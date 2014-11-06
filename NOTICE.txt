@@ -1,0 +1,7 @@
+Sensus
+Copyright 2014 The Rector & Visitors of the University of Virginia
+
+This software was developed at the Predictive Technology Laboratory at
+the University of Virginia by the following individuals:
+
+  Matthew Gerber (gerber.matthew@gmail.com)

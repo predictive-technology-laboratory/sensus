@@ -1,0 +1,3 @@
+The process for cutting a release is as follows:
+
+* ...
