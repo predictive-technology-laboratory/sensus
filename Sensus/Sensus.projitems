@@ -10,5 +10,29 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)App.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataStores\DataStoreController.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataStores\Local\LocalDataStore.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataStores\Remote\RemoteDataStore.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\AppProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\BrowserProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\CallProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\ContactsProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\SmsProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Device\BatteryProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Device\ScreenProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\GpsLocationProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\LocationProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\WiFiLocationProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AccelerometerProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\CompassProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\BluetoothProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\CellTowerProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\WlanProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Probe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\ProbeController.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Protocols\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Probes\Interactive\" />
   </ItemGroup>
 </Project>
