@@ -7,7 +7,7 @@ namespace Sensus.DataStores.Remote
     /// <summary>
     /// Responsible for storing data on remote media.
     /// </summary>
-    public abstract class RemoteDataStore
+    public abstract class RemoteDataStore : DataStore
     {
     }
 }
