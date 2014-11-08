@@ -2,8 +2,10 @@
 using Sensus.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using System.Threading;
+using System.Linq;
 
 namespace Sensus.Probes
 {
@@ -28,14 +30,18 @@ namespace Sensus.Probes
             }
         }
 
+        public static List<Probe> GetAll()
+        {
+            return Assembly.GetExecutingAssembly().GetTypes().Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(Probe))).Select(t => Activator.CreateInstance(t) as Probe).ToList();
+        }
+
         [ProbeParameter(true)]
         private int _sleepDurationMS;
-
         private ProbeState _state;
         private AutoResetEvent _pollTrigger;
         private Thread _pollThread;
         private List<Datum> _polledData;
-        private AutoResetEvent _dataReceivedEvent;
+        private AutoResetEvent _dataReceivedWaitHandle;
 
         public ProbeState State
         {
@@ -48,9 +54,9 @@ namespace Sensus.Probes
             get { return _polledData; }
         }
 
-        public AutoResetEvent DataReceivedEvent
+        public AutoResetEvent DataReceivedWaitHandle
         {
-            get { return _dataReceivedEvent; }
+            get { return _dataReceivedWaitHandle; }
         }
 
         public Probe()
@@ -59,7 +65,7 @@ namespace Sensus.Probes
             _state = ProbeState.Uninitialized;
             _pollTrigger = new AutoResetEvent(false);
             _polledData = new List<Datum>();
-            _dataReceivedEvent = new AutoResetEvent(false);
+            _dataReceivedWaitHandle = new AutoResetEvent(false);
         }
 
         public virtual void Test()

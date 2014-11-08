@@ -9,7 +9,6 @@
     <Import_RootNamespace>Sensus</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)App.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\DataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\DataStoreController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Local\LocalDataStore.cs" />
@@ -38,6 +37,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\ProbeState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Protocols\ProtocolController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Protocols\Protocol.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\MainPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\ProtocolSelectionPage.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\Interactive\" />

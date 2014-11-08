@@ -29,7 +29,6 @@ namespace Sensus.Probes.Location
 
         [ProbeParameter(true)]
         private int _desiredAccuracyMeters;
-
         private Geolocator _locator;
 
         public int DesiredAccuracyMeters
@@ -60,7 +59,7 @@ namespace Sensus.Probes.Location
 
             Poll();
 
-            DataReceivedEvent.WaitOne();
+            DataReceivedWaitHandle.WaitOne();
 
             if (PolledData.Count != 1)
                 throw new ProbeTestException(this, "Failed to get test location");
@@ -77,7 +76,7 @@ namespace Sensus.Probes.Location
                         PolledData.Add(new GpsLocationDatum(t.Result.Timestamp, t.Result.Latitude, t.Result.Longitude));
                     }
 
-                    DataReceivedEvent.Set();
+                    DataReceivedWaitHandle.Set();
 
                 }, TaskScheduler.FromCurrentSynchronizationContext());
         }

@@ -9,6 +9,9 @@ using Xamarin.Geolocation;
 
 namespace Sensus.Android.Probes
 {
+    /// <summary>
+    /// Initializes protocols and their probes with platform-specific bindings.
+    /// </summary>
     public class AndroidProbeInitializer : ProbeInitializer
     {
         private Context _context;
@@ -18,7 +21,7 @@ namespace Sensus.Android.Probes
             _context = context;
         }
 
-        public override ProbeState Initialize(Probe probe)
+        protected override ProbeState Initialize(Probe probe)
         {
             if(base.Initialize(probe) != ProbeState.Initialized)
             {

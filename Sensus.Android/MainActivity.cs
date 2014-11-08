@@ -8,6 +8,7 @@ using Android.Widget;
 using Android.OS;
 
 using Xamarin.Forms.Platform.Android;
+using Sensus.UI;
 
 namespace Sensus.Android
 {
@@ -20,7 +21,7 @@ namespace Sensus.Android
 
             Xamarin.Forms.Forms.Init(this, bundle);
 
-            SetPage(App.GetMainPage());
+            SetPage(new MainPage());
         }
     }
 }

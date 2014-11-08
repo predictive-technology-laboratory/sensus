@@ -6,6 +6,7 @@ using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 
 using Xamarin.Forms;
+using Sensus.UI;
 
 namespace Sensus.iOS
 {
@@ -31,7 +32,7 @@ namespace Sensus.iOS
 
             window = new UIWindow(UIScreen.MainScreen.Bounds);
 
-            window.RootViewController = App.GetMainPage().CreateViewController();
+            window.RootViewController = new MainPage().CreateViewController();
 
             window.MakeKeyAndVisible();
 

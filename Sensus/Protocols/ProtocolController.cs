@@ -17,23 +17,9 @@ namespace Sensus.Protocols
         /// Constructor
         /// </summary>
         /// <param name="protocol">Protocol to execute.</param>
-        /// <param name="initializer">Initializer for probes.</param>
-        public ProtocolController(Protocol protocol, ProbeInitializer initializer)
+        public ProtocolController(Protocol protocol)
         {
             _protocol = protocol;
-
-            foreach (Probe probe in _protocol.Probes)
-            {
-                if (initializer.Initialize(probe) == ProbeState.Initialized)
-                {
-                    try { probe.Test(); }
-                    catch (ProbeTestException e)
-                    {
-                        probe.State = ProbeState.TestFailed;
-                        Console.Error.WriteLine(e.Message);
-                    }
-                }
-            }
         }
 
         public void ExecuteProtocol()
