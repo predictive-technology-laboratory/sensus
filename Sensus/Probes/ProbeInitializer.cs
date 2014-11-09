@@ -14,7 +14,6 @@ namespace Sensus.Probes
         public void Initialize(Protocol protocol)
         {
             foreach (Probe probe in protocol.Probes)
-            {
                 if (Initialize(probe) == ProbeState.Initialized)
                 {
                     try { probe.Test(); }
@@ -24,7 +23,6 @@ namespace Sensus.Probes
                         Console.Error.WriteLine(e.Message);
                     }
                 }
-            }
         }
 
         protected virtual ProbeState Initialize(Probe probe)

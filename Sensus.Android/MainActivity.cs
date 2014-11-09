@@ -12,7 +12,7 @@ using Sensus.UI;
 
 namespace Sensus.Android
 {
-    [Activity(Label = "Sensus", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Label = "Loading Sensus...", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : AndroidActivity
     {
         protected override void OnCreate(Bundle bundle)
@@ -21,7 +21,7 @@ namespace Sensus.Android
 
             Xamarin.Forms.Forms.Init(this, bundle);
 
-            SetPage(new MainPage());
+            SetPage(MainPage.Get());
         }
     }
 }

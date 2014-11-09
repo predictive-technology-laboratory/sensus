@@ -8,40 +8,47 @@ namespace Sensus.UI
 {
     public class MainPage : NavigationPage
     {
-        public MainPage()
+        public static MainPage Get()
         {
-            List<Protocol> protocols = new List<Protocol>();
-            protocols.Add(new Protocol("Test Protocol 1", true));
-            protocols.Add(new Protocol("Test Protocol 2", true));
-
-            ListView mainListView = new ListView();
-            mainListView.ItemsSource = new object[] 
+            Label protocolsLabel = new Label
             {
-                protocols[0]
+                Text = "Protocols",
+                Font = Font.SystemFontOfSize(20)
             };
 
-            mainListView.ItemTemplate = new DataTemplate(typeof(TextCell));
-            mainListView.SetBinding(TextCell.TextProperty, "Description");
-            mainListView.ItemSelected += async (o, e) =>
-                {
-                    Page drillDown = null;
-                    if (e.SelectedItem is Protocol)
-                        drillDown = new ProtocolSelectionPage(protocols);
+            ListView mainList = new ListView();
+            mainList.ItemTemplate = new DataTemplate(typeof(TextCell));
+            mainList.ItemTemplate.SetBinding(TextCell.TextProperty, "Text");
+            mainList.ItemsSource = new Label[] { protocolsLabel };
 
-                    if (drillDown != null)
-                        await Navigation.PushAsync(drillDown);
-                };
-
-            ContentPage p = new ContentPage()
+            ContentPage rootPage = new ContentPage
             {
-                Content = new StackLayout()
+                Content = new StackLayout
                 {
                     VerticalOptions = LayoutOptions.FillAndExpand,
-                    Children = { mainListView }
+                    Children = { mainList}
                 }
             };
 
-            Navigation.PushModalAsync(p);
+            MainPage mainPage = new MainPage(rootPage);
+
+            mainList.ItemTapped += async (o, e) =>
+                {
+                    Page drillDownPage = null;
+                    if (e.Item == protocolsLabel)
+                        drillDownPage = ProtocolSelectionPage.Get();
+
+                    if (drillDownPage != null)
+                        await mainPage.Navigation.PushAsync(drillDownPage);
+                };
+
+            return mainPage;
+        }
+
+        private MainPage(Page rootPage)
+            : base(rootPage)
+        {
+            Title = "Sensus";
         }
     }
 }

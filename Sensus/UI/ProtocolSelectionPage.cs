@@ -6,25 +6,39 @@ using Xamarin.Forms;
 
 namespace Sensus.UI
 {
-    public class ProtocolSelectionPage : NavigationPage
+    public class ProtocolSelectionPage : ContentPage
     {
-        public ProtocolSelectionPage(List<Protocol> protocols)
+        public static ContentPage Get()
         {
-            ListView protocolListView = new ListView();
-            protocolListView.ItemsSource = protocols;
-            protocolListView.ItemTemplate = new DataTemplate(typeof(TextCell));
-            protocolListView.SetBinding(TextCell.TextProperty, "Description");
+            List<Protocol> protocols = new List<Protocol>();
+            for (int i = 0; i < 20; ++i)
+                protocols.Add(new Protocol("Test Protocol " + (i + 1), true));
 
-            ContentPage p = new ContentPage()
+            ListView protocolsList = new ListView();
+            protocolsList.ItemTemplate = new DataTemplate(typeof(TextCell));
+            protocolsList.ItemTemplate.SetBinding(TextCell.TextProperty, "Name");
+            protocolsList.ItemsSource = protocols;
+
+            ProtocolSelectionPage page = new ProtocolSelectionPage
             {
-                Content = new StackLayout()
+                Content = new StackLayout
                 {
                     VerticalOptions = LayoutOptions.FillAndExpand,
-                    Children = { protocolListView }
+                    Children = { protocolsList }
                 }
             };
 
-            Navigation.PushModalAsync(p);
+            protocolsList.ItemTapped += async (o, e) =>
+                {
+                    Protocol p = e.Item as Protocol;
+                };
+
+            return page;
+        }
+
+        private ProtocolSelectionPage()
+        {
+            Title = "Protocols";
         }
     }
 }

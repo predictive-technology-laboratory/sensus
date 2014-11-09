@@ -30,6 +30,10 @@ namespace Sensus.Probes
             }
         }
 
+        /// <summary>
+        /// Gets a list of all probes, uninitialized and instatiated with their default parameters.
+        /// </summary>
+        /// <returns></returns>
         public static List<Probe> GetAll()
         {
             return Assembly.GetExecutingAssembly().GetTypes().Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(Probe))).Select(t => Activator.CreateInstance(t) as Probe).ToList();

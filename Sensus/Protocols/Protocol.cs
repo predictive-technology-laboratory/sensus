@@ -11,28 +11,27 @@ namespace Sensus.Protocols
     /// </summary>
     public class Protocol
     {
-        private string _description;
+        private string _name;
         private List<Probe> _probes;
+
+        public string Name
+        {
+            get { return _name; }
+        }
 
         public List<Probe> Probes
         {
             get { return _probes; }
         }
 
-        public string Description
+        public Protocol(string name, bool addAllProbes)
         {
-            get { return _description; }
-        }
-
-        public Protocol(string description, bool addAllProbes)
-        {
-            _description = description;
+            _name = name;
+            _probes = new List<Probe>();
 
             if (addAllProbes)
                 foreach (Probe probe in Probe.GetAll())
                     AddProbe(probe);
-            else
-                _probes = new List<Probe>();
         }
 
         public void AddProbe(Probe probe)
