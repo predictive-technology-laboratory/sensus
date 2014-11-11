@@ -36,6 +36,11 @@ namespace Sensus.Probes.Location
             get { return _desiredAccuracyMeters; }
         }
 
+        protected override string FriendlyName
+        {
+            get { return "GPS Location Probe"; }
+        }
+
         public GpsLocationProbe()
         {
             _desiredAccuracyMeters = 10;

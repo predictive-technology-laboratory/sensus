@@ -6,13 +6,15 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Linq;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace Sensus.Probes
 {
     /// <summary>
     /// An abstract probe.
     /// </summary>
-    public abstract class Probe
+    public abstract class Probe : INotifyPropertyChanged
     {
         [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
         public class ProbeParameter : Attribute
@@ -30,6 +32,8 @@ namespace Sensus.Probes
             }
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
         /// <summary>
         /// Gets a list of all probes, uninitialized and instatiated with their default parameters.
         /// </summary>
@@ -40,6 +44,10 @@ namespace Sensus.Probes
         }
 
         [ProbeParameter(true)]
+        private string _name;
+        [ProbeParameter(true)]
+        private bool _enabled;
+        [ProbeParameter(true)]
         private int _sleepDurationMS;
         private ProbeState _state;
         private AutoResetEvent _pollTrigger;
@@ -47,10 +55,43 @@ namespace Sensus.Probes
         private List<Datum> _polledData;
         private AutoResetEvent _dataReceivedWaitHandle;
 
+        public string Name
+        {
+            get { return _name; }
+            set
+            {
+                if (!value.Equals(_name, StringComparison.Ordinal))
+                {
+                    _name = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public bool Enabled
+        {
+            get { return _enabled; }
+            set
+            {
+                if(value != _enabled)
+                {
+                    _enabled = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         public ProbeState State
         {
             get { return _state; }
-            set { _state = value; }
+            set
+            {
+                if (value != _state)
+                {
+                    _state = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         protected List<Datum> PolledData
@@ -63,8 +104,12 @@ namespace Sensus.Probes
             get { return _dataReceivedWaitHandle; }
         }
 
+        protected abstract string FriendlyName { get; }
+
         public Probe()
         {
+            _name = FriendlyName;
+            _enabled = false;
             _sleepDurationMS = 1000;
             _state = ProbeState.Uninitialized;
             _pollTrigger = new AutoResetEvent(false);
@@ -117,6 +162,12 @@ namespace Sensus.Probes
             _pollTrigger.Set();
             _pollThread.Join();
             _state = ProbeState.Stopped;
+        }
+
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

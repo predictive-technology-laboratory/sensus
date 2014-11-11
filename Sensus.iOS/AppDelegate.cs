@@ -32,7 +32,7 @@ namespace Sensus.iOS
 
             window = new UIWindow(UIScreen.MainScreen.Bounds);
 
-            window.RootViewController = MainPage.Get().CreateViewController();
+            window.RootViewController = new MainPage().CreateViewController();
 
             window.MakeKeyAndVisible();
 

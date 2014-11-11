@@ -38,7 +38,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Protocols\ProtocolController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Protocols\Protocol.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\MainPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\ProbePage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\ProbeViewCell.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\ProtocolPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProtocolSelectionPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\ProtocolViewCell.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\Interactive\" />

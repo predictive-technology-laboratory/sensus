@@ -21,7 +21,7 @@ namespace Sensus.Android
 
             Xamarin.Forms.Forms.Init(this, bundle);
 
-            SetPage(MainPage.Get());
+            SetPage(new MainPage());
         }
     }
 }

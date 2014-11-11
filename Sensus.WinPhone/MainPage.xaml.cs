@@ -20,7 +20,7 @@ namespace Sensus.WinPhone
             InitializeComponent();
 
             Forms.Init();
-            Content = Sensus.UI.MainPage.Get().ConvertPageToUIElement(this);
+            Content = new Sensus.UI.MainPage().ConvertPageToUIElement(this);
         }
     }
 }

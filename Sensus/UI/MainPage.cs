@@ -8,7 +8,8 @@ namespace Sensus.UI
 {
     public class MainPage : NavigationPage
     {
-        public static MainPage Get()
+        public MainPage()
+            : base()
         {
             Label protocolsLabel = new Label
             {
@@ -20,35 +21,27 @@ namespace Sensus.UI
             mainList.ItemTemplate = new DataTemplate(typeof(TextCell));
             mainList.ItemTemplate.SetBinding(TextCell.TextProperty, "Text");
             mainList.ItemsSource = new Label[] { protocolsLabel };
-
-            ContentPage rootPage = new ContentPage
-            {
-                Content = new StackLayout
-                {
-                    VerticalOptions = LayoutOptions.FillAndExpand,
-                    Children = { mainList}
-                }
-            };
-
-            MainPage mainPage = new MainPage(rootPage);
-
             mainList.ItemTapped += async (o, e) =>
                 {
                     Page drillDownPage = null;
                     if (e.Item == protocolsLabel)
-                        drillDownPage = ProtocolSelectionPage.Get();
+                        drillDownPage = new ProtocolSelectionPage();
 
                     if (drillDownPage != null)
-                        await mainPage.Navigation.PushAsync(drillDownPage);
+                        await Navigation.PushAsync(drillDownPage);
                 };
 
-            return mainPage;
-        }
+            ContentPage rootPage = new ContentPage
+            {
+                Title = "Sensus",
+                Content = new StackLayout
+                {
+                    VerticalOptions = LayoutOptions.FillAndExpand,
+                    Children = { mainList }
+                }
+            };
 
-        private MainPage(Page rootPage)
-            : base(rootPage)
-        {
-            Title = "Sensus";
+            Navigation.PushAsync(rootPage);
         }
     }
 }

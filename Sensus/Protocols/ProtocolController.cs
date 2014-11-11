@@ -24,16 +24,25 @@ namespace Sensus.Protocols
 
         public void ExecuteProtocol()
         {
-            foreach (Probe probe in _protocol.Probes)
-                if (probe.State == ProbeState.Initialized)
-                    probe.StartPolling();
+            if (!_protocol.Running)
+            {
+                _protocol.Running = true;
+                foreach (Probe probe in _protocol.Probes)
+                    if (probe.State == ProbeState.Initialized)
+                        probe.StartPolling();
+            }
         }
 
         public void HaltProtocol()
         {
-            foreach (Probe probe in _protocol.Probes)
-                if (probe.State == ProbeState.Polling)
-                    probe.StopPolling();
+            if (_protocol.Running)
+            {
+                foreach (Probe probe in _protocol.Probes)
+                    if (probe.State == ProbeState.Polling)
+                        probe.StopPolling();
+
+                _protocol.Running = false;
+            }
         }
     }
 }
