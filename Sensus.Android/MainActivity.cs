@@ -9,6 +9,8 @@ using Android.OS;
 
 using Xamarin.Forms.Platform.Android;
 using Sensus.UI;
+using Sensus.Probes;
+using Sensus.Android.Probes;
 
 namespace Sensus.Android
 {
@@ -18,6 +20,8 @@ namespace Sensus.Android
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
+
+            ProbeInitializer.Set(new AndroidProbeInitializer(this));
 
             Xamarin.Forms.Forms.Init(this, bundle);
 

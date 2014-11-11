@@ -15,6 +15,7 @@ namespace Sensus.UI
 
             SetBinding(TitleProperty, new Binding("Name"));
 
+            #region name
             Label nameLabel = new Label
             {
                 Text = "Name:  ",
@@ -23,7 +24,7 @@ namespace Sensus.UI
             };
 
             Entry nameEntry = new Entry();
-            nameEntry.BindingContext = BindingContext;
+            nameEntry.BindingContext = protocol;
             nameEntry.SetBinding(Entry.TextProperty, "Name");
 
             StackLayout nameStack = new StackLayout
@@ -32,7 +33,9 @@ namespace Sensus.UI
                 Orientation = StackOrientation.Horizontal,
                 Children = { nameLabel, nameEntry }
             };
+            #endregion
 
+            #region status
             Label statusLabel = new Label
             {
                 Text = "Status:  ",
@@ -41,7 +44,7 @@ namespace Sensus.UI
             };
 
             Switch statusSwitch = new Switch();
-            statusSwitch.BindingContext = BindingContext;
+            statusSwitch.BindingContext = protocol;
             statusSwitch.SetBinding(Switch.IsToggledProperty, "Running");
 
             StackLayout statusStack = new StackLayout
@@ -50,15 +53,24 @@ namespace Sensus.UI
                 Orientation = StackOrientation.Horizontal,
                 Children = { statusLabel, statusSwitch }
             };
+            #endregion
 
+            #region data store
+            
+            #endregion
+
+            #region probes
             ListView probesList = new ListView();
             probesList.ItemTemplate = new DataTemplate(typeof(ProbeViewCell));
-            probesList.BindingContext = BindingContext;
+            probesList.BindingContext = protocol;
             probesList.SetBinding(ListView.ItemsSourceProperty, "Probes");
             probesList.ItemTapped += async (o, e) =>
                 {
-                    await Navigation.PushAsync(new ProbePage(e.Item as Probe));
+                    Probe probe = e.Item as Probe;
+                    probesList.SelectedItem = null;
+                    await Navigation.PushAsync(new ProbePage(probe));
                 };
+            #endregion
 
             Content = new StackLayout
             {

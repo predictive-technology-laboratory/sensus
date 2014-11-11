@@ -1,4 +1,5 @@
-﻿using Sensus.Exceptions;
+﻿using Sensus.DataStores.Local;
+using Sensus.Exceptions;
 using Sensus.Probes;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,7 @@ namespace Sensus.Protocols
         private List<Probe> _probes;
         private bool _running;
         private PropertyChangedEventHandler _notifyWatchersOfProbesChange;
+        private LocalDataStore _localDataStore;
 
         public string Name
         {
@@ -47,8 +49,19 @@ namespace Sensus.Protocols
                 {
                     _running = value;
                     OnPropertyChanged();
+
+                    if (value)
+                        Start();
+                    else
+                        Stop();
                 }
             }
+        }
+
+        public LocalDataStore LocalDataStore
+        {
+            get { return _localDataStore; }
+            set { _localDataStore = value; }
         }
 
         public Protocol(string name, bool addAllProbes)
@@ -76,6 +89,25 @@ namespace Sensus.Protocols
         {
             probe.PropertyChanged -= _notifyWatchersOfProbesChange;
             _probes.Remove(probe);
+        }
+
+        private void Start()
+        {
+            ProbeInitializer.Get().Initialize(_probes);
+            foreach (Probe probe in _probes)
+                if (probe.State == ProbeState.Initialized)
+                    probe.StartPolling();
+
+            _localDataStore.Start(this);
+        }
+
+        private void Stop()
+        {
+            foreach (Probe probe in _probes)
+                if (probe.State == ProbeState.Polling)
+                    probe.StopPolling();
+
+            _localDataStore.Stop();
         }
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)

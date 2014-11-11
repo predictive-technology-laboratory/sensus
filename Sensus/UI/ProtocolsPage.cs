@@ -2,27 +2,30 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 using Xamarin.Forms;
 
 namespace Sensus.UI
 {
-    public class ProtocolSelectionPage : ContentPage
+    public class ProtocolsPage : ContentPage
     {
-        public ProtocolSelectionPage()
+        public ProtocolsPage()
         {
             Title = "Protocols";
 
             List<Protocol> protocols = new List<Protocol>();
-            for (int i = 0; i < 20; ++i)
+            for (int i = 0; i < 5; ++i)
                 protocols.Add(new Protocol("Test Protocol " + (i + 1), true));
 
             ListView protocolsList = new ListView();
             protocolsList.ItemTemplate = new DataTemplate(typeof(ProtocolViewCell));
             protocolsList.ItemsSource = protocols;
             protocolsList.ItemTapped += async (o, e) =>
-                {
-                    await Navigation.PushAsync(new ProtocolPage(e.Item as Protocol));
-                };
+            {
+                Protocol protocol = (o as ListView).SelectedItem as Protocol;
+                protocolsList.SelectedItem = null;
+                await Navigation.PushAsync(new ProtocolPage(protocol));
+            };
 
             Content = new StackLayout
             {

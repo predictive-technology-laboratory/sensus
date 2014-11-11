@@ -1,5 +1,6 @@
 ﻿using Sensus.DataStores.Local;
 using Sensus.Exceptions;
+using Sensus.Probes.Parameters;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -27,13 +28,21 @@ namespace Sensus.Probes.Location
             }
         }
 
-        [ProbeParameter(true)]
         private int _desiredAccuracyMeters;
         private Geolocator _locator;
 
+        [EntryIntegerProbeParameter("Desired Accuracy (Meters):", true)]
         public int DesiredAccuracyMeters
         {
             get { return _desiredAccuracyMeters; }
+            set
+            {
+                if (value != _desiredAccuracyMeters)
+                {
+                    _desiredAccuracyMeters = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         protected override string FriendlyName

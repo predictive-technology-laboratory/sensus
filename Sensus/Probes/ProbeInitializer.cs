@@ -11,9 +11,21 @@ namespace Sensus.Probes
     /// </summary>
     public class ProbeInitializer
     {
-        public void Initialize(Protocol protocol)
+        private static ProbeInitializer _probeInitializer;
+
+        public static ProbeInitializer Get()
         {
-            foreach (Probe probe in protocol.Probes)
+            return _probeInitializer;
+        }
+
+        public static void Set(ProbeInitializer probeInitializer)
+        {
+            _probeInitializer = probeInitializer;
+        }
+
+        public void Initialize(List<Probe> probes)
+        {
+            foreach (Probe probe in probes)
                 if (Initialize(probe) == ProbeState.Initialized)
                 {
                     try { probe.Test(); }

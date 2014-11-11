@@ -10,8 +10,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\DataStore.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DataStores\DataStoreController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Local\LocalDataStore.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataStores\Local\SQLiteLocalDataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Remote\RemoteDataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Datum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\InvalidProbeStateException.cs" />
@@ -32,16 +32,20 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\BluetoothProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\CellTowerProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\WlanProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Parameters\BooleanProbeParameter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Parameters\EntryIntegerProbeParameter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Parameters\IncrementalIntegerProbeParameter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Parameters\ProbeParameter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Parameters\StringProbeParameter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Probe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\ProbeInitializer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\ProbeState.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Protocols\ProtocolController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Protocols\Protocol.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\MainPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProbePage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProbeViewCell.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProtocolPage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UI\ProtocolSelectionPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\ProtocolsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProtocolViewCell.cs" />
   </ItemGroup>
   <ItemGroup>

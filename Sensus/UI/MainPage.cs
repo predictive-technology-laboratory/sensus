@@ -1,4 +1,5 @@
-﻿using Sensus.Protocols;
+﻿using Sensus.Probes;
+using Sensus.Protocols;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -6,6 +7,9 @@ using Xamarin.Forms;
 
 namespace Sensus.UI
 {
+    /// <summary>
+    /// Main Sensus page. First thing the user sees.
+    /// </summary>
     public class MainPage : NavigationPage
     {
         public MainPage()
@@ -25,7 +29,7 @@ namespace Sensus.UI
                 {
                     Page drillDownPage = null;
                     if (e.Item == protocolsLabel)
-                        drillDownPage = new ProtocolSelectionPage();
+                        drillDownPage = new ProtocolsPage();
 
                     if (drillDownPage != null)
                         await Navigation.PushAsync(drillDownPage);

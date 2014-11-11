@@ -11,6 +11,6 @@ namespace Sensus.DataStores
     {
         public abstract void Test();
 
-        public abstract void Store(IEnumerable<Datum> datum);
+        public abstract void Store(IEnumerable<Datum> data);
     }
 }
