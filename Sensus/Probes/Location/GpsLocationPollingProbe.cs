@@ -13,15 +13,15 @@ namespace Sensus.Probes.Location
     /// <summary>
     /// Probes information from the GPS sensor.
     /// </summary>
-    public class GpsLocationProbe : Probe
+    public class GpsLocationPollingProbe : PollingProbe
     {
-        private class GpsLocationDatum : Datum
+        private class GpsLocationPollingDatum : Datum
         {
             private double _latitude;
             private double _longitude;
 
-            public GpsLocationDatum(DateTimeOffset timestamp, double latitude, double longitude)
-                : base(timestamp)
+            public GpsLocationPollingDatum(int probeId, DateTimeOffset timestamp, double latitude, double longitude)
+                : base(probeId, timestamp)
             {
                 _latitude = latitude;
                 _longitude = longitude;
@@ -30,6 +30,7 @@ namespace Sensus.Probes.Location
 
         private int _desiredAccuracyMeters;
         private Geolocator _locator;
+        private GpsLocationPollingDatum _currentLocation;
 
         [EntryIntegerProbeParameter("Desired Accuracy (Meters):", true)]
         public int DesiredAccuracyMeters
@@ -45,51 +46,46 @@ namespace Sensus.Probes.Location
             }
         }
 
-        protected override string FriendlyName
+        public Geolocator Locator
         {
-            get { return "GPS Location Probe"; }
+            get { return _locator; }
+            set { _locator = value; }
         }
 
-        public GpsLocationProbe()
+        protected override string DisplayName
+        {
+            get { return "GPS Location Polling Probe"; }
+        }
+
+        public GpsLocationPollingProbe()
         {
             _desiredAccuracyMeters = 10;
             _locator = null;
         }
 
-        public void Initialize(Geolocator locator)
+        public override ProbeState Initialize()
         {
-            if (State != ProbeState.Initializing)
+            if (base.Initialize() != ProbeState.Initializing)
                 throw new InvalidProbeStateException(this, ProbeState.Initialized);
 
-            _locator = locator;
-            _locator.DesiredAccuracy = _desiredAccuracyMeters;
+            if (_locator != null)
+                State = ProbeState.Initialized;
 
-            State = ProbeState.Initialized;
+            return State;
         }
 
-        public override void Test()
+        protected override Datum Poll()
         {
-            base.Test();
-
-            Poll();
-
+            GetLocation();
             DataReceivedWaitHandle.WaitOne();
-
-            if (PolledData.Count != 1)
-                throw new ProbeTestException(this, "Failed to get test location");
-
-            PolledData.Clear();
+            return _currentLocation;
         }
 
-        protected override void Poll()
+        private void GetLocation()
         {
             _locator.GetPositionAsync(timeout: 10000).ContinueWith(t =>
                 {
-                    lock (PolledData)
-                    {
-                        PolledData.Add(new GpsLocationDatum(t.Result.Timestamp, t.Result.Latitude, t.Result.Longitude));
-                    }
-
+                    _currentLocation = new GpsLocationPollingDatum(Id, t.Result.Timestamp, t.Result.Latitude, t.Result.Longitude);
                     DataReceivedWaitHandle.Set();
 
                 }, TaskScheduler.FromCurrentSynchronizationContext());

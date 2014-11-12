@@ -23,16 +23,20 @@ namespace Sensus.Android.Probes
 
         protected override ProbeState Initialize(Probe probe)
         {
-            if(base.Initialize(probe) != ProbeState.Initialized)
+            if(base.Initialize(probe) == ProbeState.Initializing)
             {
-                if(probe is GpsLocationProbe)
+                if (probe is GpsLocationPollingProbe)
                 {
+                    GpsLocationPollingProbe gpsLocationPollingProbe = probe as GpsLocationPollingProbe;
                     Geolocator locator = new Geolocator(_context);
                     if (locator.IsGeolocationEnabled)
                     {
-                        GpsLocationProbe gpsProbe = probe as GpsLocationProbe;
-                        gpsProbe.Initialize(locator);
+                        locator.DesiredAccuracy = gpsLocationPollingProbe.DesiredAccuracyMeters;
+                        gpsLocationPollingProbe.Locator = locator;
+                        gpsLocationPollingProbe.Initialize();
                     }
+                    else
+                        gpsLocationPollingProbe.State = ProbeState.Unsupported;
                 }
             }
 

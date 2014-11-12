@@ -9,42 +9,24 @@ namespace Sensus.DataStores.Local
 {
     public class SQLiteLocalDataStore : LocalDataStore
     {
-        private Thread _thread;
-
         public override void Test()
         {
+            throw new NotImplementedException();
         }
 
-        public override void Start(Protocol protocol)
+        protected override ICollection<Datum> CommitData(ICollection<Datum> data)
         {
-            _thread = new Thread(new ThreadStart(() =>
-                {
-                    while(protocol.Running)
-                    {
-                        CommitTrigger.WaitOne(CommitDelayMS);
-
-                        foreach(Probe probe in protocol.Probes)
-                            lock (probe.PolledData)
-                            {
-                                Store(probe.PolledData);
-                                probe.PolledData.Clear();
-                            }
-                    }
-                }));
-
-            _thread.Start();
+            throw new NotImplementedException();
         }
 
-        public override void Store(IEnumerable<Datum> data)
+        public override ICollection<Datum> GetDataForRemoteDataStore()
         {
-            foreach (Datum datum in data)
-                Console.Out.WriteLine(datum.ToString());
+            throw new NotImplementedException();
         }
 
-        public override void Stop()
+        public override void ClearDataCommittedToRemoteDataStore(ICollection<Datum> data)
         {
-            CommitTrigger.Set();
-            _thread.Join();
+            throw new NotImplementedException();
         }
     }
 }

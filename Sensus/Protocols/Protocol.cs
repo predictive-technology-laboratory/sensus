@@ -19,8 +19,8 @@ namespace Sensus.Protocols
         private string _name;
         private List<Probe> _probes;
         private bool _running;
-        private PropertyChangedEventHandler _notifyWatchersOfProbesChange;
         private LocalDataStore _localDataStore;
+        private PropertyChangedEventHandler _notifyWatchersOfProbesChange;
 
         public string Name
         {
@@ -50,10 +50,36 @@ namespace Sensus.Protocols
                     _running = value;
                     OnPropertyChanged();
 
-                    if (value)
-                        Start();
+                    if (_running)
+                    {
+                        try { _localDataStore.Test(); }
+                        catch (Exception ex)
+                        {
+                            Console.Error.WriteLine("Local DataStore test failed:  " + ex.Message);
+                            Running = false;
+                            return;
+                        }
+
+                        ProbeInitializer.Get().Initialize(_probes);
+                        int probesStarted = 0;
+                        foreach (Probe probe in _probes)
+                            if (probe.State == ProbeState.Initialized)
+                            {
+                                probe.Start();
+                                probesStarted++;
+                            }
+
+                        if (probesStarted > 0)
+                            _localDataStore.Start(this);
+                    }
                     else
-                        Stop();
+                    {
+                        foreach (Probe probe in _probes)
+                            if (probe.State == ProbeState.Started)
+                                probe.Stop();
+
+                        _localDataStore.Stop();
+                    }
                 }
             }
         }
@@ -89,25 +115,6 @@ namespace Sensus.Protocols
         {
             probe.PropertyChanged -= _notifyWatchersOfProbesChange;
             _probes.Remove(probe);
-        }
-
-        private void Start()
-        {
-            ProbeInitializer.Get().Initialize(_probes);
-            foreach (Probe probe in _probes)
-                if (probe.State == ProbeState.Initialized)
-                    probe.StartPolling();
-
-            _localDataStore.Start(this);
-        }
-
-        private void Stop()
-        {
-            foreach (Probe probe in _probes)
-                if (probe.State == ProbeState.Polling)
-                    probe.StopPolling();
-
-            _localDataStore.Stop();
         }
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)

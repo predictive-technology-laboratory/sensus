@@ -11,6 +11,7 @@ namespace Sensus.Probes
     /// </summary>
     public class ProbeInitializer
     {
+        #region static members
         private static ProbeInitializer _probeInitializer;
 
         public static ProbeInitializer Get()
@@ -22,6 +23,7 @@ namespace Sensus.Probes
         {
             _probeInitializer = probeInitializer;
         }
+        #endregion
 
         public void Initialize(List<Probe> probes)
         {
@@ -29,17 +31,17 @@ namespace Sensus.Probes
                 if (Initialize(probe) == ProbeState.Initialized)
                 {
                     try { probe.Test(); }
-                    catch (ProbeTestException e)
+                    catch (ProbeTestException ex)
                     {
+                        Console.Error.WriteLine("Test failed for probe \"" + probe.Name + "\":  " + ex.Message);
                         probe.State = ProbeState.TestFailed;
-                        Console.Error.WriteLine(e.Message);
                     }
                 }
         }
 
         protected virtual ProbeState Initialize(Probe probe)
         {
-            probe.State = ProbeState.Initializing;
+            probe.Initialize();
 
             return probe.State;
         }

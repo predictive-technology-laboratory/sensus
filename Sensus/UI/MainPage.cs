@@ -2,6 +2,7 @@
 using Sensus.Protocols;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using Xamarin.Forms;
 
@@ -12,9 +13,13 @@ namespace Sensus.UI
     /// </summary>
     public class MainPage : NavigationPage
     {
+        public const string LogPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "sensus_log.txt");
+
         public MainPage()
             : base()
         {
+            Console.SetError(new StandardOutWriter(LogPath, true, true));
+
             Label protocolsLabel = new Label
             {
                 Text = "Protocols",

@@ -17,8 +17,7 @@ namespace Sensus.Probes
     /// </summary>
     public abstract class Probe : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
+        #region static members
         /// <summary>
         /// Gets a list of all probes, uninitialized and instatiated with their default parameters.
         /// </summary>
@@ -27,15 +26,21 @@ namespace Sensus.Probes
         {
             return Assembly.GetExecutingAssembly().GetTypes().Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(Probe))).Select(t => Activator.CreateInstance(t) as Probe).ToList();
         }
+        #endregion
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private int _id;
         private string _name;
         private bool _enabled;
-        private int _sleepDurationMS;
         private ProbeState _state;
-        private AutoResetEvent _pollTrigger;
-        private Thread _pollThread;
-        private List<Datum> _polledData;
+        private HashSet<Datum> _collectedData;
         private AutoResetEvent _dataReceivedWaitHandle;
+
+        public int Id
+        {
+            get { return _id; }
+        }
 
         public string Name
         {
@@ -63,20 +68,6 @@ namespace Sensus.Probes
             }
         }
 
-        [EntryIntegerProbeParameter("Sleep Duration (Milliseconds):", true)]
-        public int SleepDurationMS
-        {
-            get { return _sleepDurationMS; }
-            set
-            {
-                if (value != _sleepDurationMS)
-                {
-                    _sleepDurationMS = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
         public ProbeState State
         {
             get { return _state; }
@@ -90,75 +81,49 @@ namespace Sensus.Probes
             }
         }
 
-        public List<Datum> PolledData
+        public HashSet<Datum> CollectedData
         {
-            get { return _polledData; }
+            get { return _collectedData; }
         }
 
-        public AutoResetEvent DataReceivedWaitHandle
+        protected AutoResetEvent DataReceivedWaitHandle
         {
             get { return _dataReceivedWaitHandle; }
         }
 
-        protected abstract string FriendlyName { get; }
+        protected abstract string DisplayName { get; }
 
         public Probe()
         {
-            _name = FriendlyName;
+            _id = -1;
+            _name = DisplayName;
             _enabled = false;
-            _sleepDurationMS = 1000;
             _state = ProbeState.Uninitialized;
-            _pollTrigger = new AutoResetEvent(false);
-            _polledData = new List<Datum>();
+            _collectedData = new HashSet<Datum>();
             _dataReceivedWaitHandle = new AutoResetEvent(false);
         }
 
-        public virtual void Test()
+        public virtual ProbeState Initialize()
         {
-            _polledData.Clear();
+            _state = ProbeState.Initializing;
+            _id = 1;
+            _collectedData.Clear();
+
+            return _state;
         }
 
-        public void StartPolling()
+        public abstract void Test();
+
+        public abstract void Start();
+
+        public void ClearCommittedData(IEnumerable<Datum> data)
         {
-            lock (this)
-            {
-                if (_state != ProbeState.Initialized)
-                    throw new InvalidProbeStateException(this, ProbeState.Polling);
-
-                _state = ProbeState.Polling;
-            }
-
-            _pollThread = new Thread(new ThreadStart(() =>
-                {
-                    while (_state == ProbeState.Polling)
-                    {
-                        _pollTrigger.WaitOne(_sleepDurationMS);
-
-                        if (_state == ProbeState.Polling)
-                            Poll();
-                    }
-                }));
-
-            _pollThread.Start();
+            lock (_collectedData)
+                foreach (Datum d in data)
+                    _collectedData.Remove(d);
         }
 
-        public void TriggerPoll()
-        {
-            _pollTrigger.Set();
-        }
-
-        protected abstract void Poll();
-
-        public void StopPolling()
-        {
-            if (_state != ProbeState.Polling)
-                throw new InvalidProbeStateException(this, ProbeState.Stopping);
-
-            _state = ProbeState.Stopping;
-            _pollTrigger.Set();
-            _pollThread.Join();
-            _state = ProbeState.Stopped;
-        }
+        public abstract void Stop();
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {

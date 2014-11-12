@@ -29,9 +29,9 @@ public enum ProbeState
     TestFailed,
 
     /// <summary>
-    /// Probe is polling.
+    /// Probe has been started.
     /// </summary>
-    Polling,
+    Started,
 
     /// <summary>
     /// Probe is disposing and will soon be stopped.
