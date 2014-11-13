@@ -1,11 +1,7 @@
 ﻿using Sensus.Probes;
-using System;
+using Sensus.UI.Properties;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
-using System.Linq;
 using Xamarin.Forms;
-using Sensus.Probes.Parameters;
 
 namespace Sensus.UI
 {
@@ -63,78 +59,7 @@ namespace Sensus.UI
             #endregion
 
             #region parameters
-            foreach (PropertyInfo property in probe.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).OrderBy(p => p.Name))
-            {
-                ProbeParameter probeParameterAttribute = Attribute.GetCustomAttribute(property, typeof(ProbeParameter), true) as ProbeParameter;
-                if (probeParameterAttribute != null)
-                {
-                    Label parameterNameLabel = new Label
-                    {
-                        Text = probeParameterAttribute.LabelText,
-                        HorizontalOptions = LayoutOptions.FillAndExpand,
-                        Font = Font.SystemFontOfSize(20)
-                    };
-
-                    Label parameterValueLabel = new Label
-                    {
-                        HorizontalOptions = LayoutOptions.FillAndExpand,
-                        Font = Font.SystemFontOfSize(20)
-                    };
-                    parameterValueLabel.BindingContext = probe;
-                    parameterValueLabel.SetBinding(Label.TextProperty, property.Name);
-
-                    View view = null;
-                    BindableProperty bindingProperty = null;
-                    IValueConverter converter = null;
-                    if (probeParameterAttribute is BooleanProbeParameter)
-                    {
-                        view = new Switch();
-                        bindingProperty = Switch.IsToggledProperty;
-                    }
-                    else if (probeParameterAttribute is EntryIntegerProbeParameter)
-                    {
-                        view = new Entry
-                        {
-                            Keyboard = Keyboard.Numeric
-                        };
-                        bindingProperty = Entry.TextProperty;
-                        converter = new EntryIntegerProbeParameter.ValueConverter();
-                    }
-                    else if(probeParameterAttribute is IncrementalIntegerProbeParameter)
-                    {
-                        IncrementalIntegerProbeParameter p = probeParameterAttribute as IncrementalIntegerProbeParameter;
-                        view = new Stepper
-                        {
-                            Minimum = p.Minimum,
-                            Maximum = p.Maximum,
-                            Increment = p.Increment
-                        };
-                        bindingProperty = Stepper.ValueProperty;
-                    }
-                    else if (probeParameterAttribute is StringProbeParameter)
-                    {
-                        view = new Entry
-                        {
-                            Keyboard = Keyboard.Default
-                        };
-                        bindingProperty = Entry.TextProperty;
-                    }
-
-                    if (view != null)
-                    {
-                        view.IsEnabled = probeParameterAttribute.Editable;
-                        view.BindingContext = probe;
-                        view.SetBinding(bindingProperty, new Binding(property.Name, converter: converter));
-
-                        stacks.Add(new StackLayout
-                        {
-                            HorizontalOptions = LayoutOptions.StartAndExpand,
-                            Orientation = StackOrientation.Horizontal,
-                            Children = { parameterNameLabel, parameterValueLabel, view }
-                        });
-                    }
-                }
-            }
+            stacks.AddRange(UiProperty.GetPropertyStacks(probe));
             #endregion
 
             Content = new StackLayout

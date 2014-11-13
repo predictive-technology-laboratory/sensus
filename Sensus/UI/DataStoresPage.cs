@@ -12,46 +12,32 @@ namespace Sensus.UI
 {
     public class DataStoresPage : ContentPage
     {
-        private class DataStoreValueConverter : IValueConverter
-        {
-            public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-            {
-                return (value == parameter) ? "Current:  " + (value as DataStore).Name : "Create New " + (value as DataStore).Name;
-            }
-
-            public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-            {
-                throw new NotImplementedException();
-            }
-        }
-
         public DataStoresPage(Protocol protocol, bool local)
         {
-            DataStore current = local ? protocol.LocalDataStore as DataStore : protocol.RemoteDataStore as DataStore;
-            Type dataStoreType = local ? typeof(LocalDataStore) : typeof(RemoteDataStore);
-
-            List<object> dataStores = new List<object>();
-
-            if (current != null)
-                dataStores.Add(current);
-
-            dataStores.AddRange(Assembly.GetExecutingAssembly().GetTypes().Where(t => !t.IsAbstract && t.IsSubclassOf(dataStoreType)).Select(t => Activator.CreateInstance(t)).ToList());
-
-            ListView dataStoresList = new ListView();
-            dataStoresList.ItemTemplate = new DataTemplate(typeof(TextCell));
-            dataStoresList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", converterParameter: current, converter: new DataStoreValueConverter()));
-            dataStoresList.ItemsSource = dataStores;
-            dataStoresList.ItemTapped += async (o, e) =>
-                {
-                    await Navigation.PushAsync(new DataStorePage(e.Item as DataStore));
-                };
-
             Content = new StackLayout
             {
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 Orientation = StackOrientation.Vertical,
-                Children = { dataStoresList }
             };
+
+            Type dataStoreType = local ? typeof(LocalDataStore) : typeof(RemoteDataStore);
+
+            foreach (DataStore dataStore in Assembly.GetExecutingAssembly().GetTypes().Where(t => !t.IsAbstract && t.IsSubclassOf(dataStoreType)).Select(t => Activator.CreateInstance(t)))
+            {
+                Button createDataStoreButton = new Button
+                {
+                    Text = "Create New " + dataStore.Name
+                };
+
+                createDataStoreButton.Clicked += async (o, e) =>
+                    {
+                        await Navigation.PushAsync(new DataStorePage(dataStore, protocol, local));
+                    };
+
+                (Content as StackLayout).Children.Add(createDataStoreButton);
+            }
+
+            MessagingCenter.Subscribe<DataStorePage, object>(this, "NewLocalDataStore", async (s, a) => { await Navigation.PopAsync(); });
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sensus.UI.Properties;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -36,6 +37,7 @@ namespace Sensus.DataStores
             }
         }
 
+        [EntryIntegerUiProperty("Commit Delay (Milliseconds):", true)]
         public int CommitDelayMS
         {
             get { return _commitDelayMS; }
@@ -56,9 +58,11 @@ namespace Sensus.DataStores
 
         public abstract bool NeedsToBeRunning { get; }
 
+        protected abstract string DisplayName { get; }
+
         public DataStore()
         {
-            _name = GetType().Name;
+            _name = DisplayName;
             _commitDelayMS = 10000;
             _commitTrigger = new AutoResetEvent(false);  // delay commits for a period
             _running = false;

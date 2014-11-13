@@ -1,4 +1,5 @@
 ﻿using Sensus.DataStores;
+using Sensus.DataStores.Local;
 using Sensus.Probes;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,22 @@ namespace Sensus.UI
 {
     public class ProtocolPage : ContentPage
     {
+        private class DataStoreValueConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            {
+                DataStore dataStore = value as DataStore;
+
+                return value == null ? "Create New " + parameter + " Data Store" : parameter + " Data Store:  " + dataStore.Name;
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+
         public ProtocolPage(Protocol protocol)
         {
             BindingContext = protocol;
@@ -58,17 +75,10 @@ namespace Sensus.UI
             #region data stores
             Button localDataStoreButton = new Button
             {                
+                Text = "Create New Local Data Store",
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 Font = Font.SystemFontOfSize(20)
             };
-
-            if (protocol.LocalDataStore == null)
-                localDataStoreButton.Text = "Create New Local Data Store";
-            else
-            {
-                localDataStoreButton.BindingContext = protocol.LocalDataStore;
-                localDataStoreButton.SetBinding(Button.TextProperty, new Binding("Name", stringFormat: "Local Data Store:  {0}"));
-            }
 
             localDataStoreButton.Clicked += async (o, e) =>
                 {
@@ -95,6 +105,8 @@ namespace Sensus.UI
                 Orientation = StackOrientation.Vertical,
                 Children = { nameStack, statusStack, localDataStoreButton, probesList }
             };
+
+            MessagingCenter.Subscribe<DataStorePage, object>(this, "NewLocalDataStore", (s, a) => { localDataStoreButton.Text = "Local Data Store:  " + protocol.LocalDataStore.Name; });
         }
     }
 }

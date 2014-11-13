@@ -8,6 +8,11 @@ namespace Sensus.DataStores.Local
 {
     public class SQLiteLocalDataStore : LocalDataStore
     {
+        protected override string DisplayName
+        {
+            get { return "Local SQL Lite Data Store"; }
+        }
+
         public override void Test()
         {
             throw new NotImplementedException();

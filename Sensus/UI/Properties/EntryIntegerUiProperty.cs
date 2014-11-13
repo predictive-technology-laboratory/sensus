@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using Xamarin.Forms;
 
-namespace Sensus.Probes.Parameters
+namespace Sensus.UI.Properties
 {
-    public class EntryIntegerProbeParameter : ProbeParameter
+    public class EntryIntegerUiProperty : UiProperty
     {
         public class ValueConverter : IValueConverter
         {
@@ -27,7 +27,7 @@ namespace Sensus.Probes.Parameters
             }
         }
 
-        public EntryIntegerProbeParameter(string labelText, bool editable)
+        public EntryIntegerUiProperty(string labelText, bool editable)
             : base(labelText, editable)
         {
         }

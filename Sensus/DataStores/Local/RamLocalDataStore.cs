@@ -8,6 +8,11 @@ namespace Sensus.DataStores.Local
     {
         private HashSet<Datum> _data;
 
+        protected override string DisplayName
+        {
+            get { return "Local RAM Data Store"; }
+        }
+
         public RamLocalDataStore()
         {
             _data = new HashSet<Datum>();

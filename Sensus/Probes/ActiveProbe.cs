@@ -1,5 +1,5 @@
 ﻿using Sensus.Exceptions;
-using Sensus.Probes.Parameters;
+using Sensus.UI.Properties;
 using System;
 using System.Threading;
 
@@ -14,7 +14,7 @@ namespace Sensus.Probes
         private Thread _pollThread;
         private AutoResetEvent _pollTrigger;
 
-        [EntryIntegerProbeParameter("Sleep Duration (Milliseconds):", true)]
+        [EntryIntegerUiProperty("Sleep Duration (Milliseconds):", true)]
         public int SleepDurationMS
         {
             get { return _sleepDurationMS; }

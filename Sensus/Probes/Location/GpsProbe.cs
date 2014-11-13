@@ -1,5 +1,5 @@
 ﻿using Sensus.Exceptions;
-using Sensus.Probes.Parameters;
+using Sensus.UI.Properties;
 using System;
 using Xamarin.Geolocation;
 
@@ -16,7 +16,7 @@ namespace Sensus.Probes.Location
             get { return _gpsReceiver; }
         }
 
-        [EntryIntegerProbeParameter("Min. Time (Milliseconds, Passive Only):", true)]
+        [EntryIntegerUiProperty("Min. Time (Milliseconds, Passive Only):", true)]
         public int MinimumTimeHint
         {
             get { return _minimumTimeHint; }
@@ -30,7 +30,7 @@ namespace Sensus.Probes.Location
             }
         }
 
-        [EntryIntegerProbeParameter("Min. Distance (Meters, Passive Only):", true)]
+        [EntryIntegerUiProperty("Min. Distance (Meters, Passive Only):", true)]
         public int MinimumDistanceHint
         {
             get { return _minimumDistanceHint; }
@@ -44,7 +44,7 @@ namespace Sensus.Probes.Location
             }
         }
 
-        [EntryIntegerProbeParameter("Desired Accuracy (Meters):", true)]
+        [EntryIntegerUiProperty("Desired Accuracy (Meters):", true)]
         public int DesiredAccuracyMeters
         {
             get { return _gpsReceiver.DesiredAccuracyMeters; }

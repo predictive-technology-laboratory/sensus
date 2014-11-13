@@ -1,5 +1,5 @@
 ﻿using Sensus.Exceptions;
-using Sensus.Probes.Parameters;
+using Sensus.UI.Properties;
 
 namespace Sensus.Probes
 {
@@ -7,7 +7,7 @@ namespace Sensus.Probes
     {
         private bool _passive;
 
-        [BooleanProbeParameter("Passive:", true)]
+        [BooleanUiProperty("Passive:", true)]
         public bool Passive
         {
             get { return _passive; }

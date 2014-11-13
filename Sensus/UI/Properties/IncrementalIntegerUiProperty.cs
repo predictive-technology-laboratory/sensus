@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Sensus.Probes.Parameters
+namespace Sensus.UI.Properties
 {
-    public abstract class IncrementalIntegerProbeParameter : ProbeParameter
+    public abstract class IncrementalIntegerUiProperty : UiProperty
     {
         private int _minimum;
         private int _maximum;
@@ -25,7 +25,7 @@ namespace Sensus.Probes.Parameters
             get { return _increment; }
         }
 
-        public IncrementalIntegerProbeParameter(int minimum, int maximum, int increment, string labelText, bool editable)
+        public IncrementalIntegerUiProperty(int minimum, int maximum, int increment, string labelText, bool editable)
             : base(labelText, editable)
         {
             _minimum = minimum;
