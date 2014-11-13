@@ -36,13 +36,15 @@ namespace Sensus.DataStores.Local
 
         protected override ICollection<Datum> GetDataToCommit()
         {
-            List<Datum> data = new List<Datum>();
+            List<Datum> dataToCommit = new List<Datum>();
             foreach (Probe probe in _protocol.Probes)
-                lock (probe.CollectedData)
-                    if (probe.CollectedData.Count > 0)
-                        data.AddRange(probe.CollectedData);
+            {
+                IEnumerable<Datum> collectedData = probe.GetCollectedData();
+                lock (collectedData)
+                    dataToCommit.AddRange(collectedData);
+            }
 
-            return data;
+            return dataToCommit;
         }
 
         protected override void DataCommitted(ICollection<Datum> data)

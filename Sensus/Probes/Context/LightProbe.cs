@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Sensus.Probes
+namespace Sensus.Probes.Context
 {
-    public abstract class PassiveProbe : Probe
+    class LightProbe
     {
     }
 }

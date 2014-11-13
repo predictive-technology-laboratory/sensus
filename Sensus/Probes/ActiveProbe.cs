@@ -10,7 +10,7 @@ namespace Sensus.Probes
     /// <summary>
     /// A probe that polls a data source for samples on a predetermined schedule.
     /// </summary>
-    public abstract class PollingProbe : Probe
+    public abstract class ActiveProbe : Probe
     {
         private int _sleepDurationMS;
         private Thread _pollThread;
@@ -30,7 +30,7 @@ namespace Sensus.Probes
             }
         }
 
-        public PollingProbe()
+        public ActiveProbe()
         {
             _sleepDurationMS = 1000;
             _pollTrigger = new AutoResetEvent(true);
@@ -39,7 +39,7 @@ namespace Sensus.Probes
         public override void Test()
         {
             if (Poll() == null)
-                throw new ProbeTestException(this, "Failed to poll sensor.");
+                throw new ProbeTestException(this, "Failed to poll probe.");
         }
 
         public override void Start()
@@ -49,7 +49,7 @@ namespace Sensus.Probes
                 if (State != ProbeState.Initialized)
                     throw new InvalidProbeStateException(this, ProbeState.Started);
 
-                State = ProbeState.Started;
+                State = ProbeState.Started;  // change state here in case of multiple back-to-back calls to Start, which should not be allowed.
             }
 
             _pollThread = new Thread(new ThreadStart(() =>
@@ -59,12 +59,7 @@ namespace Sensus.Probes
                         _pollTrigger.WaitOne(_sleepDurationMS);
 
                         if (State == ProbeState.Started)
-                            lock (CollectedData)
-                            {
-                                Datum d = Poll();
-                                if (d != null)
-                                    CollectedData.Add(d);
-                            }
+                            StoreDatum(Poll());
                     }
                 }));
 
@@ -75,12 +70,17 @@ namespace Sensus.Probes
 
         public override void Stop()
         {
-            if (State != ProbeState.Started)
-                throw new InvalidProbeStateException(this, ProbeState.Stopping);
+            lock (this)
+            {
+                if (State != ProbeState.Started)
+                    throw new InvalidProbeStateException(this, ProbeState.Stopping);
 
-            State = ProbeState.Stopping;
-            _pollTrigger.Set();
+                State = ProbeState.Stopping; // change state here in case of multiple back-to-back calls to Start, which should not be allowed.
+            }
+
+            _pollTrigger.Set();  // don't wait for current sleep cycle to end -- wake up immediately
             _pollThread.Join();
+
             State = ProbeState.Stopped;
         }
     }

@@ -25,18 +25,17 @@ namespace Sensus.Android.Probes
         {
             if(base.Initialize(probe) == ProbeState.Initializing)
             {
-                if (probe is GpsLocationPollingProbe)
+                if (probe is GpsProbe)
                 {
-                    GpsLocationPollingProbe gpsLocationPollingProbe = probe as GpsLocationPollingProbe;
+                    GpsProbe gpsPollingProbe = probe as GpsProbe;
                     Geolocator locator = new Geolocator(_context);
                     if (locator.IsGeolocationEnabled)
                     {
-                        locator.DesiredAccuracy = gpsLocationPollingProbe.DesiredAccuracyMeters;
-                        gpsLocationPollingProbe.Locator = locator;
-                        gpsLocationPollingProbe.Initialize();
+                        gpsPollingProbe.SetLocator(locator);
+                        gpsPollingProbe.Initialize();
                     }
                     else
-                        gpsLocationPollingProbe.State = ProbeState.Unsupported;
+                        gpsPollingProbe.State = ProbeState.Unsupported;
                 }
             }
 

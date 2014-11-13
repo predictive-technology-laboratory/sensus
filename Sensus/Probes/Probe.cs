@@ -19,7 +19,7 @@ namespace Sensus.Probes
     {
         #region static members
         /// <summary>
-        /// Gets a list of all probes, uninitialized and instatiated with their default parameters.
+        /// Gets a list of all probes, uninitialized and with default parameter values.
         /// </summary>
         /// <returns></returns>
         public static List<Probe> GetAll()
@@ -28,6 +28,9 @@ namespace Sensus.Probes
         }
         #endregion
 
+        /// <summary>
+        /// Fired when a UI-relevant property is changed.
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
         private int _id;
@@ -35,7 +38,6 @@ namespace Sensus.Probes
         private bool _enabled;
         private ProbeState _state;
         private HashSet<Datum> _collectedData;
-        private AutoResetEvent _dataReceivedWaitHandle;
 
         public int Id
         {
@@ -81,16 +83,6 @@ namespace Sensus.Probes
             }
         }
 
-        public HashSet<Datum> CollectedData
-        {
-            get { return _collectedData; }
-        }
-
-        protected AutoResetEvent DataReceivedWaitHandle
-        {
-            get { return _dataReceivedWaitHandle; }
-        }
-
         protected abstract string DisplayName { get; }
 
         public Probe()
@@ -100,14 +92,16 @@ namespace Sensus.Probes
             _enabled = false;
             _state = ProbeState.Uninitialized;
             _collectedData = new HashSet<Datum>();
-            _dataReceivedWaitHandle = new AutoResetEvent(false);
         }
 
         public virtual ProbeState Initialize()
         {
-            _state = ProbeState.Initializing;
-            _id = 1;
-            _collectedData.Clear();
+            lock (this)
+            {
+                _state = ProbeState.Initializing;
+                _id = 1;
+                _collectedData.Clear();
+            }
 
             return _state;
         }
@@ -115,6 +109,18 @@ namespace Sensus.Probes
         public abstract void Test();
 
         public abstract void Start();
+
+        protected void StoreDatum(Datum datum)
+        {
+            if (datum != null)
+                lock (_collectedData)
+                    _collectedData.Add(datum);
+        }
+
+        public IEnumerable<Datum> GetCollectedData()
+        {
+            return _collectedData;
+        }
 
         public void ClearCommittedData(IEnumerable<Datum> data)
         {

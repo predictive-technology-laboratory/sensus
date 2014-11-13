@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Sensus.Probes.Location
+namespace Sensus.Probes.Context
 {
-    public class GpsLocationChangedProbe
+    class HumanProximityProbe
     {
     }
 }

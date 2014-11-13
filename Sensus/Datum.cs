@@ -9,6 +9,10 @@ namespace Sensus
     /// </summary>
     public class Datum
     {
+        private static int _datumNum = 0;
+
+        private readonly int _id;
+        private readonly int _hashCode;
         private int _probeId;
         private DateTimeOffset _timestamp;
 
@@ -24,8 +28,20 @@ namespace Sensus
 
         public Datum(int probeId, DateTimeOffset timestamp)
         {
+            _id = _datumNum++;
+            _hashCode = _id.GetHashCode();
             _probeId = probeId;
             _timestamp = timestamp;
+        }
+
+        public override int GetHashCode()
+        {
+            return _hashCode;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return (obj is Datum) && _id == (obj as Datum)._id;
         }
     }
 }

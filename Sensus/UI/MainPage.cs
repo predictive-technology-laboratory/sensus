@@ -13,7 +13,7 @@ namespace Sensus.UI
     /// </summary>
     public class MainPage : NavigationPage
     {
-        public const string LogPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "sensus_log.txt");
+        public string LogPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
 
         public MainPage()
             : base()
