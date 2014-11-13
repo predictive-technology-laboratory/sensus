@@ -1,7 +1,5 @@
-﻿using Sensus.Probes.Parameters;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Sensus.Exceptions;
+using Sensus.Probes.Parameters;
 
 namespace Sensus.Probes
 {
@@ -26,7 +24,11 @@ namespace Sensus.Probes
         public override void Start()
         {
             if (_passive)
+            {
+                ChangeState(ProbeState.TestPassed, ProbeState.Starting);
                 StartListening();
+                ChangeState(ProbeState.Starting, ProbeState.Started);
+            }
             else
                 base.Start();
         }
@@ -34,7 +36,11 @@ namespace Sensus.Probes
         public override void Stop()
         {
             if (_passive)
+            {
+                ChangeState(ProbeState.Started, ProbeState.Stopping);
                 StopListening();
+                ChangeState(ProbeState.Stopping, ProbeState.Stopped);
+            }
             else
                 base.Stop();
         }

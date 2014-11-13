@@ -56,8 +56,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Probe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\ProbeInitializer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\ProbeState.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Protocols\Protocol.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Protocol.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)StandardOutWriter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\DataStorePage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\DataStoresPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\DataStoreViewCell.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\MainPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProbePage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProbeViewCell.cs" />

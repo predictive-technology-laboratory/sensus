@@ -1,10 +1,6 @@
 ﻿using Sensus.Exceptions;
 using Sensus.Probes.Parameters;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Xamarin.Geolocation;
 
 namespace Sensus.Probes.Location
@@ -94,7 +90,7 @@ namespace Sensus.Probes.Location
 
             // Initialize can be called from the generic ProbeInitializer, in which case the GPS won't be configured. the GPS is configured by platform-specific initializers like AndroidProbeInitializer.
             if (_gpsReceiver.Initialize() == ProbeState.Initialized)
-                State = ProbeState.Initialized;
+                ChangeState(ProbeState.Initializing, ProbeState.Initialized);
 
             return State;
         }

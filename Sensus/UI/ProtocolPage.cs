@@ -1,5 +1,5 @@
-﻿using Sensus.Probes;
-using Sensus.Protocols;
+﻿using Sensus.DataStores;
+using Sensus.Probes;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -55,8 +55,25 @@ namespace Sensus.UI
             };
             #endregion
 
-            #region data store
-            
+            #region data stores
+            Button localDataStoreButton = new Button
+            {                
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                Font = Font.SystemFontOfSize(20)
+            };
+
+            if (protocol.LocalDataStore == null)
+                localDataStoreButton.Text = "Create New Local Data Store";
+            else
+            {
+                localDataStoreButton.BindingContext = protocol.LocalDataStore;
+                localDataStoreButton.SetBinding(Button.TextProperty, new Binding("Name", stringFormat: "Local Data Store:  {0}"));
+            }
+
+            localDataStoreButton.Clicked += async (o, e) =>
+                {
+                    await Navigation.PushAsync(new DataStoresPage(protocol, true));
+                };
             #endregion
 
             #region probes
@@ -76,7 +93,7 @@ namespace Sensus.UI
             {
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 Orientation = StackOrientation.Vertical,
-                Children = { nameStack, statusStack, probesList }
+                Children = { nameStack, statusStack, localDataStoreButton, probesList }
             };
         }
     }

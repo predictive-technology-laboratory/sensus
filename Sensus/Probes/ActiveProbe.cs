@@ -1,8 +1,6 @@
 ﻿using Sensus.Exceptions;
 using Sensus.Probes.Parameters;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 
 namespace Sensus.Probes
@@ -33,7 +31,7 @@ namespace Sensus.Probes
         public ActiveProbe()
         {
             _sleepDurationMS = 1000;
-            _pollTrigger = new AutoResetEvent(true);
+            _pollTrigger = new AutoResetEvent(true); // start polling immediately
         }
 
         public override void Test()
@@ -44,13 +42,7 @@ namespace Sensus.Probes
 
         public override void Start()
         {
-            lock (this)
-            {
-                if (State != ProbeState.Initialized)
-                    throw new InvalidProbeStateException(this, ProbeState.Started);
-
-                State = ProbeState.Started;  // change state here in case of multiple back-to-back calls to Start, which should not be allowed.
-            }
+            ChangeState(ProbeState.TestPassed, ProbeState.Started);
 
             _pollThread = new Thread(new ThreadStart(() =>
                 {
@@ -59,7 +51,13 @@ namespace Sensus.Probes
                         _pollTrigger.WaitOne(_sleepDurationMS);
 
                         if (State == ProbeState.Started)
-                            StoreDatum(Poll());
+                        {
+                            Datum d = null;
+                            try { d = Poll(); }
+                            catch (Exception) { ChangeState(ProbeState.Started, ProbeState.Failed); }
+
+                            StoreDatum(d);
+                        }
                     }
                 }));
 
@@ -70,18 +68,12 @@ namespace Sensus.Probes
 
         public override void Stop()
         {
-            lock (this)
-            {
-                if (State != ProbeState.Started)
-                    throw new InvalidProbeStateException(this, ProbeState.Stopping);
+            ChangeState(ProbeState.Started, ProbeState.Stopping);
 
-                State = ProbeState.Stopping; // change state here in case of multiple back-to-back calls to Start, which should not be allowed.
-            }
-
-            _pollTrigger.Set();  // don't wait for current sleep cycle to end -- wake up immediately
+            _pollTrigger.Set();  // don't wait for current sleep cycle to end -- wake up immediately so thread can be joined
             _pollThread.Join();
 
-            State = ProbeState.Stopped;
+            ChangeState(ProbeState.Stopping, ProbeState.Stopped);
         }
     }
 }

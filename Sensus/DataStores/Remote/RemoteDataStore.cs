@@ -6,7 +6,7 @@ using System.Text;
 namespace Sensus.DataStores.Remote
 {
     /// <summary>
-    /// Responsible for storing data on remote media.
+    /// Responsible for transferring data from a local data store to remote media.
     /// </summary>
     public abstract class RemoteDataStore : DataStore
     {
@@ -38,7 +38,9 @@ namespace Sensus.DataStores.Remote
 
         public RemoteDataStore()
         {
-            CommitDelayMS = 1000 * 60 * 30;  // every thirty minute by default
+            _requireWiFi = true;
+            _requireCharging = true;
+            CommitDelayMS = 1000 * 60 * 30;  // every thirty minutes by default
         }
 
         public void Start(LocalDataStore localDataStore)
@@ -49,9 +51,9 @@ namespace Sensus.DataStores.Remote
 
         protected override ICollection<Datum> GetDataToCommit()
         {
-            // check if wi-fi required/enabled
+            // TODO:  check if wi-fi required/connected
 
-            // check if plugged in
+            // TODO:  check if power required/connected
 
             return _localDataStore.GetDataForRemoteDataStore();
         }

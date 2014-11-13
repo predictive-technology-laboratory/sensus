@@ -1,8 +1,6 @@
 ﻿using Sensus.Exceptions;
-using Sensus.Protocols;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Sensus.Probes
 {
@@ -28,15 +26,28 @@ namespace Sensus.Probes
         public void Initialize(List<Probe> probes)
         {
             foreach (Probe probe in probes)
-                if (Initialize(probe) == ProbeState.Initialized)
+            {
+                try { Initialize(probe); }
+                catch (Exception ex)
                 {
-                    try { probe.Test(); }
+                    Console.Error.WriteLine("Probe \"" + probe.Name + "\" failed to initialize:  " + ex.Message);
+                    probe.ChangeState(ProbeState.Initializing, ProbeState.InitializeFailed);
+                }
+
+                if (probe.State == ProbeState.Initialized)
+                {
+                    try
+                    {
+                        probe.Test();
+                        probe.ChangeState(ProbeState.Initialized, ProbeState.TestPassed);
+                    }
                     catch (ProbeTestException ex)
                     {
-                        Console.Error.WriteLine("Test failed for probe \"" + probe.Name + "\":  " + ex.Message);
-                        probe.State = ProbeState.TestFailed;
+                        Console.Error.WriteLine("Probe \"" + probe.Name + "\" failed its self-test:  " + ex.Message);
+                        probe.ChangeState(ProbeState.Initialized, ProbeState.TestFailed);
                     }
                 }
+            }
         }
 
         protected virtual ProbeState Initialize(Probe probe)

@@ -14,19 +14,34 @@ public enum ProbeState
     Uninitialized,
 
     /// <summary>
-    /// Probe is currently initializing itself.
+    /// Probe is being initialized.
     /// </summary>
     Initializing,
 
     /// <summary>
-    /// Probe is initialized but has not started polling.
+    /// Probe is initialized.
     /// </summary>
     Initialized,
 
     /// <summary>
-    /// Probe was initialized but its test method failed.
+    /// Probe failed to initialize.
+    /// </summary>
+    InitializeFailed,
+
+    /// <summary>
+    /// Probe passed its self-test.
+    /// </summary>
+    TestPassed,
+
+    /// <summary>
+    /// Probe failed its self-test.
     /// </summary>
     TestFailed,
+
+    /// <summary>
+    /// Probe is being started.
+    /// </summary>
+    Starting,
 
     /// <summary>
     /// Probe has been started.
@@ -34,12 +49,17 @@ public enum ProbeState
     Started,
 
     /// <summary>
-    /// Probe is disposing and will soon be stopped.
+    /// Probe failed after being started.
+    /// </summary>
+    Failed,
+
+    /// <summary>
+    /// Probe is being stopped.
     /// </summary>
     Stopping,
 
     /// <summary>
-    /// Probe is stopped
+    /// Probe is stopped.
     /// </summary>
     Stopped
 }

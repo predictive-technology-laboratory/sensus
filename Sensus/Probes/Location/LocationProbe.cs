@@ -1,12 +1,4 @@
-﻿using Sensus.DataStores.Local;
-using Sensus.Exceptions;
-using Sensus.Probes.Parameters;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Xamarin.Geolocation;
+﻿using Xamarin.Geolocation;
 
 namespace Sensus.Probes.Location
 {

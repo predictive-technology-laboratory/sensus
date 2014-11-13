@@ -1,14 +1,10 @@
-﻿using Sensus.DataStores.Local;
-using Sensus.Exceptions;
+﻿using Sensus.Exceptions;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
-using System.Threading;
-using System.Linq;
 using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
-using Sensus.Probes.Parameters;
 
 namespace Sensus.Probes
 {
@@ -73,14 +69,6 @@ namespace Sensus.Probes
         public ProbeState State
         {
             get { return _state; }
-            set
-            {
-                if (value != _state)
-                {
-                    _state = value;
-                    OnPropertyChanged();
-                }
-            }
         }
 
         protected abstract string DisplayName { get; }
@@ -99,11 +87,27 @@ namespace Sensus.Probes
             lock (this)
             {
                 _state = ProbeState.Initializing;
-                _id = 1;
+                _id = 1;  // TODO:  Get probe Id.
                 _collectedData.Clear();
             }
 
             return _state;
+        }
+
+        internal void ChangeState(ProbeState requiredCurrentState, ProbeState newState)
+        {
+            lock (this)
+            {
+                if (_state != requiredCurrentState)
+                    throw new InvalidProbeStateException(this, newState);
+
+                bool stateChanged = _state != newState;
+
+                _state = newState;
+
+                if (stateChanged)
+                    OnPropertyChanged("State");
+            }
         }
 
         public abstract void Test();

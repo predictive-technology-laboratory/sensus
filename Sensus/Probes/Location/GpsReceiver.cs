@@ -1,7 +1,4 @@
-﻿using Sensus.Probes.Parameters;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Xamarin.Geolocation;
