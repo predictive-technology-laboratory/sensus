@@ -34,15 +34,9 @@ namespace Sensus.Probes
             _pollTrigger = new AutoResetEvent(true); // start polling immediately
         }
 
-        public override void Test()
-        {
-            if (Poll() == null)
-                throw new ProbeTestException(this, "Failed to poll probe.");
-        }
-
         public override void Start()
         {
-            ChangeState(ProbeState.TestPassed, ProbeState.Started);
+            ChangeState(ProbeState.Initialized, ProbeState.Started);
 
             _pollThread = new Thread(new ThreadStart(() =>
                 {
@@ -51,20 +45,14 @@ namespace Sensus.Probes
                         _pollTrigger.WaitOne(_sleepDurationMS);
 
                         if (State == ProbeState.Started)
-                        {
-                            Datum d = null;
-                            try { d = Poll(); }
-                            catch (Exception) { ChangeState(ProbeState.Started, ProbeState.Failed); }
-
-                            StoreDatum(d);
-                        }
+                            Poll(d => { StoreDatum(d); });
                     }
                 }));
 
             _pollThread.Start();
         }
 
-        protected abstract Datum Poll();
+        protected abstract void Poll(Action<Datum> receiptAction);
 
         public override void Stop()
         {

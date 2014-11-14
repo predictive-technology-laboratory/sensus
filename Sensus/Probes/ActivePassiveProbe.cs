@@ -25,7 +25,7 @@ namespace Sensus.Probes
         {
             if (_passive)
             {
-                ChangeState(ProbeState.TestPassed, ProbeState.Starting);
+                ChangeState(ProbeState.Initialized, ProbeState.Starting);
                 StartListening();
                 ChangeState(ProbeState.Starting, ProbeState.Started);
             }

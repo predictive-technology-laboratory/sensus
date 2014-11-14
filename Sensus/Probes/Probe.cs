@@ -110,8 +110,6 @@ namespace Sensus.Probes
             }
         }
 
-        public abstract void Test();
-
         public abstract void Start();
 
         protected void StoreDatum(Datum datum)

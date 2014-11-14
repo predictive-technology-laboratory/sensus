@@ -29,16 +29,6 @@ public enum ProbeState
     InitializeFailed,
 
     /// <summary>
-    /// Probe passed its self-test.
-    /// </summary>
-    TestPassed,
-
-    /// <summary>
-    /// Probe failed its self-test.
-    /// </summary>
-    TestFailed,
-
-    /// <summary>
     /// Probe is being started.
     /// </summary>
     Starting,

@@ -75,7 +75,7 @@ namespace Sensus
                         App.Get().ProbeInitializer.Initialize(_probes);
                         int probesStarted = 0;
                         foreach (Probe probe in _probes)
-                            if (probe.State == ProbeState.TestPassed)
+                            if (probe.State == ProbeState.Initialized)
                             {
                                 try
                                 {
@@ -119,6 +119,8 @@ namespace Sensus
                                 return;
                             }
                         }
+                        else
+                            Running = false;
                     }
                     else
                     {

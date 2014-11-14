@@ -100,14 +100,14 @@ namespace Sensus.Probes.Location
         /// Polls for a Datum from this GpsProbe. This is thread-safe, and concurrent calls will block to take new readings.
         /// </summary>
         /// <returns></returns>
-        protected override Datum Poll()
+        protected override void Poll(Action<Datum> receiptAction)
         {
             lock (this)
             {
-                AutoResetEvent readingEvent = new AutoResetEvent(false);
-                _gpsReceiver.TakeReading(60000, readingEvent);
-                readingEvent.WaitOne();
-                return ConvertReadingToDatum(_gpsReceiver.MostRecentReading);
+                _gpsReceiver.GetReadingTask(10000).ContinueWith(t =>
+                    {
+                        receiptAction(ConvertReadingToDatum(t.Result));
+                    });
             }
         }
 
