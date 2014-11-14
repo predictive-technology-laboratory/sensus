@@ -9,45 +9,36 @@ namespace Sensus.Probes
     /// </summary>
     public class ProbeInitializer
     {
-        #region static members
-        private static ProbeInitializer _probeInitializer;
-
-        public static ProbeInitializer Get()
-        {
-            return _probeInitializer;
-        }
-
-        public static void Set(ProbeInitializer probeInitializer)
-        {
-            _probeInitializer = probeInitializer;
-        }
-        #endregion
-
         public void Initialize(List<Probe> probes)
         {
             foreach (Probe probe in probes)
-            {
-                try { Initialize(probe); }
-                catch (Exception ex)
+                if (probe.Enabled)
                 {
-                    Console.Error.WriteLine("Probe \"" + probe.Name + "\" failed to initialize:  " + ex.Message);
-                    probe.ChangeState(ProbeState.Initializing, ProbeState.InitializeFailed);
-                }
+                    try { Initialize(probe); }
+                    catch (Exception ex)
+                    {
+                        Console.Error.WriteLine("Probe \"" + probe.Name + "\" failed to initialize:  " + ex.Message);
+                        probe.ChangeState(ProbeState.Initializing, ProbeState.InitializeFailed);
+                    }
 
-                if (probe.State == ProbeState.Initialized)
-                {
-                    try
+                    if (probe.State == ProbeState.Initialized)
                     {
-                        probe.Test();
-                        probe.ChangeState(ProbeState.Initialized, ProbeState.TestPassed);
-                    }
-                    catch (ProbeTestException ex)
-                    {
-                        Console.Error.WriteLine("Probe \"" + probe.Name + "\" failed its self-test:  " + ex.Message);
-                        probe.ChangeState(ProbeState.Initialized, ProbeState.TestFailed);
+                        try
+                        {
+                            Console.Error.WriteLine("Testing probe \"" + probe.Name + "\".");
+
+                            probe.Test();
+                            probe.ChangeState(ProbeState.Initialized, ProbeState.TestPassed);
+
+                            Console.Error.WriteLine("Probe \"" + probe.Name + "\" passed its self-test.");
+                        }
+                        catch (ProbeTestException ex)
+                        {
+                            Console.Error.WriteLine("Probe \"" + probe.Name + "\" failed its self-test:  " + ex.Message);
+                            probe.ChangeState(ProbeState.Initialized, ProbeState.TestFailed);
+                        }
                     }
                 }
-            }
         }
 
         protected virtual ProbeState Initialize(Probe probe)

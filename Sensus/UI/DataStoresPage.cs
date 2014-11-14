@@ -12,6 +12,15 @@ namespace Sensus.UI
 {
     public class DataStoresPage : ContentPage
     {
+        public static event EventHandler<CreateDataStoreEventArgs> CreateDataStorePressed;
+
+        public class CreateDataStoreEventArgs : EventArgs
+        {
+            public DataStore DataStore { get; set; }
+            public Protocol Protocol { get; set; }
+            public bool Local { get; set; }
+        }
+
         public DataStoresPage(Protocol protocol, bool local)
         {
             Content = new StackLayout
@@ -29,15 +38,13 @@ namespace Sensus.UI
                     Text = "Create New " + dataStore.Name
                 };
 
-                createDataStoreButton.Clicked += async (o, e) =>
+                createDataStoreButton.Clicked += (o, e) =>
                     {
-                        await Navigation.PushAsync(new DataStorePage(dataStore, protocol, local));
+                        CreateDataStorePressed(o, new CreateDataStoreEventArgs { DataStore = dataStore, Protocol = protocol, Local = local });
                     };
 
                 (Content as StackLayout).Children.Add(createDataStoreButton);
             }
-
-            MessagingCenter.Subscribe<DataStorePage, object>(this, "NewLocalDataStore", async (s, a) => { await Navigation.PopAsync(); });
         }
     }
 }

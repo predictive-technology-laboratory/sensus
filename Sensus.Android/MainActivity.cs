@@ -1,16 +1,9 @@
-﻿using System;
-
-using Android.App;
+﻿using Android.App;
 using Android.Content.PM;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 using Android.OS;
-
-using Xamarin.Forms.Platform.Android;
-using Sensus.UI;
-using Sensus.Probes;
 using Sensus.Android.Probes;
+using Xamarin.Forms;
+using Xamarin.Forms.Platform.Android;
 
 namespace Sensus.Android
 {
@@ -21,11 +14,10 @@ namespace Sensus.Android
         {
             base.OnCreate(bundle);
 
-            ProbeInitializer.Set(new AndroidProbeInitializer(this));
+            App.Init(new AndroidProbeInitializer(this));
+            Forms.Init(this, bundle);
 
-            Xamarin.Forms.Forms.Init(this, bundle);
-
-            SetPage(new MainPage());
+            SetPage(App.Get().NavigationPage);
         }
     }
 }

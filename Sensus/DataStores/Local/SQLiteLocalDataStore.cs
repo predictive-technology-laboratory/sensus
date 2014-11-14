@@ -10,7 +10,7 @@ namespace Sensus.DataStores.Local
     {
         protected override string DisplayName
         {
-            get { return "Local SQL Lite Data Store"; }
+            get { return "Local SQL Lite"; }
         }
 
         public override void Test()

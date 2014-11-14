@@ -11,6 +11,9 @@ namespace Sensus.UI
 {
     public class DataStorePage : ContentPage
     {
+        public static event EventHandler CancelPressed;
+        public static event EventHandler OkPressed;
+
         public DataStorePage(DataStore dataStore, Protocol protocol, bool local)
         {
             BindingContext = dataStore;
@@ -47,9 +50,9 @@ namespace Sensus.UI
                 Text = "Cancel"
             };
 
-            cancelButton.Clicked += async (o, e) =>
+            cancelButton.Clicked += (o, e) =>
                 {
-                    await Navigation.PopAsync();
+                    CancelPressed(o, e);
                 };
 
             Button okayButton = new Button
@@ -57,16 +60,14 @@ namespace Sensus.UI
                 Text = "OK"
             };
 
-            okayButton.Clicked += async (o, e) =>
+            okayButton.Clicked += (o, e) =>
                 {
                     if (local)
                         protocol.LocalDataStore = dataStore as LocalDataStore;
                     else
                         protocol.RemoteDataStore = dataStore as RemoteDataStore;
 
-                    await Navigation.PopAsync();  // back to data stores page
-
-                    MessagingCenter.Send<DataStorePage, object>(this, "NewLocalDataStore", null);
+                    OkPressed(o, e);
                 };
 
             stacks.Add(new StackLayout

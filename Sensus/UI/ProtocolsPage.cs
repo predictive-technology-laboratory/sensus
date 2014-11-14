@@ -8,6 +8,8 @@ namespace Sensus.UI
 {
     public class ProtocolsPage : ContentPage
     {
+        public static event EventHandler<ItemTappedEventArgs> ProtocolTapped;
+
         public ProtocolsPage()
         {
             Title = "Protocols";
@@ -19,11 +21,10 @@ namespace Sensus.UI
             ListView protocolsList = new ListView();
             protocolsList.ItemTemplate = new DataTemplate(typeof(ProtocolViewCell));
             protocolsList.ItemsSource = protocols;
-            protocolsList.ItemTapped += async (o, e) =>
+            protocolsList.ItemTapped += (o, e) =>
             {
-                Protocol protocol = (o as ListView).SelectedItem as Protocol;
                 protocolsList.SelectedItem = null;
-                await Navigation.PushAsync(new ProtocolPage(protocol));
+                ProtocolTapped(o, e);
             };
 
             Content = new StackLayout

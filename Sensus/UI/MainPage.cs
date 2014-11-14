@@ -10,14 +10,13 @@ namespace Sensus.UI
     /// <summary>
     /// Main Sensus page. First thing the user sees.
     /// </summary>
-    public class MainPage : NavigationPage
+    public class MainPage : ContentPage
     {
-        public string LogPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
+        public static event EventHandler<ItemTappedEventArgs> ProtocolsTapped;
 
         public MainPage()
-            : base()
         {
-            Console.SetError(new StandardOutWriter(LogPath, true, true));
+            Title = "Sensus";
 
             Label protocolsLabel = new Label
             {
@@ -29,27 +28,18 @@ namespace Sensus.UI
             mainList.ItemTemplate = new DataTemplate(typeof(TextCell));
             mainList.ItemTemplate.SetBinding(TextCell.TextProperty, "Text");
             mainList.ItemsSource = new Label[] { protocolsLabel };
-            mainList.ItemTapped += async (o, e) =>
+            mainList.ItemTapped += (o, e) =>
                 {
-                    Page drillDownPage = null;
+                    mainList.SelectedItem = null;
                     if (e.Item == protocolsLabel)
-                        drillDownPage = new ProtocolsPage();
-
-                    if (drillDownPage != null)
-                        await Navigation.PushAsync(drillDownPage);
+                        ProtocolsTapped(o, e);
                 };
 
-            ContentPage rootPage = new ContentPage
+            Content = new StackLayout
             {
-                Title = "Sensus",
-                Content = new StackLayout
-                {
-                    VerticalOptions = LayoutOptions.FillAndExpand,
-                    Children = { mainList }
-                }
+                VerticalOptions = LayoutOptions.FillAndExpand,
+                Children = { mainList }
             };
-
-            Navigation.PushAsync(rootPage);
         }
     }
 }

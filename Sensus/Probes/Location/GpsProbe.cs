@@ -1,6 +1,7 @@
 ﻿using Sensus.Exceptions;
 using Sensus.UI.Properties;
 using System;
+using System.Threading;
 using Xamarin.Geolocation;
 
 namespace Sensus.Probes.Location
@@ -16,7 +17,7 @@ namespace Sensus.Probes.Location
             get { return _gpsReceiver; }
         }
 
-        [EntryIntegerUiProperty("Min. Time (Milliseconds, Passive Only):", true)]
+        [EntryIntegerUiProperty("Time Change (MS, Passive):", true)]
         public int MinimumTimeHint
         {
             get { return _minimumTimeHint; }
@@ -30,7 +31,7 @@ namespace Sensus.Probes.Location
             }
         }
 
-        [EntryIntegerUiProperty("Min. Distance (Meters, Passive Only):", true)]
+        [EntryIntegerUiProperty("Distance Change (M, Passive):", true)]
         public int MinimumDistanceHint
         {
             get { return _minimumDistanceHint; }
@@ -44,7 +45,7 @@ namespace Sensus.Probes.Location
             }
         }
 
-        [EntryIntegerUiProperty("Desired Accuracy (Meters):", true)]
+        [EntryIntegerUiProperty("Desired Accuracy (M):", true)]
         public int DesiredAccuracyMeters
         {
             get { return _gpsReceiver.DesiredAccuracyMeters; }
@@ -102,7 +103,12 @@ namespace Sensus.Probes.Location
         protected override Datum Poll()
         {
             lock (this)
-                return ConvertReadingToDatum(_gpsReceiver.TakeReading(10000));
+            {
+                AutoResetEvent readingEvent = new AutoResetEvent(false);
+                _gpsReceiver.TakeReading(60000, readingEvent);
+                readingEvent.WaitOne();
+                return ConvertReadingToDatum(_gpsReceiver.MostRecentReading);
+            }
         }
 
         protected override void StopListening()

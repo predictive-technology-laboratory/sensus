@@ -85,7 +85,7 @@ namespace Sensus.DataStores.Remote
 
         protected override string DisplayName
         {
-            get { return "Remote PostgreSQL Data Store"; }
+            get { return "Remote PostgreSQL"; }
         }
 
         public PostgreSqlRemoteDataStore()

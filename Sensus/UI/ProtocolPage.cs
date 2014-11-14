@@ -10,13 +10,17 @@ namespace Sensus.UI
 {
     public class ProtocolPage : ContentPage
     {
+        public static event EventHandler CreateLocalDataStorePressed;
+        public static event EventHandler CreateRemoteDataStorePressed;
+        public static event EventHandler<ItemTappedEventArgs> ProbeTapped;
+
         private class DataStoreValueConverter : IValueConverter
         {
             public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
             {
                 DataStore dataStore = value as DataStore;
 
-                return value == null ? "Create New " + parameter + " Data Store" : parameter + " Data Store:  " + dataStore.Name;
+                return value == null ? "Create " + parameter + " Data Store" : parameter + " Data Store:  " + dataStore.Name;
             }
 
             public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -24,7 +28,6 @@ namespace Sensus.UI
                 throw new NotImplementedException();
             }
         }
-
 
         public ProtocolPage(Protocol protocol)
         {
@@ -74,15 +77,31 @@ namespace Sensus.UI
 
             #region data stores
             Button localDataStoreButton = new Button
-            {                
-                Text = "Create New Local Data Store",
+            {
+                Text = "Create Local Data Store",
                 HorizontalOptions = LayoutOptions.FillAndExpand,
-                Font = Font.SystemFontOfSize(20)
+                Font = Font.SystemFontOfSize(20),
+                BindingContext = protocol
             };
 
-            localDataStoreButton.Clicked += async (o, e) =>
+            localDataStoreButton.SetBinding(Button.TextProperty, new Binding("LocalDataStore", converter: new DataStoreValueConverter(), converterParameter: "Local"));
+            localDataStoreButton.Clicked += (o, e) =>
                 {
-                    await Navigation.PushAsync(new DataStoresPage(protocol, true));
+                    CreateLocalDataStorePressed(protocol, e);
+                };
+
+            Button remoteDataStoreButton = new Button
+            {
+                Text = "Create Remote Data Store",
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                Font = Font.SystemFontOfSize(20),
+                BindingContext = protocol
+            };
+
+            remoteDataStoreButton.SetBinding(Button.TextProperty, new Binding("RemoteDataStore", converter: new DataStoreValueConverter(), converterParameter: "Remote"));
+            remoteDataStoreButton.Clicked += (o, e) =>
+                {
+                    CreateRemoteDataStorePressed(protocol, e);
                 };
             #endregion
 
@@ -91,11 +110,10 @@ namespace Sensus.UI
             probesList.ItemTemplate = new DataTemplate(typeof(ProbeViewCell));
             probesList.BindingContext = protocol;
             probesList.SetBinding(ListView.ItemsSourceProperty, "Probes");
-            probesList.ItemTapped += async (o, e) =>
+            probesList.ItemTapped += (o, e) =>
                 {
-                    Probe probe = e.Item as Probe;
                     probesList.SelectedItem = null;
-                    await Navigation.PushAsync(new ProbePage(probe));
+                    ProbeTapped(o, e);
                 };
             #endregion
 
@@ -103,10 +121,8 @@ namespace Sensus.UI
             {
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 Orientation = StackOrientation.Vertical,
-                Children = { nameStack, statusStack, localDataStoreButton, probesList }
+                Children = { nameStack, statusStack, localDataStoreButton, remoteDataStoreButton, probesList }
             };
-
-            MessagingCenter.Subscribe<DataStorePage, object>(this, "NewLocalDataStore", (s, a) => { localDataStoreButton.Text = "Local Data Store:  " + protocol.LocalDataStore.Name; });
         }
     }
 }

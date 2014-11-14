@@ -72,7 +72,7 @@ namespace Sensus
                         }
 
                         Console.Error.WriteLine("Initializing and starting probes.");
-                        ProbeInitializer.Get().Initialize(_probes);
+                        App.Get().ProbeInitializer.Initialize(_probes);
                         int probesStarted = 0;
                         foreach (Probe probe in _probes)
                             if (probe.State == ProbeState.TestPassed)
@@ -80,10 +80,12 @@ namespace Sensus
                                 try
                                 {
                                     probe.Start();
-                                    if (probe.State != ProbeState.Started)
+                                    if (probe.State == ProbeState.Started)
+                                        Console.Error.WriteLine("Probe \"" + probe.Name + "\" started.");
+                                    else
                                         throw new Exception("Probe.Start method returned without error but the probe state is \"" + probe.State + "\".");
                                 }
-                                catch (Exception ex) { Console.Error.WriteLine("Failed to start probe \"" + probe + "\":" + ex.Message); }
+                                catch (Exception ex) { Console.Error.WriteLine("Failed to start probe \"" + probe.Name + "\":" + ex.Message); }
 
                                 if (probe.State == ProbeState.Started)
                                     probesStarted++;
@@ -92,7 +94,11 @@ namespace Sensus
                         if (probesStarted > 0)
                         {
                             Console.Error.WriteLine("Starting local data store.");
-                            try { _localDataStore.Start(this); }
+                            try
+                            {
+                                _localDataStore.Start(this);
+                                Console.Error.WriteLine("Local data store started.");
+                            }
                             catch (Exception ex)
                             {
                                 Console.Error.WriteLine("Local data store failed to start:  " + ex.Message);
@@ -101,7 +107,11 @@ namespace Sensus
                             }
 
                             Console.Error.WriteLine("Starting remote data store.");
-                            try { _remoteDataStore.Start(_localDataStore); }
+                            try
+                            {
+                                _remoteDataStore.Start(_localDataStore);
+                                Console.Error.WriteLine("Remote data store started.");
+                            }
                             catch (Exception ex)
                             {
                                 Console.Error.WriteLine("Remote data store failed to start:  " + ex.Message);

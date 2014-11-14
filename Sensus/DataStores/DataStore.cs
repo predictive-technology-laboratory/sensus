@@ -37,7 +37,7 @@ namespace Sensus.DataStores
             }
         }
 
-        [EntryIntegerUiProperty("Commit Delay (Milliseconds):", true)]
+        [EntryIntegerUiProperty("Commit Delay (MS):", true)]
         public int CommitDelayMS
         {
             get { return _commitDelayMS; }

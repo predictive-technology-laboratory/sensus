@@ -14,7 +14,7 @@ namespace Sensus.Probes
         private Thread _pollThread;
         private AutoResetEvent _pollTrigger;
 
-        [EntryIntegerUiProperty("Sleep Duration (Milliseconds):", true)]
+        [EntryIntegerUiProperty("Sleep Duration (MS):", true)]
         public int SleepDurationMS
         {
             get { return _sleepDurationMS; }

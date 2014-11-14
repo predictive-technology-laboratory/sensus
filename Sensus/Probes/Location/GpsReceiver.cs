@@ -15,6 +15,7 @@ namespace Sensus.Probes.Location
 
         private Geolocator _locator;
         private int _desiredAccuracyMeters;
+        private Position _mostRecentReading;
 
         public Geolocator Locator
         {
@@ -28,9 +29,14 @@ namespace Sensus.Probes.Location
             set { _desiredAccuracyMeters = value; }
         }
 
+        public Position MostRecentReading
+        {
+            get { return _mostRecentReading; }
+        }
+
         public GpsReceiver()
         {
-            _desiredAccuracyMeters = 10;
+            _desiredAccuracyMeters = 50;
         }
 
         public ProbeState Initialize()
@@ -59,26 +65,14 @@ namespace Sensus.Probes.Location
             }
         }
 
-        /// <summary>
-        /// Takes a single reading from the GPS receiver. Blocks until the reading has been taken or a timeout has occurred.
-        /// </summary>
-        /// <param name="timeout">Timeout in milliseconds.</param>
-        /// <returns></returns>
-        public Position TakeReading(int timeout)
+        public void TakeReading(int timeout, AutoResetEvent readingEvent)
         {
-            Position reading = null;
-            ManualResetEvent readingWaitHandle = new ManualResetEvent(false);
-
             _locator.GetPositionAsync(timeout: timeout).ContinueWith(t =>
                 {
-                    reading = t.Result;
-                    readingWaitHandle.Set();
-
+                    Console.Error.WriteLine("Obtained reading from GPS.");
+                    _mostRecentReading = t.Result;
+                    readingEvent.Set();
                 }, TaskScheduler.FromCurrentSynchronizationContext());
-
-            readingWaitHandle.WaitOne();
-
-            return reading;
         }
 
         /// <summary>
