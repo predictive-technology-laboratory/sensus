@@ -33,7 +33,7 @@ namespace Sensus.Probes
                 base.Start();
         }
 
-        public override void Stop()
+        public override void StopAsync()
         {
             if (_passive)
             {
@@ -42,7 +42,7 @@ namespace Sensus.Probes
                 ChangeState(ProbeState.Stopping, ProbeState.Stopped);
             }
             else
-                base.Stop();
+                base.StopAsync();
         }
 
         protected abstract void StartListening();

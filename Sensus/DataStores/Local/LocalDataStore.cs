@@ -24,7 +24,7 @@ namespace Sensus.DataStores.Local
 
         public LocalDataStore()
         {
-            CommitDelayMS = 5000;
+            //CommitDelayMS = 5000;
         }
 
         public void Start(Protocol protocol)
@@ -38,9 +38,10 @@ namespace Sensus.DataStores.Local
             List<Datum> dataToCommit = new List<Datum>();
             foreach (Probe probe in _protocol.Probes)
             {
-                IEnumerable<Datum> collectedData = probe.GetCollectedData();
+                ICollection<Datum> collectedData = probe.GetCollectedData();
                 lock (collectedData)
-                    dataToCommit.AddRange(collectedData);
+                    if (collectedData.Count > 0)
+                        dataToCommit.AddRange(collectedData);
             }
 
             return dataToCommit;

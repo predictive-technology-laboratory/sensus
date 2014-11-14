@@ -37,9 +37,17 @@ namespace Sensus.Probes.Location
         {
             // the receiver is configured by platform-specific initializers at the time of protocol execution. prior to this, calls to Initialize won't have access to a Geolocator.
             if (_locator == null)
+            {
+                if (Logger.Level >= LoggingLevel.Normal)
+                    Logger.Log("GPS receiver is not yet bound to a locator.");
+
                 return ProbeState.Uninitialized;
+            }
             else
             {
+                if (Logger.Level >= LoggingLevel.Normal)
+                    Logger.Log("GPS receiver is now bound to a locator.");
+
                 // if we are being initialized by a platform-specific initializer, we will have access to a geolocator and so should set the desired accuracy.
                 _locator.DesiredAccuracy = _desiredAccuracyMeters;
 
@@ -59,9 +67,49 @@ namespace Sensus.Probes.Location
             }
         }
 
-        public Task<Position> GetReadingTask(int timeout)
+        public Position GetReading(int timeout)
         {
-            return _locator.GetPositionAsync(timeout: timeout);
+            DateTime start = DateTime.Now;
+
+            Position reading = null;
+            AutoResetEvent readingWaitHandle = new AutoResetEvent(false);
+            Thread readingThread = new Thread(async () =>
+                {
+                    try
+                    {
+                        reading = await _locator.GetPositionAsync(timeout: timeout);
+
+                        if (reading == null)
+                        {
+                            if (Logger.Level >= LoggingLevel.Normal)
+                                Logger.Log("GPS reading was null.");
+                        }
+                        else if (Logger.Level >= LoggingLevel.Verbose)
+                            Logger.Log("Got reading from GPS receiver:  " + reading.Latitude + " " + reading.Longitude);
+                    }
+                    catch (TaskCanceledException ex)
+                    {
+                        if (Logger.Level >= LoggingLevel.Normal)
+                            Logger.Log("GPS reading task canceled:  " + ex.Message + Environment.NewLine + ex.StackTrace);
+
+                        reading = null;
+                    }
+
+                    readingWaitHandle.Set();
+                });
+
+            readingThread.Start();
+
+            if (Logger.Level >= LoggingLevel.Verbose)
+                Logger.Log("Waiting for GPS reading.");
+
+            readingWaitHandle.WaitOne();
+            readingThread.Join();
+
+            if (Logger.Level >= LoggingLevel.Verbose)
+                Logger.Log("GPS receiver thread has joined. Reading obtained in " + (DateTime.Now - start).Milliseconds + " MS.");
+
+            return reading;
         }
 
         /// <summary>

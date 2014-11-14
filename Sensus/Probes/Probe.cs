@@ -98,6 +98,9 @@ namespace Sensus.Probes
         {
             lock (this)
             {
+                if (Logger.Level >= LoggingLevel.Normal)
+                    Logger.Log("Changing state of probe " + _name + " from " + _state + " to " + newState + ", requiring state " + requiredCurrentState + ".");
+
                 if (_state != requiredCurrentState)
                     throw new InvalidProbeStateException(this, newState);
 
@@ -116,22 +119,32 @@ namespace Sensus.Probes
         {
             if (datum != null)
                 lock (_collectedData)
+                {
+                    if (Logger.Level >= LoggingLevel.Debug)
+                        Logger.Log("Storing datum in probe cache:  " + datum);
+
                     _collectedData.Add(datum);
+                }
         }
 
-        public IEnumerable<Datum> GetCollectedData()
+        public ICollection<Datum> GetCollectedData()
         {
             return _collectedData;
         }
 
-        public void ClearCommittedData(IEnumerable<Datum> data)
+        public void ClearCommittedData(ICollection<Datum> data)
         {
             lock (_collectedData)
-                foreach (Datum d in data)
-                    _collectedData.Remove(d);
+            {
+                if (Logger.Level >= LoggingLevel.Verbose)
+                    Logger.Log("Clearing committed data from probe cache:  " + data.Count + " items.");
+
+                foreach (Datum datum in data)
+                    _collectedData.Remove(datum);
+            }
         }
 
-        public abstract void Stop();
+        public abstract void StopAsync();
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {

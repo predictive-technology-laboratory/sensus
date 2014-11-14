@@ -16,5 +16,11 @@ namespace Sensus.Probes.Location
         {
             _heading = heading;
         }
+
+        public override string ToString()
+        {
+            return base.ToString() + Environment.NewLine +
+                   "Heading:  " + _heading;
+        }
     }
 }

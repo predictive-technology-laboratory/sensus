@@ -13,11 +13,6 @@ namespace Sensus.DataStores.Local
             get { return "Local SQL Lite"; }
         }
 
-        public override void Test()
-        {
-            throw new NotImplementedException();
-        }
-
         protected override ICollection<Datum> CommitData(ICollection<Datum> data)
         {
             throw new NotImplementedException();

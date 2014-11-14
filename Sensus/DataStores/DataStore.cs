@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Sensus.DataStores
 {
@@ -64,29 +65,40 @@ namespace Sensus.DataStores
         {
             _name = DisplayName;
             _commitDelayMS = 10000;
-            _commitTrigger = new AutoResetEvent(false);  // delay commits for a period
+            _commitTrigger = new AutoResetEvent(false);  // delay the first commit
             _running = false;
         }
-
-        public abstract void Test();
 
         protected void Start()
         {
             if (_running)
                 throw new InvalidOperationException("Datastore already running.");
 
+            if (Logger.Level >= LoggingLevel.Normal)
+                Logger.Log("Starting " + GetType().Name + " data store:  " + Name);
+
             _running = true;
 
-            _thread = new Thread(new ThreadStart(() =>
+            _thread = new Thread(() =>
                 {
                     while (NeedsToBeRunning)
                     {
+                        if (Logger.Level >= LoggingLevel.Debug)
+                            Logger.Log(Name + " is about to wait for " + _commitDelayMS + " MS before committing data.");
+
                         _commitTrigger.WaitOne(_commitDelayMS);
+
+                        if (Logger.Level >= LoggingLevel.Debug)
+                            Logger.Log(Name + " is waking up to commit data.");
+
                         DataCommitted(CommitData(GetDataToCommit()));  // regardless of whether the commit is triggered by the delay or by Stop, we should commit existing data.
                     }
 
+                    if (Logger.Level >= LoggingLevel.Normal)
+                        Logger.Log("Exited while-loop for data store " + Name);
+
                     _running = false;
-                }));
+                });
 
             _thread.Start();
         }
@@ -98,16 +110,28 @@ namespace Sensus.DataStores
         protected abstract void DataCommitted(ICollection<Datum> data);
 
 
-        public void Stop()
+        public async void StopAsync()
         {
+            // data stores will automatically stop if NeedsToBeRunning becomes false. however, we might be in the middle of a very long commit delay, in which case the Stop method serves a purpose by immediately triggering a commit and stopping the thread
             if (!_running)
-                throw new InvalidOperationException("Datastore already stopped.");
+                return;
 
             if (NeedsToBeRunning)
-                throw new InvalidOperationException("DataStore cannot be stopped while it is needed.");
+                throw new InvalidOperationException("DataStore " + Name + " cannot be stopped while it is needed.");
 
-            _commitTrigger.Set();
-            _thread.Join();
+            _running = false;
+
+            if (Logger.Level >= LoggingLevel.Normal)
+                Logger.Log("Setting data store " + Name + "'s wait handle within Stop method.");
+
+            await Task.Run(() =>
+                {
+                    _commitTrigger.Set();
+                    _thread.Join();
+                });
+
+            if (Logger.Level >= LoggingLevel.Normal)
+                Logger.Log("Data store " + Name + "'s thread joined.");
         }
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)

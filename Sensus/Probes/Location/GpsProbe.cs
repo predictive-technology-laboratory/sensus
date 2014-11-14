@@ -65,12 +65,16 @@ namespace Sensus.Probes.Location
 
             _gpsReceiver.PositionChanged += (o, e) =>
                 {
+                    if (Logger.Level >= LoggingLevel.Verbose)
+                        Logger.Log("GPS position has changed:  " + e.Position.Latitude + " " + e.Position.Longitude);
+
                     StoreDatum(ConvertReadingToDatum(e.Position));
                 };
 
             _gpsReceiver.PositionError += (o, e) =>
                 {
-                    Console.Error.WriteLine("GPS receiver position error:  " + e.Error);
+                    if (Logger.Level >= LoggingLevel.Normal)
+                        Logger.Log("GPS receiver position error:  " + e.Error);
                 };
         }
 
@@ -85,7 +89,7 @@ namespace Sensus.Probes.Location
 
         public override ProbeState Initialize()
         {
-            // base class cannot full initialize this probe...there is work to be done below.
+            // base class cannot fully initialize this probe...there is work to be done below.
             if (base.Initialize() != ProbeState.Initializing)
                 throw new InvalidProbeStateException(this, ProbeState.Initialized);
 
@@ -100,14 +104,14 @@ namespace Sensus.Probes.Location
         /// Polls for a Datum from this GpsProbe. This is thread-safe, and concurrent calls will block to take new readings.
         /// </summary>
         /// <returns></returns>
-        protected override void Poll(Action<Datum> receiptAction)
+        protected override Datum Poll()
         {
             lock (this)
             {
-                _gpsReceiver.GetReadingTask(10000).ContinueWith(t =>
-                    {
-                        receiptAction(ConvertReadingToDatum(t.Result));
-                    });
+                if (Logger.Level >= LoggingLevel.Verbose)
+                    Logger.Log("Polling GPS receiver.");
+
+                return ConvertReadingToDatum(_gpsReceiver.GetReading(10000));
             }
         }
 

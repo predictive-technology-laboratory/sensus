@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace Sensus
 {
@@ -28,7 +29,7 @@ namespace Sensus
             get { return _name; }
             set
             {
-                if(!value.Equals(_name, StringComparison.Ordinal))
+                if (!value.Equals(_name, StringComparison.Ordinal))
                 {
                     _name = value;
                     OnPropertyChanged();
@@ -53,25 +54,9 @@ namespace Sensus
 
                     if (_running)
                     {
-                        Console.Error.WriteLine("Testing local data store.");
-                        try { _localDataStore.Test(); }
-                        catch (Exception ex)
-                        {
-                            Console.Error.WriteLine("Local data store test failed:  " + ex.Message);
-                            Running = false;
-                            return;
-                        }
+                        if (Logger.Level >= LoggingLevel.Normal)
+                            Logger.Log("Initializing and starting probes.");
 
-                        Console.Error.WriteLine("Testing remote data store.");
-                        try { _remoteDataStore.Test(); }
-                        catch (Exception ex)
-                        {
-                            Console.Error.WriteLine("Remote data store test failed:  " + ex.Message);
-                            Running = false;
-                            return;
-                        }
-
-                        Console.Error.WriteLine("Initializing and starting probes.");
                         App.Get().ProbeInitializer.Initialize(_probes);
                         int probesStarted = 0;
                         foreach (Probe probe in _probes)
@@ -81,11 +66,14 @@ namespace Sensus
                                 {
                                     probe.Start();
                                     if (probe.State == ProbeState.Started)
-                                        Console.Error.WriteLine("Probe \"" + probe.Name + "\" started.");
+                                    {
+                                        if (Logger.Level >= LoggingLevel.Normal)
+                                            Logger.Log("Probe \"" + probe.Name + "\" started.");
+                                    }
                                     else
                                         throw new Exception("Probe.Start method returned without error but the probe state is \"" + probe.State + "\".");
                                 }
-                                catch (Exception ex) { Console.Error.WriteLine("Failed to start probe \"" + probe.Name + "\":" + ex.Message); }
+                                catch (Exception ex) { if (Logger.Level >= LoggingLevel.Normal) Logger.Log("Failed to start probe \"" + probe.Name + "\":" + ex.Message + Environment.NewLine + ex.StackTrace); }
 
                                 if (probe.State == ProbeState.Started)
                                     probesStarted++;
@@ -93,28 +81,40 @@ namespace Sensus
 
                         if (probesStarted > 0)
                         {
-                            Console.Error.WriteLine("Starting local data store.");
+                            if (Logger.Level >= LoggingLevel.Normal)
+                                Logger.Log("Starting local data store.");
+
                             try
                             {
                                 _localDataStore.Start(this);
-                                Console.Error.WriteLine("Local data store started.");
+
+                                if (Logger.Level >= LoggingLevel.Normal)
+                                    Logger.Log("Local data store started.");
                             }
                             catch (Exception ex)
                             {
-                                Console.Error.WriteLine("Local data store failed to start:  " + ex.Message);
+                                if (Logger.Level >= LoggingLevel.Normal)
+                                    Logger.Log("Local data store failed to start:  " + ex.Message + Environment.NewLine + ex.StackTrace);
+
                                 Running = false;
                                 return;
                             }
 
-                            Console.Error.WriteLine("Starting remote data store.");
+                            if (Logger.Level >= LoggingLevel.Normal)
+                                Logger.Log("Starting remote data store.");
+
                             try
                             {
                                 _remoteDataStore.Start(_localDataStore);
-                                Console.Error.WriteLine("Remote data store started.");
+
+                                if (Logger.Level >= LoggingLevel.Normal)
+                                    Logger.Log("Remote data store started.");
                             }
                             catch (Exception ex)
                             {
-                                Console.Error.WriteLine("Remote data store failed to start:  " + ex.Message);
+                                if (Logger.Level >= LoggingLevel.Normal)
+                                    Logger.Log("Remote data store failed to start:  " + ex.Message);
+
                                 Running = false;
                                 return;
                             }
@@ -124,24 +124,30 @@ namespace Sensus
                     }
                     else
                     {
-                        Console.Error.WriteLine("Stopping probes.");
+                        if (Logger.Level >= LoggingLevel.Normal)
+                            Logger.Log("Stopping probes.");
+
                         foreach (Probe probe in _probes)
                             if (probe.State == ProbeState.Started)
-                                try { probe.Stop(); }
-                                catch (Exception ex) { Console.Error.WriteLine("Failed to stop probe:  " + ex.Message); }
+                                try { probe.StopAsync(); }
+                                catch (Exception ex) { if (Logger.Level >= LoggingLevel.Normal) Logger.Log("Failed to stop probe:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
 
                         if (_localDataStore.Running)
                         {
-                            Console.Error.WriteLine("Stopping local data store.");
-                            try { _localDataStore.Stop(); }
-                            catch (Exception ex) { Console.Error.WriteLine("Failed to stop local data store:  " + ex.Message); }
+                            if (Logger.Level >= LoggingLevel.Normal)
+                                Logger.Log("Stopping local data store.");
+
+                            try { _localDataStore.StopAsync(); }
+                            catch (Exception ex) { if (Logger.Level >= LoggingLevel.Normal) Logger.Log("Failed to stop local data store:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
                         }
 
                         if (_remoteDataStore.Running)
                         {
-                            Console.Error.WriteLine("Stopping remote data store.");
-                            try { _remoteDataStore.Stop(); }
-                            catch (Exception ex) { Console.Error.WriteLine("Failed to stop remote data store:  " + ex.Message); }
+                            if (Logger.Level >= LoggingLevel.Normal)
+                                Logger.Log("Stopping remote data store.");
+
+                            try { _remoteDataStore.StopAsync(); }
+                            catch (Exception ex) { if (Logger.Level >= LoggingLevel.Normal) Logger.Log("Failed to stop remote data store:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
                         }
                     }
                 }

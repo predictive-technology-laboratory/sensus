@@ -11,8 +11,9 @@ namespace Sensus.DataStores.Remote
             get { return "Console"; }
         }
 
-        public override void Test()
+        public ConsoleRemoteDataStore()
         {
+            CommitDelayMS = 10000; // 10 seconds...so we can see debugging output
         }
 
         protected override ICollection<Datum> CommitData(ICollection<Datum> data)
@@ -20,8 +21,11 @@ namespace Sensus.DataStores.Remote
             List<Datum> committedData = new List<Datum>();
             foreach (Datum datum in data)
             {
-                Console.Error.WriteLine("Committed datum to remote console:  " + datum);
                 committedData.Add(datum);
+
+                if (Logger.Level >= LoggingLevel.Debug)
+                    Logger.Log("Committed datum to remote console:  " + datum + Environment.NewLine +
+                               "Size of committed data:  " + committedData.Count);
             }
 
             return committedData;

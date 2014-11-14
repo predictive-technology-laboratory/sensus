@@ -97,11 +97,6 @@ namespace Sensus.DataStores.Remote
             _password = "";
         }
 
-        public override void Test()
-        {
-            throw new NotImplementedException();
-        }
-
         protected override ICollection<Datum> CommitData(ICollection<Datum> data)
         {
             throw new NotImplementedException();

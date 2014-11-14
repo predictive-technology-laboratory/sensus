@@ -41,5 +41,13 @@ namespace Sensus
         {
             return (obj is Datum) && _id == (obj as Datum)._id;
         }
+
+        public override string ToString()
+        {
+            return "Type:  " + GetType().Name + Environment.NewLine + 
+                   "Id:  " + _id + Environment.NewLine +
+                   "Probe:  " + _probeId + Environment.NewLine +
+                   "Timestamp:  " + _timestamp;
+        }
     }
 }

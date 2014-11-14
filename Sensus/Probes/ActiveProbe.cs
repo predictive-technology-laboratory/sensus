@@ -2,6 +2,7 @@
 using Sensus.UI.Properties;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Sensus.Probes
 {
@@ -38,30 +39,41 @@ namespace Sensus.Probes
         {
             ChangeState(ProbeState.Initialized, ProbeState.Started);
 
-            _pollThread = new Thread(new ThreadStart(() =>
+            _pollThread = new Thread(() =>
                 {
                     while (State == ProbeState.Started)
                     {
                         _pollTrigger.WaitOne(_sleepDurationMS);
 
                         if (State == ProbeState.Started)
-                            Poll(d => { StoreDatum(d); });
+                        {
+                            Datum d = null;
+
+                            try { d = Poll(); }
+                            catch (Exception ex) { if(Logger.Level >= LoggingLevel.Normal) Logger.Log("Failed to poll probe \"" + Name + "\":  " + ex.Message + Environment.NewLine + ex.StackTrace); }
+
+                            try { StoreDatum(d); }
+                            catch (Exception ex) { if (Logger.Level >= LoggingLevel.Normal) Logger.Log("Failed to store datum:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
+                        }
                     }
-                }));
+                });
 
             _pollThread.Start();
         }
 
-        protected abstract void Poll(Action<Datum> receiptAction);
+        protected abstract Datum Poll();
 
-        public override void Stop()
+        public override async void StopAsync()
         {
-            ChangeState(ProbeState.Started, ProbeState.Stopping);
+            await Task.Run(() =>
+                {
+                    ChangeState(ProbeState.Started, ProbeState.Stopping);
 
-            _pollTrigger.Set();  // don't wait for current sleep cycle to end -- wake up immediately so thread can be joined
-            _pollThread.Join();
+                    _pollTrigger.Set();  // don't wait for current sleep cycle to end -- wake up immediately so thread can be joined
+                    _pollThread.Join();
 
-            ChangeState(ProbeState.Stopping, ProbeState.Stopped);
+                    ChangeState(ProbeState.Stopping, ProbeState.Stopped);
+                });
         }
     }
 }

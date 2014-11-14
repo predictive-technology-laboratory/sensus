@@ -41,8 +41,15 @@ namespace Sensus
             _probeInitializer = probeInitializer;
 
             _logPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
-            Console.Error.WriteLine("Writing error output to \"" + _logPath + "\".");
-            Console.SetError(new StandardOutWriter(_logPath, true, true, Console.Error));
+
+#if DEBUG
+            Logger.Init(_logPath, true, true, LoggingLevel.Debug, Console.Error);
+#else
+            Logger.Init(_logPath, true, true, LoggingLevel.Normal, Console.Error);
+#endif
+
+            if (Logger.Level >= LoggingLevel.Normal)
+                Logger.Log("Writing error output to \"" + _logPath + "\".");
 
             #region main page
             MainPage.ProtocolsTapped += async (o, e) =>
@@ -87,11 +94,13 @@ namespace Sensus
             DataStorePage.CancelPressed += async (o, e) =>
                 {
                     await _navigationPage.PopAsync();
+                    _navigationPage.CurrentPage.ForceLayout();
                 };
 
             DataStorePage.OkPressed += async (o, e) =>
                 {
                     await _navigationPage.PopAsync();
+                    _navigationPage.CurrentPage.ForceLayout();
                 };
             #endregion
 

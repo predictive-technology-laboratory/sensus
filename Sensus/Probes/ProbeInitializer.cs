@@ -17,7 +17,9 @@ namespace Sensus.Probes
                     try { Initialize(probe); }
                     catch (Exception ex)
                     {
-                        Console.Error.WriteLine("Probe \"" + probe.Name + "\" failed to initialize:  " + ex.Message);
+                        if (Logger.Level >= LoggingLevel.Normal)
+                            Logger.Log("Probe \"" + probe.Name + "\" failed to initialize:  " + ex.Message);
+
                         probe.ChangeState(ProbeState.Initializing, ProbeState.InitializeFailed);
                     }
                 }

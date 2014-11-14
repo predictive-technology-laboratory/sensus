@@ -22,5 +22,12 @@ namespace Sensus.Probes.Location
             _latitude = latitude;
             _longitude = longitude;
         }
+
+        public override string ToString()
+        {
+            return base.ToString() + Environment.NewLine +
+                   "Latitude:  " + _latitude + Environment.NewLine +
+                   "Longitude:  " + _longitude;
+        }
     }
 }

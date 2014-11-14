@@ -22,5 +22,11 @@ namespace Sensus
         {
             _accuracy = accuracy;
         }
+
+        public override string ToString()
+        {
+            return base.ToString() + Environment.NewLine +
+                   "Imprecise:  true";
+        }
     }
 }

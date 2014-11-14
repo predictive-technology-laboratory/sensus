@@ -16,5 +16,11 @@ namespace Sensus.Probes.Location
         {
             _altitude = altitude;
         }
+
+        public override string ToString()
+        {
+            return base.ToString() + Environment.NewLine +
+                   "Altitude:  " + _altitude;
+        }
     }
 }

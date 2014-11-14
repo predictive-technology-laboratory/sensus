@@ -18,18 +18,14 @@ namespace Sensus.DataStores.Local
             _data = new HashSet<Datum>();
         }
 
-        public override void Test()
-        {
-        }
-
         protected override ICollection<Datum> CommitData(ICollection<Datum> data)
         {
             List<Datum> committed = new List<Datum>();
             lock(_data)
-                foreach (Datum d in data)
+                foreach (Datum datum in data)
                 {
-                    _data.Add(d);
-                    committed.Add(d);
+                    _data.Add(datum);
+                    committed.Add(datum);
                 }
 
             return committed;
