@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
+﻿
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
-
-using Xamarin.Forms;
 using Sensus.UI;
+using Xamarin.Forms;
 
 namespace Sensus.iOS
 {

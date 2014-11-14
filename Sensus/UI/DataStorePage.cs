@@ -4,7 +4,6 @@ using Sensus.DataStores.Remote;
 using Sensus.UI.Properties;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Xamarin.Forms;
 
 namespace Sensus.UI

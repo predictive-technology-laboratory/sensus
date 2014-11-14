@@ -1,7 +1,5 @@
 ﻿using Sensus.Exceptions;
 using Sensus.UI.Properties;
-using System;
-using System.Threading;
 using Xamarin.Geolocation;
 
 namespace Sensus.Probes.Location

@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
-using System.Linq;
-using Xamarin.Forms;
+﻿using Sensus.DataStores;
 using Sensus.DataStores.Local;
-using Sensus.DataStores;
 using Sensus.DataStores.Remote;
+using System;
+using System.Linq;
+using System.Reflection;
+using Xamarin.Forms;
 
 namespace Sensus.UI
 {

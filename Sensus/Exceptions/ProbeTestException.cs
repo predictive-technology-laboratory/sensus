@@ -1,7 +1,4 @@
 ﻿using Sensus.Probes;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Sensus.Exceptions
 {

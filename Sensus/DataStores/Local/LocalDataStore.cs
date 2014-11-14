@@ -27,10 +27,10 @@ namespace Sensus.DataStores.Local
             CommitDelayMS = 5000;
         }
 
-        public void Start(Protocol protocol)
+        public void StartAsync(Protocol protocol)
         {
             _protocol = protocol;
-            Start();
+            StartAsync();
         }
 
         protected override ICollection<Datum> GetDataToCommit()

@@ -1,9 +1,7 @@
 ﻿using Sensus.Probes;
 using Sensus.UI;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using Xamarin.Forms;
 
 namespace Sensus
@@ -47,7 +45,7 @@ namespace Sensus
 #else
             Logger.Init(_logPath, true, true, LoggingLevel.Normal, Console.Error);
 #endif
-
+            
             if (Logger.Level >= LoggingLevel.Normal)
                 Logger.Log("Writing error output to \"" + _logPath + "\".");
 

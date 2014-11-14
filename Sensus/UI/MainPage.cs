@@ -1,8 +1,4 @@
-﻿using Sensus.Probes;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿using System;
 using Xamarin.Forms;
 
 namespace Sensus.UI

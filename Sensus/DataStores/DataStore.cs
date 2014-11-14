@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -22,7 +21,7 @@ namespace Sensus.DataStores
         private string _name;
         private int _commitDelayMS;
         private AutoResetEvent _commitTrigger;
-        private Thread _thread;
+        private Task _commitTask;
         private bool _running;
 
         public string Name
@@ -69,7 +68,7 @@ namespace Sensus.DataStores
             _running = false;
         }
 
-        protected void Start()
+        protected void StartAsync()
         {
             if (_running)
                 throw new InvalidOperationException("Datastore already running.");
@@ -79,7 +78,7 @@ namespace Sensus.DataStores
 
             _running = true;
 
-            _thread = new Thread(() =>
+            _commitTask = Task.Run(() =>
                 {
                     while (NeedsToBeRunning)
                     {
@@ -99,8 +98,6 @@ namespace Sensus.DataStores
 
                     _running = false;
                 });
-
-            _thread.Start();
         }
 
         protected abstract ICollection<Datum> GetDataToCommit();
@@ -124,14 +121,14 @@ namespace Sensus.DataStores
             if (Logger.Level >= LoggingLevel.Normal)
                 Logger.Log("Setting data store " + Name + "'s wait handle within Stop method.");
 
-            await Task.Run(() =>
+            await Task.Run(async () =>
                 {
                     _commitTrigger.Set();
-                    _thread.Join();
+                    await _commitTask;
                 });
 
             if (Logger.Level >= LoggingLevel.Normal)
-                Logger.Log("Data store " + Name + "'s thread joined.");
+                Logger.Log("Data store " + Name + "'s task ended.");
         }
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)

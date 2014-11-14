@@ -1,9 +1,5 @@
 ﻿using Sensus.DataStores;
-using Sensus.DataStores.Local;
-using Sensus.Probes;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Xamarin.Forms;
 
 namespace Sensus.UI

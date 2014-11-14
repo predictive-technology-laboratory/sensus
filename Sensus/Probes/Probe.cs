@@ -113,7 +113,7 @@ namespace Sensus.Probes
             }
         }
 
-        public abstract void Start();
+        public abstract void StartAsync();
 
         protected void StoreDatum(Datum datum)
         {

@@ -1,7 +1,6 @@
-﻿using System;
+﻿using Sensus.UI.Properties;
+using System;
 using System.Collections.Generic;
-using System.Text;
-using Sensus.UI.Properties;
 
 namespace Sensus.DataStores.Remote
 {

@@ -1,5 +1,4 @@
-﻿using Sensus.Exceptions;
-using Sensus.UI.Properties;
+﻿using Sensus.UI.Properties;
 
 namespace Sensus.Probes
 {
@@ -21,7 +20,7 @@ namespace Sensus.Probes
             }
         }
 
-        public override void Start()
+        public override void StartAsync()
         {
             if (_passive)
             {
@@ -30,7 +29,7 @@ namespace Sensus.Probes
                 ChangeState(ProbeState.Starting, ProbeState.Started);
             }
             else
-                base.Start();
+                base.StartAsync();
         }
 
         public override void StopAsync()

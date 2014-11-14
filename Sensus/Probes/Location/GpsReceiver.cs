@@ -73,7 +73,7 @@ namespace Sensus.Probes.Location
 
             Position reading = null;
             AutoResetEvent readingWaitHandle = new AutoResetEvent(false);
-            Thread readingThread = new Thread(async () =>
+            Task task = Task.Run(async () =>
                 {
                     try
                     {
@@ -98,13 +98,10 @@ namespace Sensus.Probes.Location
                     readingWaitHandle.Set();
                 });
 
-            readingThread.Start();
-
             if (Logger.Level >= LoggingLevel.Verbose)
                 Logger.Log("Waiting for GPS reading.");
 
             readingWaitHandle.WaitOne();
-            readingThread.Join();
 
             if (Logger.Level >= LoggingLevel.Verbose)
                 Logger.Log("GPS receiver thread has joined. Reading obtained in " + (DateTime.Now - start).Milliseconds + " MS.");

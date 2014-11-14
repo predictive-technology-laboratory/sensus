@@ -1,10 +1,6 @@
 ﻿using Android.Content;
 using Sensus.Probes;
 using Sensus.Probes.Location;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Xamarin.Geolocation;
 
 namespace Sensus.Android.Probes

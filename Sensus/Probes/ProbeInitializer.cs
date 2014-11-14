@@ -1,5 +1,4 @@
-﻿using Sensus.Exceptions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Sensus.Probes

@@ -1,8 +1,5 @@
-﻿using Sensus.Probes;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading;
 
 namespace Sensus.DataStores.Local
 {

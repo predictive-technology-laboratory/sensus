@@ -1,12 +1,10 @@
 ﻿using Sensus.DataStores.Local;
 using Sensus.DataStores.Remote;
-using Sensus.Exceptions;
 using Sensus.Probes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Threading;
 
 namespace Sensus
 {
@@ -64,7 +62,7 @@ namespace Sensus
                             {
                                 try
                                 {
-                                    probe.Start();
+                                    probe.StartAsync();
                                     if (probe.State == ProbeState.Started)
                                     {
                                         if (Logger.Level >= LoggingLevel.Normal)
@@ -86,7 +84,7 @@ namespace Sensus
 
                             try
                             {
-                                _localDataStore.Start(this);
+                                _localDataStore.StartAsync(this);
 
                                 if (Logger.Level >= LoggingLevel.Normal)
                                     Logger.Log("Local data store started.");
@@ -105,7 +103,7 @@ namespace Sensus
 
                             try
                             {
-                                _remoteDataStore.Start(_localDataStore);
+                                _remoteDataStore.StartAsync(_localDataStore);
 
                                 if (Logger.Level >= LoggingLevel.Normal)
                                     Logger.Log("Remote data store started.");
