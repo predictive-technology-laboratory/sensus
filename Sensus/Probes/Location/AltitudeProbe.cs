@@ -11,6 +11,9 @@ namespace Sensus.Probes.Location
 
         protected override Datum ConvertReadingToDatum(Position reading)
         {
+            if (reading == null)
+                return null;
+
             return new AltitudeDatum(Id, reading.Timestamp, reading.AltitudeAccuracy, reading.Altitude);
         }
 

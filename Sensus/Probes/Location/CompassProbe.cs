@@ -14,6 +14,9 @@ namespace Sensus.Probes.Location
 
         protected override Datum ConvertReadingToDatum(Position reading)
         {
+            if (reading == null)
+                return null;
+
             return new CompassDatum(Id, reading.Timestamp, reading.Heading);
         }
 

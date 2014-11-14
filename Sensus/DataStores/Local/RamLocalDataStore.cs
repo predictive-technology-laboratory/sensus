@@ -8,7 +8,7 @@ namespace Sensus.DataStores.Local
 
         protected override string DisplayName
         {
-            get { return "Local RAM"; }
+            get { return "RAM"; }
         }
 
         public RamLocalDataStore()

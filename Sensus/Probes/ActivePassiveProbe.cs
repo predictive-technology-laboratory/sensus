@@ -12,10 +12,26 @@ namespace Sensus.Probes
             get { return _passive; }
             set
             {
-                if(value != _passive)
+                if (value != _passive)
                 {
                     _passive = value;
                     OnPropertyChanged();
+
+                    if (State == ProbeState.Started)
+                        if (_passive)
+                        {
+                            // switch from active to passive
+                            base.StopAsync();
+                            App.Get().ProbeInitializer.InitializeProbe(this);
+                            StartAsync();
+                        }
+                        else
+                        {
+                            // switch from passive to active
+                            StopAsync();
+                            App.Get().ProbeInitializer.InitializeProbe(this);
+                            base.StartAsync();
+                        }
                 }
             }
         }

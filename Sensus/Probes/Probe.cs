@@ -34,6 +34,7 @@ namespace Sensus.Probes
         private bool _enabled;
         private ProbeState _state;
         private HashSet<Datum> _collectedData;
+        private Protocol _protocol;
 
         public int Id
         {
@@ -62,6 +63,30 @@ namespace Sensus.Probes
                 {
                     _enabled = value;
                     OnPropertyChanged();
+
+                    // if the probe is not started but it's enabled and the protocol is running, try to start it
+                    if (_enabled && _protocol.Running && _state != ProbeState.Started)
+                    {
+                        try
+                        {
+                            App.Get().ProbeInitializer.InitializeProbe(this);
+
+                            StartAsync();
+
+                            if (_state == ProbeState.Started)
+                            {
+                                if (Logger.Level >= LoggingLevel.Normal)
+                                    Logger.Log("Probe \"" + Name + "\" started.");
+                            }
+                            else
+                                throw new Exception("Probe.Start method returned without error but the probe state is \"" + _state + "\".");
+                        }
+                        catch (Exception ex) { if (Logger.Level >= LoggingLevel.Normal) Logger.Log("Failed to start probe \"" + Name + "\":" + ex.Message + Environment.NewLine + ex.StackTrace); }
+                    }
+
+                    // stop the probe if it was enabled on a running protocol (it must have been started at some point)
+                    if (!_enabled && _protocol.Running && _state == ProbeState.Started)
+                        StopAsync();
                 }
             }
         }
@@ -69,6 +94,12 @@ namespace Sensus.Probes
         public ProbeState State
         {
             get { return _state; }
+        }
+
+        public Protocol Protocol
+        {
+            get { return _protocol; }
+            set { _protocol = value; }
         }
 
         protected abstract string DisplayName { get; }

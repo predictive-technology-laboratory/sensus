@@ -15,7 +15,7 @@ namespace Sensus.Probes.Location
             get { return _gpsReceiver; }
         }
 
-        [EntryIntegerUiProperty("Time Change (MS, Passive):", true)]
+        [EntryIntegerUiProperty("Passive Res Time (MS):", true)]
         public int MinimumTimeHint
         {
             get { return _minimumTimeHint; }
@@ -25,11 +25,18 @@ namespace Sensus.Probes.Location
                 {
                     _minimumTimeHint = value;
                     OnPropertyChanged();
+
+                    // if this is a passive, running probe, restart the listener
+                    if (Passive && State == ProbeState.Started)
+                    {
+                        StopListening();
+                        StartListening();
+                    }
                 }
             }
         }
 
-        [EntryIntegerUiProperty("Distance Change (M, Passive):", true)]
+        [EntryIntegerUiProperty("Passive Res Distance (M):", true)]
         public int MinimumDistanceHint
         {
             get { return _minimumDistanceHint; }
@@ -39,6 +46,13 @@ namespace Sensus.Probes.Location
                 {
                     _minimumDistanceHint = value;
                     OnPropertyChanged();
+
+                    // if this is a passive, running probe, restart the listener
+                    if (Passive && State == ProbeState.Started)
+                    {
+                        StopListening();
+                        StartListening();
+                    }
                 }
             }
         }
@@ -51,7 +65,7 @@ namespace Sensus.Probes.Location
             {
                 if (value != _gpsReceiver.DesiredAccuracyMeters)
                 {
-                    _gpsReceiver.DesiredAccuracyMeters = value;
+                    _gpsReceiver.DesiredAccuracyMeters = value; // run-time changes are handled in this object -- the value is simply updated on the locator
                     OnPropertyChanged();
                 }
             }

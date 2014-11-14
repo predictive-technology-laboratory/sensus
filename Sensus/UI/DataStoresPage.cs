@@ -33,7 +33,7 @@ namespace Sensus.UI
             {
                 Button createDataStoreButton = new Button
                 {
-                    Text = "Create New " + dataStore.Name
+                    Text = "New " + (local ? "Local" : "Remote") + " " + dataStore.Name + " Data Store"
                 };
 
                 createDataStoreButton.Clicked += (o, e) =>

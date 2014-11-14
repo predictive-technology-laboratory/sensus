@@ -10,6 +10,10 @@ namespace Sensus.Probes.Location
     /// </summary>
     public class GpsReceiver
     {
+        private static bool _sharedReadingIsComing = false;
+        private static Position _sharedReading = null;
+        private ManualResetEvent _sharedReadingWaitHandle = new ManualResetEvent(false);
+
         public event EventHandler<PositionEventArgs> PositionChanged;
         public event EventHandler<PositionErrorEventArgs> PositionError;
 
@@ -25,7 +29,14 @@ namespace Sensus.Probes.Location
         public int DesiredAccuracyMeters
         {
             get { return _desiredAccuracyMeters; }
-            set { _desiredAccuracyMeters = value; }
+            set
+            {
+                _desiredAccuracyMeters = value;
+
+                // if the receiver has already been initialized, simply update the value
+                if (_locator != null)
+                    _locator.DesiredAccuracy = value;
+            }
         }
 
         public GpsReceiver()
@@ -69,42 +80,48 @@ namespace Sensus.Probes.Location
 
         public Position GetReading(int timeout)
         {
-            DateTime start = DateTime.Now;
-
-            Position reading = null;
-            AutoResetEvent readingWaitHandle = new AutoResetEvent(false);
-            Task task = Task.Run(async () =>
-                {
-                    try
+            if (!_sharedReadingIsComing)
+            {
+                _sharedReadingIsComing = true;
+                _sharedReadingWaitHandle.Reset();
+                Task readingTask = Task.Run(async () =>
                     {
-                        reading = await _locator.GetPositionAsync(timeout: timeout);
+                        try
+                        {
+                            if (Logger.Level >= LoggingLevel.Debug)
+                                Logger.Log("Taking shared reading.");
 
-                        if (reading == null)
+                            DateTime start = DateTime.Now;
+                            _sharedReading = await _locator.GetPositionAsync(timeout: timeout);
+                            DateTime end = DateTime.Now;
+
+                            if (_sharedReading != null && Logger.Level >= LoggingLevel.Verbose)
+                                Logger.Log("Shared reading obtained in " + (end - start).Milliseconds + " MS:  " + _sharedReading.Latitude + " " + _sharedReading.Longitude);
+                        }
+                        catch (TaskCanceledException ex)
                         {
                             if (Logger.Level >= LoggingLevel.Normal)
-                                Logger.Log("GPS reading was null.");
+                                Logger.Log("GPS reading task canceled:  " + ex.Message + Environment.NewLine + ex.StackTrace);
+
+                            _sharedReading = null;
                         }
-                        else if (Logger.Level >= LoggingLevel.Verbose)
-                            Logger.Log("Got reading from GPS receiver:  " + reading.Latitude + " " + reading.Longitude);
-                    }
-                    catch (TaskCanceledException ex)
-                    {
-                        if (Logger.Level >= LoggingLevel.Normal)
-                            Logger.Log("GPS reading task canceled:  " + ex.Message + Environment.NewLine + ex.StackTrace);
 
-                        reading = null;
-                    }
+                        _sharedReadingIsComing = false;
+                        _sharedReadingWaitHandle.Set();
+                    });
+            }
+            else if (Logger.Level >= LoggingLevel.Debug)
+                Logger.Log("A shared reading is coming. Will wait for it.");
 
-                    readingWaitHandle.Set();
-                });
+            _sharedReadingWaitHandle.WaitOne();
 
-            if (Logger.Level >= LoggingLevel.Verbose)
-                Logger.Log("Waiting for GPS reading.");
+            Position reading = _sharedReading;
 
-            readingWaitHandle.WaitOne();
-
-            if (Logger.Level >= LoggingLevel.Verbose)
-                Logger.Log("GPS receiver thread has joined. Reading obtained in " + (DateTime.Now - start).Milliseconds + " MS.");
+            if (reading == null)
+            {
+                if (Logger.Level >= LoggingLevel.Normal)
+                    Logger.Log("Shared reading is null.");
+            }
 
             return reading;
         }

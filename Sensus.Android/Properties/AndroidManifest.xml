@@ -2,6 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" package="Sensus.Sensus" android:versionCode="1" android:versionName="Prerelease">
 	<uses-sdk android:minSdkVersion="15" android:targetSdkVersion="19" />
 	<application android:label="Sensus" android:icon="@drawable/Icon"></application>
-	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 </manifest>

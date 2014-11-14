@@ -7,7 +7,7 @@ namespace Sensus.DataStores.Local
     {
         protected override string DisplayName
         {
-            get { return "Local SQL Lite"; }
+            get { return "SQL Lite"; }
         }
 
         protected override ICollection<Datum> CommitData(ICollection<Datum> data)

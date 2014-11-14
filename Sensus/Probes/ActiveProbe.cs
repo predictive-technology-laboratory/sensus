@@ -24,6 +24,10 @@ namespace Sensus.Probes
                 {
                     _sleepDurationMS = value;
                     OnPropertyChanged();
+
+                    // if the probe is running, trigger a new poll to start the new sleep duration
+                    if (State == ProbeState.Started)
+                        _pollTrigger.Set();
                 }
             }
         }

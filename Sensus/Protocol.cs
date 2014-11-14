@@ -55,10 +55,10 @@ namespace Sensus
                         if (Logger.Level >= LoggingLevel.Normal)
                             Logger.Log("Initializing and starting probes.");
 
-                        App.Get().ProbeInitializer.Initialize(_probes);
+                        App.Get().ProbeInitializer.InitializeProbes(_probes);
                         int probesStarted = 0;
                         foreach (Probe probe in _probes)
-                            if (probe.State == ProbeState.Initialized)
+                            if (probe.State == ProbeState.Initialized && probe.Enabled)
                             {
                                 try
                                 {
@@ -118,7 +118,12 @@ namespace Sensus
                             }
                         }
                         else
+                        {
+                            if (Logger.Level >= LoggingLevel.Normal)
+                                Logger.Log("No probes were started.");
+
                             Running = false;
+                        }
                     }
                     else
                     {
@@ -196,13 +201,17 @@ namespace Sensus
 
         public void AddProbe(Probe probe)
         {
+            probe.Protocol = this;
             probe.PropertyChanged += _notifyWatchersOfProbesChange;
+
             _probes.Add(probe);
         }
 
         public void RemoveProbe(Probe probe)
         {
+            probe.Protocol = null;
             probe.PropertyChanged -= _notifyWatchersOfProbesChange;
+
             _probes.Remove(probe);
         }
 
