@@ -24,7 +24,7 @@ namespace Sensus.DataStores.Local
 
         public LocalDataStore()
         {
-            //CommitDelayMS = 5000;
+            CommitDelayMS = 5000;
         }
 
         public void Start(Protocol protocol)

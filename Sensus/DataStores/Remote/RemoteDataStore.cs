@@ -35,7 +35,7 @@ namespace Sensus.DataStores.Remote
         {
             _requireWiFi = true;
             _requireCharging = true;
-            //CommitDelayMS = 1000 * 60 * 30;  // every thirty minutes by default
+            CommitDelayMS = 1000 * 60 * 30;  // every thirty minutes by default
         }
 
         public void Start(LocalDataStore localDataStore)
