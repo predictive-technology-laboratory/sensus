@@ -55,26 +55,28 @@ namespace Sensus
                         if (Logger.Level >= LoggingLevel.Normal)
                             Logger.Log("Initializing and starting probes.");
 
-                        App.Get().ProbeInitializer.InitializeProbes(_probes);
                         int probesStarted = 0;
                         foreach (Probe probe in _probes)
-                            if (probe.State == ProbeState.Initialized && probe.Enabled)
+                            if (probe.Initialize() == ProbeState.Initialized)
                             {
-                                try
+                                if (probe.Enabled)
                                 {
-                                    probe.StartAsync();
-                                    if (probe.State == ProbeState.Started)
+                                    try
                                     {
-                                        if (Logger.Level >= LoggingLevel.Normal)
-                                            Logger.Log("Probe \"" + probe.Name + "\" started.");
+                                        probe.StartAsync();
+                                        if (probe.State == ProbeState.Started)
+                                        {
+                                            if (Logger.Level >= LoggingLevel.Normal)
+                                                Logger.Log("Probe \"" + probe.Name + "\" started.");
+                                        }
+                                        else
+                                            throw new Exception("Probe.Start method returned without error but the probe state is \"" + probe.State + "\".");
                                     }
-                                    else
-                                        throw new Exception("Probe.Start method returned without error but the probe state is \"" + probe.State + "\".");
-                                }
-                                catch (Exception ex) { if (Logger.Level >= LoggingLevel.Normal) Logger.Log("Failed to start probe \"" + probe.Name + "\":" + ex.Message + Environment.NewLine + ex.StackTrace); }
+                                    catch (Exception ex) { if (Logger.Level >= LoggingLevel.Normal) Logger.Log("Failed to start probe \"" + probe.Name + "\":" + ex.Message + Environment.NewLine + ex.StackTrace); }
 
-                                if (probe.State == ProbeState.Started)
-                                    probesStarted++;
+                                    if (probe.State == ProbeState.Started)
+                                        probesStarted++;
+                                }
                             }
 
                         if (probesStarted > 0)

@@ -1,9 +1,9 @@
 ﻿using Android.App;
 using Android.Content.PM;
 using Android.OS;
-using Sensus.Android.Probes;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
+using Xamarin.Geolocation;
 
 namespace Sensus.Android
 {
@@ -14,10 +14,18 @@ namespace Sensus.Android
         {
             base.OnCreate(bundle);
 
-            App.Init(new AndroidProbeInitializer(this));
             Forms.Init(this, bundle);
 
+            App.Initialize(new Geolocator(this));
+
             SetPage(App.Get().NavigationPage);
+        }
+
+        protected override void OnStop()
+        {
+            base.OnStop();
+
+            App.Get().OnStop();
         }
     }
 }

@@ -22,5 +22,7 @@ namespace Sensus.WinPhone
             Forms.Init();
             Content = new Sensus.UI.MainPage().ConvertPageToUIElement(this);
         }
+
+        // TODO:  App.Get().OnStop()
     }
 }

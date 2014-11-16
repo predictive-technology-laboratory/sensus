@@ -1,43 +1,42 @@
 ﻿using Sensus.Probes;
+using Sensus.Probes.Location;
 using Sensus.UI;
 using System;
 using System.IO;
 using Xamarin.Forms;
+using Xamarin.Geolocation;
 
 namespace Sensus
 {
     public class App
     {
-        private static App _app;
+        private static App _singleton;
 
-        public static void Init(ProbeInitializer probeInitializer)
+        public static void Initialize(Geolocator locator)
         {
-            _app = new App(probeInitializer);
+            GpsReceiver.Get().Initialize(locator);
+
+            _singleton = new App();
         }
 
         public static App Get()
         {
-            return _app;
+            if (_singleton == null)
+                throw new InvalidOperationException("App has not yet been initialize.");
+
+            return _singleton;
         }
 
-        private ProbeInitializer _probeInitializer;
-        private readonly string _logPath;
         private NavigationPage _navigationPage;
-
-        public ProbeInitializer ProbeInitializer
-        {
-            get { return _probeInitializer; }
-        }
+        private readonly string _logPath;
 
         public NavigationPage NavigationPage
         {
             get { return _navigationPage; }
         }
 
-        public App(ProbeInitializer probeInitializer)
+        public App()
         {
-            _probeInitializer = probeInitializer;
-
             _logPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
 
 #if DEBUG
@@ -103,6 +102,14 @@ namespace Sensus
             #endregion
 
             _navigationPage = new NavigationPage(new MainPage());
+        }
+
+        public void OnStop()
+        {
+            // TODO:  Stop protocols
+
+            GpsReceiver.Get().ClearListeners();
+            GpsReceiver.Get().StopListeningForChanges();
         }
     }
 }

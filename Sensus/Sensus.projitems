@@ -52,7 +52,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\WlanProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\ActiveProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Probe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\ProbeInitializer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\ProbeState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Protocol.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Logger.cs" />

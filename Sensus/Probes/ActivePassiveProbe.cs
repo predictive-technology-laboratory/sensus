@@ -22,14 +22,14 @@ namespace Sensus.Probes
                         {
                             // switch from active to passive
                             base.StopAsync();
-                            App.Get().ProbeInitializer.InitializeProbe(this);
+                            Initialize();
                             StartAsync();
                         }
                         else
                         {
                             // switch from passive to active
                             StopAsync();
-                            App.Get().ProbeInitializer.InitializeProbe(this);
+                            Initialize();
                             base.StartAsync();
                         }
                 }

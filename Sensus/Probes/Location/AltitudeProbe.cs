@@ -17,9 +17,16 @@ namespace Sensus.Probes.Location
             return new AltitudeDatum(Id, reading.Timestamp, reading.AltitudeAccuracy, reading.Altitude);
         }
 
-        protected override void StartListening()
+        public override ProbeState Initialize()
         {
-            GpsReceiver.StartListeningForChanges(MinimumTimeHint, MinimumDistanceHint, false);
+            base.Initialize();
+
+            if (GpsReceiver.Get().Locator.IsGeolocationEnabled)
+                ChangeState(ProbeState.Initializing, ProbeState.Initialized);
+            else
+                ChangeState(ProbeState.Initializing, ProbeState.Unsupported);
+
+            return State;
         }
     }
 }

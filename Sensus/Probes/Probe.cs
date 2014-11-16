@@ -69,17 +69,18 @@ namespace Sensus.Probes
                     {
                         try
                         {
-                            App.Get().ProbeInitializer.InitializeProbe(this);
-
-                            StartAsync();
-
-                            if (_state == ProbeState.Started)
+                            if (Initialize() == ProbeState.Initialized)
                             {
-                                if (Logger.Level >= LoggingLevel.Normal)
-                                    Logger.Log("Probe \"" + Name + "\" started.");
+                                StartAsync();
+
+                                if (_state == ProbeState.Started)
+                                {
+                                    if (Logger.Level >= LoggingLevel.Normal)
+                                        Logger.Log("Probe \"" + Name + "\" started.");
+                                }
+                                else
+                                    throw new Exception("Probe.Start method returned without error but the probe state is \"" + _state + "\".");
                             }
-                            else
-                                throw new Exception("Probe.Start method returned without error but the probe state is \"" + _state + "\".");
                         }
                         catch (Exception ex) { if (Logger.Level >= LoggingLevel.Normal) Logger.Log("Failed to start probe \"" + Name + "\":" + ex.Message + Environment.NewLine + ex.StackTrace); }
                     }
@@ -115,12 +116,9 @@ namespace Sensus.Probes
 
         public virtual ProbeState Initialize()
         {
-            lock (this)
-            {
-                _state = ProbeState.Initializing;
-                _id = 1;  // TODO:  Get probe Id.
-                _collectedData.Clear();
-            }
+            _state = ProbeState.Initializing;
+            _id = 1;  // TODO:  Get reasonable probe ID
+            _collectedData.Clear();
 
             return _state;
         }

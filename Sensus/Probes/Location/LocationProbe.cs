@@ -20,9 +20,16 @@ namespace Sensus.Probes.Location
             return new LocationDatum(Id, reading.Timestamp, reading.Accuracy, reading.Latitude, reading.Longitude);
         }
 
-        protected override void StartListening()
+        public override ProbeState Initialize()
         {
-            GpsReceiver.StartListeningForChanges(MinimumTimeHint, MinimumDistanceHint, false);
+            base.Initialize();
+
+            if (GpsReceiver.Get().Locator.IsGeolocationEnabled)
+                ChangeState(ProbeState.Initializing, ProbeState.Initialized);
+            else
+                ChangeState(ProbeState.Initializing, ProbeState.Unsupported);
+
+            return State;
         }
     }
 }
