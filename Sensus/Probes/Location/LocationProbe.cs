@@ -20,16 +20,14 @@ namespace Sensus.Probes.Location
             return new LocationDatum(Id, reading.Timestamp, reading.Accuracy, reading.Latitude, reading.Longitude);
         }
 
-        public override ProbeState Initialize()
+        protected override bool Initialize()
         {
             base.Initialize();
 
-            if (GpsReceiver.Get().Locator.IsGeolocationEnabled)
-                ChangeState(ProbeState.Initializing, ProbeState.Initialized);
-            else
-                ChangeState(ProbeState.Initializing, ProbeState.Unsupported);
+            if (!GpsReceiver.Get().Locator.IsGeolocationEnabled)
+                Supported = false;
 
-            return State;
+            return Supported;
         }
     }
 }

@@ -6,7 +6,7 @@ namespace Sensus.Exceptions
     /// <summary>
     /// General exception for probes.
     /// </summary>
-    public class ProbeException : Exception
+    public class ProbeException : SensusException
     {
         private Probe _probe;
 

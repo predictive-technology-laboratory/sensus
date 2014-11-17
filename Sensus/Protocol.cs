@@ -1,6 +1,7 @@
 ﻿using Sensus.DataStores.Local;
 using Sensus.DataStores.Remote;
 using Sensus.Probes;
+using Sensus.UI.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -22,6 +23,7 @@ namespace Sensus
         private RemoteDataStore _remoteDataStore;
         private PropertyChangedEventHandler _notifyWatchersOfProbesChange;
 
+        [StringUiProperty("Name:", true)]
         public string Name
         {
             get { return _name; }
@@ -40,6 +42,7 @@ namespace Sensus
             get { return _probes; }
         }
 
+        [BooleanUiProperty("Running:", true)]
         public bool Running
         {
             get { return _running; }
@@ -57,27 +60,8 @@ namespace Sensus
 
                         int probesStarted = 0;
                         foreach (Probe probe in _probes)
-                            if (probe.Initialize() == ProbeState.Initialized)
-                            {
-                                if (probe.Enabled)
-                                {
-                                    try
-                                    {
-                                        probe.StartAsync();
-                                        if (probe.State == ProbeState.Started)
-                                        {
-                                            if (Logger.Level >= LoggingLevel.Normal)
-                                                Logger.Log("Probe \"" + probe.Name + "\" started.");
-                                        }
-                                        else
-                                            throw new Exception("Probe.Start method returned without error but the probe state is \"" + probe.State + "\".");
-                                    }
-                                    catch (Exception ex) { if (Logger.Level >= LoggingLevel.Normal) Logger.Log("Failed to start probe \"" + probe.Name + "\":" + ex.Message + Environment.NewLine + ex.StackTrace); }
-
-                                    if (probe.State == ProbeState.Started)
-                                        probesStarted++;
-                                }
-                            }
+                            if (probe.Enabled && probe.InitializeAndStart())
+                                probesStarted++;
 
                         if (probesStarted > 0)
                         {
@@ -133,9 +117,9 @@ namespace Sensus
                             Logger.Log("Stopping probes.");
 
                         foreach (Probe probe in _probes)
-                            if (probe.State == ProbeState.Started)
-                                try { probe.StopAsync(); }
-                                catch (Exception ex) { if (Logger.Level >= LoggingLevel.Normal) Logger.Log("Failed to stop probe:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
+                            if(probe.Controller.Running)
+                                try { probe.Controller.StopAsync(); }
+                                catch (Exception ex) { if (Logger.Level >= LoggingLevel.Normal) Logger.Log("Failed to stop " + probe.Name + "'s controller:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
 
                         if (_localDataStore.Running)
                         {

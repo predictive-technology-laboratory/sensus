@@ -8,21 +8,22 @@ using Xamarin.Geolocation;
 
 namespace Sensus
 {
-    public class App
+    public abstract class App
     {
         private static App _singleton;
 
-        public static void Initialize(Geolocator locator)
+        protected static void Set(App app)
         {
-            GpsReceiver.Get().Initialize(locator);
-
-            _singleton = new App();
+            if (_singleton == null)
+                _singleton = app;
+            else
+                throw new InvalidOperationException("App singleton has already been set.");
         }
 
         public static App Get()
         {
             if (_singleton == null)
-                throw new InvalidOperationException("App has not yet been initialize.");
+                throw new InvalidOperationException("App singleton has not been set.");
 
             return _singleton;
         }
@@ -35,8 +36,10 @@ namespace Sensus
             get { return _navigationPage; }
         }
 
-        public App()
+        protected App(Geolocator locator)
         {
+            GpsReceiver.Get().Initialize(locator);
+
             _logPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
 
 #if DEBUG
@@ -65,12 +68,12 @@ namespace Sensus
             #region protocol page
             ProtocolPage.CreateLocalDataStorePressed += async (o, e) =>
                 {
-                    await _navigationPage.PushAsync(new DataStoresPage(o as Protocol, true));
+                    await _navigationPage.PushAsync(new CreateDataStorePage(o as Protocol, true));
                 };
 
             ProtocolPage.CreateRemoteDataStorePressed += async (o, e) =>
                 {
-                    await _navigationPage.PushAsync(new DataStoresPage(o as Protocol, false));
+                    await _navigationPage.PushAsync(new CreateDataStorePage(o as Protocol, false));
                 };
 
             ProtocolPage.ProbeTapped += async (o, e) =>
@@ -80,7 +83,7 @@ namespace Sensus
             #endregion
 
             #region data stores page
-            DataStoresPage.CreateDataStorePressed += async (o, e) =>
+            CreateDataStorePage.CreateDataStorePressed += async (o, e) =>
                 {
                     await _navigationPage.PopAsync();
                     await _navigationPage.PushAsync(new DataStorePage(e.DataStore, e.Protocol, e.Local));
@@ -109,7 +112,6 @@ namespace Sensus
             // TODO:  Stop protocols
 
             GpsReceiver.Get().ClearListeners();
-            GpsReceiver.Get().StopListeningForChanges();
         }
     }
 }

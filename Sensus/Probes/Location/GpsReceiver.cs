@@ -28,7 +28,6 @@ namespace Sensus.Probes.Location
         private ManualResetEvent _sharedReadingWaitHandle;
         private Position _sharedReading;
         private DateTime _sharedReadingTimestamp;
-        private bool _listeningForChanges;
         private int _minimumTimeHint;
         private int _minimumDistanceHint;
 
@@ -59,10 +58,10 @@ namespace Sensus.Probes.Location
                 {
                     _minimumTimeHint = value;
 
-                    if (_listeningForChanges)
+                    if (ListeningForChanges)
                     {
-                        StopListeningForChanges();
-                        StartListeningForChanges();
+                        _locator.StopListening();
+                        _locator.StartListening(_minimumTimeHint, _minimumDistanceHint, true);
                     }
                 }
             }
@@ -77,13 +76,18 @@ namespace Sensus.Probes.Location
                 {
                     _minimumDistanceHint = value;
 
-                    if (_listeningForChanges)
+                    if (ListeningForChanges)
                     {
-                        StopListeningForChanges();
-                        StartListeningForChanges();
+                        _locator.StopListening();
+                        _locator.StartListening(_minimumTimeHint, _minimumDistanceHint, true);
                     }
                 }
             }
+        }
+
+        public bool ListeningForChanges
+        {
+            get { return PositionChanged != null; }
         }
 
         private GpsReceiver()
@@ -95,34 +99,57 @@ namespace Sensus.Probes.Location
             _sharedReadingTimestamp = DateTime.MinValue;
             _minimumTimeHint = 60000;
             _minimumDistanceHint = 100;
-            _listeningForChanges = false;
         }
 
         public void AddListener(EventHandler<PositionEventArgs> listener)
         {
             lock (this)
+            {
+                if (_locator == null)
+                    throw new InvalidOperationException("Locator has not yet been bound to a platform-specific implementation.");
+
+                if (ListeningForChanges)
+                    _locator.StopListening();
+
                 PositionChanged += listener;
+
+                _locator.StartListening(_minimumTimeHint, _minimumDistanceHint, true);
+
+                if (Logger.Level >= LoggingLevel.Normal)
+                    Logger.Log("GPS receiver is now listening for changes.");
+            }
         }
 
         public void RemoveListener(EventHandler<PositionEventArgs> listener)
         {
             lock (this)
             {
+                if (_locator == null)
+                    throw new InvalidOperationException("Locator has not yet been bound to a platform-specific implementation.");
+
+                if (ListeningForChanges)
+                    _locator.StopListening();
+
                 PositionChanged -= listener;
 
-                if (PositionChanged == null)
-                {
+                if (ListeningForChanges)
+                    _locator.StartListening(_minimumTimeHint, _minimumDistanceHint, true);
+                else
                     if (Logger.Level >= LoggingLevel.Normal)
-                        Logger.Log("All listeners removed from GPS receiver. Stopping listening.");
-
-                    StopListeningForChanges();
-                }
+                        Logger.Log("All listeners removed from GPS receiver. Stopped listening.");
             }
         }
 
         public void ClearListeners()
         {
-            lock (this) { PositionChanged = null; }
+            lock (this)
+            {
+                _locator.StopListening();
+                PositionChanged = null;
+
+                if (Logger.Level >= LoggingLevel.Normal)
+                    Logger.Log("All listeners removed from GPS receiver. Stopped listening.");
+            }
         }
 
         public void Initialize(Geolocator locator)
@@ -203,30 +230,6 @@ namespace Sensus.Probes.Location
             }
 
             return reading;
-        }
-
-        public void StartListeningForChanges()
-        {
-            if (_locator == null)
-                throw new InvalidOperationException("Locator has not yet been bound to a platform-specific implementation.");
-
-            if (_listeningForChanges)
-                return;
-
-            _listeningForChanges = true;
-            _locator.StartListening(_minimumTimeHint, _minimumDistanceHint, true);
-        }
-
-        public void StopListeningForChanges()
-        {
-            if (PositionChanged != null)
-                throw new InvalidOperationException("Cannot stop listening for position changes while there are still subscribers.");
-
-            if (!_listeningForChanges || _locator == null)
-                return;
-
-            _locator.StopListening();
-            _listeningForChanges = false;
         }
     }
 }

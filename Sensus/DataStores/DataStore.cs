@@ -24,6 +24,7 @@ namespace Sensus.DataStores
         private Task _commitTask;
         private bool _running;
 
+        [StringUiProperty("Name:", true)]
         public string Name
         {
             get { return _name; }

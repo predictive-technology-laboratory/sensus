@@ -25,13 +25,7 @@ namespace Sensus.UI.Properties
                         Font = Font.SystemFontOfSize(20)
                     };
 
-                    Label parameterValueLabel = new Label
-                    {
-                        HorizontalOptions = LayoutOptions.FillAndExpand,
-                        Font = Font.SystemFontOfSize(20)
-                    };
-                    parameterValueLabel.BindingContext = o;
-                    parameterValueLabel.SetBinding(Label.TextProperty, property.Name);
+                    bool addParameterValueLabel = false;
 
                     View view = null;
                     BindableProperty bindingProperty = null;
@@ -60,6 +54,8 @@ namespace Sensus.UI.Properties
                             Increment = p.Increment
                         };
                         bindingProperty = Stepper.ValueProperty;
+
+                        addParameterValueLabel = true;
                     }
                     else if (probeParameterAttribute is StringUiProperty)
                     {
@@ -72,16 +68,34 @@ namespace Sensus.UI.Properties
 
                     if (view != null)
                     {
+                        StackLayout stack = new StackLayout
+                        {
+                            HorizontalOptions = LayoutOptions.StartAndExpand,
+                            Orientation = StackOrientation.Horizontal,
+                        };
+
+                        stack.Children.Add(parameterNameLabel);
+
+                        if (addParameterValueLabel)
+                        {
+                            Label parameterValueLabel = new Label
+                            {
+                                HorizontalOptions = LayoutOptions.FillAndExpand,
+                                Font = Font.SystemFontOfSize(20)
+                            };
+                            parameterValueLabel.BindingContext = o;
+                            parameterValueLabel.SetBinding(Label.TextProperty, property.Name);
+
+                            stack.Children.Add(parameterValueLabel);
+                        }
+
                         view.IsEnabled = probeParameterAttribute.Editable;
                         view.BindingContext = o;
                         view.SetBinding(bindingProperty, new Binding(property.Name, converter: converter));
 
-                        propertyStacks.Add(new StackLayout
-                        {
-                            HorizontalOptions = LayoutOptions.StartAndExpand,
-                            Orientation = StackOrientation.Horizontal,
-                            Children = { parameterNameLabel, parameterValueLabel, view }
-                        });
+                        stack.Children.Add(view);
+
+                        propertyStacks.Add(stack);
                     }
                 }
             }

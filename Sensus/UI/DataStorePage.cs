@@ -19,29 +19,7 @@ namespace Sensus.UI
 
             SetBinding(TitleProperty, new Binding("Name"));
 
-            List<StackLayout> stacks = new List<StackLayout>();
-
-            #region name
-            Label nameLabel = new Label
-            {
-                Text = "Name:  ",
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                Font = Font.SystemFontOfSize(20)
-            };
-
-            Entry nameEntry = new Entry();
-            nameEntry.BindingContext = dataStore;
-            nameEntry.SetBinding(Entry.TextProperty, "Name");
-
-            stacks.Add(new StackLayout
-            {
-                HorizontalOptions = LayoutOptions.StartAndExpand,
-                Orientation = StackOrientation.Horizontal,
-                Children = { nameLabel, nameEntry }
-            });
-            #endregion
-
-            stacks.AddRange(UiProperty.GetPropertyStacks(dataStore));
+            List<StackLayout> stacks = UiProperty.GetPropertyStacks(dataStore);
 
             #region cancel / okay
             Button cancelButton = new Button

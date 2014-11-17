@@ -16,7 +16,7 @@ namespace Sensus.Android
 
             Forms.Init(this, bundle);
 
-            App.Initialize(new Geolocator(this));
+            AndroidApp.Initialize(new Geolocator(this), this);
 
             SetPage(App.Get().NavigationPage);
         }

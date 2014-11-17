@@ -4,6 +4,23 @@ namespace Sensus.UI
 {
     public class ProbeViewCell : ViewCell
     {
+        private class SupportedValueConverter : IValueConverter
+        {
+
+            public object Convert(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            {
+                if ((bool)value)
+                    return "";
+                else
+                    return "Unsupported";
+            }
+
+            public object ConvertBack(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            {
+                throw new System.NotImplementedException();
+            }
+        }
+
         public ProbeViewCell()
         {
             Label nameLabel = new Label
@@ -20,18 +37,25 @@ namespace Sensus.UI
             };
             enabledLabel.SetBinding(Label.TextProperty, new Binding("Enabled", stringFormat: "Enabled:  {0}"));
 
-            Label stateLabel = new Label
+            Label supportedLabel = new Label
             {
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 Font = Font.SystemFontOfSize(15)
             };
-            stateLabel.SetBinding(Label.TextProperty, new Binding("State", stringFormat: "State:  {0}"));
+            supportedLabel.SetBinding(Label.TextProperty, new Binding("Supported", converter: new SupportedValueConverter()));
+
+            Label runningLabel = new Label
+            {
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                Font = Font.SystemFontOfSize(15)
+            };
+            runningLabel.SetBinding(Label.TextProperty, new Binding("Controller.Running", stringFormat: "Running:  {0}"));
 
             StackLayout probeProperties = new StackLayout
             {
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 Orientation = StackOrientation.Horizontal,
-                Children = { enabledLabel, stateLabel }
+                Children = { enabledLabel, runningLabel }
             };
 
             View = new StackLayout

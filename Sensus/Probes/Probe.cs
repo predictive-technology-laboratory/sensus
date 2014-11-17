@@ -5,13 +5,14 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using Sensus.UI.Properties;
 
 namespace Sensus.Probes
 {
     /// <summary>
     /// An abstract probe.
     /// </summary>
-    public abstract class Probe : INotifyPropertyChanged
+    public abstract class Probe : IProbe, INotifyPropertyChanged
     {
         #region static members
         /// <summary>
@@ -32,15 +33,17 @@ namespace Sensus.Probes
         private int _id;
         private string _name;
         private bool _enabled;
-        private ProbeState _state;
         private HashSet<Datum> _collectedData;
         private Protocol _protocol;
+        private ProbeController _controller;
+        private bool _supported;
 
         public int Id
         {
             get { return _id; }
         }
 
+        [StringUiProperty("Name:", true)]
         public string Name
         {
             get { return _name; }
@@ -54,6 +57,7 @@ namespace Sensus.Probes
             }
         }
 
+        [BooleanUiProperty("Enabled:", true)]
         public bool Enabled
         {
             get { return _enabled; }
@@ -64,43 +68,38 @@ namespace Sensus.Probes
                     _enabled = value;
                     OnPropertyChanged();
 
-                    // if the probe is not started but it's enabled and the protocol is running, try to start it
-                    if (_enabled && _protocol.Running && _state != ProbeState.Started)
-                    {
-                        try
-                        {
-                            if (Initialize() == ProbeState.Initialized)
-                            {
-                                StartAsync();
-
-                                if (_state == ProbeState.Started)
-                                {
-                                    if (Logger.Level >= LoggingLevel.Normal)
-                                        Logger.Log("Probe \"" + Name + "\" started.");
-                                }
-                                else
-                                    throw new Exception("Probe.Start method returned without error but the probe state is \"" + _state + "\".");
-                            }
-                        }
-                        catch (Exception ex) { if (Logger.Level >= LoggingLevel.Normal) Logger.Log("Failed to start probe \"" + Name + "\":" + ex.Message + Environment.NewLine + ex.StackTrace); }
-                    }
-
-                    // stop the probe if it was enabled on a running protocol (it must have been started at some point)
-                    if (!_enabled && _protocol.Running && _state == ProbeState.Started)
-                        StopAsync();
+                    if (_protocol.Running)
+                        if (_enabled)
+                            InitializeAndStart();
+                        else
+                            _controller.StopAsync();
                 }
             }
-        }
-
-        public ProbeState State
-        {
-            get { return _state; }
         }
 
         public Protocol Protocol
         {
             get { return _protocol; }
             set { _protocol = value; }
+        }
+
+        public ProbeController Controller
+        {
+            get { return _controller; }
+            set { _controller = value; }
+        }
+
+        public bool Supported
+        {
+            get { return _supported; }
+            set
+            {
+                if (value != _supported)
+                {
+                    _supported = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         protected abstract string DisplayName { get; }
@@ -110,41 +109,47 @@ namespace Sensus.Probes
             _id = -1;
             _name = DisplayName;
             _enabled = false;
-            _state = ProbeState.Uninitialized;
             _collectedData = new HashSet<Datum>();
+            _supported = true;
+
+            if (this is ActivePassiveProbe)
+            {
+                ActivePassiveProbe probe = this as ActivePassiveProbe;
+                if (probe.Passive)
+                    _controller = new PassiveProbeController(probe);
+                else
+                    _controller = new ActiveProbeController(probe);
+            }
+            else if (this is IActiveProbe)
+                _controller = new ActiveProbeController(this as IActiveProbe);
+            else if (this is IPassiveProbe)
+                _controller = new PassiveProbeController(this as IPassiveProbe);
+            else
+                throw new ProbeException(this, "Could not find controller for probe " + _name + " (" + GetType().FullName + ").");
         }
 
-        public virtual ProbeState Initialize()
+        protected virtual bool Initialize()
         {
-            _state = ProbeState.Initializing;
             _id = 1;  // TODO:  Get reasonable probe ID
             _collectedData.Clear();
+            _supported = true;
 
-            return _state;
+            return _supported;
         }
 
-        internal void ChangeState(ProbeState requiredCurrentState, ProbeState newState)
+        public bool InitializeAndStart()
         {
-            lock (this)
+            try
             {
-                if (Logger.Level >= LoggingLevel.Normal)
-                    Logger.Log("Changing state of probe " + _name + " from " + _state + " to " + newState + ", requiring state " + requiredCurrentState + ".");
-
-                if (_state != requiredCurrentState)
-                    throw new InvalidProbeStateException(this, newState);
-
-                bool stateChanged = _state != newState;
-
-                _state = newState;
-
-                if (stateChanged)
-                    OnPropertyChanged("State");
+                if (Initialize())
+                    _controller.StartAsync();
             }
+            catch (Exception ex) { if (Logger.Level >= LoggingLevel.Normal) Logger.Log("Failed to start probe \"" + Name + "\":" + ex.Message + Environment.NewLine + ex.StackTrace); }
+
+            return _controller.Running;
         }
 
-        public abstract void StartAsync();
-
-        protected void StoreDatum(Datum datum)
+        public virtual void StoreDatum(Datum datum)
         {
             if (datum != null)
                 lock (_collectedData)
@@ -172,8 +177,6 @@ namespace Sensus.Probes
                     _collectedData.Remove(datum);
             }
         }
-
-        public abstract void StopAsync();
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {

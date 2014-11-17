@@ -1,13 +1,16 @@
 ﻿using Sensus.UI.Properties;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Sensus.Probes
 {
-    public abstract class ActivePassiveProbe : ActiveProbe
+    public abstract class ActivePassiveProbe : PassiveProbe, IActiveProbe
     {
         private bool _passive;
 
         [BooleanUiProperty("Passive:", true)]
-        public bool Passive
+        public virtual bool Passive
         {
             get { return _passive; }
             set
@@ -17,51 +20,24 @@ namespace Sensus.Probes
                     _passive = value;
                     OnPropertyChanged();
 
-                    if (State == ProbeState.Started)
-                        if (_passive)
-                        {
-                            // switch from active to passive
-                            base.StopAsync();
-                            Initialize();
-                            StartAsync();
-                        }
-                        else
-                        {
-                            // switch from passive to active
-                            StopAsync();
-                            Initialize();
-                            base.StartAsync();
-                        }
+                    bool wasRunning = false;
+                    if (Controller.Running)
+                    {
+                        if (Logger.Level >= LoggingLevel.Normal)
+                            Logger.Log("Restarting " + Name + " as " + (_passive ? "passive" : "active") + " probe.");
+
+                        Controller.StopAsync();
+                        wasRunning = true;
+                    }
+
+                    Controller = _passive ? new PassiveProbeController(this) as ProbeController : new ActiveProbeController(this) as ProbeController;
+
+                    if (wasRunning)
+                        InitializeAndStart();
                 }
             }
         }
 
-        public override void StartAsync()
-        {
-            if (_passive)
-            {
-                ChangeState(ProbeState.Initialized, ProbeState.Starting);
-                StartListening();
-                ChangeState(ProbeState.Starting, ProbeState.Started);
-            }
-            else
-                base.StartAsync();
-        }
-
-        public override void StopAsync()
-        {
-            if (_passive)
-            {
-                ChangeState(ProbeState.Started, ProbeState.Stopping);
-                StopListening();
-                ChangeState(ProbeState.Stopping, ProbeState.Stopped);
-            }
-            else
-                base.StopAsync();
-        }
-
-        protected abstract void StartListening();
-
-        protected abstract void StopListening();
+        public abstract Datum Poll();
     }
 }

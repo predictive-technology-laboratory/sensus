@@ -1,5 +1,7 @@
 ﻿using Sensus.DataStores;
+using Sensus.UI.Properties;
 using System;
+using System.Collections.Generic;
 using Xamarin.Forms;
 
 namespace Sensus.UI
@@ -31,45 +33,9 @@ namespace Sensus.UI
 
             SetBinding(TitleProperty, new Binding("Name"));
 
-            #region name
-            Label nameLabel = new Label
-            {
-                Text = "Name:  ",
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                Font = Font.SystemFontOfSize(20)
-            };
+            List<View> views = new List<View>();
 
-            Entry nameEntry = new Entry();
-            nameEntry.BindingContext = protocol;
-            nameEntry.SetBinding(Entry.TextProperty, "Name");
-
-            StackLayout nameStack = new StackLayout
-            {
-                HorizontalOptions = LayoutOptions.StartAndExpand,
-                Orientation = StackOrientation.Horizontal,
-                Children = { nameLabel, nameEntry }
-            };
-            #endregion
-
-            #region status
-            Label statusLabel = new Label
-            {
-                Text = "Status:  ",
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                Font = Font.SystemFontOfSize(20)
-            };
-
-            Switch statusSwitch = new Switch();
-            statusSwitch.BindingContext = protocol;
-            statusSwitch.SetBinding(Switch.IsToggledProperty, "Running");
-
-            StackLayout statusStack = new StackLayout
-            {
-                HorizontalOptions = LayoutOptions.StartAndExpand,
-                Orientation = StackOrientation.Horizontal,
-                Children = { statusLabel, statusSwitch }
-            };
-            #endregion
+            views.AddRange(UiProperty.GetPropertyStacks(protocol));
 
             #region data stores
             Button localDataStoreButton = new Button
@@ -86,6 +52,8 @@ namespace Sensus.UI
                     CreateLocalDataStorePressed(protocol, e);
                 };
 
+            views.Add(localDataStoreButton);
+
             Button remoteDataStoreButton = new Button
             {
                 Text = "Create Remote Data Store",
@@ -99,6 +67,8 @@ namespace Sensus.UI
                 {
                     CreateRemoteDataStorePressed(protocol, e);
                 };
+
+            views.Add(remoteDataStoreButton);
             #endregion
 
             #region probes
@@ -111,14 +81,18 @@ namespace Sensus.UI
                     probesList.SelectedItem = null;
                     ProbeTapped(o, e);
                 };
+
+            views.Add(probesList);
             #endregion
 
             Content = new StackLayout
             {
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 Orientation = StackOrientation.Vertical,
-                Children = { nameStack, statusStack, localDataStoreButton, remoteDataStoreButton, probesList }
             };
+
+            foreach (View view in views)
+                (Content as StackLayout).Children.Add(view);
         }
     }
 }
