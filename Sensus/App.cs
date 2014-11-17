@@ -2,14 +2,17 @@
 using Sensus.Probes.Location;
 using Sensus.UI;
 using System;
+using System.ComponentModel;
 using System.IO;
 using Xamarin.Forms;
 using Xamarin.Geolocation;
+using Sensus;
+using Sensus.Exceptions;
 
 namespace Sensus
 {
     public abstract class App
-    {
+    {     
         private static App _singleton;
 
         protected static void Set(App app)
@@ -17,13 +20,13 @@ namespace Sensus
             if (_singleton == null)
                 _singleton = app;
             else
-                throw new InvalidOperationException("App singleton has already been set.");
+                throw new SensusException("App singleton has already been set.");
         }
 
         public static App Get()
         {
             if (_singleton == null)
-                throw new InvalidOperationException("App singleton has not been set.");
+                throw new SensusException("App singleton has not been set.");
 
             return _singleton;
         }

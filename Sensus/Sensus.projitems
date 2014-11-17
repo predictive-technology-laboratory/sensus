@@ -18,6 +18,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Remote\PostgreSqlRemoteDataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Remote\RemoteDataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Datum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\DataStoreException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\ProbeControllerException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\ProbeException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\SensusException.cs" />

@@ -108,6 +108,7 @@ namespace Sensus
                             if (Logger.Level >= LoggingLevel.Normal)
                                 Logger.Log("No probes were started.");
 
+
                             Running = false;
                         }
                     }
@@ -117,11 +118,11 @@ namespace Sensus
                             Logger.Log("Stopping probes.");
 
                         foreach (Probe probe in _probes)
-                            if(probe.Controller.Running)
+                            if (probe.Controller.Running)
                                 try { probe.Controller.StopAsync(); }
                                 catch (Exception ex) { if (Logger.Level >= LoggingLevel.Normal) Logger.Log("Failed to stop " + probe.Name + "'s controller:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
 
-                        if (_localDataStore.Running)
+                        if (_localDataStore != null && _localDataStore.Running)
                         {
                             if (Logger.Level >= LoggingLevel.Normal)
                                 Logger.Log("Stopping local data store.");
@@ -130,7 +131,7 @@ namespace Sensus
                             catch (Exception ex) { if (Logger.Level >= LoggingLevel.Normal) Logger.Log("Failed to stop local data store:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
                         }
 
-                        if (_remoteDataStore.Running)
+                        if (_remoteDataStore != null && _remoteDataStore.Running)
                         {
                             if (Logger.Level >= LoggingLevel.Normal)
                                 Logger.Log("Stopping remote data store.");

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sensus.Exceptions;
+using System;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -118,7 +119,7 @@ namespace Sensus
                 lock (otherOutput)
                 {
                     try { otherOutput.Write(value); }
-                    catch (Exception ex) { throw new Exception("Failed to write to other output from LogWriter:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
+                    catch (Exception ex) { throw new SensusException("Failed to write to other output from LogWriter:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
                 }
             }
 

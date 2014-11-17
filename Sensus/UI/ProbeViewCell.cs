@@ -1,4 +1,6 @@
-﻿using Xamarin.Forms;
+﻿using Sensus.Probes;
+using System;
+using Xamarin.Forms;
 
 namespace Sensus.UI
 {
@@ -6,13 +8,25 @@ namespace Sensus.UI
     {
         private class SupportedValueConverter : IValueConverter
         {
-
             public object Convert(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
             {
                 if ((bool)value)
                     return "";
                 else
                     return "Unsupported";
+            }
+
+            public object ConvertBack(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            {
+                throw new System.NotImplementedException();
+            }
+        }
+
+        public class ControllerValueConverter : IValueConverter
+        {
+            public object Convert(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            {
+                return "Running:  " + (value as ProbeController).Running;
             }
 
             public object ConvertBack(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -49,7 +63,7 @@ namespace Sensus.UI
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 Font = Font.SystemFontOfSize(15)
             };
-            runningLabel.SetBinding(Label.TextProperty, new Binding("Controller.Running", stringFormat: "Running:  {0}"));
+            runningLabel.SetBinding(Label.TextProperty, new Binding("Controller", converter: new ControllerValueConverter()));
 
             StackLayout probeProperties = new StackLayout
             {

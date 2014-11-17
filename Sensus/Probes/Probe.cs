@@ -86,7 +86,14 @@ namespace Sensus.Probes
         public ProbeController Controller
         {
             get { return _controller; }
-            set { _controller = value; }
+            set
+            {
+                if (value != _controller)
+                {
+                    _controller = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         public bool Supported

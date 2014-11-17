@@ -1,4 +1,5 @@
-﻿using Sensus.UI.Properties;
+﻿using Sensus.Exceptions;
+using Sensus.UI.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -72,7 +73,7 @@ namespace Sensus.DataStores
         protected void StartAsync()
         {
             if (_running)
-                throw new InvalidOperationException("Datastore already running.");
+                throw new DataStoreException("Datastore already running.");
 
             if (Logger.Level >= LoggingLevel.Normal)
                 Logger.Log("Starting " + GetType().Name + " data store:  " + Name);
@@ -107,7 +108,6 @@ namespace Sensus.DataStores
 
         protected abstract void DataCommitted(ICollection<Datum> data);
 
-
         public async void StopAsync()
         {
             // data stores will automatically stop if NeedsToBeRunning becomes false. however, we might be in the middle of a very long commit delay, in which case the Stop method serves a purpose by immediately triggering a commit and stopping the thread
@@ -115,7 +115,7 @@ namespace Sensus.DataStores
                 return;
 
             if (NeedsToBeRunning)
-                throw new InvalidOperationException("DataStore " + Name + " cannot be stopped while it is needed.");
+                throw new DataStoreException("DataStore " + Name + " cannot be stopped while it is needed.");
 
             _running = false;
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sensus.Exceptions;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Xamarin.Geolocation;
@@ -15,7 +16,7 @@ namespace Sensus.Probes.Location
         public static GpsReceiver Get()
         {
             if (_singleton == null)
-                throw new InvalidOperationException("GpsReceiver has not yet been initialize.");
+                throw new SensusException("GpsReceiver has not yet been initialize.");
 
             return _singleton;
         }
@@ -106,7 +107,7 @@ namespace Sensus.Probes.Location
             lock (this)
             {
                 if (_locator == null)
-                    throw new InvalidOperationException("Locator has not yet been bound to a platform-specific implementation.");
+                    throw new SensusException("Locator has not yet been bound to a platform-specific implementation.");
 
                 if (ListeningForChanges)
                     _locator.StopListening();
@@ -125,7 +126,7 @@ namespace Sensus.Probes.Location
             lock (this)
             {
                 if (_locator == null)
-                    throw new InvalidOperationException("Locator has not yet been bound to a platform-specific implementation.");
+                    throw new SensusException("Locator has not yet been bound to a platform-specific implementation.");
 
                 if (ListeningForChanges)
                     _locator.StopListening();
