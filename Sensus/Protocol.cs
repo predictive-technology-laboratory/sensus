@@ -53,14 +53,7 @@ namespace Sensus
                     _running = value;
                     OnPropertyChanged();
 
-                    if (App.Get().SensusService == null)
-                    {
-                        if (Logger.Level >= LoggingLevel.Normal)
-                            Logger.Log("Sensus service has not been started. Cannot run protocol.");
-
-                        Running = false;
-                    }
-                    else if (_running)
+                    if (_running)
                         App.Get().SensusService.StartProtocol(this);
                     else
                         App.Get().SensusService.StopProtocol(this);
@@ -218,6 +211,20 @@ namespace Sensus
                 try { _remoteDataStore.StopAsync(); }
                 catch (Exception ex) { if (Logger.Level >= LoggingLevel.Normal) Logger.Log("Failed to stop remote data store:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
             }
+        }
+
+        public void ClearPropertyChangedDelegates()
+        {
+            PropertyChanged = null;
+
+            foreach (Probe probe in _probes)
+                probe.ClearPropertyChangedDelegates();
+
+            if (_localDataStore != null)
+                _localDataStore.ClearPropertyChangedDelegates();
+
+            if (_remoteDataStore != null)
+                _remoteDataStore.ClearPropertyChangedDelegates();
         }
     }
 }

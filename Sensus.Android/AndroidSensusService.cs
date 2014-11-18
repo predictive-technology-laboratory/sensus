@@ -27,9 +27,9 @@ namespace Sensus.Android
             get { return _serviceHelper.Logger; }
         }
 
-        public IEnumerable<Protocol> StartedProtocols
+        public IEnumerable<Protocol> RegisteredProtocols
         {
-            get { return _serviceHelper.StartedProtocols; }
+            get { return _serviceHelper.RegisteredProtocols; }
         }
 
         public AndroidSensusService()
@@ -73,12 +73,13 @@ namespace Sensus.Android
 
         public void StartProtocol(Protocol protocol)
         {
-            _serviceHelper.StartProtocol(protocol);
+            _serviceHelper.RegisterProtocol(protocol);
+            protocol.StartAsync();
         }
 
         public void StopProtocol(Protocol protocol)
         {
-            _serviceHelper.StopProtocol(protocol);
+            protocol.StopAsync();
         }
 
         public void Stop()

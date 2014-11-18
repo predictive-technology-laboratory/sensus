@@ -7,7 +7,7 @@ namespace Sensus
 {
     public class SensusServiceHelper
     {
-        private List<Protocol> _startedProtocols;
+        private List<Protocol> _registeredProtocols;
         private Logger _logger;
         private readonly string _logPath;
 
@@ -16,14 +16,14 @@ namespace Sensus
             get { return _logger; }
         }
 
-        public List<Protocol> StartedProtocols
+        public List<Protocol> RegisteredProtocols
         {
-            get { return _startedProtocols; }
+            get { return _registeredProtocols; }
         }
 
         public SensusServiceHelper()
         {
-            _startedProtocols = new List<Protocol>();
+            _registeredProtocols = new List<Protocol>();
 
             _logPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
 
@@ -34,34 +34,26 @@ namespace Sensus
 #endif
         }
 
-        public void StartProtocol(Protocol protocol)
+        public void RegisterProtocol(Protocol protocol)
         {
-            lock (_startedProtocols)
-            {
-                protocol.StartAsync();
-                _startedProtocols.Add(protocol);
-            }
+            lock (_registeredProtocols)
+                if (!_registeredProtocols.Contains(protocol))
+                    _registeredProtocols.Add(protocol);
         }
 
-        public void StopProtocol(Protocol protocol)
+        public void UnregisterProtocol(Protocol protocol)
         {
-            lock (_startedProtocols)
-            {
-                protocol.StopAsync();
-                _startedProtocols.Remove(protocol);
-            }
+            lock (_registeredProtocols)
+                _registeredProtocols.Remove(protocol);
         }
 
         public void Stop()
         {
             _logger.Close();
 
-            lock (_startedProtocols)
-                foreach (Protocol protocol in _startedProtocols.ToList())
-                {
+            lock (_registeredProtocols)
+                foreach (Protocol protocol in _registeredProtocols)
                     protocol.StopAsync();
-                    _startedProtocols.Remove(protocol);
-                }
         }
     }
 }

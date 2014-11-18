@@ -8,24 +8,30 @@ using Xamarin.Forms;
 using Xamarin.Geolocation;
 using Sensus;
 using Sensus.Exceptions;
+using System.Threading;
 
 namespace Sensus
 {
     public abstract class App
     {     
         private static App _singleton;
+        private static object _staticLockObject = new object();
 
         protected static void Set(App app)
         {
-            _singleton = app;
+            lock (_staticLockObject)
+                _singleton = app;
         }
 
         public static App Get()
         {
-            if (_singleton == null)
-                throw new SensusException("App singleton has not been set.");
+            lock (_staticLockObject)
+            {
+                if (_singleton == null)
+                    throw new SensusException("App singleton has not been set.");
 
-            return _singleton;
+                return _singleton;
+            }
         }
 
         private NavigationPage _navigationPage;
@@ -38,7 +44,18 @@ namespace Sensus
 
         public ISensusService SensusService
         {
-            get { return _sensusService; }
+            get
+            {
+                // service might be null for a brief period when restarting the app
+                int triesLeft = 5;
+                while (_sensusService == null && triesLeft-- > 0)
+                    Thread.Sleep(1000);
+
+                if (_sensusService == null)
+                    throw new Exception("Failed to get Sensus service from App.");
+
+                return _sensusService;
+            }
             set { _sensusService = value; }
         }
 

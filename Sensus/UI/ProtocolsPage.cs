@@ -14,7 +14,12 @@ namespace Sensus.UI
 
             List<Protocol> protocols = new List<Protocol>();
 
-            protocols.AddRange(App.Get().SensusService.StartedProtocols);
+            // for protocols registered with the service, we need to remove previous bindings to propertychanged events
+            foreach (Protocol protocol in App.Get().SensusService.RegisteredProtocols)
+            {
+                protocol.ClearPropertyChangedDelegates();
+                protocols.Add(protocol);
+            }
 
             for (int i = 0; i < 5; ++i)
                 protocols.Add(new Protocol("Test Protocol " + (i + 1), true));

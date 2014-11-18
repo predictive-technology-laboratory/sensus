@@ -37,6 +37,20 @@ namespace Sensus.UI
 
             views.AddRange(UiProperty.GetPropertyStacks(protocol));
 
+            #region probes
+            ListView probesList = new ListView();
+            probesList.ItemTemplate = new DataTemplate(typeof(ProbeViewCell));
+            probesList.BindingContext = protocol;
+            probesList.SetBinding(ListView.ItemsSourceProperty, "Probes");
+            probesList.ItemTapped += (o, e) =>
+                {
+                    probesList.SelectedItem = null;
+                    ProbeTapped(o, e);
+                };
+
+            views.Add(probesList);
+            #endregion
+
             #region data stores
             Button localDataStoreButton = new Button
             {
@@ -69,20 +83,6 @@ namespace Sensus.UI
                 };
 
             views.Add(remoteDataStoreButton);
-            #endregion
-
-            #region probes
-            ListView probesList = new ListView();
-            probesList.ItemTemplate = new DataTemplate(typeof(ProbeViewCell));
-            probesList.BindingContext = protocol;
-            probesList.SetBinding(ListView.ItemsSourceProperty, "Probes");
-            probesList.ItemTapped += (o, e) =>
-                {
-                    probesList.SelectedItem = null;
-                    ProbeTapped(o, e);
-                };
-
-            views.Add(probesList);
             #endregion
 
             Content = new StackLayout

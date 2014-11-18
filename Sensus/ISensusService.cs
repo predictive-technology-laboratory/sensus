@@ -8,7 +8,7 @@ namespace Sensus
     {
         Logger Logger { get; }
 
-        IEnumerable<Protocol> StartedProtocols { get; }
+        IEnumerable<Protocol> RegisteredProtocols { get; }
 
         void StartProtocol(Protocol protocol);
 

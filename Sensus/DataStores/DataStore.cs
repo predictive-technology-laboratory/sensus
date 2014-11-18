@@ -137,5 +137,10 @@ namespace Sensus.DataStores
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        public void ClearPropertyChangedDelegates()
+        {
+            PropertyChanged = null;
+        }
     }
 }
