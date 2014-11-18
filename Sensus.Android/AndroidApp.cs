@@ -3,34 +3,46 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Android.App;
+using Application = Android.App.Application;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Xamarin.Geolocation;
+using System.Threading.Tasks;
 
 namespace Sensus.Android
 {
     public class AndroidApp : App
     {
-        public static void Initialize(Geolocator locator, Context context)
+        public static void Initialize(Geolocator locator)
         {
-            Set(new AndroidApp(locator, context));
+            Set(new AndroidApp(locator));
         }
 
-        private Context _context;
-
-        public Context Context
-        {
-            get { return _context; }
-        }
-
-        protected AndroidApp(Geolocator locator, Context context)
+        protected AndroidApp(Geolocator locator)
             : base(locator)
         {
-            _context = context;
+            Task.Run(() =>
+                {
+                    // start service -- if it's already running from on-boot startup, this will have no effect
+                    Intent serviceIntent = new Intent(Application.Context, typeof(AndroidSensusService));
+                    Application.Context.StartService(serviceIntent);
+
+                    // bind to the service
+                    SensusServiceConnection serviceConnection = new SensusServiceConnection(null);
+                    serviceConnection.ServiceConnected += (o, e) =>
+                        {
+                            SensusService = e.Binder.Service;  // bind
+
+                            if (Logger.Level >= LoggingLevel.Normal)
+                                Logger.Log("Connected to Sensus service.");
+                        };
+
+                    Intent bindServiceIntent = new Intent(Application.Context, typeof(AndroidSensusService));
+                    Application.Context.BindService(bindServiceIntent, serviceConnection, Bind.AutoCreate);
+                });
         }
     }
 }

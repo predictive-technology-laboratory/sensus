@@ -14,18 +14,13 @@ namespace Sensus.Android
         {
             base.OnCreate(bundle);
 
+            Title = "Sensus";
+
             Forms.Init(this, bundle);
 
-            AndroidApp.Initialize(new Geolocator(this), this);
+            AndroidApp.Initialize(new Geolocator(this));
 
             SetPage(App.Get().NavigationPage);
-        }
-
-        protected override void OnStop()
-        {
-            base.OnStop();
-
-            App.Get().OnStop();
         }
     }
 }

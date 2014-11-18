@@ -78,6 +78,7 @@ namespace Sensus.UI
                 Orientation = StackOrientation.Vertical,
                 Spacing = 0,
                 Padding = new Thickness(0),
+                MinimumHeightRequest = 35,
                 Children = { nameLabel, probeProperties }
             };
         }

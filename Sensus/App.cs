@@ -17,10 +17,7 @@ namespace Sensus
 
         protected static void Set(App app)
         {
-            if (_singleton == null)
-                _singleton = app;
-            else
-                throw new SensusException("App singleton has already been set.");
+            _singleton = app;
         }
 
         public static App Get()
@@ -32,27 +29,22 @@ namespace Sensus
         }
 
         private NavigationPage _navigationPage;
-        private readonly string _logPath;
+        private ISensusService _sensusService;
 
         public NavigationPage NavigationPage
         {
             get { return _navigationPage; }
         }
 
+        public ISensusService SensusService
+        {
+            get { return _sensusService; }
+            set { _sensusService = value; }
+        }
+
         protected App(Geolocator locator)
         {
-            GpsReceiver.Get().Initialize(locator);
-
-            _logPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
-
-#if DEBUG
-            Logger.Init(_logPath, true, true, LoggingLevel.Debug, Console.Error);
-#else
-            Logger.Init(_logPath, true, true, LoggingLevel.Normal, Console.Error);
-#endif
-            
-            if (Logger.Level >= LoggingLevel.Normal)
-                Logger.Log("Writing error output to \"" + _logPath + "\".");
+            GpsReceiver.Get().Initialize(locator);            
 
             #region main page
             MainPage.ProtocolsTapped += async (o, e) =>
@@ -108,13 +100,6 @@ namespace Sensus
             #endregion
 
             _navigationPage = new NavigationPage(new MainPage());
-        }
-
-        public void OnStop()
-        {
-            // TODO:  Stop protocols
-
-            GpsReceiver.Get().ClearListeners();
         }
     }
 }

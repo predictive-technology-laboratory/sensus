@@ -22,8 +22,6 @@ namespace Sensus.Probes.Location
 
         protected override bool Initialize()
         {
-            base.Initialize();
-
             if (!GpsReceiver.Get().Locator.IsGeolocationEnabled)
                 Supported = false;
 

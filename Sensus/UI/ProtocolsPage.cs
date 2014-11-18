@@ -13,6 +13,9 @@ namespace Sensus.UI
             Title = "Protocols";
 
             List<Protocol> protocols = new List<Protocol>();
+
+            protocols.AddRange(App.Get().SensusService.StartedProtocols);
+
             for (int i = 0; i < 5; ++i)
                 protocols.Add(new Protocol("Test Protocol " + (i + 1), true));
 

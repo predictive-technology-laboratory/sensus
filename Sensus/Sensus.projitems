@@ -23,11 +23,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\ProbeException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\SensusException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ImpreciseDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ISensusService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LoggingLevel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\ActivePassiveProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\IActiveProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\IPassiveProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\IProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\CompassProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\PassiveProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\PassiveProbeController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\AppProbe.cs" />
@@ -60,6 +62,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\ProbeController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Protocol.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Logger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SensusServiceHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\DataStorePage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\CreateDataStorePage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\MainPage.cs" />

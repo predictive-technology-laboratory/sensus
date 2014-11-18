@@ -11,21 +11,14 @@ namespace Sensus
     /// </summary>
     public class Logger : TextWriter
     {
-        private static Logger _logger;
-
         public static LoggingLevel Level
         {
-            get { return _logger._level; }
-        }
-
-        public static void Init(string path, bool writeTimestamp, bool append, LoggingLevel level, params TextWriter[] otherOutputs)
-        {
-            _logger = new Logger(path, writeTimestamp, append, level, otherOutputs);
+            get { return App.Get().SensusService.Logger._level; }
         }
 
         public static void Log(string message)
         {
-            _logger.WriteLine(message.Trim() + Environment.NewLine);
+            App.Get().SensusService.Logger.WriteLine(message.Trim() + Environment.NewLine);
         }
 
         private string _path;
@@ -51,7 +44,7 @@ namespace Sensus
         /// <param name="append">Whether or not to append to the output file</param>
         /// <param name="level">Logging level</param>
         /// <param name="otherOutputs">Other outputs to use</param>
-        private Logger(string path, bool writeTimestamp, bool append, LoggingLevel level, params TextWriter[] otherOutputs)
+        public Logger(string path, bool writeTimestamp, bool append, LoggingLevel level, params TextWriter[] otherOutputs)
         {
             _path = path;
             _writeTimestamp = writeTimestamp;
@@ -129,13 +122,15 @@ namespace Sensus
         }
 
         /// <summary>
-        /// Closes this writer
+        /// Closes this logger.
         /// </summary>
         public override void Close()
         {
-            base.Close();
+            lock (this)
+                base.Close();
 
-            _file.Close();
+            lock (_file)
+                _file.Close();
         }
     }
 }

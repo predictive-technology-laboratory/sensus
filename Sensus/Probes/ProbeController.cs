@@ -35,7 +35,8 @@ namespace Sensus.Probes
                     _running = value;
 
                     OnPropertyChanged();
-                    _probe.OnPropertyChanged("Running");
+
+                    _probe.OnPropertyChanged("Running");  // controller's hold the running state of probes, so notify watchers of the associated probe that this controller's running status has changed
                 }
             }
         }
@@ -48,11 +49,17 @@ namespace Sensus.Probes
 
         public virtual void StartAsync()
         {
+            if (Logger.Level >= LoggingLevel.Normal)
+                Logger.Log("Starting " + GetType().FullName + " for " + _probe.Name);
+
             Running = true;
         }
 
         public virtual void StopAsync()
         {
+            if (Logger.Level >= LoggingLevel.Normal)
+                Logger.Log("Stopping " + GetType().FullName + " for " + _probe.Name);
+
             Running = false;
         }
 

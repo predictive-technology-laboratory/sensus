@@ -21,6 +21,8 @@ namespace Sensus.UI
 
         public CreateDataStorePage(Protocol protocol, bool local)
         {
+            Title = "Create " + (local ? "Local" : "Remote") + " Data Store";
+
             Content = new StackLayout
             {
                 VerticalOptions = LayoutOptions.FillAndExpand,
@@ -33,7 +35,7 @@ namespace Sensus.UI
             {
                 Button createDataStoreButton = new Button
                 {
-                    Text = "New " + (local ? "Local" : "Remote") + " " + dataStore.Name + " Data Store"
+                    Text = "New " + dataStore.Name + " Data Store"
                 };
 
                 createDataStoreButton.Clicked += (o, e) =>

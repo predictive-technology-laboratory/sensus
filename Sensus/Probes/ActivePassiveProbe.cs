@@ -9,7 +9,7 @@ namespace Sensus.Probes
     {
         private bool _passive;
 
-        [BooleanUiProperty("Passive:", true)]
+        [BooleanUiProperty("Passive Mode:", true)]
         public virtual bool Passive
         {
             get { return _passive; }
@@ -33,7 +33,7 @@ namespace Sensus.Probes
                     Controller = _passive ? new PassiveProbeController(this) as ProbeController : new ActiveProbeController(this) as ProbeController;
 
                     if (wasRunning)
-                        InitializeAndStart();
+                        InitializeAndStartAsync();
                 }
             }
         }

@@ -53,93 +53,17 @@ namespace Sensus
                     _running = value;
                     OnPropertyChanged();
 
-                    if (_running)
+                    if (App.Get().SensusService == null)
                     {
                         if (Logger.Level >= LoggingLevel.Normal)
-                            Logger.Log("Initializing and starting probes.");
+                            Logger.Log("Sensus service has not been started. Cannot run protocol.");
 
-                        int probesStarted = 0;
-                        foreach (Probe probe in _probes)
-                            if (probe.Enabled && probe.InitializeAndStart())
-                                probesStarted++;
-
-                        if (probesStarted > 0)
-                        {
-                            if (Logger.Level >= LoggingLevel.Normal)
-                                Logger.Log("Starting local data store.");
-
-                            try
-                            {
-                                _localDataStore.StartAsync(this);
-
-                                if (Logger.Level >= LoggingLevel.Normal)
-                                    Logger.Log("Local data store started.");
-                            }
-                            catch (Exception ex)
-                            {
-                                if (Logger.Level >= LoggingLevel.Normal)
-                                    Logger.Log("Local data store failed to start:  " + ex.Message + Environment.NewLine + ex.StackTrace);
-
-                                Running = false;
-                                return;
-                            }
-
-                            if (Logger.Level >= LoggingLevel.Normal)
-                                Logger.Log("Starting remote data store.");
-
-                            try
-                            {
-                                _remoteDataStore.StartAsync(_localDataStore);
-
-                                if (Logger.Level >= LoggingLevel.Normal)
-                                    Logger.Log("Remote data store started.");
-                            }
-                            catch (Exception ex)
-                            {
-                                if (Logger.Level >= LoggingLevel.Normal)
-                                    Logger.Log("Remote data store failed to start:  " + ex.Message);
-
-                                Running = false;
-                                return;
-                            }
-                        }
-                        else
-                        {
-                            if (Logger.Level >= LoggingLevel.Normal)
-                                Logger.Log("No probes were started.");
-
-
-                            Running = false;
-                        }
+                        Running = false;
                     }
+                    else if (_running)
+                        App.Get().SensusService.StartProtocol(this);
                     else
-                    {
-                        if (Logger.Level >= LoggingLevel.Normal)
-                            Logger.Log("Stopping probes.");
-
-                        foreach (Probe probe in _probes)
-                            if (probe.Controller.Running)
-                                try { probe.Controller.StopAsync(); }
-                                catch (Exception ex) { if (Logger.Level >= LoggingLevel.Normal) Logger.Log("Failed to stop " + probe.Name + "'s controller:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
-
-                        if (_localDataStore != null && _localDataStore.Running)
-                        {
-                            if (Logger.Level >= LoggingLevel.Normal)
-                                Logger.Log("Stopping local data store.");
-
-                            try { _localDataStore.StopAsync(); }
-                            catch (Exception ex) { if (Logger.Level >= LoggingLevel.Normal) Logger.Log("Failed to stop local data store:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
-                        }
-
-                        if (_remoteDataStore != null && _remoteDataStore.Running)
-                        {
-                            if (Logger.Level >= LoggingLevel.Normal)
-                                Logger.Log("Stopping remote data store.");
-
-                            try { _remoteDataStore.StopAsync(); }
-                            catch (Exception ex) { if (Logger.Level >= LoggingLevel.Normal) Logger.Log("Failed to stop remote data store:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
-                        }
-                    }
+                        App.Get().SensusService.StopProtocol(this);
                 }
             }
         }
@@ -206,6 +130,94 @@ namespace Sensus
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void StartAsync()
+        {
+            if (Logger.Level >= LoggingLevel.Normal)
+                Logger.Log("Initializing and starting probes for protocol " + _name + ".");
+
+            int probesStarted = 0;
+            foreach (Probe probe in _probes)
+                if (probe.Enabled && probe.InitializeAndStartAsync())
+                    probesStarted++;
+
+            if (probesStarted > 0)
+            {
+                if (Logger.Level >= LoggingLevel.Normal)
+                    Logger.Log("Starting local data store.");
+
+                try
+                {
+                    _localDataStore.StartAsync(this);
+
+                    if (Logger.Level >= LoggingLevel.Normal)
+                        Logger.Log("Local data store started.");
+                }
+                catch (Exception ex)
+                {
+                    if (Logger.Level >= LoggingLevel.Normal)
+                        Logger.Log("Local data store failed to start:  " + ex.Message + Environment.NewLine + ex.StackTrace);
+
+                    Running = false;
+                    return;
+                }
+
+                if (Logger.Level >= LoggingLevel.Normal)
+                    Logger.Log("Starting remote data store.");
+
+                try
+                {
+                    _remoteDataStore.StartAsync(_localDataStore);
+
+                    if (Logger.Level >= LoggingLevel.Normal)
+                        Logger.Log("Remote data store started.");
+                }
+                catch (Exception ex)
+                {
+                    if (Logger.Level >= LoggingLevel.Normal)
+                        Logger.Log("Remote data store failed to start:  " + ex.Message);
+
+                    Running = false;
+                    return;
+                }
+            }
+            else
+            {
+                if (Logger.Level >= LoggingLevel.Normal)
+                    Logger.Log("No probes were started.");
+
+                Running = false;
+            }
+        }
+
+        public void StopAsync()
+        {
+            if (Logger.Level >= LoggingLevel.Normal)
+                Logger.Log("Stopping probes.");
+
+            foreach (Probe probe in _probes)
+                if (probe.Controller.Running)
+                    try { probe.Controller.StopAsync(); }
+                    catch (Exception ex) { if (Logger.Level >= LoggingLevel.Normal) Logger.Log("Failed to stop " + probe.Name + "'s controller:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
+
+            if (_localDataStore != null && _localDataStore.Running)
+            {
+                if (Logger.Level >= LoggingLevel.Normal)
+                    Logger.Log("Stopping local data store.");
+
+                try { _localDataStore.StopAsync(); }
+                catch (Exception ex) { if (Logger.Level >= LoggingLevel.Normal) Logger.Log("Failed to stop local data store:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
+            }
+
+            if (_remoteDataStore != null && _remoteDataStore.Running)
+            {
+                if (Logger.Level >= LoggingLevel.Normal)
+                    Logger.Log("Stopping remote data store.");
+
+                try { _remoteDataStore.StopAsync(); }
+                catch (Exception ex) { if (Logger.Level >= LoggingLevel.Normal) Logger.Log("Failed to stop remote data store:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
+            }
         }
     }
 }

@@ -70,7 +70,7 @@ namespace Sensus.Probes
 
                     if (_protocol.Running)
                         if (_enabled)
-                            InitializeAndStart();
+                            InitializeAndStartAsync();
                         else
                             _controller.StopAsync();
                 }
@@ -90,8 +90,12 @@ namespace Sensus.Probes
             {
                 if (value != _controller)
                 {
+                    bool previousRunningValue = _controller.Running;
+
                     _controller = value;
-                    OnPropertyChanged("Running");
+
+                    if (previousRunningValue != _controller.Running)
+                        OnPropertyChanged("Running");  // the running status of probes come from the controller, so if the controller changes we should update
                 }
             }
         }
@@ -118,7 +122,7 @@ namespace Sensus.Probes
 
         public Probe()
         {
-            _id = -1;
+            _id = -1;  // TODO:  Get reasonable probe ID
             _name = DisplayName;
             _enabled = false;
             _collectedData = new HashSet<Datum>();
@@ -140,16 +144,9 @@ namespace Sensus.Probes
                 throw new ProbeException(this, "Could not find controller for probe " + _name + " (" + GetType().FullName + ").");
         }
 
-        protected virtual bool Initialize()
-        {
-            _id = 1;  // TODO:  Get reasonable probe ID
-            _collectedData.Clear();
-            _supported = true;
+        protected abstract bool Initialize();
 
-            return _supported;
-        }
-
-        public bool InitializeAndStart()
+        public bool InitializeAndStartAsync()
         {
             try
             {
