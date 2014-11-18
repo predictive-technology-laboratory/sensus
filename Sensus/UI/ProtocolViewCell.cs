@@ -8,12 +8,25 @@ namespace Sensus.UI
 {
     public class ProtocolViewCell : ViewCell
     {
+        private class ProtocolRunningValueConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            {
+                return "Status:  " + (((bool)value) ? "On" : "Off");
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            {
+                throw new NotImplementedException();
+            }
+        }
+        
         private class ProbeCountValueConverter : IValueConverter
         {
             public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
             {
                 List<Probe> probes = value as List<Probe>;
-                return "Probes:  " + probes.Count(p => p.Enabled) + " of " + probes.Count + " enabled";
+                return "Probes on:  " + probes.Count(p => p.Running) + " of " + probes.Count;
             }
 
             public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -31,12 +44,12 @@ namespace Sensus.UI
             };
             nameLabel.SetBinding(Label.TextProperty, "Name");
 
-            Label runningLabel = new Label
+            Label statusLabel = new Label
             {
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 Font = Font.SystemFontOfSize(15),
             };
-            runningLabel.SetBinding(Label.TextProperty, new Binding("Running", stringFormat: "Running:  {0}"));
+            statusLabel.SetBinding(Label.TextProperty, new Binding("Running", converter: new ProtocolRunningValueConverter()));
 
             Label probesLabel = new Label
             {
@@ -49,7 +62,7 @@ namespace Sensus.UI
             {
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 Orientation = StackOrientation.Horizontal,
-                Children = { runningLabel, probesLabel }
+                Children = { statusLabel, probesLabel }
             };
 
             View = new StackLayout

@@ -23,8 +23,7 @@ namespace Sensus.DataStores.Remote
                 committedData.Add(datum);
 
                 if (Logger.Level >= LoggingLevel.Debug)
-                    Logger.Log("Committed datum to remote console:  " + datum + Environment.NewLine +
-                               "Size of committed data:  " + committedData.Count);
+                    Logger.Log("Committed datum to remote console:  " + datum);
             }
 
             return committedData;

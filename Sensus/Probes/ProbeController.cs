@@ -33,7 +33,9 @@ namespace Sensus.Probes
                         throw new ProbeControllerException(this, "Attempted to " + (value ? "start" : "stop") + " controller, but it was already " + (value ? "started" : "stopped"));
 
                     _running = value;
+
                     OnPropertyChanged();
+                    _probe.OnPropertyChanged("Running");
                 }
             }
         }

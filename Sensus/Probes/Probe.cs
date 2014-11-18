@@ -91,7 +91,7 @@ namespace Sensus.Probes
                 if (value != _controller)
                 {
                     _controller = value;
-                    OnPropertyChanged();
+                    OnPropertyChanged("Running");
                 }
             }
         }
@@ -107,6 +107,11 @@ namespace Sensus.Probes
                     OnPropertyChanged();
                 }
             }
+        }
+
+        public bool Running
+        {
+            get { return _controller.Running; }
         }
 
         protected abstract string DisplayName { get; }
@@ -185,7 +190,7 @@ namespace Sensus.Probes
             }
         }
 
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        public void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));

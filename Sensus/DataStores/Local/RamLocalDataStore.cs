@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Sensus.DataStores.Local
 {
@@ -31,7 +32,8 @@ namespace Sensus.DataStores.Local
 
         public override ICollection<Datum> GetDataForRemoteDataStore()
         {
-            return _data;
+            lock (_data)
+                return _data.ToList();
         }
 
         public override void ClearDataCommittedToRemoteDataStore(ICollection<Datum> data)

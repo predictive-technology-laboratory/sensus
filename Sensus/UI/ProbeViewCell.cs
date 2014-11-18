@@ -6,6 +6,19 @@ namespace Sensus.UI
 {
     public class ProbeViewCell : ViewCell
     {
+        private class ProbeRunningValueConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            {
+                return "Status:  " + (((bool)value) ? "On" : "Off");
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         private class SupportedValueConverter : IValueConverter
         {
             public object Convert(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -14,19 +27,6 @@ namespace Sensus.UI
                     return "";
                 else
                     return "Unsupported";
-            }
-
-            public object ConvertBack(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
-            {
-                throw new System.NotImplementedException();
-            }
-        }
-
-        public class ControllerValueConverter : IValueConverter
-        {
-            public object Convert(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
-            {
-                return "Running:  " + (value as ProbeController).Running;
             }
 
             public object ConvertBack(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -58,18 +58,18 @@ namespace Sensus.UI
             };
             supportedLabel.SetBinding(Label.TextProperty, new Binding("Supported", converter: new SupportedValueConverter()));
 
-            Label runningLabel = new Label
+            Label statusLabel = new Label
             {
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 Font = Font.SystemFontOfSize(15)
             };
-            runningLabel.SetBinding(Label.TextProperty, new Binding("Controller", converter: new ControllerValueConverter()));
+            statusLabel.SetBinding(Label.TextProperty, new Binding("Running", converter: new ProbeRunningValueConverter()));
 
             StackLayout probeProperties = new StackLayout
             {
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 Orientation = StackOrientation.Horizontal,
-                Children = { enabledLabel, runningLabel }
+                Children = { enabledLabel, supportedLabel, statusLabel }
             };
 
             View = new StackLayout

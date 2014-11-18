@@ -42,7 +42,7 @@ namespace Sensus
             get { return _probes; }
         }
 
-        [BooleanUiProperty("Running:", true)]
+        [BooleanUiProperty("Status:", true)]
         public bool Running
         {
             get { return _running; }
