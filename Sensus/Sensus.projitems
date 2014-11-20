@@ -67,7 +67,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\CreateDataStorePage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\MainPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProbePage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UI\ProbeViewCell.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Properties\BooleanUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Properties\EntryIntegerUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Properties\IncrementalIntegerUiProperty.cs" />
@@ -75,7 +74,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\Properties\UiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProtocolPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProtocolsPage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UI\ProtocolViewCell.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\Interactive\" />

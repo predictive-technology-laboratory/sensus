@@ -25,7 +25,8 @@ namespace Sensus.UI
                 protocols.Add(new Protocol("Test Protocol " + (i + 1), true));
 
             ListView protocolsList = new ListView();
-            protocolsList.ItemTemplate = new DataTemplate(typeof(ProtocolViewCell));
+            protocolsList.ItemTemplate = new DataTemplate(typeof(TextCell));
+            protocolsList.ItemTemplate.SetBinding(TextCell.TextProperty, "Name");
             protocolsList.ItemsSource = protocols;
             protocolsList.ItemTapped += (o, e) =>
             {

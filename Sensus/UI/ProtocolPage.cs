@@ -39,9 +39,9 @@ namespace Sensus.UI
 
             #region probes
             ListView probesList = new ListView();
-            probesList.ItemTemplate = new DataTemplate(typeof(ProbeViewCell));
-            probesList.BindingContext = protocol;
-            probesList.SetBinding(ListView.ItemsSourceProperty, "Probes");
+            probesList.ItemTemplate = new DataTemplate(typeof(TextCell));
+            probesList.ItemTemplate.SetBinding(TextCell.TextProperty, "Name");
+            probesList.ItemsSource = protocol.Probes;
             probesList.ItemTapped += (o, e) =>
                 {
                     probesList.SelectedItem = null;
