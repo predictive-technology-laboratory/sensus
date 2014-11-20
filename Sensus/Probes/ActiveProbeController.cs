@@ -42,39 +42,56 @@ namespace Sensus.Probes
             _pollTrigger = new AutoResetEvent(true); // start polling immediately
         }
 
-        public override void StartAsync()
+        public override Task StartAsync()
         {
-            base.StartAsync();
-
-            _pollTask = Task.Run(() =>
+            return Task.Run(async () =>
                 {
-                    while (Running)
-                    {
-                        _pollTrigger.WaitOne(_sleepDurationMS);
+                    await base.StartAsync();
 
-                        if (Running)
+                    _pollTask = Task.Run(() =>
                         {
-                            IActiveProbe activeProbe = Probe as IActiveProbe;
+                            while (Running)
+                            {
+                                _pollTrigger.WaitOne(_sleepDurationMS);
 
-                            Datum d = null;
+                                if (Running)
+                                {
+                                    IActiveProbe activeProbe = Probe as IActiveProbe;
 
-                            try { d = activeProbe.Poll(); }
-                            catch (Exception ex) { if (Logger.Level >= LoggingLevel.Normal) Logger.Log("Failed to poll probe \"" + activeProbe.Name + "\":  " + ex.Message + Environment.NewLine + ex.StackTrace); }
+                                    Datum d = null;
 
-                            try { activeProbe.StoreDatum(d); }
-                            catch (Exception ex) { if (Logger.Level >= LoggingLevel.Normal) Logger.Log("Failed to store datum:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
-                        }
-                    }
+                                    try { d = activeProbe.Poll(); }
+                                    catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to poll probe \"" + activeProbe.Name + "\":  " + ex.Message + Environment.NewLine + ex.StackTrace); }
+
+                                    try { activeProbe.StoreDatum(d); }
+                                    catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to store datum:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
+                                }
+                            }
+                        });
                 });
         }
 
-        public override async void StopAsync()
+        public override Task StopAsync()
         {
-            base.StopAsync();
-
-            await Task.Run(async () =>
+            return Task.Run(async () =>
                 {
+                    // might have called stop immediately after start, in which case the poll task might not have been initialized. wait for the poll task to appear.
+                    int triesLeft = 5;
+                    while (_pollTask == null && triesLeft-- > 0)
+                    {
+                        if (App.LoggingLevel >= LoggingLevel.Normal)
+                            App.Get().SensusService.Log("Waiting for controller poll task to appear.");
+
+                        Thread.Sleep(1000);
+                    }
+
+                    if (_pollTask == null)
+                        throw new SensusException("Failed to get poll task in ActiveProbeController.StopAsync");
+
+                    await base.StopAsync();
+
                     _pollTrigger.Set();  // don't wait for current sleep cycle to end -- wake up immediately so task can complete
+
                     await _pollTask;
                 });
         }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Sensus.Probes
 {
@@ -20,20 +21,21 @@ namespace Sensus.Probes
                     _passive = value;
                     OnPropertyChanged();
 
-                    bool wasRunning = false;
+                    ProbeController newController = _passive ? new PassiveProbeController(this) as ProbeController : new ActiveProbeController(this) as ProbeController;
+
                     if (Controller.Running)
                     {
-                        if (Logger.Level >= LoggingLevel.Normal)
-                            Logger.Log("Restarting " + Name + " as " + (_passive ? "passive" : "active") + " probe.");
+                        if (App.LoggingLevel >= LoggingLevel.Normal)
+                            App.Get().SensusService.Log("Restarting " + Name + " as " + (_passive ? "passive" : "active") + " probe.");
 
-                        Controller.StopAsync();
-                        wasRunning = true;
+                        Controller.StopAsync().ContinueWith(t =>
+                            {
+                                Controller = newController;
+                                InitializeAndStartAsync();
+                            });
                     }
-
-                    Controller = _passive ? new PassiveProbeController(this) as ProbeController : new ActiveProbeController(this) as ProbeController;
-
-                    if (wasRunning)
-                        InitializeAndStartAsync();
+                    else
+                        Controller = newController;
                 }
             }
         }

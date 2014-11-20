@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Sensus.Probes
 {
@@ -35,8 +36,7 @@ namespace Sensus.Probes
                     _running = value;
 
                     OnPropertyChanged();
-
-                    _probe.OnPropertyChanged("Running");  // controller's hold the running state of probes, so notify watchers of the associated probe that this controller's running status has changed
+                    _probe.OnPropertyChanged("Running");  // controllers hold the running state of probes, so notify watchers of the associated probe that this controller's running status has changed
                 }
             }
         }
@@ -47,20 +47,26 @@ namespace Sensus.Probes
             _running = false;
         }
 
-        public virtual void StartAsync()
+        public virtual Task StartAsync()
         {
-            if (Logger.Level >= LoggingLevel.Normal)
-                Logger.Log("Starting " + GetType().FullName + " for " + _probe.Name);
+            return Task.Run(() =>
+                {
+                    if (App.LoggingLevel >= LoggingLevel.Normal)
+                        App.Get().SensusService.Log("Starting " + GetType().FullName + " for " + _probe.Name);
 
-            Running = true;
+                    Running = true;
+                });
         }
 
-        public virtual void StopAsync()
+        public virtual Task StopAsync()
         {
-            if (Logger.Level >= LoggingLevel.Normal)
-                Logger.Log("Stopping " + GetType().FullName + " for " + _probe.Name);
+            return Task.Run(() =>
+                {
+                    if (App.LoggingLevel >= LoggingLevel.Normal)
+                        App.Get().SensusService.Log("Stopping " + GetType().FullName + " for " + _probe.Name);
 
-            Running = false;
+                    Running = false;
+                });
         }
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)

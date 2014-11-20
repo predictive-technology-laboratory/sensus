@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Sensus
 {
@@ -10,6 +11,7 @@ namespace Sensus
         private List<Protocol> _registeredProtocols;
         private Logger _logger;
         private readonly string _logPath;
+        private bool _stopped;
 
         public Logger Logger
         {
@@ -23,6 +25,7 @@ namespace Sensus
 
         public SensusServiceHelper()
         {
+            _stopped = false;
             _registeredProtocols = new List<Protocol>();
 
             _logPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
@@ -34,26 +37,56 @@ namespace Sensus
 #endif
         }
 
-        public void RegisterProtocol(Protocol protocol)
+        public void StartProtocol(Protocol protocol)
         {
-            lock (_registeredProtocols)
-                if (!_registeredProtocols.Contains(protocol))
-                    _registeredProtocols.Add(protocol);
+            lock (this)
+                if (!_stopped)
+                {
+                    if (!_registeredProtocols.Contains(protocol))
+                        _registeredProtocols.Add(protocol);
+
+                    protocol.StartAsync();
+                }
+        }
+
+        public void StopProtocol(Protocol protocol)
+        {
+            lock (this)
+                if (!_stopped)
+                    protocol.StopAsync();
         }
 
         public void UnregisterProtocol(Protocol protocol)
         {
-            lock (_registeredProtocols)
-                _registeredProtocols.Remove(protocol);
+            lock (this)
+                if (!_stopped)
+                    _registeredProtocols.Remove(protocol);
         }
 
-        public void Stop()
+        /// <summary>
+        /// Stops all platform-independent service functionality. This include the logger, so no logging can be done after this method is called.
+        /// </summary>
+        /// <returns></returns>
+        public Task StopServiceAsync()
         {
-            _logger.Close();
+            // prevent any future interactions with the ServiceHelper
+            lock (this)
+                if (_stopped)
+                    return null;
+                else
+                    _stopped = true;
 
-            lock (_registeredProtocols)
-                foreach (Protocol protocol in _registeredProtocols)
-                    protocol.StopAsync();
+            if (App.LoggingLevel >= LoggingLevel.Normal)
+                App.Get().SensusService.Log("Stopping Sensus service.");
+
+            return Task.Run(async () =>
+                {
+                    foreach (Protocol protocol in _registeredProtocols)
+                        if (protocol.Running)
+                            await protocol.StopAsync();
+
+                    _logger.Close();
+                });
         }
     }
 }

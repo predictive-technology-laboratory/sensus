@@ -1,21 +1,27 @@
-﻿using Sensus.Probes;
+﻿using Sensus.Exceptions;
+using Sensus.Probes;
 using Sensus.Probes.Location;
 using Sensus.UI;
 using System;
-using System.ComponentModel;
-using System.IO;
+using System.Threading;
 using Xamarin.Forms;
 using Xamarin.Geolocation;
-using Sensus;
-using Sensus.Exceptions;
-using System.Threading;
 
 namespace Sensus
 {
     public abstract class App
-    {     
+    {
         private static App _singleton;
-        private static object _staticLockObject = new object();
+        private static readonly object _staticLockObject = new object();
+        private static LoggingLevel _loggingLevel;
+
+        /// <summary>
+        /// This is a shortcut accessor for the logging level of the current App. It gets set when the the App is connected to its SensusService.
+        /// </summary>
+        public static LoggingLevel LoggingLevel
+        {
+            get { return _loggingLevel; }
+        }
 
         protected static void Set(App app)
         {
@@ -33,6 +39,8 @@ namespace Sensus
                 return _singleton;
             }
         }
+
+        public event EventHandler StopSensusTapped;
 
         private NavigationPage _navigationPage;
         private ISensusService _sensusService;
@@ -52,11 +60,17 @@ namespace Sensus
                     Thread.Sleep(1000);
 
                 if (_sensusService == null)
-                    throw new Exception("Failed to get Sensus service from App.");
+                    throw new SensusException("Failed to connect to SensusService.");
 
                 return _sensusService;
             }
-            set { _sensusService = value; }
+            set
+            {
+                _sensusService = value;
+
+                // retrieve the logging level for quick access later, minimizing the computational impact of checking the logging level.
+                _loggingLevel = _sensusService.LoggingLevel;
+            }
         }
 
         protected App(Geolocator locator)
@@ -68,6 +82,18 @@ namespace Sensus
                 {
                     await _navigationPage.PushAsync(new ProtocolsPage());
                 };
+
+            MainPage.SettingsTapped += (o, e) =>
+                {
+                };
+
+            MainPage.StopSensusTapped += async (o, e) =>
+                {
+                    await App.Get().SensusService.StopAsync();
+
+                    if (StopSensusTapped != null)
+                        StopSensusTapped(o, e);
+                };
             #endregion
 
             #region protocols page
@@ -78,12 +104,12 @@ namespace Sensus
             #endregion
 
             #region protocol page
-            ProtocolPage.CreateLocalDataStorePressed += async (o, e) =>
+            ProtocolPage.CreateLocalDataStoreTapped += async (o, e) =>
                 {
                     await _navigationPage.PushAsync(new CreateDataStorePage(o as Protocol, true));
                 };
 
-            ProtocolPage.CreateRemoteDataStorePressed += async (o, e) =>
+            ProtocolPage.CreateRemoteDataStoreTapped += async (o, e) =>
                 {
                     await _navigationPage.PushAsync(new CreateDataStorePage(o as Protocol, false));
                 };
@@ -95,7 +121,7 @@ namespace Sensus
             #endregion
 
             #region data stores page
-            CreateDataStorePage.CreateDataStorePressed += async (o, e) =>
+            CreateDataStorePage.CreateDataStoreTapped += async (o, e) =>
                 {
                     await _navigationPage.PopAsync();
                     await _navigationPage.PushAsync(new DataStorePage(e.DataStore, e.Protocol, e.Local));
@@ -103,13 +129,13 @@ namespace Sensus
             #endregion
 
             #region data store page
-            DataStorePage.CancelPressed += async (o, e) =>
+            DataStorePage.CancelTapped += async (o, e) =>
                 {
                     await _navigationPage.PopAsync();
                     _navigationPage.CurrentPage.ForceLayout();
                 };
 
-            DataStorePage.OkPressed += async (o, e) =>
+            DataStorePage.OkTapped += async (o, e) =>
                 {
                     await _navigationPage.PopAsync();
                     _navigationPage.CurrentPage.ForceLayout();

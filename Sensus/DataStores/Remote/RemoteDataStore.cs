@@ -36,10 +36,10 @@ namespace Sensus.DataStores.Remote
             CommitDelayMS = 1000 * 60 * 30;  // every thirty minutes by default
         }
 
-        public void StartAsync(LocalDataStore localDataStore)
+        public void Start(LocalDataStore localDataStore)
         {
             _localDataStore = localDataStore;
-            StartAsync();
+            Start();
         }
 
         protected override ICollection<Datum> GetDataToCommit()

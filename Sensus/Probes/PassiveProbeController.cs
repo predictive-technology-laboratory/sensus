@@ -1,4 +1,5 @@
 ﻿using Sensus.Exceptions;
+using System.Threading.Tasks;
 namespace Sensus.Probes
 {
     public class PassiveProbeController : ProbeController
@@ -8,18 +9,24 @@ namespace Sensus.Probes
         {
         }
 
-        public override void StartAsync()
+        public override Task StartAsync()
         {
-            base.StartAsync();
+            return Task.Run(async () =>
+                {
+                    await base.StartAsync();
 
-            (Probe as IPassiveProbe).StartListening();
+                    (Probe as IPassiveProbe).StartListening();
+                });
         }
 
-        public override void StopAsync()
+        public override Task StopAsync()
         {
-            base.StopAsync();
+            return Task.Run(async () =>
+                {
+                    await base.StopAsync();
 
-            (Probe as IPassiveProbe).StopListening();
+                    (Probe as IPassiveProbe).StopListening();
+                });
         }
     }
 }

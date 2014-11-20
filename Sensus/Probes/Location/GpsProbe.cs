@@ -13,8 +13,8 @@ namespace Sensus.Probes.Location
         {
             _positionChangedHandler = (o, e) =>
                 {
-                    if (Logger.Level >= LoggingLevel.Verbose)
-                        Logger.Log("Received position change notification.");
+                    if (App.LoggingLevel >= LoggingLevel.Verbose)
+                        App.Get().SensusService.Log("Received position change notification.");
 
                     StoreDatum(ConvertReadingToDatum(e.Position));
                 };
@@ -28,8 +28,8 @@ namespace Sensus.Probes.Location
         {
             lock (this)
             {
-                if (Logger.Level >= LoggingLevel.Verbose)
-                    Logger.Log("Polling GPS receiver.");
+                if (App.LoggingLevel >= LoggingLevel.Verbose)
+                    App.Get().SensusService.Log("Polling GPS receiver.");
 
                 return ConvertReadingToDatum(GpsReceiver.Get().GetReading((Controller as ActiveProbeController).SleepDurationMS, 10000));
             }

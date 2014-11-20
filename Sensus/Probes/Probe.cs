@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Sensus.UI.Properties;
+using System.Threading.Tasks;
 
 namespace Sensus.Probes
 {
@@ -146,16 +147,19 @@ namespace Sensus.Probes
 
         protected abstract bool Initialize();
 
-        public bool InitializeAndStartAsync()
+        public Task<bool> InitializeAndStartAsync()
         {
-            try
-            {
-                if (Initialize())
-                    _controller.StartAsync();
-            }
-            catch (Exception ex) { if (Logger.Level >= LoggingLevel.Normal) Logger.Log("Failed to start probe \"" + Name + "\":" + ex.Message + Environment.NewLine + ex.StackTrace); }
+            return Task.Run<bool>(async () =>
+                {
+                    try
+                    {
+                        if (Initialize())
+                            await _controller.StartAsync();
+                    }
+                    catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to start probe \"" + Name + "\":" + ex.Message + Environment.NewLine + ex.StackTrace); }
 
-            return _controller.Running;
+                    return _controller.Running;
+                });
         }
 
         public virtual void StoreDatum(Datum datum)
@@ -163,8 +167,8 @@ namespace Sensus.Probes
             if (datum != null)
                 lock (_collectedData)
                 {
-                    if (Logger.Level >= LoggingLevel.Debug)
-                        Logger.Log("Storing datum in probe cache:  " + datum);
+                    if (App.LoggingLevel >= LoggingLevel.Debug)
+                        App.Get().SensusService.Log("Storing datum in probe cache:  " + datum);
 
                     _collectedData.Add(datum);
                 }
@@ -179,8 +183,8 @@ namespace Sensus.Probes
         {
             lock (_collectedData)
             {
-                if (Logger.Level >= LoggingLevel.Verbose)
-                    Logger.Log("Clearing committed data from probe cache:  " + data.Count + " items.");
+                if (App.LoggingLevel >= LoggingLevel.Verbose)
+                    App.Get().SensusService.Log("Clearing committed data from probe cache:  " + data.Count + " items.");
 
                 foreach (Datum datum in data)
                     _collectedData.Remove(datum);

@@ -1,19 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Sensus
 {
     public interface ISensusService
     {
-        Logger Logger { get; }
-
         IEnumerable<Protocol> RegisteredProtocols { get; }
+
+        LoggingLevel LoggingLevel { get; }
+
+        void Log(string message);
 
         void StartProtocol(Protocol protocol);
 
         void StopProtocol(Protocol protocol);
 
-        void Stop();
+        Task StopAsync();
     }
 }

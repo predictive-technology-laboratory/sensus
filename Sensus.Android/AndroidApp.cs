@@ -36,8 +36,8 @@ namespace Sensus.Android
                         {
                             SensusService = e.Binder.Service;  // bind
 
-                            if (Logger.Level >= LoggingLevel.Normal)
-                                Logger.Log("Connected to Sensus service.");
+                            if (App.LoggingLevel >= LoggingLevel.Normal)
+                                App.Get().SensusService.Log("Connected to Sensus service.");
                         };
 
                     Intent bindServiceIntent = new Intent(Application.Context, typeof(AndroidSensusService));

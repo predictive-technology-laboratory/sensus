@@ -18,18 +18,19 @@ namespace Sensus.Android
     {
         private int _startId;
         private SensusServiceHelper _serviceHelper;
+        private NotificationManager _notificationManager;
         private Notification.Builder _notificationBuilder;
         private const int ServiceNotificationId = 0;
         private const int NotificationPendingIntentId = 1;
 
-        public Logger Logger
-        {
-            get { return _serviceHelper.Logger; }
-        }
-
         public IEnumerable<Protocol> RegisteredProtocols
         {
             get { return _serviceHelper.RegisteredProtocols; }
+        }
+
+        public LoggingLevel LoggingLevel
+        {
+            get { return _serviceHelper.Logger.Level; }
         }
 
         public AndroidSensusService()
@@ -40,6 +41,7 @@ namespace Sensus.Android
         {
             base.OnCreate();
 
+            _notificationManager = GetSystemService(Context.NotificationService) as NotificationManager;
             _notificationBuilder = new Notification.Builder(this);
             _serviceHelper = new SensusServiceHelper();
         }
@@ -61,11 +63,9 @@ namespace Sensus.Android
                                         .SetSmallIcon(Resource.Drawable.Icon)
                                         .SetContentIntent(pendingIntent)
                                         .SetAutoCancel(true)
-                                        .SetOngoing(true);
+                                        .SetOngoing(true);                    
 
-                    NotificationManager notificationManager = GetSystemService(Context.NotificationService) as NotificationManager;
-
-                    notificationManager.Notify(ServiceNotificationId, _notificationBuilder.Build());
+                    _notificationManager.Notify(ServiceNotificationId, _notificationBuilder.Build());
                 });
 
             return StartCommandResult.RedeliverIntent;
@@ -73,37 +73,43 @@ namespace Sensus.Android
 
         public void StartProtocol(Protocol protocol)
         {
-            _serviceHelper.RegisterProtocol(protocol);
-            protocol.StartAsync();
+            _serviceHelper.StartProtocol(protocol);
         }
 
         public void StopProtocol(Protocol protocol)
         {
-            protocol.StopAsync();
+            _serviceHelper.StopProtocol(protocol);
         }
 
-        public void Stop()
+        public Task StopAsync()
         {
-            _serviceHelper.Stop();
+            return Task.Run(async () =>
+                {
+                    await _serviceHelper.StopServiceAsync();
 
-            if (StopSelfResult(_startId))
-                if (Logger.Level >= LoggingLevel.Normal)
-                    Logger.Log("Stopped Sensus service.");
+                    _notificationManager.Cancel(ServiceNotificationId);
+
+                    StopSelf();
+                });
         }
 
         public override void OnDestroy()
         {
-            if (Logger.Level >= LoggingLevel.Normal)
-                Logger.Log("Destroying Sensus service.");
-
             base.OnDestroy();
 
-            _serviceHelper.Stop();
+            _notificationManager.Cancel(ServiceNotificationId);
+
+            _serviceHelper.StopServiceAsync();
         }
 
         public override IBinder OnBind(Intent intent)
         {
             return new SensusServiceBinder(this);
+        }        
+
+        public void Log(string message)
+        {
+            _serviceHelper.Logger.WriteLine(message);
         }
     }
 }

@@ -70,13 +70,13 @@ namespace Sensus.DataStores
             _running = false;
         }
 
-        protected void StartAsync()
+        protected void Start()
         {
             if (_running)
                 throw new DataStoreException("Datastore already running.");
 
-            if (Logger.Level >= LoggingLevel.Normal)
-                Logger.Log("Starting " + GetType().Name + " data store:  " + Name);
+            if (App.LoggingLevel >= LoggingLevel.Normal)
+                App.Get().SensusService.Log("Starting " + GetType().Name + " data store:  " + Name);
 
             _running = true;
 
@@ -84,19 +84,19 @@ namespace Sensus.DataStores
                 {
                     while (NeedsToBeRunning)
                     {
-                        if (Logger.Level >= LoggingLevel.Debug)
-                            Logger.Log(Name + " is about to wait for " + _commitDelayMS + " MS before committing data.");
+                        if (App.LoggingLevel >= LoggingLevel.Debug)
+                            App.Get().SensusService.Log(Name + " is about to wait for " + _commitDelayMS + " MS before committing data.");
 
                         _commitTrigger.WaitOne(_commitDelayMS);
 
-                        if (Logger.Level >= LoggingLevel.Debug)
-                            Logger.Log(Name + " is waking up to commit data.");
+                        if (App.LoggingLevel >= LoggingLevel.Debug)
+                            App.Get().SensusService.Log(Name + " is waking up to commit data.");
 
                         DataCommitted(CommitData(GetDataToCommit()));  // regardless of whether the commit is triggered by the delay or by Stop, we should commit existing data.
                     }
 
-                    if (Logger.Level >= LoggingLevel.Normal)
-                        Logger.Log("Exited while-loop for data store " + Name);
+                    if (App.LoggingLevel >= LoggingLevel.Normal)
+                        App.Get().SensusService.Log("Exited while-loop for data store " + Name);
 
                     _running = false;
                 });
@@ -108,28 +108,29 @@ namespace Sensus.DataStores
 
         protected abstract void DataCommitted(ICollection<Datum> data);
 
-        public async void StopAsync()
+        public Task StopAsync()
         {
-            // data stores will automatically stop if NeedsToBeRunning becomes false. however, we might be in the middle of a very long commit delay, in which case the Stop method serves a purpose by immediately triggering a commit and stopping the thread
-            if (!_running)
-                return;
-
-            if (NeedsToBeRunning)
-                throw new DataStoreException("DataStore " + Name + " cannot be stopped while it is needed.");
-
-            _running = false;
-
-            if (Logger.Level >= LoggingLevel.Normal)
-                Logger.Log("Setting data store " + Name + "'s wait handle within Stop method.");
-
-            await Task.Run(async () =>
+            return Task.Run(async () =>
                 {
-                    _commitTrigger.Set();
-                    await _commitTask;
-                });
+                    // data stores will automatically stop if NeedsToBeRunning becomes false. however, we might be in the middle of a very long commit delay, in which case the Stop method serves a purpose by immediately triggering a commit and stopping the thread
+                    if (!_running)
+                        return;
 
-            if (Logger.Level >= LoggingLevel.Normal)
-                Logger.Log("Data store " + Name + "'s task ended.");
+                    if (NeedsToBeRunning)
+                        throw new DataStoreException("DataStore " + Name + " cannot be stopped while it is needed.");
+
+                    _running = false;
+
+                    if (App.LoggingLevel >= LoggingLevel.Normal)
+                        App.Get().SensusService.Log("Setting data store " + Name + "'s wait handle within Stop method.");
+
+                    _commitTrigger.Set();
+
+                    await _commitTask;
+
+                    if (App.LoggingLevel >= LoggingLevel.Normal)
+                        App.Get().SensusService.Log("Data store " + Name + "'s task ended.");
+                });
         }
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)

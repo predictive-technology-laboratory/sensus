@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace Sensus
 {
@@ -125,51 +126,51 @@ namespace Sensus
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public void StartAsync()
+        public async void StartAsync()
         {
-            if (Logger.Level >= LoggingLevel.Normal)
-                Logger.Log("Initializing and starting probes for protocol " + _name + ".");
+            if (App.LoggingLevel >= LoggingLevel.Normal)
+                App.Get().SensusService.Log("Initializing and starting probes for protocol " + _name + ".");
 
             int probesStarted = 0;
             foreach (Probe probe in _probes)
-                if (probe.Enabled && probe.InitializeAndStartAsync())
+                if (probe.Enabled && await probe.InitializeAndStartAsync())
                     probesStarted++;
 
             if (probesStarted > 0)
             {
-                if (Logger.Level >= LoggingLevel.Normal)
-                    Logger.Log("Starting local data store.");
+                if (App.LoggingLevel >= LoggingLevel.Normal)
+                    App.Get().SensusService.Log("Starting local data store.");
 
                 try
                 {
-                    _localDataStore.StartAsync(this);
+                    _localDataStore.Start(this);
 
-                    if (Logger.Level >= LoggingLevel.Normal)
-                        Logger.Log("Local data store started.");
+                    if (App.LoggingLevel >= LoggingLevel.Normal)
+                        App.Get().SensusService.Log("Local data store started.");
                 }
                 catch (Exception ex)
                 {
-                    if (Logger.Level >= LoggingLevel.Normal)
-                        Logger.Log("Local data store failed to start:  " + ex.Message + Environment.NewLine + ex.StackTrace);
+                    if (App.LoggingLevel >= LoggingLevel.Normal)
+                        App.Get().SensusService.Log("Local data store failed to start:  " + ex.Message + Environment.NewLine + ex.StackTrace);
 
                     Running = false;
                     return;
                 }
 
-                if (Logger.Level >= LoggingLevel.Normal)
-                    Logger.Log("Starting remote data store.");
+                if (App.LoggingLevel >= LoggingLevel.Normal)
+                    App.Get().SensusService.Log("Starting remote data store.");
 
                 try
                 {
-                    _remoteDataStore.StartAsync(_localDataStore);
+                    _remoteDataStore.Start(_localDataStore);
 
-                    if (Logger.Level >= LoggingLevel.Normal)
-                        Logger.Log("Remote data store started.");
+                    if (App.LoggingLevel >= LoggingLevel.Normal)
+                        App.Get().SensusService.Log("Remote data store started.");
                 }
                 catch (Exception ex)
                 {
-                    if (Logger.Level >= LoggingLevel.Normal)
-                        Logger.Log("Remote data store failed to start:  " + ex.Message);
+                    if (App.LoggingLevel >= LoggingLevel.Normal)
+                        App.Get().SensusService.Log("Remote data store failed to start:  " + ex.Message);
 
                     Running = false;
                     return;
@@ -177,40 +178,50 @@ namespace Sensus
             }
             else
             {
-                if (Logger.Level >= LoggingLevel.Normal)
-                    Logger.Log("No probes were started.");
+                if (App.LoggingLevel >= LoggingLevel.Normal)
+                    App.Get().SensusService.Log("No probes were started.");
 
                 Running = false;
             }
         }
 
-        public void StopAsync()
+        public Task StopAsync()
         {
-            if (Logger.Level >= LoggingLevel.Normal)
-                Logger.Log("Stopping probes.");
+            return Task.Run(async () =>
+                {
+                    // if the service is stopping this protocol, then _running/Running will be true here. set it to false to release the probes and data stores below.
+                    if (_running)
+                    {
+                        _running = false;
+                        OnPropertyChanged("Running");
+                    }
 
-            foreach (Probe probe in _probes)
-                if (probe.Controller.Running)
-                    try { probe.Controller.StopAsync(); }
-                    catch (Exception ex) { if (Logger.Level >= LoggingLevel.Normal) Logger.Log("Failed to stop " + probe.Name + "'s controller:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
+                    if (App.LoggingLevel >= LoggingLevel.Normal)
+                        App.Get().SensusService.Log("Stopping probes.");
 
-            if (_localDataStore != null && _localDataStore.Running)
-            {
-                if (Logger.Level >= LoggingLevel.Normal)
-                    Logger.Log("Stopping local data store.");
+                    foreach (Probe probe in _probes)
+                        if (probe.Controller.Running)
+                            try { await probe.Controller.StopAsync(); }
+                            catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to stop " + probe.Name + "'s controller:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
 
-                try { _localDataStore.StopAsync(); }
-                catch (Exception ex) { if (Logger.Level >= LoggingLevel.Normal) Logger.Log("Failed to stop local data store:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
-            }
+                    if (_localDataStore != null && _localDataStore.Running)
+                    {
+                        if (App.LoggingLevel >= LoggingLevel.Normal)
+                            App.Get().SensusService.Log("Stopping local data store.");
 
-            if (_remoteDataStore != null && _remoteDataStore.Running)
-            {
-                if (Logger.Level >= LoggingLevel.Normal)
-                    Logger.Log("Stopping remote data store.");
+                        try { await _localDataStore.StopAsync(); }
+                        catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to stop local data store:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
+                    }
 
-                try { _remoteDataStore.StopAsync(); }
-                catch (Exception ex) { if (Logger.Level >= LoggingLevel.Normal) Logger.Log("Failed to stop remote data store:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
-            }
+                    if (_remoteDataStore != null && _remoteDataStore.Running)
+                    {
+                        if (App.LoggingLevel >= LoggingLevel.Normal)
+                            App.Get().SensusService.Log("Stopping remote data store.");
+
+                        try { await _remoteDataStore.StopAsync(); }
+                        catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to stop remote data store:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
+                    }
+                });
         }
 
         public void ClearPropertyChangedDelegates()

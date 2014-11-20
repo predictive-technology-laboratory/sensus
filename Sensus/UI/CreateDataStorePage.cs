@@ -10,7 +10,7 @@ namespace Sensus.UI
 {
     public class CreateDataStorePage : ContentPage
     {
-        public static event EventHandler<CreateDataStoreEventArgs> CreateDataStorePressed;
+        public static event EventHandler<CreateDataStoreEventArgs> CreateDataStoreTapped;
 
         public class CreateDataStoreEventArgs : EventArgs
         {
@@ -40,7 +40,7 @@ namespace Sensus.UI
 
                 createDataStoreButton.Clicked += (o, e) =>
                     {
-                        CreateDataStorePressed(o, new CreateDataStoreEventArgs { DataStore = dataStore, Protocol = protocol, Local = local });
+                        CreateDataStoreTapped(o, new CreateDataStoreEventArgs { DataStore = dataStore, Protocol = protocol, Local = local });
                     };
 
                 (Content as StackLayout).Children.Add(createDataStoreButton);

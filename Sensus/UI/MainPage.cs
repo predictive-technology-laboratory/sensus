@@ -9,6 +9,8 @@ namespace Sensus.UI
     public class MainPage : ContentPage
     {
         public static event EventHandler<ItemTappedEventArgs> ProtocolsTapped;
+        public static event EventHandler<EventArgs> SettingsTapped;
+        public static event EventHandler<EventArgs> StopSensusTapped;
 
         public MainPage()
         {
@@ -36,6 +38,9 @@ namespace Sensus.UI
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 Children = { mainList }
             };
+
+            ToolbarItems.Add(new ToolbarItem("Settings", null, new Action(() => SettingsTapped(null, null))));
+            ToolbarItems.Add(new ToolbarItem("Stop Sensus", null, new Action(() => StopSensusTapped(null, null))));
         }
     }
 }

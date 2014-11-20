@@ -8,8 +8,8 @@ namespace Sensus.UI
 {
     public class ProtocolPage : ContentPage
     {
-        public static event EventHandler CreateLocalDataStorePressed;
-        public static event EventHandler CreateRemoteDataStorePressed;
+        public static event EventHandler CreateLocalDataStoreTapped;
+        public static event EventHandler CreateRemoteDataStoreTapped;
         public static event EventHandler<ItemTappedEventArgs> ProbeTapped;
 
         private class DataStoreValueConverter : IValueConverter
@@ -63,7 +63,7 @@ namespace Sensus.UI
             localDataStoreButton.SetBinding(Button.TextProperty, new Binding("LocalDataStore", converter: new DataStoreValueConverter(), converterParameter: "Local"));
             localDataStoreButton.Clicked += (o, e) =>
                 {
-                    CreateLocalDataStorePressed(protocol, e);
+                    CreateLocalDataStoreTapped(protocol, e);
                 };
 
             views.Add(localDataStoreButton);
@@ -79,7 +79,7 @@ namespace Sensus.UI
             remoteDataStoreButton.SetBinding(Button.TextProperty, new Binding("RemoteDataStore", converter: new DataStoreValueConverter(), converterParameter: "Remote"));
             remoteDataStoreButton.Clicked += (o, e) =>
                 {
-                    CreateRemoteDataStorePressed(protocol, e);
+                    CreateRemoteDataStoreTapped(protocol, e);
                 };
 
             views.Add(remoteDataStoreButton);

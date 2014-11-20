@@ -10,8 +10,8 @@ namespace Sensus.UI
 {
     public class DataStorePage : ContentPage
     {
-        public static event EventHandler CancelPressed;
-        public static event EventHandler OkPressed;
+        public static event EventHandler CancelTapped;
+        public static event EventHandler OkTapped;
 
         public DataStorePage(DataStore dataStore, Protocol protocol, bool local)
         {
@@ -29,7 +29,7 @@ namespace Sensus.UI
 
             cancelButton.Clicked += (o, e) =>
                 {
-                    CancelPressed(o, e);
+                    CancelTapped(o, e);
                 };
 
             Button okayButton = new Button
@@ -44,7 +44,7 @@ namespace Sensus.UI
                     else
                         protocol.RemoteDataStore = dataStore as RemoteDataStore;
 
-                    OkPressed(o, e);
+                    OkTapped(o, e);
                 };
 
             stacks.Add(new StackLayout

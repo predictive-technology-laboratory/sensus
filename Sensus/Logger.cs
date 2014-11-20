@@ -7,26 +7,21 @@ using System.Text.RegularExpressions;
 namespace Sensus
 {
     /// <summary>
-    /// Alternative writer for standard out. Pass to Console.SetOut to use.
+    /// Logger for Sensus.
     /// </summary>
     public class Logger : TextWriter
     {
-        public static LoggingLevel Level
-        {
-            get { return App.Get().SensusService.Logger._level; }
-        }
-
-        public static void Log(string message)
-        {
-            App.Get().SensusService.Logger.WriteLine(message.Trim() + Environment.NewLine);
-        }
-
         private string _path;
         private StreamWriter _file;
         private bool _writeTimestamp;
         private TextWriter[] _otherOutputs;
         private bool _previousWriteNewLine;
         private LoggingLevel _level;
+
+        public LoggingLevel Level
+        {
+            get { return _level; }
+        }
 
         /// <summary>
         /// Gets the encoding used by this writer (always UTF8)
