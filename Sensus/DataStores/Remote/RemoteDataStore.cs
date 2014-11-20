@@ -1,4 +1,5 @@
 ﻿using Sensus.DataStores.Local;
+using System;
 using System.Collections.Generic;
 
 namespace Sensus.DataStores.Remote
@@ -6,9 +7,9 @@ namespace Sensus.DataStores.Remote
     /// <summary>
     /// Responsible for transferring data from a local data store to remote media.
     /// </summary>
+    [Serializable]
     public abstract class RemoteDataStore : DataStore
     {
-        private LocalDataStore _localDataStore;
         private bool _requireWiFi;
         private bool _requireCharging;
 
@@ -26,7 +27,7 @@ namespace Sensus.DataStores.Remote
 
         public override bool NeedsToBeRunning
         {
-            get { return _localDataStore.NeedsToBeRunning; }
+            get { return Protocol.LocalDataStore.NeedsToBeRunning; }
         }
 
         public RemoteDataStore()
@@ -36,24 +37,18 @@ namespace Sensus.DataStores.Remote
             CommitDelayMS = 1000 * 60 * 30;  // every thirty minutes by default
         }
 
-        public void Start(LocalDataStore localDataStore)
-        {
-            _localDataStore = localDataStore;
-            Start();
-        }
-
         protected override ICollection<Datum> GetDataToCommit()
         {
             // TODO:  check if wi-fi required/connected
 
             // TODO:  check if power required/connected
 
-            return _localDataStore.GetDataForRemoteDataStore();
+            return Protocol.LocalDataStore.GetDataForRemoteDataStore();
         }
 
         protected override void DataCommitted(ICollection<Datum> data)
         {
-            _localDataStore.ClearDataCommittedToRemoteDataStore(data);
+            Protocol.LocalDataStore.ClearDataCommittedToRemoteDataStore(data);
         }
     }
 }

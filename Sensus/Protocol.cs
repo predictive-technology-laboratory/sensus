@@ -13,8 +13,13 @@ namespace Sensus
     /// <summary>
     /// Defines a Sensus protocol.
     /// </summary>
+    [Serializable]
     public class Protocol : INotifyPropertyChanged
     {
+        /// <summary>
+        /// Fired when a UI-relevant property is changed.
+        /// </summary>
+        [NonSerialized]
         public event PropertyChangedEventHandler PropertyChanged;
 
         private string _name;
@@ -22,7 +27,6 @@ namespace Sensus
         private bool _running;
         private LocalDataStore _localDataStore;
         private RemoteDataStore _remoteDataStore;
-        private PropertyChangedEventHandler _notifyWatchersOfProbesChange;
 
         [StringUiProperty("Name:", true)]
         public string Name
@@ -71,6 +75,8 @@ namespace Sensus
                 {
                     _localDataStore = value;
                     OnPropertyChanged();
+
+                    _localDataStore.Protocol = this;
                 }
             }
         }
@@ -84,6 +90,8 @@ namespace Sensus
                 {
                     _remoteDataStore = value;
                     OnPropertyChanged();
+
+                    _remoteDataStore.Protocol = this;
                 }
             }
         }
@@ -94,11 +102,6 @@ namespace Sensus
             _probes = new List<Probe>();
             _running = false;
 
-            _notifyWatchersOfProbesChange = (o, e) =>
-                {
-                    OnPropertyChanged("Probes");
-                };
-
             if (addAllProbes)
                 foreach (Probe probe in Probe.GetAll())
                     AddProbe(probe);
@@ -107,17 +110,25 @@ namespace Sensus
         public void AddProbe(Probe probe)
         {
             probe.Protocol = this;
-            probe.PropertyChanged += _notifyWatchersOfProbesChange;
-
             _probes.Add(probe);
         }
 
         public void RemoveProbe(Probe probe)
         {
             probe.Protocol = null;
-            probe.PropertyChanged -= _notifyWatchersOfProbesChange;
-
             _probes.Remove(probe);
+        }
+
+        public void DeserializationRebind()
+        {
+            foreach (Probe probe in _probes)
+            {
+                probe.Protocol = this;
+                probe.DeserializationRebind();
+
+                _localDataStore.Protocol = this;
+                _remoteDataStore.Protocol = this;
+            }
         }
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -143,7 +154,7 @@ namespace Sensus
 
                 try
                 {
-                    _localDataStore.Start(this);
+                    _localDataStore.Start();
 
                     if (App.LoggingLevel >= LoggingLevel.Normal)
                         App.Get().SensusService.Log("Local data store started.");
@@ -162,7 +173,7 @@ namespace Sensus
 
                 try
                 {
-                    _remoteDataStore.Start(_localDataStore);
+                    _remoteDataStore.Start();
 
                     if (App.LoggingLevel >= LoggingLevel.Normal)
                         App.Get().SensusService.Log("Remote data store started.");
@@ -222,20 +233,6 @@ namespace Sensus
                         catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to stop remote data store:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
                     }
                 });
-        }
-
-        public void ClearPropertyChangedDelegates()
-        {
-            PropertyChanged = null;
-
-            foreach (Probe probe in _probes)
-                probe.ClearPropertyChangedDelegates();
-
-            if (_localDataStore != null)
-                _localDataStore.ClearPropertyChangedDelegates();
-
-            if (_remoteDataStore != null)
-                _remoteDataStore.ClearPropertyChangedDelegates();
         }
     }
 }

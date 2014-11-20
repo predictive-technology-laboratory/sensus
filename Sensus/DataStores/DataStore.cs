@@ -17,13 +17,24 @@ namespace Sensus.DataStores
         /// <summary>
         /// Fired when a UI-relevant property is changed.
         /// </summary>
+        [Serializable]
         public event PropertyChangedEventHandler PropertyChanged;
 
         private string _name;
         private int _commitDelayMS;
+        [NonSerialized]
         private AutoResetEvent _commitTrigger;
+        [NonSerialized]
         private Task _commitTask;
         private bool _running;
+        [NonSerialized]
+        private Protocol _protocol;
+
+        public Protocol Protocol
+        {
+            get { return _protocol; }
+            set { _protocol = value; }
+        }
 
         [StringUiProperty("Name:", true)]
         public string Name
@@ -66,11 +77,10 @@ namespace Sensus.DataStores
         {
             _name = DisplayName;
             _commitDelayMS = 10000;
-            _commitTrigger = new AutoResetEvent(false);  // delay the first commit
             _running = false;
         }
 
-        protected void Start()
+        public virtual void Start()
         {
             if (_running)
                 throw new DataStoreException("Datastore already running.");
@@ -78,10 +88,10 @@ namespace Sensus.DataStores
             if (App.LoggingLevel >= LoggingLevel.Normal)
                 App.Get().SensusService.Log("Starting " + GetType().Name + " data store:  " + Name);
 
+            _commitTrigger = new AutoResetEvent(false);  // delay the first commit
             _running = true;
-
             _commitTask = Task.Run(() =>
-                {
+                {                  
                     while (NeedsToBeRunning)
                     {
                         if (App.LoggingLevel >= LoggingLevel.Debug)
@@ -137,11 +147,6 @@ namespace Sensus.DataStores
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public void ClearPropertyChangedDelegates()
-        {
-            PropertyChanged = null;
         }
     }
 }

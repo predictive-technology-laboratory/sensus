@@ -1,7 +1,9 @@
 ﻿using Sensus.Exceptions;
+using System;
 using System.Threading.Tasks;
 namespace Sensus.Probes
 {
+    [Serializable]
     public class PassiveProbeController : ProbeController
     {
         public PassiveProbeController(IPassiveProbe probe)

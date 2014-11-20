@@ -8,18 +8,12 @@ namespace Sensus.DataStores.Local
     /// <summary>
     /// Responsible for transferring data from probes to local media.
     /// </summary>
+    [Serializable]
     public abstract class LocalDataStore : DataStore
     {
-        private Protocol _protocol;
-
-        protected Protocol Protocol
-        {
-            get { return _protocol; }
-        }
-
         public override bool NeedsToBeRunning
         {
-            get { return _protocol.Running; }
+            get { return Protocol.Running; }
         }
 
         public LocalDataStore()
@@ -27,16 +21,10 @@ namespace Sensus.DataStores.Local
             CommitDelayMS = 5000;
         }
 
-        public void Start(Protocol protocol)
-        {
-            _protocol = protocol;
-            Start();
-        }
-
         protected override ICollection<Datum> GetDataToCommit()
         {
             List<Datum> dataToCommit = new List<Datum>();
-            foreach (Probe probe in _protocol.Probes)
+            foreach (Probe probe in Protocol.Probes)
             {
                 ICollection<Datum> collectedData = probe.GetCollectedData();
                 lock (collectedData)
@@ -49,7 +37,7 @@ namespace Sensus.DataStores.Local
 
         protected override void DataCommitted(ICollection<Datum> data)
         {
-            foreach (Probe probe in _protocol.Probes)
+            foreach (Probe probe in Protocol.Probes)
                 probe.ClearCommittedData(data);
         }
 

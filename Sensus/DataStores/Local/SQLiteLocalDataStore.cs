@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace Sensus.DataStores.Local
 {
+    [Serializable]
     public class SQLiteLocalDataStore : LocalDataStore
     {
         protected override string DisplayName

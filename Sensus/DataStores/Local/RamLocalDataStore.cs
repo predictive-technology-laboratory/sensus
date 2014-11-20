@@ -1,10 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Sensus.DataStores.Local
 {
+    [Serializable]
     public class RamLocalDataStore : LocalDataStore
     {
+        [NonSerialized]
         private HashSet<Datum> _data;
 
         protected override string DisplayName
@@ -14,7 +17,13 @@ namespace Sensus.DataStores.Local
 
         public RamLocalDataStore()
         {
+        }
+
+        protected override void Start()
+        {
             _data = new HashSet<Datum>();
+
+            base.Start();
         }
 
         protected override ICollection<Datum> CommitData(ICollection<Datum> data)

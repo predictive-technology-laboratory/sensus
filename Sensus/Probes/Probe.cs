@@ -13,6 +13,7 @@ namespace Sensus.Probes
     /// <summary>
     /// An abstract probe.
     /// </summary>
+    [Serializable]
     public abstract class Probe : IProbe, INotifyPropertyChanged
     {
         #region static members
@@ -29,12 +30,15 @@ namespace Sensus.Probes
         /// <summary>
         /// Fired when a UI-relevant property is changed.
         /// </summary>
+        [NonSerialized]
         public event PropertyChangedEventHandler PropertyChanged;
 
         private int _id;
         private string _name;
         private bool _enabled;
+        [NonSerialized]
         private HashSet<Datum> _collectedData;
+        [NonSerialized]
         private Protocol _protocol;
         private ProbeController _controller;
         private bool _supported;
@@ -126,7 +130,6 @@ namespace Sensus.Probes
             _id = -1;  // TODO:  Get reasonable probe ID
             _name = DisplayName;
             _enabled = false;
-            _collectedData = new HashSet<Datum>();
             _supported = true;
 
             if (this is ActivePassiveProbe)
@@ -145,7 +148,12 @@ namespace Sensus.Probes
                 throw new ProbeException(this, "Could not find controller for probe " + _name + " (" + GetType().FullName + ").");
         }
 
-        protected abstract bool Initialize();
+        protected virtual bool Initialize()
+        {
+            _collectedData = new HashSet<Datum>();
+
+            return _supported;
+        }
 
         public Task<bool> InitializeAndStartAsync()
         {
@@ -191,15 +199,15 @@ namespace Sensus.Probes
             }
         }
 
+        public void DeserializationRebind()
+        {
+            _controller.Probe = this;
+        }
+
         public void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public void ClearPropertyChangedDelegates()
-        {
-            PropertyChanged = null;
         }
     }
 }

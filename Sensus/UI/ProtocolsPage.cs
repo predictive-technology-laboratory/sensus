@@ -1,44 +1,59 @@
 ﻿using System;
 using System.Collections.Generic;
 using Xamarin.Forms;
+using System.Linq;
 
 namespace Sensus.UI
 {
     public class ProtocolsPage : ContentPage
     {
         public static event EventHandler<ItemTappedEventArgs> ProtocolTapped;
+        public static event EventHandler NewProtocolTapped;
+        public static event EventHandler RemoveSelectedProtocolTapped;
+
+        private ListView _protocolsList;
 
         public ProtocolsPage()
         {
             Title = "Protocols";
 
-            List<Protocol> protocols = new List<Protocol>();
-
-            // for protocols registered with the service, we need to remove previous bindings to propertychanged events
-            foreach (Protocol protocol in App.Get().SensusService.RegisteredProtocols)
+            _protocolsList = new ListView();
+            _protocolsList.ItemTemplate = new DataTemplate(typeof(TextCell));
+            _protocolsList.ItemTemplate.SetBinding(TextCell.TextProperty, "Name");
+            _protocolsList.ItemsSource = App.Get().SensusService.RegisteredProtocols;
+            _protocolsList.ItemTapped += (o, e) =>
             {
-                protocol.ClearPropertyChangedDelegates();
-                protocols.Add(protocol);
-            }
-
-            for (int i = 0; i < 5; ++i)
-                protocols.Add(new Protocol("Test Protocol " + (i + 1), true));
-
-            ListView protocolsList = new ListView();
-            protocolsList.ItemTemplate = new DataTemplate(typeof(TextCell));
-            protocolsList.ItemTemplate.SetBinding(TextCell.TextProperty, "Name");
-            protocolsList.ItemsSource = protocols;
-            protocolsList.ItemTapped += (o, e) =>
-            {
-                protocolsList.SelectedItem = null;
+                _protocolsList.SelectedItem = null;
                 ProtocolTapped(o, e);
             };
 
             Content = new StackLayout
             {
                 VerticalOptions = LayoutOptions.FillAndExpand,
-                Children = { protocolsList }
+                Children = { _protocolsList }
             };
+
+            ToolbarItems.Add(new ToolbarItem("+", null, new Action(() => NewProtocolTapped(this, null))));
+            ToolbarItems.Add(new ToolbarItem("-", null, new Action(() => RemoveSelectedProtocolTapped(this, null))));
+        }
+
+        public void AddProtocol(Protocol protocol)
+        {
+            List<Protocol> protocols = _protocolsList.ItemsSource.Cast<Protocol>().ToList();
+            protocols.Add(protocol);
+
+            _protocolsList.ItemsSource = protocols;
+        }
+
+        public void RemoveSelectedProtocol()
+        {
+            if (_protocolsList.SelectedItem != null)
+            {
+                List<Protocol> protocols = _protocolsList.ItemsSource.Cast<Protocol>().ToList();
+                protocols.Remove(_protocolsList.SelectedItem as Protocol);
+
+                _protocolsList.ItemsSource = protocols;
+            }
         }
     }
 }

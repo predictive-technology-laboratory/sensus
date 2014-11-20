@@ -101,6 +101,16 @@ namespace Sensus
                 {
                     await _navigationPage.PushAsync(new ProtocolPage(e.Item as Protocol));
                 };
+
+            ProtocolsPage.NewProtocolTapped += (o,e) =>
+                {
+                    (o as ProtocolsPage).AddProtocol(new Protocol("New Protocol", true));
+                };
+
+            ProtocolsPage.RemoveSelectedProtocolTapped += (o, e) =>
+                {
+                    (o as ProtocolsPage).RemoveSelectedProtocol();
+                };
             #endregion
 
             #region protocol page

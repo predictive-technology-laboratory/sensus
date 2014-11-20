@@ -29,11 +29,6 @@ namespace Sensus.Android.Probes.Location
             Supported = _compassListener.Supported;
         }
 
-        protected override bool Initialize()
-        {
-            return Supported;
-        }
-
         public override void StartListening()
         {
             _compassListener.Start();

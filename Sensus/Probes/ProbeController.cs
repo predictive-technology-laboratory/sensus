@@ -8,19 +8,23 @@ using System.Threading.Tasks;
 
 namespace Sensus.Probes
 {
+    [Serializable]
     public abstract class ProbeController : INotifyPropertyChanged
     {
         /// <summary>
         /// Fired when a UI-relevant property is changed.
         /// </summary>
+        [NonSerialized]
         public event PropertyChangedEventHandler PropertyChanged;
 
+        [NonSerialized]
         private IProbe _probe;
         private bool _running;
 
         public IProbe Probe
         {
             get { return _probe; }
+            set { _probe = value; }
         }
 
         public bool Running

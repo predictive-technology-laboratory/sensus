@@ -11,10 +11,13 @@ namespace Sensus.Probes
     /// <summary>
     /// A probe that polls a data source for samples on a predetermined schedule.
     /// </summary>
+    [Serializable]
     public class ActiveProbeController : ProbeController
     {
         private int _sleepDurationMS;
+        [NonSerialized]
         private Task _pollTask;
+        [NonSerialized]
         private AutoResetEvent _pollTrigger;
 
         [EntryIntegerUiProperty("Sleep Duration (MS):", true)]
@@ -39,14 +42,15 @@ namespace Sensus.Probes
             : base(probe)
         {
             _sleepDurationMS = 1000;
-            _pollTrigger = new AutoResetEvent(true); // start polling immediately
         }
 
         public override Task StartAsync()
         {
+            _pollTrigger = new AutoResetEvent(true); // start polling immediately
+
             return Task.Run(async () =>
                 {
-                    await base.StartAsync();
+                    await base.StartAsync();                   
 
                     _pollTask = Task.Run(() =>
                         {

@@ -96,24 +96,22 @@ namespace Sensus
         /// <returns>Value that was written</returns>
         protected virtual string Write(string value, bool newLine)
         {
-            value = (_writeTimestamp && _previousWriteNewLine ? DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + ":  " : "") + value + (newLine ? Environment.NewLine : "");
-
-            lock (this) { base.Write(value); }
-
-            lock (_file) { _file.Write(value); }
-
-            foreach (TextWriter otherOutput in _otherOutputs)
+            lock (this)
             {
-                lock (otherOutput)
-                {
+                value = (_writeTimestamp && _previousWriteNewLine ? DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + ":  " : "") + value + (newLine ? Environment.NewLine : "");
+
+                base.Write(value);
+
+                _file.Write(value);
+
+                foreach (TextWriter otherOutput in _otherOutputs)
                     try { otherOutput.Write(value); }
                     catch (Exception ex) { throw new SensusException("Failed to write to other output from LogWriter:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
-                }
+
+                _previousWriteNewLine = newLine;
+
+                return value;
             }
-
-            _previousWriteNewLine = newLine;
-
-            return value;
         }
 
         /// <summary>
@@ -122,10 +120,10 @@ namespace Sensus
         public override void Close()
         {
             lock (this)
+            {
                 base.Close();
-
-            lock (_file)
                 _file.Close();
+            }
         }
     }
 }

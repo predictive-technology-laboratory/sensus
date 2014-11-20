@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace Sensus.DataStores.Remote
 {
+    [Serializable]
     public class PostgreSqlRemoteDataStore : RemoteDataStore
     {
         private string _host;

@@ -33,11 +33,6 @@ namespace Sensus.Android.Probes.Location
             Supported = _altitudeListener.Supported;
         }
 
-        protected override bool Initialize()
-        {
-            return Supported;
-        }
-
         public override void StartListening()
         {
             _altitudeListener.Start();
