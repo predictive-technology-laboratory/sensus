@@ -7,9 +7,7 @@ namespace Sensus.UI
 {
     public class ProtocolsPage : ContentPage
     {
-        public static event EventHandler<ItemTappedEventArgs> ProtocolTapped;
-        public static event EventHandler NewProtocolTapped;
-        public static event EventHandler RemoveSelectedProtocolTapped;
+        public static event EventHandler EditProtocol;
 
         private ListView _protocolsList;
 
@@ -21,11 +19,6 @@ namespace Sensus.UI
             _protocolsList.ItemTemplate = new DataTemplate(typeof(TextCell));
             _protocolsList.ItemTemplate.SetBinding(TextCell.TextProperty, "Name");
             _protocolsList.ItemsSource = App.Get().SensusService.RegisteredProtocols;
-            _protocolsList.ItemTapped += (o, e) =>
-            {
-                _protocolsList.SelectedItem = null;
-                ProtocolTapped(o, e);
-            };
 
             Content = new StackLayout
             {
@@ -33,27 +26,35 @@ namespace Sensus.UI
                 Children = { _protocolsList }
             };
 
-            ToolbarItems.Add(new ToolbarItem("+", null, new Action(() => NewProtocolTapped(this, null))));
-            ToolbarItems.Add(new ToolbarItem("-", null, new Action(() => RemoveSelectedProtocolTapped(this, null))));
-        }
+            ToolbarItems.Add(new ToolbarItem("...", null, new Action(() =>
+                {
+                    if (_protocolsList.SelectedItem != null)
+                        EditProtocol(_protocolsList.SelectedItem, null);
+                })));
 
-        public void AddProtocol(Protocol protocol)
-        {
-            List<Protocol> protocols = _protocolsList.ItemsSource.Cast<Protocol>().ToList();
-            protocols.Add(protocol);
+            ToolbarItems.Add(new ToolbarItem("+", null, new Action(() =>
+                {
+                    App.Get().SensusService.RegisterProtocol(new Protocol("New Protocol", true));
 
-            _protocolsList.ItemsSource = protocols;
-        }
+                    _protocolsList.ItemsSource = null;
+                    _protocolsList.ItemsSource = App.Get().SensusService.RegisteredProtocols;
+                })));
 
-        public void RemoveSelectedProtocol()
-        {
-            if (_protocolsList.SelectedItem != null)
-            {
-                List<Protocol> protocols = _protocolsList.ItemsSource.Cast<Protocol>().ToList();
-                protocols.Remove(_protocolsList.SelectedItem as Protocol);
+            ToolbarItems.Add(new ToolbarItem("-", null, new Action(async () =>
+                {
+                    if (_protocolsList.SelectedItem != null)
+                    {
+                        if (await DisplayAlert("Confirm Deletion", "This action cannot be undone.", "Delete", "Cancel"))
+                        {
+                            Protocol protocolToRemove = _protocolsList.SelectedItem as Protocol;
 
-                _protocolsList.ItemsSource = protocols;
-            }
+                            App.Get().SensusService.StopProtocol(protocolToRemove, true);
+
+                            _protocolsList.ItemsSource = _protocolsList.ItemsSource.Cast<Protocol>().Where(p => p != protocolToRemove);
+                            _protocolsList.SelectedItem = null;
+                        }
+                    }
+                })));
         }
     }
 }

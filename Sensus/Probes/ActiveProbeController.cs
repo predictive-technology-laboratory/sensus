@@ -46,11 +46,11 @@ namespace Sensus.Probes
 
         public override Task StartAsync()
         {
-            _pollTrigger = new AutoResetEvent(true); // start polling immediately
-
             return Task.Run(async () =>
                 {
-                    await base.StartAsync();                   
+                    await base.StartAsync();
+
+                    _pollTrigger = new AutoResetEvent(true);  // start polling immediately
 
                     _pollTask = Task.Run(() =>
                         {
@@ -79,24 +79,14 @@ namespace Sensus.Probes
         {
             return Task.Run(async () =>
                 {
-                    // might have called stop immediately after start, in which case the poll task might not have been initialized. wait for the poll task to appear.
-                    int triesLeft = 5;
-                    while (_pollTask == null && triesLeft-- > 0)
-                    {
-                        if (App.LoggingLevel >= LoggingLevel.Normal)
-                            App.Get().SensusService.Log("Waiting for controller poll task to appear.");
-
-                        Thread.Sleep(1000);
-                    }
-
-                    if (_pollTask == null)
-                        throw new SensusException("Failed to get poll task in ActiveProbeController.StopAsync");
-
                     await base.StopAsync();
 
-                    _pollTrigger.Set();  // don't wait for current sleep cycle to end -- wake up immediately so task can complete
-
-                    await _pollTask;
+                    if (_pollTask != null)  // might have called stop immediately after start, in which case the poll task will be null. if it's null at this point, it will soon be stopped because we have already set Running to false via base call, terminating the poll task while-loop upon startup.
+                    {
+                        // don't wait for current sleep cycle to end -- wake up immediately so task can complete. if the task is not null, neither will the trigger be.
+                        _pollTrigger.Set();
+                        await _pollTask;
+                    }
                 });
         }
     }

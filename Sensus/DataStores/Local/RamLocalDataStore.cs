@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Sensus.DataStores.Local
 {
@@ -19,16 +20,20 @@ namespace Sensus.DataStores.Local
         {
         }
 
-        protected override void Start()
+        public override Task StartAsync()
         {
-            _data = new HashSet<Datum>();
+            return Task.Run(async () =>
+                {
+                    await base.StartAsync();
 
-            base.Start();
+                    _data = new HashSet<Datum>();
+                });
         }
 
         protected override ICollection<Datum> CommitData(ICollection<Datum> data)
         {
             List<Datum> committed = new List<Datum>();
+
             lock(_data)
                 foreach (Datum datum in data)
                 {

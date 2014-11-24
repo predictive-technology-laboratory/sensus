@@ -41,8 +41,6 @@ namespace Sensus.Android
         {
             base.OnCreate();
 
-            _notificationManager = GetSystemService(Context.NotificationService) as NotificationManager;
-            _notificationBuilder = new Notification.Builder(this);
             _serviceHelper = new SensusServiceHelper();
         }
 
@@ -50,25 +48,39 @@ namespace Sensus.Android
         {
             _startId = startId;
 
-            Task.Run(() =>
-                {
-                    TaskStackBuilder stackBuilder = TaskStackBuilder.Create(this);
-                    stackBuilder.AddParentStack(Java.Lang.Class.FromType(typeof(MainActivity)));
-                    stackBuilder.AddNextIntent(new Intent(this, typeof(MainActivity)));
+            // the service can be stopped without destroying the service object. in such cases, 
+            // subsequent calls to start the service will not call OnCreate, which is why the 
+            // following code needs to run here. it's important that any code called here is
+            // okay to call multiple times, even if the service is running. calling this when
+            // the service is running can happen because sensus receives a signal on device
+            // boot to start the service, and then when the sensus app is started the service
+            // start method is called again.
 
-                    PendingIntent pendingIntent = stackBuilder.GetPendingIntent(NotificationPendingIntentId, PendingIntentFlags.OneShot);
+            _serviceHelper.StartService();
 
-                    _notificationBuilder.SetContentTitle("Sensus")
-                                        .SetContentText("Tap to Open")
-                                        .SetSmallIcon(Resource.Drawable.Icon)
-                                        .SetContentIntent(pendingIntent)
-                                        .SetAutoCancel(true)
-                                        .SetOngoing(true);                    
+            TaskStackBuilder stackBuilder = TaskStackBuilder.Create(this);
+            stackBuilder.AddParentStack(Java.Lang.Class.FromType(typeof(MainActivity)));
+            stackBuilder.AddNextIntent(new Intent(this, typeof(MainActivity)));
 
-                    _notificationManager.Notify(ServiceNotificationId, _notificationBuilder.Build());
-                });
+            PendingIntent pendingIntent = stackBuilder.GetPendingIntent(NotificationPendingIntentId, PendingIntentFlags.OneShot);
+
+            _notificationBuilder = new Notification.Builder(this);
+            _notificationBuilder.SetContentTitle("Sensus")
+                                .SetContentText("Tap to Open")
+                                .SetSmallIcon(Resource.Drawable.Icon)
+                                .SetContentIntent(pendingIntent)
+                                .SetAutoCancel(true)
+                                .SetOngoing(true);
+
+            _notificationManager = GetSystemService(Context.NotificationService) as NotificationManager;
+            _notificationManager.Notify(ServiceNotificationId, _notificationBuilder.Build());
 
             return StartCommandResult.RedeliverIntent;
+        }
+
+        public void RegisterProtocol(Protocol protocol)
+        {
+            _serviceHelper.RegisterProtocol(protocol);
         }
 
         public void StartProtocol(Protocol protocol)
@@ -76,19 +88,17 @@ namespace Sensus.Android
             _serviceHelper.StartProtocol(protocol);
         }
 
-        public void StopProtocol(Protocol protocol)
+        public void StopProtocol(Protocol protocol, bool unregister)
         {
-            _serviceHelper.StopProtocol(protocol);
+            _serviceHelper.StopProtocol(protocol, unregister);
         }
 
         public Task StopAsync()
         {
-            return Task.Run(async () =>
+            return Task.Run(() =>
                 {
-                    await _serviceHelper.StopServiceAsync();
-
                     _notificationManager.Cancel(ServiceNotificationId);
-
+                    _serviceHelper.StopServiceAsync();
                     StopSelf();
                 });
         }
@@ -97,15 +107,16 @@ namespace Sensus.Android
         {
             base.OnDestroy();
 
-            _notificationManager.Cancel(ServiceNotificationId);
-
             _serviceHelper.StopServiceAsync();
+            _serviceHelper.DestroyService();
+
+            _notificationManager.Cancel(ServiceNotificationId);
         }
 
         public override IBinder OnBind(Intent intent)
         {
             return new SensusServiceBinder(this);
-        }        
+        }
 
         public void Log(string message)
         {

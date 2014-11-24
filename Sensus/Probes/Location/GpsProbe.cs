@@ -5,6 +5,7 @@ using Xamarin.Geolocation;
 
 namespace Sensus.Probes.Location
 {
+    [Serializable]
     public abstract class GpsProbe : ActivePassiveProbe
     {
         private EventHandler<PositionEventArgs> _positionChangedHandler;

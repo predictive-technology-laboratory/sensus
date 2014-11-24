@@ -5,6 +5,7 @@ using System.Text;
 
 namespace Sensus.Probes
 {
+    [Serializable]
     public abstract class PassiveProbe : Probe, IPassiveProbe
     {
         private int _maxDataStoresPerSecond;

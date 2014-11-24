@@ -25,15 +25,11 @@ namespace Sensus.DataStores.Remote
             set { _requireCharging = value; }
         }
 
-        public override bool NeedsToBeRunning
-        {
-            get { return Protocol.LocalDataStore.NeedsToBeRunning; }
-        }
-
         public RemoteDataStore()
         {
             _requireWiFi = true;
             _requireCharging = true;
+
             CommitDelayMS = 1000 * 60 * 30;  // every thirty minutes by default
         }
 
@@ -43,7 +39,12 @@ namespace Sensus.DataStores.Remote
 
             // TODO:  check if power required/connected
 
-            return Protocol.LocalDataStore.GetDataForRemoteDataStore();
+            ICollection<Datum> localData = Protocol.LocalDataStore.GetDataForRemoteDataStore();
+
+            if (App.LoggingLevel >= LoggingLevel.Normal)
+                App.Get().SensusService.Log("Retrieved " + localData.Count + " data elements from local data store.");
+
+            return localData;
         }
 
         protected override void DataCommitted(ICollection<Datum> data)

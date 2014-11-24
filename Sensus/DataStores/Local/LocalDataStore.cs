@@ -11,11 +11,6 @@ namespace Sensus.DataStores.Local
     [Serializable]
     public abstract class LocalDataStore : DataStore
     {
-        public override bool NeedsToBeRunning
-        {
-            get { return Protocol.Running; }
-        }
-
         public LocalDataStore()
         {
             CommitDelayMS = 5000;
@@ -27,16 +22,23 @@ namespace Sensus.DataStores.Local
             foreach (Probe probe in Protocol.Probes)
             {
                 ICollection<Datum> collectedData = probe.GetCollectedData();
-                lock (collectedData)
-                    if (collectedData.Count > 0)
-                        dataToCommit.AddRange(collectedData);
+                if (collectedData != null)
+                    lock (collectedData)
+                        if (collectedData.Count > 0)
+                            dataToCommit.AddRange(collectedData);
             }
+
+            if (App.LoggingLevel >= LoggingLevel.Normal)
+                App.Get().SensusService.Log("Retrieved " + dataToCommit.Count + " data elements from probes.");
 
             return dataToCommit;
         }
 
         protected override void DataCommitted(ICollection<Datum> data)
         {
+            if (App.LoggingLevel >= LoggingLevel.Normal)
+                App.Get().SensusService.Log("Clearing " + data.Count + " committed data elements from probes.");
+
             foreach (Probe probe in Protocol.Probes)
                 probe.ClearCommittedData(data);
         }

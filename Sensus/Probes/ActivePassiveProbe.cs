@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sensus.Probes
 {
+    [Serializable]
     public abstract class ActivePassiveProbe : PassiveProbe, IActiveProbe
     {
         private bool _passive;

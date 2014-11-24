@@ -91,25 +91,16 @@ namespace Sensus
                 {
                     await App.Get().SensusService.StopAsync();
 
+                    // also let application know that it should stop itself
                     if (StopSensusTapped != null)
                         StopSensusTapped(o, e);
                 };
             #endregion
 
             #region protocols page
-            ProtocolsPage.ProtocolTapped += async (o, e) =>
+            ProtocolsPage.EditProtocol += async (o, e) =>
                 {
-                    await _navigationPage.PushAsync(new ProtocolPage(e.Item as Protocol));
-                };
-
-            ProtocolsPage.NewProtocolTapped += (o,e) =>
-                {
-                    (o as ProtocolsPage).AddProtocol(new Protocol("New Protocol", true));
-                };
-
-            ProtocolsPage.RemoveSelectedProtocolTapped += (o, e) =>
-                {
-                    (o as ProtocolsPage).RemoveSelectedProtocol();
+                    await _navigationPage.PushAsync(new ProtocolPage(o as Protocol));
                 };
             #endregion
 

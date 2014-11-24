@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
 namespace Sensus
@@ -19,11 +20,12 @@ namespace Sensus
         /// <summary>
         /// Fired when a UI-relevant property is changed.
         /// </summary>
-        [NonSerialized]
+        [field: NonSerialized]
         public event PropertyChangedEventHandler PropertyChanged;
 
         private string _name;
         private List<Probe> _probes;
+        [NonSerialized]
         private bool _running;
         private LocalDataStore _localDataStore;
         private RemoteDataStore _remoteDataStore;
@@ -61,7 +63,7 @@ namespace Sensus
                     if (_running)
                         App.Get().SensusService.StartProtocol(this);
                     else
-                        App.Get().SensusService.StopProtocol(this);
+                        App.Get().SensusService.StopProtocol(this, false);  // don't unregister the protocol when stopped via the UI
                 }
             }
         }
@@ -119,16 +121,17 @@ namespace Sensus
             _probes.Remove(probe);
         }
 
-        public void DeserializationRebind()
+        [OnDeserialized]
+        private void PostDeserialization(StreamingContext c)
         {
             foreach (Probe probe in _probes)
-            {
                 probe.Protocol = this;
-                probe.DeserializationRebind();
 
+            if (_localDataStore != null)
                 _localDataStore.Protocol = this;
+
+            if (_remoteDataStore != null)
                 _remoteDataStore.Protocol = this;
-            }
         }
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -137,70 +140,55 @@ namespace Sensus
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public async void StartAsync()
+        public Task StartAsync()
         {
-            if (App.LoggingLevel >= LoggingLevel.Normal)
-                App.Get().SensusService.Log("Initializing and starting probes for protocol " + _name + ".");
-
-            int probesStarted = 0;
-            foreach (Probe probe in _probes)
-                if (probe.Enabled && await probe.InitializeAndStartAsync())
-                    probesStarted++;
-
-            if (probesStarted > 0)
-            {
-                if (App.LoggingLevel >= LoggingLevel.Normal)
-                    App.Get().SensusService.Log("Starting local data store.");
-
-                try
-                {
-                    _localDataStore.Start();
-
-                    if (App.LoggingLevel >= LoggingLevel.Normal)
-                        App.Get().SensusService.Log("Local data store started.");
-                }
-                catch (Exception ex)
+            return Task.Run(async () =>
                 {
                     if (App.LoggingLevel >= LoggingLevel.Normal)
-                        App.Get().SensusService.Log("Local data store failed to start:  " + ex.Message + Environment.NewLine + ex.StackTrace);
+                        App.Get().SensusService.Log("Initializing and starting probes for protocol " + _name + ".");
 
-                    Running = false;
-                    return;
-                }
+                    int probesStarted = 0;
+                    foreach (Probe probe in _probes)
+                        if (probe.Enabled && await probe.InitializeAndStartAsync())
+                            probesStarted++;
 
-                if (App.LoggingLevel >= LoggingLevel.Normal)
-                    App.Get().SensusService.Log("Starting remote data store.");
+                    if (probesStarted > 0)
+                    {
+                        try { await _localDataStore.StartAsync(); }
+                        catch (Exception ex)
+                        {
+                            if (App.LoggingLevel >= LoggingLevel.Normal)
+                                App.Get().SensusService.Log("Local data store failed to start:  " + ex.Message + Environment.NewLine + ex.StackTrace);
 
-                try
-                {
-                    _remoteDataStore.Start();
+                            Running = false;
+                            return;
+                        }
 
-                    if (App.LoggingLevel >= LoggingLevel.Normal)
-                        App.Get().SensusService.Log("Remote data store started.");
-                }
-                catch (Exception ex)
-                {
-                    if (App.LoggingLevel >= LoggingLevel.Normal)
-                        App.Get().SensusService.Log("Remote data store failed to start:  " + ex.Message);
+                        try { await _remoteDataStore.StartAsync(); }
+                        catch (Exception ex)
+                        {
+                            if (App.LoggingLevel >= LoggingLevel.Normal)
+                                App.Get().SensusService.Log("Remote data store failed to start:  " + ex.Message);
 
-                    Running = false;
-                    return;
-                }
-            }
-            else
-            {
-                if (App.LoggingLevel >= LoggingLevel.Normal)
-                    App.Get().SensusService.Log("No probes were started.");
+                            Running = false;
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        if (App.LoggingLevel >= LoggingLevel.Normal)
+                            App.Get().SensusService.Log("No probes were started.");
 
-                Running = false;
-            }
+                        Running = false;
+                    }
+                });
         }
 
         public Task StopAsync()
         {
             return Task.Run(async () =>
                 {
-                    // if the service is stopping this protocol, then _running/Running will be true here. set it to false to release the probes and data stores below.
+                    // if the service is stopping this protocol, then _running/Running will be true here. set it to false to update UI and allow the data stores to stop.
                     if (_running)
                     {
                         _running = false;

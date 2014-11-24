@@ -34,14 +34,13 @@ namespace Sensus.Android
                     SensusServiceConnection serviceConnection = new SensusServiceConnection(null);
                     serviceConnection.ServiceConnected += (o, e) =>
                         {
-                            SensusService = e.Binder.Service;  // bind
+                            SensusService = e.Binder.Service;  // set service within App
 
                             if (App.LoggingLevel >= LoggingLevel.Normal)
-                                App.Get().SensusService.Log("Connected to Sensus service.");
+                                SensusService.Log("Connected to Sensus service.");
                         };
 
-                    Intent bindServiceIntent = new Intent(Application.Context, typeof(AndroidSensusService));
-                    Application.Context.BindService(bindServiceIntent, serviceConnection, Bind.AutoCreate);
+                    Application.Context.BindService(serviceIntent, serviceConnection, Bind.AutoCreate);
                 });
         }
     }

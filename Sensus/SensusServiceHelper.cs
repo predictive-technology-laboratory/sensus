@@ -50,7 +50,7 @@ namespace Sensus
 
         public SensusServiceHelper()
         {
-            _stopped = false;
+            _stopped = true;
             _logPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
 
 #if DEBUG
@@ -58,31 +58,41 @@ namespace Sensus
 #else
             _logger = new Logger(_logPath, true, true, LoggingLevel.Normal, Console.Error);
 #endif
+
+            if (_logger.Level >= LoggingLevel.Normal)
+                _logger.WriteLine("Log file started at \"" + _logPath + "\".");
         }
 
-        public Task StartServiceAsync()
+        public void StartService()
         {
-            return Task.Run(() =>
+            lock (this)
+                if (_stopped)
+                    _stopped = false;
+                else
+                    return;
+
+            if (File.Exists(_protocolsPath))
+            {
+                try
                 {
-                    lock (this)
-                    {
-                        if (File.Exists(_protocolsPath))
-                            try
-                            {
-                                BinaryFormatter bf = new BinaryFormatter();
-                                FileStream protocolsFile = new FileStream(_protocolsPath, FileMode.Open, FileAccess.Read);
-                                _registeredProtocols = bf.Deserialize(protocolsFile) as List<Protocol>;
-                                protocolsFile.Close();
+                    using (FileStream protocolsFile = new FileStream(_protocolsPath, FileMode.Open, FileAccess.Read))
+                        _registeredProtocols = new BinaryFormatter().Deserialize(protocolsFile) as List<Protocol>;
+                }
+                catch (Exception ex) { if (_logger.Level >= LoggingLevel.Normal) _logger.WriteLine("Failed to deserialize protocols:  " + ex.Message); }
+            }
+            else if (_logger.Level >= LoggingLevel.Normal)
+                _logger.WriteLine("No protocols file found at \"" + _protocolsPath + "\".");
 
-                                foreach (Protocol protocol in _registeredProtocols)
-                                    protocol.DeserializationRebind();
-                            }
-                            catch (Exception ex) { if (App.LoggingLevel > LoggingLevel.Normal) App.Get().SensusService.Log("Failed to deserialize and/or rebind protocols:  " + ex.Message); }
+            if (_registeredProtocols == null)
+                _registeredProtocols = new List<Protocol>();
+        }
 
-                        if (_registeredProtocols == null)
-                            _registeredProtocols = new List<Protocol>();
-                    }
-                });
+        public void RegisterProtocol(Protocol protocol)
+        {
+            lock (this)
+                if (!_stopped)
+                    if (!_registeredProtocols.Contains(protocol))
+                        _registeredProtocols.Add(protocol);
         }
 
         public void StartProtocol(Protocol protocol)
@@ -97,53 +107,48 @@ namespace Sensus
                 }
         }
 
-        public void StopProtocol(Protocol protocol)
+        public void StopProtocol(Protocol protocol, bool unregister)
         {
             lock (this)
                 if (!_stopped)
+                {
                     protocol.StopAsync();
+
+                    if (unregister)
+                        _registeredProtocols.Remove(protocol);
+                }
         }
 
-        public void UnregisterProtocol(Protocol protocol)
-        {
-            lock (this)
-                if (!_stopped)
-                    _registeredProtocols.Remove(protocol);
-        }
-
-        /// <summary>
-        /// Stops all platform-independent service functionality. This include the logger, so no logging can be done after this method is called.
-        /// </summary>
-        /// <returns></returns>
-        public Task StopServiceAsync()
+        public async void StopServiceAsync()
         {
             // prevent any future interactions with the ServiceHelper
             lock (this)
                 if (_stopped)
-                    return null;
+                    return;
                 else
                     _stopped = true;
 
-            if (App.LoggingLevel >= LoggingLevel.Normal)
-                App.Get().SensusService.Log("Stopping Sensus service.");
+            if (_logger.Level >= LoggingLevel.Normal)
+                _logger.WriteLine("Stopping Sensus service.");
 
-            return Task.Run(async () =>
-                {
-                    foreach (Protocol protocol in _registeredProtocols)
-                        if (protocol.Running)
-                            await protocol.StopAsync();
+            foreach (Protocol protocol in _registeredProtocols)
+                if (protocol.Running)
+                    await protocol.StopAsync();
 
-                    try
-                    {
-                        BinaryFormatter bf = new BinaryFormatter();
-                        FileStream protocolsFile = new FileStream(_protocolsPath, FileMode.Create, FileAccess.Write);
-                        bf.Serialize(protocolsFile, _registeredProtocols);
-                        protocolsFile.Close();
-                    }
-                    catch (Exception ex) { if (App.LoggingLevel > LoggingLevel.Normal) App.Get().SensusService.Log("Failed to serialize protocols:  " + ex.Message); }
+            try
+            {
+                using (FileStream protocolsFile = new FileStream(_protocolsPath, FileMode.Create, FileAccess.Write))
+                    new BinaryFormatter().Serialize(protocolsFile, _registeredProtocols);
+            }
+            catch (Exception ex) { if (_logger.Level >= LoggingLevel.Normal) _logger.WriteLine("Failed to serialize protocols:  " + ex.Message); }
+        }
 
-                    _logger.Close();
-                });
+        public void DestroyService()
+        {
+            _registeredProtocols = null;
+
+            _logger.Close();
+            _logger = null;
         }
     }
 }

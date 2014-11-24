@@ -14,11 +14,12 @@ namespace Sensus.Probes
         /// <summary>
         /// Fired when a UI-relevant property is changed.
         /// </summary>
-        [NonSerialized]
+        [field: NonSerialized]
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NonSerialized]
         private IProbe _probe;
+        [NonSerialized]
         private bool _running;
 
         public IProbe Probe

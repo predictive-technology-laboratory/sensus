@@ -1,10 +1,12 @@
-﻿using Xamarin.Geolocation;
+﻿using System;
+using Xamarin.Geolocation;
 
 namespace Sensus.Probes.Location
 {
     /// <summary>
     /// Probes location information.
     /// </summary>
+    [Serializable]
     public class LocationProbe : GpsProbe
     {
         protected override string DisplayName

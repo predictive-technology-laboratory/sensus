@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using Sensus.UI.Properties;
 using System.Threading.Tasks;
+using System.Runtime.Serialization;
 
 namespace Sensus.Probes
 {
@@ -30,7 +31,7 @@ namespace Sensus.Probes
         /// <summary>
         /// Fired when a UI-relevant property is changed.
         /// </summary>
-        [NonSerialized]
+        [field: NonSerialized]
         public event PropertyChangedEventHandler PropertyChanged;
 
         private int _id;
@@ -148,7 +149,7 @@ namespace Sensus.Probes
                 throw new ProbeException(this, "Could not find controller for probe " + _name + " (" + GetType().FullName + ").");
         }
 
-        protected virtual bool Initialize()
+        protected bool Initialize()
         {
             _collectedData = new HashSet<Datum>();
 
@@ -189,17 +190,21 @@ namespace Sensus.Probes
 
         public void ClearCommittedData(ICollection<Datum> data)
         {
-            lock (_collectedData)
-            {
-                if (App.LoggingLevel >= LoggingLevel.Verbose)
-                    App.Get().SensusService.Log("Clearing committed data from probe cache:  " + data.Count + " items.");
+            if (_collectedData != null)
+                lock (_collectedData)
+                {
+                    int removed = 0;
+                    foreach (Datum datum in data)
+                        if (_collectedData.Remove(datum))
+                            ++removed;
 
-                foreach (Datum datum in data)
-                    _collectedData.Remove(datum);
-            }
+                    if (App.LoggingLevel >= LoggingLevel.Verbose)
+                        App.Get().SensusService.Log("Cleared " + removed + " committed data elements from probe:  " + _name);
+                }
         }
 
-        public void DeserializationRebind()
+        [OnDeserialized]
+        private void PostDeserialization(StreamingContext c)
         {
             _controller.Probe = this;
         }

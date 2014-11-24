@@ -11,14 +11,28 @@ using Android.Views;
 using Android.Widget;
 using Sensus.Probes.Location;
 using Android.Hardware;
+using System.Runtime.Serialization;
 
 namespace Sensus.Android.Probes.Location
 {
+    [Serializable]
     public class AndroidAltitudeProbe : AltitudeProbe
     {
+        [NonSerialized]
         private AndroidSensorListener _altitudeListener;
 
         public AndroidAltitudeProbe()
+        {
+            CreateListener();
+        }
+
+        [OnDeserialized]
+        private void PostDeserialization(StreamingContext c)
+        {
+            CreateListener();
+        }
+
+        private void CreateListener()
         {
             _altitudeListener = new AndroidSensorListener(SensorType.Pressure, SensorDelay.Normal, null, new Action<SensorEvent>(e =>
                 {

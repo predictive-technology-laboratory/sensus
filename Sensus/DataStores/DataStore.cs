@@ -12,12 +12,13 @@ namespace Sensus.DataStores
     /// <summary>
     /// An abstract repository for probed data.
     /// </summary>
+    [Serializable]
     public abstract class DataStore : INotifyPropertyChanged
     {
         /// <summary>
         /// Fired when a UI-relevant property is changed.
         /// </summary>
-        [Serializable]
+        [field: NonSerialized]
         public event PropertyChangedEventHandler PropertyChanged;
 
         private string _name;
@@ -26,6 +27,7 @@ namespace Sensus.DataStores
         private AutoResetEvent _commitTrigger;
         [NonSerialized]
         private Task _commitTask;
+        [NonSerialized]
         private bool _running;
         [NonSerialized]
         private Protocol _protocol;
@@ -69,8 +71,6 @@ namespace Sensus.DataStores
             get { return _running; }
         }
 
-        public abstract bool NeedsToBeRunning { get; }
-
         protected abstract string DisplayName { get; }
 
         public DataStore()
@@ -80,35 +80,38 @@ namespace Sensus.DataStores
             _running = false;
         }
 
-        public virtual void Start()
+        public virtual Task StartAsync()
         {
-            if (_running)
-                throw new DataStoreException("Datastore already running.");
-
-            if (App.LoggingLevel >= LoggingLevel.Normal)
-                App.Get().SensusService.Log("Starting " + GetType().Name + " data store:  " + Name);
-
-            _commitTrigger = new AutoResetEvent(false);  // delay the first commit
-            _running = true;
-            _commitTask = Task.Run(() =>
-                {                  
-                    while (NeedsToBeRunning)
-                    {
-                        if (App.LoggingLevel >= LoggingLevel.Debug)
-                            App.Get().SensusService.Log(Name + " is about to wait for " + _commitDelayMS + " MS before committing data.");
-
-                        _commitTrigger.WaitOne(_commitDelayMS);
-
-                        if (App.LoggingLevel >= LoggingLevel.Debug)
-                            App.Get().SensusService.Log(Name + " is waking up to commit data.");
-
-                        DataCommitted(CommitData(GetDataToCommit()));  // regardless of whether the commit is triggered by the delay or by Stop, we should commit existing data.
-                    }
-
+            return Task.Run(() =>
+                {
                     if (App.LoggingLevel >= LoggingLevel.Normal)
-                        App.Get().SensusService.Log("Exited while-loop for data store " + Name);
+                        App.Get().SensusService.Log("Starting " + GetType().Name + " data store:  " + Name);
 
-                    _running = false;
+                    _running = true;
+
+                    _commitTrigger = new AutoResetEvent(false);  // delay the first commit  
+
+                    _commitTask = Task.Run(() =>
+                        {
+                            while (_protocol.Running)
+                            {
+                                if (App.LoggingLevel >= LoggingLevel.Debug)
+                                    App.Get().SensusService.Log(Name + " is about to wait for " + _commitDelayMS + " MS before committing data.");
+
+                                _commitTrigger.WaitOne(_commitDelayMS);
+
+                                if (App.LoggingLevel >= LoggingLevel.Debug)
+                                    App.Get().SensusService.Log(Name + " is waking up to commit data.");
+
+                                try { DataCommitted(CommitData(GetDataToCommit())); }  // regardless of whether the commit is triggered by the delay or by Stop, we should commit existing data.
+                                catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to commit data to " + Name + ":  " + ex.Message); }
+                            }
+
+                            if (App.LoggingLevel >= LoggingLevel.Normal)
+                                App.Get().SensusService.Log("Exited while-loop for data store " + Name);
+
+                            _running = false;
+                        });
                 });
         }
 
@@ -118,28 +121,22 @@ namespace Sensus.DataStores
 
         protected abstract void DataCommitted(ICollection<Datum> data);
 
-        public Task StopAsync()
+        public virtual Task StopAsync()
         {
             return Task.Run(async () =>
                 {
-                    // data stores will automatically stop if NeedsToBeRunning becomes false. however, we might be in the middle of a very long commit delay, in which case the Stop method serves a purpose by immediately triggering a commit and stopping the thread
-                    if (!_running)
-                        return;
-
-                    if (NeedsToBeRunning)
-                        throw new DataStoreException("DataStore " + Name + " cannot be stopped while it is needed.");
-
-                    _running = false;
+                    if (_protocol.Running)
+                        throw new DataStoreException("DataStore " + Name + " cannot be stopped while its associated protocol is running.");
 
                     if (App.LoggingLevel >= LoggingLevel.Normal)
-                        App.Get().SensusService.Log("Setting data store " + Name + "'s wait handle within Stop method.");
+                        App.Get().SensusService.Log("Stopping " + GetType().Name + " data store:  " + Name);
 
-                    _commitTrigger.Set();
-
-                    await _commitTask;
-
-                    if (App.LoggingLevel >= LoggingLevel.Normal)
-                        App.Get().SensusService.Log("Data store " + Name + "'s task ended.");
+                    if (_commitTask != null)  // might have called stop immediately after start, in which case the commit task will be null. if it's null at this point, it will soon be stopped because we have already confirmed that it does not need to be running and thus will terminate the task's while-loop upon startup.
+                    {
+                        // don't wait for current sleep cycle to end -- wake up immediately so task can complete. if the task is not null, neither will the trigger be.
+                        _commitTrigger.Set();
+                        await _commitTask;
+                    }
                 });
         }
 
