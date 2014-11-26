@@ -21,11 +21,18 @@ namespace Sensus
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
+        private int _id;
         private string _name;
         private List<Probe> _probes;
         private bool _running;
         private LocalDataStore _localDataStore;
         private RemoteDataStore _remoteDataStore;
+
+        public int Id
+        {
+            get { return _id; }
+            set { _id = value; }
+        }
 
         [StringUiProperty("Name:", true)]
         public string Name
@@ -62,7 +69,7 @@ namespace Sensus
                     if (_running)
                         App.Get().SensusService.StartProtocol(this);
                     else
-                        App.Get().SensusService.StopProtocol(this, false);  // don't unregister the protocol when stopped via the UI
+                        App.Get().SensusService.StopProtocol(this, false);  // don't unregister the protocol when stopped via UI interaction
                 }
             }
         }
@@ -102,6 +109,7 @@ namespace Sensus
 
         public Protocol(string name, bool addAllProbes)
         {
+            _id = -1;
             _name = name;
             _probes = new List<Probe>();
             _running = false;
@@ -133,6 +141,13 @@ namespace Sensus
         {
             return Task.Run(async () =>
                 {
+                    // if the service is starting this protocol (e.g., when restarting protocols upon startup), then _running/Running will be false here. set it to true to update UI.
+                    if (!_running)
+                    {
+                        _running = true;
+                        OnPropertyChanged("Running");
+                    }
+
                     if (App.LoggingLevel >= LoggingLevel.Normal)
                         App.Get().SensusService.Log("Initializing and starting probes for protocol " + _name + ".");
 

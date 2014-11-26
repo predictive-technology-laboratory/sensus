@@ -13,7 +13,7 @@ namespace Sensus
     {
         private static App _singleton;
         private static readonly object _staticLockObject = new object();
-        private static LoggingLevel _loggingLevel;
+        private static LoggingLevel _loggingLevel = LoggingLevel.Off;  // no logging from the app until the service is connected
 
         /// <summary>
         /// This is a shortcut accessor for the logging level of the current App. It gets set when the the App is connected to its SensusService.
@@ -68,8 +68,11 @@ namespace Sensus
             {
                 _sensusService = value;
 
-                // retrieve the logging level for quick access later, minimizing the computational impact of checking the logging level.
+                // retrieve the logging level for quick access later, minimizing the computational impact of checking the logging level many times.
                 _loggingLevel = _sensusService.LoggingLevel;
+
+                if (_loggingLevel >= LoggingLevel.Normal)
+                    _sensusService.Log("App has connected to the Sensus service.");
             }
         }
 

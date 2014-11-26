@@ -26,7 +26,7 @@ namespace Sensus.UI
                 Children = { _protocolsList }
             };
 
-            ToolbarItems.Add(new ToolbarItem("Edit", null, new Action(() =>
+            ToolbarItems.Add(new ToolbarItem("Open", null, new Action(() =>
                 {
                     if (_protocolsList.SelectedItem != null)
                         EditProtocol(_protocolsList.SelectedItem, null);
@@ -44,10 +44,10 @@ namespace Sensus.UI
                 {
                     if (_protocolsList.SelectedItem != null)
                     {
-                        if (await DisplayAlert("Confirm Deletion", "This action cannot be undone.", "Delete", "Cancel"))
-                        {
-                            Protocol protocolToRemove = _protocolsList.SelectedItem as Protocol;
+                        Protocol protocolToRemove = _protocolsList.SelectedItem as Protocol;
 
+                        if (await DisplayAlert("Delete " + protocolToRemove.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
+                        {
                             App.Get().SensusService.StopProtocol(protocolToRemove, true);
 
                             _protocolsList.ItemsSource = _protocolsList.ItemsSource.Cast<Protocol>().Where(p => p != protocolToRemove);

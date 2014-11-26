@@ -35,9 +35,6 @@ namespace Sensus.Android
                     serviceConnection.ServiceConnected += (o, e) =>
                         {
                             SensusService = e.Binder.Service;  // set service within App
-
-                            if (App.LoggingLevel >= LoggingLevel.Normal)
-                                SensusService.Log("Connected to Sensus service.");
                         };
 
                     Application.Context.BindService(serviceIntent, serviceConnection, Bind.AutoCreate);

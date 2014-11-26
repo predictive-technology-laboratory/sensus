@@ -5,6 +5,10 @@ using System.Threading.Tasks;
 
 namespace Sensus
 {
+    /// <summary>
+    /// Interface for platform-specific Sensus services. These typically need to derive from platform-specific classes (e.g., Service on Android),
+    /// so we can't use an abstract base class to provide common functionality, e.g., that provided by SensusServiceHelper.
+    /// </summary>
     public interface ISensusService
     {
         IEnumerable<Protocol> RegisteredProtocols { get; }

@@ -19,7 +19,7 @@ namespace Sensus.Android
 
             Title = "Loading Sensus...";
 
-            // perform platfor-specific initialization and bind to stop event
+            // perform platform-specific initialization and bind to stop event
             AndroidApp.Initialize(new Geolocator(this));
             App.Get().StopSensusTapped += (o, e) => { Finish(); };
 
