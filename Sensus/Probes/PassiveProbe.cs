@@ -5,14 +5,13 @@ using System.Text;
 
 namespace Sensus.Probes
 {
-    [Serializable]
     public abstract class PassiveProbe : Probe, IPassiveProbe
     {
         private int _maxDataStoresPerSecond;
         private DateTime _lastStoreTime;
 
         [EntryIntegerUiProperty("Max Data / Second:", true)]
-        public int Throttle
+        public int MaxDataStoresPerSecond
         {
             get { return _maxDataStoresPerSecond; }
             set

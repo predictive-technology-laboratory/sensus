@@ -1,8 +1,5 @@
-﻿using Sensus.Exceptions;
-using Sensus.UI.Properties;
+﻿using Sensus.UI.Properties;
 using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,13 +8,10 @@ namespace Sensus.Probes
     /// <summary>
     /// A probe that polls a data source for samples on a predetermined schedule.
     /// </summary>
-    [Serializable]
     public class ActiveProbeController : ProbeController
     {
         private int _sleepDurationMS;
-        [NonSerialized]
         private Task _pollTask;
-        [NonSerialized]
         private AutoResetEvent _pollTrigger;
 
         [EntryIntegerUiProperty("Sleep Duration (MS):", true)]

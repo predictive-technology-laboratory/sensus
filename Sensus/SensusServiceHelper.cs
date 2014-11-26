@@ -3,16 +3,18 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using System.Threading;
 using Sensus.Exceptions;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json.Converters;
 
 namespace Sensus
 {
     public class SensusServiceHelper
     {
-        private static string _protocolsPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_protocols.bin");
+        private static string _protocolsPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_protocols.json");
 
         private List<Protocol> _registeredProtocols;
         private Logger _logger;
@@ -75,8 +77,14 @@ namespace Sensus
             {
                 try
                 {
-                    using (FileStream protocolsFile = new FileStream(_protocolsPath, FileMode.Open, FileAccess.Read))
-                        _registeredProtocols = new BinaryFormatter().Deserialize(protocolsFile) as List<Protocol>;
+                    using (StreamReader protocolsFile = new StreamReader(_protocolsPath))
+                        _registeredProtocols = JsonConvert.DeserializeObject<List<Protocol>>(protocolsFile.ReadToEnd(), new JsonSerializerSettings
+                        {
+                            PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+                            TypeNameHandling = TypeNameHandling.Auto,
+                            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
+                        });
                 }
                 catch (Exception ex) { if (_logger.Level >= LoggingLevel.Normal) _logger.WriteLine("Failed to deserialize protocols:  " + ex.Message); }
             }
@@ -137,8 +145,14 @@ namespace Sensus
 
             try
             {
-                using (FileStream protocolsFile = new FileStream(_protocolsPath, FileMode.Create, FileAccess.Write))
-                    new BinaryFormatter().Serialize(protocolsFile, _registeredProtocols);
+                using (StreamWriter protocolsFile = new StreamWriter(_protocolsPath))
+                    protocolsFile.Write(JsonConvert.SerializeObject(_registeredProtocols, Formatting.Indented, new JsonSerializerSettings 
+                    { 
+                        PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                        ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+                        TypeNameHandling = TypeNameHandling.Auto,
+                        ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
+                    }));
             }
             catch (Exception ex) { if (_logger.Level >= LoggingLevel.Normal) _logger.WriteLine("Failed to serialize protocols:  " + ex.Message); }
         }

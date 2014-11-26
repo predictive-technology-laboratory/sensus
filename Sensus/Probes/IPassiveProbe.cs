@@ -2,7 +2,7 @@
 {
     public interface IPassiveProbe : IProbe
     {
-        int Throttle { get; set; }
+        int MaxDataStoresPerSecond { get; set; }
 
         void StartListening();
 

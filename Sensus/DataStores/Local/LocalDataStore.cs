@@ -8,7 +8,6 @@ namespace Sensus.DataStores.Local
     /// <summary>
     /// Responsible for transferring data from probes to local media.
     /// </summary>
-    [Serializable]
     public abstract class LocalDataStore : DataStore
     {
         public LocalDataStore()

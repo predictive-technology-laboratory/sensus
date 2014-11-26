@@ -7,14 +7,13 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using Sensus.UI.Properties;
 using System.Threading.Tasks;
-using System.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace Sensus.Probes
 {
     /// <summary>
     /// An abstract probe.
     /// </summary>
-    [Serializable]
     public abstract class Probe : IProbe, INotifyPropertyChanged
     {
         #region static members
@@ -31,22 +30,21 @@ namespace Sensus.Probes
         /// <summary>
         /// Fired when a UI-relevant property is changed.
         /// </summary>
-        [field: NonSerialized]
         public event PropertyChangedEventHandler PropertyChanged;
 
         private int _id;
         private string _name;
         private bool _enabled;
-        [NonSerialized]
         private HashSet<Datum> _collectedData;
-        [NonSerialized]
         private Protocol _protocol;
         private ProbeController _controller;
         private bool _supported;
+        private Datum _mostRecentlyStoredDatum;
 
         public int Id
         {
             get { return _id; }
+            set { _id = value; }
         }
 
         [StringUiProperty("Name:", true)]
@@ -74,7 +72,7 @@ namespace Sensus.Probes
                     _enabled = value;
                     OnPropertyChanged();
 
-                    if (_protocol.Running)
+                    if (_protocol != null && _protocol.Running)  // _protocol can be null when deserializing the probe
                         if (_enabled)
                             InitializeAndStartAsync();
                         else
@@ -96,12 +94,12 @@ namespace Sensus.Probes
             {
                 if (value != _controller)
                 {
-                    bool previousRunningValue = _controller.Running;
+                    bool previousRunningValue = _controller != null && _controller.Running;
 
                     _controller = value;
 
                     if (previousRunningValue != _controller.Running)
-                        OnPropertyChanged("Running");  // the running status of probes come from the controller, so if the controller changes we should update
+                        OnPropertyChanged("Running");  // the running status of probes comes from the controller, so if the controller changes we should update
                 }
             }
         }
@@ -119,9 +117,24 @@ namespace Sensus.Probes
             }
         }
 
+        [JsonIgnore]
+        public Datum MostRecentlyStoredDatum
+        {
+            get { return _mostRecentlyStoredDatum; }
+            set
+            {
+                if(value != _mostRecentlyStoredDatum)
+                {
+                    _mostRecentlyStoredDatum = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        [JsonIgnore]
         public bool Running
         {
-            get { return _controller.Running; }
+            get { return _controller != null && _controller.Running; }  // can be null if this property is referenced by another when deserializing
         }
 
         protected abstract string DisplayName { get; }
@@ -149,7 +162,7 @@ namespace Sensus.Probes
                 throw new ProbeException(this, "Could not find controller for probe " + _name + " (" + GetType().FullName + ").");
         }
 
-        protected bool Initialize()
+        protected virtual bool Initialize()
         {
             _collectedData = new HashSet<Datum>();
 
@@ -180,6 +193,8 @@ namespace Sensus.Probes
                         App.Get().SensusService.Log("Storing datum in probe cache:  " + datum);
 
                     _collectedData.Add(datum);
+
+                    MostRecentlyStoredDatum = datum;
                 }
         }
 
@@ -201,12 +216,6 @@ namespace Sensus.Probes
                     if (App.LoggingLevel >= LoggingLevel.Verbose)
                         App.Get().SensusService.Log("Cleared " + removed + " committed data elements from probe:  " + _name);
                 }
-        }
-
-        [OnDeserialized]
-        private void PostDeserialization(StreamingContext c)
-        {
-            _controller.Probe = this;
         }
 
         public void OnPropertyChanged([CallerMemberName] string propertyName = null)

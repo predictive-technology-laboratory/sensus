@@ -1,4 +1,5 @@
 ﻿using Sensus.DataStores;
+using Sensus.Probes;
 using Sensus.UI.Properties;
 using System;
 using System.Collections.Generic;
@@ -27,6 +28,20 @@ namespace Sensus.UI
             }
         }
 
+        private class ProbeDetailValueConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            {
+                Datum mostRecent = value as Datum;
+                return mostRecent == null ? "----------" : mostRecent.DisplayDetail + Environment.NewLine + mostRecent.Timestamp;
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public ProtocolPage(Protocol protocol)
         {
             BindingContext = protocol;
@@ -41,6 +56,7 @@ namespace Sensus.UI
             ListView probesList = new ListView();
             probesList.ItemTemplate = new DataTemplate(typeof(TextCell));
             probesList.ItemTemplate.SetBinding(TextCell.TextProperty, "Name");
+            probesList.ItemTemplate.SetBinding(TextCell.DetailProperty, new Binding("MostRecentlyStoredDatum", converter: new ProbeDetailValueConverter()));
             probesList.ItemsSource = protocol.Probes;
             probesList.ItemTapped += (o, e) =>
                 {

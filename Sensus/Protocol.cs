@@ -1,4 +1,5 @@
-﻿using Sensus.DataStores.Local;
+﻿using Newtonsoft.Json;
+using Sensus.DataStores.Local;
 using Sensus.DataStores.Remote;
 using Sensus.Probes;
 using Sensus.UI.Properties;
@@ -6,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
 namespace Sensus
@@ -14,18 +14,15 @@ namespace Sensus
     /// <summary>
     /// Defines a Sensus protocol.
     /// </summary>
-    [Serializable]
     public class Protocol : INotifyPropertyChanged
     {
         /// <summary>
         /// Fired when a UI-relevant property is changed.
         /// </summary>
-        [field: NonSerialized]
         public event PropertyChangedEventHandler PropertyChanged;
 
         private string _name;
         private List<Probe> _probes;
-        [NonSerialized]
         private bool _running;
         private LocalDataStore _localDataStore;
         private RemoteDataStore _remoteDataStore;
@@ -47,9 +44,11 @@ namespace Sensus
         public List<Probe> Probes
         {
             get { return _probes; }
+            set { _probes = value; }
         }
 
         [BooleanUiProperty("Status:", true)]
+        [JsonIgnore]
         public bool Running
         {
             get { return _running; }
@@ -98,6 +97,9 @@ namespace Sensus
             }
         }
 
+        private Protocol() { } // for JSON deserialization
+
+
         public Protocol(string name, bool addAllProbes)
         {
             _name = name;
@@ -119,19 +121,6 @@ namespace Sensus
         {
             probe.Protocol = null;
             _probes.Remove(probe);
-        }
-
-        [OnDeserialized]
-        private void PostDeserialization(StreamingContext c)
-        {
-            foreach (Probe probe in _probes)
-                probe.Protocol = this;
-
-            if (_localDataStore != null)
-                _localDataStore.Protocol = this;
-
-            if (_remoteDataStore != null)
-                _remoteDataStore.Protocol = this;
         }
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)

@@ -7,7 +7,6 @@ namespace Sensus.DataStores.Remote
     /// <summary>
     /// Responsible for transferring data from a local data store to remote media.
     /// </summary>
-    [Serializable]
     public abstract class RemoteDataStore : DataStore
     {
         private bool _requireWiFi;

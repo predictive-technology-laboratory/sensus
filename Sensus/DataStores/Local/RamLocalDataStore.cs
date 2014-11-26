@@ -5,10 +5,8 @@ using System.Threading.Tasks;
 
 namespace Sensus.DataStores.Local
 {
-    [Serializable]
     public class RamLocalDataStore : LocalDataStore
     {
-        [NonSerialized]
         private HashSet<Datum> _data;
 
         protected override string DisplayName

@@ -4,7 +4,6 @@ using System.Text;
 
 namespace Sensus.Probes.Location
 {
-    [Serializable]
     public abstract class CompassProbe : PassiveProbe
     {
         protected override string DisplayName

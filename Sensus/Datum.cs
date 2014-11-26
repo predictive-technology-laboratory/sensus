@@ -5,7 +5,7 @@ namespace Sensus
     /// <summary>
     /// A single unit of sensed information returned by a probe.
     /// </summary>
-    public class Datum
+    public abstract class Datum
     {
         private static int _datumNum = 0;
 
@@ -23,6 +23,8 @@ namespace Sensus
         {
             get { return _timestamp; }
         }
+
+        public abstract string DisplayDetail { get; }
 
         public Datum(int probeId, DateTimeOffset timestamp)
         {

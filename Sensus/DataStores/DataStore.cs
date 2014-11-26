@@ -1,4 +1,5 @@
-﻿using Sensus.Exceptions;
+﻿using Newtonsoft.Json;
+using Sensus.Exceptions;
 using Sensus.UI.Properties;
 using System;
 using System.Collections.Generic;
@@ -12,31 +13,19 @@ namespace Sensus.DataStores
     /// <summary>
     /// An abstract repository for probed data.
     /// </summary>
-    [Serializable]
     public abstract class DataStore : INotifyPropertyChanged
     {
         /// <summary>
         /// Fired when a UI-relevant property is changed.
         /// </summary>
-        [field: NonSerialized]
         public event PropertyChangedEventHandler PropertyChanged;
 
         private string _name;
         private int _commitDelayMS;
-        [NonSerialized]
         private AutoResetEvent _commitTrigger;
-        [NonSerialized]
         private Task _commitTask;
-        [NonSerialized]
         private bool _running;
-        [NonSerialized]
         private Protocol _protocol;
-
-        public Protocol Protocol
-        {
-            get { return _protocol; }
-            set { _protocol = value; }
-        }
 
         [StringUiProperty("Name:", true)]
         public string Name
@@ -66,6 +55,13 @@ namespace Sensus.DataStores
             }
         }
 
+        public Protocol Protocol
+        {
+            get { return _protocol; }
+            set { _protocol = value; }
+        }
+
+        [JsonIgnore]
         public bool Running
         {
             get { return _running; }

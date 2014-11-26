@@ -26,7 +26,7 @@ namespace Sensus.UI
                 Children = { _protocolsList }
             };
 
-            ToolbarItems.Add(new ToolbarItem("...", null, new Action(() =>
+            ToolbarItems.Add(new ToolbarItem("Edit", null, new Action(() =>
                 {
                     if (_protocolsList.SelectedItem != null)
                         EditProtocol(_protocolsList.SelectedItem, null);

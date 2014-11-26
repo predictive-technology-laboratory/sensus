@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace Sensus.Probes
 {
-    [Serializable]
     public abstract class ActivePassiveProbe : PassiveProbe, IActiveProbe
     {
         private bool _passive;
@@ -24,7 +23,7 @@ namespace Sensus.Probes
 
                     ProbeController newController = _passive ? new PassiveProbeController(this) as ProbeController : new ActiveProbeController(this) as ProbeController;
 
-                    if (Controller.Running)
+                    if (Controller != null && Controller.Running)  // can be null when deserializing, before the controller is set
                     {
                         if (App.LoggingLevel >= LoggingLevel.Normal)
                             App.Get().SensusService.Log("Restarting " + Name + " as " + (_passive ? "passive" : "active") + " probe.");

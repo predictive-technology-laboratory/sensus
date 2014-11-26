@@ -6,6 +6,11 @@ namespace Sensus.Probes.Location
     {
         private double _altitude;
 
+        public override string DisplayDetail
+        {
+            get { return Math.Round(_altitude, 0) + " feet"; }
+        }
+
         public double Altitude
         {
             get { return _altitude; }
@@ -20,7 +25,7 @@ namespace Sensus.Probes.Location
         public override string ToString()
         {
             return base.ToString() + Environment.NewLine +
-                   "Altitude:  " + _altitude;
+                   "Altitude:  " + _altitude + " feet";
         }
     }
 }

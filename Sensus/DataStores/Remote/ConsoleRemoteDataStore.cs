@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 namespace Sensus.DataStores.Remote
 {
-    [Serializable]
     public class ConsoleRemoteDataStore : RemoteDataStore
     {
         protected override string DisplayName

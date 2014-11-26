@@ -7,10 +7,16 @@ namespace Sensus.Probes.Location
         private double _latitude;
         private double _longitude;
 
+        public override string DisplayDetail
+        {
+            get { return _latitude + " (lat), " + _longitude + " (lon)"; }
+        }
+
         public double Latitude
         {
             get { return _latitude; }
         }
+
         public double Longitude
         {
             get { return _longitude; }

@@ -1,25 +1,19 @@
-﻿using Sensus.Exceptions;
-using System;
-using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using Sensus.Exceptions;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Sensus.Probes
 {
-    [Serializable]
     public abstract class ProbeController : INotifyPropertyChanged
     {
         /// <summary>
         /// Fired when a UI-relevant property is changed.
         /// </summary>
-        [field: NonSerialized]
         public event PropertyChangedEventHandler PropertyChanged;
 
-        [NonSerialized]
         private IProbe _probe;
-        [NonSerialized]
         private bool _running;
 
         public IProbe Probe
@@ -28,6 +22,7 @@ namespace Sensus.Probes
             set { _probe = value; }
         }
 
+        [JsonIgnore]
         public bool Running
         {
             get { return _running; }

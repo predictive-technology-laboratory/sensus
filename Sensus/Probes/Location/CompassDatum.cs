@@ -6,6 +6,11 @@ namespace Sensus.Probes.Location
     {
         private double _heading;
 
+        public override string DisplayDetail
+        {
+            get { return Math.Round(_heading, 0) + " degrees from magnetic north"; }
+        }
+
         public double Heading
         {
             get { return _heading; }
