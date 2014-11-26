@@ -1,11 +1,9 @@
 ﻿using Sensus.UI.Properties;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Sensus.Probes
 {
-    public abstract class PassiveProbe : Probe, IPassiveProbe
+    public abstract class ListeningProbe : Probe, IListeningProbe
     {
         private int _maxDataStoresPerSecond;
         private DateTime _lastStoreTime;
@@ -24,7 +22,12 @@ namespace Sensus.Probes
             }
         }
 
-        protected PassiveProbe()
+        protected override ProbeController DefaultController
+        {
+            get { return new ListeningProbeController(this); }
+        }
+
+        protected ListeningProbe()
         {
             _maxDataStoresPerSecond = 1;
             _lastStoreTime = DateTime.MinValue;

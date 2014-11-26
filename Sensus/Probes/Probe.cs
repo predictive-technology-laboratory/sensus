@@ -139,27 +139,15 @@ namespace Sensus.Probes
 
         protected abstract string DisplayName { get; }
 
-        public Probe()
+        protected abstract ProbeController DefaultController { get; }
+
+        protected Probe()
         {
             _id = -1;  // TODO:  Get reasonable probe ID
             _name = DisplayName;
             _enabled = false;
             _supported = true;
-
-            if (this is ActivePassiveProbe)
-            {
-                ActivePassiveProbe probe = this as ActivePassiveProbe;
-                if (probe.Passive)
-                    _controller = new PassiveProbeController(probe);
-                else
-                    _controller = new ActiveProbeController(probe);
-            }
-            else if (this is IActiveProbe)
-                _controller = new ActiveProbeController(this as IActiveProbe);
-            else if (this is IPassiveProbe)
-                _controller = new PassiveProbeController(this as IPassiveProbe);
-            else
-                throw new ProbeException(this, "Could not find controller for probe " + _name + " (" + GetType().FullName + ").");
+            _controller = DefaultController;
         }
 
         protected virtual bool Initialize()

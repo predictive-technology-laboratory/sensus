@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Sensus.Probes.Location
 {
-    public abstract class CompassProbe : PassiveProbe
+    public abstract class CompassProbe : ListeningProbe
     {
         protected override string DisplayName
         {

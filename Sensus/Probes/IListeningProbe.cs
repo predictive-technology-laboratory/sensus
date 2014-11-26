@@ -1,6 +1,6 @@
 ﻿namespace Sensus.Probes
 {
-    public interface IPassiveProbe : IProbe
+    public interface IListeningProbe : IProbe
     {
         int MaxDataStoresPerSecond { get; set; }
 

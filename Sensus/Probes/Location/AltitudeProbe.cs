@@ -3,7 +3,7 @@ using Xamarin.Geolocation;
 
 namespace Sensus.Probes.Location
 {
-    public abstract class AltitudeProbe : PassiveProbe
+    public abstract class AltitudeProbe : ListeningProbe
     {
         protected override string DisplayName
         {

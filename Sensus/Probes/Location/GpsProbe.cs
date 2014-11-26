@@ -5,7 +5,7 @@ using Xamarin.Geolocation;
 
 namespace Sensus.Probes.Location
 {
-    public abstract class GpsProbe : ActivePassiveProbe
+    public abstract class GpsProbe : ListeningOrPollingProbe
     {
         private EventHandler<PositionEventArgs> _positionChangedHandler;
 
@@ -31,7 +31,7 @@ namespace Sensus.Probes.Location
                 if (App.LoggingLevel >= LoggingLevel.Verbose)
                     App.Get().SensusService.Log("Polling GPS receiver.");
 
-                return ConvertReadingToDatum(GpsReceiver.Get().GetReading((Controller as ActiveProbeController).SleepDurationMS, 10000));
+                return ConvertReadingToDatum(GpsReceiver.Get().GetReading((Controller as PollingProbeController).SleepDurationMS, 10000));
             }
         }
 

@@ -2,9 +2,9 @@
 
 namespace Sensus.Probes
 {
-    public class PassiveProbeController : ProbeController
+    public class ListeningProbeController : ProbeController
     {
-        public PassiveProbeController(IPassiveProbe probe)
+        public ListeningProbeController(IListeningProbe probe)
             : base(probe)
         {
         }
@@ -15,7 +15,7 @@ namespace Sensus.Probes
                 {
                     await base.StartAsync();
 
-                    (Probe as IPassiveProbe).StartListening();
+                    (Probe as IListeningProbe).StartListening();
                 });
         }
 
@@ -25,7 +25,7 @@ namespace Sensus.Probes
                 {
                     await base.StopAsync();
 
-                    (Probe as IPassiveProbe).StopListening();
+                    (Probe as IListeningProbe).StopListening();
                 });
         }
     }

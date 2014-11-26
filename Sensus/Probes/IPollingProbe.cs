@@ -1,6 +1,6 @@
 ﻿namespace Sensus.Probes
 {
-    public interface IActiveProbe : IProbe
+    public interface IPollingProbe : IProbe
     {
         Datum Poll();
     }

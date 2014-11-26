@@ -8,7 +8,7 @@ namespace Sensus.Probes
     /// <summary>
     /// A probe that polls a data source for samples on a predetermined schedule.
     /// </summary>
-    public class ActiveProbeController : ProbeController
+    public class PollingProbeController : ProbeController
     {
         private int _sleepDurationMS;
         private Task _pollTask;
@@ -32,7 +32,7 @@ namespace Sensus.Probes
             }
         }
 
-        public ActiveProbeController(IActiveProbe probe)
+        public PollingProbeController(IPollingProbe probe)
             : base(probe)
         {
             _sleepDurationMS = 1000;
@@ -54,14 +54,14 @@ namespace Sensus.Probes
 
                                 if (Running)
                                 {
-                                    IActiveProbe activeProbe = Probe as IActiveProbe;
+                                    IPollingProbe pollingProbe = Probe as IPollingProbe;
 
                                     Datum d = null;
 
-                                    try { d = activeProbe.Poll(); }
-                                    catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to poll probe \"" + activeProbe.Name + "\":  " + ex.Message + Environment.NewLine + ex.StackTrace); }
+                                    try { d = pollingProbe.Poll(); }
+                                    catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to poll probe \"" + pollingProbe.Name + "\":  " + ex.Message + Environment.NewLine + ex.StackTrace); }
 
-                                    try { activeProbe.StoreDatum(d); }
+                                    try { pollingProbe.StoreDatum(d); }
                                     catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to store datum:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
                                 }
                             }
