@@ -32,7 +32,7 @@ namespace Sensus.Probes
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private int _id;
+        private string _id;
         private string _name;
         private bool _enabled;
         private HashSet<Datum> _collectedData;
@@ -41,7 +41,7 @@ namespace Sensus.Probes
         private bool _supported;
         private Datum _mostRecentlyStoredDatum;
 
-        public int Id
+        public string Id
         {
             get { return _id; }
             set { _id = value; }
@@ -143,7 +143,7 @@ namespace Sensus.Probes
 
         protected Probe()
         {
-            _id = -1;  // TODO:  Get reasonable probe ID
+            _id = GetType().FullName;
             _name = DisplayName;
             _enabled = false;
             _supported = true;

@@ -124,7 +124,7 @@ namespace Sensus
                 };
             #endregion
 
-            #region data stores page
+            #region create data store page
             CreateDataStorePage.CreateDataStoreTapped += async (o, e) =>
                 {
                     await _navigationPage.PopAsync();

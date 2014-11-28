@@ -11,10 +11,10 @@ namespace Sensus
 
         private readonly int _id;
         private readonly int _hashCode;
-        private int _probeId;
+        private string _probeId;
         private DateTimeOffset _timestamp;
 
-        public int ProbeId
+        public string ProbeId
         {
             get { return _probeId; }
         }
@@ -26,7 +26,7 @@ namespace Sensus
 
         public abstract string DisplayDetail { get; }
 
-        public Datum(int probeId, DateTimeOffset timestamp)
+        public Datum(string probeId, DateTimeOffset timestamp)
         {
             _id = _datumNum++;
             _hashCode = _id.GetHashCode();
