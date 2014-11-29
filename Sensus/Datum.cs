@@ -7,29 +7,40 @@ namespace Sensus
     /// </summary>
     public abstract class Datum
     {
-        private static int _datumNum = 0;
-
-        private readonly int _id;
-        private readonly int _hashCode;
+        private string _id;
+        private int _hashCode;
         private string _probeId;
         private DateTimeOffset _timestamp;
+
+        public string Id
+        {
+            get { return _id; }
+            set
+            {
+                _id = value;
+                _hashCode = _id.GetHashCode();
+            }
+        }
 
         public string ProbeId
         {
             get { return _probeId; }
+            set { _probeId = value; }
         }
 
         public DateTimeOffset Timestamp
         {
             get { return _timestamp; }
+            set { _timestamp = value; }
         }
 
         public abstract string DisplayDetail { get; }
 
+        private Datum() { }  // for JSON.NET deserialization
+
         public Datum(string probeId, DateTimeOffset timestamp)
         {
-            _id = _datumNum++;
-            _hashCode = _id.GetHashCode();
+            Id = Guid.NewGuid().ToString();
             _probeId = probeId;
             _timestamp = timestamp;
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace Sensus.Probes.Location
 {
@@ -7,22 +8,25 @@ namespace Sensus.Probes.Location
         private double _latitude;
         private double _longitude;
 
-        public override string DisplayDetail
-        {
-            get { return _latitude + " (lat), " + _longitude + " (lon)"; }
-        }
-
         public double Latitude
         {
             get { return _latitude; }
+            set { _latitude = value; }
         }
 
         public double Longitude
         {
             get { return _longitude; }
+            set { _longitude = value; }
         }
 
-        public LocationDatum(int probeId, DateTimeOffset timestamp, double accuracy, double latitude, double longitude)
+        [JsonIgnore]
+        public override string DisplayDetail
+        {
+            get { return _latitude + " (lat), " + _longitude + " (lon)"; }
+        }
+
+        public LocationDatum(string probeId, DateTimeOffset timestamp, double accuracy, double latitude, double longitude)
             : base(probeId, timestamp, accuracy)
         {
             _latitude = latitude;

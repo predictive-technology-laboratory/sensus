@@ -83,14 +83,14 @@ namespace Sensus.Android
             _serviceHelper.RegisterProtocol(protocol);
         }
 
-        public void StartProtocol(Protocol protocol)
+        public Task StartProtocolAsync(Protocol protocol)
         {
-            _serviceHelper.StartProtocol(protocol);
+            return _serviceHelper.StartProtocolAsync(protocol);
         }
 
-        public void StopProtocol(Protocol protocol, bool unregister)
+        public Task StopProtocolAsync(Protocol protocol, bool unregister)
         {
-            _serviceHelper.StopProtocol(protocol, unregister);
+            return _serviceHelper.StopProtocolAsync(protocol, unregister);
         }
 
         public Task StopAsync()

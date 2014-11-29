@@ -6,6 +6,7 @@ using Sensus.UI.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
@@ -21,14 +22,14 @@ namespace Sensus
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private int _id;
+        private string _id;
         private string _name;
         private List<Probe> _probes;
         private bool _running;
         private LocalDataStore _localDataStore;
         private RemoteDataStore _remoteDataStore;
 
-        public int Id
+        public string Id
         {
             get { return _id; }
             set { _id = value; }
@@ -67,9 +68,9 @@ namespace Sensus
                     OnPropertyChanged();
 
                     if (_running)
-                        App.Get().SensusService.StartProtocol(this);
+                        App.Get().SensusService.StartProtocolAsync(this);
                     else
-                        App.Get().SensusService.StopProtocol(this, false);  // don't unregister the protocol when stopped via UI interaction
+                        App.Get().SensusService.StopProtocolAsync(this, false);  // don't unregister the protocol when stopped via UI interaction
                 }
             }
         }
@@ -104,12 +105,18 @@ namespace Sensus
             }
         }
 
+        [JsonIgnore]
+        public string StorageDirectory
+        {
+            get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), _id); }
+        }
+
         private Protocol() { } // for JSON deserialization
 
 
         public Protocol(string name, bool addAllProbes)
         {
-            _id = -1;
+            _id = Guid.NewGuid().ToString();
             _name = name;
             _probes = new List<Probe>();
             _running = false;
@@ -225,6 +232,16 @@ namespace Sensus
                         catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to stop remote data store:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
                     }
                 });
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Protocol && (obj as Protocol)._id == _id;
+        }
+
+        public override int GetHashCode()
+        {
+            return _id.GetHashCode();
         }
     }
 }

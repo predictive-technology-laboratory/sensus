@@ -14,10 +14,6 @@ namespace Sensus.DataStores.Local
             get { return "RAM"; }
         }
 
-        public RamLocalDataStore()
-        {
-        }
-
         public override Task StartAsync()
         {
             return Task.Run(async () =>

@@ -86,7 +86,7 @@ namespace Sensus
                     {
                         PreserveReferencesHandling = PreserveReferencesHandling.Objects,
                         ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-                        TypeNameHandling = TypeNameHandling.Auto,
+                        TypeNameHandling = TypeNameHandling.All,
                         ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
                     });
             }
@@ -97,17 +97,17 @@ namespace Sensus
 
             try
             {
-                List<int> _previouslyRunningProtocols = new List<int>();
+                List<string> previouslyRunningProtocols = new List<string>();
                 using (StreamReader previouslyRunningProtocolsFile = new StreamReader(_previouslyRunningProtocolsPath))
-                    _previouslyRunningProtocols = JsonConvert.DeserializeObject<List<int>>(previouslyRunningProtocolsFile.ReadToEnd());
+                    previouslyRunningProtocols = JsonConvert.DeserializeObject<List<string>>(previouslyRunningProtocolsFile.ReadToEnd());
 
                 foreach (Protocol protocol in _registeredProtocols)
-                    if (!protocol.Running && _previouslyRunningProtocols.Contains(protocol.Id))
+                    if (!protocol.Running && previouslyRunningProtocols.Contains(protocol.Id))
                     {
                         if (_logger.Level >= LoggingLevel.Normal)
                             _logger.WriteLine("Starting previously running protocol:  " + protocol.Name);
 
-                        StartProtocol(protocol);
+                        StartProtocolAsync(protocol);
                     }
             }
             catch (Exception ex) { if (_logger.Level >= LoggingLevel.Normal) _logger.WriteLine("Failed to deserialize ids for previously running protocols:  " + ex.Message); }
@@ -118,49 +118,37 @@ namespace Sensus
             lock (this)
                 if (!_stopped)
                     if (!_registeredProtocols.Contains(protocol))
-                    {
-                        SetProtocolId(protocol);
                         _registeredProtocols.Add(protocol);
-                    }
         }
 
-        public void StartProtocol(Protocol protocol)
+        public Task StartProtocolAsync(Protocol protocol)
         {
             lock (this)
-                if (!_stopped)
+                if (_stopped)
+                    return null;
+                else
                 {
-                    // can't call RegisterProtocol here due to locking -- just repeat the code
-                    if (!_registeredProtocols.Contains(protocol))
-                    {
-                        SetProtocolId(protocol);
+                    if (!_registeredProtocols.Contains(protocol))  // can't call RegisterProtocol here due to locking -- just repeat the code
                         _registeredProtocols.Add(protocol);
-                    }
 
-                    protocol.StartAsync();
+                    return protocol.StartAsync();
                 }
         }
 
-        public void StopProtocol(Protocol protocol, bool unregister)
+        public Task StopProtocolAsync(Protocol protocol, bool unregister)
         {
             lock (this)
-                if (!_stopped)
+                if (_stopped)
+                    return null;
+                else
                 {
-                    protocol.StopAsync();
+                    Task stopTask = protocol.StopAsync();
 
                     if (unregister)
-                    {
-                        protocol.Id = -1;
                         _registeredProtocols.Remove(protocol);
-                    }
-                }
-        }
 
-        private void SetProtocolId(Protocol protocol)
-        {
-            if (_registeredProtocols.Count == 0)
-                protocol.Id = 0;
-            else
-                protocol.Id = _registeredProtocols.Max(p => p.Id) + 1;
+                    return stopTask;
+                }
         }
 
         public async void StopServiceAsync()
@@ -175,7 +163,7 @@ namespace Sensus
             if (_logger.Level >= LoggingLevel.Normal)
                 _logger.WriteLine("Stopping Sensus service.");
 
-            List<int> runningProtocolIds = new List<int>();
+            List<string> runningProtocolIds = new List<string>();
 
             foreach (Protocol protocol in _registeredProtocols)
                 if (protocol.Running)
@@ -191,7 +179,7 @@ namespace Sensus
                     {
                         PreserveReferencesHandling = PreserveReferencesHandling.Objects,
                         ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-                        TypeNameHandling = TypeNameHandling.Auto,
+                        TypeNameHandling = TypeNameHandling.All,
                         ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
                     }));
             }

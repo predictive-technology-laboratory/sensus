@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace Sensus.Probes.Location
 {
@@ -6,6 +7,7 @@ namespace Sensus.Probes.Location
     {
         private double _altitude;
 
+        [JsonIgnore]
         public override string DisplayDetail
         {
             get { return Math.Round(_altitude, 0) + " feet"; }
@@ -14,9 +16,10 @@ namespace Sensus.Probes.Location
         public double Altitude
         {
             get { return _altitude; }
+            set { _altitude = value; }
         }
 
-        public AltitudeDatum(int probeId, DateTimeOffset timestamp, double accuracy, double altitude)
+        public AltitudeDatum(string probeId, DateTimeOffset timestamp, double accuracy, double altitude)
             : base(probeId, timestamp, accuracy)
         {
             _altitude = altitude;

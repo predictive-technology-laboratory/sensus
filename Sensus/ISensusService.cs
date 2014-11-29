@@ -19,9 +19,9 @@ namespace Sensus
 
         void RegisterProtocol(Protocol protocol);
 
-        void StartProtocol(Protocol protocol);
+        Task StartProtocolAsync(Protocol protocol);
 
-        void StopProtocol(Protocol protocol, bool unregister);
+        Task StopProtocolAsync(Protocol protocol, bool unregister);
 
         Task StopAsync();
     }

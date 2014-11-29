@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Xamarin.Forms;
 using System.Linq;
+using System.IO;
 
 namespace Sensus.UI
 {
@@ -48,7 +49,10 @@ namespace Sensus.UI
 
                         if (await DisplayAlert("Delete " + protocolToRemove.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
                         {
-                            App.Get().SensusService.StopProtocol(protocolToRemove, true);
+                            await App.Get().SensusService.StopProtocolAsync(protocolToRemove, true);
+
+                            try { Directory.Delete(protocolToRemove.StorageDirectory, true); }
+                            catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to delete protocol storage directory \"" + protocolToRemove.StorageDirectory + "\":  " + ex.Message); }
 
                             _protocolsList.ItemsSource = _protocolsList.ItemsSource.Cast<Protocol>().Where(p => p != protocolToRemove);
                             _protocolsList.SelectedItem = null;

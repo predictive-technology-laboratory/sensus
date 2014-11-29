@@ -15,9 +15,10 @@ namespace Sensus
         public double Accuracy
         {
             get { return _accuracy; }
+            set { _accuracy = value; }
         }
 
-        protected ImpreciseDatum(int probeId, DateTimeOffset timestamp, double accuracy)
+        protected ImpreciseDatum(string probeId, DateTimeOffset timestamp, double accuracy)
             : base(probeId, timestamp)
         {
             _accuracy = accuracy;
