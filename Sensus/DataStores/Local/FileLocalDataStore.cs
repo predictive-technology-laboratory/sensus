@@ -55,21 +55,24 @@ namespace Sensus.DataStores.Local
                 });
         }
 
-        protected override ICollection<Datum> CommitData(ICollection<Datum> data)
+        protected override Task<ICollection<Datum>> CommitData(ICollection<Datum> data)
         {
             lock (this)
             {
-                List<Datum> committedData = new List<Datum>();
-
-                foreach (Datum datum in data)
-                    try
+                return Task.Run<ICollection<Datum>>(() =>
                     {
-                        _file.WriteLine(GetJSON(datum));
-                        committedData.Add(datum);
-                    }
-                    catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to store datum in local file:  " + ex.Message); }
+                        List<Datum> committedData = new List<Datum>();
 
-                return committedData;
+                        foreach (Datum datum in data)
+                            try
+                            {
+                                _file.WriteLine(GetJSON(datum));
+                                committedData.Add(datum);
+                            }
+                            catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to store datum in local file:  " + ex.Message); }
+
+                        return committedData;
+                    });
             }
         }
 

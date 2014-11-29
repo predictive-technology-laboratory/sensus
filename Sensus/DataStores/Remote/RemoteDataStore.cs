@@ -29,7 +29,11 @@ namespace Sensus.DataStores.Remote
             _requireWiFi = true;
             _requireCharging = true;
 
-            CommitDelayMS = 1000 * 60 * 30;  // every thirty minutes by default
+#if DEBUG
+            CommitDelayMS = 10000;  // 10 seconds...so we can see debugging output
+#else
+            CommitDelayMS = 1000 * 60 * 30;  // every thirty minutes
+#endif
         }
 
         protected override ICollection<Datum> GetDataToCommit()

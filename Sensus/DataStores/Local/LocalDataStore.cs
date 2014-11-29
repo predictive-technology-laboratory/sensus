@@ -12,7 +12,11 @@ namespace Sensus.DataStores.Local
     {
         public LocalDataStore()
         {
-            CommitDelayMS = 5000;
+#if DEBUG
+            CommitDelayMS = 5000;  // so we can see the operation quickly
+#else
+            CommitDelayMS = 60000;
+#endif
         }
 
         protected override ICollection<Datum> GetDataToCommit()

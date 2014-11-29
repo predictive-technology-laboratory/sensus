@@ -1,6 +1,7 @@
 ﻿using Sensus.UI.Properties;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Sensus.DataStores.Remote
 {
@@ -96,7 +97,7 @@ namespace Sensus.DataStores.Remote
             _password = "";
         }
 
-        protected override ICollection<Datum> CommitData(ICollection<Datum> data)
+        protected override Task<ICollection<Datum>> CommitData(ICollection<Datum> data)
         {
             throw new NotImplementedException();
         }

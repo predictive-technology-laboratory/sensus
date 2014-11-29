@@ -24,18 +24,21 @@ namespace Sensus.DataStores.Local
                 });
         }
 
-        protected override ICollection<Datum> CommitData(ICollection<Datum> data)
+        protected override Task<ICollection<Datum>> CommitData(ICollection<Datum> data)
         {
-            List<Datum> committed = new List<Datum>();
-
-            lock(_data)
-                foreach (Datum datum in data)
+            return Task.Run<ICollection<Datum>>(() =>
                 {
-                    _data.Add(datum);
-                    committed.Add(datum);
-                }
+                    List<Datum> committed = new List<Datum>();
 
-            return committed;
+                    lock (_data)
+                        foreach (Datum datum in data)
+                        {
+                            _data.Add(datum);
+                            committed.Add(datum);
+                        }
+
+                    return committed;
+                });
         }
 
         public override ICollection<Datum> GetDataForRemoteDataStore()

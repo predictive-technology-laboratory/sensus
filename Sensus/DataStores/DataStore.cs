@@ -87,7 +87,7 @@ namespace Sensus.DataStores
 
                     _commitTrigger = new AutoResetEvent(false);  // delay the first commit  
 
-                    _commitTask = Task.Run(() =>
+                    _commitTask = Task.Run(async () =>
                         {
                             while (_protocol.Running)
                             {
@@ -105,7 +105,7 @@ namespace Sensus.DataStores
 
                                     try
                                     {
-                                        ICollection<Datum> committedData = CommitData(dataToCommit);
+                                        ICollection<Datum> committedData = await CommitData(dataToCommit);
 
                                         try { ProcessCommittedData(committedData); }
                                         catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log(Name + " failed to process committed data:  " + ex.Message); }
@@ -125,7 +125,7 @@ namespace Sensus.DataStores
 
         protected abstract ICollection<Datum> GetDataToCommit();
 
-        protected abstract ICollection<Datum> CommitData(ICollection<Datum> data);
+        protected abstract Task<ICollection<Datum>> CommitData(ICollection<Datum> data);
 
         protected abstract void ProcessCommittedData(ICollection<Datum> data);
 
