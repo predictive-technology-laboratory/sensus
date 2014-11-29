@@ -80,8 +80,9 @@ namespace Sensus
             _registeredProtocols = new List<Protocol>();
 
             try
-            {                
+            {
                 using (StreamReader protocolsFile = new StreamReader(_protocolsPath))
+                {
                     _registeredProtocols = JsonConvert.DeserializeObject<List<Protocol>>(protocolsFile.ReadToEnd(), new JsonSerializerSettings
                     {
                         PreserveReferencesHandling = PreserveReferencesHandling.Objects,
@@ -89,6 +90,9 @@ namespace Sensus
                         TypeNameHandling = TypeNameHandling.All,
                         ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
                     });
+
+                    protocolsFile.Close();
+                }
             }
             catch (Exception ex) { if (_logger.Level >= LoggingLevel.Normal) _logger.WriteLine("Failed to deserialize protocols:  " + ex.Message); }
 
@@ -99,7 +103,10 @@ namespace Sensus
             {
                 List<string> previouslyRunningProtocols = new List<string>();
                 using (StreamReader previouslyRunningProtocolsFile = new StreamReader(_previouslyRunningProtocolsPath))
+                {
                     previouslyRunningProtocols = JsonConvert.DeserializeObject<List<string>>(previouslyRunningProtocolsFile.ReadToEnd());
+                    previouslyRunningProtocolsFile.Close();
+                }
 
                 foreach (Protocol protocol in _registeredProtocols)
                     if (!protocol.Running && previouslyRunningProtocols.Contains(protocol.Id))
@@ -175,6 +182,7 @@ namespace Sensus
             try
             {
                 using (StreamWriter protocolsFile = new StreamWriter(_protocolsPath))
+                {
                     protocolsFile.Write(JsonConvert.SerializeObject(_registeredProtocols, Formatting.Indented, new JsonSerializerSettings
                     {
                         PreserveReferencesHandling = PreserveReferencesHandling.Objects,
@@ -182,13 +190,19 @@ namespace Sensus
                         TypeNameHandling = TypeNameHandling.All,
                         ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
                     }));
+
+                    protocolsFile.Close();
+                }
             }
             catch (Exception ex) { if (_logger.Level >= LoggingLevel.Normal) _logger.WriteLine("Failed to serialize protocols:  " + ex.Message); }
 
             try
             {
                 using (StreamWriter previouslyRunningProtocolsFile = new StreamWriter(_previouslyRunningProtocolsPath))
+                {
                     previouslyRunningProtocolsFile.Write(JsonConvert.SerializeObject(runningProtocolIds, Formatting.Indented));
+                    previouslyRunningProtocolsFile.Close();
+                }
             }
             catch (Exception ex) { if (_logger.Level >= LoggingLevel.Normal) _logger.WriteLine("Failed to serialize running protocol id list:  " + ex.Message); }
         }

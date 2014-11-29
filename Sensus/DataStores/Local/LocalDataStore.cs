@@ -33,7 +33,7 @@ namespace Sensus.DataStores.Local
             return dataToCommit;
         }
 
-        protected override void DataCommitted(ICollection<Datum> data)
+        protected override void ProcessCommittedData(ICollection<Datum> data)
         {
             if (App.LoggingLevel >= LoggingLevel.Normal)
                 App.Get().SensusService.Log("Clearing " + data.Count + " committed data elements from probes.");

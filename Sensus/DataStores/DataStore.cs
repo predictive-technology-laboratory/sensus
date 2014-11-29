@@ -99,8 +99,20 @@ namespace Sensus.DataStores
                                 if (App.LoggingLevel >= LoggingLevel.Debug)
                                     App.Get().SensusService.Log(Name + " is waking up to commit data.");
 
-                                try { DataCommitted(CommitData(GetDataToCommit())); }  // regardless of whether the commit is triggered by the delay or by Stop, we should commit existing data.
-                                catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to commit data to " + Name + ":  " + ex.Message); }
+                                try
+                                {
+                                    ICollection<Datum> dataToCommit = GetDataToCommit();
+
+                                    try
+                                    {
+                                        ICollection<Datum> committedData = CommitData(dataToCommit);
+
+                                        try { ProcessCommittedData(committedData); }
+                                        catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log(Name + " failed to process committed data:  " + ex.Message); }
+                                    }
+                                    catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log(Name + " failed to commit data:  " + ex.Message); }
+                                }
+                                catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log(Name + " failed to get data to commit:  " + ex.Message); }
                             }
 
                             if (App.LoggingLevel >= LoggingLevel.Normal)
@@ -115,7 +127,7 @@ namespace Sensus.DataStores
 
         protected abstract ICollection<Datum> CommitData(ICollection<Datum> data);
 
-        protected abstract void DataCommitted(ICollection<Datum> data);
+        protected abstract void ProcessCommittedData(ICollection<Datum> data);
 
         public virtual Task StopAsync()
         {

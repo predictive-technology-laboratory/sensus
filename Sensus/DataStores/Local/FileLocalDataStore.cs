@@ -47,22 +47,11 @@ namespace Sensus.DataStores.Local
         {
             return Task.Run(async () =>
                 {
-                    await base.StartAsync();
-
+                    // file needs to be ready to accept data immediately
                     lock (this)
                         InitializeFile();
-                });
-        }
 
-        public override Task StopAsync()
-        {
-            return Task.Run(async () =>
-                {
-                    await base.StopAsync();
-
-                    lock (this)
-                        try { _file.Close(); }
-                        catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to close local data store file:  " + ex.Message); }
+                    await base.StartAsync();
                 });
         }
 
@@ -88,21 +77,29 @@ namespace Sensus.DataStores.Local
         {
             lock (this)
             {
-                _file.Close();
+                bool initializeNewFile = false;
+                if (_file != null)
+                {
+                    _file.Close();
+                    initializeNewFile = true;
+                }
 
-                List<Datum> data = new List<Datum>();
+                List<Datum> localData = new List<Datum>();
 
                 foreach (string path in Directory.GetFiles(StorageDirectory))
                     using (StreamReader file = new StreamReader(path))
                     {
                         string line;
                         while ((line = file.ReadLine()) != null)
-                            data.Add(JsonConvert.DeserializeObject<Datum>(line, _serializationSettings));
+                            localData.Add(JsonConvert.DeserializeObject<Datum>(line, _serializationSettings));
+
+                        file.Close();
                     }
 
-                InitializeFile();
+                if (initializeNewFile)
+                    InitializeFile();
 
-                return data;
+                return localData;
             }
         }
 
@@ -130,20 +127,42 @@ namespace Sensus.DataStores.Local
                                     filteredDataWritten++;
                                 }
                             }
+
+                            filteredFile.Close();
+                            file.Close();
                         }
 
-                        if (filteredDataWritten == 0)  // all data were committed to remote data store -- delete original and filtered files
+                        if (filteredDataWritten == 0)  // all data in local file were committed to remote data store -- delete local and filtered files
                         {
                             File.Delete(path);
                             File.Delete(filteredPath);
                         }
-                        else  // some data were not committed to the remote data store -- move filtered path to original path and retry sending to remote store next time
+                        else  // data from local file were not committed to the remote data store -- move filtered path to local path and retry sending to remote store next time
                         {
                             File.Delete(path);
                             File.Move(filteredPath, path);
                         }
                     }
             }
+        }
+
+        public override Task StopAsync()
+        {
+            return Task.Run(async () =>
+                {
+                    // stop the data store before closing the file to make sure all data are allowed in
+                    await base.StopAsync();
+
+                    lock (this)
+                    {
+                        try
+                        {
+                            _file.Close();
+                            _file = null;
+                        }
+                        catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to close local data store file:  " + ex.Message); }
+                    }
+                });
         }
 
         private string GetJSON(Datum datum)
@@ -166,7 +185,7 @@ namespace Sensus.DataStores.Local
             }
 
             if (_file == null)
-                throw new SensusException("Failed to open file for local data store.");
+                throw new DataStoreException("Failed to open file for local data store.");
         }
     }
 }

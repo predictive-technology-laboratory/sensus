@@ -46,7 +46,7 @@ namespace Sensus.DataStores.Remote
             return localData;
         }
 
-        protected override void DataCommitted(ICollection<Datum> data)
+        protected override void ProcessCommittedData(ICollection<Datum> data)
         {
             Protocol.LocalDataStore.ClearDataCommittedToRemoteDataStore(data);
         }
