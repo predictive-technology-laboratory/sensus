@@ -190,5 +190,12 @@ namespace Sensus.DataStores.Local
             if (_file == null)
                 throw new DataStoreException("Failed to open file for local data store.");
         }
+
+        public override void Clear()
+        {
+            foreach (string path in Directory.GetFiles(StorageDirectory))
+                try { File.Delete(path); }
+                catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to delete local data store file \"" + path + "\":  " + ex.Message); }
+        }
     }
 }

@@ -53,5 +53,11 @@ namespace Sensus.DataStores.Local
                 foreach (Datum d in data)
                     _data.Remove(d);
         }
+
+        public override void Clear()
+        {
+            lock (_data)
+                _data.Clear();
+        }
     }
 }

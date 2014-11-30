@@ -21,7 +21,7 @@ namespace Sensus.UI.Properties
                     Label parameterNameLabel = new Label
                     {
                         Text = probeParameterAttribute.LabelText,
-                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        HorizontalOptions = LayoutOptions.Start,
                         Font = Font.SystemFontOfSize(20)
                     };
 
@@ -39,7 +39,8 @@ namespace Sensus.UI.Properties
                     {
                         view = new Entry
                         {
-                            Keyboard = Keyboard.Numeric
+                            Keyboard = Keyboard.Numeric,
+                            HorizontalOptions = LayoutOptions.FillAndExpand
                         };
                         bindingProperty = Entry.TextProperty;
                         converter = new EntryIntegerUiProperty.ValueConverter();
@@ -61,7 +62,8 @@ namespace Sensus.UI.Properties
                     {
                         view = new Entry
                         {
-                            Keyboard = Keyboard.Default
+                            Keyboard = Keyboard.Default,                           
+                            HorizontalOptions = LayoutOptions.Fill
                         };
                         bindingProperty = Entry.TextProperty;
                     }
@@ -70,8 +72,8 @@ namespace Sensus.UI.Properties
                     {
                         StackLayout stack = new StackLayout
                         {
-                            HorizontalOptions = LayoutOptions.StartAndExpand,
                             Orientation = StackOrientation.Horizontal,
+                            HorizontalOptions = LayoutOptions.FillAndExpand
                         };
 
                         stack.Children.Add(parameterNameLabel);

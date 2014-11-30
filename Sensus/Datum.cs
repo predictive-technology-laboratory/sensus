@@ -8,10 +8,20 @@ namespace Sensus
     /// </summary>
     public abstract class Datum
     {
+        private string _id;
         private int _userId;
         private int _probeId;
         private DateTimeOffset _timestamp;
         private int _hashCode;
+
+        /// <summary>
+        /// Present for database storage purposes. This should never be set programmatically. Rather, it is set by the database.
+        /// </summary>
+        public string Id
+        {
+            get { return _id; }
+            set { _id = value; }
+        }
 
         public int UserId
         {

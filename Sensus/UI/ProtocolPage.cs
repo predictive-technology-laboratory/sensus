@@ -9,7 +9,9 @@ namespace Sensus.UI
 {
     public class ProtocolPage : ContentPage
     {
+        public static event EventHandler EditLocalDataStoreTapped;
         public static event EventHandler CreateLocalDataStoreTapped;
+        public static event EventHandler EditRemoteDataStoreTapped;
         public static event EventHandler CreateRemoteDataStoreTapped;
         public static event EventHandler<ItemTappedEventArgs> ProbeTapped;
 
@@ -18,8 +20,7 @@ namespace Sensus.UI
             public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
             {
                 DataStore dataStore = value as DataStore;
-
-                return value == null ? "Create " + parameter + " Data Store" : parameter + " Data Store:  " + dataStore.Name;
+                return dataStore == null ? "None" : parameter + " Data Store:  " + dataStore.Name;
             }
 
             public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -55,7 +56,7 @@ namespace Sensus.UI
             #region probes
             ListView probesList = new ListView();
             probesList.ItemTemplate = new DataTemplate(typeof(TextCell));
-            probesList.ItemTemplate.SetBinding(TextCell.TextProperty, "Name");
+            probesList.ItemTemplate.SetBinding(TextCell.TextProperty, "DisplayName");
             probesList.ItemTemplate.SetBinding(TextCell.DetailProperty, new Binding("MostRecentlyStoredDatum", converter: new ProbeDetailValueConverter()));
             probesList.ItemsSource = protocol.Probes;
             probesList.ItemTapped += (o, e) =>
@@ -68,37 +69,86 @@ namespace Sensus.UI
             #endregion
 
             #region data stores
-            Button localDataStoreButton = new Button
+            Button editLocalDataStoreButton = new Button
             {
-                Text = "Create Local Data Store",
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 Font = Font.SystemFontOfSize(20),
                 BindingContext = protocol
             };
 
-            localDataStoreButton.SetBinding(Button.TextProperty, new Binding("LocalDataStore", converter: new DataStoreValueConverter(), converterParameter: "Local"));
-            localDataStoreButton.Clicked += (o, e) =>
+            editLocalDataStoreButton.SetBinding(Button.TextProperty, new Binding("LocalDataStore", converter: new DataStoreValueConverter(), converterParameter: "Local"));
+            editLocalDataStoreButton.Clicked += (o, e) =>
+                {
+                    EditLocalDataStoreTapped(protocol, e);
+                };
+
+            Button createLocalDataStoreButton = new Button
+            {
+                Text = "+",
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                Font = Font.SystemFontOfSize(20)
+            };
+
+            createLocalDataStoreButton.Clicked += (o, e) =>
                 {
                     CreateLocalDataStoreTapped(protocol, e);
                 };
 
-            views.Add(localDataStoreButton);
-
-            Button remoteDataStoreButton = new Button
+            Button clearLocalDataStoreButton = new Button
             {
-                Text = "Create Remote Data Store",
+                Text = "Clear",
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                Font = Font.SystemFontOfSize(20)
+            };
+
+            clearLocalDataStoreButton.Clicked += (o, e) =>
+                {
+                    if (protocol.LocalDataStore != null)
+                        protocol.LocalDataStore.Clear();
+                };
+
+            StackLayout localDataStoreStack = new StackLayout
+            {
+                Orientation = StackOrientation.Horizontal,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                Children = { editLocalDataStoreButton, createLocalDataStoreButton, clearLocalDataStoreButton }
+            };
+
+            views.Add(localDataStoreStack);
+
+            Button editRemoteDataStoreButton = new Button
+            {
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 Font = Font.SystemFontOfSize(20),
                 BindingContext = protocol
             };
 
-            remoteDataStoreButton.SetBinding(Button.TextProperty, new Binding("RemoteDataStore", converter: new DataStoreValueConverter(), converterParameter: "Remote"));
-            remoteDataStoreButton.Clicked += (o, e) =>
+            editRemoteDataStoreButton.SetBinding(Button.TextProperty, new Binding("RemoteDataStore", converter: new DataStoreValueConverter(), converterParameter: "Remote"));
+            editRemoteDataStoreButton.Clicked += (o, e) =>
+                {
+                    EditRemoteDataStoreTapped(protocol, e);
+                };
+
+            Button createRemoteDataStoreButton = new Button
+            {
+                Text = "+",
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                Font = Font.SystemFontOfSize(20)
+            };
+
+            createRemoteDataStoreButton.Clicked += (o, e) =>
                 {
                     CreateRemoteDataStoreTapped(protocol, e);
                 };
 
-            views.Add(remoteDataStoreButton);
+            StackLayout remoteDataStoreStack = new StackLayout
+            {
+                Orientation = StackOrientation.Horizontal,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                Children = { editRemoteDataStoreButton, createRemoteDataStoreButton }
+            };
+
+            views.Add(remoteDataStoreStack);
             #endregion
 
             Content = new StackLayout

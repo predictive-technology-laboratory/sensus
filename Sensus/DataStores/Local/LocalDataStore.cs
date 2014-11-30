@@ -49,5 +49,7 @@ namespace Sensus.DataStores.Local
         public abstract ICollection<Datum> GetDataForRemoteDataStore();
 
         public abstract void ClearDataCommittedToRemoteDataStore(ICollection<Datum> data);
+
+        public abstract void Clear();
     }
 }

@@ -108,9 +108,23 @@ namespace Sensus
             #endregion
 
             #region protocol page
+            ProtocolPage.EditLocalDataStoreTapped += async (o, e) =>
+                {
+                    Protocol protocol = o as Protocol;
+                    if (protocol.LocalDataStore != null)
+                        await _navigationPage.PushAsync(new DataStorePage(protocol.LocalDataStore, protocol, true));
+                };
+
             ProtocolPage.CreateLocalDataStoreTapped += async (o, e) =>
                 {
                     await _navigationPage.PushAsync(new CreateDataStorePage(o as Protocol, true));
+                };
+
+            ProtocolPage.EditRemoteDataStoreTapped += async (o, e) =>
+                {
+                    Protocol protocol = o as Protocol;
+                    if (protocol.RemoteDataStore != null)
+                        await _navigationPage.PushAsync(new DataStorePage(protocol.RemoteDataStore, protocol, false));
                 };
 
             ProtocolPage.CreateRemoteDataStoreTapped += async (o, e) =>

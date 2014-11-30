@@ -79,4 +79,7 @@
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\Interactive\" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)DataStores\Remote\AzureInitDB.sql" />
+  </ItemGroup>
 </Project>

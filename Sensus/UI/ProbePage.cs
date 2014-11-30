@@ -14,7 +14,7 @@ namespace Sensus.UI
         {
             BindingContext = probe;
 
-            SetBinding(TitleProperty, new Binding("Name"));
+            SetBinding(TitleProperty, new Binding("DisplayName"));
 
             Content = new StackLayout
             {
