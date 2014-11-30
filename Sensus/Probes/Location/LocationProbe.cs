@@ -8,7 +8,12 @@ namespace Sensus.Probes.Location
     /// </summary>
     public class LocationProbe : GpsProbe
     {
-        protected override string DisplayName
+        protected override int Id
+        {
+            get { return 3; }
+        }
+
+        protected override string DefaultDisplayName
         {
             get { return "Location"; }
         }

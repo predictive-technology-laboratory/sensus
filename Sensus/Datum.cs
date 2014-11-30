@@ -75,6 +75,7 @@ namespace Sensus
         public override string ToString()
         {
             return "Type:  " + GetType().Name + Environment.NewLine + 
+                   "User ID:  " + _userId + Environment.NewLine +
                    "Probe:  " + _probeId + Environment.NewLine +
                    "Timestamp:  " + _timestamp;
         }

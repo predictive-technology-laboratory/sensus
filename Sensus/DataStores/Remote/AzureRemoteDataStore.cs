@@ -11,7 +11,7 @@ namespace Sensus.DataStores.Remote
     public class AzureRemoteDataStore : RemoteDataStore
     {
         private MobileServiceClient _client;
-        private string _URL;
+        private string _url;
         private string _key;
 
         private IMobileServiceTable<AltitudeDatum> _altitudeTable;
@@ -21,12 +21,12 @@ namespace Sensus.DataStores.Remote
         [StringUiProperty("Azure URL:", true)]
         public string URL
         {
-            get { return _URL; }
+            get { return _url; }
             set
             {
-                if (!value.Equals(_URL, StringComparison.Ordinal))
+                if (!value.Equals(_url, StringComparison.Ordinal))
                 {
-                    _URL = value;
+                    _url = value;
                     OnPropertyChanged();
                 }
             }
@@ -55,7 +55,7 @@ namespace Sensus.DataStores.Remote
         {
             return Task.Run(async () =>
                 {
-                    _client = new MobileServiceClient(_URL, _key);
+                    _client = new MobileServiceClient(_url, _key);
 
                     _altitudeTable = _client.GetTable<AltitudeDatum>();
                     _compassTable = _client.GetTable<CompassDatum>();
@@ -92,7 +92,7 @@ namespace Sensus.DataStores.Remote
                     }
 
                     if (App.LoggingLevel >= LoggingLevel.Normal)
-                        App.Get().SensusService.Log("Committed " + committedData.Count + " data items to Azure in " + (DateTime.Now - start).TotalSeconds + " seconds.");
+                        App.Get().SensusService.Log("Committed " + committedData.Count + " data items to Azure tables in " + (DateTime.Now - start).TotalSeconds + " seconds.");
 
                     return committedData;
                 });
@@ -103,6 +103,7 @@ namespace Sensus.DataStores.Remote
             return Task.Run(async () =>
                 {
                     await base.StopAsync();
+
                     _client.Dispose();
                 });
         }

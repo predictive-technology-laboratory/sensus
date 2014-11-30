@@ -18,6 +18,13 @@ namespace Sensus.Probes
     public abstract class Probe : IProbe, INotifyPropertyChanged
     {
         #region static members
+        static Probe()
+        {
+            Probe[] probes = Assembly.GetExecutingAssembly().GetTypes().Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(Probe))).Select(t => Activator.CreateInstance(t) as Probe).ToArray();
+            if (probes.Length != probes.Select(p => p.Id).Distinct().Count())
+                throw new SensusException("All probes must have distinct IDs.");
+        }
+
         /// <summary>
         /// Gets a list of all probes, uninitialized and with default parameter values.
         /// </summary>
@@ -33,8 +40,7 @@ namespace Sensus.Probes
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private int _id;
-        private string _name;
+        private string _displayName;
         private bool _enabled;
         private HashSet<Datum> _collectedData;
         private Protocol _protocol;
@@ -42,21 +48,15 @@ namespace Sensus.Probes
         private bool _supported;
         private Datum _mostRecentlyStoredDatum;
 
-        public int Id
-        {
-            get { return _id; }
-            set { _id = value; }
-        }
-
         [StringUiProperty("Name:", true)]
-        public string Name
+        public string DisplayName
         {
-            get { return _name; }
+            get { return _displayName; }
             set
             {
-                if (!value.Equals(_name, StringComparison.Ordinal))
+                if (!value.Equals(_displayName, StringComparison.Ordinal))
                 {
-                    _name = value;
+                    _displayName = value;
                     OnPropertyChanged();
                 }
             }
@@ -95,11 +95,11 @@ namespace Sensus.Probes
             {
                 if (value != _controller)
                 {
-                    bool previousRunningValue = _controller != null && _controller.Running;
+                    bool previousRunning = _controller != null && _controller.Running;
 
                     _controller = value;
 
-                    if (previousRunningValue != _controller.Running)
+                    if (previousRunning != _controller.Running)
                         OnPropertyChanged("Running");  // the running status of probes comes from the controller, so if the controller changes we should update
                 }
             }
@@ -138,26 +138,18 @@ namespace Sensus.Probes
             get { return _controller != null && _controller.Running; }  // can be null if this property is referenced by another when deserializing
         }
 
-        protected abstract string DisplayName { get; }
+        protected abstract int Id { get; }
+
+        protected abstract string DefaultDisplayName { get; }
 
         protected abstract ProbeController DefaultController { get; }
 
         protected Probe()
         {
-            _name = DisplayName;
+            _displayName = DefaultDisplayName;
             _enabled = false;
             _supported = true;
             _controller = DefaultController;
-
-            // we need short, controlled IDs for probes. manage this below.
-            if (this is AltitudeProbe)
-                _id = 0;
-            else if (this is CompassProbe)
-                _id = 10;
-            else if (this is LocationProbe)
-                _id = 20;
-            else
-                throw new ProbeException(this, "Failed to get ID for probe of type " + GetType().FullName);
         }
 
         protected virtual bool Initialize()
@@ -176,7 +168,7 @@ namespace Sensus.Probes
                         if (Initialize())
                             await _controller.StartAsync();
                     }
-                    catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to start probe \"" + Name + "\":" + ex.Message + Environment.NewLine + ex.StackTrace); }
+                    catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to start probe \"" + DisplayName + "\":" + ex.Message + Environment.NewLine + ex.StackTrace); }
 
                     return _controller.Running;
                 });
@@ -212,7 +204,7 @@ namespace Sensus.Probes
                             ++removed;
 
                     if (App.LoggingLevel >= LoggingLevel.Verbose)
-                        App.Get().SensusService.Log("Cleared " + removed + " committed data elements from probe:  " + _name);
+                        App.Get().SensusService.Log("Cleared " + removed + " committed data elements from probe:  " + _displayName);
                 }
         }
 
