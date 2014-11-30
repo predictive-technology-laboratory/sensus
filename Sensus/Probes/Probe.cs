@@ -94,11 +94,11 @@ namespace Sensus.Probes
             {
                 if (value != _controller)
                 {
-                    bool previousRunning = _controller != null && _controller.Running;
+                    bool previousRunningValue = _controller != null && _controller.Running;
 
                     _controller = value;
 
-                    if (previousRunning != _controller.Running)
+                    if (previousRunningValue != _controller.Running)
                         OnPropertyChanged("Running");  // the running status of probes comes from the controller, so if the controller changes we should update
                 }
             }
