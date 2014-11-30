@@ -1,19 +1,50 @@
 ﻿using Microsoft.WindowsAzure.MobileServices;
+using Sensus.Exceptions;
+using Sensus.Probes.Location;
+using Sensus.UI.Properties;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using System.Linq;
-using System.Reflection;
-using Sensus.Probes.Location;
 
 namespace Sensus.DataStores.Remote
 {
     public class AzureRemoteDataStore : RemoteDataStore
     {
-        private MobileServiceClient _azureClient;
-        private const string applicationURL = @"https://ptl-sensus.azure-mobile.net/";
-        private const string applicationKey = @"uwCPohtQxDPNZHeRkHJjJXOmxQNscM81";
+        private MobileServiceClient _client;
+        private string _URL;
+        private string _key;
+
+        private IMobileServiceTable<AltitudeDatum> _altitudeTable;
+        private IMobileServiceTable<CompassDatum> _compassTable;
+        private IMobileServiceTable<LocationDatum> _locationTable;
+
+        [StringUiProperty("Azure URL:", true)]
+        public string URL
+        {
+            get { return _URL; }
+            set
+            {
+                if (!value.Equals(_URL, StringComparison.Ordinal))
+                {
+                    _URL = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        [StringUiProperty("Azure Key:", true)]
+        public string Key
+        {
+            get { return _key; }
+            set
+            {
+                if (!value.Equals(_key, StringComparison.Ordinal))
+                {
+                    _key = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         protected override string DisplayName
         {
@@ -24,7 +55,11 @@ namespace Sensus.DataStores.Remote
         {
             return Task.Run(async () =>
                 {
-                    _azureClient = new MobileServiceClient(applicationURL, applicationKey, null);
+                    _client = new MobileServiceClient(_URL, _key);
+
+                    _altitudeTable = _client.GetTable<AltitudeDatum>();
+                    _compassTable = _client.GetTable<CompassDatum>();
+                    _locationTable = _client.GetTable<LocationDatum>();
 
                     await base.StartAsync();
                 });
@@ -36,18 +71,39 @@ namespace Sensus.DataStores.Remote
                 {
                     List<Datum> committedData = new List<Datum>();
 
+                    DateTime start = DateTime.Now;
+
                     foreach (Datum datum in data)
                     {
                         try
                         {
-                            IMobileServiceTable<LocationDatum> table = _azureClient.GetTable<LocationDatum>();
-                            await table.InsertAsync(datum as LocationDatum);
+                            if (datum is AltitudeDatum)
+                                await _altitudeTable.InsertAsync(datum as AltitudeDatum);
+                            else if (datum is CompassDatum)
+                                await _compassTable.InsertAsync(datum as CompassDatum);
+                            else if (datum is LocationDatum)
+                                await _locationTable.InsertAsync(datum as LocationDatum);
+                            else
+                                throw new DataStoreException("Unrecognized Azure table:  " + datum.GetType().FullName);
+
                             committedData.Add(datum);
                         }
                         catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to insert datum into Azure table:  " + ex.Message); }
                     }
 
+                    if (App.LoggingLevel >= LoggingLevel.Normal)
+                        App.Get().SensusService.Log("Committed " + committedData.Count + " data items to Azure in " + (DateTime.Now - start).TotalSeconds + " seconds.");
+
                     return committedData;
+                });
+        }
+
+        public override Task StopAsync()
+        {
+            return Task.Run(async () =>
+                {
+                    await base.StopAsync();
+                    _client.Dispose();
                 });
         }
     }

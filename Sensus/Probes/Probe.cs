@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using Sensus.UI.Properties;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Sensus.Probes.Location;
 
 namespace Sensus.Probes
 {
@@ -32,7 +33,7 @@ namespace Sensus.Probes
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private string _id;
+        private int _id;
         private string _name;
         private bool _enabled;
         private HashSet<Datum> _collectedData;
@@ -41,7 +42,7 @@ namespace Sensus.Probes
         private bool _supported;
         private Datum _mostRecentlyStoredDatum;
 
-        public string Id
+        public int Id
         {
             get { return _id; }
             set { _id = value; }
@@ -143,11 +144,20 @@ namespace Sensus.Probes
 
         protected Probe()
         {
-            _id = GetType().FullName;
             _name = DisplayName;
             _enabled = false;
             _supported = true;
             _controller = DefaultController;
+
+            // we need short, controlled IDs for probes. manage this below.
+            if (this is AltitudeProbe)
+                _id = 0;
+            else if (this is CompassProbe)
+                _id = 10;
+            else if (this is LocationProbe)
+                _id = 20;
+            else
+                throw new ProbeException(this, "Failed to get ID for probe of type " + GetType().FullName);
         }
 
         protected virtual bool Initialize()

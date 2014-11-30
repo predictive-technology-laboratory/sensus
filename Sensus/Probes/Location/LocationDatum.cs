@@ -26,8 +26,8 @@ namespace Sensus.Probes.Location
             get { return _latitude + " (lat), " + _longitude + " (lon)"; }
         }
 
-        public LocationDatum(string probeId, DateTimeOffset timestamp, double accuracy, double latitude, double longitude)
-            : base(probeId, timestamp, accuracy)
+        public LocationDatum(int userId, int probeId, DateTimeOffset timestamp, double accuracy, double latitude, double longitude)
+            : base(userId, probeId, timestamp, accuracy)
         {
             _latitude = latitude;
             _longitude = longitude;

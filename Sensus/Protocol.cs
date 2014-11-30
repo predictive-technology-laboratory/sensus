@@ -23,6 +23,7 @@ namespace Sensus
         public event PropertyChangedEventHandler PropertyChanged;
 
         private string _id;
+        private int _userId;
         private string _name;
         private List<Probe> _probes;
         private bool _running;
@@ -33,6 +34,13 @@ namespace Sensus
         {
             get { return _id; }
             set { _id = value; }
+        }
+
+        [EntryIntegerUiProperty("User ID:", false)]
+        public int UserId
+        {
+            get { return _userId; }
+            set { _userId = value; }
         }
 
         [StringUiProperty("Name:", true)]
@@ -114,9 +122,10 @@ namespace Sensus
         private Protocol() { } // for JSON deserialization
 
 
-        public Protocol(string name, bool addAllProbes)
+        public Protocol(int userId, string name, bool addAllProbes)
         {
-            _id = Guid.NewGuid().ToString();
+            _id = Guid.NewGuid().ToString();  // used for local file data store path
+            _userId = userId;
             _name = name;
             _probes = new List<Probe>();
             _running = false;
