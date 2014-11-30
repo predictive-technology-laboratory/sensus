@@ -1,14 +1,13 @@
-﻿using Sensus.Exceptions;
+﻿using Newtonsoft.Json;
+using Sensus.Exceptions;
+using Sensus.UI.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using Sensus.UI.Properties;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Sensus.Probes.Location;
 
 namespace Sensus.Probes
 {
