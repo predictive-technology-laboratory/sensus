@@ -12,10 +12,11 @@ namespace Sensus
         private int _userId;
         private int _probeId;
         private DateTimeOffset _timestamp;
-        private int _hashCode;
+        private long _timestampTicks;
+        private int _hashCode;  // the hash code is based on combining the probe ID with the timestamp of datum generation
 
         /// <summary>
-        /// Present for database storage purposes. This should never be set programmatically. Rather, it is set by the database.
+        /// Present for database storage purposes. This should never be set programmatically. Rather, it is set by the database upon insert.
         /// </summary>
         public string Id
         {
@@ -35,7 +36,7 @@ namespace Sensus
             set
             {
                 _probeId = value;
-                SetHashCode();
+                SetHashCode();  // the hash code is based on combining the probe ID with the timestamp of datum generation
             }
         }
 
@@ -44,8 +45,13 @@ namespace Sensus
             get { return _timestamp; }
             set
             {
-                _timestamp = value;
-                SetHashCode();
+                long newTimestampTicks = value.UtcTicks;
+                if (newTimestampTicks != _timestampTicks)
+                {
+                    _timestampTicks = newTimestampTicks;
+                    _timestamp = new DateTimeOffset(_timestampTicks, new TimeSpan());
+                    SetHashCode();
+                }
             }
         }
 
@@ -53,11 +59,12 @@ namespace Sensus
 
         private Datum() { }  // for JSON.NET deserialization
 
-        public Datum(int userId, int probeId, DateTimeOffset timestamp)
+        public Datum(int userId, int probeId, long timestampTicks)
         {
             _userId = userId;
             _probeId = probeId;
-            _timestamp = timestamp;
+            _timestampTicks = timestampTicks;
+            _timestamp = new DateTimeOffset(_timestampTicks, new TimeSpan());
 
             SetHashCode();
         }
@@ -69,7 +76,7 @@ namespace Sensus
 
         private void SetHashCode()
         {
-            _hashCode = (_probeId + "-" + _timestamp).GetHashCode();
+            _hashCode = (_probeId + "-" + _timestampTicks).GetHashCode();
         }
 
         public override bool Equals(object obj)
@@ -79,7 +86,7 @@ namespace Sensus
 
             Datum d = obj as Datum;
 
-            return (obj is Datum) && d._probeId == _probeId && d._timestamp == _timestamp;
+            return (obj is Datum) && d._probeId == _probeId && d._timestampTicks == _timestampTicks;
         }
 
         public override string ToString()

@@ -18,7 +18,7 @@ namespace Sensus.DataStores.Remote
         private IMobileServiceTable<CompassDatum> _compassTable;
         private IMobileServiceTable<LocationDatum> _locationTable;
 
-        [StringUiProperty("Azure URL:", true)]
+        [StringUiProperty("URL:", true)]
         public string URL
         {
             get { return _url; }
@@ -32,7 +32,7 @@ namespace Sensus.DataStores.Remote
             }
         }
 
-        [StringUiProperty("Azure Key:", true)]
+        [StringUiProperty("Key:", true)]
         public string Key
         {
             get { return _key; }
@@ -91,7 +91,7 @@ namespace Sensus.DataStores.Remote
                         catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to insert datum into Azure table:  " + ex.Message); }
                     }
 
-                    if (App.LoggingLevel >= LoggingLevel.Normal)
+                    if (App.LoggingLevel >= LoggingLevel.Verbose)
                         App.Get().SensusService.Log("Committed " + committedData.Count + " data items to Azure tables in " + (DateTime.Now - start).TotalSeconds + " seconds.");
 
                     return committedData;
@@ -106,6 +106,11 @@ namespace Sensus.DataStores.Remote
 
                     _client.Dispose();
                 });
+        }
+
+        public override void Clear()
+        {
+            // TODO:  Implement
         }
     }
 }

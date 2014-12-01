@@ -73,13 +73,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\Properties\IncrementalIntegerUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Properties\StringUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Properties\UiProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\ProtocolDataStoreEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProtocolPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProtocolsPage.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\Interactive\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)DataStores\Remote\AzureInitDB.sql" />
   </ItemGroup>
 </Project>

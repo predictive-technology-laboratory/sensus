@@ -19,8 +19,8 @@ namespace Sensus.Probes.Location
             set { _heading = value; }
         }
 
-        public CompassDatum(int userId, int probeId, DateTimeOffset timestamp, double heading)
-            : base(userId, probeId, timestamp)
+        public CompassDatum(int userId, int probeId, long timestampTicks, double heading)
+            : base(userId, probeId, timestampTicks)
         {
             _heading = heading;
         }

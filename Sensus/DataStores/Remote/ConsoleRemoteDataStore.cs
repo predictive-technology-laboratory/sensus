@@ -27,5 +27,10 @@ namespace Sensus.DataStores.Remote
                     return committedData;
                 });
         }
+
+        public override void Clear()
+        {
+            // nothing to do here.
+        }
     }
 }

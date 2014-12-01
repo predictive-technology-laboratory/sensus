@@ -63,7 +63,7 @@ namespace Sensus.UI.Properties
                         view = new Entry
                         {
                             Keyboard = Keyboard.Default,                           
-                            HorizontalOptions = LayoutOptions.Fill
+                            HorizontalOptions = LayoutOptions.FillAndExpand
                         };
                         bindingProperty = Entry.TextProperty;
                     }

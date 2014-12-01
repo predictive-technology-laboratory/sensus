@@ -31,25 +31,23 @@ namespace Sensus.DataStores.Local
                             dataToCommit.AddRange(collectedData);
             }
 
-            if (App.LoggingLevel >= LoggingLevel.Normal)
+            if (App.LoggingLevel >= LoggingLevel.Verbose)
                 App.Get().SensusService.Log("Retrieved " + dataToCommit.Count + " data elements from probes.");
 
             return dataToCommit;
         }
 
-        protected override void ProcessCommittedData(ICollection<Datum> data)
+        protected override void ProcessCommittedData(ICollection<Datum> committedData)
         {
-            if (App.LoggingLevel >= LoggingLevel.Normal)
-                App.Get().SensusService.Log("Clearing " + data.Count + " committed data elements from probes.");
+            if (App.LoggingLevel >= LoggingLevel.Verbose)
+                App.Get().SensusService.Log("Clearing " + committedData.Count + " committed data elements from probes.");
 
             foreach (Probe probe in Protocol.Probes)
-                probe.ClearCommittedData(data);
+                probe.ClearCommittedData(committedData);
         }
 
         public abstract ICollection<Datum> GetDataForRemoteDataStore();
 
-        public abstract void ClearDataCommittedToRemoteDataStore(ICollection<Datum> data);
-
-        public abstract void Clear();
+        public abstract void ClearDataCommittedToRemoteDataStore(ICollection<Datum> dataCommittedToRemote);
     }
 }

@@ -101,5 +101,10 @@ namespace Sensus.DataStores.Remote
         {
             throw new NotImplementedException();
         }
+
+        public override void Clear()
+        {
+            // TODO:  Implement
+        }
     }
 }

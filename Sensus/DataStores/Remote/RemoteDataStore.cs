@@ -44,15 +44,15 @@ namespace Sensus.DataStores.Remote
 
             ICollection<Datum> localData = Protocol.LocalDataStore.GetDataForRemoteDataStore();
 
-            if (App.LoggingLevel >= LoggingLevel.Normal)
+            if (App.LoggingLevel >= LoggingLevel.Verbose)
                 App.Get().SensusService.Log("Retrieved " + localData.Count + " data elements from local data store.");
 
             return localData;
         }
 
-        protected override void ProcessCommittedData(ICollection<Datum> data)
+        protected override void ProcessCommittedData(ICollection<Datum> committedData)
         {
-            Protocol.LocalDataStore.ClearDataCommittedToRemoteDataStore(data);
+            Protocol.LocalDataStore.ClearDataCommittedToRemoteDataStore(committedData);
         }
     }
 }

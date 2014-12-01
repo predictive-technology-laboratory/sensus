@@ -78,7 +78,7 @@ namespace Sensus
 
         protected App(Geolocator locator)
         {
-            GpsReceiver.Get().Initialize(locator);            
+            GpsReceiver.Get().Initialize(locator);
 
             #region main page
             MainPage.ProtocolsTapped += async (o, e) =>
@@ -108,28 +108,15 @@ namespace Sensus
             #endregion
 
             #region protocol page
-            ProtocolPage.EditLocalDataStoreTapped += async (o, e) =>
+            ProtocolPage.EditDataStoreTapped += async (o, e) =>
                 {
-                    Protocol protocol = o as Protocol;
-                    if (protocol.LocalDataStore != null)
-                        await _navigationPage.PushAsync(new DataStorePage(protocol.LocalDataStore, protocol, true));
+                    if (e.DataStore != null)
+                        await _navigationPage.PushAsync(new DataStorePage(e));
                 };
 
-            ProtocolPage.CreateLocalDataStoreTapped += async (o, e) =>
+            ProtocolPage.CreateDataStoreTapped += async (o, e) =>
                 {
-                    await _navigationPage.PushAsync(new CreateDataStorePage(o as Protocol, true));
-                };
-
-            ProtocolPage.EditRemoteDataStoreTapped += async (o, e) =>
-                {
-                    Protocol protocol = o as Protocol;
-                    if (protocol.RemoteDataStore != null)
-                        await _navigationPage.PushAsync(new DataStorePage(protocol.RemoteDataStore, protocol, false));
-                };
-
-            ProtocolPage.CreateRemoteDataStoreTapped += async (o, e) =>
-                {
-                    await _navigationPage.PushAsync(new CreateDataStorePage(o as Protocol, false));
+                    await _navigationPage.PushAsync(new CreateDataStorePage(e));
                 };
 
             ProtocolPage.ProbeTapped += async (o, e) =>
@@ -139,24 +126,17 @@ namespace Sensus
             #endregion
 
             #region create data store page
-            CreateDataStorePage.CreateDataStoreTapped += async (o, e) =>
+            CreateDataStorePage.CreateTapped += async (o, e) =>
                 {
                     await _navigationPage.PopAsync();
-                    await _navigationPage.PushAsync(new DataStorePage(e.DataStore, e.Protocol, e.Local));
+                    await _navigationPage.PushAsync(new DataStorePage(e));
                 };
             #endregion
 
             #region data store page
-            DataStorePage.CancelTapped += async (o, e) =>
-                {
-                    await _navigationPage.PopAsync();
-                    _navigationPage.CurrentPage.ForceLayout();
-                };
-
             DataStorePage.OkTapped += async (o, e) =>
                 {
                     await _navigationPage.PopAsync();
-                    _navigationPage.CurrentPage.ForceLayout();
                 };
             #endregion
 

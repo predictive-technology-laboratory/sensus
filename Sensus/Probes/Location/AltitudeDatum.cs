@@ -19,8 +19,8 @@ namespace Sensus.Probes.Location
             set { _altitude = value; }
         }
 
-        public AltitudeDatum(int userId, int probeId, DateTimeOffset timestamp, double accuracy, double altitude)
-            : base(userId, probeId, timestamp, accuracy)
+        public AltitudeDatum(int userId, int probeId, long timestampTicks, double accuracy, double altitude)
+            : base(userId, probeId, timestampTicks, accuracy)
         {
             _altitude = altitude;
         }
