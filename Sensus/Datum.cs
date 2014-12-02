@@ -12,16 +12,16 @@ namespace Sensus
         private int _userId;
         private int _probeId;
         private DateTimeOffset _timestamp;
-        private long _timestampTicks;
-        private int _hashCode;  // the hash code is based on combining the probe ID with the timestamp of datum generation
+        private int _hashCode;
 
-        /// <summary>
-        /// Present for database storage purposes. This should never be set programmatically. Rather, it is set by the database upon insert.
-        /// </summary>
         public string Id
         {
             get { return _id; }
-            set { _id = value; }
+            set
+            {
+                _id = value;
+                _hashCode = _id.GetHashCode();
+            }
         }
 
         public int UserId
@@ -33,40 +33,26 @@ namespace Sensus
         public int ProbeId
         {
             get { return _probeId; }
-            set
-            {
-                _probeId = value;
-                SetHashCode();  // the hash code is based on combining the probe ID with the timestamp of datum generation
-            }
+            set { _probeId = value; }
         }
 
         public DateTimeOffset Timestamp
         {
             get { return _timestamp; }
-            set
-            {
-                long newTimestampTicks = value.UtcTicks;
-                if (newTimestampTicks != _timestampTicks)
-                {
-                    _timestampTicks = newTimestampTicks;
-                    _timestamp = new DateTimeOffset(_timestampTicks, new TimeSpan());
-                    SetHashCode();
-                }
-            }
+            set { _timestamp = value; }
         }
 
         public abstract string DisplayDetail { get; }
 
         private Datum() { }  // for JSON.NET deserialization
 
-        public Datum(int userId, int probeId, long timestampTicks)
+        public Datum(int userId, int probeId, DateTimeOffset timestamp)
         {
             _userId = userId;
             _probeId = probeId;
-            _timestampTicks = timestampTicks;
-            _timestamp = new DateTimeOffset(_timestampTicks, new TimeSpan());
+            _timestamp = timestamp;
 
-            SetHashCode();
+            Id = Guid.NewGuid().ToString();
         }
 
         public override int GetHashCode()
@@ -74,24 +60,17 @@ namespace Sensus
             return _hashCode;
         }
 
-        private void SetHashCode()
-        {
-            _hashCode = (_probeId + "-" + _timestampTicks).GetHashCode();
-        }
-
         public override bool Equals(object obj)
         {
             if (!(obj is Datum))
                 return false;
 
-            Datum d = obj as Datum;
-
-            return (obj is Datum) && d._probeId == _probeId && d._timestampTicks == _timestampTicks;
+            return (obj as Datum)._id == _id;
         }
 
         public override string ToString()
         {
-            return "Type:  " + GetType().Name + Environment.NewLine + 
+            return "Type:  " + GetType().Name + Environment.NewLine +
                    "User ID:  " + _userId + Environment.NewLine +
                    "Probe:  " + _probeId + Environment.NewLine +
                    "Timestamp:  " + _timestamp;

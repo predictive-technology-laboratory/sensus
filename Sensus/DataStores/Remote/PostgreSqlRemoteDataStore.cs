@@ -1,4 +1,5 @@
-﻿using Sensus.UI.Properties;
+﻿using Newtonsoft.Json;
+using Sensus.UI.Properties;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -86,6 +87,12 @@ namespace Sensus.DataStores.Remote
         protected override string DisplayName
         {
             get { return "PostgreSQL"; }
+        }
+
+        [JsonIgnore]
+        public override bool CanClear
+        {
+            get { return true; }
         }
 
         public PostgreSqlRemoteDataStore()

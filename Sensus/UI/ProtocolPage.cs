@@ -31,7 +31,7 @@ namespace Sensus.UI
             public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
             {
                 Datum mostRecent = value as Datum;
-                return mostRecent == null ? "----------" : mostRecent.DisplayDetail + Environment.NewLine + new DateTimeOffset(mostRecent.TimestampTicks, new TimeSpan());
+                return mostRecent == null ? "----------" : mostRecent.DisplayDetail + Environment.NewLine + mostRecent.Timestamp;
             }
 
             public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

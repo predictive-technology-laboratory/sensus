@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -9,6 +10,12 @@ namespace Sensus.DataStores.Remote
         protected override string DisplayName
         {
             get { return "Console"; }
+        }
+
+        [JsonIgnore]
+        public override bool CanClear
+        {
+            get { return false; }
         }
 
         protected override Task<ICollection<Datum>> CommitData(ICollection<Datum> data)
@@ -26,11 +33,6 @@ namespace Sensus.DataStores.Remote
 
                     return committedData;
                 });
-        }
-
-        public override void Clear()
-        {
-            // nothing to do here.
         }
     }
 }

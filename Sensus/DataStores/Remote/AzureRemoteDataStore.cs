@@ -1,4 +1,5 @@
 ﻿using Microsoft.WindowsAzure.MobileServices;
+using Newtonsoft.Json;
 using Sensus.Exceptions;
 using Sensus.Probes.Location;
 using Sensus.UI.Properties;
@@ -49,7 +50,13 @@ namespace Sensus.DataStores.Remote
         protected override string DisplayName
         {
             get { return "Azure"; }
-        }        
+        }
+
+        [JsonIgnore]
+        public override bool CanClear
+        {
+            get { return false; }
+        }
 
         public override Task StartAsync()
         {
@@ -106,11 +113,6 @@ namespace Sensus.DataStores.Remote
 
                     _client.Dispose();
                 });
-        }
-
-        public override void Clear()
-        {
-            // TODO:  Implement
         }
     }
 }

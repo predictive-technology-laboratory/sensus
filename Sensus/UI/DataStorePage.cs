@@ -24,7 +24,8 @@ namespace Sensus.UI
             {
                 Text = "Clear",
                 HorizontalOptions = LayoutOptions.Start,
-                Font = Font.SystemFontOfSize(20)
+                Font = Font.SystemFontOfSize(20),
+                IsEnabled = args.DataStore.CanClear
             };
 
             clearButton.Clicked += async (o, e) =>

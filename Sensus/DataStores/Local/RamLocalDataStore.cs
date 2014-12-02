@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,6 +13,12 @@ namespace Sensus.DataStores.Local
         protected override string DisplayName
         {
             get { return "RAM"; }
+        }
+
+        [JsonIgnore]
+        public override bool CanClear
+        {
+            get { return true; }
         }
 
         public override Task StartAsync()

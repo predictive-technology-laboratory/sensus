@@ -31,6 +31,12 @@ namespace Sensus.DataStores.Local
         {
             get { return "File"; }
         }
+        
+        [JsonIgnore]
+        public override bool CanClear
+        {
+            get { return true; }
+        }
 
         public FileLocalDataStore()
         {
@@ -57,9 +63,9 @@ namespace Sensus.DataStores.Local
 
         protected override Task<ICollection<Datum>> CommitData(ICollection<Datum> data)
         {
-            lock (this)
-            {
-                return Task.Run<ICollection<Datum>>(() =>
+            return Task.Run<ICollection<Datum>>(() =>
+                {
+                    lock (this)
                     {
                         List<Datum> committedData = new List<Datum>();
 
@@ -98,8 +104,8 @@ namespace Sensus.DataStores.Local
                         }
 
                         return committedData;
-                    });
-            }
+                    }
+                });
         }
 
         public override ICollection<Datum> GetDataForRemoteDataStore()

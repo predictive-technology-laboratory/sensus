@@ -69,6 +69,9 @@ namespace Sensus.DataStores
 
         protected abstract string DisplayName { get; }
 
+        [JsonIgnore]
+        public abstract bool CanClear { get; }
+
         public DataStore()
         {
             _name = DisplayName;
@@ -139,7 +142,7 @@ namespace Sensus.DataStores
 
         protected abstract void ProcessCommittedData(ICollection<Datum> committedData);
 
-        public abstract void Clear();
+        public virtual void Clear() { }
 
         public virtual Task StopAsync()
         {
