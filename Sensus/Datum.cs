@@ -52,7 +52,7 @@ namespace Sensus
             _probeId = probeId;
             _timestamp = timestamp;
 
-            Id = Guid.NewGuid().ToString();
+            Id = userId + "-" + Guid.NewGuid().ToString();
         }
 
         public override int GetHashCode()
