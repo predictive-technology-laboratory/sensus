@@ -15,9 +15,6 @@ namespace Sensus.Probes.Location
 
         public static GpsReceiver Get()
         {
-            if (_singleton == null)
-                throw new SensusException("GpsReceiver has not yet been initialize.");
-
             return _singleton;
         }
 

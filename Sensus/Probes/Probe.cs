@@ -61,7 +61,7 @@ namespace Sensus.Probes
             }
         }
 
-        [BooleanUiProperty("Enabled:", true)]
+        [OnOffUiProperty("Enabled:", true)]
         public bool Enabled
         {
             get { return _enabled; }

@@ -19,12 +19,11 @@ namespace Sensus.Android
 
             Title = "Loading Sensus...";
 
-            // perform platform-specific initialization and bind to stop event
-            AndroidApp.Initialize(new Geolocator(this));
-            App.Get().StopSensusTapped += (o, e) => { Finish(); };
+            AndroidApp app = new AndroidApp();
 
-            // show start screen
-            SetPage(App.Get().NavigationPage);
+            app.StopSensusTapped += (o, e) => { Finish(); };  // end activity when the user taps stop
+
+            SetPage(app.NavigationPage);
 
             Title = "Sensus";
         }

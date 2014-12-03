@@ -30,10 +30,21 @@ namespace Sensus.UI.Properties
                     View view = null;
                     BindableProperty bindingProperty = null;
                     IValueConverter converter = null;
-                    if (probeParameterAttribute is BooleanUiProperty)
+                    if (probeParameterAttribute is OnOffUiProperty)
                     {
                         view = new Switch();
                         bindingProperty = Switch.IsToggledProperty;
+                    }
+                    else if(probeParameterAttribute is YesNoUiProperty)
+                    {
+                        view = new Label
+                        {
+                            Font = Font.SystemFontOfSize(20)
+                        };
+
+                        bindingProperty = Label.TextProperty;
+                        converter = new YesNoUiProperty.ValueConverter();
+                        probeParameterAttribute.Editable = true;  // just makes the text non-dimmed. it's never editable.
                     }
                     else if (probeParameterAttribute is EntryIntegerUiProperty)
                     {
@@ -111,11 +122,13 @@ namespace Sensus.UI.Properties
         public string LabelText
         {
             get { return _labelText; }
+            set { _labelText = value; }
         }
 
         public bool Editable
         {
             get { return _editable; }
+            set { _editable = value; }
         }
 
         protected UiProperty(string labelText, bool editable)

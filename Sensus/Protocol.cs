@@ -63,7 +63,7 @@ namespace Sensus
             set { _probes = value; }
         }
 
-        [BooleanUiProperty("Status:", true)]
+        [OnOffUiProperty("Status:", true)]
         [JsonIgnore]
         public bool Running
         {

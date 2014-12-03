@@ -8,7 +8,7 @@ namespace Sensus.Probes
 {
     public abstract class ListeningOrPollingProbe : ListeningProbe, IPollingProbe
     {
-        [BooleanUiProperty("Listening Mode:", true)]
+        [OnOffUiProperty("Listening Mode:", true)]
         public bool Listening
         {
             get { return Controller is ListeningProbeController; }

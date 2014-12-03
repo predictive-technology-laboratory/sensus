@@ -126,7 +126,6 @@
     <Compile Include="AndroidSensusService.cs" />
     <Compile Include="SensusServiceBinder.cs" />
     <Compile Include="SensusServiceConnection.cs" />
-    <Compile Include="SensusServiceStarter.cs" />
     <Compile Include="ServiceConnectedEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
