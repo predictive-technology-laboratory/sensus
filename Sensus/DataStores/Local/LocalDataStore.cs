@@ -13,7 +13,7 @@ namespace Sensus.DataStores.Local
         public LocalDataStore()
         {
 #if DEBUG
-            CommitDelayMS = 5000;  // so we can see the operation quickly
+            CommitDelayMS = 5000;  // 5 seconds...so we can see debugging output quickly
 #else
             CommitDelayMS = 60000;
 #endif
