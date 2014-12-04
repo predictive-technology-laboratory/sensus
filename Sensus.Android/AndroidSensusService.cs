@@ -25,7 +25,7 @@ namespace Sensus.Android
         {
             public override void OnReceive(Context context, Intent intent)
             {
-                Toast.MakeText(context, "Starting Sensus", ToastLength.Short).Show();
+                Toast.MakeText(context, "Starting Sensus", ToastLength.Long).Show();
 
                 if (intent.Action == Intent.ActionBootCompleted)
                     context.ApplicationContext.StartService(new Intent(context, typeof(AndroidSensusService)));

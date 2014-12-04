@@ -47,7 +47,7 @@ namespace Sensus.Probes
         private bool _supported;
         private Datum _mostRecentlyStoredDatum;
 
-        [StringUiProperty("Name:", true)]
+        [EntryStringUiProperty("Name:", true)]
         public string DisplayName
         {
             get { return _displayName; }

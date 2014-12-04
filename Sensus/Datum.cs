@@ -10,6 +10,7 @@ namespace Sensus
     {
         private string _id;
         private int _userId;
+        private string _deviceId;
         private int _probeId;
         private DateTimeOffset _timestamp;
         private int _hashCode;
@@ -22,6 +23,12 @@ namespace Sensus
                 _id = value;
                 _hashCode = _id.GetHashCode();
             }
+        }
+
+        public string DeviceId
+        {
+            get { return _deviceId; }
+            set { _deviceId = value; }
         }
 
         public int UserId
@@ -51,8 +58,9 @@ namespace Sensus
             _userId = userId;
             _probeId = probeId;
             _timestamp = timestamp;
+            _deviceId = App.Get().DeviceId;
 
-            Id = userId + "-" + Guid.NewGuid().ToString();
+            Id = Guid.NewGuid().ToString();
         }
 
         public override int GetHashCode()
@@ -72,6 +80,7 @@ namespace Sensus
         {
             return "Type:  " + GetType().Name + Environment.NewLine +
                    "User ID:  " + _userId + Environment.NewLine +
+                   "Device ID:  " + _deviceId + Environment.NewLine + 
                    "Probe:  " + _probeId + Environment.NewLine +
                    "Timestamp:  " + _timestamp;
         }

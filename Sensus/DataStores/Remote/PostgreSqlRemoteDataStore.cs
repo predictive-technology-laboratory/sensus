@@ -14,7 +14,7 @@ namespace Sensus.DataStores.Remote
         private string _username;
         private string _password;
 
-        [StringUiProperty("Host:", true)]
+        [EntryStringUiProperty("Host:", true)]
         public string Host
         {
             get { return _host; }
@@ -42,7 +42,7 @@ namespace Sensus.DataStores.Remote
             }
         }
 
-        [StringUiProperty("Database:", true)]
+        [EntryStringUiProperty("Database:", true)]
         public string Database
         {
             get { return _database; }
@@ -56,7 +56,7 @@ namespace Sensus.DataStores.Remote
             }
         }
 
-        [StringUiProperty("Username:", true)]
+        [EntryStringUiProperty("Username:", true)]
         public string Username
         {
             get { return _username; }
@@ -70,7 +70,7 @@ namespace Sensus.DataStores.Remote
             }
         }
 
-        [StringUiProperty("Password:", true)]
+        [EntryStringUiProperty("Password:", true)]
         public string Password
         {
             get { return _password; }

@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Sensus.Exceptions;
+using Sensus.UI;
+using Sensus.UI.Properties;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,8 +12,19 @@ namespace Sensus.DataStores.Local
 {
     public class FileLocalDataStore : LocalDataStore
     {
+        /// <summary>
+        /// File being written with local data.
+        /// </summary>
         private StreamWriter _file;
+
+        /// <summary>
+        /// Contains the path to the file currently being written.
+        /// </summary>
         private string _path;
+
+        /// <summary>
+        /// Settings for serializing this data store.
+        /// </summary>
         private JsonSerializerSettings _serializationSettings;
 
         private string StorageDirectory
@@ -112,18 +125,10 @@ namespace Sensus.DataStores.Local
         {
             lock (this)
             {
-                bool initializeNewFile = false;
-                if (_file != null)
-                {
-                    try { _file.Close(); }
-                    catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to close current local data store file:  " + ex.Message); }
+                CloseFile();
 
-                    _file = null;
-                    initializeNewFile = true;
-                }
-
+                // get local data from all files
                 List<Datum> localData = new List<Datum>();
-
                 foreach (string path in Directory.GetFiles(StorageDirectory))
                     try
                     {
@@ -138,7 +143,8 @@ namespace Sensus.DataStores.Local
                     }
                     catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Exception while reading local data store for transfer to remote:  " + ex.Message); }
 
-                if (initializeNewFile)
+                // this method is called from a remote data store, which doesn't care whether this local data store is running. don't start a new file unless this local data store is, in fact, running.
+                if (Running)
                     InitializeFile();
 
                 return localData;
@@ -151,6 +157,9 @@ namespace Sensus.DataStores.Local
             {
                 if (App.LoggingLevel >= LoggingLevel.Verbose)
                     App.Get().SensusService.Log("Local data store received " + dataCommittedToRemote.Count + " remote-committed elements to clear.");
+
+                if (dataCommittedToRemote.Count == 0)
+                    return;
 
                 HashSet<Datum> hashDataCommittedToRemote = new HashSet<Datum>(dataCommittedToRemote);  // for quick access via hashing
 
@@ -208,14 +217,7 @@ namespace Sensus.DataStores.Local
                     await base.StopAsync();
 
                     lock (this)
-                    {
-                        try
-                        {
-                            _file.Close();
-                            _file = null;
-                        }
-                        catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to close local data store file:  " + ex.Message); }
-                    }
+                        CloseFile();
                 });
         }
 
@@ -224,7 +226,46 @@ namespace Sensus.DataStores.Local
             return JsonConvert.SerializeObject(datum, Formatting.None, _serializationSettings).Replace('\n', ' ').Replace('\r', ' ');
         }
 
+        /// <summary>
+        /// Initializes a new file. Should be called from a locked context.
+        /// </summary>
         private void InitializeFile()
+        {
+            CloseFile();
+
+            try
+            {
+                for (int i = 0; _file == null && i < int.MaxValue; ++i)
+                {
+                    try { _path = Path.Combine(StorageDirectory, i.ToString()); }  // getting the storage directory creates the directory, which could fail
+                    catch (Exception ex) { throw new DataStoreException("Failed to get path to local data file:  " + ex.Message); }
+
+                    if (!File.Exists(_path))
+                    {
+                        try
+                        {
+                            _file = new StreamWriter(_path);
+                            _file.AutoFlush = true;
+                        }
+                        catch (Exception ex) { throw new DataStoreException("Failed to open local file at a path that did not previously exist:  " + ex.Message); }
+                    }
+                }
+
+                if (_file == null)
+                    throw new DataStoreException("Failed to open file for local data store.");
+            }
+            catch (Exception ex)
+            {
+                _file = null;
+                _path = null;
+                throw new SensusException("Failed to initialize new local data store file:  " + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Closes the current file. Should be called from a locked context.
+        /// </summary>
+        private void CloseFile()
         {
             if (_file != null)
             {
@@ -234,25 +275,15 @@ namespace Sensus.DataStores.Local
                 _file = null;
             }
 
-            for (int i = 0; _file == null && i < int.MaxValue; ++i)
-            {
-                _path = Path.Combine(StorageDirectory, i.ToString());
-                if (!File.Exists(_path))
-                {
-                    _file = new StreamWriter(_path);
-                    _file.AutoFlush = true;
-                }
-            }
-
-            if (_file == null)
-                throw new DataStoreException("Failed to open file for local data store.");
+            _path = null;
         }
 
         public override void Clear()
         {
-            foreach (string path in Directory.GetFiles(StorageDirectory))
-                try { File.Delete(path); }
-                catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to delete local data store file \"" + path + "\":  " + ex.Message); }
+            if (Protocol != null)
+                foreach (string path in Directory.GetFiles(StorageDirectory))
+                    try { File.Delete(path); }
+                    catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to delete local data store file \"" + path + "\":  " + ex.Message); }
         }
     }
 }

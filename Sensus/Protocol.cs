@@ -43,7 +43,7 @@ namespace Sensus
             set { _userId = value; }
         }
 
-        [StringUiProperty("Name:", true)]
+        [EntryStringUiProperty("Name:", true)]
         public string Name
         {
             get { return _name; }
@@ -116,11 +116,25 @@ namespace Sensus
         [JsonIgnore]
         public string StorageDirectory
         {
-            get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), _id); }
+            get
+            {
+                string directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), _id);
+
+                if (!Directory.Exists(directory))
+                    Directory.CreateDirectory(directory);
+
+                return directory;
+            }
         }
 
         private Protocol() { } // for JSON deserialization
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="userId">Participant's ID. Must be unique within an experiment.</param>
+        /// <param name="name">Name of protocol.</param>
+        /// <param name="addAllProbes">Whether or not to add all available probes into the protocol.</param>
         public Protocol(int userId, string name, bool addAllProbes)
         {
             _userId = userId;

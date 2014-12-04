@@ -5,7 +5,7 @@ using Xamarin.Forms;
 
 namespace Sensus.UI.Properties
 {
-    public class YesNoUiProperty : UiProperty
+    public class DisplayYesNoUiProperty : UiProperty
     {
         public class ValueConverter : IValueConverter
         {
@@ -20,8 +20,8 @@ namespace Sensus.UI.Properties
             }
         }
 
-        public YesNoUiProperty(string labelText, bool editable)
-            : base(labelText, editable)
+        public DisplayYesNoUiProperty(string labelText)
+            : base(labelText, false)
         {
         }
     }

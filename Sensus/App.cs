@@ -72,11 +72,13 @@ namespace Sensus
             }
         }
 
-        [YesNoUiProperty("Charging:", false)]
+        [DisplayYesNoUiProperty("Charging:")]
         public abstract bool IsCharging { get; }
 
-        [YesNoUiProperty("WiFi Connected:", false)]
+        [DisplayYesNoUiProperty("WiFi Connected:")]
         public abstract bool WiFiConnected { get; }
+
+        public abstract string DeviceId { get; }
 
         protected App(Geolocator geolocator)
         {

@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Sensus.Exceptions;
+using Sensus.UI;
 using Sensus.UI.Properties;
 using System;
 using System.Collections.Generic;
@@ -27,7 +28,7 @@ namespace Sensus.DataStores
         private bool _running;
         private Protocol _protocol;
 
-        [StringUiProperty("Name:", true)]
+        [EntryStringUiProperty("Name:", true)]
         public string Name
         {
             get { return _name; }

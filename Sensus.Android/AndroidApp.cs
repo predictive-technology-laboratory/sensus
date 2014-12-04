@@ -14,12 +14,14 @@ using System.Threading.Tasks;
 using Android.Net;
 using Sensus.UI.Properties;
 using System.ComponentModel;
+using Android.Provider;
 
 namespace Sensus.Android
 {
     public class AndroidApp : App
     {
         private ConnectivityManager _connectivityManager;
+        private string _deviceId;
 
         public override bool WiFiConnected
         {
@@ -31,9 +33,19 @@ namespace Sensus.Android
             get
             {
                 IntentFilter filter = new IntentFilter(Intent.ActionBatteryChanged);
-                Intent statusIntent = Application.Context.RegisterReceiver(null, filter);
-                BatteryStatus status = (BatteryStatus)statusIntent.GetIntExtra(BatteryManager.ExtraStatus, -1);
+                BatteryStatus status = (BatteryStatus)Application.Context.RegisterReceiver(null, filter).GetIntExtra(BatteryManager.ExtraStatus, -1);
                 return status == BatteryStatus.Charging || status == BatteryStatus.Full;
+            }
+        }
+
+        public override string DeviceId
+        {
+            get
+            {
+                if (_deviceId == null)
+                    _deviceId = Settings.Secure.GetString(Application.Context.ContentResolver, Settings.Secure.AndroidId);
+
+                return _deviceId;
             }
         }
 

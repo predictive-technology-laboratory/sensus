@@ -35,7 +35,7 @@ namespace Sensus.UI.Properties
                         view = new Switch();
                         bindingProperty = Switch.IsToggledProperty;
                     }
-                    else if(probeParameterAttribute is YesNoUiProperty)
+                    else if(probeParameterAttribute is DisplayYesNoUiProperty)
                     {
                         view = new Label
                         {
@@ -43,8 +43,19 @@ namespace Sensus.UI.Properties
                         };
 
                         bindingProperty = Label.TextProperty;
-                        converter = new YesNoUiProperty.ValueConverter();
-                        probeParameterAttribute.Editable = true;  // just makes the text non-dimmed. it's never editable.
+                        converter = new DisplayYesNoUiProperty.ValueConverter();
+                        probeParameterAttribute.Editable = true;  // just makes the label text non-dimmed. a label's text is never editable.
+                    }
+                    else if(probeParameterAttribute is DisplayStringUiProperty)
+                    {
+                        view = new Label
+                        {
+                            Font = Font.SystemFontOfSize(20)
+                        };
+
+                        bindingProperty = Label.TextProperty;
+                        converter = new DisplayStringUiProperty.ValueConverter();
+                        probeParameterAttribute.Editable = true;  // just makes the label text non-dimmed. a label's text is never editable.
                     }
                     else if (probeParameterAttribute is EntryIntegerUiProperty)
                     {
@@ -69,7 +80,7 @@ namespace Sensus.UI.Properties
 
                         addParameterValueLabel = true;
                     }
-                    else if (probeParameterAttribute is StringUiProperty)
+                    else if (probeParameterAttribute is EntryStringUiProperty)
                     {
                         view = new Entry
                         {

@@ -68,12 +68,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\CreateDataStorePage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\MainPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProbePage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Properties\DisplayStringUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Properties\OnOffUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Properties\EntryIntegerUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Properties\IncrementalIntegerUiProperty.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UI\Properties\StringUiProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Properties\EntryStringUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Properties\UiProperty.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UI\Properties\YesNoUiProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Properties\DisplayYesNoUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProtocolDataStoreEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProtocolPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProtocolsPage.cs" />
