@@ -117,6 +117,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AndroidApp.cs" />
+    <Compile Include="AndroidAppStarter.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Probes\Location\AndroidAltitudeProbe.cs" />
     <Compile Include="Probes\Location\AndroidCompassProbe.cs" />
