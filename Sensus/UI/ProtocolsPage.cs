@@ -35,7 +35,7 @@ namespace Sensus.UI
 
             ToolbarItems.Add(new ToolbarItem("+", null, new Action(() =>
                 {
-                    App.Get().SensusService.RegisterProtocol(new Protocol("New Protocol", true));
+                    App.Get().SensusService.RegisterProtocol(new Protocol(1, "New Protocol", true));
 
                     _protocolsList.ItemsSource = null;
                     _protocolsList.ItemsSource = App.Get().SensusService.RegisteredProtocols;

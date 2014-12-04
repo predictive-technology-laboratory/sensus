@@ -1,17 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-using Sensus.Probes.Location;
 using Android.Hardware;
-using Sensus.Probes;
+using Sensus.Probes.Location;
+using System;
 
 namespace Sensus.Android.Probes.Location
 {
@@ -22,9 +11,9 @@ namespace Sensus.Android.Probes.Location
         public AndroidCompassProbe()
         {
             _compassListener = new AndroidSensorListener(SensorType.Orientation, SensorDelay.Normal, null, e =>
-                            {
-                                StoreDatum(new CompassDatum(Id, new DateTimeOffset(DateTime.UtcNow, new TimeSpan(0)), e.Values[0]));
-                            });
+                {
+                    StoreDatum(new CompassDatum(Protocol.UserId, Id, DateTime.UtcNow, e.Values[0]));
+                });
 
             Supported = _compassListener.Supported;
         }

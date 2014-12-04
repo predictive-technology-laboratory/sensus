@@ -52,7 +52,7 @@ namespace Sensus.Probes
             return Task.Run(() =>
                 {
                     if (App.LoggingLevel >= LoggingLevel.Normal)
-                        App.Get().SensusService.Log("Starting " + GetType().FullName + " for " + _probe.Name);
+                        App.Get().SensusService.Log("Starting " + GetType().FullName + " for " + _probe.DisplayName);
 
                     Running = true;
                 });
@@ -63,7 +63,7 @@ namespace Sensus.Probes
             return Task.Run(() =>
                 {
                     if (App.LoggingLevel >= LoggingLevel.Normal)
-                        App.Get().SensusService.Log("Stopping " + GetType().FullName + " for " + _probe.Name);
+                        App.Get().SensusService.Log("Stopping " + GetType().FullName + " for " + _probe.DisplayName);
 
                     Running = false;
                 });

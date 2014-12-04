@@ -10,18 +10,11 @@ namespace Sensus.UI
 {
     public class CreateDataStorePage : ContentPage
     {
-        public static event EventHandler<CreateDataStoreEventArgs> CreateDataStoreTapped;
+        public static event EventHandler<ProtocolDataStoreEventArgs> CreateTapped;
 
-        public class CreateDataStoreEventArgs : EventArgs
+        public CreateDataStorePage(ProtocolDataStoreEventArgs args)
         {
-            public DataStore DataStore { get; set; }
-            public Protocol Protocol { get; set; }
-            public bool Local { get; set; }
-        }
-
-        public CreateDataStorePage(Protocol protocol, bool local)
-        {
-            Title = "Create " + (local ? "Local" : "Remote") + " Data Store";
+            Title = "Create " + (args.Local ? "Local" : "Remote") + " Data Store";
 
             Content = new StackLayout
             {
@@ -29,18 +22,18 @@ namespace Sensus.UI
                 Orientation = StackOrientation.Vertical,
             };
 
-            Type dataStoreType = local ? typeof(LocalDataStore) : typeof(RemoteDataStore);
+            Type dataStoreType = args.Local ? typeof(LocalDataStore) : typeof(RemoteDataStore);
 
             foreach (DataStore dataStore in Assembly.GetExecutingAssembly().GetTypes().Where(t => !t.IsAbstract && t.IsSubclassOf(dataStoreType)).Select(t => Activator.CreateInstance(t)))
             {
                 Button createDataStoreButton = new Button
                 {
-                    Text = "New " + dataStore.Name + " Data Store"
+                    Text = dataStore.Name
                 };
 
                 createDataStoreButton.Clicked += (o, e) =>
                     {
-                        CreateDataStoreTapped(o, new CreateDataStoreEventArgs { DataStore = dataStore, Protocol = protocol, Local = local });
+                        CreateTapped(o, new ProtocolDataStoreEventArgs { Protocol = args.Protocol, DataStore = dataStore, Local = args.Local });
                     };
 
                 (Content as StackLayout).Children.Add(createDataStoreButton);

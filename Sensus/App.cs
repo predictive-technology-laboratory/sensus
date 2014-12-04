@@ -2,17 +2,20 @@
 using Sensus.Probes;
 using Sensus.Probes.Location;
 using Sensus.UI;
+using Sensus.UI.Properties;
 using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using Xamarin.Forms;
 using Xamarin.Geolocation;
 
 namespace Sensus
 {
-    public abstract class App
+    public abstract class App : INotifyPropertyChanged
     {
+        #region static members
         private static App _singleton;
-        private static readonly object _staticLockObject = new object();
         private static LoggingLevel _loggingLevel = LoggingLevel.Off;  // no logging from the app until the service is connected
 
         /// <summary>
@@ -23,23 +26,16 @@ namespace Sensus
             get { return _loggingLevel; }
         }
 
-        protected static void Set(App app)
-        {
-            lock (_staticLockObject)
-                _singleton = app;
-        }
-
         public static App Get()
         {
-            lock (_staticLockObject)
-            {
-                if (_singleton == null)
-                    throw new SensusException("App singleton has not been set.");
+            if (_singleton == null)
+                throw new SensusException("App singleton has not been set.");
 
-                return _singleton;
-            }
+            return _singleton;
         }
+        #endregion
 
+        public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler StopSensusTapped;
 
         private NavigationPage _navigationPage;
@@ -76,9 +72,17 @@ namespace Sensus
             }
         }
 
-        protected App(Geolocator locator)
+        [YesNoUiProperty("Charging:", false)]
+        public abstract bool IsCharging { get; }
+
+        [YesNoUiProperty("WiFi Connected:", false)]
+        public abstract bool WiFiConnected { get; }
+
+        protected App(Geolocator geolocator)
         {
-            GpsReceiver.Get().Initialize(locator);            
+            _singleton = this;
+
+            GpsReceiver.Get().Initialize(geolocator);
 
             #region main page
             MainPage.ProtocolsTapped += async (o, e) =>
@@ -86,8 +90,9 @@ namespace Sensus
                     await _navigationPage.PushAsync(new ProtocolsPage());
                 };
 
-            MainPage.SettingsTapped += (o, e) =>
+            MainPage.StatusTapped += async (o, e) =>
                 {
+                    await _navigationPage.PushAsync(new StatusPage(App.Get()));
                 };
 
             MainPage.StopSensusTapped += async (o, e) =>
@@ -108,14 +113,15 @@ namespace Sensus
             #endregion
 
             #region protocol page
-            ProtocolPage.CreateLocalDataStoreTapped += async (o, e) =>
+            ProtocolPage.EditDataStoreTapped += async (o, e) =>
                 {
-                    await _navigationPage.PushAsync(new CreateDataStorePage(o as Protocol, true));
+                    if (e.DataStore != null)
+                        await _navigationPage.PushAsync(new DataStorePage(e));
                 };
 
-            ProtocolPage.CreateRemoteDataStoreTapped += async (o, e) =>
+            ProtocolPage.CreateDataStoreTapped += async (o, e) =>
                 {
-                    await _navigationPage.PushAsync(new CreateDataStorePage(o as Protocol, false));
+                    await _navigationPage.PushAsync(new CreateDataStorePage(e));
                 };
 
             ProtocolPage.ProbeTapped += async (o, e) =>
@@ -125,28 +131,27 @@ namespace Sensus
             #endregion
 
             #region create data store page
-            CreateDataStorePage.CreateDataStoreTapped += async (o, e) =>
+            CreateDataStorePage.CreateTapped += async (o, e) =>
                 {
                     await _navigationPage.PopAsync();
-                    await _navigationPage.PushAsync(new DataStorePage(e.DataStore, e.Protocol, e.Local));
+                    await _navigationPage.PushAsync(new DataStorePage(e));
                 };
             #endregion
 
             #region data store page
-            DataStorePage.CancelTapped += async (o, e) =>
-                {
-                    await _navigationPage.PopAsync();
-                    _navigationPage.CurrentPage.ForceLayout();
-                };
-
             DataStorePage.OkTapped += async (o, e) =>
                 {
                     await _navigationPage.PopAsync();
-                    _navigationPage.CurrentPage.ForceLayout();
                 };
             #endregion
 
             _navigationPage = new NavigationPage(new MainPage());
         }
+
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }        
     }
 }

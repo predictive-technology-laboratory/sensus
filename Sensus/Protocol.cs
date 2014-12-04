@@ -23,6 +23,7 @@ namespace Sensus
         public event PropertyChangedEventHandler PropertyChanged;
 
         private string _id;
+        private int _userId;
         private string _name;
         private List<Probe> _probes;
         private bool _running;
@@ -33,6 +34,13 @@ namespace Sensus
         {
             get { return _id; }
             set { _id = value; }
+        }
+
+        [EntryIntegerUiProperty("User ID:", false)]
+        public int UserId
+        {
+            get { return _userId; }
+            set { _userId = value; }
         }
 
         [StringUiProperty("Name:", true)]
@@ -55,7 +63,7 @@ namespace Sensus
             set { _probes = value; }
         }
 
-        [BooleanUiProperty("Status:", true)]
+        [OnOffUiProperty("Status:", true)]
         [JsonIgnore]
         public bool Running
         {
@@ -113,13 +121,14 @@ namespace Sensus
 
         private Protocol() { } // for JSON deserialization
 
-
-        public Protocol(string name, bool addAllProbes)
+        public Protocol(int userId, string name, bool addAllProbes)
         {
-            _id = Guid.NewGuid().ToString();
+            _userId = userId;
             _name = name;
-            _probes = new List<Probe>();
+            _id = Guid.NewGuid().ToString();
             _running = false;
+
+            _probes = new List<Probe>();
 
             if (addAllProbes)
                 foreach (Probe probe in Probe.GetAll())
@@ -212,7 +221,7 @@ namespace Sensus
                     foreach (Probe probe in _probes)
                         if (probe.Controller.Running)
                             try { await probe.Controller.StopAsync(); }
-                            catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to stop " + probe.Name + "'s controller:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
+                            catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to stop " + probe.DisplayName + "'s controller:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
 
                     if (_localDataStore != null && _localDataStore.Running)
                     {

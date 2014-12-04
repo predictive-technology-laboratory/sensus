@@ -21,7 +21,7 @@ namespace Sensus.UI.Properties
                     Label parameterNameLabel = new Label
                     {
                         Text = probeParameterAttribute.LabelText,
-                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        HorizontalOptions = LayoutOptions.Start,
                         Font = Font.SystemFontOfSize(20)
                     };
 
@@ -30,16 +30,28 @@ namespace Sensus.UI.Properties
                     View view = null;
                     BindableProperty bindingProperty = null;
                     IValueConverter converter = null;
-                    if (probeParameterAttribute is BooleanUiProperty)
+                    if (probeParameterAttribute is OnOffUiProperty)
                     {
                         view = new Switch();
                         bindingProperty = Switch.IsToggledProperty;
+                    }
+                    else if(probeParameterAttribute is YesNoUiProperty)
+                    {
+                        view = new Label
+                        {
+                            Font = Font.SystemFontOfSize(20)
+                        };
+
+                        bindingProperty = Label.TextProperty;
+                        converter = new YesNoUiProperty.ValueConverter();
+                        probeParameterAttribute.Editable = true;  // just makes the text non-dimmed. it's never editable.
                     }
                     else if (probeParameterAttribute is EntryIntegerUiProperty)
                     {
                         view = new Entry
                         {
-                            Keyboard = Keyboard.Numeric
+                            Keyboard = Keyboard.Numeric,
+                            HorizontalOptions = LayoutOptions.FillAndExpand
                         };
                         bindingProperty = Entry.TextProperty;
                         converter = new EntryIntegerUiProperty.ValueConverter();
@@ -61,7 +73,8 @@ namespace Sensus.UI.Properties
                     {
                         view = new Entry
                         {
-                            Keyboard = Keyboard.Default
+                            Keyboard = Keyboard.Default,                           
+                            HorizontalOptions = LayoutOptions.FillAndExpand
                         };
                         bindingProperty = Entry.TextProperty;
                     }
@@ -70,8 +83,8 @@ namespace Sensus.UI.Properties
                     {
                         StackLayout stack = new StackLayout
                         {
-                            HorizontalOptions = LayoutOptions.StartAndExpand,
                             Orientation = StackOrientation.Horizontal,
+                            HorizontalOptions = LayoutOptions.FillAndExpand
                         };
 
                         stack.Children.Add(parameterNameLabel);
@@ -109,11 +122,13 @@ namespace Sensus.UI.Properties
         public string LabelText
         {
             get { return _labelText; }
+            set { _labelText = value; }
         }
 
         public bool Editable
         {
             get { return _editable; }
+            set { _editable = value; }
         }
 
         protected UiProperty(string labelText, bool editable)

@@ -1,4 +1,5 @@
 ﻿using Sensus.DataStores.Local;
+using Sensus.UI.Properties;
 using System;
 using System.Collections.Generic;
 
@@ -12,16 +13,32 @@ namespace Sensus.DataStores.Remote
         private bool _requireWiFi;
         private bool _requireCharging;
 
+        [OnOffUiProperty("Require WiFi:", true)]
         public bool RequireWiFi
         {
             get { return _requireWiFi; }
-            set { _requireWiFi = value; }
+            set
+            {
+                if (value != _requireWiFi)
+                {
+                    _requireWiFi = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
+        [OnOffUiProperty("Require Charging:", true)]
         public bool RequireCharging
         {
             get { return _requireCharging; }
-            set { _requireCharging = value; }
+            set
+            {
+                if (value != _requireCharging)
+                {
+                    _requireCharging = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         public RemoteDataStore()
@@ -29,26 +46,41 @@ namespace Sensus.DataStores.Remote
             _requireWiFi = true;
             _requireCharging = true;
 
-            CommitDelayMS = 1000 * 60 * 30;  // every thirty minutes by default
+#if DEBUG
+            CommitDelayMS = 10000;  // 10 seconds...so we can see debugging output quickly
+#else
+            CommitDelayMS = 1000 * 60 * 30;  // every thirty minutes
+#endif
         }
 
         protected override ICollection<Datum> GetDataToCommit()
         {
-            // TODO:  check if wi-fi required/connected
+            if (_requireWiFi && !App.Get().WiFiConnected)
+            {
+                if (App.LoggingLevel >= LoggingLevel.Verbose)
+                    App.Get().SensusService.Log("Required WiFi but device WiFi is not connected.");
 
-            // TODO:  check if power required/connected
+                return new List<Datum>();
+            }
+            else if (_requireCharging && !App.Get().IsCharging)
+            {
+                if (App.LoggingLevel >= LoggingLevel.Verbose)
+                    App.Get().SensusService.Log("Required charging but device is not charging.");
+
+                return new List<Datum>();
+            }
 
             ICollection<Datum> localData = Protocol.LocalDataStore.GetDataForRemoteDataStore();
 
-            if (App.LoggingLevel >= LoggingLevel.Normal)
+            if (App.LoggingLevel >= LoggingLevel.Verbose)
                 App.Get().SensusService.Log("Retrieved " + localData.Count + " data elements from local data store.");
 
             return localData;
         }
 
-        protected override void ProcessCommittedData(ICollection<Datum> data)
+        protected override void ProcessCommittedData(ICollection<Datum> committedData)
         {
-            Protocol.LocalDataStore.ClearDataCommittedToRemoteDataStore(data);
+            Protocol.LocalDataStore.ClearDataCommittedToRemoteDataStore(committedData);
         }
     }
 }

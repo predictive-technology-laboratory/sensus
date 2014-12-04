@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,6 +15,12 @@ namespace Sensus.DataStores.Local
             get { return "RAM"; }
         }
 
+        [JsonIgnore]
+        public override bool CanClear
+        {
+            get { return true; }
+        }
+
         public override Task StartAsync()
         {
             return Task.Run(async () =>
@@ -24,18 +31,21 @@ namespace Sensus.DataStores.Local
                 });
         }
 
-        protected override ICollection<Datum> CommitData(ICollection<Datum> data)
+        protected override Task<ICollection<Datum>> CommitData(ICollection<Datum> data)
         {
-            List<Datum> committed = new List<Datum>();
-
-            lock(_data)
-                foreach (Datum datum in data)
+            return Task.Run<ICollection<Datum>>(() =>
                 {
-                    _data.Add(datum);
-                    committed.Add(datum);
-                }
+                    List<Datum> committed = new List<Datum>();
 
-            return committed;
+                    lock (_data)
+                        foreach (Datum datum in data)
+                        {
+                            _data.Add(datum);
+                            committed.Add(datum);
+                        }
+
+                    return committed;
+                });
         }
 
         public override ICollection<Datum> GetDataForRemoteDataStore()
@@ -49,6 +59,12 @@ namespace Sensus.DataStores.Local
             lock (_data)
                 foreach (Datum d in data)
                     _data.Remove(d);
+        }
+
+        public override void Clear()
+        {
+            lock (_data)
+                _data.Clear();
         }
     }
 }

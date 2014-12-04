@@ -8,7 +8,7 @@ namespace Sensus.Probes
 {
     public abstract class ListeningOrPollingProbe : ListeningProbe, IPollingProbe
     {
-        [BooleanUiProperty("Listening:", true)]
+        [OnOffUiProperty("Listening Mode:", true)]
         public bool Listening
         {
             get { return Controller is ListeningProbeController; }
@@ -21,7 +21,7 @@ namespace Sensus.Probes
                     if (Controller.Running)
                     {
                         if (App.LoggingLevel >= LoggingLevel.Normal)
-                            App.Get().SensusService.Log("Restarting " + Name + " as " + (value ? "listening" : "polling") + " probe.");
+                            App.Get().SensusService.Log("Restarting " + DisplayName + " as " + (value ? "listening" : "polling") + " probe.");
 
                         Controller.StopAsync().ContinueWith(t =>
                             {

@@ -1,6 +1,8 @@
-﻿using Sensus.UI.Properties;
+﻿using Newtonsoft.Json;
+using Sensus.UI.Properties;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Sensus.DataStores.Remote
 {
@@ -87,6 +89,12 @@ namespace Sensus.DataStores.Remote
             get { return "PostgreSQL"; }
         }
 
+        [JsonIgnore]
+        public override bool CanClear
+        {
+            get { return true; }
+        }
+
         public PostgreSqlRemoteDataStore()
         {
             _host = "";
@@ -96,9 +104,14 @@ namespace Sensus.DataStores.Remote
             _password = "";
         }
 
-        protected override ICollection<Datum> CommitData(ICollection<Datum> data)
+        protected override Task<ICollection<Datum>> CommitData(ICollection<Datum> data)
         {
             throw new NotImplementedException();
+        }
+
+        public override void Clear()
+        {
+            // TODO:  Implement
         }
     }
 }

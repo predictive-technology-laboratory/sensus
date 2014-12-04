@@ -16,6 +16,22 @@ namespace Sensus.Android
     [Service]
     public class AndroidSensusService : Service, ISensusService
     {
+        /// <summary>
+        /// Starts service on device boot completion.
+        /// </summary>
+        [BroadcastReceiver]
+        [IntentFilter(new string[] { Intent.ActionBootCompleted })]
+        public class ServiceStarter : BroadcastReceiver
+        {
+            public override void OnReceive(Context context, Intent intent)
+            {
+                Toast.MakeText(context, "Starting Sensus", ToastLength.Short).Show();
+
+                if (intent.Action == Intent.ActionBootCompleted)
+                    context.ApplicationContext.StartService(new Intent(context, typeof(AndroidSensusService)));
+            }
+        }
+
         private int _startId;
         private SensusServiceHelper _serviceHelper;
         private NotificationManager _notificationManager;

@@ -4,7 +4,7 @@ namespace Sensus.Probes
 {
     public interface IProbe
     {
-        string Name { get; }
+        string DisplayName { get; }
 
         void StoreDatum(Datum datum);
 

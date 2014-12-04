@@ -1,13 +1,13 @@
-﻿using Sensus.Exceptions;
+﻿using Newtonsoft.Json;
+using Sensus.Exceptions;
+using Sensus.UI.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using Sensus.UI.Properties;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace Sensus.Probes
 {
@@ -17,6 +17,13 @@ namespace Sensus.Probes
     public abstract class Probe : IProbe, INotifyPropertyChanged
     {
         #region static members
+        static Probe()
+        {
+            Probe[] probes = Assembly.GetExecutingAssembly().GetTypes().Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(Probe))).Select(t => Activator.CreateInstance(t) as Probe).ToArray();
+            if (probes.Length != probes.Select(p => p.Id).Distinct().Count())
+                throw new SensusException("All probes must have distinct IDs.");
+        }
+
         /// <summary>
         /// Gets a list of all probes, uninitialized and with default parameter values.
         /// </summary>
@@ -32,8 +39,7 @@ namespace Sensus.Probes
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private string _id;
-        private string _name;
+        private string _displayName;
         private bool _enabled;
         private HashSet<Datum> _collectedData;
         private Protocol _protocol;
@@ -41,27 +47,21 @@ namespace Sensus.Probes
         private bool _supported;
         private Datum _mostRecentlyStoredDatum;
 
-        public string Id
-        {
-            get { return _id; }
-            set { _id = value; }
-        }
-
         [StringUiProperty("Name:", true)]
-        public string Name
+        public string DisplayName
         {
-            get { return _name; }
+            get { return _displayName; }
             set
             {
-                if (!value.Equals(_name, StringComparison.Ordinal))
+                if (!value.Equals(_displayName, StringComparison.Ordinal))
                 {
-                    _name = value;
+                    _displayName = value;
                     OnPropertyChanged();
                 }
             }
         }
 
-        [BooleanUiProperty("Enabled:", true)]
+        [OnOffUiProperty("Enabled:", true)]
         public bool Enabled
         {
             get { return _enabled; }
@@ -137,14 +137,15 @@ namespace Sensus.Probes
             get { return _controller != null && _controller.Running; }  // can be null if this property is referenced by another when deserializing
         }
 
-        protected abstract string DisplayName { get; }
+        protected abstract int Id { get; }
+
+        protected abstract string DefaultDisplayName { get; }
 
         protected abstract ProbeController DefaultController { get; }
 
         protected Probe()
         {
-            _id = GetType().FullName;
-            _name = DisplayName;
+            _displayName = DefaultDisplayName;
             _enabled = false;
             _supported = true;
             _controller = DefaultController;
@@ -166,7 +167,7 @@ namespace Sensus.Probes
                         if (Initialize())
                             await _controller.StartAsync();
                     }
-                    catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to start probe \"" + Name + "\":" + ex.Message + Environment.NewLine + ex.StackTrace); }
+                    catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to start probe \"" + DisplayName + "\":" + ex.Message + Environment.NewLine + ex.StackTrace); }
 
                     return _controller.Running;
                 });
@@ -202,7 +203,7 @@ namespace Sensus.Probes
                             ++removed;
 
                     if (App.LoggingLevel >= LoggingLevel.Verbose)
-                        App.Get().SensusService.Log("Cleared " + removed + " committed data elements from probe:  " + _name);
+                        App.Get().SensusService.Log("Cleared " + removed + " committed data elements from probe:  " + _displayName);
                 }
         }
 

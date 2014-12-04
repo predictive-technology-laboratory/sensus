@@ -9,51 +9,54 @@ using Xamarin.Forms;
 namespace Sensus.UI
 {
     public class DataStorePage : ContentPage
-    {
-        public static event EventHandler CancelTapped;
+    {        
         public static event EventHandler OkTapped;
 
-        public DataStorePage(DataStore dataStore, Protocol protocol, bool local)
+        public DataStorePage(ProtocolDataStoreEventArgs args)
         {
-            BindingContext = dataStore;
+            BindingContext = args.DataStore;
 
             SetBinding(TitleProperty, new Binding("Name"));
 
-            List<StackLayout> stacks = UiProperty.GetPropertyStacks(dataStore);
+            List<StackLayout> stacks = UiProperty.GetPropertyStacks(args.DataStore);
 
-            #region cancel / okay
-            Button cancelButton = new Button
+            Button clearButton = new Button
             {
-                Text = "Cancel"
+                Text = "Clear",
+                HorizontalOptions = LayoutOptions.Start,
+                Font = Font.SystemFontOfSize(20),
+                IsEnabled = args.DataStore.CanClear
             };
 
-            cancelButton.Clicked += (o, e) =>
+            clearButton.Clicked += async (o, e) =>
                 {
-                    CancelTapped(o, e);
+                    if (await DisplayAlert("Clear data from " + args.DataStore.Name + "?", "This action cannot be undone.", "Clear", "Cancel"))
+                        args.DataStore.Clear();
                 };
 
             Button okayButton = new Button
             {
-                Text = "OK"
+                Text = "OK",
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                Font = Font.SystemFontOfSize(20)
             };
 
             okayButton.Clicked += (o, e) =>
                 {
-                    if (local)
-                        protocol.LocalDataStore = dataStore as LocalDataStore;
+                    if (args.Local)
+                        args.Protocol.LocalDataStore = args.DataStore as LocalDataStore;
                     else
-                        protocol.RemoteDataStore = dataStore as RemoteDataStore;
+                        args.Protocol.RemoteDataStore = args.DataStore as RemoteDataStore;
 
                     OkTapped(o, e);
                 };
 
             stacks.Add(new StackLayout
             {
-                HorizontalOptions = LayoutOptions.FillAndExpand,
                 Orientation = StackOrientation.Horizontal,
-                Children = { cancelButton, okayButton }
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                Children = { clearButton, okayButton }
             });
-            #endregion
 
             Content = new StackLayout
             {

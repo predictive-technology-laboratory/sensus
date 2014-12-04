@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Sensus.DataStores.Remote
 {
@@ -10,23 +12,27 @@ namespace Sensus.DataStores.Remote
             get { return "Console"; }
         }
 
-        public ConsoleRemoteDataStore()
+        [JsonIgnore]
+        public override bool CanClear
         {
-            CommitDelayMS = 10000; // 10 seconds...so we can see debugging output
+            get { return false; }
         }
 
-        protected override ICollection<Datum> CommitData(ICollection<Datum> data)
+        protected override Task<ICollection<Datum>> CommitData(ICollection<Datum> data)
         {
-            List<Datum> committedData = new List<Datum>();
-            foreach (Datum datum in data)
-            {
-                committedData.Add(datum);
+            return Task.Run<ICollection<Datum>>(() =>
+                {
+                    List<Datum> committedData = new List<Datum>();
+                    foreach (Datum datum in data)
+                    {
+                        committedData.Add(datum);
 
-                if (App.LoggingLevel >= LoggingLevel.Debug)
-                    App.Get().SensusService.Log("Committed datum to remote console:  " + datum);
-            }
+                        if (App.LoggingLevel >= LoggingLevel.Debug)
+                            App.Get().SensusService.Log("Committed datum to remote console:  " + datum);
+                    }
 
-            return committedData;
+                    return committedData;
+                });
         }
     }
 }

@@ -69,6 +69,9 @@ namespace Sensus.DataStores
 
         protected abstract string DisplayName { get; }
 
+        [JsonIgnore]
+        public abstract bool CanClear { get; }
+
         public DataStore()
         {
             _name = DisplayName;
@@ -87,32 +90,42 @@ namespace Sensus.DataStores
 
                     _commitTrigger = new AutoResetEvent(false);  // delay the first commit  
 
-                    _commitTask = Task.Run(() =>
+                    _commitTask = Task.Run(async () =>
                         {
                             while (_protocol.Running)
                             {
-                                if (App.LoggingLevel >= LoggingLevel.Debug)
+                                if (App.LoggingLevel >= LoggingLevel.Verbose)
                                     App.Get().SensusService.Log(Name + " is about to wait for " + _commitDelayMS + " MS before committing data.");
 
                                 _commitTrigger.WaitOne(_commitDelayMS);
 
-                                if (App.LoggingLevel >= LoggingLevel.Debug)
+                                if (App.LoggingLevel >= LoggingLevel.Verbose)
                                     App.Get().SensusService.Log(Name + " is waking up to commit data.");
 
+                                ICollection<Datum> dataToCommit = null;
                                 try
                                 {
-                                    ICollection<Datum> dataToCommit = GetDataToCommit();
-
-                                    try
-                                    {
-                                        ICollection<Datum> committedData = CommitData(dataToCommit);
-
-                                        try { ProcessCommittedData(committedData); }
-                                        catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log(Name + " failed to process committed data:  " + ex.Message); }
-                                    }
-                                    catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log(Name + " failed to commit data:  " + ex.Message); }
+                                    dataToCommit = GetDataToCommit();
+                                    if (dataToCommit == null)
+                                        throw new DataStoreException("Null collection returned by GetDataToCommit");
                                 }
                                 catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log(Name + " failed to get data to commit:  " + ex.Message); }
+
+                                if (dataToCommit != null)
+                                {
+                                    ICollection<Datum> committedData = null;
+                                    try
+                                    {
+                                        committedData = await CommitData(dataToCommit);
+                                        if (committedData == null)
+                                            throw new DataStoreException("Null collection returned by CommitData");
+                                    }
+                                    catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log(Name + " failed to commit data:  " + ex.Message); }
+
+                                    if (committedData != null)
+                                        try { ProcessCommittedData(committedData); }
+                                        catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log(Name + " failed to process committed data:  " + ex.Message); }
+                                }
                             }
 
                             if (App.LoggingLevel >= LoggingLevel.Normal)
@@ -125,9 +138,11 @@ namespace Sensus.DataStores
 
         protected abstract ICollection<Datum> GetDataToCommit();
 
-        protected abstract ICollection<Datum> CommitData(ICollection<Datum> data);
+        protected abstract Task<ICollection<Datum>> CommitData(ICollection<Datum> data);
 
-        protected abstract void ProcessCommittedData(ICollection<Datum> data);
+        protected abstract void ProcessCommittedData(ICollection<Datum> committedData);
+
+        public virtual void Clear() { }
 
         public virtual Task StopAsync()
         {
@@ -152,6 +167,19 @@ namespace Sensus.DataStores
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public DataStore Copy()
+        {
+            JsonSerializerSettings settings = new JsonSerializerSettings
+            {
+                PreserveReferencesHandling = PreserveReferencesHandling.None,
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                TypeNameHandling = TypeNameHandling.All,
+                ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
+            };
+
+            return JsonConvert.DeserializeObject<DataStore>(JsonConvert.SerializeObject(this, settings), settings);
         }
     }
 }
