@@ -1,6 +1,8 @@
 using Android.App;
 using Android.Content;
 using Android.Widget;
+using SensusService;
+using System;
 
 namespace Sensus.Android
 {
@@ -9,16 +11,12 @@ namespace Sensus.Android
     /// </summary>
     [BroadcastReceiver]
     [IntentFilter(new string[] { Intent.ActionBootCompleted })]
-    public class AndroidSensusServiceStarter : BroadcastReceiver
+    public class AndroidSensusServiceBootStarter : BroadcastReceiver
     {
         public override void OnReceive(Context context, Intent intent)
         {
             if (intent.Action == Intent.ActionBootCompleted)
-            {
-                Toast.MakeText(context, "Starting Sensus Service", ToastLength.Long).Show();
-
-                context.StartService(new Intent(context, typeof(AndroidSensusService)));
-            }
+                AndroidSensusServiceHelper.UpdateAutoRestart(context, true);
         }
     }
 }

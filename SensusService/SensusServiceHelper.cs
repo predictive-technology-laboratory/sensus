@@ -22,8 +22,8 @@ namespace SensusService
         #region static members
         private static SensusServiceHelper _singleton;
 
-        private static string _protocolsPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "protocols.json");
-        private static string _previouslyRunningProtocolsPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "previously_running_protocols.json");
+        private static string _protocolsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "protocols.json");
+        private static string _previouslyRunningProtocolsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "previously_running_protocols.json");
 
         private static string _logPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
         private static string _logTag = "SERVICE-HELPER";
@@ -99,6 +99,9 @@ namespace SensusService
         public abstract bool WiFiConnected { get; }
 
         public abstract string DeviceId { get; }
+
+        [OnOffUiProperty("Auto-Restart:", true, 0)]
+        public abstract bool AutoRestart { get; set; }
 
         protected SensusServiceHelper(Geolocator geolocator)
         {

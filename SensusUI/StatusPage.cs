@@ -9,6 +9,8 @@ namespace SensusUI
     {
         public StatusPage(SensusServiceHelper service)
         {
+            Title = "Status";
+
             List<StackLayout> stacks = UiProperty.GetPropertyStacks(service);
 
             Content = new StackLayout
