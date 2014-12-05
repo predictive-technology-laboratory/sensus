@@ -18,7 +18,7 @@ using Android.Provider;
 
 namespace Sensus.Android
 {
-    public class AndroidApp : App
+    public class AndroidSensusServiceHelper : SensusServiceHelper
     {
         private ConnectivityManager _connectivityManager;
         private string _deviceId;
@@ -40,35 +40,14 @@ namespace Sensus.Android
 
         public override string DeviceId
         {
-            get
-            {
-                if (_deviceId == null)
-                    _deviceId = Settings.Secure.GetString(Application.Context.ContentResolver, Settings.Secure.AndroidId);
-
-                return _deviceId;
-            }
+            get { return _deviceId; }
         }
 
-        public AndroidApp()
+        public AndroidSensusServiceHelper()
             : base(new Geolocator(Application.Context))
         {
-            Task.Run(() =>
-                {
-                    _connectivityManager = Application.Context.GetSystemService(Context.ConnectivityService) as ConnectivityManager;
-
-                    // start service -- if it's already running from on-boot startup, this will have no effect
-                    Intent serviceIntent = new Intent(Application.Context, typeof(AndroidSensusService));
-                    Application.Context.StartService(serviceIntent);
-
-                    // bind to the service
-                    SensusServiceConnection serviceConnection = new SensusServiceConnection(null);
-                    serviceConnection.ServiceConnected += (o, e) =>
-                        {
-                            SensusService = e.Binder.Service;  // set service within App
-                        };
-
-                    Application.Context.BindService(serviceIntent, serviceConnection, Bind.AutoCreate);
-                });
+            _connectivityManager = Application.Context.GetSystemService(Context.ConnectivityService) as ConnectivityManager;
+            _deviceId = Settings.Secure.GetString(Application.Context.ContentResolver, Settings.Secure.AndroidId);
         }
     }
 }

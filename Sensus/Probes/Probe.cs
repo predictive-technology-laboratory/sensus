@@ -167,7 +167,7 @@ namespace Sensus.Probes
                         if (Initialize())
                             await _controller.StartAsync();
                     }
-                    catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to start probe \"" + DisplayName + "\":" + ex.Message + Environment.NewLine + ex.StackTrace); }
+                    catch (Exception ex) { if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Normal) SensusServiceHelper.Get().Log("Failed to start probe \"" + DisplayName + "\":" + ex.Message + Environment.NewLine + ex.StackTrace); }
 
                     return _controller.Running;
                 });
@@ -178,8 +178,8 @@ namespace Sensus.Probes
             if (datum != null)
                 lock (_collectedData)
                 {
-                    if (App.LoggingLevel >= LoggingLevel.Debug)
-                        App.Get().SensusService.Log("Storing datum in probe cache:  " + datum);
+                    if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Debug)
+                        SensusServiceHelper.Get().Log("Storing datum in probe cache:  " + datum);
 
                     _collectedData.Add(datum);
 
@@ -202,8 +202,8 @@ namespace Sensus.Probes
                         if (_collectedData.Remove(datum))
                             ++removed;
 
-                    if (App.LoggingLevel >= LoggingLevel.Verbose)
-                        App.Get().SensusService.Log("Cleared " + removed + " committed data elements from probe:  " + _displayName);
+                    if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Verbose)
+                        SensusServiceHelper.Get().Log("Cleared " + removed + " committed data elements from probe:  " + _displayName);
                 }
         }
 

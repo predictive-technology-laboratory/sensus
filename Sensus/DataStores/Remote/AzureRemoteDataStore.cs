@@ -95,11 +95,11 @@ namespace Sensus.DataStores.Remote
 
                             committedData.Add(datum);
                         }
-                        catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to insert datum into Azure table:  " + ex.Message); }
+                        catch (Exception ex) { if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Normal) SensusServiceHelper.Get().Log("Failed to insert datum into Azure table:  " + ex.Message); }
                     }
 
-                    if (App.LoggingLevel >= LoggingLevel.Verbose)
-                        App.Get().SensusService.Log("Committed " + committedData.Count + " data items to Azure tables in " + (DateTime.Now - start).TotalSeconds + " seconds.");
+                    if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Verbose)
+                        SensusServiceHelper.Get().Log("Committed " + committedData.Count + " data items to Azure tables in " + (DateTime.Now - start).TotalSeconds + " seconds.");
 
                     return committedData;
                 });

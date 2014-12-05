@@ -1,31 +1,64 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Linq;
-using System.Threading.Tasks;
-using System.IO;
-using System.Threading;
+﻿using Newtonsoft.Json;
 using Sensus.Exceptions;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using Newtonsoft.Json.Converters;
+using Sensus.Probes.Location;
+using Sensus.UI.Properties;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
+using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using Xamarin.Geolocation;
 
 namespace Sensus
 {
-    public class SensusServiceHelper
+    public abstract class SensusServiceHelper : INotifyPropertyChanged
     {
+        #region static members
+        private static LoggingLevel _loggingLevel = LoggingLevel.Off;  // no logging allowed until the 
+        private static SensusServiceHelper _singleton;
         private static string _protocolsPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "protocols.json");
         private static string _previouslyRunningProtocolsPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "previously_running_protocols.json");
+        private static string _logPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
+        private const string _tag = "SERVICE-HELPER";
 
-        private List<Protocol> _registeredProtocols;
-        private Logger _logger;
-        private readonly string _logPath;
-        private bool _stopped;
-
-        public Logger Logger
+        /// <summary>
+        /// This is a shortcut accessor for the logging level of the service. It gets set after the Sensus service has started.
+        /// </summary>
+        public static LoggingLevel LoggingLevel
         {
-            get { return _logger; }
+            get { return _loggingLevel; }
         }
+
+        public static SensusServiceHelper Get()
+        {
+            // service helper be null for a brief period between the time when the app starts and when the service has finished starting. wait for it.
+            int triesLeft = 5;
+            while (_singleton == null && triesLeft-- > 0)
+                Thread.Sleep(1000);
+
+            if (_singleton == null)
+                throw new SensusException("Sensus failed to start service helper.");
+
+            return _singleton;
+        }
+        #endregion
+
+        /// <summary>
+        /// Raised when a UI-relevant property has changed.
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Raised when the service helper has stopped.
+        /// </summary>
+        public event EventHandler Stopped;
+
+        private bool _stopped;
+        private Logger _logger;
+        private List<Protocol> _registeredProtocols;
 
         public List<Protocol> RegisteredProtocols
         {
@@ -38,8 +71,8 @@ namespace Sensus
                     lock (this)
                         if (_registeredProtocols == null)
                         {
-                            if (_logger.Level >= LoggingLevel.Normal)
-                                _logger.WriteLine("Waiting for registered protocols to be deserialized.");
+                            if (_loggingLevel >= LoggingLevel.Normal)
+                                Log("Waiting for registered protocols to be deserialized.", _tag);
 
                             Thread.Sleep(1000);
                         }
@@ -51,10 +84,19 @@ namespace Sensus
             }
         }
 
-        public SensusServiceHelper()
+        [DisplayYesNoUiProperty("Charging:")]
+        public abstract bool IsCharging { get; }
+
+        [DisplayYesNoUiProperty("WiFi Connected:")]
+        public abstract bool WiFiConnected { get; }
+
+        public abstract string DeviceId { get; }
+
+        protected SensusServiceHelper(Geolocator geolocator)
         {
+            GpsReceiver.Get().Initialize(geolocator);
+
             _stopped = true;
-            _logPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
 
 #if DEBUG
             _logger = new Logger(_logPath, true, true, LoggingLevel.Debug, Console.Error);
@@ -62,14 +104,18 @@ namespace Sensus
             _logger = new Logger(_logPath, true, true, LoggingLevel.Normal, Console.Error);
 #endif
 
-            if (_logger.Level >= LoggingLevel.Normal)
-                _logger.WriteLine("Log file started at \"" + _logPath + "\".");
+            _loggingLevel = _logger.Level;
+
+            if (_loggingLevel >= LoggingLevel.Normal)
+                Log("Log file started at \"" + _logPath + "\".", _tag);
+
+            _singleton = this;
         }
 
         /// <summary>
         /// Starts platform-independent service functionality. Okay to call multiple times, even if the service is already running.
         /// </summary>
-        public void StartService()
+        public void Start()
         {
             lock (this)
                 if (_stopped)
@@ -94,10 +140,10 @@ namespace Sensus
                     protocolsFile.Close();
                 }
             }
-            catch (Exception ex) { if (_logger.Level >= LoggingLevel.Normal) _logger.WriteLine("Failed to deserialize protocols:  " + ex.Message); }
+            catch (Exception ex) { if (_loggingLevel >= LoggingLevel.Normal) Log("Failed to deserialize protocols:  " + ex.Message); }
 
-            if (_logger.Level >= LoggingLevel.Normal)
-                _logger.WriteLine("Deserialized " + _registeredProtocols.Count + " protocols.");
+            if (_loggingLevel >= LoggingLevel.Normal)
+                Log("Deserialized " + _registeredProtocols.Count + " protocols.", _tag);
 
             try
             {
@@ -111,13 +157,13 @@ namespace Sensus
                 foreach (Protocol protocol in _registeredProtocols)
                     if (!protocol.Running && previouslyRunningProtocols.Contains(protocol.Id))
                     {
-                        if (_logger.Level >= LoggingLevel.Normal)
-                            _logger.WriteLine("Starting previously running protocol:  " + protocol.Name);
+                        if (_loggingLevel >= LoggingLevel.Normal)
+                            Log("Starting previously running protocol:  " + protocol.Name, _tag);
 
                         StartProtocolAsync(protocol);
                     }
             }
-            catch (Exception ex) { if (_logger.Level >= LoggingLevel.Normal) _logger.WriteLine("Failed to deserialize ids for previously running protocols:  " + ex.Message); }
+            catch (Exception ex) { if (_loggingLevel >= LoggingLevel.Normal) Log("Failed to deserialize ids for previously running protocols:  " + ex.Message, _tag); }
         }
 
         public void RegisterProtocol(Protocol protocol)
@@ -158,61 +204,90 @@ namespace Sensus
                 }
         }
 
-        public async void StopServiceAsync()
+        public Task StopAsync()
         {
-            // prevent any future interactions with the ServiceHelper
-            lock (this)
-                if (_stopped)
-                    return;
-                else
-                    _stopped = true;
-
-            if (_logger.Level >= LoggingLevel.Normal)
-                _logger.WriteLine("Stopping Sensus service.");
-
-            List<string> runningProtocolIds = new List<string>();
-
-            foreach (Protocol protocol in _registeredProtocols)
-                if (protocol.Running)
+            return Task.Run(async () =>
                 {
-                    runningProtocolIds.Add(protocol.Id);
-                    await protocol.StopAsync();
-                }
+                    // prevent any future interactions with the SensusServiceHelper
+                    lock (this)
+                        if (_stopped)
+                            return;
+                        else
+                            _stopped = true;
 
-            try
-            {
-                using (StreamWriter protocolsFile = new StreamWriter(_protocolsPath))
-                {
-                    protocolsFile.Write(JsonConvert.SerializeObject(_registeredProtocols, Formatting.Indented, new JsonSerializerSettings
+                    if (_loggingLevel >= LoggingLevel.Normal)
+                        Log("Stopping Sensus service.", _tag);
+
+                    List<string> runningProtocolIds = new List<string>();
+
+                    foreach (Protocol protocol in _registeredProtocols)
+                        if (protocol.Running)
+                        {
+                            runningProtocolIds.Add(protocol.Id);
+                            await protocol.StopAsync();
+                        }
+
+                    try
                     {
-                        PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-                        ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-                        TypeNameHandling = TypeNameHandling.All,
-                        ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
-                    }));
+                        using (StreamWriter protocolsFile = new StreamWriter(_protocolsPath))
+                        {
+                            protocolsFile.Write(JsonConvert.SerializeObject(_registeredProtocols, Formatting.Indented, new JsonSerializerSettings
+                            {
+                                PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                                ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+                                TypeNameHandling = TypeNameHandling.All,
+                                ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
+                            }));
 
-                    protocolsFile.Close();
-                }
-            }
-            catch (Exception ex) { if (_logger.Level >= LoggingLevel.Normal) _logger.WriteLine("Failed to serialize protocols:  " + ex.Message); }
+                            protocolsFile.Close();
+                        }
+                    }
+                    catch (Exception ex) { if (_loggingLevel >= LoggingLevel.Normal) Log("Failed to serialize protocols:  " + ex.Message, _tag); }
 
-            try
-            {
-                using (StreamWriter previouslyRunningProtocolsFile = new StreamWriter(_previouslyRunningProtocolsPath))
-                {
-                    previouslyRunningProtocolsFile.Write(JsonConvert.SerializeObject(runningProtocolIds, Formatting.Indented));
-                    previouslyRunningProtocolsFile.Close();
-                }
-            }
-            catch (Exception ex) { if (_logger.Level >= LoggingLevel.Normal) _logger.WriteLine("Failed to serialize running protocol id list:  " + ex.Message); }
+                    _registeredProtocols = null;
+
+                    try
+                    {
+                        using (StreamWriter previouslyRunningProtocolsFile = new StreamWriter(_previouslyRunningProtocolsPath))
+                        {
+                            previouslyRunningProtocolsFile.Write(JsonConvert.SerializeObject(runningProtocolIds, Formatting.Indented));
+                            previouslyRunningProtocolsFile.Close();
+                        }
+                    }
+                    catch (Exception ex) { if (_loggingLevel >= LoggingLevel.Normal) Log("Failed to serialize running protocol id list:  " + ex.Message, _tag); }
+
+                    if (Stopped != null)
+                        Stopped(this, null);
+                });
         }
 
-        public void DestroyService()
+        public async void Destroy()
         {
-            _registeredProtocols = null;
+            await StopAsync();
 
+            _loggingLevel = LoggingLevel.Off;
             _logger.Close();
             _logger = null;
+        }
+
+        public void Log(string message, params string[] tags)
+        {
+            StringBuilder tagString = null;
+            if (tags != null && tags.Length > 0)
+            {
+                tagString = new StringBuilder();
+                foreach (string tag in tags)
+                    if (!string.IsNullOrWhiteSpace(tag))
+                        tagString.Append("[" + tag.ToUpper() + "]");
+            }
+
+            _logger.WriteLine((tagString == null && tagString.Length > 0 ? "" : tagString.ToString() + ":") + message);
+        }
+
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

@@ -8,9 +8,9 @@ namespace Sensus.UI
 {
     public class StatusPage : ContentPage
     {
-        public StatusPage(App app)
+        public StatusPage(SensusServiceHelper service)
         {
-            List<StackLayout> stacks = UiProperty.GetPropertyStacks(app);
+            List<StackLayout> stacks = UiProperty.GetPropertyStacks(service);
 
             Content = new StackLayout
             {

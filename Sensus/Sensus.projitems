@@ -9,7 +9,6 @@
     <Import_RootNamespace>Sensus</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)App.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\DataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Local\FileLocalDataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Local\LocalDataStore.cs" />
@@ -24,7 +23,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\ProbeException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\SensusException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ImpreciseDatum.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ISensusService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LoggingLevel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\ListeningOrPollingProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\IPollingProbe.cs" />
@@ -67,6 +65,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\DataStorePage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\CreateDataStorePage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\MainPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\SensusNavigationPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProbePage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Properties\DisplayStringUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Properties\OnOffUiProperty.cs" />

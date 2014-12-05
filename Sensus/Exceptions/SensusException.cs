@@ -9,8 +9,8 @@ namespace Sensus.Exceptions
         public SensusException(string message)
             : base(message)
         {
-            if (App.LoggingLevel >= LoggingLevel.Normal)
-                App.Get().SensusService.Log("Exception being created:  " + message + Environment.NewLine + "Stack:  " + StackTrace);
+            if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Normal)
+                SensusServiceHelper.Get().Log("Exception being created:  " + message + Environment.NewLine + "Stack:  " + StackTrace);
         }
     }
 }

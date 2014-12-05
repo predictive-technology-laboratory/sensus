@@ -76,9 +76,9 @@ namespace Sensus
                     OnPropertyChanged();
 
                     if (_running)
-                        App.Get().SensusService.StartProtocolAsync(this);
+                        SensusServiceHelper.Get().StartProtocolAsync(this);
                     else
-                        App.Get().SensusService.StopProtocolAsync(this, false);  // don't unregister the protocol when stopped via UI interaction
+                        SensusServiceHelper.Get().StopProtocolAsync(this, false);  // don't unregister the protocol when stopped via UI interaction
                 }
             }
         }
@@ -178,8 +178,8 @@ namespace Sensus
                         OnPropertyChanged("Running");
                     }
 
-                    if (App.LoggingLevel >= LoggingLevel.Normal)
-                        App.Get().SensusService.Log("Initializing and starting probes for protocol " + _name + ".");
+                    if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Normal)
+                        SensusServiceHelper.Get().Log("Initializing and starting probes for protocol " + _name + ".");
 
                     int probesStarted = 0;
                     foreach (Probe probe in _probes)
@@ -191,8 +191,8 @@ namespace Sensus
                         try { await _localDataStore.StartAsync(); }
                         catch (Exception ex)
                         {
-                            if (App.LoggingLevel >= LoggingLevel.Normal)
-                                App.Get().SensusService.Log("Local data store failed to start:  " + ex.Message + Environment.NewLine + ex.StackTrace);
+                            if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Normal)
+                                SensusServiceHelper.Get().Log("Local data store failed to start:  " + ex.Message + Environment.NewLine + ex.StackTrace);
 
                             Running = false;
                             return;
@@ -201,8 +201,8 @@ namespace Sensus
                         try { await _remoteDataStore.StartAsync(); }
                         catch (Exception ex)
                         {
-                            if (App.LoggingLevel >= LoggingLevel.Normal)
-                                App.Get().SensusService.Log("Remote data store failed to start:  " + ex.Message);
+                            if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Normal)
+                                SensusServiceHelper.Get().Log("Remote data store failed to start:  " + ex.Message);
 
                             Running = false;
                             return;
@@ -210,8 +210,8 @@ namespace Sensus
                     }
                     else
                     {
-                        if (App.LoggingLevel >= LoggingLevel.Normal)
-                            App.Get().SensusService.Log("No probes were started.");
+                        if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Normal)
+                            SensusServiceHelper.Get().Log("No probes were started.");
 
                         Running = false;
                     }
@@ -229,30 +229,30 @@ namespace Sensus
                         OnPropertyChanged("Running");
                     }
 
-                    if (App.LoggingLevel >= LoggingLevel.Normal)
-                        App.Get().SensusService.Log("Stopping probes.");
+                    if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Normal)
+                        SensusServiceHelper.Get().Log("Stopping probes.");
 
                     foreach (Probe probe in _probes)
                         if (probe.Controller.Running)
                             try { await probe.Controller.StopAsync(); }
-                            catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to stop " + probe.DisplayName + "'s controller:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
+                            catch (Exception ex) { if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Normal) SensusServiceHelper.Get().Log("Failed to stop " + probe.DisplayName + "'s controller:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
 
                     if (_localDataStore != null && _localDataStore.Running)
                     {
-                        if (App.LoggingLevel >= LoggingLevel.Normal)
-                            App.Get().SensusService.Log("Stopping local data store.");
+                        if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Normal)
+                            SensusServiceHelper.Get().Log("Stopping local data store.");
 
                         try { await _localDataStore.StopAsync(); }
-                        catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to stop local data store:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
+                        catch (Exception ex) { if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Normal) SensusServiceHelper.Get().Log("Failed to stop local data store:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
                     }
 
                     if (_remoteDataStore != null && _remoteDataStore.Running)
                     {
-                        if (App.LoggingLevel >= LoggingLevel.Normal)
-                            App.Get().SensusService.Log("Stopping remote data store.");
+                        if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Normal)
+                            SensusServiceHelper.Get().Log("Stopping remote data store.");
 
                         try { await _remoteDataStore.StopAsync(); }
-                        catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to stop remote data store:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
+                        catch (Exception ex) { if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Normal) SensusServiceHelper.Get().Log("Failed to stop remote data store:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
                     }
                 });
         }

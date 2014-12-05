@@ -59,10 +59,10 @@ namespace Sensus.Probes
                                     Datum d = null;
 
                                     try { d = pollingProbe.Poll(); }
-                                    catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to poll probe \"" + pollingProbe.DisplayName + "\":  " + ex.Message + Environment.NewLine + ex.StackTrace); }
+                                    catch (Exception ex) { if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Normal) SensusServiceHelper.Get().Log("Failed to poll probe \"" + pollingProbe.DisplayName + "\":  " + ex.Message + Environment.NewLine + ex.StackTrace); }
 
                                     try { pollingProbe.StoreDatum(d); }
-                                    catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to store datum:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
+                                    catch (Exception ex) { if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Normal) SensusServiceHelper.Get().Log("Failed to store datum:  " + ex.Message + Environment.NewLine + ex.StackTrace); }
                                 }
                             }
                         });

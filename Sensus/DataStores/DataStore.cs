@@ -84,8 +84,8 @@ namespace Sensus.DataStores
         {
             return Task.Run(() =>
                 {
-                    if (App.LoggingLevel >= LoggingLevel.Normal)
-                        App.Get().SensusService.Log("Starting " + GetType().Name + " data store:  " + Name);
+                    if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Normal)
+                        SensusServiceHelper.Get().Log("Starting " + GetType().Name + " data store:  " + Name);
 
                     _running = true;
 
@@ -95,13 +95,13 @@ namespace Sensus.DataStores
                         {
                             while (_protocol.Running)
                             {
-                                if (App.LoggingLevel >= LoggingLevel.Verbose)
-                                    App.Get().SensusService.Log(Name + " is about to wait for " + _commitDelayMS + " MS before committing data.");
+                                if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Verbose)
+                                    SensusServiceHelper.Get().Log(Name + " is about to wait for " + _commitDelayMS + " MS before committing data.");
 
                                 _commitTrigger.WaitOne(_commitDelayMS);
 
-                                if (App.LoggingLevel >= LoggingLevel.Verbose)
-                                    App.Get().SensusService.Log(Name + " is waking up to commit data.");
+                                if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Verbose)
+                                    SensusServiceHelper.Get().Log(Name + " is waking up to commit data.");
 
                                 ICollection<Datum> dataToCommit = null;
                                 try
@@ -110,7 +110,7 @@ namespace Sensus.DataStores
                                     if (dataToCommit == null)
                                         throw new DataStoreException("Null collection returned by GetDataToCommit");
                                 }
-                                catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log(Name + " failed to get data to commit:  " + ex.Message); }
+                                catch (Exception ex) { if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Normal) SensusServiceHelper.Get().Log(Name + " failed to get data to commit:  " + ex.Message); }
 
                                 if (dataToCommit != null)
                                 {
@@ -121,16 +121,16 @@ namespace Sensus.DataStores
                                         if (committedData == null)
                                             throw new DataStoreException("Null collection returned by CommitData");
                                     }
-                                    catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log(Name + " failed to commit data:  " + ex.Message); }
+                                    catch (Exception ex) { if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Normal) SensusServiceHelper.Get().Log(Name + " failed to commit data:  " + ex.Message); }
 
                                     if (committedData != null)
                                         try { ProcessCommittedData(committedData); }
-                                        catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log(Name + " failed to process committed data:  " + ex.Message); }
+                                        catch (Exception ex) { if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Normal) SensusServiceHelper.Get().Log(Name + " failed to process committed data:  " + ex.Message); }
                                 }
                             }
 
-                            if (App.LoggingLevel >= LoggingLevel.Normal)
-                                App.Get().SensusService.Log("Exited while-loop for data store " + Name);
+                            if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Normal)
+                                SensusServiceHelper.Get().Log("Exited while-loop for data store " + Name);
 
                             _running = false;
                         });
@@ -152,8 +152,8 @@ namespace Sensus.DataStores
                     if (_protocol.Running)
                         throw new DataStoreException("DataStore " + Name + " cannot be stopped while its associated protocol is running.");
 
-                    if (App.LoggingLevel >= LoggingLevel.Normal)
-                        App.Get().SensusService.Log("Stopping " + GetType().Name + " data store:  " + Name);
+                    if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Normal)
+                        SensusServiceHelper.Get().Log("Stopping " + GetType().Name + " data store:  " + Name);
 
                     if (_commitTask != null)  // might have called stop immediately after start, in which case the commit task will be null. if it's null at this point, it will soon be stopped because we have already confirmed that it does not need to be running and thus will terminate the task's while-loop upon startup.
                     {

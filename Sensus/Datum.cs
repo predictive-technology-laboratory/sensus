@@ -58,7 +58,7 @@ namespace Sensus
             _userId = userId;
             _probeId = probeId;
             _timestamp = timestamp;
-            _deviceId = App.Get().DeviceId;
+            _deviceId = SensusServiceHelper.Get().DeviceId;
 
             Id = Guid.NewGuid().ToString();
         }

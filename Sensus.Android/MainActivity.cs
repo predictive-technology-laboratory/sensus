@@ -1,6 +1,8 @@
 ﻿using Android.App;
+using Android.Content;
 using Android.Content.PM;
 using Android.OS;
+using Sensus.UI;
 using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
@@ -19,11 +21,13 @@ namespace Sensus.Android
 
             Title = "Loading Sensus...";
 
-            AndroidApp app = new AndroidApp();
+            // start service -- if it's already running from on-boot startup, this will have no effect
+            Intent serviceIntent = new Intent(Application.Context, typeof(AndroidSensusService));
+            Application.Context.StartService(serviceIntent);
 
-            app.StopSensusTapped += (o, e) => { Finish(); };  // end activity when the user taps stop
+            MainPage.StopSensusTapped += (o, e) => { Finish(); };  // end activity when the user taps stop
 
-            SetPage(app.NavigationPage);
+            SetPage(new SensusNavigationPage());
 
             Title = "Sensus";
         }

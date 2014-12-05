@@ -20,8 +20,8 @@ namespace Sensus.Probes
 
                     if (Controller.Running)
                     {
-                        if (App.LoggingLevel >= LoggingLevel.Normal)
-                            App.Get().SensusService.Log("Restarting " + DisplayName + " as " + (value ? "listening" : "polling") + " probe.");
+                        if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Normal)
+                            SensusServiceHelper.Get().Log("Restarting " + DisplayName + " as " + (value ? "listening" : "polling") + " probe.");
 
                         Controller.StopAsync().ContinueWith(t =>
                             {

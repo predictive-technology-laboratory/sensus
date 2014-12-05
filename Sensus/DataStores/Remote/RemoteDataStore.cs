@@ -55,25 +55,25 @@ namespace Sensus.DataStores.Remote
 
         protected override ICollection<Datum> GetDataToCommit()
         {
-            if (_requireWiFi && !App.Get().WiFiConnected)
+            if (_requireWiFi && !SensusServiceHelper.Get().WiFiConnected)
             {
-                if (App.LoggingLevel >= LoggingLevel.Verbose)
-                    App.Get().SensusService.Log("Required WiFi but device WiFi is not connected.");
+                if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Verbose)
+                    SensusServiceHelper.Get().Log("Required WiFi but device WiFi is not connected.");
 
                 return new List<Datum>();
             }
-            else if (_requireCharging && !App.Get().IsCharging)
+            else if (_requireCharging && !SensusServiceHelper.Get().IsCharging)
             {
-                if (App.LoggingLevel >= LoggingLevel.Verbose)
-                    App.Get().SensusService.Log("Required charging but device is not charging.");
+                if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Verbose)
+                    SensusServiceHelper.Get().Log("Required charging but device is not charging.");
 
                 return new List<Datum>();
             }
 
             ICollection<Datum> localData = Protocol.LocalDataStore.GetDataForRemoteDataStore();
 
-            if (App.LoggingLevel >= LoggingLevel.Verbose)
-                App.Get().SensusService.Log("Retrieved " + localData.Count + " data elements from local data store.");
+            if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Verbose)
+                SensusServiceHelper.Get().Log("Retrieved " + localData.Count + " data elements from local data store.");
 
             return localData;
         }

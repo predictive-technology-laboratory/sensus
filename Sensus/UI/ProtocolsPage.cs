@@ -19,7 +19,7 @@ namespace Sensus.UI
             _protocolsList = new ListView();
             _protocolsList.ItemTemplate = new DataTemplate(typeof(TextCell));
             _protocolsList.ItemTemplate.SetBinding(TextCell.TextProperty, "Name");
-            _protocolsList.ItemsSource = App.Get().SensusService.RegisteredProtocols;
+            _protocolsList.ItemsSource = SensusServiceHelper.Get().RegisteredProtocols;
 
             Content = new StackLayout
             {
@@ -35,10 +35,10 @@ namespace Sensus.UI
 
             ToolbarItems.Add(new ToolbarItem("+", null, new Action(() =>
                 {
-                    App.Get().SensusService.RegisterProtocol(new Protocol(1, "New Protocol", true));
+                    SensusServiceHelper.Get().RegisterProtocol(new Protocol(1, "New Protocol", true));
 
                     _protocolsList.ItemsSource = null;
-                    _protocolsList.ItemsSource = App.Get().SensusService.RegisteredProtocols;
+                    _protocolsList.ItemsSource = SensusServiceHelper.Get().RegisteredProtocols;
                 })));
 
             ToolbarItems.Add(new ToolbarItem("-", null, new Action(async () =>
@@ -49,10 +49,10 @@ namespace Sensus.UI
 
                         if (await DisplayAlert("Delete " + protocolToRemove.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
                         {
-                            await App.Get().SensusService.StopProtocolAsync(protocolToRemove, true);
+                            await SensusServiceHelper.Get().StopProtocolAsync(protocolToRemove, true);
 
                             try { Directory.Delete(protocolToRemove.StorageDirectory, true); }
-                            catch (Exception ex) { if (App.LoggingLevel >= LoggingLevel.Normal) App.Get().SensusService.Log("Failed to delete protocol storage directory \"" + protocolToRemove.StorageDirectory + "\":  " + ex.Message); }
+                            catch (Exception ex) { if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Normal) SensusServiceHelper.Get().Log("Failed to delete protocol storage directory \"" + protocolToRemove.StorageDirectory + "\":  " + ex.Message); }
 
                             _protocolsList.ItemsSource = _protocolsList.ItemsSource.Cast<Protocol>().Where(p => p != protocolToRemove);
                             _protocolsList.SelectedItem = null;
