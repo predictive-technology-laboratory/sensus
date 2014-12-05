@@ -22,9 +22,21 @@ namespace Sensus.Android
 
             Title = "Loading Sensus...";
 
-            Application.Context.StartService(new Intent(Application.Context, typeof(AndroidSensusService)));  // start service -- if it's already running from on-boot or on-timer startup, this will have no effect
+            // start service -- if it's already running, this will have no effect
+            Intent serviceIntent = new Intent(Application.Context, typeof(AndroidSensusService));
+            Application.Context.StartService(serviceIntent);
 
-            Task.Run(() => { SensusServiceHelper.Get().Stopped += (o, e) => { Finish(); }; });  // end activity when the service stops
+            // bind to the service
+            AndroidSensusServiceConnection serviceConnection = new AndroidSensusServiceConnection(null);
+            serviceConnection.ServiceConnected += (o, e) =>
+                {
+                    SensusServiceHelper.Set(e.Binder.Service.SensusServiceHelper);
+                };
+
+            Application.Context.BindService(serviceIntent, serviceConnection, Bind.AutoCreate);
+
+            // stop activity when user presses stop
+            MainPage.StopSensusTapped += (o, e) => { Finish(); };
 
             SetPage(new SensusNavigationPage());
 

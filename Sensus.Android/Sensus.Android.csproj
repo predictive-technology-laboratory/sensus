@@ -125,6 +125,9 @@
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AndroidSensusService.cs" />
+    <Compile Include="AndroidSensusServiceBinder.cs" />
+    <Compile Include="AndroidSensusServiceConnection.cs" />
+    <Compile Include="AndroidServiceConnectedEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

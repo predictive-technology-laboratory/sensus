@@ -16,12 +16,17 @@ namespace Sensus.Android
 {
     [Service]
     public class AndroidSensusService : Service
-    {       
+    {
         private NotificationManager _notificationManager;
         private Notification.Builder _notificationBuilder;
-        private SensusServiceHelper _serviceHelper;
+        private SensusServiceHelper _sensusServiceHelper;
         private const int ServiceNotificationId = 0;
         private const int NotificationPendingIntentId = 1;
+
+        public SensusServiceHelper SensusServiceHelper
+        {
+            get { return _sensusServiceHelper; }
+        }
 
         public override void OnCreate()
         {
@@ -30,9 +35,9 @@ namespace Sensus.Android
             _notificationManager = GetSystemService(Context.NotificationService) as NotificationManager;
             _notificationBuilder = new Notification.Builder(this);
 
-            _serviceHelper = new AndroidSensusServiceHelper();
-            _serviceHelper.Stopped += (o, e) =>
-                {
+            _sensusServiceHelper = new AndroidSensusServiceHelper();
+            _sensusServiceHelper.Stopped += (o, e) =>
+                {                    
                     _notificationManager.Cancel(ServiceNotificationId);
                     StopSelf();
                 };
@@ -48,7 +53,7 @@ namespace Sensus.Android
             // boot to start the service, and then when the sensus app is started the service
             // start method is called again.
 
-            _serviceHelper.Start();
+            _sensusServiceHelper.Start();
 
             TaskStackBuilder stackBuilder = TaskStackBuilder.Create(this);
             stackBuilder.AddParentStack(Java.Lang.Class.FromType(typeof(MainActivity)));
@@ -72,13 +77,14 @@ namespace Sensus.Android
         {
             base.OnDestroy();
 
-            _serviceHelper.Destroy();
+            _sensusServiceHelper.Destroy();
+
             _notificationManager.Cancel(ServiceNotificationId);
         }
 
         public override IBinder OnBind(Intent intent)
         {
-            throw new SensusException("Binding to the Sensus service is not supported.");
+            return new AndroidSensusServiceBinder(this);
         }
     }
 }
