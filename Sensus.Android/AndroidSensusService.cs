@@ -29,6 +29,7 @@ namespace Sensus.Android
 
             _notificationManager = GetSystemService(Context.NotificationService) as NotificationManager;
             _notificationBuilder = new Notification.Builder(this);
+
             _serviceHelper = new AndroidSensusServiceHelper();
             _serviceHelper.Stopped += (o, e) =>
                 {
@@ -77,7 +78,7 @@ namespace Sensus.Android
 
         public override IBinder OnBind(Intent intent)
         {
-            throw new SensusException("Binding to Sensus service is not supported.");
+            throw new SensusException("Binding to the Sensus service is not supported.");
         }
     }
 }

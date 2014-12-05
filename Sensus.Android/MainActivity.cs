@@ -4,6 +4,7 @@ using Android.Content.PM;
 using Android.OS;
 using Sensus.UI;
 using System;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 using Xamarin.Geolocation;
@@ -22,7 +23,9 @@ namespace Sensus.Android
             Title = "Loading Sensus...";
 
             Application.Context.StartService(new Intent(Application.Context, typeof(AndroidSensusService)));  // start service -- if it's already running from on-boot or on-timer startup, this will have no effect
-            MainPage.StopSensusTapped += (o, e) => { Finish(); };  // end activity when the user taps stop
+
+            Task.Run(() => { SensusServiceHelper.Get().Stopped += (o, e) => { Finish(); }; });  // end activity when the service stops
+
             SetPage(new SensusNavigationPage());
 
             Title = "Sensus";

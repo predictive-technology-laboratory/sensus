@@ -17,7 +17,7 @@ namespace Sensus
     public abstract class SensusServiceHelper : INotifyPropertyChanged
     {
         #region static members
-        private static LoggingLevel _loggingLevel = LoggingLevel.Off;  // no logging allowed until the 
+        private static LoggingLevel _loggingLevel = LoggingLevel.Off;  // no logging allowed until the service has started
         private static SensusServiceHelper _singleton;
         private static string _protocolsPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "protocols.json");
         private static string _previouslyRunningProtocolsPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "previously_running_protocols.json");
@@ -34,7 +34,7 @@ namespace Sensus
 
         public static SensusServiceHelper Get()
         {
-            // service helper be null for a brief period between the time when the app starts and when the service has finished starting. wait for it.
+            // service helper be null for a brief period between the time when the app starts and when the service constructs the helper object.
             int triesLeft = 5;
             while (_singleton == null && triesLeft-- > 0)
                 Thread.Sleep(1000);
@@ -64,7 +64,7 @@ namespace Sensus
         {
             get
             {
-                // registered protocols get deserialized on service startup. wait for them here.
+                // registered protocols get deserialized on service startup. wait for them.
                 int triesLeft = 5;
                 while (triesLeft-- > 0)
                 {
@@ -148,6 +148,7 @@ namespace Sensus
             try
             {
                 List<string> previouslyRunningProtocols = new List<string>();
+
                 using (StreamReader previouslyRunningProtocolsFile = new StreamReader(_previouslyRunningProtocolsPath))
                 {
                     previouslyRunningProtocols = JsonConvert.DeserializeObject<List<string>>(previouslyRunningProtocolsFile.ReadToEnd());
@@ -195,12 +196,10 @@ namespace Sensus
                     return null;
                 else
                 {
-                    Task stopTask = protocol.StopAsync();
-
                     if (unregister)
                         _registeredProtocols.Remove(protocol);
 
-                    return stopTask;
+                    return protocol.StopAsync();
                 }
         }
 
@@ -257,7 +256,7 @@ namespace Sensus
                     catch (Exception ex) { if (_loggingLevel >= LoggingLevel.Normal) Log("Failed to serialize running protocol id list:  " + ex.Message, _tag); }
 
                     if (Stopped != null)
-                        Stopped(this, null);
+                        Stopped(null, null);
                 });
         }
 
