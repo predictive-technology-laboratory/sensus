@@ -8,7 +8,7 @@ namespace SensusService.Probes
         private int _maxDataStoresPerSecond;
         private DateTime _lastStoreTime;
 
-        [EntryIntegerUiProperty("Max Data / Second:", true)]
+        [EntryIntegerUiProperty("Max Data / Second:", true, int.MaxValue)]
         public int MaxDataStoresPerSecond
         {
             get { return _maxDataStoresPerSecond; }

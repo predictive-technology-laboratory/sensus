@@ -47,7 +47,7 @@ namespace SensusService.Probes
         private bool _supported;
         private Datum _mostRecentlyStoredDatum;
 
-        [EntryStringUiProperty("Name:", true)]
+        [EntryStringUiProperty("Name:", true, 1)]
         public string DisplayName
         {
             get { return _displayName; }
@@ -61,7 +61,7 @@ namespace SensusService.Probes
             }
         }
 
-        [OnOffUiProperty("Enabled:", true)]
+        [OnOffUiProperty("Enabled:", true, 2)]
         public bool Enabled
         {
             get { return _enabled; }

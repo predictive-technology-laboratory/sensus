@@ -18,8 +18,8 @@ namespace SensusUI.UiProperties
             }
         }
 
-        public DisplayYesNoUiProperty(string labelText)
-            : base(labelText, false)
+        public DisplayYesNoUiProperty(string labelText, int order)
+            : base(labelText, false, order)
         {
         }
     }

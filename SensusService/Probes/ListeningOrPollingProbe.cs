@@ -4,7 +4,7 @@ namespace SensusService.Probes
 {
     public abstract class ListeningOrPollingProbe : ListeningProbe, IPollingProbe
     {
-        [OnOffUiProperty("Listening Mode:", true)]
+        [OnOffUiProperty("Listening Mode:", true, int.MaxValue)]
         public bool Listening
         {
             get { return Controller is ListeningProbeController; }

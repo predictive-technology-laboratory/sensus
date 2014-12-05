@@ -36,14 +36,14 @@ namespace SensusService
             set { _id = value; }
         }
 
-        [EntryIntegerUiProperty("User ID:", false)]
+        [EntryIntegerUiProperty("User ID:", false, 3)]
         public int UserId
         {
             get { return _userId; }
             set { _userId = value; }
         }
 
-        [EntryStringUiProperty("Name:", true)]
+        [EntryStringUiProperty("Name:", true, 1)]
         public string Name
         {
             get { return _name; }
@@ -63,7 +63,7 @@ namespace SensusService
             set { _probes = value; }
         }
 
-        [OnOffUiProperty("Status:", true)]
+        [OnOffUiProperty("Status:", true, 2)]
         [JsonIgnore]
         public bool Running
         {

@@ -19,7 +19,7 @@ namespace SensusService.DataStores.Remote
         private IMobileServiceTable<CompassDatum> _compassTable;
         private IMobileServiceTable<LocationDatum> _locationTable;
 
-        [EntryStringUiProperty("URL:", true)]
+        [EntryStringUiProperty("URL:", true, 2)]
         public string URL
         {
             get { return _url; }
@@ -33,7 +33,7 @@ namespace SensusService.DataStores.Remote
             }
         }
 
-        [EntryStringUiProperty("Key:", true)]
+        [EntryStringUiProperty("Key:", true, 2)]
         public string Key
         {
             get { return _key; }

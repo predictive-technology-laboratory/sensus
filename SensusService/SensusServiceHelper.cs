@@ -92,10 +92,10 @@ namespace SensusService
             }
         }
 
-        [DisplayYesNoUiProperty("Charging:")]
+        [DisplayYesNoUiProperty("Charging:", 1)]
         public abstract bool IsCharging { get; }
 
-        [DisplayYesNoUiProperty("WiFi Connected:")]
+        [DisplayYesNoUiProperty("WiFi Connected:", 2)]
         public abstract bool WiFiConnected { get; }
 
         public abstract string DeviceId { get; }

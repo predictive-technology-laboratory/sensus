@@ -11,7 +11,7 @@ namespace SensusService.DataStores.Remote
         private bool _requireWiFi;
         private bool _requireCharging;
 
-        [OnOffUiProperty("Require WiFi:", true)]
+        [OnOffUiProperty("Require WiFi:", true, int.MaxValue)]
         public bool RequireWiFi
         {
             get { return _requireWiFi; }
@@ -25,7 +25,7 @@ namespace SensusService.DataStores.Remote
             }
         }
 
-        [OnOffUiProperty("Require Charging:", true)]
+        [OnOffUiProperty("Require Charging:", true, int.MaxValue)]
         public bool RequireCharging
         {
             get { return _requireCharging; }

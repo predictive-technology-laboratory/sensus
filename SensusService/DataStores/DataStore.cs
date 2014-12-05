@@ -27,7 +27,7 @@ namespace SensusService.DataStores
         private bool _running;
         private Protocol _protocol;
 
-        [EntryStringUiProperty("Name:", true)]
+        [EntryStringUiProperty("Name:", true, 1)]
         public string Name
         {
             get { return _name; }
@@ -41,7 +41,7 @@ namespace SensusService.DataStores
             }
         }
 
-        [EntryIntegerUiProperty("Commit Delay (MS):", true)]
+        [EntryIntegerUiProperty("Commit Delay (MS):", true, 2)]
         public int CommitDelayMS
         {
             get { return _commitDelayMS; }

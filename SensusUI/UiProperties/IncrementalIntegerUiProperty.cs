@@ -22,8 +22,8 @@ namespace SensusUI.UiProperties
             get { return _increment; }
         }
 
-        public IncrementalIntegerUiProperty(int minimum, int maximum, int increment, string labelText, bool editable)
-            : base(labelText, editable)
+        public IncrementalIntegerUiProperty(int minimum, int maximum, int increment, string labelText, bool editable, int order)
+            : base(labelText, editable, order)
         {
             _minimum = minimum;
             _maximum = maximum;

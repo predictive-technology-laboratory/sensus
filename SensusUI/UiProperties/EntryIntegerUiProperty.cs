@@ -25,8 +25,8 @@ namespace SensusUI.UiProperties
             }
         }
 
-        public EntryIntegerUiProperty(string labelText, bool editable)
-            : base(labelText, editable)
+        public EntryIntegerUiProperty(string labelText, bool editable, int order)
+            : base(labelText, editable, order)
         {
         }
     }
