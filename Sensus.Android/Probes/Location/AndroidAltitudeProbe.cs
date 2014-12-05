@@ -9,7 +9,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using Sensus.Probes.Location;
+using SensusService.Probes.Location;
 using Android.Hardware;
 
 namespace Sensus.Android.Probes.Location

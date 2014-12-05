@@ -1,20 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Application = Android.App.Application;
 using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-using Xamarin.Geolocation;
-using System.Threading.Tasks;
 using Android.Net;
-using Sensus.UI.Properties;
-using System.ComponentModel;
+using Android.OS;
 using Android.Provider;
+using SensusService;
+using Xamarin.Geolocation;
+using Application = Android.App.Application;
 
 namespace Sensus.Android
 {

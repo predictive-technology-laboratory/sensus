@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>b2f65fe8-f266-4c0c-b4a8-d326002b9180</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>SensusService</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)DataStores\DataStore.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataStores\Local\FileLocalDataStore.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataStores\Local\LocalDataStore.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataStores\Local\RamLocalDataStore.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataStores\Remote\AzureRemoteDataStore.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataStores\Remote\ConsoleRemoteDataStore.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataStores\Remote\PostgreSqlRemoteDataStore.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataStores\Remote\RemoteDataStore.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Datum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\DataStoreException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\ProbeControllerException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\ProbeException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\SensusException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ImpreciseDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LoggingLevel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\ListeningOrPollingProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\IPollingProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\IListeningProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\IProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\CompassProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\ListeningProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\ListeningProbeController.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\AppProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\BrowserProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\CallProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\ContactsProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\SmsProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\TwitterProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\ActivityProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\HumanProximityProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\LightProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\SoundProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Device\BatteryProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Device\ScreenProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\AltitudeProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\AltitudeDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\CompassDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\GpsReceiver.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\LocationDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\LocationProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\GpsProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\WiFiLocationProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AccelerometerProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\SpeedProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\BluetoothProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\CellTowerProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\WlanProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\PollingProbeController.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Probe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\ProbeController.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Protocol.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Logger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SensusServiceHelper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Probes\Interactive\" />
+  </ItemGroup>
+</Project>

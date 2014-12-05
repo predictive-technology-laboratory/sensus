@@ -185,7 +185,8 @@
       <HintPath>..\Components\xamarin.mobile-0.7.4\lib\wp8\Xamarin.Mobile.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <Import Project="..\Sensus\Sensus.projitems" Label="Shared" Condition="Exists('..\Sensus\Sensus.projitems')" />
+  <Import Project="..\SensusService\SensusService.projitems" Label="Shared" Condition="Exists('..\SensusService\SensusService.projitems')" />
+  <Import Project="..\SensusUI\SensusUI.projitems" Label="Shared" Condition="Exists('..\SensusUI\SensusUI.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).$(TargetFrameworkVersion).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

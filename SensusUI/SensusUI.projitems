@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>5b75b250-ccc2-43bf-91d7-5dafaf0dcc6b</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>SensusUI</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)CreateDataStorePage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataStorePage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MainPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ProbePage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UiProperties\DisplayStringUiProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UiProperties\DisplayYesNoUiProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UiProperties\EntryIntegerUiProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UiProperties\EntryStringUiProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UiProperties\IncrementalIntegerUiProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UiProperties\OnOffUiProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UiProperties\UiProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ProtocolDataStoreEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ProtocolPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ProtocolsPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SensusNavigationPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)StatusPage.cs" />
+  </ItemGroup>
+</Project>

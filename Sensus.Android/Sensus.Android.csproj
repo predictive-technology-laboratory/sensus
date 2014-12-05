@@ -150,7 +150,8 @@
       <Version>0.7.4</Version>
     </XamarinComponentReference>
   </ItemGroup>
-  <Import Project="..\Sensus\Sensus.projitems" Label="Shared" Condition="Exists('..\Sensus\Sensus.projitems')" />
+  <Import Project="..\SensusService\SensusService.projitems" Label="Shared" Condition="Exists('..\SensusService\SensusService.projitems')" />
+  <Import Project="..\SensusUI\SensusUI.projitems" Label="Shared" Condition="Exists('..\SensusUI\SensusUI.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

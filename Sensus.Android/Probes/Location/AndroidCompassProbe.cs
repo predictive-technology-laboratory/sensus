@@ -1,5 +1,5 @@
 using Android.Hardware;
-using Sensus.Probes.Location;
+using SensusService.Probes.Location;
 using System;
 
 namespace Sensus.Android.Probes.Location

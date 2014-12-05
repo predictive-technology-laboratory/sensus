@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Sensus", "Sensus\Sensus.shproj", "{B2F65FE8-F266-4C0C-B4A8-D326002B9180}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SensusService", "SensusService\SensusService.shproj", "{B2F65FE8-F266-4C0C-B4A8-D326002B9180}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.Android", "Sensus.Android\Sensus.Android.csproj", "{D33B6CDB-795C-4826-B131-47C526ACE07F}"
 EndProject
@@ -23,12 +23,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{D0290B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.WinPhone", "Sensus.WinPhone\Sensus.WinPhone.csproj", "{07F0C017-BEA0-4C03-B762-EE3C7F140E8A}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SensusUI", "SensusUI\SensusUI.shproj", "{5B75B250-CCC2-43BF-91D7-5DAFAF0DCC6B}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		Sensus\Sensus.projitems*{b2f65fe8-f266-4c0c-b4a8-d326002b9180}*SharedItemsImports = 13
-		Sensus\Sensus.projitems*{d33b6cdb-795c-4826-b131-47c526ace07f}*SharedItemsImports = 4
-		Sensus\Sensus.projitems*{07f0c017-bea0-4c03-b762-ee3c7f140e8a}*SharedItemsImports = 4
-		Sensus\Sensus.projitems*{5fc26757-7e79-461e-ab44-7b2bce55c49d}*SharedItemsImports = 4
+		SensusService\SensusService.projitems*{b2f65fe8-f266-4c0c-b4a8-d326002b9180}*SharedItemsImports = 13
+		SensusUI\SensusUI.projitems*{5b75b250-ccc2-43bf-91d7-5dafaf0dcc6b}*SharedItemsImports = 13
+		SensusUI\SensusUI.projitems*{d33b6cdb-795c-4826-b131-47c526ace07f}*SharedItemsImports = 4
+		SensusService\SensusService.projitems*{d33b6cdb-795c-4826-b131-47c526ace07f}*SharedItemsImports = 4
+		SensusUI\SensusUI.projitems*{07f0c017-bea0-4c03-b762-ee3c7f140e8a}*SharedItemsImports = 4
+		SensusService\SensusService.projitems*{07f0c017-bea0-4c03-b762-ee3c7f140e8a}*SharedItemsImports = 4
+		SensusUI\SensusUI.projitems*{5fc26757-7e79-461e-ab44-7b2bce55c49d}*SharedItemsImports = 4
+		SensusService\SensusService.projitems*{5fc26757-7e79-461e-ab44-7b2bce55c49d}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Ad-Hoc|Any CPU = Ad-Hoc|Any CPU

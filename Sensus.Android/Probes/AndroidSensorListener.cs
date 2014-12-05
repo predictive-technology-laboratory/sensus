@@ -10,7 +10,8 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.Hardware;
-using Sensus.Exceptions;
+using SensusService.Exceptions;
+using SensusService.Exceptions;
 
 namespace Sensus.Android.Probes
 {

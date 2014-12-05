@@ -2,7 +2,8 @@
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
-using Sensus.UI;
+using SensusService;
+using SensusUI;
 using System;
 using System.Threading.Tasks;
 using Xamarin.Forms;
