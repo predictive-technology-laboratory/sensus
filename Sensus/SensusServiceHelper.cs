@@ -281,7 +281,7 @@ namespace Sensus
                         tagString.Append("[" + tag.ToUpper() + "]");
             }
 
-            _logger.WriteLine((tagString == null && tagString.Length > 0 ? "" : tagString.ToString() + ":") + message);
+            _logger.WriteLine((tagString == null || tagString.Length == 0 ? "" : tagString.ToString() + ":") + message);
         }
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)

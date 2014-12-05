@@ -21,12 +21,8 @@ namespace Sensus.Android
 
             Title = "Loading Sensus...";
 
-            // start service -- if it's already running from on-boot startup, this will have no effect
-            Intent serviceIntent = new Intent(Application.Context, typeof(AndroidSensusService));
-            Application.Context.StartService(serviceIntent);
-
+            Application.Context.StartService(new Intent(Application.Context, typeof(AndroidSensusService)));  // start service -- if it's already running from on-boot or on-timer startup, this will have no effect
             MainPage.StopSensusTapped += (o, e) => { Finish(); };  // end activity when the user taps stop
-
             SetPage(new SensusNavigationPage());
 
             Title = "Sensus";
