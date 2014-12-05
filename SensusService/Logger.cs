@@ -102,7 +102,8 @@ namespace SensusService
 
                 base.Write(value);
 
-                _file.Write(value);
+                try { _file.Write(value); }
+                catch (Exception) { }
 
                 foreach (TextWriter otherOutput in _otherOutputs)
                     try { otherOutput.Write(value); }
@@ -112,6 +113,23 @@ namespace SensusService
 
                 return value;
             }
+        }
+
+        public void Log(string message, LoggingLevel level, params string[] tags)
+        {
+            if (level > _level)
+                return;
+
+            StringBuilder tagString = null;
+            if (tags != null && tags.Length > 0)
+            {
+                tagString = new StringBuilder();
+                foreach (string tag in tags)
+                    if (!string.IsNullOrWhiteSpace(tag))
+                        tagString.Append("[" + tag.ToUpper() + "]");
+            }
+
+            WriteLine((tagString == null || tagString.Length == 0 ? "" : tagString.ToString() + ":") + message);
         }
 
         /// <summary>

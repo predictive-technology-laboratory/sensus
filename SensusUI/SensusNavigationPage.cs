@@ -17,12 +17,12 @@ namespace SensusUI
 
             MainPage.StatusTapped += async (o, e) =>
                 {
-                    await PushAsync(new StatusPage(SensusServiceHelper.Get()));
+                    await PushAsync(new StatusPage(UiBoundSensusServiceHelper.Get()));
                 };
 
             MainPage.StopSensusTapped += async (o, e) =>
                 {
-                    await SensusServiceHelper.Get().StopAsync();
+                    await UiBoundSensusServiceHelper.Get().StopAsync();
                 };
             #endregion
 

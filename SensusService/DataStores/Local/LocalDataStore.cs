@@ -29,16 +29,14 @@ namespace SensusService.DataStores.Local
                             dataToCommit.AddRange(collectedData);
             }
 
-            if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Verbose)
-                SensusServiceHelper.Get().Log("Retrieved " + dataToCommit.Count + " data elements from probes.");
+            SensusServiceHelper.Get().Logger.Log("Retrieved " + dataToCommit.Count + " data elements from probes.", LoggingLevel.Verbose);
 
             return dataToCommit;
         }
 
         protected override void ProcessCommittedData(ICollection<Datum> committedData)
         {
-            if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Verbose)
-                SensusServiceHelper.Get().Log("Clearing " + committedData.Count + " committed data elements from probes.");
+            SensusServiceHelper.Get().Logger.Log("Clearing " + committedData.Count + " committed data elements from probes.", LoggingLevel.Verbose);
 
             foreach (Probe probe in Protocol.Probes)
                 probe.ClearCommittedData(committedData);

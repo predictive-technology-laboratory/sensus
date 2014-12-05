@@ -27,17 +27,8 @@ namespace SensusService
 
         private static string _logPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
         private static string _logTag = "SERVICE-HELPER";
-        private static LoggingLevel _loggingLevel = LoggingLevel.Off;  // no logging allowed until the service helper has been set
 
         private static object _staticLockObject = new object();
-
-        /// <summary>
-        /// This is a shortcut accessor for the logging level of the service. It gets set when the singleton helper is set.
-        /// </summary>
-        public static LoggingLevel LoggingLevel
-        {
-            get { return _loggingLevel; }
-        }
 
         public static SensusServiceHelper Get()
         {
@@ -57,15 +48,6 @@ namespace SensusService
 
             return _singleton;
         }
-
-        public static void Set(SensusServiceHelper singleton)
-        {
-            lock (_staticLockObject)
-            {
-                _singleton = singleton;
-                _loggingLevel = _singleton._logger.Level;
-            }
-        }
         #endregion
 
         /// <summary>
@@ -82,6 +64,11 @@ namespace SensusService
         private Logger _logger;
         private List<Protocol> _registeredProtocols;
 
+        public Logger Logger
+        {
+            get { return _logger; }
+        }
+
         public List<Protocol> RegisteredProtocols
         {
             get
@@ -93,8 +80,7 @@ namespace SensusService
                     lock (this)
                         if (_registeredProtocols == null)
                         {
-                            if (_loggingLevel >= LoggingLevel.Normal)
-                                Log("Waiting for registered protocols to be deserialized.", _logTag);
+                            _logger.Log("Waiting for registered protocols to be deserialized.", LoggingLevel.Normal, _logTag);
 
                             Thread.Sleep(1000);
                         }
@@ -126,8 +112,10 @@ namespace SensusService
             _logger = new Logger(_logPath, true, true, LoggingLevel.Normal, Console.Error);
 #endif
 
-            if (_loggingLevel >= LoggingLevel.Normal)
-                _logger.WriteLine("Log file started at \"" + _logPath + "\".", _logTag);
+            _logger.Log("Log file started at \"" + _logPath + "\".", LoggingLevel.Normal, _logTag);
+
+            lock (_staticLockObject)
+                _singleton = this;
         }
 
         /// <summary>
@@ -158,10 +146,9 @@ namespace SensusService
                     protocolsFile.Close();
                 }
             }
-            catch (Exception ex) { if (_loggingLevel >= LoggingLevel.Normal) Log("Failed to deserialize protocols:  " + ex.Message); }
+            catch (Exception ex) { _logger.Log("Failed to deserialize protocols:  " + ex.Message, LoggingLevel.Normal); }
 
-            if (_loggingLevel >= LoggingLevel.Normal)
-                Log("Deserialized " + _registeredProtocols.Count + " protocols.", _logTag);
+            _logger.Log("Deserialized " + _registeredProtocols.Count + " protocols.", LoggingLevel.Normal, _logTag);
 
             try
             {
@@ -176,13 +163,12 @@ namespace SensusService
                 foreach (Protocol protocol in _registeredProtocols)
                     if (!protocol.Running && previouslyRunningProtocols.Contains(protocol.Id))
                     {
-                        if (_loggingLevel >= LoggingLevel.Normal)
-                            Log("Starting previously running protocol:  " + protocol.Name, _logTag);
+                        _logger.Log("Starting previously running protocol:  " + protocol.Name, LoggingLevel.Normal, _logTag);
 
                         StartProtocolAsync(protocol);
                     }
             }
-            catch (Exception ex) { if (_loggingLevel >= LoggingLevel.Normal) Log("Failed to deserialize ids for previously running protocols:  " + ex.Message, _logTag); }
+            catch (Exception ex) { _logger.Log("Failed to deserialize ids for previously running protocols:  " + ex.Message, LoggingLevel.Normal, _logTag); }
         }
 
         public void RegisterProtocol(Protocol protocol)
@@ -232,8 +218,7 @@ namespace SensusService
                         else
                             _stopped = true;
 
-                    if (_loggingLevel >= LoggingLevel.Normal)
-                        Log("Stopping Sensus service.", _logTag);
+                    _logger.Log("Stopping Sensus service.", LoggingLevel.Normal, _logTag);
 
                     List<string> runningProtocolIds = new List<string>();
 
@@ -259,7 +244,7 @@ namespace SensusService
                             protocolsFile.Close();
                         }
                     }
-                    catch (Exception ex) { if (_loggingLevel >= LoggingLevel.Normal) Log("Failed to serialize protocols:  " + ex.Message, _logTag); }
+                    catch (Exception ex) { _logger.Log("Failed to serialize protocols:  " + ex.Message, LoggingLevel.Normal, _logTag); }
 
                     _registeredProtocols = null;
 
@@ -271,7 +256,7 @@ namespace SensusService
                             previouslyRunningProtocolsFile.Close();
                         }
                     }
-                    catch (Exception ex) { if (_loggingLevel >= LoggingLevel.Normal) Log("Failed to serialize running protocol ID list:  " + ex.Message, _logTag); }
+                    catch (Exception ex) { _logger.Log("Failed to serialize running protocol ID list:  " + ex.Message, LoggingLevel.Normal, _logTag); }
 
                     if (Stopped != null)
                         Stopped(null, null);
@@ -282,23 +267,7 @@ namespace SensusService
         {
             await StopAsync();
 
-            _loggingLevel = LoggingLevel.Off;
             _logger.Close();
-            _logger = null;
-        }
-
-        public void Log(string message, params string[] tags)
-        {
-            StringBuilder tagString = null;
-            if (tags != null && tags.Length > 0)
-            {
-                tagString = new StringBuilder();
-                foreach (string tag in tags)
-                    if (!string.IsNullOrWhiteSpace(tag))
-                        tagString.Append("[" + tag.ToUpper() + "]");
-            }
-
-            _logger.WriteLine((tagString == null || tagString.Length == 0 ? "" : tagString.ToString() + ":") + message);
         }
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)

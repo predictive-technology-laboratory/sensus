@@ -26,8 +26,7 @@ namespace SensusService.DataStores.Remote
                     {
                         committedData.Add(datum);
 
-                        if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Debug)
-                            SensusServiceHelper.Get().Log("Committed datum to remote console:  " + datum);
+                        SensusServiceHelper.Get().Logger.Log("Committed datum to remote console:  " + datum, LoggingLevel.Debug);
                     }
 
                     return committedData;

@@ -27,11 +27,11 @@ namespace Sensus.Android
             Intent serviceIntent = new Intent(Application.Context, typeof(AndroidSensusService));
             Application.Context.StartService(serviceIntent);
 
-            // bind to the service
+            // bind UI to the service
             AndroidSensusServiceConnection serviceConnection = new AndroidSensusServiceConnection(null);
             serviceConnection.ServiceConnected += (o, e) =>
                 {
-                    SensusServiceHelper.Set(e.Binder.Service.SensusServiceHelper);
+                    UiBoundSensusServiceHelper.Set(e.Binder.Service.SensusServiceHelper);
                 };
 
             Application.Context.BindService(serviceIntent, serviceConnection, Bind.AutoCreate);

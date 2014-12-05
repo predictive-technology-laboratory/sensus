@@ -95,11 +95,16 @@ namespace SensusService.DataStores.Remote
 
                             committedData.Add(datum);
                         }
-                        catch (Exception ex) { if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Normal) SensusServiceHelper.Get().Log("Failed to insert datum into Azure table:  " + ex.Message); }
+                        catch (Exception ex)
+                        {
+                            if (ex.Message == "Error: Could not insert the item because an item with that id already exists.")
+                                committedData.Add(datum);
+                            else
+                                SensusServiceHelper.Get().Logger.Log("Failed to insert datum into Azure table:  " + ex.Message, LoggingLevel.Normal);
+                        }
                     }
 
-                    if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Verbose)
-                        SensusServiceHelper.Get().Log("Committed " + committedData.Count + " data items to Azure tables in " + (DateTime.Now - start).TotalSeconds + " seconds.");
+                    SensusServiceHelper.Get().Logger.Log("Committed " + committedData.Count + " data items to Azure tables in " + (DateTime.Now - start).TotalSeconds + " seconds.", LoggingLevel.Verbose);
 
                     return committedData;
                 });

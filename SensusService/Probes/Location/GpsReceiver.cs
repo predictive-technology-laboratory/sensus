@@ -113,8 +113,7 @@ namespace SensusService.Probes.Location
 
                 _locator.StartListening(_minimumTimeHint, _minimumDistanceHint, true);
 
-                if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Normal)
-                    SensusServiceHelper.Get().Log("GPS receiver is now listening for changes.");
+                SensusServiceHelper.Get().Logger.Log("GPS receiver is now listening for changes.", LoggingLevel.Normal);
             }
         }
 
@@ -133,8 +132,7 @@ namespace SensusService.Probes.Location
                 if (ListeningForChanges)
                     _locator.StartListening(_minimumTimeHint, _minimumDistanceHint, true);
                 else
-                    if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Normal)
-                        SensusServiceHelper.Get().Log("All listeners removed from GPS receiver. Stopped listening.");
+                    SensusServiceHelper.Get().Logger.Log("All listeners removed from GPS receiver. Stopped listening.", LoggingLevel.Normal);
             }
         }
 
@@ -145,8 +143,7 @@ namespace SensusService.Probes.Location
                 _locator.StopListening();
                 PositionChanged = null;
 
-                if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Normal)
-                    SensusServiceHelper.Get().Log("All listeners removed from GPS receiver. Stopped listening.");
+                SensusServiceHelper.Get().Logger.Log("All listeners removed from GPS receiver. Stopped listening.", LoggingLevel.Normal);
             }
         }
 
@@ -159,8 +156,7 @@ namespace SensusService.Probes.Location
 
             _locator.PositionChanged += (o, e) =>
                 {
-                    if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Verbose)
-                        SensusServiceHelper.Get().Log("GPS position has changed:  " + e.Position.Latitude + " " + e.Position.Longitude);
+                    SensusServiceHelper.Get().Logger.Log("GPS position has changed:  " + e.Position.Latitude + " " + e.Position.Longitude, LoggingLevel.Verbose);
 
                     if (PositionChanged != null)
                         PositionChanged(o, e);
@@ -168,7 +164,7 @@ namespace SensusService.Probes.Location
 
             _locator.PositionError += (o, e) =>
                 {
-                    SensusServiceHelper.Get().Log("Position error from GPS receiver:  " + e.Error);
+                    SensusServiceHelper.Get().Logger.Log("Position error from GPS receiver:  " + e.Error, LoggingLevel.Normal);
                 };
         }
 
@@ -178,8 +174,7 @@ namespace SensusService.Probes.Location
             TimeSpan sharedReadingAge = DateTime.Now - _sharedReadingTimestamp;
             if (sharedReadingAge.TotalMilliseconds < maxSharedReadingAgeForReuseMS)
             {
-                if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Verbose)
-                    SensusServiceHelper.Get().Log("Reusing previous GPS reading, which is " + sharedReadingAge.TotalMilliseconds + " MS old (maximum=" + maxSharedReadingAgeForReuseMS + ").");
+                SensusServiceHelper.Get().Logger.Log("Reusing previous GPS reading, which is " + sharedReadingAge.TotalMilliseconds + " MS old (maximum=" + maxSharedReadingAgeForReuseMS + ").", LoggingLevel.Verbose);
 
                 return _sharedReading;
             }
@@ -192,20 +187,18 @@ namespace SensusService.Probes.Location
                     {
                         try
                         {
-                            if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Debug)
-                                SensusServiceHelper.Get().Log("Taking shared reading.");
+                            SensusServiceHelper.Get().Logger.Log("Taking shared reading.", LoggingLevel.Debug);
 
                             DateTime start = DateTime.Now;
                             _sharedReading = await _locator.GetPositionAsync(timeout: timeout);
                             DateTime end = _sharedReadingTimestamp = DateTime.Now;
 
-                            if (_sharedReading != null && SensusServiceHelper.LoggingLevel >= LoggingLevel.Verbose)
-                                SensusServiceHelper.Get().Log("Shared reading obtained in " + (end - start).Milliseconds + " MS:  " + _sharedReading.Latitude + " " + _sharedReading.Longitude);
+                            if (_sharedReading != null)
+                                SensusServiceHelper.Get().Logger.Log("Shared reading obtained in " + (end - start).Milliseconds + " MS:  " + _sharedReading.Latitude + " " + _sharedReading.Longitude, LoggingLevel.Verbose);
                         }
                         catch (TaskCanceledException ex)
                         {
-                            if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Normal)
-                                SensusServiceHelper.Get().Log("GPS reading task canceled:  " + ex.Message + Environment.NewLine + ex.StackTrace);
+                            SensusServiceHelper.Get().Logger.Log("GPS reading task canceled:  " + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal);
 
                             _sharedReading = null;
                         }
@@ -214,18 +207,15 @@ namespace SensusService.Probes.Location
                         _sharedReadingWaitHandle.Set();  // tell anyone waiting on the shared reading that it is ready
                     });
             }
-            else if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Debug)
-                SensusServiceHelper.Get().Log("A shared reading is coming. Will wait for it.");
+            else
+                SensusServiceHelper.Get().Logger.Log("A shared reading is coming. Will wait for it.", LoggingLevel.Debug);
 
             _sharedReadingWaitHandle.WaitOne(timeout * 2);  // wait twice the locator timeout, just to be sure.
 
             Position reading = _sharedReading;
 
             if (reading == null)
-            {
-                if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Normal)
-                    SensusServiceHelper.Get().Log("Shared reading is null.");
-            }
+                SensusServiceHelper.Get().Logger.Log("Shared reading is null.", LoggingLevel.Normal);
 
             return reading;
         }

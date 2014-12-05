@@ -55,23 +55,20 @@ namespace SensusService.DataStores.Remote
         {
             if (_requireWiFi && !SensusServiceHelper.Get().WiFiConnected)
             {
-                if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Verbose)
-                    SensusServiceHelper.Get().Log("Required WiFi but device WiFi is not connected.");
+                SensusServiceHelper.Get().Logger.Log("Required WiFi but device WiFi is not connected.", LoggingLevel.Verbose);
 
                 return new List<Datum>();
             }
             else if (_requireCharging && !SensusServiceHelper.Get().IsCharging)
             {
-                if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Verbose)
-                    SensusServiceHelper.Get().Log("Required charging but device is not charging.");
+                SensusServiceHelper.Get().Logger.Log("Required charging but device is not charging.", LoggingLevel.Verbose);
 
                 return new List<Datum>();
             }
 
             ICollection<Datum> localData = Protocol.LocalDataStore.GetDataForRemoteDataStore();
 
-            if (SensusServiceHelper.LoggingLevel >= LoggingLevel.Verbose)
-                SensusServiceHelper.Get().Log("Retrieved " + localData.Count + " data elements from local data store.");
+            SensusServiceHelper.Get().Logger.Log("Retrieved " + localData.Count + " data elements from local data store.", LoggingLevel.Verbose);
 
             return localData;
         }
