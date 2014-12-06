@@ -16,7 +16,7 @@ namespace Sensus.Android
         public override void OnReceive(Context context, Intent intent)
         {
             if (intent.Action == Intent.ActionBootCompleted)
-                AndroidSensusServiceHelper.UpdateAutoRestart(context, true);
+                context.StartService(new Intent(context, typeof(AndroidSensusService)));
         }
     }
 }

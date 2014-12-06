@@ -63,6 +63,7 @@ namespace SensusService
         private bool _stopped;
         private Logger _logger;
         private List<Protocol> _registeredProtocols;
+        private bool _autoRestart;
 
         public Logger Logger
         {
@@ -101,13 +102,26 @@ namespace SensusService
         public abstract string DeviceId { get; }
 
         [OnOffUiProperty("Auto-Restart:", true, 0)]
-        public abstract bool AutoRestart { get; set; }
+        public bool AutoRestart
+        {
+            get { return _autoRestart; }
+            set
+            {
+                if (value != _autoRestart)
+                {
+                    _autoRestart = value;
+                    SetAutoRestart(_autoRestart);
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         protected SensusServiceHelper(Geolocator geolocator)
         {
             GpsReceiver.Get().Initialize(geolocator);
 
             _stopped = true;
+            _autoRestart = false;
 
 #if DEBUG
             _logger = new Logger(_logPath, true, true, LoggingLevel.Debug, Console.Error);
@@ -120,6 +134,8 @@ namespace SensusService
             lock (_staticLockObject)
                 _singleton = this;
         }
+
+        protected abstract void SetAutoRestart(bool enabled);
 
         /// <summary>
         /// Starts platform-independent service functionality. Okay to call multiple times, even if the service is already running.
@@ -261,6 +277,7 @@ namespace SensusService
                     }
                     catch (Exception ex) { _logger.Log("Failed to serialize running protocol ID list:  " + ex.Message, LoggingLevel.Normal, _logTag); }
 
+                    // let others (e.g., platform-specific services and applications) know that we've stopped
                     if (Stopped != null)
                         Stopped(null, null);
                 });

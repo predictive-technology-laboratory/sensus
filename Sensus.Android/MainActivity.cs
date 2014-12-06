@@ -32,12 +32,12 @@ namespace Sensus.Android
             serviceConnection.ServiceConnected += (o, e) =>
                 {
                     UiBoundSensusServiceHelper.Set(e.Binder.Service.SensusServiceHelper);
+
+                    // stop activity when service stops
+                    e.Binder.Service.SensusServiceHelper.Stopped += (oo, ee) => { Finish(); };
                 };
 
-            Application.Context.BindService(serviceIntent, serviceConnection, Bind.AutoCreate);
-
-            // stop activity when user presses stop
-            MainPage.StopSensusTapped += (o, e) => { Finish(); };
+            Application.Context.BindService(serviceIntent, serviceConnection, Bind.AutoCreate);      
 
             SetPage(new SensusNavigationPage());
 

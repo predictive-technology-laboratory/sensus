@@ -9,8 +9,7 @@ namespace SensusUI
     public class MainPage : ContentPage
     {
         public static event EventHandler<ItemTappedEventArgs> ProtocolsTapped;
-        public static event EventHandler<EventArgs> StatusTapped;
-        public static event EventHandler<EventArgs> StopSensusTapped;
+        public static event EventHandler<EventArgs> OptionsTapped;
 
         public MainPage()
         {
@@ -39,8 +38,7 @@ namespace SensusUI
                 Children = { mainList }
             };
 
-            ToolbarItems.Add(new ToolbarItem("Status", null, new Action(() => StatusTapped(null, null))));
-            ToolbarItems.Add(new ToolbarItem("Stop Sensus", null, new Action(() => StopSensusTapped(null, null))));
+            ToolbarItems.Add(new ToolbarItem("Options", null, new Action(() => OptionsTapped(null, null))));
         }
     }
 }

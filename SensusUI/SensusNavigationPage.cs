@@ -15,12 +15,14 @@ namespace SensusUI
                     await PushAsync(new ProtocolsPage());
                 };
 
-            MainPage.StatusTapped += async (o, e) =>
+            MainPage.OptionsTapped += async (o, e) =>
                 {
-                    await PushAsync(new StatusPage(UiBoundSensusServiceHelper.Get()));
+                    await PushAsync(new OptionsPage(UiBoundSensusServiceHelper.Get()));
                 };
+            #endregion
 
-            MainPage.StopSensusTapped += async (o, e) =>
+            #region options page
+            OptionsPage.StopSensusTapped += async (o, e) =>
                 {
                     await UiBoundSensusServiceHelper.Get().StopAsync();
                 };

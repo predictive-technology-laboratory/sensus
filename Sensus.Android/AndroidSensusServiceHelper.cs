@@ -15,38 +15,6 @@ namespace Sensus.Android
     public class AndroidSensusServiceHelper : SensusServiceHelper
     {
         private static string _preventAutoRestartPath = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), "no_autorestart");
-        private static bool _autoRestart = PendingIntent.GetBroadcast (Application.Context, 0, GetAutoRestartIntent(Application.Context), PendingIntentFlags.NoCreate) != null;
-
-        private static Intent GetAutoRestartIntent(Context context)
-        {
-            return new Intent(context, typeof(AndroidSensusService));
-        }
-
-        private static PendingIntent GetAutoRestartPendingIntent(Context context)
-        {
-            return PendingIntent.GetService(context, 0, GetAutoRestartIntent(context), PendingIntentFlags.UpdateCurrent);
-        }
-
-        public static void UpdateAutoRestart(Context context, bool enable)
-        {
-            _autoRestart = enable;
-
-            AlarmManager alarm = context.GetSystemService(Context.AlarmService) as AlarmManager;
-
-            PendingIntent pendingIntent = GetAutoRestartPendingIntent(context);
-
-            if (_autoRestart && !File.Exists(_preventAutoRestartPath))
-            {
-                long nextAlarmMS = JavaSystem.CurrentTimeMillis() + 5000;
-                alarm.SetRepeating(AlarmType.RtcWakeup, nextAlarmMS, 1000 * 60, pendingIntent);
-                Toast.MakeText(context, "Sensus auto-restart has been enabled.", ToastLength.Long).Show();
-            }
-            else
-            {
-                alarm.Cancel(pendingIntent);
-                Toast.MakeText(context, "Sensus auto-restart has been disabled.", ToastLength.Long).Show();
-            }
-        }
 
         private ConnectivityManager _connectivityManager;
         private string _deviceId;
@@ -71,29 +39,39 @@ namespace Sensus.Android
             get { return _deviceId; }
         }
 
-        public override bool AutoRestart
-        {
-            get { return _autoRestart; }
-            set
-            {
-                if (value && File.Exists(_preventAutoRestartPath))
-                    File.Delete(_preventAutoRestartPath);
-                else if (!value && !File.Exists(_preventAutoRestartPath))
-                    File.Create(_preventAutoRestartPath);
-                    
-                if (value != _autoRestart)
-                {
-                    UpdateAutoRestart(Application.Context, value);
-                    OnPropertyChanged();
-                }
-            }
-        }
-
         public AndroidSensusServiceHelper()
             : base(new Geolocator(Application.Context))
         {
             _connectivityManager = Application.Context.GetSystemService(Context.ConnectivityService) as ConnectivityManager;
             _deviceId = Settings.Secure.GetString(Application.Context.ContentResolver, Settings.Secure.AndroidId);
+
+            AutoRestart = !File.Exists(_preventAutoRestartPath);
+        }
+
+        protected override void SetAutoRestart(bool enabled)
+        {
+            Context context = Application.Context;
+            AlarmManager alarmManager = context.GetSystemService(Context.AlarmService) as AlarmManager;
+            Intent serviceIntent = new Intent(context, typeof(AndroidSensusService));
+            PendingIntent pendingServiceIntent = PendingIntent.GetService(context, 0, serviceIntent, PendingIntentFlags.UpdateCurrent);
+
+            if (enabled)
+            {
+                if (File.Exists(_preventAutoRestartPath))
+                    File.Delete(_preventAutoRestartPath);
+
+                long nextAlarmMS = JavaSystem.CurrentTimeMillis() + 5000;
+                alarmManager.SetRepeating(AlarmType.RtcWakeup, nextAlarmMS, 1000 * 60, pendingServiceIntent);
+                Toast.MakeText(context, "Sensus auto-restart has been enabled.", ToastLength.Long).Show();
+            }
+            else
+            {
+                if (!File.Exists(_preventAutoRestartPath))
+                    File.Create(_preventAutoRestartPath);
+
+                alarmManager.Cancel(pendingServiceIntent);
+                Toast.MakeText(context, "Sensus auto-restart has been disabled.", ToastLength.Long).Show();
+            }
         }
     }
 }
