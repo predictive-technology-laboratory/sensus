@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Xamarin.Geolocation;
@@ -204,6 +203,8 @@ namespace SensusService
                     return protocol.StartAsync();
                 }
         }
+
+        public abstract void ShareProtocol(Protocol protocol, Protocol.ShareMethod method);
 
         public Task StopProtocolAsync(Protocol protocol, bool unregister)
         {

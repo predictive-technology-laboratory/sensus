@@ -38,7 +38,7 @@ namespace SensusUI
                 Children = { mainList }
             };
 
-            ToolbarItems.Add(new ToolbarItem("Options", null, new Action(() => OptionsTapped(null, null))));
+            ToolbarItems.Add(new ToolbarItem("Options", null, () => OptionsTapped(null, null)));
         }
     }
 }

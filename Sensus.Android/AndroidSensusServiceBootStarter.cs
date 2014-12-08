@@ -10,7 +10,7 @@ namespace Sensus.Android
     /// Starts Sensus service on boot completion.
     /// </summary>
     [BroadcastReceiver]
-    [IntentFilter(new string[] { Intent.ActionBootCompleted })]
+    [IntentFilter(new string[] { Intent.ActionBootCompleted }, Categories = new string[] { Intent.CategoryDefault })]
     public class AndroidSensusServiceBootStarter : BroadcastReceiver
     {
         public override void OnReceive(Context context, Intent intent)

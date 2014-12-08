@@ -22,6 +22,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\ProbeControllerException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\ProbeException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\SensusException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ExtensionMethods.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ImpreciseDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LoggingLevel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\ListeningOrPollingProbe.cs" />

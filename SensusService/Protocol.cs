@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using SensusService;
 using SensusService.DataStores.Local;
 using SensusService.DataStores.Remote;
 using SensusService.Probes;
@@ -7,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Net;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
@@ -17,6 +19,47 @@ namespace SensusService
     /// </summary>
     public class Protocol : INotifyPropertyChanged
     {
+        public enum ShareMethod
+        {
+            Email,
+            Text
+        }
+
+        private static JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
+        {
+            PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+            TypeNameHandling = TypeNameHandling.All,
+            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
+        };
+
+        public static Task<Protocol> GetFromWeb(string uri)
+        {
+            return Task.Run(async () =>
+                {
+                    WebClient client = new WebClient();
+                    using (StreamReader reader = new StreamReader(await client.OpenReadTaskAsync(new Uri(uri))))
+                    {
+                        string protocolJSON = reader.ReadToEnd();
+                        reader.Close();
+                        return JsonConvert.DeserializeObject<Protocol>(protocolJSON, _jsonSerializerSettings);
+                    }
+                });
+        }
+
+        public static Task<Protocol> GetFromFile(string path)
+        {
+            return Task.Run(() =>
+                {
+                    using (StreamReader file = new StreamReader(path))
+                    {
+                        Protocol protocol = JsonConvert.DeserializeObject<Protocol>(file.ReadToEnd(), _jsonSerializerSettings);
+                        file.Close();
+                        return protocol;
+                    }
+                });
+        }
+
         /// <summary>
         /// Fired when a UI-relevant property is changed.
         /// </summary>
@@ -248,6 +291,15 @@ namespace SensusService
                         catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to stop remote data store:  " + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal); }
                     }
                 });
+        }
+
+        public void Save(string path)
+        {
+            using (StreamWriter file = new StreamWriter(path))
+            {
+                file.Write(JsonConvert.SerializeObject(this, _jsonSerializerSettings));
+                file.Close();
+            }
         }
 
         public override bool Equals(object obj)

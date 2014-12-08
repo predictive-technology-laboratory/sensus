@@ -46,6 +46,35 @@ namespace Sensus.Android
             _deviceId = Settings.Secure.GetString(Application.Context.ContentResolver, Settings.Secure.AndroidId);
         }
 
+        public override void ShareProtocol(Protocol protocol, Protocol.ShareMethod method)
+        {
+            Intent intent = null;
+
+            if (method == Protocol.ShareMethod.Email)
+            {
+                intent = new Intent(Intent.ActionSend);
+                intent.SetType("plain/text");
+intent.PutExtra(Intent.ExtraEmail, new string[] { "gerber.matthew@gmail.com" });
+intent.PutExtra(Intent.ExtraSubject, "subject");
+intent.PutExtra(Intent.ExtraText, "mail body");
+
+                /*intent = new Intent(Intent.ActionSend);
+                intent.PutExtra(Intent.ExtraSubject, "Sensus Protocol:  " + protocol.Name);
+                intent.PutExtra(Intent.ExtraEmail, new string[] { "gerber.matthew@gmail.com" });
+                string path = Path.GetTempFileName();
+                protocol.Save(path);
+
+                Java.IO.File file = new Java.IO.File(path);
+                file.SetReadable(true, true);
+                global::Android.Net.Uri uri = global::Android.Net.Uri.FromFile(file);
+                intent.PutExtra(Intent.ExtraStream, uri);
+                intent.SetType("plain/text");*/
+            }
+
+            if (intent != null)
+                Application.Context.StartActivity(intent);
+        }
+
         protected override void SetAutoRestart(bool enabled)
         {
             Context context = Application.Context;

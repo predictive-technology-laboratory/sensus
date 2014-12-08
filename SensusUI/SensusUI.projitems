@@ -9,6 +9,8 @@
     <Import_RootNamespace>SensusUI</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)ShareProtocolEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ShareProtocolPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UiBoundSensusServiceHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CreateDataStorePage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStorePage.cs" />
