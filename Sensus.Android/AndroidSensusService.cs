@@ -15,11 +15,6 @@ namespace Sensus.Android
         private const int ServiceNotificationId = 0;
         private const int NotificationPendingIntentId = 1;
 
-        public SensusServiceHelper SensusServiceHelper
-        {
-            get { return _sensusServiceHelper; }
-        }
-
         public override void OnCreate()
         {
             base.OnCreate();
@@ -37,9 +32,12 @@ namespace Sensus.Android
 
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
+            _sensusServiceHelper.Logger.Log("Sensus service received start command (startId=" + startId + ").", LoggingLevel.Normal);
+
             // the service can be stopped without destroying the service object. in such cases, 
             // subsequent calls to start the service will not call OnCreate, which is why the 
-            // following code needs to run here. it's important that any code called here is
+            // following code needs to run here -- e.g., starting the helper object and displaying
+            // the notification. therefore, it's important that any code called here is
             // okay to call multiple times, even if the service is running. calling this when
             // the service is running can happen because sensus receives a signal on device
             // boot to start the service, and then when the sensus app is started the service
@@ -67,16 +65,14 @@ namespace Sensus.Android
 
         public override void OnDestroy()
         {
-            base.OnDestroy();
-
             _sensusServiceHelper.Destroy();
 
-            _notificationManager.Cancel(ServiceNotificationId);
+            base.OnDestroy();
         }
 
         public override IBinder OnBind(Intent intent)
         {
-            return new AndroidSensusServiceBinder(this);
+            return new AndroidSensusServiceBinder(_sensusServiceHelper);
         }
     }
 }

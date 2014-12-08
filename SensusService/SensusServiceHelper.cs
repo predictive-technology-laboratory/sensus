@@ -33,18 +33,22 @@ namespace SensusService
         public static SensusServiceHelper Get()
         {
             // service helper be null for a brief period between the time when the app starts and when the service constructs the helper object.
-            int triesLeft = 5;
+            int triesLeft = 10;
             while (triesLeft-- > 0)
             {
                 lock (_staticLockObject)
                     if (_singleton == null)
+                    {
+                        Console.Error.WriteLine(_logTag + ":  Waiting for service to construct helper object.");
                         Thread.Sleep(1000);
+                    }
                     else
                         break;
             }
 
-            if (_singleton == null)
-                throw new SensusException("Sensus failed to start service helper.");
+            lock (_staticLockObject)
+                if (_singleton == null)
+                    throw new SensusException("Sensus failed to construct service helper.");
 
             return _singleton;
         }
@@ -72,25 +76,7 @@ namespace SensusService
 
         public List<Protocol> RegisteredProtocols
         {
-            get
-            {
-                // registered protocols get deserialized on service startup. wait for them.
-                int triesLeft = 5;
-                while (triesLeft-- > 0)
-                {
-                    lock (this)
-                        if (_registeredProtocols == null)
-                        {
-                            _logger.Log("Waiting for registered protocols to be deserialized.", LoggingLevel.Normal, _logTag);
-
-                            Thread.Sleep(1000);
-                        }
-                        else
-                            return _registeredProtocols;
-                }
-
-                throw new SensusException("Failed to get registered protocols.");
-            }
+            get { return _registeredProtocols; }
         }
 
         [DisplayYesNoUiProperty("Charging:", 1)]
@@ -99,6 +85,7 @@ namespace SensusService
         [DisplayYesNoUiProperty("WiFi Connected:", 2)]
         public abstract bool WiFiConnected { get; }
 
+        [DisplayStringUiProperty("Device ID:", int.MaxValue)]
         public abstract string DeviceId { get; }
 
         [OnOffUiProperty("Auto-Restart:", true, 0)]
@@ -116,13 +103,13 @@ namespace SensusService
             }
         }
 
-        protected SensusServiceHelper(Geolocator geolocator)
+        protected SensusServiceHelper(Geolocator geolocator, bool autoRestart)
         {
             GpsReceiver.Get().Initialize(geolocator);
-
+            AutoRestart = autoRestart;
             _stopped = true;
-            _autoRestart = false;
 
+            #region logger
 #if DEBUG
             _logger = new Logger(_logPath, true, true, LoggingLevel.Debug, Console.Error);
 #else
@@ -130,6 +117,33 @@ namespace SensusService
 #endif
 
             _logger.Log("Log file started at \"" + _logPath + "\".", LoggingLevel.Normal, _logTag);
+            #endregion
+
+            #region get saved protocols
+            _registeredProtocols = new List<Protocol>();
+
+            if (File.Exists(_protocolsPath))
+                try
+                {
+                    using (StreamReader protocolsFile = new StreamReader(_protocolsPath))
+                    {
+                        _registeredProtocols = JsonConvert.DeserializeObject<List<Protocol>>(protocolsFile.ReadToEnd(), new JsonSerializerSettings
+                        {
+                            PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+                            TypeNameHandling = TypeNameHandling.All,
+                            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
+                        });
+
+                        protocolsFile.Close();
+                    }
+                }
+                catch (Exception ex) { _logger.Log("Failed to read serialized protocols from existing path \"" + _protocolsPath + "\":  " + ex.Message, LoggingLevel.Normal, _logTag); }
+            else
+                _logger.Log("No protocols serialization file exists. Proceeding with no saved protocols.", LoggingLevel.Normal, _logTag);
+
+            _logger.Log("Deserialized " + _registeredProtocols.Count + " protocols.", LoggingLevel.Normal, _logTag);
+            #endregion
 
             lock (_staticLockObject)
                 _singleton = this;
@@ -147,27 +161,6 @@ namespace SensusService
                     _stopped = false;
                 else
                     return;
-
-            _registeredProtocols = new List<Protocol>();
-
-            try
-            {
-                using (StreamReader protocolsFile = new StreamReader(_protocolsPath))
-                {
-                    _registeredProtocols = JsonConvert.DeserializeObject<List<Protocol>>(protocolsFile.ReadToEnd(), new JsonSerializerSettings
-                    {
-                        PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-                        ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-                        TypeNameHandling = TypeNameHandling.All,
-                        ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
-                    });
-
-                    protocolsFile.Close();
-                }
-            }
-            catch (Exception ex) { _logger.Log("Failed to deserialize protocols:  " + ex.Message, LoggingLevel.Normal); }
-
-            _logger.Log("Deserialized " + _registeredProtocols.Count + " protocols.", LoggingLevel.Normal, _logTag);
 
             try
             {
@@ -187,7 +180,7 @@ namespace SensusService
                         StartProtocolAsync(protocol);
                     }
             }
-            catch (Exception ex) { _logger.Log("Failed to deserialize ids for previously running protocols:  " + ex.Message, LoggingLevel.Normal, _logTag); }
+            catch (Exception ex) { _logger.Log("Failed to deserialize IDs for previously running protocols:  " + ex.Message, LoggingLevel.Normal, _logTag); }
         }
 
         public void RegisterProtocol(Protocol protocol)
@@ -226,6 +219,11 @@ namespace SensusService
                 }
         }
 
+        /// <summary>
+        /// Stops the service helper, but leaves it in a state in which subsequent calls to Start will succeed. This happens, for example, when the service is stopped and then 
+        /// restarted without being destroyed.
+        /// </summary>
+        /// <returns></returns>
         public Task StopAsync()
         {
             return Task.Run(async () =>
@@ -265,8 +263,6 @@ namespace SensusService
                     }
                     catch (Exception ex) { _logger.Log("Failed to serialize protocols:  " + ex.Message, LoggingLevel.Normal, _logTag); }
 
-                    _registeredProtocols = null;
-
                     try
                     {
                         using (StreamWriter previouslyRunningProtocolsFile = new StreamWriter(_previouslyRunningProtocolsPath))
@@ -285,7 +281,11 @@ namespace SensusService
 
         public async void Destroy()
         {
+            _logger.Log("Destroying Sensus service helper.", LoggingLevel.Normal, _logTag);
+
             await StopAsync();
+
+            _registeredProtocols = null;
 
             _logger.Close();
         }

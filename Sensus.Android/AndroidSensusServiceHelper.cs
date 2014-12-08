@@ -40,12 +40,10 @@ namespace Sensus.Android
         }
 
         public AndroidSensusServiceHelper()
-            : base(new Geolocator(Application.Context))
+            : base(new Geolocator(Application.Context), !File.Exists(_preventAutoRestartPath))
         {
             _connectivityManager = Application.Context.GetSystemService(Context.ConnectivityService) as ConnectivityManager;
             _deviceId = Settings.Secure.GetString(Application.Context.ContentResolver, Settings.Secure.AndroidId);
-
-            AutoRestart = !File.Exists(_preventAutoRestartPath);
         }
 
         protected override void SetAutoRestart(bool enabled)

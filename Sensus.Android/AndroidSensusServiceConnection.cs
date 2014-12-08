@@ -34,7 +34,7 @@ namespace Sensus.Android
 
         public void OnServiceDisconnected(ComponentName name)
         {
-            _binder.Service = null;
+            _binder.SensusServiceHelper = null;
         }
     }
 }

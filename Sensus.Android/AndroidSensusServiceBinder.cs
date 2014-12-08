@@ -1,25 +1,26 @@
 using Android.OS;
+using SensusService;
 
 namespace Sensus.Android
 {
     public class AndroidSensusServiceBinder : Binder
     {
-        private AndroidSensusService _service;
+        private SensusServiceHelper _sensusServiceHelper;
 
-        public AndroidSensusService Service
+        public SensusServiceHelper SensusServiceHelper
         {
-            get { return _service; }
-            set { _service = value; }
+            get { return _sensusServiceHelper; }
+            set { _sensusServiceHelper = value; }
         }
 
         public bool IsBound
         {
-            get { return _service != null; }
+            get { return _sensusServiceHelper != null; }
         }
 
-        public AndroidSensusServiceBinder(AndroidSensusService service)
+        public AndroidSensusServiceBinder(SensusServiceHelper sensusServiceHelper)
         {
-            _service = service;
+            _sensusServiceHelper = sensusServiceHelper;
         }
     }
 }

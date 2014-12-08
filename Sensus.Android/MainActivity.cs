@@ -31,10 +31,10 @@ namespace Sensus.Android
             AndroidSensusServiceConnection serviceConnection = new AndroidSensusServiceConnection(null);
             serviceConnection.ServiceConnected += (o, e) =>
                 {
-                    UiBoundSensusServiceHelper.Set(e.Binder.Service.SensusServiceHelper);
+                    UiBoundSensusServiceHelper.Set(e.Binder.SensusServiceHelper);
 
                     // stop activity when service stops
-                    e.Binder.Service.SensusServiceHelper.Stopped += (oo, ee) => { Finish(); };
+                    e.Binder.SensusServiceHelper.Stopped += (oo, ee) => { Finish(); };
                 };
 
             Application.Context.BindService(serviceIntent, serviceConnection, Bind.AutoCreate);      
