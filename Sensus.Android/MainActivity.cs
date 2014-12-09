@@ -46,7 +46,7 @@ namespace Sensus.Android
 
                     SetPage(navigationPage);
 
-                    // open page to view protocol if a protocol was passed to us
+                    #region open page to view protocol if a protocol was passed to us
                     if (Intent.Data != null)
                     {
                         global::Android.Net.Uri dataURI = Intent.Data;
@@ -78,6 +78,7 @@ namespace Sensus.Android
                             }
                         }
                     }
+                    #endregion
 
                     Title = "Sensus";
                 };
