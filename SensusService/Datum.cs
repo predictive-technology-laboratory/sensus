@@ -8,7 +8,6 @@ namespace SensusService
     public abstract class Datum
     {
         private string _id;
-        private int _userId;
         private string _deviceId;
         private int _probeId;
         private DateTimeOffset _timestamp;
@@ -30,12 +29,6 @@ namespace SensusService
             set { _deviceId = value; }
         }
 
-        public int UserId
-        {
-            get { return _userId; }
-            set { _userId = value; }
-        }
-
         public int ProbeId
         {
             get { return _probeId; }
@@ -52,9 +45,8 @@ namespace SensusService
 
         private Datum() { }  // for JSON.NET deserialization
 
-        public Datum(int userId, int probeId, DateTimeOffset timestamp)
+        public Datum(int probeId, DateTimeOffset timestamp)
         {
-            _userId = userId;
             _probeId = probeId;
             _timestamp = timestamp;
             _deviceId = SensusServiceHelper.Get().DeviceId;
@@ -78,7 +70,6 @@ namespace SensusService
         public override string ToString()
         {
             return "Type:  " + GetType().Name + Environment.NewLine +
-                   "User ID:  " + _userId + Environment.NewLine +
                    "Device ID:  " + _deviceId + Environment.NewLine + 
                    "Probe:  " + _probeId + Environment.NewLine +
                    "Timestamp:  " + _timestamp;

@@ -44,7 +44,6 @@ namespace SensusService.Probes
         private HashSet<Datum> _collectedData;
         private Protocol _protocol;
         private ProbeController _controller;
-        private bool _supported;
         private Datum _mostRecentlyStoredDatum;
 
         [EntryStringUiProperty("Name:", true, 1)]
@@ -104,19 +103,6 @@ namespace SensusService.Probes
             }
         }
 
-        public bool Supported
-        {
-            get { return _supported; }
-            set
-            {
-                if (value != _supported)
-                {
-                    _supported = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
         [JsonIgnore]
         public Datum MostRecentlyStoredDatum
         {
@@ -147,7 +133,6 @@ namespace SensusService.Probes
         {
             _displayName = DefaultDisplayName;
             _enabled = false;
-            _supported = true;
             _controller = DefaultController;
         }
 
@@ -155,7 +140,7 @@ namespace SensusService.Probes
         {
             _collectedData = new HashSet<Datum>();
 
-            return _supported;
+            return true;
         }
 
         public Task<bool> InitializeAndStartAsync()

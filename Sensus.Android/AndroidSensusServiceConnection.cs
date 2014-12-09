@@ -18,6 +18,11 @@ namespace Sensus.Android
 
         private AndroidSensusServiceBinder _binder;
 
+        public AndroidSensusServiceBinder Binder
+        {
+            get { return _binder; }
+        }
+
         public AndroidSensusServiceConnection(AndroidSensusServiceBinder binder)
         {
             if (binder != null)

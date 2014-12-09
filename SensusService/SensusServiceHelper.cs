@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Xamarin.Geolocation;
@@ -48,7 +47,11 @@ namespace SensusService
 
             lock (_staticLockObject)
                 if (_singleton == null)
-                    throw new SensusException("Sensus failed to construct service helper.");
+                {
+                    string error = _logTag + ":  Failed to get service helper.";
+                    Console.Error.WriteLine(error);
+                    throw new Exception(error);
+                }
 
             return _singleton;
         }
@@ -102,6 +105,8 @@ namespace SensusService
                 }
             }
         }
+
+        
 
         protected SensusServiceHelper(Geolocator geolocator, bool autoRestart)
         {
@@ -204,6 +209,8 @@ namespace SensusService
                     return protocol.StartAsync();
                 }
         }
+
+        public abstract void ShareProtocol(Protocol protocol);
 
         public Task StopProtocolAsync(Protocol protocol, bool unregister)
         {

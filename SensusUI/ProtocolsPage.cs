@@ -27,21 +27,21 @@ namespace SensusUI
                 Children = { _protocolsList }
             };
 
-            ToolbarItems.Add(new ToolbarItem("Open", null, new Action(() =>
+            ToolbarItems.Add(new ToolbarItem("Open", null, () =>
                 {
                     if (_protocolsList.SelectedItem != null)
                         EditProtocol(_protocolsList.SelectedItem, null);
-                })));
+                }));
 
-            ToolbarItems.Add(new ToolbarItem("+", null, new Action(() =>
+            ToolbarItems.Add(new ToolbarItem("+", null, () =>
                 {
-                    UiBoundSensusServiceHelper.Get().RegisterProtocol(new Protocol(1, "New Protocol", true));
+                    UiBoundSensusServiceHelper.Get().RegisterProtocol(new Protocol("New Protocol", true));
 
                     _protocolsList.ItemsSource = null;
                     _protocolsList.ItemsSource = UiBoundSensusServiceHelper.Get().RegisteredProtocols;
-                })));
+                }));
 
-            ToolbarItems.Add(new ToolbarItem("-", null, new Action(async () =>
+            ToolbarItems.Add(new ToolbarItem("-", null, async () =>
                 {
                     if (_protocolsList.SelectedItem != null)
                     {
@@ -58,7 +58,7 @@ namespace SensusUI
                             _protocolsList.SelectedItem = null;
                         }
                     }
-                })));
+                }));
         }
     }
 }

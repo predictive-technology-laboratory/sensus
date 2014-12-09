@@ -11,7 +11,7 @@ namespace SensusUI
         {
             #region main page
             MainPage.ProtocolsTapped += async (o, e) =>
-                {
+                {                  
                     await PushAsync(new ProtocolsPage());
                 };
 
@@ -50,6 +50,11 @@ namespace SensusUI
             ProtocolPage.ProbeTapped += async (o, e) =>
                 {
                     await PushAsync(new ProbePage(e.Item as Probe));
+                };
+
+            ProtocolPage.ShareProtocolTapped += (o, e) =>
+                {
+                    UiBoundSensusServiceHelper.Get().ShareProtocol(e);
                 };
             #endregion
 
