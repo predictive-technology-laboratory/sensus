@@ -17,8 +17,8 @@ namespace Sensus.Android
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault, Intent.CategoryBrowsable }, DataScheme = "file", DataHost = "*", DataPathPattern = ".*\\\\.sensus")]
     public class MainActivity : AndroidActivity
     {
-        Intent serviceIntent;
-        AndroidSensusServiceConnection serviceConnection;
+        private Intent _serviceIntent;
+        private AndroidSensusServiceConnection _serviceConnection;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -29,12 +29,12 @@ namespace Sensus.Android
             Title = "Loading Sensus...";
 
             // start service -- if it's already running, this will have no effect
-            serviceIntent = new Intent(this, typeof(AndroidSensusService));
-            StartService(serviceIntent);
+            _serviceIntent = new Intent(this, typeof(AndroidSensusService));
+            StartService(_serviceIntent);
 
             // bind UI to the service
-            serviceConnection = new AndroidSensusServiceConnection(null);
-            serviceConnection.ServiceConnected += async (o, e) =>
+            _serviceConnection = new AndroidSensusServiceConnection(null);
+            _serviceConnection.ServiceConnected += async (o, e) =>
                 {
                     UiBoundSensusServiceHelper.Set(e.Binder.SensusServiceHelper);
 
@@ -67,14 +67,28 @@ namespace Sensus.Android
         {
             base.OnResume();
 
-            BindService(serviceIntent, serviceConnection, Bind.AutoCreate);
+            BindService(_serviceIntent, _serviceConnection, Bind.AutoCreate);
+        }
+
+        protected override void OnPause()
+        {
+            base.OnPause();
+
+            UnbindService(_serviceConnection);
         }
 
         protected override void OnStop()
         {
             base.OnStop();
 
-            UnbindService(serviceConnection);
+            UnbindService(_serviceConnection);
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+
+            UnbindService(_serviceConnection);
         }
     }
 }

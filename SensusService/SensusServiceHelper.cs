@@ -47,7 +47,11 @@ namespace SensusService
 
             lock (_staticLockObject)
                 if (_singleton == null)
-                    Console.Error.WriteLine(_logTag + ":  Failed to get service helper.");
+                {
+                    string error = _logTag + ":  Failed to get service helper.";
+                    Console.Error.WriteLine(error);
+                    throw new Exception(error);
+                }
 
             return _singleton;
         }

@@ -10,11 +10,11 @@ namespace Sensus.Android.Probes
     public class AndroidSensorListener : Java.Lang.Object, ISensorEventListener
     {
         private SensorType _sensorType;
-        private SensorManager _sensorManager;
-        private Sensor _sensor;
         private SensorDelay _sensorDelay;
         private Action<SensorStatus> _sensorAccuracyChangedCallback;
         private Action<SensorEvent> _sensorValueChangedCallback;
+        private SensorManager _sensorManager;
+        private Sensor _sensor;
         private bool _listening;
 
         public AndroidSensorListener(SensorType sensorType, SensorDelay sensorDelay, Action<SensorStatus> sensorAccuracyChangedCallback, Action<SensorEvent> sensorValueChangedCallback)
@@ -23,13 +23,12 @@ namespace Sensus.Android.Probes
             _sensorDelay = sensorDelay;
             _sensorAccuracyChangedCallback = sensorAccuracyChangedCallback;
             _sensorValueChangedCallback = sensorValueChangedCallback;
+            _sensorManager = Application.Context.GetSystemService(Context.SensorService) as SensorManager;
             _listening = false;
         }
 
         public bool Initialize()
         {
-            _sensorManager = Application.Context.GetSystemService(Context.SensorService) as SensorManager;
-
             IList<Sensor> sensors = _sensorManager.GetSensorList(_sensorType);
             _sensor = null;
             if (sensors.Count > 0)
