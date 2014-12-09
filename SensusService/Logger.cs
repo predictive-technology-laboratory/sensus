@@ -98,7 +98,7 @@ namespace SensusService
         {
             lock (this)
             {
-                value = (_writeTimestamp && _previousWriteNewLine ? DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + ":  " : "") + value + (newLine ? Environment.NewLine : "");
+                value = (_writeTimestamp && _previousWriteNewLine ? DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + ":  " : "") + value + (newLine ? Environment.NewLine : "");
 
                 base.Write(value);
 

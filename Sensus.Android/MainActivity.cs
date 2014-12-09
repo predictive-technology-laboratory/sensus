@@ -61,34 +61,16 @@ namespace Sensus.Android
 
                     Title = "Sensus";
                 };
-        }
-
-        protected override void OnResume()
-        {
-            base.OnResume();
 
             BindService(_serviceIntent, _serviceConnection, Bind.AutoCreate);
-        }
-
-        protected override void OnPause()
-        {
-            base.OnPause();
-
-            UnbindService(_serviceConnection);
-        }
-
-        protected override void OnStop()
-        {
-            base.OnStop();
-
-            UnbindService(_serviceConnection);
         }
 
         protected override void OnDestroy()
         {
             base.OnDestroy();
 
-            UnbindService(_serviceConnection);
+            if (_serviceConnection.Binder.IsBound)
+                UnbindService(_serviceConnection);
         }
     }
 }
