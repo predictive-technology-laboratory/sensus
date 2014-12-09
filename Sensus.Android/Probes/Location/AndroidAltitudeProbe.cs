@@ -29,8 +29,11 @@ namespace Sensus.Android.Probes.Location
 
                     StoreDatum(new AltitudeDatum(Protocol.UserId, Id, DateTime.UtcNow, -1, altitude));
                 }));
+        }
 
-            Supported = _altitudeListener.Supported;
+        protected override bool Initialize()
+        {
+            return base.Initialize() && _altitudeListener.Initialize();
         }
 
         public override void StartListening()

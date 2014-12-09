@@ -14,8 +14,11 @@ namespace Sensus.Android.Probes.Location
                 {
                     StoreDatum(new CompassDatum(Protocol.UserId, Id, DateTime.UtcNow, e.Values[0]));
                 });
+        }
 
-            Supported = _compassListener.Supported;
+        protected override bool Initialize()
+        {
+            return base.Initialize() && _compassListener.Initialize();
         }
 
         public override void StartListening()

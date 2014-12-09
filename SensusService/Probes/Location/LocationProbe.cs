@@ -17,10 +17,9 @@ namespace SensusService.Probes.Location
             get { return "Location"; }
         }
 
-        public LocationProbe()
+        protected override bool Initialize()
         {
-            if (!GpsReceiver.Get().Locator.IsGeolocationEnabled)
-                Supported = false;
+            return base.Initialize() && GpsReceiver.Get().Locator.IsGeolocationEnabled;
         }
 
         protected override Datum ConvertReadingToDatum(Position reading)

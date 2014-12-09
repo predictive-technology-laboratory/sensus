@@ -11,7 +11,7 @@ namespace SensusUI
         {
             #region main page
             MainPage.ProtocolsTapped += async (o, e) =>
-                {
+                {                  
                     await PushAsync(new ProtocolsPage());
                 };
 

@@ -8,7 +8,6 @@ using Java.Lang;
 using SensusService;
 using System.IO;
 using Xamarin.Geolocation;
-using Application = Android.App.Application;
 
 namespace Sensus.Android
 {
@@ -53,22 +52,17 @@ namespace Sensus.Android
             if (method == Protocol.ShareMethod.Email)
             {
                 intent = new Intent(Intent.ActionSend);
-                intent.SetType("plain/text");
-intent.PutExtra(Intent.ExtraEmail, new string[] { "gerber.matthew@gmail.com" });
-intent.PutExtra(Intent.ExtraSubject, "subject");
-intent.PutExtra(Intent.ExtraText, "mail body");
-
-                /*intent = new Intent(Intent.ActionSend);
                 intent.PutExtra(Intent.ExtraSubject, "Sensus Protocol:  " + protocol.Name);
                 intent.PutExtra(Intent.ExtraEmail, new string[] { "gerber.matthew@gmail.com" });
+                intent.AddFlags(ActivityFlags.NewTask);
+                intent.SetType("message/rfc822");
+
                 string path = Path.GetTempFileName();
                 protocol.Save(path);
-
                 Java.IO.File file = new Java.IO.File(path);
                 file.SetReadable(true, true);
                 global::Android.Net.Uri uri = global::Android.Net.Uri.FromFile(file);
                 intent.PutExtra(Intent.ExtraStream, uri);
-                intent.SetType("plain/text");*/
             }
 
             if (intent != null)

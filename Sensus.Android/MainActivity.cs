@@ -17,6 +17,9 @@ namespace Sensus.Android
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault, Intent.CategoryBrowsable }, DataScheme = "file", DataHost = "*", DataPathPattern = ".*\\\\.sensus")]
     public class MainActivity : AndroidActivity
     {
+        Intent serviceIntent;
+        AndroidSensusServiceConnection serviceConnection;
+
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
@@ -26,11 +29,11 @@ namespace Sensus.Android
             Title = "Loading Sensus...";
 
             // start service -- if it's already running, this will have no effect
-            Intent serviceIntent = new Intent(Application.Context, typeof(AndroidSensusService));
-            Application.Context.StartService(serviceIntent);
+            serviceIntent = new Intent(this, typeof(AndroidSensusService));
+            StartService(serviceIntent);
 
             // bind UI to the service
-            AndroidSensusServiceConnection serviceConnection = new AndroidSensusServiceConnection(null);
+            serviceConnection = new AndroidSensusServiceConnection(null);
             serviceConnection.ServiceConnected += async (o, e) =>
                 {
                     UiBoundSensusServiceHelper.Set(e.Binder.SensusServiceHelper);
@@ -58,8 +61,20 @@ namespace Sensus.Android
 
                     Title = "Sensus";
                 };
+        }
 
-            Application.Context.BindService(serviceIntent, serviceConnection, Bind.AutoCreate);
+        protected override void OnResume()
+        {
+            base.OnResume();
+
+            BindService(serviceIntent, serviceConnection, Bind.AutoCreate);
+        }
+
+        protected override void OnStop()
+        {
+            base.OnStop();
+
+            UnbindService(serviceConnection);
         }
     }
 }

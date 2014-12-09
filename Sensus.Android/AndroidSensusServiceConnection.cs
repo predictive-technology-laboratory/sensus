@@ -34,6 +34,7 @@ namespace Sensus.Android
 
         public void OnServiceDisconnected(ComponentName name)
         {
+            _binder.SensusServiceHelper.Logger.Log("Service has been disconnected.", SensusService.LoggingLevel.Normal);
             _binder.SensusServiceHelper = null;
         }
     }
