@@ -27,7 +27,7 @@ namespace SensusService.Probes.Location
             if (reading == null)
                 return null;
 
-            return new LocationDatum(Protocol.UserId, Id, reading.Timestamp, reading.Accuracy, reading.Latitude, reading.Longitude);
+            return new LocationDatum(Id, reading.Timestamp, reading.Accuracy, reading.Latitude, reading.Longitude);
         }
     }
 }

@@ -45,28 +45,31 @@ namespace Sensus.Android
             _deviceId = Settings.Secure.GetString(Application.Context.ContentResolver, Settings.Secure.AndroidId);
         }
 
-        public override void ShareProtocol(Protocol protocol, Protocol.ShareMethod method)
+        public override void ShareProtocol(Protocol protocol)
         {
-            Intent intent = null;
+            Intent intent = new Intent(Intent.ActionSend);
+            intent.PutExtra(Intent.ExtraSubject, "Sensus Protocol:  " + protocol.Name);
+            intent.AddFlags(ActivityFlags.NewTask);
+            intent.SetType("text/plain");
 
-            if (method == Protocol.ShareMethod.Email)
+            string path = null;
+            while (path == null)
             {
-                intent = new Intent(Intent.ActionSend);
-                intent.PutExtra(Intent.ExtraSubject, "Sensus Protocol:  " + protocol.Name);
-                intent.PutExtra(Intent.ExtraEmail, new string[] { "gerber.matthew@gmail.com" });
-                intent.AddFlags(ActivityFlags.NewTask);
-                intent.SetType("message/rfc822");
+                string tempPath = Path.GetTempFileName();
+                File.Delete(tempPath);
+                tempPath = Path.Combine(Path.GetDirectoryName(tempPath), Path.GetFileNameWithoutExtension(tempPath) + ".sensus");
 
-                string path = Path.GetTempFileName();
-                protocol.Save(path);
-                Java.IO.File file = new Java.IO.File(path);
-                file.SetReadable(true, true);
-                global::Android.Net.Uri uri = global::Android.Net.Uri.FromFile(file);
-                intent.PutExtra(Intent.ExtraStream, uri);
+                if (!File.Exists(tempPath))
+                    path = tempPath;
             }
 
-            if (intent != null)
-                Application.Context.StartActivity(intent);
+            protocol.Save(path);
+            Java.IO.File file = new Java.IO.File(path);
+            file.SetReadable(true, false);
+            global::Android.Net.Uri uri = global::Android.Net.Uri.FromFile(file);
+            intent.PutExtra(Intent.ExtraStream, uri);
+
+            Application.Context.StartActivity(intent);
         }
 
         protected override void SetAutoRestart(bool enabled)

@@ -3,18 +3,20 @@ using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using SensusService;
+using SensusService.Exceptions;
 using SensusUI;
 using System;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
-using Xamarin.Geolocation;
 
 namespace Sensus.Android
 {
     [Activity(Label = "Sensus", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-    [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault, Intent.CategoryBrowsable }, DataScheme = "http", DataHost = "*", DataPathPattern = ".*\\\\.sensus")]
-    [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault, Intent.CategoryBrowsable }, DataScheme = "file", DataHost = "*", DataPathPattern = ".*\\\\.sensus")]
+    [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault, Intent.CategoryBrowsable }, DataScheme = "http", DataHost = "*", DataPathPattern = ".*\\\\.sensus")]  // protocols downloaded from an http web link
+    [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault, Intent.CategoryBrowsable }, DataScheme = "https", DataHost = "*", DataPathPattern = ".*\\\\.sensus")]  // protocols downloaded from an https web link
+    [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault }, DataMimeType = "application/octet-stream", DataScheme = "content", DataHost = "*")]  // protocols opened from email attachments originating from the sensus app itself -- DataPathPattern doesn't work here, since email apps (e.g., gmail) rename attachments when stored in the local file system
+    [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault }, DataMimeType = "text/plain", DataScheme = "content", DataHost = "*")]  // protocols opened from email attachments originating from non-sensus senders (i.e., the "share" button in sensus) -- DataPathPattern doesn't work here, since email apps (e.g., gmail) rename attachments when stored in the local file system
+    [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault }, DataMimeType = "text/plain", DataScheme = "file", DataHost = "*", DataPathPattern = ".*\\\\.sensus")]  // protocols opened from the local file system
     public class MainActivity : AndroidActivity
     {
         private Intent _serviceIntent;
@@ -50,13 +52,31 @@ namespace Sensus.Android
                         global::Android.Net.Uri dataURI = Intent.Data;
 
                         Protocol protocol = null;
-                        if (Intent.Scheme == "http")
-                            protocol = await Protocol.GetFromWeb(dataURI.ToString());
-                        else if (Intent.Scheme == "file")
-                            protocol = await Protocol.GetFromFile(dataURI.Path);
+                        try
+                        {
+                            if (Intent.Scheme == "http" || Intent.Scheme == "https")
+                                protocol = Protocol.GetFromWeb(new Uri(dataURI.ToString()));
+                            else if (Intent.Scheme == "content" || Intent.Scheme == "file")
+                                protocol = Protocol.GetFromFile(dataURI, ContentResolver);
+                            else
+                                throw new SensusException("Sensus didn't know what to do with URI \"" + dataURI);
+                        }
+                        catch (Exception ex) { new AlertDialog.Builder(this).SetTitle("Failed to get protocol").SetMessage(ex.Message).Show(); }
 
                         if (protocol != null)
-                            await navigationPage.PushAsync(new ProtocolPage(protocol));
+                        {
+                            try
+                            {
+                                UiBoundSensusServiceHelper.Get().RegisterProtocol(protocol);
+                                await navigationPage.PushAsync(new ProtocolPage(protocol));
+                            }
+                            catch (Exception ex)
+                            {
+                                string message = "Failed to register/display new protocol:  " + ex.Message;
+                                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal);
+                                new AlertDialog.Builder(this).SetTitle("Failed to show protocol").SetMessage(message).Show();
+                            }
+                        }
                     }
 
                     Title = "Sensus";

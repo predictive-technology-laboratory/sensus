@@ -106,6 +106,8 @@ namespace SensusService
             }
         }
 
+        
+
         protected SensusServiceHelper(Geolocator geolocator, bool autoRestart)
         {
             GpsReceiver.Get().Initialize(geolocator);
@@ -208,7 +210,7 @@ namespace SensusService
                 }
         }
 
-        public abstract void ShareProtocol(Protocol protocol, Protocol.ShareMethod method);
+        public abstract void ShareProtocol(Protocol protocol);
 
         public Task StopProtocolAsync(Protocol protocol, bool unregister)
         {

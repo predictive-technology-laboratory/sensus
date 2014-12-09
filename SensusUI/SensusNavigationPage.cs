@@ -52,17 +52,9 @@ namespace SensusUI
                     await PushAsync(new ProbePage(e.Item as Probe));
                 };
 
-            ProtocolPage.ShareProtocolTapped += async (o, e) =>
+            ProtocolPage.ShareProtocolTapped += (o, e) =>
                 {
-                    await PushAsync(new ShareProtocolPage(e));
-                };
-            #endregion
-
-            #region share protocol page
-            ShareProtocolPage.ShareTapped += async (o, e) =>
-                {
-                    await PopAsync();
-                    UiBoundSensusServiceHelper.Get().ShareProtocol(e.Protocol, e.Method);
+                    UiBoundSensusServiceHelper.Get().ShareProtocol(e);
                 };
             #endregion
 
