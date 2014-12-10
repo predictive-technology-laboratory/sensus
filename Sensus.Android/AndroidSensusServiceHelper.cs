@@ -16,7 +16,7 @@ namespace Sensus.Android
         private static string _preventAutoRestartPath = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), "no_autorestart");
 
         private ConnectivityManager _connectivityManager;
-        private string _deviceId;
+        private readonly string _deviceId;
 
         public override bool WiFiConnected
         {

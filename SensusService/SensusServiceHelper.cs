@@ -116,9 +116,9 @@ namespace SensusService
 
             #region logger
 #if DEBUG
-            _logger = new Logger(_logPath, true, true, LoggingLevel.Debug, Console.Error);
+            _logger = new Logger(_logPath, LoggingLevel.Debug, Console.Error);
 #else
-            _logger = new Logger(_logPath, true, true, LoggingLevel.Normal, Console.Error);
+            _logger = new Logger(_logPath, LoggingLevel.Normal, Console.Error);
 #endif
 
             _logger.Log("Log file started at \"" + _logPath + "\".", LoggingLevel.Normal, _logTag);

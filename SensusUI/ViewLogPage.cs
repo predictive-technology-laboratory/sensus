@@ -1,24 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace SensusUI
 {
     public class ViewLogPage : ContentPage
     {
+        private Task _updateTask;
+        private bool _update;
+
         public ViewLogPage()
         {
-            Editor editor = new Editor
-            {
-                IsEnabled = false,
-            };
+            ListView messageList = new ListView();
 
-            UiBoundSensusServiceHelper.Get().Logger.MessageLogged += (o, m) =>
+            _updateTask = Task.Run(() =>
                 {
-                    lock (editor)
-                        editor.Text += m;
-                };
+                    _update = true;
+                    while (_update)
+                    {
+                        Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+                            {
+                                messageList.ItemsSource = null;
+                                messageList.ItemsSource = UiBoundSensusServiceHelper.Get().Logger.Read(10);
+                            });
+                        Thread.Sleep(1000);
+                    }
+                });
 
             Button clearLogButton = new Button
             {
@@ -26,20 +37,22 @@ namespace SensusUI
                 Font = Font.SystemFontOfSize(20)
             };
 
-            clearLogButton.Clicked += (o, e) =>
-                {
-                    UiBoundSensusServiceHelper.Get().Logger.Clear();
-
-                    lock (editor)
-                        editor.Text = UiBoundSensusServiceHelper.Get().Logger.GetText();
-                };
+            clearLogButton.Clicked += (o, e) => { UiBoundSensusServiceHelper.Get().Logger.Clear(); };
 
             Content = new StackLayout
             {
                 Orientation = StackOrientation.Vertical,
                 VerticalOptions = LayoutOptions.FillAndExpand,
-                Children = { clearLogButton, editor }
+                Children = { messageList, clearLogButton }
             };
+        }
+
+        protected async override void OnDisappearing()
+        {
+            base.OnDisappearing();
+
+            _update = false;
+            await _updateTask;
         }
     }
 }

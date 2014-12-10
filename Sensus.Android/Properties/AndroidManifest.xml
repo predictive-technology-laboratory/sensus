@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" package="Sensus.Sensus" android:versionCode="1" android:versionName="Prerelease">
-	<uses-sdk android:minSdkVersion="15" android:targetSdkVersion="19" />
+	<uses-sdk android:minSdkVersion="19" android:targetSdkVersion="19" />
 	<application android:label="Sensus" android:icon="@drawable/Icon"></application>
 	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
