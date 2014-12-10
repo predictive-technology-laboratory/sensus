@@ -10,26 +10,25 @@ namespace SensusUI
 {
     public class ViewLogPage : ContentPage
     {
-        private Task _updateTask;
-        private bool _update;
+        public static event EventHandler RefreshTapped;
 
         public ViewLogPage()
         {
-            ListView messageList = new ListView();
+            ListView messageList = new ListView
+            {
+                ItemsSource = UiBoundSensusServiceHelper.Get().Logger.Read(int.MaxValue)
+            };
 
-            _updateTask = Task.Run(() =>
+            Button refreshButton = new Button
+            {
+                Text = "Refresh",
+                Font = Font.SystemFontOfSize(20)
+            };
+
+            refreshButton.Clicked += (o,e) =>
                 {
-                    _update = true;
-                    while (_update)
-                    {
-                        Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
-                            {
-                                messageList.ItemsSource = null;
-                                messageList.ItemsSource = UiBoundSensusServiceHelper.Get().Logger.Read(10);
-                            });
-                        Thread.Sleep(1000);
-                    }
-                });
+                    RefreshTapped(o, e);
+                };
 
             Button clearLogButton = new Button
             {
@@ -37,22 +36,21 @@ namespace SensusUI
                 Font = Font.SystemFontOfSize(20)
             };
 
-            clearLogButton.Clicked += (o, e) => { UiBoundSensusServiceHelper.Get().Logger.Clear(); };
+            clearLogButton.Clicked += async (o, e) =>
+            {
+                if (await DisplayAlert("Confirm Clear", "Do you wish to clear the log? This cannot be undone.", "OK", "Cancel"))
+                {
+                    UiBoundSensusServiceHelper.Get().Logger.Clear();
+                    RefreshTapped(o, e);
+                }
+            };
 
             Content = new StackLayout
             {
                 Orientation = StackOrientation.Vertical,
                 VerticalOptions = LayoutOptions.FillAndExpand,
-                Children = { messageList, clearLogButton }
+                Children = { messageList, refreshButton, clearLogButton }
             };
-        }
-
-        protected async override void OnDisappearing()
-        {
-            base.OnDisappearing();
-
-            _update = false;
-            await _updateTask;
         }
     }
 }

@@ -28,6 +28,14 @@ namespace SensusUI
                 };
             #endregion
 
+            #region view log page
+            ViewLogPage.RefreshTapped += async (o, e) =>
+                {
+                    await PopAsync();
+                    await PushAsync(new ViewLogPage());
+                };
+            #endregion
+
             #region protocols page
             ProtocolsPage.EditProtocol += async (o, e) =>
                 {
