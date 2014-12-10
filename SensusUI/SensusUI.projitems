@@ -26,5 +26,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SensusNavigationPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)OptionsPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewLogPage.cs" />
   </ItemGroup>
 </Project>

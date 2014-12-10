@@ -11,6 +11,8 @@ namespace SensusService
     /// </summary>
     public class Logger : TextWriter
     {
+        public event EventHandler<string> MessageLogged;
+
         private string _path;
         private StreamWriter _file;
         private bool _writeTimestamp;
@@ -44,10 +46,10 @@ namespace SensusService
             _path = path;
             _writeTimestamp = writeTimestamp;
             _otherOutputs = otherOutputs;
-            _file = new StreamWriter(path, append);
-            _file.AutoFlush = true;
             _level = level;
             _previousWriteNewLine = true;
+
+            InitializeFile(_path);
         }
 
         /// <summary>
@@ -55,12 +57,19 @@ namespace SensusService
         /// </summary>
         public virtual void Clear()
         {
-            lock (_file)
+            lock (this)
             {
                 _file.Close();
-                _file = new StreamWriter(_path);
-                _file.AutoFlush = true;
+                File.Delete(_path);
+                InitializeFile(_path);
             }
+        }
+
+        private void InitializeFile(string path)
+        {
+            FileStream fileToWrite = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
+            _file = new StreamWriter(fileToWrite);
+            _file.AutoFlush = true;
         }
 
         /// <summary>
@@ -111,6 +120,9 @@ namespace SensusService
 
                 _previousWriteNewLine = newLine;
 
+                if (MessageLogged != null)
+                    MessageLogged(this, value);
+
                 return value;
             }
         }
@@ -130,6 +142,23 @@ namespace SensusService
             }
 
             WriteLine((tagString == null || tagString.Length == 0 ? "" : tagString.ToString() + ":") + message);
+        }
+
+        public string GetText()
+        {
+            lock (this)
+            {
+                using (FileStream file = new FileStream(_path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                using (StreamReader reader = new StreamReader(file))
+                {
+                    string text = reader.ReadToEnd();
+
+                    reader.Close();
+                    file.Close();
+
+                    return text;
+                }
+            }
         }
 
         /// <summary>

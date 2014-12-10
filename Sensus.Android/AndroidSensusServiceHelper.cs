@@ -64,6 +64,7 @@ namespace Sensus.Android
             }
 
             protocol.Save(path);
+
             Java.IO.File file = new Java.IO.File(path);
             file.SetReadable(true, false);
             global::Android.Net.Uri uri = global::Android.Net.Uri.FromFile(file);
