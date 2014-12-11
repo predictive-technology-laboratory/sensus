@@ -20,14 +20,14 @@ namespace SensusUI
             messageList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", mode: BindingMode.OneWay));
             messageList.ItemsSource = new ObservableCollection<string>(UiBoundSensusServiceHelper.Get().Logger.Read(int.MaxValue));
 
-            Button emailButton = new Button
+            Button shareButton = new Button
             {
                 Text = "Share",
                 Font = Font.SystemFontOfSize(20),
                 HorizontalOptions = LayoutOptions.FillAndExpand
             };
 
-            emailButton.Clicked += (o, e) =>
+            shareButton.Clicked += (o, e) =>
                 {
                     string path = null;
                     try
@@ -61,18 +61,18 @@ namespace SensusUI
                 }
             };
 
-            StackLayout emailClearStack = new StackLayout
+            StackLayout shareClearStack = new StackLayout
             {
                 Orientation = StackOrientation.Horizontal,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
-                Children = { emailButton, clearButton }
+                Children = { shareButton, clearButton }
             };
 
             Content = new StackLayout
             {
                 Orientation = StackOrientation.Vertical,
                 VerticalOptions = LayoutOptions.FillAndExpand,
-                Children = { messageList, emailClearStack }
+                Children = { messageList, shareClearStack }
             };
         }
     }
