@@ -23,7 +23,6 @@ namespace SensusUI
             ListView messageList = new ListView();
             messageList.ItemTemplate = new DataTemplate(typeof(TextCell));
             messageList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", mode: BindingMode.OneWay));
-            messageList.ItemTemplate.SetBinding(TextCell.DetailProperty, new Binding(".", mode: BindingMode.OneWay));
             messageList.ItemsSource = messages;
 
             UiBoundSensusServiceHelper.Get().Logger.MessageLogged += (o, e) =>
