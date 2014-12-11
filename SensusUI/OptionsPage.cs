@@ -27,7 +27,7 @@ namespace SensusUI
 
             Button viewLogButton = new Button
             {
-                Text = "View Message Log",
+                Text = "View Sensus Log",
                 Font = Font.SystemFontOfSize(20)
             };
 

@@ -43,34 +43,27 @@ namespace Sensus.Android
         {
             _connectivityManager = Application.Context.GetSystemService(Context.ConnectivityService) as ConnectivityManager;
             _deviceId = Settings.Secure.GetString(Application.Context.ContentResolver, Settings.Secure.AndroidId);
-        }
+        }       
 
-        public override void ShareProtocol(Protocol protocol)
+        public override void ShareFile(string path, string emailSubject)
         {
-            Intent intent = new Intent(Intent.ActionSend);
-            intent.PutExtra(Intent.ExtraSubject, "Sensus Protocol:  " + protocol.Name);
-            intent.AddFlags(ActivityFlags.NewTask);
-            intent.SetType("text/plain");
-
-            string path = null;
-            while (path == null)
+            try
             {
-                string tempPath = Path.GetTempFileName();
-                File.Delete(tempPath);
-                tempPath = Path.Combine(Path.GetDirectoryName(tempPath), Path.GetFileNameWithoutExtension(tempPath) + ".sensus");
+                Intent intent = new Intent(Intent.ActionSend);
+                intent.SetType("text/plain");
+                intent.AddFlags(ActivityFlags.NewTask);
 
-                if (!File.Exists(tempPath))
-                    path = tempPath;
+                if (!string.IsNullOrWhiteSpace(emailSubject))
+                    intent.PutExtra(Intent.ExtraSubject, emailSubject);
+
+                Java.IO.File file = new Java.IO.File(path);
+                file.SetReadable(true, false);
+                global::Android.Net.Uri uri = global::Android.Net.Uri.FromFile(file);
+                intent.PutExtra(Intent.ExtraStream, uri);
+
+                Application.Context.StartActivity(intent);
             }
-
-            protocol.Save(path);
-
-            Java.IO.File file = new Java.IO.File(path);
-            file.SetReadable(true, false);
-            global::Android.Net.Uri uri = global::Android.Net.Uri.FromFile(file);
-            intent.PutExtra(Intent.ExtraStream, uri);
-
-            Application.Context.StartActivity(intent);
+            catch (Exception ex) { Logger.Log("Failed to start intent to share file \"" + path + "\":  " + ex.Message, LoggingLevel.Normal); }
         }
 
         protected override void SetAutoRestart(bool enabled)

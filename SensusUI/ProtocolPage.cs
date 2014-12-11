@@ -154,7 +154,20 @@ namespace SensusUI
 
             ToolbarItems.Add(new ToolbarItem("Share", null, () =>
                 {
-                    UiBoundSensusServiceHelper.Get().ShareProtocol(protocol);
+                    string path = null;
+                    try
+                    {
+                        path = UiBoundSensusServiceHelper.Get().GetTempPath(".sensus");
+                        protocol.Save(path);
+                    }
+                    catch (Exception ex)
+                    {
+                        UiBoundSensusServiceHelper.Get().Logger.Log("Failed to save protocol to file for sharing:  " + ex.Message, LoggingLevel.Normal);
+                        path = null;
+                    }
+
+                    if (path != null)
+                        UiBoundSensusServiceHelper.Get().ShareFile(path, "Sensus Protocol:  " + protocol.Name);
                 }));
         }
     }

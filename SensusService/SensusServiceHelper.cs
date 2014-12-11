@@ -210,7 +210,25 @@ namespace SensusService
                 }
         }
 
-        public abstract void ShareProtocol(Protocol protocol);
+        public abstract void ShareFile(string path, string emailSubject);
+
+        public string GetTempPath(string extension)
+        {
+            string path = null;
+            while (path == null)
+            {
+                string tempPath = Path.GetTempFileName();
+                File.Delete(tempPath);
+
+                if (!string.IsNullOrWhiteSpace(extension))
+                    tempPath = Path.Combine(Path.GetDirectoryName(tempPath), Path.GetFileNameWithoutExtension(tempPath) + "." + extension.Trim('.'));
+
+                if (!File.Exists(tempPath))
+                    path = tempPath;
+            }
+
+            return path;
+        }
 
         public Task StopProtocolAsync(Protocol protocol, bool unregister)
         {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,57 +11,43 @@ namespace SensusUI
 {
     public class ViewLogPage : ContentPage
     {
-        private bool _paused;
-
         public ViewLogPage()
         {
-            Title = "Message Log";
-
-            _paused = false;
-
-            ObservableCollection<string> messages = new ObservableCollection<string>(UiBoundSensusServiceHelper.Get().Logger.Read(int.MaxValue));
+            Title = "Sensus Log";
 
             ListView messageList = new ListView();
             messageList.ItemTemplate = new DataTemplate(typeof(TextCell));
             messageList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", mode: BindingMode.OneWay));
-            messageList.ItemsSource = messages;
+            messageList.ItemsSource = new ObservableCollection<string>(UiBoundSensusServiceHelper.Get().Logger.Read(int.MaxValue));
 
-            UiBoundSensusServiceHelper.Get().Logger.MessageLogged += (o, e) =>
-                {
-                    lock (messages)
-                        if (!_paused)
-                            messages.Insert(0, e);
-                };
-
-            Button pauseButton = new Button
+            Button emailButton = new Button
             {
-                Text = "Pause",
+                Text = "Share",
                 Font = Font.SystemFontOfSize(20),
                 HorizontalOptions = LayoutOptions.FillAndExpand
             };
 
-            pauseButton.Clicked += (o, e) =>
+            emailButton.Clicked += (o, e) =>
                 {
-                    lock (messages)
+                    string path = null;
+                    try
                     {
-                        if (_paused)
-                        {
-                            messages.Clear();
-                            foreach (string message in UiBoundSensusServiceHelper.Get().Logger.Read(int.MaxValue))
-                                messages.Add(message);
-
-                            pauseButton.Text = "Pause";
-                        }
-                        else
-                            pauseButton.Text = "Resume";
-
-                        _paused = !_paused;
+                        path = UiBoundSensusServiceHelper.Get().GetTempPath(".txt");
+                        File.WriteAllLines(path, UiBoundSensusServiceHelper.Get().Logger.Read(int.MaxValue).ToArray());
                     }
+                    catch (Exception ex)
+                    {
+                        UiBoundSensusServiceHelper.Get().Logger.Log("Failed to write log to temp file for sharing:  " + ex.Message, SensusService.LoggingLevel.Normal);
+                        path = null;
+                    }
+
+                    if (path != null)
+                        UiBoundSensusServiceHelper.Get().ShareFile(path, "Sensus Log:  " + Path.GetFileName(path));
                 };
 
             Button clearButton = new Button
             {
-                Text = "Clear Log",
+                Text = "Clear",
                 Font = Font.SystemFontOfSize(20),
                 HorizontalOptions = LayoutOptions.FillAndExpand
             };
@@ -70,24 +57,22 @@ namespace SensusUI
                 if (await DisplayAlert("Confirm", "Do you wish to clear the log? This cannot be undone.", "OK", "Cancel"))
                 {
                     UiBoundSensusServiceHelper.Get().Logger.Clear();
-
-                    lock (messages)
-                        messages.Clear();
+                    messageList.ItemsSource = null;
                 }
             };
 
-            StackLayout pauseClearStack = new StackLayout
+            StackLayout emailClearStack = new StackLayout
             {
                 Orientation = StackOrientation.Horizontal,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
-                Children = { pauseButton, clearButton }
+                Children = { emailButton, clearButton }
             };
 
             Content = new StackLayout
             {
                 Orientation = StackOrientation.Vertical,
                 VerticalOptions = LayoutOptions.FillAndExpand,
-                Children = { messageList, pauseClearStack }
+                Children = { messageList, emailClearStack }
             };
         }
     }
