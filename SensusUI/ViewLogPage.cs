@@ -10,46 +10,85 @@ namespace SensusUI
 {
     public class ViewLogPage : ContentPage
     {
-        public static event EventHandler RefreshTapped;
+        private bool _paused;
 
         public ViewLogPage()
         {
-            ListView messageList = new ListView
-            {
-                ItemsSource = UiBoundSensusServiceHelper.Get().Logger.Read(int.MaxValue)
-            };
+            Title = "Message Log";
 
-            Button refreshButton = new Button
-            {
-                Text = "Refresh",
-                Font = Font.SystemFontOfSize(20)
-            };
+            _paused = false;
 
-            refreshButton.Clicked += (o,e) =>
+            ObservableCollection<string> messages = new ObservableCollection<string>(UiBoundSensusServiceHelper.Get().Logger.Read(int.MaxValue));
+
+            ListView messageList = new ListView();
+            messageList.ItemTemplate = new DataTemplate(typeof(TextCell));
+            messageList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", mode: BindingMode.OneWay));
+            messageList.ItemTemplate.SetBinding(TextCell.DetailProperty, new Binding(".", mode: BindingMode.OneWay));
+            messageList.ItemsSource = messages;
+
+            UiBoundSensusServiceHelper.Get().Logger.MessageLogged += (o, e) =>
                 {
-                    RefreshTapped(o, e);
+                    lock (messages)
+                        if (!_paused)
+                            messages.Insert(0, e);
                 };
 
-            Button clearLogButton = new Button
+            Button pauseButton = new Button
             {
-                Text = "Clear Log",
-                Font = Font.SystemFontOfSize(20)
+                Text = "Pause",
+                Font = Font.SystemFontOfSize(20),
+                HorizontalOptions = LayoutOptions.FillAndExpand
             };
 
-            clearLogButton.Clicked += async (o, e) =>
+            pauseButton.Clicked += (o, e) =>
+                {
+                    lock (messages)
+                    {
+                        if (_paused)
+                        {
+                            messages.Clear();
+                            foreach (string message in UiBoundSensusServiceHelper.Get().Logger.Read(int.MaxValue))
+                                messages.Add(message);
+
+                            pauseButton.Text = "Pause";
+                        }
+                        else
+                            pauseButton.Text = "Resume";
+
+                        _paused = !_paused;
+                    }
+                };
+
+            Button clearButton = new Button
             {
-                if (await DisplayAlert("Confirm Clear", "Do you wish to clear the log? This cannot be undone.", "OK", "Cancel"))
+                Text = "Clear Log",
+                Font = Font.SystemFontOfSize(20),
+                HorizontalOptions = LayoutOptions.FillAndExpand
+            };
+
+            clearButton.Clicked += async (o, e) =>
+            {
+                if (await DisplayAlert("Confirm", "Do you wish to clear the log? This cannot be undone.", "OK", "Cancel"))
                 {
                     UiBoundSensusServiceHelper.Get().Logger.Clear();
-                    RefreshTapped(o, e);
+
+                    lock (messages)
+                        messages.Clear();
                 }
+            };
+
+            StackLayout pauseClearStack = new StackLayout
+            {
+                Orientation = StackOrientation.Horizontal,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                Children = { pauseButton, clearButton }
             };
 
             Content = new StackLayout
             {
                 Orientation = StackOrientation.Vertical,
                 VerticalOptions = LayoutOptions.FillAndExpand,
-                Children = { messageList, refreshButton, clearLogButton }
+                Children = { messageList, pauseClearStack }
             };
         }
     }

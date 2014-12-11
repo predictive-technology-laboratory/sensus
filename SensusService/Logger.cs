@@ -16,6 +16,8 @@ namespace SensusService
     /// </summary>
     public class Logger
     {
+        public event EventHandler<string> MessageLogged;
+
         private string _path;
         private LoggingLevel _level;
         private TextWriter[] _otherOutputs;
@@ -32,12 +34,12 @@ namespace SensusService
             _level = level;
             _otherOutputs = otherOutputs;
 
-            InitializeFile(_path);
+            InitializeFile(_path, true);
         }
 
-        private void InitializeFile(string path)
+        private void InitializeFile(string path, bool append)
         {
-            _file = new StreamWriter(path, true);
+            _file = new StreamWriter(path, append);
             _file.AutoFlush = true;
         }
 
@@ -69,6 +71,9 @@ namespace SensusService
                 if (_otherOutputs != null)
                     foreach (TextWriter otherOutput in _otherOutputs)
                         otherOutput.WriteLine(message);
+
+                if (MessageLogged != null)
+                    MessageLogged(this, message);
             }
         }
 
@@ -85,7 +90,7 @@ namespace SensusService
 
                 lines = lines.GetRange(0, mostRecentLines);
 
-                InitializeFile(_path);
+                InitializeFile(_path, true);
 
                 return lines;
             }
@@ -96,7 +101,7 @@ namespace SensusService
             lock (this)
             {
                 _file.Close();
-                InitializeFile(_path);
+                InitializeFile(_path, false);
             }
         }
 

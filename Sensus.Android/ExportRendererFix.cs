@@ -12,7 +12,7 @@ namespace SensusUI
         protected override void OnCellPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs args)
         {
             try { base.OnCellPropertyChanged(sender, args); }
-            catch (ArgumentException) { }
+            catch (Exception) { }
         }
     }
 }
