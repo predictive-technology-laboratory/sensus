@@ -118,6 +118,7 @@
   <ItemGroup>
     <Compile Include="AndroidSensusServiceHelper.cs" />
     <Compile Include="AndroidSensusServiceBootStarter.cs" />
+    <Compile Include="ExportRendererFix.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Probes\Location\AndroidAltitudeProbe.cs" />
     <Compile Include="Probes\Location\AndroidCompassProbe.cs" />

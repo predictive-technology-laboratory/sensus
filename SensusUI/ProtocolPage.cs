@@ -12,7 +12,6 @@ namespace SensusUI
         public static event EventHandler<ProtocolDataStoreEventArgs> EditDataStoreTapped;
         public static event EventHandler<ProtocolDataStoreEventArgs> CreateDataStoreTapped;
         public static event EventHandler<ItemTappedEventArgs> ProbeTapped;
-        public static event EventHandler<Protocol> ShareProtocolTapped;
 
         private class DataStoreValueConverter : IValueConverter
         {
@@ -155,7 +154,20 @@ namespace SensusUI
 
             ToolbarItems.Add(new ToolbarItem("Share", null, () =>
                 {
-                    ShareProtocolTapped(this, protocol);
+                    string path = null;
+                    try
+                    {
+                        path = UiBoundSensusServiceHelper.Get().GetTempPath(".sensus");
+                        protocol.Save(path);
+                    }
+                    catch (Exception ex)
+                    {
+                        UiBoundSensusServiceHelper.Get().Logger.Log("Failed to save protocol to file for sharing:  " + ex.Message, LoggingLevel.Normal);
+                        path = null;
+                    }
+
+                    if (path != null)
+                        UiBoundSensusServiceHelper.Get().ShareFile(path, "Sensus Protocol:  " + protocol.Name);
                 }));
         }
     }

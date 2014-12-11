@@ -22,9 +22,9 @@ namespace SensusUI
             #endregion
 
             #region options page
-            OptionsPage.StopSensusTapped += async (o, e) =>
+            OptionsPage.ViewLogTapped += async (o, e) =>
                 {
-                    await UiBoundSensusServiceHelper.Get().StopAsync();
+                    await PushAsync(new ViewLogPage());
                 };
             #endregion
 
@@ -50,11 +50,6 @@ namespace SensusUI
             ProtocolPage.ProbeTapped += async (o, e) =>
                 {
                     await PushAsync(new ProbePage(e.Item as Probe));
-                };
-
-            ProtocolPage.ShareProtocolTapped += (o, e) =>
-                {
-                    UiBoundSensusServiceHelper.Get().ShareProtocol(e);
                 };
             #endregion
 

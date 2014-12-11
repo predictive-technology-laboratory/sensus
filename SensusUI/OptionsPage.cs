@@ -8,7 +8,7 @@ namespace SensusUI
 {
     public class OptionsPage : ContentPage
     {
-        public static event EventHandler StopSensusTapped;
+        public static event EventHandler ViewLogTapped;
 
         public OptionsPage(SensusServiceHelper service)
         {
@@ -25,16 +25,28 @@ namespace SensusUI
             foreach (StackLayout stack in stacks)
                 contentLayout.Children.Add(stack);
 
+            Button viewLogButton = new Button
+            {
+                Text = "View Sensus Log",
+                Font = Font.SystemFontOfSize(20)
+            };
+
+            viewLogButton.Clicked += (o, e) =>
+                {
+                    ViewLogTapped(o, e);
+                };
+
+            contentLayout.Children.Add(viewLogButton);
+
             Button stopSensusButton = new Button
             {
                 Text = "Stop Sensus",
                 Font = Font.SystemFontOfSize(20)
             };
 
-            stopSensusButton.Clicked += (o, e) =>
+            stopSensusButton.Clicked += async (o, e) =>
                 {
-                    if (StopSensusTapped != null)
-                        StopSensusTapped(o, e);
+                    await UiBoundSensusServiceHelper.Get().StopAsync();
                 };
 
             contentLayout.Children.Add(stopSensusButton);
