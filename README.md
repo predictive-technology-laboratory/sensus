@@ -1,4 +1,4 @@
 sensus
 ======
 
-Platform for Mobile Crowd-Sensing
+Platform for Mobile Crowd-Sensing based on Xamarin.
