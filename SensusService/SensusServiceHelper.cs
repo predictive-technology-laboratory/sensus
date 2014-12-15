@@ -91,27 +91,9 @@ namespace SensusService
         [DisplayStringUiProperty("Device ID:", int.MaxValue)]
         public abstract string DeviceId { get; }
 
-        [OnOffUiProperty("Auto-Restart:", true, 0)]
-        public bool AutoRestart
-        {
-            get { return _autoRestart; }
-            set
-            {
-                if (value != _autoRestart)
-                {
-                    _autoRestart = value;
-                    SetAutoRestart(_autoRestart);
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        
-
-        protected SensusServiceHelper(Geolocator geolocator, bool autoRestart)
+        protected SensusServiceHelper(Geolocator geolocator)
         {
             GpsReceiver.Get().Initialize(geolocator);
-            AutoRestart = autoRestart;
             _stopped = true;
 
             #region logger

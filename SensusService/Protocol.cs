@@ -234,9 +234,11 @@ namespace SensusService
         {
             return Task.Run(async () =>
                 {
-                    // if the service is starting this protocol (e.g., when restarting protocols upon startup), then _running/Running will be false here. set it to true to update UI.
-                    if (!_running)
+                    if (_running)
+                        return;
+                    else
                     {
+                        // if the service is starting this protocol (e.g., when restarting protocols upon startup), then _running/Running will be false here. set it to true to update UI.
                         _running = true;
                         OnPropertyChanged("Running");
                     }
@@ -287,6 +289,8 @@ namespace SensusService
                         _running = false;
                         OnPropertyChanged("Running");
                     }
+                    else
+                        return;
 
                     SensusServiceHelper.Get().Logger.Log("Stopping probes.", LoggingLevel.Normal);
 
