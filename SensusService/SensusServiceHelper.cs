@@ -121,7 +121,7 @@ namespace SensusService
         }
 
         #region save/read protocols
-        private void SaveRegisteredProtocols()
+        public void SaveRegisteredProtocols()
         {
             lock (this)
             {
@@ -246,52 +246,6 @@ namespace SensusService
             }
         }
 
-        /// <summary>
-        /// Stops the service helper, but leaves it in a state in which subsequent calls to Start will succeed. This happens, for example, when the service is stopped and then 
-        /// restarted without being destroyed.
-        /// </summary>
-        public Task StopAsync()
-        {
-            return Task.Run(() =>
-                {
-                    // prevent any future interactions with the SensusServiceHelper
-                    lock (this)
-                        if (_stopped)
-                            return;
-                        else
-                            _stopped = true;
-
-                    _logger.Log("Stopping Sensus service.", LoggingLevel.Normal, _logTag);
-
-                    foreach (Protocol protocol in _registeredProtocols)
-                        StopProtocolAsync(protocol, false).Wait();
-
-                    // let others (e.g., platform-specific services and applications) know that we've stopped
-                    if (Stopped != null)
-                        Stopped(null, null);
-                });
-        }
-
-        public void RegisterProtocol(Protocol protocol)
-        {
-            lock (this)
-                if (!_stopped)
-                    if (!_registeredProtocols.Contains(protocol))
-                    {
-                        _registeredProtocols.Add(protocol);
-                        SaveRegisteredProtocols();
-                    }
-        }
-
-        public void UnregisterProtocol(Protocol protocol)
-        {
-            lock (this)
-                if (!_stopped)
-                    if (_registeredProtocols.Remove(protocol))
-                        SaveRegisteredProtocols();
-        }
-
-
         public Task StartProtocolAsync(Protocol protocol)
         {
             return Task.Run(() =>
@@ -342,53 +296,104 @@ namespace SensusService
                             }
 
                             if (stopProtocol)
-                                StopProtocolAsync(protocol, false);
+                                StopProtocol(protocol, false);
                         }
                 });
         }
 
+        public void RegisterProtocol(Protocol protocol)
+        {
+            lock (this)
+                if (!_stopped)
+                    if (!_registeredProtocols.Contains(protocol))
+                    {
+                        _registeredProtocols.Add(protocol);
+                        SaveRegisteredProtocols();
+                    }
+        }
+
         public Task StopProtocolAsync(Protocol protocol, bool unregister)
+        {
+            return Task.Run(() => { StopProtocol(protocol, unregister); });
+        }
+
+        private void StopProtocol(Protocol protocol, bool unregister)
+        {
+            lock (this)
+                lock (protocol)
+                {
+                    if (_stopped)
+                        return;
+
+                    if (unregister)
+                        UnregisterProtocol(protocol);
+
+                    if (!protocol.Running)
+                        return;
+
+                    protocol.SetRunning(false);
+
+                    RemoveRunningProtocolId(protocol.Id);
+
+                    if (_registeredProtocols.Count(p => p.Running) == 0)
+                        StopSensusPings();
+
+                    _logger.Log("Stopping probes.", LoggingLevel.Normal);
+                    foreach (Probe probe in protocol.Probes)
+                        if (probe.Controller.Running)
+                            try { probe.Controller.Stop(); }
+                            catch (Exception ex) { _logger.Log("Failed to stop " + probe.DisplayName + "'s controller:  " + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal); }
+
+                    if (protocol.LocalDataStore != null && protocol.LocalDataStore.Running)
+                    {
+                        _logger.Log("Stopping local data store.", LoggingLevel.Normal);
+
+                        try { protocol.LocalDataStore.Stop(); }
+                        catch (Exception ex) { _logger.Log("Failed to stop local data store:  " + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal); }
+                    }
+
+                    if (protocol.RemoteDataStore != null && protocol.RemoteDataStore.Running)
+                    {
+                        _logger.Log("Stopping remote data store.", LoggingLevel.Normal);
+
+                        try { protocol.RemoteDataStore.Stop(); }
+                        catch (Exception ex) { _logger.Log("Failed to stop remote data store:  " + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal); }
+                    }
+                }
+        }
+
+        public void UnregisterProtocol(Protocol protocol)
+        {
+            lock (this)
+                if (!_stopped)
+                    if (_registeredProtocols.Remove(protocol))
+                        SaveRegisteredProtocols();
+        }
+
+        /// <summary>
+        /// Stops the service helper, but leaves it in a state in which subsequent calls to Start will succeed. This happens, for example, when the service is stopped and then 
+        /// restarted without being destroyed.
+        /// </summary>
+        public Task StopAsync()
         {
             return Task.Run(() =>
                 {
                     lock (this)
-                        lock (protocol)
-                        {
-                            if (_stopped || !protocol.Running)
-                                return;
+                    {
+                        if (_stopped)
+                            return;
 
-                            protocol.SetRunning(false);
+                        _logger.Log("Stopping Sensus service.", LoggingLevel.Normal, _logTag);
 
-                            if (unregister)
-                                UnregisterProtocol(protocol);
+                        foreach (Protocol protocol in _registeredProtocols)
+                            StopProtocol(protocol, false);
 
-                            RemoveRunningProtocolId(protocol.Id);
+                        _stopped = true;
+                    }
 
-                            if (_registeredProtocols.Count(p => p.Running) == 0)
-                                StopSensusPings();
-
-                            _logger.Log("Stopping probes.", LoggingLevel.Normal);
-                            foreach (Probe probe in protocol.Probes)
-                                if (probe.Controller.Running)
-                                    try { probe.Controller.Stop(); }
-                                    catch (Exception ex) { _logger.Log("Failed to stop " + probe.DisplayName + "'s controller:  " + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal); }
-
-                            if (protocol.LocalDataStore != null && protocol.LocalDataStore.Running)
-                            {
-                                _logger.Log("Stopping local data store.", LoggingLevel.Normal);
-
-                                try { protocol.LocalDataStore.Stop(); }
-                                catch (Exception ex) { _logger.Log("Failed to stop local data store:  " + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal); }
-                            }
-
-                            if (protocol.RemoteDataStore != null && protocol.RemoteDataStore.Running)
-                            {
-                                _logger.Log("Stopping remote data store.", LoggingLevel.Normal);
-
-                                try { protocol.RemoteDataStore.Stop(); }
-                                catch (Exception ex) { _logger.Log("Failed to stop remote data store:  " + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal); }
-                            }
-                        }
+                    // let others (e.g., platform-specific services and applications) know that we've stopped
+                    if (Stopped != null)
+                        Stopped(null, null);
                 });
         }
 
@@ -401,6 +406,8 @@ namespace SensusService
             lock (this)
                 if (_stopped)
                     return;
+
+            _logger.Log("Sensus service helper was pinged.", LoggingLevel.Normal, _logTag);
 
             List<string> runningProtocolIds = ReadRunningProtocolIds();
             foreach (Protocol protocol in _registeredProtocols)
@@ -416,12 +423,8 @@ namespace SensusService
 
         public void Destroy()
         {
-            _logger.Log("Destroying Sensus service helper.", LoggingLevel.Normal, _logTag);
-
-            StopAsync().Wait();
-
-            _registeredProtocols = null;
-            _logger.Close();
+            try { _logger.Close(); }
+            catch (Exception) { }
         }
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -434,20 +437,23 @@ namespace SensusService
 
         public string GetTempPath(string extension)
         {
-            string path = null;
-            while (path == null)
+            lock (this)
             {
-                string tempPath = Path.GetTempFileName();
-                File.Delete(tempPath);
+                string path = null;
+                while (path == null)
+                {
+                    string tempPath = Path.GetTempFileName();
+                    File.Delete(tempPath);
 
-                if (!string.IsNullOrWhiteSpace(extension))
-                    tempPath = Path.Combine(Path.GetDirectoryName(tempPath), Path.GetFileNameWithoutExtension(tempPath) + "." + extension.Trim('.'));
+                    if (!string.IsNullOrWhiteSpace(extension))
+                        tempPath = Path.Combine(Path.GetDirectoryName(tempPath), Path.GetFileNameWithoutExtension(tempPath) + "." + extension.Trim('.'));
 
-                if (!File.Exists(tempPath))
-                    path = tempPath;
+                    if (!File.Exists(tempPath))
+                        path = tempPath;
+                }
+
+                return path;
             }
-
-            return path;
         }
     }
 }

@@ -170,5 +170,12 @@ namespace SensusUI
                         UiBoundSensusServiceHelper.Get().ShareFile(path, "Sensus Protocol:  " + protocol.Name);
                 }));
         }
+
+        protected override void OnDisappearing()
+        {
+            UiBoundSensusServiceHelper.Get().SaveRegisteredProtocols();
+
+            base.OnDisappearing();
+        }
     }
 }

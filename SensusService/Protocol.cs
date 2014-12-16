@@ -129,11 +129,10 @@ namespace SensusService
             get { return _running; }
             set
             {
-                if (SetRunning(value))
-                    if (_running)
-                        SensusServiceHelper.Get().StartProtocolAsync(this);
-                    else
-                        SensusServiceHelper.Get().StopProtocolAsync(this, false);  // don't unregister the protocol when stopped via UI interaction
+                if (value)
+                    SensusServiceHelper.Get().StartProtocolAsync(this);
+                else
+                    SensusServiceHelper.Get().StopProtocolAsync(this, false);  // don't unregister the protocol when stopped via UI interaction
             }
         }
 
