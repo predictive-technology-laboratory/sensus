@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace SensusService.DataStores.Local
 {
@@ -20,31 +19,25 @@ namespace SensusService.DataStores.Local
             get { return true; }
         }
 
-        public override Task StartAsync()
+        public override void Start()
         {
-            return Task.Run(async () =>
-                {
-                    await base.StartAsync();
+            _data = new HashSet<Datum>();
 
-                    _data = new HashSet<Datum>();
-                });
+            base.Start();
         }
 
-        protected override Task<ICollection<Datum>> CommitData(ICollection<Datum> data)
+        protected override ICollection<Datum> CommitData(ICollection<Datum> data)
         {
-            return Task.Run<ICollection<Datum>>(() =>
+            List<Datum> committed = new List<Datum>();
+
+            lock (_data)
+                foreach (Datum datum in data)
                 {
-                    List<Datum> committed = new List<Datum>();
+                    _data.Add(datum);
+                    committed.Add(datum);
+                }
 
-                    lock (_data)
-                        foreach (Datum datum in data)
-                        {
-                            _data.Add(datum);
-                            committed.Add(datum);
-                        }
-
-                    return committed;
-                });
+            return committed;
         }
 
         public override ICollection<Datum> GetDataForRemoteDataStore()

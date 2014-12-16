@@ -1,7 +1,5 @@
 ﻿using Android.Content;
-using Android.Provider;
 using Newtonsoft.Json;
-using SensusService;
 using SensusService.DataStores.Local;
 using SensusService.DataStores.Remote;
 using SensusService.Exceptions;
@@ -12,9 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Net;
-using System.Net.Security;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 
 namespace SensusService
 {
@@ -231,8 +227,8 @@ namespace SensusService
 
         public void RemoveProbe(Probe probe)
         {
-            probe.Protocol = null;
-            _probes.Remove(probe);
+            if (_probes.Remove(probe))
+                probe.Protocol = null;
         }
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)

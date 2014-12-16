@@ -18,13 +18,12 @@ namespace SensusService.Probes
                     {
                         SensusServiceHelper.Get().Logger.Log("Restarting " + DisplayName + " as " + (value ? "listening" : "polling") + " probe.", LoggingLevel.Normal);
 
-                        Controller.StopAsync().ContinueWith(t =>
-                            {
-                                Controller = newController;
-                                OnPropertyChanged();
+                        Controller.Stop();
+                        Controller = newController;
 
-                                InitializeAndStartAsync();
-                            });
+                        OnPropertyChanged();
+
+                        InitializeAndStart();
                     }
                     else
                     {

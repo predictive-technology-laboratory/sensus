@@ -232,56 +232,56 @@ namespace SensusService
 
         public Task StartProtocolAsync(Protocol protocol)
         {
-            return Task.Run(async () =>
+            return Task.Run(() =>
                 {
                     lock (this)
                         if (_stopped)
                             return;
 
                     lock (protocol)
+                    {
                         if (protocol.Running)
                             return;
                         else
                             protocol.SetRunning(true);
 
-                    RegisterProtocol(protocol);
+                        RegisterProtocol(protocol);
+                        SaveSensusState();
+                        StartSensusMonitoring();
 
-                    SaveSensusState();
+                        SensusServiceHelper.Get().Logger.Log("Initializing and starting probes for protocol " + protocol.Name + ".", LoggingLevel.Normal);
 
-                    StartSensusMonitoring();
+                        int probesStarted = 0;
+                        foreach (Probe probe in protocol.Probes)
+                            if (probe.Enabled && probe.InitializeAndStart())
+                                probesStarted++;
 
-                    SensusServiceHelper.Get().Logger.Log("Initializing and starting probes for protocol " + protocol.Name + ".", LoggingLevel.Normal);
-
-                    int probesStarted = 0;
-                    foreach (Probe probe in protocol.Probes)
-                        if (probe.Enabled && await probe.InitializeAndStartAsync())
-                            probesStarted++;
-
-                    if (probesStarted > 0)
-                    {
-                        try { await protocol.LocalDataStore.StartAsync(); }
-                        catch (Exception ex)
+                        if (probesStarted > 0)
                         {
-                            SensusServiceHelper.Get().Logger.Log("Local data store failed to start:  " + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal);
+                            try { protocol.LocalDataStore.Start(); }
+                            catch (Exception ex)
+                            {
+                                SensusServiceHelper.Get().Logger.Log("Local data store failed to start:  " + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal);
+
+                                protocol.Running = false;
+                                return;
+                            }
+
+                            try { protocol.RemoteDataStore.Start(); }
+                            catch (Exception ex)
+                            {
+                                SensusServiceHelper.Get().Logger.Log("Remote data store failed to start:  " + ex.Message, LoggingLevel.Normal);
+
+                                protocol.Running = false;
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            SensusServiceHelper.Get().Logger.Log("No probes were started.", LoggingLevel.Normal);
 
                             protocol.Running = false;
-                            return;
                         }
-
-                        try { await protocol.RemoteDataStore.StartAsync(); }
-                        catch (Exception ex)
-                        {
-                            SensusServiceHelper.Get().Logger.Log("Remote data store failed to start:  " + ex.Message, LoggingLevel.Normal);
-
-                            protocol.Running = false;
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        SensusServiceHelper.Get().Logger.Log("No probes were started.", LoggingLevel.Normal);
-
-                        protocol.Running = false;
                     }
                 });
         }
@@ -297,46 +297,48 @@ namespace SensusService
 
         public Task StopProtocolAsync(Protocol protocol, bool unregister)
         {
-            return Task.Run(async () =>
+            return Task.Run(() =>
                 {
                     lock (this)
                         if (_stopped)
                             return;
 
                     lock (protocol)
+                    {
                         if (protocol.Running)
                             protocol.SetRunning(false);
                         else
                             return;
 
-                    if (unregister)
-                        UnregisterProtocol(protocol);
+                        if (unregister)
+                            UnregisterProtocol(protocol);
 
-                    SensusServiceHelper.Get().Logger.Log("Stopping probes.", LoggingLevel.Normal);
+                        SensusServiceHelper.Get().Logger.Log("Stopping probes.", LoggingLevel.Normal);
 
-                    foreach (Probe probe in protocol.Probes)
-                        if (probe.Controller.Running)
-                            try { await probe.Controller.StopAsync(); }
-                            catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to stop " + probe.DisplayName + "'s controller:  " + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal); }
+                        foreach (Probe probe in protocol.Probes)
+                            if (probe.Controller.Running)
+                                try { probe.Controller.Stop(); }
+                                catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to stop " + probe.DisplayName + "'s controller:  " + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal); }
 
-                    if (protocol.LocalDataStore != null && protocol.LocalDataStore.Running)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Stopping local data store.", LoggingLevel.Normal);
+                        if (protocol.LocalDataStore != null && protocol.LocalDataStore.Running)
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Stopping local data store.", LoggingLevel.Normal);
 
-                        try { await protocol.LocalDataStore.StopAsync(); }
-                        catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to stop local data store:  " + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal); }
+                            try { protocol.LocalDataStore.Stop(); }
+                            catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to stop local data store:  " + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal); }
+                        }
+
+                        if (protocol.RemoteDataStore != null && protocol.RemoteDataStore.Running)
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Stopping remote data store.", LoggingLevel.Normal);
+
+                            try { protocol.RemoteDataStore.Stop(); }
+                            catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to stop remote data store:  " + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal); }
+                        }
+
+                        if (_registeredProtocols.Count(p => p.Running) == 0)
+                            StopSensusMonitoring();
                     }
-
-                    if (protocol.RemoteDataStore != null && protocol.RemoteDataStore.Running)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Stopping remote data store.", LoggingLevel.Normal);
-
-                        try { await protocol.RemoteDataStore.StopAsync(); }
-                        catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to stop remote data store:  " + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal); }
-                    }
-
-                    if (_registeredProtocols.Count(p => p.Running) == 0)
-                        StopSensusMonitoring();
                 });
         }
 
@@ -346,35 +348,32 @@ namespace SensusService
         /// Stops the service helper, but leaves it in a state in which subsequent calls to Start will succeed. This happens, for example, when the service is stopped and then 
         /// restarted without being destroyed.
         /// </summary>
-        /// <returns></returns>
-        public Task StopAsync()
+        public void Stop()
         {
-            return Task.Run(async () =>
-                {
-                    // prevent any future interactions with the SensusServiceHelper
-                    lock (this)
-                        if (_stopped)
-                            return;
-                        else
-                            _stopped = true;
+            // prevent any future interactions with the SensusServiceHelper
+            lock (this)
+                if (_stopped)
+                    return;
+                else
+                    _stopped = true;
 
-                    _logger.Log("Stopping Sensus service.", LoggingLevel.Normal, _logTag);
+            _logger.Log("Stopping Sensus service.", LoggingLevel.Normal, _logTag);
 
-                    foreach (Protocol protocol in _registeredProtocols)
-                        if (protocol.Running)
-                            await StopProtocolAsync(protocol, false);
+            foreach (Protocol protocol in _registeredProtocols)
+                lock (protocol)
+                    if (protocol.Running)
+                        StopProtocolAsync(protocol, false).Wait();
 
-                    // let others (e.g., platform-specific services and applications) know that we've stopped
-                    if (Stopped != null)
-                        Stopped(null, null);
-                });
+            // let others (e.g., platform-specific services and applications) know that we've stopped
+            if (Stopped != null)
+                Stopped(null, null);
         }
 
-        public async void Destroy()
+        public void Destroy()
         {
             _logger.Log("Destroying Sensus service helper.", LoggingLevel.Normal, _logTag);
 
-            await StopAsync();
+            Stop();
 
             _registeredProtocols = null;
 

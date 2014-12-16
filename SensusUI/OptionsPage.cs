@@ -44,9 +44,9 @@ namespace SensusUI
                 Font = Font.SystemFontOfSize(20)
             };
 
-            stopSensusButton.Clicked += async (o, e) =>
+            stopSensusButton.Clicked += (o, e) =>
                 {
-                    await UiBoundSensusServiceHelper.Get().StopAsync();
+                    UiBoundSensusServiceHelper.Get().Stop();
                 };
 
             contentLayout.Children.Add(stopSensusButton);
