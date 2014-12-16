@@ -26,6 +26,7 @@ namespace SensusService.DataStores
         private Task _commitTask;
         private bool _running;
         private Protocol _protocol;
+        private DateTimeOffset _mostRecentCommitTimestamp;
 
         [EntryStringUiProperty("Name:", true, 1)]
         public string Name
@@ -72,11 +73,27 @@ namespace SensusService.DataStores
         [JsonIgnore]
         public abstract bool CanClear { get; }
 
+        [DisplayStringUiProperty("Last Commit:", int.MinValue)]
+        [JsonIgnore]
+        public DateTimeOffset MostRecentCommitTimestamp
+        {
+            get { return _mostRecentCommitTimestamp; }
+            set
+            {
+                if (value != _mostRecentCommitTimestamp)
+                {
+                    _mostRecentCommitTimestamp = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         public DataStore()
         {
             _name = DisplayName;
             _commitDelayMS = 10000;
             _running = false;
+            _mostRecentCommitTimestamp = DateTime.MinValue;
         }
 
         public virtual void Start()
@@ -118,7 +135,11 @@ namespace SensusService.DataStores
                             catch (Exception ex) { SensusServiceHelper.Get().Logger.Log(Name + " failed to commit data:  " + ex.Message, LoggingLevel.Normal); }
 
                             if (committedData != null)
-                                try { ProcessCommittedData(committedData); }
+                                try
+                                {
+                                    ProcessCommittedData(committedData);
+                                    MostRecentCommitTimestamp = DateTime.UtcNow;
+                                }
                                 catch (Exception ex) { SensusServiceHelper.Get().Logger.Log(Name + " failed to process committed data:  " + ex.Message, LoggingLevel.Normal); }
                         }
                     }
@@ -150,6 +171,28 @@ namespace SensusService.DataStores
                 _commitTrigger.Set();
                 _commitTask.Wait();
             }
+        }
+
+        public virtual bool Ping(ref string error, ref string warning, ref string misc)
+        {
+            bool healthy = true;
+
+            if (!_running)
+            {
+                error += "Datastore \"" + _name + "\" is not running.";
+                healthy = false;
+            }
+
+            double elapsed = (DateTime.UtcNow - _mostRecentCommitTimestamp).TotalMilliseconds;
+            if (elapsed > _commitDelayMS)
+            {
+                warning += "Datastore \"" + _name + "\" has not committed data in " + elapsed + "ms (commit delay = " + _commitDelayMS + "ms)." + Environment.NewLine;
+
+                if (elapsed / _commitDelayMS > 5)
+                    healthy = false;
+            }
+
+            return healthy;
         }
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)

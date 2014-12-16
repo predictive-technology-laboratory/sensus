@@ -248,57 +248,59 @@ namespace SensusService
 
         public Task StartProtocolAsync(Protocol protocol)
         {
-            return Task.Run(() =>
+            return Task.Run(() => { StartProtocol(protocol); });
+        }
+
+        public void StartProtocol(Protocol protocol)
+        {
+            lock (this)
+                lock (protocol)
                 {
-                    lock (this)
-                        lock (protocol)
+                    if (_stopped || protocol.Running)
+                        return;
+
+                    protocol.SetRunning(true);
+
+                    RegisterProtocol(protocol);
+                    AddRunningProtocolId(protocol.Id);
+                    StartSensusPings();
+
+                    _logger.Log("Initializing and starting probes for protocol " + protocol.Name + ".", LoggingLevel.Normal);
+                    int probesStarted = 0;
+                    foreach (Probe probe in protocol.Probes)
+                        if (probe.Enabled && probe.InitializeAndStart())
+                            probesStarted++;
+
+                    bool stopProtocol = false;
+
+                    if (probesStarted > 0)
+                    {
+                        try
                         {
-                            if (_stopped || protocol.Running)
-                                return;
+                            protocol.LocalDataStore.Start();
 
-                            protocol.SetRunning(true);
-
-                            RegisterProtocol(protocol);
-                            AddRunningProtocolId(protocol.Id);
-                            StartSensusPings();
-
-                            _logger.Log("Initializing and starting probes for protocol " + protocol.Name + ".", LoggingLevel.Normal);
-                            int probesStarted = 0;
-                            foreach (Probe probe in protocol.Probes)
-                                if (probe.Enabled && probe.InitializeAndStart())
-                                    probesStarted++;
-
-                            bool stopProtocol = false;
-
-                            if (probesStarted > 0)
+                            try { protocol.RemoteDataStore.Start(); }
+                            catch (Exception ex)
                             {
-                                try
-                                {
-                                    protocol.LocalDataStore.Start();
-
-                                    try { protocol.RemoteDataStore.Start(); }
-                                    catch (Exception ex)
-                                    {
-                                        _logger.Log("Remote data store failed to start:  " + ex.Message, LoggingLevel.Normal);
-                                        stopProtocol = true;
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    _logger.Log("Local data store failed to start:  " + ex.Message, LoggingLevel.Normal);
-                                    stopProtocol = true;
-                                }
-                            }
-                            else
-                            {
-                                _logger.Log("No probes were started.", LoggingLevel.Normal);
+                                _logger.Log("Remote data store failed to start:  " + ex.Message, LoggingLevel.Normal);
                                 stopProtocol = true;
                             }
-
-                            if (stopProtocol)
-                                StopProtocol(protocol, false);
                         }
-                });
+                        catch (Exception ex)
+                        {
+                            _logger.Log("Local data store failed to start:  " + ex.Message, LoggingLevel.Normal);
+                            stopProtocol = true;
+                        }
+                    }
+                    else
+                    {
+                        _logger.Log("No probes were started.", LoggingLevel.Normal);
+                        stopProtocol = true;
+                    }
+
+                    if (stopProtocol)
+                        StopProtocolAsync(protocol, false);  // must be async because start and stop lock the same objects
+                }
         }
 
         public void RegisterProtocol(Protocol protocol)
@@ -317,7 +319,7 @@ namespace SensusService
             return Task.Run(() => { StopProtocol(protocol, unregister); });
         }
 
-        private void StopProtocol(Protocol protocol, bool unregister)
+        public void StopProtocol(Protocol protocol, bool unregister)
         {
             lock (this)
                 lock (protocol)
@@ -404,20 +406,29 @@ namespace SensusService
         public void Ping()
         {
             lock (this)
+            {
                 if (_stopped)
                     return;
 
-            _logger.Log("Sensus service helper was pinged.", LoggingLevel.Normal, _logTag);
+                _logger.Log("Sensus service helper was pinged.", LoggingLevel.Normal, _logTag);
 
-            List<string> runningProtocolIds = ReadRunningProtocolIds();
-            foreach (Protocol protocol in _registeredProtocols)
-            {
-                if (!protocol.Running && runningProtocolIds.Contains(protocol.Id))
-                    StartProtocolAsync(protocol).Wait();
+                List<string> runningProtocolIds = ReadRunningProtocolIds();
+                foreach (Protocol protocol in _registeredProtocols)
+                {
+                    string error = null;
+                    string warning = null;
+                    string misc = null;
 
-                // TODO:  Check datastores
+                    if (!protocol.Running && runningProtocolIds.Contains(protocol.Id))
+                    {
+                        error += "Protocol \"" + protocol.Name + "\" was not running." + Environment.NewLine;
+                        StartProtocol(protocol);
+                    }
 
-                // TODO:  Check probes
+                    // TODO:  Check datastores
+
+                    // TODO:  Check probes
+                }
             }
         }
 

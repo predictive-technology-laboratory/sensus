@@ -113,5 +113,10 @@ namespace SensusService.DataStores.Remote
         {
             // TODO:  Implement
         }
+
+        public override void UploadProtocolReport(ProtocolReport report)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

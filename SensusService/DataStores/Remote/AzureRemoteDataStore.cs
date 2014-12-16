@@ -18,6 +18,7 @@ namespace SensusService.DataStores.Remote
         private IMobileServiceTable<AltitudeDatum> _altitudeTable;
         private IMobileServiceTable<CompassDatum> _compassTable;
         private IMobileServiceTable<LocationDatum> _locationTable;
+        private IMobileServiceTable<ProtocolReport> _protocolReportTable;
 
         [EntryStringUiProperty("URL:", true, 2)]
         public string URL
@@ -66,6 +67,8 @@ namespace SensusService.DataStores.Remote
             _compassTable = _client.GetTable<CompassDatum>();
             _locationTable = _client.GetTable<LocationDatum>();
 
+            _protocolReportTable = _client.GetTable<ProtocolReport>();
+
             base.Start();
         }
 
@@ -102,6 +105,12 @@ namespace SensusService.DataStores.Remote
             SensusServiceHelper.Get().Logger.Log("Committed " + committedData.Count + " data items to Azure tables in " + (DateTime.Now - start).TotalSeconds + " seconds.", LoggingLevel.Verbose);
 
             return committedData;
+        }
+
+        public override void UploadProtocolReport(ProtocolReport report)
+        {
+            try { _protocolReportTable.InsertAsync(report); }
+            catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to upload protocol report:  " + ex.Message, LoggingLevel.Normal); }
         }
 
         public override void Stop()

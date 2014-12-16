@@ -29,5 +29,10 @@ namespace SensusService.DataStores.Remote
 
             return committedData;
         }
+
+        public override void UploadProtocolReport(ProtocolReport report)
+        {
+            SensusServiceHelper.Get().Logger.Log("Protocol report:  " + report, LoggingLevel.Normal);
+        }
     }
 }
