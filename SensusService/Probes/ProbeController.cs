@@ -47,22 +47,16 @@ namespace SensusService.Probes
             _running = false;
         }
 
-        public virtual Task StartAsync()
+        public virtual void Start()
         {
-            return Task.Run(() =>
-                {
-                    SensusServiceHelper.Get().Logger.Log("Starting " + GetType().FullName + " for " + _probe.DisplayName, LoggingLevel.Normal);
-                    Running = true;
-                });
+            SensusServiceHelper.Get().Logger.Log("Starting " + GetType().FullName + " for " + _probe.DisplayName, LoggingLevel.Normal);
+            Running = true;
         }
 
-        public virtual Task StopAsync()
+        public virtual void Stop()
         {
-            return Task.Run(() =>
-                {
-                    SensusServiceHelper.Get().Logger.Log("Stopping " + GetType().FullName + " for " + _probe.DisplayName, LoggingLevel.Normal);
-                    Running = false;
-                });
+            SensusServiceHelper.Get().Logger.Log("Stopping " + GetType().FullName + " for " + _probe.DisplayName, LoggingLevel.Normal);
+            Running = false;
         }
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)

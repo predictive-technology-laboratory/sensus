@@ -17,20 +17,17 @@ namespace SensusService.DataStores.Remote
             get { return false; }
         }
 
-        protected override Task<ICollection<Datum>> CommitData(ICollection<Datum> data)
+        protected override ICollection<Datum> CommitData(ICollection<Datum> data)
         {
-            return Task.Run<ICollection<Datum>>(() =>
-                {
-                    List<Datum> committedData = new List<Datum>();
-                    foreach (Datum datum in data)
-                    {
-                        committedData.Add(datum);
+            List<Datum> committedData = new List<Datum>();
+            foreach (Datum datum in data)
+            {
+                committedData.Add(datum);
 
-                        SensusServiceHelper.Get().Logger.Log("Committed datum to remote console:  " + datum, LoggingLevel.Debug);
-                    }
+                SensusServiceHelper.Get().Logger.Log("Committed datum to remote console:  " + datum, LoggingLevel.Debug);
+            }
 
-                    return committedData;
-                });
+            return committedData;
         }
     }
 }

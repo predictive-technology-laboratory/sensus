@@ -9,24 +9,18 @@ namespace SensusService.Probes
         {
         }
 
-        public override Task StartAsync()
+        public override void Start()
         {
-            return Task.Run(async () =>
-                {
-                    await base.StartAsync();
+            base.Start();
 
-                    (Probe as IListeningProbe).StartListening();
-                });
+            (Probe as IListeningProbe).StartListening();
         }
 
-        public override Task StopAsync()
+        public override void Stop()
         {
-            return Task.Run(async () =>
-                {
-                    await base.StopAsync();
+            base.Stop();
 
-                    (Probe as IListeningProbe).StopListening();
-                });
+            (Probe as IListeningProbe).StopListening();
         }
     }
 }

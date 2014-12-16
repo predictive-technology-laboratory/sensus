@@ -1,11 +1,12 @@
 ﻿using Newtonsoft.Json;
-using SensusService.Exceptions;
+using SensusService.Probes;
 using SensusService.Probes.Location;
 using SensusUI.UiProperties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,15 +19,8 @@ namespace SensusService
     /// </summary>
     public abstract class SensusServiceHelper : INotifyPropertyChanged
     {
-        #region static members
+        #region singleton management
         private static SensusServiceHelper _singleton;
-
-        private static string _protocolsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "protocols.json");
-        private static string _previouslyRunningProtocolsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "previously_running_protocols.json");
-
-        private static string _logPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
-        private static string _logTag = "SERVICE-HELPER";
-
         private static object _staticLockObject = new object();
 
         public static SensusServiceHelper Get()
@@ -38,7 +32,7 @@ namespace SensusService
                 lock (_staticLockObject)
                     if (_singleton == null)
                     {
-                        Console.Error.WriteLine(_logTag + ":  Waiting for service to construct helper object.");
+                        Console.Error.WriteLine("Waiting for service to construct helper object.");
                         Thread.Sleep(1000);
                     }
                     else
@@ -48,7 +42,7 @@ namespace SensusService
             lock (_staticLockObject)
                 if (_singleton == null)
                 {
-                    string error = _logTag + ":  Failed to get service helper.";
+                    string error = "Failed to get service helper.";
                     Console.Error.WriteLine(error);
                     throw new Exception(error);
                 }
@@ -67,10 +61,21 @@ namespace SensusService
         /// </summary>
         public event EventHandler Stopped;
 
+        private readonly string _logPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
+        private readonly string _logTag = "SERVICE-HELPER";
+        private readonly string _savedProtocolsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "saved_protocols.json");
+        private readonly string _runningProtocolIdsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "running_protocol_ids.json");
+        private readonly JsonSerializerSettings _protocolSerializationSettings = new JsonSerializerSettings
+        {
+            PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+            TypeNameHandling = TypeNameHandling.All,
+            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
+        };
+
         private bool _stopped;
         private Logger _logger;
         private List<Protocol> _registeredProtocols;
-        private bool _autoRestart;
 
         public Logger Logger
         {
@@ -91,27 +96,10 @@ namespace SensusService
         [DisplayStringUiProperty("Device ID:", int.MaxValue)]
         public abstract string DeviceId { get; }
 
-        [OnOffUiProperty("Auto-Restart:", true, 0)]
-        public bool AutoRestart
-        {
-            get { return _autoRestart; }
-            set
-            {
-                if (value != _autoRestart)
-                {
-                    _autoRestart = value;
-                    SetAutoRestart(_autoRestart);
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        
-
-        protected SensusServiceHelper(Geolocator geolocator, bool autoRestart)
+        protected SensusServiceHelper(Geolocator geolocator)
         {
             GpsReceiver.Get().Initialize(geolocator);
-            AutoRestart = autoRestart;
+
             _stopped = true;
 
             #region logger
@@ -124,37 +112,120 @@ namespace SensusService
             _logger.Log("Log file started at \"" + _logPath + "\".", LoggingLevel.Normal, _logTag);
             #endregion
 
-            #region get saved protocols
-            _registeredProtocols = new List<Protocol>();
+            _registeredProtocols = ReadSavedProtocols();
 
-            if (File.Exists(_protocolsPath))
-                try
-                {
-                    using (StreamReader protocolsFile = new StreamReader(_protocolsPath))
-                    {
-                        _registeredProtocols = JsonConvert.DeserializeObject<List<Protocol>>(protocolsFile.ReadToEnd(), new JsonSerializerSettings
-                        {
-                            PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-                            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-                            TypeNameHandling = TypeNameHandling.All,
-                            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
-                        });
-
-                        protocolsFile.Close();
-                    }
-                }
-                catch (Exception ex) { _logger.Log("Failed to read serialized protocols from existing path \"" + _protocolsPath + "\":  " + ex.Message, LoggingLevel.Normal, _logTag); }
-            else
-                _logger.Log("No protocols serialization file exists. Proceeding with no saved protocols.", LoggingLevel.Normal, _logTag);
-
-            _logger.Log("Deserialized " + _registeredProtocols.Count + " protocols.", LoggingLevel.Normal, _logTag);
-            #endregion
+            _logger.Log("Loaded " + _registeredProtocols.Count + " protocols.", LoggingLevel.Normal, _logTag);
 
             lock (_staticLockObject)
                 _singleton = this;
         }
 
-        protected abstract void SetAutoRestart(bool enabled);
+        #region save/read protocols
+        public void SaveRegisteredProtocols()
+        {
+            lock (this)
+            {
+                try
+                {
+                    using (StreamWriter file = new StreamWriter(_savedProtocolsPath))
+                    {
+                        file.Write(JsonConvert.SerializeObject(_registeredProtocols, Formatting.Indented, _protocolSerializationSettings));
+                        file.Close();
+                    }
+                }
+                catch (Exception ex) { _logger.Log("Failed to save protocols:  " + ex.Message, LoggingLevel.Normal, _logTag); }
+            }
+        }
+
+        private List<Protocol> ReadSavedProtocols()
+        {
+            lock (this)
+            {
+                List<Protocol> protocols = null;
+
+                if (File.Exists(_savedProtocolsPath))
+                    try
+                    {
+                        using (StreamReader file = new StreamReader(_savedProtocolsPath))
+                        {
+                            protocols = JsonConvert.DeserializeObject<List<Protocol>>(file.ReadToEnd(), _protocolSerializationSettings);
+                            file.Close();
+                        }
+                    }
+                    catch (Exception ex) { _logger.Log("Failed to read protocols from existing path \"" + _savedProtocolsPath + "\":  " + ex.Message, LoggingLevel.Normal, _logTag); }
+                else
+                    _logger.Log("No saved protocols file exists at \"" + _savedProtocolsPath + "\".", LoggingLevel.Normal, _logTag);
+
+                if (protocols == null)
+                    protocols = new List<Protocol>();
+
+                return protocols;
+            }
+        }
+        #endregion
+
+        #region running protocol ids
+        private void AddRunningProtocolId(string id)
+        {
+            lock (this)
+            {
+                List<string> ids = ReadRunningProtocolIds();
+                if (ids.Contains(id))
+                    return;
+                else
+                {
+                    ids.Add(id);
+                    SaveRunningProtocolIds(ids);
+                }
+            }
+        }
+
+        private void RemoveRunningProtocolId(string id)
+        {
+            lock (this)
+            {
+                List<string> ids = ReadRunningProtocolIds();
+                if (ids.Remove(id))
+                    SaveRunningProtocolIds(ids);
+            }
+        }
+
+        private void SaveRunningProtocolIds(List<string> ids)
+        {
+            lock (this)
+                try
+                {
+                    using (StreamWriter file = new StreamWriter(_runningProtocolIdsPath))
+                    {
+                        file.Write(JsonConvert.SerializeObject(ids, Formatting.Indented));
+                        file.Close();
+                    }
+                }
+                catch (Exception ex) { _logger.Log("Failed to save running protocol ID list:  " + ex.Message, LoggingLevel.Normal, _logTag); }
+        }
+
+        private List<string> ReadRunningProtocolIds()
+        {
+            lock (this)
+            {
+                List<string> ids = null;
+                try
+                {
+                    using (StreamReader file = new StreamReader(_runningProtocolIdsPath))
+                    {
+                        ids = JsonConvert.DeserializeObject<List<string>>(file.ReadToEnd());
+                        file.Close();
+                    }
+                }
+                catch (Exception ex) { _logger.Log("Failed to read running protocol ID list:  " + ex.Message, LoggingLevel.Normal); }
+
+                if (ids == null)
+                    ids = new List<string>();
+
+                return ids;
+            }
+        }
+        #endregion
 
         /// <summary>
         /// Starts platform-independent service functionality. Okay to call multiple times, even if the service is already running.
@@ -162,30 +233,72 @@ namespace SensusService
         public void Start()
         {
             lock (this)
+            {
                 if (_stopped)
                     _stopped = false;
                 else
                     return;
 
-            try
-            {
-                List<string> previouslyRunningProtocols = new List<string>();
-
-                using (StreamReader previouslyRunningProtocolsFile = new StreamReader(_previouslyRunningProtocolsPath))
-                {
-                    previouslyRunningProtocols = JsonConvert.DeserializeObject<List<string>>(previouslyRunningProtocolsFile.ReadToEnd());
-                    previouslyRunningProtocolsFile.Close();
-                }
-
+                List<string> runningProtocolIds = ReadRunningProtocolIds();
                 foreach (Protocol protocol in _registeredProtocols)
-                    if (!protocol.Running && previouslyRunningProtocols.Contains(protocol.Id))
-                    {
-                        _logger.Log("Starting previously running protocol:  " + protocol.Name, LoggingLevel.Normal, _logTag);
-
+                    if (!protocol.Running && runningProtocolIds.Contains(protocol.Id))
                         StartProtocolAsync(protocol);
-                    }
             }
-            catch (Exception ex) { _logger.Log("Failed to deserialize IDs for previously running protocols:  " + ex.Message, LoggingLevel.Normal, _logTag); }
+        }
+
+        public Task StartProtocolAsync(Protocol protocol)
+        {
+            return Task.Run(() =>
+                {
+                    lock (this)
+                        lock (protocol)
+                        {
+                            if (_stopped || protocol.Running)
+                                return;
+
+                            protocol.SetRunning(true);
+
+                            RegisterProtocol(protocol);
+                            AddRunningProtocolId(protocol.Id);
+                            StartSensusPings();
+
+                            _logger.Log("Initializing and starting probes for protocol " + protocol.Name + ".", LoggingLevel.Normal);
+                            int probesStarted = 0;
+                            foreach (Probe probe in protocol.Probes)
+                                if (probe.Enabled && probe.InitializeAndStart())
+                                    probesStarted++;
+
+                            bool stopProtocol = false;
+
+                            if (probesStarted > 0)
+                            {
+                                try
+                                {
+                                    protocol.LocalDataStore.Start();
+
+                                    try { protocol.RemoteDataStore.Start(); }
+                                    catch (Exception ex)
+                                    {
+                                        _logger.Log("Remote data store failed to start:  " + ex.Message, LoggingLevel.Normal);
+                                        stopProtocol = true;
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    _logger.Log("Local data store failed to start:  " + ex.Message, LoggingLevel.Normal);
+                                    stopProtocol = true;
+                                }
+                            }
+                            else
+                            {
+                                _logger.Log("No probes were started.", LoggingLevel.Normal);
+                                stopProtocol = true;
+                            }
+
+                            if (stopProtocol)
+                                StopProtocol(protocol, false);
+                        }
+                });
         }
 
         public void RegisterProtocol(Protocol protocol)
@@ -193,110 +306,90 @@ namespace SensusService
             lock (this)
                 if (!_stopped)
                     if (!_registeredProtocols.Contains(protocol))
+                    {
                         _registeredProtocols.Add(protocol);
-        }
-
-        public Task StartProtocolAsync(Protocol protocol)
-        {
-            lock (this)
-                if (_stopped)
-                    return null;
-                else
-                {
-                    if (!_registeredProtocols.Contains(protocol))  // can't call RegisterProtocol here due to locking -- just repeat the code
-                        _registeredProtocols.Add(protocol);
-
-                    return protocol.StartAsync();
-                }
-        }
-
-        public abstract void ShareFile(string path, string emailSubject);
-
-        public string GetTempPath(string extension)
-        {
-            string path = null;
-            while (path == null)
-            {
-                string tempPath = Path.GetTempFileName();
-                File.Delete(tempPath);
-
-                if (!string.IsNullOrWhiteSpace(extension))
-                    tempPath = Path.Combine(Path.GetDirectoryName(tempPath), Path.GetFileNameWithoutExtension(tempPath) + "." + extension.Trim('.'));
-
-                if (!File.Exists(tempPath))
-                    path = tempPath;
-            }
-
-            return path;
+                        SaveRegisteredProtocols();
+                    }
         }
 
         public Task StopProtocolAsync(Protocol protocol, bool unregister)
         {
-            lock (this)
-                if (_stopped)
-                    return null;
-                else
-                {
-                    if (unregister)
-                        _registeredProtocols.Remove(protocol);
+            return Task.Run(() => { StopProtocol(protocol, unregister); });
+        }
 
-                    return protocol.StopAsync();
+        private void StopProtocol(Protocol protocol, bool unregister)
+        {
+            lock (this)
+                lock (protocol)
+                {
+                    if (_stopped)
+                        return;
+
+                    if (unregister)
+                        UnregisterProtocol(protocol);
+
+                    if (!protocol.Running)
+                        return;
+
+                    protocol.SetRunning(false);
+
+                    RemoveRunningProtocolId(protocol.Id);
+
+                    if (_registeredProtocols.Count(p => p.Running) == 0)
+                        StopSensusPings();
+
+                    _logger.Log("Stopping probes.", LoggingLevel.Normal);
+                    foreach (Probe probe in protocol.Probes)
+                        if (probe.Controller.Running)
+                            try { probe.Controller.Stop(); }
+                            catch (Exception ex) { _logger.Log("Failed to stop " + probe.DisplayName + "'s controller:  " + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal); }
+
+                    if (protocol.LocalDataStore != null && protocol.LocalDataStore.Running)
+                    {
+                        _logger.Log("Stopping local data store.", LoggingLevel.Normal);
+
+                        try { protocol.LocalDataStore.Stop(); }
+                        catch (Exception ex) { _logger.Log("Failed to stop local data store:  " + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal); }
+                    }
+
+                    if (protocol.RemoteDataStore != null && protocol.RemoteDataStore.Running)
+                    {
+                        _logger.Log("Stopping remote data store.", LoggingLevel.Normal);
+
+                        try { protocol.RemoteDataStore.Stop(); }
+                        catch (Exception ex) { _logger.Log("Failed to stop remote data store:  " + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal); }
+                    }
                 }
+        }
+
+        public void UnregisterProtocol(Protocol protocol)
+        {
+            lock (this)
+                if (!_stopped)
+                    if (_registeredProtocols.Remove(protocol))
+                        SaveRegisteredProtocols();
         }
 
         /// <summary>
         /// Stops the service helper, but leaves it in a state in which subsequent calls to Start will succeed. This happens, for example, when the service is stopped and then 
         /// restarted without being destroyed.
         /// </summary>
-        /// <returns></returns>
         public Task StopAsync()
         {
-            return Task.Run(async () =>
+            return Task.Run(() =>
                 {
-                    // prevent any future interactions with the SensusServiceHelper
                     lock (this)
+                    {
                         if (_stopped)
                             return;
-                        else
-                            _stopped = true;
 
-                    _logger.Log("Stopping Sensus service.", LoggingLevel.Normal, _logTag);
+                        _logger.Log("Stopping Sensus service.", LoggingLevel.Normal, _logTag);
 
-                    List<string> runningProtocolIds = new List<string>();
+                        foreach (Protocol protocol in _registeredProtocols)
+                            StopProtocol(protocol, false);
 
-                    foreach (Protocol protocol in _registeredProtocols)
-                        if (protocol.Running)
-                        {
-                            runningProtocolIds.Add(protocol.Id);
-                            await protocol.StopAsync();
-                        }
-
-                    try
-                    {
-                        using (StreamWriter protocolsFile = new StreamWriter(_protocolsPath))
-                        {
-                            protocolsFile.Write(JsonConvert.SerializeObject(_registeredProtocols, Formatting.Indented, new JsonSerializerSettings
-                            {
-                                PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-                                ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-                                TypeNameHandling = TypeNameHandling.All,
-                                ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
-                            }));
-
-                            protocolsFile.Close();
-                        }
+                        _stopped = true;
                     }
-                    catch (Exception ex) { _logger.Log("Failed to serialize protocols:  " + ex.Message, LoggingLevel.Normal, _logTag); }
-
-                    try
-                    {
-                        using (StreamWriter previouslyRunningProtocolsFile = new StreamWriter(_previouslyRunningProtocolsPath))
-                        {
-                            previouslyRunningProtocolsFile.Write(JsonConvert.SerializeObject(runningProtocolIds, Formatting.Indented));
-                            previouslyRunningProtocolsFile.Close();
-                        }
-                    }
-                    catch (Exception ex) { _logger.Log("Failed to serialize running protocol ID list:  " + ex.Message, LoggingLevel.Normal, _logTag); }
 
                     // let others (e.g., platform-specific services and applications) know that we've stopped
                     if (Stopped != null)
@@ -304,21 +397,63 @@ namespace SensusService
                 });
         }
 
-        public async void Destroy()
+        protected abstract void StartSensusPings();
+
+        protected abstract void StopSensusPings();
+
+        public void Ping()
         {
-            _logger.Log("Destroying Sensus service helper.", LoggingLevel.Normal, _logTag);
+            lock (this)
+                if (_stopped)
+                    return;
 
-            await StopAsync();
+            _logger.Log("Sensus service helper was pinged.", LoggingLevel.Normal, _logTag);
 
-            _registeredProtocols = null;
+            List<string> runningProtocolIds = ReadRunningProtocolIds();
+            foreach (Protocol protocol in _registeredProtocols)
+            {
+                if (!protocol.Running && runningProtocolIds.Contains(protocol.Id))
+                    StartProtocolAsync(protocol).Wait();
 
-            _logger.Close();
+                // TODO:  Check datastores
+
+                // TODO:  Check probes
+            }
+        }
+
+        public void Destroy()
+        {
+            try { _logger.Close(); }
+            catch (Exception) { }
         }
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public abstract void ShareFile(string path, string emailSubject);
+
+        public string GetTempPath(string extension)
+        {
+            lock (this)
+            {
+                string path = null;
+                while (path == null)
+                {
+                    string tempPath = Path.GetTempFileName();
+                    File.Delete(tempPath);
+
+                    if (!string.IsNullOrWhiteSpace(extension))
+                        tempPath = Path.Combine(Path.GetDirectoryName(tempPath), Path.GetFileNameWithoutExtension(tempPath) + "." + extension.Trim('.'));
+
+                    if (!File.Exists(tempPath))
+                        path = tempPath;
+                }
+
+                return path;
+            }
         }
     }
 }

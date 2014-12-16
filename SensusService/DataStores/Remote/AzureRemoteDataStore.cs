@@ -58,66 +58,57 @@ namespace SensusService.DataStores.Remote
             get { return false; }
         }
 
-        public override Task StartAsync()
+        public override void Start()
         {
-            return Task.Run(async () =>
-                {
-                    _client = new MobileServiceClient(_url, _key);
+            _client = new MobileServiceClient(_url, _key);
 
-                    _altitudeTable = _client.GetTable<AltitudeDatum>();
-                    _compassTable = _client.GetTable<CompassDatum>();
-                    _locationTable = _client.GetTable<LocationDatum>();
+            _altitudeTable = _client.GetTable<AltitudeDatum>();
+            _compassTable = _client.GetTable<CompassDatum>();
+            _locationTable = _client.GetTable<LocationDatum>();
 
-                    await base.StartAsync();
-                });
+            base.Start();
         }
 
-        protected override Task<ICollection<Datum>> CommitData(ICollection<Datum> data)
+        protected override ICollection<Datum> CommitData(ICollection<Datum> data)
         {
-            return Task.Run<ICollection<Datum>>(async () =>
+            List<Datum> committedData = new List<Datum>();
+
+            DateTime start = DateTime.Now;
+
+            foreach (Datum datum in data)
+            {
+                try
                 {
-                    List<Datum> committedData = new List<Datum>();
+                    if (datum is AltitudeDatum)
+                        _altitudeTable.InsertAsync(datum as AltitudeDatum).Wait();
+                    else if (datum is CompassDatum)
+                        _compassTable.InsertAsync(datum as CompassDatum).Wait();
+                    else if (datum is LocationDatum)
+                        _locationTable.InsertAsync(datum as LocationDatum).Wait();
+                    else
+                        throw new DataStoreException("Unrecognized Azure table:  " + datum.GetType().FullName);
 
-                    DateTime start = DateTime.Now;
+                    committedData.Add(datum);
+                }
+                catch (Exception ex)
+                {
+                    if (ex.Message == "Error: Could not insert the item because an item with that id already exists.")
+                        committedData.Add(datum);
+                    else
+                        SensusServiceHelper.Get().Logger.Log("Failed to insert datum into Azure table:  " + ex.Message, LoggingLevel.Normal);
+                }
+            }
 
-                    foreach (Datum datum in data)
-                    {
-                        try
-                        {
-                            if (datum is AltitudeDatum)
-                                await _altitudeTable.InsertAsync(datum as AltitudeDatum);
-                            else if (datum is CompassDatum)
-                                await _compassTable.InsertAsync(datum as CompassDatum);
-                            else if (datum is LocationDatum)
-                                await _locationTable.InsertAsync(datum as LocationDatum);
-                            else
-                                throw new DataStoreException("Unrecognized Azure table:  " + datum.GetType().FullName);
+            SensusServiceHelper.Get().Logger.Log("Committed " + committedData.Count + " data items to Azure tables in " + (DateTime.Now - start).TotalSeconds + " seconds.", LoggingLevel.Verbose);
 
-                            committedData.Add(datum);
-                        }
-                        catch (Exception ex)
-                        {
-                            if (ex.Message == "Error: Could not insert the item because an item with that id already exists.")
-                                committedData.Add(datum);
-                            else
-                                SensusServiceHelper.Get().Logger.Log("Failed to insert datum into Azure table:  " + ex.Message, LoggingLevel.Normal);
-                        }
-                    }
-
-                    SensusServiceHelper.Get().Logger.Log("Committed " + committedData.Count + " data items to Azure tables in " + (DateTime.Now - start).TotalSeconds + " seconds.", LoggingLevel.Verbose);
-
-                    return committedData;
-                });
+            return committedData;
         }
 
-        public override Task StopAsync()
+        public override void Stop()
         {
-            return Task.Run(async () =>
-                {
-                    await base.StopAsync();
+            base.Stop();
 
-                    _client.Dispose();
-                });
+            _client.Dispose();
         }
     }
 }

@@ -24,7 +24,7 @@ namespace Sensus.Android
 
             _sensusServiceHelper = new AndroidSensusServiceHelper();
             _sensusServiceHelper.Stopped += (o, e) =>
-                {                    
+                {
                     _notificationManager.Cancel(ServiceNotificationId);
                     StopSelf();
                 };
@@ -60,11 +60,16 @@ namespace Sensus.Android
 
             _notificationManager.Notify(ServiceNotificationId, _notificationBuilder.Build());
 
+            if (intent.GetBooleanExtra(AndroidSensusServiceHelper.INTENT_EXTRA_NAME_PING, false))
+                _sensusServiceHelper.Ping();
+
             return StartCommandResult.RedeliverIntent;
         }
 
         public override void OnDestroy()
         {
+            _notificationManager.Cancel(ServiceNotificationId);
+
             _sensusServiceHelper.Destroy();
 
             base.OnDestroy();

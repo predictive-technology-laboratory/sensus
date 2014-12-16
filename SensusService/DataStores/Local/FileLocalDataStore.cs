@@ -22,7 +22,13 @@ namespace SensusService.DataStores.Local
         /// <summary>
         /// Settings for serializing this data store.
         /// </summary>
-        private JsonSerializerSettings _serializationSettings;
+        private readonly JsonSerializerSettings _serializationSettings = new JsonSerializerSettings
+        {
+            PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+            TypeNameHandling = TypeNameHandling.All,
+            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
+        };
 
         private string StorageDirectory
         {
@@ -48,72 +54,55 @@ namespace SensusService.DataStores.Local
             get { return true; }
         }
 
-        public FileLocalDataStore()
+        public override void Start()
         {
-            _serializationSettings = new JsonSerializerSettings
+            // file needs to be ready to accept data immediately
+            lock (this)
+                InitializeFile();
+
+            base.Start();
+        }
+
+        protected override ICollection<Datum> CommitData(ICollection<Datum> data)
+        {
+            lock (this)
             {
-                PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-                ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-                TypeNameHandling = TypeNameHandling.All,
-                ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
-            };
-        }
+                List<Datum> committedData = new List<Datum>();
 
-        public override Task StartAsync()
-        {
-            return Task.Run(async () =>
+                foreach (Datum datum in data)
                 {
-                    // file needs to be ready to accept data immediately
-                    lock (this)
-                        InitializeFile();
+                    string datumJSON = null;
+                    try { datumJSON = GetJSON(datum); }
+                    catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to get JSON for datum:  " + ex.Message, LoggingLevel.Normal); }
 
-                    await base.StartAsync();
-                });
-        }
-
-        protected override Task<ICollection<Datum>> CommitData(ICollection<Datum> data)
-        {
-            return Task.Run<ICollection<Datum>>(() =>
-                {
-                    lock (this)
+                    if (datumJSON != null)
                     {
-                        List<Datum> committedData = new List<Datum>();
-
-                        foreach (Datum datum in data)
+                        bool writtenToFile = false;
+                        try
                         {
-                            string datumJSON = null;
-                            try { datumJSON = GetJSON(datum); }
-                            catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to get JSON for datum:  " + ex.Message, LoggingLevel.Normal); }
+                            _file.WriteLine(datumJSON);
+                            writtenToFile = true;
+                        }
+                        catch (Exception ex)
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Failed to write datum JSON to local file:  " + ex.Message, LoggingLevel.Normal);
 
-                            if (datumJSON != null)
+                            try
                             {
-                                bool writtenToFile = false;
-                                try
-                                {
-                                    _file.WriteLine(datumJSON);
-                                    writtenToFile = true;
-                                }
-                                catch (Exception ex)
-                                {
-                                    SensusServiceHelper.Get().Logger.Log("Failed to write datum JSON to local file:  " + ex.Message, LoggingLevel.Normal);
+                                InitializeFile();
 
-                                    try
-                                    {
-                                        InitializeFile();
-
-                                        SensusServiceHelper.Get().Logger.Log("Initialized new local file.", LoggingLevel.Normal);
-                                    }
-                                    catch (Exception ex2) { SensusServiceHelper.Get().Logger.Log("Failed to initialize new local data store file after failing to write the old one:  " + ex2.Message, LoggingLevel.Normal); }
-                                }
-
-                                if (writtenToFile)
-                                    committedData.Add(datum);
+                                SensusServiceHelper.Get().Logger.Log("Initialized new local file.", LoggingLevel.Normal);
                             }
+                            catch (Exception ex2) { SensusServiceHelper.Get().Logger.Log("Failed to initialize new local data store file after failing to write the old one:  " + ex2.Message, LoggingLevel.Normal); }
                         }
 
-                        return committedData;
+                        if (writtenToFile)
+                            committedData.Add(datum);
                     }
-                });
+                }
+
+                return committedData;
+            }
         }
 
         public override ICollection<Datum> GetDataForRemoteDataStore()
@@ -200,16 +189,13 @@ namespace SensusService.DataStores.Local
             }
         }
 
-        public override Task StopAsync()
+        public override void Stop()
         {
-            return Task.Run(async () =>
-                {
-                    // stop the data store before closing the file to make sure all data are allowed in
-                    await base.StopAsync();
+            // stop the data store before closing the file to make sure all data are allowed in
+            base.Stop();
 
-                    lock (this)
-                        CloseFile();
-                });
+            lock (this)
+                CloseFile();
         }
 
         private string GetJSON(Datum datum)

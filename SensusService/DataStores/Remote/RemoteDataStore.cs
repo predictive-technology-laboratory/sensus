@@ -56,13 +56,11 @@ namespace SensusService.DataStores.Remote
             if (_requireWiFi && !SensusServiceHelper.Get().WiFiConnected)
             {
                 SensusServiceHelper.Get().Logger.Log("Required WiFi but device WiFi is not connected.", LoggingLevel.Verbose);
-
                 return new List<Datum>();
             }
             else if (_requireCharging && !SensusServiceHelper.Get().IsCharging)
             {
                 SensusServiceHelper.Get().Logger.Log("Required charging but device is not charging.", LoggingLevel.Verbose);
-
                 return new List<Datum>();
             }
 

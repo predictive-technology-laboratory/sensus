@@ -73,9 +73,9 @@ namespace SensusService.Probes
 
                     if (_protocol != null && _protocol.Running)  // _protocol can be null when deserializing the probe
                         if (_enabled)
-                            InitializeAndStartAsync();
+                            InitializeAndStart();
                         else
-                            _controller.StopAsync();
+                            _controller.Stop();
                 }
             }
         }
@@ -143,19 +143,16 @@ namespace SensusService.Probes
             return true;
         }
 
-        public Task<bool> InitializeAndStartAsync()
+        public bool InitializeAndStart()
         {
-            return Task.Run<bool>(async () =>
-                {
-                    try
-                    {
-                        if (Initialize())
-                            await _controller.StartAsync();
-                    }
-                    catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to start probe \"" + DisplayName + "\":" + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal); }
+            try
+            {
+                if (Initialize())
+                    _controller.Start();
+            }
+            catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to start probe \"" + _displayName + "\":" + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal); }
 
-                    return _controller.Running;
-                });
+            return _controller.Running;
         }
 
         public virtual void StoreDatum(Datum datum)

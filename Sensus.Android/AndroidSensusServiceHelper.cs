@@ -13,7 +13,7 @@ namespace Sensus.Android
 {
     public class AndroidSensusServiceHelper : SensusServiceHelper
     {
-        private static string _preventAutoRestartPath = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), "no_autorestart");
+        public const string INTENT_EXTRA_NAME_PING = "PING-SENSUS";
 
         private ConnectivityManager _connectivityManager;
         private readonly string _deviceId;
@@ -39,11 +39,11 @@ namespace Sensus.Android
         }
 
         public AndroidSensusServiceHelper()
-            : base(new Geolocator(Application.Context), !File.Exists(_preventAutoRestartPath))
+            : base(new Geolocator(Application.Context))
         {
             _connectivityManager = Application.Context.GetSystemService(Context.ConnectivityService) as ConnectivityManager;
             _deviceId = Settings.Secure.GetString(Application.Context.ContentResolver, Settings.Secure.AndroidId);
-        }       
+        }
 
         public override void ShareFile(string path, string emailSubject)
         {
@@ -66,30 +66,28 @@ namespace Sensus.Android
             catch (Exception ex) { Logger.Log("Failed to start intent to share file \"" + path + "\":  " + ex.Message, LoggingLevel.Normal); }
         }
 
-        protected override void SetAutoRestart(bool enabled)
+        protected override void StartSensusPings()
+        {
+            SetSensusMonitoringAlarm(true);
+        }
+
+        protected override void StopSensusPings()
+        {
+            SetSensusMonitoringAlarm(false);
+        }
+
+        private void SetSensusMonitoringAlarm(bool enabled)
         {
             Context context = Application.Context;
             AlarmManager alarmManager = context.GetSystemService(Context.AlarmService) as AlarmManager;
             Intent serviceIntent = new Intent(context, typeof(AndroidSensusService));
+            serviceIntent.PutExtra(INTENT_EXTRA_NAME_PING, true);
             PendingIntent pendingServiceIntent = PendingIntent.GetService(context, 0, serviceIntent, PendingIntentFlags.UpdateCurrent);
 
             if (enabled)
-            {
-                if (File.Exists(_preventAutoRestartPath))
-                    File.Delete(_preventAutoRestartPath);
-
-                long nextAlarmMS = JavaSystem.CurrentTimeMillis() + 5000;
-                alarmManager.SetRepeating(AlarmType.RtcWakeup, nextAlarmMS, 1000 * 60, pendingServiceIntent);
-                Toast.MakeText(context, "Sensus auto-restart has been enabled.", ToastLength.Long).Show();
-            }
+                alarmManager.SetRepeating(AlarmType.RtcWakeup, JavaSystem.CurrentTimeMillis() + 5000, 1000 * 60, pendingServiceIntent);
             else
-            {
-                if (!File.Exists(_preventAutoRestartPath))
-                    File.Create(_preventAutoRestartPath);
-
                 alarmManager.Cancel(pendingServiceIntent);
-                Toast.MakeText(context, "Sensus auto-restart has been disabled.", ToastLength.Long).Show();
-            }
         }
     }
 }
