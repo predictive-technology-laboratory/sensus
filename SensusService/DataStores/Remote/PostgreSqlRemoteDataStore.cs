@@ -104,7 +104,7 @@ namespace SensusService.DataStores.Remote
             _password = "";
         }
 
-        protected override Task<ICollection<Datum>> CommitData(ICollection<Datum> data)
+        protected override ICollection<Datum> CommitData(ICollection<Datum> data)
         {
             throw new NotImplementedException();
         }

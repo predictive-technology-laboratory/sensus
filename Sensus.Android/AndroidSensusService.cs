@@ -34,6 +34,9 @@ namespace Sensus.Android
         {
             _sensusServiceHelper.Logger.Log("Sensus service received start command (startId=" + startId + ").", LoggingLevel.Normal);
 
+            if (intent.GetBooleanExtra(AndroidSensusServiceHelper.INTENT_EXTRA_NAME_PING, false))
+                _sensusServiceHelper.Ping();
+
             // the service can be stopped without destroying the service object. in such cases, 
             // subsequent calls to start the service will not call OnCreate, which is why the 
             // following code needs to run here -- e.g., starting the helper object and displaying
