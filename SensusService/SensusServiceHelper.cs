@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using SensusService.Exceptions;
 using SensusService.Probes;
 using SensusService.Probes.Location;
 using SensusUI.UiProperties;
@@ -7,10 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Linq;
 using Xamarin.Geolocation;
 
 namespace SensusService
@@ -20,7 +19,7 @@ namespace SensusService
     /// </summary>
     public abstract class SensusServiceHelper : INotifyPropertyChanged
     {
-        #region static members
+        #region singleton management
         private static SensusServiceHelper _singleton;
         private static object _staticLockObject = new object();
 
@@ -155,7 +154,7 @@ namespace SensusService
                     }
                     catch (Exception ex) { _logger.Log("Failed to read protocols from existing path \"" + _savedProtocolsPath + "\":  " + ex.Message, LoggingLevel.Normal, _logTag); }
                 else
-                    _logger.Log("No saved protocols file exists.", LoggingLevel.Normal, _logTag);
+                    _logger.Log("No saved protocols file exists at \"" + _savedProtocolsPath + "\".", LoggingLevel.Normal, _logTag);
 
                 if (protocols == null)
                     protocols = new List<Protocol>();
@@ -253,7 +252,7 @@ namespace SensusService
         /// </summary>
         public Task StopAsync()
         {
-            return Task.Run(async () =>
+            return Task.Run(() =>
                 {
                     // prevent any future interactions with the SensusServiceHelper
                     lock (this)
@@ -265,7 +264,7 @@ namespace SensusService
                     _logger.Log("Stopping Sensus service.", LoggingLevel.Normal, _logTag);
 
                     foreach (Protocol protocol in _registeredProtocols)
-                        await StopProtocolAsync(protocol, false);
+                        StopProtocolAsync(protocol, false).Wait();
 
                     // let others (e.g., platform-specific services and applications) know that we've stopped
                     if (Stopped != null)
@@ -292,9 +291,6 @@ namespace SensusService
                         SaveRegisteredProtocols();
         }
 
-        protected abstract void StartSensusMonitoring();
-
-        protected abstract void StopSensusMonitoring();
 
         public Task StartProtocolAsync(Protocol protocol)
         {
@@ -310,7 +306,7 @@ namespace SensusService
 
                             RegisterProtocol(protocol);
                             AddRunningProtocolId(protocol.Id);
-                            StartSensusMonitoring();
+                            StartSensusPings();
 
                             _logger.Log("Initializing and starting probes for protocol " + protocol.Name + ".", LoggingLevel.Normal);
                             int probesStarted = 0;
@@ -335,7 +331,7 @@ namespace SensusService
                                 }
                                 catch (Exception ex)
                                 {
-                                    _logger.Log("Local data store failed to start:  " + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal);
+                                    _logger.Log("Local data store failed to start:  " + ex.Message, LoggingLevel.Normal);
                                     stopProtocol = true;
                                 }
                             }
@@ -369,7 +365,7 @@ namespace SensusService
                             RemoveRunningProtocolId(protocol.Id);
 
                             if (_registeredProtocols.Count(p => p.Running) == 0)
-                                StopSensusMonitoring();
+                                StopSensusPings();
 
                             _logger.Log("Stopping probes.", LoggingLevel.Normal);
                             foreach (Probe probe in protocol.Probes)
@@ -396,7 +392,11 @@ namespace SensusService
                 });
         }
 
-        public async void Ping()
+        protected abstract void StartSensusPings();
+
+        protected abstract void StopSensusPings();
+
+        public void Ping()
         {
             lock (this)
                 if (_stopped)
@@ -406,7 +406,7 @@ namespace SensusService
             foreach (Protocol protocol in _registeredProtocols)
             {
                 if (!protocol.Running && runningProtocolIds.Contains(protocol.Id))
-                    await StartProtocolAsync(protocol);
+                    StartProtocolAsync(protocol).Wait();
 
                 // TODO:  Check datastores
 

@@ -22,7 +22,13 @@ namespace SensusService.DataStores.Local
         /// <summary>
         /// Settings for serializing this data store.
         /// </summary>
-        private JsonSerializerSettings _serializationSettings;
+        private readonly JsonSerializerSettings _serializationSettings = new JsonSerializerSettings
+        {
+            PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+            TypeNameHandling = TypeNameHandling.All,
+            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
+        };
 
         private string StorageDirectory
         {
@@ -46,17 +52,6 @@ namespace SensusService.DataStores.Local
         public override bool CanClear
         {
             get { return true; }
-        }
-
-        public FileLocalDataStore()
-        {
-            _serializationSettings = new JsonSerializerSettings
-            {
-                PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-                ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-                TypeNameHandling = TypeNameHandling.All,
-                ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
-            };
         }
 
         public override void Start()

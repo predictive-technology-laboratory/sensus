@@ -137,7 +137,7 @@ namespace SensusService.DataStores
 
         public virtual void Clear() { }
 
-        public virtual async void Stop()
+        public virtual void Stop()
         {
             if (_protocol.Running)
                 throw new DataStoreException("DataStore " + Name + " cannot be stopped while its associated protocol is running.");
@@ -148,7 +148,7 @@ namespace SensusService.DataStores
             {
                 // don't wait for current sleep cycle to end -- wake up immediately so task can complete. if the task is not null, neither will the trigger be.
                 _commitTrigger.Set();
-                await _commitTask;
+                _commitTask.Wait();
             }
         }
 

@@ -66,12 +66,12 @@ namespace Sensus.Android
             catch (Exception ex) { Logger.Log("Failed to start intent to share file \"" + path + "\":  " + ex.Message, LoggingLevel.Normal); }
         }
 
-        protected override void StartSensusMonitoring()
+        protected override void StartSensusPings()
         {
             SetSensusMonitoringAlarm(true);
         }
 
-        protected override void StopSensusMonitoring()
+        protected override void StopSensusPings()
         {
             SetSensusMonitoringAlarm(false);
         }

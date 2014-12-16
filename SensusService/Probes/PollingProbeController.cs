@@ -66,7 +66,7 @@ namespace SensusService.Probes
                 });
         }
 
-        public override async void Stop()
+        public override void Stop()
         {
             base.Stop();
 
@@ -74,7 +74,7 @@ namespace SensusService.Probes
             {
                 // don't wait for current sleep cycle to end -- wake up immediately so task can complete. if the task is not null, neither will the trigger be.
                 _pollTrigger.Set();
-                await _pollTask;
+                _pollTask.Wait();
             }
         }
     }
