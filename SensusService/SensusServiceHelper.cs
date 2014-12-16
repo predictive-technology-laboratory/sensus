@@ -299,7 +299,7 @@ namespace SensusService
                     }
 
                     if (stopProtocol)
-                        StopProtocolAsync(protocol, false);  // must be async because start and stop lock the same objects
+                        StopProtocol(protocol, false);
                 }
         }
 
@@ -414,21 +414,29 @@ namespace SensusService
 
                 List<string> runningProtocolIds = ReadRunningProtocolIds();
                 foreach (Protocol protocol in _registeredProtocols)
-                {
-                    string error = null;
-                    string warning = null;
-                    string misc = null;
-
-                    if (!protocol.Running && runningProtocolIds.Contains(protocol.Id))
+                    lock (protocol)
                     {
-                        error += "Protocol \"" + protocol.Name + "\" was not running." + Environment.NewLine;
-                        StartProtocol(protocol);
+                        string error = null;
+                        string warning = null;
+                        string misc = null;
+
+                        if (!protocol.Running && runningProtocolIds.Contains(protocol.Id))
+                        {
+                            error += "Protocol \"" + protocol.Name + "\" was not running." + Environment.NewLine;
+
+                            try { StopProtocol(protocol, false); }
+                            catch (Exception) { }
+
+                            try { StartProtocol(protocol); }
+                            catch (Exception) { }
+                        }
+
+                        if (protocol.Running)
+                            foreach (Probe probe in protocol.Probes)
+                                probe.Ping(ref error, ref warning, ref misc);
+
+                        protocol.RemoteDataStore.UploadProtocolReport(new ProtocolReport(DeviceId, DateTime.UtcNow, error, warning, misc));
                     }
-
-                    // TODO:  Check datastores
-
-                    // TODO:  Check probes
-                }
             }
         }
 
