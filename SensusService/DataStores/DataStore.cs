@@ -73,7 +73,7 @@ namespace SensusService.DataStores
         [JsonIgnore]
         public abstract bool CanClear { get; }
 
-        [DisplayStringUiProperty("Last Commit:", int.MinValue)]
+        [DisplayStringUiProperty("Recency:", int.MaxValue)]
         [JsonIgnore]
         public DateTimeOffset MostRecentCommitTimestamp
         {

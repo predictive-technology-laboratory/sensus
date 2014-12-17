@@ -6,11 +6,18 @@ namespace SensusService
 {
     public class ProtocolReport
     {
+        private string _id;
         private string _deviceId;
         private DateTimeOffset _timestamp;
         private string _error;
         private string _warning;
         private string _misc;
+
+        public string Id
+        {
+            get { return _id; }
+            set { _id = value; }
+        }
 
         public string DeviceId
         {
@@ -44,6 +51,7 @@ namespace SensusService
 
         public ProtocolReport(string deviceId, DateTimeOffset timestamp, string error, string warning, string misc)
         {
+            _id = Guid.NewGuid().ToString();
             _deviceId = deviceId;
             _timestamp = timestamp;
             _error = error;

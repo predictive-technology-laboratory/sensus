@@ -187,7 +187,7 @@ namespace SensusService.Probes
                 }
         }
 
-        public bool Ping(ref string error, ref string warning, ref string misc)
+        public virtual bool Ping(ref string error, ref string warning, ref string misc)
         {
             return _controller.Ping(ref error, ref warning, ref misc);
         }

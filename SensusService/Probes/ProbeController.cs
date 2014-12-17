@@ -63,9 +63,9 @@ namespace SensusService.Probes
         {
             bool restart = false;
 
-            if (!_running)
+            if (_probe.Protocol.Running && _probe.Enabled && !_running)
             {
-                error += "Controller for probe \"" + _probe.DisplayName + "\" is not running.";
+                error += "Controller for enabled probe \"" + _probe.DisplayName + "\" is not running.";
                 restart = true;
             }
 

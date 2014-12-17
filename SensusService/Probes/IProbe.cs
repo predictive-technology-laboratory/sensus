@@ -4,6 +4,10 @@ namespace SensusService.Probes
 {
     public interface IProbe
     {
+        bool Enabled { get; }
+
+        Protocol Protocol { get; }
+
         string DisplayName { get; }
 
         Datum MostRecentlyStoredDatum { get; }

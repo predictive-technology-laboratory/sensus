@@ -74,43 +74,51 @@ namespace SensusService.DataStores.Remote
 
         protected override ICollection<Datum> CommitData(ICollection<Datum> data)
         {
-            List<Datum> committedData = new List<Datum>();
-
-            DateTime start = DateTime.Now;
-
-            foreach (Datum datum in data)
+            lock (this)
             {
-                try
-                {
-                    if (datum is AltitudeDatum)
-                        _altitudeTable.InsertAsync(datum as AltitudeDatum).Wait();
-                    else if (datum is CompassDatum)
-                        _compassTable.InsertAsync(datum as CompassDatum).Wait();
-                    else if (datum is LocationDatum)
-                        _locationTable.InsertAsync(datum as LocationDatum).Wait();
-                    else
-                        throw new DataStoreException("Unrecognized Azure table:  " + datum.GetType().FullName);
+                List<Datum> committedData = new List<Datum>();
 
-                    committedData.Add(datum);
-                }
-                catch (Exception ex)
+                DateTime start = DateTime.Now;
+
+                foreach (Datum datum in data)
                 {
-                    if (ex.Message == "Error: Could not insert the item because an item with that id already exists.")
+                    try
+                    {
+                        if (datum is AltitudeDatum)
+                            _altitudeTable.InsertAsync(datum as AltitudeDatum).Wait();
+                        else if (datum is CompassDatum)
+                            _compassTable.InsertAsync(datum as CompassDatum).Wait();
+                        else if (datum is LocationDatum)
+                            _locationTable.InsertAsync(datum as LocationDatum).Wait();
+                        else
+                            throw new DataStoreException("Unrecognized Azure table:  " + datum.GetType().FullName);
+
                         committedData.Add(datum);
-                    else
-                        SensusServiceHelper.Get().Logger.Log("Failed to insert datum into Azure table:  " + ex.Message, LoggingLevel.Normal);
+                    }
+                    catch (Exception ex)
+                    {
+                        if (ex.Message == "Error: Could not insert the item because an item with that id already exists.")
+                            committedData.Add(datum);
+                        else
+                            SensusServiceHelper.Get().Logger.Log("Failed to insert datum into Azure table:  " + ex.Message, LoggingLevel.Normal);
+                    }
                 }
+
+                SensusServiceHelper.Get().Logger.Log("Committed " + committedData.Count + " data items to Azure tables in " + (DateTime.Now - start).TotalSeconds + " seconds.", LoggingLevel.Verbose);
+
+                return committedData;
             }
-
-            SensusServiceHelper.Get().Logger.Log("Committed " + committedData.Count + " data items to Azure tables in " + (DateTime.Now - start).TotalSeconds + " seconds.", LoggingLevel.Verbose);
-
-            return committedData;
         }
 
         public override void UploadProtocolReport(ProtocolReport report)
         {
-            try { _protocolReportTable.InsertAsync(report); }
-            catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to upload protocol report:  " + ex.Message, LoggingLevel.Normal); }
+            lock (this)
+            {
+                try { _protocolReportTable.InsertAsync(report).Wait(); }
+                catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to upload protocol report:  " + ex.Message, LoggingLevel.Normal); }
+
+                SensusServiceHelper.Get().Logger.Log("Uploaded protocol report.", LoggingLevel.Normal);
+            }
         }
 
         public override void Stop()
