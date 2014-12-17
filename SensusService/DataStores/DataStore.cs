@@ -160,9 +160,6 @@ namespace SensusService.DataStores
 
         public virtual void Stop()
         {
-            if (_protocol.Running)
-                throw new DataStoreException("DataStore " + Name + " cannot be stopped while its associated protocol is running.");
-
             SensusServiceHelper.Get().Logger.Log("Stopping " + GetType().Name + " data store:  " + Name, LoggingLevel.Normal);
 
             if (_commitTask != null)  // might have called stop immediately after start, in which case the commit task will be null. if it's null at this point, it will soon be stopped because we have already confirmed that it does not need to be running and thus will terminate the task's while-loop upon startup.
@@ -175,24 +172,19 @@ namespace SensusService.DataStores
 
         public virtual bool Ping(ref string error, ref string warning, ref string misc)
         {
-            bool healthy = true;
+            bool restart = false;
 
             if (!_running)
             {
-                error += "Datastore \"" + _name + "\" is not running.";
-                healthy = false;
+                error += "Datastore \"" + _name + "\" is not running." + Environment.NewLine;
+                restart = true;
             }
 
             double elapsed = (DateTime.UtcNow - _mostRecentCommitTimestamp).TotalMilliseconds;
             if (elapsed > _commitDelayMS)
-            {
                 warning += "Datastore \"" + _name + "\" has not committed data in " + elapsed + "ms (commit delay = " + _commitDelayMS + "ms)." + Environment.NewLine;
 
-                if (elapsed / _commitDelayMS > 5)
-                    healthy = false;
-            }
-
-            return healthy;
+            return restart;
         }
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)

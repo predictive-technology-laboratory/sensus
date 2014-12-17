@@ -80,18 +80,13 @@ namespace SensusService.Probes
 
         public override bool Ping(ref string error, ref string warning, ref string misc)
         {
-            bool healthy = base.Ping(ref error, ref warning, ref misc);
+            bool restart = base.Ping(ref error, ref warning, ref misc);
 
             double elapsed = (DateTime.UtcNow - Probe.MostRecentlyStoredDatum.Timestamp).TotalMilliseconds;
             if (elapsed > _sleepDurationMS)
-            {
                 warning += "Probe \"" + Probe.DisplayName + "\" has not taken a reading in " + elapsed + "ms (polling delay = " + _sleepDurationMS + "ms)." + Environment.NewLine;
 
-                if (elapsed / _sleepDurationMS > 5)
-                    healthy = false;
-            }
-
-            return healthy;
+            return restart;
         }
     }
 }

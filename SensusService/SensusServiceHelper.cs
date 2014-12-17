@@ -424,16 +424,59 @@ namespace SensusService
                         {
                             error += "Protocol \"" + protocol.Name + "\" was not running." + Environment.NewLine;
 
-                            try { StopProtocol(protocol, false); }
-                            catch (Exception) { }
+                            try
+                            {
+                                StopProtocol(protocol, false);
+                                StartProtocol(protocol);
+                            }
+                            catch (Exception ex) { error += ex.Message + Environment.NewLine; }
 
-                            try { StartProtocol(protocol); }
-                            catch (Exception) { }
+                            if (!protocol.Running)
+                                error += "Failed to restart protocol \"" + protocol.Name + "\"." + Environment.NewLine;
                         }
 
                         if (protocol.Running)
+                        {
+                            if (protocol.LocalDataStore.Ping(ref error, ref warning, ref misc))
+                            {
+                                try
+                                {
+                                    protocol.LocalDataStore.Stop();
+                                    protocol.LocalDataStore.Start();
+                                }
+                                catch (Exception ex) { error += ex.Message + Environment.NewLine; }
+
+                                if (!protocol.LocalDataStore.Running)
+                                    error += "Failed to restart local data store." + Environment.NewLine;
+                            }
+
+                            if (protocol.RemoteDataStore.Ping(ref error, ref warning, ref misc))
+                            {
+                                try
+                                {
+                                    protocol.RemoteDataStore.Stop();
+                                    protocol.RemoteDataStore.Start();
+                                }
+                                catch (Exception ex) { error += ex.Message + Environment.NewLine; }
+
+                                if (!protocol.RemoteDataStore.Running)
+                                    error += "Failed to restart remote data store." + Environment.NewLine;
+                            }
+
                             foreach (Probe probe in protocol.Probes)
-                                probe.Ping(ref error, ref warning, ref misc);
+                                if (probe.Ping(ref error, ref warning, ref misc))
+                                {
+                                    try
+                                    {
+                                        probe.Enabled = false;
+                                        probe.Enabled = true;
+                                    }
+                                    catch (Exception ex) { error += ex.Message + Environment.NewLine; }
+
+                                    if (!probe.Running)
+                                        error += "Failed to restart probe \"" + probe.DisplayName + "\".";
+                                }
+                        }
 
                         protocol.RemoteDataStore.UploadProtocolReport(new ProtocolReport(DeviceId, DateTime.UtcNow, error, warning, misc));
                     }
