@@ -93,7 +93,7 @@ namespace SensusService.DataStores
             _name = DisplayName;
             _commitDelayMS = 10000;
             _running = false;
-            _mostRecentCommitTimestamp = DateTime.MinValue;
+            _mostRecentCommitTimestamp = DateTimeOffset.MinValue;
         }
 
         public virtual void Start()
@@ -180,9 +180,9 @@ namespace SensusService.DataStores
                 restart = true;
             }
 
-            double elapsed = (DateTime.UtcNow - _mostRecentCommitTimestamp).TotalMilliseconds;
-            if (elapsed > _commitDelayMS)
-                warning += "Datastore \"" + _name + "\" has not committed data in " + elapsed + "ms (commit delay = " + _commitDelayMS + "ms)." + Environment.NewLine;
+            double msElapsedSinceLastCommit = (DateTime.UtcNow - _mostRecentCommitTimestamp).TotalMilliseconds;
+            if (msElapsedSinceLastCommit > _commitDelayMS)
+                warning += "Datastore \"" + _name + "\" has not committed data in " + msElapsedSinceLastCommit + "ms (commit delay = " + _commitDelayMS + "ms)." + Environment.NewLine;
 
             return restart;
         }

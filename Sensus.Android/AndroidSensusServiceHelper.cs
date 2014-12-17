@@ -66,17 +66,17 @@ namespace Sensus.Android
             catch (Exception ex) { Logger.Log("Failed to start intent to share file \"" + path + "\":  " + ex.Message, LoggingLevel.Normal); }
         }
 
-        protected override void StartSensusPings()
+        protected override void StartSensusPings(int ms)
         {
-            SetSensusMonitoringAlarm(true);
+            SetSensusMonitoringAlarm(ms);
         }
 
         protected override void StopSensusPings()
         {
-            SetSensusMonitoringAlarm(false);
+            SetSensusMonitoringAlarm(-1);
         }
 
-        private void SetSensusMonitoringAlarm(bool enabled)
+        private void SetSensusMonitoringAlarm(int ms)
         {
             Context context = Application.Context;
             AlarmManager alarmManager = context.GetSystemService(Context.AlarmService) as AlarmManager;
@@ -84,8 +84,8 @@ namespace Sensus.Android
             serviceIntent.PutExtra(INTENT_EXTRA_NAME_PING, true);
             PendingIntent pendingServiceIntent = PendingIntent.GetService(context, 0, serviceIntent, PendingIntentFlags.UpdateCurrent);
 
-            if (enabled)
-                alarmManager.SetRepeating(AlarmType.RtcWakeup, JavaSystem.CurrentTimeMillis() + 5000, 1000 * 60, pendingServiceIntent);
+            if (ms > 0)
+                alarmManager.SetRepeating(AlarmType.RtcWakeup, JavaSystem.CurrentTimeMillis() + ms, ms, pendingServiceIntent);
             else
                 alarmManager.Cancel(pendingServiceIntent);
         }
