@@ -49,7 +49,7 @@ namespace SensusService.DataStores.Local
         }
         
         [JsonIgnore]
-        public override bool CanClear
+        public override bool Clearable
         {
             get { return true; }
         }

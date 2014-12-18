@@ -54,7 +54,7 @@ namespace SensusService.DataStores.Remote
         }
 
         [JsonIgnore]
-        public override bool CanClear
+        public override bool Clearable
         {
             get { return false; }
         }
@@ -74,51 +74,39 @@ namespace SensusService.DataStores.Remote
 
         protected override ICollection<Datum> CommitData(ICollection<Datum> data)
         {
-            lock (this)
+            List<Datum> committedData = new List<Datum>();
+
+            DateTime start = DateTime.Now;
+
+            foreach (Datum datum in data)
             {
-                List<Datum> committedData = new List<Datum>();
-
-                DateTime start = DateTime.Now;
-
-                foreach (Datum datum in data)
+                try
                 {
-                    try
-                    {
-                        if (datum is AltitudeDatum)
-                            _altitudeTable.InsertAsync(datum as AltitudeDatum).Wait();
-                        else if (datum is CompassDatum)
-                            _compassTable.InsertAsync(datum as CompassDatum).Wait();
-                        else if (datum is LocationDatum)
-                            _locationTable.InsertAsync(datum as LocationDatum).Wait();
-                        else
-                            throw new DataStoreException("Unrecognized Azure table:  " + datum.GetType().FullName);
+                    if (datum is AltitudeDatum)
+                        _altitudeTable.InsertAsync(datum as AltitudeDatum).Wait();
+                    else if (datum is CompassDatum)
+                        _compassTable.InsertAsync(datum as CompassDatum).Wait();
+                    else if (datum is LocationDatum)
+                        _locationTable.InsertAsync(datum as LocationDatum).Wait();
+                    else if (datum is ProtocolReport)
+                        _protocolReportTable.InsertAsync(datum as ProtocolReport).Wait();
+                    else
+                        throw new DataStoreException("Unrecognized Azure table:  " + datum.GetType().FullName);
 
-                        committedData.Add(datum);
-                    }
-                    catch (Exception ex)
-                    {
-                        if (ex.Message == "Error: Could not insert the item because an item with that id already exists.")
-                            committedData.Add(datum);
-                        else
-                            SensusServiceHelper.Get().Logger.Log("Failed to insert datum into Azure table:  " + ex.Message, LoggingLevel.Normal);
-                    }
+                    committedData.Add(datum);
                 }
-
-                SensusServiceHelper.Get().Logger.Log("Committed " + committedData.Count + " data items to Azure tables in " + (DateTime.Now - start).TotalSeconds + " seconds.", LoggingLevel.Verbose);
-
-                return committedData;
+                catch (Exception ex)
+                {
+                    if (ex.Message == "Error: Could not insert the item because an item with that id already exists.")
+                        committedData.Add(datum);
+                    else
+                        SensusServiceHelper.Get().Logger.Log("Failed to insert datum into Azure table:  " + ex.Message, LoggingLevel.Normal);
+                }
             }
-        }
 
-        public override void UploadProtocolReport(ProtocolReport report)
-        {
-            lock (this)
-            {
-                try { _protocolReportTable.InsertAsync(report).Wait(); }
-                catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to upload protocol report:  " + ex.Message, LoggingLevel.Normal); }
+            SensusServiceHelper.Get().Logger.Log("Committed " + committedData.Count + " data items to Azure tables in " + (DateTime.Now - start).TotalSeconds + " seconds.", LoggingLevel.Verbose);
 
-                SensusServiceHelper.Get().Logger.Log("Uploaded protocol report.", LoggingLevel.Normal);
-            }
+            return committedData;
         }
 
         public override void Stop()

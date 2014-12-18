@@ -27,6 +27,7 @@ namespace SensusService.DataStores
         private bool _running;
         private Protocol _protocol;
         private DateTimeOffset _mostRecentCommitTimestamp;
+        private List<Datum> _nonProbeDataToCommit;
 
         [EntryStringUiProperty("Name:", true, 1)]
         public string Name
@@ -71,10 +72,9 @@ namespace SensusService.DataStores
         protected abstract string DisplayName { get; }
 
         [JsonIgnore]
-        public abstract bool CanClear { get; }
+        public abstract bool Clearable { get; }
 
-        [DisplayStringUiProperty("Recency:", int.MaxValue)]
-        [JsonIgnore]
+        [DisplayStringUiProperty("Last:", int.MaxValue)]
         public DateTimeOffset MostRecentCommitTimestamp
         {
             get { return _mostRecentCommitTimestamp; }
@@ -94,6 +94,13 @@ namespace SensusService.DataStores
             _commitDelayMS = 10000;
             _running = false;
             _mostRecentCommitTimestamp = DateTimeOffset.MinValue;
+            _nonProbeDataToCommit = new List<Datum>();
+        }
+
+        public void AddNonProbeDatum(Datum datum)
+        {
+            lock (_nonProbeDataToCommit)
+                _nonProbeDataToCommit.Add(datum);
         }
 
         public virtual void Start()
@@ -125,6 +132,10 @@ namespace SensusService.DataStores
 
                         if (dataToCommit != null)
                         {
+                            lock (_nonProbeDataToCommit)
+                                foreach (Datum datum in _nonProbeDataToCommit)
+                                    dataToCommit.Add(datum);
+
                             ICollection<Datum> committedData = null;
                             try
                             {
@@ -137,8 +148,19 @@ namespace SensusService.DataStores
                             if (committedData != null)
                                 try
                                 {
+                                    lock (_nonProbeDataToCommit)
+                                    {
+                                        List<Datum> committedNonProbeData = new List<Datum>();
+                                        foreach (Datum datum in committedData)
+                                            if (_nonProbeDataToCommit.Remove(datum))
+                                                committedNonProbeData.Add(datum);
+
+                                        foreach (Datum datum in committedNonProbeData)
+                                            committedData.Remove(datum);
+                                    }
+
                                     ProcessCommittedData(committedData);
-                                    MostRecentCommitTimestamp = DateTime.UtcNow;
+                                    MostRecentCommitTimestamp = DateTimeOffset.UtcNow;
                                 }
                                 catch (Exception ex) { SensusServiceHelper.Get().Logger.Log(Name + " failed to process committed data:  " + ex.Message, LoggingLevel.Normal); }
                         }

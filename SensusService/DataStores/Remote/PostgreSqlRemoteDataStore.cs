@@ -90,7 +90,7 @@ namespace SensusService.DataStores.Remote
         }
 
         [JsonIgnore]
-        public override bool CanClear
+        public override bool Clearable
         {
             get { return true; }
         }
@@ -112,11 +112,6 @@ namespace SensusService.DataStores.Remote
         public override void Clear()
         {
             // TODO:  Implement
-        }
-
-        public override void UploadProtocolReport(ProtocolReport report)
-        {
-            throw new NotImplementedException();
         }
     }
 }

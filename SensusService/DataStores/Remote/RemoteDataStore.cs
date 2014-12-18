@@ -75,7 +75,5 @@ namespace SensusService.DataStores.Remote
         {
             Protocol.LocalDataStore.ClearDataCommittedToRemoteDataStore(committedData);
         }
-
-        public abstract void UploadProtocolReport(ProtocolReport report);
     }
 }

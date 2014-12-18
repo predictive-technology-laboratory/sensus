@@ -4,32 +4,11 @@ using System.Text;
 
 namespace SensusService
 {
-    public class ProtocolReport
+    public class ProtocolReport : Datum
     {
-        private string _id;
-        private string _deviceId;
-        private DateTimeOffset _timestamp;
         private string _error;
         private string _warning;
         private string _misc;
-
-        public string Id
-        {
-            get { return _id; }
-            set { _id = value; }
-        }
-
-        public string DeviceId
-        {
-            get { return _deviceId; }
-            set { _deviceId = value; }
-        }
-
-        public DateTimeOffset Timestamp
-        {
-            get { return _timestamp; }
-            set { _timestamp = value; }
-        }
 
         public string Error
         {
@@ -49,11 +28,14 @@ namespace SensusService
             set { _misc = value; }
         }
 
-        public ProtocolReport(string deviceId, DateTimeOffset timestamp, string error, string warning, string misc)
+        public override string DisplayDetail
         {
-            _id = Guid.NewGuid().ToString();
-            _deviceId = deviceId;
-            _timestamp = timestamp;
+            get { return ""; }
+        }
+
+        public ProtocolReport(DateTimeOffset timestamp, string error, string warning, string misc)
+            : base(-1, timestamp)
+        {
             _error = error;
             _warning = warning;
             _misc = misc;

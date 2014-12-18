@@ -76,6 +76,9 @@ namespace SensusService
         private bool _stopped;
         private Logger _logger;
         private List<Protocol> _registeredProtocols;
+        private int _pingDelayMS;
+        private int _pingsPerProtocolReport;
+        private int _pingCount;
 
         public Logger Logger
         {
@@ -96,11 +99,42 @@ namespace SensusService
         [DisplayStringUiProperty("Device ID:", int.MaxValue)]
         public abstract string DeviceId { get; }
 
+        [EntryIntegerUiProperty("Ping Delay (MS):", true, int.MaxValue)]
+        public int PingDelayMS
+        {
+            get { return _pingDelayMS; }
+            set
+            {
+                if (value != _pingDelayMS)
+                {
+                    _pingDelayMS = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        [EntryIntegerUiProperty("Pings Per Report:", true, int.MaxValue)]
+        public int PingsPerProtocolReport
+        {
+            get { return _pingsPerProtocolReport; }
+            set
+            {
+                if (value != _pingsPerProtocolReport)
+                {
+                    _pingsPerProtocolReport = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         protected SensusServiceHelper(Geolocator geolocator)
         {
             GpsReceiver.Get().Initialize(geolocator);
 
             _stopped = true;
+            _pingDelayMS = 1000 * 60;
+            _pingsPerProtocolReport = 5;
+            _pingCount = 0;
 
             #region logger
 #if DEBUG
@@ -263,7 +297,7 @@ namespace SensusService
 
                     RegisterProtocol(protocol);
                     AddRunningProtocolId(protocol.Id);
-                    StartSensusPings(1000 * 60);
+                    StartSensusPings(_pingDelayMS);
 
                     _logger.Log("Initializing and starting probes for protocol " + protocol.Name + ".", LoggingLevel.Normal);
                     int probesStarted = 0;
@@ -410,8 +444,9 @@ namespace SensusService
                 if (_stopped)
                     return;
 
-                _logger.Log("Sensus service helper was pinged.", LoggingLevel.Normal, _logTag);
+                _logger.Log("Sensus service helper was pinged (count=" + ++_pingCount + ")", LoggingLevel.Normal, _logTag);
 
+                // make sure everything is running properly
                 List<string> runningProtocolIds = ReadRunningProtocolIds();
                 foreach (Protocol protocol in _registeredProtocols)
                     lock (protocol)
@@ -486,7 +521,12 @@ namespace SensusService
                                 }
                         }
 
-                        protocol.RemoteDataStore.UploadProtocolReport(new ProtocolReport(DeviceId, DateTime.UtcNow, error, warning, misc));
+                        // submit report about sensus status
+                        if (_pingCount % _pingsPerProtocolReport == 0)
+                        {
+                            _logger.Log("Submitting protocol report.", LoggingLevel.Normal, _logTag);
+                            protocol.LocalDataStore.AddNonProbeDatum(new ProtocolReport(DateTimeOffset.UtcNow, error, warning, misc));
+                        }
                     }
             }
         }
