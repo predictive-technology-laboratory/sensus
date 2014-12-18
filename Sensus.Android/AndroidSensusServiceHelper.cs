@@ -3,10 +3,9 @@ using Android.Content;
 using Android.Net;
 using Android.OS;
 using Android.Provider;
-using Android.Widget;
 using Java.Lang;
 using SensusService;
-using System.IO;
+using Xamarin;
 using Xamarin.Geolocation;
 
 namespace Sensus.Android
@@ -43,6 +42,11 @@ namespace Sensus.Android
         {
             _connectivityManager = Application.Context.GetSystemService(Context.ConnectivityService) as ConnectivityManager;
             _deviceId = Settings.Secure.GetString(Application.Context.ContentResolver, Settings.Secure.AndroidId);
+        }
+
+        protected override void InitializeXamarinInsights()
+        {
+            Insights.Initialize(XAMARIN_INSIGHTS_APP_KEY, Application.Context);
         }
 
         public override void ShareFile(string path, string emailSubject)

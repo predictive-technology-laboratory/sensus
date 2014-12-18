@@ -111,6 +111,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Xamarin.Forms.1.2.3.6257\lib\MonoAndroid10\Xamarin.Forms.Xaml.dll</HintPath>
     </Reference>
+    <Reference Include="Xamarin.Insights">
+      <HintPath>..\packages\Xamarin.Insights.1.8.2.105\lib\MonoAndroid10\Xamarin.Insights.dll</HintPath>
+    </Reference>
     <Reference Include="Xamarin.Mobile, Version=0.7.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Components\xamarin.mobile-0.7.4\lib\android\Xamarin.Mobile.dll</HintPath>
@@ -149,7 +152,7 @@
     </XamarinComponentReference>
     <XamarinComponentReference Include="xamarin.mobile">
       <Visible>False</Visible>
-      <Version>0.7.4</Version>
+      <Version>0.7.5</Version>
     </XamarinComponentReference>
   </ItemGroup>
   <Import Project="..\SensusService\SensusService.projitems" Label="Shared" Condition="Exists('..\SensusService\SensusService.projitems')" />

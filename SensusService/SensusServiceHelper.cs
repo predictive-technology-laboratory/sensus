@@ -51,6 +51,8 @@ namespace SensusService
         }
         #endregion
 
+        protected const string XAMARIN_INSIGHTS_APP_KEY = "97af5c4ab05c6a69d2945fd403ff45535f8bb9bb";
+
         /// <summary>
         /// Raised when a UI-relevant property has changed.
         /// </summary>
@@ -150,9 +152,14 @@ namespace SensusService
 
             _logger.Log("Loaded " + _registeredProtocols.Count + " protocols.", LoggingLevel.Normal, _logTag);
 
+            try { InitializeXamarinInsights(); }
+            catch (Exception ex) { _logger.Log("Failed to initialize Xamarin insights:  " + ex.Message, LoggingLevel.Normal); }
+
             lock (_staticLockObject)
                 _singleton = this;
         }
+
+        protected abstract void InitializeXamarinInsights();
 
         #region save/read protocols
         public void SaveRegisteredProtocols()

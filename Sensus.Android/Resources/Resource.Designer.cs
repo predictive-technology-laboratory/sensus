@@ -26,6 +26,8 @@ namespace Sensus.Android
 		
 		public static void UpdateIdValues()
 		{
+			global::Xamarin.InsightsCore.Resource.String.ApplicationName = global::Sensus.Android.Resource.String.ApplicationName;
+			global::Xamarin.InsightsCore.Resource.String.Hello = global::Sensus.Android.Resource.String.Hello;
 		}
 		
 		public partial class Attribute
@@ -53,6 +55,25 @@ namespace Sensus.Android
 			}
 			
 			private Drawable()
+			{
+			}
+		}
+		
+		public partial class String
+		{
+			
+			// aapt resource value: 0x7f030001
+			public const int ApplicationName = 2130903041;
+			
+			// aapt resource value: 0x7f030000
+			public const int Hello = 2130903040;
+			
+			static String()
+			{
+				global::Android.Runtime.ResourceIdManager.UpdateIdValues();
+			}
+			
+			private String()
 			{
 			}
 		}
