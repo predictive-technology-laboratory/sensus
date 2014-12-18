@@ -18,6 +18,7 @@ namespace SensusService.DataStores.Remote
         private IMobileServiceTable<AltitudeDatum> _altitudeTable;
         private IMobileServiceTable<CompassDatum> _compassTable;
         private IMobileServiceTable<LocationDatum> _locationTable;
+        private IMobileServiceTable<ProtocolReport> _protocolReportTable;
 
         [EntryStringUiProperty("URL:", true, 2)]
         public string URL
@@ -53,7 +54,7 @@ namespace SensusService.DataStores.Remote
         }
 
         [JsonIgnore]
-        public override bool CanClear
+        public override bool Clearable
         {
             get { return false; }
         }
@@ -65,6 +66,8 @@ namespace SensusService.DataStores.Remote
             _altitudeTable = _client.GetTable<AltitudeDatum>();
             _compassTable = _client.GetTable<CompassDatum>();
             _locationTable = _client.GetTable<LocationDatum>();
+
+            _protocolReportTable = _client.GetTable<ProtocolReport>();
 
             base.Start();
         }
@@ -85,6 +88,8 @@ namespace SensusService.DataStores.Remote
                         _compassTable.InsertAsync(datum as CompassDatum).Wait();
                     else if (datum is LocationDatum)
                         _locationTable.InsertAsync(datum as LocationDatum).Wait();
+                    else if (datum is ProtocolReport)
+                        _protocolReportTable.InsertAsync(datum as ProtocolReport).Wait();
                     else
                         throw new DataStoreException("Unrecognized Azure table:  " + datum.GetType().FullName);
 

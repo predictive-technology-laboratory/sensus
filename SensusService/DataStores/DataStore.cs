@@ -26,6 +26,8 @@ namespace SensusService.DataStores
         private Task _commitTask;
         private bool _running;
         private Protocol _protocol;
+        private DateTimeOffset _mostRecentCommitTimestamp;
+        private List<Datum> _nonProbeDataToCommit;
 
         [EntryStringUiProperty("Name:", true, 1)]
         public string Name
@@ -70,13 +72,35 @@ namespace SensusService.DataStores
         protected abstract string DisplayName { get; }
 
         [JsonIgnore]
-        public abstract bool CanClear { get; }
+        public abstract bool Clearable { get; }
+
+        [DisplayStringUiProperty("Last:", int.MaxValue)]
+        public DateTimeOffset MostRecentCommitTimestamp
+        {
+            get { return _mostRecentCommitTimestamp; }
+            set
+            {
+                if (value != _mostRecentCommitTimestamp)
+                {
+                    _mostRecentCommitTimestamp = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         public DataStore()
         {
             _name = DisplayName;
             _commitDelayMS = 10000;
             _running = false;
+            _mostRecentCommitTimestamp = DateTimeOffset.MinValue;
+            _nonProbeDataToCommit = new List<Datum>();
+        }
+
+        public void AddNonProbeDatum(Datum datum)
+        {
+            lock (_nonProbeDataToCommit)
+                _nonProbeDataToCommit.Add(datum);
         }
 
         public virtual void Start()
@@ -108,6 +132,10 @@ namespace SensusService.DataStores
 
                         if (dataToCommit != null)
                         {
+                            lock (_nonProbeDataToCommit)
+                                foreach (Datum datum in _nonProbeDataToCommit)
+                                    dataToCommit.Add(datum);
+
                             ICollection<Datum> committedData = null;
                             try
                             {
@@ -118,7 +146,22 @@ namespace SensusService.DataStores
                             catch (Exception ex) { SensusServiceHelper.Get().Logger.Log(Name + " failed to commit data:  " + ex.Message, LoggingLevel.Normal); }
 
                             if (committedData != null)
-                                try { ProcessCommittedData(committedData); }
+                                try
+                                {
+                                    lock (_nonProbeDataToCommit)
+                                    {
+                                        List<Datum> committedNonProbeData = new List<Datum>();
+                                        foreach (Datum datum in committedData)
+                                            if (_nonProbeDataToCommit.Remove(datum))
+                                                committedNonProbeData.Add(datum);
+
+                                        foreach (Datum datum in committedNonProbeData)
+                                            committedData.Remove(datum);
+                                    }
+
+                                    ProcessCommittedData(committedData);
+                                    MostRecentCommitTimestamp = DateTimeOffset.UtcNow;
+                                }
                                 catch (Exception ex) { SensusServiceHelper.Get().Logger.Log(Name + " failed to process committed data:  " + ex.Message, LoggingLevel.Normal); }
                         }
                     }
@@ -139,9 +182,6 @@ namespace SensusService.DataStores
 
         public virtual void Stop()
         {
-            if (_protocol.Running)
-                throw new DataStoreException("DataStore " + Name + " cannot be stopped while its associated protocol is running.");
-
             SensusServiceHelper.Get().Logger.Log("Stopping " + GetType().Name + " data store:  " + Name, LoggingLevel.Normal);
 
             if (_commitTask != null)  // might have called stop immediately after start, in which case the commit task will be null. if it's null at this point, it will soon be stopped because we have already confirmed that it does not need to be running and thus will terminate the task's while-loop upon startup.
@@ -150,6 +190,23 @@ namespace SensusService.DataStores
                 _commitTrigger.Set();
                 _commitTask.Wait();
             }
+        }
+
+        public virtual bool Ping(ref string error, ref string warning, ref string misc)
+        {
+            bool restart = false;
+
+            if (!_running)
+            {
+                error += "Datastore \"" + _name + "\" is not running." + Environment.NewLine;
+                restart = true;
+            }
+
+            double msElapsedSinceLastCommit = (DateTime.UtcNow - _mostRecentCommitTimestamp).TotalMilliseconds;
+            if (msElapsedSinceLastCommit > _commitDelayMS)
+                warning += "Datastore \"" + _name + "\" has not committed data in " + msElapsedSinceLastCommit + "ms (commit delay = " + _commitDelayMS + "ms)." + Environment.NewLine;
+
+            return restart;
         }
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)

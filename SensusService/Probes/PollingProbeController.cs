@@ -77,5 +77,20 @@ namespace SensusService.Probes
                 _pollTask.Wait();
             }
         }
+
+        public override bool Ping(ref string error, ref string warning, ref string misc)
+        {
+            bool restart = base.Ping(ref error, ref warning, ref misc);
+
+            DateTimeOffset mostRecentReadingTimestamp = DateTimeOffset.MinValue;
+            if (Probe.MostRecentlyStoredDatum != null)
+                mostRecentReadingTimestamp = Probe.MostRecentlyStoredDatum.Timestamp;
+
+            double msElapsedSinceLastPoll = (DateTime.UtcNow - mostRecentReadingTimestamp).TotalMilliseconds;
+            if (msElapsedSinceLastPoll > _sleepDurationMS)
+                warning += "Probe \"" + Probe.DisplayName + "\" has not taken a reading in " + msElapsedSinceLastPoll + "ms (polling delay = " + _sleepDurationMS + "ms)." + Environment.NewLine;
+
+            return restart;
+        }
     }
 }

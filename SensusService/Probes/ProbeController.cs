@@ -59,6 +59,19 @@ namespace SensusService.Probes
             Running = false;
         }
 
+        public virtual bool Ping(ref string error, ref string warning, ref string misc)
+        {
+            bool restart = false;
+
+            if (_probe.Protocol.Running && _probe.Enabled && !_running)
+            {
+                error += "Controller for enabled probe \"" + _probe.DisplayName + "\" is not running.";
+                restart = true;
+            }
+
+            return restart;
+        }
+
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             if (PropertyChanged != null)

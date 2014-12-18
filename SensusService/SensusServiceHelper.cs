@@ -76,6 +76,9 @@ namespace SensusService
         private bool _stopped;
         private Logger _logger;
         private List<Protocol> _registeredProtocols;
+        private int _pingDelayMS;
+        private int _pingsPerProtocolReport;
+        private int _pingCount;
 
         public Logger Logger
         {
@@ -96,11 +99,42 @@ namespace SensusService
         [DisplayStringUiProperty("Device ID:", int.MaxValue)]
         public abstract string DeviceId { get; }
 
+        [EntryIntegerUiProperty("Ping Delay (MS):", true, int.MaxValue)]
+        public int PingDelayMS
+        {
+            get { return _pingDelayMS; }
+            set
+            {
+                if (value != _pingDelayMS)
+                {
+                    _pingDelayMS = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        [EntryIntegerUiProperty("Pings Per Report:", true, int.MaxValue)]
+        public int PingsPerProtocolReport
+        {
+            get { return _pingsPerProtocolReport; }
+            set
+            {
+                if (value != _pingsPerProtocolReport)
+                {
+                    _pingsPerProtocolReport = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         protected SensusServiceHelper(Geolocator geolocator)
         {
             GpsReceiver.Get().Initialize(geolocator);
 
             _stopped = true;
+            _pingDelayMS = 1000 * 60;
+            _pingsPerProtocolReport = 5;
+            _pingCount = 0;
 
             #region logger
 #if DEBUG
@@ -248,57 +282,59 @@ namespace SensusService
 
         public Task StartProtocolAsync(Protocol protocol)
         {
-            return Task.Run(() =>
+            return Task.Run(() => { StartProtocol(protocol); });
+        }
+
+        public void StartProtocol(Protocol protocol)
+        {
+            lock (this)
+                lock (protocol)
                 {
-                    lock (this)
-                        lock (protocol)
+                    if (_stopped || protocol.Running)
+                        return;
+
+                    protocol.SetRunning(true);
+
+                    RegisterProtocol(protocol);
+                    AddRunningProtocolId(protocol.Id);
+                    StartSensusPings(_pingDelayMS);
+
+                    _logger.Log("Initializing and starting probes for protocol " + protocol.Name + ".", LoggingLevel.Normal);
+                    int probesStarted = 0;
+                    foreach (Probe probe in protocol.Probes)
+                        if (probe.Enabled && probe.InitializeAndStart())
+                            probesStarted++;
+
+                    bool stopProtocol = false;
+
+                    if (probesStarted > 0)
+                    {
+                        try
                         {
-                            if (_stopped || protocol.Running)
-                                return;
+                            protocol.LocalDataStore.Start();
 
-                            protocol.SetRunning(true);
-
-                            RegisterProtocol(protocol);
-                            AddRunningProtocolId(protocol.Id);
-                            StartSensusPings();
-
-                            _logger.Log("Initializing and starting probes for protocol " + protocol.Name + ".", LoggingLevel.Normal);
-                            int probesStarted = 0;
-                            foreach (Probe probe in protocol.Probes)
-                                if (probe.Enabled && probe.InitializeAndStart())
-                                    probesStarted++;
-
-                            bool stopProtocol = false;
-
-                            if (probesStarted > 0)
+                            try { protocol.RemoteDataStore.Start(); }
+                            catch (Exception ex)
                             {
-                                try
-                                {
-                                    protocol.LocalDataStore.Start();
-
-                                    try { protocol.RemoteDataStore.Start(); }
-                                    catch (Exception ex)
-                                    {
-                                        _logger.Log("Remote data store failed to start:  " + ex.Message, LoggingLevel.Normal);
-                                        stopProtocol = true;
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    _logger.Log("Local data store failed to start:  " + ex.Message, LoggingLevel.Normal);
-                                    stopProtocol = true;
-                                }
-                            }
-                            else
-                            {
-                                _logger.Log("No probes were started.", LoggingLevel.Normal);
+                                _logger.Log("Remote data store failed to start:  " + ex.Message, LoggingLevel.Normal);
                                 stopProtocol = true;
                             }
-
-                            if (stopProtocol)
-                                StopProtocol(protocol, false);
                         }
-                });
+                        catch (Exception ex)
+                        {
+                            _logger.Log("Local data store failed to start:  " + ex.Message, LoggingLevel.Normal);
+                            stopProtocol = true;
+                        }
+                    }
+                    else
+                    {
+                        _logger.Log("No probes were started.", LoggingLevel.Normal);
+                        stopProtocol = true;
+                    }
+
+                    if (stopProtocol)
+                        StopProtocol(protocol, false);
+                }
         }
 
         public void RegisterProtocol(Protocol protocol)
@@ -317,7 +353,7 @@ namespace SensusService
             return Task.Run(() => { StopProtocol(protocol, unregister); });
         }
 
-        private void StopProtocol(Protocol protocol, bool unregister)
+        public void StopProtocol(Protocol protocol, bool unregister)
         {
             lock (this)
                 lock (protocol)
@@ -397,27 +433,101 @@ namespace SensusService
                 });
         }
 
-        protected abstract void StartSensusPings();
+        protected abstract void StartSensusPings(int ms);
 
         protected abstract void StopSensusPings();
 
         public void Ping()
         {
             lock (this)
+            {
                 if (_stopped)
                     return;
 
-            _logger.Log("Sensus service helper was pinged.", LoggingLevel.Normal, _logTag);
+                _logger.Log("Sensus service helper was pinged (count=" + ++_pingCount + ")", LoggingLevel.Normal, _logTag);
 
-            List<string> runningProtocolIds = ReadRunningProtocolIds();
-            foreach (Protocol protocol in _registeredProtocols)
-            {
-                if (!protocol.Running && runningProtocolIds.Contains(protocol.Id))
-                    StartProtocolAsync(protocol).Wait();
+                // make sure everything is running properly
+                List<string> runningProtocolIds = ReadRunningProtocolIds();
+                foreach (Protocol protocol in _registeredProtocols)
+                    lock (protocol)
+                    {
+                        string error = null;
+                        string warning = null;
+                        string misc = null;
 
-                // TODO:  Check datastores
+                        if (!protocol.Running && runningProtocolIds.Contains(protocol.Id))
+                        {
+                            error += "Restarting protocol \"" + protocol.Name + "\"...";
+                            try
+                            {
+                                StopProtocol(protocol, false);
+                                StartProtocol(protocol);
+                            }
+                            catch (Exception ex) { error += ex.Message + "..."; }
 
-                // TODO:  Check probes
+                            if (protocol.Running)
+                                error += "restarted protocol." + Environment.NewLine;
+                            else
+                                error += "failed to restart protocol." + Environment.NewLine;
+                        }
+
+                        if (protocol.Running)
+                        {
+                            if (protocol.LocalDataStore == null)
+                                error += "No local data store present on protocol." + Environment.NewLine;
+                            else if (protocol.LocalDataStore.Ping(ref error, ref warning, ref misc))
+                            {
+                                error += "Restarting local data store...";
+                                try
+                                {
+                                    protocol.LocalDataStore.Stop();
+                                    protocol.LocalDataStore.Start();
+                                }
+                                catch (Exception ex) { error += ex.Message + "..."; }
+
+                                if (!protocol.LocalDataStore.Running)
+                                    error += "failed to restart local data store." + Environment.NewLine;
+                            }
+
+                            if (protocol.RemoteDataStore == null)
+                                error += "No remote data store present on protocol." + Environment.NewLine;
+                            else if (protocol.RemoteDataStore.Ping(ref error, ref warning, ref misc))
+                            {
+                                error += "Restarting remote data store...";
+                                try
+                                {
+                                    protocol.RemoteDataStore.Stop();
+                                    protocol.RemoteDataStore.Start();
+                                }
+                                catch (Exception ex) { error += ex.Message + "..."; }
+
+                                if (!protocol.RemoteDataStore.Running)
+                                    error += "failed to restart remote data store." + Environment.NewLine;
+                            }
+
+                            foreach (Probe probe in protocol.Probes)
+                                if (probe.Ping(ref error, ref warning, ref misc))
+                                {
+                                    error += "Restarting probe \"" + probe.DisplayName + "\"...";
+                                    try
+                                    {
+                                        probe.Enabled = false;
+                                        probe.Enabled = true;
+                                    }
+                                    catch (Exception ex) { error += ex.Message + "..."; }
+
+                                    if (!probe.Running)
+                                        error += "failed to restart probe \"" + probe.DisplayName + "\".";
+                                }
+                        }
+
+                        // submit report about sensus status
+                        if (_pingCount % _pingsPerProtocolReport == 0)
+                        {
+                            _logger.Log("Submitting protocol report.", LoggingLevel.Normal, _logTag);
+                            protocol.LocalDataStore.AddNonProbeDatum(new ProtocolReport(DateTimeOffset.UtcNow, error, warning, misc));
+                        }
+                    }
             }
         }
 
