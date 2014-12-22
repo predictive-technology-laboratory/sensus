@@ -10,6 +10,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Xamarin;
 using Xamarin.Geolocation;
 
 namespace SensusService
@@ -43,8 +44,16 @@ namespace SensusService
                 if (_singleton == null)
                 {
                     string error = "Failed to get service helper.";
+
+                    // don't try to access/write the logger or raise a sensus-based exception, since these will call back into the current method
                     Console.Error.WriteLine(error);
-                    throw new Exception(error);
+
+                    Exception ex = new Exception(error);
+
+                    try { Insights.Report(ex, ReportSeverity.Error); }
+                    catch (Exception ex2) { Console.Error.WriteLine("Failed to report exception to Xamarin Insights:  " + ex2.Message); }
+
+                    throw ex;
                 }
 
             return _singleton;

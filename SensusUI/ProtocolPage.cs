@@ -1,5 +1,6 @@
 ﻿using SensusService;
 using SensusService.DataStores;
+using SensusService.Exceptions;
 using SensusUI.UiProperties;
 using System;
 using System.Collections.Generic;
@@ -22,7 +23,7 @@ namespace SensusUI
 
             public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
             {
-                throw new NotImplementedException();
+                throw new SensusException("Invalid call to " + GetType().FullName + ".ConvertBack.");
             }
         }
 
@@ -36,7 +37,7 @@ namespace SensusUI
 
             public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
             {
-                throw new NotImplementedException();
+                throw new SensusException("Invalid call to " + GetType().FullName + ".ConvertBack.");
             }
         }
 

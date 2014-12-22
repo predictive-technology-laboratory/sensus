@@ -148,16 +148,10 @@ namespace SensusService.DataStores
                             if (committedData != null)
                                 try
                                 {
+                                    // remove any non-probe data that were committed from the in-memory store
                                     lock (_nonProbeDataToCommit)
-                                    {
-                                        List<Datum> committedNonProbeData = new List<Datum>();
                                         foreach (Datum datum in committedData)
-                                            if (_nonProbeDataToCommit.Remove(datum))
-                                                committedNonProbeData.Add(datum);
-
-                                        foreach (Datum datum in committedNonProbeData)
-                                            committedData.Remove(datum);
-                                    }
+                                            _nonProbeDataToCommit.Remove(datum);
 
                                     ProcessCommittedData(committedData);
                                     MostRecentCommitTimestamp = DateTimeOffset.UtcNow;
