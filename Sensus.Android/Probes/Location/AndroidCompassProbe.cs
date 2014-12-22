@@ -12,7 +12,7 @@ namespace Sensus.Android.Probes.Location
         {
             _compassListener = new AndroidSensorListener(SensorType.Orientation, SensorDelay.Normal, null, e =>
                 {
-                    StoreDatum(new CompassDatum(Id, DateTime.UtcNow, e.Values[0]));
+                    StoreDatum(new CompassDatum(this, DateTime.UtcNow, e.Values[0]));
                 });
         }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SensusService.Probes;
+using System;
 
 namespace SensusService
 {
@@ -18,8 +19,8 @@ namespace SensusService
             set { _accuracy = value; }
         }
 
-        protected ImpreciseDatum(int probeId, DateTimeOffset timestamp, double accuracy)
-            : base(probeId, timestamp)
+        protected ImpreciseDatum(Probe probe, DateTimeOffset timestamp, double accuracy)
+            : base(probe, timestamp)
         {
             _accuracy = accuracy;
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Xamarin.Geolocation;
 
 namespace SensusService.Probes.Location
@@ -21,13 +22,13 @@ namespace SensusService.Probes.Location
         /// Polls for a Datum from this GpsProbe. This is thread-safe, and concurrent calls will block to take new readings.
         /// </summary>
         /// <returns></returns>
-        public override Datum Poll()
+        public override IEnumerable<Datum> Poll()
         {
             lock (this)
             {
                 SensusServiceHelper.Get().Logger.Log("Polling GPS receiver.", LoggingLevel.Verbose);
 
-                return ConvertReadingToDatum(GpsReceiver.Get().GetReading((Controller as PollingProbeController).SleepDurationMS, 10000));
+                return new Datum[] { ConvertReadingToDatum(GpsReceiver.Get().GetReading((Controller as PollingProbeController).SleepDurationMS, 10000)) };
             }
         }
 

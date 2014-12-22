@@ -1,4 +1,5 @@
 ﻿using SensusUI.UiProperties;
+using System.Collections.Generic;
 
 namespace SensusService.Probes
 {
@@ -39,6 +40,6 @@ namespace SensusService.Probes
             get { return new PollingProbeController(this); }  // listening is often more resource intensive than polling
         }
 
-        public abstract Datum Poll();
+        public abstract IEnumerable<Datum> Poll();
     }
 }

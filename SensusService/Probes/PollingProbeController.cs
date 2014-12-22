@@ -1,5 +1,6 @@
 ﻿using SensusUI.UiProperties;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -54,13 +55,14 @@ namespace SensusService.Probes
                         {
                             IPollingProbe pollingProbe = Probe as IPollingProbe;
 
-                            Datum d = null;
-
-                            try { d = pollingProbe.Poll(); }
+                            IEnumerable<Datum> data = null;
+                            try { data = pollingProbe.Poll(); }
                             catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to poll probe \"" + pollingProbe.DisplayName + "\":  " + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal); }
 
-                            try { pollingProbe.StoreDatum(d); }
-                            catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to store datum:  " + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal); }
+                            if (data != null)
+                                foreach (Datum datum in data)
+                                    try { pollingProbe.StoreDatum(datum); }
+                                    catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to store datum:  " + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal); }
                         }
                     }
                 });

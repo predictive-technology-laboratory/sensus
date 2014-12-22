@@ -34,7 +34,7 @@ namespace SensusService
         }
 
         public ProtocolReport(DateTimeOffset timestamp, string error, string warning, string misc)
-            : base(-1, timestamp)
+            : base(null, timestamp)
         {
             _error = error;
             _warning = warning;

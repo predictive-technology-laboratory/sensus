@@ -1,8 +1,10 @@
 ﻿
+using System.Collections.Generic;
+
 namespace SensusService.Probes
 {
     public interface IPollingProbe : IProbe
     {
-        Datum Poll();
+        IEnumerable<Datum> Poll();
     }
 }

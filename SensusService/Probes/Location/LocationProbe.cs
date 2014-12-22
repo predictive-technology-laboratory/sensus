@@ -7,11 +7,6 @@ namespace SensusService.Probes.Location
     /// </summary>
     public class LocationProbe : GpsProbe
     {
-        protected override int Id
-        {
-            get { return 3; }
-        }
-
         protected override string DefaultDisplayName
         {
             get { return "Location"; }
@@ -27,7 +22,7 @@ namespace SensusService.Probes.Location
             if (reading == null)
                 return null;
 
-            return new LocationDatum(Id, reading.Timestamp, reading.Accuracy, reading.Latitude, reading.Longitude);
+            return new LocationDatum(this, reading.Timestamp, reading.Accuracy, reading.Latitude, reading.Longitude);
         }
     }
 }

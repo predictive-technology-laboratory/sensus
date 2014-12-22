@@ -17,13 +17,6 @@ namespace SensusService.Probes
     public abstract class Probe : IProbe, INotifyPropertyChanged
     {
         #region static members
-        static Probe()
-        {
-            Probe[] probes = Assembly.GetExecutingAssembly().GetTypes().Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(Probe))).Select(t => Activator.CreateInstance(t) as Probe).ToArray();
-            if (probes.Length != probes.Select(p => p.Id).Distinct().Count())
-                throw new SensusException("All probes must have distinct IDs.");
-        }
-
         /// <summary>
         /// Gets a list of all probes, uninitialized and with default parameter values.
         /// </summary>
@@ -122,8 +115,6 @@ namespace SensusService.Probes
         {
             get { return _controller != null && _controller.Running; }  // can be null if this property is referenced by another when deserializing
         }
-
-        protected abstract int Id { get; }
 
         protected abstract string DefaultDisplayName { get; }
 

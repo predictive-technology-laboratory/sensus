@@ -124,6 +124,9 @@
     <Compile Include="AndroidSensusServiceBootStarter.cs" />
     <Compile Include="ExportRendererFix.cs" />
     <Compile Include="MainActivity.cs" />
+    <Compile Include="Probes\AndroidPhoneStateListener.cs" />
+    <Compile Include="Probes\Apps\AndroidRunningAppsProbe.cs" />
+    <Compile Include="Probes\Communication\AndroidCallProbe.cs" />
     <Compile Include="Probes\Location\AndroidAltitudeProbe.cs" />
     <Compile Include="Probes\Location\AndroidCompassProbe.cs" />
     <Compile Include="Probes\AndroidSensorListener.cs" />

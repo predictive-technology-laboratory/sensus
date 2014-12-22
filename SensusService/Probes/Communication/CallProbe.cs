@@ -2,9 +2,13 @@
 namespace SensusService.Probes.Communication
 {
     /// <summary>
-    /// Probes information about calls made and received.
+    /// Probes information about incoming and outgoing calls.
     /// </summary>
-    public class CallProbe
+    public abstract class CallProbe : ListeningProbe
     {
+        protected override string DefaultDisplayName
+        {
+            get { return "Calls"; }
+        }
     }
 }
