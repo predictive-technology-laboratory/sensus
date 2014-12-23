@@ -67,6 +67,8 @@ namespace SensusService.DataStores.Remote
         {
             _client = new MobileServiceClient(_url, _key);
 
+            _runningAppsTable = _client.GetTable<RunningAppsDatum>();
+            _telephonyTable = _client.GetTable<TelephonyDatum>();
             _altitudeTable = _client.GetTable<AltitudeDatum>();
             _compassTable = _client.GetTable<CompassDatum>();
             _locationTable = _client.GetTable<LocationDatum>();
