@@ -10,16 +10,22 @@ namespace SensusService.Probes
 
         public override void Start()
         {
-            base.Start();
+            lock (this)
+            {
+                base.Start();
 
-            (Probe as IListeningProbe).StartListening();
+                (Probe as IListeningProbe).StartListening();
+            }
         }
 
         public override void Stop()
         {
-            base.Stop();
+            lock (this)
+            {
+                base.Stop();
 
-            (Probe as IListeningProbe).StopListening();
+                (Probe as IListeningProbe).StopListening();
+            }
         }
     }
 }

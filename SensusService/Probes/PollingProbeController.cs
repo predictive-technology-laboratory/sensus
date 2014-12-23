@@ -38,42 +38,48 @@ namespace SensusService.Probes
 
         public override void Start()
         {
-            base.Start();
+            lock (this)
+            {
+                base.Start();
 
-            _pollTrigger = new AutoResetEvent(true);  // start polling immediately
+                _pollTrigger = new AutoResetEvent(true);  // start polling immediately
 
-            _pollTask = Task.Run(() =>
-                {
-                    while (Running)
+                _pollTask = Task.Run(() =>
                     {
-                        _pollTrigger.WaitOne(_sleepDurationMS);
-
-                        if (Running)
+                        while (Running)
                         {
-                            IPollingProbe pollingProbe = Probe as IPollingProbe;
+                            _pollTrigger.WaitOne(_sleepDurationMS);
 
-                            IEnumerable<Datum> data = null;
-                            try { data = pollingProbe.Poll(); }
-                            catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to poll probe \"" + pollingProbe.DisplayName + "\":  " + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal); }
+                            if (Running)
+                            {
+                                IPollingProbe pollingProbe = Probe as IPollingProbe;
 
-                            if (data != null)
-                                foreach (Datum datum in data)
-                                    try { pollingProbe.StoreDatum(datum); }
-                                    catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to store datum:  " + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal); }
+                                IEnumerable<Datum> data = null;
+                                try { data = pollingProbe.Poll(); }
+                                catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to poll probe \"" + pollingProbe.DisplayName + "\":  " + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal); }
+
+                                if (data != null)
+                                    foreach (Datum datum in data)
+                                        try { pollingProbe.StoreDatum(datum); }
+                                        catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to store datum:  " + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal); }
+                            }
                         }
-                    }
-                });
+                    });
+            }
         }
 
         public override void Stop()
         {
-            base.Stop();
-
-            if (_pollTask != null)  // might have called stop immediately after start, in which case the poll task will be null. if it's null at this point, it will soon be stopped because we have already set Running to false via base call, terminating the poll task while-loop upon startup.
+            lock (this)
             {
-                // don't wait for current sleep cycle to end -- wake up immediately so task can complete. if the task is not null, neither will the trigger be.
-                _pollTrigger.Set();
-                _pollTask.Wait();
+                base.Stop();
+
+                if (_pollTask != null)  // might have called stop immediately after start, in which case the poll task will be null. if it's null at this point, it will soon be stopped because we have already set Running to false via base call, terminating the poll task while-loop upon startup.
+                {
+                    // don't wait for current sleep cycle to end -- wake up immediately so task can complete. if the task is not null, neither will the trigger be.
+                    _pollTrigger.Set();
+                    _pollTask.Wait();
+                }
             }
         }
 

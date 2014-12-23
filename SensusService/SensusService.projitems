@@ -25,7 +25,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)LoggingLevel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\RunningAppsDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\TelephonyDatum.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\ListeningOrPollingProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\IPollingProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\IListeningProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\IProbe.cs" />
@@ -47,9 +46,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\AltitudeDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\CompassDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\GpsReceiver.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\ListeningLocationProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\LocationDatum.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\LocationProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\GpsProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\PollingLocationProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\WiFiLocationProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AccelerometerProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\SpeedProbe.cs" />

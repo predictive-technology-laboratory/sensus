@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using SensusService.Exceptions;
 using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace SensusService.Probes
 {
@@ -39,16 +40,32 @@ namespace SensusService.Probes
             _running = false;
         }
 
+        public void StartAsync()
+        {
+            Task.Run(() => { Start(); });
+        }
+
         public virtual void Start()
         {
-            SensusServiceHelper.Get().Logger.Log("Starting " + GetType().FullName + " for " + _probe.DisplayName, LoggingLevel.Normal);
-            Running = true;
+            lock (this)
+            {
+                SensusServiceHelper.Get().Logger.Log("Starting " + GetType().FullName + " for " + _probe.DisplayName, LoggingLevel.Normal);
+                Running = true;
+            }
+        }
+
+        public void StopAsync()
+        {
+            Task.Run(() => { Stop(); });
         }
 
         public virtual void Stop()
         {
-            SensusServiceHelper.Get().Logger.Log("Stopping " + GetType().FullName + " for " + _probe.DisplayName, LoggingLevel.Normal);
-            Running = false;
+            lock (this)
+            {
+                SensusServiceHelper.Get().Logger.Log("Stopping " + GetType().FullName + " for " + _probe.DisplayName, LoggingLevel.Normal);
+                Running = false;
+            }
         }
 
         public virtual bool Ping(ref string error, ref string warning, ref string misc)
