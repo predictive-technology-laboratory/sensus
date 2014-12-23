@@ -1,6 +1,8 @@
 ﻿using Microsoft.WindowsAzure.MobileServices;
 using Newtonsoft.Json;
 using SensusService.Exceptions;
+using SensusService.Probes.Apps;
+using SensusService.Probes.Communication;
 using SensusService.Probes.Location;
 using SensusUI.UiProperties;
 using System;
@@ -15,6 +17,8 @@ namespace SensusService.DataStores.Remote
         private string _url;
         private string _key;
 
+        private IMobileServiceTable<RunningAppsDatum> _runningAppsTable;
+        private IMobileServiceTable<TelephonyDatum> _telephonyTable;
         private IMobileServiceTable<AltitudeDatum> _altitudeTable;
         private IMobileServiceTable<CompassDatum> _compassTable;
         private IMobileServiceTable<LocationDatum> _locationTable;
@@ -82,7 +86,11 @@ namespace SensusService.DataStores.Remote
             {
                 try
                 {
-                    if (datum is AltitudeDatum)
+                    if (datum is RunningAppsDatum)
+                        _runningAppsTable.InsertAsync(datum as RunningAppsDatum).Wait();
+                    else if (datum is TelephonyDatum)
+                        _telephonyTable.InsertAsync(datum as TelephonyDatum).Wait();
+                    else if (datum is AltitudeDatum)
                         _altitudeTable.InsertAsync(datum as AltitudeDatum).Wait();
                     else if (datum is CompassDatum)
                         _compassTable.InsertAsync(datum as CompassDatum).Wait();

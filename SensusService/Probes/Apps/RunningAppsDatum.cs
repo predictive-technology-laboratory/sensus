@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace SensusService.Probes.Apps
 {
@@ -21,9 +20,10 @@ namespace SensusService.Probes.Apps
             set { _description = value; }
         }
 
+        [JsonIgnore]
         public override string DisplayDetail
         {
-            get { return "Name:  " + _name + "; Description:  " + _description; }
+            get { return "Name:  " + _name + " (" + _description + ")"; }
         }
 
         public RunningAppsDatum(Probe probe, DateTimeOffset timestamp, string name, string description)

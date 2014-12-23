@@ -6,34 +6,33 @@ using System;
 
 namespace Sensus.Android.Probes.Communication
 {
-    public class AndroidCallProbe : CallProbe
+    public class AndroidTelephonyProbe : TelephonyProbe
     {
         private TelephonyManager _telephonyManager;
         private AndroidPhoneStateListener _phoneStateListener;
 
-        public AndroidCallProbe()
+        public AndroidTelephonyProbe()
         {
             _telephonyManager = Application.Context.GetSystemService(Context.TelephonyService) as TelephonyManager;
 
             _phoneStateListener = new AndroidPhoneStateListener();
+
+            _phoneStateListener.CellLocationChanged += (o, e) =>
+                {
+                    StoreDatum(new TelephonyDatum(this, DateTimeOffset.UtcNow, "Cell location:  " + e, null));
+                };
+
             _phoneStateListener.CallStateChanged += (o, e) =>
                 {
-                    bool incoming = false;
-                    string number = null;
-
-                    if (e.CallState == CallState.Ringing)
-                    {
-                        incoming = true;
-                        number = e.IncomingNumber;
-                    }
-
-                    StoreDatum(new CallDatum(this, DateTimeOffset.UtcNow, incoming, number));
+                    StoreDatum(new TelephonyDatum(this, DateTimeOffset.UtcNow, e.CallState.ToString(), e.IncomingNumber));
                 };
         }
 
         public override void StartListening()
         {
-            _telephonyManager.Listen(_phoneStateListener, PhoneStateListenerFlags.CallState);
+            _telephonyManager.Listen(_phoneStateListener, PhoneStateListenerFlags.CallForwardingIndicator |
+                                                          PhoneStateListenerFlags.CallState |
+                                                          PhoneStateListenerFlags.CellLocation);
         }
 
         public override void StopListening()

@@ -2,13 +2,13 @@
 namespace SensusService.Probes.Communication
 {
     /// <summary>
-    /// Probes information about incoming and outgoing calls.
+    /// Probes information about telephony activities (e.g., calls).
     /// </summary>
-    public abstract class CallProbe : ListeningProbe
+    public abstract class TelephonyProbe : ListeningProbe
     {
         protected override string DefaultDisplayName
         {
-            get { return "Calls"; }
+            get { return "Telephony"; }
         }
     }
 }

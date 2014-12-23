@@ -8,18 +8,12 @@ namespace Sensus.Android.Probes
         public class StateChangedEventArgs : EventArgs
         {
             public CallState CallState { get; set; }
+
             public string IncomingNumber { get; set; }
         }
 
-        public event EventHandler<bool> CallForwardingIndicatorChanged;
         public event EventHandler<StateChangedEventArgs> CallStateChanged;
         public event EventHandler<CellLocation> CellLocationChanged;
-
-        public override void OnCallForwardingIndicatorChanged(bool indicatorValue)
-        {
-            if (CallForwardingIndicatorChanged != null)
-                CallForwardingIndicatorChanged(this, indicatorValue);
-        }
 
         public override void OnCallStateChanged(CallState state, string incomingNumber)
         {

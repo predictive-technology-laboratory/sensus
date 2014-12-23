@@ -1,4 +1,5 @@
-﻿using SensusService.Probes;
+﻿using Newtonsoft.Json;
+using SensusService.Probes;
 using System;
 
 namespace SensusService
@@ -42,6 +43,7 @@ namespace SensusService
             set { _timestamp = value; }
         }
 
+        [JsonIgnore]
         public abstract string DisplayDetail { get; }
 
         private Datum() { }  // for JSON.NET deserialization
