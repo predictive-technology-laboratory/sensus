@@ -141,9 +141,6 @@ namespace SensusService.DataStores.Local
             {
                 SensusServiceHelper.Get().Logger.Log("Local data store received " + dataCommittedToRemote.Count + " remote-committed elements to clear.", LoggingLevel.Verbose);
 
-                if (dataCommittedToRemote.Count == 0)
-                    return;
-
                 HashSet<Datum> hashDataCommittedToRemote = new HashSet<Datum>(dataCommittedToRemote);  // for quick access via hashing
 
                 foreach (string path in Directory.GetFiles(StorageDirectory))
