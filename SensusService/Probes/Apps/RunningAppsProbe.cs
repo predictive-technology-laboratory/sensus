@@ -28,6 +28,11 @@ namespace SensusService.Probes.Apps
             get { return "Running Applications"; }
         }
 
+        public sealed override int DefaultPollingSleepDurationMS
+        {
+            get { return 1000 * 60; }
+        }
+
         public RunningAppsProbe()
         {
             _maxAppsPerPoll = 10;

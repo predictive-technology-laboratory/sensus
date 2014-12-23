@@ -10,11 +10,6 @@ namespace Sensus.Android.Probes.Apps
     {
         private ActivityManager _activityManager;
 
-        public override int DefaultPollingSleepDurationMS
-        {
-            get { return 1000 * 60; }
-        }
-
         public AndroidRunningAppsProbe()
         {
             _activityManager = Application.Context.GetSystemService(Context.ActivityService) as ActivityManager;
@@ -24,8 +19,12 @@ namespace Sensus.Android.Probes.Apps
         {
             List<RunningAppsDatum> data = new List<RunningAppsDatum>();
 
-            foreach (ActivityManager.RunningTaskInfo task in _activityManager.GetRunningTasks(MaxAppsPerPoll))
-                data.Add(new RunningAppsDatum(this, DateTimeOffset.UtcNow, task.Class.CanonicalName, task.Description.ToString()));
+            foreach (ActivityManager.RunningTaskInfo task in _activityManager.GetRunningTasks(int.MaxValue))
+            {
+                string name = task.BaseActivity.PackageName;
+                string desc = task.Description == null ? "" : task.Description.ToString();
+                data.Add(new RunningAppsDatum(this, DateTimeOffset.UtcNow, name, desc));
+            }
 
             return data;
         }

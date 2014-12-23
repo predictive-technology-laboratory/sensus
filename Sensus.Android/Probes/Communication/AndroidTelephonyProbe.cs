@@ -17,22 +17,20 @@ namespace Sensus.Android.Probes.Communication
 
             _phoneStateListener = new AndroidPhoneStateListener();
 
-            _phoneStateListener.CellLocationChanged += (o, e) =>
-                {
-                    StoreDatum(new TelephonyDatum(this, DateTimeOffset.UtcNow, "Cell location:  " + e, null));
-                };
-
             _phoneStateListener.CallStateChanged += (o, e) =>
                 {
                     StoreDatum(new TelephonyDatum(this, DateTimeOffset.UtcNow, e.CallState.ToString(), e.IncomingNumber));
+                };
+
+            _phoneStateListener.CellLocationChanged += (o, e) =>
+                {
+                    StoreDatum(new TelephonyDatum(this, DateTimeOffset.UtcNow, "Cell Location:  " + e, null));
                 };
         }
 
         public override void StartListening()
         {
-            _telephonyManager.Listen(_phoneStateListener, PhoneStateListenerFlags.CallForwardingIndicator |
-                                                          PhoneStateListenerFlags.CallState |
-                                                          PhoneStateListenerFlags.CellLocation);
+            _telephonyManager.Listen(_phoneStateListener, PhoneStateListenerFlags.CallState | PhoneStateListenerFlags.CellLocation);
         }
 
         public override void StopListening()
