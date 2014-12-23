@@ -6,7 +6,7 @@ namespace SensusService.Probes.Communication
     /// </summary>
     public abstract class TelephonyProbe : ListeningProbe
     {
-        protected override string DefaultDisplayName
+        protected sealed override string DefaultDisplayName
         {
             get { return "Telephony"; }
         }

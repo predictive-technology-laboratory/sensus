@@ -40,6 +40,8 @@ namespace SensusService.Probes
             get { return new PollingProbeController(this); }  // listening is often more resource intensive than polling
         }
 
+        public abstract int DefaultPollingSleepDurationMS { get; }
+
         public abstract IEnumerable<Datum> Poll();
     }
 }

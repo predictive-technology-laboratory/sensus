@@ -35,7 +35,7 @@ namespace SensusService.Probes
 
         public abstract void StopListening();
 
-        public override void StoreDatum(Datum datum)
+        public sealed override void StoreDatum(Datum datum)
         {
             DateTimeOffset lastStoreTime = DateTimeOffset.MinValue;
             if (MostRecentlyStoredDatum != null)

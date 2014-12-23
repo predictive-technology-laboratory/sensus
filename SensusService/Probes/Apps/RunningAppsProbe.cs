@@ -1,28 +1,48 @@
 ﻿
 using SensusUI.UiProperties;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace SensusService.Probes.Apps
 {
     public abstract class RunningAppsProbe : PollingProbe
     {
-        private int _maximumNumber;
+        private int _maxAppsPerPoll;
 
-        [EntryIntegerUiProperty("Max Apps / Poll:", true, 1)]
-        public int MaximumNumber
+        [EntryIntegerUiProperty("Max Apps / Poll:", true, 3)]
+        public int MaxAppsPerPoll
         {
-            get { return _maximumNumber; }
+            get { return _maxAppsPerPoll; }
             set
             {
-                if (value != _maximumNumber)
+                if (value != _maxAppsPerPoll)
                 {
-                    _maximumNumber = value;
+                    _maxAppsPerPoll = value;
                     OnPropertyChanged();
                 }
             }
         }
 
-        protected override string DefaultDisplayName
+        protected sealed override string DefaultDisplayName
         {
             get { return "Running Applications"; }
+        }
+
+        public RunningAppsProbe()
+        {
+            _maxAppsPerPoll = 10;
+        }
+
+        protected abstract List<RunningAppsDatum> GetRunningAppsData();
+
+        public sealed override IEnumerable<Datum> Poll()
+        {
+            List<RunningAppsDatum> data = GetRunningAppsData();
+
+            if (data != null && data.Count > _maxAppsPerPoll)
+                data = data.GetRange(0, _maxAppsPerPoll);
+
+            return data;
         }
     }
 }

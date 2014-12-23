@@ -7,9 +7,14 @@ namespace SensusService.Probes.Location
     /// </summary>
     public class LocationProbe : GpsProbe
     {
-        protected override string DefaultDisplayName
+        protected sealed override string DefaultDisplayName
         {
             get { return "Location"; }
+        }
+
+        public override int DefaultPollingSleepDurationMS
+        {
+            get { return 1000 * 10; }
         }
 
         protected override bool Initialize()
@@ -17,7 +22,7 @@ namespace SensusService.Probes.Location
             return base.Initialize() && GpsReceiver.Get().Locator.IsGeolocationEnabled;
         }
 
-        protected override Datum ConvertReadingToDatum(Position reading)
+        protected sealed override Datum ConvertReadingToDatum(Position reading)
         {
             if (reading == null)
                 return null;

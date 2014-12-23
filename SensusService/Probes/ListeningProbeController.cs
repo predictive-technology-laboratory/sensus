@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-
+﻿
 namespace SensusService.Probes
 {
     public class ListeningProbeController : ProbeController

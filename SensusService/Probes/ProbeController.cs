@@ -1,18 +1,11 @@
 ﻿using Newtonsoft.Json;
 using SensusService.Exceptions;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 
 namespace SensusService.Probes
 {
-    public abstract class ProbeController : INotifyPropertyChanged
+    public abstract class ProbeController
     {
-        /// <summary>
-        /// Fired when a UI-relevant property is changed.
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
-
         private IProbe _probe;
         private bool _running;
 
@@ -35,7 +28,6 @@ namespace SensusService.Probes
 
                     _running = value;
 
-                    OnPropertyChanged();
                     _probe.OnPropertyChanged("Running");  // controllers hold the running state of probes, so notify watchers of the associated probe that this controller's running status has changed
                 }
             }
@@ -70,12 +62,6 @@ namespace SensusService.Probes
             }
 
             return restart;
-        }
-
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

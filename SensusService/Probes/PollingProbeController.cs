@@ -1,5 +1,4 @@
-﻿using SensusUI.UiProperties;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,7 +14,6 @@ namespace SensusService.Probes
         private Task _pollTask;
         private AutoResetEvent _pollTrigger;
 
-        [EntryIntegerUiProperty("Sleep Duration (MS):", true, 3)]
         public int SleepDurationMS
         {
             get { return _sleepDurationMS; }
@@ -24,7 +22,6 @@ namespace SensusService.Probes
                 if (value != _sleepDurationMS)
                 {
                     _sleepDurationMS = value;
-                    OnPropertyChanged();
 
                     // if the probe is running, trigger a new poll to start the new sleep duration
                     if (Running)
@@ -36,7 +33,7 @@ namespace SensusService.Probes
         public PollingProbeController(IPollingProbe probe)
             : base(probe)
         {
-            _sleepDurationMS = 1000;
+            _sleepDurationMS = probe.DefaultPollingSleepDurationMS;
         }
 
         public override void Start()

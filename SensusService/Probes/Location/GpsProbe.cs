@@ -22,7 +22,7 @@ namespace SensusService.Probes.Location
         /// Polls for a Datum from this GpsProbe. This is thread-safe, and concurrent calls will block to take new readings.
         /// </summary>
         /// <returns></returns>
-        public override IEnumerable<Datum> Poll()
+        public sealed override IEnumerable<Datum> Poll()
         {
             lock (this)
             {
@@ -32,12 +32,12 @@ namespace SensusService.Probes.Location
             }
         }
 
-        public override void StartListening()
+        public sealed override void StartListening()
         {
             GpsReceiver.Get().AddListener(_positionChangedHandler);
         }
 
-        public override void StopListening()
+        public sealed override void StopListening()
         {
             GpsReceiver.Get().RemoveListener(_positionChangedHandler);
         }
