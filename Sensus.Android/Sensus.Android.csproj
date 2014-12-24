@@ -124,7 +124,9 @@
     <Compile Include="ExportRendererFix.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Probes\AndroidPhoneStateListener.cs" />
+    <Compile Include="Probes\AndroidSmsBroadcastReceiver.cs" />
     <Compile Include="Probes\Apps\AndroidRunningAppsProbe.cs" />
+    <Compile Include="Probes\Communication\AndroidSmsProbe.cs" />
     <Compile Include="Probes\Communication\AndroidTelephonyProbe.cs" />
     <Compile Include="Probes\Location\AndroidAltitudeProbe.cs" />
     <Compile Include="Probes\Location\AndroidCompassProbe.cs" />
