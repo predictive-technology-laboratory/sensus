@@ -25,9 +25,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)LoggingLevel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\RunningAppsDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\TelephonyDatum.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\IPollingProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\IListeningProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\IProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\CompassProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\ListeningProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\ListeningProbeController.cs" />

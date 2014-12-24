@@ -30,7 +30,7 @@ namespace SensusService.Probes
             }
         }
 
-        public PollingProbeController(IPollingProbe probe)
+        public PollingProbeController(PollingProbe probe)
             : base(probe)
         {
             _sleepDurationMS = probe.DefaultPollingSleepDurationMS;
@@ -52,7 +52,7 @@ namespace SensusService.Probes
 
                             if (Running)
                             {
-                                IPollingProbe pollingProbe = Probe as IPollingProbe;
+                                PollingProbe pollingProbe = Probe as PollingProbe;
 
                                 IEnumerable<Datum> data = null;
                                 try { data = pollingProbe.Poll(); }

@@ -14,7 +14,7 @@ namespace SensusService.Probes
     /// <summary>
     /// An abstract probe.
     /// </summary>
-    public abstract class Probe : IProbe, INotifyPropertyChanged
+    public abstract class Probe : INotifyPropertyChanged
     {
         #region static members
         /// <summary>
@@ -64,7 +64,7 @@ namespace SensusService.Probes
                     _enabled = value;
                     OnPropertyChanged();
 
-                    if (_protocol != null && _protocol.Running)  // _protocol can be null when deserializing the probe
+                    if (_protocol != null && _protocol.Running)  // _protocol can be null when deserializing the probe -- if Enabled is set before Protocol
                         if (_enabled)
                             InitializeAndStartAsync();
                         else

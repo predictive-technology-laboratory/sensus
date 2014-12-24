@@ -3,7 +3,7 @@ namespace SensusService.Probes
 {
     public class ListeningProbeController : ProbeController
     {
-        public ListeningProbeController(IListeningProbe probe)
+        public ListeningProbeController(ListeningProbe probe)
             : base(probe)
         {
         }
@@ -14,7 +14,7 @@ namespace SensusService.Probes
             {
                 base.Start();
 
-                (Probe as IListeningProbe).StartListening();
+                (Probe as ListeningProbe).StartListening();
             }
         }
 
@@ -24,7 +24,7 @@ namespace SensusService.Probes
             {
                 base.Stop();
 
-                (Probe as IListeningProbe).StopListening();
+                (Probe as ListeningProbe).StopListening();
             }
         }
     }

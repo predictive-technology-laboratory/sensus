@@ -158,7 +158,7 @@ namespace SensusUI
                     string path = null;
                     try
                     {
-                        path = UiBoundSensusServiceHelper.Get().GetTempPath(".sensus");
+                        path = UiBoundSensusServiceHelper.Get().GetSharePath(".sensus");
                         protocol.Save(path);
                     }
                     catch (Exception ex)

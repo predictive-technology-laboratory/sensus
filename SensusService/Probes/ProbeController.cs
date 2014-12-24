@@ -7,10 +7,10 @@ namespace SensusService.Probes
 {
     public abstract class ProbeController
     {
-        private IProbe _probe;
+        private Probe _probe;
         private bool _running;
 
-        public IProbe Probe
+        public Probe Probe
         {
             get { return _probe; }
             set { _probe = value; }
@@ -34,7 +34,7 @@ namespace SensusService.Probes
             }
         }
 
-        protected ProbeController(IProbe probe)
+        protected ProbeController(Probe probe)
         {
             _probe = probe;
             _running = false;

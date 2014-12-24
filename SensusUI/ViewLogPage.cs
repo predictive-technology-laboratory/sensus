@@ -32,7 +32,7 @@ namespace SensusUI
                     string path = null;
                     try
                     {
-                        path = UiBoundSensusServiceHelper.Get().GetTempPath(".txt");
+                        path = UiBoundSensusServiceHelper.Get().GetSharePath(".txt");
                         File.WriteAllLines(path, UiBoundSensusServiceHelper.Get().Logger.Read(int.MaxValue).ToArray());
                     }
                     catch (Exception ex)

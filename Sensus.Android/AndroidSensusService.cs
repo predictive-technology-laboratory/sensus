@@ -11,7 +11,7 @@ namespace Sensus.Android
     {
         private NotificationManager _notificationManager;
         private Notification.Builder _notificationBuilder;
-        private SensusServiceHelper _sensusServiceHelper;
+        private AndroidSensusServiceHelper _sensusServiceHelper;
         private const int ServiceNotificationId = 0;
         private const int NotificationPendingIntentId = 1;
 

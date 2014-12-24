@@ -83,6 +83,7 @@ namespace SensusService
             TypeNameHandling = TypeNameHandling.All,
             ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
         };
+        private readonly string _shareDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "share");
 
         private bool _stopped;
         private Logger _logger;
@@ -138,6 +139,11 @@ namespace SensusService
             }
         }
 
+        public string ShareDirectory
+        {
+            get { return _shareDirectory; }
+        }
+
         protected SensusServiceHelper(Geolocator geolocator)
         {
             GpsReceiver.Get().Initialize(geolocator);
@@ -146,6 +152,9 @@ namespace SensusService
             _pingDelayMS = 1000 * 60;
             _pingsPerProtocolReport = 5;
             _pingCount = 0;
+
+            if (!Directory.Exists(_shareDirectory))
+                Directory.CreateDirectory(_shareDirectory);
 
             #region logger
 #if DEBUG
@@ -559,24 +568,16 @@ namespace SensusService
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public abstract void ShareFile(string path, string emailSubject);
+        public abstract void ShareFile(string path, string subject);
 
-        public string GetTempPath(string extension)
+        public string GetSharePath(string extension)
         {
             lock (this)
             {
+                int fileNum = 0;
                 string path = null;
-                while (path == null)
-                {
-                    string tempPath = Path.GetTempFileName();
-                    File.Delete(tempPath);
-
-                    if (!string.IsNullOrWhiteSpace(extension))
-                        tempPath = Path.Combine(Path.GetDirectoryName(tempPath), Path.GetFileNameWithoutExtension(tempPath) + "." + extension.Trim('.'));
-
-                    if (!File.Exists(tempPath))
-                        path = tempPath;
-                }
+                while (path == null || File.Exists(path))
+                    path = Path.Combine(_shareDirectory, fileNum++ + (string.IsNullOrWhiteSpace(extension) ? "" : "." + extension.Trim('.')));
 
                 return path;
             }

@@ -3,7 +3,7 @@ using System;
 
 namespace SensusService.Probes
 {
-    public abstract class ListeningProbe : Probe, IListeningProbe
+    public abstract class ListeningProbe : Probe
     {
         private int _maxDataStoresPerSecond;
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SensusService.Probes
 {
-    public abstract class PollingProbe : Probe, IPollingProbe
+    public abstract class PollingProbe : Probe
     {
         protected sealed override ProbeController DefaultController
         {
