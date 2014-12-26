@@ -20,7 +20,7 @@ namespace Sensus.Android.Probes
                 MessageReceived = null;
         }
 
-        public override void OnReceive(Context context, Intent intent)
+        public override void OnReceive(global::Android.Content.Context context, Intent intent)
         {
             lock (_staticLockObject)
                 if (intent != null && intent.Action == "android.provider.Telephony.SMS_RECEIVED" && MessageReceived != null)

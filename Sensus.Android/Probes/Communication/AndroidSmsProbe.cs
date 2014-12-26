@@ -14,7 +14,7 @@ namespace Sensus.Android.Probes.Communication
 
         public AndroidSmsProbe()
         {
-            _telephonyManager = Application.Context.GetSystemService(Context.TelephonyService) as TelephonyManager;
+            _telephonyManager = Application.Context.GetSystemService(global::Android.Content.Context.TelephonyService) as TelephonyManager;
             _smsSendObserver = new AndroidSmsSendObserver(Application.Context);
         }
 

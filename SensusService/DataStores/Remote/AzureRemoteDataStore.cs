@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using SensusService.Exceptions;
 using SensusService.Probes.Apps;
 using SensusService.Probes.Communication;
+using SensusService.Probes.Context;
 using SensusService.Probes.Location;
 using SensusService.Probes.Network;
 using SensusUI.UiProperties;
@@ -24,7 +25,8 @@ namespace SensusService.DataStores.Remote
         private IMobileServiceTable<CompassDatum> _compassTable;
         private IMobileServiceTable<LocationDatum> _locationTable;
         private IMobileServiceTable<SmsDatum> _smsTable;
-        private IMobileServiceTable<CellTowerDatum> _cellTowerDatum;
+        private IMobileServiceTable<CellTowerDatum> _cellTowerTable;
+        private IMobileServiceTable<BluetoothDeviceProximityDatum> _bluetoothTable;
         private IMobileServiceTable<ProtocolReport> _protocolReportTable;
 
         [EntryStringUiProperty("URL:", true, 2)]
@@ -76,7 +78,8 @@ namespace SensusService.DataStores.Remote
             _compassTable = _client.GetTable<CompassDatum>();
             _locationTable = _client.GetTable<LocationDatum>();
             _smsTable = _client.GetTable<SmsDatum>();
-            _cellTowerDatum = _client.GetTable<CellTowerDatum>();
+            _cellTowerTable = _client.GetTable<CellTowerDatum>();
+            _bluetoothTable = _client.GetTable<BluetoothDeviceProximityDatum>();
 
             _protocolReportTable = _client.GetTable<ProtocolReport>();
 
@@ -103,6 +106,12 @@ namespace SensusService.DataStores.Remote
                         _compassTable.InsertAsync(datum as CompassDatum).Wait();
                     else if (datum is LocationDatum)
                         _locationTable.InsertAsync(datum as LocationDatum).Wait();
+                    else if (datum is CellTowerDatum)
+                        _cellTowerTable.InsertAsync(datum as CellTowerDatum).Wait();
+                    else if (datum is SmsDatum)
+                        _smsTable.InsertAsync(datum as SmsDatum).Wait();
+                    else if (datum is BluetoothDeviceProximityDatum)
+                        _bluetoothTable.InsertAsync(datum as BluetoothDeviceProximityDatum).Wait();
                     else if (datum is ProtocolReport)
                         _protocolReportTable.InsertAsync(datum as ProtocolReport).Wait();
                     else

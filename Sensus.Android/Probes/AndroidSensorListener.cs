@@ -23,7 +23,7 @@ namespace Sensus.Android.Probes
             _sensorDelay = sensorDelay;
             _sensorAccuracyChangedCallback = sensorAccuracyChangedCallback;
             _sensorValueChangedCallback = sensorValueChangedCallback;
-            _sensorManager = Application.Context.GetSystemService(Context.SensorService) as SensorManager;
+            _sensorManager = Application.Context.GetSystemService(global::Android.Content.Context.SensorService) as SensorManager;
             _listening = false;
         }
 

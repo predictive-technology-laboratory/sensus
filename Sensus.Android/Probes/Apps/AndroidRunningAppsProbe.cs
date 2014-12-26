@@ -12,7 +12,7 @@ namespace Sensus.Android.Probes.Apps
 
         public AndroidRunningAppsProbe()
         {
-            _activityManager = Application.Context.GetSystemService(Context.ActivityService) as ActivityManager;
+            _activityManager = Application.Context.GetSystemService(global::Android.Content.Context.ActivityService) as ActivityManager;
         }
 
         protected override List<RunningAppsDatum> GetRunningAppsData()

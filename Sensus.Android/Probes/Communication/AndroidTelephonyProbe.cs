@@ -13,7 +13,7 @@ namespace Sensus.Android.Probes.Communication
 
         public AndroidTelephonyProbe()
         {
-            _telephonyManager = Application.Context.GetSystemService(Context.TelephonyService) as TelephonyManager;
+            _telephonyManager = Application.Context.GetSystemService(global::Android.Content.Context.TelephonyService) as TelephonyManager;
             _phoneStateListener = new AndroidPhoneStateListener();
 
             _phoneStateListener.CallStateChanged += (o, e) =>

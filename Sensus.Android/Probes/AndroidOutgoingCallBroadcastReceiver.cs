@@ -17,7 +17,7 @@ namespace Sensus.Android.Probes
                 CallMade = null;
         }
 
-        public override void OnReceive(Context context, Intent intent)
+        public override void OnReceive(global::Android.Content.Context context, Intent intent)
         {
             lock (this)
                 if (intent != null && intent.Action == Intent.ActionNewOutgoingCall && CallMade != null)

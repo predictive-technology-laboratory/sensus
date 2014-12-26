@@ -12,14 +12,14 @@ namespace Sensus.Android.Probes
     {
         public event EventHandler<SmsDatum> MessageSent;
 
-        private Context _context;
+        private global::Android.Content.Context _context;
         private TelephonyManager _telephonyManager;
 
-        public AndroidSmsSendObserver(Context context)
+        public AndroidSmsSendObserver(global::Android.Content.Context context)
             : base(null)
         {
             _context = context;
-            _telephonyManager = _context.GetSystemService(Context.TelephonyService) as TelephonyManager;
+            _telephonyManager = _context.GetSystemService(global::Android.Content.Context.TelephonyService) as TelephonyManager;
         }
 
         public override void OnChange(bool selfChange)

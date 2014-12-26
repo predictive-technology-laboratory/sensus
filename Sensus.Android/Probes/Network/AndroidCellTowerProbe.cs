@@ -14,7 +14,7 @@ namespace Sensus.Android.Probes.Network
 
         public AndroidCellTowerProbe()
         {
-            _telephonyManager = Application.Context.GetSystemService(Context.TelephonyService) as TelephonyManager;
+            _telephonyManager = Application.Context.GetSystemService(global::Android.Content.Context.TelephonyService) as TelephonyManager;
             _phoneStateListener = new AndroidPhoneStateListener();
 
             _phoneStateListener.CellLocationChanged += (o, e) =>
