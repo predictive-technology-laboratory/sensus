@@ -14,27 +14,28 @@ namespace Sensus.Android.Probes.Communication
         public AndroidTelephonyProbe()
         {
             _telephonyManager = Application.Context.GetSystemService(Context.TelephonyService) as TelephonyManager;
-
             _phoneStateListener = new AndroidPhoneStateListener();
 
             _phoneStateListener.CallStateChanged += (o, e) =>
                 {
-                    StoreDatum(new TelephonyDatum(this, DateTimeOffset.UtcNow, e.CallState.ToString(), e.IncomingNumber));
-                };
-
-            _phoneStateListener.CellLocationChanged += (o, e) =>
-                {
-                    StoreDatum(new TelephonyDatum(this, DateTimeOffset.UtcNow, "Cell Location:  " + e, null));
+                    if (e.CallState == CallState.Ringing)
+                        StoreDatum(new TelephonyDatum(this, DateTimeOffset.UtcNow, e.CallState.ToString(), e.IncomingNumber));
                 };
         }
 
         public override void StartListening()
         {
-            _telephonyManager.Listen(_phoneStateListener, PhoneStateListenerFlags.CallState | PhoneStateListenerFlags.CellLocation);
+            AndroidOutgoingCallBroadcastReceiver.CallMade += (o, phoneNumber) =>
+                {
+                    StoreDatum(new TelephonyDatum(this, DateTimeOffset.UtcNow, CallState.Offhook.ToString(), phoneNumber));
+                };
+
+            _telephonyManager.Listen(_phoneStateListener, PhoneStateListenerFlags.CallState);
         }
 
         public override void StopListening()
         {
+            AndroidOutgoingCallBroadcastReceiver.Stop();
             _telephonyManager.Listen(_phoneStateListener, PhoneStateListenerFlags.None);
         }
     }

@@ -21,7 +21,7 @@ namespace SensusService.Probes
             }
         }
 
-        protected override ProbeController DefaultController
+        protected sealed override ProbeController DefaultController
         {
             get { return new ListeningProbeController(this); }
         }

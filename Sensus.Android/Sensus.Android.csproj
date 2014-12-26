@@ -123,6 +123,7 @@
     <Compile Include="AndroidSensusServiceBootStarter.cs" />
     <Compile Include="ExportRendererFix.cs" />
     <Compile Include="MainActivity.cs" />
+    <Compile Include="Probes\AndroidOutgoingCallBroadcastReceiver.cs" />
     <Compile Include="Probes\AndroidPhoneStateListener.cs" />
     <Compile Include="Probes\AndroidSmsBroadcastReceiver.cs" />
     <Compile Include="Probes\AndroidSmsSendObserver.cs" />
@@ -130,6 +131,7 @@
     <Compile Include="Probes\Communication\AndroidSmsProbe.cs" />
     <Compile Include="Probes\Communication\AndroidTelephonyProbe.cs" />
     <Compile Include="Probes\Location\AndroidAltitudeProbe.cs" />
+    <Compile Include="Probes\Network\AndroidCellTowerProbe.cs" />
     <Compile Include="Probes\Location\AndroidCompassProbe.cs" />
     <Compile Include="Probes\AndroidSensorListener.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />

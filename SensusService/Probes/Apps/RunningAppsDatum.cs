@@ -32,5 +32,12 @@ namespace SensusService.Probes.Apps
             _name = name;
             _description = description;
         }
+
+        public override string ToString()
+        {
+            return base.ToString() + Environment.NewLine +
+                   "Name:  " + _name + Environment.NewLine +
+                   "Description:  " + _description;
+        }
     }
 }

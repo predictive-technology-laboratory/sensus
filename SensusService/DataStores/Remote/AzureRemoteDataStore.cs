@@ -4,6 +4,7 @@ using SensusService.Exceptions;
 using SensusService.Probes.Apps;
 using SensusService.Probes.Communication;
 using SensusService.Probes.Location;
+using SensusService.Probes.Network;
 using SensusUI.UiProperties;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,8 @@ namespace SensusService.DataStores.Remote
         private IMobileServiceTable<AltitudeDatum> _altitudeTable;
         private IMobileServiceTable<CompassDatum> _compassTable;
         private IMobileServiceTable<LocationDatum> _locationTable;
+        private IMobileServiceTable<SmsDatum> _smsTable;
+        private IMobileServiceTable<CellTowerDatum> _cellTowerDatum;
         private IMobileServiceTable<ProtocolReport> _protocolReportTable;
 
         [EntryStringUiProperty("URL:", true, 2)]
@@ -72,6 +75,8 @@ namespace SensusService.DataStores.Remote
             _altitudeTable = _client.GetTable<AltitudeDatum>();
             _compassTable = _client.GetTable<CompassDatum>();
             _locationTable = _client.GetTable<LocationDatum>();
+            _smsTable = _client.GetTable<SmsDatum>();
+            _cellTowerDatum = _client.GetTable<CellTowerDatum>();
 
             _protocolReportTable = _client.GetTable<ProtocolReport>();
 

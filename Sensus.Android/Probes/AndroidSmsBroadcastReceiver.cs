@@ -23,7 +23,6 @@ namespace Sensus.Android.Probes
         public override void OnReceive(Context context, Intent intent)
         {
             lock (_staticLockObject)
-            {
                 if (intent != null && intent.Action == "android.provider.Telephony.SMS_RECEIVED" && MessageReceived != null)
                 {
                     Bundle bundle = intent.Extras;
@@ -42,7 +41,6 @@ namespace Sensus.Android.Probes
                         catch (Exception) { }
                     }
                 }
-            }
         }
     }
 }

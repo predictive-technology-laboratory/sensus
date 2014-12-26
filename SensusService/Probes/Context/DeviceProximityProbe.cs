@@ -1,7 +1,7 @@
 ﻿
 namespace SensusService.Probes.Context
 {
-    class HumanProximityProbe
+    public class DeviceProximityProbe
     {
     }
 }

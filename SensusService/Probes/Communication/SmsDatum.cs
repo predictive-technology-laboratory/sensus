@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Text.RegularExpressions;
 
 namespace SensusService.Probes.Communication
@@ -27,6 +28,7 @@ namespace SensusService.Probes.Communication
             set { _message = value; }
         }
 
+        [JsonIgnore]
         public override string DisplayDetail
         {
             get { return _message; }
@@ -38,6 +40,14 @@ namespace SensusService.Probes.Communication
             FromNumber = fromNumber;
             ToNumber = toNumber;
             _message = message;
+        }
+
+        public override string ToString()
+        {
+            return base.ToString() + Environment.NewLine +
+                   "From:  " + _fromNumber + Environment.NewLine +
+                   "To:  " + _toNumber + Environment.NewLine +
+                   "Message:  " + _message;
         }
     }
 }

@@ -32,9 +32,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\RunningAppsProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\TelephonyProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\SmsProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\TwitterProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\ActivityProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\HumanProximityProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\DeviceProximityProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\LightProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\SoundProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Device\BatteryProbe.cs" />
@@ -49,7 +47,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\WiFiLocationProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AccelerometerProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\SpeedProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\BluetoothProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\CellTowerDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\CellTowerProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\WlanProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\PollingProbe.cs" />
