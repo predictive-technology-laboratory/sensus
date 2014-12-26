@@ -1,5 +1,4 @@
 using Android.App;
-using Android.Content;
 using Android.Hardware;
 using SensusService.Exceptions;
 using System;

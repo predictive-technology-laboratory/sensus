@@ -73,13 +73,13 @@ namespace SensusService.DataStores.Remote
             _client = new MobileServiceClient(_url, _key);
 
             _runningAppsTable = _client.GetTable<RunningAppsDatum>();
+            _smsTable = _client.GetTable<SmsDatum>();
             _telephonyTable = _client.GetTable<TelephonyDatum>();
+            _bluetoothTable = _client.GetTable<BluetoothDeviceProximityDatum>();
             _altitudeTable = _client.GetTable<AltitudeDatum>();
             _compassTable = _client.GetTable<CompassDatum>();
             _locationTable = _client.GetTable<LocationDatum>();
-            _smsTable = _client.GetTable<SmsDatum>();
             _cellTowerTable = _client.GetTable<CellTowerDatum>();
-            _bluetoothTable = _client.GetTable<BluetoothDeviceProximityDatum>();
 
             _protocolReportTable = _client.GetTable<ProtocolReport>();
 
@@ -98,8 +98,12 @@ namespace SensusService.DataStores.Remote
                 {
                     if (datum is RunningAppsDatum)
                         _runningAppsTable.InsertAsync(datum as RunningAppsDatum).Wait();
+                    else if (datum is SmsDatum)
+                        _smsTable.InsertAsync(datum as SmsDatum).Wait();
                     else if (datum is TelephonyDatum)
                         _telephonyTable.InsertAsync(datum as TelephonyDatum).Wait();
+                    else if (datum is BluetoothDeviceProximityDatum)
+                        _bluetoothTable.InsertAsync(datum as BluetoothDeviceProximityDatum).Wait();
                     else if (datum is AltitudeDatum)
                         _altitudeTable.InsertAsync(datum as AltitudeDatum).Wait();
                     else if (datum is CompassDatum)
@@ -108,10 +112,6 @@ namespace SensusService.DataStores.Remote
                         _locationTable.InsertAsync(datum as LocationDatum).Wait();
                     else if (datum is CellTowerDatum)
                         _cellTowerTable.InsertAsync(datum as CellTowerDatum).Wait();
-                    else if (datum is SmsDatum)
-                        _smsTable.InsertAsync(datum as SmsDatum).Wait();
-                    else if (datum is BluetoothDeviceProximityDatum)
-                        _bluetoothTable.InsertAsync(datum as BluetoothDeviceProximityDatum).Wait();
                     else if (datum is ProtocolReport)
                         _protocolReportTable.InsertAsync(datum as ProtocolReport).Wait();
                     else

@@ -25,7 +25,10 @@ namespace SensusService.Probes
                 lock (this)
                 {
                     if (value == _running)
-                        throw new ProbeControllerException(this, "Attempted to " + (value ? "start" : "stop") + " controller, but it was already " + (value ? "started" : "stopped"));
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Attempted to " + (value ? "start" : "stop") + " controller, but it was already " + (value ? "started" : "stopped"), LoggingLevel.Normal);
+                        return;
+                    }
 
                     _running = value;
 

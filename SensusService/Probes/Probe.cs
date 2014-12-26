@@ -148,7 +148,12 @@ namespace SensusService.Probes
                     if (Initialize())
                         _controller.Start();
                 }
-                catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to start probe \"" + _displayName + "\":" + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal); }
+                catch (Exception ex)
+                {
+
+                    SensusServiceHelper.Get().Logger.Log("Failed to start probe \"" + _displayName + "\":" + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal);
+                    Enabled = false;
+                }
 
                 return _controller.Running;
             }
