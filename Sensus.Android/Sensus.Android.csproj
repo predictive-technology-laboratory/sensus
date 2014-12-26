@@ -125,6 +125,7 @@
     <Compile Include="MainActivity.cs" />
     <Compile Include="Probes\AndroidPhoneStateListener.cs" />
     <Compile Include="Probes\AndroidSmsBroadcastReceiver.cs" />
+    <Compile Include="Probes\AndroidSmsSendObserver.cs" />
     <Compile Include="Probes\Apps\AndroidRunningAppsProbe.cs" />
     <Compile Include="Probes\Communication\AndroidSmsProbe.cs" />
     <Compile Include="Probes\Communication\AndroidTelephonyProbe.cs" />

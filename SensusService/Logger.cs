@@ -43,7 +43,7 @@ namespace SensusService
         {
             lock (this)
             {
-                if (level >= _level)
+                if (level > _level)
                     return;
 
                 message = new Regex(@"\s\s+").Replace(message.Replace('\r', ' ').Replace('\n', ' ').Trim(), " ");

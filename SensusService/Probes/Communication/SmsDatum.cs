@@ -1,23 +1,24 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 
 namespace SensusService.Probes.Communication
 {
     public class SmsDatum : Datum
     {
-        private string _from;
-        private string _to;
+        private string _fromNumber;
+        private string _toNumber;
         private string _message;
 
-        public string From
+        public string FromNumber
         {
-            get { return _from; }
-            set { _from = value; }
+            get { return _fromNumber; }
+            set { _fromNumber = value == null ? "" : new Regex(@"[^0-9]").Replace(value, ""); }
         }
 
-        public string To
+        public string ToNumber
         {
-            get { return _to; }
-            set { _to = value; }
+            get { return _toNumber; }
+            set { _toNumber = value == null ? "" : new Regex(@"[^0-9]").Replace(value, ""); }
         }
 
         public string Message
@@ -31,11 +32,11 @@ namespace SensusService.Probes.Communication
             get { return _message; }
         }
 
-        public SmsDatum(Probe probe, DateTimeOffset timestamp, string from, string to, string message)
+        public SmsDatum(Probe probe, DateTimeOffset timestamp, string fromNumber, string toNumber, string message)
             : base(probe, timestamp)
         {
-            _from = from;
-            _to = to;
+            FromNumber = fromNumber;
+            ToNumber = toNumber;
             _message = message;
         }
     }

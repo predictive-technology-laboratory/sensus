@@ -2,46 +2,47 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Telephony;
+using SensusService.Probes.Communication;
 using System;
-using System.Collections.Generic;
 
 namespace Sensus.Android.Probes
 {
     [BroadcastReceiver]
-    [IntentFilter(new string[] { "android.provider.Telephony.SMS_SENT", "android.provider.Telephony.SMS_RECEIVED" }, Categories = new string[] { Intent.CategoryDefault })]
+    [IntentFilter(new string[] { "android.provider.Telephony.SMS_RECEIVED" }, Categories = new string[] { Intent.CategoryDefault })]
     public class AndroidSmsBroadcastReceiver : BroadcastReceiver
     {
-        public static event EventHandler<SmsMessage> MessageSent;
-        public static event EventHandler<SmsMessage> MessageReceived;
+        public static event EventHandler<SmsDatum> MessageReceived;
+        public static object _staticLockObject = new object();
 
         public static void Stop()
         {
-            MessageSent = null;
-            MessageReceived = null;
+            lock (_staticLockObject)
+                MessageReceived = null;
         }
 
         public override void OnReceive(Context context, Intent intent)
         {
-            List<SmsMessage> messages = new List<SmsMessage>();
-
-            Bundle bundle = intent.Extras;
-            if (bundle != null)
+            lock (_staticLockObject)
             {
-                try
+                if (intent != null && intent.Action == "android.provider.Telephony.SMS_RECEIVED" && MessageReceived != null)
                 {
-                    Java.Lang.Object[] pdus = (Java.Lang.Object[])bundle.Get("pdus");
-                    for (int i = 0; i < pdus.Length; i++)
-                        messages.Add(SmsMessage.CreateFromPdu((byte[])pdus[i]));
+                    Bundle bundle = intent.Extras;
+                    if (bundle != null)
+                    {
+                        try
+                        {
+                            Java.Lang.Object[] pdus = (Java.Lang.Object[])bundle.Get("pdus");
+                            for (int i = 0; i < pdus.Length; i++)
+                            {
+                                SmsMessage message = SmsMessage.CreateFromPdu((byte[])pdus[i]);
+                                DateTimeOffset timestamp = new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(message.TimestampMillis);
+                                MessageReceived(this, new SmsDatum(null, timestamp, message.OriginatingAddress, null, message.MessageBody));
+                            }
+                        }
+                        catch (Exception) { }
+                    }
                 }
-                catch (Exception) { }
             }
-
-            if (intent.Action == "android.provider.Telephony.SMS_SENT" && MessageSent != null)
-                foreach (SmsMessage message in messages)
-                    MessageSent(this, message);
-            else if (intent.Action == "android.provider.Telephony.SMS_RECEIVED" && MessageReceived != null)
-                foreach (SmsMessage message in messages)
-                    MessageReceived(this, message);
         }
     }
 }
