@@ -6,6 +6,7 @@ using SensusService.Probes.Communication;
 using SensusService.Probes.Context;
 using SensusService.Probes.Device;
 using SensusService.Probes.Location;
+using SensusService.Probes.Movement;
 using SensusService.Probes.Network;
 using SensusUI.UiProperties;
 using System;
@@ -30,6 +31,7 @@ namespace SensusService.DataStores.Remote
         private IMobileServiceTable<AltitudeDatum> _altitudeTable;
         private IMobileServiceTable<CompassDatum> _compassTable;
         private IMobileServiceTable<LocationDatum> _locationTable;
+        private IMobileServiceTable<AccelerometerDatum> _accelerometerTable;
         private IMobileServiceTable<CellTowerDatum> _cellTowerTable;
 
         private IMobileServiceTable<ProtocolReport> _protocolReportTable;
@@ -88,6 +90,7 @@ namespace SensusService.DataStores.Remote
             _altitudeTable = _client.GetTable<AltitudeDatum>();
             _compassTable = _client.GetTable<CompassDatum>();
             _locationTable = _client.GetTable<LocationDatum>();
+            _accelerometerTable = _client.GetTable<AccelerometerDatum>();
             _cellTowerTable = _client.GetTable<CellTowerDatum>();
 
             _protocolReportTable = _client.GetTable<ProtocolReport>();
@@ -127,6 +130,8 @@ namespace SensusService.DataStores.Remote
                         _compassTable.InsertAsync(datum as CompassDatum).Wait();
                     else if (datum is LocationDatum)
                         _locationTable.InsertAsync(datum as LocationDatum).Wait();
+                    else if (datum is AccelerometerDatum)
+                        _accelerometerTable.InsertAsync(datum as AccelerometerDatum).Wait();
                     else if (datum is CellTowerDatum)
                         _cellTowerTable.InsertAsync(datum as CellTowerDatum).Wait();
                     else if (datum is ProtocolReport)

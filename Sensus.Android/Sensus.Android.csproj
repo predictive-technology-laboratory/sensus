@@ -137,6 +137,7 @@
     <Compile Include="Probes\Device\AndroidBatteryProbe.cs" />
     <Compile Include="Probes\Device\AndroidScreenProbe.cs" />
     <Compile Include="Probes\Location\AndroidAltitudeProbe.cs" />
+    <Compile Include="Probes\Movement\AndroidAccelerometerProbe.cs" />
     <Compile Include="Probes\Network\AndroidCellTowerChangeListener.cs" />
     <Compile Include="Probes\Network\AndroidCellTowerProbe.cs" />
     <Compile Include="Probes\Location\AndroidCompassProbe.cs" />
