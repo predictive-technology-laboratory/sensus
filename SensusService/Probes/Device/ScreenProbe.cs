@@ -2,9 +2,18 @@
 namespace SensusService.Probes.Device
 {
     /// <summary>
-    /// Probes information about screen actions.
+    /// Probes information about screen on/off status.
     /// </summary>
-    public class ScreenProbe
+    public abstract class ScreenProbe : PollingProbe
     {
+        protected override string DefaultDisplayName
+        {
+            get { return "Screen On/Off"; }
+        }
+
+        public override int DefaultPollingSleepDurationMS
+        {
+            get { return 10000; }
+        }
     }
 }

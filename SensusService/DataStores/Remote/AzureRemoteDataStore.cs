@@ -4,12 +4,12 @@ using SensusService.Exceptions;
 using SensusService.Probes.Apps;
 using SensusService.Probes.Communication;
 using SensusService.Probes.Context;
+using SensusService.Probes.Device;
 using SensusService.Probes.Location;
 using SensusService.Probes.Network;
 using SensusUI.UiProperties;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace SensusService.DataStores.Remote
 {
@@ -25,6 +25,8 @@ namespace SensusService.DataStores.Remote
         private IMobileServiceTable<BluetoothDeviceProximityDatum> _bluetoothTable;
         private IMobileServiceTable<LightDatum> _lightTable;
         private IMobileServiceTable<SoundDatum> _soundTable;
+        private IMobileServiceTable<BatteryDatum> _batteryTable;
+        private IMobileServiceTable<ScreenDatum> _screenTable;
         private IMobileServiceTable<AltitudeDatum> _altitudeTable;
         private IMobileServiceTable<CompassDatum> _compassTable;
         private IMobileServiceTable<LocationDatum> _locationTable;
@@ -81,6 +83,8 @@ namespace SensusService.DataStores.Remote
             _bluetoothTable = _client.GetTable<BluetoothDeviceProximityDatum>();
             _lightTable = _client.GetTable<LightDatum>();
             _soundTable = _client.GetTable<SoundDatum>();
+            _batteryTable = _client.GetTable<BatteryDatum>();
+            _screenTable = _client.GetTable<ScreenDatum>();
             _altitudeTable = _client.GetTable<AltitudeDatum>();
             _compassTable = _client.GetTable<CompassDatum>();
             _locationTable = _client.GetTable<LocationDatum>();
@@ -113,6 +117,10 @@ namespace SensusService.DataStores.Remote
                         _lightTable.InsertAsync(datum as LightDatum).Wait();
                     else if (datum is SoundDatum)
                         _soundTable.InsertAsync(datum as SoundDatum).Wait();
+                    else if (datum is BatteryDatum)
+                        _batteryTable.InsertAsync(datum as BatteryDatum).Wait();
+                    else if (datum is ScreenDatum)
+                        _screenTable.InsertAsync(datum as ScreenDatum).Wait();
                     else if (datum is AltitudeDatum)
                         _altitudeTable.InsertAsync(datum as AltitudeDatum).Wait();
                     else if (datum is CompassDatum)
