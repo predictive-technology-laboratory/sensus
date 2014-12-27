@@ -32,5 +32,12 @@ namespace SensusService.Probes.Communication
             _state = state;
             _phoneNumber = phoneNumber;
         }
+
+        public override string ToString()
+        {
+            return base.ToString() + Environment.NewLine +
+                   "State:  " + _state + Environment.NewLine +
+                   "Number:  " + _phoneNumber;
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using SensusService;
 using SensusService.DataStores;
 using SensusService.Exceptions;
+using SensusService.Probes;
 using SensusUI.UiProperties;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,19 @@ namespace SensusUI
             public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
             {
                 return parameter + " store:  " + (value == null ? "None" : (value as DataStore).Name);
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            {
+                throw new SensusException("Invalid call to " + GetType().FullName + ".ConvertBack.");
+            }
+        }
+
+        private class ProbeTextColorValueConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            {
+                return (bool)value ? Color.Green : Color.Red;
             }
 
             public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -55,6 +69,7 @@ namespace SensusUI
             ListView probesList = new ListView();
             probesList.ItemTemplate = new DataTemplate(typeof(TextCell));
             probesList.ItemTemplate.SetBinding(TextCell.TextProperty, "DisplayName");
+            probesList.ItemTemplate.SetBinding(TextCell.TextColorProperty, new Binding("Enabled", converter: new ProbeTextColorValueConverter()));
             probesList.ItemTemplate.SetBinding(TextCell.DetailProperty, new Binding("MostRecentlyStoredDatum", converter: new ProbeDetailValueConverter()));
             probesList.ItemsSource = protocol.Probes;
             probesList.ItemTapped += (o, e) =>
