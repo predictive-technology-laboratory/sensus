@@ -49,11 +49,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\ListeningLocationProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\LocationDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\PollingLocationProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\WiFiLocationProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AccelerometerDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AccelerometerProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\CellTowerDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\CellTowerProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\WlanDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\WlanProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\PollingProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\PollingProbeController.cs" />

@@ -33,6 +33,7 @@ namespace SensusService.DataStores.Remote
         private IMobileServiceTable<LocationDatum> _locationTable;
         private IMobileServiceTable<AccelerometerDatum> _accelerometerTable;
         private IMobileServiceTable<CellTowerDatum> _cellTowerTable;
+        private IMobileServiceTable<WlanDatum> _wlanTable;
 
         private IMobileServiceTable<ProtocolReport> _protocolReportTable;
 
@@ -92,6 +93,7 @@ namespace SensusService.DataStores.Remote
             _locationTable = _client.GetTable<LocationDatum>();
             _accelerometerTable = _client.GetTable<AccelerometerDatum>();
             _cellTowerTable = _client.GetTable<CellTowerDatum>();
+            _wlanTable = _client.GetTable<WlanDatum>();
 
             _protocolReportTable = _client.GetTable<ProtocolReport>();
 
@@ -134,6 +136,8 @@ namespace SensusService.DataStores.Remote
                         _accelerometerTable.InsertAsync(datum as AccelerometerDatum).Wait();
                     else if (datum is CellTowerDatum)
                         _cellTowerTable.InsertAsync(datum as CellTowerDatum).Wait();
+                    else if (datum is WlanDatum)
+                        _wlanTable.InsertAsync(datum as WlanDatum).Wait();
                     else if (datum is ProtocolReport)
                         _protocolReportTable.InsertAsync(datum as ProtocolReport).Wait();
                     else
