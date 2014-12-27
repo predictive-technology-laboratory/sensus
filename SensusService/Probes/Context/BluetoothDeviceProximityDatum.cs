@@ -25,7 +25,7 @@ namespace SensusService.Probes.Context
         [JsonIgnore]
         public override string DisplayDetail
         {
-            get { return _name + " [" + _address + "]"; }
+            get { return _name + " (" + _address + ")"; }
         }
 
         public BluetoothDeviceProximityDatum(Probe probe, DateTimeOffset timestamp, string name, string address)
@@ -33,6 +33,13 @@ namespace SensusService.Probes.Context
         {
             _name = name;
             _address = address;
+        }
+
+        public override string ToString()
+        {
+            return base.ToString() + Environment.NewLine +
+                   "Name:  " + _name + Environment.NewLine +
+                   "Address:  " + _address;
         }
     }
 }
