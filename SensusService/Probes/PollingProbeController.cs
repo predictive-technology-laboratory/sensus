@@ -46,6 +46,8 @@ namespace SensusService.Probes
 
                 _pollTask = Task.Run(() =>
                     {
+                        (Probe as PollingProbe).PollingStarted();
+
                         while (Running)
                         {
                             _pollTrigger.WaitOne(_sleepDurationMS);
@@ -64,6 +66,8 @@ namespace SensusService.Probes
                                         catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to store datum:  " + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal); }
                             }
                         }
+
+                        (Probe as PollingProbe).PollingStopped();
                     });
             }
         }

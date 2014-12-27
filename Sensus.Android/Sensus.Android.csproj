@@ -133,6 +133,7 @@
     <Compile Include="Probes\Communication\AndroidTelephonyProbe.cs" />
     <Compile Include="Probes\Context\AndroidBluetoothDeviceProximityProbe.cs" />
     <Compile Include="Probes\Context\AndroidLightProbe.cs" />
+    <Compile Include="Probes\Context\AndroidSoundProbe.cs" />
     <Compile Include="Probes\Location\AndroidAltitudeProbe.cs" />
     <Compile Include="Probes\Network\AndroidCellTowerChangeListener.cs" />
     <Compile Include="Probes\Network\AndroidCellTowerProbe.cs" />

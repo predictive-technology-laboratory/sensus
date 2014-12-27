@@ -36,6 +36,10 @@ namespace SensusService.Probes
             }
         }
 
+        public virtual void PollingStarted() { }
+
         public abstract IEnumerable<Datum> Poll();
+
+        public virtual void PollingStopped() { }
     }
 }

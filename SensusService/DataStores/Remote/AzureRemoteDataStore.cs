@@ -20,14 +20,16 @@ namespace SensusService.DataStores.Remote
         private string _key;
 
         private IMobileServiceTable<RunningAppsDatum> _runningAppsTable;
+        private IMobileServiceTable<SmsDatum> _smsTable;
         private IMobileServiceTable<TelephonyDatum> _telephonyTable;
+        private IMobileServiceTable<BluetoothDeviceProximityDatum> _bluetoothTable;
+        private IMobileServiceTable<LightDatum> _lightTable;
+        private IMobileServiceTable<SoundDatum> _soundTable;
         private IMobileServiceTable<AltitudeDatum> _altitudeTable;
         private IMobileServiceTable<CompassDatum> _compassTable;
         private IMobileServiceTable<LocationDatum> _locationTable;
-        private IMobileServiceTable<SmsDatum> _smsTable;
         private IMobileServiceTable<CellTowerDatum> _cellTowerTable;
-        private IMobileServiceTable<BluetoothDeviceProximityDatum> _bluetoothTable;
-        private IMobileServiceTable<LightDatum> _lightTable; 
+
         private IMobileServiceTable<ProtocolReport> _protocolReportTable;
 
         [EntryStringUiProperty("URL:", true, 2)]
@@ -78,6 +80,7 @@ namespace SensusService.DataStores.Remote
             _telephonyTable = _client.GetTable<TelephonyDatum>();
             _bluetoothTable = _client.GetTable<BluetoothDeviceProximityDatum>();
             _lightTable = _client.GetTable<LightDatum>();
+            _soundTable = _client.GetTable<SoundDatum>();
             _altitudeTable = _client.GetTable<AltitudeDatum>();
             _compassTable = _client.GetTable<CompassDatum>();
             _locationTable = _client.GetTable<LocationDatum>();
@@ -108,6 +111,8 @@ namespace SensusService.DataStores.Remote
                         _bluetoothTable.InsertAsync(datum as BluetoothDeviceProximityDatum).Wait();
                     else if (datum is LightDatum)
                         _lightTable.InsertAsync(datum as LightDatum).Wait();
+                    else if (datum is SoundDatum)
+                        _soundTable.InsertAsync(datum as SoundDatum).Wait();
                     else if (datum is AltitudeDatum)
                         _altitudeTable.InsertAsync(datum as AltitudeDatum).Wait();
                     else if (datum is CompassDatum)

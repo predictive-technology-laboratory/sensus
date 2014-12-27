@@ -5,7 +5,7 @@ namespace SensusService.Probes.Context
     {
         protected sealed override string DefaultDisplayName
         {
-            get { return "Light Level"; }
+            get { return "Light"; }
         }
     }
 }
