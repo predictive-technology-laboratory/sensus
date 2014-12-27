@@ -27,6 +27,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\SmsDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\TelephonyDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\BluetoothDeviceProximityDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\LightDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\CompassProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\ListeningProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\ListeningProbeController.cs" />

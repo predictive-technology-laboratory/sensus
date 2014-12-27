@@ -27,6 +27,7 @@ namespace SensusService.DataStores.Remote
         private IMobileServiceTable<SmsDatum> _smsTable;
         private IMobileServiceTable<CellTowerDatum> _cellTowerTable;
         private IMobileServiceTable<BluetoothDeviceProximityDatum> _bluetoothTable;
+        private IMobileServiceTable<LightDatum> _lightTable; 
         private IMobileServiceTable<ProtocolReport> _protocolReportTable;
 
         [EntryStringUiProperty("URL:", true, 2)]
@@ -76,6 +77,7 @@ namespace SensusService.DataStores.Remote
             _smsTable = _client.GetTable<SmsDatum>();
             _telephonyTable = _client.GetTable<TelephonyDatum>();
             _bluetoothTable = _client.GetTable<BluetoothDeviceProximityDatum>();
+            _lightTable = _client.GetTable<LightDatum>();
             _altitudeTable = _client.GetTable<AltitudeDatum>();
             _compassTable = _client.GetTable<CompassDatum>();
             _locationTable = _client.GetTable<LocationDatum>();
@@ -104,6 +106,8 @@ namespace SensusService.DataStores.Remote
                         _telephonyTable.InsertAsync(datum as TelephonyDatum).Wait();
                     else if (datum is BluetoothDeviceProximityDatum)
                         _bluetoothTable.InsertAsync(datum as BluetoothDeviceProximityDatum).Wait();
+                    else if (datum is LightDatum)
+                        _lightTable.InsertAsync(datum as LightDatum).Wait();
                     else if (datum is AltitudeDatum)
                         _altitudeTable.InsertAsync(datum as AltitudeDatum).Wait();
                     else if (datum is CompassDatum)

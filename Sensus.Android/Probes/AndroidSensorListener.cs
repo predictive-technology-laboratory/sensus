@@ -76,7 +76,7 @@ namespace Sensus.Android.Probes
 
         public void OnSensorChanged(SensorEvent e)
         {
-            if (_sensorValueChangedCallback != null)
+            if (_sensorValueChangedCallback != null && e != null && e.Values != null && e.Values.Count > 0)
                 _sensorValueChangedCallback(e);
         }
     }
