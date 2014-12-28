@@ -11,6 +11,15 @@ namespace Sensus.Android.Probes.Network
         private TelephonyManager _telephonyManager;
         private AndroidCellTowerChangeListener _cellTowerChangeListener;
 
+        public AndroidCellTowerProbe()
+        {
+            _cellTowerChangeListener = new AndroidCellTowerChangeListener();
+            _cellTowerChangeListener.CellTowerChanged += (o, cellTowerLocation) =>
+                {
+                    StoreDatum(new CellTowerDatum(this, DateTimeOffset.UtcNow, cellTowerLocation));
+                };
+        }
+
         protected override bool Initialize()
         {
             try
@@ -18,8 +27,6 @@ namespace Sensus.Android.Probes.Network
                 _telephonyManager = Application.Context.GetSystemService(global::Android.Content.Context.TelephonyService) as TelephonyManager;
                 if (_telephonyManager == null)
                     throw new Exception("No telephony present.");
-
-                _cellTowerChangeListener = new AndroidCellTowerChangeListener(towerLocation => StoreDatum(new CellTowerDatum(this, DateTimeOffset.UtcNow, towerLocation)));
 
                 return base.Initialize();
             }

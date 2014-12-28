@@ -5,16 +5,12 @@ namespace Sensus.Android.Probes.Network
 {
     public class AndroidCellTowerChangeListener : PhoneStateListener
     {
-        private Action<string> _cellTowerChanged;
-
-        public AndroidCellTowerChangeListener(Action<string> cellTowerChangedCallback)
-        {
-            _cellTowerChanged = cellTowerChangedCallback;
-        }
+        public event EventHandler<string> CellTowerChanged;
 
         public override void OnCellLocationChanged(CellLocation location)
         {
-            _cellTowerChanged(location.ToString());
+            if (CellTowerChanged != null)
+                CellTowerChanged(this, location.ToString());
         }
     }
 }
