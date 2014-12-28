@@ -5,30 +5,30 @@ namespace SensusService.Probes.Network
 {
     public class WlanDatum : Datum
     {
-        private string _accessPoint;
+        private string _accessPointBSSID;
 
-        public string AccessPoint
+        public string AccessPointBSSID
         {
-            get { return _accessPoint; }
-            set { _accessPoint = value; }
+            get { return _accessPointBSSID; }
+            set { _accessPointBSSID = value; }
         }
 
         [JsonIgnore]
         public override string DisplayDetail
         {
-            get { return "Access Point:  " + _accessPoint; }
+            get { return "AP BSSID:  " + _accessPointBSSID; }
         }
 
-        public WlanDatum(Probe probe, DateTimeOffset timestamp, string accessPoint)
+        public WlanDatum(Probe probe, DateTimeOffset timestamp, string accessPointBSSID)
             : base(probe, timestamp)
         {
-            _accessPoint = accessPoint;
+            _accessPointBSSID = accessPointBSSID;
         }
 
         public override string ToString()
         {
             return base.ToString() + Environment.NewLine +
-                   "Access Point:  " + _accessPoint;
+                   "AP BSSID:  " + _accessPointBSSID;
         }
     }
 }
