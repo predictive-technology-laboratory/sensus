@@ -1,17 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-using SensusService.Probes.Movement;
 using Android.Hardware;
-using Java.Lang;
+using SensusService.Probes.Movement;
+using System;
 
 namespace Sensus.Android.Probes.Movement
 {
@@ -45,17 +34,19 @@ namespace Sensus.Android.Probes.Movement
                 });
         }
 
-        protected override bool Initialize()
+        protected override void Initialize()
         {
-            return base.Initialize() && _accelerometerListener.Initialize();
+            base.Initialize();
+
+            _accelerometerListener.Initialize();
         }
 
-        public override void StartListening()
+        protected override void StartListening()
         {
             _accelerometerListener.Start();
         }
 
-        public override void StopListening()
+        protected override void StopListening()
         {
             _accelerometerListener.Stop();
         }

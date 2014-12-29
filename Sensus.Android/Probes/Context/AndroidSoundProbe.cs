@@ -10,41 +10,33 @@ namespace Sensus.Android.Probes.Context
     {
         private MediaRecorder _recorder;
 
-        protected override bool Initialize()
+        protected override void Initialize()
         {
-            try
+            base.Initialize();
+
+            if (_recorder != null)
             {
-                if (_recorder != null)
-                {
-                    try { _recorder.Stop(); }  // will throw exception if recorder is already stopped
-                    catch (Exception) { }
-                }
-
-                _recorder = new MediaRecorder();
-
-                _recorder.SetAudioSource(AudioSource.Mic);
-                _recorder.SetOutputFormat(OutputFormat.ThreeGpp);
-                _recorder.SetAudioEncoder(AudioEncoder.AmrNb);
-                _recorder.SetOutputFile("/dev/null");
-                _recorder.Prepare();
-                _recorder.Start();
-
-                return base.Initialize();
+                try { _recorder.Stop(); }  // will throw exception if recorder is already stopped
+                catch (Exception) { }
             }
-            catch (Exception ex)
-            {
-                SensusServiceHelper.Get().Logger.Log("Failed to initialize " + GetType().FullName + ":  " + ex.Message, LoggingLevel.Normal);
-                return false;
-            }
+
+            _recorder = new MediaRecorder();
+
+            _recorder.SetAudioSource(AudioSource.Mic);
+            _recorder.SetOutputFormat(OutputFormat.ThreeGpp);
+            _recorder.SetAudioEncoder(AudioEncoder.AmrNb);
+            _recorder.SetOutputFile("/dev/null");
+            _recorder.Prepare();
+            _recorder.Start();
         }
 
-        public override IEnumerable<SensusService.Datum> Poll()
+        protected override IEnumerable<SensusService.Datum> Poll()
         {
             // http://www.mathworks.com/help/signal/ref/mag2db.html
             return new Datum[] { new SoundDatum(this, DateTimeOffset.UtcNow, 20 * Math.Log10(_recorder.MaxAmplitude)) };
         }
 
-        public override void PollingStopped()
+        protected override void PollingStopped()
         {
             base.PollingStopped();
 

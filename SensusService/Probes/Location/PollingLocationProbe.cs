@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Xamarin.Geolocation;
 
 namespace SensusService.Probes.Location
@@ -18,14 +19,17 @@ namespace SensusService.Probes.Location
             get { return 1000 * 10; }
         }
 
-        protected override bool Initialize()
+        protected override void Initialize()
         {
-            return base.Initialize() && GpsReceiver.Get().Locator.IsGeolocationEnabled;
+            base.Initialize();
+
+            if (!GpsReceiver.Get().Locator.IsGeolocationEnabled)
+                throw new Exception("Geolocation is not enabled on this device.");
         }
 
-        public sealed override IEnumerable<Datum> Poll()
+        protected sealed override IEnumerable<Datum> Poll()
         {
-            Position reading = GpsReceiver.Get().GetReading((Controller as PollingProbeController).SleepDurationMS, 30000);
+            Position reading = GpsReceiver.Get().GetReading(PollingSleepDurationMS, 30000);
 
             if (reading == null)
                 return new Datum[] { };

@@ -18,7 +18,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Remote\RemoteDataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Datum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\DataStoreException.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\ProbeControllerException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\ProbeException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\SensusException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ImpreciseDatum.cs" />
@@ -33,7 +32,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Device\ScreenDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\CompassProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\ListeningProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\ListeningProbeController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\RunningAppsProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\TelephonyProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\SmsProbe.cs" />
@@ -56,9 +54,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\WlanDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\WlanProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\PollingProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\PollingProbeController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Probe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\ProbeController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Protocol.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Logger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolReport.cs" />

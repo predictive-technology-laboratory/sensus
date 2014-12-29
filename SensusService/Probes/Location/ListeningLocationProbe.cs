@@ -17,9 +17,12 @@ namespace SensusService.Probes.Location
             get { return "Location (Listening)"; }
         }
 
-        protected override bool Initialize()
+        protected override void Initialize()
         {
-            return base.Initialize() && GpsReceiver.Get().Locator.IsGeolocationEnabled;
+            base.Initialize();
+
+            if (!GpsReceiver.Get().Locator.IsGeolocationEnabled)
+                throw new Exception("Geolocation is not enabled on this device.");
         }
 
         public ListeningLocationProbe()
@@ -32,12 +35,12 @@ namespace SensusService.Probes.Location
                 };
         }
 
-        public sealed override void StartListening()
+        protected sealed override void StartListening()
         {
             GpsReceiver.Get().AddListener(_positionChangedHandler);
         }
 
-        public sealed override void StopListening()
+        protected sealed override void StopListening()
         {
             GpsReceiver.Get().RemoveListener(_positionChangedHandler);
         }

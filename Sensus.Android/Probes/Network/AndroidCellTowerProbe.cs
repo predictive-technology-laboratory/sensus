@@ -20,29 +20,21 @@ namespace Sensus.Android.Probes.Network
                 };
         }
 
-        protected override bool Initialize()
+        protected override void Initialize()
         {
-            try
-            {
-                _telephonyManager = Application.Context.GetSystemService(global::Android.Content.Context.TelephonyService) as TelephonyManager;
-                if (_telephonyManager == null)
-                    throw new Exception("No telephony present.");
+            base.Initialize();
 
-                return base.Initialize();
-            }
-            catch (Exception ex)
-            {
-                SensusServiceHelper.Get().Logger.Log("Failed to initialize " + GetType().FullName + ":  " + ex.Message, LoggingLevel.Normal);
-                return false;
-            }
+            _telephonyManager = Application.Context.GetSystemService(global::Android.Content.Context.TelephonyService) as TelephonyManager;
+            if (_telephonyManager == null)
+                throw new Exception("No telephony present.");
         }
 
-        public override void StartListening()
+        protected override void StartListening()
         {
             _telephonyManager.Listen(_cellTowerChangeListener, PhoneStateListenerFlags.CellLocation);
         }
 
-        public override void StopListening()
+        protected override void StopListening()
         {
             _telephonyManager.Listen(_cellTowerChangeListener, PhoneStateListenerFlags.None);
         }

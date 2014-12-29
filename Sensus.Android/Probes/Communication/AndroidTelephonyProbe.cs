@@ -26,30 +26,22 @@ namespace Sensus.Android.Probes.Communication
                 };
         }
 
-        protected override bool Initialize()
+        protected override void Initialize()
         {
-            try
-            {
-                _telephonyManager = Application.Context.GetSystemService(global::Android.Content.Context.TelephonyService) as TelephonyManager;
-                if (_telephonyManager == null)
-                    throw new Exception("No telephony present.");
+            base.Initialize();
 
-                return base.Initialize();
-            }
-            catch (Exception ex)
-            {
-                SensusServiceHelper.Get().Logger.Log("Failed to initialize " + GetType().FullName + ":  " + ex.Message, LoggingLevel.Normal);
-                return false;
-            }
+            _telephonyManager = Application.Context.GetSystemService(global::Android.Content.Context.TelephonyService) as TelephonyManager;
+            if (_telephonyManager == null)
+                throw new Exception("No telephony present.");
         }
 
-        public override void StartListening()
+        protected override void StartListening()
         {
             AndroidTelephonyOutgoingBroadcastReceiver.OutgoingCall += _outgoingCallCallback;
             _telephonyManager.Listen(_incomingCallListener, PhoneStateListenerFlags.CallState);
         }
 
-        public override void StopListening()
+        protected override void StopListening()
         {
             AndroidTelephonyOutgoingBroadcastReceiver.OutgoingCall -= _outgoingCallCallback;
             _telephonyManager.Listen(_incomingCallListener, PhoneStateListenerFlags.None);

@@ -9,7 +9,7 @@ namespace Sensus.Android.Probes.Device
 {
     public class AndroidBatteryProbe : BatteryProbe
     {
-        public override IEnumerable<SensusService.Datum> Poll()
+        protected override IEnumerable<SensusService.Datum> Poll()
         {
             Intent lastIntent = Application.Context.RegisterReceiver(null, new IntentFilter(Intent.ActionBatteryChanged));
             if (lastIntent == null)

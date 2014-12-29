@@ -40,7 +40,7 @@ namespace SensusService.Probes.Apps
 
         protected abstract List<RunningAppsDatum> GetRunningAppsData();
 
-        public sealed override IEnumerable<Datum> Poll()
+        protected sealed override IEnumerable<Datum> Poll()
         {
             List<RunningAppsDatum> data = GetRunningAppsData();
 

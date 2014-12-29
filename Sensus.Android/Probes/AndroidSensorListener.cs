@@ -26,14 +26,16 @@ namespace Sensus.Android.Probes
             _listening = false;
         }
 
-        public bool Initialize()
+        public void Initialize()
         {
             IList<Sensor> sensors = _sensorManager.GetSensorList(_sensorType);
+
             _sensor = null;
             if (sensors.Count > 0)
                 _sensor = sensors[0];
 
-            return _sensor != null;
+            if (_sensor == null)
+                throw new Exception("No sensors present for sensor type " + _sensorType);
         }
 
         public void Start()

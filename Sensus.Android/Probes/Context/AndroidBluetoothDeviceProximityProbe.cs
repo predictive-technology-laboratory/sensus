@@ -17,12 +17,12 @@ namespace Sensus.Android.Probes.Context
                 };
         }
 
-        public override void StartListening()
+        protected override void StartListening()
         {
             AndroidBluetoothBroadcastReceiver.DeviceFound += _deviceFoundCallback;
         }
 
-        public override void StopListening()
+        protected override void StopListening()
         {
             AndroidBluetoothBroadcastReceiver.DeviceFound -= _deviceFoundCallback;
         }

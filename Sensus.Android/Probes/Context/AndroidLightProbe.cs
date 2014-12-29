@@ -16,17 +16,19 @@ namespace Sensus.Android.Probes.Context
                 });
         }
 
-        protected override bool Initialize()
+        protected override void Initialize()
         {
-            return base.Initialize() && _lightListener.Initialize();
+            base.Initialize();
+
+            _lightListener.Initialize();
         }
 
-        public override void StartListening()
+        protected override void StartListening()
         {
             _lightListener.Start();
         }
 
-        public override void StopListening()
+        protected override void StopListening()
         {
             _lightListener.Stop();
         }

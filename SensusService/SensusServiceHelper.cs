@@ -307,7 +307,7 @@ namespace SensusService
 
         public Task StartProtocolAsync(Protocol protocol)
         {
-            return Task.Run(() => { StartProtocol(protocol); });
+            return Task.Run(() => StartProtocol(protocol));
         }
 
         public void StartProtocol(Protocol protocol)
@@ -324,11 +324,16 @@ namespace SensusService
                     AddRunningProtocolId(protocol.Id);
                     StartSensusPings(_pingDelayMS);
 
-                    _logger.Log("Initializing and starting probes for protocol " + protocol.Name + ".", LoggingLevel.Normal);
+                    _logger.Log("Starting probes for protocol " + protocol.Name + ".", LoggingLevel.Normal);
                     int probesStarted = 0;
                     foreach (Probe probe in protocol.Probes)
-                        if (probe.Enabled && probe.InitializeAndStart())
-                            probesStarted++;
+                        if (probe.Enabled)
+                            try
+                            {
+                                probe.Start();
+                                probesStarted++;
+                            }
+                            catch (Exception ex) { _logger.Log("Failed to start probe \"" + probe.GetType().FullName + "\":" + ex.Message, LoggingLevel.Normal); }
 
                     bool stopProtocol = false;
 
@@ -375,7 +380,7 @@ namespace SensusService
 
         public Task StopProtocolAsync(Protocol protocol, bool unregister)
         {
-            return Task.Run(() => { StopProtocol(protocol, unregister); });
+            return Task.Run(() => StopProtocol(protocol, unregister));
         }
 
         public void StopProtocol(Protocol protocol, bool unregister)
@@ -401,9 +406,9 @@ namespace SensusService
 
                     _logger.Log("Stopping probes.", LoggingLevel.Normal);
                     foreach (Probe probe in protocol.Probes)
-                        if (probe.Controller.Running)
-                            try { probe.Controller.Stop(); }
-                            catch (Exception ex) { _logger.Log("Failed to stop " + probe.DisplayName + "'s controller:  " + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal); }
+                        if (probe.Running)
+                            try { probe.Stop(); }
+                            catch (Exception ex) { _logger.Log("Failed to stop " + probe.GetType().FullName + ":  " + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal); }
 
                     if (protocol.LocalDataStore != null && protocol.LocalDataStore.Running)
                     {
@@ -533,7 +538,7 @@ namespace SensusService
                             foreach (Probe probe in protocol.Probes)
                                 if (probe.Ping(ref error, ref warning, ref misc))
                                 {
-                                    error += "Restarting probe \"" + probe.DisplayName + "\"...";
+                                    error += "Restarting probe \"" + probe.GetType().FullName + "\"...";
                                     try
                                     {
                                         probe.Enabled = false;
@@ -542,7 +547,7 @@ namespace SensusService
                                     catch (Exception ex) { error += ex.Message + "..."; }
 
                                     if (!probe.Running)
-                                        error += "failed to restart probe \"" + probe.DisplayName + "\".";
+                                        error += "failed to restart probe \"" + probe.GetType().FullName + "\"." + Environment.NewLine;
                                 }
                         }
 

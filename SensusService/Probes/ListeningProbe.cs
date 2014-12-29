@@ -21,21 +21,36 @@ namespace SensusService.Probes
             }
         }
 
-        protected sealed override ProbeController DefaultController
-        {
-            get { return new ListeningProbeController(this); }
-        }
-
         protected ListeningProbe()
         {
             _maxDataStoresPerSecond = 1;
         }
 
-        public abstract void StartListening();
+        public sealed override void Start()
+        {
+            lock (this)
+            {
+                base.Start();
 
-        public abstract void StopListening();
+                StartListening();
+            }
+        }
 
-        public sealed override void StoreDatum(Datum datum)
+        protected abstract void StartListening();
+
+        public sealed override void Stop()
+        {
+            lock (this)
+            {
+                base.Stop();
+
+                StopListening();
+            }
+        }
+
+        protected abstract void StopListening();
+
+        protected sealed override void StoreDatum(Datum datum)
         {
             DateTimeOffset lastStoreTime = DateTimeOffset.MinValue;
             if (MostRecentlyStoredDatum != null)

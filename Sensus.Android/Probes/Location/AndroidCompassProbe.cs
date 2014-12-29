@@ -16,17 +16,19 @@ namespace Sensus.Android.Probes.Location
                 });
         }
 
-        protected override bool Initialize()
+        protected override void Initialize()
         {
-            return base.Initialize() && _compassListener.Initialize();
+            base.Initialize();
+
+            _compassListener.Initialize();
         }
 
-        public override void StartListening()
+        protected override void StartListening()
         {
             _compassListener.Start();
         }
 
-        public override void StopListening()
+        protected override void StopListening()
         {
             _compassListener.Stop();
         }

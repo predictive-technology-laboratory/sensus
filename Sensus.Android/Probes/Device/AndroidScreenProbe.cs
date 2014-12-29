@@ -16,7 +16,7 @@ namespace Sensus.Android.Probes.Device
             _powerManager = Application.Context.GetSystemService(global::Android.Content.Context.PowerService) as PowerManager;
         }
 
-        public override IEnumerable<Datum> Poll()
+        protected override IEnumerable<Datum> Poll()
         {
             return new Datum[] { new ScreenDatum(this, DateTimeOffset.UtcNow, _powerManager.IsScreenOn) };
         }

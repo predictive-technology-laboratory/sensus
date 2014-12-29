@@ -19,6 +19,7 @@ namespace SensusService
     /// </summary>
     public class Protocol : INotifyPropertyChanged
     {
+        #region static members
         private static JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
         {
             PreserveReferencesHandling = PreserveReferencesHandling.Objects,
@@ -82,6 +83,7 @@ namespace SensusService
             }
             catch (Exception ex) { throw new SensusException("Failed to extract Protocol from stream:  " + ex.Message); }
         }
+        #endregion
 
         /// <summary>
         /// Fired when a UI-relevant property is changed.
@@ -218,19 +220,10 @@ namespace SensusService
 
             if (addAllProbes)
                 foreach (Probe probe in Probe.GetAll())
-                    AddProbe(probe);
-        }
-
-        public void AddProbe(Probe probe)
-        {
-            probe.Protocol = this;
-            _probes.Add(probe);
-        }
-
-        public void RemoveProbe(Probe probe)
-        {
-            if (_probes.Remove(probe))
-                probe.Protocol = null;
+                {
+                    probe.Protocol = this;
+                    _probes.Add(probe);
+                }
         }
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)

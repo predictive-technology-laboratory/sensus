@@ -16,12 +16,12 @@ namespace Sensus.Android.Probes.Network
                 };
         }
 
-        public override void StartListening()
+        protected override void StartListening()
         {
             AndroidWlanBroadcastReceiver.WifiConnectionChanged += _wlanConnectionChangedCallback;
         }
 
-        public override void StopListening()
+        protected override void StopListening()
         {
             AndroidWlanBroadcastReceiver.WifiConnectionChanged -= _wlanConnectionChangedCallback;
         }
