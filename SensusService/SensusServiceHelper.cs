@@ -90,7 +90,7 @@ namespace SensusService
         private List<Protocol> _registeredProtocols;
         private int _pingDelayMS;
         private int _pingCount;
-        private int _pingsPerProtocolReport;
+        private int _pingsPerProtocolReportUpload;
 
         public Logger Logger
         {
@@ -125,15 +125,15 @@ namespace SensusService
             }
         }
 
-        [EntryIntegerUiProperty("Pings Per Report:", true, int.MaxValue)]
-        public int PingsPerProtocolReport
+        [EntryIntegerUiProperty("Pings Per Report Upload:", true, int.MaxValue)]
+        public int PingsPerProtocolReportUpload
         {
-            get { return _pingsPerProtocolReport; }
+            get { return _pingsPerProtocolReportUpload; }
             set
             {
-                if (value != _pingsPerProtocolReport)
+                if (value != _pingsPerProtocolReportUpload)
                 {
-                    _pingsPerProtocolReport = value;
+                    _pingsPerProtocolReportUpload = value;
                     OnPropertyChanged();
                 }
             }
@@ -146,7 +146,7 @@ namespace SensusService
             _stopped = true;
             _pingDelayMS = 1000 * 60;
             _pingCount = 0;
-            _pingsPerProtocolReport = 5;
+            _pingsPerProtocolReportUpload = 5;
 
             if (!Directory.Exists(_shareDirectory))
                 Directory.CreateDirectory(_shareDirectory);
@@ -546,16 +546,14 @@ namespace SensusService
                                 }
                         }
 
-                        _logger.Log("Protocol report (" + (error == null ? "" : "e") + (warning == null ? "" : "w") + (misc == null ? "" : "m") + "):" + Environment.NewLine +
-                                    "\tError:  " + error + Environment.NewLine +
-                                    "\tWarning:  " + warning + Environment.NewLine +
-                                    "\tMisc:  " + misc, LoggingLevel.Normal, _logTag);
+                        protocol.MostRecentReport = new ProtocolReport(DateTimeOffset.UtcNow, error, warning, misc);
 
-                        // submit report about sensus status
-                        if (_pingCount % _pingsPerProtocolReport == 0)
+                        _logger.Log("Protocol report:" + Environment.NewLine + protocol.MostRecentReport, LoggingLevel.Normal, _logTag);
+
+                        if (_pingCount % _pingsPerProtocolReportUpload == 0)
                         {
-                            _logger.Log("Submitting protocol report.", LoggingLevel.Normal, _logTag);
-                            protocol.LocalDataStore.AddNonProbeDatum(new ProtocolReport(DateTimeOffset.UtcNow, error, warning, misc));
+                            _logger.Log("Uploading protocol report.", LoggingLevel.Normal, _logTag);
+                            protocol.UploadMostRecentProtocolReport();
                         }
                     }
             }

@@ -2,23 +2,20 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace SensusUI
 {
-    public class ViewLogPage : ContentPage
+    public class ViewTextLinesPage : ContentPage
     {
-        public ViewLogPage()
+        public ViewTextLinesPage(string title, List<string> lines, Action clearCallback)
         {
-            Title = "Sensus Log";
+            Title = title;
 
             ListView messageList = new ListView();
             messageList.ItemTemplate = new DataTemplate(typeof(TextCell));
             messageList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", mode: BindingMode.OneWay));
-            messageList.ItemsSource = new ObservableCollection<string>(UiBoundSensusServiceHelper.Get().Logger.Read(int.MaxValue));
+            messageList.ItemsSource = new ObservableCollection<string>(lines);
 
             Button shareButton = new Button
             {
@@ -33,33 +30,35 @@ namespace SensusUI
                     try
                     {
                         path = UiBoundSensusServiceHelper.Get().GetSharePath(".txt");
-                        File.WriteAllLines(path, UiBoundSensusServiceHelper.Get().Logger.Read(int.MaxValue).ToArray());
+                        File.WriteAllLines(path, lines);
                     }
                     catch (Exception ex)
                     {
-                        UiBoundSensusServiceHelper.Get().Logger.Log("Failed to write log to temp file for sharing:  " + ex.Message, SensusService.LoggingLevel.Normal);
+                        UiBoundSensusServiceHelper.Get().Logger.Log("Failed to write lines to temp file for sharing:  " + ex.Message, SensusService.LoggingLevel.Normal);
                         path = null;
                     }
 
                     if (path != null)
-                        UiBoundSensusServiceHelper.Get().ShareFile(path, "Sensus Log:  " + Path.GetFileName(path));
+                        UiBoundSensusServiceHelper.Get().ShareFile(path, title + ":  " + Path.GetFileName(path));
                 };
 
             Button clearButton = new Button
             {
                 Text = "Clear",
                 Font = Font.SystemFontOfSize(20),
-                HorizontalOptions = LayoutOptions.FillAndExpand
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                IsEnabled = clearCallback != null
             };
 
-            clearButton.Clicked += async (o, e) =>
-            {
-                if (await DisplayAlert("Confirm", "Do you wish to clear the log? This cannot be undone.", "OK", "Cancel"))
-                {
-                    UiBoundSensusServiceHelper.Get().Logger.Clear();
-                    messageList.ItemsSource = null;
-                }
-            };
+            if (clearCallback != null)
+                clearButton.Clicked += async (o, e) =>
+                    {
+                        if (await DisplayAlert("Confirm", "Do you wish to clear the list? This cannot be undone.", "OK", "Cancel"))
+                        {
+                            clearCallback();
+                            messageList.ItemsSource = null;
+                        }
+                    };
 
             StackLayout shareClearStack = new StackLayout
             {

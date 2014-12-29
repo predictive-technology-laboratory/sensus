@@ -1,5 +1,4 @@
 using Android.App;
-using Android.Content;
 using SensusService.Probes.Apps;
 using System;
 using System.Collections.Generic;

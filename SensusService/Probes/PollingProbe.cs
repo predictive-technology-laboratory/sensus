@@ -99,13 +99,16 @@ namespace SensusService.Probes
         {
             bool restart = base.Ping(ref error, ref warning, ref misc);
 
-            DateTimeOffset mostRecentReadingTimestamp = DateTimeOffset.MinValue;
-            if (MostRecentlyStoredDatum != null)
-                mostRecentReadingTimestamp = MostRecentlyStoredDatum.Timestamp;
+            if (Running)
+            {
+                DateTimeOffset mostRecentReadingTimestamp = DateTimeOffset.MinValue;
+                if (MostRecentlyStoredDatum != null)
+                    mostRecentReadingTimestamp = MostRecentlyStoredDatum.Timestamp;
 
-            double msElapsedSinceLastPoll = (DateTime.UtcNow - mostRecentReadingTimestamp).TotalMilliseconds;
-            if (msElapsedSinceLastPoll > _pollingSleepDurationMS)
-                warning += "Probe \"" + GetType().FullName + "\" has not taken a reading in " + msElapsedSinceLastPoll + "ms (polling delay = " + _pollingSleepDurationMS + "ms)." + Environment.NewLine;
+                double msElapsedSinceLastPoll = (DateTime.UtcNow - mostRecentReadingTimestamp).TotalMilliseconds;
+                if (msElapsedSinceLastPoll > _pollingSleepDurationMS)
+                    warning += "Probe \"" + GetType().FullName + "\" has not taken a reading in " + msElapsedSinceLastPoll + "ms (polling delay = " + _pollingSleepDurationMS + "ms)." + Environment.NewLine;
+            }
 
             return restart;
         }

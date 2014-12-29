@@ -14,6 +14,7 @@ namespace SensusUI
         public static event EventHandler<ProtocolDataStoreEventArgs> EditDataStoreTapped;
         public static event EventHandler<ProtocolDataStoreEventArgs> CreateDataStoreTapped;
         public static event EventHandler<ItemTappedEventArgs> ProbeTapped;
+        public static event EventHandler<ProtocolReport> ViewMostRecentReportTapped;
 
         private class DataStoreValueConverter : IValueConverter
         {
@@ -167,6 +168,14 @@ namespace SensusUI
 
             foreach (View view in views)
                 (Content as StackLayout).Children.Add(view);
+
+            ToolbarItems.Add(new ToolbarItem("View Report", null, async () =>
+                {
+                    if (protocol.MostRecentReport == null)
+                        await DisplayAlert("No Report", "This protocol has not yet generated a report.", "OK");
+                    else
+                        ViewMostRecentReportTapped(this, protocol.MostRecentReport);
+                }));
 
             ToolbarItems.Add(new ToolbarItem("Share", null, () =>
                 {

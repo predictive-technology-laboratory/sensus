@@ -1,6 +1,5 @@
 using Android.Database;
 using Android.Provider;
-using Android.Telephony;
 using SensusService.Probes;
 using SensusService.Probes.Communication;
 using System;

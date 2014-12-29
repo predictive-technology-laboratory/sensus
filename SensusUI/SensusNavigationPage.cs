@@ -1,6 +1,8 @@
 ﻿using SensusService;
 using SensusService.Probes;
+using System;
 using Xamarin.Forms;
+using System.Linq;
 
 namespace SensusUI
 {
@@ -11,7 +13,7 @@ namespace SensusUI
         {
             #region main page
             MainPage.ProtocolsTapped += async (o, e) =>
-                {                  
+                {
                     await PushAsync(new ProtocolsPage());
                 };
 
@@ -24,7 +26,7 @@ namespace SensusUI
             #region options page
             OptionsPage.ViewLogTapped += async (o, e) =>
                 {
-                    await PushAsync(new ViewLogPage());
+                    await PushAsync(new ViewTextLinesPage("Sensus Log", UiBoundSensusServiceHelper.Get().Logger.Read(int.MaxValue), () => UiBoundSensusServiceHelper.Get().Logger.Clear()));
                 };
             #endregion
 
@@ -50,6 +52,11 @@ namespace SensusUI
             ProtocolPage.ProbeTapped += async (o, e) =>
                 {
                     await PushAsync(new ProbePage(e.Item as Probe));
+                };
+
+            ProtocolPage.ViewMostRecentReportTapped += async (o, report) =>
+                {
+                    await PushAsync(new ViewTextLinesPage("Protocol Report", report.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList(), null));
                 };
             #endregion
 

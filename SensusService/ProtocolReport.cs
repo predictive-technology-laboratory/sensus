@@ -40,5 +40,12 @@ namespace SensusService
             _warning = warning;
             _misc = misc;
         }
+
+        public override string ToString()
+        {
+            return "Errors:  " + Environment.NewLine + _error + Environment.NewLine +
+                   "Warnings:  " + Environment.NewLine + _warning + Environment.NewLine +
+                   "Misc:  " + Environment.NewLine + _misc;
+        }
     }
 }

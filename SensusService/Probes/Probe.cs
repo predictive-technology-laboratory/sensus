@@ -133,6 +133,7 @@ namespace SensusService.Probes
                 {
                     SensusServiceHelper.Get().Logger.Log("Starting probe \"" + GetType().FullName + "\".", LoggingLevel.Normal);
                     Initialize();
+                    _running = true;
                 }
             }
         }
@@ -192,7 +193,7 @@ namespace SensusService.Probes
         {
             bool restart = false;
 
-            if (!_running)
+            if (_protocol.Running && _enabled && !_running)
             {
                 restart = true;
                 error += "Probe \"" + GetType().FullName + "\" is not running." + Environment.NewLine;

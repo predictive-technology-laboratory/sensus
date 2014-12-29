@@ -97,6 +97,7 @@ namespace SensusService
         private LocalDataStore _localDataStore;
         private RemoteDataStore _remoteDataStore;
         private string _storageDirectory;
+        private ProtocolReport _mostRecentReport;
 
         public string Id
         {
@@ -193,6 +194,12 @@ namespace SensusService
             set { _storageDirectory = value; }
         }
 
+        public ProtocolReport MostRecentReport
+        {
+            get { return _mostRecentReport; }
+            set { _mostRecentReport = value; }
+        }
+
         private Protocol() { }  // for JSON deserialization
 
         /// <summary>
@@ -239,6 +246,11 @@ namespace SensusService
                 file.Write(JsonConvert.SerializeObject(this, _jsonSerializerSettings));
                 file.Close();
             }
+        }
+
+        public void UploadMostRecentProtocolReport()
+        {
+            _localDataStore.AddNonProbeDatum(_mostRecentReport);
         }
 
         public override bool Equals(object obj)
