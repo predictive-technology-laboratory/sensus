@@ -43,7 +43,7 @@ namespace SensusService.DataStores.Remote
             get { return _url; }
             set
             {
-                if (!value.Equals(_url, StringComparison.Ordinal))
+                if (value != _url)
                 {
                     _url = value;
                     OnPropertyChanged();
@@ -57,7 +57,7 @@ namespace SensusService.DataStores.Remote
             get { return _key; }
             set
             {
-                if (!value.Equals(_key, StringComparison.Ordinal))
+                if (value != _key)
                 {
                     _key = value;
                     OnPropertyChanged();

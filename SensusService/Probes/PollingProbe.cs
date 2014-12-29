@@ -8,11 +8,9 @@ namespace SensusService.Probes
 {
     public abstract class PollingProbe : Probe
     {
-        private int _pollingSleepDurationMS;
         private Task _pollTask;
         private AutoResetEvent _pollTrigger;
-
-        public abstract int DefaultPollingSleepDurationMS { get; }
+        private int _pollingSleepDurationMS;
 
         [EntryIntegerUiProperty("Sleep Duration:", true, 5)]
         public int PollingSleepDurationMS
@@ -24,15 +22,23 @@ namespace SensusService.Probes
                 {
                     _pollingSleepDurationMS = value;
                     OnPropertyChanged();
+
+                    if (_pollTrigger != null)
+                        _pollTrigger.Set();
                 }
             }
         }
+
+        public abstract int DefaultPollingSleepDurationMS { get; }
 
         protected PollingProbe()
         {
             _pollingSleepDurationMS = DefaultPollingSleepDurationMS;
         }
 
+        /// <summary>
+        /// Starts this probe. Throws an exception if start fails.
+        /// </summary>
         public sealed override void Start()
         {
             lock (this)
@@ -49,6 +55,7 @@ namespace SensusService.Probes
                         {
                             _pollTrigger.WaitOne(_pollingSleepDurationMS);
 
+                            // Running could be false if the probe has been stopped
                             if (Running)
                             {
                                 IEnumerable<Datum> data = null;
@@ -58,7 +65,7 @@ namespace SensusService.Probes
                                 if (data != null)
                                     foreach (Datum datum in data)
                                         try { StoreDatum(datum); }
-                                        catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to store datum in \"" + GetType().FullName + "\":  " + ex.Message, LoggingLevel.Normal); }
+                                        catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to store datum in probe \"" + GetType().FullName + "\":  " + ex.Message, LoggingLevel.Normal); }
                             }
                         }
 

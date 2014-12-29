@@ -15,7 +15,7 @@ using System.Runtime.CompilerServices;
 namespace SensusService
 {
     /// <summary>
-    /// Defines a Sensus protocol.
+    /// Container for probes.
     /// </summary>
     public class Protocol : INotifyPropertyChanged
     {
@@ -110,7 +110,7 @@ namespace SensusService
             get { return _name; }
             set
             {
-                if (!value.Equals(_name, StringComparison.Ordinal))
+                if (value != _name)
                 {
                     _name = value;
                     OnPropertyChanged();
@@ -165,9 +165,9 @@ namespace SensusService
                 if (value != _localDataStore)
                 {
                     _localDataStore = value;
-                    OnPropertyChanged();
-
                     _localDataStore.Protocol = this;
+
+                    OnPropertyChanged();
                 }
             }
         }
@@ -180,9 +180,9 @@ namespace SensusService
                 if (value != _remoteDataStore)
                 {
                     _remoteDataStore = value;
-                    OnPropertyChanged();
-
                     _remoteDataStore.Protocol = this;
+
+                    OnPropertyChanged();
                 }
             }
         }

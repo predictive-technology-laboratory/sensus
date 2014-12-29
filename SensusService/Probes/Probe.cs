@@ -22,7 +22,7 @@ namespace SensusService.Probes
         /// <returns></returns>
         public static List<Probe> GetAll()
         {
-            return Assembly.GetExecutingAssembly().GetTypes().Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(Probe))).Select(t => Activator.CreateInstance(t) as Probe).ToList();
+            return Assembly.GetExecutingAssembly().GetTypes().Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(Probe))).Select(t => Activator.CreateInstance(t) as Probe).OrderBy(p => p.DisplayName).ToList();
         }
         #endregion
 
@@ -35,8 +35,8 @@ namespace SensusService.Probes
         private bool _enabled;
         private bool _running;
         private HashSet<Datum> _collectedData;
-        private Protocol _protocol;
         private Datum _mostRecentlyStoredDatum;
+        private Protocol _protocol;
 
         [EntryStringUiProperty("Name:", true, 1)]
         public string DisplayName
@@ -44,7 +44,7 @@ namespace SensusService.Probes
             get { return _displayName; }
             set
             {
-                if (!value.Equals(_displayName, StringComparison.Ordinal))
+                if (value != _displayName)
                 {
                     _displayName = value;
                     OnPropertyChanged();
@@ -72,10 +72,11 @@ namespace SensusService.Probes
             }
         }
 
-        public Protocol Protocol
+
+        [JsonIgnore]
+        public bool Running
         {
-            get { return _protocol; }
-            set { _protocol = value; }
+            get { return _running; }
         }
 
         [JsonIgnore]
@@ -92,10 +93,10 @@ namespace SensusService.Probes
             }
         }
 
-        [JsonIgnore]
-        public bool Running
+        public Protocol Protocol
         {
-            get { return _running; }
+            get { return _protocol; }
+            set { _protocol = value; }
         }
 
         protected abstract string DefaultDisplayName { get; }
@@ -106,6 +107,9 @@ namespace SensusService.Probes
             _enabled = _running = false;
         }
 
+        /// <summary>
+        /// Initializes this probe. Throws an exception if initialization fails.
+        /// </summary>
         protected virtual void Initialize()
         {
             _collectedData = new HashSet<Datum>();
@@ -116,6 +120,9 @@ namespace SensusService.Probes
             return Task.Run(() => Start());
         }
 
+        /// <summary>
+        /// Starts this probe. Throws an exception if start fails.
+        /// </summary>
         public virtual void Start()
         {
             lock (this)
@@ -124,7 +131,7 @@ namespace SensusService.Probes
                     SensusServiceHelper.Get().Logger.Log("Attempted to start probe \"" + GetType().FullName + "\", but it was already running.", LoggingLevel.Normal);
                 else
                 {
-                    SensusServiceHelper.Get().Logger.Log("Starting \"" + GetType().FullName + "\".", LoggingLevel.Normal);
+                    SensusServiceHelper.Get().Logger.Log("Starting probe \"" + GetType().FullName + "\".", LoggingLevel.Normal);
                     Initialize();
                 }
             }
@@ -148,17 +155,17 @@ namespace SensusService.Probes
             return _collectedData;
         }
 
-        public void ClearCommittedData(ICollection<Datum> data)
+        public void ClearDataCommittedToLocalDataStore(ICollection<Datum> data)
         {
             if (_collectedData != null)
                 lock (_collectedData)
                 {
-                    int removed = 0;
+                    int cleared = 0;
                     foreach (Datum datum in data)
                         if (_collectedData.Remove(datum))
-                            ++removed;
+                            ++cleared;
 
-                    SensusServiceHelper.Get().Logger.Log("Cleared " + removed + " committed data elements from probe:  " + _displayName, LoggingLevel.Verbose);
+                    SensusServiceHelper.Get().Logger.Log("Cleared " + cleared + " committed data elements from probe:  " + GetType().FullName, LoggingLevel.Verbose);
                 }
         }
 
@@ -173,11 +180,11 @@ namespace SensusService.Probes
             {
                 if (_running)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Stopping \"" + _displayName + "\".", LoggingLevel.Normal);
+                    SensusServiceHelper.Get().Logger.Log("Stopping probe \"" + GetType().FullName + "\".", LoggingLevel.Normal);
                     _running = false;
                 }
                 else
-                    SensusServiceHelper.Get().Logger.Log("Attempted to stop probe \"" + _displayName + "\" but it wasn't running.", LoggingLevel.Normal);
+                    SensusServiceHelper.Get().Logger.Log("Attempted to stop probe \"" + GetType().FullName + "\", but it wasn't running.", LoggingLevel.Normal);
             }
         }
 
@@ -188,7 +195,7 @@ namespace SensusService.Probes
             if (!_running)
             {
                 restart = true;
-                error += "Probe \"" + _displayName + "\" is not running." + Environment.NewLine;
+                error += "Probe \"" + GetType().FullName + "\" is not running." + Environment.NewLine;
             }
 
             return restart;

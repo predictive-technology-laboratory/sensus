@@ -35,7 +35,7 @@ namespace SensusService.DataStores
             get { return _name; }
             set
             {
-                if (!value.Equals(_name, StringComparison.Ordinal))
+                if (value != _name)
                 {
                     _name = value;
                     OnPropertyChanged();

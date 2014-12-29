@@ -72,6 +72,7 @@ namespace SensusService
         /// </summary>
         public event EventHandler Stopped;
 
+        private readonly string _shareDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "share");
         private readonly string _logPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
         private readonly string _logTag = "SERVICE-HELPER";
         private readonly string _savedProtocolsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "saved_protocols.json");
@@ -83,14 +84,13 @@ namespace SensusService
             TypeNameHandling = TypeNameHandling.All,
             ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
         };
-        private readonly string _shareDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "share");
 
         private bool _stopped;
         private Logger _logger;
         private List<Protocol> _registeredProtocols;
         private int _pingDelayMS;
-        private int _pingsPerProtocolReport;
         private int _pingCount;
+        private int _pingsPerProtocolReport;
 
         public Logger Logger
         {
@@ -139,19 +139,14 @@ namespace SensusService
             }
         }
 
-        public string ShareDirectory
-        {
-            get { return _shareDirectory; }
-        }
-
         protected SensusServiceHelper(Geolocator geolocator)
         {
             GpsReceiver.Get().Initialize(geolocator);
 
             _stopped = true;
             _pingDelayMS = 1000 * 60;
-            _pingsPerProtocolReport = 5;
             _pingCount = 0;
+            _pingsPerProtocolReport = 5;
 
             if (!Directory.Exists(_shareDirectory))
                 Directory.CreateDirectory(_shareDirectory);
@@ -408,14 +403,14 @@ namespace SensusService
                     foreach (Probe probe in protocol.Probes)
                         if (probe.Running)
                             try { probe.Stop(); }
-                            catch (Exception ex) { _logger.Log("Failed to stop " + probe.GetType().FullName + ":  " + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal); }
+                            catch (Exception ex) { _logger.Log("Failed to stop " + probe.GetType().FullName + ":  " + ex.Message, LoggingLevel.Normal); }
 
                     if (protocol.LocalDataStore != null && protocol.LocalDataStore.Running)
                     {
                         _logger.Log("Stopping local data store.", LoggingLevel.Normal);
 
                         try { protocol.LocalDataStore.Stop(); }
-                        catch (Exception ex) { _logger.Log("Failed to stop local data store:  " + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal); }
+                        catch (Exception ex) { _logger.Log("Failed to stop local data store:  " + ex.Message, LoggingLevel.Normal); }
                     }
 
                     if (protocol.RemoteDataStore != null && protocol.RemoteDataStore.Running)
@@ -423,7 +418,7 @@ namespace SensusService
                         _logger.Log("Stopping remote data store.", LoggingLevel.Normal);
 
                         try { protocol.RemoteDataStore.Stop(); }
-                        catch (Exception ex) { _logger.Log("Failed to stop remote data store:  " + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal); }
+                        catch (Exception ex) { _logger.Log("Failed to stop remote data store:  " + ex.Message, LoggingLevel.Normal); }
                     }
                 }
         }
