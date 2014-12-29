@@ -53,22 +53,19 @@ namespace SensusService.DataStores.Remote
 
         protected override ICollection<Datum> GetDataToCommit()
         {
+            ICollection<Datum> dataToCommit = new Datum[] { };
+
             if (_requireWiFi && !SensusServiceHelper.Get().WiFiConnected)
-            {
                 SensusServiceHelper.Get().Logger.Log("Required WiFi but device WiFi is not connected.", LoggingLevel.Verbose);
-                return new List<Datum>();
-            }
             else if (_requireCharging && !SensusServiceHelper.Get().IsCharging)
-            {
                 SensusServiceHelper.Get().Logger.Log("Required charging but device is not charging.", LoggingLevel.Verbose);
-                return new List<Datum>();
+            else
+            {
+                dataToCommit = Protocol.LocalDataStore.GetDataForRemoteDataStore();
+                SensusServiceHelper.Get().Logger.Log("Retrieved " + dataToCommit.Count + " data elements from local data store.", LoggingLevel.Verbose);
             }
 
-            ICollection<Datum> localData = Protocol.LocalDataStore.GetDataForRemoteDataStore();
-
-            SensusServiceHelper.Get().Logger.Log("Retrieved " + localData.Count + " data elements from local data store.", LoggingLevel.Verbose);
-
-            return localData;
+            return dataToCommit;
         }
 
         protected override void ProcessCommittedData(ICollection<Datum> committedData)

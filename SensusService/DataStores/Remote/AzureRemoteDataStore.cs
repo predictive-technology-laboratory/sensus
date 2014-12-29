@@ -78,26 +78,29 @@ namespace SensusService.DataStores.Remote
 
         public override void Start()
         {
-            _client = new MobileServiceClient(_url, _key);
+            lock (this)
+            {
+                _client = new MobileServiceClient(_url, _key);
 
-            _runningAppsTable = _client.GetTable<RunningAppsDatum>();
-            _smsTable = _client.GetTable<SmsDatum>();
-            _telephonyTable = _client.GetTable<TelephonyDatum>();
-            _bluetoothTable = _client.GetTable<BluetoothDeviceProximityDatum>();
-            _lightTable = _client.GetTable<LightDatum>();
-            _soundTable = _client.GetTable<SoundDatum>();
-            _batteryTable = _client.GetTable<BatteryDatum>();
-            _screenTable = _client.GetTable<ScreenDatum>();
-            _altitudeTable = _client.GetTable<AltitudeDatum>();
-            _compassTable = _client.GetTable<CompassDatum>();
-            _locationTable = _client.GetTable<LocationDatum>();
-            _accelerometerTable = _client.GetTable<AccelerometerDatum>();
-            _cellTowerTable = _client.GetTable<CellTowerDatum>();
-            _wlanTable = _client.GetTable<WlanDatum>();
+                _runningAppsTable = _client.GetTable<RunningAppsDatum>();
+                _smsTable = _client.GetTable<SmsDatum>();
+                _telephonyTable = _client.GetTable<TelephonyDatum>();
+                _bluetoothTable = _client.GetTable<BluetoothDeviceProximityDatum>();
+                _lightTable = _client.GetTable<LightDatum>();
+                _soundTable = _client.GetTable<SoundDatum>();
+                _batteryTable = _client.GetTable<BatteryDatum>();
+                _screenTable = _client.GetTable<ScreenDatum>();
+                _altitudeTable = _client.GetTable<AltitudeDatum>();
+                _compassTable = _client.GetTable<CompassDatum>();
+                _locationTable = _client.GetTable<LocationDatum>();
+                _accelerometerTable = _client.GetTable<AccelerometerDatum>();
+                _cellTowerTable = _client.GetTable<CellTowerDatum>();
+                _wlanTable = _client.GetTable<WlanDatum>();
 
-            _protocolReportTable = _client.GetTable<ProtocolReport>();
+                _protocolReportTable = _client.GetTable<ProtocolReport>();
 
-            base.Start();
+                base.Start();
+            }
         }
 
         protected override ICollection<Datum> CommitData(ICollection<Datum> data)
@@ -161,9 +164,12 @@ namespace SensusService.DataStores.Remote
 
         public override void Stop()
         {
-            base.Stop();
+            lock (this)
+            {
+                base.Stop();
 
-            _client.Dispose();
+                _client.Dispose();
+            }
         }
     }
 }

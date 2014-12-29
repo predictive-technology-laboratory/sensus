@@ -21,9 +21,12 @@ namespace SensusService.DataStores.Local
 
         public override void Start()
         {
-            _data = new HashSet<Datum>();
+            lock (this)
+            {
+                _data = new HashSet<Datum>();
 
-            base.Start();
+                base.Start();
+            }
         }
 
         protected override ICollection<Datum> CommitData(ICollection<Datum> data)

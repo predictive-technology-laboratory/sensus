@@ -58,9 +58,11 @@ namespace SensusService.DataStores.Local
         {
             // file needs to be ready to accept data immediately
             lock (this)
+            {
                 InitializeFile();
 
-            base.Start();
+                base.Start();
+            }
         }
 
         protected override ICollection<Datum> CommitData(ICollection<Datum> data)
@@ -188,11 +190,13 @@ namespace SensusService.DataStores.Local
 
         public override void Stop()
         {
-            // stop the data store before closing the file to make sure all data are allowed in
-            base.Stop();
-
             lock (this)
+            {
+                // stop the data store before closing the file to make sure all data are allowed in
+                base.Stop();
+
                 CloseFile();
+            }
         }
 
         private string GetJSON(Datum datum)
