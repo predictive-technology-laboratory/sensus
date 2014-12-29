@@ -54,7 +54,7 @@ namespace SensusUI
                     await PushAsync(new ProbePage(e.Item as Probe));
                 };
 
-            ProtocolPage.ViewMostRecentReportTapped += async (o, report) =>
+            ProtocolPage.DisplayProtocolReport += async (o, report) =>
                 {
                     await PushAsync(new ViewTextLinesPage("Protocol Report", report.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList(), null));
                 };

@@ -189,11 +189,20 @@ namespace SensusService.Probes
             }
         }
 
+        public void Restart()
+        {
+            lock(this)
+            {
+                Stop();
+                Start();
+            }
+        }
+
         public virtual bool Ping(ref string error, ref string warning, ref string misc)
         {
             bool restart = false;
 
-            if (_protocol.Running && _enabled && !_running)
+            if (!_running)
             {
                 restart = true;
                 error += "Probe \"" + GetType().FullName + "\" is not running." + Environment.NewLine;

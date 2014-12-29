@@ -192,15 +192,20 @@ namespace SensusService.DataStores
 
                 SensusServiceHelper.Get().Logger.Log("Stopping " + GetType().Name + " data store:  " + Name, LoggingLevel.Normal);
 
-                if (_commitTrigger == null)
-                    throw new DataStoreException("Called DataStore.Stop, but the commit trigger was not present.");
-                else
+                if (_commitTrigger != null)
                     _commitTrigger.Set();
 
-                if (_commitTask == null)
-                    throw new DataStoreException("Called DataStore.Stop, but the commit task was not present.");
-                else
+                if (_commitTask != null)
                     _commitTask.Wait();
+            }
+        }
+
+        public void Restart()
+        {
+            lock (this)
+            {
+                Stop();
+                Start();
             }
         }
 
