@@ -546,6 +546,11 @@ namespace SensusService
                                 }
                         }
 
+                        _logger.Log("Protocol report (" + (error == null ? "" : "e") + (warning == null ? "" : "w") + (misc == null ? "" : "m") + "):" + Environment.NewLine +
+                                    "\tError:  " + error + Environment.NewLine +
+                                    "\tWarning:  " + warning + Environment.NewLine +
+                                    "\tMisc:  " + misc, LoggingLevel.Normal, _logTag);
+
                         // submit report about sensus status
                         if (_pingCount % _pingsPerProtocolReport == 0)
                         {

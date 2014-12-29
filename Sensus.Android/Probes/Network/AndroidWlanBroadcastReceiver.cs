@@ -13,7 +13,7 @@ namespace Sensus.Android.Probes.Network
     {
         public static event EventHandler<WlanDatum> WifiConnectionChanged;
 
-        private static string _previousApBSSID = null;
+        private static string _previousAccessPointBSSID = null;
         private static bool _firstReceive = true;
 
         private ConnectivityManager _connectivityManager;
@@ -27,11 +27,11 @@ namespace Sensus.Android.Probes.Network
         {
             if (WifiConnectionChanged != null && intent != null && intent.Action == ConnectivityManager.ConnectivityAction)
             {
-                string apBSSID = GetAccessPointBSSID();
-                if (_firstReceive || apBSSID != _previousApBSSID)
+                string currAccessPointBSSID = GetAccessPointBSSID();
+                if (_firstReceive || currAccessPointBSSID != _previousAccessPointBSSID)
                 {
-                    WifiConnectionChanged(this, new WlanDatum(null, DateTimeOffset.UtcNow, apBSSID));
-                    _previousApBSSID = apBSSID;
+                    WifiConnectionChanged(this, new WlanDatum(null, DateTimeOffset.UtcNow, currAccessPointBSSID));
+                    _previousAccessPointBSSID = currAccessPointBSSID;
                     _firstReceive = false;
                 }
             }
@@ -39,15 +39,15 @@ namespace Sensus.Android.Probes.Network
 
         private string GetAccessPointBSSID()
         {
-            string apBSSID = null;
+            string accessPointBSSID = null;
 
             if (_connectivityManager.GetNetworkInfo(ConnectivityType.Wifi).IsConnected)
             {
                 WifiManager wifiManager = Application.Context.GetSystemService(global::Android.Content.Context.WifiService) as WifiManager;
-                apBSSID = wifiManager.ConnectionInfo.BSSID;
+                accessPointBSSID = wifiManager.ConnectionInfo.BSSID;
             }
 
-            return apBSSID;
+            return accessPointBSSID;
         }
     }
 }
