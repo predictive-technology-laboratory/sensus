@@ -1,7 +1,15 @@
-﻿
-namespace SensusService.Probes.Context
+﻿namespace SensusService.Probes.Context
 {
-    class SoundProbe
+    public abstract class SoundProbe : PollingProbe
     {
+        protected sealed override string DefaultDisplayName
+        {
+            get { return "Sound"; }
+        }
+
+        public override int DefaultPollingSleepDurationMS
+        {
+            get { return 10000; }
+        }
     }
 }

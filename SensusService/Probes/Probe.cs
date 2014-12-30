@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using SensusService.Exceptions;
 using SensusUI.UiProperties;
 using System;
 using System.Collections.Generic;
@@ -14,23 +13,16 @@ namespace SensusService.Probes
     /// <summary>
     /// An abstract probe.
     /// </summary>
-    public abstract class Probe : IProbe, INotifyPropertyChanged
+    public abstract class Probe : INotifyPropertyChanged
     {
         #region static members
-        static Probe()
-        {
-            Probe[] probes = Assembly.GetExecutingAssembly().GetTypes().Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(Probe))).Select(t => Activator.CreateInstance(t) as Probe).ToArray();
-            if (probes.Length != probes.Select(p => p.Id).Distinct().Count())
-                throw new SensusException("All probes must have distinct IDs.");
-        }
-
         /// <summary>
         /// Gets a list of all probes, uninitialized and with default parameter values.
         /// </summary>
         /// <returns></returns>
         public static List<Probe> GetAll()
         {
-            return Assembly.GetExecutingAssembly().GetTypes().Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(Probe))).Select(t => Activator.CreateInstance(t) as Probe).ToList();
+            return Assembly.GetExecutingAssembly().GetTypes().Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(Probe))).Select(t => Activator.CreateInstance(t) as Probe).OrderBy(p => p.DisplayName).ToList();
         }
         #endregion
 
@@ -41,10 +33,10 @@ namespace SensusService.Probes
 
         private string _displayName;
         private bool _enabled;
+        private bool _running;
         private HashSet<Datum> _collectedData;
-        private Protocol _protocol;
-        private ProbeController _controller;
         private Datum _mostRecentlyStoredDatum;
+        private Protocol _protocol;
 
         [EntryStringUiProperty("Name:", true, 1)]
         public string DisplayName
@@ -52,7 +44,7 @@ namespace SensusService.Probes
             get { return _displayName; }
             set
             {
-                if (!value.Equals(_displayName, StringComparison.Ordinal))
+                if (value != _displayName)
                 {
                     _displayName = value;
                     OnPropertyChanged();
@@ -71,11 +63,32 @@ namespace SensusService.Probes
                     _enabled = value;
                     OnPropertyChanged();
 
-                    if (_protocol != null && _protocol.Running)  // _protocol can be null when deserializing the probe
+                    if (_protocol != null && _protocol.Running)  // _protocol can be null when deserializing the probe -- if Enabled is set before Protocol
                         if (_enabled)
-                            InitializeAndStart();
+                            StartAsync();
                         else
-                            _controller.Stop();
+                            StopAsync();
+                }
+            }
+        }
+
+
+        [JsonIgnore]
+        public bool Running
+        {
+            get { return _running; }
+        }
+
+        [JsonIgnore]
+        public Datum MostRecentlyStoredDatum
+        {
+            get { return _mostRecentlyStoredDatum; }
+            set
+            {
+                if (value != _mostRecentlyStoredDatum)
+                {
+                    _mostRecentlyStoredDatum = value;
+                    OnPropertyChanged();
                 }
             }
         }
@@ -86,76 +99,46 @@ namespace SensusService.Probes
             set { _protocol = value; }
         }
 
-        public ProbeController Controller
-        {
-            get { return _controller; }
-            set
-            {
-                if (value != _controller)
-                {
-                    bool previousRunningValue = _controller != null && _controller.Running;
-
-                    _controller = value;
-
-                    if (previousRunningValue != _controller.Running)
-                        OnPropertyChanged("Running");  // the running status of probes comes from the controller, so if the controller changes we should update
-                }
-            }
-        }
-
-        [JsonIgnore]
-        public Datum MostRecentlyStoredDatum
-        {
-            get { return _mostRecentlyStoredDatum; }
-            set
-            {
-                if(value != _mostRecentlyStoredDatum)
-                {
-                    _mostRecentlyStoredDatum = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        [JsonIgnore]
-        public bool Running
-        {
-            get { return _controller != null && _controller.Running; }  // can be null if this property is referenced by another when deserializing
-        }
-
-        protected abstract int Id { get; }
-
         protected abstract string DefaultDisplayName { get; }
-
-        protected abstract ProbeController DefaultController { get; }
 
         protected Probe()
         {
             _displayName = DefaultDisplayName;
-            _enabled = false;
-            _controller = DefaultController;
+            _enabled = _running = false;
         }
 
-        protected virtual bool Initialize()
+        /// <summary>
+        /// Initializes this probe. Throws an exception if initialization fails.
+        /// </summary>
+        protected virtual void Initialize()
         {
             _collectedData = new HashSet<Datum>();
-
-            return true;
         }
 
-        public bool InitializeAndStart()
+        protected Task StartAsync()
         {
-            try
-            {
-                if (Initialize())
-                    _controller.Start();
-            }
-            catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to start probe \"" + _displayName + "\":" + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal); }
-
-            return _controller.Running;
+            return Task.Run(() => Start());
         }
 
-        public virtual void StoreDatum(Datum datum)
+        /// <summary>
+        /// Starts this probe. Throws an exception if start fails. Should be called first within parent-class overrides.
+        /// </summary>
+        public virtual void Start()
+        {
+            lock (this)
+            {
+                if (_running)
+                    SensusServiceHelper.Get().Logger.Log("Attempted to start probe \"" + GetType().FullName + "\", but it was already running.", LoggingLevel.Normal);
+                else
+                {
+                    SensusServiceHelper.Get().Logger.Log("Starting probe \"" + GetType().FullName + "\".", LoggingLevel.Normal);
+                    Initialize();
+                    _running = true;
+                }
+            }
+        }
+
+        protected virtual void StoreDatum(Datum datum)
         {
             if (datum != null)
                 lock (_collectedData)
@@ -173,23 +156,66 @@ namespace SensusService.Probes
             return _collectedData;
         }
 
-        public void ClearCommittedData(ICollection<Datum> data)
+        public void ClearDataCommittedToLocalDataStore(ICollection<Datum> data)
         {
             if (_collectedData != null)
                 lock (_collectedData)
                 {
-                    int removed = 0;
+                    int cleared = 0;
                     foreach (Datum datum in data)
                         if (_collectedData.Remove(datum))
-                            ++removed;
+                            ++cleared;
 
-                    SensusServiceHelper.Get().Logger.Log("Cleared " + removed + " committed data elements from probe:  " + _displayName, LoggingLevel.Verbose);
+                    SensusServiceHelper.Get().Logger.Log("Cleared " + cleared + " committed data elements from probe:  " + GetType().FullName, LoggingLevel.Verbose);
                 }
+        }
+
+        protected Task StopAsync()
+        {
+            return Task.Run(() => Stop());
+        }
+
+        /// <summary>
+        /// Should be called first within parent-class overrides.
+        /// </summary>
+        public virtual void Stop()
+        {
+            lock (this)
+            {
+                if (_running)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Stopping probe \"" + GetType().FullName + "\".", LoggingLevel.Normal);
+                    _running = false;
+
+                    // clear out the probe's in-memory storage
+                    lock (_collectedData)
+                        _collectedData.Clear();
+                }
+                else
+                    SensusServiceHelper.Get().Logger.Log("Attempted to stop probe \"" + GetType().FullName + "\", but it wasn't running.", LoggingLevel.Normal);
+            }
+        }
+
+        public void Restart()
+        {
+            lock(this)
+            {
+                Stop();
+                Start();
+            }
         }
 
         public virtual bool Ping(ref string error, ref string warning, ref string misc)
         {
-            return _controller.Ping(ref error, ref warning, ref misc);
+            bool restart = false;
+
+            if (!_running)
+            {
+                restart = true;
+                error += "Probe \"" + GetType().FullName + "\" is not running." + Environment.NewLine;
+            }
+
+            return restart;
         }
 
         public void OnPropertyChanged([CallerMemberName] string propertyName = null)

@@ -58,9 +58,11 @@ namespace SensusService.DataStores.Local
         {
             // file needs to be ready to accept data immediately
             lock (this)
+            {
                 InitializeFile();
 
-            base.Start();
+                base.Start();
+            }
         }
 
         protected override ICollection<Datum> CommitData(ICollection<Datum> data)
@@ -141,9 +143,6 @@ namespace SensusService.DataStores.Local
             {
                 SensusServiceHelper.Get().Logger.Log("Local data store received " + dataCommittedToRemote.Count + " remote-committed elements to clear.", LoggingLevel.Verbose);
 
-                if (dataCommittedToRemote.Count == 0)
-                    return;
-
                 HashSet<Datum> hashDataCommittedToRemote = new HashSet<Datum>(dataCommittedToRemote);  // for quick access via hashing
 
                 foreach (string path in Directory.GetFiles(StorageDirectory))
@@ -191,11 +190,17 @@ namespace SensusService.DataStores.Local
 
         public override void Stop()
         {
-            // stop the data store before closing the file to make sure all data are allowed in
-            base.Stop();
-
             lock (this)
+            {
+                // stop the commit thread
+                base.Stop();
+
+                // close current file
                 CloseFile();
+
+                // clear out files that remain. they won't be committed.
+                Clear();
+            }
         }
 
         private string GetJSON(Datum datum)

@@ -3,10 +3,9 @@ using System;
 
 namespace SensusService.Probes
 {
-    public abstract class ListeningProbe : Probe, IListeningProbe
+    public abstract class ListeningProbe : Probe
     {
         private int _maxDataStoresPerSecond;
-        private DateTime _lastStoreTime;
 
         [EntryIntegerUiProperty("Max Data / Second:", true, int.MaxValue)]
         public int MaxDataStoresPerSecond
@@ -22,29 +21,44 @@ namespace SensusService.Probes
             }
         }
 
-        protected override ProbeController DefaultController
-        {
-            get { return new ListeningProbeController(this); }
-        }
-
         protected ListeningProbe()
         {
             _maxDataStoresPerSecond = 1;
-            _lastStoreTime = DateTime.MinValue;
         }
 
-        public abstract void StartListening();
-
-        public abstract void StopListening();
-
-        public override void StoreDatum(Datum datum)
+        public sealed override void Start()
         {
-            float dataPerSecond = 1 / (float)(DateTime.Now - _lastStoreTime).TotalSeconds;
-            if (dataPerSecond < _maxDataStoresPerSecond)
+            lock (this)
             {
-                base.StoreDatum(datum);
-                _lastStoreTime = DateTime.Now;
+                base.Start();
+
+                StartListening();
             }
+        }
+
+        protected abstract void StartListening();
+
+        public sealed override void Stop()
+        {
+            lock (this)
+            {
+                base.Stop();
+
+                StopListening();
+            }
+        }
+
+        protected abstract void StopListening();
+
+        protected sealed override void StoreDatum(Datum datum)
+        {
+            DateTimeOffset lastStoreTime = DateTimeOffset.MinValue;
+            if (MostRecentlyStoredDatum != null)
+                lastStoreTime = MostRecentlyStoredDatum.Timestamp;
+
+            float storesPerSecond = 1 / (float)(DateTime.Now - lastStoreTime).TotalSeconds;
+            if (storesPerSecond <= _maxDataStoresPerSecond)
+                base.StoreDatum(datum);
         }
     }
 }

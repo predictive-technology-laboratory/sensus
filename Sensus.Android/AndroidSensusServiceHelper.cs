@@ -3,8 +3,10 @@ using Android.Content;
 using Android.Net;
 using Android.OS;
 using Android.Provider;
+using Android.Support.V4.Content;
 using Java.Lang;
 using SensusService;
+using System.IO;
 using Xamarin;
 using Xamarin.Geolocation;
 
@@ -16,6 +18,13 @@ namespace Sensus.Android
 
         private ConnectivityManager _connectivityManager;
         private readonly string _deviceId;
+        private Activity _mainActivity;
+
+        public Activity MainActivity
+        {
+            get { return _mainActivity; }
+            set { _mainActivity = value; }
+        }
 
         public override bool WiFiConnected
         {
@@ -49,23 +58,30 @@ namespace Sensus.Android
             Insights.Initialize(XAMARIN_INSIGHTS_APP_KEY, Application.Context);
         }
 
-        public override void ShareFile(string path, string emailSubject)
+        public override void ShareFile(string path, string subject)
         {
             try
             {
                 Intent intent = new Intent(Intent.ActionSend);
                 intent.SetType("text/plain");
-                intent.AddFlags(ActivityFlags.NewTask);
+                intent.AddFlags(ActivityFlags.GrantReadUriPermission);
 
-                if (!string.IsNullOrWhiteSpace(emailSubject))
-                    intent.PutExtra(Intent.ExtraSubject, emailSubject);
+                if (!string.IsNullOrWhiteSpace(subject))
+                    intent.PutExtra(Intent.ExtraSubject, subject);
 
                 Java.IO.File file = new Java.IO.File(path);
-                file.SetReadable(true, false);
-                global::Android.Net.Uri uri = global::Android.Net.Uri.FromFile(file);
+                Uri uri = FileProvider.GetUriForFile(Application.Context, "edu.virginia.sie.ptl.sensus.fileprovider", file);
                 intent.PutExtra(Intent.ExtraStream, uri);
 
-                Application.Context.StartActivity(intent);
+                // if we're outside the context of the main activity (e.g., within the service), start a new activity
+                if (_mainActivity == null)
+                {
+                    intent.AddFlags(ActivityFlags.NewTask);
+                    Application.Context.StartActivity(intent);
+                }
+                // otherwise, start the activity off the main activity -- smoother transition back to sensus after the file has been shared
+                else
+                    _mainActivity.StartActivity(intent);
             }
             catch (Exception ex) { Logger.Log("Failed to start intent to share file \"" + path + "\":  " + ex.Message, LoggingLevel.Normal); }
         }

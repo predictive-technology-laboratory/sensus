@@ -185,7 +185,7 @@
       <HintPath>..\packages\Xamarin.Insights.1.8.2.105\lib\WP80\Xamarin.Insights.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Mobile">
-      <HintPath>..\Components\xamarin.mobile-0.7.4\lib\wp8\Xamarin.Mobile.dll</HintPath>
+      <HintPath>..\Components\xamarin.mobile-0.7.5\lib\wp8\Xamarin.Mobile.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="..\SensusService\SensusService.projitems" Label="Shared" Condition="Exists('..\SensusService\SensusService.projitems')" />

@@ -7,20 +7,20 @@ namespace SensusService.Probes.Location
     {
         private double _heading;
 
-        [JsonIgnore]
-        public override string DisplayDetail
-        {
-            get { return Math.Round(_heading, 0) + " degrees from magnetic north"; }
-        }
-
         public double Heading
         {
             get { return _heading; }
             set { _heading = value; }
         }
 
-        public CompassDatum(int probeId, DateTimeOffset timestamp, double heading)
-            : base(probeId, timestamp)
+        [JsonIgnore]
+        public override string DisplayDetail
+        {
+            get { return Math.Round(_heading, 0) + " degrees from magnetic north"; }
+        }
+
+        public CompassDatum(Probe probe, DateTimeOffset timestamp, double heading)
+            : base(probe, timestamp)
         {
             _heading = heading;
         }

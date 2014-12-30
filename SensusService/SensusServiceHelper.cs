@@ -72,6 +72,7 @@ namespace SensusService
         /// </summary>
         public event EventHandler Stopped;
 
+        private readonly string _shareDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "share");
         private readonly string _logPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
         private readonly string _logTag = "SERVICE-HELPER";
         private readonly string _savedProtocolsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "saved_protocols.json");
@@ -88,8 +89,8 @@ namespace SensusService
         private Logger _logger;
         private List<Protocol> _registeredProtocols;
         private int _pingDelayMS;
-        private int _pingsPerProtocolReport;
         private int _pingCount;
+        private int _pingsPerProtocolReportUpload;
 
         public Logger Logger
         {
@@ -124,15 +125,15 @@ namespace SensusService
             }
         }
 
-        [EntryIntegerUiProperty("Pings Per Report:", true, int.MaxValue)]
-        public int PingsPerProtocolReport
+        [EntryIntegerUiProperty("Pings Per Report Upload:", true, int.MaxValue)]
+        public int PingsPerProtocolReportUpload
         {
-            get { return _pingsPerProtocolReport; }
+            get { return _pingsPerProtocolReportUpload; }
             set
             {
-                if (value != _pingsPerProtocolReport)
+                if (value != _pingsPerProtocolReportUpload)
                 {
-                    _pingsPerProtocolReport = value;
+                    _pingsPerProtocolReportUpload = value;
                     OnPropertyChanged();
                 }
             }
@@ -144,8 +145,11 @@ namespace SensusService
 
             _stopped = true;
             _pingDelayMS = 1000 * 60;
-            _pingsPerProtocolReport = 5;
             _pingCount = 0;
+            _pingsPerProtocolReportUpload = 5;
+
+            if (!Directory.Exists(_shareDirectory))
+                Directory.CreateDirectory(_shareDirectory);
 
             #region logger
 #if DEBUG
@@ -275,6 +279,11 @@ namespace SensusService
                 return ids;
             }
         }
+
+        public bool ProtocolShouldBeRunning(Protocol protocol)
+        {
+            return ReadRunningProtocolIds().Contains(protocol.Id);
+        }
         #endregion
 
         /// <summary>
@@ -298,7 +307,7 @@ namespace SensusService
 
         public Task StartProtocolAsync(Protocol protocol)
         {
-            return Task.Run(() => { StartProtocol(protocol); });
+            return Task.Run(() => StartProtocol(protocol));
         }
 
         public void StartProtocol(Protocol protocol)
@@ -315,11 +324,16 @@ namespace SensusService
                     AddRunningProtocolId(protocol.Id);
                     StartSensusPings(_pingDelayMS);
 
-                    _logger.Log("Initializing and starting probes for protocol " + protocol.Name + ".", LoggingLevel.Normal);
+                    _logger.Log("Starting probes for protocol " + protocol.Name + ".", LoggingLevel.Normal);
                     int probesStarted = 0;
                     foreach (Probe probe in protocol.Probes)
-                        if (probe.Enabled && probe.InitializeAndStart())
-                            probesStarted++;
+                        if (probe.Enabled)
+                            try
+                            {
+                                probe.Start();
+                                probesStarted++;
+                            }
+                            catch (Exception ex) { _logger.Log("Failed to start probe \"" + probe.GetType().FullName + "\":" + ex.Message, LoggingLevel.Normal); }
 
                     bool stopProtocol = false;
 
@@ -366,7 +380,7 @@ namespace SensusService
 
         public Task StopProtocolAsync(Protocol protocol, bool unregister)
         {
-            return Task.Run(() => { StopProtocol(protocol, unregister); });
+            return Task.Run(() => StopProtocol(protocol, unregister));
         }
 
         public void StopProtocol(Protocol protocol, bool unregister)
@@ -392,16 +406,16 @@ namespace SensusService
 
                     _logger.Log("Stopping probes.", LoggingLevel.Normal);
                     foreach (Probe probe in protocol.Probes)
-                        if (probe.Controller.Running)
-                            try { probe.Controller.Stop(); }
-                            catch (Exception ex) { _logger.Log("Failed to stop " + probe.DisplayName + "'s controller:  " + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal); }
+                        if (probe.Running)
+                            try { probe.Stop(); }
+                            catch (Exception ex) { _logger.Log("Failed to stop " + probe.GetType().FullName + ":  " + ex.Message, LoggingLevel.Normal); }
 
                     if (protocol.LocalDataStore != null && protocol.LocalDataStore.Running)
                     {
                         _logger.Log("Stopping local data store.", LoggingLevel.Normal);
 
                         try { protocol.LocalDataStore.Stop(); }
-                        catch (Exception ex) { _logger.Log("Failed to stop local data store:  " + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal); }
+                        catch (Exception ex) { _logger.Log("Failed to stop local data store:  " + ex.Message, LoggingLevel.Normal); }
                     }
 
                     if (protocol.RemoteDataStore != null && protocol.RemoteDataStore.Running)
@@ -409,7 +423,7 @@ namespace SensusService
                         _logger.Log("Stopping remote data store.", LoggingLevel.Normal);
 
                         try { protocol.RemoteDataStore.Stop(); }
-                        catch (Exception ex) { _logger.Log("Failed to stop remote data store:  " + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal); }
+                        catch (Exception ex) { _logger.Log("Failed to stop remote data store:  " + ex.Message, LoggingLevel.Normal); }
                     }
                 }
         }
@@ -462,87 +476,14 @@ namespace SensusService
 
                 _logger.Log("Sensus service helper was pinged (count=" + ++_pingCount + ")", LoggingLevel.Normal, _logTag);
 
-                // make sure everything is running properly
                 List<string> runningProtocolIds = ReadRunningProtocolIds();
                 foreach (Protocol protocol in _registeredProtocols)
-                    lock (protocol)
+                    if (runningProtocolIds.Contains(protocol.Id))
                     {
-                        string error = null;
-                        string warning = null;
-                        string misc = null;
+                        protocol.Ping();
 
-                        if (!protocol.Running && runningProtocolIds.Contains(protocol.Id))
-                        {
-                            error += "Restarting protocol \"" + protocol.Name + "\"...";
-                            try
-                            {
-                                StopProtocol(protocol, false);
-                                StartProtocol(protocol);
-                            }
-                            catch (Exception ex) { error += ex.Message + "..."; }
-
-                            if (protocol.Running)
-                                error += "restarted protocol." + Environment.NewLine;
-                            else
-                                error += "failed to restart protocol." + Environment.NewLine;
-                        }
-
-                        if (protocol.Running)
-                        {
-                            if (protocol.LocalDataStore == null)
-                                error += "No local data store present on protocol." + Environment.NewLine;
-                            else if (protocol.LocalDataStore.Ping(ref error, ref warning, ref misc))
-                            {
-                                error += "Restarting local data store...";
-                                try
-                                {
-                                    protocol.LocalDataStore.Stop();
-                                    protocol.LocalDataStore.Start();
-                                }
-                                catch (Exception ex) { error += ex.Message + "..."; }
-
-                                if (!protocol.LocalDataStore.Running)
-                                    error += "failed to restart local data store." + Environment.NewLine;
-                            }
-
-                            if (protocol.RemoteDataStore == null)
-                                error += "No remote data store present on protocol." + Environment.NewLine;
-                            else if (protocol.RemoteDataStore.Ping(ref error, ref warning, ref misc))
-                            {
-                                error += "Restarting remote data store...";
-                                try
-                                {
-                                    protocol.RemoteDataStore.Stop();
-                                    protocol.RemoteDataStore.Start();
-                                }
-                                catch (Exception ex) { error += ex.Message + "..."; }
-
-                                if (!protocol.RemoteDataStore.Running)
-                                    error += "failed to restart remote data store." + Environment.NewLine;
-                            }
-
-                            foreach (Probe probe in protocol.Probes)
-                                if (probe.Ping(ref error, ref warning, ref misc))
-                                {
-                                    error += "Restarting probe \"" + probe.DisplayName + "\"...";
-                                    try
-                                    {
-                                        probe.Enabled = false;
-                                        probe.Enabled = true;
-                                    }
-                                    catch (Exception ex) { error += ex.Message + "..."; }
-
-                                    if (!probe.Running)
-                                        error += "failed to restart probe \"" + probe.DisplayName + "\".";
-                                }
-                        }
-
-                        // submit report about sensus status
-                        if (_pingCount % _pingsPerProtocolReport == 0)
-                        {
-                            _logger.Log("Submitting protocol report.", LoggingLevel.Normal, _logTag);
-                            protocol.LocalDataStore.AddNonProbeDatum(new ProtocolReport(DateTimeOffset.UtcNow, error, warning, misc));
-                        }
+                        if (_pingCount % _pingsPerProtocolReportUpload == 0)
+                            protocol.UploadMostRecentProtocolReport();
                     }
             }
         }
@@ -559,24 +500,16 @@ namespace SensusService
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public abstract void ShareFile(string path, string emailSubject);
+        public abstract void ShareFile(string path, string subject);
 
-        public string GetTempPath(string extension)
+        public string GetSharePath(string extension)
         {
             lock (this)
             {
+                int fileNum = 0;
                 string path = null;
-                while (path == null)
-                {
-                    string tempPath = Path.GetTempFileName();
-                    File.Delete(tempPath);
-
-                    if (!string.IsNullOrWhiteSpace(extension))
-                        tempPath = Path.Combine(Path.GetDirectoryName(tempPath), Path.GetFileNameWithoutExtension(tempPath) + "." + extension.Trim('.'));
-
-                    if (!File.Exists(tempPath))
-                        path = tempPath;
-                }
+                while (path == null || File.Exists(path))
+                    path = Path.Combine(_shareDirectory, fileNum++ + (string.IsNullOrWhiteSpace(extension) ? "" : "." + extension.Trim('.')));
 
                 return path;
             }

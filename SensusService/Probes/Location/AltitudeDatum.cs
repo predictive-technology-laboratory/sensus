@@ -7,20 +7,20 @@ namespace SensusService.Probes.Location
     {
         private double _altitude;
 
-        [JsonIgnore]
-        public override string DisplayDetail
-        {
-            get { return Math.Round(_altitude, 0) + " feet"; }
-        }
-
         public double Altitude
         {
             get { return _altitude; }
             set { _altitude = value; }
         }
 
-        public AltitudeDatum(int probeId, DateTimeOffset timestamp, double accuracy, double altitude)
-            : base(probeId, timestamp, accuracy)
+        [JsonIgnore]
+        public override string DisplayDetail
+        {
+            get { return Math.Round(_altitude, 0) + " feet"; }
+        }
+
+        public AltitudeDatum(Probe probe, DateTimeOffset timestamp, double accuracy, double altitude)
+            : base(probe, timestamp, accuracy)
         {
             _altitude = altitude;
         }

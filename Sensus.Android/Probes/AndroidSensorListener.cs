@@ -1,5 +1,4 @@
 using Android.App;
-using Android.Content;
 using Android.Hardware;
 using SensusService.Exceptions;
 using System;
@@ -23,18 +22,20 @@ namespace Sensus.Android.Probes
             _sensorDelay = sensorDelay;
             _sensorAccuracyChangedCallback = sensorAccuracyChangedCallback;
             _sensorValueChangedCallback = sensorValueChangedCallback;
-            _sensorManager = Application.Context.GetSystemService(Context.SensorService) as SensorManager;
+            _sensorManager = Application.Context.GetSystemService(global::Android.Content.Context.SensorService) as SensorManager;
             _listening = false;
         }
 
-        public bool Initialize()
+        public void Initialize()
         {
             IList<Sensor> sensors = _sensorManager.GetSensorList(_sensorType);
+
             _sensor = null;
             if (sensors.Count > 0)
                 _sensor = sensors[0];
 
-            return _sensor != null;
+            if (_sensor == null)
+                throw new Exception("No sensors present for sensor type " + _sensorType);
         }
 
         public void Start()
@@ -77,7 +78,7 @@ namespace Sensus.Android.Probes
 
         public void OnSensorChanged(SensorEvent e)
         {
-            if (_sensorValueChangedCallback != null)
+            if (_sensorValueChangedCallback != null && e != null && e.Values != null && e.Values.Count > 0)
                 _sensorValueChangedCallback(e);
         }
     }

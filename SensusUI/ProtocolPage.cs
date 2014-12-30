@@ -1,6 +1,7 @@
 ﻿using SensusService;
 using SensusService.DataStores;
 using SensusService.Exceptions;
+using SensusService.Probes;
 using SensusUI.UiProperties;
 using System;
 using System.Collections.Generic;
@@ -13,12 +14,26 @@ namespace SensusUI
         public static event EventHandler<ProtocolDataStoreEventArgs> EditDataStoreTapped;
         public static event EventHandler<ProtocolDataStoreEventArgs> CreateDataStoreTapped;
         public static event EventHandler<ItemTappedEventArgs> ProbeTapped;
+        public static event EventHandler<ProtocolReport> DisplayProtocolReport;
 
         private class DataStoreValueConverter : IValueConverter
         {
             public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
             {
                 return parameter + " store:  " + (value == null ? "None" : (value as DataStore).Name);
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            {
+                throw new SensusException("Invalid call to " + GetType().FullName + ".ConvertBack.");
+            }
+        }
+
+        private class ProbeTextColorValueConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            {
+                return (bool)value ? Color.Green : Color.Red;
             }
 
             public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -55,6 +70,7 @@ namespace SensusUI
             ListView probesList = new ListView();
             probesList.ItemTemplate = new DataTemplate(typeof(TextCell));
             probesList.ItemTemplate.SetBinding(TextCell.TextProperty, "DisplayName");
+            probesList.ItemTemplate.SetBinding(TextCell.TextColorProperty, new Binding("Enabled", converter: new ProbeTextColorValueConverter()));
             probesList.ItemTemplate.SetBinding(TextCell.DetailProperty, new Binding("MostRecentlyStoredDatum", converter: new ProbeDetailValueConverter()));
             probesList.ItemsSource = protocol.Probes;
             probesList.ItemTapped += (o, e) =>
@@ -153,12 +169,27 @@ namespace SensusUI
             foreach (View view in views)
                 (Content as StackLayout).Children.Add(view);
 
+            ToolbarItems.Add(new ToolbarItem("Ping", null, async () =>
+                {
+                    if (SensusServiceHelper.Get().ProtocolShouldBeRunning(protocol))
+                    {
+                        await protocol.PingAsync();
+
+                        if (protocol.MostRecentReport == null)
+                            await DisplayAlert("No Report", "Ping failed.", "OK");
+                        else
+                            DisplayProtocolReport(this, protocol.MostRecentReport);
+                    }
+                    else
+                        await DisplayAlert("Protocol Not Running", "Cannot ping protocol when it is not running.", "OK");
+                }));
+
             ToolbarItems.Add(new ToolbarItem("Share", null, () =>
                 {
                     string path = null;
                     try
                     {
-                        path = UiBoundSensusServiceHelper.Get().GetTempPath(".sensus");
+                        path = UiBoundSensusServiceHelper.Get().GetSharePath(".sensus");
                         protocol.Save(path);
                     }
                     catch (Exception ex)

@@ -6,6 +6,7 @@ using SensusService;
 using SensusService.Exceptions;
 using SensusUI;
 using System;
+using System.IO;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 
@@ -38,11 +39,14 @@ namespace Sensus.Android
             _serviceConnection = new AndroidSensusServiceConnection(null);
             _serviceConnection.ServiceConnected += async (o, e) =>
                 {
+                    // before binding, add reference to main activity within the service helper
+                    e.Binder.SensusServiceHelper.MainActivity = this;
+
                     UiBoundSensusServiceHelper.Set(e.Binder.SensusServiceHelper);
 
                     UiBoundSensusServiceHelper.Get().Stopped += (oo, ee) => { Finish(); };  // stop activity when service stops
 
-                    SensusNavigationPage navigationPage = new SensusNavigationPage();
+                    SensusNavigationPage navigationPage = new SensusNavigationPage(UiBoundSensusServiceHelper.Get());
 
                     SetPage(navigationPage);
 

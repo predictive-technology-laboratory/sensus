@@ -12,21 +12,23 @@ namespace Sensus.Android.Probes.Location
         {
             _compassListener = new AndroidSensorListener(SensorType.Orientation, SensorDelay.Normal, null, e =>
                 {
-                    StoreDatum(new CompassDatum(Id, DateTime.UtcNow, e.Values[0]));
+                    StoreDatum(new CompassDatum(this, DateTimeOffset.UtcNow, e.Values[0]));
                 });
         }
 
-        protected override bool Initialize()
+        protected override void Initialize()
         {
-            return base.Initialize() && _compassListener.Initialize();
+            base.Initialize();
+
+            _compassListener.Initialize();
         }
 
-        public override void StartListening()
+        protected override void StartListening()
         {
             _compassListener.Start();
         }
 
-        public override void StopListening()
+        protected override void StopListening()
         {
             _compassListener.Stop();
         }

@@ -1,11 +1,16 @@
 ﻿using Microsoft.WindowsAzure.MobileServices;
 using Newtonsoft.Json;
 using SensusService.Exceptions;
+using SensusService.Probes.Apps;
+using SensusService.Probes.Communication;
+using SensusService.Probes.Context;
+using SensusService.Probes.Device;
 using SensusService.Probes.Location;
+using SensusService.Probes.Movement;
+using SensusService.Probes.Network;
 using SensusUI.UiProperties;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace SensusService.DataStores.Remote
 {
@@ -15,9 +20,21 @@ namespace SensusService.DataStores.Remote
         private string _url;
         private string _key;
 
+        private IMobileServiceTable<RunningAppsDatum> _runningAppsTable;
+        private IMobileServiceTable<SmsDatum> _smsTable;
+        private IMobileServiceTable<TelephonyDatum> _telephonyTable;
+        private IMobileServiceTable<BluetoothDeviceProximityDatum> _bluetoothTable;
+        private IMobileServiceTable<LightDatum> _lightTable;
+        private IMobileServiceTable<SoundDatum> _soundTable;
+        private IMobileServiceTable<BatteryDatum> _batteryTable;
+        private IMobileServiceTable<ScreenDatum> _screenTable;
         private IMobileServiceTable<AltitudeDatum> _altitudeTable;
         private IMobileServiceTable<CompassDatum> _compassTable;
         private IMobileServiceTable<LocationDatum> _locationTable;
+        private IMobileServiceTable<AccelerometerDatum> _accelerometerTable;
+        private IMobileServiceTable<CellTowerDatum> _cellTowerTable;
+        private IMobileServiceTable<WlanDatum> _wlanTable;
+
         private IMobileServiceTable<ProtocolReport> _protocolReportTable;
 
         [EntryStringUiProperty("URL:", true, 2)]
@@ -26,7 +43,7 @@ namespace SensusService.DataStores.Remote
             get { return _url; }
             set
             {
-                if (!value.Equals(_url, StringComparison.Ordinal))
+                if (value != _url)
                 {
                     _url = value;
                     OnPropertyChanged();
@@ -40,7 +57,7 @@ namespace SensusService.DataStores.Remote
             get { return _key; }
             set
             {
-                if (!value.Equals(_key, StringComparison.Ordinal))
+                if (value != _key)
                 {
                     _key = value;
                     OnPropertyChanged();
@@ -61,15 +78,29 @@ namespace SensusService.DataStores.Remote
 
         public override void Start()
         {
-            _client = new MobileServiceClient(_url, _key);
+            lock (this)
+            {
+                _client = new MobileServiceClient(_url, _key);
 
-            _altitudeTable = _client.GetTable<AltitudeDatum>();
-            _compassTable = _client.GetTable<CompassDatum>();
-            _locationTable = _client.GetTable<LocationDatum>();
+                _runningAppsTable = _client.GetTable<RunningAppsDatum>();
+                _smsTable = _client.GetTable<SmsDatum>();
+                _telephonyTable = _client.GetTable<TelephonyDatum>();
+                _bluetoothTable = _client.GetTable<BluetoothDeviceProximityDatum>();
+                _lightTable = _client.GetTable<LightDatum>();
+                _soundTable = _client.GetTable<SoundDatum>();
+                _batteryTable = _client.GetTable<BatteryDatum>();
+                _screenTable = _client.GetTable<ScreenDatum>();
+                _altitudeTable = _client.GetTable<AltitudeDatum>();
+                _compassTable = _client.GetTable<CompassDatum>();
+                _locationTable = _client.GetTable<LocationDatum>();
+                _accelerometerTable = _client.GetTable<AccelerometerDatum>();
+                _cellTowerTable = _client.GetTable<CellTowerDatum>();
+                _wlanTable = _client.GetTable<WlanDatum>();
 
-            _protocolReportTable = _client.GetTable<ProtocolReport>();
+                _protocolReportTable = _client.GetTable<ProtocolReport>();
 
-            base.Start();
+                base.Start();
+            }
         }
 
         protected override ICollection<Datum> CommitData(ICollection<Datum> data)
@@ -82,12 +113,34 @@ namespace SensusService.DataStores.Remote
             {
                 try
                 {
-                    if (datum is AltitudeDatum)
+                    if (datum is RunningAppsDatum)
+                        _runningAppsTable.InsertAsync(datum as RunningAppsDatum).Wait();
+                    else if (datum is SmsDatum)
+                        _smsTable.InsertAsync(datum as SmsDatum).Wait();
+                    else if (datum is TelephonyDatum)
+                        _telephonyTable.InsertAsync(datum as TelephonyDatum).Wait();
+                    else if (datum is BluetoothDeviceProximityDatum)
+                        _bluetoothTable.InsertAsync(datum as BluetoothDeviceProximityDatum).Wait();
+                    else if (datum is LightDatum)
+                        _lightTable.InsertAsync(datum as LightDatum).Wait();
+                    else if (datum is SoundDatum)
+                        _soundTable.InsertAsync(datum as SoundDatum).Wait();
+                    else if (datum is BatteryDatum)
+                        _batteryTable.InsertAsync(datum as BatteryDatum).Wait();
+                    else if (datum is ScreenDatum)
+                        _screenTable.InsertAsync(datum as ScreenDatum).Wait();
+                    else if (datum is AltitudeDatum)
                         _altitudeTable.InsertAsync(datum as AltitudeDatum).Wait();
                     else if (datum is CompassDatum)
                         _compassTable.InsertAsync(datum as CompassDatum).Wait();
                     else if (datum is LocationDatum)
                         _locationTable.InsertAsync(datum as LocationDatum).Wait();
+                    else if (datum is AccelerometerDatum)
+                        _accelerometerTable.InsertAsync(datum as AccelerometerDatum).Wait();
+                    else if (datum is CellTowerDatum)
+                        _cellTowerTable.InsertAsync(datum as CellTowerDatum).Wait();
+                    else if (datum is WlanDatum)
+                        _wlanTable.InsertAsync(datum as WlanDatum).Wait();
                     else if (datum is ProtocolReport)
                         _protocolReportTable.InsertAsync(datum as ProtocolReport).Wait();
                     else
@@ -111,9 +164,14 @@ namespace SensusService.DataStores.Remote
 
         public override void Stop()
         {
-            base.Stop();
+            lock (this)
+            {
+                // stop the commit thread
+                base.Stop();
 
-            _client.Dispose();
+                // close azure client
+                _client.Dispose();
+            }
         }
     }
 }

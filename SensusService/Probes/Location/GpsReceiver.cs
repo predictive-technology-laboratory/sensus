@@ -151,7 +151,6 @@ namespace SensusService.Probes.Location
         {
             _locator = locator;
 
-            // if we are being initialized by a platform-specific initializer, we will have access to a geolocator and so should set the desired accuracy.
             _locator.DesiredAccuracy = _desiredAccuracyMeters;
 
             _locator.PositionChanged += (o, e) =>
@@ -198,7 +197,7 @@ namespace SensusService.Probes.Location
                         }
                         catch (TaskCanceledException ex)
                         {
-                            SensusServiceHelper.Get().Logger.Log("GPS reading task canceled:  " + ex.Message + Environment.NewLine + ex.StackTrace, LoggingLevel.Normal);
+                            SensusServiceHelper.Get().Logger.Log("GPS reading task canceled:  " + ex.Message, LoggingLevel.Normal);
 
                             _sharedReading = null;
                         }

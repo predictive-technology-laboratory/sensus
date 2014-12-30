@@ -11,14 +11,16 @@ using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace SensusService
 {
     /// <summary>
-    /// Defines a Sensus protocol.
+    /// Container for probes.
     /// </summary>
     public class Protocol : INotifyPropertyChanged
     {
+        #region static members
         private static JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
         {
             PreserveReferencesHandling = PreserveReferencesHandling.Objects,
@@ -82,6 +84,7 @@ namespace SensusService
             }
             catch (Exception ex) { throw new SensusException("Failed to extract Protocol from stream:  " + ex.Message); }
         }
+        #endregion
 
         /// <summary>
         /// Fired when a UI-relevant property is changed.
@@ -95,6 +98,7 @@ namespace SensusService
         private LocalDataStore _localDataStore;
         private RemoteDataStore _remoteDataStore;
         private string _storageDirectory;
+        private ProtocolReport _mostRecentReport;
 
         public string Id
         {
@@ -108,7 +112,7 @@ namespace SensusService
             get { return _name; }
             set
             {
-                if (!value.Equals(_name, StringComparison.Ordinal))
+                if (value != _name)
                 {
                     _name = value;
                     OnPropertyChanged();
@@ -163,9 +167,9 @@ namespace SensusService
                 if (value != _localDataStore)
                 {
                     _localDataStore = value;
-                    OnPropertyChanged();
-
                     _localDataStore.Protocol = this;
+
+                    OnPropertyChanged();
                 }
             }
         }
@@ -178,9 +182,9 @@ namespace SensusService
                 if (value != _remoteDataStore)
                 {
                     _remoteDataStore = value;
-                    OnPropertyChanged();
-
                     _remoteDataStore.Protocol = this;
+
+                    OnPropertyChanged();
                 }
             }
         }
@@ -189,6 +193,13 @@ namespace SensusService
         {
             get { return _storageDirectory; }
             set { _storageDirectory = value; }
+        }
+
+        [JsonIgnore]
+        public ProtocolReport MostRecentReport
+        {
+            get { return _mostRecentReport; }
+            set { _mostRecentReport = value; }
         }
 
         private Protocol() { }  // for JSON deserialization
@@ -218,19 +229,10 @@ namespace SensusService
 
             if (addAllProbes)
                 foreach (Probe probe in Probe.GetAll())
-                    AddProbe(probe);
-        }
-
-        public void AddProbe(Probe probe)
-        {
-            probe.Protocol = this;
-            _probes.Add(probe);
-        }
-
-        public void RemoveProbe(Probe probe)
-        {
-            if (_probes.Remove(probe))
-                probe.Protocol = null;
+                {
+                    probe.Protocol = this;
+                    _probes.Add(probe);
+                }
         }
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -246,6 +248,92 @@ namespace SensusService
                 file.Write(JsonConvert.SerializeObject(this, _jsonSerializerSettings));
                 file.Close();
             }
+        }
+
+        public Task PingAsync()
+        {
+            return Task.Run(() => Ping());
+        }
+
+        public void Ping()
+        {
+            lock (this)
+            {
+                string error = null;
+                string warning = null;
+                string misc = null;
+
+                if (!_running)
+                {
+                    error += "Restarting protocol \"" + _name + "\"...";
+                    try
+                    {
+                        SensusServiceHelper.Get().StopProtocol(this, false);
+                        SensusServiceHelper.Get().StartProtocol(this);
+                    }
+                    catch (Exception ex) { error += ex.Message + "..."; }
+
+                    if (_running)
+                        error += "restarted protocol." + Environment.NewLine;
+                    else
+                        error += "failed to restart protocol." + Environment.NewLine;
+                }
+
+                if (_running)
+                {
+                    if (_localDataStore == null)
+                        error += "No local data store present on protocol." + Environment.NewLine;
+                    else if (_localDataStore.Ping(ref error, ref warning, ref misc))
+                    {
+                        error += "Restarting local data store...";
+
+                        try { _localDataStore.Restart(); }
+                        catch (Exception ex) { error += ex.Message + "..."; }
+
+                        if (!_localDataStore.Running)
+                            error += "failed to restart local data store." + Environment.NewLine;
+                    }
+
+                    if (_remoteDataStore == null)
+                        error += "No remote data store present on protocol." + Environment.NewLine;
+                    else if (_remoteDataStore.Ping(ref error, ref warning, ref misc))
+                    {
+                        error += "Restarting remote data store...";
+
+                        try { _remoteDataStore.Restart(); }
+                        catch (Exception ex) { error += ex.Message + "..."; }
+
+                        if (!_remoteDataStore.Running)
+                            error += "failed to restart remote data store." + Environment.NewLine;
+                    }
+
+                    foreach (Probe probe in _probes)
+                        if (probe.Enabled && probe.Ping(ref error, ref warning, ref misc))
+                        {
+                            error += "Restarting probe \"" + probe.GetType().FullName + "\"...";
+
+                            try { probe.Restart(); }
+                            catch (Exception ex) { error += ex.Message + "..."; }
+
+                            if (!probe.Running)
+                                error += "failed to restart probe \"" + probe.GetType().FullName + "\"." + Environment.NewLine;
+                        }
+                }
+
+                _mostRecentReport = new ProtocolReport(DateTimeOffset.UtcNow, error, warning, misc);
+
+                SensusServiceHelper.Get().Logger.Log("Protocol report:" + Environment.NewLine + _mostRecentReport, LoggingLevel.Normal);
+            }
+        }
+
+        public void UploadMostRecentProtocolReport()
+        {
+            lock (this)
+                if (_mostRecentReport != null)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Uploading protocol report.", LoggingLevel.Normal);
+                    _localDataStore.AddNonProbeDatum(_mostRecentReport);
+                }
         }
 
         public override bool Equals(object obj)

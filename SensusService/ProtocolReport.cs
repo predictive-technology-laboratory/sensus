@@ -34,11 +34,18 @@ namespace SensusService
         }
 
         public ProtocolReport(DateTimeOffset timestamp, string error, string warning, string misc)
-            : base(-1, timestamp)
+            : base(null, timestamp)
         {
             _error = error;
             _warning = warning;
             _misc = misc;
+        }
+
+        public override string ToString()
+        {
+            return "Errors:  " + Environment.NewLine + _error + Environment.NewLine +
+                   "Warnings:  " + Environment.NewLine + _warning + Environment.NewLine +
+                   "Misc:  " + Environment.NewLine + _misc;
         }
     }
 }

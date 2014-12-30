@@ -5,9 +5,9 @@ namespace Sensus.Android
 {
     public class AndroidSensusServiceBinder : Binder
     {
-        private SensusServiceHelper _sensusServiceHelper;
+        private AndroidSensusServiceHelper _sensusServiceHelper;
 
-        public SensusServiceHelper SensusServiceHelper
+        public AndroidSensusServiceHelper SensusServiceHelper
         {
             get { return _sensusServiceHelper; }
             set { _sensusServiceHelper = value; }
@@ -18,7 +18,7 @@ namespace Sensus.Android
             get { return _sensusServiceHelper != null; }
         }
 
-        public AndroidSensusServiceBinder(SensusServiceHelper sensusServiceHelper)
+        public AndroidSensusServiceBinder(AndroidSensusServiceHelper sensusServiceHelper)
         {
             _sensusServiceHelper = sensusServiceHelper;
         }
