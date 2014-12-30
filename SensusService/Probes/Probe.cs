@@ -121,7 +121,7 @@ namespace SensusService.Probes
         }
 
         /// <summary>
-        /// Starts this probe. Throws an exception if start fails.
+        /// Starts this probe. Throws an exception if start fails. Should be called first within parent-class overrides.
         /// </summary>
         public virtual void Start()
         {
@@ -175,6 +175,9 @@ namespace SensusService.Probes
             return Task.Run(() => Stop());
         }
 
+        /// <summary>
+        /// Should be called first within parent-class overrides.
+        /// </summary>
         public virtual void Stop()
         {
             lock (this)

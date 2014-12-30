@@ -2,14 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace SensusService.Probes
 {
     public abstract class PollingProbe : Probe
     {
-        private Task _pollTask;
-        private AutoResetEvent _pollTrigger;
+        private Thread _pollThread;
         private int _pollingSleepDurationMS;
 
         [EntryIntegerUiProperty("Sleep Duration:", true, 5)]
@@ -22,9 +20,6 @@ namespace SensusService.Probes
                 {
                     _pollingSleepDurationMS = value;
                     OnPropertyChanged();
-
-                    if (_pollTrigger != null)
-                        _pollTrigger.Set();
                 }
             }
         }
@@ -45,17 +40,23 @@ namespace SensusService.Probes
             {
                 base.Start();
 
-                _pollTrigger = new AutoResetEvent(true);  // start polling immediately
-
-                _pollTask = Task.Run(() =>
+                _pollThread = new Thread(() =>
                     {
                         PollingStarted();
 
+                        int msToSleep = _pollingSleepDurationMS;
+
                         while (Running)
                         {
-                            _pollTrigger.WaitOne(_pollingSleepDurationMS);
+                            // in order to allow the commit thread to be interrupted by Stop, sleep for 1-second intervals.
+                            Thread.Sleep(1000);
+                            msToSleep -= 1000;
 
-                            // Running could be false if the probe has been stopped
+                            // have we slept enough to run a poll? if not, continue the loop.
+                            if (msToSleep > 0)
+                                continue;
+
+                            // if we're still running, execute a poll.
                             if (Running)
                             {
                                 IEnumerable<Datum> data = null;
@@ -67,10 +68,14 @@ namespace SensusService.Probes
                                         try { StoreDatum(datum); }
                                         catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to store datum in probe \"" + GetType().FullName + "\":  " + ex.Message, LoggingLevel.Normal); }
                             }
+
+                            msToSleep = _pollingSleepDurationMS;
                         }
 
                         PollingStopped();
                     });
+
+                _pollThread.Start();
             }
         }
 
@@ -84,12 +89,8 @@ namespace SensusService.Probes
             {
                 base.Stop();
 
-                if (_pollTask != null)  // might have called stop immediately after start, in which case the poll task will be null. if it's null at this point, it will soon be stopped because we have already set Running to false via base call, terminating the poll task while-loop upon startup.
-                {
-                    // don't wait for current sleep cycle to end -- wake up immediately so task can complete. if the task is not null, neither will the trigger be.
-                    _pollTrigger.Set();
-                    _pollTask.Wait();
-                }
+                // since Running is now false, the poll thread will be exiting soon. if it's in the middle of a poll, the poll will finish.
+                _pollThread.Join();
             }
         }
 

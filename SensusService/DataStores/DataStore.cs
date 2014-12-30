@@ -130,7 +130,7 @@ namespace SensusService.DataStores
                             if (msToSleep > 0)
                                 continue;
 
-                            // if we're still running, run a commit.
+                            // if we're still running, execute a commit.
                             if (_running)
                             {
                                 SensusServiceHelper.Get().Logger.Log(_name + " is committing data.", LoggingLevel.Verbose);
