@@ -102,6 +102,9 @@ namespace SensusService.DataStores
                 _nonProbeDataToCommit.Add(datum);
         }
 
+        /// <summary>
+        /// Starts the commit thread. This should always be called last within parent-class overrides.
+        /// </summary>
         public virtual void Start()
         {
             lock (this)
@@ -115,66 +118,64 @@ namespace SensusService.DataStores
 
                 _commitThread = new Thread(() =>
                     {
-                        int sleepMS = 1000;
-                        long totalMsSlept = 0;
+                        int msToSleep = _commitDelayMS;
 
                         while (_running)
                         {
-                            SensusServiceHelper.Get().Logger.Log(_name + " is about to sleep for " + sleepMS + "ms.", LoggingLevel.Verbose);
+                            // in order to allow the commit thread to be interrupted by Stop, sleep for 1-second intervals.
+                            Thread.Sleep(1000);
+                            msToSleep -= 1000;
 
-                            Thread.Sleep(sleepMS);
-
-                            totalMsSlept += sleepMS;
-
-                            if (totalMsSlept < _commitDelayMS)
+                            // have we slept enough to run a commit? if not, continue the loop.
+                            if (msToSleep > 0)
                                 continue;
 
-                            totalMsSlept = 0;
+                            // if we're still running, run a commit.
+                            if (_running)
+                            {
+                                SensusServiceHelper.Get().Logger.Log(_name + " is committing data.", LoggingLevel.Verbose);
 
-                            // lock data store, since it could be stopped by the UI before the below code is executed -- bad, e.g., if we're going to commit data to a file-backed data store that is about to be closed.
-                            lock (this)
-                                if (_running)
+                                ICollection<Datum> dataToCommit = null;
+                                try
                                 {
-                                    SensusServiceHelper.Get().Logger.Log(_name + " is waking up to commit data.", LoggingLevel.Verbose);
+                                    dataToCommit = GetDataToCommit();
+                                    if (dataToCommit == null)
+                                        throw new DataStoreException("Null collection returned by GetDataToCommit");
+                                }
+                                catch (Exception ex) { SensusServiceHelper.Get().Logger.Log(_name + " failed to get data to commit:  " + ex.Message, LoggingLevel.Normal); }
 
-                                    ICollection<Datum> dataToCommit = null;
+                                if (dataToCommit != null)
+                                {
+                                    // add in non-probe data (e.g., that from protocol reports)
+                                    lock (_nonProbeDataToCommit)
+                                        foreach (Datum datum in _nonProbeDataToCommit)
+                                            dataToCommit.Add(datum);
+
+                                    ICollection<Datum> committedData = null;
                                     try
                                     {
-                                        dataToCommit = GetDataToCommit();
-                                        if (dataToCommit == null)
-                                            throw new DataStoreException("Null collection returned by GetDataToCommit");
+                                        committedData = CommitData(dataToCommit);
+                                        if (committedData == null)
+                                            throw new DataStoreException("Null collection returned by CommitData");
                                     }
-                                    catch (Exception ex) { SensusServiceHelper.Get().Logger.Log(_name + " failed to get data to commit:  " + ex.Message, LoggingLevel.Normal); }
+                                    catch (Exception ex) { SensusServiceHelper.Get().Logger.Log(_name + " failed to commit data:  " + ex.Message, LoggingLevel.Normal); }
 
-                                    if (dataToCommit != null)
-                                    {
-                                        lock (_nonProbeDataToCommit)
-                                            foreach (Datum datum in _nonProbeDataToCommit)
-                                                dataToCommit.Add(datum);
-
-                                        ICollection<Datum> committedData = null;
+                                    if (committedData != null)
                                         try
                                         {
-                                            committedData = CommitData(dataToCommit);
-                                            if (committedData == null)
-                                                throw new DataStoreException("Null collection returned by CommitData");
+                                            // remove any non-probe data that were committed from the in-memory store
+                                            lock (_nonProbeDataToCommit)
+                                                foreach (Datum datum in committedData)
+                                                    _nonProbeDataToCommit.Remove(datum);
+
+                                            ProcessCommittedData(committedData);
+                                            MostRecentCommitTimestamp = DateTimeOffset.UtcNow;
                                         }
-                                        catch (Exception ex) { SensusServiceHelper.Get().Logger.Log(_name + " failed to commit data:  " + ex.Message, LoggingLevel.Normal); }
-
-                                        if (committedData != null)
-                                            try
-                                            {
-                                                // remove any non-probe data that were committed from the in-memory store
-                                                lock (_nonProbeDataToCommit)
-                                                    foreach (Datum datum in committedData)
-                                                        _nonProbeDataToCommit.Remove(datum);
-
-                                                ProcessCommittedData(committedData);
-                                                MostRecentCommitTimestamp = DateTimeOffset.UtcNow;
-                                            }
-                                            catch (Exception ex) { SensusServiceHelper.Get().Logger.Log(_name + " failed to process committed data:  " + ex.Message, LoggingLevel.Normal); }
-                                    }
+                                        catch (Exception ex) { SensusServiceHelper.Get().Logger.Log(_name + " failed to process committed data:  " + ex.Message, LoggingLevel.Normal); }
                                 }
+                            }
+
+                            msToSleep = _commitDelayMS;
                         }
 
                         SensusServiceHelper.Get().Logger.Log("Exited while-loop for data store " + _name, LoggingLevel.Normal);
@@ -192,6 +193,9 @@ namespace SensusService.DataStores
 
         public virtual void Clear() { }
 
+        /// <summary>
+        /// Stops the commit thread. This should always be called first within parent-class overrides.
+        /// </summary>
         public virtual void Stop()
         {
             lock (this)
@@ -203,7 +207,7 @@ namespace SensusService.DataStores
 
                 SensusServiceHelper.Get().Logger.Log("Stopping " + GetType().Name + " data store:  " + Name, LoggingLevel.Normal);
 
-                _commitDelayMS = 0;
+                // since _running is now false, the commit thread will be exiting soon. if it's in the middle of a commit, the commit will finish.
                 _commitThread.Join();
             }
         }

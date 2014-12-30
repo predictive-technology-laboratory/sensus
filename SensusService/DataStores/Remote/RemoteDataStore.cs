@@ -51,7 +51,7 @@ namespace SensusService.DataStores.Remote
 #endif
         }
 
-        protected override ICollection<Datum> GetDataToCommit()
+        protected sealed override ICollection<Datum> GetDataToCommit()
         {
             ICollection<Datum> dataToCommit = new Datum[] { };
 
@@ -68,7 +68,7 @@ namespace SensusService.DataStores.Remote
             return dataToCommit;
         }
 
-        protected override void ProcessCommittedData(ICollection<Datum> committedData)
+        protected sealed override void ProcessCommittedData(ICollection<Datum> committedData)
         {
             Protocol.LocalDataStore.ClearDataCommittedToRemoteDataStore(committedData);
         }

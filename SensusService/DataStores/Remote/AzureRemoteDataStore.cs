@@ -166,8 +166,10 @@ namespace SensusService.DataStores.Remote
         {
             lock (this)
             {
+                // stop the commit thread
                 base.Stop();
 
+                // close azure client
                 _client.Dispose();
             }
         }

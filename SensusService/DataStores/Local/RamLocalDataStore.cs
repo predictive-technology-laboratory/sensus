@@ -58,8 +58,19 @@ namespace SensusService.DataStores.Local
 
         public override void Clear()
         {
-            lock (_data)
-                _data.Clear();
+            if (_data != null)
+                lock (_data)
+                    _data.Clear();
+        }
+
+        public override void Stop()
+        {
+            lock (this)
+            {
+                base.Stop();
+
+                Clear();
+            }
         }
     }
 }

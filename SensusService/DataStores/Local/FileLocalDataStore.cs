@@ -192,10 +192,14 @@ namespace SensusService.DataStores.Local
         {
             lock (this)
             {
-                // stop the data store before closing the file to make sure all data are allowed in
+                // stop the commit thread
                 base.Stop();
 
+                // close current file
                 CloseFile();
+
+                // clear out files that remain. they won't be committed.
+                Clear();
             }
         }
 

@@ -183,6 +183,10 @@ namespace SensusService.Probes
                 {
                     SensusServiceHelper.Get().Logger.Log("Stopping probe \"" + GetType().FullName + "\".", LoggingLevel.Normal);
                     _running = false;
+
+                    // clear out the probe's in-memory storage
+                    lock (_collectedData)
+                        _collectedData.Clear();
                 }
                 else
                     SensusServiceHelper.Get().Logger.Log("Attempted to stop probe \"" + GetType().FullName + "\", but it wasn't running.", LoggingLevel.Normal);
