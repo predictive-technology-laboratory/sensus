@@ -1,30 +1,23 @@
 ﻿using SensusService;
 using SensusService.Probes;
 using System;
-using Xamarin.Forms;
 using System.Linq;
+using Xamarin.Forms;
 
 namespace SensusUI
 {
     public class SensusNavigationPage : NavigationPage
     {
-        public SensusNavigationPage()
-            : base(new MainPage())
+        public SensusNavigationPage(SensusServiceHelper service)
+            : base(new MainPage(service))
         {
             #region main page
-            MainPage.ProtocolsTapped += async (o, e) =>
+            MainPage.ViewProtocolsTapped += async (o, e) =>
                 {
                     await PushAsync(new ProtocolsPage());
                 };
 
-            MainPage.OptionsTapped += async (o, e) =>
-                {
-                    await PushAsync(new OptionsPage(UiBoundSensusServiceHelper.Get()));
-                };
-            #endregion
-
-            #region options page
-            OptionsPage.ViewLogTapped += async (o, e) =>
+            MainPage.ViewLogTapped += async (o, e) =>
                 {
                     await PushAsync(new ViewTextLinesPage("Sensus Log", UiBoundSensusServiceHelper.Get().Logger.Read(int.MaxValue), () => UiBoundSensusServiceHelper.Get().Logger.Clear()));
                 };

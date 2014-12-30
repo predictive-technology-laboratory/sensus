@@ -46,7 +46,7 @@ namespace Sensus.Android
 
                     UiBoundSensusServiceHelper.Get().Stopped += (oo, ee) => { Finish(); };  // stop activity when service stops
 
-                    SensusNavigationPage navigationPage = new SensusNavigationPage();
+                    SensusNavigationPage navigationPage = new SensusNavigationPage(UiBoundSensusServiceHelper.Get());
 
                     SetPage(navigationPage);
 
