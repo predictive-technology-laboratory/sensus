@@ -1,18 +1,19 @@
 Current release version:  0.1.0-prerelease
 
-The process for cutting a release is as follows:
+The process for publishing a release to GitHub and the app stores is as follows:
 
 * Check out the most recent version of develop.
-* Determine the new Sensus release version based on the version at the top of this file and the Semantic Versioning guidelines:  http://semver.org
-* Update the release version at the top of this file.
-* Build the Sensus solution, run tests, resolve any errors, and test Sensus by deploying to a physical device (not an emulator).
+* Open the Sensus solution.
+* Determine the new Sensus release version based on the version at the top of this file and the Semantic Versioning guidelines (http://semver.org). Below, we'll refer to this new version as [RELVERSION].
+* Update the release version at the top of this file to be [RELVERSION].
 
 ===== Begin Platform-Specific Steps =====
 
 Android
-* Right-click on the Sensus.Android project, go to Android Manifest, and increment "Version number".
-* Also under Android Manifest, update "Version name" with the new release version (top of this file).
-* In Sensus.Android, Properties, AssemblyInfo.cs, update the "Assembly Version" and "Assembly File Version" with the new release version (top of this file). Note that .NET requires version identifiers in a.b.c.d format, but Semantic Versioning uses a.b.c format. To get around this, use a.b.c.0 in AssemblyInfo.cs.
+* Right-click on the Sensus.Android project, go to Android Manifest, and increment "Version number" by 1.
+* Also under Android Manifest, update "Version name" to be [RELVERSION].
+* In Sensus.Android, Properties, AssemblyInfo.cs, update the "Assembly Version" and "Assembly File Version" to be [RELVERSION]. Note that .NET requires version identifiers in a.b.c.d format, but [RELVERSION] follows Semantic Versioning guidelines (a.b.c-xxxx). To get around this, use a.b.c.0 in AssemblyInfo.cs.
+* Build the Android.Sensus project, run tests, resolve any errors, and test Sensus by deploying to a physical device (not an emulator).
 
 iOS
 * Under construction...
@@ -24,19 +25,20 @@ Windows Phone
 
 * Close Visual Studio.
 * Commit all changes to develop and push develop to GitHub.
-* Merge develop into master, noting the commit number (we'll call this RELEASE-COMMIT).
+* Merge develop into master.
 * Push master to GitHub.
-* On GitHub, draft a new release based on master @ RELEASE-COMMIT with tag "[platform]-vX.Y.Z" and release title "[platform] Sensus release X.Y.Z", where [platform] is "Android", "iOS", or "WinPhone".
-* Check out the new release tag (e.g., git checkout Android-v0.1.0). Don't worry about running in "detached head mode".
+* On GitHub, draft a new release based on the commit you just made to master, with release tag "[platform]-v[RELVERSION]" and release title "[platform] Sensus release v[RELVERSION]", where [platform] is "Android", "iOS", or "WinPhone".
+* Pull down the new release tag (e.g., git pull).
+* Check out the new release tag (e.g., git checkout Android-v0.1.0-prerelease). Don't worry about running in "detached head" state. We're not going to make any changes.
 * Open the Sensus solution in Visual Studio.
 
 ===== Begin Platform-Specific Steps =====
 
 Android
 * Switch the Solution Configuration to AppStore.
-* Build the Sensus.Android project.
+* Rebuild the Sensus.Android project.
 * Select Tools -> Android -> Publish Android App...
-* Sign the APK and save it locally.
+* Sign the APK with the Sensus keystore and save it locally.
 * Publish APK to Google Play.
 
 iOS
@@ -47,4 +49,4 @@ Windows Phone
 
 ===== End Platform-Specific Steps =====
 
-* You can now delete the release branch and tag if you wish (e.g., git branch -d Android-v0.1.0 -- then git tag -d Android-V0.0.1).
+* You can now delete the release tag if you wish (e.g., git tag -d Android-v0.1.0-prerelease).
