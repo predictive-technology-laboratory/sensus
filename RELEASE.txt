@@ -22,9 +22,9 @@ Windows Phone
 
 ===== End Platform-Specific Steps =====
 
-* Commit all changes to develop, noting the commit number (we'll call this DCOMMIT).
-* On GitHub, execute a Pull Request to merge all changes from develop @ DEVCOMMIT into master, noting the commmit number (we'll call this MCOMMIT).
-* On GitHub, draft a new release based on master @ MCOMMIT with tag "[platform]-vX.Y.Z" and release title "[platform] Sensus release X.Y.Z", where [platform] is "android", "ios", or "winphone".
+* Commit all changes to develop.
+* Merge develop into master, noting the commit number (we'll call this RELEASE-COMMIT).
+* On GitHub, draft a new release based on master @ RELEASE-COMMIT with tag "[platform]-vX.Y.Z" and release title "[platform] Sensus release X.Y.Z", where [platform] is "Android", "iOS", or "WinPhone".
 * Check out the new release tag.
 
 ===== Begin Platform-Specific Steps =====
