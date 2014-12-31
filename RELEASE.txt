@@ -1,3 +1,45 @@
+Current release version:  0.1.0-prerelease
+
 The process for cutting a release is as follows:
 
-* ...
+* Check out the most recent version of develop.
+* Determine the new Sensus release version based on the version at the top of this file and the Semantic Versioning guidelines:  http://semver.org
+* Update the release version at the top of this file.
+* Build the Sensus solution, run tests, resolve any errors, and test Sensus by deploying to a physical device (not an emulator).
+
+===== Begin Platform-Specific Steps =====
+
+Android
+* Right-click on the Sensus.Android project, go to Android Manifest, and increment "Version number".
+* Also under Android Manifest, update "Version name" with the new release version (top of this file).
+* In Sensus.Android, Properties, AssemblyInfo.cs, update the "Assembly Version" and "Assembly File Version" with the new release version (top of this file). Note that .NET requires version identifiers in a.b.c.d format, but Semantic Versioning uses a.b.c format. To get around this, use a.b.c.0 in AssemblyInfo.cs.
+
+iOS
+* Under construction...
+
+Windows Phone
+* Under construction... 
+
+===== End Platform-Specific Steps =====
+
+* Commit all changes to develop, noting the commit number (we'll call this DCOMMIT).
+* On GitHub, execute a Pull Request to merge all changes from develop @ DEVCOMMIT into master, noting the commmit number (we'll call this MCOMMIT).
+* On GitHub, draft a new release based on master @ MCOMMIT with tag "[platform]-vX.Y.Z" and release title "[platform] Sensus release X.Y.Z", where [platform] is "android", "ios", or "winphone".
+* Check out the new release tag.
+
+===== Begin Platform-Specific Steps =====
+
+Android
+* Switch the Solution Configuration to AppStore.
+* Build the Sensus.Android project.
+* Select Tools -> Android -> Publish Android App...
+* Sign the APK and save it locally.
+* Publish APK to Google Play.
+
+iOS
+* Under construction...
+
+Windows Phone
+* Under construction... 
+
+===== End Platform-Specific Steps =====
