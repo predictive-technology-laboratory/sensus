@@ -28,6 +28,7 @@ Windows Phone
 * Push master to GitHub.
 * On GitHub, draft a new release based on master @ RELEASE-COMMIT with tag "[platform]-vX.Y.Z" and release title "[platform] Sensus release X.Y.Z", where [platform] is "Android", "iOS", or "WinPhone".
 * Check out the new release tag (e.g., git checkout -b Android-v0.1.0 Android-v0.1.0)
+* Open the Sensus solution in Visual Studio.
 
 ===== Begin Platform-Specific Steps =====
 
