@@ -12,13 +12,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{56DC9286-7449-4F64-8C94-C6B4543F125D}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
-		launcher_ic_hi_res_512.png = launcher_ic_hi_res_512.png
 		LICENSE.txt = LICENSE.txt
 		NOTICE.txt = NOTICE.txt
 		README.md = README.md
 		RELEASE.txt = RELEASE.txt
-		screenshot_main_page.png = screenshot_main_page.png
-		screenshot_probes_page.png = screenshot_probes_page.png
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{D0290BCC-1A5C-4258-891F-A1D4E8098EE2}"
