@@ -46,4 +46,4 @@ Windows Phone
 
 ===== End Platform-Specific Steps =====
 
-* You can now delete the release branch if you wish (e.g., git branch -d Android-v0.1.0).
+* You can now delete the release branch and tag if you wish (e.g., git branch -d Android-v0.1.0 -- then git tag -d Android-V0.0.1).
