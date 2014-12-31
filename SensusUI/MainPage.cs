@@ -15,7 +15,7 @@ namespace SensusUI
 
         public MainPage(SensusServiceHelper service)
         {
-            Title = "Sensus";
+            Title = "ensus";  // the icon supplies the initial "S"
 
             StackLayout contentLayout = new StackLayout
             {
