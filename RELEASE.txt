@@ -25,6 +25,7 @@ Windows Phone
 * Close Visual Studio.
 * Commit all changes to develop.
 * Merge develop into master, noting the commit number (we'll call this RELEASE-COMMIT).
+* Push all branches to GitHub.
 * On GitHub, draft a new release based on master @ RELEASE-COMMIT with tag "[platform]-vX.Y.Z" and release title "[platform] Sensus release X.Y.Z", where [platform] is "Android", "iOS", or "WinPhone".
 * Check out the new release tag.
 
