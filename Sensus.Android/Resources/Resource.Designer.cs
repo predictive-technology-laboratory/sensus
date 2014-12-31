@@ -47,7 +47,7 @@ namespace Sensus.Android
 		{
 			
 			// aapt resource value: 0x7f020000
-			public const int Icon = 2130837504;
+			public const int ic_launcher = 2130837504;
 			
 			static Drawable()
 			{

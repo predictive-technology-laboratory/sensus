@@ -53,7 +53,7 @@ namespace Sensus.Android
 
             _notificationBuilder.SetContentTitle("Sensus")
                                 .SetContentText("Tap to Open")
-                                .SetSmallIcon(Resource.Drawable.Icon)
+                                .SetSmallIcon(Resource.Drawable.ic_launcher)
                                 .SetContentIntent(pendingIntent)
                                 .SetAutoCancel(true)
                                 .SetOngoing(true);

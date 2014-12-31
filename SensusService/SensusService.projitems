@@ -30,6 +30,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\SoundDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Device\BatteryDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Device\ScreenDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Interactive\QuestionProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\CompassProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\ListeningProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\RunningAppsProbe.cs" />
@@ -59,8 +60,5 @@
     <Compile Include="$(MSBuildThisFileDirectory)Logger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolReport.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SensusServiceHelper.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Probes\Interactive\" />
   </ItemGroup>
 </Project>
