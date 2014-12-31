@@ -1,4 +1,5 @@
-﻿#region copyright
+extensions:  .cs
+#region copyright
 // Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,23 +15,3 @@
 // limitations under the License.
 #endregion
  
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using MonoTouch.Foundation;
-using MonoTouch.UIKit;
-
-namespace Sensus.iOS
-{
-    public class Application
-    {
-        // This is the main entry point of the application.
-        static void Main(string[] args)
-        {
-            // if you want to use a different Application Delegate class from "AppDelegate"
-            // you can specify it here.
-            UIApplication.Main(args, null, "AppDelegate");
-        }
-    }
-}

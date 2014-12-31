@@ -118,6 +118,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Sensus.Android\Sensus.licenseheader">
+      <Link>Sensus.licenseheader</Link>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\AppManifest.xml" />
     <None Include="Properties\WMAppManifest.xml">
