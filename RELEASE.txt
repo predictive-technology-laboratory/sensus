@@ -27,7 +27,7 @@ Windows Phone
 * Merge develop into master, noting the commit number (we'll call this RELEASE-COMMIT).
 * Push master to GitHub.
 * On GitHub, draft a new release based on master @ RELEASE-COMMIT with tag "[platform]-vX.Y.Z" and release title "[platform] Sensus release X.Y.Z", where [platform] is "Android", "iOS", or "WinPhone".
-* Check out the new release tag.
+* Check out the new release tag (e.g., git checkout -b Android-v0.1.0 Android-v0.1.0)
 
 ===== Begin Platform-Specific Steps =====
 
@@ -45,3 +45,5 @@ Windows Phone
 * Under construction... 
 
 ===== End Platform-Specific Steps =====
+
+* You can now delete the release branch if you wish (e.g., git branch -d Android-v0.1.0).
