@@ -27,7 +27,4 @@
     <Compile Include="$(MSBuildThisFileDirectory)SensusNavigationPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewTextLinesPage.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Tests\" />
-  </ItemGroup>
 </Project>

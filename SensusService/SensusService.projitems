@@ -59,9 +59,5 @@
     <Compile Include="$(MSBuildThisFileDirectory)Logger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolReport.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SensusServiceHelper.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Tests\DataStores\FileLocalDataStoreTest.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Tests\Probes\" />
   </ItemGroup>
 </Project>
