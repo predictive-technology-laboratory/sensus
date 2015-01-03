@@ -48,6 +48,7 @@ namespace SensusService.DataStores.Remote
         private IMobileServiceTable<CompassDatum> _compassTable;
         private IMobileServiceTable<LocationDatum> _locationTable;
         private IMobileServiceTable<AccelerometerDatum> _accelerometerTable;
+        private IMobileServiceTable<SpeedDatum> _speedTable;
         private IMobileServiceTable<CellTowerDatum> _cellTowerTable;
         private IMobileServiceTable<WlanDatum> _wlanTable;
 
@@ -110,6 +111,7 @@ namespace SensusService.DataStores.Remote
                 _compassTable = _client.GetTable<CompassDatum>();
                 _locationTable = _client.GetTable<LocationDatum>();
                 _accelerometerTable = _client.GetTable<AccelerometerDatum>();
+                _speedTable = _client.GetTable<SpeedDatum>();
                 _cellTowerTable = _client.GetTable<CellTowerDatum>();
                 _wlanTable = _client.GetTable<WlanDatum>();
 
@@ -153,6 +155,8 @@ namespace SensusService.DataStores.Remote
                         _locationTable.InsertAsync(datum as LocationDatum).Wait();
                     else if (datum is AccelerometerDatum)
                         _accelerometerTable.InsertAsync(datum as AccelerometerDatum).Wait();
+                    else if (datum is SpeedDatum)
+                        _speedTable.InsertAsync(datum as SpeedDatum).Wait();
                     else if (datum is CellTowerDatum)
                         _cellTowerTable.InsertAsync(datum as CellTowerDatum).Wait();
                     else if (datum is WlanDatum)

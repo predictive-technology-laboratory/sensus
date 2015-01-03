@@ -49,6 +49,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\PollingLocationProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AccelerometerDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AccelerometerProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\SpeedDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\PollingSpeedProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\CellTowerDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\CellTowerProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\WlanDatum.cs" />

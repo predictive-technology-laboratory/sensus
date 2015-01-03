@@ -50,7 +50,7 @@ namespace SensusService.Probes
         /// <summary>
         /// Starts this probe. Throws an exception if start fails.
         /// </summary>
-        public sealed override void Start()
+        public override void Start()
         {
             lock (this)
             {
@@ -99,7 +99,7 @@ namespace SensusService.Probes
 
         protected abstract IEnumerable<Datum> Poll();
 
-        public sealed override void Stop()
+        public override void Stop()
         {
             lock (this)
             {
