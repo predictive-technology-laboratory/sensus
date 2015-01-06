@@ -51,9 +51,12 @@ namespace SensusService.Probes.Movement
 
         public override void Start()
         {
-            _locationProbe.Start();
+            lock (this)
+            {
+                _locationProbe.Start();
 
-            base.Start();
+                base.Start();
+            }
         }
 
         protected override IEnumerable<Datum> Poll()
@@ -93,9 +96,12 @@ namespace SensusService.Probes.Movement
 
         public override void Stop()
         {
-            _locationProbe.Stop();
+            lock (this)
+            {
+                _locationProbe.Stop();
 
-            base.Stop();
+                base.Stop();
+            }
         }
     }
 }
