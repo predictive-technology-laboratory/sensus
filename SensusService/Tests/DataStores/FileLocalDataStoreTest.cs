@@ -13,22 +13,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-
-using Microsoft.Phone.Controls;
-using Xamarin.Forms;
-
-namespace Sensus.WinPhone
+ 
+namespace SensusService.Tests.DataStores
 {
-    public partial class MainPage : PhoneApplicationPage
+    /*[TestFixture]
+    public class FileLocalDataStoreTest
     {
-        public MainPage()
+        [TestFixtureSetUp]
+        public void SetUp()
         {
-            InitializeComponent();
-
-            Forms.Init();
-            Content = new SensusUI.MainPage(null).ConvertPageToUIElement(this);
         }
 
-        // TODO:  App.Get().OnStop()
-    }
+        [Test]
+        public void Test()
+        {
+        }
+
+        [TestFixtureTearDown]
+        public void TearDown()
+        {
+        }
+    }*/
 }
