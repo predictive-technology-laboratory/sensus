@@ -17,48 +17,24 @@
 using SensusService.Probes.Location;
 using System;
 using System.Collections.Generic;
+using System.Device.Location;
 
 namespace SensusService.Probes.Movement
 {
     public class PollingSpeedProbe : PollingProbe
     {
-        public const double EARTH_RADIUS_MILES = 3956;
-        public const double EARTH_RADIUS_KILOMETERS = 6367;
-
-        public static double ToRadians(double value)
-        {
-            return value * (Math.PI / 180);
-        }
-
-        public static double DiffRadians(double value1, double value2)
-        {
-            return ToRadians(value2) - ToRadians(value1);
-        }
-
-        public static double CalculateDistanceMiles(double lat1, double lon1, double lat2, double lon2)
-        {
-            return CalculateDistance(lat1, lon1, lat2, lon2, EARTH_RADIUS_MILES);
-        }
-
-        public static double CalculateDistanceKilometers(double lat1, double lon1, double lat2, double lon2)
-        {
-            return CalculateDistance(lat1, lon1, lat2, lon2, EARTH_RADIUS_KILOMETERS);
-        }
-
-        public static double CalculateDistance(double lat1, double lon1, double lat2, double lon2, double radius)
-        {
-            return radius * 2 * Math.Asin(Math.Min(1, Math.Sqrt((Math.Pow(Math.Sin((DiffRadians(lat1, lat2)) / 2.0), 2.0) +
-                                            Math.Cos(ToRadians(lat1)) *
-                                            Math.Cos(ToRadians(lat2)) *
-                                            Math.Pow(Math.Sin((DiffRadians(lon1, lon2)) / 2.0), 2.0)))));
-        }
-
         private PollingLocationProbe _locationProbe;
         private LocationDatum _previousLocation;
 
         protected sealed override string DefaultDisplayName
         {
             get { return "Speed"; }
+        }
+
+        public sealed override int PollingSleepDurationMS
+        {
+            get { return base.PollingSleepDurationMS; }
+            set { base.PollingSleepDurationMS = _locationProbe.PollingSleepDurationMS = value; }
         }
 
         public sealed override int DefaultPollingSleepDurationMS
@@ -69,6 +45,8 @@ namespace SensusService.Probes.Movement
         public PollingSpeedProbe()
         {
             _locationProbe = new PollingLocationProbe();
+
+            _locationProbe.PollingSleepDurationMS = DefaultPollingSleepDurationMS;
         }
 
         public override void Start()
@@ -90,17 +68,20 @@ namespace SensusService.Probes.Movement
                     data = new Datum[] { };
                 else
                 {
-                    double reportedKilometers = CalculateDistanceKilometers(_previousLocation.Latitude, _previousLocation.Longitude, currentLocation.Latitude, currentLocation.Longitude);
-                    double minKilometers = reportedKilometers - _previousLocation.Accuracy / 1000f - currentLocation.Accuracy / 1000f;
-                    double maxKilometers = reportedKilometers + _previousLocation.Accuracy / 1000f + currentLocation.Accuracy / 1000f;
+                    GeoCoordinate previousCoordinate = new GeoCoordinate(_previousLocation.Latitude, _previousLocation.Longitude);
+                    GeoCoordinate currentCoordinate = new GeoCoordinate(currentLocation.Latitude, currentLocation.Longitude);
+
+                    double reportedDistKM = previousCoordinate.GetDistanceTo(currentCoordinate);
+                    double minDistKM = reportedDistKM - _previousLocation.Accuracy / 1000f - currentLocation.Accuracy / 1000f;
+                    double maxDistKM = reportedDistKM + _previousLocation.Accuracy / 1000f + currentLocation.Accuracy / 1000f;
 
                     double elapsedHours = new TimeSpan(currentLocation.Timestamp.Ticks - _previousLocation.Timestamp.Ticks).TotalHours;
 
-                    double reportedSpeed = reportedKilometers / elapsedHours;
-                    double minSpeed = minKilometers / elapsedHours;
-                    double maxSpeed = maxKilometers / elapsedHours;
+                    double reportedSpeedKPH = reportedDistKM / elapsedHours;
+                    double minSpeedKPH = minDistKM / elapsedHours;
+                    double maxSpeedKPH = maxDistKM / elapsedHours;
 
-                    data = new SpeedDatum[] { new SpeedDatum(this, currentLocation.Timestamp, (float)(maxSpeed - minSpeed) / 2f, (float)reportedSpeed) };
+                    data = new SpeedDatum[] { new SpeedDatum(this, currentLocation.Timestamp, (float)(maxSpeedKPH - minSpeedKPH) / 2f, (float)reportedSpeedKPH) };
                 }
 
                 if (currentLocation != null)

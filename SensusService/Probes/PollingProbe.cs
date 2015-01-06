@@ -27,7 +27,7 @@ namespace SensusService.Probes
         private int _pollingSleepDurationMS;
 
         [EntryIntegerUiProperty("Sleep Duration:", true, 5)]
-        public int PollingSleepDurationMS
+        public virtual int PollingSleepDurationMS
         {
             get { return _pollingSleepDurationMS; }
             set
