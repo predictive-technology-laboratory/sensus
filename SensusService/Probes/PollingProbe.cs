@@ -23,8 +23,8 @@ namespace SensusService.Probes
 {
     public abstract class PollingProbe : Probe
     {
-        private Thread _pollThread;
         private int _pollingSleepDurationMS;
+        private Thread _pollThread;
 
         [EntryIntegerUiProperty("Sleep Duration:", true, 5)]
         public virtual int PollingSleepDurationMS
@@ -119,8 +119,8 @@ namespace SensusService.Probes
             if (Running)
             {
                 DateTimeOffset mostRecentReadingTimestamp = DateTimeOffset.MinValue;
-                if (MostRecentlyStoredDatum != null)
-                    mostRecentReadingTimestamp = MostRecentlyStoredDatum.Timestamp;
+                if (MostRecentDatum != null)
+                    mostRecentReadingTimestamp = MostRecentDatum.Timestamp;
 
                 double msElapsedSinceLastPoll = (DateTime.UtcNow - mostRecentReadingTimestamp).TotalMilliseconds;
                 if (msElapsedSinceLastPoll > _pollingSleepDurationMS)

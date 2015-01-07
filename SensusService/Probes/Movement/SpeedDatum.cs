@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
 using Newtonsoft.Json;
 using System;
 
@@ -32,7 +32,7 @@ namespace SensusService.Probes.Movement
         [JsonIgnore]
         public override string DisplayDetail
         {
-            get { return _kph + " KPH"; }
+            get { return Math.Round(_kph, 1) + " (+/- " + Math.Round(Accuracy, 1) + ")" + " KPH"; }
         }
 
         public SpeedDatum(Probe probe, DateTimeOffset timestamp, float accuracy, float kph)

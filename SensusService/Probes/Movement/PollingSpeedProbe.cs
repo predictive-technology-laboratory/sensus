@@ -27,7 +27,7 @@ namespace SensusService.Probes.Movement
 
         protected sealed override string DefaultDisplayName
         {
-            get { return "Speed"; }
+            get { return "Speed (Polling)"; }
         }
 
         public sealed override int PollingSleepDurationMS
@@ -44,7 +44,7 @@ namespace SensusService.Probes.Movement
         public PollingSpeedProbe()
         {
             _locationProbe = new PollingLocationProbe();
-
+            _locationProbe.StoreData = false;
             _locationProbe.PollingSleepDurationMS = DefaultPollingSleepDurationMS;
         }
 
@@ -72,7 +72,7 @@ namespace SensusService.Probes.Movement
         {
             lock (this)
             {
-                LocationDatum currentLocation = _locationProbe.MostRecentlyStoredDatum as LocationDatum;
+                LocationDatum currentLocation = _locationProbe.MostRecentDatum as LocationDatum;
 
                 Datum[] data = null;
 
@@ -89,13 +89,17 @@ namespace SensusService.Probes.Movement
                     reportedDistKM = RadiansToDegrees(Math.Acos(reportedDistKM)) * 111.18957696;
 
                     double elapsedHours = new TimeSpan(currentLocation.Timestamp.Ticks - _previousLocation.Timestamp.Ticks).TotalHours;
-
                     double reportedSpeedKPH = reportedDistKM / elapsedHours;
 
-                    double maxDistKM = reportedDistKM + _previousLocation.Accuracy / 1000f + currentLocation.Accuracy / 1000f;
-                    double maxSpeedKPH = maxDistKM / elapsedHours;
+                    float accuracy = 0;
+                    if (_previousLocation.Accuracy >= 0 && currentLocation.Accuracy >= 0)
+                    {
+                        double maxDistKM = reportedDistKM + _previousLocation.Accuracy / 1000f + currentLocation.Accuracy / 1000f;
+                        double maxSpeedKPH = maxDistKM / elapsedHours;
+                        accuracy = (float)(maxSpeedKPH - reportedSpeedKPH);
+                    }
 
-                    data = new SpeedDatum[] { new SpeedDatum(this, currentLocation.Timestamp, (float)(maxSpeedKPH - reportedSpeedKPH), (float)reportedSpeedKPH) };
+                    data = new SpeedDatum[] { new SpeedDatum(this, currentLocation.Timestamp, accuracy, (float)reportedSpeedKPH) };
                 }
 
                 if (currentLocation != null)

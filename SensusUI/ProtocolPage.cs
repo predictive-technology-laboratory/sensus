@@ -87,7 +87,7 @@ namespace SensusUI
             probesList.ItemTemplate = new DataTemplate(typeof(TextCell));
             probesList.ItemTemplate.SetBinding(TextCell.TextProperty, "DisplayName");
             probesList.ItemTemplate.SetBinding(TextCell.TextColorProperty, new Binding("Enabled", converter: new ProbeTextColorValueConverter()));
-            probesList.ItemTemplate.SetBinding(TextCell.DetailProperty, new Binding("MostRecentlyStoredDatum", converter: new ProbeDetailValueConverter()));
+            probesList.ItemTemplate.SetBinding(TextCell.DetailProperty, new Binding("MostRecentDatum", converter: new ProbeDetailValueConverter()));
             probesList.ItemsSource = protocol.Probes;
             probesList.ItemTapped += (o, e) =>
                 {

@@ -51,8 +51,9 @@ namespace SensusService.Probes
         private bool _enabled;
         private bool _running;
         private HashSet<Datum> _collectedData;
-        private Datum _mostRecentlyStoredDatum;
+        private Datum _mostRecentDatum;
         private Protocol _protocol;
+        private bool _storeData;
 
         [EntryStringUiProperty("Name:", true, 1)]
         public string DisplayName
@@ -96,14 +97,14 @@ namespace SensusService.Probes
         }
 
         [JsonIgnore]
-        public Datum MostRecentlyStoredDatum
+        public Datum MostRecentDatum
         {
-            get { return _mostRecentlyStoredDatum; }
+            get { return _mostRecentDatum; }
             set
             {
-                if (value != _mostRecentlyStoredDatum)
+                if (value != _mostRecentDatum)
                 {
-                    _mostRecentlyStoredDatum = value;
+                    _mostRecentDatum = value;
                     OnPropertyChanged();
                 }
             }
@@ -115,12 +116,19 @@ namespace SensusService.Probes
             set { _protocol = value; }
         }
 
+        public bool StoreData
+        {
+            get { return _storeData; }
+            set { _storeData = value; }
+        }
+
         protected abstract string DefaultDisplayName { get; }
 
         protected Probe()
         {
             _displayName = DefaultDisplayName;
             _enabled = _running = false;
+            _storeData = true;
         }
 
         /// <summary>
@@ -157,14 +165,16 @@ namespace SensusService.Probes
         protected virtual void StoreDatum(Datum datum)
         {
             if (datum != null)
-                lock (_collectedData)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Storing datum in probe cache:  " + datum, LoggingLevel.Debug);
+            {
+                if (_storeData)
+                    lock (_collectedData)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Storing datum in probe cache:  " + datum, LoggingLevel.Debug);
+                        _collectedData.Add(datum);
+                    }
 
-                    _collectedData.Add(datum);
-
-                    MostRecentlyStoredDatum = datum;
-                }
+                MostRecentDatum = datum;
+            }
         }
 
         public ICollection<Datum> GetCollectedData()
