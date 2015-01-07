@@ -32,7 +32,7 @@ namespace SensusService.Probes.Movement
         [JsonIgnore]
         public override string DisplayDetail
         {
-            get { return _kph + " MPH"; }
+            get { return _kph + " KPH"; }
         }
 
         public SpeedDatum(Probe probe, DateTimeOffset timestamp, float accuracy, float kph)

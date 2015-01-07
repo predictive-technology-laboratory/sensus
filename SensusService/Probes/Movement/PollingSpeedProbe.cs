@@ -17,7 +17,6 @@
 using SensusService.Probes.Location;
 using System;
 using System.Collections.Generic;
-using System.Device.Location;
 
 namespace SensusService.Probes.Movement
 {
@@ -59,6 +58,16 @@ namespace SensusService.Probes.Movement
             }
         }
 
+        private double DegreesToRadians(double degrees)
+        {
+            return degrees * Math.PI / 180;
+        }
+
+        private double RadiansToDegrees(double radians)
+        {
+            return radians / Math.PI * 180;
+        }
+
         protected override IEnumerable<Datum> Poll()
         {
             lock (this)
@@ -67,24 +76,26 @@ namespace SensusService.Probes.Movement
 
                 Datum[] data = null;
 
-                if (_previousLocation == null || currentLocation == null | currentLocation.Timestamp == _previousLocation.Timestamp)
+                if (_previousLocation == null || currentLocation == null || currentLocation.Timestamp == _previousLocation.Timestamp)
                     data = new Datum[] { };
                 else
                 {
-                    GeoCoordinate previousCoordinate = new GeoCoordinate(_previousLocation.Latitude, _previousLocation.Longitude);
-                    GeoCoordinate currentCoordinate = new GeoCoordinate(currentLocation.Latitude, currentLocation.Longitude);
+                    double reportedDistKM = Math.Sin(DegreesToRadians(_previousLocation.Latitude)) *
+                                                Math.Sin(DegreesToRadians(currentLocation.Latitude)) +
+                                                Math.Cos(DegreesToRadians(_previousLocation.Latitude)) *
+                                                Math.Cos(DegreesToRadians(currentLocation.Latitude)) *
+                                                Math.Cos(DegreesToRadians(_previousLocation.Longitude - currentLocation.Longitude));
 
-                    double reportedDistKM = previousCoordinate.GetDistanceTo(currentCoordinate);
-                    double minDistKM = reportedDistKM - _previousLocation.Accuracy / 1000f - currentLocation.Accuracy / 1000f;
-                    double maxDistKM = reportedDistKM + _previousLocation.Accuracy / 1000f + currentLocation.Accuracy / 1000f;
+                    reportedDistKM = RadiansToDegrees(Math.Acos(reportedDistKM)) * 111.18957696;
 
                     double elapsedHours = new TimeSpan(currentLocation.Timestamp.Ticks - _previousLocation.Timestamp.Ticks).TotalHours;
 
                     double reportedSpeedKPH = reportedDistKM / elapsedHours;
-                    double minSpeedKPH = minDistKM / elapsedHours;
+
+                    double maxDistKM = reportedDistKM + _previousLocation.Accuracy / 1000f + currentLocation.Accuracy / 1000f;
                     double maxSpeedKPH = maxDistKM / elapsedHours;
 
-                    data = new SpeedDatum[] { new SpeedDatum(this, currentLocation.Timestamp, (float)(maxSpeedKPH - minSpeedKPH) / 2f, (float)reportedSpeedKPH) };
+                    data = new SpeedDatum[] { new SpeedDatum(this, currentLocation.Timestamp, (float)(maxSpeedKPH - reportedSpeedKPH), (float)reportedSpeedKPH) };
                 }
 
                 if (currentLocation != null)
@@ -98,9 +109,9 @@ namespace SensusService.Probes.Movement
         {
             lock (this)
             {
-                _locationProbe.Stop();
-
-                base.Stop();
+                // make sure the base class has a chance to stop
+                try { _locationProbe.Stop(); }
+                finally { base.Stop(); }
             }
         }
     }
