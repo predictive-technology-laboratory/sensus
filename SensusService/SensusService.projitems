@@ -25,6 +25,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\RunningAppsDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\SmsDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\TelephonyDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\TelephonyState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\BluetoothDeviceProximityDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\LightDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\SoundDatum.cs" />
@@ -57,6 +58,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\WlanProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\PollingProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Probe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Script.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ListeningScriptProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Protocol.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Logger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolReport.cs" />

@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
 using Newtonsoft.Json;
 using SensusUI.UiProperties;
 using System;
@@ -46,6 +46,11 @@ namespace SensusService.Probes
         /// Fired when a UI-relevant property is changed.
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Fired when the most recent datum is changed.
+        /// </summary>
+        public event EventHandler<Tuple<Datum, Datum>> MostRecentDatumChanged;
 
         private string _displayName;
         private bool _enabled;
@@ -104,8 +109,13 @@ namespace SensusService.Probes
             {
                 if (value != _mostRecentDatum)
                 {
+                    Datum oldDatum = _mostRecentDatum;
+
                     _mostRecentDatum = value;
                     OnPropertyChanged();
+
+                    if (MostRecentDatumChanged != null)
+                        MostRecentDatumChanged(this, new Tuple<Datum, Datum>(oldDatum, _mostRecentDatum));
                 }
             }
         }
@@ -224,7 +234,7 @@ namespace SensusService.Probes
 
         public void Restart()
         {
-            lock(this)
+            lock (this)
             {
                 Stop();
                 Start();

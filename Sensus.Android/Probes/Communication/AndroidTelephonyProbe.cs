@@ -13,10 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
 using Android.App;
 using Android.Telephony;
-using SensusService;
 using SensusService.Probes.Communication;
 using System;
 
@@ -32,13 +31,13 @@ namespace Sensus.Android.Probes.Communication
         {
             _outgoingCallCallback = (sender, outgoingNumber) =>
                 {
-                    StoreDatum(new TelephonyDatum(this, DateTimeOffset.UtcNow, CallState.Offhook.ToString(), outgoingNumber));
+                    StoreDatum(new TelephonyDatum(this, DateTimeOffset.UtcNow, TelephonyState.OutgoingCall, outgoingNumber));
                 };
 
             _incomingCallListener = new AndroidTelephonyIncomingListener();
             _incomingCallListener.IncomingCall += (o, incomingNumber) =>
                 {
-                    StoreDatum(new TelephonyDatum(this, DateTimeOffset.UtcNow, CallState.Ringing.ToString(), incomingNumber));
+                    StoreDatum(new TelephonyDatum(this, DateTimeOffset.UtcNow, TelephonyState.IncomingCall, incomingNumber));
                 };
         }
 

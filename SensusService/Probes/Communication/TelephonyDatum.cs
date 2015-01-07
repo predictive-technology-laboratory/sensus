@@ -21,10 +21,10 @@ namespace SensusService.Probes.Communication
 {
     public class TelephonyDatum : Datum
     {
-        private string _state;
+        private TelephonyState _state;
         private string _phoneNumber;
 
-        public string State
+        public TelephonyState State
         {
             get { return _state; }
             set { _state = value; }
@@ -42,7 +42,7 @@ namespace SensusService.Probes.Communication
             get { return _phoneNumber + " (" + _state + ")"; }
         }
 
-        public TelephonyDatum(Probe probe, DateTimeOffset timestamp, string state, string phoneNumber)
+        public TelephonyDatum(Probe probe, DateTimeOffset timestamp, TelephonyState state, string phoneNumber)
             : base(probe, timestamp)
         {
             _state = state;
