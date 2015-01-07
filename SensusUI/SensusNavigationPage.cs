@@ -35,7 +35,7 @@ namespace SensusUI
 
             MainPage.ViewLogTapped += async (o, e) =>
                 {
-                    await PushAsync(new ViewTextLinesPage("Sensus Log", UiBoundSensusServiceHelper.Get().Logger.Read(int.MaxValue), () => UiBoundSensusServiceHelper.Get().Logger.Clear()));
+                    await PushAsync(new ViewTextLinesPage("Log", UiBoundSensusServiceHelper.Get().Logger.Read(int.MaxValue), () => UiBoundSensusServiceHelper.Get().Logger.Clear()));
                 };
             #endregion
 

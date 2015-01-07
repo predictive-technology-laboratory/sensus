@@ -118,16 +118,14 @@ namespace SensusService
             get { return _registeredProtocols; }
         }
 
-        [DisplayYesNoUiProperty("Charging:", 1)]
         public abstract bool IsCharging { get; }
 
-        [DisplayYesNoUiProperty("WiFi Connected:", 2)]
         public abstract bool WiFiConnected { get; }
 
         [DisplayStringUiProperty("Device ID:", int.MaxValue)]
         public abstract string DeviceId { get; }
 
-        [EntryIntegerUiProperty("Ping Delay (MS):", true, int.MaxValue)]
+        [EntryIntegerUiProperty("Ping Delay (MS):", true, 9)]
         public int PingDelayMS
         {
             get { return _pingDelayMS; }
@@ -141,7 +139,7 @@ namespace SensusService
             }
         }
 
-        [EntryIntegerUiProperty("Pings Per Report Upload:", true, int.MaxValue)]
+        [EntryIntegerUiProperty("Pings Per Report Upload:", true, 10)]
         public int PingsPerProtocolReportUpload
         {
             get { return _pingsPerProtocolReportUpload; }
