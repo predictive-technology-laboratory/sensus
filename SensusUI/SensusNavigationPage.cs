@@ -69,6 +69,13 @@ namespace SensusUI
                 };
             #endregion
 
+            #region probe page
+            ProbePage.AddTriggerTapped += async (o, scriptProbe) =>
+                {
+                    await PushAsync(new AddScriptProbeTriggerPage(scriptProbe));
+                };
+            #endregion
+
             #region create data store page
             CreateDataStorePage.CreateTapped += async (o, e) =>
                 {

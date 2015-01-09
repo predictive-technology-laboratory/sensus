@@ -16,6 +16,7 @@
  
 using SensusService.Probes;
 using SensusUI.UiProperties;
+using System;
 using Xamarin.Forms;
 
 namespace SensusUI
@@ -25,20 +26,63 @@ namespace SensusUI
     /// </summary>
     public class ProbePage : ContentPage
     {
+        public static event EventHandler<IScriptProbe> AddTriggerTapped;
+
         public ProbePage(Probe probe)
         {
             BindingContext = probe;
 
             SetBinding(TitleProperty, new Binding("DisplayName"));
 
-            Content = new StackLayout
+            StackLayout contentLayout = new StackLayout
             {
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 Orientation = StackOrientation.Vertical,
             };
 
             foreach (StackLayout stack in UiProperty.GetPropertyStacks(probe))
-                (Content as StackLayout).Children.Add(stack);
+                contentLayout.Children.Add(stack);
+
+            if (probe is IScriptProbe)
+            {
+                IScriptProbe scriptProbe = probe as IScriptProbe;
+
+                ListView triggerList = new ListView();
+                triggerList.ItemTemplate = new DataTemplate(typeof(TextCell));
+                triggerList.ItemTemplate.SetBinding(TextCell.TextProperty, ".");
+                triggerList.ItemsSource = scriptProbe.Triggers;
+                contentLayout.Children.Add(triggerList);
+
+                Button addTriggerButton = new Button
+                {
+                    Text = "Add Trigger",
+                    Font = Font.SystemFontOfSize(20)
+                };
+
+                addTriggerButton.Clicked += (o, e) =>
+                    {
+                        if (AddTriggerTapped != null)
+                            AddTriggerTapped(o, scriptProbe);
+                    };
+
+                contentLayout.Children.Add(addTriggerButton);
+
+                Button deleteTriggerButton = new Button
+                {
+                    Text = "Delete Trigger",
+                    Font = Font.SystemFontOfSize(20)
+                };
+
+                deleteTriggerButton.Clicked += async (o, e) =>
+                    {
+                        if (triggerList.SelectedItem != null && await DisplayAlert("Confirm Delete", "Are you sure you want to delete the selected trigger?", "OK", "Cancel"))
+                            scriptProbe.RemoveTrigger(triggerList.SelectedItem as string);
+                    };
+
+                contentLayout.Children.Add(deleteTriggerButton);
+            }
+
+            Content = contentLayout;
         }
     }
 }

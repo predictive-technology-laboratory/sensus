@@ -24,6 +24,7 @@ namespace SensusService.Probes.Communication
         private TelephonyState _state;
         private string _phoneNumber;
 
+        [ProbeTriggerProperty(ProbeTriggerPropertyType.)]
         public TelephonyState State
         {
             get { return _state; }
