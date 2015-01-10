@@ -13,7 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
+using System;
+
 namespace SensusService.Probes.Communication
 {
     /// <summary>
@@ -24,6 +26,11 @@ namespace SensusService.Probes.Communication
         protected sealed override string DefaultDisplayName
         {
             get { return "Text Messages"; }
+        }
+
+        public sealed override Type DatumType
+        {
+            get { return typeof(SmsDatum); }
         }
     }
 }

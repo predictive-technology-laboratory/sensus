@@ -13,8 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
 using SensusService.Probes;
+using SensusService.Probes.User;
 using SensusUI.UiProperties;
 using System;
 using Xamarin.Forms;
@@ -76,7 +77,7 @@ namespace SensusUI
                 deleteTriggerButton.Clicked += async (o, e) =>
                     {
                         if (triggerList.SelectedItem != null && await DisplayAlert("Confirm Delete", "Are you sure you want to delete the selected trigger?", "OK", "Cancel"))
-                            scriptProbe.RemoveTrigger(triggerList.SelectedItem as string);
+                            scriptProbe.RemoveTrigger(probe, triggerList.SelectedItem as string);
                     };
 
                 contentLayout.Children.Add(deleteTriggerButton);

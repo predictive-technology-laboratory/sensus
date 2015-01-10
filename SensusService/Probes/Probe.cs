@@ -134,6 +134,8 @@ namespace SensusService.Probes
 
         protected abstract string DefaultDisplayName { get; }
 
+        public abstract Type DatumType { get; }
+
         protected Probe()
         {
             _displayName = DefaultDisplayName;

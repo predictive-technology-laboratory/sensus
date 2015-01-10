@@ -8,6 +8,6 @@ namespace SensusService.Probes.User
 
         IEnumerable<string> Triggers { get; }
 
-        void RemoveTrigger(string triggerKey);
+        void RemoveTrigger(Probe probe, string triggerKey);
     }
 }

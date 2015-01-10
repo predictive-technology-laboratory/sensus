@@ -41,9 +41,14 @@ namespace SensusService.Probes.User
             get { return "User"; }
         }
 
-        public override IEnumerable<string> Triggers
+        public IEnumerable<string> Triggers
         {
             get { return _triggerHandler.Keys; }
+        }
+
+        public sealed override Type DatumType
+        {
+            get { return typeof(ScriptDatum); }
         }
 
         public ListeningScriptProbe()

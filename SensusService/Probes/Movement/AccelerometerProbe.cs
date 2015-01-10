@@ -13,7 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
+using System;
+
 namespace SensusService.Probes.Movement
 {
     /// <summary>
@@ -24,6 +26,11 @@ namespace SensusService.Probes.Movement
         protected sealed override string DefaultDisplayName
         {
             get { return "Accelerometer"; }
+        }
+
+        public sealed override Type DatumType
+        {
+            get { return typeof(AccelerometerDatum); }
         }
     }
 }

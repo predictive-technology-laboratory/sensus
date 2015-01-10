@@ -13,7 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
+using System;
+
 namespace SensusService.Probes.Location
 {
     public abstract class CompassProbe : ListeningProbe
@@ -21,6 +23,11 @@ namespace SensusService.Probes.Location
         protected sealed override string DefaultDisplayName
         {
             get { return "Compass"; }
+        }
+
+        public sealed override Type DatumType
+        {
+            get { return typeof(CompassDatum); }
         }
     }
 }

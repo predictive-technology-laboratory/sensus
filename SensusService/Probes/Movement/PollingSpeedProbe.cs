@@ -36,6 +36,11 @@ namespace SensusService.Probes.Movement
             set { base.PollingSleepDurationMS = _locationProbe.PollingSleepDurationMS = value; }
         }
 
+        public sealed override Type DatumType
+        {
+            get { return typeof(SpeedDatum); }
+        }
+
         public sealed override int DefaultPollingSleepDurationMS
         {
             get { return 5000; }

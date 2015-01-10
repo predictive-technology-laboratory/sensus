@@ -22,6 +22,7 @@ namespace SensusService.Probes.User
 
         public Script(string path)
         {
+            _path = path;
         }
 
         public void Run(Datum previous, Datum current)

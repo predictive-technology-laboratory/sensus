@@ -59,9 +59,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\PollingProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Probe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\IScriptProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ProbeTriggerProperties\ListProbeTriggerProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ProbeTriggerProperties\NumberProbeTriggerProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ProbeTriggerProperties\ProbeTriggerProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ProbeTriggerProperties\TextProbeTriggerProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Script.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ListeningScriptProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ProbeTriggerProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ScriptDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Protocol.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Logger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolReport.cs" />

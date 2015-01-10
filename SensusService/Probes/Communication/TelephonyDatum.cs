@@ -13,9 +13,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
 using Newtonsoft.Json;
+using SensusService.Probes.User.ProbeTriggerProperties;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SensusService.Probes.Communication
 {
@@ -24,13 +27,14 @@ namespace SensusService.Probes.Communication
         private TelephonyState _state;
         private string _phoneNumber;
 
-        [ProbeTriggerProperty(ProbeTriggerPropertyType.)]
+        [ListProbeTriggerProperty(new List<object>(new TelephonyState[] { TelephonyState.IncomingCall, TelephonyState.OutgoingCall }.Cast<object>()))]
         public TelephonyState State
         {
             get { return _state; }
             set { _state = value; }
         }
 
+        [TextProbeTriggerProperty]
         public string PhoneNumber
         {
             get { return _phoneNumber; }

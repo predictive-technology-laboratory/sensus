@@ -35,6 +35,11 @@ namespace SensusService.Probes.Location
             get { return 1000 * 10; }
         }
 
+        public sealed override Type DatumType
+        {
+            get { return typeof(LocationDatum); }
+        }
+
         protected override void Initialize()
         {
             base.Initialize();
