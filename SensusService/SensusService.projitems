@@ -66,6 +66,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Script.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ListeningScriptProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ScriptDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\TriggerValueCondition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Protocol.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Logger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolReport.cs" />

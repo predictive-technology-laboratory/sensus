@@ -10,5 +10,10 @@ namespace SensusService.Probes.User
         {
             get { throw new NotImplementedException(); }
         }
+
+        public ScriptDatum(Probe probe, DateTimeOffset timestamp)
+            : base(probe, timestamp)
+        {
+        }
     }
 }

@@ -5,18 +5,7 @@ using System.Reflection;
 namespace SensusService.Probes.User
 {
     public class ListeningScriptProbe : ListeningProbe, IScriptProbe
-    {
-        [Flags]
-        public enum TriggerValueCondition
-        {
-            Change = 1,
-            LessThan = 2,
-            LessThanOrEqual = 4,
-            Equal = 8,
-            GreaterThanOrEqual = 16,
-            GreaterThan = 32
-        }
-
+    {  
         private Script _script;
         private Dictionary<string, EventHandler<Tuple<Datum, Datum>>> _triggerHandler;
         private bool _listening;
@@ -57,9 +46,9 @@ namespace SensusService.Probes.User
             _listening = false;
         }
 
-        public void AddTrigger(Probe probe, Type datumType, string datumProperty, TriggerValueCondition condition, object conditionValue)
+        public void AddTrigger(Probe probe, PropertyInfo datumProperty, TriggerValueCondition condition, object conditionValue, bool change)
         {
-            RemoveTrigger(probe, datumType, datumProperty, condition, conditionValue);
+            RemoveTrigger(probe, datumProperty, condition, conditionValue);
 
             EventHandler<Tuple<Datum, Datum>> handler = (o, prevCurrDatum) =>
                 {
@@ -70,18 +59,16 @@ namespace SensusService.Probes.User
                     Datum prevDatum = prevCurrDatum.Item1;
                     Datum currDatum = prevCurrDatum.Item2;
 
-                    PropertyInfo property = datumType.GetProperty(datumProperty);
+                    object datumValueToCompare = datumProperty.GetValue(currDatum);
 
-                    object datumValueToCompare = property.GetValue(currDatum);
-
-                    if (condition.HasFlag(TriggerValueCondition.Change))
+                    if (change)
                     {
                         if (prevDatum == null)
                             return;
 
                         try
                         {
-                            datumValueToCompare = Convert.ToDouble(datumValueToCompare) - Convert.ToDouble(property.GetValue(prevDatum));
+                            datumValueToCompare = Convert.ToDouble(datumValueToCompare) - Convert.ToDouble(datumProperty.GetValue(prevDatum));
                             conditionValue = Convert.ToDouble(conditionValue);
                         }
                         catch (Exception ex)
@@ -99,21 +86,21 @@ namespace SensusService.Probes.User
                         return;
                     }
 
-                    if (condition.HasFlag(TriggerValueCondition.Equal) && compareTo == 0 ||
-                        condition.HasFlag(TriggerValueCondition.GreaterThan) && compareTo > 0 ||
-                        condition.HasFlag(TriggerValueCondition.GreaterThanOrEqual) && compareTo >= 0 ||
-                        condition.HasFlag(TriggerValueCondition.LessThan) && compareTo < 0 ||
-                        condition.HasFlag(TriggerValueCondition.LessThanOrEqual) && compareTo <= 0)
+                    if (condition == TriggerValueCondition.Equal && compareTo == 0 ||
+                        condition == TriggerValueCondition.GreaterThan && compareTo > 0 ||
+                        condition == TriggerValueCondition.GreaterThanOrEqual && compareTo >= 0 ||
+                        condition == TriggerValueCondition.LessThan && compareTo < 0 ||
+                        condition == TriggerValueCondition.LessThanOrEqual && compareTo <= 0)
                         _script.Run(prevDatum, currDatum);
                 };
 
-            _triggerHandler.Add(GetTriggerKey(datumType, datumProperty, condition, conditionValue), handler);
+            _triggerHandler.Add(GetTriggerKey(probe.DatumType, datumProperty, condition, conditionValue), handler);
             probe.MostRecentDatumChanged += handler;
         }
 
-        public void RemoveTrigger(Probe probe, Type datumType, string datumProperty, TriggerValueCondition condition, object conditionValue)
+        public void RemoveTrigger(Probe probe, PropertyInfo datumProperty, TriggerValueCondition condition, object conditionValue)
         {
-            RemoveTrigger(probe, GetTriggerKey(datumType, datumProperty, condition, conditionValue));
+            RemoveTrigger(probe, GetTriggerKey(probe.DatumType, datumProperty, condition, conditionValue));
         }
 
         public void RemoveTrigger(Probe probe, string triggerKey)
@@ -125,7 +112,7 @@ namespace SensusService.Probes.User
             }
         }
 
-        private string GetTriggerKey(Type datumType, string datumProperty, TriggerValueCondition condition, object conditionValue)
+        private string GetTriggerKey(Type datumType, PropertyInfo datumProperty, TriggerValueCondition condition, object conditionValue)
         {
             return datumType.FullName + "-" + datumProperty + "-" + condition + "-" + conditionValue;
         }
