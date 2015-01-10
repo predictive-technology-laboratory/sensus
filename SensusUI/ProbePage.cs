@@ -18,6 +18,7 @@ using SensusService.Probes;
 using SensusService.Probes.User;
 using SensusUI.UiProperties;
 using System;
+using System.Linq;
 using Xamarin.Forms;
 
 namespace SensusUI
@@ -59,6 +60,8 @@ namespace SensusUI
                     Text = "Add Trigger",
                     Font = Font.SystemFontOfSize(20)
                 };
+
+                addTriggerButton.IsEnabled = scriptProbe.Protocol.Probes.Where(p => p != scriptProbe && p.Enabled).Count() > 0;
 
                 addTriggerButton.Clicked += (o, e) =>
                     {

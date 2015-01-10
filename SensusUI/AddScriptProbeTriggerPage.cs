@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
 using SensusService.Probes;
 using Xamarin.Forms;
 using System.Linq;
@@ -39,6 +39,18 @@ namespace SensusUI
         {
             _scriptProbe = scriptProbe;
 
+            List<Probe> enabledProbes = scriptProbe.Protocol.Probes.Where(p => p != _scriptProbe && p.Enabled).ToList();
+            if (enabledProbes.Count == 0)
+            {
+                Content = new Label
+                {
+                    Text = "No enabled probes. Please enable them before creating triggers.",
+                    Font = Font.SystemFontOfSize(30)
+                };
+
+                return;
+            }
+
             StackLayout contentLayout = new StackLayout
             {
                 Orientation = StackOrientation.Vertical,
@@ -47,7 +59,7 @@ namespace SensusUI
 
             Picker probePicker = new Picker();
 
-            List<Probe> enabledProbes = scriptProbe.Protocol.Probes.Where(p => p.Enabled).ToList();
+
             foreach (Probe enabledProbe in enabledProbes)
                 probePicker.Items.Add(enabledProbe.GetType().FullName);
 

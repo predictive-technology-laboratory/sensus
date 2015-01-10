@@ -28,7 +28,7 @@ namespace SensusService.Probes.User
 
         public string ScriptPath
         {
-            get { return _script.Path; }
+            get { return _script == null ? null : _script.Path; }
             set
             {
                 if (_script == null || _script.Path != value)

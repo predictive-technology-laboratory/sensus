@@ -118,6 +118,8 @@ namespace SensusService.Probes.Movement
         {
             lock (this)
             {
+                _previousLocation = null;
+
                 // make sure the base class has a chance to stop
                 try { _locationProbe.Stop(); }
                 finally { base.Stop(); }
