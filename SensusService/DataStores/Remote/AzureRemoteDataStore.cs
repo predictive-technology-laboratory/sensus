@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
 using Microsoft.WindowsAzure.MobileServices;
 using Newtonsoft.Json;
 using SensusService.Exceptions;
@@ -24,6 +24,7 @@ using SensusService.Probes.Device;
 using SensusService.Probes.Location;
 using SensusService.Probes.Movement;
 using SensusService.Probes.Network;
+using SensusService.Probes.User;
 using SensusUI.UiProperties;
 using System;
 using System.Collections.Generic;
@@ -51,6 +52,7 @@ namespace SensusService.DataStores.Remote
         private IMobileServiceTable<SpeedDatum> _speedTable;
         private IMobileServiceTable<CellTowerDatum> _cellTowerTable;
         private IMobileServiceTable<WlanDatum> _wlanTable;
+        private IMobileServiceTable<ScriptDatum> _scriptTable;
 
         private IMobileServiceTable<ProtocolReport> _protocolReportTable;
 
@@ -114,6 +116,7 @@ namespace SensusService.DataStores.Remote
                 _speedTable = _client.GetTable<SpeedDatum>();
                 _cellTowerTable = _client.GetTable<CellTowerDatum>();
                 _wlanTable = _client.GetTable<WlanDatum>();
+                _scriptTable = _client.GetTable<ScriptDatum>();
 
                 _protocolReportTable = _client.GetTable<ProtocolReport>();
 
@@ -161,6 +164,8 @@ namespace SensusService.DataStores.Remote
                         _cellTowerTable.InsertAsync(datum as CellTowerDatum).Wait();
                     else if (datum is WlanDatum)
                         _wlanTable.InsertAsync(datum as WlanDatum).Wait();
+                    else if (datum is ScriptDatum)
+                        _scriptTable.InsertAsync(datum as ScriptDatum).Wait();
                     else if (datum is ProtocolReport)
                         _protocolReportTable.InsertAsync(datum as ProtocolReport).Wait();
                     else
