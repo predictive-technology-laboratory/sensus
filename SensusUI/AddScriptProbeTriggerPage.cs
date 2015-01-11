@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-
+ 
 using SensusService.Probes;
 using Xamarin.Forms;
 using System.Linq;
@@ -210,7 +210,7 @@ namespace SensusUI
 
                                 conditionValueStackView = entry;
                             }
-                            else if(datumTriggerAttribute is BooleanProbeTriggerProperty)
+                            else if (datumTriggerAttribute is BooleanProbeTriggerProperty)
                             {
                                 Switch booleanSwitch = new Switch
                                 {
@@ -284,7 +284,7 @@ namespace SensusUI
 
         private void AddTrigger(object sender, EventArgs args)
         {
-            _scriptProbe.AddTrigger(_selectedProbe, _selectedDatumProperty, _selectedCondition, _conditionValue, _change);
+            _scriptProbe.Triggers.Add(new Trigger(_selectedProbe, _selectedDatumProperty.Name, _selectedCondition, _conditionValue, _change));
         }
     }
 }

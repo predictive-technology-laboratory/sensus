@@ -13,10 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-
-using System.Collections.Generic;
+ 
 using System.Collections.ObjectModel;
-using System.Reflection;
 
 namespace SensusService.Probes.User
 {
@@ -25,9 +23,5 @@ namespace SensusService.Probes.User
         Protocol Protocol { get; }
 
         ObservableCollection<Trigger> Triggers { get; }
-
-        void AddTrigger(Probe probe, PropertyInfo datumProperty, TriggerValueCondition condition, object conditionValue, bool change);
-
-        void RemoveTrigger(Trigger trigger);
     }
 }
