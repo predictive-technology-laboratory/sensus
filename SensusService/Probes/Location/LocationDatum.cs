@@ -13,8 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
 using Newtonsoft.Json;
+using SensusService.Probes.User.ProbeTriggerProperties;
 using System;
 
 namespace SensusService.Probes.Location
@@ -24,12 +25,14 @@ namespace SensusService.Probes.Location
         private double _latitude;
         private double _longitude;
 
+        [NumberProbeTriggerProperty]
         public double Latitude
         {
             get { return _latitude; }
             set { _latitude = value; }
         }
 
+        [NumberProbeTriggerProperty]
         public double Longitude
         {
             get { return _longitude; }

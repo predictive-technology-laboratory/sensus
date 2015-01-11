@@ -13,8 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
 using Newtonsoft.Json;
+using SensusService.Probes.User.ProbeTriggerProperties;
 using System;
 
 namespace SensusService.Probes.Context
@@ -23,6 +24,7 @@ namespace SensusService.Probes.Context
     {
         private float _brightness;
 
+        [NumberProbeTriggerProperty]
         public float Brightness
         {
             get { return _brightness; }

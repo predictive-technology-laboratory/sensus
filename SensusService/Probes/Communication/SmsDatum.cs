@@ -13,8 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
 using Newtonsoft.Json;
+using SensusService.Probes.User.ProbeTriggerProperties;
 using System;
 using System.Text.RegularExpressions;
 
@@ -26,18 +27,21 @@ namespace SensusService.Probes.Communication
         private string _toNumber;
         private string _message;
 
+        [TextProbeTriggerProperty]
         public string FromNumber
         {
             get { return _fromNumber; }
             set { _fromNumber = value == null ? "" : new Regex(@"[^0-9]").Replace(value, ""); }
         }
 
+        [TextProbeTriggerProperty]
         public string ToNumber
         {
             get { return _toNumber; }
             set { _toNumber = value == null ? "" : new Regex(@"[^0-9]").Replace(value, ""); }
         }
 
+        [TextProbeTriggerProperty]
         public string Message
         {
             get { return _message; }

@@ -51,7 +51,7 @@ namespace SensusUI
 
                 ListView triggerList = new ListView();
                 triggerList.ItemTemplate = new DataTemplate(typeof(TextCell));
-                triggerList.ItemTemplate.SetBinding(TextCell.TextProperty, ".");
+                triggerList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", stringFormat: "{0}"));
                 triggerList.ItemsSource = scriptProbe.Triggers;
                 contentLayout.Children.Add(triggerList);
 
@@ -61,13 +61,13 @@ namespace SensusUI
                     Font = Font.SystemFontOfSize(20)
                 };
 
-                addTriggerButton.IsEnabled = scriptProbe.Protocol.Probes.Where(p => p != scriptProbe && p.Enabled).Count() > 0;
-
                 addTriggerButton.Clicked += (o, e) =>
                     {
                         if (AddTriggerTapped != null)
                             AddTriggerTapped(o, scriptProbe);
                     };
+
+                addTriggerButton.IsEnabled = scriptProbe.Protocol.Probes.Where(p => p != scriptProbe && p.Enabled).Count() > 0;
 
                 contentLayout.Children.Add(addTriggerButton);
 
@@ -80,7 +80,10 @@ namespace SensusUI
                 deleteTriggerButton.Clicked += async (o, e) =>
                     {
                         if (triggerList.SelectedItem != null && await DisplayAlert("Confirm Delete", "Are you sure you want to delete the selected trigger?", "OK", "Cancel"))
-                            scriptProbe.RemoveTrigger(probe, triggerList.SelectedItem as string);
+                        {
+                            scriptProbe.RemoveTrigger(triggerList.SelectedItem as Trigger);
+                            triggerList.SelectedItem = null;
+                        }
                     };
 
                 contentLayout.Children.Add(deleteTriggerButton);

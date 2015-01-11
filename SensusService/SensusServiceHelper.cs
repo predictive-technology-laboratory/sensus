@@ -122,7 +122,6 @@ namespace SensusService
 
         public abstract bool WiFiConnected { get; }
 
-        [DisplayStringUiProperty("Device ID:", int.MaxValue)]
         public abstract string DeviceId { get; }
 
         [EntryIntegerUiProperty("Ping Delay (MS):", true, 9)]

@@ -13,8 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
 using Newtonsoft.Json;
+using SensusService.Probes.User.ProbeTriggerProperties;
 using System;
 
 namespace SensusService.Probes.Movement
@@ -23,6 +24,7 @@ namespace SensusService.Probes.Movement
     {
         private float _kph;
 
+        [NumberProbeTriggerProperty]
         public float KPH
         {
             get { return _kph; }

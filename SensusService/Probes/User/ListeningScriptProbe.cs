@@ -13,18 +13,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Reflection;
 
 namespace SensusService.Probes.User
 {
     public class ListeningScriptProbe : ListeningProbe, IScriptProbe
     {  
-        private Script _script;
-        private Dictionary<string, EventHandler<Tuple<Datum, Datum>>> _triggerHandler;
+        private ObservableCollection<Trigger> _triggers;
+        private Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>> _triggerHandler;
         private bool _listening;
+        private Script _script;
 
         public string ScriptPath
         {
@@ -43,14 +46,29 @@ namespace SensusService.Probes.User
 
         protected override string DefaultDisplayName
         {
-            get { return "User"; }
+            get { return "User Interaction"; }
         }
 
-        public IEnumerable<string> Triggers
+        public ObservableCollection<Trigger> Triggers
         {
-            get { return _triggerHandler.Keys; }
+            get { return _triggers; }
+            set
+            {
+                lock (this)
+                {
+                    if (_triggers != null)
+                    {
+                        foreach (Trigger trigger in _triggers)
+                            RemoveTrigger(trigger);
+                    }
+
+                    foreach (Trigger trigger in value)
+                        AddTrigger(trigger);
+                }
+            }
         }
 
+        [JsonIgnore]
         public sealed override Type DatumType
         {
             get { return typeof(ScriptDatum); }
@@ -58,13 +76,19 @@ namespace SensusService.Probes.User
 
         public ListeningScriptProbe()
         {
-            _triggerHandler = new Dictionary<string, EventHandler<Tuple<Datum, Datum>>>();
+            _triggers = new ObservableCollection<Trigger>();
+            _triggerHandler = new Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>>();
             _listening = false;
         }
 
         public void AddTrigger(Probe probe, PropertyInfo datumProperty, TriggerValueCondition condition, object conditionValue, bool change)
         {
-            RemoveTrigger(probe, datumProperty, condition, conditionValue);
+            AddTrigger(new Trigger(probe, datumProperty.Name, condition, conditionValue, change));
+        }
+
+        public void AddTrigger(Trigger trigger)
+        {
+            RemoveTrigger(trigger);
 
             EventHandler<Tuple<Datum, Datum>> handler = (o, prevCurrDatum) =>
                 {
@@ -75,18 +99,14 @@ namespace SensusService.Probes.User
                     Datum prevDatum = prevCurrDatum.Item1;
                     Datum currDatum = prevCurrDatum.Item2;
 
-                    object datumValueToCompare = datumProperty.GetValue(currDatum);
+                    object datumValueToCompare = trigger.DatumProperty.GetValue(currDatum);
 
-                    if (change)
+                    if (trigger.Change)
                     {
                         if (prevDatum == null)
                             return;
 
-                        try
-                        {
-                            datumValueToCompare = Convert.ToDouble(datumValueToCompare) - Convert.ToDouble(datumProperty.GetValue(prevDatum));
-                            conditionValue = Convert.ToDouble(conditionValue);
-                        }
+                        try { datumValueToCompare = Convert.ToDouble(datumValueToCompare) - Convert.ToDouble(trigger.DatumProperty.GetValue(prevDatum)); }
                         catch (Exception ex)
                         {
                             SensusServiceHelper.Get().Logger.Log("Failed to convert datum values to doubles:  " + ex.Message, LoggingLevel.Normal);
@@ -94,43 +114,24 @@ namespace SensusService.Probes.User
                         }
                     }
 
-                    int compareTo;
-                    try { compareTo = ((IComparable)datumValueToCompare).CompareTo(conditionValue); }
-                    catch (Exception ex)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Failed to compare datum values:  " + ex.Message, LoggingLevel.Normal);
-                        return;
-                    }
-
-                    if (condition == TriggerValueCondition.Equal && compareTo == 0 ||
-                        condition == TriggerValueCondition.GreaterThan && compareTo > 0 ||
-                        condition == TriggerValueCondition.GreaterThanOrEqual && compareTo >= 0 ||
-                        condition == TriggerValueCondition.LessThan && compareTo < 0 ||
-                        condition == TriggerValueCondition.LessThanOrEqual && compareTo <= 0)
+                    if (trigger.FiresFor(datumValueToCompare))
                         _script.Run(prevDatum, currDatum);
                 };
 
-            _triggerHandler.Add(GetTriggerKey(probe.DatumType, datumProperty, condition, conditionValue), handler);
-            probe.MostRecentDatumChanged += handler;
+            trigger.Probe.MostRecentDatumChanged += handler;
+            _triggers.Add(trigger);
+            _triggerHandler.Add(trigger, handler);
         }
 
-        public void RemoveTrigger(Probe probe, PropertyInfo datumProperty, TriggerValueCondition condition, object conditionValue)
+        public void RemoveTrigger(Trigger trigger)
         {
-            RemoveTrigger(probe, GetTriggerKey(probe.DatumType, datumProperty, condition, conditionValue));
-        }
-
-        public void RemoveTrigger(Probe probe, string triggerKey)
-        {
-            if (_triggerHandler.ContainsKey(triggerKey))
-            {
-                _triggerHandler.Remove(triggerKey);
-                probe.MostRecentDatumChanged -= _triggerHandler[triggerKey];
-            }
-        }
-
-        private string GetTriggerKey(Type datumType, PropertyInfo datumProperty, TriggerValueCondition condition, object conditionValue)
-        {
-            return datumType.FullName + "-" + datumProperty + "-" + condition + "-" + conditionValue;
+            lock (this)
+                if (_triggerHandler.ContainsKey(trigger))
+                {
+                    trigger.Probe.MostRecentDatumChanged -= _triggerHandler[trigger];
+                    _triggers.Remove(trigger);
+                    _triggerHandler.Remove(trigger);
+                }
         }
 
         protected override void StartListening()

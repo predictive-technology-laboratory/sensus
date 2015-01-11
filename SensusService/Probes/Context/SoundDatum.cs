@@ -13,8 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
 using Newtonsoft.Json;
+using SensusService.Probes.User.ProbeTriggerProperties;
 using System;
 
 namespace SensusService.Probes.Context
@@ -23,6 +24,7 @@ namespace SensusService.Probes.Context
     {
         private double _decibels;
 
+        [NumberProbeTriggerProperty]
         public double Decibels
         {
             get { return _decibels; }

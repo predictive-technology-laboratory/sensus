@@ -28,6 +28,8 @@ namespace SensusUI
 {
     public class AddScriptProbeTriggerPage : ContentPage
     {
+        public static event EventHandler OkTapped;
+
         private IScriptProbe _scriptProbe;
         private Probe _selectedProbe;
         private PropertyInfo _selectedDatumProperty;
@@ -38,6 +40,8 @@ namespace SensusUI
         public AddScriptProbeTriggerPage(IScriptProbe scriptProbe)
         {
             _scriptProbe = scriptProbe;
+
+            Title = "Add Trigger";
 
             List<Probe> enabledProbes = scriptProbe.Protocol.Probes.Where(p => p != _scriptProbe && p.Enabled).ToList();
             if (enabledProbes.Count == 0)
@@ -57,73 +61,83 @@ namespace SensusUI
                 VerticalOptions = LayoutOptions.FillAndExpand
             };
 
-            Picker probePicker = new Picker();
+            Label probeLabel = new Label
+            {
+                Text = "Probe:",
+                Font = Font.SystemFontOfSize(20)
+            };
 
-
+            Picker probePicker = new Picker { Title = "Select Probe", HorizontalOptions = LayoutOptions.FillAndExpand };
             foreach (Probe enabledProbe in enabledProbes)
-                probePicker.Items.Add(enabledProbe.GetType().FullName);
+                probePicker.Items.Add(enabledProbe.DisplayName);
 
-            contentLayout.Children.Add(probePicker);
+            contentLayout.Children.Add(new StackLayout
+            {
+                Orientation = StackOrientation.Horizontal,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                Children = { probeLabel, probePicker }
+            });
 
-            StackLayout triggerLayout = new StackLayout
+            StackLayout triggerDefinitionLayout = new StackLayout
             {
                 Orientation = StackOrientation.Vertical,
                 VerticalOptions = LayoutOptions.FillAndExpand
             };
 
-            contentLayout.Children.Add(triggerLayout);
+            contentLayout.Children.Add(triggerDefinitionLayout);
 
             probePicker.SelectedIndexChanged += (o, e) =>
                 {
                     if (probePicker.SelectedIndex < 0)
                         return;
 
-                    _selectedProbe = enabledProbes.Where(p => p.GetType().FullName == probePicker.Items[probePicker.SelectedIndex]).First();
+                    _selectedProbe = enabledProbes[probePicker.SelectedIndex];
 
-                    triggerLayout.Children.Clear();
+                    triggerDefinitionLayout.Children.Clear();
 
-                    #region property picker based on probe's datum type
-                    Type datum = _selectedProbe.DatumType;
+                    #region datum property picker
+                    Type datumType = _selectedProbe.DatumType;
 
-                    Label propertyLabel = new Label
+                    Label datumPropertyLabel = new Label
                     {
                         Text = "Property:",
                         Font = Font.SystemFontOfSize(20)
                     };
 
-                    Picker propertyPicker = new Picker();
-                    PropertyInfo[] triggerProperties = datum.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(p => p.GetCustomAttributes<ProbeTriggerProperty>().Count() > 0).ToArray();
-                    foreach (PropertyInfo triggerProperty in triggerProperties)
-                        propertyPicker.Items.Add(triggerProperty.Name);
+                    Picker datumPropertyPicker = new Picker { Title = "Select Datum Property", HorizontalOptions = LayoutOptions.FillAndExpand };
+                    PropertyInfo[] datumProperties = datumType.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(p => p.GetCustomAttributes<ProbeTriggerProperty>().Count() > 0).ToArray();
+                    foreach (PropertyInfo triggerProperty in datumProperties)
+                        datumPropertyPicker.Items.Add(triggerProperty.Name);
 
-                    triggerLayout.Children.Add(new StackLayout
+                    triggerDefinitionLayout.Children.Add(new StackLayout
                     {
                         Orientation = StackOrientation.Horizontal,
                         HorizontalOptions = LayoutOptions.FillAndExpand,
-                        Children = { propertyLabel, propertyPicker }
+                        Children = { datumPropertyLabel, datumPropertyPicker }
                     });
                     #endregion
 
-                    #region condition (same for all datum types)
+                    #region condition picker (same for all datum types)
                     Label conditionLabel = new Label
                     {
                         Text = "Condition:",
                         Font = Font.SystemFontOfSize(20)
                     };
 
-                    Picker conditionPicker = new Picker();
-                    foreach (TriggerValueCondition condition in Enum.GetValues(typeof(TriggerValueCondition)))
-                        conditionPicker.Items.Add(conditionPicker.ToString());
+                    Picker conditionPicker = new Picker { Title = "Select Condition", HorizontalOptions = LayoutOptions.FillAndExpand };
+                    TriggerValueCondition[] conditions = Enum.GetValues(typeof(TriggerValueCondition)) as TriggerValueCondition[];
+                    foreach (TriggerValueCondition condition in conditions)
+                        conditionPicker.Items.Add(condition.ToString());
 
                     conditionPicker.SelectedIndexChanged += (oo, ee) =>
                         {
                             if (conditionPicker.SelectedIndex < 0)
                                 return;
 
-                            _selectedCondition = (TriggerValueCondition)Enum.Parse(typeof(TriggerValueCondition), conditionPicker.Items[conditionPicker.SelectedIndex]);
+                            _selectedCondition = conditions[conditionPicker.SelectedIndex];
                         };
 
-                    triggerLayout.Children.Add(new StackLayout
+                    triggerDefinitionLayout.Children.Add(new StackLayout
                     {
                         Orientation = StackOrientation.Horizontal,
                         HorizontalOptions = LayoutOptions.FillAndExpand,
@@ -131,47 +145,47 @@ namespace SensusUI
                     });
                     #endregion
 
-                    #region property value, based on selected property
-                    StackLayout propertyValueStack = new StackLayout
+                    #region condition value for comparison, based on selected datum property
+                    StackLayout conditionValueStack = new StackLayout
                     {
                         Orientation = StackOrientation.Vertical,
                         HorizontalOptions = LayoutOptions.FillAndExpand
                     };
 
-                    triggerLayout.Children.Add(propertyValueStack);
+                    triggerDefinitionLayout.Children.Add(conditionValueStack);
 
-                    propertyPicker.SelectedIndexChanged += (oo, ee) =>
+                    datumPropertyPicker.SelectedIndexChanged += (oo, ee) =>
                         {
-                            if (propertyPicker.SelectedIndex < 0)
+                            if (datumPropertyPicker.SelectedIndex < 0)
                                 return;
 
-                            _selectedDatumProperty = triggerProperties.Where(p => p.Name == propertyPicker.Items[propertyPicker.SelectedIndex]).First();
+                            _selectedDatumProperty = datumProperties[datumPropertyPicker.SelectedIndex];
 
-                            propertyValueStack.Children.Clear();
+                            conditionValueStack.Children.Clear();
 
-                            ProbeTriggerProperty triggerAttribute = _selectedDatumProperty.GetCustomAttribute<ProbeTriggerProperty>();
+                            ProbeTriggerProperty datumTriggerAttribute = _selectedDatumProperty.GetCustomAttribute<ProbeTriggerProperty>();
 
-                            View propertyValueStackView = null;
+                            View conditionValueStackView = null;
                             bool allowChangeCalculation = false;
 
-                            if (triggerAttribute is ListProbeTriggerProperty)
+                            if (datumTriggerAttribute is ListProbeTriggerProperty)
                             {
-                                Picker picker = new Picker();
-                                object[] items = (triggerAttribute as ListProbeTriggerProperty).Items;
+                                Picker conditionValuePicker = new Picker { Title = "Select Condition Value", HorizontalOptions = LayoutOptions.FillAndExpand };
+                                object[] items = (datumTriggerAttribute as ListProbeTriggerProperty).Items;
                                 foreach (object item in items)
-                                    picker.Items.Add(item.ToString());
+                                    conditionValuePicker.Items.Add(item.ToString());
 
-                                picker.SelectedIndexChanged += (ooo, eee) =>
+                                conditionValuePicker.SelectedIndexChanged += (ooo, eee) =>
                                     {
-                                        if (picker.SelectedIndex < 0)
+                                        if (conditionValuePicker.SelectedIndex < 0)
                                             return;
 
-                                        _conditionValue = items.Where(i => i.ToString() == picker.Items[picker.SelectedIndex].ToString());
+                                        _conditionValue = items[conditionValuePicker.SelectedIndex];
                                     };
 
-                                propertyValueStackView = picker;
+                                conditionValueStackView = conditionValuePicker;
                             }
-                            else if (triggerAttribute is NumberProbeTriggerProperty)
+                            else if (datumTriggerAttribute is NumberProbeTriggerProperty)
                             {
                                 Entry entry = new Entry
                                 {
@@ -179,12 +193,12 @@ namespace SensusUI
                                     HorizontalOptions = LayoutOptions.FillAndExpand
                                 };
 
-                                entry.TextChanged += (ooo, eee) => _conditionValue = double.Parse(entry.Text);
+                                entry.TextChanged += (ooo, eee) => _conditionValue = double.Parse(eee.NewTextValue);
 
-                                propertyValueStackView = entry;
+                                conditionValueStackView = entry;
                                 allowChangeCalculation = true;
                             }
-                            else if (triggerAttribute is TextProbeTriggerProperty)
+                            else if (datumTriggerAttribute is TextProbeTriggerProperty)
                             {
                                 Entry entry = new Entry
                                 {
@@ -192,16 +206,38 @@ namespace SensusUI
                                     HorizontalOptions = LayoutOptions.FillAndExpand
                                 };
 
-                                entry.TextChanged += (ooo, eee) => _conditionValue = entry.Text;
+                                entry.TextChanged += (ooo, eee) => _conditionValue = eee.NewTextValue;
 
-                                propertyValueStackView = entry;
+                                conditionValueStackView = entry;
+                            }
+                            else if(datumTriggerAttribute is BooleanProbeTriggerProperty)
+                            {
+                                Switch booleanSwitch = new Switch
+                                {
+                                    HorizontalOptions = LayoutOptions.FillAndExpand
+                                };
+
+                                booleanSwitch.Toggled += (ooo, eee) => _conditionValue = eee.Value;
+
+                                conditionValueStackView = booleanSwitch;
                             }
 
-                            propertyValueStack.Children.Add(propertyValueStackView);
+                            Label conditionValueStackLabel = new Label
+                            {
+                                Text = "Value:",
+                                Font = Font.SystemFontOfSize(20)
+                            };
+
+                            conditionValueStack.Children.Add(new StackLayout
+                            {
+                                Orientation = StackOrientation.Horizontal,
+                                HorizontalOptions = LayoutOptions.FillAndExpand,
+                                Children = { conditionValueStackLabel, conditionValueStackView }
+                            });
 
                             if (allowChangeCalculation)
                             {
-                                Label switchLabel = new Label
+                                Label changeLabel = new Label
                                 {
                                     Text = "Change:",
                                     Font = Font.SystemFontOfSize(20)
@@ -211,18 +247,18 @@ namespace SensusUI
 
                                 changeSwitch.Toggled += (ooo, eee) => { _change = eee.Value; };
 
-                                propertyValueStack.Children.Add(new StackLayout
+                                conditionValueStack.Children.Add(new StackLayout
                                 {
                                     Orientation = StackOrientation.Horizontal,
                                     HorizontalOptions = LayoutOptions.FillAndExpand,
-                                    Children = { switchLabel, changeSwitch }
+                                    Children = { changeLabel, changeSwitch }
                                 });
                             }
 
                             _change = false;
                         };
 
-                    propertyPicker.SelectedIndex = 0;
+                    datumPropertyPicker.SelectedIndex = 0;
                     #endregion
                 };
 
@@ -235,6 +271,11 @@ namespace SensusUI
             };
 
             okButton.Clicked += AddTrigger;
+            okButton.Clicked += (o, e) =>
+                {
+                    if (OkTapped != null)
+                        OkTapped(o, e);
+                };
 
             contentLayout.Children.Add(okButton);
 
