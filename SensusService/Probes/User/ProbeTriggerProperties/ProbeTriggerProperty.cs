@@ -16,7 +16,7 @@
  
 using System;
 
-namespace SensusService
+namespace SensusService.Probes.User.ProbeTriggerProperties
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public abstract class ProbeTriggerProperty : Attribute

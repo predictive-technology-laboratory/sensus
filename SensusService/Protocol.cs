@@ -14,7 +14,6 @@
 // limitations under the License.
 #endregion
  
-using Android.Content;
 using Newtonsoft.Json;
 using SensusService.DataStores.Local;
 using SensusService.DataStores.Remote;
@@ -45,25 +44,12 @@ namespace SensusService
             ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
         };
 
-        public static Protocol GetFromWeb(Uri uri)
+        public static Protocol GetFromWebURI(Uri webURI)
         {
             Stream stream = null;
 
-            try { stream = new WebClient().OpenRead(uri); }
-            catch (Exception ex) { throw new SensusException("Failed to open web client to URI \"" + uri + "\":  " + ex.Message + ". If this is an HTTPS URI, make sure the server's certificate is valid."); }
-
-            if (stream == null)
-                return null;
-            else
-                return GetFromStream(stream);
-        }
-
-        public static Protocol GetFromFile(Android.Net.Uri uri, ContentResolver contentResolver)
-        {
-            Stream stream = null;
-
-            try { stream = contentResolver.OpenInputStream(uri); }
-            catch (Exception ex) { throw new SensusException("Failed to open local file URI \"" + uri + "\":  " + ex.Message); }
+            try { stream = new WebClient().OpenRead(webURI); }
+            catch (Exception ex) { throw new SensusException("Failed to open web client to URI \"" + webURI + "\":  " + ex.Message + ". If this is an HTTPS URI, make sure the server's certificate is valid."); }
 
             if (stream == null)
                 return null;

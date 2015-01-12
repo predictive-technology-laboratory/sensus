@@ -15,11 +15,11 @@
 #endregion
  
 using Newtonsoft.Json;
+using SensusUI.UiProperties;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Reflection;
 
 namespace SensusService.Probes.User
 {
@@ -30,17 +30,20 @@ namespace SensusService.Probes.User
         private bool _listening;
         private Script _script;
 
-        public string ScriptPath
+        [LoadTextFileUiProperty("Script:", true, 3, "Select Script")]
+        public string Script
         {
-            get { return _script == null ? null : _script.Path; }
+            get { return _script == null ? null : _script.Name; }
             set
             {
-                if (_script == null || _script.Path != value)
+                if (value != null)
                 {
-                    _script = new Script(value);
-                    OnPropertyChanged();
-
-                    DisplayName = _script.Name;
+                    try
+                    {
+                        _script = new Script(value);
+                        OnPropertyChanged();
+                    }
+                    catch (Exception) { }
                 }
             }
         }
@@ -72,8 +75,13 @@ namespace SensusService.Probes.User
                     if (e.Action == NotifyCollectionChangedAction.Add)
                         foreach (Trigger addedTrigger in e.NewItems)
                         {
+                            // ignore duplicate triggers -- the user should delete and re-add them instead.
+                            if (_triggerHandler.ContainsKey(addedTrigger))
+                                return;
+
                             EventHandler<Tuple<Datum, Datum>> handler = (oo, prevCurrDatum) =>
                                 {
+                                    // must be listening and must have a current datum
                                     lock (this)
                                         if (!_listening || prevCurrDatum.Item2 == null)
                                             return;
@@ -81,8 +89,15 @@ namespace SensusService.Probes.User
                                     Datum prevDatum = prevCurrDatum.Item1;
                                     Datum currDatum = prevCurrDatum.Item2;
 
+                                    // get the object that might trigger the script
                                     object datumValueToCompare = addedTrigger.DatumProperty.GetValue(currDatum);
+                                    if (datumValueToCompare == null)
+                                    {
+                                        SensusServiceHelper.Get().Logger.Log("Trigger error:  Value of datum property " + addedTrigger.DatumPropertyName + " was null.", LoggingLevel.Normal);
+                                        return;
+                                    }
 
+                                    // if we're triggering based on datum value changes instead of absolute values, calculate the change now
                                     if (addedTrigger.Change)
                                     {
                                         if (prevDatum == null)
@@ -91,11 +106,12 @@ namespace SensusService.Probes.User
                                         try { datumValueToCompare = Convert.ToDouble(datumValueToCompare) - Convert.ToDouble(addedTrigger.DatumProperty.GetValue(prevDatum)); }
                                         catch (Exception ex)
                                         {
-                                            SensusServiceHelper.Get().Logger.Log("Failed to convert datum values to doubles:  " + ex.Message, LoggingLevel.Normal);
+                                            SensusServiceHelper.Get().Logger.Log("Trigger error:  Failed to convert datum values to doubles:  " + ex.Message, LoggingLevel.Normal);
                                             return;
                                         }
                                     }
 
+                                    // run script of trigger is fired
                                     if (addedTrigger.FiresFor(datumValueToCompare))
                                         _script.Run(prevDatum, currDatum);
                                 };

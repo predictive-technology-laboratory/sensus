@@ -14,12 +14,15 @@
 // limitations under the License.
 #endregion
  
-
 using Newtonsoft.Json;
 using System;
 using System.Reflection;
+
 namespace SensusService.Probes.User
 {
+    /// <summary>
+    /// Represents a condition under which a script-driven probe is run.
+    /// </summary>
     public class Trigger
     {
         private Probe _probe;
@@ -51,7 +54,6 @@ namespace SensusService.Probes.User
             get { return _condition; }
             set { _condition = value; }
         }
-
 
         public object ConditionValue
         {

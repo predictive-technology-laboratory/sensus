@@ -187,6 +187,8 @@ namespace SensusService
 
         protected abstract void InitializeXamarinInsights();
 
+        public abstract Task<string> PromptForAndReadTextFile(string promptTitle);
+
         #region save/read protocols
         public void SaveRegisteredProtocols()
         {

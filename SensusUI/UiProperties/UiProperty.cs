@@ -85,6 +85,7 @@ namespace SensusUI.UiProperties
                         Keyboard = Keyboard.Numeric,
                         HorizontalOptions = LayoutOptions.FillAndExpand
                     };
+
                     bindingProperty = Entry.TextProperty;
                     converter = new EntryIntegerUiProperty.ValueConverter();
                 }
@@ -97,8 +98,8 @@ namespace SensusUI.UiProperties
                         Maximum = p.Maximum,
                         Increment = p.Increment
                     };
-                    bindingProperty = Stepper.ValueProperty;
 
+                    bindingProperty = Stepper.ValueProperty;
                     addParameterValueLabel = true;
                 }
                 else if (uiElement is EntryStringUiProperty)
@@ -108,7 +109,28 @@ namespace SensusUI.UiProperties
                         Keyboard = Keyboard.Default,
                         HorizontalOptions = LayoutOptions.FillAndExpand
                     };
+
                     bindingProperty = Entry.TextProperty;
+                }
+                else if (uiElement is LoadTextFileUiProperty)
+                {
+                    LoadTextFileUiProperty loadUiElement = uiElement as LoadTextFileUiProperty;
+
+                    Button readButton = new Button
+                    {
+                        Text = "Load",
+                        HorizontalOptions = LayoutOptions.FillAndExpand
+                    };
+
+                    readButton.Clicked += async (oo, e) =>
+                        {
+                            string text = await UiBoundSensusServiceHelper.Get().PromptForAndReadTextFile(loadUiElement.Prompt);
+                            propertyUiElement.Item1.SetValue(o, text);
+                        };
+
+                    view = readButton;
+                    bindingProperty = Button.TextProperty;
+                    converter = new LoadTextFileUiProperty.ValueConverter("Load");
                 }
 
                 if (view != null)
@@ -135,8 +157,12 @@ namespace SensusUI.UiProperties
                     }
 
                     view.IsEnabled = uiElement.Editable;
-                    view.BindingContext = o;
-                    view.SetBinding(bindingProperty, new Binding(propertyUiElement.Item1.Name, converter: converter));
+
+                    if (bindingProperty != null)
+                    {
+                        view.BindingContext = o;
+                        view.SetBinding(bindingProperty, new Binding(propertyUiElement.Item1.Name, converter: converter));
+                    }
 
                     stack.Children.Add(view);
 

@@ -23,6 +23,8 @@ using SensusService.Exceptions;
 using SensusUI;
 using System;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 
@@ -38,10 +40,15 @@ namespace Sensus.Android
     {
         private Intent _serviceIntent;
         private AndroidSensusServiceConnection _serviceConnection;
+        private int _activityRequestCode;
+        private AutoResetEvent _activityResultTrigger;
+        private Tuple<Result, Intent> _activityResult;
 
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
+
+            _activityResultTrigger = new AutoResetEvent(false);
 
             Title = "Sensus";
 
@@ -75,9 +82,17 @@ namespace Sensus.Android
                         try
                         {
                             if (Intent.Scheme == "http" || Intent.Scheme == "https")
-                                protocol = Protocol.GetFromWeb(new Uri(dataURI.ToString()));
+                                protocol = Protocol.GetFromWebURI(new Uri(dataURI.ToString()));
                             else if (Intent.Scheme == "content" || Intent.Scheme == "file")
-                                protocol = Protocol.GetFromFile(dataURI, ContentResolver);
+                            {
+                                Stream stream = null;
+
+                                try { stream = ContentResolver.OpenInputStream(dataURI); }
+                                catch (Exception ex) { throw new SensusException("Failed to open local protocol file URI \"" + dataURI + "\":  " + ex.Message); }
+
+                                if (stream != null)
+                                    protocol = Protocol.GetFromStream(stream);
+                            }
                             else
                                 throw new SensusException("Sensus didn't know what to do with URI \"" + dataURI);
                         }
@@ -110,6 +125,32 @@ namespace Sensus.Android
 
             if (_serviceConnection.Binder.IsBound)
                 UnbindService(_serviceConnection);
+        }
+
+        public Task<Tuple<Result, Intent>> GetActivityResult(Intent intent, int requestCode)
+        {
+            return Task.Run<Tuple<Result, Intent>>(() =>
+                {
+                    lock (this)
+                    {
+                        _activityRequestCode = requestCode;
+
+                        _activityResultTrigger.Reset();
+                        StartActivityForResult(intent, requestCode);
+                        _activityResultTrigger.WaitOne();
+
+                        return _activityResult;
+                    }
+                });
+        }
+
+        protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
+        {
+            if (requestCode == _activityRequestCode)
+            {
+                _activityResult = new Tuple<Result, Intent>(resultCode, data);
+                _activityResultTrigger.Set();
+            }
         }
     }
 }

@@ -16,13 +16,16 @@
  
 using Android.App;
 using Android.Content;
+using Android.Database;
 using Android.Net;
 using Android.OS;
 using Android.Provider;
 using Android.Support.V4.Content;
-using Java.Lang;
+using Android.Widget;
 using SensusService;
+using System;
 using System.IO;
+using System.Threading.Tasks;
 using Xamarin;
 using Xamarin.Geolocation;
 
@@ -34,9 +37,9 @@ namespace Sensus.Android
 
         private ConnectivityManager _connectivityManager;
         private readonly string _deviceId;
-        private Activity _mainActivity;
+        private MainActivity _mainActivity;
 
-        public Activity MainActivity
+        public MainActivity MainActivity
         {
             get { return _mainActivity; }
             set { _mainActivity = value; }
@@ -69,6 +72,38 @@ namespace Sensus.Android
             _deviceId = Settings.Secure.GetString(Application.Context.ContentResolver, Settings.Secure.AndroidId);
         }
 
+        public override Task<string> PromptForAndReadTextFile(string promptTitle)
+        {
+            return Task.Run<string>(async () =>
+                {
+                    Intent intent = new Intent(Intent.ActionGetContent);
+                    intent.SetType("*/*");
+                    intent.AddCategory(Intent.CategoryOpenable);
+
+                    try
+                    {
+                        Tuple<Result, Intent> result = await (SensusServiceHelper.Get() as AndroidSensusServiceHelper).MainActivity.GetActivityResult(intent, 0);
+                        if (result.Item1 == Result.Ok)
+                            try
+                            {
+                                using (StreamReader file = new StreamReader(MainActivity.ContentResolver.OpenInputStream(result.Item2.Data)))
+                                    return file.ReadToEnd();
+                            }
+                            catch (Exception ex) { Toast.MakeText(MainActivity, "Error reading file:  " + ex.Message, ToastLength.Long); }
+                    }
+                    catch (ActivityNotFoundException)
+                    {
+                        Toast.MakeText(MainActivity, "Please install a file manager from the Apps store.", ToastLength.Long);
+                    }
+                    catch (Exception ex)
+                    {
+                        Toast.MakeText(MainActivity, "Something went wrong while prompting you for a file to read:  " + ex.Message, ToastLength.Long);
+                    }
+
+                    return null;
+                });
+        }
+
         protected override void InitializeXamarinInsights()
         {
             Insights.Initialize(XAMARIN_INSIGHTS_APP_KEY, Application.Context);
@@ -86,7 +121,7 @@ namespace Sensus.Android
                     intent.PutExtra(Intent.ExtraSubject, subject);
 
                 Java.IO.File file = new Java.IO.File(path);
-                Uri uri = FileProvider.GetUriForFile(Application.Context, "edu.virginia.sie.ptl.sensus.fileprovider", file);
+                global::Android.Net.Uri uri = FileProvider.GetUriForFile(Application.Context, "edu.virginia.sie.ptl.sensus.fileprovider", file);
                 intent.PutExtra(Intent.ExtraStream, uri);
 
                 // if we're outside the context of the main activity (e.g., within the service), start a new activity
@@ -121,7 +156,7 @@ namespace Sensus.Android
             PendingIntent pendingServiceIntent = PendingIntent.GetService(context, 0, serviceIntent, PendingIntentFlags.UpdateCurrent);
 
             if (ms > 0)
-                alarmManager.SetRepeating(AlarmType.RtcWakeup, JavaSystem.CurrentTimeMillis() + ms, ms, pendingServiceIntent);
+                alarmManager.SetRepeating(AlarmType.RtcWakeup, Java.Lang.JavaSystem.CurrentTimeMillis() + ms, ms, pendingServiceIntent);
             else
                 alarmManager.Cancel(pendingServiceIntent);
         }

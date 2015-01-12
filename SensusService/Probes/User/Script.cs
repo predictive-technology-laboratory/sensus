@@ -13,22 +13,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SensusService.Probes.User
 {
     public class Script
     {
-        private string _path;
         private string _name;
-
-        public string Path
-        {
-            get { return _path; }
-        }
 
         public string Name
         {
@@ -36,9 +26,9 @@ namespace SensusService.Probes.User
             set { _name = value; }
         }
 
-        public Script(string path)
+        public Script(string scriptText)
         {
-            _path = path;
+            _name = scriptText;
         }
 
         public void Run(Datum previous, Datum current)
