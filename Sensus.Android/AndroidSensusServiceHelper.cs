@@ -27,6 +27,7 @@ using SensusService;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Xamarin;
 using Xamarin.Geolocation;
@@ -37,14 +38,35 @@ namespace Sensus.Android
     {
         public const string INTENT_EXTRA_NAME_PING = "PING-SENSUS";
 
+        private AndroidSensusService _service;
         private ConnectivityManager _connectivityManager;
         private readonly string _deviceId;
-        private MainActivity _mainActivity;
+        private AndroidMainActivity _mainActivity;
+        private ManualResetEvent _mainActivityWait;
+        private AndroidTextToSpeech _textToSpeech;
 
-        public MainActivity MainActivity
+        public AndroidMainActivity MainActivity
         {
-            get { return _mainActivity; }
-            set { _mainActivity = value; }
+            get
+            {
+                lock (this)
+                {                    
+                    if (_mainActivity == null)
+                    {
+                        // start the activity and wait for it to bind itself to the service
+                        _mainActivityWait.Reset();
+                        _service.StartActivity(typeof(AndroidMainActivity));
+                        _mainActivityWait.WaitOne();
+                    }
+
+                    return _mainActivity;
+                }
+            }
+            set
+            {
+                _mainActivity = value;
+                _mainActivityWait.Set();
+            }
         }
 
         public override bool WiFiConnected
@@ -57,7 +79,7 @@ namespace Sensus.Android
             get
             {
                 IntentFilter filter = new IntentFilter(Intent.ActionBatteryChanged);
-                BatteryStatus status = (BatteryStatus)Application.Context.RegisterReceiver(null, filter).GetIntExtra(BatteryManager.ExtraStatus, -1);
+                BatteryStatus status = (BatteryStatus)_service.RegisterReceiver(null, filter).GetIntExtra(BatteryManager.ExtraStatus, -1);
                 return status == BatteryStatus.Charging || status == BatteryStatus.Full;
             }
         }
@@ -72,16 +94,19 @@ namespace Sensus.Android
             get { return PackageManager.FeatureMicrophone == "android.hardware.microphone"; }
         }
 
-        public AndroidSensusServiceHelper()
-            : base(new Geolocator(Application.Context))
+        public AndroidSensusServiceHelper(AndroidSensusService service)
+            : base(new Geolocator(service))
         {
-            _connectivityManager = Application.Context.GetSystemService(Context.ConnectivityService) as ConnectivityManager;
-            _deviceId = Settings.Secure.GetString(Application.Context.ContentResolver, Settings.Secure.AndroidId);
+            _service = service;
+            _connectivityManager = _service.GetSystemService(Context.ConnectivityService) as ConnectivityManager;
+            _deviceId = Settings.Secure.GetString(_service.ContentResolver, Settings.Secure.AndroidId);
+            _mainActivityWait = new ManualResetEvent(false);
+            _textToSpeech = new AndroidTextToSpeech(_service);
         }
 
         protected override void InitializeXamarinInsights()
         {
-            Insights.Initialize(XAMARIN_INSIGHTS_APP_KEY, Application.Context);
+            Insights.Initialize(XAMARIN_INSIGHTS_APP_KEY, Application.Context);  // can't reference _service here since this method is called from the base class constructor.
         }
 
         public override Task<string> PromptForAndReadTextFile(string promptTitle)
@@ -94,17 +119,17 @@ namespace Sensus.Android
 
                     try
                     {
-                        Tuple<Result, Intent> result = await (SensusServiceHelper.Get() as AndroidSensusServiceHelper).MainActivity.GetActivityResult(intent, ActivityResultRequestCode.PromptForFile);
+                        Tuple<Result, Intent> result = await MainActivity.GetActivityResult(intent, AndroidActivityResultRequestCode.PromptForFile);
                         if (result.Item1 == Result.Ok)
                             try
                             {
-                                using (StreamReader file = new StreamReader(MainActivity.ContentResolver.OpenInputStream(result.Item2.Data)))
+                                using (StreamReader file = new StreamReader(_service.ContentResolver.OpenInputStream(result.Item2.Data)))
                                     return file.ReadToEnd();
                             }
-                            catch (Exception ex) { Toast.MakeText(MainActivity, "Error reading text file:  " + ex.Message, ToastLength.Long); }
+                            catch (Exception ex) { Toast.MakeText(_service, "Error reading text file:  " + ex.Message, ToastLength.Long); }
                     }
-                    catch (ActivityNotFoundException) { Toast.MakeText(MainActivity, "Please install a file manager from the Apps store.", ToastLength.Long); }
-                    catch (Exception ex) { Toast.MakeText(MainActivity, "Something went wrong while prompting you for a file to read:  " + ex.Message, ToastLength.Long); }
+                    catch (ActivityNotFoundException) { Toast.MakeText(_service, "Please install a file manager from the Apps store.", ToastLength.Long); }
+                    catch (Exception ex) { Toast.MakeText(_service, "Something went wrong while prompting you for a file to read:  " + ex.Message, ToastLength.Long); }
 
                     return null;
                 });
@@ -122,18 +147,11 @@ namespace Sensus.Android
                     intent.PutExtra(Intent.ExtraSubject, subject);
 
                 Java.IO.File file = new Java.IO.File(path);
-                global::Android.Net.Uri uri = FileProvider.GetUriForFile(Application.Context, "edu.virginia.sie.ptl.sensus.fileprovider", file);
+                global::Android.Net.Uri uri = FileProvider.GetUriForFile(_service, "edu.virginia.sie.ptl.sensus.fileprovider", file);
                 intent.PutExtra(Intent.ExtraStream, uri);
 
-                // if we're outside the context of the main activity (e.g., within the service), start a new activity
-                if (_mainActivity == null)
-                {
-                    intent.AddFlags(ActivityFlags.NewTask);
-                    Application.Context.StartActivity(intent);
-                }
-                // otherwise, start the activity off the main activity -- smoother transition back to sensus after the file has been shared
-                else
-                    _mainActivity.StartActivity(intent);
+                // run from main activity to get a smoother transition back to sensus
+                MainActivity.StartActivity(intent);
             }
             catch (Exception ex) { Logger.Log("Failed to start intent to share file \"" + path + "\":  " + ex.Message, LoggingLevel.Normal); }
         }
@@ -150,7 +168,7 @@ namespace Sensus.Android
 
         public override void TextToSpeech(string text)
         {
-            MainActivity.TextToSpeech(text);
+            _textToSpeech.Speak(text);
         }
 
         public override Task<string> RecognizeSpeech(string prompt)
@@ -168,7 +186,7 @@ namespace Sensus.Android
                     if (prompt != null)
                         intent.PutExtra(RecognizerIntent.ExtraPrompt, prompt);
 
-                    Tuple<Result, Intent> result = await MainActivity.GetActivityResult(intent, ActivityResultRequestCode.RecognizeSpeech);
+                    Tuple<Result, Intent> result = await MainActivity.GetActivityResult(intent, AndroidActivityResultRequestCode.RecognizeSpeech);
                     if (result.Item1 == Result.Ok)
                     {
                         IList<string> matches = result.Item2.GetStringArrayListExtra(RecognizerIntent.ExtraResults);
@@ -184,16 +202,22 @@ namespace Sensus.Android
 
         private void SetSensusMonitoringAlarm(int ms)
         {
-            Context context = Application.Context;
-            AlarmManager alarmManager = context.GetSystemService(Context.AlarmService) as AlarmManager;
-            Intent serviceIntent = new Intent(context, typeof(AndroidSensusService));
+            AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
+            Intent serviceIntent = new Intent(_service, typeof(AndroidSensusService));
             serviceIntent.PutExtra(INTENT_EXTRA_NAME_PING, true);
-            PendingIntent pendingServiceIntent = PendingIntent.GetService(context, 0, serviceIntent, PendingIntentFlags.UpdateCurrent);
+            PendingIntent pendingServiceIntent = PendingIntent.GetService(_service, 0, serviceIntent, PendingIntentFlags.UpdateCurrent);
 
             if (ms > 0)
                 alarmManager.SetRepeating(AlarmType.RtcWakeup, Java.Lang.JavaSystem.CurrentTimeMillis() + ms, ms, pendingServiceIntent);
             else
                 alarmManager.Cancel(pendingServiceIntent);
+        }
+
+        public override void Destroy()
+        {
+            base.Destroy();
+
+            _textToSpeech.Dispose();
         }
     }
 }

@@ -13,15 +13,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
-using SensusService;
-using SensusUI;
+
+using Sensus.Android;
 using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 
 [assembly: ExportRenderer(typeof(TextCell), typeof(TextCellRendererFix))]
-namespace SensusUI
+
+namespace Sensus.Android
 {
     public class TextCellRendererFix : TextCellRenderer
     {

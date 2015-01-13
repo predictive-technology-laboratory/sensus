@@ -119,11 +119,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ActivityResultRequestCode.cs" />
+    <Compile Include="AndroidActivityResultRequestCode.cs" />
     <Compile Include="AndroidSensusServiceHelper.cs" />
     <Compile Include="AndroidSensusServiceBootStarter.cs" />
-    <Compile Include="ExportRendererFix.cs" />
-    <Compile Include="MainActivity.cs" />
+    <Compile Include="AndroidTextToSpeech.cs" />
+    <Compile Include="AndroidExportRendererFix.cs" />
+    <Compile Include="AndroidMainActivity.cs" />
     <Compile Include="Probes\Context\AndroidBluetoothBroadcastReceiver.cs" />
     <Compile Include="Probes\Communication\AndroidTelephonyOutgoingBroadcastReceiver.cs" />
     <Compile Include="Probes\Communication\AndroidTelephonyIncomingListener.cs" />

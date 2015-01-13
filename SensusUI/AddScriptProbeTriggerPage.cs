@@ -193,7 +193,12 @@ namespace SensusUI
                                     HorizontalOptions = LayoutOptions.FillAndExpand
                                 };
 
-                                entry.TextChanged += (ooo, eee) => _conditionValue = double.Parse(eee.NewTextValue);
+                                entry.TextChanged += (ooo, eee) =>
+                                    {
+                                        double value;
+                                        if (double.TryParse(eee.NewTextValue, out  value))
+                                            _conditionValue = value;
+                                    };
 
                                 conditionValueStackView = entry;
                                 allowChangeCalculation = true;

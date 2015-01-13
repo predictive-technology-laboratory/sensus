@@ -13,12 +13,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-
+ 
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
-using Android.Speech.Tts;
 using SensusService;
 using SensusService.Exceptions;
 using SensusUI;
@@ -31,31 +30,25 @@ using Xamarin.Forms.Platform.Android;
 
 namespace Sensus.Android
 {
-    [Activity(Label = "ensus is Loading...", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Label = "Sensus", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault, Intent.CategoryBrowsable }, DataScheme = "http", DataHost = "*", DataPathPattern = ".*\\\\.sensus")]  // protocols downloaded from an http web link
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault, Intent.CategoryBrowsable }, DataScheme = "https", DataHost = "*", DataPathPattern = ".*\\\\.sensus")]  // protocols downloaded from an https web link
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault }, DataMimeType = "application/octet-stream", DataScheme = "content", DataHost = "*")]  // protocols opened from email attachments originating from the sensus app itself -- DataPathPattern doesn't work here, since email apps (e.g., gmail) rename attachments when stored in the local file system
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault }, DataMimeType = "text/plain", DataScheme = "content", DataHost = "*")]  // protocols opened from email attachments originating from non-sensus senders (i.e., the "share" button in sensus) -- DataPathPattern doesn't work here, since email apps (e.g., gmail) rename attachments when stored in the local file system
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault }, DataMimeType = "text/plain", DataScheme = "file", DataHost = "*", DataPathPattern = ".*\\\\.sensus")]  // protocols opened from the local file system
-    public class MainActivity : AndroidActivity, TextToSpeech.IOnInitListener
+    public class AndroidMainActivity : AndroidActivity
     {
         private Intent _serviceIntent;
         private AndroidSensusServiceConnection _serviceConnection;
         private ManualResetEvent _activityResultTrigger;
         private int _activityRequestCode;
         private Tuple<Result, Intent> _activityResult;
-        private TextToSpeech _textToSpeech;
-        private ManualResetEvent _textToSpeechInitWait;
 
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
 
             _activityResultTrigger = new ManualResetEvent(false);
-            _textToSpeech = new TextToSpeech(this, this);
-            _textToSpeechInitWait = new ManualResetEvent(false);
-
-            Title = "Sensus";
 
             Forms.Init(this, bundle);
 
@@ -123,20 +116,13 @@ namespace Sensus.Android
             BindService(_serviceIntent, _serviceConnection, Bind.AutoCreate);
         }
 
-        void TextToSpeech.IOnInitListener.OnInit(OperationResult status)
-        {
-            _textToSpeech.SetLanguage(Java.Util.Locale.Default);
-            _textToSpeechInitWait.Set();
-        }
-
-        public void TextToSpeech(string text)
-        {
-            // wait for TTS to initialize
-            _textToSpeechInitWait.WaitOne();
-            _textToSpeech.Speak(text, QueueMode.Add, null);
-        }
-
-        public Task<Tuple<Result, Intent>> GetActivityResult(Intent intent, ActivityResultRequestCode requestCode)
+        /// <summary>
+        /// Starts an activity and waits for a result to come back.
+        /// </summary>
+        /// <param name="intent">Intent defining the activity to start.</param>
+        /// <param name="requestCode">Request code to use.</param>
+        /// <returns>Result status and return intent.</returns>
+        public Task<Tuple<Result, Intent>> GetActivityResult(Intent intent, AndroidActivityResultRequestCode requestCode)
         {
             return Task.Run<Tuple<Result, Intent>>(() =>
                 {
@@ -169,9 +155,6 @@ namespace Sensus.Android
 
             if (_serviceConnection.Binder.IsBound)
                 UnbindService(_serviceConnection);
-
-            try { _textToSpeech.Shutdown(); }
-            catch (Exception) { }
         }
     }
 }

@@ -407,6 +407,27 @@ namespace SensusService
                     }
         }
 
+        public void Ping()
+        {
+            lock (this)
+            {
+                if (_stopped)
+                    return;
+
+                _logger.Log("Sensus service helper was pinged (count=" + ++_pingCount + ")", LoggingLevel.Normal, _logTag);
+
+                List<string> runningProtocolIds = ReadRunningProtocolIds();
+                foreach (Protocol protocol in _registeredProtocols)
+                    if (runningProtocolIds.Contains(protocol.Id))
+                    {
+                        protocol.Ping();
+
+                        if (_pingCount % _pingsPerProtocolReportUpload == 0)
+                            protocol.UploadMostRecentProtocolReport();
+                    }
+            }
+        }
+
         public Task StopProtocolAsync(Protocol protocol, bool unregister)
         {
             return Task.Run(() => StopProtocol(protocol, unregister));
@@ -492,28 +513,7 @@ namespace SensusService
                 });
         }
 
-        public void Ping()
-        {
-            lock (this)
-            {
-                if (_stopped)
-                    return;
-
-                _logger.Log("Sensus service helper was pinged (count=" + ++_pingCount + ")", LoggingLevel.Normal, _logTag);
-
-                List<string> runningProtocolIds = ReadRunningProtocolIds();
-                foreach (Protocol protocol in _registeredProtocols)
-                    if (runningProtocolIds.Contains(protocol.Id))
-                    {
-                        protocol.Ping();
-
-                        if (_pingCount % _pingsPerProtocolReportUpload == 0)
-                            protocol.UploadMostRecentProtocolReport();
-                    }
-            }
-        }
-
-        public void Destroy()
+        public virtual void Destroy()
         {
             try { _logger.Close(); }
             catch (Exception) { }

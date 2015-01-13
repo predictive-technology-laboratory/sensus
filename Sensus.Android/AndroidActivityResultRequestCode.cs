@@ -14,11 +14,9 @@
 // limitations under the License.
 #endregion
  
-
-
 namespace Sensus.Android
 {
-    public enum ActivityResultRequestCode
+    public enum AndroidActivityResultRequestCode
     {
         PromptForFile,
         RecognizeSpeech
