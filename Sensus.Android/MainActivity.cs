@@ -13,11 +13,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
+using Android.Speech.Tts;
 using SensusService;
 using SensusService.Exceptions;
 using SensusUI;
@@ -36,19 +37,23 @@ namespace Sensus.Android
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault }, DataMimeType = "application/octet-stream", DataScheme = "content", DataHost = "*")]  // protocols opened from email attachments originating from the sensus app itself -- DataPathPattern doesn't work here, since email apps (e.g., gmail) rename attachments when stored in the local file system
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault }, DataMimeType = "text/plain", DataScheme = "content", DataHost = "*")]  // protocols opened from email attachments originating from non-sensus senders (i.e., the "share" button in sensus) -- DataPathPattern doesn't work here, since email apps (e.g., gmail) rename attachments when stored in the local file system
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault }, DataMimeType = "text/plain", DataScheme = "file", DataHost = "*", DataPathPattern = ".*\\\\.sensus")]  // protocols opened from the local file system
-    public class MainActivity : AndroidActivity
+    public class MainActivity : AndroidActivity, TextToSpeech.IOnInitListener
     {
         private Intent _serviceIntent;
         private AndroidSensusServiceConnection _serviceConnection;
+        private ManualResetEvent _activityResultTrigger;
         private int _activityRequestCode;
-        private AutoResetEvent _activityResultTrigger;
         private Tuple<Result, Intent> _activityResult;
+        private TextToSpeech _textToSpeech;
+        private ManualResetEvent _textToSpeechInitWait;
 
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
 
-            _activityResultTrigger = new AutoResetEvent(false);
+            _activityResultTrigger = new ManualResetEvent(false);
+            _textToSpeech = new TextToSpeech(this, this);
+            _textToSpeechInitWait = new ManualResetEvent(false);
 
             Title = "Sensus";
 
@@ -66,7 +71,6 @@ namespace Sensus.Android
                     e.Binder.SensusServiceHelper.MainActivity = this;
 
                     UiBoundSensusServiceHelper.Set(e.Binder.SensusServiceHelper);
-
                     UiBoundSensusServiceHelper.Get().Stopped += (oo, ee) => { Finish(); };  // stop activity when service stops
 
                     SensusNavigationPage navigationPage = new SensusNavigationPage(UiBoundSensusServiceHelper.Get());
@@ -119,24 +123,30 @@ namespace Sensus.Android
             BindService(_serviceIntent, _serviceConnection, Bind.AutoCreate);
         }
 
-        protected override void OnDestroy()
+        void TextToSpeech.IOnInitListener.OnInit(OperationResult status)
         {
-            base.OnDestroy();
-
-            if (_serviceConnection.Binder.IsBound)
-                UnbindService(_serviceConnection);
+            _textToSpeech.SetLanguage(Java.Util.Locale.Default);
+            _textToSpeechInitWait.Set();
         }
 
-        public Task<Tuple<Result, Intent>> GetActivityResult(Intent intent, int requestCode)
+        public void TextToSpeech(string text)
+        {
+            // wait for TTS to initialize
+            _textToSpeechInitWait.WaitOne();
+            _textToSpeech.Speak(text, QueueMode.Add, null);
+        }
+
+        public Task<Tuple<Result, Intent>> GetActivityResult(Intent intent, ActivityResultRequestCode requestCode)
         {
             return Task.Run<Tuple<Result, Intent>>(() =>
                 {
                     lock (this)
                     {
-                        _activityRequestCode = requestCode;
+                        _activityRequestCode = (int)requestCode;
 
+                        // start activity and wait for result to be retrieved
                         _activityResultTrigger.Reset();
-                        StartActivityForResult(intent, requestCode);
+                        StartActivityForResult(intent, _activityRequestCode);
                         _activityResultTrigger.WaitOne();
 
                         return _activityResult;
@@ -149,8 +159,19 @@ namespace Sensus.Android
             if (requestCode == _activityRequestCode)
             {
                 _activityResult = new Tuple<Result, Intent>(resultCode, data);
-                _activityResultTrigger.Set();
+                _activityResultTrigger.Set();  // let the requestor know that the result has been retrieved
             }
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+
+            if (_serviceConnection.Binder.IsBound)
+                UnbindService(_serviceConnection);
+
+            try { _textToSpeech.Shutdown(); }
+            catch (Exception) { }
         }
     }
 }

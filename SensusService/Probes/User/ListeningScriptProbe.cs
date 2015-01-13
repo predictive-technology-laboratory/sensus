@@ -30,7 +30,7 @@ namespace SensusService.Probes.User
         private bool _listening;
         private Script _script;
 
-        [LoadTextFileUiProperty("Script:", true, 3, "Load", "Select Script")]
+        [ReadTextFileUiProperty("Script:", true, 3, "Load", "Select Script")]
         [JsonIgnore]
         public string ScriptContent
         {
@@ -45,8 +45,8 @@ namespace SensusService.Probes.User
                 catch (Exception) { }
             }
         }
-
-        public Script Script
+        
+        public Script Script  // present for JSON serialization
         {
             get { return _script; }
             set { _script = value; }

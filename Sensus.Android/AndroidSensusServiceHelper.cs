@@ -16,14 +16,16 @@
  
 using Android.App;
 using Android.Content;
-using Android.Database;
+using Android.Content.PM;
 using Android.Net;
 using Android.OS;
 using Android.Provider;
+using Android.Speech;
 using Android.Support.V4.Content;
 using Android.Widget;
 using SensusService;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Xamarin;
@@ -65,11 +67,21 @@ namespace Sensus.Android
             get { return _deviceId; }
         }
 
+        public override bool DeviceHasMicrophone
+        {
+            get { return PackageManager.FeatureMicrophone == "android.hardware.microphone"; }
+        }
+
         public AndroidSensusServiceHelper()
             : base(new Geolocator(Application.Context))
         {
             _connectivityManager = Application.Context.GetSystemService(Context.ConnectivityService) as ConnectivityManager;
             _deviceId = Settings.Secure.GetString(Application.Context.ContentResolver, Settings.Secure.AndroidId);
+        }
+
+        protected override void InitializeXamarinInsights()
+        {
+            Insights.Initialize(XAMARIN_INSIGHTS_APP_KEY, Application.Context);
         }
 
         public override Task<string> PromptForAndReadTextFile(string promptTitle)
@@ -82,31 +94,20 @@ namespace Sensus.Android
 
                     try
                     {
-                        Tuple<Result, Intent> result = await (SensusServiceHelper.Get() as AndroidSensusServiceHelper).MainActivity.GetActivityResult(intent, 0);
+                        Tuple<Result, Intent> result = await (SensusServiceHelper.Get() as AndroidSensusServiceHelper).MainActivity.GetActivityResult(intent, ActivityResultRequestCode.PromptForFile);
                         if (result.Item1 == Result.Ok)
                             try
                             {
                                 using (StreamReader file = new StreamReader(MainActivity.ContentResolver.OpenInputStream(result.Item2.Data)))
                                     return file.ReadToEnd();
                             }
-                            catch (Exception ex) { Toast.MakeText(MainActivity, "Error reading file:  " + ex.Message, ToastLength.Long); }
+                            catch (Exception ex) { Toast.MakeText(MainActivity, "Error reading text file:  " + ex.Message, ToastLength.Long); }
                     }
-                    catch (ActivityNotFoundException)
-                    {
-                        Toast.MakeText(MainActivity, "Please install a file manager from the Apps store.", ToastLength.Long);
-                    }
-                    catch (Exception ex)
-                    {
-                        Toast.MakeText(MainActivity, "Something went wrong while prompting you for a file to read:  " + ex.Message, ToastLength.Long);
-                    }
+                    catch (ActivityNotFoundException) { Toast.MakeText(MainActivity, "Please install a file manager from the Apps store.", ToastLength.Long); }
+                    catch (Exception ex) { Toast.MakeText(MainActivity, "Something went wrong while prompting you for a file to read:  " + ex.Message, ToastLength.Long); }
 
                     return null;
                 });
-        }
-
-        protected override void InitializeXamarinInsights()
-        {
-            Insights.Initialize(XAMARIN_INSIGHTS_APP_KEY, Application.Context);
         }
 
         public override void ShareFile(string path, string subject)
@@ -145,6 +146,40 @@ namespace Sensus.Android
         protected override void StopSensusPings()
         {
             SetSensusMonitoringAlarm(-1);
+        }
+
+        public override void TextToSpeech(string text)
+        {
+            MainActivity.TextToSpeech(text);
+        }
+
+        public override Task<string> RecognizeSpeech(string prompt)
+        {
+            return Task.Run<string>(async () =>
+                {
+                    Intent intent = new Intent(RecognizerIntent.ActionRecognizeSpeech);
+                    intent.PutExtra(RecognizerIntent.ExtraLanguageModel, RecognizerIntent.LanguageModelFreeForm);
+                    intent.PutExtra(RecognizerIntent.ExtraSpeechInputCompleteSilenceLengthMillis, 1500);
+                    intent.PutExtra(RecognizerIntent.ExtraSpeechInputPossiblyCompleteSilenceLengthMillis, 1500);
+                    intent.PutExtra(RecognizerIntent.ExtraSpeechInputMinimumLengthMillis, 15000);
+                    intent.PutExtra(RecognizerIntent.ExtraMaxResults, 1);
+                    intent.PutExtra(RecognizerIntent.ExtraLanguage, Java.Util.Locale.Default);
+
+                    if (prompt != null)
+                        intent.PutExtra(RecognizerIntent.ExtraPrompt, prompt);
+
+                    Tuple<Result, Intent> result = await MainActivity.GetActivityResult(intent, ActivityResultRequestCode.RecognizeSpeech);
+                    if (result.Item1 == Result.Ok)
+                    {
+                        IList<string> matches = result.Item2.GetStringArrayListExtra(RecognizerIntent.ExtraResults);
+                        if (matches.Count == 0)
+                            return null;
+                        else
+                            return matches[0];
+                    }
+                    else
+                        return null;
+                });
         }
 
         private void SetSensusMonitoringAlarm(int ms)

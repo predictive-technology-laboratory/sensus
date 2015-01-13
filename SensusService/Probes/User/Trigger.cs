@@ -21,7 +21,7 @@ using System.Reflection;
 namespace SensusService.Probes.User
 {
     /// <summary>
-    /// Represents a condition under which a script-driven probe is run.
+    /// Represents a condition under which a scripted probe is run.
     /// </summary>
     public class Trigger
     {

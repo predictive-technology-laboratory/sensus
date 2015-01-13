@@ -1,4 +1,4 @@
-﻿#region copyright
+#region copyright
 // Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,25 +14,13 @@
 // limitations under the License.
 #endregion
  
-namespace SensusService.Probes.User
+
+
+namespace Sensus.Android
 {
-    public class Script
+    public enum ActivityResultRequestCode
     {
-        private string _name;
-
-        public string Name
-        {
-            get { return _name; }
-            set { _name = value; }
-        }
-
-        public Script(string scriptText)
-        {
-            _name = scriptText;
-        }
-
-        public void Run(Datum previous, Datum current)
-        {
-        }
+        PromptForFile,
+        RecognizeSpeech
     }
 }

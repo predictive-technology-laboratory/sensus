@@ -29,16 +29,21 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.WinPhone", "Sensus.W
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SensusUI", "SensusUI\SensusUI.shproj", "{5B75B250-CCC2-43BF-91D7-5DAFAF0DCC6B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{95E10AD6-C2CD-4234-A10E-4AC879B3849B}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\ExampleScript.xml = Scripts\ExampleScript.xml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		SensusService\SensusService.projitems*{b2f65fe8-f266-4c0c-b4a8-d326002b9180}*SharedItemsImports = 13
 		SensusUI\SensusUI.projitems*{5b75b250-ccc2-43bf-91d7-5dafaf0dcc6b}*SharedItemsImports = 13
-		SensusService\SensusService.projitems*{d33b6cdb-795c-4826-b131-47c526ace07f}*SharedItemsImports = 4
 		SensusUI\SensusUI.projitems*{d33b6cdb-795c-4826-b131-47c526ace07f}*SharedItemsImports = 4
-		SensusService\SensusService.projitems*{07f0c017-bea0-4c03-b762-ee3c7f140e8a}*SharedItemsImports = 4
+		SensusService\SensusService.projitems*{d33b6cdb-795c-4826-b131-47c526ace07f}*SharedItemsImports = 4
 		SensusUI\SensusUI.projitems*{07f0c017-bea0-4c03-b762-ee3c7f140e8a}*SharedItemsImports = 4
-		SensusService\SensusService.projitems*{5fc26757-7e79-461e-ab44-7b2bce55c49d}*SharedItemsImports = 4
+		SensusService\SensusService.projitems*{07f0c017-bea0-4c03-b762-ee3c7f140e8a}*SharedItemsImports = 4
 		SensusUI\SensusUI.projitems*{5fc26757-7e79-461e-ab44-7b2bce55c49d}*SharedItemsImports = 4
+		SensusService\SensusService.projitems*{5fc26757-7e79-461e-ab44-7b2bce55c49d}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Ad-Hoc|Any CPU = Ad-Hoc|Any CPU
@@ -213,5 +218,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{95E10AD6-C2CD-4234-A10E-4AC879B3849B} = {56DC9286-7449-4F64-8C94-C6B4543F125D}
 	EndGlobalSection
 EndGlobal

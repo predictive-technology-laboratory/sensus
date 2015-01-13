@@ -124,6 +124,8 @@ namespace SensusService
 
         public abstract string DeviceId { get; }
 
+        public abstract bool DeviceHasMicrophone { get; }
+
         [EntryIntegerUiProperty("Ping Delay (MS):", true, 9)]
         public int PingDelayMS
         {
@@ -185,9 +187,21 @@ namespace SensusService
                 _singleton = this;
         }
 
+        #region platform-specific abstract methods
         protected abstract void InitializeXamarinInsights();
 
         public abstract Task<string> PromptForAndReadTextFile(string promptTitle);
+
+        public abstract void ShareFile(string path, string subject);
+
+        protected abstract void StartSensusPings(int ms);
+
+        protected abstract void StopSensusPings();
+
+        public abstract void TextToSpeech(string text);
+
+        public abstract Task<string> RecognizeSpeech(string prompt);
+        #endregion
 
         #region save/read protocols
         public void SaveRegisteredProtocols()
@@ -478,10 +492,6 @@ namespace SensusService
                 });
         }
 
-        protected abstract void StartSensusPings(int ms);
-
-        protected abstract void StopSensusPings();
-
         public void Ping()
         {
             lock (this)
@@ -514,8 +524,6 @@ namespace SensusService
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
-
-        public abstract void ShareFile(string path, string subject);
 
         public string GetSharePath(string extension)
         {

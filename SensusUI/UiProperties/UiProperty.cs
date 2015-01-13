@@ -112,9 +112,9 @@ namespace SensusUI.UiProperties
 
                     bindingProperty = Entry.TextProperty;
                 }
-                else if (uiElement is LoadTextFileUiProperty)
+                else if (uiElement is ReadTextFileUiProperty)
                 {
-                    LoadTextFileUiProperty loadUiElement = uiElement as LoadTextFileUiProperty;
+                    ReadTextFileUiProperty loadUiElement = uiElement as ReadTextFileUiProperty;
 
                     Button loadButton = new Button
                     {
@@ -131,7 +131,7 @@ namespace SensusUI.UiProperties
 
                     view = loadButton;
                     bindingProperty = Button.TextProperty;
-                    converter = new LoadTextFileUiProperty.ValueConverter(loadUiElement.ButtonText);
+                    converter = new ReadTextFileUiProperty.ValueConverter(loadUiElement.ButtonText);
                 }
 
                 if (view != null)

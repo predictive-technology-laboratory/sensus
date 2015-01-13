@@ -119,6 +119,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActivityResultRequestCode.cs" />
     <Compile Include="AndroidSensusServiceHelper.cs" />
     <Compile Include="AndroidSensusServiceBootStarter.cs" />
     <Compile Include="ExportRendererFix.cs" />
