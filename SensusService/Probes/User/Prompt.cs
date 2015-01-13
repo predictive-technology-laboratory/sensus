@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
 using System.Threading.Tasks;
 
 namespace SensusService.Probes.User
@@ -62,6 +62,8 @@ namespace SensusService.Probes.User
             get { return _response; }
             set { _response = value; }
         }
+
+        private Prompt() { }  // for JSON deserialization
 
         public Prompt(PromptType type, string message, PromptResponseType responseType)
         {

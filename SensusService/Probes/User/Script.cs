@@ -17,16 +17,19 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SensusService.Probes.User
 {
     public class Script
     {
+        #region static members
         private static JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
         {
             PreserveReferencesHandling = PreserveReferencesHandling.Objects,
             ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-            TypeNameHandling = TypeNameHandling.All,
+            //TypeNameHandling = TypeNameHandling.All,
             ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
         };
 
@@ -34,9 +37,11 @@ namespace SensusService.Probes.User
         {
             return JsonConvert.DeserializeObject<Script>(json, _jsonSerializerSettings);
         }
+        #endregion
 
         private string _name;
-        private Prompt[] _prompts;
+        private List<Prompt> _prompts;
+        private bool _running;
 
         public string Name
         {
@@ -44,18 +49,24 @@ namespace SensusService.Probes.User
             set { _name = value; }
         }
 
-        public Prompt[] Prompts
+        public List<Prompt> Prompts
         {
             get { return _prompts; }
             set { _prompts = value; }
         }
 
-        private Script() { }  // for JSON deserialization
+        private Script()
+        {
+            _running = false;
+        }
 
         public Script(string name, params Prompt[] prompts)
+            : this()
         {
             _name = name;
-            _prompts = prompts;
+
+            if (prompts != null)
+                _prompts = prompts.ToList();
         }
 
         public void Save(string path)
@@ -67,10 +78,26 @@ namespace SensusService.Probes.User
             }
         }
 
-        public void Run(Datum previous, Datum current)
+        public Task<bool> RunAsync(Datum previous, Datum current)
         {
-            foreach (Prompt prompt in _prompts)
-                prompt.Run();
+            return Task.Run<bool>(() =>
+                {
+                    lock (this)
+                    {
+                        if (_running)
+                            return false;
+                        else
+                            _running = true;
+
+                        if (_prompts != null)
+                            foreach (Prompt prompt in _prompts)
+                                prompt.Run();
+
+                        _running = false;
+
+                        return true;
+                    }
+                });
         }
     }
 }

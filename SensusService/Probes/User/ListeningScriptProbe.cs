@@ -83,7 +83,7 @@ namespace SensusService.Probes.User
                             if (_triggerHandler.ContainsKey(addedTrigger))
                                 return;
 
-                            EventHandler<Tuple<Datum, Datum>> handler = (oo, prevCurrDatum) =>
+                            EventHandler<Tuple<Datum, Datum>> handler = async (oo, prevCurrDatum) =>
                                 {
                                     // must be listening and must have a current datum
                                     lock (this)
@@ -118,9 +118,10 @@ namespace SensusService.Probes.User
                                     // run script of trigger is fired
                                     if (addedTrigger.FiresFor(datumValueToCompare))
                                     {
-                                        _script.Run(prevDatum, currDatum);
-
-                                        // store collected data
+                                        if (await _script.RunAsync(prevDatum, currDatum))
+                                        {
+                                            int x = 1;
+                                        }
                                     }
                                 };
 

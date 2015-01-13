@@ -13,9 +13,12 @@ namespace Scripter
 
         private void Scripter_Load(object sender, EventArgs e)
         {
-            Prompt example = new Prompt(PromptType.Voice, "How are you?", PromptResponseType.Voice);
-            Script script = new Script("Example Script", example);
-            script.Save(@".\Scripts\test.json");
+            Script script = new Script("Example Script");
+            script.Prompts.Add(new Prompt(PromptType.Text, "How are you?", PromptResponseType.Text));
+            script.Prompts.Add(new Prompt(PromptType.Text, "How are you?", PromptResponseType.Voice));
+            script.Prompts.Add(new Prompt(PromptType.Voice, "How are you?", PromptResponseType.Text));
+            script.Prompts.Add(new Prompt(PromptType.Voice, "How are you?", PromptResponseType.Voice));
+            script.Save(@"..\..\Scripts\ExampleScript.json");
         }
     }
 }
