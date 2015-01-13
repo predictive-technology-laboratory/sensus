@@ -116,21 +116,22 @@ namespace SensusUI.UiProperties
                 {
                     LoadTextFileUiProperty loadUiElement = uiElement as LoadTextFileUiProperty;
 
-                    Button readButton = new Button
+                    Button loadButton = new Button
                     {
-                        Text = "Load",
+                        Text = loadUiElement.ButtonText,
                         HorizontalOptions = LayoutOptions.FillAndExpand
                     };
 
-                    readButton.Clicked += async (oo, e) =>
+                    loadButton.Clicked += async (oo, e) =>
                         {
+                            // set the property on the UI element to the file's content
                             string text = await UiBoundSensusServiceHelper.Get().PromptForAndReadTextFile(loadUiElement.Prompt);
                             propertyUiElement.Item1.SetValue(o, text);
                         };
 
-                    view = readButton;
+                    view = loadButton;
                     bindingProperty = Button.TextProperty;
-                    converter = new LoadTextFileUiProperty.ValueConverter("Load");
+                    converter = new LoadTextFileUiProperty.ValueConverter(loadUiElement.ButtonText);
                 }
 
                 if (view != null)

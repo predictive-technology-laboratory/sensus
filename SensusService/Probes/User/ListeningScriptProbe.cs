@@ -30,22 +30,26 @@ namespace SensusService.Probes.User
         private bool _listening;
         private Script _script;
 
-        [LoadTextFileUiProperty("Script:", true, 3, "Select Script")]
-        public string Script
+        [LoadTextFileUiProperty("Script:", true, 3, "Load", "Select Script")]
+        [JsonIgnore]
+        public string ScriptContent
         {
             get { return _script == null ? null : _script.Name; }
             set
             {
-                if (value != null)
+                try
                 {
-                    try
-                    {
-                        _script = new Script(value);
-                        OnPropertyChanged();
-                    }
-                    catch (Exception) { }
+                    _script = new Script(value);
+                    OnPropertyChanged();
                 }
+                catch (Exception) { }
             }
+        }
+
+        public Script Script
+        {
+            get { return _script; }
+            set { _script = value; }
         }
 
         protected override string DefaultDisplayName

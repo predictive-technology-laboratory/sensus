@@ -13,9 +13,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
 using SensusService.Exceptions;
+using System;
 using Xamarin.Forms;
+
 namespace SensusUI.UiProperties
 {
     public class LoadTextFileUiProperty : UiProperty
@@ -40,16 +42,23 @@ namespace SensusUI.UiProperties
             }
         }
 
+        private string _buttonText;
         private string _prompt;
+
+        public string ButtonText
+        {
+            get { return _buttonText; }
+        }
 
         public string Prompt
         {
             get { return _prompt; }
         }
 
-        public LoadTextFileUiProperty(string labelText, bool editable, int order, string prompt)
+        public LoadTextFileUiProperty(string labelText, bool editable, int order, string buttonText, string prompt)
             : base(labelText, editable, order)
         {
+            _buttonText = buttonText;
             _prompt = prompt;
         }
     }
