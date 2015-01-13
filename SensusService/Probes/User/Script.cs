@@ -13,12 +13,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
+using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.IO;
+
 namespace SensusService.Probes.User
 {
     public class Script
     {
+        private static JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
+        {
+            PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+            TypeNameHandling = TypeNameHandling.All,
+            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
+        };
+
+        public static Script FromJSON(string json)
+        {
+            return JsonConvert.DeserializeObject<Script>(json, _jsonSerializerSettings);
+        }
+
         private string _name;
+        private Prompt[] _prompts;
 
         public string Name
         {
@@ -26,13 +44,33 @@ namespace SensusService.Probes.User
             set { _name = value; }
         }
 
-        public Script(string scriptText)
+        public Prompt[] Prompts
         {
-            _name = scriptText;
+            get { return _prompts; }
+            set { _prompts = value; }
+        }
+
+        private Script() { }  // for JSON deserialization
+
+        public Script(string name, params Prompt[] prompts)
+        {
+            _name = name;
+            _prompts = prompts;
+        }
+
+        public void Save(string path)
+        {
+            using (StreamWriter file = new StreamWriter(path))
+            {
+                file.Write(JsonConvert.SerializeObject(this, _jsonSerializerSettings));
+                file.Close();
+            }
         }
 
         public void Run(Datum previous, Datum current)
         {
+            foreach (Prompt prompt in _prompts)
+                prompt.Run();
         }
     }
 }

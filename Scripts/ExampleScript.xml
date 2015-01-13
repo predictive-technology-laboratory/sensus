@@ -1,5 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<script>
-  <prompt id="1" output-speech="true" output-text="true" input-text="true">Are you there?</prompt>
-  <prompt follow-prompt="1" follow-value="yes" output-speech="true">Good!</prompt>
-</script>

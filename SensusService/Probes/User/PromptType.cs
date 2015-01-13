@@ -14,21 +14,12 @@
 // limitations under the License.
 #endregion
  
-using Sensus.Android;
-using System;
-using Xamarin.Forms;
-using Xamarin.Forms.Platform.Android;
 
-[assembly: ExportRenderer(typeof(TextCell), typeof(TextCellRendererFix))]
-
-namespace Sensus.Android
+namespace SensusService.Probes.User
 {
-    public class TextCellRendererFix : TextCellRenderer
+    public enum PromptType
     {
-        protected override void OnCellPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs args)
-        {
-            try { base.OnCellPropertyChanged(sender, args); }
-            catch (Exception) { }
-        }
+        Voice,
+        Text
     }
 }

@@ -30,7 +30,7 @@ namespace SensusService.Probes.User
         private bool _listening;
         private Script _script;
 
-        [ReadTextFileUiProperty("Script:", true, 3, "Load", "Select Script")]
+        [ReadTextFileUiProperty("Script:", true, 3, "Load", "Select Script (.json)")]
         [JsonIgnore]
         public string ScriptContent
         {
@@ -39,7 +39,7 @@ namespace SensusService.Probes.User
             {
                 try
                 {
-                    _script = new Script(value);
+                    _script = Script.FromJSON(value);
                     OnPropertyChanged();
                 }
                 catch (Exception) { }
@@ -117,7 +117,11 @@ namespace SensusService.Probes.User
 
                                     // run script of trigger is fired
                                     if (addedTrigger.FiresFor(datumValueToCompare))
+                                    {
                                         _script.Run(prevDatum, currDatum);
+
+                                        // store collected data
+                                    }
                                 };
 
                             addedTrigger.Probe.MostRecentDatumChanged += handler;

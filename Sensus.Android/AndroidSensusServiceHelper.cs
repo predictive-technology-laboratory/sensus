@@ -50,7 +50,7 @@ namespace Sensus.Android
             get
             {
                 lock (this)
-                {                    
+                {
                     if (_mainActivity == null)
                     {
                         // start the activity and wait for it to bind itself to the service
@@ -197,6 +197,32 @@ namespace Sensus.Android
                     }
                     else
                         return null;
+                });
+        }
+
+        public override Task<string> PromptForTextInput(string prompt)
+        {
+            return Task.Run<string>(() =>
+                {
+                    string input = null;
+                    ManualResetEvent inputWait = new ManualResetEvent(false);
+
+                    MainActivity.RunOnUiThread(() =>
+                        {
+                            EditText textBox = new EditText(MainActivity);
+                            new AlertDialog.Builder(MainActivity)
+                            .SetTitle(prompt)
+                            .SetView(textBox)
+                            .SetPositiveButton("OK", (o, e) =>
+                                {
+                                    input = textBox.Text;
+                                    inputWait.Set();
+                                }).Show();
+                        });
+
+                    inputWait.WaitOne();
+
+                    return input;
                 });
         }
 
