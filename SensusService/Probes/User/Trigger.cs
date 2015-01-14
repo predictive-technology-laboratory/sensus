@@ -30,6 +30,8 @@ namespace SensusService.Probes.User
         private TriggerValueCondition _condition;
         private object _conditionValue;
         private bool _change;
+        private bool _fireRepeatedly;
+        private bool _conditionSatisfiedLastTime;
 
         public Probe Probe
         {
@@ -67,30 +69,53 @@ namespace SensusService.Probes.User
             set { _change = value; }
         }
 
-        public Trigger(Probe probe, string datumPropertyName, TriggerValueCondition condition, object conditionValue, bool change)
+        public bool FireRepeatedly
+        {
+            get { return _fireRepeatedly; }
+            set { _fireRepeatedly = value; }
+        }
+
+        public Trigger(Probe probe, string datumPropertyName, TriggerValueCondition condition, object conditionValue, bool change, bool fireRepeatedly)
         {
             _probe = probe;
             _datumPropertyName = datumPropertyName;
             _condition = condition;
             _conditionValue = conditionValue;
             _change = change;
+            _fireRepeatedly = fireRepeatedly;
+            _conditionSatisfiedLastTime = false;
         }
 
-        public bool FiresFor(object value)
+        public bool FireFor(object value)
         {
-            int compareTo;
-            try { compareTo = ((IComparable)value).CompareTo(_conditionValue); }
-            catch (Exception ex)
+            lock (this)
             {
-                SensusServiceHelper.Get().Logger.Log("Trigger failed to compare values:  " + ex.Message, LoggingLevel.Normal);
-                return false;
-            }
+                bool conditionSatisfied = false;
 
-            return _condition == TriggerValueCondition.Equal && compareTo == 0 ||
-                   _condition == TriggerValueCondition.GreaterThan && compareTo > 0 ||
-                   _condition == TriggerValueCondition.GreaterThanOrEqual && compareTo >= 0 ||
-                   _condition == TriggerValueCondition.LessThan && compareTo < 0 ||
-                   _condition == TriggerValueCondition.LessThanOrEqual && compareTo <= 0;
+                int compareTo;
+                try { compareTo = ((IComparable)value).CompareTo(_conditionValue); }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Trigger failed to compare values:  " + ex.Message, LoggingLevel.Normal);
+                    return false;
+                }
+
+                conditionSatisfied = _condition == TriggerValueCondition.Equal && compareTo == 0 ||
+                                     _condition == TriggerValueCondition.GreaterThan && compareTo > 0 ||
+                                     _condition == TriggerValueCondition.GreaterThanOrEqual && compareTo >= 0 ||
+                                     _condition == TriggerValueCondition.LessThan && compareTo < 0 ||
+                                     _condition == TriggerValueCondition.LessThanOrEqual && compareTo <= 0;
+
+                bool fire = false;
+
+                if (conditionSatisfied)
+                    if (_fireRepeatedly || !_conditionSatisfiedLastTime)
+                        fire = true;
+
+                _conditionSatisfiedLastTime = conditionSatisfied;
+
+                return fire;
+            }
         }
 
         public override string ToString()

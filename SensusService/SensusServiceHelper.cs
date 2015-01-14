@@ -200,9 +200,11 @@ namespace SensusService
 
         public abstract void TextToSpeech(string text);
 
-        public abstract Task<string> RecognizeSpeech(string prompt);
+        public abstract string RecognizeSpeech(string prompt);
 
-        public abstract Task<string> PromptForTextInput(string prompt);
+        public abstract string PromptForTextInput(string prompt);
+
+        public abstract void FlashNotification(string message);
         #endregion
 
         #region save/read protocols

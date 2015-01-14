@@ -13,13 +13,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
 using Newtonsoft.Json;
 using SensusUI.UiProperties;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SensusService.Probes.User
 {
@@ -45,7 +47,7 @@ namespace SensusService.Probes.User
                 catch (Exception) { }
             }
         }
-        
+
         public Script Script  // present for JSON serialization
         {
             get { return _script; }
@@ -83,7 +85,7 @@ namespace SensusService.Probes.User
                             if (_triggerHandler.ContainsKey(addedTrigger))
                                 return;
 
-                            EventHandler<Tuple<Datum, Datum>> handler = async (oo, prevCurrDatum) =>
+                            EventHandler<Tuple<Datum, Datum>> handler = (oo, prevCurrDatum) =>
                                 {
                                     // must be listening and must have a current datum
                                     lock (this)
@@ -94,8 +96,8 @@ namespace SensusService.Probes.User
                                     Datum currDatum = prevCurrDatum.Item2;
 
                                     // get the object that might trigger the script
-                                    object datumValueToCompare = addedTrigger.DatumProperty.GetValue(currDatum);
-                                    if (datumValueToCompare == null)
+                                    object datumValue = addedTrigger.DatumProperty.GetValue(currDatum);
+                                    if (datumValue == null)
                                     {
                                         SensusServiceHelper.Get().Logger.Log("Trigger error:  Value of datum property " + addedTrigger.DatumPropertyName + " was null.", LoggingLevel.Normal);
                                         return;
@@ -107,7 +109,7 @@ namespace SensusService.Probes.User
                                         if (prevDatum == null)
                                             return;
 
-                                        try { datumValueToCompare = Convert.ToDouble(datumValueToCompare) - Convert.ToDouble(addedTrigger.DatumProperty.GetValue(prevDatum)); }
+                                        try { datumValue = Convert.ToDouble(datumValue) - Convert.ToDouble(addedTrigger.DatumProperty.GetValue(prevDatum)); }
                                         catch (Exception ex)
                                         {
                                             SensusServiceHelper.Get().Logger.Log("Trigger error:  Failed to convert datum values to doubles:  " + ex.Message, LoggingLevel.Normal);
@@ -115,14 +117,17 @@ namespace SensusService.Probes.User
                                         }
                                     }
 
-                                    // run script of trigger is fired
-                                    if (addedTrigger.FiresFor(datumValueToCompare))
-                                    {
-                                        if (await _script.RunAsync(prevDatum, currDatum))
+                                    Thread t = new Thread(() =>
                                         {
-                                            int x = 1;
-                                        }
-                                    }
+                                            if (addedTrigger.FireFor(datumValue))
+                                                foreach (ScriptDatum datum in _script.Run(prevDatum, currDatum))
+                                                {
+                                                    datum.ProbeType = GetType().FullName;
+                                                    StoreDatum(datum);
+                                                }
+                                        });
+
+                                    t.Start();
                                 };
 
                             addedTrigger.Probe.MostRecentDatumChanged += handler;

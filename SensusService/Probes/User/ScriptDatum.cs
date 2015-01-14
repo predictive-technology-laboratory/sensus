@@ -15,21 +15,28 @@
 #endregion
  
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SensusService.Probes.User
 {
     public class ScriptDatum : Datum
     {
-        public override string DisplayDetail
+        private string _response;
+
+        public string Response
         {
-            get { throw new NotImplementedException(); }
+            get { return _response; }
+            set { _response = value; }
         }
 
-        public ScriptDatum(Probe probe, DateTimeOffset timestamp)
+        public override string DisplayDetail
+        {
+            get { return _response; }
+        }
+
+        public ScriptDatum(Probe probe, DateTimeOffset timestamp, string response)
             : base(probe, timestamp)
         {
+            _response = response;
         }
     }
 }

@@ -19,6 +19,7 @@ namespace SensusService.Probes.User
 {
     public enum PromptResponseType
     {
+        None,
         Voice,
         Text
     }

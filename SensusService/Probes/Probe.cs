@@ -157,7 +157,7 @@ namespace SensusService.Probes
         }
 
         /// <summary>
-        /// Starts this probe. Throws an exception if start fails. Should be called first within parent-class overrides.
+        /// Starts this probe. Throws an exception if start fails. Should be called first within child-class overrides.
         /// </summary>
         public virtual void Start()
         {
@@ -214,7 +214,7 @@ namespace SensusService.Probes
         }
 
         /// <summary>
-        /// Should be called first within parent-class overrides.
+        /// Should be called first within child-class overrides.
         /// </summary>
         public virtual void Stop()
         {

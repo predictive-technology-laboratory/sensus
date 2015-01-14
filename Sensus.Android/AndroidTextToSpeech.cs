@@ -23,24 +23,25 @@ namespace Sensus.Android
     public class AndroidTextToSpeech : Java.Lang.Object, TextToSpeech.IOnInitListener
     {
         private TextToSpeech _textToSpeech;
-        private ManualResetEvent _textToSpeechInitWait;
+        private bool _initialized;
 
         public AndroidTextToSpeech(AndroidSensusService service)
         {
+            _initialized = false;
             _textToSpeech = new TextToSpeech(service, this);
-            _textToSpeechInitWait = new ManualResetEvent(false);
         }
 
         void TextToSpeech.IOnInitListener.OnInit(OperationResult status)
         {
             _textToSpeech.SetLanguage(Java.Util.Locale.Default);
-            _textToSpeechInitWait.Set();
+            _initialized = true;
         }
 
         public void Speak(string text)
         {
-            // wait for TTS to initialize
-            _textToSpeechInitWait.WaitOne();
+            while (!_initialized)
+                Thread.Sleep(500);
+
             _textToSpeech.Speak(text, QueueMode.Add, null);
         }
 

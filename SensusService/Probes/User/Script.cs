@@ -29,7 +29,6 @@ namespace SensusService.Probes.User
         {
             PreserveReferencesHandling = PreserveReferencesHandling.Objects,
             ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-            //TypeNameHandling = TypeNameHandling.All,
             ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
         };
 
@@ -78,26 +77,30 @@ namespace SensusService.Probes.User
             }
         }
 
-        public Task<bool> RunAsync(Datum previous, Datum current)
+        public List<ScriptDatum> Run(Datum previous, Datum current)
         {
-            return Task.Run<bool>(() =>
+            List<ScriptDatum> data = new List<ScriptDatum>();
+
+            lock (this)
+            {
+                if (_running)
+                    return data;
+                else
+                    _running = true;
+            }
+
+            if (_prompts != null)
+                foreach (Prompt prompt in _prompts)
                 {
-                    lock (this)
-                    {
-                        if (_running)
-                            return false;
-                        else
-                            _running = true;
+                    ScriptDatum datum = prompt.Run();
+                    if (datum != null)
+                        data.Add(datum);
+                }
 
-                        if (_prompts != null)
-                            foreach (Prompt prompt in _prompts)
-                                prompt.Run();
+            lock (this)
+                _running = false;
 
-                        _running = false;
-
-                        return true;
-                    }
-                });
+            return data;
         }
     }
 }

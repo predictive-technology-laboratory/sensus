@@ -1,0 +1,1 @@
+{"$id":"1","Name":"Output Only","Prompts":[{"$id":"2","Type":1,"Message":"Fired","ResponseType":0,"NextPrompt":null,"NextPromptValue":null,"Response":null},{"$id":"3","Type":0,"Message":"Fired","ResponseType":0,"NextPrompt":null,"NextPromptValue":null,"Response":null}]}

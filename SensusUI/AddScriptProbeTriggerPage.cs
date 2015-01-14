@@ -36,6 +36,7 @@ namespace SensusUI
         private TriggerValueCondition _selectedCondition;
         private object _conditionValue;
         private bool _change;
+        private bool _fireRepeatedly;
 
         public AddScriptProbeTriggerPage(IScriptProbe scriptProbe)
         {
@@ -217,10 +218,7 @@ namespace SensusUI
                             }
                             else if (datumTriggerAttribute is BooleanProbeTriggerProperty)
                             {
-                                Switch booleanSwitch = new Switch
-                                {
-                                    HorizontalOptions = LayoutOptions.FillAndExpand
-                                };
+                                Switch booleanSwitch = new Switch();
 
                                 booleanSwitch.Toggled += (ooo, eee) => _conditionValue = eee.Value;
 
@@ -240,6 +238,8 @@ namespace SensusUI
                                 Children = { conditionValueStackLabel, conditionValueStackView }
                             });
 
+                            _change = false;
+
                             if (allowChangeCalculation)
                             {
                                 Label changeLabel = new Label
@@ -248,7 +248,10 @@ namespace SensusUI
                                     Font = Font.SystemFontOfSize(20)
                                 };
 
-                                Switch changeSwitch = new Switch();
+                                Switch changeSwitch = new Switch
+                                {
+                                    IsToggled = _change
+                                };
 
                                 changeSwitch.Toggled += (ooo, eee) => { _change = eee.Value; };
 
@@ -260,7 +263,27 @@ namespace SensusUI
                                 });
                             }
 
-                            _change = false;
+                            Label fireRepeatedlyLabel = new Label
+                            {
+                                Text = "Fire Repeatedly:",
+                                Font = Font.SystemFontOfSize(20)
+                            };
+
+                            _fireRepeatedly = false;
+
+                            Switch fireRepeatedlySwitch = new Switch
+                            {
+                                IsToggled = _fireRepeatedly
+                            };
+
+                            fireRepeatedlySwitch.Toggled += (ooo, eee) => { _fireRepeatedly = eee.Value; };
+
+                            conditionValueStack.Children.Add(new StackLayout
+                            {
+                                Orientation = StackOrientation.Horizontal,
+                                HorizontalOptions = LayoutOptions.FillAndExpand,
+                                Children = { fireRepeatedlyLabel, fireRepeatedlySwitch }
+                            });
                         };
 
                     datumPropertyPicker.SelectedIndex = 0;
@@ -289,7 +312,7 @@ namespace SensusUI
 
         private void AddTrigger(object sender, EventArgs args)
         {
-            _scriptProbe.Triggers.Add(new Trigger(_selectedProbe, _selectedDatumProperty.Name, _selectedCondition, _conditionValue, _change));
+            _scriptProbe.Triggers.Add(new Trigger(_selectedProbe, _selectedDatumProperty.Name, _selectedCondition, _conditionValue, _change, _fireRepeatedly));
         }
     }
 }

@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
@@ -42,7 +42,6 @@ namespace Sensus.Android
         private ConnectivityManager _connectivityManager;
         private readonly string _deviceId;
         private AndroidMainActivity _mainActivity;
-        private ManualResetEvent _mainActivityWait;
         private AndroidTextToSpeech _textToSpeech;
 
         public AndroidMainActivity MainActivity
@@ -54,19 +53,17 @@ namespace Sensus.Android
                     if (_mainActivity == null)
                     {
                         // start the activity and wait for it to bind itself to the service
-                        _mainActivityWait.Reset();
-                        _service.StartActivity(typeof(AndroidMainActivity));
-                        _mainActivityWait.WaitOne();
+                        Intent intent = new Intent(_service, typeof(AndroidMainActivity));
+                        intent.AddFlags(ActivityFlags.NewTask);
+                        _service.StartActivity(intent);
+                        while (_mainActivity == null)
+                            Thread.Sleep(500);
                     }
 
                     return _mainActivity;
                 }
             }
-            set
-            {
-                _mainActivity = value;
-                _mainActivityWait.Set();
-            }
+            set { _mainActivity = value; }
         }
 
         public override bool WiFiConnected
@@ -100,7 +97,6 @@ namespace Sensus.Android
             _service = service;
             _connectivityManager = _service.GetSystemService(Context.ConnectivityService) as ConnectivityManager;
             _deviceId = Settings.Secure.GetString(_service.ContentResolver, Settings.Secure.AndroidId);
-            _mainActivityWait = new ManualResetEvent(false);
             _textToSpeech = new AndroidTextToSpeech(_service);
         }
 
@@ -113,13 +109,14 @@ namespace Sensus.Android
         {
             return Task.Run<string>(async () =>
                 {
-                    Intent intent = new Intent(Intent.ActionGetContent);
-                    intent.SetType("*/*");
-                    intent.AddCategory(Intent.CategoryOpenable);
-
                     try
                     {
-                        Tuple<Result, Intent> result = await MainActivity.GetActivityResult(intent, AndroidActivityResultRequestCode.PromptForFile);
+                        Intent intent = new Intent(Intent.ActionGetContent);
+                        intent.SetType("*/*");
+                        intent.AddCategory(Intent.CategoryOpenable);
+
+                        Tuple<Result, Intent> result = await MainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.PromptForFile);
+
                         if (result.Item1 == Result.Ok)
                             try
                             {
@@ -171,59 +168,61 @@ namespace Sensus.Android
             _textToSpeech.Speak(text);
         }
 
-        public override Task<string> RecognizeSpeech(string prompt)
+        public override string RecognizeSpeech(string prompt)
         {
-            return Task.Run<string>(async () =>
-                {
-                    Intent intent = new Intent(RecognizerIntent.ActionRecognizeSpeech);
-                    intent.PutExtra(RecognizerIntent.ExtraLanguageModel, RecognizerIntent.LanguageModelFreeForm);
-                    intent.PutExtra(RecognizerIntent.ExtraSpeechInputCompleteSilenceLengthMillis, 1500);
-                    intent.PutExtra(RecognizerIntent.ExtraSpeechInputPossiblyCompleteSilenceLengthMillis, 1500);
-                    intent.PutExtra(RecognizerIntent.ExtraSpeechInputMinimumLengthMillis, 15000);
-                    intent.PutExtra(RecognizerIntent.ExtraMaxResults, 1);
-                    intent.PutExtra(RecognizerIntent.ExtraLanguage, Java.Util.Locale.Default);
+            /*Intent intent = new Intent(RecognizerIntent.ActionRecognizeSpeech);
+            intent.PutExtra(RecognizerIntent.ExtraLanguageModel, RecognizerIntent.LanguageModelFreeForm);
+            intent.PutExtra(RecognizerIntent.ExtraSpeechInputCompleteSilenceLengthMillis, 1500);
+            intent.PutExtra(RecognizerIntent.ExtraSpeechInputPossiblyCompleteSilenceLengthMillis, 1500);
+            intent.PutExtra(RecognizerIntent.ExtraSpeechInputMinimumLengthMillis, 15000);
+            intent.PutExtra(RecognizerIntent.ExtraMaxResults, 1);
+            intent.PutExtra(RecognizerIntent.ExtraLanguage, Java.Util.Locale.Default);
 
-                    if (prompt != null)
-                        intent.PutExtra(RecognizerIntent.ExtraPrompt, prompt);
+            if (prompt != null)
+                intent.PutExtra(RecognizerIntent.ExtraPrompt, prompt);
 
-                    Tuple<Result, Intent> result = await MainActivity.GetActivityResult(intent, AndroidActivityResultRequestCode.RecognizeSpeech);
-                    if (result.Item1 == Result.Ok)
-                    {
-                        IList<string> matches = result.Item2.GetStringArrayListExtra(RecognizerIntent.ExtraResults);
-                        if (matches.Count == 0)
-                            return null;
-                        else
-                            return matches[0];
-                    }
-                    else
-                        return null;
-                });
+            Tuple<Result, Intent> result = MainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.RecognizeSpeech);
+
+            if (result.Item1 == Result.Ok)
+            {
+                IList<string> matches = result.Item2.GetStringArrayListExtra(RecognizerIntent.ExtraResults);
+                if (matches.Count == 0)
+                    return null;
+                else
+                    return matches[0];
+            }
+            else
+                return null;*/
+
+            return "FAKE!!!!";
         }
 
-        public override Task<string> PromptForTextInput(string prompt)
+        public override string PromptForTextInput(string prompt)
         {
-            return Task.Run<string>(() =>
+            string input = null;
+            ManualResetEvent inputWait = new ManualResetEvent(false);
+
+            MainActivity.RunOnUiThread(() =>
                 {
-                    string input = null;
-                    ManualResetEvent inputWait = new ManualResetEvent(false);
-
-                    MainActivity.RunOnUiThread(() =>
+                    EditText textBox = new EditText(MainActivity);
+                    new AlertDialog.Builder(MainActivity)
+                    .SetTitle(prompt)
+                    .SetView(textBox)
+                    .SetPositiveButton("OK", (o, e) =>
                         {
-                            EditText textBox = new EditText(MainActivity);
-                            new AlertDialog.Builder(MainActivity)
-                            .SetTitle(prompt)
-                            .SetView(textBox)
-                            .SetPositiveButton("OK", (o, e) =>
-                                {
-                                    input = textBox.Text;
-                                    inputWait.Set();
-                                }).Show();
-                        });
-
-                    inputWait.WaitOne();
-
-                    return input;
+                            input = textBox.Text;
+                            inputWait.Set();
+                        }).Show();
                 });
+
+            inputWait.WaitOne();
+
+            return input;
+        }
+
+        public override void FlashNotification(string message)
+        {
+            MainActivity.RunOnUiThread(() => Toast.MakeText(MainActivity, message, ToastLength.Long).Show());
         }
 
         private void SetSensusMonitoringAlarm(int ms)

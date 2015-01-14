@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
@@ -22,6 +22,7 @@ using SensusService;
 using SensusService.Exceptions;
 using SensusUI;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -40,15 +41,15 @@ namespace Sensus.Android
     {
         private Intent _serviceIntent;
         private AndroidSensusServiceConnection _serviceConnection;
-        private ManualResetEvent _activityResultTrigger;
-        private int _activityRequestCode;
+        private AndroidActivityResultRequestCode _activityResultsRequestCode;
         private Tuple<Result, Intent> _activityResult;
+        private ManualResetEvent _activityResultWait;
 
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
 
-            _activityResultTrigger = new ManualResetEvent(false);
+            _activityResultWait = new ManualResetEvent(false);
 
             Forms.Init(this, bundle);
 
@@ -116,24 +117,17 @@ namespace Sensus.Android
             BindService(_serviceIntent, _serviceConnection, Bind.AutoCreate);
         }
 
-        /// <summary>
-        /// Starts an activity and waits for a result to come back.
-        /// </summary>
-        /// <param name="intent">Intent defining the activity to start.</param>
-        /// <param name="requestCode">Request code to use.</param>
-        /// <returns>Result status and return intent.</returns>
-        public Task<Tuple<Result, Intent>> GetActivityResult(Intent intent, AndroidActivityResultRequestCode requestCode)
+        public Task<Tuple<Result, Intent>> GetActivityResultAsync(Intent intent, AndroidActivityResultRequestCode requestCode)
         {
             return Task.Run<Tuple<Result, Intent>>(() =>
                 {
                     lock (this)
                     {
-                        _activityRequestCode = (int)requestCode;
+                        _activityResultsRequestCode = requestCode;
 
-                        // start activity and wait for result to be retrieved
-                        _activityResultTrigger.Reset();
-                        StartActivityForResult(intent, _activityRequestCode);
-                        _activityResultTrigger.WaitOne();
+                        _activityResultWait.Reset();
+                        StartActivityForResult(intent, (int)requestCode);
+                        _activityResultWait.WaitOne();
 
                         return _activityResult;
                     }
@@ -142,10 +136,10 @@ namespace Sensus.Android
 
         protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
         {
-            if (requestCode == _activityRequestCode)
+            if (requestCode == (int)_activityResultsRequestCode)
             {
                 _activityResult = new Tuple<Result, Intent>(resultCode, data);
-                _activityResultTrigger.Set();  // let the requestor know that the result has been retrieved
+                _activityResultWait.Set();
             }
         }
 
