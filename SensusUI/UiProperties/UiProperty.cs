@@ -126,7 +126,7 @@ namespace SensusUI.UiProperties
                     loadButton.Clicked += async (oo, e) =>
                         {
                             // set the property on the UI element to the file's content
-                            string text = await UiBoundSensusServiceHelper.Get().PromptForAndReadTextFile(loadUiElement.Prompt);
+                            string text = await UiBoundSensusServiceHelper.Get().PromptForAndReadTextFileAsync(loadUiElement.Prompt);
                             propertyUiElement.Item1.SetValue(o, text);
                         };
 

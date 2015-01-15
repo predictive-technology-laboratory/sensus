@@ -105,7 +105,7 @@ namespace Sensus.Android
             Insights.Initialize(XAMARIN_INSIGHTS_APP_KEY, Application.Context);  // can't reference _service here since this method is called from the base class constructor.
         }
 
-        public override Task<string> PromptForAndReadTextFile(string promptTitle)
+        public override Task<string> PromptForAndReadTextFileAsync(string promptTitle)
         {
             return Task.Run<string>(async () =>
                 {
@@ -168,33 +168,34 @@ namespace Sensus.Android
             _textToSpeech.Speak(text);
         }
 
-        public override string RecognizeSpeech(string prompt)
+        public override Task<string> RecognizeSpeechAsync(string prompt)
         {
-            /*Intent intent = new Intent(RecognizerIntent.ActionRecognizeSpeech);
-            intent.PutExtra(RecognizerIntent.ExtraLanguageModel, RecognizerIntent.LanguageModelFreeForm);
-            intent.PutExtra(RecognizerIntent.ExtraSpeechInputCompleteSilenceLengthMillis, 1500);
-            intent.PutExtra(RecognizerIntent.ExtraSpeechInputPossiblyCompleteSilenceLengthMillis, 1500);
-            intent.PutExtra(RecognizerIntent.ExtraSpeechInputMinimumLengthMillis, 15000);
-            intent.PutExtra(RecognizerIntent.ExtraMaxResults, 1);
-            intent.PutExtra(RecognizerIntent.ExtraLanguage, Java.Util.Locale.Default);
+            return Task.Run<string>(async () =>
+                {
+                    Intent intent = new Intent(RecognizerIntent.ActionRecognizeSpeech);
+                    intent.PutExtra(RecognizerIntent.ExtraLanguageModel, RecognizerIntent.LanguageModelFreeForm);
+                    intent.PutExtra(RecognizerIntent.ExtraSpeechInputCompleteSilenceLengthMillis, 1500);
+                    intent.PutExtra(RecognizerIntent.ExtraSpeechInputPossiblyCompleteSilenceLengthMillis, 1500);
+                    intent.PutExtra(RecognizerIntent.ExtraSpeechInputMinimumLengthMillis, 15000);
+                    intent.PutExtra(RecognizerIntent.ExtraMaxResults, 1);
+                    intent.PutExtra(RecognizerIntent.ExtraLanguage, Java.Util.Locale.Default);
 
-            if (prompt != null)
-                intent.PutExtra(RecognizerIntent.ExtraPrompt, prompt);
+                    if (prompt != null)
+                        intent.PutExtra(RecognizerIntent.ExtraPrompt, prompt);
 
-            Tuple<Result, Intent> result = MainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.RecognizeSpeech);
+                    Tuple<Result, Intent> result = await MainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.RecognizeSpeech);
 
-            if (result.Item1 == Result.Ok)
-            {
-                IList<string> matches = result.Item2.GetStringArrayListExtra(RecognizerIntent.ExtraResults);
-                if (matches.Count == 0)
-                    return null;
-                else
-                    return matches[0];
-            }
-            else
-                return null;*/
-
-            return "FAKE!!!!";
+                    if (result.Item1 == Result.Ok)
+                    {
+                        IList<string> matches = result.Item2.GetStringArrayListExtra(RecognizerIntent.ExtraResults);
+                        if (matches.Count == 0)
+                            return null;
+                        else
+                            return matches[0];
+                    }
+                    else
+                        return null;
+                });
         }
 
         public override string PromptForTextInput(string prompt)

@@ -117,10 +117,10 @@ namespace SensusService.Probes.User
                                         }
                                     }
 
-                                    Thread t = new Thread(() =>
+                                    Thread t = new Thread(async () =>
                                         {
                                             if (addedTrigger.FireFor(datumValue))
-                                                foreach (ScriptDatum datum in _script.Run(prevDatum, currDatum))
+                                                foreach (ScriptDatum datum in await _script.RunAsync(prevDatum, currDatum))
                                                 {
                                                     datum.ProbeType = GetType().FullName;
                                                     StoreDatum(datum);

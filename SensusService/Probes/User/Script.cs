@@ -77,30 +77,33 @@ namespace SensusService.Probes.User
             }
         }
 
-        public List<ScriptDatum> Run(Datum previous, Datum current)
+        public Task<List<ScriptDatum>> RunAsync(Datum previous, Datum current)
         {
-            List<ScriptDatum> data = new List<ScriptDatum>();
-
-            lock (this)
-            {
-                if (_running)
-                    return data;
-                else
-                    _running = true;
-            }
-
-            if (_prompts != null)
-                foreach (Prompt prompt in _prompts)
+            return Task.Run<List<ScriptDatum>>(async () =>
                 {
-                    ScriptDatum datum = prompt.Run();
-                    if (datum != null)
-                        data.Add(datum);
-                }
+                    List<ScriptDatum> data = new List<ScriptDatum>();
 
-            lock (this)
-                _running = false;
+                    lock (this)
+                    {
+                        if (_running)
+                            return data;
+                        else
+                            _running = true;
+                    }
 
-            return data;
+                    if (_prompts != null)
+                        foreach (Prompt prompt in _prompts)
+                        {
+                            ScriptDatum datum = await prompt.RunAsync();
+                            if (datum != null)
+                                data.Add(datum);
+                        }
+
+                    lock (this)
+                        _running = false;
+
+                    return data;
+                });
         }
     }
 }

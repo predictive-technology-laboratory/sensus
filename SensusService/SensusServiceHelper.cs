@@ -190,7 +190,7 @@ namespace SensusService
         #region platform-specific abstract methods
         protected abstract void InitializeXamarinInsights();
 
-        public abstract Task<string> PromptForAndReadTextFile(string promptTitle);
+        public abstract Task<string> PromptForAndReadTextFileAsync(string promptTitle);
 
         public abstract void ShareFile(string path, string subject);
 
@@ -200,7 +200,7 @@ namespace SensusService
 
         public abstract void TextToSpeech(string text);
 
-        public abstract string RecognizeSpeech(string prompt);
+        public abstract Task<string> RecognizeSpeechAsync(string prompt);
 
         public abstract string PromptForTextInput(string prompt);
 
