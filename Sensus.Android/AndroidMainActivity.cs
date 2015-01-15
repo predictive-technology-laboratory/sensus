@@ -21,6 +21,7 @@ using Android.OS;
 using SensusService;
 using SensusService.Exceptions;
 using SensusUI;
+using SensusUI.UiProperties;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -39,23 +40,25 @@ namespace Sensus.Android
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault }, DataMimeType = "text/plain", DataScheme = "file", DataHost = "*", DataPathPattern = ".*\\\\.sensus")]  // protocols opened from the local file system
     public class AndroidMainActivity : AndroidActivity
     {
-        private Intent _serviceIntent;
         private AndroidSensusServiceConnection _serviceConnection;
-        private AndroidActivityResultRequestCode _activityResultsRequestCode;
-        private Tuple<Result, Intent> _activityResult;
         private ManualResetEvent _activityResultWait;
+        private AndroidActivityResultRequestCode _activityResultRequestCode;
+        private Tuple<Result, Intent> _activityResult;
 
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
 
-            _activityResultWait = new ManualResetEvent(false);
-
             Forms.Init(this, bundle);
 
+            _activityResultWait = new ManualResetEvent(false);
+
+            SensusNavigationPage navigationPage = new SensusNavigationPage(new MainPage());
+            SetPage(navigationPage);
+
             // start service -- if it's already running, this will have no effect
-            _serviceIntent = new Intent(this, typeof(AndroidSensusService));
-            StartService(_serviceIntent);
+            Intent serviceIntent = new Intent(this, typeof(AndroidSensusService));
+            StartService(serviceIntent);
 
             // bind UI to the service
             _serviceConnection = new AndroidSensusServiceConnection(null);
@@ -65,11 +68,11 @@ namespace Sensus.Android
                     e.Binder.SensusServiceHelper.MainActivity = this;
 
                     UiBoundSensusServiceHelper.Set(e.Binder.SensusServiceHelper);
-                    UiBoundSensusServiceHelper.Get().Stopped += (oo, ee) => { Finish(); };  // stop activity when service stops
+                    UiBoundSensusServiceHelper.Get().Stopped += (oo, ee) => { Finish(); };  // stop activity when service stops    
 
-                    SensusNavigationPage navigationPage = new SensusNavigationPage(UiBoundSensusServiceHelper.Get());
-
-                    SetPage(navigationPage);
+                    // add service helper ui elements to main page
+                    foreach (StackLayout serviceStack in UiProperty.GetPropertyStacks(UiBoundSensusServiceHelper.Get()))
+                        (navigationPage.MainPage.Content as StackLayout).Children.Add(serviceStack);
 
                     #region open page to view protocol if a protocol was passed to us
                     if (Intent.Data != null)
@@ -114,7 +117,7 @@ namespace Sensus.Android
                     #endregion
                 };
 
-            BindService(_serviceIntent, _serviceConnection, Bind.AutoCreate);
+            BindService(serviceIntent, _serviceConnection, Bind.AutoCreate);           
         }
 
         public Task<Tuple<Result, Intent>> GetActivityResultAsync(Intent intent, AndroidActivityResultRequestCode requestCode)
@@ -123,7 +126,7 @@ namespace Sensus.Android
                 {
                     lock (this)
                     {
-                        _activityResultsRequestCode = requestCode;
+                        _activityResultRequestCode = requestCode;
 
                         _activityResultWait.Reset();
                         StartActivityForResult(intent, (int)requestCode);
@@ -136,7 +139,7 @@ namespace Sensus.Android
 
         protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
         {
-            if (requestCode == (int)_activityResultsRequestCode)
+            if (requestCode == (int)_activityResultRequestCode)
             {
                 _activityResult = new Tuple<Result, Intent>(resultCode, data);
                 _activityResultWait.Set();

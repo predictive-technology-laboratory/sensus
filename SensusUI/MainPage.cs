@@ -29,7 +29,7 @@ namespace SensusUI
         public static event EventHandler ViewProtocolsTapped;
         public static event EventHandler ViewLogTapped;
 
-        public MainPage(SensusServiceHelper service)
+        public MainPage()
         {
             Title = "ensus";  // the icon supplies the initial "S"
 
@@ -78,9 +78,6 @@ namespace SensusUI
                 };
 
             contentLayout.Children.Add(stopSensusButton);
-
-            foreach (StackLayout serviceStack in UiProperty.GetPropertyStacks(service))
-                contentLayout.Children.Add(serviceStack);
 
             Content = contentLayout;
         }
