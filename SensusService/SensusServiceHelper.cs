@@ -334,7 +334,7 @@ namespace SensusService
                 List<string> runningProtocolIds = ReadRunningProtocolIds();
                 foreach (Protocol protocol in _registeredProtocols)
                     if (!protocol.Running && runningProtocolIds.Contains(protocol.Id))
-                        StartProtocolAsync(protocol);
+                        StartProtocol(protocol);
             }
         }
 

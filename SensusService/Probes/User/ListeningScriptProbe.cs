@@ -85,7 +85,7 @@ namespace SensusService.Probes.User
                             if (_triggerHandler.ContainsKey(addedTrigger))
                                 return;
 
-                            EventHandler<Tuple<Datum, Datum>> handler = (oo, prevCurrDatum) =>
+                            EventHandler<Tuple<Datum, Datum>> handler = async (oo, prevCurrDatum) =>
                                 {
                                     // must be listening and must have a current datum
                                     lock (this)
@@ -117,17 +117,12 @@ namespace SensusService.Probes.User
                                         }
                                     }
 
-                                    Thread t = new Thread(async () =>
+                                    if (addedTrigger.FireFor(datumValue))
+                                        foreach (ScriptDatum datum in await _script.RunAsync(prevDatum, currDatum))
                                         {
-                                            if (addedTrigger.FireFor(datumValue))
-                                                foreach (ScriptDatum datum in await _script.RunAsync(prevDatum, currDatum))
-                                                {
-                                                    datum.ProbeType = GetType().FullName;
-                                                    StoreDatum(datum);
-                                                }
-                                        });
-
-                                    t.Start();
+                                            datum.ProbeType = GetType().FullName;
+                                            StoreDatum(datum);
+                                        }
                                 };
 
                             addedTrigger.Probe.MostRecentDatumChanged += handler;

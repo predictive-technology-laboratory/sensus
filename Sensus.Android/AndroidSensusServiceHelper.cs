@@ -44,6 +44,16 @@ namespace Sensus.Android
         private AndroidMainActivity _mainActivity;
         private AndroidTextToSpeech _textToSpeech;
 
+        public AndroidSensusService Service
+        {
+            get { return _service; }
+        }
+
+        public override string DeviceId
+        {
+            get { return _deviceId; }
+        }
+
         public AndroidMainActivity MainActivity
         {
             get
@@ -79,11 +89,6 @@ namespace Sensus.Android
                 BatteryStatus status = (BatteryStatus)_service.RegisterReceiver(null, filter).GetIntExtra(BatteryManager.ExtraStatus, -1);
                 return status == BatteryStatus.Charging || status == BatteryStatus.Full;
             }
-        }
-
-        public override string DeviceId
-        {
-            get { return _deviceId; }
         }
 
         public override bool DeviceHasMicrophone

@@ -16,7 +16,6 @@
  
 using Android.Speech.Tts;
 using System;
-using System.Threading;
 
 namespace Sensus.Android
 {
@@ -39,8 +38,8 @@ namespace Sensus.Android
 
         public void Speak(string text)
         {
-            while (!_initialized)
-                Thread.Sleep(500);
+            if (!_initialized)
+                return;
 
             _textToSpeech.Speak(text, QueueMode.Add, null);
         }
