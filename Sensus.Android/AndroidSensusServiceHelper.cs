@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-
+ 
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
@@ -42,16 +42,12 @@ namespace Sensus.Android
         private ConnectivityManager _connectivityManager;
         private readonly string _deviceId;
         private AndroidMainActivity _mainActivity;
+        private ManualResetEvent _mainActivityWait;
         private AndroidTextToSpeech _textToSpeech;
 
         public AndroidSensusService Service
         {
             get { return _service; }
-        }
-
-        public override string DeviceId
-        {
-            get { return _deviceId; }
         }
 
         public AndroidMainActivity MainActivity
@@ -65,15 +61,27 @@ namespace Sensus.Android
                         // start the activity and wait for it to bind itself to the service
                         Intent intent = new Intent(_service, typeof(AndroidMainActivity));
                         intent.AddFlags(ActivityFlags.NewTask);
+
+                        _mainActivityWait.Reset();
                         _service.StartActivity(intent);
-                        while (_mainActivity == null)
-                            Thread.Sleep(500);
+                        _mainActivityWait.WaitOne();
                     }
 
                     return _mainActivity;
                 }
             }
-            set { _mainActivity = value; }
+            set
+            {
+                _mainActivity = value;
+
+                if (_mainActivity != null)
+                    _mainActivityWait.Set();
+            }
+        }
+
+        public override string DeviceId
+        {
+            get { return _deviceId; }
         }
 
         public override bool WiFiConnected
@@ -103,6 +111,7 @@ namespace Sensus.Android
             _connectivityManager = _service.GetSystemService(Context.ConnectivityService) as ConnectivityManager;
             _deviceId = Settings.Secure.GetString(_service.ContentResolver, Settings.Secure.AndroidId);
             _textToSpeech = new AndroidTextToSpeech(_service);
+            _mainActivityWait = new ManualResetEvent(false);
         }
 
         protected override void InitializeXamarinInsights()

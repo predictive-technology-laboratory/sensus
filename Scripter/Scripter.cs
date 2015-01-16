@@ -24,6 +24,10 @@ namespace Scripter
             script2.Prompts.Add(new Prompt(PromptType.Text, "Fired", PromptResponseType.None));
             script2.Prompts.Add(new Prompt(PromptType.Voice, "Fired", PromptResponseType.None));
             script2.Save(@"..\..\Scripts\ExampleScriptOutputOnly.json");
+
+            Script script3 = new Script("Single Voice Prompt");
+            script3.Prompts.Add(new Prompt(PromptType.Voice, "How are you?", PromptResponseType.Voice));
+            script3.Save(@"..\..\Scripts\ExampleVoicePrompt.json");
         }
     }
 }

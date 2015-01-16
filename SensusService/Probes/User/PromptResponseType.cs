@@ -14,7 +14,6 @@
 // limitations under the License.
 #endregion
  
-
 namespace SensusService.Probes.User
 {
     public enum PromptResponseType

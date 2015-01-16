@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-
+ 
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
@@ -53,9 +53,6 @@ namespace Sensus.Android
 
             _activityResultWait = new ManualResetEvent(false);
 
-            SensusNavigationPage navigationPage = new SensusNavigationPage(new MainPage());
-            SetPage(navigationPage);
-
             // start service -- if it's already running, this will have no effect
             Intent serviceIntent = new Intent(this, typeof(AndroidSensusService));
             StartService(serviceIntent);
@@ -67,12 +64,13 @@ namespace Sensus.Android
                     // before binding, add reference to main activity within the service helper
                     e.Binder.SensusServiceHelper.MainActivity = this;
 
+                    // get reference to service helper for use within the UI
                     UiBoundSensusServiceHelper.Set(e.Binder.SensusServiceHelper);
                     UiBoundSensusServiceHelper.Get().Stopped += (oo, ee) => { Finish(); };  // stop activity when service stops    
 
-                    // add service helper ui elements to main page
-                    foreach (StackLayout serviceStack in UiProperty.GetPropertyStacks(UiBoundSensusServiceHelper.Get()))
-                        (navigationPage.MainPage.Content as StackLayout).Children.Add(serviceStack);
+                    // display main page
+                    SensusNavigationPage navigationPage = new SensusNavigationPage(UiBoundSensusServiceHelper.Get());
+                    SetPage(navigationPage);
 
                     #region open page to view protocol if a protocol was passed to us
                     if (Intent.Data != null)
@@ -117,7 +115,7 @@ namespace Sensus.Android
                     #endregion
                 };
 
-            BindService(serviceIntent, _serviceConnection, Bind.AutoCreate);           
+            BindService(serviceIntent, _serviceConnection, Bind.AutoCreate);
         }
 
         public Task<Tuple<Result, Intent>> GetActivityResultAsync(Intent intent, AndroidActivityResultRequestCode requestCode)
