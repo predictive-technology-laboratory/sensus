@@ -38,5 +38,11 @@ namespace SensusService.Probes.User
         {
             _response = response;
         }
+
+        public override string ToString()
+        {
+            return base.ToString() + Environment.NewLine +
+                   "Response:  " + _response;
+        }
     }
 }
