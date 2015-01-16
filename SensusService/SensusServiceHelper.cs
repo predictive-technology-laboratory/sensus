@@ -320,7 +320,7 @@ namespace SensusService
         #endregion
 
         /// <summary>
-        /// Starts platform-independent service functionality. Okay to call multiple times, even if the service is already running.
+        /// Starts platform-independent service functionality, including protocols that should be running. Okay to call multiple times, even if the service is already running.
         /// </summary>
         public void Start()
         {

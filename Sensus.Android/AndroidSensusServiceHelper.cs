@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
@@ -48,35 +48,6 @@ namespace Sensus.Android
         public AndroidSensusService Service
         {
             get { return _service; }
-        }
-
-        public AndroidMainActivity MainActivity
-        {
-            get
-            {
-                lock (this)
-                {
-                    if (_mainActivity == null)
-                    {
-                        // start the activity and wait for it to bind itself to the service
-                        Intent intent = new Intent(_service, typeof(AndroidMainActivity));
-                        intent.AddFlags(ActivityFlags.NewTask);
-
-                        _mainActivityWait.Reset();
-                        _service.StartActivity(intent);
-                        _mainActivityWait.WaitOne();
-                    }
-
-                    return _mainActivity;
-                }
-            }
-            set
-            {
-                _mainActivity = value;
-
-                if (_mainActivity != null)
-                    _mainActivityWait.Set();
-            }
         }
 
         public override string DeviceId
@@ -114,6 +85,47 @@ namespace Sensus.Android
             _mainActivityWait = new ManualResetEvent(false);
         }
 
+        public AndroidMainActivity GetMainActivity(bool disableKeyguard)
+        {
+            lock (this)
+            {
+                if (_mainActivity == null)
+                {
+                    Logger.Log("Main activity is not present. Starting it.", LoggingLevel.Normal);
+
+                    // start the activity and wait for it to bind itself to the service
+                    Intent intent = new Intent(_service, typeof(AndroidMainActivity));
+                    intent.AddFlags(ActivityFlags.NewTask);
+
+                    _mainActivityWait.Reset();
+                    _service.StartActivity(intent);
+                    _mainActivityWait.WaitOne();
+
+                    Logger.Log("Main activity retrieved.", LoggingLevel.Normal);
+                }
+
+                if (disableKeyguard)
+                    _mainActivity.RunOnUiThread(() =>
+                        {
+                            Logger.Log("Disabling keyguard.", LoggingLevel.Normal);
+
+                            _mainActivity.Window.AddFlags(global::Android.Views.WindowManagerFlags.DismissKeyguard);
+                            _mainActivity.Window.AddFlags(global::Android.Views.WindowManagerFlags.ShowWhenLocked);
+                            _mainActivity.Window.AddFlags(global::Android.Views.WindowManagerFlags.TurnScreenOn);
+                        });
+
+                return _mainActivity;
+            }
+        }
+
+        public void SetMainActivity(AndroidMainActivity mainActivity)
+        {
+            _mainActivity = mainActivity;
+
+            if (_mainActivity != null)
+                _mainActivityWait.Set();
+        }
+
         protected override void InitializeXamarinInsights()
         {
             Insights.Initialize(XAMARIN_INSIGHTS_APP_KEY, Application.Context);  // can't reference _service here since this method is called from the base class constructor.
@@ -129,7 +141,7 @@ namespace Sensus.Android
                         intent.SetType("*/*");
                         intent.AddCategory(Intent.CategoryOpenable);
 
-                        Tuple<Result, Intent> result = await MainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.PromptForFile);
+                        Tuple<Result, Intent> result = await GetMainActivity(true).GetActivityResultAsync(intent, AndroidActivityResultRequestCode.PromptForFile);
 
                         if (result.Item1 == Result.Ok)
                             try
@@ -162,7 +174,7 @@ namespace Sensus.Android
                 intent.PutExtra(Intent.ExtraStream, uri);
 
                 // run from main activity to get a smoother transition back to sensus
-                MainActivity.StartActivity(intent);
+                GetMainActivity(true).StartActivity(intent);
             }
             catch (Exception ex) { Logger.Log("Failed to start intent to share file \"" + path + "\":  " + ex.Message, LoggingLevel.Normal); }
         }
@@ -197,7 +209,7 @@ namespace Sensus.Android
                     if (prompt != null)
                         intent.PutExtra(RecognizerIntent.ExtraPrompt, prompt);
 
-                    Tuple<Result, Intent> result = await MainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.RecognizeSpeech);
+                    Tuple<Result, Intent> result = await GetMainActivity(true).GetActivityResultAsync(intent, AndroidActivityResultRequestCode.RecognizeSpeech);
 
                     if (result.Item1 == Result.Ok)
                     {
@@ -217,10 +229,12 @@ namespace Sensus.Android
             string input = null;
             ManualResetEvent inputWait = new ManualResetEvent(false);
 
-            MainActivity.RunOnUiThread(() =>
+            AndroidMainActivity mainActivity = GetMainActivity(true);
+
+            mainActivity.RunOnUiThread(() =>
                 {
-                    EditText textBox = new EditText(MainActivity);
-                    new AlertDialog.Builder(MainActivity)
+                    EditText textBox = new EditText(mainActivity);
+                    new AlertDialog.Builder(mainActivity)
                     .SetTitle(prompt)
                     .SetView(textBox)
                     .SetPositiveButton("OK", (o, e) =>
@@ -241,7 +255,9 @@ namespace Sensus.Android
 
         public override void FlashNotification(string message)
         {
-            MainActivity.RunOnUiThread(() => Toast.MakeText(MainActivity, message, ToastLength.Long).Show());
+            AndroidMainActivity mainActivity = GetMainActivity(true);
+
+            mainActivity.RunOnUiThread(() => Toast.MakeText(mainActivity, message, ToastLength.Long).Show());
         }
 
         private void SetSensusMonitoringAlarm(int ms)
