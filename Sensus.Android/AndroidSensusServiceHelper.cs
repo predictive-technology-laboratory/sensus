@@ -227,7 +227,11 @@ namespace Sensus.Android
                         {
                             input = textBox.Text;
                             inputWait.Set();
-                        }).Show();
+                        })
+                    .SetOnDismissListener(new AndroidOnDismissListener(() =>
+                        {
+                            inputWait.Set();
+                        })).Show();
                 });
 
             inputWait.WaitOne();

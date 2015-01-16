@@ -119,10 +119,11 @@ namespace SensusService.Probes.User
 
                                     if (addedTrigger.FireFor(datumValue))
                                         foreach (ScriptDatum datum in await _script.RunAsync(prevDatum, currDatum))
-                                        {
-                                            datum.ProbeType = GetType().FullName;
-                                            StoreDatum(datum);
-                                        }
+                                            if (datum != null)
+                                            {
+                                                datum.ProbeType = GetType().FullName;
+                                                StoreDatum(datum);
+                                            }
                                 };
 
                             addedTrigger.Probe.MostRecentDatumChanged += handler;

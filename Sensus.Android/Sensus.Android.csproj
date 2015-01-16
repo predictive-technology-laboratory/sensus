@@ -120,6 +120,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AndroidActivityResultRequestCode.cs" />
+    <Compile Include="AndroidOnDismissListener.cs" />
     <Compile Include="AndroidSensusServiceHelper.cs" />
     <Compile Include="AndroidSensusServiceBootStarter.cs" />
     <Compile Include="AndroidTextToSpeech.cs" />

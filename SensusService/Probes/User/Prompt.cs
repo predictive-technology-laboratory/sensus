@@ -97,10 +97,7 @@ namespace SensusService.Probes.User
                     else if (_type == PromptType.Voice && _responseType == PromptResponseType.None)
                         SensusServiceHelper.Get().TextToSpeech(_message);
 
-                    if (string.IsNullOrWhiteSpace(response))
-                        return null;
-                    else
-                        return new ScriptDatum(null, DateTimeOffset.UtcNow, response);
+                    return new ScriptDatum(null, DateTimeOffset.UtcNow, response);
                 });
         }
     }
