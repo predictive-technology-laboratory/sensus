@@ -47,6 +47,10 @@ namespace Sensus.Android
         {
             base.OnCreate(bundle);
 
+            Window.AddFlags(global::Android.Views.WindowManagerFlags.DismissKeyguard);
+            Window.AddFlags(global::Android.Views.WindowManagerFlags.ShowWhenLocked);
+            Window.AddFlags(global::Android.Views.WindowManagerFlags.TurnScreenOn);
+
             Forms.Init(this, bundle);
 
             _activityResultWait = new ManualResetEvent(false);
@@ -60,7 +64,7 @@ namespace Sensus.Android
             _serviceConnection.ServiceConnected += async (o, e) =>
                 {
                     // before binding, add reference to main activity within the service helper
-                    e.Binder.SensusServiceHelper.SetMainActivity(this);
+                    e.Binder.SensusServiceHelper.MainActivity = this;
 
                     // get reference to service helper for use within the UI
                     UiBoundSensusServiceHelper.Set(e.Binder.SensusServiceHelper);
