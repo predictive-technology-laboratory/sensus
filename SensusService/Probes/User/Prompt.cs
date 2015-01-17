@@ -26,6 +26,8 @@ namespace SensusService.Probes.User
         private PromptResponseType _responseType;
         private Prompt _nextPrompt;
         private string _nextPromptValue;
+        private bool _requireNonEmptyResponse;
+        private int _numTries;
 
         public PromptType Type
         {
@@ -56,6 +58,19 @@ namespace SensusService.Probes.User
             get { return _nextPromptValue; }
             set { _nextPromptValue = value; }
         }
+
+        public bool RequireNonEmptyResponse
+        {
+            get { return _requireNonEmptyResponse; }
+            set { _requireNonEmptyResponse = value; }
+        }
+
+        public int NumTries
+        {
+            get { return _numTries; }
+            set { _numTries = value; }
+        }
+
         private Prompt() { }  // for JSON deserialization
 
         public Prompt(PromptType type, string message, PromptResponseType responseType)
@@ -65,8 +80,22 @@ namespace SensusService.Probes.User
             _responseType = responseType;
         }
 
+        public Prompt(PromptType type, string message, PromptResponseType responseType, bool requireNonEmptyResponse, int numTries)
+            : this(type, message, responseType)
+        {
+            _requireNonEmptyResponse = requireNonEmptyResponse;
+            _numTries = numTries;
+        }
+
         public Prompt(PromptType type, string message, PromptResponseType responseType, Prompt nextPrompt, string nextPromptValue)
             : this(type, message, responseType)
+        {
+            _nextPrompt = nextPrompt;
+            _nextPromptValue = nextPromptValue;
+        }
+
+        public Prompt(PromptType type, string message, PromptResponseType responseType, bool requireNonEmptyResponse, int numTries, Prompt nextPrompt, string nextPromptValue)
+            : this(type, message, responseType, requireNonEmptyResponse, numTries)
         {
             _nextPrompt = nextPrompt;
             _nextPromptValue = nextPromptValue;
@@ -76,26 +105,35 @@ namespace SensusService.Probes.User
         {
             return Task.Run<ScriptDatum>(async () =>
                 {
+                    if (_requireNonEmptyResponse)
+                        _message += " (response required)";
+
                     string response = null;
 
-                    if (_type == PromptType.Text && _responseType == PromptResponseType.Text)
-                        response = SensusServiceHelper.Get().PromptForTextInput(_message);
-                    else if (_type == PromptType.Text && _responseType == PromptResponseType.Voice)
-                        response = await SensusServiceHelper.Get().RecognizeSpeechAsync(_message);
-                    else if (_type == PromptType.Text && _responseType == PromptResponseType.None)
-                        SensusServiceHelper.Get().FlashNotification(_message);
-                    else if (_type == PromptType.Voice && _responseType == PromptResponseType.Text)
+                    int triesLeft = _numTries;
+
+                    do
                     {
-                        SensusServiceHelper.Get().TextToSpeech(_message);
-                        response = SensusServiceHelper.Get().PromptForTextInput(_message);
+                        if (_type == PromptType.Text && _responseType == PromptResponseType.Text)
+                            response = SensusServiceHelper.Get().PromptForTextInput(_message);
+                        else if (_type == PromptType.Text && _responseType == PromptResponseType.Voice)
+                            response = await SensusServiceHelper.Get().RecognizeSpeechAsync(_message);
+                        else if (_type == PromptType.Text && _responseType == PromptResponseType.None)
+                            SensusServiceHelper.Get().FlashNotification(_message);
+                        else if (_type == PromptType.Voice && _responseType == PromptResponseType.Text)
+                        {
+                            SensusServiceHelper.Get().TextToSpeech(_message);
+                            response = SensusServiceHelper.Get().PromptForTextInput(_message);
+                        }
+                        else if (_type == PromptType.Voice && _responseType == PromptResponseType.Voice)
+                        {
+                            SensusServiceHelper.Get().TextToSpeech(_message);
+                            response = await SensusServiceHelper.Get().RecognizeSpeechAsync(_message);
+                        }
+                        else if (_type == PromptType.Voice && _responseType == PromptResponseType.None)
+                            SensusServiceHelper.Get().TextToSpeech(_message);
                     }
-                    else if (_type == PromptType.Voice && _responseType == PromptResponseType.Voice)
-                    {
-                        SensusServiceHelper.Get().TextToSpeech(_message);
-                        response = await SensusServiceHelper.Get().RecognizeSpeechAsync(_message);
-                    }
-                    else if (_type == PromptType.Voice && _responseType == PromptResponseType.None)
-                        SensusServiceHelper.Get().TextToSpeech(_message);
+                    while (response == null && _requireNonEmptyResponse && --triesLeft > 0);
 
                     return new ScriptDatum(null, DateTimeOffset.UtcNow, response);
                 });
