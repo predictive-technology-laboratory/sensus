@@ -73,8 +73,6 @@ namespace Sensus.Android
                         _mainActivityWait.Reset();
                         _service.StartActivity(intent);
                         _mainActivityWait.WaitOne();
-
-                        Logger.Log("Main activity retrieved.", LoggingLevel.Normal);
                     }
 
                     return _mainActivity;
@@ -84,8 +82,10 @@ namespace Sensus.Android
             {
                 _mainActivity = value;
 
-                if (_mainActivity != null)
-                    _mainActivityWait.Set();
+                if (_mainActivity == null)
+                    Logger.Log("Main activity has been unset.", LoggingLevel.Normal);
+                else
+                    Logger.Log("Main activity has been set.", LoggingLevel.Normal);
             }
         }
 
