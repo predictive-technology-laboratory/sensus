@@ -60,7 +60,7 @@ namespace SensusService.Probes
                     {
                         PollingStarted();
 
-                        int msToSleep = _pollingSleepDurationMS;
+                        int msToSleep = 0;  // poll immediately the first time
 
                         while (Running)
                         {
