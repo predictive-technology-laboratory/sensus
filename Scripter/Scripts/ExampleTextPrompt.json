@@ -1,1 +1,1 @@
-{"$id":"1","Name":"Text Prompt","Prompts":[{"$id":"2","Type":1,"Message":"How are you?","ResponseType":2,"NextPrompt":null,"NextPromptValue":null}]}
+{"$id":"1","Name":"Text Prompt","Prompts":[{"$id":"2","Type":1,"Message":"How are you?","ResponseType":2,"NextPrompt":null,"NextPromptValue":null,"RequireNonEmptyResponse":false,"NumTries":0}]}

@@ -1,1 +1,1 @@
-{"$id":"1","Name":"Voice Output","Prompts":[{"$id":"2","Type":0,"Message":"Hi","ResponseType":0,"NextPrompt":null,"NextPromptValue":null}]}
+{"$id":"1","Name":"Voice Output","Prompts":[{"$id":"2","Type":0,"Message":"Hi","ResponseType":0,"NextPrompt":null,"NextPromptValue":null,"RequireNonEmptyResponse":false,"NumTries":0}]}

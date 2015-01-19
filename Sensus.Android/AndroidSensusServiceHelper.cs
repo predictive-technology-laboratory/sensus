@@ -22,6 +22,7 @@ using Android.OS;
 using Android.Provider;
 using Android.Speech;
 using Android.Support.V4.Content;
+using Android.Views;
 using Android.Widget;
 using SensusService;
 using System;
@@ -181,63 +182,74 @@ namespace Sensus.Android
             SetSensusMonitoringAlarm(-1);
         }
 
-        public override void TextToSpeech(string text)
+        public override void TextToSpeechAsync(string text, bool waitForCompletion)
         {
-            _textToSpeech.Speak(text);
+            _textToSpeech.SpeakAsync(text, waitForCompletion);
         }
 
-        public override Task<string> RecognizeSpeechAsync(string prompt)
+        public override Task<string> PromptForInputAsync(string prompt, bool startVoiceRecognizer)
         {
-            return Task.Run<string>(async () =>
+            return Task.Run<string>(() =>
                 {
-                    Intent intent = new Intent(MainActivity, typeof(AndroidSpeechRecognitionActivity));
-                    intent.PutExtra(RecognizerIntent.ExtraPrompt, prompt);
+                    string input = null;
+                    ManualResetEvent inputWait = new ManualResetEvent(false);
 
-                    Tuple<Result, Intent> result = await MainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.RecognizeSpeech);
-
-                    string response = null;
-
-                    if (result.Item1 == Result.Ok)
-                    {
-                        IList<string> matches = result.Item2.GetStringArrayListExtra(SpeechRecognizer.ResultsRecognition);
-                        if (matches != null && matches.Count > 0)
-                            response = matches[0];
-                    }
-
-                    return response;
-                });
-        }
-
-        public override string PromptForTextInput(string prompt)
-        {
-            string input = null;
-            ManualResetEvent inputWait = new ManualResetEvent(false);
-
-            MainActivity.RunOnUiThread(() =>
-                {
-                    EditText textBox = new EditText(MainActivity);
-                    AlertDialog dialog = new AlertDialog.Builder(MainActivity)
-                    .SetTitle(prompt)
-                    .SetView(textBox)
-                    .SetPositiveButton("OK", (o, e) =>
+                    MainActivity.RunOnUiThread(async () =>
                         {
-                            input = textBox.Text;
-                            inputWait.Set();
-                        })
-                    .SetOnDismissListener(new AndroidOnDismissListener(() =>
-                        {
-                            inputWait.Set();
-                        })).Create();
+                            EditText responseEdit = new EditText(MainActivity);
 
-                    dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.DismissKeyguard);
-                    dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.ShowWhenLocked);
-                    dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.TurnScreenOn);
-                    dialog.Show();
+                            AlertDialog dialog = new AlertDialog.Builder(MainActivity, global::Android.Resource.Style.ThemeTranslucentNoTitleBar)
+                                                 .SetTitle("Sensus is Requesting Input")
+                                                 .SetMessage(prompt)
+                                                 .SetView(responseEdit)
+                                                 .SetPositiveButton("OK", (o, e) =>
+                                                     {
+                                                         input = responseEdit.Text;
+                                                         inputWait.Set();
+                                                     })
+                                                 .SetNegativeButton("Cancel", (o, e) =>
+                                                     {
+                                                         input = null;
+                                                         inputWait.Set();
+                                                     })
+                                                 .Create();
+
+                            // dismiss the keyguard
+                            dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.DismissKeyguard);
+                            dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.ShowWhenLocked);
+                            dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.TurnScreenOn);
+
+                            // dim whatever is behind the dialog
+                            dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.DimBehind);
+                            dialog.Window.Attributes.DimAmount = 0.75f;
+
+                            dialog.Show();
+
+                            if (startVoiceRecognizer)
+                            {
+                                Intent intent = new Intent(RecognizerIntent.ActionRecognizeSpeech);
+                                intent.PutExtra(RecognizerIntent.ExtraLanguageModel, RecognizerIntent.LanguageModelFreeForm);
+                                intent.PutExtra(RecognizerIntent.ExtraSpeechInputCompleteSilenceLengthMillis, 1500);
+                                intent.PutExtra(RecognizerIntent.ExtraSpeechInputPossiblyCompleteSilenceLengthMillis, 1500);
+                                intent.PutExtra(RecognizerIntent.ExtraSpeechInputMinimumLengthMillis, 15000);
+                                intent.PutExtra(RecognizerIntent.ExtraMaxResults, 1);
+                                intent.PutExtra(RecognizerIntent.ExtraLanguage, Java.Util.Locale.Default);
+
+                                Tuple<Result, Intent> result = await MainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.RecognizeSpeech);
+
+                                if (result.Item1 == Result.Ok)
+                                {
+                                    IList<string> matches = result.Item2.GetStringArrayListExtra(RecognizerIntent.ExtraResults);
+                                    if (matches != null && matches.Count > 0)
+                                        responseEdit.Text = matches[0];
+                                }
+                            }
+                        });
+
+                    inputWait.WaitOne();
+
+                    return input;
                 });
-
-            inputWait.WaitOne();
-
-            return input;
         }
 
         public override void FlashNotification(string message)

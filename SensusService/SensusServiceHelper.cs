@@ -198,11 +198,9 @@ namespace SensusService
 
         protected abstract void StopSensusPings();
 
-        public abstract void TextToSpeech(string text);
+        public abstract void TextToSpeechAsync(string text, bool waitForCompletion);
 
-        public abstract Task<string> RecognizeSpeechAsync(string prompt);
-
-        public abstract string PromptForTextInput(string prompt);
+        public abstract Task<string> PromptForInputAsync(string prompt, bool startVoiceRecognizer);
 
         public abstract void FlashNotification(string message);
         #endregion

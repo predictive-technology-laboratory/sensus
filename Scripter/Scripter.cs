@@ -27,6 +27,10 @@ namespace Scripter
             text.Prompts.Add(new Prompt(PromptType.Text, "How are you?", PromptResponseType.Text));
             text.Save(@"..\..\Scripts\ExampleTextPrompt.json");
 
+            Script longVoice = new Script("Long Voice Prompt");
+            longVoice.Prompts.Add(new Prompt(PromptType.Voice, "This is a long voice prompt. It should take at least a little while to complete.", PromptResponseType.Voice, true, 3));
+            longVoice.Save(@"..\..\Scripts\ExampleLongVoicePrompt.json");
+
             Script voiceOutputOnly = new Script("Voice Output");
             voiceOutputOnly.Prompts.Add(new Prompt(PromptType.Voice, "Hi", PromptResponseType.None));
             voiceOutputOnly.Save(@"..\..\Scripts\ExampleVoiceOutput.json");
