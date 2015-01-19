@@ -22,10 +22,10 @@ namespace SensusService.Probes.Movement
 {
     public class SpeedDatum : ImpreciseDatum
     {
-        private float _kph;
+        private double _kph;
 
         [NumberProbeTriggerProperty]
-        public float KPH
+        public double KPH
         {
             get { return _kph; }
             set { _kph = value; }
@@ -37,7 +37,7 @@ namespace SensusService.Probes.Movement
             get { return Math.Round(_kph, 1) + " (+/- " + Math.Round(Accuracy, 1) + ")" + " KPH"; }
         }
 
-        public SpeedDatum(Probe probe, DateTimeOffset timestamp, float accuracy, float kph)
+        public SpeedDatum(Probe probe, DateTimeOffset timestamp, float accuracy, double kph)
             : base(probe, timestamp, accuracy)
         {
             _kph = kph;

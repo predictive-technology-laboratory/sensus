@@ -1,1 +1,1 @@
-{"$id":"1","Name":"Long Voice Prompt","Prompts":[{"$id":"2","Type":0,"Message":"This is a long voice prompt. It should take at least a little while to complete.","ResponseType":1,"NextPrompt":null,"NextPromptValue":null,"RequireNonEmptyResponse":true,"NumTries":3}]}
+{"$id":"1","Name":"Long Voice Prompt","Prompts":[{"$id":"2","OutputType":0,"OutputMessage":"This is a long voice prompt. It should take at least a little while to complete. (response required)","InputType":1,"RequireNonEmptyInput":true,"NumTries":3,"NextPrompt":null,"NextPromptValue":null}]}

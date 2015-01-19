@@ -24,26 +24,26 @@ namespace SensusService.Probes.Movement
 {
     public class AccelerometerDatum : Datum
     {
-        private float _x;
-        private float _y;
-        private float _z;
+        private double _x;
+        private double _y;
+        private double _z;
 
         [NumberProbeTriggerProperty]
-        public float X
+        public double X
         {
             get { return _x; }
             set { _x = value; }
         }
 
         [NumberProbeTriggerProperty]
-        public float Y
+        public double Y
         {
             get { return _y; }
             set { _y = value; }
         }
 
         [NumberProbeTriggerProperty]
-        public float Z
+        public double Z
         {
             get { return _z; }
             set { _z = value; }
@@ -55,7 +55,7 @@ namespace SensusService.Probes.Movement
             get { return Math.Round(_x, 2) + " (x), " + Math.Round(_y, 2) + " (y), " + Math.Round(_z, 2) + " (z)"; }
         }
 
-        public AccelerometerDatum(Probe probe, DateTimeOffset timestamp, float x, float y, float z)
+        public AccelerometerDatum(Probe probe, DateTimeOffset timestamp, double x, double y, double z)
             : base(probe, timestamp)
         {
             _x = x;

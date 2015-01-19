@@ -65,8 +65,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ProbeTriggerProperties\ProbeTriggerProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ProbeTriggerProperties\TextProbeTriggerProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Prompt.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\PromptResponseType.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\PromptType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\PromptInputType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\PromptOutputType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Script.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ListeningScriptProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ScriptDatum.cs" />

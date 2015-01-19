@@ -22,10 +22,10 @@ namespace SensusService.Probes.Context
 {
     public class LightDatum : Datum
     {
-        private float _brightness;
+        private double _brightness;
 
         [NumberProbeTriggerProperty]
-        public float Brightness
+        public double Brightness
         {
             get { return _brightness; }
             set { _brightness = value; }
@@ -37,7 +37,7 @@ namespace SensusService.Probes.Context
             get { return "Brightness:  " + _brightness; }
         }
 
-        public LightDatum(Probe probe, DateTimeOffset timestamp, float brightness)
+        public LightDatum(Probe probe, DateTimeOffset timestamp, double brightness)
             : base(probe, timestamp)
         {
             _brightness = brightness;

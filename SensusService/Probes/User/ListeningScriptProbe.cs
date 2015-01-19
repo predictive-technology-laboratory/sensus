@@ -29,7 +29,6 @@ namespace SensusService.Probes.User
         private Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>> _triggerHandler;
         private bool _listening;
         private Script _script;
-        private bool _scriptRunning;
 
         [ReadTextFileUiProperty("Script:", true, 3, "Load", "Select Script (.json)")]
         [JsonIgnore]
@@ -74,7 +73,6 @@ namespace SensusService.Probes.User
             _triggers = new ObservableCollection<Trigger>();
             _triggerHandler = new Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>>();
             _listening = false;
-            _scriptRunning = false;
 
             _triggers.CollectionChanged += (o, e) =>
                 {

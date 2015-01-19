@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
 using Android.Hardware;
 using SensusService.Probes.Location;
 using System;
@@ -41,19 +41,27 @@ namespace Sensus.Android.Probes.Location
             _magneticFieldValues = new float[3];
             _magnetometerListener = new AndroidSensorListener(SensorType.MagneticField, SensorDelay.Normal, null, e =>
                 {
-                    for (int i = 0; i < 3; i++)
-                        _magneticFieldValues[i] = e.Values[i];
+                    if (e.Values != null && e.Values.Count == 3)
+                        lock (this)
+                        {
+                            for (int i = 0; i < 3; i++)
+                                _magneticFieldValues[i] = e.Values[i];
 
-                    StoreHeading();
+                            StoreHeading();
+                        }
                 });
 
             _accelerometerValues = new float[3];
             _accelerometerListener = new AndroidSensorListener(SensorType.Accelerometer, SensorDelay.Normal, null, e =>
                 {
-                    for (int i = 0; i < 3; i++)
-                        _accelerometerValues[i] = e.Values[i];
+                    if (e.Values != null && e.Values.Count == 3)
+                        lock (this)
+                        {
+                            for (int i = 0; i < 3; i++)
+                                _accelerometerValues[i] = e.Values[i];
 
-                    StoreHeading();
+                            StoreHeading();
+                        }
                 });
         }
 
