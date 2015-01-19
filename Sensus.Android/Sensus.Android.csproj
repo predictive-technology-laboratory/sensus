@@ -172,7 +172,6 @@
     <AndroidResource Include="Resources\drawable-xhdpi\ic_launcher.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\ic_launcher.png" />
     <AndroidResource Include="Resources\drawable-xxxhdpi\ic_launcher.png" />
-    <AndroidResource Include="Resources\values\styles.xml" />
     <None Include="Resources\app-store\Sensus-feature-graphic.png" />
     <None Include="Resources\app-store\launcher_ic_hi_res_512.png" />
     <None Include="Resources\app-store\screenshot_main_page.png" />

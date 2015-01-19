@@ -40,7 +40,6 @@ namespace SensusService.Probes.User
 
         private string _name;
         private List<Prompt> _prompts;
-        private bool _running;
 
         public string Name
         {
@@ -54,13 +53,9 @@ namespace SensusService.Probes.User
             set { _prompts = value; }
         }
 
-        private Script()
-        {
-            _running = false;
-        }
+        private Script() { }  // for JSON deserialization
 
         public Script(string name, params Prompt[] prompts)
-            : this()
         {
             _name = name;
 
@@ -83,14 +78,6 @@ namespace SensusService.Probes.User
                 {
                     List<ScriptDatum> data = new List<ScriptDatum>();
 
-                    lock (this)
-                    {
-                        if (_running)
-                            return data;
-                        else
-                            _running = true;
-                    }
-
                     if (_prompts != null)
                         foreach (Prompt prompt in _prompts)
                         {
@@ -98,9 +85,6 @@ namespace SensusService.Probes.User
                             if (datum != null)
                                 data.Add(datum);
                         }
-
-                    lock (this)
-                        _running = false;
 
                     return data;
                 });

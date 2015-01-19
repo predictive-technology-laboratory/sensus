@@ -13,15 +13,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
 using Newtonsoft.Json;
 using SensusUI.UiProperties;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SensusService.Probes.User
 {
@@ -31,6 +29,7 @@ namespace SensusService.Probes.User
         private Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>> _triggerHandler;
         private bool _listening;
         private Script _script;
+        private bool _scriptRunning;
 
         [ReadTextFileUiProperty("Script:", true, 3, "Load", "Select Script (.json)")]
         [JsonIgnore]
@@ -75,6 +74,7 @@ namespace SensusService.Probes.User
             _triggers = new ObservableCollection<Trigger>();
             _triggerHandler = new Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>>();
             _listening = false;
+            _scriptRunning = false;
 
             _triggers.CollectionChanged += (o, e) =>
                 {
@@ -118,12 +118,14 @@ namespace SensusService.Probes.User
                                     }
 
                                     if (addedTrigger.FireFor(datumValue))
+                                    {
                                         foreach (ScriptDatum datum in await _script.RunAsync(prevDatum, currDatum))
                                             if (datum != null)
                                             {
                                                 datum.ProbeType = GetType().FullName;
                                                 StoreDatum(datum);
                                             }
+                                    }
                                 };
 
                             addedTrigger.Probe.MostRecentDatumChanged += handler;
