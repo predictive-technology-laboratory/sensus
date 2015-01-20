@@ -13,8 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
 using SensusService.Probes;
+using SensusUI.UiProperties;
 using System.Collections.Generic;
 
 namespace SensusService.DataStores.Local
@@ -24,8 +25,19 @@ namespace SensusService.DataStores.Local
     /// </summary>
     public abstract class LocalDataStore : DataStore
     {
+        private bool _uploadToRemoteDataStore;
+
+        [OnOffUiProperty("Upload to Remote:", true, 3)]
+        public bool UploadToRemoteDataStore
+        {
+            get { return _uploadToRemoteDataStore; }
+            set { _uploadToRemoteDataStore = value; }
+        }
+
         public LocalDataStore()
         {
+            _uploadToRemoteDataStore = true;
+
 #if DEBUG
             CommitDelayMS = 5000;  // 5 seconds...so we can see debugging output quickly
 #else

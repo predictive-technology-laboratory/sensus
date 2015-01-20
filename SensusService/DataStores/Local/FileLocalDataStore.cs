@@ -19,7 +19,6 @@ using SensusService.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
 
 namespace SensusService.DataStores.Local
 {

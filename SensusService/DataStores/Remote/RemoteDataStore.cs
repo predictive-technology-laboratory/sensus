@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
 using SensusUI.UiProperties;
 using System.Collections.Generic;
 
@@ -71,7 +71,9 @@ namespace SensusService.DataStores.Remote
         {
             ICollection<Datum> dataToCommit = new Datum[] { };
 
-            if (_requireWiFi && !SensusServiceHelper.Get().WiFiConnected)
+            if (!Protocol.LocalDataStore.UploadToRemoteDataStore)
+                SensusServiceHelper.Get().Logger.Log("Not committing data to remote data store.", LoggingLevel.Verbose);
+            else if (_requireWiFi && !SensusServiceHelper.Get().WiFiConnected)
                 SensusServiceHelper.Get().Logger.Log("Required WiFi but device WiFi is not connected.", LoggingLevel.Verbose);
             else if (_requireCharging && !SensusServiceHelper.Get().IsCharging)
                 SensusServiceHelper.Get().Logger.Log("Required charging but device is not charging.", LoggingLevel.Verbose);

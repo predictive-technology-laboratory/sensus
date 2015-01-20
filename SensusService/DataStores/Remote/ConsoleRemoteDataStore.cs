@@ -16,7 +16,6 @@
  
 using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace SensusService.DataStores.Remote
 {
