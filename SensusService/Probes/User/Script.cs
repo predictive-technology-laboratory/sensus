@@ -13,11 +13,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SensusService.Probes.User
@@ -39,12 +40,19 @@ namespace SensusService.Probes.User
         #endregion
 
         private string _name;
+        private int _delayMS;
         private List<Prompt> _prompts;
 
         public string Name
         {
             get { return _name; }
             set { _name = value; }
+        }
+
+        public int DelayMS
+        {
+            get { return _delayMS; }
+            set { _delayMS = value; }
         }
 
         public List<Prompt> Prompts
@@ -58,9 +66,16 @@ namespace SensusService.Probes.User
         public Script(string name, params Prompt[] prompts)
         {
             _name = name;
+            _delayMS = 0;
 
             if (prompts != null)
                 _prompts = prompts.ToList();
+        }
+
+        public Script(string name, int delayMS, params Prompt[] prompts)
+            : this(name, prompts)
+        {
+            _delayMS = delayMS;
         }
 
         public void Save(string path)
@@ -76,6 +91,9 @@ namespace SensusService.Probes.User
         {
             return Task.Run<List<ScriptDatum>>(async () =>
                 {
+                    if (_delayMS > 0)
+                        Thread.Sleep(_delayMS);
+
                     List<ScriptDatum> data = new List<ScriptDatum>();
 
                     if (_prompts != null)

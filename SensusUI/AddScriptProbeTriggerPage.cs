@@ -13,16 +13,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
 using SensusService.Probes;
-using Xamarin.Forms;
-using System.Linq;
 using SensusService.Probes.User;
-using SensusService;
-using System.Collections.Generic;
-using System;
-using System.Reflection;
 using SensusService.Probes.User.ProbeTriggerProperties;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using Xamarin.Forms;
 
 namespace SensusUI
 {
@@ -238,6 +237,7 @@ namespace SensusUI
                                 Children = { conditionValueStackLabel, conditionValueStackView }
                             });
 
+                            #region change calculation
                             _change = false;
 
                             if (allowChangeCalculation)
@@ -262,14 +262,16 @@ namespace SensusUI
                                     Children = { changeLabel, changeSwitch }
                                 });
                             }
+                            #endregion
+
+                            #region fire repeatedly
+                            _fireRepeatedly = false;
 
                             Label fireRepeatedlyLabel = new Label
                             {
                                 Text = "Fire Repeatedly:",
                                 Font = Font.SystemFontOfSize(20)
                             };
-
-                            _fireRepeatedly = false;
 
                             Switch fireRepeatedlySwitch = new Switch
                             {
@@ -284,6 +286,7 @@ namespace SensusUI
                                 HorizontalOptions = LayoutOptions.FillAndExpand,
                                 Children = { fireRepeatedlyLabel, fireRepeatedlySwitch }
                             });
+                            #endregion
                         };
 
                     datumPropertyPicker.SelectedIndex = 0;
@@ -299,6 +302,7 @@ namespace SensusUI
             };
 
             okButton.Clicked += AddTrigger;
+
             okButton.Clicked += (o, e) =>
                 {
                     if (OkTapped != null)
@@ -311,7 +315,7 @@ namespace SensusUI
         }
 
         private void AddTrigger(object sender, EventArgs args)
-        {
+        {            
             _scriptProbe.Triggers.Add(new Trigger(_selectedProbe, _selectedDatumProperty.Name, _selectedCondition, _conditionValue, _change, _fireRepeatedly));
         }
     }

@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
 using Newtonsoft.Json;
 using System;
 using System.Reflection;
@@ -29,6 +29,7 @@ namespace SensusService.Probes.User
         private string _datumPropertyName;
         private TriggerValueCondition _condition;
         private object _conditionValue;
+        private Type _conditionValueEnumType;
         private bool _change;
         private bool _fireRepeatedly;
         private bool _conditionSatisfiedLastTime;
@@ -60,7 +61,37 @@ namespace SensusService.Probes.User
         public object ConditionValue
         {
             get { return _conditionValue; }
-            set { _conditionValue = value; }
+            set
+            {
+                _conditionValue = value;
+
+                // convert to enumerated type if we have the string type name
+                if (_conditionValueEnumType != null)
+                    _conditionValue = Enum.ToObject(_conditionValueEnumType, _conditionValue);
+            }
+        }
+
+        /// <summary>
+        /// This is a workaround for an odd behavior of JSON.NET, which serializes enumerations as integers. We happen to be deserializing them as objects
+        /// into ConditionValue, which means they are stored as integers after deserialization. Integers are not comparable with the enumerated values 
+        /// that come off the probes, so we need to jump through some hoops during deserization (i.e., below and above). Below, gettings and setting the
+        /// value works off of the enumerated type that should be used for the ConditionValue above. When either the below or above are set, they check
+        /// for the existence of the other and convert the number returned by JSON.NET to its appropriate enumerated type.
+        /// </summary>
+        public string ConditionValueEnumType
+        {
+            get { return _conditionValue is Enum ? _conditionValue.GetType().FullName : null; }
+            set
+            {
+                if(value != null)
+                {
+                    _conditionValueEnumType = Assembly.GetExecutingAssembly().GetType(value);
+
+                    // convert to enumerated type if we have the integer value
+                    if (_conditionValue != null)
+                        _conditionValue = Enum.ToObject(_conditionValueEnumType, _conditionValue);
+                }
+            }
         }
 
         public bool Change
@@ -74,6 +105,8 @@ namespace SensusService.Probes.User
             get { return _fireRepeatedly; }
             set { _fireRepeatedly = value; }
         }
+
+        private Trigger() { }  // for JSON deserialization
 
         public Trigger(Probe probe, string datumPropertyName, TriggerValueCondition condition, object conditionValue, bool change, bool fireRepeatedly)
         {

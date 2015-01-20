@@ -34,6 +34,10 @@ namespace Scripter
             Script voiceOutputOnly = new Script("Voice Output");
             voiceOutputOnly.Prompts.Add(new Prompt(PromptOutputType.Voice, "Hi", PromptInputType.None));
             voiceOutputOnly.Save(@"..\..\Scripts\ExampleVoiceOutput.json");
+
+            Script voiceOutputDelayed = new Script("Voice Output Delayed", 5000);
+            voiceOutputDelayed.Prompts.Add(new Prompt(PromptOutputType.Voice, "Hi", PromptInputType.None));
+            voiceOutputDelayed.Save(@"..\..\Scripts\ExampleVoiceOutputDelayed.json");
         }
     }
 }
