@@ -22,7 +22,6 @@ using Android.OS;
 using Android.Provider;
 using Android.Speech;
 using Android.Support.V4.Content;
-using Android.Views;
 using Android.Widget;
 using SensusService;
 using System;
@@ -44,6 +43,7 @@ namespace Sensus.Android
         private readonly string _deviceId;
         private AndroidMainActivity _mainActivity;
         private ManualResetEvent _mainActivityWait;
+        private readonly object _getMainActivityLocker = new object();
         private AndroidTextToSpeech _textToSpeech;
 
         public AndroidSensusService Service
@@ -60,7 +60,7 @@ namespace Sensus.Android
         {
             get
             {
-                lock (this)
+                lock (_getMainActivityLocker)
                 {
                     if (_mainActivity == null)
                     {
@@ -85,7 +85,10 @@ namespace Sensus.Android
                 if (_mainActivity == null)
                     Logger.Log("Main activity has been unset.", LoggingLevel.Normal);
                 else
+                {
                     Logger.Log("Main activity has been set.", LoggingLevel.Normal);
+                    _mainActivityWait.Set();
+                }
             }
         }
 

@@ -16,9 +16,6 @@
  
 using SensusService;
 using SensusService.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 
 namespace SensusUI
