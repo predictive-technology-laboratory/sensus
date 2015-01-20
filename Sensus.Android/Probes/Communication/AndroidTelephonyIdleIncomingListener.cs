@@ -19,13 +19,16 @@ using System;
 
 namespace Sensus.Android.Probes.Communication
 {
-    public class AndroidTelephonyIncomingListener : PhoneStateListener
+    public class AndroidTelephonyIdleIncomingListener : PhoneStateListener
     {
+        public event EventHandler Idle;
         public event EventHandler<string> IncomingCall;
 
         public override void OnCallStateChanged(CallState state, string incomingNumber)
         {
-            if (IncomingCall != null && state == CallState.Ringing)
+            if (Idle != null && state == CallState.Idle)
+                Idle(this, null);
+            else if (IncomingCall != null && state == CallState.Ringing)
                 IncomingCall(this, incomingNumber);
         }
     }

@@ -128,7 +128,7 @@
     <Compile Include="AndroidMainActivity.cs" />
     <Compile Include="Probes\Context\AndroidBluetoothBroadcastReceiver.cs" />
     <Compile Include="Probes\Communication\AndroidTelephonyOutgoingBroadcastReceiver.cs" />
-    <Compile Include="Probes\Communication\AndroidTelephonyIncomingListener.cs" />
+    <Compile Include="Probes\Communication\AndroidTelephonyIdleIncomingListener.cs" />
     <Compile Include="Probes\Communication\AndroidSmsIncomingBroadcastReceiver.cs" />
     <Compile Include="Probes\Communication\AndroidSmsOutgoingObserver.cs" />
     <Compile Include="Probes\Apps\AndroidRunningAppsProbe.cs" />

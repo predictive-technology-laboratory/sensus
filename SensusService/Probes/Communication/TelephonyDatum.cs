@@ -27,7 +27,7 @@ namespace SensusService.Probes.Communication
         private TelephonyState _state;
         private string _phoneNumber;
 
-        [ListProbeTriggerProperty(new object[] { TelephonyState.IncomingCall, TelephonyState.OutgoingCall })]
+        [ListProbeTriggerProperty(new object[] { TelephonyState.Idle, TelephonyState.IncomingCall, TelephonyState.OutgoingCall })]
         public TelephonyState State
         {
             get { return _state; }

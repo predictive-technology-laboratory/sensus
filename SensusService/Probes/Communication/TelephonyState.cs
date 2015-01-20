@@ -18,6 +18,7 @@ namespace SensusService.Probes.Communication
 {
     public enum TelephonyState
     {
+        Idle,
         OutgoingCall,
         IncomingCall
     }
