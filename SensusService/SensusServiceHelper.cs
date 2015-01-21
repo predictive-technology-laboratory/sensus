@@ -106,7 +106,7 @@ namespace SensusService
         private List<Protocol> _registeredProtocols;
         private int _pingDelayMS;
         private int _pingCount;
-        private int _pingsPerProtocolReportUpload;
+        private int _pingsPerProtocolReport;
 
         public Logger Logger
         {
@@ -140,15 +140,15 @@ namespace SensusService
             }
         }
 
-        [EntryIntegerUiProperty("Pings Per Report Upload:", true, 10)]
-        public int PingsPerProtocolReportUpload
+        [EntryIntegerUiProperty("Pings Per Report:", true, 10)]
+        public int PingsPerProtocolReport
         {
-            get { return _pingsPerProtocolReportUpload; }
+            get { return _pingsPerProtocolReport; }
             set
             {
-                if (value != _pingsPerProtocolReportUpload)
+                if (value != _pingsPerProtocolReport)
                 {
-                    _pingsPerProtocolReportUpload = value;
+                    _pingsPerProtocolReport = value;
                     OnPropertyChanged();
                 }
             }
@@ -161,7 +161,7 @@ namespace SensusService
             _stopped = true;
             _pingDelayMS = 1000 * 60;
             _pingCount = 0;
-            _pingsPerProtocolReportUpload = 5;
+            _pingsPerProtocolReport = 5;
 
             if (!Directory.Exists(_shareDirectory))
                 Directory.CreateDirectory(_shareDirectory);
@@ -424,8 +424,8 @@ namespace SensusService
                     {
                         protocol.Ping();
 
-                        if (_pingCount % _pingsPerProtocolReportUpload == 0)
-                            protocol.UploadMostRecentProtocolReport();
+                        if (_pingCount % _pingsPerProtocolReport == 0)
+                            protocol.StoreMostRecentProtocolReport();
                     }
             }
         }

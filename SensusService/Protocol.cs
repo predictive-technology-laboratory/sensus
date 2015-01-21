@@ -101,6 +101,7 @@ namespace SensusService
         private RemoteDataStore _remoteDataStore;
         private string _storageDirectory;
         private ProtocolReport _mostRecentReport;
+        private bool _alwaysUploadProtocolReportsToRemoteDataStore;
 
         public string Id
         {
@@ -204,7 +205,27 @@ namespace SensusService
             set { _mostRecentReport = value; }
         }
 
-        private Protocol() { }  // for JSON deserialization
+        [OnOffUiProperty("Always Upload Reports:", true, 20)]
+        public bool AlwaysUploadProtocolReportsToRemoteDataStore
+        {
+            get { return _alwaysUploadProtocolReportsToRemoteDataStore; }
+            set
+            {
+                if (value != _alwaysUploadProtocolReportsToRemoteDataStore)
+                {
+                    _alwaysUploadProtocolReportsToRemoteDataStore = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        /// <summary>
+        /// For JSON deserialization
+        /// </summary>
+        private Protocol()
+        {
+            _alwaysUploadProtocolReportsToRemoteDataStore = false;
+        }
 
         /// <summary>
         /// Constructor
@@ -328,13 +349,19 @@ namespace SensusService
             }
         }
 
-        public void UploadMostRecentProtocolReport()
+        public void StoreMostRecentProtocolReport()
         {
             lock (this)
                 if (_mostRecentReport != null)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Uploading protocol report.", LoggingLevel.Normal);
+                    SensusServiceHelper.Get().Logger.Log("Storing protocol report locally.", LoggingLevel.Normal);
                     _localDataStore.AddNonProbeDatum(_mostRecentReport);
+
+                    if (!_localDataStore.UploadToRemoteDataStore && _alwaysUploadProtocolReportsToRemoteDataStore)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Local data aren't pushed to remote, but we're sending the protocol report there.", LoggingLevel.Normal);
+                        _remoteDataStore.AddNonProbeDatum(_mostRecentReport);
+                    }
                 }
         }
 
