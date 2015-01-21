@@ -17,6 +17,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace SensusService.Probes.User
 {
@@ -33,6 +34,7 @@ namespace SensusService.Probes.User
         private bool _change;
         private bool _fireRepeatedly;
         private bool _conditionSatisfiedLastTime;
+        private Regex _regularExpression;
 
         public Probe Probe
         {
@@ -106,9 +108,23 @@ namespace SensusService.Probes.User
             set { _fireRepeatedly = value; }
         }
 
-        private Trigger() { }  // for JSON deserialization
+        public string RegularExpressionText
+        {
+            get { return _regularExpression.ToString(); }
+            set
+            {
+                if (value != null)
+                    _regularExpression = new Regex(value);
+            }
+        }
 
-        public Trigger(Probe probe, string datumPropertyName, TriggerValueCondition condition, object conditionValue, bool change, bool fireRepeatedly)
+        private Trigger()
+        {
+            _conditionSatisfiedLastTime = false;
+        }
+
+        public Trigger(Probe probe, string datumPropertyName, TriggerValueCondition condition, object conditionValue, bool change, bool fireRepeatedly, bool useRegularExpressions)
+            : this()
         {
             _probe = probe;
             _datumPropertyName = datumPropertyName;
@@ -116,28 +132,42 @@ namespace SensusService.Probes.User
             _conditionValue = conditionValue;
             _change = change;
             _fireRepeatedly = fireRepeatedly;
-            _conditionSatisfiedLastTime = false;
+
+            if (useRegularExpressions)
+                _regularExpression = new Regex(_conditionValue.ToString());
         }
 
         public bool FireFor(object value)
         {
             lock (this)
             {
-                bool conditionSatisfied = false;
-
                 int compareTo;
-                try { compareTo = ((IComparable)value).CompareTo(_conditionValue); }
-                catch (Exception ex)
+
+                if (_regularExpression == null)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Trigger failed to compare values:  " + ex.Message, LoggingLevel.Normal);
-                    return false;
+                    try { compareTo = ((IComparable)value).CompareTo(_conditionValue); }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Trigger failed to compare values:  " + ex.Message, LoggingLevel.Normal);
+                        return false;
+                    }
+                }
+                else
+                {
+                    try { compareTo = _regularExpression.Match(value.ToString()).Success ? 0 : -1; }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Trigger failed to compare values:  " + ex.Message, LoggingLevel.Normal);
+                        return false;
+                    }
+
                 }
 
-                conditionSatisfied = _condition == TriggerValueCondition.Equal && compareTo == 0 ||
-                                     _condition == TriggerValueCondition.GreaterThan && compareTo > 0 ||
-                                     _condition == TriggerValueCondition.GreaterThanOrEqual && compareTo >= 0 ||
-                                     _condition == TriggerValueCondition.LessThan && compareTo < 0 ||
-                                     _condition == TriggerValueCondition.LessThanOrEqual && compareTo <= 0;
+                bool conditionSatisfied = _condition == TriggerValueCondition.Equal && compareTo == 0 ||
+                                          _condition == TriggerValueCondition.GreaterThan && compareTo > 0 ||
+                                          _condition == TriggerValueCondition.GreaterThanOrEqual && compareTo >= 0 ||
+                                          _condition == TriggerValueCondition.LessThan && compareTo < 0 ||
+                                          _condition == TriggerValueCondition.LessThanOrEqual && compareTo <= 0;
 
                 bool fire = false;
 

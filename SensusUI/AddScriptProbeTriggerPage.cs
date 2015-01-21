@@ -36,6 +36,7 @@ namespace SensusUI
         private object _conditionValue;
         private bool _change;
         private bool _fireRepeatedly;
+        private bool _useRegularExpression;
 
         public AddScriptProbeTriggerPage(IScriptProbe scriptProbe)
         {
@@ -167,6 +168,7 @@ namespace SensusUI
 
                             View conditionValueStackView = null;
                             bool allowChangeCalculation = false;
+                            bool allowRegularExpression = false;
 
                             if (datumTriggerAttribute is ListProbeTriggerProperty)
                             {
@@ -214,6 +216,7 @@ namespace SensusUI
                                 entry.TextChanged += (ooo, eee) => _conditionValue = eee.NewTextValue;
 
                                 conditionValueStackView = entry;
+                                allowRegularExpression = true;
                             }
                             else if (datumTriggerAttribute is BooleanProbeTriggerProperty)
                             {
@@ -260,6 +263,33 @@ namespace SensusUI
                                     Orientation = StackOrientation.Horizontal,
                                     HorizontalOptions = LayoutOptions.FillAndExpand,
                                     Children = { changeLabel, changeSwitch }
+                                });
+                            }
+                            #endregion
+
+                            #region regular expression
+                            _useRegularExpression = false;
+
+                            if(allowRegularExpression)
+                            {
+                                Label regexLabel = new Label
+                                {
+                                    Text = "Regular Expression:",
+                                    Font = Font.SystemFontOfSize(20)
+                                };
+
+                                Switch regexSwitch = new Switch
+                                {
+                                    IsToggled = _useRegularExpression
+                                };
+
+                                regexSwitch.Toggled += (ooo, eee) => { _useRegularExpression = eee.Value; };
+
+                                conditionValueStack.Children.Add(new StackLayout
+                                {
+                                    Orientation = StackOrientation.Horizontal,
+                                    HorizontalOptions = LayoutOptions.FillAndExpand,
+                                    Children = { regexLabel, regexSwitch }
                                 });
                             }
                             #endregion
@@ -316,7 +346,7 @@ namespace SensusUI
 
         private void AddTrigger(object sender, EventArgs args)
         {            
-            _scriptProbe.Triggers.Add(new Trigger(_selectedProbe, _selectedDatumProperty.Name, _selectedCondition, _conditionValue, _change, _fireRepeatedly));
+            _scriptProbe.Triggers.Add(new Trigger(_selectedProbe, _selectedDatumProperty.Name, _selectedCondition, _conditionValue, _change, _fireRepeatedly, _useRegularExpression));
         }
     }
 }
