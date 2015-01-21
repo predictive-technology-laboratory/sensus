@@ -331,10 +331,10 @@ namespace SensusUI
                 Font = Font.SystemFontOfSize(20)
             };
 
-            okButton.Clicked += AddTrigger;
-
             okButton.Clicked += (o, e) =>
                 {
+                    _scriptProbe.Triggers.Add(new Trigger(_selectedProbe, _selectedDatumProperty.Name, _selectedCondition, _conditionValue, _change, _fireRepeatedly, _useRegularExpression));
+
                     if (OkTapped != null)
                         OkTapped(o, e);
                 };
@@ -342,11 +342,6 @@ namespace SensusUI
             contentLayout.Children.Add(okButton);
 
             Content = contentLayout;
-        }
-
-        private void AddTrigger(object sender, EventArgs args)
-        {            
-            _scriptProbe.Triggers.Add(new Trigger(_selectedProbe, _selectedDatumProperty.Name, _selectedCondition, _conditionValue, _change, _fireRepeatedly, _useRegularExpression));
         }
     }
 }
