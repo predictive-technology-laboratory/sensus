@@ -151,7 +151,7 @@ namespace SensusService.DataStores
                             {
                                 SensusServiceHelper.Get().Logger.Log(_name + " is committing data.", LoggingLevel.Verbose);
 
-                                ICollection<Datum> dataToCommit = null;
+                                List<Datum> dataToCommit = null;
                                 try
                                 {
                                     dataToCommit = GetDataToCommit();
@@ -167,7 +167,7 @@ namespace SensusService.DataStores
                                         foreach (Datum datum in _nonProbeDataToCommit)
                                             dataToCommit.Add(datum);
 
-                                    ICollection<Datum> committedData = null;
+                                    List<Datum> committedData = null;
                                     try
                                     {
                                         committedData = CommitData(dataToCommit);
@@ -201,11 +201,11 @@ namespace SensusService.DataStores
             }
         }
 
-        protected abstract ICollection<Datum> GetDataToCommit();
+        protected abstract List<Datum> GetDataToCommit();
 
-        protected abstract ICollection<Datum> CommitData(ICollection<Datum> data);
+        protected abstract List<Datum> CommitData(List<Datum> data);
 
-        protected abstract void ProcessCommittedData(ICollection<Datum> committedData);
+        protected abstract void ProcessCommittedData(List<Datum> committedData);
 
         public virtual void Clear() { }
 

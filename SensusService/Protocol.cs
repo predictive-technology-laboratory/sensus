@@ -136,10 +136,13 @@ namespace SensusService
             get { return _running; }
             set
             {
-                if (value)
-                    SensusServiceHelper.Get().StartProtocolAsync(this);
-                else
-                    SensusServiceHelper.Get().StopProtocolAsync(this, false);  // don't unregister the protocol when stopped via UI interaction
+                if (value != _running)
+                {
+                    if (value)
+                        SensusServiceHelper.Get().StartProtocolAsync(this);
+                    else
+                        SensusServiceHelper.Get().StopProtocolAsync(this, false);  // don't unregister the protocol when stopped via UI interaction
+                }
             }
         }
 
@@ -205,7 +208,7 @@ namespace SensusService
             set { _mostRecentReport = value; }
         }
 
-        [OnOffUiProperty("Always Upload Reports:", true, 20)]
+        [OnOffUiProperty("Force Reports to Remote:", true, 20)]
         public bool AlwaysUploadProtocolReportsToRemoteDataStore
         {
             get { return _alwaysUploadProtocolReportsToRemoteDataStore; }
@@ -359,7 +362,7 @@ namespace SensusService
 
                     if (!_localDataStore.UploadToRemoteDataStore && _alwaysUploadProtocolReportsToRemoteDataStore)
                     {
-                        SensusServiceHelper.Get().Logger.Log("Local data aren't pushed to remote, but we're sending the protocol report there.", LoggingLevel.Normal);
+                        SensusServiceHelper.Get().Logger.Log("Local data aren't pushed to remote, so we're sending the protocol report there.", LoggingLevel.Normal);
                         _remoteDataStore.AddNonProbeDatum(_mostRecentReport);
                     }
                 }

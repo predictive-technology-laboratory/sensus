@@ -67,12 +67,12 @@ namespace SensusService.DataStores.Remote
 #endif
         }
 
-        protected sealed override ICollection<Datum> GetDataToCommit()
+        protected sealed override List<Datum> GetDataToCommit()
         {
-            ICollection<Datum> dataToCommit = new Datum[] { };
+            List<Datum> dataToCommit = new List<Datum>();
 
             if (!Protocol.LocalDataStore.UploadToRemoteDataStore)
-                SensusServiceHelper.Get().Logger.Log("Not committing data to remote data store.", LoggingLevel.Verbose);
+                SensusServiceHelper.Get().Logger.Log("Not committing local data to remote data store.", LoggingLevel.Verbose);
             else if (_requireWiFi && !SensusServiceHelper.Get().WiFiConnected)
                 SensusServiceHelper.Get().Logger.Log("Required WiFi but device WiFi is not connected.", LoggingLevel.Verbose);
             else if (_requireCharging && !SensusServiceHelper.Get().IsCharging)
@@ -86,7 +86,7 @@ namespace SensusService.DataStores.Remote
             return dataToCommit;
         }
 
-        protected sealed override void ProcessCommittedData(ICollection<Datum> committedData)
+        protected sealed override void ProcessCommittedData(List<Datum> committedData)
         {
             Protocol.LocalDataStore.ClearDataCommittedToRemoteDataStore(committedData);
         }

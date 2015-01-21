@@ -179,7 +179,7 @@ namespace SensusUI
             Content = new StackLayout
             {
                 VerticalOptions = LayoutOptions.FillAndExpand,
-                Orientation = StackOrientation.Vertical,
+                Orientation = StackOrientation.Vertical
             };
 
             foreach (View view in views)

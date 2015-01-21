@@ -45,7 +45,7 @@ namespace SensusService.DataStores.Local
 #endif
         }
 
-        protected sealed override ICollection<Datum> GetDataToCommit()
+        protected sealed override List<Datum> GetDataToCommit()
         {
             List<Datum> dataToCommit = new List<Datum>();
             foreach (Probe probe in Protocol.Probes)
@@ -63,7 +63,7 @@ namespace SensusService.DataStores.Local
             return dataToCommit;
         }
 
-        protected sealed override void ProcessCommittedData(ICollection<Datum> committedData)
+        protected sealed override void ProcessCommittedData(List<Datum> committedData)
         {
             SensusServiceHelper.Get().Logger.Log("Clearing " + committedData.Count + " committed data elements from probes.", LoggingLevel.Verbose);
 
@@ -71,8 +71,8 @@ namespace SensusService.DataStores.Local
                 probe.ClearDataCommittedToLocalDataStore(committedData);
         }
 
-        public abstract ICollection<Datum> GetDataForRemoteDataStore();
+        public abstract List<Datum> GetDataForRemoteDataStore();
 
-        public abstract void ClearDataCommittedToRemoteDataStore(ICollection<Datum> dataCommittedToRemote);
+        public abstract void ClearDataCommittedToRemoteDataStore(List<Datum> dataCommittedToRemote);
     }
 }

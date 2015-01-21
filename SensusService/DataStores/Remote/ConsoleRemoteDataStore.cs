@@ -32,7 +32,7 @@ namespace SensusService.DataStores.Remote
             get { return false; }
         }
 
-        protected override ICollection<Datum> CommitData(ICollection<Datum> data)
+        protected override List<Datum> CommitData(List<Datum> data)
         {
             List<Datum> committedData = new List<Datum>();
             foreach (Datum datum in data)

@@ -124,7 +124,7 @@ namespace SensusService.DataStores.Remote
             }
         }
 
-        protected override ICollection<Datum> CommitData(ICollection<Datum> data)
+        protected override List<Datum> CommitData(List<Datum> data)
         {
             List<Datum> committedData = new List<Datum>();
 
