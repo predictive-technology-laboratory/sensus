@@ -85,7 +85,7 @@ namespace SensusService.Probes.User
             get { return _conditionValue is Enum ? _conditionValue.GetType().FullName : null; }
             set
             {
-                if(value != null)
+                if (value != null)
                 {
                     _conditionValueEnumType = Assembly.GetExecutingAssembly().GetType(value);
 
@@ -110,7 +110,7 @@ namespace SensusService.Probes.User
 
         public string RegularExpressionText
         {
-            get { return _regularExpression.ToString(); }
+            get { return _regularExpression == null ? null : _regularExpression.ToString(); }
             set
             {
                 if (value != null)
@@ -141,33 +141,33 @@ namespace SensusService.Probes.User
         {
             lock (this)
             {
-                int compareTo;
+                bool conditionSatisfied;
 
                 if (_regularExpression == null)
                 {
+                    int compareTo;
                     try { compareTo = ((IComparable)value).CompareTo(_conditionValue); }
                     catch (Exception ex)
                     {
                         SensusServiceHelper.Get().Logger.Log("Trigger failed to compare values:  " + ex.Message, LoggingLevel.Normal);
                         return false;
                     }
+
+                    conditionSatisfied = _condition == TriggerValueCondition.Equal && compareTo == 0 ||
+                                         _condition == TriggerValueCondition.GreaterThan && compareTo > 0 ||
+                                         _condition == TriggerValueCondition.GreaterThanOrEqual && compareTo >= 0 ||
+                                         _condition == TriggerValueCondition.LessThan && compareTo < 0 ||
+                                         _condition == TriggerValueCondition.LessThanOrEqual && compareTo <= 0;
                 }
                 else
                 {
-                    try { compareTo = _regularExpression.Match(value.ToString()).Success ? 0 : -1; }
+                    try { conditionSatisfied = _regularExpression.Match(value.ToString()).Success; }
                     catch (Exception ex)
                     {
-                        SensusServiceHelper.Get().Logger.Log("Trigger failed to compare values:  " + ex.Message, LoggingLevel.Normal);
+                        SensusServiceHelper.Get().Logger.Log("Trigger failed to run Regex.Match:  " + ex.Message, LoggingLevel.Normal);
                         return false;
                     }
-
                 }
-
-                bool conditionSatisfied = _condition == TriggerValueCondition.Equal && compareTo == 0 ||
-                                          _condition == TriggerValueCondition.GreaterThan && compareTo > 0 ||
-                                          _condition == TriggerValueCondition.GreaterThanOrEqual && compareTo >= 0 ||
-                                          _condition == TriggerValueCondition.LessThan && compareTo < 0 ||
-                                          _condition == TriggerValueCondition.LessThanOrEqual && compareTo <= 0;
 
                 bool fire = false;
 

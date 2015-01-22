@@ -22,6 +22,7 @@ using SensusService;
 using SensusService.Exceptions;
 using SensusUI;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -43,6 +44,16 @@ namespace Sensus.Android
         private AndroidActivityResultRequestCode _activityResultRequestCode;
         private Tuple<Result, Intent> _activityResult;
 
+        public bool IsForegrounded
+        {
+            get
+            {
+                ActivityManager activityManager = GetSystemService(Context.ActivityService) as ActivityManager;
+                IList<ActivityManager.RunningTaskInfo> runningTasksInfo = activityManager.GetRunningTasks(1);
+                return runningTasksInfo.Count > 0 && runningTasksInfo[0].TopActivity != null && runningTasksInfo[0].TopActivity.PackageName == PackageName;
+            }
+        }
+
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
@@ -60,11 +71,11 @@ namespace Sensus.Android
             StartService(serviceIntent);
 
             // bind UI to the service
-            _serviceConnection = new AndroidSensusServiceConnection(null);
+            _serviceConnection = new AndroidSensusServiceConnection();
             _serviceConnection.ServiceConnected += async (o, e) =>
                 {
                     // before binding, add reference to main activity within the service helper
-                    e.Binder.SensusServiceHelper.MainActivity = this;
+                    e.Binder.SensusServiceHelper.SetMainActivity(this);
 
                     // get reference to service helper for use within the UI
                     UiBoundSensusServiceHelper.Set(e.Binder.SensusServiceHelper);
@@ -115,6 +126,11 @@ namespace Sensus.Android
                         }
                     }
                     #endregion
+                };
+
+            _serviceConnection.ServiceDisconnected += (o, e) =>
+                {
+                    e.Binder.SensusServiceHelper.SetMainActivity(null);
                 };
 
             BindService(serviceIntent, _serviceConnection, Bind.AutoCreate);

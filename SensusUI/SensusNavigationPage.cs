@@ -77,7 +77,7 @@ namespace SensusUI
             #endregion
 
             #region add script probe trigger
-            AddScriptProbeTriggerPage.OkTapped += async (o, e) =>
+            AddScriptProbeTriggerPage.TriggerAdded += async (o, e) =>
                 {
                     await PopAsync();
                 };

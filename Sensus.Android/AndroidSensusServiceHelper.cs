@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
@@ -56,42 +56,6 @@ namespace Sensus.Android
             get { return _deviceId; }
         }
 
-        public AndroidMainActivity MainActivity
-        {
-            get
-            {
-                lock (_getMainActivityLocker)
-                {
-                    if (_mainActivity == null)
-                    {
-                        Logger.Log("Main activity is not present. Starting it.", LoggingLevel.Normal);
-
-                        // start the activity and wait for it to bind itself to the service
-                        Intent intent = new Intent(_service, typeof(AndroidMainActivity));
-                        intent.AddFlags(ActivityFlags.NewTask);
-
-                        _mainActivityWait.Reset();
-                        _service.StartActivity(intent);
-                        _mainActivityWait.WaitOne();
-                    }
-
-                    return _mainActivity;
-                }
-            }
-            set
-            {
-                _mainActivity = value;
-
-                if (_mainActivity == null)
-                    Logger.Log("Main activity has been unset.", LoggingLevel.Normal);
-                else
-                {
-                    Logger.Log("Main activity has been set.", LoggingLevel.Normal);
-                    _mainActivityWait.Set();
-                }
-            }
-        }
-
         public override bool WiFiConnected
         {
             get { return _connectivityManager.GetNetworkInfo(ConnectivityType.Wifi).IsConnected; }
@@ -122,6 +86,40 @@ namespace Sensus.Android
             _mainActivityWait = new ManualResetEvent(false);
         }
 
+        public AndroidMainActivity GetMainActivity(bool foreground)
+        {
+            lock (_getMainActivityLocker)
+            {
+                if (_mainActivity == null || (foreground && !_mainActivity.IsForegrounded))
+                {
+                    Logger.Log("Main activity is not started or is not in the foreground. Starting it.", LoggingLevel.Normal);
+
+                    // start the activity and wait for it to bind itself to the service
+                    Intent intent = new Intent(_service, typeof(AndroidMainActivity));
+                    intent.AddFlags(ActivityFlags.NewTask);
+
+                    _mainActivityWait.Reset();
+                    _service.StartActivity(intent);
+                    _mainActivityWait.WaitOne();
+                }
+
+                return _mainActivity;
+            }
+        }
+
+        public void SetMainActivity(AndroidMainActivity value)
+        {
+            _mainActivity = value;
+
+            if (_mainActivity == null)
+                Logger.Log("Main activity has been unset.", LoggingLevel.Normal);
+            else
+            {
+                Logger.Log("Main activity has been set.", LoggingLevel.Normal);
+                _mainActivityWait.Set();
+            }
+        }
+
         protected override void InitializeXamarinInsights()
         {
             Insights.Initialize(XAMARIN_INSIGHTS_APP_KEY, Application.Context);  // can't reference _service here since this method is called from the base class constructor.
@@ -137,7 +135,7 @@ namespace Sensus.Android
                         intent.SetType("*/*");
                         intent.AddCategory(Intent.CategoryOpenable);
 
-                        Tuple<Result, Intent> result = await MainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.PromptForFile);
+                        Tuple<Result, Intent> result = await GetMainActivity(true).GetActivityResultAsync(intent, AndroidActivityResultRequestCode.PromptForFile);
 
                         if (result.Item1 == Result.Ok)
                             try
@@ -170,7 +168,7 @@ namespace Sensus.Android
                 intent.PutExtra(Intent.ExtraStream, uri);
 
                 // run from main activity to get a smoother transition back to sensus
-                MainActivity.StartActivity(intent);
+                GetMainActivity(true).StartActivity(intent);
             }
             catch (Exception ex) { Logger.Log("Failed to start intent to share file \"" + path + "\":  " + ex.Message, LoggingLevel.Normal); }
         }
@@ -197,11 +195,13 @@ namespace Sensus.Android
                     string input = null;
                     ManualResetEvent inputWait = new ManualResetEvent(false);
 
-                    MainActivity.RunOnUiThread(async () =>
-                        {
-                            EditText responseEdit = new EditText(MainActivity);
+                    AndroidMainActivity mainActivity = GetMainActivity(true);
 
-                            AlertDialog dialog = new AlertDialog.Builder(MainActivity, global::Android.Resource.Style.ThemeTranslucentNoTitleBar)
+                    mainActivity.RunOnUiThread(async () =>
+                        {
+                            EditText responseEdit = new EditText(mainActivity);
+
+                            AlertDialog dialog = new AlertDialog.Builder(mainActivity, global::Android.Resource.Style.ThemeTranslucentNoTitleBar)
                                                  .SetTitle("Sensus is Requesting Input")
                                                  .SetMessage(prompt)
                                                  .SetView(responseEdit)
@@ -238,7 +238,7 @@ namespace Sensus.Android
                                 intent.PutExtra(RecognizerIntent.ExtraMaxResults, 1);
                                 intent.PutExtra(RecognizerIntent.ExtraLanguage, Java.Util.Locale.Default);
 
-                                Tuple<Result, Intent> result = await MainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.RecognizeSpeech);
+                                Tuple<Result, Intent> result = await mainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.RecognizeSpeech);
 
                                 if (result.Item1 == Result.Ok)
                                 {
@@ -257,7 +257,9 @@ namespace Sensus.Android
 
         public override void FlashNotification(string message)
         {
-            MainActivity.RunOnUiThread(() => Toast.MakeText(MainActivity, message, ToastLength.Long).Show());
+            AndroidMainActivity mainActivity = GetMainActivity(false);
+
+            mainActivity.RunOnUiThread(() => Toast.MakeText(mainActivity, message, ToastLength.Long).Show());
         }
 
         private void SetSensusMonitoringAlarm(int ms)

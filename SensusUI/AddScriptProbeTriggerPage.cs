@@ -14,6 +14,7 @@
 // limitations under the License.
 #endregion
 
+using SensusService;
 using SensusService.Probes;
 using SensusService.Probes.User;
 using SensusService.Probes.User.ProbeTriggerProperties;
@@ -27,7 +28,7 @@ namespace SensusUI
 {
     public class AddScriptProbeTriggerPage : ContentPage
     {
-        public static event EventHandler OkTapped;
+        public static event EventHandler TriggerAdded;
 
         private IScriptProbe _scriptProbe;
         private Probe _selectedProbe;
@@ -333,10 +334,19 @@ namespace SensusUI
 
             okButton.Clicked += (o, e) =>
                 {
-                    _scriptProbe.Triggers.Add(new Trigger(_selectedProbe, _selectedDatumProperty.Name, _selectedCondition, _conditionValue, _change, _fireRepeatedly, _useRegularExpression));
+                    try
+                    {
+                        _scriptProbe.Triggers.Add(new Trigger(_selectedProbe, _selectedDatumProperty.Name, _selectedCondition, _conditionValue, _change, _fireRepeatedly, _useRegularExpression));
 
-                    if (OkTapped != null)
-                        OkTapped(o, e);
+                        if (TriggerAdded != null)
+                            TriggerAdded(o, e);
+                    }
+                    catch (Exception ex)
+                    {
+                        string message = "Failed to add trigger:  " + ex.Message;
+                        UiBoundSensusServiceHelper.Get().FlashNotification(message);
+                        UiBoundSensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal);
+                    }
                 };
 
             contentLayout.Children.Add(okButton);
