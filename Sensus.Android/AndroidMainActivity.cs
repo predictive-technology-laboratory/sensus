@@ -136,17 +136,18 @@ namespace Sensus.Android
             BindService(serviceIntent, _serviceConnection, Bind.AutoCreate);
         }
 
-        public Task<Tuple<Result, Intent>> GetActivityResultAsync(Intent intent, AndroidActivityResultRequestCode requestCode)
+        public Task<Tuple<Result, Intent>> GetActivityResultAsync(Intent intent, AndroidActivityResultRequestCode requestCode, int timeoutMS)
         {
             return Task.Run<Tuple<Result, Intent>>(() =>
                 {
                     lock (this)
                     {
                         _activityResultRequestCode = requestCode;
+                        _activityResult = null;
 
                         _activityResultWait.Reset();
                         StartActivityForResult(intent, (int)requestCode);
-                        _activityResultWait.WaitOne();
+                        _activityResultWait.WaitOne(timeoutMS);
 
                         return _activityResult;
                     }

@@ -135,9 +135,9 @@ namespace Sensus.Android
                         intent.SetType("*/*");
                         intent.AddCategory(Intent.CategoryOpenable);
 
-                        Tuple<Result, Intent> result = await GetMainActivity(true).GetActivityResultAsync(intent, AndroidActivityResultRequestCode.PromptForFile);
+                        Tuple<Result, Intent> result = await GetMainActivity(true).GetActivityResultAsync(intent, AndroidActivityResultRequestCode.PromptForFile, 60000 * 5);
 
-                        if (result.Item1 == Result.Ok)
+                        if (result != null && result.Item1 == Result.Ok)
                             try
                             {
                                 using (StreamReader file = new StreamReader(_service.ContentResolver.OpenInputStream(result.Item2.Data)))
@@ -238,9 +238,9 @@ namespace Sensus.Android
                                 intent.PutExtra(RecognizerIntent.ExtraMaxResults, 1);
                                 intent.PutExtra(RecognizerIntent.ExtraLanguage, Java.Util.Locale.Default);
 
-                                Tuple<Result, Intent> result = await mainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.RecognizeSpeech);
+                                Tuple<Result, Intent> result = await mainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.RecognizeSpeech, 60000);
 
-                                if (result.Item1 == Result.Ok)
+                                if (result != null && result.Item1 == Result.Ok)
                                 {
                                     IList<string> matches = result.Item2.GetStringArrayListExtra(RecognizerIntent.ExtraResults);
                                     if (matches != null && matches.Count > 0)
