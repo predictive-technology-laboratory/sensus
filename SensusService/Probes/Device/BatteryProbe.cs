@@ -14,6 +14,8 @@
 // limitations under the License.
 #endregion
  
+using System;
+
 namespace SensusService.Probes.Device
 {
     /// <summary>
@@ -29,6 +31,11 @@ namespace SensusService.Probes.Device
         public override int DefaultPollingSleepDurationMS
         {
             get { return 60000; }
+        }
+
+        public sealed override Type DatumType
+        {
+            get { return typeof(BatteryDatum); }
         }
     }
 }

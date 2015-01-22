@@ -24,6 +24,7 @@ using SensusService.Probes.Device;
 using SensusService.Probes.Location;
 using SensusService.Probes.Movement;
 using SensusService.Probes.Network;
+using SensusService.Probes.User;
 using SensusUI.UiProperties;
 using System;
 using System.Collections.Generic;
@@ -48,8 +49,10 @@ namespace SensusService.DataStores.Remote
         private IMobileServiceTable<CompassDatum> _compassTable;
         private IMobileServiceTable<LocationDatum> _locationTable;
         private IMobileServiceTable<AccelerometerDatum> _accelerometerTable;
+        private IMobileServiceTable<SpeedDatum> _speedTable;
         private IMobileServiceTable<CellTowerDatum> _cellTowerTable;
         private IMobileServiceTable<WlanDatum> _wlanTable;
+        private IMobileServiceTable<ScriptDatum> _scriptTable;
 
         private IMobileServiceTable<ProtocolReport> _protocolReportTable;
 
@@ -110,8 +113,10 @@ namespace SensusService.DataStores.Remote
                 _compassTable = _client.GetTable<CompassDatum>();
                 _locationTable = _client.GetTable<LocationDatum>();
                 _accelerometerTable = _client.GetTable<AccelerometerDatum>();
+                _speedTable = _client.GetTable<SpeedDatum>();
                 _cellTowerTable = _client.GetTable<CellTowerDatum>();
                 _wlanTable = _client.GetTable<WlanDatum>();
+                _scriptTable = _client.GetTable<ScriptDatum>();
 
                 _protocolReportTable = _client.GetTable<ProtocolReport>();
 
@@ -119,7 +124,7 @@ namespace SensusService.DataStores.Remote
             }
         }
 
-        protected override ICollection<Datum> CommitData(ICollection<Datum> data)
+        protected override List<Datum> CommitData(List<Datum> data)
         {
             List<Datum> committedData = new List<Datum>();
 
@@ -153,10 +158,14 @@ namespace SensusService.DataStores.Remote
                         _locationTable.InsertAsync(datum as LocationDatum).Wait();
                     else if (datum is AccelerometerDatum)
                         _accelerometerTable.InsertAsync(datum as AccelerometerDatum).Wait();
+                    else if (datum is SpeedDatum)
+                        _speedTable.InsertAsync(datum as SpeedDatum).Wait();
                     else if (datum is CellTowerDatum)
                         _cellTowerTable.InsertAsync(datum as CellTowerDatum).Wait();
                     else if (datum is WlanDatum)
                         _wlanTable.InsertAsync(datum as WlanDatum).Wait();
+                    else if (datum is ScriptDatum)
+                        _scriptTable.InsertAsync(datum as ScriptDatum).Wait();
                     else if (datum is ProtocolReport)
                         _protocolReportTable.InsertAsync(datum as ProtocolReport).Wait();
                     else

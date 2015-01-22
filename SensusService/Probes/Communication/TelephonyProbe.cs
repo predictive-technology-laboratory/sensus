@@ -14,6 +14,8 @@
 // limitations under the License.
 #endregion
  
+using System;
+
 namespace SensusService.Probes.Communication
 {
     /// <summary>
@@ -24,6 +26,11 @@ namespace SensusService.Probes.Communication
         protected sealed override string DefaultDisplayName
         {
             get { return "Phone Calls"; }
+        }
+
+        public sealed override Type DatumType
+        {
+            get { return typeof(TelephonyDatum); }
         }
     }
 }

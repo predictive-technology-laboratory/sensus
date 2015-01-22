@@ -17,7 +17,6 @@
 using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Widget;
 using SensusService;
 
 namespace Sensus.Android
@@ -38,7 +37,7 @@ namespace Sensus.Android
             _notificationManager = GetSystemService(Context.NotificationService) as NotificationManager;
             _notificationBuilder = new Notification.Builder(this);
 
-            _sensusServiceHelper = new AndroidSensusServiceHelper();
+            _sensusServiceHelper = new AndroidSensusServiceHelper(this);
             _sensusServiceHelper.Stopped += (o, e) =>
                 {
                     _notificationManager.Cancel(ServiceNotificationId);
@@ -62,8 +61,8 @@ namespace Sensus.Android
             _sensusServiceHelper.Start();
 
             TaskStackBuilder stackBuilder = TaskStackBuilder.Create(this);
-            stackBuilder.AddParentStack(Java.Lang.Class.FromType(typeof(MainActivity)));
-            stackBuilder.AddNextIntent(new Intent(this, typeof(MainActivity)));
+            stackBuilder.AddParentStack(Java.Lang.Class.FromType(typeof(AndroidMainActivity)));
+            stackBuilder.AddNextIntent(new Intent(this, typeof(AndroidMainActivity)));
 
             PendingIntent pendingIntent = stackBuilder.GetPendingIntent(NotificationPendingIntentId, PendingIntentFlags.OneShot);
 

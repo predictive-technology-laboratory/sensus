@@ -24,8 +24,8 @@ namespace SensusUI
 {
     public class SensusNavigationPage : NavigationPage
     {
-        public SensusNavigationPage(SensusServiceHelper service)
-            : base(new MainPage(service))
+        public SensusNavigationPage(SensusServiceHelper serviceHelper)
+            : base(new MainPage(serviceHelper))
         {
             #region main page
             MainPage.ViewProtocolsTapped += async (o, e) =>
@@ -35,7 +35,7 @@ namespace SensusUI
 
             MainPage.ViewLogTapped += async (o, e) =>
                 {
-                    await PushAsync(new ViewTextLinesPage("Sensus Log", UiBoundSensusServiceHelper.Get().Logger.Read(int.MaxValue), () => UiBoundSensusServiceHelper.Get().Logger.Clear()));
+                    await PushAsync(new ViewTextLinesPage("Log", UiBoundSensusServiceHelper.Get().Logger.Read(int.MaxValue), () => UiBoundSensusServiceHelper.Get().Logger.Clear()));
                 };
             #endregion
 
@@ -66,6 +66,20 @@ namespace SensusUI
             ProtocolPage.DisplayProtocolReport += async (o, report) =>
                 {
                     await PushAsync(new ViewTextLinesPage("Protocol Report", report.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList(), null));
+                };
+            #endregion
+
+            #region probe page
+            ProbePage.AddTriggerTapped += async (o, scriptProbe) =>
+                {
+                    await PushAsync(new AddScriptProbeTriggerPage(scriptProbe));
+                };
+            #endregion
+
+            #region add script probe trigger
+            AddScriptProbeTriggerPage.TriggerAdded += async (o, e) =>
+                {
+                    await PopAsync();
                 };
             #endregion
 

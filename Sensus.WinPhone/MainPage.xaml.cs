@@ -13,19 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Navigation;
+
 using Microsoft.Phone.Controls;
-using Microsoft.Phone.Shell;
-
 using Xamarin.Forms;
-
 
 namespace Sensus.WinPhone
 {

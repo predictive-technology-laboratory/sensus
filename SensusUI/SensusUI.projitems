@@ -9,6 +9,7 @@
     <Import_RootNamespace>SensusUI</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)AddScriptProbeTriggerPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UiBoundSensusServiceHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CreateDataStorePage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStorePage.cs" />
@@ -18,6 +19,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\DisplayYesNoUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\EntryIntegerUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\EntryStringUiProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UiProperties\ReadTextFileUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\IncrementalIntegerUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\OnOffUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\UiProperty.cs" />

@@ -14,6 +14,8 @@
 // limitations under the License.
 #endregion
  
+using System;
+
 namespace SensusService.Probes.Location
 {
     public abstract class AltitudeProbe : ListeningProbe
@@ -21,6 +23,11 @@ namespace SensusService.Probes.Location
         protected sealed override string DefaultDisplayName
         {
             get { return "Altitude"; }
+        }
+
+        public sealed override Type DatumType
+        {
+            get { return typeof(AltitudeDatum); }
         }
     }
 }

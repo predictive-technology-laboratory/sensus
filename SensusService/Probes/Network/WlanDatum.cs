@@ -15,6 +15,7 @@
 #endregion
  
 using Newtonsoft.Json;
+using SensusService.Probes.User.ProbeTriggerProperties;
 using System;
 
 namespace SensusService.Probes.Network
@@ -23,6 +24,7 @@ namespace SensusService.Probes.Network
     {
         private string _accessPointBSSID;
 
+        [TextProbeTriggerProperty]
         public string AccessPointBSSID
         {
             get { return _accessPointBSSID; }

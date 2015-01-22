@@ -14,6 +14,8 @@
 // limitations under the License.
 #endregion
  
+using System;
+
 namespace SensusService.Probes.Network
 {
     /// <summary>
@@ -24,6 +26,11 @@ namespace SensusService.Probes.Network
         protected sealed override string DefaultDisplayName
         {
             get { return "Cell Tower"; }
+        }
+
+        public sealed override Type DatumType
+        {
+            get { return typeof(CellTowerDatum); }
         }
     }
 }

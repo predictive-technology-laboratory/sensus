@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace SensusUI.UiProperties
@@ -85,6 +86,7 @@ namespace SensusUI.UiProperties
                         Keyboard = Keyboard.Numeric,
                         HorizontalOptions = LayoutOptions.FillAndExpand
                     };
+
                     bindingProperty = Entry.TextProperty;
                     converter = new EntryIntegerUiProperty.ValueConverter();
                 }
@@ -97,8 +99,8 @@ namespace SensusUI.UiProperties
                         Maximum = p.Maximum,
                         Increment = p.Increment
                     };
-                    bindingProperty = Stepper.ValueProperty;
 
+                    bindingProperty = Stepper.ValueProperty;
                     addParameterValueLabel = true;
                 }
                 else if (uiElement is EntryStringUiProperty)
@@ -108,7 +110,29 @@ namespace SensusUI.UiProperties
                         Keyboard = Keyboard.Default,
                         HorizontalOptions = LayoutOptions.FillAndExpand
                     };
+
                     bindingProperty = Entry.TextProperty;
+                }
+                else if (uiElement is ReadTextFileUiProperty)
+                {
+                    ReadTextFileUiProperty loadUiElement = uiElement as ReadTextFileUiProperty;
+
+                    Button loadButton = new Button
+                    {
+                        Text = loadUiElement.ButtonText,
+                        HorizontalOptions = LayoutOptions.FillAndExpand
+                    };
+
+                    loadButton.Clicked += async (oo, e) =>
+                        {
+                            // set the property on the UI element to the file's content
+                            string text = await UiBoundSensusServiceHelper.Get().PromptForAndReadTextFileAsync(loadUiElement.Prompt);
+                            propertyUiElement.Item1.SetValue(o, text);
+                        };
+
+                    view = loadButton;
+                    bindingProperty = Button.TextProperty;
+                    converter = new ReadTextFileUiProperty.ValueConverter(loadUiElement.ButtonText);
                 }
 
                 if (view != null)
@@ -135,8 +159,12 @@ namespace SensusUI.UiProperties
                     }
 
                     view.IsEnabled = uiElement.Editable;
-                    view.BindingContext = o;
-                    view.SetBinding(bindingProperty, new Binding(propertyUiElement.Item1.Name, converter: converter));
+
+                    if (bindingProperty != null)
+                    {
+                        view.BindingContext = o;
+                        view.SetBinding(bindingProperty, new Binding(propertyUiElement.Item1.Name, converter: converter));
+                    }
 
                     stack.Children.Add(view);
 

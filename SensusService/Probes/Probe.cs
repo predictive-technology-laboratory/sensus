@@ -47,12 +47,18 @@ namespace SensusService.Probes
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
+        /// <summary>
+        /// Fired when the most recent datum is changed.
+        /// </summary>
+        public event EventHandler<Tuple<Datum, Datum>> MostRecentDatumChanged;
+
         private string _displayName;
         private bool _enabled;
         private bool _running;
         private HashSet<Datum> _collectedData;
-        private Datum _mostRecentlyStoredDatum;
+        private Datum _mostRecentDatum;
         private Protocol _protocol;
+        private bool _storeData;
 
         [EntryStringUiProperty("Name:", true, 1)]
         public string DisplayName
@@ -96,15 +102,20 @@ namespace SensusService.Probes
         }
 
         [JsonIgnore]
-        public Datum MostRecentlyStoredDatum
+        public Datum MostRecentDatum
         {
-            get { return _mostRecentlyStoredDatum; }
+            get { return _mostRecentDatum; }
             set
             {
-                if (value != _mostRecentlyStoredDatum)
+                if (value != _mostRecentDatum)
                 {
-                    _mostRecentlyStoredDatum = value;
+                    Datum oldDatum = _mostRecentDatum;
+
+                    _mostRecentDatum = value;
                     OnPropertyChanged();
+
+                    if (MostRecentDatumChanged != null)
+                        MostRecentDatumChanged(this, new Tuple<Datum, Datum>(oldDatum, _mostRecentDatum));
                 }
             }
         }
@@ -115,12 +126,21 @@ namespace SensusService.Probes
             set { _protocol = value; }
         }
 
+        public bool StoreData
+        {
+            get { return _storeData; }
+            set { _storeData = value; }
+        }
+
         protected abstract string DefaultDisplayName { get; }
+
+        public abstract Type DatumType { get; }
 
         protected Probe()
         {
             _displayName = DefaultDisplayName;
             _enabled = _running = false;
+            _storeData = true;
         }
 
         /// <summary>
@@ -137,7 +157,7 @@ namespace SensusService.Probes
         }
 
         /// <summary>
-        /// Starts this probe. Throws an exception if start fails. Should be called first within parent-class overrides.
+        /// Starts this probe. Throws an exception if start fails. Should be called first within child-class overrides.
         /// </summary>
         public virtual void Start()
         {
@@ -157,14 +177,16 @@ namespace SensusService.Probes
         protected virtual void StoreDatum(Datum datum)
         {
             if (datum != null)
-                lock (_collectedData)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Storing datum in probe cache:  " + datum, LoggingLevel.Debug);
+            {
+                if (_storeData)
+                    lock (_collectedData)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Storing datum in probe cache:  " + datum, LoggingLevel.Debug);
+                        _collectedData.Add(datum);
+                    }
 
-                    _collectedData.Add(datum);
-
-                    MostRecentlyStoredDatum = datum;
-                }
+                MostRecentDatum = datum;
+            }
         }
 
         public ICollection<Datum> GetCollectedData()
@@ -192,7 +214,7 @@ namespace SensusService.Probes
         }
 
         /// <summary>
-        /// Should be called first within parent-class overrides.
+        /// Should be called first within child-class overrides.
         /// </summary>
         public virtual void Stop()
         {
@@ -214,7 +236,7 @@ namespace SensusService.Probes
 
         public void Restart()
         {
-            lock(this)
+            lock (this)
             {
                 Stop();
                 Start();

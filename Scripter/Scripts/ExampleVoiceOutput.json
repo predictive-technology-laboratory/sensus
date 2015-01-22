@@ -1,0 +1,1 @@
+{"$id":"1","Name":"Voice Output","DelayMS":0,"Prompts":[{"$id":"2","OutputType":0,"OutputMessage":"Hi","InputType":0,"RequireNonEmptyInput":false,"NumTries":0,"NextPrompt":null,"NextPromptValue":null}]}

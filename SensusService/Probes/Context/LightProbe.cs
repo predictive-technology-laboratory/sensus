@@ -14,6 +14,8 @@
 // limitations under the License.
 #endregion
  
+using System;
+
 namespace SensusService.Probes.Context
 {
     public abstract class LightProbe : ListeningProbe
@@ -21,6 +23,11 @@ namespace SensusService.Probes.Context
         protected sealed override string DefaultDisplayName
         {
             get { return "Light"; }
+        }
+
+        public sealed override Type DatumType
+        {
+            get { return typeof(LightDatum); }
         }
     }
 }

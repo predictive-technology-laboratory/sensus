@@ -15,6 +15,7 @@
 #endregion
  
 using Newtonsoft.Json;
+using SensusService.Probes.User.ProbeTriggerProperties;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -23,23 +24,26 @@ namespace SensusService.Probes.Movement
 {
     public class AccelerometerDatum : Datum
     {
-        private float _x;
-        private float _y;
-        private float _z;
+        private double _x;
+        private double _y;
+        private double _z;
 
-        public float X
+        [NumberProbeTriggerProperty]
+        public double X
         {
             get { return _x; }
             set { _x = value; }
         }
 
-        public float Y
+        [NumberProbeTriggerProperty]
+        public double Y
         {
             get { return _y; }
             set { _y = value; }
         }
 
-        public float Z
+        [NumberProbeTriggerProperty]
+        public double Z
         {
             get { return _z; }
             set { _z = value; }
@@ -51,7 +55,7 @@ namespace SensusService.Probes.Movement
             get { return Math.Round(_x, 2) + " (x), " + Math.Round(_y, 2) + " (y), " + Math.Round(_z, 2) + " (z)"; }
         }
 
-        public AccelerometerDatum(Probe probe, DateTimeOffset timestamp, float x, float y, float z)
+        public AccelerometerDatum(Probe probe, DateTimeOffset timestamp, double x, double y, double z)
             : base(probe, timestamp)
         {
             _x = x;

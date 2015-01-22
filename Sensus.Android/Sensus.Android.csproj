@@ -119,13 +119,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AndroidActivityResultRequestCode.cs" />
+    <Compile Include="AndroidOnDismissListener.cs" />
     <Compile Include="AndroidSensusServiceHelper.cs" />
     <Compile Include="AndroidSensusServiceBootStarter.cs" />
-    <Compile Include="ExportRendererFix.cs" />
-    <Compile Include="MainActivity.cs" />
+    <Compile Include="AndroidTextToSpeech.cs" />
+    <Compile Include="AndroidExportRendererFix.cs" />
+    <Compile Include="AndroidMainActivity.cs" />
     <Compile Include="Probes\Context\AndroidBluetoothBroadcastReceiver.cs" />
     <Compile Include="Probes\Communication\AndroidTelephonyOutgoingBroadcastReceiver.cs" />
-    <Compile Include="Probes\Communication\AndroidTelephonyIncomingListener.cs" />
+    <Compile Include="Probes\Communication\AndroidTelephonyIdleIncomingListener.cs" />
     <Compile Include="Probes\Communication\AndroidSmsIncomingBroadcastReceiver.cs" />
     <Compile Include="Probes\Communication\AndroidSmsOutgoingObserver.cs" />
     <Compile Include="Probes\Apps\AndroidRunningAppsProbe.cs" />
@@ -158,8 +161,12 @@
     <None Include="Sensus.licenseheader" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Properties\AndroidManifest.xml" />
-    <AndroidResource Include="Resources\xml\filepaths.xml" />
+    <Content Include="Properties\AndroidManifest.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <AndroidResource Include="Resources\xml\filepaths.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
     <AndroidResource Include="Resources\drawable-hdpi\ic_launcher.png" />
     <AndroidResource Include="Resources\drawable-mdpi\ic_launcher.png" />
     <AndroidResource Include="Resources\drawable-xhdpi\ic_launcher.png" />

@@ -15,6 +15,7 @@
 #endregion
  
 using SensusUI.UiProperties;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -46,6 +47,11 @@ namespace SensusService.Probes.Apps
         public sealed override int DefaultPollingSleepDurationMS
         {
             get { return 1000 * 60; }
+        }
+
+        public sealed override Type DatumType
+        {
+            get { return typeof(RunningAppsDatum); }
         }
 
         public RunningAppsProbe()

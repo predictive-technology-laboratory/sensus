@@ -15,6 +15,7 @@
 #endregion
  
 using Newtonsoft.Json;
+using SensusService.Probes.User.ProbeTriggerProperties;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -25,6 +26,7 @@ namespace SensusService.Probes.Device
     {
         private double _level;
 
+        [NumberProbeTriggerProperty]
         public double Level
         {
             get { return _level; }

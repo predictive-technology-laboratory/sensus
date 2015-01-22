@@ -15,6 +15,7 @@
 #endregion
  
 using Newtonsoft.Json;
+using SensusService.Probes.User.ProbeTriggerProperties;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -26,12 +27,14 @@ namespace SensusService.Probes.Context
         private string _name;
         private string _address;
 
+        [TextProbeTriggerProperty]
         public string Name
         {
             get { return _name; }
             set { _name = value; }
         }
 
+        [TextProbeTriggerProperty]
         public string Address
         {
             get { return _address; }

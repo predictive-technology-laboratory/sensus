@@ -23,11 +23,11 @@ namespace SensusService.Probes
 {
     public abstract class PollingProbe : Probe
     {
-        private Thread _pollThread;
         private int _pollingSleepDurationMS;
+        private Thread _pollThread;
 
         [EntryIntegerUiProperty("Sleep Duration:", true, 5)]
-        public int PollingSleepDurationMS
+        public virtual int PollingSleepDurationMS
         {
             get { return _pollingSleepDurationMS; }
             set
@@ -50,7 +50,7 @@ namespace SensusService.Probes
         /// <summary>
         /// Starts this probe. Throws an exception if start fails.
         /// </summary>
-        public sealed override void Start()
+        public override void Start()
         {
             lock (this)
             {
@@ -60,7 +60,7 @@ namespace SensusService.Probes
                     {
                         PollingStarted();
 
-                        int msToSleep = _pollingSleepDurationMS;
+                        int msToSleep = 0;  // poll immediately the first time
 
                         while (Running)
                         {
@@ -99,7 +99,7 @@ namespace SensusService.Probes
 
         protected abstract IEnumerable<Datum> Poll();
 
-        public sealed override void Stop()
+        public override void Stop()
         {
             lock (this)
             {
@@ -119,8 +119,8 @@ namespace SensusService.Probes
             if (Running)
             {
                 DateTimeOffset mostRecentReadingTimestamp = DateTimeOffset.MinValue;
-                if (MostRecentlyStoredDatum != null)
-                    mostRecentReadingTimestamp = MostRecentlyStoredDatum.Timestamp;
+                if (MostRecentDatum != null)
+                    mostRecentReadingTimestamp = MostRecentDatum.Timestamp;
 
                 double msElapsedSinceLastPoll = (DateTime.UtcNow - mostRecentReadingTimestamp).TotalMilliseconds;
                 if (msElapsedSinceLastPoll > _pollingSleepDurationMS)

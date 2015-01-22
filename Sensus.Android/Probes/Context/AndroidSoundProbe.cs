@@ -17,47 +17,65 @@
 using Android.Media;
 using SensusService;
 using SensusService.Probes.Context;
+using SensusUI.UiProperties;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Sensus.Android.Probes.Context
 {
     public class AndroidSoundProbe : SoundProbe
     {
-        private MediaRecorder _recorder;
+        private int _sampleLengthMS;
 
-        protected override void Initialize()
+        [EntryIntegerUiProperty("Sample Length (MS):", true, 5)]
+        public int SampleLengthMS
         {
-            base.Initialize();
+            get { return _sampleLengthMS; }
+            set { _sampleLengthMS = value; }
+        }
 
-            if (_recorder != null)
-            {
-                try { _recorder.Stop(); }  // will throw exception if recorder is already stopped
-                catch (Exception) { }
-            }
-
-            _recorder = new MediaRecorder();
-
-            _recorder.SetAudioSource(AudioSource.Mic);
-            _recorder.SetOutputFormat(OutputFormat.ThreeGpp);
-            _recorder.SetAudioEncoder(AudioEncoder.AmrNb);
-            _recorder.SetOutputFile("/dev/null");
-            _recorder.Prepare();
-            _recorder.Start();
+        public AndroidSoundProbe()
+        {
+            _sampleLengthMS = 5000;
         }
 
         protected override IEnumerable<SensusService.Datum> Poll()
         {
-            // http://www.mathworks.com/help/signal/ref/mag2db.html
-            return new Datum[] { new SoundDatum(this, DateTimeOffset.UtcNow, 20 * Math.Log10(_recorder.MaxAmplitude)) };
-        }
+            MediaRecorder recorder = null;
+            try
+            {
+                recorder = new MediaRecorder();
+                recorder.SetAudioSource(AudioSource.Mic);
+                recorder.SetOutputFormat(OutputFormat.ThreeGpp);
+                recorder.SetAudioEncoder(AudioEncoder.AmrNb);
+                recorder.SetOutputFile("/dev/null");
+                recorder.Prepare();
+                recorder.Start();
 
-        protected override void PollingStopped()
-        {
-            base.PollingStopped();
+                // mark start time of amplitude measurement -- see documentation for MaxAmplitude
+                int dummy = recorder.MaxAmplitude;
 
-            try { _recorder.Stop(); }
-            catch (Exception) { }
+                Thread.Sleep(_sampleLengthMS);
+
+                return new Datum[] { new SoundDatum(this, DateTimeOffset.UtcNow, 20 * Math.Log10(recorder.MaxAmplitude)) };  // http://www.mathworks.com/help/signal/ref/mag2db.html
+            }
+            catch (Exception)
+            {
+                // exception might be thrown if we're doing voice recognition
+                return new Datum[] { };
+            }
+            finally
+            {
+                if (recorder != null)
+                {
+                    try { recorder.Stop(); }
+                    catch (Exception) { }
+
+                    try { recorder.Release(); }
+                    catch (Exception) { }
+                }
+            }
         }
     }
 }

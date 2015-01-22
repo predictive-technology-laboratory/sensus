@@ -14,11 +14,9 @@
 // limitations under the License.
 #endregion
  
-using Android.App;
 using Android.Hardware;
 using SensusService.Exceptions;
 using System;
-using System.Collections.Generic;
 
 namespace Sensus.Android.Probes
 {
@@ -38,18 +36,14 @@ namespace Sensus.Android.Probes
             _sensorDelay = sensorDelay;
             _sensorAccuracyChangedCallback = sensorAccuracyChangedCallback;
             _sensorValueChangedCallback = sensorValueChangedCallback;
-            _sensorManager = Application.Context.GetSystemService(global::Android.Content.Context.SensorService) as SensorManager;
             _listening = false;
         }
 
         public void Initialize()
         {
-            IList<Sensor> sensors = _sensorManager.GetSensorList(_sensorType);
+            _sensorManager = (AndroidSensusServiceHelper.Get() as AndroidSensusServiceHelper).Service.GetSystemService(global::Android.Content.Context.SensorService) as SensorManager;
 
-            _sensor = null;
-            if (sensors.Count > 0)
-                _sensor = sensors[0];
-
+            _sensor = _sensorManager.GetDefaultSensor(_sensorType);
             if (_sensor == null)
                 throw new Exception("No sensors present for sensor type " + _sensorType);
         }

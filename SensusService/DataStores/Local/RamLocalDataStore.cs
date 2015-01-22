@@ -45,7 +45,7 @@ namespace SensusService.DataStores.Local
             }
         }
 
-        protected override ICollection<Datum> CommitData(ICollection<Datum> data)
+        protected override List<Datum> CommitData(List<Datum> data)
         {
             List<Datum> committed = new List<Datum>();
 
@@ -59,13 +59,13 @@ namespace SensusService.DataStores.Local
             return committed;
         }
 
-        public override ICollection<Datum> GetDataForRemoteDataStore()
+        public override List<Datum> GetDataForRemoteDataStore()
         {
             lock (_data)
                 return _data.ToList();
         }
 
-        public override void ClearDataCommittedToRemoteDataStore(ICollection<Datum> data)
+        public override void ClearDataCommittedToRemoteDataStore(List<Datum> data)
         {
             lock (_data)
                 foreach (Datum d in data)

@@ -14,7 +14,6 @@
 // limitations under the License.
 #endregion
  
-using Android.Content;
 using Newtonsoft.Json;
 using SensusService.DataStores.Local;
 using SensusService.DataStores.Remote;
@@ -45,25 +44,12 @@ namespace SensusService
             ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
         };
 
-        public static Protocol GetFromWeb(Uri uri)
+        public static Protocol GetFromWebURI(Uri webURI)
         {
             Stream stream = null;
 
-            try { stream = new WebClient().OpenRead(uri); }
-            catch (Exception ex) { throw new SensusException("Failed to open web client to URI \"" + uri + "\":  " + ex.Message + ". If this is an HTTPS URI, make sure the server's certificate is valid."); }
-
-            if (stream == null)
-                return null;
-            else
-                return GetFromStream(stream);
-        }
-
-        public static Protocol GetFromFile(Android.Net.Uri uri, ContentResolver contentResolver)
-        {
-            Stream stream = null;
-
-            try { stream = contentResolver.OpenInputStream(uri); }
-            catch (Exception ex) { throw new SensusException("Failed to open local file URI \"" + uri + "\":  " + ex.Message); }
+            try { stream = new WebClient().OpenRead(webURI); }
+            catch (Exception ex) { throw new SensusException("Failed to open web client to URI \"" + webURI + "\":  " + ex.Message + ". If this is an HTTPS URI, make sure the server's certificate is valid."); }
 
             if (stream == null)
                 return null;
@@ -107,6 +93,16 @@ namespace SensusService
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
+        /// <summary>
+        /// Fired when the protocol is started.
+        /// </summary>
+        public event EventHandler Started;
+
+        /// <summary>
+        /// Fired when the protocol is stopped.
+        /// </summary>
+        public event EventHandler Stopped;
+
         private string _id;
         private string _name;
         private List<Probe> _probes;
@@ -115,6 +111,7 @@ namespace SensusService
         private RemoteDataStore _remoteDataStore;
         private string _storageDirectory;
         private ProtocolReport _mostRecentReport;
+        private bool _alwaysUploadProtocolReportsToRemoteDataStore;
 
         public string Id
         {
@@ -149,10 +146,14 @@ namespace SensusService
             get { return _running; }
             set
             {
-                if (value)
-                    SensusServiceHelper.Get().StartProtocolAsync(this);
-                else
-                    SensusServiceHelper.Get().StopProtocolAsync(this, false);  // don't unregister the protocol when stopped via UI interaction
+                // we don't actually set the value of _running in this method; rather, the service helper does this via SetRunning.
+                if (value != _running)
+                {
+                    if (value)
+                        SensusServiceHelper.Get().StartProtocolAsync(this);
+                    else
+                        SensusServiceHelper.Get().StopProtocolAsync(this, false);  // don't unregister the protocol when stopped via UI interaction
+                }
             }
         }
 
@@ -171,6 +172,12 @@ namespace SensusService
             {
                 _running = value;
                 OnPropertyChanged("Running");
+
+                if (_running && Started != null)
+                    Started(this, null);
+                else if (!_running && Stopped != null)
+                    Stopped(this, null);
+
                 return true;
             }
         }
@@ -218,7 +225,27 @@ namespace SensusService
             set { _mostRecentReport = value; }
         }
 
-        private Protocol() { }  // for JSON deserialization
+        [OnOffUiProperty("Force Reports to Remote:", true, 20)]
+        public bool AlwaysUploadProtocolReportsToRemoteDataStore
+        {
+            get { return _alwaysUploadProtocolReportsToRemoteDataStore; }
+            set
+            {
+                if (value != _alwaysUploadProtocolReportsToRemoteDataStore)
+                {
+                    _alwaysUploadProtocolReportsToRemoteDataStore = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        /// <summary>
+        /// For JSON deserialization
+        /// </summary>
+        private Protocol()
+        {
+            _alwaysUploadProtocolReportsToRemoteDataStore = false;
+        }
 
         /// <summary>
         /// Constructor
@@ -342,13 +369,19 @@ namespace SensusService
             }
         }
 
-        public void UploadMostRecentProtocolReport()
+        public void StoreMostRecentProtocolReport()
         {
             lock (this)
                 if (_mostRecentReport != null)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Uploading protocol report.", LoggingLevel.Normal);
+                    SensusServiceHelper.Get().Logger.Log("Storing protocol report locally.", LoggingLevel.Normal);
                     _localDataStore.AddNonProbeDatum(_mostRecentReport);
+
+                    if (!_localDataStore.UploadToRemoteDataStore && _alwaysUploadProtocolReportsToRemoteDataStore)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Local data aren't pushed to remote, so we're sending the protocol report there.", LoggingLevel.Normal);
+                        _remoteDataStore.AddNonProbeDatum(_mostRecentReport);
+                    }
                 }
         }
 

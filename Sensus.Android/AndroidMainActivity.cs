@@ -22,48 +22,67 @@ using SensusService;
 using SensusService.Exceptions;
 using SensusUI;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 
 namespace Sensus.Android
 {
-    [Activity(Label = "ensus is Loading...", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Label = "Sensus", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault, Intent.CategoryBrowsable }, DataScheme = "http", DataHost = "*", DataPathPattern = ".*\\\\.sensus")]  // protocols downloaded from an http web link
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault, Intent.CategoryBrowsable }, DataScheme = "https", DataHost = "*", DataPathPattern = ".*\\\\.sensus")]  // protocols downloaded from an https web link
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault }, DataMimeType = "application/octet-stream", DataScheme = "content", DataHost = "*")]  // protocols opened from email attachments originating from the sensus app itself -- DataPathPattern doesn't work here, since email apps (e.g., gmail) rename attachments when stored in the local file system
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault }, DataMimeType = "text/plain", DataScheme = "content", DataHost = "*")]  // protocols opened from email attachments originating from non-sensus senders (i.e., the "share" button in sensus) -- DataPathPattern doesn't work here, since email apps (e.g., gmail) rename attachments when stored in the local file system
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault }, DataMimeType = "text/plain", DataScheme = "file", DataHost = "*", DataPathPattern = ".*\\\\.sensus")]  // protocols opened from the local file system
-    public class MainActivity : AndroidActivity
+    public class AndroidMainActivity : AndroidActivity
     {
-        private Intent _serviceIntent;
         private AndroidSensusServiceConnection _serviceConnection;
+        private ManualResetEvent _activityResultWait;
+        private AndroidActivityResultRequestCode _activityResultRequestCode;
+        private Tuple<Result, Intent> _activityResult;
+
+        public bool IsForegrounded
+        {
+            get
+            {
+                ActivityManager activityManager = GetSystemService(Context.ActivityService) as ActivityManager;
+                IList<ActivityManager.RunningTaskInfo> runningTasksInfo = activityManager.GetRunningTasks(1);
+                return runningTasksInfo.Count > 0 && runningTasksInfo[0].TopActivity != null && runningTasksInfo[0].TopActivity.PackageName == PackageName;
+            }
+        }
 
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
 
-            Title = "Sensus";
+            Window.AddFlags(global::Android.Views.WindowManagerFlags.DismissKeyguard);
+            Window.AddFlags(global::Android.Views.WindowManagerFlags.ShowWhenLocked);
+            Window.AddFlags(global::Android.Views.WindowManagerFlags.TurnScreenOn);
 
             Forms.Init(this, bundle);
 
+            _activityResultWait = new ManualResetEvent(false);
+
             // start service -- if it's already running, this will have no effect
-            _serviceIntent = new Intent(this, typeof(AndroidSensusService));
-            StartService(_serviceIntent);
+            Intent serviceIntent = new Intent(this, typeof(AndroidSensusService));
+            StartService(serviceIntent);
 
             // bind UI to the service
-            _serviceConnection = new AndroidSensusServiceConnection(null);
+            _serviceConnection = new AndroidSensusServiceConnection();
             _serviceConnection.ServiceConnected += async (o, e) =>
                 {
                     // before binding, add reference to main activity within the service helper
-                    e.Binder.SensusServiceHelper.MainActivity = this;
+                    e.Binder.SensusServiceHelper.SetMainActivity(this);
 
+                    // get reference to service helper for use within the UI
                     UiBoundSensusServiceHelper.Set(e.Binder.SensusServiceHelper);
+                    UiBoundSensusServiceHelper.Get().Stopped += (oo, ee) => { Finish(); };  // stop activity when service stops    
 
-                    UiBoundSensusServiceHelper.Get().Stopped += (oo, ee) => { Finish(); };  // stop activity when service stops
-
+                    // display main page
                     SensusNavigationPage navigationPage = new SensusNavigationPage(UiBoundSensusServiceHelper.Get());
-
                     SetPage(navigationPage);
 
                     #region open page to view protocol if a protocol was passed to us
@@ -75,9 +94,17 @@ namespace Sensus.Android
                         try
                         {
                             if (Intent.Scheme == "http" || Intent.Scheme == "https")
-                                protocol = Protocol.GetFromWeb(new Uri(dataURI.ToString()));
+                                protocol = Protocol.GetFromWebURI(new Uri(dataURI.ToString()));
                             else if (Intent.Scheme == "content" || Intent.Scheme == "file")
-                                protocol = Protocol.GetFromFile(dataURI, ContentResolver);
+                            {
+                                Stream stream = null;
+
+                                try { stream = ContentResolver.OpenInputStream(dataURI); }
+                                catch (Exception ex) { throw new SensusException("Failed to open local protocol file URI \"" + dataURI + "\":  " + ex.Message); }
+
+                                if (stream != null)
+                                    protocol = Protocol.GetFromStream(stream);
+                            }
                             else
                                 throw new SensusException("Sensus didn't know what to do with URI \"" + dataURI);
                         }
@@ -101,7 +128,39 @@ namespace Sensus.Android
                     #endregion
                 };
 
-            BindService(_serviceIntent, _serviceConnection, Bind.AutoCreate);
+            _serviceConnection.ServiceDisconnected += (o, e) =>
+                {
+                    e.Binder.SensusServiceHelper.SetMainActivity(null);
+                };
+
+            BindService(serviceIntent, _serviceConnection, Bind.AutoCreate);
+        }
+
+        public Task<Tuple<Result, Intent>> GetActivityResultAsync(Intent intent, AndroidActivityResultRequestCode requestCode, int timeoutMS)
+        {
+            return Task.Run<Tuple<Result, Intent>>(() =>
+                {
+                    lock (this)
+                    {
+                        _activityResultRequestCode = requestCode;
+                        _activityResult = null;
+
+                        _activityResultWait.Reset();
+                        StartActivityForResult(intent, (int)requestCode);
+                        _activityResultWait.WaitOne(timeoutMS);
+
+                        return _activityResult;
+                    }
+                });
+        }
+
+        protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
+        {
+            if (requestCode == (int)_activityResultRequestCode)
+            {
+                _activityResult = new Tuple<Result, Intent>(resultCode, data);
+                _activityResultWait.Set();
+            }
         }
 
         protected override void OnDestroy()

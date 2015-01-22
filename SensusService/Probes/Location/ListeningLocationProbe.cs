@@ -15,8 +15,6 @@
 #endregion
  
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Xamarin.Geolocation;
 
 namespace SensusService.Probes.Location
@@ -31,6 +29,11 @@ namespace SensusService.Probes.Location
         protected override string DefaultDisplayName
         {
             get { return "Location (Listening)"; }
+        }
+
+        public sealed override Type DatumType
+        {
+            get { return typeof(LocationDatum); }
         }
 
         protected override void Initialize()

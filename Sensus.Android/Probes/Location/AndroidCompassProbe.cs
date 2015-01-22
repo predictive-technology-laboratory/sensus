@@ -22,13 +22,46 @@ namespace Sensus.Android.Probes.Location
 {
     public class AndroidCompassProbe : CompassProbe
     {
-        private AndroidSensorListener _compassListener;
+        private AndroidSensorListener _magnetometerListener;
+        private float[] _magneticFieldValues;
+
+        private AndroidSensorListener _accelerometerListener;
+        private float[] _accelerometerValues;
+
+        private float[] _rMatrix;
+        private float[] _iMatrix;
+        private float[] _azimuthPitchRoll;
 
         public AndroidCompassProbe()
         {
-            _compassListener = new AndroidSensorListener(SensorType.Orientation, SensorDelay.Normal, null, e =>
+            _rMatrix = new float[9];
+            _iMatrix = new float[9];
+            _azimuthPitchRoll = new float[3];
+
+            _magneticFieldValues = new float[3];
+            _magnetometerListener = new AndroidSensorListener(SensorType.MagneticField, SensorDelay.Normal, null, e =>
                 {
-                    StoreDatum(new CompassDatum(this, DateTimeOffset.UtcNow, e.Values[0]));
+                    if (e.Values != null && e.Values.Count == 3)
+                        lock (this)
+                        {
+                            for (int i = 0; i < 3; i++)
+                                _magneticFieldValues[i] = e.Values[i];
+
+                            StoreHeading();
+                        }
+                });
+
+            _accelerometerValues = new float[3];
+            _accelerometerListener = new AndroidSensorListener(SensorType.Accelerometer, SensorDelay.Normal, null, e =>
+                {
+                    if (e.Values != null && e.Values.Count == 3)
+                        lock (this)
+                        {
+                            for (int i = 0; i < 3; i++)
+                                _accelerometerValues[i] = e.Values[i];
+
+                            StoreHeading();
+                        }
                 });
         }
 
@@ -36,17 +69,34 @@ namespace Sensus.Android.Probes.Location
         {
             base.Initialize();
 
-            _compassListener.Initialize();
+            _magnetometerListener.Initialize();
+            _accelerometerListener.Initialize();
         }
 
         protected override void StartListening()
         {
-            _compassListener.Start();
+            _magnetometerListener.Start();
+            _accelerometerListener.Start();
+        }
+
+        private void StoreHeading()
+        {
+            if (SensorManager.GetRotationMatrix(_rMatrix, _iMatrix, _accelerometerValues, _magneticFieldValues))
+            {
+                SensorManager.GetOrientation(_rMatrix, _azimuthPitchRoll);
+
+                double heading = _azimuthPitchRoll[0] * (180 / Math.PI);  // convert heading radians to heading degrees
+                if (heading < 0)
+                    heading = 180 + (180 - Math.Abs(heading));  // convert to [0, 360] degrees from north
+
+                StoreDatum(new CompassDatum(this, DateTimeOffset.UtcNow, heading));
+            }
         }
 
         protected override void StopListening()
         {
-            _compassListener.Stop();
+            _magnetometerListener.Stop();
+            _accelerometerListener.Stop();
         }
     }
 }

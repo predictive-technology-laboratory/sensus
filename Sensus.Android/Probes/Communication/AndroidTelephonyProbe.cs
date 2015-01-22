@@ -16,7 +16,6 @@
  
 using Android.App;
 using Android.Telephony;
-using SensusService;
 using SensusService.Probes.Communication;
 using System;
 
@@ -26,20 +25,27 @@ namespace Sensus.Android.Probes.Communication
     {
         private TelephonyManager _telephonyManager;
         private EventHandler<string> _outgoingCallCallback;
-        private AndroidTelephonyIncomingListener _incomingCallListener;
+        private AndroidTelephonyIdleIncomingListener _idleIncomingCallListener;
 
         public AndroidTelephonyProbe()
         {
             _outgoingCallCallback = (sender, outgoingNumber) =>
                 {
-                    StoreDatum(new TelephonyDatum(this, DateTimeOffset.UtcNow, CallState.Offhook.ToString(), outgoingNumber));
+                    StoreDatum(new TelephonyDatum(this, DateTimeOffset.UtcNow, TelephonyState.OutgoingCall, outgoingNumber));
                 };
 
-            _incomingCallListener = new AndroidTelephonyIncomingListener();
-            _incomingCallListener.IncomingCall += (o, incomingNumber) =>
+            _idleIncomingCallListener = new AndroidTelephonyIdleIncomingListener();
+
+            _idleIncomingCallListener.IncomingCall += (o, incomingNumber) =>
                 {
-                    StoreDatum(new TelephonyDatum(this, DateTimeOffset.UtcNow, CallState.Ringing.ToString(), incomingNumber));
+                    StoreDatum(new TelephonyDatum(this, DateTimeOffset.UtcNow, TelephonyState.IncomingCall, incomingNumber));
                 };
+
+            _idleIncomingCallListener.Idle += (o, e) =>
+                {
+                    StoreDatum(new TelephonyDatum(this, DateTimeOffset.UtcNow, TelephonyState.Idle, null));
+                };
+
         }
 
         protected override void Initialize()
@@ -54,13 +60,13 @@ namespace Sensus.Android.Probes.Communication
         protected override void StartListening()
         {
             AndroidTelephonyOutgoingBroadcastReceiver.OutgoingCall += _outgoingCallCallback;
-            _telephonyManager.Listen(_incomingCallListener, PhoneStateListenerFlags.CallState);
+            _telephonyManager.Listen(_idleIncomingCallListener, PhoneStateListenerFlags.CallState);
         }
 
         protected override void StopListening()
         {
             AndroidTelephonyOutgoingBroadcastReceiver.OutgoingCall -= _outgoingCallCallback;
-            _telephonyManager.Listen(_incomingCallListener, PhoneStateListenerFlags.None);
+            _telephonyManager.Listen(_idleIncomingCallListener, PhoneStateListenerFlags.None);
         }
     }
 }

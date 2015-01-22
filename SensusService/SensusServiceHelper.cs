@@ -106,7 +106,7 @@ namespace SensusService
         private List<Protocol> _registeredProtocols;
         private int _pingDelayMS;
         private int _pingCount;
-        private int _pingsPerProtocolReportUpload;
+        private int _pingsPerProtocolReport;
 
         public Logger Logger
         {
@@ -118,16 +118,15 @@ namespace SensusService
             get { return _registeredProtocols; }
         }
 
-        [DisplayYesNoUiProperty("Charging:", 1)]
         public abstract bool IsCharging { get; }
 
-        [DisplayYesNoUiProperty("WiFi Connected:", 2)]
         public abstract bool WiFiConnected { get; }
 
-        [DisplayStringUiProperty("Device ID:", int.MaxValue)]
         public abstract string DeviceId { get; }
 
-        [EntryIntegerUiProperty("Ping Delay (MS):", true, int.MaxValue)]
+        public abstract bool DeviceHasMicrophone { get; }
+
+        [EntryIntegerUiProperty("Ping Delay (MS):", true, 9)]
         public int PingDelayMS
         {
             get { return _pingDelayMS; }
@@ -141,15 +140,15 @@ namespace SensusService
             }
         }
 
-        [EntryIntegerUiProperty("Pings Per Report Upload:", true, int.MaxValue)]
-        public int PingsPerProtocolReportUpload
+        [EntryIntegerUiProperty("Pings Per Report:", true, 10)]
+        public int PingsPerProtocolReport
         {
-            get { return _pingsPerProtocolReportUpload; }
+            get { return _pingsPerProtocolReport; }
             set
             {
-                if (value != _pingsPerProtocolReportUpload)
+                if (value != _pingsPerProtocolReport)
                 {
-                    _pingsPerProtocolReportUpload = value;
+                    _pingsPerProtocolReport = value;
                     OnPropertyChanged();
                 }
             }
@@ -162,7 +161,7 @@ namespace SensusService
             _stopped = true;
             _pingDelayMS = 1000 * 60;
             _pingCount = 0;
-            _pingsPerProtocolReportUpload = 5;
+            _pingsPerProtocolReport = 5;
 
             if (!Directory.Exists(_shareDirectory))
                 Directory.CreateDirectory(_shareDirectory);
@@ -188,7 +187,23 @@ namespace SensusService
                 _singleton = this;
         }
 
+        #region platform-specific abstract methods
         protected abstract void InitializeXamarinInsights();
+
+        public abstract Task<string> PromptForAndReadTextFileAsync(string promptTitle);
+
+        public abstract void ShareFile(string path, string subject);
+
+        protected abstract void StartSensusPings(int ms);
+
+        protected abstract void StopSensusPings();
+
+        public abstract void TextToSpeechAsync(string text, bool waitForCompletion);
+
+        public abstract Task<string> PromptForInputAsync(string prompt, bool startVoiceRecognizer);
+
+        public abstract void FlashNotification(string message);
+        #endregion
 
         #region save/read protocols
         public void SaveRegisteredProtocols()
@@ -303,7 +318,7 @@ namespace SensusService
         #endregion
 
         /// <summary>
-        /// Starts platform-independent service functionality. Okay to call multiple times, even if the service is already running.
+        /// Starts platform-independent service functionality, including protocols that should be running. Okay to call multiple times, even if the service is already running.
         /// </summary>
         public void Start()
         {
@@ -317,7 +332,7 @@ namespace SensusService
                 List<string> runningProtocolIds = ReadRunningProtocolIds();
                 foreach (Protocol protocol in _registeredProtocols)
                     if (!protocol.Running && runningProtocolIds.Contains(protocol.Id))
-                        StartProtocolAsync(protocol);
+                        StartProtocol(protocol);
             }
         }
 
@@ -392,6 +407,27 @@ namespace SensusService
                         _registeredProtocols.Add(protocol);
                         SaveRegisteredProtocols();
                     }
+        }
+
+        public void Ping()
+        {
+            lock (this)
+            {
+                if (_stopped)
+                    return;
+
+                _logger.Log("Sensus service helper was pinged (count=" + ++_pingCount + ")", LoggingLevel.Normal, _logTag);
+
+                List<string> runningProtocolIds = ReadRunningProtocolIds();
+                foreach (Protocol protocol in _registeredProtocols)
+                    if (runningProtocolIds.Contains(protocol.Id))
+                    {
+                        protocol.Ping();
+
+                        if (_pingCount % _pingsPerProtocolReport == 0)
+                            protocol.StoreMostRecentProtocolReport();
+                    }
+            }
         }
 
         public Task StopProtocolAsync(Protocol protocol, bool unregister)
@@ -479,32 +515,7 @@ namespace SensusService
                 });
         }
 
-        protected abstract void StartSensusPings(int ms);
-
-        protected abstract void StopSensusPings();
-
-        public void Ping()
-        {
-            lock (this)
-            {
-                if (_stopped)
-                    return;
-
-                _logger.Log("Sensus service helper was pinged (count=" + ++_pingCount + ")", LoggingLevel.Normal, _logTag);
-
-                List<string> runningProtocolIds = ReadRunningProtocolIds();
-                foreach (Protocol protocol in _registeredProtocols)
-                    if (runningProtocolIds.Contains(protocol.Id))
-                    {
-                        protocol.Ping();
-
-                        if (_pingCount % _pingsPerProtocolReportUpload == 0)
-                            protocol.UploadMostRecentProtocolReport();
-                    }
-            }
-        }
-
-        public void Destroy()
+        public virtual void Destroy()
         {
             try { _logger.Close(); }
             catch (Exception) { }
@@ -515,8 +526,6 @@ namespace SensusService
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
-
-        public abstract void ShareFile(string path, string subject);
 
         public string GetSharePath(string extension)
         {

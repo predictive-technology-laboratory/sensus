@@ -14,21 +14,14 @@
 // limitations under the License.
 #endregion
  
-using SensusService;
-using SensusUI;
-using System;
-using Xamarin.Forms;
-using Xamarin.Forms.Platform.Android;
-
-[assembly: ExportRenderer(typeof(TextCell), typeof(TextCellRendererFix))]
-namespace SensusUI
+namespace SensusService.Probes.User
 {
-    public class TextCellRendererFix : TextCellRenderer
+    public enum TriggerValueCondition
     {
-        protected override void OnCellPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs args)
-        {
-            try { base.OnCellPropertyChanged(sender, args); }
-            catch (Exception) { }
-        }
+        LessThan,
+        LessThanOrEqual,
+        Equal,
+        GreaterThanOrEqual,
+        GreaterThan
     }
 }

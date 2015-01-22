@@ -14,6 +14,8 @@
 // limitations under the License.
 #endregion
  
+using System;
+
 namespace SensusService.Probes.Context
 {
     public abstract class SoundProbe : PollingProbe
@@ -26,6 +28,11 @@ namespace SensusService.Probes.Context
         public override int DefaultPollingSleepDurationMS
         {
             get { return 10000; }
+        }
+
+        public sealed override Type DatumType
+        {
+            get { return typeof(SoundDatum); }
         }
     }
 }

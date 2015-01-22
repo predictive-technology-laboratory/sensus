@@ -19,7 +19,6 @@ using SensusService.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
 
 namespace SensusService.DataStores.Local
 {
@@ -81,7 +80,7 @@ namespace SensusService.DataStores.Local
             }
         }
 
-        protected override ICollection<Datum> CommitData(ICollection<Datum> data)
+        protected override List<Datum> CommitData(List<Datum> data)
         {
             lock (this)
             {
@@ -123,7 +122,7 @@ namespace SensusService.DataStores.Local
             }
         }
 
-        public override ICollection<Datum> GetDataForRemoteDataStore()
+        public override List<Datum> GetDataForRemoteDataStore()
         {
             lock (this)
             {
@@ -153,7 +152,7 @@ namespace SensusService.DataStores.Local
             }
         }
 
-        public override void ClearDataCommittedToRemoteDataStore(ICollection<Datum> dataCommittedToRemote)
+        public override void ClearDataCommittedToRemoteDataStore(List<Datum> dataCommittedToRemote)
         {
             lock (this)
             {

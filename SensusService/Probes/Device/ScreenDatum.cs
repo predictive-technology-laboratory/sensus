@@ -15,6 +15,7 @@
 #endregion
  
 using Newtonsoft.Json;
+using SensusService.Probes.User.ProbeTriggerProperties;
 using System;
 
 namespace SensusService.Probes.Device
@@ -23,6 +24,7 @@ namespace SensusService.Probes.Device
     {
         private bool _on;
 
+        [BooleanProbeTriggerProperty]
         public bool On
         {
             get { return _on; }

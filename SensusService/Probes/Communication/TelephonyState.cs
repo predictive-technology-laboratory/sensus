@@ -1,4 +1,4 @@
-#region copyright
+﻿#region copyright
 // Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,19 +14,12 @@
 // limitations under the License.
 #endregion
  
-using Android.Telephony;
-using System;
-
-namespace Sensus.Android.Probes.Communication
+namespace SensusService.Probes.Communication
 {
-    public class AndroidTelephonyIncomingListener : PhoneStateListener
+    public enum TelephonyState
     {
-        public event EventHandler<string> IncomingCall;
-
-        public override void OnCallStateChanged(CallState state, string incomingNumber)
-        {
-            if (IncomingCall != null && state == CallState.Ringing)
-                IncomingCall(this, incomingNumber);
-        }
+        Idle,
+        OutgoingCall,
+        IncomingCall
     }
 }
