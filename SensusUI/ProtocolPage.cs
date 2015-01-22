@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
 using SensusService;
 using SensusService.DataStores;
 using SensusService.Exceptions;
@@ -72,15 +72,22 @@ namespace SensusUI
             }
         }
 
+        private Protocol _protocol;
+        private EventHandler _protocolStartedHandler;
+        private EventHandler _protocolStoppedHandler;
+
+
         public ProtocolPage(Protocol protocol)
         {
-            BindingContext = protocol;
+            _protocol = protocol;
+
+            BindingContext = _protocol;
 
             SetBinding(TitleProperty, new Binding("Name"));
 
             List<View> views = new List<View>();
 
-            views.AddRange(UiProperty.GetPropertyStacks(protocol));
+            views.AddRange(UiProperty.GetPropertyStacks(_protocol));
 
             #region probes
             ListView probesList = new ListView();
@@ -88,7 +95,7 @@ namespace SensusUI
             probesList.ItemTemplate.SetBinding(TextCell.TextProperty, "DisplayName");
             probesList.ItemTemplate.SetBinding(TextCell.TextColorProperty, new Binding("Enabled", converter: new ProbeTextColorValueConverter()));
             probesList.ItemTemplate.SetBinding(TextCell.DetailProperty, new Binding("MostRecentDatum", converter: new ProbeDetailValueConverter()));
-            probesList.ItemsSource = protocol.Probes;
+            probesList.ItemsSource = _protocol.Probes;
             probesList.ItemTapped += (o, e) =>
                 {
                     probesList.SelectedItem = null;
@@ -103,17 +110,17 @@ namespace SensusUI
             {
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 Font = Font.SystemFontOfSize(20),
-                BindingContext = protocol
+                BindingContext = _protocol
             };
 
             editLocalDataStoreButton.SetBinding(Button.TextProperty, new Binding("LocalDataStore", converter: new DataStoreValueConverter(), converterParameter: "Local"));
             editLocalDataStoreButton.Clicked += (o, e) =>
                 {
                     DataStore copy = null;
-                    if (protocol.LocalDataStore != null)
-                        copy = protocol.LocalDataStore.Copy();
+                    if (_protocol.LocalDataStore != null)
+                        copy = _protocol.LocalDataStore.Copy();
 
-                    EditDataStoreTapped(o, new ProtocolDataStoreEventArgs { Protocol = protocol, DataStore = copy, Local = true });
+                    EditDataStoreTapped(o, new ProtocolDataStoreEventArgs { Protocol = _protocol, DataStore = copy, Local = true });
                 };
 
             Button createLocalDataStoreButton = new Button
@@ -125,7 +132,7 @@ namespace SensusUI
 
             createLocalDataStoreButton.Clicked += (o, e) =>
                 {
-                    CreateDataStoreTapped(o, new ProtocolDataStoreEventArgs { Protocol = protocol, Local = true });
+                    CreateDataStoreTapped(o, new ProtocolDataStoreEventArgs { Protocol = _protocol, Local = true });
                 };
 
             StackLayout localDataStoreStack = new StackLayout
@@ -141,17 +148,17 @@ namespace SensusUI
             {
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 Font = Font.SystemFontOfSize(20),
-                BindingContext = protocol
+                BindingContext = _protocol
             };
 
             editRemoteDataStoreButton.SetBinding(Button.TextProperty, new Binding("RemoteDataStore", converter: new DataStoreValueConverter(), converterParameter: "Remote"));
             editRemoteDataStoreButton.Clicked += (o, e) =>
                 {
                     DataStore copy = null;
-                    if (protocol.RemoteDataStore != null)
-                        copy = protocol.RemoteDataStore.Copy();
+                    if (_protocol.RemoteDataStore != null)
+                        copy = _protocol.RemoteDataStore.Copy();
 
-                    EditDataStoreTapped(o, new ProtocolDataStoreEventArgs { Protocol = protocol, DataStore = copy, Local = false });
+                    EditDataStoreTapped(o, new ProtocolDataStoreEventArgs { Protocol = _protocol, DataStore = copy, Local = false });
                 };
 
             Button createRemoteDataStoreButton = new Button
@@ -163,7 +170,7 @@ namespace SensusUI
 
             createRemoteDataStoreButton.Clicked += (o, e) =>
                 {
-                    CreateDataStoreTapped(o, new ProtocolDataStoreEventArgs { Protocol = protocol, Local = false });
+                    CreateDataStoreTapped(o, new ProtocolDataStoreEventArgs { Protocol = _protocol, Local = false });
                 };
 
             StackLayout remoteDataStoreStack = new StackLayout
@@ -174,6 +181,30 @@ namespace SensusUI
             };
 
             views.Add(remoteDataStoreStack);
+
+            #region disable/enable the datastore buttons when the protocol is started/stopped
+            editLocalDataStoreButton.IsEnabled = createLocalDataStoreButton.IsEnabled = createRemoteDataStoreButton.IsEnabled = editRemoteDataStoreButton.IsEnabled = !_protocol.Running;
+
+            _protocolStartedHandler = (o, e) =>
+                {
+                    Device.BeginInvokeOnMainThread(() =>
+                        {
+                            editLocalDataStoreButton.IsEnabled = createLocalDataStoreButton.IsEnabled = createRemoteDataStoreButton.IsEnabled = editRemoteDataStoreButton.IsEnabled = false;
+                        });
+                };
+
+            _protocol.Started += _protocolStartedHandler;
+
+            _protocolStoppedHandler = (o, e) =>
+                {
+                    Device.BeginInvokeOnMainThread(() =>
+                        {
+                            editLocalDataStoreButton.IsEnabled = createLocalDataStoreButton.IsEnabled = createRemoteDataStoreButton.IsEnabled = editRemoteDataStoreButton.IsEnabled = true;
+                        });
+                };
+
+            _protocol.Stopped += _protocolStoppedHandler;
+            #endregion
             #endregion
 
             Content = new StackLayout
@@ -187,14 +218,14 @@ namespace SensusUI
 
             ToolbarItems.Add(new ToolbarItem("Ping", null, async () =>
                 {
-                    if (SensusServiceHelper.Get().ProtocolShouldBeRunning(protocol))
+                    if (SensusServiceHelper.Get().ProtocolShouldBeRunning(_protocol))
                     {
-                        await protocol.PingAsync();
+                        await _protocol.PingAsync();
 
-                        if (protocol.MostRecentReport == null)
+                        if (_protocol.MostRecentReport == null)
                             await DisplayAlert("No Report", "Ping failed.", "OK");
                         else
-                            DisplayProtocolReport(this, protocol.MostRecentReport);
+                            DisplayProtocolReport(this, _protocol.MostRecentReport);
                     }
                     else
                         await DisplayAlert("Protocol Not Running", "Cannot ping protocol when it is not running.", "OK");
@@ -206,7 +237,7 @@ namespace SensusUI
                     try
                     {
                         path = UiBoundSensusServiceHelper.Get().GetSharePath(".sensus");
-                        protocol.Save(path);
+                        _protocol.Save(path);
                     }
                     catch (Exception ex)
                     {
@@ -215,13 +246,16 @@ namespace SensusUI
                     }
 
                     if (path != null)
-                        UiBoundSensusServiceHelper.Get().ShareFile(path, "Sensus Protocol:  " + protocol.Name);
+                        UiBoundSensusServiceHelper.Get().ShareFile(path, "Sensus Protocol:  " + _protocol.Name);
                 }));
         }
 
         protected override void OnDisappearing()
         {
             UiBoundSensusServiceHelper.Get().SaveRegisteredProtocols();
+
+            _protocol.Started -= _protocolStartedHandler;
+            _protocol.Stopped -= _protocolStoppedHandler;
 
             base.OnDisappearing();
         }
