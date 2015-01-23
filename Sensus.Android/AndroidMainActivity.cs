@@ -137,8 +137,10 @@ namespace Sensus.Android
         {
             base.OnResume();
 
-            // the call to UiBoundSensusServiceHelper.Get blocks until Set is called, but since Set gets called upon binding to the service (above), we have to use the async version to avoid a deadlock (binding occurrs on the UI thread).
-            // we set main activity here (and not in the binding event above) so that anyone waiting on the activity in the service will wait until the activity is visible.
+            // the call to UiBoundSensusServiceHelper.Get blocks until Set is called, but since Set gets called upon binding to the service (above), we have to use the 
+            // async version to avoid a deadlock (binding occurrs on the UI thread). we set main activity here (and not in the binding event above) so that anyone 
+            // waiting on the activity on the service side will wait until the activity is visible. this is important because the service does things like display
+            // dialogs and ask for input. we don't want those elements to be hidden by this activity.
             (await UiBoundSensusServiceHelper.GetAsync() as AndroidSensusServiceHelper).SetMainActivity(this);
         }
 

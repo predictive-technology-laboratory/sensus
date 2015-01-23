@@ -30,8 +30,7 @@ namespace SensusService.Probes.User
         private PromptOutputType _outputType;
         private string _outputMessage;
         private PromptInputType _inputType;
-        private ScriptDatum _inputDatum;
-        private ManualResetEvent _inputDatumWait;
+        private ScriptDatum _mostRecentInputDatum;
         private bool _requireNonEmptyInput;
         private int _numTries;
         private Prompt _nextPrompt;
@@ -53,6 +52,12 @@ namespace SensusService.Probes.User
         {
             get { return _inputType; }
             set { _inputType = value; }
+        }
+
+        public ScriptDatum MostRecentInputDatum
+        {
+            get { return _mostRecentInputDatum; }
+            set { _mostRecentInputDatum = value; }
         }
 
         public bool RequireNonEmptyInput
@@ -84,7 +89,6 @@ namespace SensusService.Probes.User
         /// </summary>
         private Prompt()
         {
-            _inputDatumWait = new ManualResetEvent(false);
             _requireNonEmptyInput = false;
         }
 
@@ -120,56 +124,52 @@ namespace SensusService.Probes.User
             _nextPromptValue = nextPromptValue;
         }
 
-        public Task<ScriptDatum> RunAsync()
+        public Task<ScriptDatum> RunAsync(Datum previous, Datum current)
         {
-            return Task.Run<ScriptDatum>(() =>
+            return Task.Run<ScriptDatum>(async () =>
                 {
-                    lock (_staticLockObject)
+                    _mostRecentInputDatum = null;
+
+                    // only one prompt is allowed to execute at a time, and we can't use a lock statement because await cannot be used within lock. so we use a monitor.
+                    if (Monitor.TryEnter(_staticLockObject))
                     {
-                        _inputDatumWait.Reset();
-                        RunAsyncPrivate();
-                        _inputDatumWait.WaitOne();
+                        try
+                        {
+                            string inputText = null;
+                            int triesLeft = _numTries;
+                            do
+                            {
+                                if (_outputType == PromptOutputType.Text && _inputType == PromptInputType.Text)
+                                    inputText = await SensusServiceHelper.Get().PromptForInputAsync(_outputMessage, false);
+                                else if (_outputType == PromptOutputType.Text && _inputType == PromptInputType.Voice)
+                                    inputText = await SensusServiceHelper.Get().PromptForInputAsync(_outputMessage, true);
+                                else if (_outputType == PromptOutputType.Text && _inputType == PromptInputType.None)
+                                    await SensusServiceHelper.Get().FlashNotificationAsync(_outputMessage);
+                                else if (_outputType == PromptOutputType.Voice && _inputType == PromptInputType.Text)
+                                {
+                                    await SensusServiceHelper.Get().TextToSpeechAsync(_outputMessage);
+                                    inputText = await SensusServiceHelper.Get().PromptForInputAsync(_outputMessage, false);
+                                }
+                                else if (_outputType == PromptOutputType.Voice && _inputType == PromptInputType.Voice)
+                                {
+                                    await SensusServiceHelper.Get().TextToSpeechAsync(_outputMessage);
+                                    inputText = await SensusServiceHelper.Get().PromptForInputAsync(_outputMessage, true);
+                                }
+                                else if (_outputType == PromptOutputType.Voice && _inputType == PromptInputType.None)
+                                    await SensusServiceHelper.Get().TextToSpeechAsync(_outputMessage);
+                                else
+                                    SensusServiceHelper.Get().Logger.Log("Prompt failure:  Unrecognized output/input setup:  " + _outputType + " -> " + _inputType, LoggingLevel.Normal);
+                            }
+                            while (inputText == null && _requireNonEmptyInput && --triesLeft > 0);
 
-                        return _inputDatum;
+                            if (inputText != null)
+                                _mostRecentInputDatum = new ScriptDatum(null, DateTimeOffset.UtcNow, inputText);
+                        }
+                        finally { Monitor.Exit(_staticLockObject); }  // ensure the lock is always released
                     }
+
+                    return _mostRecentInputDatum;
                 });
-        }
-
-        private async void RunAsyncPrivate()
-        {
-            _inputDatum = null;
-
-            string inputText = null;
-            int triesLeft = _numTries;
-            do
-            {
-                if (_outputType == PromptOutputType.Text && _inputType == PromptInputType.Text)
-                    inputText = await SensusServiceHelper.Get().PromptForInputAsync(_outputMessage, false);
-                else if (_outputType == PromptOutputType.Text && _inputType == PromptInputType.Voice)
-                    inputText = await SensusServiceHelper.Get().PromptForInputAsync(_outputMessage, true);
-                else if (_outputType == PromptOutputType.Text && _inputType == PromptInputType.None)
-                    await SensusServiceHelper.Get().FlashNotificationAsync(_outputMessage);
-                else if (_outputType == PromptOutputType.Voice && _inputType == PromptInputType.Text)
-                {
-                    await SensusServiceHelper.Get().TextToSpeechAsync(_outputMessage);
-                    inputText = await SensusServiceHelper.Get().PromptForInputAsync(_outputMessage, false);
-                }
-                else if (_outputType == PromptOutputType.Voice && _inputType == PromptInputType.Voice)
-                {
-                    await SensusServiceHelper.Get().TextToSpeechAsync(_outputMessage);
-                    inputText = await SensusServiceHelper.Get().PromptForInputAsync(_outputMessage, true);
-                }
-                else if (_outputType == PromptOutputType.Voice && _inputType == PromptInputType.None)
-                    await SensusServiceHelper.Get().TextToSpeechAsync(_outputMessage);
-                else
-                    SensusServiceHelper.Get().Logger.Log("Prompt failure:  Unrecognized output/input setup:  " + _outputType + " -> " + _inputType, LoggingLevel.Normal);
-            }
-            while (inputText == null && _requireNonEmptyInput && --triesLeft > 0);
-
-            if (_inputType != PromptInputType.None)
-                _inputDatum = new ScriptDatum(null, DateTimeOffset.UtcNow, inputText);
-
-            _inputDatumWait.Set();
         }
     }
 }
