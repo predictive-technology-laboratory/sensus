@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
 using SensusService.Probes;
 using SensusService.Probes.User;
 using SensusUI.UiProperties;
