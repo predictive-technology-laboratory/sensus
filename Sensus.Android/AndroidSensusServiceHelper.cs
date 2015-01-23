@@ -86,25 +86,31 @@ namespace Sensus.Android
             _mainActivityWait = new ManualResetEvent(false);
         }
 
-        public AndroidMainActivity GetMainActivity(bool foreground)
+        public Task<AndroidMainActivity> GetMainActivityAsync(bool foreground)
         {
-            lock (_getMainActivityLocker)
-            {
-                if (_mainActivity == null || (foreground && !_mainActivity.IsForegrounded))
+            // this is asynchronous because it blocks while waiting for the main activity to start. but the new main activity runs on the UI 
+            // thread, so if this method would be called from the main thread you'll get a deadlock. none of that will happen, though, since
+            // this is all done asynchronously.
+            return Task.Run(() =>
                 {
-                    Logger.Log("Main activity is not started or is not in the foreground. Starting it.", LoggingLevel.Normal);
+                    lock (_getMainActivityLocker)
+                    {
+                        if (_mainActivity == null || (foreground && !_mainActivity.IsForegrounded))
+                        {
+                            Logger.Log("Main activity is not started or is not in the foreground. Starting it.", LoggingLevel.Normal);
 
-                    // start the activity and wait for it to bind itself to the service
-                    Intent intent = new Intent(_service, typeof(AndroidMainActivity));
-                    intent.AddFlags(ActivityFlags.NewTask);
+                            // start the activity and wait for it to bind itself to the service
+                            Intent intent = new Intent(_service, typeof(AndroidMainActivity));
+                            intent.AddFlags(ActivityFlags.NewTask);
 
-                    _mainActivityWait.Reset();
-                    _service.StartActivity(intent);
-                    _mainActivityWait.WaitOne();
-                }
+                            _mainActivityWait.Reset();
+                            _service.StartActivity(intent);
+                            _mainActivityWait.WaitOne();
+                        }
 
-                return _mainActivity;
-            }
+                        return _mainActivity;
+                    }
+                });
         }
 
         public void SetMainActivity(AndroidMainActivity value)
@@ -135,7 +141,7 @@ namespace Sensus.Android
                         intent.SetType("*/*");
                         intent.AddCategory(Intent.CategoryOpenable);
 
-                        Tuple<Result, Intent> result = await GetMainActivity(true).GetActivityResultAsync(intent, AndroidActivityResultRequestCode.PromptForFile, 60000 * 5);
+                        Tuple<Result, Intent> result = await(await GetMainActivityAsync(true)).GetActivityResultAsync(intent, AndroidActivityResultRequestCode.PromptForFile, 60000 * 5);
 
                         if (result != null && result.Item1 == Result.Ok)
                             try
@@ -152,7 +158,7 @@ namespace Sensus.Android
                 });
         }
 
-        public override void ShareFile(string path, string subject)
+        public override async void ShareFileAsync(string path, string subject)
         {
             try
             {
@@ -168,7 +174,7 @@ namespace Sensus.Android
                 intent.PutExtra(Intent.ExtraStream, uri);
 
                 // run from main activity to get a smoother transition back to sensus
-                GetMainActivity(true).StartActivity(intent);
+                (await GetMainActivityAsync(true)).StartActivity(intent);
             }
             catch (Exception ex) { Logger.Log("Failed to start intent to share file \"" + path + "\":  " + ex.Message, LoggingLevel.Normal); }
         }
@@ -183,19 +189,19 @@ namespace Sensus.Android
             SetSensusMonitoringAlarm(-1);
         }
 
-        public override void TextToSpeechAsync(string text, bool waitForCompletion)
+        public override Task TextToSpeechAsync(string text)
         {
-            _textToSpeech.SpeakAsync(text, waitForCompletion);
+            return _textToSpeech.SpeakAsync(text);
         }
 
         public override Task<string> PromptForInputAsync(string prompt, bool startVoiceRecognizer)
         {
-            return Task.Run<string>(() =>
+            return Task.Run<string>(async () =>
                 {
                     string input = null;
                     ManualResetEvent inputWait = new ManualResetEvent(false);
 
-                    AndroidMainActivity mainActivity = GetMainActivity(true);
+                    AndroidMainActivity mainActivity = await GetMainActivityAsync(true);
 
                     mainActivity.RunOnUiThread(async () =>
                         {
@@ -255,11 +261,13 @@ namespace Sensus.Android
                 });
         }
 
-        public override void FlashNotification(string message)
+        public override Task FlashNotificationAsync(string message)
         {
-            AndroidMainActivity mainActivity = GetMainActivity(false);
-
-            mainActivity.RunOnUiThread(() => Toast.MakeText(mainActivity, message, ToastLength.Long).Show());
+            return Task.Run(async () =>
+                {
+                    AndroidMainActivity mainActivity = await GetMainActivityAsync(false);
+                    mainActivity.RunOnUiThread(() => Toast.MakeText(mainActivity, message, ToastLength.Long).Show());
+                });
         }
 
         private void SetSensusMonitoringAlarm(int ms)

@@ -246,7 +246,7 @@ namespace SensusUI
                     }
 
                     if (path != null)
-                        UiBoundSensusServiceHelper.Get().ShareFile(path, "Sensus Protocol:  " + _protocol.Name);
+                        UiBoundSensusServiceHelper.Get().ShareFileAsync(path, "Sensus Protocol:  " + _protocol.Name);
                 }));
         }
 

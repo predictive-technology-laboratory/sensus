@@ -148,19 +148,19 @@ namespace SensusService.Probes.User
                 else if (_outputType == PromptOutputType.Text && _inputType == PromptInputType.Voice)
                     inputText = await SensusServiceHelper.Get().PromptForInputAsync(_outputMessage, true);
                 else if (_outputType == PromptOutputType.Text && _inputType == PromptInputType.None)
-                    SensusServiceHelper.Get().FlashNotification(_outputMessage);
+                    await SensusServiceHelper.Get().FlashNotificationAsync(_outputMessage);
                 else if (_outputType == PromptOutputType.Voice && _inputType == PromptInputType.Text)
                 {
-                    SensusServiceHelper.Get().TextToSpeechAsync(_outputMessage, true);
+                    await SensusServiceHelper.Get().TextToSpeechAsync(_outputMessage);
                     inputText = await SensusServiceHelper.Get().PromptForInputAsync(_outputMessage, false);
                 }
                 else if (_outputType == PromptOutputType.Voice && _inputType == PromptInputType.Voice)
                 {
-                    SensusServiceHelper.Get().TextToSpeechAsync(_outputMessage, true);
+                    await SensusServiceHelper.Get().TextToSpeechAsync(_outputMessage);
                     inputText = await SensusServiceHelper.Get().PromptForInputAsync(_outputMessage, true);
                 }
                 else if (_outputType == PromptOutputType.Voice && _inputType == PromptInputType.None)
-                    SensusServiceHelper.Get().TextToSpeechAsync(_outputMessage, false);
+                    await SensusServiceHelper.Get().TextToSpeechAsync(_outputMessage);
                 else
                     SensusServiceHelper.Get().Logger.Log("Prompt failure:  Unrecognized output/input setup:  " + _outputType + " -> " + _inputType, LoggingLevel.Normal);
             }

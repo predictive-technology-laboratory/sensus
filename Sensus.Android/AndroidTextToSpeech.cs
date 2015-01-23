@@ -18,6 +18,7 @@ using Android.Speech.Tts;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Sensus.Android
 {
@@ -45,28 +46,26 @@ namespace Sensus.Android
             _initWait.Set();
         }
 
-        public void SpeakAsync(string text, bool waitForCompletion)
+        public Task SpeakAsync(string text)
         {
-            lock (this)
-            {
-                if (_disposed)
-                    return;
+            return Task.Run(() =>
+                {
+                    lock (this)
+                    {
+                        if (_disposed)
+                            return;
 
-                _initWait.WaitOne();
+                        _initWait.WaitOne();
 
-                string utteranceId = Guid.NewGuid().ToString();
+                        _utteranceIdToWaitFor = Guid.NewGuid().ToString();
+                        Dictionary<string, string> speakParams = new Dictionary<string, string>();
+                        speakParams.Add(TextToSpeech.Engine.KeyParamUtteranceId, _utteranceIdToWaitFor);
 
-                Dictionary<string, string> speakParams = new Dictionary<string, string>();
-                speakParams.Add(TextToSpeech.Engine.KeyParamUtteranceId, utteranceId);
-
-                _utteranceIdToWaitFor = utteranceId;
-                _utteranceWait.Reset();
-
-                _textToSpeech.Speak(text, QueueMode.Add, speakParams);
-
-                if (waitForCompletion)
-                    _utteranceWait.WaitOne();
-            }
+                        _utteranceWait.Reset();
+                        _textToSpeech.Speak(text, QueueMode.Add, speakParams);
+                        _utteranceWait.WaitOne();
+                    }
+                });
         }
 
         public override void OnStart(string utteranceId)
