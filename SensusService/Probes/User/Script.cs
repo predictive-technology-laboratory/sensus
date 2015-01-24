@@ -166,7 +166,7 @@ namespace SensusService.Probes.User
                     List<ScriptDatum> scriptData = new List<ScriptDatum>();
 
                     foreach (Prompt prompt in _prompts)
-                        if (prompt.MostRecentInputDatum != null)
+                        if (prompt.MostRecentInputDatum == null)
                         {
                             ScriptDatum scriptDatum = await prompt.RunAsync(_previousDatum, _currentDatum);
                             if (scriptDatum != null)
