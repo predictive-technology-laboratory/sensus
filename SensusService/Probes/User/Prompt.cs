@@ -132,7 +132,6 @@ namespace SensusService.Probes.User
 
                     // only one prompt is allowed to execute at a time, and we can't use a lock statement because await cannot be used within lock. so we use a monitor.
                     if (Monitor.TryEnter(_staticLockObject))
-                    {
                         try
                         {
                             string inputText = null;
@@ -166,7 +165,6 @@ namespace SensusService.Probes.User
                                 _mostRecentInputDatum = new ScriptDatum(null, DateTimeOffset.UtcNow, inputText);
                         }
                         finally { Monitor.Exit(_staticLockObject); }  // ensure the lock is always released
-                    }
 
                     return _mostRecentInputDatum;
                 });

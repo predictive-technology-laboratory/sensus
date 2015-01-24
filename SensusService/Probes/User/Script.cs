@@ -56,7 +56,11 @@ namespace SensusService.Probes.User
             set
             {
                 _id = value;
-                _hashCode = _id.GetHashCode();
+
+                if (_id == null)
+                    _hashCode = base.GetHashCode();
+                else
+                    _hashCode = _id.GetHashCode();
             }
         } 
 
@@ -159,21 +163,21 @@ namespace SensusService.Probes.User
                     if (!_hasRun)
                         _firstRunTimeStamp = DateTimeOffset.UtcNow;
 
-                    List<ScriptDatum> data = new List<ScriptDatum>();
+                    List<ScriptDatum> scriptData = new List<ScriptDatum>();
 
                     foreach (Prompt prompt in _prompts)
                         if (prompt.MostRecentInputDatum != null)
                         {
-                            ScriptDatum datum = await prompt.RunAsync(_previousDatum, _currentDatum);
-                            if (datum != null)
-                                data.Add(datum);
+                            ScriptDatum scriptDatum = await prompt.RunAsync(_previousDatum, _currentDatum);
+                            if (scriptDatum != null)
+                                scriptData.Add(scriptDatum);
                         }
 
                     _hasRun = true;
 
                     SensusServiceHelper.Get().Logger.Log("Script \"" + _name + "\" has finished running.", LoggingLevel.Normal);
 
-                    return data;
+                    return scriptData;
                 });
         }
 
