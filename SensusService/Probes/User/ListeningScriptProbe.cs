@@ -1,20 +1,4 @@
-﻿#region copyright
-// Copyright 2014 The Rector & Visitors of the University of Virginia
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-#endregion
-
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using SensusUI.UiProperties;
 using System;
 using System.Collections.Generic;
@@ -36,6 +20,7 @@ namespace SensusService.Probes.User
         private Task _scriptRerunTask;
         private bool _stopScriptRerunTask;
         private int _scriptRerunDelay;
+        private int _maxScriptAgeMinutes;
 
         public ObservableCollection<Trigger> Triggers
         {
@@ -98,6 +83,20 @@ namespace SensusService.Probes.User
             }
         }
 
+        [EntryIntegerUiProperty("Max. Script Age (Mins.):", true, 12)]
+        public int MaxScriptAgeMinutes
+        {
+            get { return _maxScriptAgeMinutes; }
+            set
+            {
+                if (value != _maxScriptAgeMinutes)
+                {
+                    _maxScriptAgeMinutes = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         public Queue<Script> IncompleteScripts
         {
             get { return _incompleteScripts; }
@@ -123,6 +122,7 @@ namespace SensusService.Probes.User
             _rerunIncompleteScripts = false;
             _scriptRerunDelay = 60000;
             _stopScriptRerunTask = true;
+            _maxScriptAgeMinutes = 10;
 
             _triggers.CollectionChanged += (o, e) =>
                 {
@@ -222,8 +222,16 @@ namespace SensusService.Probes.User
                         {
                             Script scriptToRerun = null;
                             lock (_incompleteScripts)
-                                if (_incompleteScripts.Count > 0)
+                                while (scriptToRerun == null && _incompleteScripts.Count > 0)
+                                {
                                     scriptToRerun = _incompleteScripts.Dequeue();
+                                    TimeSpan scriptAge = DateTimeOffset.UtcNow - scriptToRerun.FirstRunTimeStamp;
+                                    if (scriptAge.TotalMinutes > _maxScriptAgeMinutes)
+                                    {
+                                        SensusServiceHelper.Get().Logger.Log("Script \"" + scriptToRerun.Name + "\" has aged out.", LoggingLevel.Normal);
+                                        scriptToRerun = null;
+                                    }
+                                }
 
                             if (scriptToRerun != null)
                                 await RunScriptAsync(scriptToRerun, null, null);
