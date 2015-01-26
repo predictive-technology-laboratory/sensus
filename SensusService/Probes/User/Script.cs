@@ -45,7 +45,6 @@ namespace SensusService.Probes.User
         private string _name;
         private int _delayMS;
         private List<Prompt> _prompts;
-        private bool _hasRun;
         private DateTimeOffset _firstRunTimeStamp;
         private Datum _previousDatum;
         private Datum _currentDatum;
@@ -82,12 +81,6 @@ namespace SensusService.Probes.User
             set { _prompts = value; }
         }
 
-        public bool HasRun
-        {
-            get { return _hasRun; }
-            set { _hasRun = value; }
-        }
-
         public DateTimeOffset FirstRunTimeStamp
         {
             get { return _firstRunTimeStamp; }
@@ -109,7 +102,7 @@ namespace SensusService.Probes.User
         [JsonIgnore]
         public bool Complete
         {
-            get { return _hasRun && _prompts.Count == 0 ? true : _prompts.All(p => p.MostRecentInputDatum != null); }
+            get { return _prompts.Count == 0 ? true : _prompts.All(p => p.InputDatum != null); }
         }
 
         /// <summary>
@@ -121,7 +114,6 @@ namespace SensusService.Probes.User
             _hashCode = _id.GetHashCode();
             _delayMS = 0;
             _prompts = new List<Prompt>();
-            _hasRun = false;
         }
 
         public Script(string name)
@@ -160,24 +152,23 @@ namespace SensusService.Probes.User
                     if (_delayMS > 0)
                         Thread.Sleep(_delayMS);
 
-                    if (!_hasRun)
-                        _firstRunTimeStamp = DateTimeOffset.UtcNow;
+                    lock (this)
+                        if (_firstRunTimeStamp == DateTimeOffset.MinValue)
+                            _firstRunTimeStamp = DateTimeOffset.UtcNow;
 
-                    List<ScriptDatum> scriptData = new List<ScriptDatum>();
+                    List<ScriptDatum> data = new List<ScriptDatum>();
 
                     foreach (Prompt prompt in _prompts)
-                        if (prompt.MostRecentInputDatum == null)
+                        if (prompt.InputDatum == null)
                         {
-                            ScriptDatum scriptDatum = await prompt.RunAsync(_previousDatum, _currentDatum);
-                            if (scriptDatum != null)
-                                scriptData.Add(scriptDatum);
+                            ScriptDatum datum = await prompt.RunAsync(_previousDatum, _currentDatum);
+                            if (datum != null)
+                                data.Add(datum);
                         }
-
-                    _hasRun = true;
 
                     SensusServiceHelper.Get().Logger.Log("Script \"" + _name + "\" has finished running.", LoggingLevel.Normal);
 
-                    return scriptData;
+                    return data;
                 });
         }
 

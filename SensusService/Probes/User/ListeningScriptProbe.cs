@@ -20,7 +20,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -35,6 +34,7 @@ namespace SensusService.Probes.User
         private Queue<Script> _incompleteScripts;
         private bool _rerunIncompleteScripts;
         private Task _scriptRerunTask;
+        private bool _stopScriptRerunTask;
         private int _scriptRerunDelay;
 
         public ObservableCollection<Trigger> Triggers
@@ -122,6 +122,7 @@ namespace SensusService.Probes.User
             _incompleteScripts = new Queue<Script>();
             _rerunIncompleteScripts = false;
             _scriptRerunDelay = 60000;
+            _stopScriptRerunTask = true;
 
             _triggers.CollectionChanged += (o, e) =>
                 {
@@ -206,16 +207,18 @@ namespace SensusService.Probes.User
 
             _scriptRerunTask = Task.Run(async () =>
                 {
-                    while (_rerunIncompleteScripts)
+                    _stopScriptRerunTask = false;
+
+                    while (!_stopScriptRerunTask)
                     {
                         int msToSleep = _scriptRerunDelay;
-                        while (_rerunIncompleteScripts && msToSleep > 0)
+                        while (!_stopScriptRerunTask && msToSleep > 0)
                         {
                             Thread.Sleep(1000);
                             msToSleep -= 1000;
                         }
 
-                        if (_rerunIncompleteScripts)
+                        if (!_stopScriptRerunTask)
                         {
                             Script scriptToRerun = null;
                             lock (_incompleteScripts)
@@ -256,7 +259,7 @@ namespace SensusService.Probes.User
                     {
                         SensusServiceHelper.Get().Logger.Log("Stopping incomplete script task.", LoggingLevel.Normal);
 
-                        _rerunIncompleteScripts = false;
+                        _stopScriptRerunTask = true;
                         _scriptRerunTask.Wait();
                     }
                 });
