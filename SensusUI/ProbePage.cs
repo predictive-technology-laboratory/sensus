@@ -89,7 +89,10 @@ namespace SensusUI
                 contentLayout.Children.Add(deleteTriggerButton);
             }
 
-            Content = contentLayout;
+            Content = new ScrollView
+            {
+                Content = contentLayout
+            };
         }
     }
 }
