@@ -73,14 +73,19 @@ namespace SensusUI
                 Children = { clearButton, okayButton }
             });
 
-            Content = new StackLayout
+            StackLayout contentLayout = new StackLayout
             {
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 Orientation = StackOrientation.Vertical,
             };
 
             foreach (StackLayout stack in stacks)
-                (Content as StackLayout).Children.Add(stack);
+                contentLayout.Children.Add(stack);
+
+            Content = new ScrollView
+            {
+                Content = contentLayout
+            };
         }
     }
 }

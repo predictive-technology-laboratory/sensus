@@ -10,6 +10,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)AddScriptProbeTriggerPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ProbesPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ScriptTriggersPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UiBoundSensusServiceHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CreateDataStorePage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStorePage.cs" />

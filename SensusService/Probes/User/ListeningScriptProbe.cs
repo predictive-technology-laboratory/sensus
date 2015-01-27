@@ -1,4 +1,20 @@
-﻿using Newtonsoft.Json;
+﻿#region copyright
+// Copyright 2014 The Rector & Visitors of the University of Virginia
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+#endregion
+
+using Newtonsoft.Json;
 using SensusUI.UiProperties;
 using System;
 using System.Collections.Generic;
@@ -19,7 +35,7 @@ namespace SensusService.Probes.User
         private bool _rerunIncompleteScripts;
         private Task _scriptRerunTask;
         private bool _stopScriptRerunTask;
-        private int _scriptRerunDelay;
+        private int _scriptRerunDelayMS;
         private int _maxScriptAgeMinutes;
 
         public ObservableCollection<Trigger> Triggers
@@ -69,15 +85,15 @@ namespace SensusService.Probes.User
             }
         }
 
-        [EntryIntegerUiProperty("Script Rerun Delay:", true, 11)]
-        public int ScriptRerunDelay
+        [EntryIntegerUiProperty("Script Rerun Delay (MS):", true, 11)]
+        public int ScriptRerunDelayMS
         {
-            get { return _scriptRerunDelay; }
+            get { return _scriptRerunDelayMS; }
             set
             {
-                if (value != _scriptRerunDelay)
+                if (value != _scriptRerunDelayMS)
                 {
-                    _scriptRerunDelay = value;
+                    _scriptRerunDelayMS = value;
                     OnPropertyChanged();
                 }
             }
@@ -120,7 +136,7 @@ namespace SensusService.Probes.User
             _listening = false;
             _incompleteScripts = new Queue<Script>();
             _rerunIncompleteScripts = false;
-            _scriptRerunDelay = 60000;
+            _scriptRerunDelayMS = 60000;
             _stopScriptRerunTask = true;
             _maxScriptAgeMinutes = 10;
 
@@ -211,7 +227,7 @@ namespace SensusService.Probes.User
 
                     while (!_stopScriptRerunTask)
                     {
-                        int msToSleep = _scriptRerunDelay;
+                        int msToSleep = _scriptRerunDelayMS;
                         while (!_stopScriptRerunTask && msToSleep > 0)
                         {
                             Thread.Sleep(1000);

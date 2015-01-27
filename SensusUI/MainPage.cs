@@ -83,7 +83,10 @@ namespace SensusUI
             foreach (StackLayout serviceStack in UiProperty.GetPropertyStacks(serviceHelper))
                 contentLayout.Children.Add(serviceStack);
 
-            Content = contentLayout;
+            Content = new ScrollView
+            {
+                Content = contentLayout
+            };
         }
     }
 }

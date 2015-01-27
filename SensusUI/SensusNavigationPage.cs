@@ -58,9 +58,9 @@ namespace SensusUI
                     await PushAsync(new CreateDataStorePage(e));
                 };
 
-            ProtocolPage.ProbeTapped += async (o, e) =>
+            ProtocolPage.ViewProbesTapped += async (o, protocol) =>
                 {
-                    await PushAsync(new ProbePage(e.Item as Probe));
+                    await PushAsync(new ProbesPage(protocol));
                 };
 
             ProtocolPage.DisplayProtocolReport += async (o, report) =>
@@ -69,8 +69,22 @@ namespace SensusUI
                 };
             #endregion
 
+            #region probes page
+            ProbesPage.ProbeTapped += async (o, probe) =>
+                {
+                    await PushAsync(new ProbePage(probe));
+                };
+            #endregion
+
             #region probe page
-            ProbePage.AddTriggerTapped += async (o, scriptProbe) =>
+            ProbePage.ViewScriptTriggersTapped += async (o, scriptProbe) =>
+                {
+                    await PushAsync(new ScriptTriggersPage(scriptProbe));
+                };
+            #endregion
+
+            #region script triggers page
+            ScriptTriggersPage.AddTriggerTapped += async (o, scriptProbe) =>
                 {
                     await PushAsync(new AddScriptProbeTriggerPage(scriptProbe));
                 };

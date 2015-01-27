@@ -351,7 +351,10 @@ namespace SensusUI
 
             contentLayout.Children.Add(okButton);
 
-            Content = contentLayout;
+            Content = new ScrollView
+            {
+                Content = contentLayout
+            };
         }
     }
 }
