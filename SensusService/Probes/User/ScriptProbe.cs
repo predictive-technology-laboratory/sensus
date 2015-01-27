@@ -284,7 +284,7 @@ namespace SensusService.Probes.User
                                 while (scriptToRerun == null && _incompleteScripts.Count > 0)
                                 {
                                     scriptToRerun = _incompleteScripts.Dequeue();
-                                    TimeSpan scriptAge = DateTimeOffset.UtcNow - scriptToRerun.FirstRunTimeStamp;
+                                    TimeSpan scriptAge = DateTimeOffset.UtcNow - scriptToRerun.FirstRunTimestamp;
                                     if (scriptAge.TotalMinutes > _maxScriptAgeMinutes)
                                     {
                                         SensusServiceHelper.Get().Logger.Log("Script \"" + scriptToRerun.Name + "\" has aged out.", LoggingLevel.Normal);
@@ -355,7 +355,7 @@ namespace SensusService.Probes.User
             {
                 lock (_incompleteScripts)
                     if (_incompleteScripts.Count > 0)
-                        warning += "Listening probe is holding " + _incompleteScripts.Count + " scripts, the oldest being run first on " + _incompleteScripts.Select(s => s.FirstRunTimeStamp).Min() + "." + Environment.NewLine;
+                        warning += "Listening probe is holding " + _incompleteScripts.Count + " scripts, the oldest being run first on " + _incompleteScripts.Select(s => s.FirstRunTimestamp).Min() + "." + Environment.NewLine;
 
                 if (_numScriptsAgedOut > 0)
                     warning += _numScriptsAgedOut + " scripts have aged out.";

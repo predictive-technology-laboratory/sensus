@@ -219,8 +219,31 @@ namespace Sensus.Android
                                                  .SetOnDismissListener(new AndroidOnDismissListener(() =>
                                                      {
                                                          inputWait.Set();
-                                                     }))
+                                                     }))                                                 
                                                  .Create();
+
+                            dialog.SetOnShowListener(new AndroidOnShowListener(async () =>
+                                {
+                                    if (startVoiceRecognizer)
+                                    {
+                                        Intent intent = new Intent(RecognizerIntent.ActionRecognizeSpeech);
+                                        intent.PutExtra(RecognizerIntent.ExtraLanguageModel, RecognizerIntent.LanguageModelFreeForm);
+                                        intent.PutExtra(RecognizerIntent.ExtraSpeechInputCompleteSilenceLengthMillis, 1500);
+                                        intent.PutExtra(RecognizerIntent.ExtraSpeechInputPossiblyCompleteSilenceLengthMillis, 1500);
+                                        intent.PutExtra(RecognizerIntent.ExtraSpeechInputMinimumLengthMillis, 15000);
+                                        intent.PutExtra(RecognizerIntent.ExtraMaxResults, 1);
+                                        intent.PutExtra(RecognizerIntent.ExtraLanguage, Java.Util.Locale.Default);
+
+                                        Tuple<Result, Intent> result = await mainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.RecognizeSpeech, timeoutMS);
+
+                                        if (result != null && result.Item1 == Result.Ok)
+                                        {
+                                            IList<string> matches = result.Item2.GetStringArrayListExtra(RecognizerIntent.ExtraResults);
+                                            if (matches != null && matches.Count > 0)
+                                                responseEdit.Text = matches[0];
+                                        }
+                                    }
+                                }));
 
                             // dismiss the keyguard
                             dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.DismissKeyguard);
@@ -232,26 +255,6 @@ namespace Sensus.Android
                             dialog.Window.Attributes.DimAmount = 0.75f;
 
                             dialog.Show();
-
-                            if (startVoiceRecognizer)
-                            {
-                                Intent intent = new Intent(RecognizerIntent.ActionRecognizeSpeech);
-                                intent.PutExtra(RecognizerIntent.ExtraLanguageModel, RecognizerIntent.LanguageModelFreeForm);
-                                intent.PutExtra(RecognizerIntent.ExtraSpeechInputCompleteSilenceLengthMillis, 1500);
-                                intent.PutExtra(RecognizerIntent.ExtraSpeechInputPossiblyCompleteSilenceLengthMillis, 1500);
-                                intent.PutExtra(RecognizerIntent.ExtraSpeechInputMinimumLengthMillis, 15000);
-                                intent.PutExtra(RecognizerIntent.ExtraMaxResults, 1);
-                                intent.PutExtra(RecognizerIntent.ExtraLanguage, Java.Util.Locale.Default);
-
-                                Tuple<Result, Intent> result = await mainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.RecognizeSpeech, timeoutMS);
-
-                                if (result != null && result.Item1 == Result.Ok)
-                                {
-                                    IList<string> matches = result.Item2.GetStringArrayListExtra(RecognizerIntent.ExtraResults);
-                                    if (matches != null && matches.Count > 0)
-                                        responseEdit.Text = matches[0];
-                                }
-                            }
 
                             // dismiss the dialog after a timeout
                             await Task.Run(() =>

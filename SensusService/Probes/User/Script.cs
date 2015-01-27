@@ -45,7 +45,7 @@ namespace SensusService.Probes.User
         private string _name;
         private int _delayMS;
         private List<Prompt> _prompts;
-        private DateTimeOffset _firstRunTimeStamp;
+        private DateTimeOffset _firstRunTimestamp;
         private Datum _previousDatum;
         private Datum _currentDatum;
 
@@ -81,10 +81,10 @@ namespace SensusService.Probes.User
             set { _prompts = value; }
         }
 
-        public DateTimeOffset FirstRunTimeStamp
+        public DateTimeOffset FirstRunTimestamp
         {
-            get { return _firstRunTimeStamp; }
-            set { _firstRunTimeStamp = value; }
+            get { return _firstRunTimestamp; }
+            set { _firstRunTimestamp = value; }
         }
 
         public Datum PreviousDatum
@@ -152,16 +152,20 @@ namespace SensusService.Probes.User
                     if (_delayMS > 0)
                         Thread.Sleep(_delayMS);
 
+                    bool isRerun = true;
                     lock (this)
-                        if (_firstRunTimeStamp == DateTimeOffset.MinValue)
-                            _firstRunTimeStamp = DateTimeOffset.UtcNow;
+                        if (_firstRunTimestamp == DateTimeOffset.MinValue)
+                        {
+                            _firstRunTimestamp = DateTimeOffset.UtcNow;
+                            isRerun = false;
+                        }
 
                     List<ScriptDatum> data = new List<ScriptDatum>();
 
                     foreach (Prompt prompt in _prompts)
                         if (prompt.InputDatum == null)
                         {
-                            ScriptDatum datum = await prompt.RunAsync(_previousDatum, _currentDatum);
+                            ScriptDatum datum = await prompt.RunAsync(_previousDatum, _currentDatum, isRerun, _firstRunTimestamp);
                             if (datum != null)
                                 data.Add(datum);
                         }

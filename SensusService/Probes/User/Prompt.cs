@@ -26,6 +26,7 @@ namespace SensusService.Probes.User
 
         private PromptOutputType _outputType;
         private string _outputMessage;
+        private string _outputMessageRerun;
         private PromptInputType _inputType;
         private int _timeoutMS;
         private ScriptDatum _inputDatum;
@@ -44,6 +45,12 @@ namespace SensusService.Probes.User
         {
             get { return _outputMessage; }
             set { _outputMessage = value; }
+        }
+
+        public string OutputMessageRerun
+        {
+            get { return _outputMessageRerun; }
+            set { _outputMessageRerun = value; }
         }
 
         public PromptInputType InputType
@@ -97,17 +104,18 @@ namespace SensusService.Probes.User
             _timeoutMS = 30000;
         }
 
-        public Prompt(PromptOutputType outputType, string outputMessage, PromptInputType inputType, int timeoutMS)
+        public Prompt(PromptOutputType outputType, string outputMessage, string outputMessageRerun, PromptInputType inputType, int timeoutMS)
             : this()
         {
             _outputType = outputType;
             _outputMessage = outputMessage;
+            _outputMessageRerun = outputMessageRerun;
             _inputType = inputType;
             _timeoutMS = timeoutMS;
         }
 
-        public Prompt(PromptOutputType outputType, string outputMessage, PromptInputType inputType, int timeoutMS, bool requireNonEmptyInput, int numTries)
-            : this(outputType, outputMessage, inputType, timeoutMS)
+        public Prompt(PromptOutputType outputType, string outputMessage, string outputMessageRerun, PromptInputType inputType, int timeoutMS, bool requireNonEmptyInput, int numTries)
+            : this(outputType, outputMessage, outputMessageRerun, inputType, timeoutMS)
         {
             _requireNonEmptyInput = requireNonEmptyInput;
             _numTries = numTries;
@@ -116,21 +124,21 @@ namespace SensusService.Probes.User
                 _outputMessage += " (response required)";
         }
 
-        public Prompt(PromptOutputType outputType, string outputMessage, PromptInputType inputType, int timeoutMS, Prompt nextPrompt, string nextPromptValue)
-            : this(outputType, outputMessage, inputType, timeoutMS)
+        public Prompt(PromptOutputType outputType, string outputMessage, string outputMessageRerun, PromptInputType inputType, int timeoutMS, Prompt nextPrompt, string nextPromptValue)
+            : this(outputType, outputMessage, outputMessageRerun, inputType, timeoutMS)
         {
             _nextPrompt = nextPrompt;
             _nextPromptValue = nextPromptValue;
         }
 
-        public Prompt(PromptOutputType outputType, string outputMessage, PromptInputType inputType, int timeoutMS, bool requireNonEmptyInput, int numTries, Prompt nextPrompt, string nextPromptValue)
-            : this(outputType, outputMessage, inputType, timeoutMS, requireNonEmptyInput, numTries)
+        public Prompt(PromptOutputType outputType, string outputMessage, string outputMessageRerun, PromptInputType inputType, int timeoutMS, bool requireNonEmptyInput, int numTries, Prompt nextPrompt, string nextPromptValue)
+            : this(outputType, outputMessage, outputMessageRerun, inputType, timeoutMS, requireNonEmptyInput, numTries)
         {
             _nextPrompt = nextPrompt;
             _nextPromptValue = nextPromptValue;
         }
 
-        public Task<ScriptDatum> RunAsync(Datum previous, Datum current)
+        public Task<ScriptDatum> RunAsync(Datum previous, Datum current, bool isRerun, DateTimeOffset firstRunTimestamp)
         {
             return Task.Run<ScriptDatum>(async () =>
                 {
@@ -145,28 +153,46 @@ namespace SensusService.Probes.User
                             _promptIsRunning = true;
                     }
 
+                    string message = _outputMessage;
+                    if (isRerun && !string.IsNullOrWhiteSpace(_outputMessageRerun))
+                    {
+                        TimeSpan promptAge = DateTimeOffset.UtcNow - firstRunTimestamp;
+
+                        int daysAgo = (int)promptAge.TotalDays;
+                        string daysAgoStr;
+                        if (daysAgo == 0)
+                            daysAgoStr = "today";
+                        else if (daysAgo == 1)
+                            daysAgoStr = "yesterday";
+                        else
+                            daysAgoStr = promptAge.TotalDays + " days ago";
+
+                        DateTime localDateTime = firstRunTimestamp.ToLocalTime().DateTime;
+                        message = string.Format(_outputMessageRerun, daysAgoStr + " at " + localDateTime.ToString("%h:%m %tt"));
+                    }
+
                     string inputText = null;
                     int triesLeft = _numTries;
                     do
                     {
                         if (_outputType == PromptOutputType.Text && _inputType == PromptInputType.Text)
-                            inputText = await SensusServiceHelper.Get().PromptForInputAsync(_outputMessage, false, _timeoutMS);
+                            inputText = await SensusServiceHelper.Get().PromptForInputAsync(message, false, _timeoutMS);
                         else if (_outputType == PromptOutputType.Text && _inputType == PromptInputType.Voice)
-                            inputText = await SensusServiceHelper.Get().PromptForInputAsync(_outputMessage, true, _timeoutMS);
+                            inputText = await SensusServiceHelper.Get().PromptForInputAsync(message, true, _timeoutMS);
                         else if (_outputType == PromptOutputType.Text && _inputType == PromptInputType.None)
-                            await SensusServiceHelper.Get().FlashNotificationAsync(_outputMessage);
+                            await SensusServiceHelper.Get().FlashNotificationAsync(message);
                         else if (_outputType == PromptOutputType.Voice && _inputType == PromptInputType.Text)
                         {
-                            await SensusServiceHelper.Get().TextToSpeechAsync(_outputMessage);
-                            inputText = await SensusServiceHelper.Get().PromptForInputAsync(_outputMessage, false, _timeoutMS);
+                            await SensusServiceHelper.Get().TextToSpeechAsync(message);
+                            inputText = await SensusServiceHelper.Get().PromptForInputAsync(message, false, _timeoutMS);
                         }
                         else if (_outputType == PromptOutputType.Voice && _inputType == PromptInputType.Voice)
                         {
-                            await SensusServiceHelper.Get().TextToSpeechAsync(_outputMessage);
-                            inputText = await SensusServiceHelper.Get().PromptForInputAsync(_outputMessage, true, _timeoutMS);
+                            await SensusServiceHelper.Get().TextToSpeechAsync(message);
+                            inputText = await SensusServiceHelper.Get().PromptForInputAsync(message, true, _timeoutMS);
                         }
                         else if (_outputType == PromptOutputType.Voice && _inputType == PromptInputType.None)
-                            await SensusServiceHelper.Get().TextToSpeechAsync(_outputMessage);
+                            await SensusServiceHelper.Get().TextToSpeechAsync(message);
                         else
                             SensusServiceHelper.Get().Logger.Log("Prompt failure:  Unrecognized output/input setup:  " + _outputType + " -> " + _inputType, LoggingLevel.Normal);
 
