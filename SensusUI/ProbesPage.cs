@@ -68,7 +68,7 @@ namespace SensusUI
             probesList.ItemTapped += (o, e) =>
                 {
                     probesList.SelectedItem = null;
-                    ProbeTapped(o, e.Item);
+                    ProbeTapped(o, e.Item as Probe);
                 };
 
             Content = probesList;
