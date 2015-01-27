@@ -28,7 +28,7 @@ namespace SensusUI
     /// </summary>
     public class ProbePage : ContentPage
     {
-        public static event EventHandler<IScriptProbe> ViewScriptTriggersTapped;
+        public static event EventHandler<ScriptProbe> ViewScriptTriggersTapped;
 
         public ProbePage(Probe probe)
         {
@@ -45,7 +45,7 @@ namespace SensusUI
             foreach (StackLayout stack in UiProperty.GetPropertyStacks(probe))
                 contentLayout.Children.Add(stack);
 
-            if (probe is IScriptProbe)
+            if (probe is ScriptProbe)
             {
                 Button viewScriptTriggersButton = new Button
                 {
@@ -55,7 +55,7 @@ namespace SensusUI
 
                 viewScriptTriggersButton.Clicked += (o, e) =>
                     {
-                        ViewScriptTriggersTapped(o, probe as IScriptProbe);
+                        ViewScriptTriggersTapped(o, probe as ScriptProbe);
                     };
 
                 contentLayout.Children.Add(viewScriptTriggersButton);

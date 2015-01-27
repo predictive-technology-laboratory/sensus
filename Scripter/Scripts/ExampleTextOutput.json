@@ -1,1 +1,1 @@
-{"$id":"1","Name":"Text Output","DelayMS":0,"Prompts":[{"$id":"2","OutputType":1,"OutputMessage":"Hi","InputType":0,"RequireNonEmptyInput":false,"NumTries":0,"NextPrompt":null,"NextPromptValue":null}]}
+{"$id":"1","Id":"ed126484-739a-408e-9ce5-ce5f6a1c7897","Name":"Text Output","DelayMS":0,"Prompts":[{"$id":"2","OutputType":1,"OutputMessage":"Hi","InputType":0,"TimeoutMS":0,"InputDatum":null,"RequireNonEmptyInput":false,"NumTries":0,"NextPrompt":null,"NextPromptValue":null}],"FirstRunTimeStamp":"0001-01-01T00:00:00+00:00","PreviousDatum":null,"CurrentDatum":null}

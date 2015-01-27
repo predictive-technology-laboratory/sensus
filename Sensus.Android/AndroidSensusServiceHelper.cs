@@ -141,7 +141,7 @@ namespace Sensus.Android
                         intent.SetType("*/*");
                         intent.AddCategory(Intent.CategoryOpenable);
 
-                        Tuple<Result, Intent> result = await(await GetMainActivityAsync(true)).GetActivityResultAsync(intent, AndroidActivityResultRequestCode.PromptForFile, 60000 * 5);
+                        Tuple<Result, Intent> result = await (await GetMainActivityAsync(true)).GetActivityResultAsync(intent, AndroidActivityResultRequestCode.PromptForFile, 60000 * 5);
 
                         if (result != null && result.Item1 == Result.Ok)
                             try
@@ -194,7 +194,7 @@ namespace Sensus.Android
             return _textToSpeech.SpeakAsync(text);
         }
 
-        public override Task<string> PromptForInputAsync(string prompt, bool startVoiceRecognizer)
+        public override Task<string> PromptForInputAsync(string prompt, bool startVoiceRecognizer, int timeoutMS)
         {
             return Task.Run<string>(async () =>
                 {
@@ -214,13 +214,12 @@ namespace Sensus.Android
                                                  .SetPositiveButton("OK", (o, e) =>
                                                      {
                                                          input = responseEdit.Text;
-                                                         inputWait.Set();
                                                      })
-                                                 .SetNegativeButton("Cancel", (o, e) =>
+                                                 .SetNegativeButton("Cancel", (o, e) => { })
+                                                 .SetOnDismissListener(new AndroidOnDismissListener(() =>
                                                      {
-                                                         input = null;
                                                          inputWait.Set();
-                                                     })
+                                                     }))
                                                  .Create();
 
                             // dismiss the keyguard
@@ -244,7 +243,7 @@ namespace Sensus.Android
                                 intent.PutExtra(RecognizerIntent.ExtraMaxResults, 1);
                                 intent.PutExtra(RecognizerIntent.ExtraLanguage, Java.Util.Locale.Default);
 
-                                Tuple<Result, Intent> result = await mainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.RecognizeSpeech, 60000);
+                                Tuple<Result, Intent> result = await mainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.RecognizeSpeech, timeoutMS);
 
                                 if (result != null && result.Item1 == Result.Ok)
                                 {
@@ -253,6 +252,20 @@ namespace Sensus.Android
                                         responseEdit.Text = matches[0];
                                 }
                             }
+
+                            // dismiss the dialog after a timeout
+                            await Task.Run(() =>
+                                {
+                                    Thread.Sleep(timeoutMS);
+                                    try
+                                    {
+                                        mainActivity.RunOnUiThread(() =>
+                                            {
+                                                dialog.Dismiss();
+                                            });
+                                    }
+                                    catch (Exception) { }
+                                });
                         });
 
                     inputWait.WaitOne();

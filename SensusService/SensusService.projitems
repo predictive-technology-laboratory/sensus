@@ -58,7 +58,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\WlanProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\PollingProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Probe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\IScriptProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ProbeTriggerProperties\BooleanProbeTriggerProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ProbeTriggerProperties\ListProbeTriggerProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ProbeTriggerProperties\NumberProbeTriggerProperty.cs" />
@@ -68,7 +67,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\PromptInputType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\PromptOutputType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Script.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ListeningScriptProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ScriptProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ScriptDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Trigger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\TriggerValueCondition.cs" />

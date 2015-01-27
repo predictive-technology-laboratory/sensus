@@ -30,7 +30,7 @@ namespace SensusUI
     {
         public static event EventHandler TriggerAdded;
 
-        private IScriptProbe _scriptProbe;
+        private ScriptProbe _scriptProbe;
         private Probe _selectedProbe;
         private PropertyInfo _selectedDatumProperty;
         private TriggerValueCondition _selectedCondition;
@@ -39,7 +39,7 @@ namespace SensusUI
         private bool _fireRepeatedly;
         private bool _useRegularExpression;
 
-        public AddScriptProbeTriggerPage(IScriptProbe scriptProbe)
+        public AddScriptProbeTriggerPage(ScriptProbe scriptProbe)
         {
             _scriptProbe = scriptProbe;
 
