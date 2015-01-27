@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
@@ -74,9 +74,6 @@ namespace Sensus.Android
             _serviceConnection = new AndroidSensusServiceConnection();
             _serviceConnection.ServiceConnected += async (o, e) =>
                 {
-                    // before binding, add reference to main activity within the service helper
-                    e.Binder.SensusServiceHelper.SetMainActivity(this);
-
                     // get reference to service helper for use within the UI
                     UiBoundSensusServiceHelper.Set(e.Binder.SensusServiceHelper);
                     UiBoundSensusServiceHelper.Get().Stopped += (oo, ee) => { Finish(); };  // stop activity when service stops    
@@ -134,6 +131,17 @@ namespace Sensus.Android
                 };
 
             BindService(serviceIntent, _serviceConnection, Bind.AutoCreate);
+        }
+
+        protected async override void OnResume()
+        {
+            base.OnResume();
+
+            // the call to UiBoundSensusServiceHelper.Get blocks until Set is called, but since Set gets called upon binding to the service (above), we have to use the 
+            // async version to avoid a deadlock (binding occurrs on the UI thread). we set main activity here (and not in the binding event above) so that anyone 
+            // waiting on the activity on the service side will wait until the activity is visible. this is important because the service does things like display
+            // dialogs and ask for input. we don't want those elements to be hidden by this activity.
+            (await UiBoundSensusServiceHelper.GetAsync() as AndroidSensusServiceHelper).SetMainActivity(this);
         }
 
         public Task<Tuple<Result, Intent>> GetActivityResultAsync(Intent intent, AndroidActivityResultRequestCode requestCode, int timeoutMS)

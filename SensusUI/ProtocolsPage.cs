@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
 using SensusService;
 using System;
 using System.IO;
@@ -37,12 +37,9 @@ namespace SensusUI
             _protocolsList.ItemTemplate.SetBinding(TextCell.TextProperty, "Name");
             _protocolsList.ItemsSource = UiBoundSensusServiceHelper.Get().RegisteredProtocols;
 
-            Content = new StackLayout
-            {
-                VerticalOptions = LayoutOptions.FillAndExpand,
-                Children = { _protocolsList }
-            };
+            Content = _protocolsList;
 
+            #region toolbar
             ToolbarItems.Add(new ToolbarItem("Open", null, () =>
                 {
                     if (_protocolsList.SelectedItem != null)
@@ -75,6 +72,7 @@ namespace SensusUI
                         }
                     }
                 }));
+            #endregion
         }
     }
 }

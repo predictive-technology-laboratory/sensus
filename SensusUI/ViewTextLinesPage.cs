@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -55,7 +55,7 @@ namespace SensusUI
                     }
 
                     if (path != null)
-                        UiBoundSensusServiceHelper.Get().ShareFile(path, title + ":  " + Path.GetFileName(path));
+                        UiBoundSensusServiceHelper.Get().ShareFileAsync(path, title + ":  " + Path.GetFileName(path));
                 };
 
             Button clearButton = new Button

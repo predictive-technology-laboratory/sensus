@@ -15,6 +15,7 @@
 #endregion
 
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -39,9 +40,28 @@ namespace SensusService.Probes.User
         }
         #endregion
 
+        private string _id;
+        private int _hashCode;
         private string _name;
         private int _delayMS;
         private List<Prompt> _prompts;
+        private DateTimeOffset _firstRunTimeStamp;
+        private Datum _previousDatum;
+        private Datum _currentDatum;
+
+        public string Id
+        {
+            get { return _id; }
+            set
+            {
+                _id = value;
+
+                if (_id == null)
+                    _hashCode = base.GetHashCode();
+                else
+                    _hashCode = _id.GetHashCode();
+            }
+        } 
 
         public string Name
         {
@@ -61,19 +81,49 @@ namespace SensusService.Probes.User
             set { _prompts = value; }
         }
 
-        private Script() { }  // for JSON deserialization
-
-        public Script(string name, params Prompt[] prompts)
+        public DateTimeOffset FirstRunTimeStamp
         {
-            _name = name;
-            _delayMS = 0;
-
-            if (prompts != null)
-                _prompts = prompts.ToList();
+            get { return _firstRunTimeStamp; }
+            set { _firstRunTimeStamp = value; }
         }
 
-        public Script(string name, int delayMS, params Prompt[] prompts)
-            : this(name, prompts)
+        public Datum PreviousDatum
+        {
+            get { return _previousDatum; }
+            set { _previousDatum = value; }
+        }
+
+        public Datum CurrentDatum
+        {
+            get { return _currentDatum; }
+            set { _currentDatum = value; }
+        }
+
+        [JsonIgnore]
+        public bool Complete
+        {
+            get { return _prompts.Count == 0 ? true : _prompts.All(p => p.InputDatum != null); }
+        }
+
+        /// <summary>
+        /// Constructor for JSON deserialization.
+        /// </summary>
+        private Script()
+        {
+            _id = Guid.NewGuid().ToString();
+            _hashCode = _id.GetHashCode();
+            _delayMS = 0;
+            _prompts = new List<Prompt>();
+        }
+
+        public Script(string name)
+            : this()
+        {
+            _name = name;
+        }
+
+        public Script(string name, int delayMS)
+            : this(name)
         {
             _delayMS = delayMS;
         }
@@ -87,25 +137,56 @@ namespace SensusService.Probes.User
             }
         }
 
-        public Task<List<ScriptDatum>> RunAsync(Datum previous, Datum current)
+        public Task<List<ScriptDatum>> RunAsync(Datum previousDatum, Datum currentDatum)
         {
+            SensusServiceHelper.Get().Logger.Log("Running script \"" + _name + "\".", LoggingLevel.Normal);
+
+            if (previousDatum != null)
+                _previousDatum = previousDatum;
+
+            if (currentDatum != null)
+                _currentDatum = currentDatum;
+
             return Task.Run<List<ScriptDatum>>(async () =>
                 {
                     if (_delayMS > 0)
                         Thread.Sleep(_delayMS);
 
+                    lock (this)
+                        if (_firstRunTimeStamp == DateTimeOffset.MinValue)
+                            _firstRunTimeStamp = DateTimeOffset.UtcNow;
+
                     List<ScriptDatum> data = new List<ScriptDatum>();
 
-                    if (_prompts != null)
-                        foreach (Prompt prompt in _prompts)
+                    foreach (Prompt prompt in _prompts)
+                        if (prompt.InputDatum == null)
                         {
-                            ScriptDatum datum = await prompt.RunAsync();
+                            ScriptDatum datum = await prompt.RunAsync(_previousDatum, _currentDatum);
                             if (datum != null)
                                 data.Add(datum);
                         }
 
+                    SensusServiceHelper.Get().Logger.Log("Script \"" + _name + "\" has finished running.", LoggingLevel.Normal);
+
                     return data;
                 });
+        }
+
+        public Script Copy()
+        {
+            return JsonConvert.DeserializeObject<Script>(JsonConvert.SerializeObject(this, _jsonSerializerSettings));
+        }
+
+        public override bool Equals(object obj)
+        {
+            Script s = obj as Script;
+
+            return s != null && _id == s._id;
+        }
+
+        public override int GetHashCode()
+        {
+            return _hashCode;
         }
     }
 }

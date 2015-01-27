@@ -344,14 +344,17 @@ namespace SensusUI
                     catch (Exception ex)
                     {
                         string message = "Failed to add trigger:  " + ex.Message;
-                        UiBoundSensusServiceHelper.Get().FlashNotification(message);
+                        UiBoundSensusServiceHelper.Get().FlashNotificationAsync(message);
                         UiBoundSensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal);
                     }
                 };
 
             contentLayout.Children.Add(okButton);
 
-            Content = contentLayout;
+            Content = new ScrollView
+            {
+                Content = contentLayout
+            };
         }
     }
 }

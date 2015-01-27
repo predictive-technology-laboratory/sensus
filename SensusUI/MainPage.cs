@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
 using SensusService;
 using SensusUI.UiProperties;
 using System;
@@ -83,7 +83,10 @@ namespace SensusUI
             foreach (StackLayout serviceStack in UiProperty.GetPropertyStacks(serviceHelper))
                 contentLayout.Children.Add(serviceStack);
 
-            Content = contentLayout;
+            Content = new ScrollView
+            {
+                Content = contentLayout
+            };
         }
     }
 }

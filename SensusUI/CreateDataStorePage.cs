@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
 using SensusService.DataStores;
 using SensusService.DataStores.Local;
 using SensusService.DataStores.Remote;
@@ -32,7 +32,7 @@ namespace SensusUI
         {
             Title = "Create " + (args.Local ? "Local" : "Remote") + " Data Store";
 
-            Content = new StackLayout
+            StackLayout contentLayout = new StackLayout
             {
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 Orientation = StackOrientation.Vertical,
@@ -52,8 +52,13 @@ namespace SensusUI
                         CreateTapped(o, new ProtocolDataStoreEventArgs { Protocol = args.Protocol, DataStore = dataStore, Local = args.Local });
                     };
 
-                (Content as StackLayout).Children.Add(createDataStoreButton);
+                contentLayout.Children.Add(createDataStoreButton);
             }
+
+            Content = new ScrollView
+            {
+                Content = contentLayout
+            };
         }
     }
 }

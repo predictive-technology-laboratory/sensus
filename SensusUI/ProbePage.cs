@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
 using SensusService.Probes;
 using SensusService.Probes.User;
 using SensusUI.UiProperties;
@@ -28,7 +28,7 @@ namespace SensusUI
     /// </summary>
     public class ProbePage : ContentPage
     {
-        public static event EventHandler<IScriptProbe> AddTriggerTapped;
+        public static event EventHandler<IScriptProbe> ViewScriptTriggersTapped;
 
         public ProbePage(Probe probe)
         {
@@ -38,8 +38,8 @@ namespace SensusUI
 
             StackLayout contentLayout = new StackLayout
             {
-                VerticalOptions = LayoutOptions.FillAndExpand,
                 Orientation = StackOrientation.Vertical,
+                VerticalOptions = LayoutOptions.FillAndExpand
             };
 
             foreach (StackLayout stack in UiProperty.GetPropertyStacks(probe))
@@ -47,49 +47,24 @@ namespace SensusUI
 
             if (probe is IScriptProbe)
             {
-                IScriptProbe scriptProbe = probe as IScriptProbe;
-
-                ListView triggerList = new ListView();
-                triggerList.ItemTemplate = new DataTemplate(typeof(TextCell));
-                triggerList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", stringFormat: "{0}"));
-                triggerList.ItemsSource = scriptProbe.Triggers;
-                contentLayout.Children.Add(triggerList);
-
-                Button addTriggerButton = new Button
+                Button viewScriptTriggersButton = new Button
                 {
-                    Text = "Add Trigger",
+                    Text = "View Triggers",
                     Font = Font.SystemFontOfSize(20)
                 };
 
-                addTriggerButton.Clicked += (o, e) =>
+                viewScriptTriggersButton.Clicked += (o, e) =>
                     {
-                        if (AddTriggerTapped != null)
-                            AddTriggerTapped(o, scriptProbe);
+                        ViewScriptTriggersTapped(o, probe as IScriptProbe);
                     };
 
-                addTriggerButton.IsEnabled = scriptProbe.Protocol.Probes.Where(p => p != scriptProbe && p.Enabled).Count() > 0;
-
-                contentLayout.Children.Add(addTriggerButton);
-
-                Button deleteTriggerButton = new Button
-                {
-                    Text = "Delete Trigger",
-                    Font = Font.SystemFontOfSize(20)
-                };
-
-                deleteTriggerButton.Clicked += async (o, e) =>
-                    {
-                        if (triggerList.SelectedItem != null && await DisplayAlert("Confirm Delete", "Are you sure you want to delete the selected trigger?", "OK", "Cancel"))
-                        {
-                            scriptProbe.Triggers.Remove(triggerList.SelectedItem as Trigger);
-                            triggerList.SelectedItem = null;
-                        }
-                    };
-
-                contentLayout.Children.Add(deleteTriggerButton);
+                contentLayout.Children.Add(viewScriptTriggersButton);
             }
 
-            Content = contentLayout;
+            Content = new ScrollView
+            {
+                Content = contentLayout
+            };
         }
     }
 }

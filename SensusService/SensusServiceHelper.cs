@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
- 
+
 using Newtonsoft.Json;
 using SensusService.Probes;
 using SensusService.Probes.Location;
@@ -192,17 +192,17 @@ namespace SensusService
 
         public abstract Task<string> PromptForAndReadTextFileAsync(string promptTitle);
 
-        public abstract void ShareFile(string path, string subject);
+        public abstract void ShareFileAsync(string path, string subject);
 
         protected abstract void StartSensusPings(int ms);
 
         protected abstract void StopSensusPings();
 
-        public abstract void TextToSpeechAsync(string text, bool waitForCompletion);
+        public abstract Task TextToSpeechAsync(string text);
 
         public abstract Task<string> PromptForInputAsync(string prompt, bool startVoiceRecognizer);
 
-        public abstract void FlashNotification(string message);
+        public abstract Task FlashNotificationAsync(string message);
         #endregion
 
         #region save/read protocols

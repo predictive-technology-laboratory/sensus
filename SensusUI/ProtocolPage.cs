@@ -17,7 +17,6 @@
 using SensusService;
 using SensusService.DataStores;
 using SensusService.Exceptions;
-using SensusService.Probes;
 using SensusUI.UiProperties;
 using System;
 using System.Collections.Generic;
@@ -27,11 +26,6 @@ namespace SensusUI
 {
     public class ProtocolPage : ContentPage
     {
-        public static event EventHandler<ProtocolDataStoreEventArgs> EditDataStoreTapped;
-        public static event EventHandler<ProtocolDataStoreEventArgs> CreateDataStoreTapped;
-        public static event EventHandler<ItemTappedEventArgs> ProbeTapped;
-        public static event EventHandler<ProtocolReport> DisplayProtocolReport;
-
         private class DataStoreValueConverter : IValueConverter
         {
             public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -45,37 +39,14 @@ namespace SensusUI
             }
         }
 
-        private class ProbeTextColorValueConverter : IValueConverter
-        {
-            public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-            {
-                return (bool)value ? Color.Green : Color.Red;
-            }
-
-            public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-            {
-                throw new SensusException("Invalid call to " + GetType().FullName + ".ConvertBack.");
-            }
-        }
-
-        private class ProbeDetailValueConverter : IValueConverter
-        {
-            public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-            {
-                Datum mostRecent = value as Datum;
-                return mostRecent == null ? "----------" : mostRecent.DisplayDetail + Environment.NewLine + mostRecent.Timestamp;
-            }
-
-            public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-            {
-                throw new SensusException("Invalid call to " + GetType().FullName + ".ConvertBack.");
-            }
-        }
+        public static event EventHandler<ProtocolDataStoreEventArgs> EditDataStoreTapped;
+        public static event EventHandler<ProtocolDataStoreEventArgs> CreateDataStoreTapped;
+        public static event EventHandler<Protocol> ViewProbesTapped;
+        public static event EventHandler<ProtocolReport> DisplayProtocolReport;
 
         private Protocol _protocol;
         private EventHandler _protocolStartedHandler;
         private EventHandler _protocolStoppedHandler;
-
 
         public ProtocolPage(Protocol protocol)
         {
@@ -88,22 +59,6 @@ namespace SensusUI
             List<View> views = new List<View>();
 
             views.AddRange(UiProperty.GetPropertyStacks(_protocol));
-
-            #region probes
-            ListView probesList = new ListView();
-            probesList.ItemTemplate = new DataTemplate(typeof(TextCell));
-            probesList.ItemTemplate.SetBinding(TextCell.TextProperty, "DisplayName");
-            probesList.ItemTemplate.SetBinding(TextCell.TextColorProperty, new Binding("Enabled", converter: new ProbeTextColorValueConverter()));
-            probesList.ItemTemplate.SetBinding(TextCell.DetailProperty, new Binding("MostRecentDatum", converter: new ProbeDetailValueConverter()));
-            probesList.ItemsSource = _protocol.Probes;
-            probesList.ItemTapped += (o, e) =>
-                {
-                    probesList.SelectedItem = null;
-                    ProbeTapped(o, e);
-                };
-
-            views.Add(probesList);
-            #endregion
 
             #region data stores
             Button editLocalDataStoreButton = new Button
@@ -207,15 +162,34 @@ namespace SensusUI
             #endregion
             #endregion
 
-            Content = new StackLayout
+            Button viewProbesButton = new Button
             {
-                VerticalOptions = LayoutOptions.FillAndExpand,
-                Orientation = StackOrientation.Vertical
+                Text = "Probes",
+                Font = Font.SystemFontOfSize(20)
+            };
+
+            viewProbesButton.Clicked += (o, e) =>
+                {
+                    ViewProbesTapped(o, _protocol);
+                };
+
+            views.Add(viewProbesButton);
+
+            StackLayout stack = new StackLayout
+            {
+                Orientation = StackOrientation.Vertical,
+                VerticalOptions = LayoutOptions.FillAndExpand
             };
 
             foreach (View view in views)
-                (Content as StackLayout).Children.Add(view);
+                stack.Children.Add(view);
 
+            Content = new ScrollView
+            {
+                Content = stack
+            };
+
+            #region toolbar
             ToolbarItems.Add(new ToolbarItem("Ping", null, async () =>
                 {
                     if (SensusServiceHelper.Get().ProtocolShouldBeRunning(_protocol))
@@ -246,8 +220,9 @@ namespace SensusUI
                     }
 
                     if (path != null)
-                        UiBoundSensusServiceHelper.Get().ShareFile(path, "Sensus Protocol:  " + _protocol.Name);
+                        UiBoundSensusServiceHelper.Get().ShareFileAsync(path, "Sensus Protocol:  " + _protocol.Name);
                 }));
+            #endregion
         }
 
         protected override void OnDisappearing()
