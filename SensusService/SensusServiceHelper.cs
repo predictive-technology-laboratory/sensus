@@ -200,7 +200,7 @@ namespace SensusService
 
         public abstract Task TextToSpeechAsync(string text);
 
-        public abstract Task<string> PromptForInputAsync(string prompt, bool startVoiceRecognizer, int timeoutMS);
+        public abstract Task<string> PromptForInputAsync(string prompt, bool startVoiceRecognizer);
 
         public abstract Task FlashNotificationAsync(string message);
         #endregion

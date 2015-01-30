@@ -24,9 +24,18 @@ namespace SensusUI
 {
     public class SensusNavigationPage : NavigationPage
     {
-        public SensusNavigationPage(SensusServiceHelper serviceHelper)
-            : base(new MainPage(serviceHelper))
+        private MainPage _mainPage;
+
+        public MainPage MainPage
         {
+            get { return _mainPage; }
+        }
+
+        public SensusNavigationPage(MainPage mainPage)
+            : base(mainPage)
+        {
+            _mainPage = mainPage;
+
             #region main page
             MainPage.ViewProtocolsTapped += async (o, e) =>
                 {
