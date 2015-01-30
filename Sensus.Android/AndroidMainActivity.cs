@@ -43,6 +43,12 @@ namespace Sensus.Android
         private ManualResetEvent _activityResultWait;
         private AndroidActivityResultRequestCode _activityResultRequestCode;
         private Tuple<Result, Intent> _activityResult;
+        private ManualResetEvent _uiReadyWait;
+
+        public ManualResetEvent UiReadyWait
+        {
+            get { return _uiReadyWait; }
+        }
 
         public bool IsForegrounded
         {
@@ -58,13 +64,17 @@ namespace Sensus.Android
         {
             base.OnCreate(bundle);
 
+            _uiReadyWait = new ManualResetEvent(false);
+            _activityResultWait = new ManualResetEvent(false);
+
             Window.AddFlags(global::Android.Views.WindowManagerFlags.DismissKeyguard);
             Window.AddFlags(global::Android.Views.WindowManagerFlags.ShowWhenLocked);
             Window.AddFlags(global::Android.Views.WindowManagerFlags.TurnScreenOn);
 
             Forms.Init(this, bundle);
 
-            _activityResultWait = new ManualResetEvent(false);
+            SensusNavigationPage navigationPage = new SensusNavigationPage(new MainPage());
+            SetPage(navigationPage);
 
             // start service -- if it's already running, this will have no effect
             Intent serviceIntent = new Intent(this, typeof(AndroidSensusService));
@@ -75,12 +85,16 @@ namespace Sensus.Android
             _serviceConnection.ServiceConnected += async (o, e) =>
                 {
                     // get reference to service helper for use within the UI
-                    UiBoundSensusServiceHelper.Set(e.Binder.SensusServiceHelper);
-                    UiBoundSensusServiceHelper.Get().Stopped += (oo, ee) => { Finish(); };  // stop activity when service stops    
+                    UiBoundSensusServiceHelper.Set(e.Binder.SensusServiceHelper);  
 
-                    // display main page
-                    SensusNavigationPage navigationPage = new SensusNavigationPage(UiBoundSensusServiceHelper.Get());
-                    SetPage(navigationPage);
+                    // stop activity when service stops    
+                    UiBoundSensusServiceHelper.Get().Stopped += (oo, ee) => { Finish(); };  
+
+                    // give service a reference to this activity
+                    (UiBoundSensusServiceHelper.Get() as AndroidSensusServiceHelper).SetMainActivity(this);  
+
+                    // display service helper properties on the main page
+                    navigationPage.MainPage.DisplayServiceHelper(UiBoundSensusServiceHelper.Get());                    
 
                     #region open page to view protocol if a protocol was passed to us
                     if (Intent.Data != null)
@@ -127,24 +141,29 @@ namespace Sensus.Android
 
             _serviceConnection.ServiceDisconnected += (o, e) =>
                 {
+                    // do the opposite of what's in ServiceConnected
+                    UiBoundSensusServiceHelper.Set(null);
                     e.Binder.SensusServiceHelper.SetMainActivity(null);
                 };
 
             BindService(serviceIntent, _serviceConnection, Bind.AutoCreate);
         }
 
-        protected async override void OnResume()
+        protected override void OnResume()
         {
             base.OnResume();
 
-            // the call to UiBoundSensusServiceHelper.Get blocks until Set is called, but since Set gets called upon binding to the service (above), we have to use the 
-            // async version to avoid a deadlock (binding occurrs on the UI thread). we set main activity here (and not in the binding event above) so that anyone 
-            // waiting on the activity on the service side will wait until the activity is visible. this is important because the service does things like display
-            // dialogs and ask for input. we don't want those elements to be hidden by this activity.
-            (await UiBoundSensusServiceHelper.GetAsync() as AndroidSensusServiceHelper).SetMainActivity(this);
+            _uiReadyWait.Set();
         }
 
-        public Task<Tuple<Result, Intent>> GetActivityResultAsync(Intent intent, AndroidActivityResultRequestCode requestCode, int timeoutMS)
+        protected override void OnPause()
+        {
+            base.OnPause();
+
+            _uiReadyWait.Reset();
+        }
+
+        public Task<Tuple<Result, Intent>> GetActivityResultAsync(Intent intent, AndroidActivityResultRequestCode requestCode)
         {
             return Task.Run<Tuple<Result, Intent>>(() =>
                 {
@@ -155,7 +174,7 @@ namespace Sensus.Android
 
                         _activityResultWait.Reset();
                         StartActivityForResult(intent, (int)requestCode);
-                        _activityResultWait.WaitOne(timeoutMS);
+                        _activityResultWait.WaitOne();
 
                         return _activityResult;
                     }

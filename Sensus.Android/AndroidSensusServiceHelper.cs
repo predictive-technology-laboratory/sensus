@@ -88,9 +88,7 @@ namespace Sensus.Android
 
         public Task<AndroidMainActivity> GetMainActivityAsync(bool foreground)
         {
-            // this is asynchronous because it blocks while waiting for the main activity to start. but the new main activity runs on the UI 
-            // thread, so if this method would be called from the main thread you'll get a deadlock. none of that will happen, though, since
-            // this is all done asynchronously.
+            // this must be done asynchronously because it blocks waiting for the activity to start. calling this method from the UI would create deadlocks.
             return Task.Run(() =>
                 {
                     lock (_getMainActivityLocker)
@@ -102,10 +100,12 @@ namespace Sensus.Android
                             // start the activity and wait for it to bind itself to the service
                             Intent intent = new Intent(_service, typeof(AndroidMainActivity));
                             intent.AddFlags(ActivityFlags.NewTask);
-
                             _mainActivityWait.Reset();
                             _service.StartActivity(intent);
                             _mainActivityWait.WaitOne();
+
+                            // wait for the UI to come up
+                            _mainActivity.UiReadyWait.WaitOne();
                         }
 
                         return _mainActivity;
@@ -141,7 +141,7 @@ namespace Sensus.Android
                         intent.SetType("*/*");
                         intent.AddCategory(Intent.CategoryOpenable);
 
-                        Tuple<Result, Intent> result = await(await GetMainActivityAsync(true)).GetActivityResultAsync(intent, AndroidActivityResultRequestCode.PromptForFile, 60000 * 5);
+                        Tuple<Result, Intent> result = await (await GetMainActivityAsync(true)).GetActivityResultAsync(intent, AndroidActivityResultRequestCode.PromptForFile);
 
                         if (result != null && result.Item1 == Result.Ok)
                             try
@@ -199,29 +199,34 @@ namespace Sensus.Android
             return Task.Run<string>(async () =>
                 {
                     string input = null;
-                    ManualResetEvent inputWait = new ManualResetEvent(false);
+                    ManualResetEvent dialogDismissWait = new ManualResetEvent(false);
 
                     AndroidMainActivity mainActivity = await GetMainActivityAsync(true);
-
-                    mainActivity.RunOnUiThread(async () =>
+                    mainActivity.RunOnUiThread(() =>
                         {
                             EditText responseEdit = new EditText(mainActivity);
 
-                            AlertDialog dialog = new AlertDialog.Builder(mainActivity, global::Android.Resource.Style.ThemeTranslucentNoTitleBar)
+                            AlertDialog dialog = new AlertDialog.Builder(mainActivity)
                                                  .SetTitle("Sensus is Requesting Input")
                                                  .SetMessage(prompt)
                                                  .SetView(responseEdit)
                                                  .SetPositiveButton("OK", (o, e) =>
                                                      {
                                                          input = responseEdit.Text;
-                                                         inputWait.Set();
                                                      })
-                                                 .SetNegativeButton("Cancel", (o, e) =>
+                                                 .SetNegativeButton("Cancel", (o, e) => { })
+                                                 .SetOnDismissListener(new AndroidOnDismissListener(() =>
                                                      {
-                                                         input = null;
-                                                         inputWait.Set();
-                                                     })
+                                                         dialogDismissWait.Set();
+                                                     }))
                                                  .Create();
+
+                            ManualResetEvent dialogShowWait = new ManualResetEvent(false);
+
+                            dialog.SetOnShowListener(new AndroidOnShowListener(() =>
+                                {
+                                    dialogShowWait.Set();
+                                }));
 
                             // dismiss the keyguard
                             dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.DismissKeyguard);
@@ -234,28 +239,38 @@ namespace Sensus.Android
 
                             dialog.Show();
 
-                            if (startVoiceRecognizer)
-                            {
-                                Intent intent = new Intent(RecognizerIntent.ActionRecognizeSpeech);
-                                intent.PutExtra(RecognizerIntent.ExtraLanguageModel, RecognizerIntent.LanguageModelFreeForm);
-                                intent.PutExtra(RecognizerIntent.ExtraSpeechInputCompleteSilenceLengthMillis, 1500);
-                                intent.PutExtra(RecognizerIntent.ExtraSpeechInputPossiblyCompleteSilenceLengthMillis, 1500);
-                                intent.PutExtra(RecognizerIntent.ExtraSpeechInputMinimumLengthMillis, 15000);
-                                intent.PutExtra(RecognizerIntent.ExtraMaxResults, 1);
-                                intent.PutExtra(RecognizerIntent.ExtraLanguage, Java.Util.Locale.Default);
-
-                                Tuple<Result, Intent> result = await mainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.RecognizeSpeech, 60000);
-
-                                if (result != null && result.Item1 == Result.Ok)
+                            Task.Run(async () =>
                                 {
-                                    IList<string> matches = result.Item2.GetStringArrayListExtra(RecognizerIntent.ExtraResults);
-                                    if (matches != null && matches.Count > 0)
-                                        responseEdit.Text = matches[0];
-                                }
-                            }
+                                    // wait for the dialog to be shown so it doesn't hide our speech recognizer activity
+                                    dialogShowWait.WaitOne();
+
+                                    if (startVoiceRecognizer)
+                                    {
+                                        Intent intent = new Intent(RecognizerIntent.ActionRecognizeSpeech);
+                                        intent.PutExtra(RecognizerIntent.ExtraLanguageModel, RecognizerIntent.LanguageModelFreeForm);
+                                        intent.PutExtra(RecognizerIntent.ExtraSpeechInputCompleteSilenceLengthMillis, 1500);
+                                        intent.PutExtra(RecognizerIntent.ExtraSpeechInputPossiblyCompleteSilenceLengthMillis, 1500);
+                                        intent.PutExtra(RecognizerIntent.ExtraSpeechInputMinimumLengthMillis, 15000);
+                                        intent.PutExtra(RecognizerIntent.ExtraMaxResults, 1);
+                                        intent.PutExtra(RecognizerIntent.ExtraLanguage, Java.Util.Locale.Default);
+                                        intent.PutExtra(RecognizerIntent.ExtraPrompt, prompt);
+
+                                        Tuple<Result, Intent> result = await mainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.RecognizeSpeech);
+
+                                        if (result != null && result.Item1 == Result.Ok)
+                                        {
+                                            IList<string> matches = result.Item2.GetStringArrayListExtra(RecognizerIntent.ExtraResults);
+                                            if (matches != null && matches.Count > 0)
+                                                mainActivity.RunOnUiThread(() =>
+                                                    {
+                                                        responseEdit.Text = matches[0];
+                                                    });
+                                        }
+                                    }
+                                });
                         });
 
-                    inputWait.WaitOne();
+                    dialogDismissWait.WaitOne();
 
                     return input;
                 });

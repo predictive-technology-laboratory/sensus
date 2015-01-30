@@ -47,7 +47,9 @@ namespace SensusUI
         {
             _sensusServiceHelper = value;
 
-            if (_sensusServiceHelper != null)
+            if (_sensusServiceHelper == null)
+                _sensusServiceHelperWait.Reset();
+            else
                 _sensusServiceHelperWait.Set();
         }
     }

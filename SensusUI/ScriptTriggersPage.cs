@@ -23,11 +23,11 @@ namespace SensusUI
 {
     public class ScriptTriggersPage : ContentPage
     {
-        public static event EventHandler<IScriptProbe> AddTriggerTapped;
+        public static event EventHandler<ScriptProbe> AddTriggerTapped;
 
-        public ScriptTriggersPage(IScriptProbe probe)
+        public ScriptTriggersPage(ScriptProbe probe)
         {
-            IScriptProbe scriptProbe = probe as IScriptProbe;
+            ScriptProbe scriptProbe = probe as ScriptProbe;
 
             BindingContext = probe;
 

@@ -29,7 +29,7 @@ namespace SensusUI
         public static event EventHandler ViewProtocolsTapped;
         public static event EventHandler ViewLogTapped;
 
-        public MainPage(SensusServiceHelper serviceHelper)
+        public MainPage()
         {
             Title = "Sensus";
 
@@ -79,14 +79,17 @@ namespace SensusUI
 
             contentLayout.Children.Add(stopSensusButton);
 
-            // add service helper ui elements to main page
-            foreach (StackLayout serviceStack in UiProperty.GetPropertyStacks(serviceHelper))
-                contentLayout.Children.Add(serviceStack);
-
             Content = new ScrollView
             {
                 Content = contentLayout
             };
+        }
+
+        public void DisplayServiceHelper(SensusServiceHelper serviceHelper)
+        {
+            // add service helper ui elements to main page
+            foreach (StackLayout serviceStack in UiProperty.GetPropertyStacks(serviceHelper))
+                ((Content as ScrollView).Content as StackLayout).Children.Add(serviceStack);
         }
     }
 }

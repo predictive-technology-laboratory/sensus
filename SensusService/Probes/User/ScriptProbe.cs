@@ -20,16 +20,16 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SensusService.Probes.User
 {
-    public class ListeningScriptProbe : ListeningProbe, IScriptProbe
+    public class ScriptProbe : Probe
     {
         private ObservableCollection<Trigger> _triggers;
         private Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>> _triggerHandler;
-        private bool _listening;
         private Script _script;
         private Queue<Script> _incompleteScripts;
         private bool _rerunIncompleteScripts;
@@ -37,6 +37,11 @@ namespace SensusService.Probes.User
         private bool _stopScriptRerunTask;
         private int _scriptRerunDelayMS;
         private int _maxScriptAgeMinutes;
+        private int _numScriptsAgedOut;
+        private bool _triggerRandomly;
+        private int _randomTriggerDelayMaxMinutes;
+        private Task _randomTriggerTask;
+        private bool _stopRandomTriggerTask;
 
         public ObservableCollection<Trigger> Triggers
         {
@@ -76,11 +81,11 @@ namespace SensusService.Probes.User
                     _rerunIncompleteScripts = value;
                     OnPropertyChanged();
 
-                    if (_listening)
+                    if (Running)
                         if (_rerunIncompleteScripts)
                             StartScriptRerunTaskAsync();
                         else
-                            StopRerunTaskAsync();
+                            StopScriptRerunTaskAsync();
                 }
             }
         }
@@ -113,6 +118,40 @@ namespace SensusService.Probes.User
             }
         }
 
+        [OnOffUiProperty("Trigger Randomly:", true, 13)]
+        public bool TriggerRandomly
+        {
+            get { return _triggerRandomly; }
+            set
+            {
+                if (value != _triggerRandomly)
+                {
+                    _triggerRandomly = value;
+                    OnPropertyChanged();
+
+                    if (Running)
+                        if (_triggerRandomly)
+                            StartRandomScriptTriggerTaskAsync();
+                        else
+                            StopRandomScriptTriggerTaskAsync();
+                }
+            }
+        }
+
+        [EntryIntegerUiProperty("Random Delay Max. Mins.:", true, 14)]
+        public int RandomTriggerDelayMaxMinutes
+        {
+            get { return _randomTriggerDelayMaxMinutes; }
+            set
+            {
+                if (value != _randomTriggerDelayMaxMinutes)
+                {
+                    _randomTriggerDelayMaxMinutes = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         public Queue<Script> IncompleteScripts
         {
             get { return _incompleteScripts; }
@@ -129,16 +168,18 @@ namespace SensusService.Probes.User
             get { return typeof(ScriptDatum); }
         }
 
-        public ListeningScriptProbe()
+        public ScriptProbe()
         {
             _triggers = new ObservableCollection<Trigger>();
             _triggerHandler = new Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>>();
-            _listening = false;
             _incompleteScripts = new Queue<Script>();
             _rerunIncompleteScripts = false;
             _scriptRerunDelayMS = 60000;
             _stopScriptRerunTask = true;
             _maxScriptAgeMinutes = 10;
+            _numScriptsAgedOut = 0;
+            _triggerRandomly = false;
+            _randomTriggerDelayMaxMinutes = 1;
 
             _triggers.CollectionChanged += (o, e) =>
                 {
@@ -151,9 +192,9 @@ namespace SensusService.Probes.User
 
                             EventHandler<Tuple<Datum, Datum>> handler = async (oo, prevCurrDatum) =>
                                 {
-                                    // must be listening and must have a current datum
+                                    // must be running and must have a current datum
                                     lock (this)
-                                        if (!_listening || prevCurrDatum.Item2 == null)
+                                        if (!Running || prevCurrDatum.Item2 == null)
                                             return;
 
                                     Datum prevDatum = prevCurrDatum.Item1;
@@ -198,26 +239,28 @@ namespace SensusService.Probes.User
                 };
         }
 
-        protected override void StartListening()
+        protected override void Initialize()
         {
-            lock (this)
-            {
-                if (_script == null)
-                    throw new Exception("Script has not been set on " + GetType().FullName);
+            base.Initialize();
 
-                if (_listening)
-                    return;
-                else
-                    _listening = true;
+            if (_script == null)
+                throw new Exception("Script has not been set on " + GetType().FullName);
+        }
 
-                if (_rerunIncompleteScripts)
-                    StartScriptRerunTaskAsync();
-            }
+        public override void Start()
+        {
+            base.Start();
+
+            if (_rerunIncompleteScripts)
+                StartScriptRerunTaskAsync();
+
+            if (_triggerRandomly)
+                StartRandomScriptTriggerTaskAsync();
         }
 
         private async void StartScriptRerunTaskAsync()
         {
-            await StopRerunTaskAsync();
+            await StopScriptRerunTaskAsync();
 
             SensusServiceHelper.Get().Logger.Log("Starting script rerun task.", LoggingLevel.Normal);
 
@@ -241,11 +284,12 @@ namespace SensusService.Probes.User
                                 while (scriptToRerun == null && _incompleteScripts.Count > 0)
                                 {
                                     scriptToRerun = _incompleteScripts.Dequeue();
-                                    TimeSpan scriptAge = DateTimeOffset.UtcNow - scriptToRerun.FirstRunTimeStamp;
+                                    TimeSpan scriptAge = DateTimeOffset.UtcNow - scriptToRerun.FirstRunTimestamp;
                                     if (scriptAge.TotalMinutes > _maxScriptAgeMinutes)
                                     {
                                         SensusServiceHelper.Get().Logger.Log("Script \"" + scriptToRerun.Name + "\" has aged out.", LoggingLevel.Normal);
                                         scriptToRerun = null;
+                                        ++_numScriptsAgedOut;
                                     }
                                 }
 
@@ -255,6 +299,34 @@ namespace SensusService.Probes.User
                     }
 
                     SensusServiceHelper.Get().Logger.Log("Script rerun task has exited its while-loop.", LoggingLevel.Normal);
+                });
+        }
+
+        private async void StartRandomScriptTriggerTaskAsync()
+        {
+            await StopRandomScriptTriggerTaskAsync();
+
+            SensusServiceHelper.Get().Logger.Log("Starting random script trigger task.", LoggingLevel.Normal);
+
+            _randomTriggerTask = Task.Run(async () =>
+                {
+                    _stopRandomTriggerTask = false;
+                    Random random = new Random();
+
+                    while(!_stopRandomTriggerTask)
+                    {
+                        int msToSleep = random.Next(_randomTriggerDelayMaxMinutes * 60 * 1000);
+                        while(!_stopRandomTriggerTask && msToSleep > 0)
+                        {
+                            Thread.Sleep(1000);
+                            msToSleep -= 1000;
+                        }
+
+                        if (!_stopRandomTriggerTask)
+                            await RunScriptAsync(_script.Copy(), null, null);
+                    }
+
+                    SensusServiceHelper.Get().Logger.Log("Random script trigger task has exited its while-loop.", LoggingLevel.Normal);
                 });
         }
 
@@ -275,7 +347,24 @@ namespace SensusService.Probes.User
                 });
         }
 
-        private Task StopRerunTaskAsync()
+        public override bool Ping(ref string error, ref string warning, ref string misc)
+        {
+            bool restart = base.Ping(ref error, ref warning, ref misc);
+
+            if (Running)
+            {
+                lock (_incompleteScripts)
+                    if (_incompleteScripts.Count > 0)
+                        warning += "Listening probe is holding " + _incompleteScripts.Count + " scripts, the oldest being run first on " + _incompleteScripts.Select(s => s.FirstRunTimestamp).Min() + "." + Environment.NewLine;
+
+                if (_numScriptsAgedOut > 0)
+                    warning += _numScriptsAgedOut + " scripts have aged out.";
+            }
+
+            return restart;
+        }
+
+        private Task StopScriptRerunTaskAsync()
         {
             return Task.Run(() =>
                 {
@@ -289,16 +378,26 @@ namespace SensusService.Probes.User
                 });
         }
 
-        protected override void StopListening()
+        private Task StopRandomScriptTriggerTaskAsync()
         {
-            lock (this)
-                if (_listening)
+            return Task.Run(() =>
                 {
-                    _listening = false;
-                    StopRerunTaskAsync().Wait();
-                }
-                else
-                    return;
+                    if (_randomTriggerTask != null)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Stopping random script trigger task.", LoggingLevel.Normal);
+
+                        _stopRandomTriggerTask = true;
+                        _randomTriggerTask.Wait();
+                    }
+                });
+        }
+
+        public override void Stop()
+        {
+            base.Stop();
+
+            StopScriptRerunTaskAsync().Wait();
+            StopRandomScriptTriggerTaskAsync().Wait();
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿#region copyright
+#region copyright
 // Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,14 +14,23 @@
 // limitations under the License.
 #endregion
 
-using System.Collections.ObjectModel;
+using Android.Content;
+using System;
 
-namespace SensusService.Probes.User
+namespace Sensus.Android
 {
-    public interface IScriptProbe
+    public class AndroidOnShowListener : Java.Lang.Object, IDialogInterfaceOnShowListener
     {
-        Protocol Protocol { get; }
+        private readonly Action _action;
 
-        ObservableCollection<Trigger> Triggers { get; }
+        public AndroidOnShowListener(Action action)
+        {
+            _action = action;
+        }
+
+        public void OnShow(IDialogInterface dialog)
+        {
+            _action();
+        }
     }
 }
