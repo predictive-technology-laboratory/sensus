@@ -93,16 +93,6 @@ namespace SensusService
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
-        /// <summary>
-        /// Fired when the protocol is started.
-        /// </summary>
-        public event EventHandler Started;
-
-        /// <summary>
-        /// Fired when the protocol is stopped.
-        /// </summary>
-        public event EventHandler Stopped;
-
         private string _id;
         private string _name;
         private List<Probe> _probes;
@@ -172,11 +162,6 @@ namespace SensusService
             {
                 _running = value;
                 OnPropertyChanged("Running");
-
-                if (_running && Started != null)
-                    Started(this, null);
-                else if (!_running && Stopped != null)
-                    Stopped(this, null);
 
                 return true;
             }

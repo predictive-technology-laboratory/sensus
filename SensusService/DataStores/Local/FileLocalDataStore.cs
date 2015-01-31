@@ -34,17 +34,6 @@ namespace SensusService.DataStores.Local
         /// </summary>
         private string _path;
 
-        /// <summary>
-        /// Settings for serializing this data store.
-        /// </summary>
-        private readonly JsonSerializerSettings _serializationSettings = new JsonSerializerSettings
-        {
-            PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-            TypeNameHandling = TypeNameHandling.All,
-            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
-        };
-
         private string StorageDirectory
         {
             get
@@ -89,7 +78,7 @@ namespace SensusService.DataStores.Local
                 foreach (Datum datum in data)
                 {
                     string datumJSON = null;
-                    try { datumJSON = GetJSON(datum); }
+                    try { datumJSON = datum.JSON; }
                     catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to get JSON for datum:  " + ex.Message, LoggingLevel.Normal); }
 
                     if (datumJSON != null)
@@ -137,7 +126,8 @@ namespace SensusService.DataStores.Local
                         {
                             string line;
                             while ((line = file.ReadLine()) != null)
-                                localData.Add(JsonConvert.DeserializeObject<Datum>(line, _serializationSettings));
+                                if (!string.IsNullOrWhiteSpace(line))
+                                    localData.Add(Datum.FromJSON(line));
 
                             file.Close();
                         }
@@ -173,10 +163,10 @@ namespace SensusService.DataStores.Local
                             string line;
                             while ((line = file.ReadLine()) != null)
                             {
-                                Datum datum = JsonConvert.DeserializeObject<Datum>(line, _serializationSettings);
+                                Datum datum = Datum.FromJSON(line);
                                 if (!hashDataCommittedToRemote.Contains(datum))
                                 {
-                                    filteredFile.WriteLine(GetJSON(datum));
+                                    filteredFile.WriteLine(datum.JSON);
                                     filteredDataWritten++;
                                 }
                             }
@@ -210,17 +200,9 @@ namespace SensusService.DataStores.Local
                 // stop the commit thread
                 base.Stop();
 
-                // close current file
+                // close current file -- don't clear the files out. the user can clear them or they can be uploaded to remote.
                 CloseFile();
-
-                // clear out files that remain. they won't be committed.
-                Clear();
             }
-        }
-
-        private string GetJSON(Datum datum)
-        {
-            return JsonConvert.SerializeObject(datum, Formatting.None, _serializationSettings).Replace('\n', ' ').Replace('\r', ' ');
         }
 
         /// <summary>

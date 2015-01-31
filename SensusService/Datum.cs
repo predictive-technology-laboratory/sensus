@@ -25,6 +25,27 @@ namespace SensusService
     /// </summary>
     public abstract class Datum
     {
+        /// <summary>
+        /// Settings for serializing Datum objects
+        /// </summary>
+        private static readonly JsonSerializerSettings _serializationSettings = new JsonSerializerSettings
+        {
+            PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+            TypeNameHandling = TypeNameHandling.All,
+            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
+        };
+
+        public static Datum FromJSON(string json)
+        {
+            Datum datum = null;
+
+            try { datum = JsonConvert.DeserializeObject<Datum>(json, _serializationSettings); }
+            catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to convert JSON to datum:  " + ex.Message, LoggingLevel.Normal); }
+
+            return datum;
+        }
+
         private string _id;
         private string _deviceId;
         private string _probeType;
@@ -57,6 +78,12 @@ namespace SensusService
         {
             get { return _timestamp; }
             set { _timestamp = value; }
+        }
+
+        [JsonIgnore]
+        public string JSON
+        {
+            get { return JsonConvert.SerializeObject(this, Formatting.None, _serializationSettings).Replace('\n', ' ').Replace('\r', ' '); }
         }
 
         [JsonIgnore]

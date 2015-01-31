@@ -26,11 +26,24 @@ namespace SensusUI
 {
     public class ProtocolPage : ContentPage
     {
-        private class DataStoreValueConverter : IValueConverter
+        private class EditDataStoreButtonTextValueConverter : IValueConverter
         {
             public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
             {
                 return parameter + " store:  " + (value == null ? "None" : (value as DataStore).Name);
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            {
+                throw new SensusException("Invalid call to " + GetType().FullName + ".ConvertBack.");
+            }
+        }
+
+        private class DataStoreButtonEnabledValueConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            {
+                return !(bool)value;
             }
 
             public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -45,8 +58,6 @@ namespace SensusUI
         public static event EventHandler<ProtocolReport> DisplayProtocolReport;
 
         private Protocol _protocol;
-        private EventHandler _protocolStartedHandler;
-        private EventHandler _protocolStoppedHandler;
 
         public ProtocolPage(Protocol protocol)
         {
@@ -68,7 +79,9 @@ namespace SensusUI
                 BindingContext = _protocol
             };
 
-            editLocalDataStoreButton.SetBinding(Button.TextProperty, new Binding("LocalDataStore", converter: new DataStoreValueConverter(), converterParameter: "Local"));
+            editLocalDataStoreButton.SetBinding(Button.TextProperty, new Binding("LocalDataStore", converter: new EditDataStoreButtonTextValueConverter(), converterParameter: "Local"));
+            editLocalDataStoreButton.SetBinding(Button.IsEnabledProperty, new Binding("Running", converter: new DataStoreButtonEnabledValueConverter()));
+
             editLocalDataStoreButton.Clicked += (o, e) =>
                 {
                     DataStore copy = null;
@@ -82,8 +95,11 @@ namespace SensusUI
             {
                 Text = "+",
                 HorizontalOptions = LayoutOptions.End,
-                Font = Font.SystemFontOfSize(20)
+                Font = Font.SystemFontOfSize(20),
+                BindingContext = _protocol
             };
+
+            createLocalDataStoreButton.SetBinding(Button.IsEnabledProperty, new Binding("Running", converter: new DataStoreButtonEnabledValueConverter()));
 
             createLocalDataStoreButton.Clicked += (o, e) =>
                 {
@@ -106,7 +122,9 @@ namespace SensusUI
                 BindingContext = _protocol
             };
 
-            editRemoteDataStoreButton.SetBinding(Button.TextProperty, new Binding("RemoteDataStore", converter: new DataStoreValueConverter(), converterParameter: "Remote"));
+            editRemoteDataStoreButton.SetBinding(Button.TextProperty, new Binding("RemoteDataStore", converter: new EditDataStoreButtonTextValueConverter(), converterParameter: "Remote"));
+            editRemoteDataStoreButton.SetBinding(Button.IsEnabledProperty, new Binding("Running", converter: new DataStoreButtonEnabledValueConverter()));
+
             editRemoteDataStoreButton.Clicked += (o, e) =>
                 {
                     DataStore copy = null;
@@ -120,8 +138,11 @@ namespace SensusUI
             {
                 Text = "+",
                 HorizontalOptions = LayoutOptions.End,
-                Font = Font.SystemFontOfSize(20)
+                Font = Font.SystemFontOfSize(20),
+                BindingContext = _protocol
             };
+
+            createRemoteDataStoreButton.SetBinding(Button.IsEnabledProperty, new Binding("Running", converter: new DataStoreButtonEnabledValueConverter()));
 
             createRemoteDataStoreButton.Clicked += (o, e) =>
                 {
@@ -136,30 +157,6 @@ namespace SensusUI
             };
 
             views.Add(remoteDataStoreStack);
-
-            #region disable/enable the datastore buttons when the protocol is started/stopped
-            editLocalDataStoreButton.IsEnabled = createLocalDataStoreButton.IsEnabled = createRemoteDataStoreButton.IsEnabled = editRemoteDataStoreButton.IsEnabled = !_protocol.Running;
-
-            _protocolStartedHandler = (o, e) =>
-                {
-                    Device.BeginInvokeOnMainThread(() =>
-                        {
-                            editLocalDataStoreButton.IsEnabled = createLocalDataStoreButton.IsEnabled = createRemoteDataStoreButton.IsEnabled = editRemoteDataStoreButton.IsEnabled = false;
-                        });
-                };
-
-            _protocol.Started += _protocolStartedHandler;
-
-            _protocolStoppedHandler = (o, e) =>
-                {
-                    Device.BeginInvokeOnMainThread(() =>
-                        {
-                            editLocalDataStoreButton.IsEnabled = createLocalDataStoreButton.IsEnabled = createRemoteDataStoreButton.IsEnabled = editRemoteDataStoreButton.IsEnabled = true;
-                        });
-                };
-
-            _protocol.Stopped += _protocolStoppedHandler;
-            #endregion
             #endregion
 
             Button viewProbesButton = new Button
@@ -223,16 +220,6 @@ namespace SensusUI
                         UiBoundSensusServiceHelper.Get().ShareFileAsync(path, "Sensus Protocol:  " + _protocol.Name);
                 }));
             #endregion
-        }
-
-        protected override void OnDisappearing()
-        {
-            UiBoundSensusServiceHelper.Get().SaveRegisteredProtocols();
-
-            _protocol.Started -= _protocolStartedHandler;
-            _protocol.Stopped -= _protocolStoppedHandler;
-
-            base.OnDisappearing();
         }
     }
 }

@@ -171,12 +171,15 @@ namespace SensusService.DataStores
                                     try
                                     {
                                         committedData = CommitData(dataToCommit);
+
                                         if (committedData == null)
                                             throw new DataStoreException("Null collection returned by CommitData");
+
+                                        MostRecentCommitTimestamp = DateTimeOffset.UtcNow;
                                     }
                                     catch (Exception ex) { SensusServiceHelper.Get().Logger.Log(_name + " failed to commit data:  " + ex.Message, LoggingLevel.Normal); }
 
-                                    if (committedData != null)
+                                    if (committedData != null && committedData.Count > 0)
                                         try
                                         {
                                             // remove any non-probe data that were committed from the in-memory store
@@ -185,7 +188,6 @@ namespace SensusService.DataStores
                                                     _nonProbeDataToCommit.Remove(datum);
 
                                             ProcessCommittedData(committedData);
-                                            MostRecentCommitTimestamp = DateTimeOffset.UtcNow;
                                         }
                                         catch (Exception ex) { SensusServiceHelper.Get().Logger.Log(_name + " failed to process committed data:  " + ex.Message, LoggingLevel.Normal); }
                                 }
