@@ -193,7 +193,7 @@ namespace SensusService.Probes.User
                     while (inputText == null && _requireNonEmptyInput && --triesLeft > 0);
 
                     if (inputText != null)
-                        _inputDatum = new ScriptDatum(null, DateTimeOffset.UtcNow, inputText);
+                        _inputDatum = new ScriptDatum(null, DateTimeOffset.UtcNow, inputText, current == null ? null : current.Id);
 
                     lock (_staticLockObject)
                         _promptIsRunning = false;

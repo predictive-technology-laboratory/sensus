@@ -21,6 +21,7 @@ namespace SensusService.Probes.User
     public class ScriptDatum : Datum
     {
         private string _response;
+        private string _triggerDatumId;
 
         public string Response
         {
@@ -28,15 +29,22 @@ namespace SensusService.Probes.User
             set { _response = value; }
         }
 
+        public string TriggerDatumId
+        {
+            get { return _triggerDatumId; }
+            set { _triggerDatumId = value; }
+        }
+
         public override string DisplayDetail
         {
             get { return _response; }
         }
 
-        public ScriptDatum(Probe probe, DateTimeOffset timestamp, string response)
+        public ScriptDatum(Probe probe, DateTimeOffset timestamp, string response, string triggerDatumId)
             : base(probe, timestamp)
         {
             _response = response == null ? "" : response;
+            _triggerDatumId = triggerDatumId == null ? "" : triggerDatumId;
         }
 
         public override string ToString()
