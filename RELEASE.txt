@@ -1,4 +1,4 @@
-Current release version:  0.1.0-prerelease
+Current release version:  0.2.0-prerelease
 
 The process for publishing a release to GitHub and the app stores is as follows:
 
