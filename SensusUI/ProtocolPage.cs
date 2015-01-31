@@ -221,5 +221,12 @@ namespace SensusUI
                 }));
             #endregion
         }
+
+        protected override void OnDisappearing()
+        {
+            UiBoundSensusServiceHelper.Get().SaveRegisteredProtocols();
+
+            base.OnDisappearing();
+        }
     }
 }

@@ -40,7 +40,7 @@ namespace SensusService.Probes.Network
         public WlanDatum(Probe probe, DateTimeOffset timestamp, string accessPointBSSID)
             : base(probe, timestamp)
         {
-            _accessPointBSSID = accessPointBSSID;
+            _accessPointBSSID = accessPointBSSID == null ? "" : accessPointBSSID;
         }
 
         public override string ToString()

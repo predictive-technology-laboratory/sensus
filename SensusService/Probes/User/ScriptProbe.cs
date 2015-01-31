@@ -355,10 +355,10 @@ namespace SensusService.Probes.User
             {
                 lock (_incompleteScripts)
                     if (_incompleteScripts.Count > 0)
-                        warning += "Listening probe is holding " + _incompleteScripts.Count + " scripts, the oldest being run first on " + _incompleteScripts.Select(s => s.FirstRunTimestamp).Min() + "." + Environment.NewLine;
+                        misc += "Listening probe is holding " + _incompleteScripts.Count + " scripts, the oldest being run first on " + _incompleteScripts.Select(s => s.FirstRunTimestamp).Min() + "." + Environment.NewLine;
 
                 if (_numScriptsAgedOut > 0)
-                    warning += _numScriptsAgedOut + " scripts have aged out.";
+                    misc += _numScriptsAgedOut + " scripts have aged out." + Environment.NewLine;
             }
 
             return restart;

@@ -57,9 +57,9 @@ namespace SensusService.Probes.Communication
         public SmsDatum(Probe probe, DateTimeOffset timestamp, string fromNumber, string toNumber, string message)
             : base(probe, timestamp)
         {
-            FromNumber = fromNumber;
-            ToNumber = toNumber;
-            _message = message;
+            FromNumber = fromNumber == null ? "" : fromNumber;
+            ToNumber = toNumber == null ? "" : toNumber;
+            _message = message == null ? "" : message;
         }
 
         public override string ToString()

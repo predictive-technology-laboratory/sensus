@@ -14,6 +14,7 @@
 // limitations under the License.
 #endregion
 
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -52,9 +53,9 @@ namespace SensusService
         public ProtocolReport(DateTimeOffset timestamp, string error, string warning, string misc)
             : base(null, timestamp)
         {
-            _error = error;
-            _warning = warning;
-            _misc = misc;
+            _error = error == null ? "" : error;
+            _warning = warning == null ? "" : warning;
+            _misc = misc == null ? "" : misc;
         }
 
         public override string ToString()

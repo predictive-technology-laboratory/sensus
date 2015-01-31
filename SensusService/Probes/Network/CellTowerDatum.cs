@@ -40,7 +40,7 @@ namespace SensusService.Probes.Network
         public CellTowerDatum(Probe probe, DateTimeOffset timestamp, string cellTower)
             : base(probe, timestamp)
         {
-            _cellTower = cellTower;
+            _cellTower = cellTower == null ? "" : cellTower;
         }
 
         public override string ToString()

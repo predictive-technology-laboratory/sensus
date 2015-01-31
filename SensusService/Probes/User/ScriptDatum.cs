@@ -36,7 +36,7 @@ namespace SensusService.Probes.User
         public ScriptDatum(Probe probe, DateTimeOffset timestamp, string response)
             : base(probe, timestamp)
         {
-            _response = response;
+            _response = response == null ? "" : response;
         }
 
         public override string ToString()

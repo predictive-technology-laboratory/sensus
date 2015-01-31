@@ -50,8 +50,8 @@ namespace SensusService.Probes.Context
         public BluetoothDeviceProximityDatum(Probe probe, DateTimeOffset timestamp, string name, string address)
             : base(probe, timestamp)
         {
-            _name = name;
-            _address = address;
+            _name = name == null ? "" : name;
+            _address = address == null ? "" : address;
         }
 
         public override string ToString()

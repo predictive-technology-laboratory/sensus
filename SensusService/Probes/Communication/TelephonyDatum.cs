@@ -49,7 +49,7 @@ namespace SensusService.Probes.Communication
             : base(probe, timestamp)
         {
             _state = state;
-            _phoneNumber = phoneNumber;
+            _phoneNumber = phoneNumber == null ? "" : phoneNumber;
         }
 
         public override string ToString()
