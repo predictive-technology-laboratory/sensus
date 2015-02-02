@@ -364,7 +364,7 @@ namespace SensusService
 
                     if (!_localDataStore.UploadToRemoteDataStore && _alwaysUploadProtocolReportsToRemoteDataStore)
                     {
-                        SensusServiceHelper.Get().Logger.Log("Local data aren't pushed to remote, so we're sending the protocol report there.", LoggingLevel.Normal);
+                        SensusServiceHelper.Get().Logger.Log("Local data aren't pushed to remote, so we're copying the report datum directly to the remote data store cache.", LoggingLevel.Normal);
                         _remoteDataStore.AddNonProbeDatum(_mostRecentReport);
                     }
                 }

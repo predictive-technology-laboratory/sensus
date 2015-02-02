@@ -38,6 +38,7 @@ namespace SensusUI
         private bool _change;
         private bool _fireRepeatedly;
         private bool _useRegularExpression;
+        private bool _ignoreFirstDatum;
 
         public AddScriptProbeTriggerPage(ScriptProbe scriptProbe)
         {
@@ -147,7 +148,7 @@ namespace SensusUI
                     });
                     #endregion
 
-                    #region condition value for comparison, based on selected datum property
+                    #region condition value for comparison, based on selected datum property -- includes change calculation (for double datum) and regex (for string datum)
                     StackLayout conditionValueStack = new StackLayout
                     {
                         Orientation = StackOrientation.Vertical,
@@ -271,7 +272,7 @@ namespace SensusUI
                             #region regular expression
                             _useRegularExpression = false;
 
-                            if(allowRegularExpression)
+                            if (allowRegularExpression)
                             {
                                 Label regexLabel = new Label
                                 {
@@ -326,6 +327,32 @@ namespace SensusUI
 
             probePicker.SelectedIndex = 0;
 
+            #region ignore first datum
+            _ignoreFirstDatum = false;
+            Label ignoreFirstDatumLabel = new Label
+            {
+                Text = "Ignore First Datum:",
+                Font = Font.SystemFontOfSize(20)
+            };
+
+            Switch ignoreFirstDatumSwitch = new Switch
+            {
+                IsToggled = _ignoreFirstDatum
+            };
+
+            ignoreFirstDatumSwitch.Toggled += (o, e) =>
+                {
+                    _ignoreFirstDatum = e.Value;
+                };
+
+            contentLayout.Children.Add(new StackLayout
+            {
+                Orientation = StackOrientation.Horizontal,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                Children = { ignoreFirstDatumLabel, ignoreFirstDatumSwitch }
+            });
+            #endregion
+
             Button okButton = new Button
             {
                 Text = "OK",
@@ -336,7 +363,7 @@ namespace SensusUI
                 {
                     try
                     {
-                        _scriptProbe.Triggers.Add(new Trigger(_selectedProbe, _selectedDatumProperty.Name, _selectedCondition, _conditionValue, _change, _fireRepeatedly, _useRegularExpression));
+                        _scriptProbe.Triggers.Add(new Trigger(_selectedProbe, _selectedDatumProperty.Name, _selectedCondition, _conditionValue, _change, _fireRepeatedly, _useRegularExpression, _ignoreFirstDatum));
 
                         if (TriggerAdded != null)
                             TriggerAdded(o, e);

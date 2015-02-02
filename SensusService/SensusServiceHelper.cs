@@ -154,7 +154,7 @@ namespace SensusService
             }
         }
 
-        [ListUiProperty("Debug Level:", true, 11, new object[] { LoggingLevel.Off, LoggingLevel.Normal, LoggingLevel.Verbose, LoggingLevel.Debug })]
+        [ListUiProperty("Logging Level:", true, 11, new object[] { LoggingLevel.Off, LoggingLevel.Normal, LoggingLevel.Verbose, LoggingLevel.Debug })]
         public LoggingLevel LoggingLevel
         {
             get { return _logger.Level; }

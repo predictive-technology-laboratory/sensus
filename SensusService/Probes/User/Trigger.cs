@@ -35,6 +35,8 @@ namespace SensusService.Probes.User
         private bool _fireRepeatedly;
         private bool _conditionSatisfiedLastTime;
         private Regex _regularExpression;
+        private bool _ignoreFirstDatum;
+        private bool _firstDatum;
 
         public Probe Probe
         {
@@ -118,12 +120,18 @@ namespace SensusService.Probes.User
             }
         }
 
-        private Trigger()
+        public bool IgnoreFirstDatum
         {
-            _conditionSatisfiedLastTime = false;
+            get { return _ignoreFirstDatum; }
+            set { _ignoreFirstDatum = value; }
         }
 
-        public Trigger(Probe probe, string datumPropertyName, TriggerValueCondition condition, object conditionValue, bool change, bool fireRepeatedly, bool useRegularExpressions)
+        private Trigger()
+        {
+            Reset();
+        }
+
+        public Trigger(Probe probe, string datumPropertyName, TriggerValueCondition condition, object conditionValue, bool change, bool fireRepeatedly, bool useRegularExpressions, bool ignoreFirstDatum)
             : this()
         {
             _probe = probe;
@@ -132,9 +140,16 @@ namespace SensusService.Probes.User
             _conditionValue = conditionValue;
             _change = change;
             _fireRepeatedly = fireRepeatedly;
+            _ignoreFirstDatum = ignoreFirstDatum;
 
             if (useRegularExpressions)
                 _regularExpression = new Regex(_conditionValue.ToString());
+        }
+
+        public void Reset()
+        {
+            _conditionSatisfiedLastTime = false;
+            _firstDatum = true;
         }
 
         public bool FireFor(object value)
@@ -171,11 +186,13 @@ namespace SensusService.Probes.User
 
                 bool fire = false;
 
-                if (conditionSatisfied)
-                    if (_fireRepeatedly || !_conditionSatisfiedLastTime)
-                        fire = true;
+                if (!_ignoreFirstDatum || !_firstDatum)  // the user can ignore the first generated datum, e.g., if a probe immediately returns a triggering value that shouldn't be used. if we're not ignoring the first datum, then proceed; otherwise, if we are ignore it but this isn't the first datum, then proceed. in all other cases, do not fire.
+                    if (conditionSatisfied)  // if the condition is satisfied, proceed.
+                        if (_fireRepeatedly || !_conditionSatisfiedLastTime)  // some probes return many datum objects, but we only want the trigger to fire if it did not fire for the previous datum (i.e., on changes).
+                            fire = true;
 
                 _conditionSatisfiedLastTime = conditionSatisfied;
+                _firstDatum = false;
 
                 return fire;
             }
