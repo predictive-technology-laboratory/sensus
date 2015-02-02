@@ -72,7 +72,7 @@ namespace SensusService.Probes
             if (MostRecentDatum != null)
                 lastStoreTime = MostRecentDatum.Timestamp;
 
-            float storesPerSecond = 1 / (float)(DateTime.Now - lastStoreTime).TotalSeconds;
+            float storesPerSecond = 1 / (float)(DateTimeOffset.UtcNow - lastStoreTime).TotalSeconds;
             if (storesPerSecond <= _maxDataStoresPerSecond)
                 base.StoreDatum(datum);
         }

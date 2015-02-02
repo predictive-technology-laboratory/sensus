@@ -154,6 +154,20 @@ namespace SensusService
             }
         }
 
+        [ListUiProperty("Debug Level:", true, 11, new object[] { LoggingLevel.Off, LoggingLevel.Normal, LoggingLevel.Verbose, LoggingLevel.Debug })]
+        public LoggingLevel LoggingLevel
+        {
+            get { return _logger.Level; }
+            set
+            {
+                if (value != _logger.Level)
+                {
+                    _logger.Level = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         protected SensusServiceHelper(Geolocator geolocator)
         {
             GpsReceiver.Get().Initialize(geolocator);

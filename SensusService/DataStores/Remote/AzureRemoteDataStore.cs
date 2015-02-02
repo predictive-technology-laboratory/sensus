@@ -128,7 +128,7 @@ namespace SensusService.DataStores.Remote
         {
             List<Datum> committedData = new List<Datum>();
 
-            DateTime start = DateTime.Now;
+            DateTimeOffset start = DateTimeOffset.UtcNow;
 
             foreach (Datum datum in data)
             {
@@ -182,7 +182,7 @@ namespace SensusService.DataStores.Remote
                 }
             }
 
-            SensusServiceHelper.Get().Logger.Log("Committed " + committedData.Count + " data items to Azure tables in " + (DateTime.Now - start).TotalSeconds + " seconds.", LoggingLevel.Verbose);
+            SensusServiceHelper.Get().Logger.Log("Committed " + committedData.Count + " data items to Azure tables in " + (DateTimeOffset.UtcNow - start).TotalSeconds + " seconds.", LoggingLevel.Verbose);
 
             return committedData;
         }

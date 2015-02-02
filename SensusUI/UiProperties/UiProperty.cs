@@ -134,6 +134,27 @@ namespace SensusUI.UiProperties
                     bindingProperty = Button.TextProperty;
                     converter = new ReadTextFileUiProperty.ValueConverter(loadUiElement.ButtonText);
                 }
+                else if (uiElement is ListUiProperty)
+                {
+                    Picker picker = new Picker
+                    {
+                        HorizontalOptions = LayoutOptions.FillAndExpand
+                    };
+
+                    List<object> items = (uiElement as ListUiProperty).Items.ToList();
+                    foreach (object item in items)
+                        picker.Items.Add(item.ToString());
+
+                    picker.SelectedIndex = items.IndexOf(propertyUiElement.Item1.GetValue(o));
+
+                    picker.SelectedIndexChanged += (oo, ee) =>
+                        {
+                            if (picker.SelectedIndex >= 0)
+                                propertyUiElement.Item1.SetValue(o, items[picker.SelectedIndex]);
+                        };
+
+                    view = picker;
+                }
 
                 if (view != null)
                 {

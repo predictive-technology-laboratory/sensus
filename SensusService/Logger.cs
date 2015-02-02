@@ -38,6 +38,7 @@ namespace SensusService
         public LoggingLevel Level
         {
             get { return _level; }
+            set { _level = value; }
         }
 
         public Logger(string path, LoggingLevel level, params TextWriter[] otherOutputs)

@@ -41,7 +41,7 @@ namespace SensusService.Probes.Location
         private bool _sharedReadingIsComing;
         private ManualResetEvent _sharedReadingWaitHandle;
         private Position _sharedReading;
-        private DateTime _sharedReadingTimestamp;
+        private DateTimeOffset _sharedReadingTimestamp;
         private int _minimumTimeHint;
         private int _minimumDistanceHint;
 
@@ -110,7 +110,7 @@ namespace SensusService.Probes.Location
             _sharedReadingIsComing = false;
             _sharedReadingWaitHandle = new ManualResetEvent(false);
             _sharedReading = null;
-            _sharedReadingTimestamp = DateTime.MinValue;
+            _sharedReadingTimestamp = DateTimeOffset.MinValue;
             _minimumTimeHint = 60000;
             _minimumDistanceHint = 100;
         }
@@ -186,7 +186,7 @@ namespace SensusService.Probes.Location
         public Position GetReading(int maxSharedReadingAgeForReuseMS, int timeout)
         {
             // reuse a previous reading if it isn't too old
-            TimeSpan sharedReadingAge = DateTime.Now - _sharedReadingTimestamp;
+            TimeSpan sharedReadingAge = DateTimeOffset.UtcNow - _sharedReadingTimestamp;
             if (sharedReadingAge.TotalMilliseconds < maxSharedReadingAgeForReuseMS)
             {
                 SensusServiceHelper.Get().Logger.Log("Reusing previous GPS reading, which is " + sharedReadingAge.TotalMilliseconds + " MS old (maximum=" + maxSharedReadingAgeForReuseMS + ").", LoggingLevel.Verbose);
@@ -204,9 +204,9 @@ namespace SensusService.Probes.Location
                         {
                             SensusServiceHelper.Get().Logger.Log("Taking shared reading.", LoggingLevel.Debug);
 
-                            DateTime start = DateTime.Now;
+                            DateTimeOffset start = DateTimeOffset.UtcNow;
                             _sharedReading = await _locator.GetPositionAsync(timeout: timeout);
-                            DateTime end = _sharedReadingTimestamp = DateTime.Now;
+                            DateTimeOffset end = _sharedReadingTimestamp = DateTimeOffset.UtcNow;
 
                             if (_sharedReading != null)
                                 SensusServiceHelper.Get().Logger.Log("Shared reading obtained in " + (end - start).Milliseconds + " MS:  " + _sharedReading.Latitude + " " + _sharedReading.Longitude, LoggingLevel.Verbose);

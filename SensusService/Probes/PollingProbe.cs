@@ -122,7 +122,7 @@ namespace SensusService.Probes
                 if (MostRecentDatum != null)
                     mostRecentReadingTimestamp = MostRecentDatum.Timestamp;
 
-                double msElapsedSinceLastPoll = (DateTime.UtcNow - mostRecentReadingTimestamp).TotalMilliseconds;
+                double msElapsedSinceLastPoll = (DateTimeOffset.UtcNow - mostRecentReadingTimestamp).TotalMilliseconds;
                 if (msElapsedSinceLastPoll > _pollingSleepDurationMS)
                     warning += "Probe \"" + GetType().FullName + "\" has not taken a reading in " + msElapsedSinceLastPoll + "ms (polling delay = " + _pollingSleepDurationMS + "ms)." + Environment.NewLine;
             }

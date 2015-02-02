@@ -14,31 +14,24 @@
 // limitations under the License.
 #endregion
 
-namespace SensusService
+namespace SensusUI.UiProperties
 {
-    /// <summary>
-    /// Logging levels.
-    /// </summary>
-    public enum LoggingLevel
+    public class ListUiProperty : UiProperty
     {
-        /// <summary>
-        /// No logging.
-        /// </summary>
-        Off,
+        private object[] _items;
 
-        /// <summary>
-        /// Normal logging:  messages that get generated on startup and shutdown, plus exceptions.
-        /// </summary>
-        Normal,
+        public object[] Items
+        {
+            get { return _items; }
+        }
 
-        /// <summary>
-        /// Verbose logging:  Normal plus additional, frequent messages.
-        /// </summary>
-        Verbose,
+        public ListUiProperty(string labelText, bool editable, int order, object[] items)
+            : base(labelText, editable, order)
+        {
+            _items = items;
 
-        /// <summary>
-        /// Debug logging:  Verbose plus all other possible messages.
-        /// </summary>
-        Debug
+            if(_items == null)
+                _items = new object[0];
+        }       
     }
 }

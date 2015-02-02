@@ -119,7 +119,7 @@ namespace SensusService.DataStores
         }
 
         /// <summary>
-        /// Starts the commit thread. This should always be called last within parent-class overrides.
+        /// Starts the commit thread. This should always be called last within child-class overrides.
         /// </summary>
         public virtual void Start()
         {
@@ -249,7 +249,7 @@ namespace SensusService.DataStores
                 restart = true;
             }
 
-            double msElapsedSinceLastCommit = (DateTime.UtcNow - _mostRecentCommitTimestamp).TotalMilliseconds;
+            double msElapsedSinceLastCommit = (DateTimeOffset.UtcNow - _mostRecentCommitTimestamp).TotalMilliseconds;
             if (msElapsedSinceLastCommit > _commitDelayMS)
                 warning += "Datastore \"" + _name + "\" has not committed data in " + msElapsedSinceLastCommit + "ms (commit delay = " + _commitDelayMS + "ms)." + Environment.NewLine;
 
