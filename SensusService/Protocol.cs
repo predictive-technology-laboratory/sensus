@@ -118,7 +118,7 @@ namespace SensusService
                 if (value != _name)
                 {
                     _name = value;
-                    OnPropertyChanged();
+                    OnPropertyChanged();  // update protocol name in list of protocols
                 }
             }
         }
@@ -161,7 +161,7 @@ namespace SensusService
             else
             {
                 _running = value;
-                OnPropertyChanged("Running");
+                OnPropertyChanged("Running");  // toggle switch
 
                 return true;
             }
@@ -177,7 +177,7 @@ namespace SensusService
                     _localDataStore = value;
                     _localDataStore.Protocol = this;
 
-                    OnPropertyChanged();
+                    OnPropertyChanged();  // update button text for local data store
                 }
             }
         }
@@ -192,7 +192,7 @@ namespace SensusService
                     _remoteDataStore = value;
                     _remoteDataStore.Protocol = this;
 
-                    OnPropertyChanged();
+                    OnPropertyChanged();  // update button text for remote data store
                 }
             }
         }

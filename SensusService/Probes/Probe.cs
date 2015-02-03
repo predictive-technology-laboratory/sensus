@@ -69,7 +69,7 @@ namespace SensusService.Probes
                 if (value != _displayName)
                 {
                     _displayName = value;
-                    OnPropertyChanged();
+                    OnPropertyChanged();  // update probe name in list of probes
                 }
             }
         }
@@ -84,7 +84,7 @@ namespace SensusService.Probes
                 {
                     _enabled = value;
 
-                    OnPropertyChanged();
+                    OnPropertyChanged();  // update probe color in list of probes
 
                     if (_protocol != null && _protocol.Running)  // _protocol can be null when deserializing the probe -- if Enabled is set before Protocol
                         if (_enabled)

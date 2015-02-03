@@ -60,7 +60,7 @@ namespace SensusService.Probes.User
                 try
                 {
                     _script = Script.FromJSON(value);
-                    OnPropertyChanged();
+                    OnPropertyChanged();  // update script name on button
                 }
                 catch (Exception) { }
             }
