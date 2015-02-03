@@ -47,8 +47,6 @@ namespace SensusService.Probes
         /// </summary>
         public event EventHandler<Tuple<Datum, Datum>> MostRecentDatumChanged;
 
-        public event EventHandler<bool> RunningChanged;
-
         private string _displayName;
         private bool _enabled;
         private bool _running;

@@ -158,7 +158,7 @@ namespace SensusService.Probes.User
                         else
                             daysAgoStr = promptAge.TotalDays + " days ago";
 
-                        message = string.Format(_outputMessageRerun, daysAgoStr + " at " + firstRunTimestamp.ToLocalTime().DateTime.ToString("%h:%m %tt"));
+                        message = string.Format(_outputMessageRerun, daysAgoStr + " at " + firstRunTimestamp.ToLocalTime().DateTime.ToString("%h:%mm %tt"));
                     }
 
                     string inputText = null;
