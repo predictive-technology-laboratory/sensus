@@ -45,7 +45,11 @@ namespace SensusService.Probes.Location
             base.Initialize();
 
             if (!GpsReceiver.Get().Locator.IsGeolocationEnabled)
-                throw new Exception("Geolocation is not enabled on this device.");
+            {
+                string error = "Geolocation is not enabled on this device. Cannot start location probe.";
+                SensusServiceHelper.Get().FlashNotificationAsync(error);
+                throw new Exception(error);
+            }
         }
 
         protected sealed override IEnumerable<Datum> Poll()
