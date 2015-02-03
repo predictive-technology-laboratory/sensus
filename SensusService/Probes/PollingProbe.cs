@@ -99,7 +99,8 @@ namespace SensusService.Probes
                 base.Stop();
 
                 // since Running is now false, the poll thread will be exiting soon. if it's in the middle of a poll, the poll will finish.
-                _pollThread.Join();
+                if (_pollThread != null)
+                    _pollThread.Join();
             }
         }
 

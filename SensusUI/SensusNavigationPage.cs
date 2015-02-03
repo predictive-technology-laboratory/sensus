@@ -15,7 +15,6 @@
 #endregion
 
 using SensusService;
-using SensusService.Probes;
 using System;
 using System.Linq;
 using Xamarin.Forms;
@@ -49,9 +48,11 @@ namespace SensusUI
             #endregion
 
             #region protocols page
-            ProtocolsPage.EditProtocol += async (o, e) =>
+            ProtocolsPage.OpenProtocol += async (protocolsPage, protocol) =>
                 {
-                    await PushAsync(new ProtocolPage(o as Protocol));
+                    ProtocolPage protocolPage = new ProtocolPage(protocol);
+                    protocolPage.Disappearing += (o, e) => (protocolsPage as ProtocolsPage).Bind();
+                    await PushAsync(protocolPage);
                 };
             #endregion
 
@@ -63,7 +64,7 @@ namespace SensusUI
                 };
 
             ProtocolPage.CreateDataStoreTapped += async (protocolPage, args) =>
-                {                    
+                {
                     await PushAsync(new CreateDataStorePage(args));
                 };
 
@@ -82,9 +83,7 @@ namespace SensusUI
             ProbesPage.ProbeTapped += async (probesPage, probe) =>
                 {
                     ProbePage probePage = new ProbePage(probe);
-
                     probePage.Disappearing += (o, e) => { (probesPage as ProbesPage).Bind(); };  // rebind the probes page to pick up changes in the probe
-
                     await PushAsync(probePage);
                 };
             #endregion

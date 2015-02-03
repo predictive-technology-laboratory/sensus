@@ -73,6 +73,8 @@ namespace SensusUI
 
             Bind();
 
+            ToolbarItems.Add(new ToolbarItem("Refresh", null, () => { Bind(); }));
+
             Content = _probesList;
         }
 

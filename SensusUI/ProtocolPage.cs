@@ -47,10 +47,14 @@ namespace SensusUI
             {
                 Text = "Status:",
                 Font = Font.SystemFontOfSize(20),
-                HorizontalOptions = LayoutOptions.FillAndExpand
+                HorizontalOptions = LayoutOptions.Start
             };
 
-            Switch onOffSwitch = new Switch();
+            Switch onOffSwitch = new Switch
+            {
+                IsToggled = _protocol.Running
+            };
+
             onOffSwitch.Toggled += (o, e) => _protocol.Running = e.Value;
 
             views.Add(new StackLayout
@@ -68,7 +72,8 @@ namespace SensusUI
             {
                 Text = "Local Data Store",
                 Font = Font.SystemFontOfSize(20),
-                HorizontalOptions = LayoutOptions.FillAndExpand
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                IsEnabled = !_protocol.Running
             };
 
             editLocalDataStoreButton.Clicked += (o, e) =>
@@ -84,7 +89,8 @@ namespace SensusUI
             {
                 Text = "+",
                 Font = Font.SystemFontOfSize(20),
-                HorizontalOptions = LayoutOptions.End
+                HorizontalOptions = LayoutOptions.End,
+                IsEnabled = !_protocol.Running
             };
 
             createLocalDataStoreButton.Clicked += (o, e) =>
@@ -105,7 +111,8 @@ namespace SensusUI
             {
                 Text = "Remote Data Store",
                 Font = Font.SystemFontOfSize(20),
-                HorizontalOptions = LayoutOptions.FillAndExpand
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                IsEnabled = !_protocol.Running
             };
 
             editRemoteDataStoreButton.Clicked += (o, e) =>
@@ -121,7 +128,8 @@ namespace SensusUI
             {
                 Text = "+",
                 Font = Font.SystemFontOfSize(20),
-                HorizontalOptions = LayoutOptions.End
+                HorizontalOptions = LayoutOptions.End,
+                IsEnabled = !_protocol.Running
             };
 
             createRemoteDataStoreButton.Clicked += (o, e) =>

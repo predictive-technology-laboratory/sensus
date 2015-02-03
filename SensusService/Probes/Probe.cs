@@ -47,6 +47,8 @@ namespace SensusService.Probes
         /// </summary>
         public event EventHandler<Tuple<Datum, Datum>> MostRecentDatumChanged;
 
+        public event EventHandler<bool> RunningChanged;
+
         private string _displayName;
         private bool _enabled;
         private bool _running;
@@ -138,7 +140,11 @@ namespace SensusService.Probes
 
         protected Task StartAsync()
         {
-            return Task.Run(() => Start());
+            return Task.Run(() =>
+                {
+                    try { Start(); }
+                    catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to start probe \"" + GetType().FullName + "\":" + ex.Message, LoggingLevel.Normal); }
+                });
         }
 
         /// <summary>
@@ -195,7 +201,11 @@ namespace SensusService.Probes
 
         protected Task StopAsync()
         {
-            return Task.Run(() => Stop());
+            return Task.Run(() =>
+                {
+                    try { Stop(); }
+                    catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to stop probe \"" + GetType().FullName + "\":" + ex.Message, LoggingLevel.Normal); }
+                });
         }
 
         /// <summary>

@@ -24,7 +24,7 @@ namespace SensusUI
 {
     public class ProtocolsPage : ContentPage
     {
-        public static event EventHandler EditProtocol;
+        public static event EventHandler<Protocol> OpenProtocol;
 
         private ListView _protocolsList;
 
@@ -36,13 +36,18 @@ namespace SensusUI
             _protocolsList.ItemTemplate = new DataTemplate(typeof(TextCell));
             _protocolsList.ItemTemplate.SetBinding(TextCell.TextProperty, "Name");
 
+            Bind();
+
             Content = _protocolsList;
 
             #region toolbar
             ToolbarItems.Add(new ToolbarItem("Open", null, () =>
                 {
                     if (_protocolsList.SelectedItem != null)
-                        EditProtocol(_protocolsList.SelectedItem, null);
+                    {
+                        OpenProtocol(this, _protocolsList.SelectedItem as Protocol);
+                        _protocolsList.SelectedItem = null;
+                    }
                 }));
 
             ToolbarItems.Add(new ToolbarItem("+", null, () =>
