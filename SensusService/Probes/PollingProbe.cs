@@ -30,14 +30,7 @@ namespace SensusService.Probes
         public virtual int PollingSleepDurationMS
         {
             get { return _pollingSleepDurationMS; }
-            set
-            {
-                if (value != _pollingSleepDurationMS)
-                {
-                    _pollingSleepDurationMS = value;
-                    OnPropertyChanged();
-                }
-            }
+            set { _pollingSleepDurationMS = value; }
         }
 
         public abstract int DefaultPollingSleepDurationMS { get; }

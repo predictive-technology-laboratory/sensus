@@ -83,6 +83,7 @@ namespace SensusService.Probes
                 if (value != _enabled)
                 {
                     _enabled = value;
+
                     OnPropertyChanged();
 
                     if (_protocol != null && _protocol.Running)  // _protocol can be null when deserializing the probe -- if Enabled is set before Protocol
@@ -93,7 +94,6 @@ namespace SensusService.Probes
                 }
             }
         }
-
 
         [JsonIgnore]
         public bool Running
@@ -112,7 +112,6 @@ namespace SensusService.Probes
                     Datum oldDatum = _mostRecentDatum;
 
                     _mostRecentDatum = value;
-                    OnPropertyChanged();
 
                     if (MostRecentDatumChanged != null)
                         MostRecentDatumChanged(this, new Tuple<Datum, Datum>(oldDatum, _mostRecentDatum));
@@ -256,7 +255,7 @@ namespace SensusService.Probes
             return restart;
         }
 
-        public void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));

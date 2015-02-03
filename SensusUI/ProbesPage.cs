@@ -55,9 +55,7 @@ namespace SensusUI
 
         public ProbesPage(Protocol protocol)
         {
-            BindingContext = protocol;
-
-            SetBinding(TitleProperty, new Binding("Name", stringFormat: "{0}'s Probes"));
+            Title = protocol.Name + "'s Probes";
 
             ListView probesList = new ListView();
             probesList.ItemTemplate = new DataTemplate(typeof(TextCell));

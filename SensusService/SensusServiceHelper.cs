@@ -20,10 +20,8 @@ using SensusService.Probes.Location;
 using SensusUI.UiProperties;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Xamarin;
@@ -34,7 +32,7 @@ namespace SensusService
     /// <summary>
     /// Provides platform-independent service functionality.
     /// </summary>
-    public abstract class SensusServiceHelper : INotifyPropertyChanged
+    public abstract class SensusServiceHelper
     {
         #region singleton management
         private static SensusServiceHelper _singleton;
@@ -77,11 +75,6 @@ namespace SensusService
         #endregion
 
         protected const string XAMARIN_INSIGHTS_APP_KEY = "97af5c4ab05c6a69d2945fd403ff45535f8bb9bb";
-
-        /// <summary>
-        /// Raised when a UI-relevant property has changed.
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
         /// Raised when the service helper has stopped.
@@ -130,42 +123,21 @@ namespace SensusService
         public int PingDelayMS
         {
             get { return _pingDelayMS; }
-            set
-            {
-                if (value != _pingDelayMS)
-                {
-                    _pingDelayMS = value;
-                    OnPropertyChanged();
-                }
-            }
+            set { _pingDelayMS = value; }
         }
 
         [EntryIntegerUiProperty("Pings Per Report:", true, 10)]
         public int PingsPerProtocolReport
         {
             get { return _pingsPerProtocolReport; }
-            set
-            {
-                if (value != _pingsPerProtocolReport)
-                {
-                    _pingsPerProtocolReport = value;
-                    OnPropertyChanged();
-                }
-            }
+            set { _pingsPerProtocolReport = value; }
         }
 
         [ListUiProperty("Logging Level:", true, 11, new object[] { LoggingLevel.Off, LoggingLevel.Normal, LoggingLevel.Verbose, LoggingLevel.Debug })]
         public LoggingLevel LoggingLevel
         {
             get { return _logger.Level; }
-            set
-            {
-                if (value != _logger.Level)
-                {
-                    _logger.Level = value;
-                    OnPropertyChanged();
-                }
-            }
+            set { _logger.Level = value; }
         }
 
         protected SensusServiceHelper(Geolocator geolocator)
@@ -533,12 +505,6 @@ namespace SensusService
         {
             try { _logger.Close(); }
             catch (Exception) { }
-        }
-
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public string GetSharePath(string extension)

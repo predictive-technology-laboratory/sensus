@@ -20,7 +20,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -79,7 +81,6 @@ namespace SensusService.Probes.User
                 if (value != _rerunIncompleteScripts)
                 {
                     _rerunIncompleteScripts = value;
-                    OnPropertyChanged();
 
                     if (Running)
                         if (_rerunIncompleteScripts)
@@ -94,28 +95,14 @@ namespace SensusService.Probes.User
         public int ScriptRerunDelayMS
         {
             get { return _scriptRerunDelayMS; }
-            set
-            {
-                if (value != _scriptRerunDelayMS)
-                {
-                    _scriptRerunDelayMS = value;
-                    OnPropertyChanged();
-                }
-            }
+            set { _scriptRerunDelayMS = value; }
         }
 
         [EntryIntegerUiProperty("Max. Script Age (Mins.):", true, 12)]
         public int MaxScriptAgeMinutes
         {
             get { return _maxScriptAgeMinutes; }
-            set
-            {
-                if (value != _maxScriptAgeMinutes)
-                {
-                    _maxScriptAgeMinutes = value;
-                    OnPropertyChanged();
-                }
-            }
+            set { _maxScriptAgeMinutes = value; }
         }
 
         [OnOffUiProperty("Trigger Randomly:", true, 13)]
@@ -127,7 +114,6 @@ namespace SensusService.Probes.User
                 if (value != _triggerRandomly)
                 {
                     _triggerRandomly = value;
-                    OnPropertyChanged();
 
                     if (Running)
                         if (_triggerRandomly)
@@ -142,14 +128,7 @@ namespace SensusService.Probes.User
         public int RandomTriggerDelayMaxMinutes
         {
             get { return _randomTriggerDelayMaxMinutes; }
-            set
-            {
-                if (value != _randomTriggerDelayMaxMinutes)
-                {
-                    _randomTriggerDelayMaxMinutes = value;
-                    OnPropertyChanged();
-                }
-            }
+            set { _randomTriggerDelayMaxMinutes = value; }
         }
 
         public Queue<Script> IncompleteScripts

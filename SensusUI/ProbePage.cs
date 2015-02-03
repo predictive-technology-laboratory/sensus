@@ -32,9 +32,7 @@ namespace SensusUI
 
         public ProbePage(Probe probe)
         {
-            BindingContext = probe;
-
-            SetBinding(TitleProperty, new Binding("DisplayName"));
+            Title = "Probe";
 
             StackLayout contentLayout = new StackLayout
             {

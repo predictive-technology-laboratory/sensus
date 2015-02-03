@@ -31,9 +31,7 @@ namespace SensusUI
 
         public DataStorePage(ProtocolDataStoreEventArgs args)
         {
-            BindingContext = args.DataStore;
-
-            SetBinding(TitleProperty, new Binding("Name"));
+            Title = (args.Local ? "Local" : "Remote") + " Data Store";
 
             List<StackLayout> stacks = UiProperty.GetPropertyStacks(args.DataStore);
 

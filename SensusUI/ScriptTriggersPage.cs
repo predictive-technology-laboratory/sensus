@@ -27,11 +27,9 @@ namespace SensusUI
 
         public ScriptTriggersPage(ScriptProbe probe)
         {
+            Title = probe.DisplayName + "'s Triggers";
+
             ScriptProbe scriptProbe = probe as ScriptProbe;
-
-            BindingContext = probe;
-
-            SetBinding(ContentPage.TitleProperty, new Binding("DisplayName", stringFormat: "{0}'s Triggers"));
 
             ListView triggerList = new ListView();
             triggerList.ItemTemplate = new DataTemplate(typeof(TextCell));

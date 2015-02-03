@@ -63,9 +63,7 @@ namespace SensusUI
         {
             _protocol = protocol;
 
-            BindingContext = _protocol;
-
-            SetBinding(TitleProperty, new Binding("Name"));
+            Title = "Protocol";
 
             List<View> views = new List<View>();
 

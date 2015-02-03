@@ -31,7 +31,7 @@ using System.Threading.Tasks;
 namespace SensusService
 {
     /// <summary>
-    /// Container for probes.
+    /// Self-contained sensing design, comprising probes and data stores.
     /// </summary>
     public class Protocol : INotifyPropertyChanged
     {
@@ -101,7 +101,7 @@ namespace SensusService
         private RemoteDataStore _remoteDataStore;
         private string _storageDirectory;
         private ProtocolReport _mostRecentReport;
-        private bool _alwaysUploadProtocolReportsToRemoteDataStore;
+        private bool _forceProtocolReportsToRemoteDataStore;
 
         public string Id
         {
@@ -211,17 +211,10 @@ namespace SensusService
         }
 
         [OnOffUiProperty("Force Reports to Remote:", true, 20)]
-        public bool AlwaysUploadProtocolReportsToRemoteDataStore
+        public bool ForceProtocolReportsToRemoteDataStore
         {
-            get { return _alwaysUploadProtocolReportsToRemoteDataStore; }
-            set
-            {
-                if (value != _alwaysUploadProtocolReportsToRemoteDataStore)
-                {
-                    _alwaysUploadProtocolReportsToRemoteDataStore = value;
-                    OnPropertyChanged();
-                }
-            }
+            get { return _forceProtocolReportsToRemoteDataStore; }
+            set { _forceProtocolReportsToRemoteDataStore = value; }
         }
 
         /// <summary>
@@ -229,7 +222,7 @@ namespace SensusService
         /// </summary>
         private Protocol()
         {
-            _alwaysUploadProtocolReportsToRemoteDataStore = false;
+            _forceProtocolReportsToRemoteDataStore = false;
         }
 
         /// <summary>
@@ -362,7 +355,7 @@ namespace SensusService
                     SensusServiceHelper.Get().Logger.Log("Storing protocol report locally.", LoggingLevel.Normal);
                     _localDataStore.AddNonProbeDatum(_mostRecentReport);
 
-                    if (!_localDataStore.UploadToRemoteDataStore && _alwaysUploadProtocolReportsToRemoteDataStore)
+                    if (!_localDataStore.UploadToRemoteDataStore && _forceProtocolReportsToRemoteDataStore)
                     {
                         SensusServiceHelper.Get().Logger.Log("Local data aren't pushed to remote, so we're copying the report datum directly to the remote data store cache.", LoggingLevel.Normal);
                         _remoteDataStore.AddNonProbeDatum(_mostRecentReport);
