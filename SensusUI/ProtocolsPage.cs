@@ -35,7 +35,6 @@ namespace SensusUI
             _protocolsList = new ListView();
             _protocolsList.ItemTemplate = new DataTemplate(typeof(TextCell));
             _protocolsList.ItemTemplate.SetBinding(TextCell.TextProperty, "Name");
-            _protocolsList.ItemsSource = UiBoundSensusServiceHelper.Get().RegisteredProtocols;
 
             Content = _protocolsList;
 
@@ -62,7 +61,8 @@ namespace SensusUI
 
                         if (await DisplayAlert("Delete " + protocolToRemove.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
                         {
-                            await UiBoundSensusServiceHelper.Get().StopProtocolAsync(protocolToRemove, true);
+                            await protocolToRemove.StopAsync();
+                            UiBoundSensusServiceHelper.Get().UnregisterProtocol(protocolToRemove);
 
                             try { Directory.Delete(protocolToRemove.StorageDirectory, true); }
                             catch (Exception ex) { UiBoundSensusServiceHelper.Get().Logger.Log("Failed to delete protocol storage directory \"" + protocolToRemove.StorageDirectory + "\":  " + ex.Message, LoggingLevel.Normal); }
@@ -73,6 +73,12 @@ namespace SensusUI
                     }
                 }));
             #endregion
+        }
+
+        public void Bind()
+        {
+            _protocolsList.ItemsSource = null;
+            _protocolsList.ItemsSource = UiBoundSensusServiceHelper.Get().RegisteredProtocols;
         }
     }
 }

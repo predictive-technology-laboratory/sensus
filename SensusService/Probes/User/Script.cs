@@ -36,7 +36,12 @@ namespace SensusService.Probes.User
 
         public static Script FromJSON(string json)
         {
-            return JsonConvert.DeserializeObject<Script>(json, _jsonSerializerSettings);
+            Script script = null;
+
+            try { script = JsonConvert.DeserializeObject<Script>(json, _jsonSerializerSettings); }
+            catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to deserialize script:  " + ex.Message, LoggingLevel.Normal); }
+
+            return script;
         }
         #endregion
 

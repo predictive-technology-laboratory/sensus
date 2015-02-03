@@ -22,7 +22,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\EntryIntegerUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\EntryStringUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\ListUiProperty.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UiProperties\ReadTextFileUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\IncrementalIntegerUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\OnOffUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\UiProperty.cs" />

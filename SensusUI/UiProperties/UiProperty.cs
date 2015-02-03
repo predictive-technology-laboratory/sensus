@@ -113,27 +113,6 @@ namespace SensusUI.UiProperties
 
                     bindingProperty = Entry.TextProperty;
                 }
-                else if (uiElement is ReadTextFileUiProperty)
-                {
-                    ReadTextFileUiProperty loadUiElement = uiElement as ReadTextFileUiProperty;
-
-                    Button loadButton = new Button
-                    {
-                        Text = loadUiElement.ButtonText,
-                        HorizontalOptions = LayoutOptions.FillAndExpand
-                    };
-
-                    loadButton.Clicked += async (oo, e) =>
-                        {
-                            // set the property on the UI element to the file's content
-                            string text = await UiBoundSensusServiceHelper.Get().PromptForAndReadTextFileAsync(loadUiElement.Prompt);
-                            propertyUiElement.Item1.SetValue(o, text);
-                        };
-
-                    view = loadButton;
-                    bindingProperty = Button.TextProperty;
-                    converter = new ReadTextFileUiProperty.ValueConverter(loadUiElement.ButtonText);
-                }
                 else if (uiElement is ListUiProperty)
                 {
                     Picker picker = new Picker

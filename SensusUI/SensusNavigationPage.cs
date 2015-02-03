@@ -56,15 +56,15 @@ namespace SensusUI
             #endregion
 
             #region protocol page
-            ProtocolPage.EditDataStoreTapped += async (o, e) =>
+            ProtocolPage.EditDataStoreTapped += async (protocolPage, args) =>
                 {
-                    if (e.DataStore != null)
-                        await PushAsync(new DataStorePage(e));
+                    if (args.DataStore != null)
+                        await PushAsync(new DataStorePage(args));
                 };
 
-            ProtocolPage.CreateDataStoreTapped += async (o, e) =>
-                {
-                    await PushAsync(new CreateDataStorePage(e));
+            ProtocolPage.CreateDataStoreTapped += async (protocolPage, args) =>
+                {                    
+                    await PushAsync(new CreateDataStorePage(args));
                 };
 
             ProtocolPage.ViewProbesTapped += async (o, protocol) =>
@@ -79,9 +79,13 @@ namespace SensusUI
             #endregion
 
             #region probes page
-            ProbesPage.ProbeTapped += async (o, probe) =>
+            ProbesPage.ProbeTapped += async (probesPage, probe) =>
                 {
-                    await PushAsync(new ProbePage(probe));
+                    ProbePage probePage = new ProbePage(probe);
+
+                    probePage.Disappearing += (o, e) => { (probesPage as ProbesPage).Bind(); };  // rebind the probes page to pick up changes in the probe
+
+                    await PushAsync(probePage);
                 };
             #endregion
 

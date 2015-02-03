@@ -50,23 +50,7 @@ namespace SensusService.Probes.User
             get { return _triggers; }
         }
 
-        [ReadTextFileUiProperty("Script:", true, 3, "Load", "Select Script (.json)")]
-        [JsonIgnore]
-        public string ScriptContent
-        {
-            get { return _script == null ? null : _script.Name; }
-            set
-            {
-                try
-                {
-                    _script = Script.FromJSON(value);
-                    OnPropertyChanged();  // update script name on button
-                }
-                catch (Exception) { }
-            }
-        }
-
-        public Script Script  // present for JSON serialization
+        public Script Script
         {
             get { return _script; }
             set { _script = value; }

@@ -45,18 +45,39 @@ namespace SensusUI
 
             if (probe is ScriptProbe)
             {
+                ScriptProbe scriptProbe = probe as ScriptProbe;
+
+                Button loadButton = new Button
+                {
+                    Text = scriptProbe.Script == null ? "Load Script" : scriptProbe.Script.Name,
+                    Font = Font.SystemFontOfSize(20),
+                    HorizontalOptions = LayoutOptions.FillAndExpand
+                };
+
+                loadButton.Clicked += async (oo, e) =>
+                    {
+                        scriptProbe.Script = Script.FromJSON(await UiBoundSensusServiceHelper.Get().PromptForAndReadTextFileAsync("Select Script File"));
+                        loadButton.Text = scriptProbe.Script == null ? "Load Script" : scriptProbe.Script.Name;
+                    };
+
                 Button viewScriptTriggersButton = new Button
                 {
                     Text = "View Triggers",
-                    Font = Font.SystemFontOfSize(20)
+                    Font = Font.SystemFontOfSize(20),
+                    HorizontalOptions = LayoutOptions.FillAndExpand
                 };
 
                 viewScriptTriggersButton.Clicked += (o, e) =>
                     {
-                        ViewScriptTriggersTapped(o, probe as ScriptProbe);
+                        ViewScriptTriggersTapped(o, scriptProbe);
                     };
 
-                contentLayout.Children.Add(viewScriptTriggersButton);
+                contentLayout.Children.Add(new StackLayout
+                {
+                    Orientation = StackOrientation.Horizontal,
+                    HorizontalOptions = LayoutOptions.FillAndExpand,
+                    Children = { loadButton, viewScriptTriggersButton }
+                });
             }
 
             Content = new ScrollView

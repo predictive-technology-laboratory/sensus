@@ -53,23 +53,35 @@ namespace SensusUI
 
         public static event EventHandler<Probe> ProbeTapped;
 
+        private Protocol _protocol;
+        private ListView _probesList;
+
         public ProbesPage(Protocol protocol)
         {
-            Title = protocol.Name + "'s Probes";
+            _protocol = protocol;
 
-            ListView probesList = new ListView();
-            probesList.ItemTemplate = new DataTemplate(typeof(TextCell));
-            probesList.ItemTemplate.SetBinding(TextCell.TextProperty, "DisplayName");
-            probesList.ItemTemplate.SetBinding(TextCell.TextColorProperty, new Binding("Enabled", converter: new ProbeTextColorValueConverter()));
-            probesList.ItemTemplate.SetBinding(TextCell.DetailProperty, new Binding("MostRecentDatum", converter: new ProbeDetailValueConverter()));
-            probesList.ItemsSource = protocol.Probes;
-            probesList.ItemTapped += (o, e) =>
+            _probesList = new ListView();
+            _probesList.ItemTemplate = new DataTemplate(typeof(TextCell));
+            _probesList.ItemTemplate.SetBinding(TextCell.TextProperty, "DisplayName");
+            _probesList.ItemTemplate.SetBinding(TextCell.TextColorProperty, new Binding("Enabled", converter: new ProbeTextColorValueConverter()));
+            _probesList.ItemTemplate.SetBinding(TextCell.DetailProperty, new Binding("MostRecentDatum", converter: new ProbeDetailValueConverter()));
+            _probesList.ItemTapped += (o, e) =>
                 {
-                    probesList.SelectedItem = null;
-                    ProbeTapped(o, e.Item as Probe);
+                    _probesList.SelectedItem = null;
+                    ProbeTapped(this, e.Item as Probe);
                 };
 
-            Content = probesList;
+            Bind();
+
+            Content = _probesList;
+        }
+
+        public void Bind()
+        {
+            Title = _protocol.Name + "'s Probes";
+
+            _probesList.ItemsSource = null;
+            _probesList.ItemsSource = _protocol.Probes;
         }
     }
 }

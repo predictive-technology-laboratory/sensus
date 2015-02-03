@@ -29,7 +29,7 @@ namespace SensusService.Probes
     /// <summary>
     /// An abstract probe.
     /// </summary>
-    public abstract class Probe : INotifyPropertyChanged
+    public abstract class Probe
     {
         #region static members
         /// <summary>
@@ -41,11 +41,6 @@ namespace SensusService.Probes
             return Assembly.GetExecutingAssembly().GetTypes().Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(Probe))).Select(t => Activator.CreateInstance(t) as Probe).OrderBy(p => p.DisplayName).ToList();
         }
         #endregion
-
-        /// <summary>
-        /// Fired when a UI-relevant property is changed.
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
         /// Fired when the most recent datum is changed.
@@ -64,14 +59,7 @@ namespace SensusService.Probes
         public string DisplayName
         {
             get { return _displayName; }
-            set
-            {
-                if (value != _displayName)
-                {
-                    _displayName = value;
-                    OnPropertyChanged();  // update probe name in list of probes
-                }
-            }
+            set { _displayName = value; }
         }
 
         [OnOffUiProperty("Enabled:", true, 2)]
@@ -83,8 +71,6 @@ namespace SensusService.Probes
                 if (value != _enabled)
                 {
                     _enabled = value;
-
-                    OnPropertyChanged();  // update probe color in list of probes
 
                     if (_protocol != null && _protocol.Running)  // _protocol can be null when deserializing the probe -- if Enabled is set before Protocol
                         if (_enabled)
@@ -253,12 +239,6 @@ namespace SensusService.Probes
             }
 
             return restart;
-        }
-
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
