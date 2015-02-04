@@ -338,25 +338,28 @@ namespace SensusService
                     }
         }
 
-        public void Ping()
+        public Task PingAsync()
         {
-            lock (this)
-            {
-                if (_stopped)
-                    return;
-
-                _logger.Log("Sensus service helper was pinged (count=" + ++_pingCount + ")", LoggingLevel.Normal, _logTag);
-
-                List<string> runningProtocolIds = ReadRunningProtocolIds();
-                foreach (Protocol protocol in _registeredProtocols)
-                    if (runningProtocolIds.Contains(protocol.Id))
+            return Task.Run(() =>
+                {
+                    lock (this)
                     {
-                        protocol.Ping();
+                        if (_stopped)
+                            return;
 
-                        if (_pingCount % _pingsPerProtocolReport == 0)
-                            protocol.StoreMostRecentProtocolReport();
+                        _logger.Log("Sensus service helper was pinged (count=" + ++_pingCount + ")", LoggingLevel.Normal, _logTag);
+
+                        List<string> runningProtocolIds = ReadRunningProtocolIds();
+                        foreach (Protocol protocol in _registeredProtocols)
+                            if (runningProtocolIds.Contains(protocol.Id))
+                            {
+                                protocol.Ping();
+
+                                if (_pingCount % _pingsPerProtocolReport == 0)
+                                    protocol.StoreMostRecentProtocolReport();
+                            }
                     }
-            }
+                });
         }
 
         public void UnregisterProtocol(Protocol protocol)
