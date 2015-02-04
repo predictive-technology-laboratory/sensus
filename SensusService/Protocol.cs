@@ -24,6 +24,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SensusService
@@ -42,18 +44,38 @@ namespace SensusService
             ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
         };
 
-        public static Protocol GetFromWebURI(Uri webURI)
+        public static Task<Protocol> GetFromWebURI(Uri webURI)
         {
-            Stream stream = null;
+            return Task.Run<Protocol>(() =>
+                {
+                    try
+                    {
+                        MemoryStream stream = new MemoryStream();
+                        ManualResetEvent streamWait = new ManualResetEvent(false);
 
-            try { stream = new WebClient().OpenRead(webURI); }
-            catch (Exception ex) { throw new SensusException("Failed to open web client to URI \"" + webURI + "\":  " + ex.Message + ". If this is an HTTPS URI, make sure the server's certificate is valid."); }
+                        WebClient client = new WebClient();
 
-            if (stream == null)
-                return null;
-            else
-                return GetFromStream(stream);
+                        client.DownloadStringCompleted += (s, ev) =>
+                        {
+                            using (StreamWriter writer = new StreamWriter(stream))
+                            {
+                                writer.Write(ev.Result);
+                                writer.Close();
+                            }
+
+                            streamWait.Set();
+                        };
+
+                        client.DownloadStringAsync(webURI);
+
+                        streamWait.WaitOne();
+
+                        return GetFromStream(stream);
+                    }
+                    catch (Exception ex) { throw new SensusException("Failed to open web client to URI \"" + webURI + "\":  " + ex.Message + ". If this is an HTTPS URI, make sure the server's certificate is valid."); }
+                });
         }
+
 
         public static Protocol GetFromStream(Stream stream)
         {

@@ -46,7 +46,13 @@ namespace SensusUI
                     try
                     {
                         path = UiBoundSensusServiceHelper.Get().GetSharePath(".txt");
-                        File.WriteAllLines(path, lines);
+                        using (StreamWriter file = new StreamWriter(path))
+                        {
+                            foreach (string line in lines)
+                                file.WriteLine(line);
+
+                            file.Close();
+                        }
                     }
                     catch (Exception ex)
                     {

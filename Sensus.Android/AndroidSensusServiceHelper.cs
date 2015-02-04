@@ -104,7 +104,6 @@ namespace Sensus.Android
                             _service.StartActivity(intent);
                             _mainActivityWait.WaitOne();
 
-                            // wait for the UI to come up
                             _mainActivity.UiReadyWait.WaitOne();
                         }
 

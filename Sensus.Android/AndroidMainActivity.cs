@@ -105,7 +105,7 @@ namespace Sensus.Android
                         try
                         {
                             if (Intent.Scheme == "http" || Intent.Scheme == "https")
-                                protocol = Protocol.GetFromWebURI(new Uri(dataURI.ToString()));
+                                protocol = await Protocol.GetFromWebURI(new Uri(dataURI.ToString()));
                             else if (Intent.Scheme == "content" || Intent.Scheme == "file")
                             {
                                 Stream stream = null;

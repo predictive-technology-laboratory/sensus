@@ -96,7 +96,18 @@ namespace SensusService
             {
                 _file.Close();
 
-                List<string> lines = File.ReadAllLines(_path).Reverse().ToList();
+                List<string> lines = new List<string>();
+
+                using (StreamReader file = new StreamReader(_path))
+                {
+                    string line;
+                    while ((line = file.ReadLine()) != null)
+                        lines.Add(line);
+
+                    file.Close();
+                }
+
+                lines.Reverse();
 
                 if (mostRecentLines > lines.Count)
                     mostRecentLines = lines.Count;
