@@ -26,9 +26,6 @@ namespace SensusUI
     /// </summary>
     public class MainPage : ContentPage
     {
-        public static event EventHandler ViewProtocolsTapped;
-        public static event EventHandler ViewLogTapped;
-
         public MainPage()
         {
             Title = "Sensus";
@@ -45,9 +42,9 @@ namespace SensusUI
                 Font = Font.SystemFontOfSize(20)
             };
 
-            viewProtocolsButton.Clicked += (o, e) =>
+            viewProtocolsButton.Clicked += async (o, e) =>
                 {
-                    ViewProtocolsTapped(o, e);
+                    await Navigation.PushAsync(new ProtocolsPage());
                 };
 
             contentLayout.Children.Add(viewProtocolsButton);
@@ -58,9 +55,9 @@ namespace SensusUI
                 Font = Font.SystemFontOfSize(20)
             };
 
-            viewLogButton.Clicked += (o, e) =>
+            viewLogButton.Clicked += async (o, e) =>
                 {
-                    ViewLogTapped(o, e);
+                    await Navigation.PushAsync(new ViewTextLinesPage("Log", UiBoundSensusServiceHelper.Get().Logger.Read(int.MaxValue), () => UiBoundSensusServiceHelper.Get().Logger.Clear()));
                 };
 
             contentLayout.Children.Add(viewLogButton);

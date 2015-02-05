@@ -35,27 +35,6 @@ namespace SensusUI
         {
             _mainPage = mainPage;
 
-            #region main page
-            MainPage.ViewProtocolsTapped += async (o, e) =>
-                {
-                    await PushAsync(new ProtocolsPage());
-                };
-
-            MainPage.ViewLogTapped += async (o, e) =>
-                {
-                    await PushAsync(new ViewTextLinesPage("Log", UiBoundSensusServiceHelper.Get().Logger.Read(int.MaxValue), () => UiBoundSensusServiceHelper.Get().Logger.Clear()));
-                };
-            #endregion
-
-            #region protocols page
-            ProtocolsPage.OpenProtocol += async (protocolsPage, protocol) =>
-                {
-                    ProtocolPage protocolPage = new ProtocolPage(protocol);
-                    protocolPage.Disappearing += (o, e) => (protocolsPage as ProtocolsPage).Bind();
-                    await PushAsync(protocolPage);
-                };
-            #endregion
-
             #region protocol page
             ProtocolPage.EditDataStoreTapped += async (protocolPage, args) =>
                 {
