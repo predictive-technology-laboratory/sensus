@@ -27,14 +27,7 @@ namespace SensusService.Probes
         public int MaxDataStoresPerSecond
         {
             get { return _maxDataStoresPerSecond; }
-            set
-            {
-                if (value != _maxDataStoresPerSecond)
-                {
-                    _maxDataStoresPerSecond = value;
-                    OnPropertyChanged();
-                }
-            }
+            set { _maxDataStoresPerSecond = value; }
         }
 
         protected ListeningProbe()

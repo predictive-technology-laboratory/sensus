@@ -29,14 +29,7 @@ namespace SensusService.Probes.Apps
         public int MaxAppsPerPoll
         {
             get { return _maxAppsPerPoll; }
-            set
-            {
-                if (value != _maxAppsPerPoll)
-                {
-                    _maxAppsPerPoll = value;
-                    OnPropertyChanged();
-                }
-            }
+            set { _maxAppsPerPoll = value; }
         }
 
         protected sealed override string DefaultDisplayName

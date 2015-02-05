@@ -48,23 +48,7 @@ namespace SensusService.Probes.User
             get { return _triggers; }
         }
 
-        [ReadTextFileUiProperty("Script:", true, 3, "Load", "Select Script (.json)")]
-        [JsonIgnore]
-        public string ScriptContent
-        {
-            get { return _script == null ? null : _script.Name; }
-            set
-            {
-                try
-                {
-                    _script = Script.FromJSON(value);
-                    OnPropertyChanged();
-                }
-                catch (Exception) { }
-            }
-        }
-
-        public Script Script  // present for JSON serialization
+        public Script Script
         {
             get { return _script; }
             set { _script = value; }
@@ -79,7 +63,6 @@ namespace SensusService.Probes.User
                 if (value != _rerunIncompleteScripts)
                 {
                     _rerunIncompleteScripts = value;
-                    OnPropertyChanged();
 
                     if (Running)
                         if (_rerunIncompleteScripts)
@@ -94,28 +77,14 @@ namespace SensusService.Probes.User
         public int ScriptRerunDelayMS
         {
             get { return _scriptRerunDelayMS; }
-            set
-            {
-                if (value != _scriptRerunDelayMS)
-                {
-                    _scriptRerunDelayMS = value;
-                    OnPropertyChanged();
-                }
-            }
+            set { _scriptRerunDelayMS = value; }
         }
 
         [EntryIntegerUiProperty("Max. Script Age (Mins.):", true, 12)]
         public int MaxScriptAgeMinutes
         {
             get { return _maxScriptAgeMinutes; }
-            set
-            {
-                if (value != _maxScriptAgeMinutes)
-                {
-                    _maxScriptAgeMinutes = value;
-                    OnPropertyChanged();
-                }
-            }
+            set { _maxScriptAgeMinutes = value; }
         }
 
         [OnOffUiProperty("Trigger Randomly:", true, 13)]
@@ -127,7 +96,6 @@ namespace SensusService.Probes.User
                 if (value != _triggerRandomly)
                 {
                     _triggerRandomly = value;
-                    OnPropertyChanged();
 
                     if (Running)
                         if (_triggerRandomly)
@@ -142,14 +110,7 @@ namespace SensusService.Probes.User
         public int RandomTriggerDelayMaxMinutes
         {
             get { return _randomTriggerDelayMaxMinutes; }
-            set
-            {
-                if (value != _randomTriggerDelayMaxMinutes)
-                {
-                    _randomTriggerDelayMaxMinutes = value;
-                    OnPropertyChanged();
-                }
-            }
+            set { _randomTriggerDelayMaxMinutes = value; }
         }
 
         public Queue<Script> IncompleteScripts

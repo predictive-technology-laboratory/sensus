@@ -104,7 +104,7 @@ namespace Sensus.Android
                             _service.StartActivity(intent);
                             _mainActivityWait.WaitOne();
 
-                            // wait for the UI to come up
+                            // wait for the UI to come up -- we don't want it to come up later and hide anything
                             _mainActivity.UiReadyWait.WaitOne();
                         }
 
@@ -228,7 +228,7 @@ namespace Sensus.Android
                                     dialogShowWait.Set();
                                 }));
 
-                            // dismiss the keyguard
+                            // dismiss the keyguard when dialog appears
                             dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.DismissKeyguard);
                             dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.ShowWhenLocked);
                             dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.TurnScreenOn);
@@ -243,6 +243,9 @@ namespace Sensus.Android
                                 {
                                     // wait for the dialog to be shown so it doesn't hide our speech recognizer activity
                                     dialogShowWait.WaitOne();
+
+                                    // there's a slight race condition between the dialog showing and speech recognition showing. pause here to prevent the dialog from hiding the speech recognizer.
+                                    Thread.Sleep(1000);
 
                                     if (startVoiceRecognizer)
                                     {

@@ -19,23 +19,15 @@ using SensusService.Exceptions;
 using SensusUI.UiProperties;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace SensusService.DataStores
 {
     /// <summary>
     /// An abstract repository for probed data.
     /// </summary>
-    public abstract class DataStore : INotifyPropertyChanged
+    public abstract class DataStore
     {
-        /// <summary>
-        /// Fired when a UI-relevant property is changed.
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
-
         private string _name;
         private int _commitDelayMS;
         private Thread _commitThread;
@@ -48,28 +40,14 @@ namespace SensusService.DataStores
         public string Name
         {
             get { return _name; }
-            set
-            {
-                if (value != _name)
-                {
-                    _name = value;
-                    OnPropertyChanged();
-                }
-            }
+            set { _name = value; }
         }
 
         [EntryIntegerUiProperty("Commit Delay (MS):", true, 2)]
         public int CommitDelayMS
         {
             get { return _commitDelayMS; }
-            set
-            {
-                if (value != _commitDelayMS)
-                {
-                    _commitDelayMS = value;
-                    OnPropertyChanged();
-                }
-            }
+            set { _commitDelayMS = value; }
         }
 
         public Protocol Protocol
@@ -88,20 +66,6 @@ namespace SensusService.DataStores
 
         [JsonIgnore]
         public abstract bool Clearable { get; }
-
-        [DisplayStringUiProperty("Last:", int.MaxValue)]
-        public DateTimeOffset MostRecentCommitTimestamp
-        {
-            get { return _mostRecentCommitTimestamp; }
-            set
-            {
-                if (value != _mostRecentCommitTimestamp)
-                {
-                    _mostRecentCommitTimestamp = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
 
         public DataStore()
         {
@@ -175,7 +139,7 @@ namespace SensusService.DataStores
                                         if (committedData == null)
                                             throw new DataStoreException("Null collection returned by CommitData");
 
-                                        MostRecentCommitTimestamp = DateTimeOffset.UtcNow;
+                                        _mostRecentCommitTimestamp = DateTimeOffset.UtcNow;
                                     }
                                     catch (Exception ex) { SensusServiceHelper.Get().Logger.Log(_name + " failed to commit data:  " + ex.Message, LoggingLevel.Normal); }
 
@@ -254,12 +218,6 @@ namespace SensusService.DataStores
                 warning += "Datastore \"" + _name + "\" has not committed data in " + msElapsedSinceLastCommit + "ms (commit delay = " + _commitDelayMS + "ms)." + Environment.NewLine;
 
             return restart;
-        }
-
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public DataStore Copy()

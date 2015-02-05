@@ -15,7 +15,6 @@
 #endregion
 
 using SensusService;
-using SensusService.Probes;
 using System;
 using System.Linq;
 using Xamarin.Forms;
@@ -49,22 +48,24 @@ namespace SensusUI
             #endregion
 
             #region protocols page
-            ProtocolsPage.EditProtocol += async (o, e) =>
+            ProtocolsPage.OpenProtocol += async (protocolsPage, protocol) =>
                 {
-                    await PushAsync(new ProtocolPage(o as Protocol));
+                    ProtocolPage protocolPage = new ProtocolPage(protocol);
+                    protocolPage.Disappearing += (o, e) => (protocolsPage as ProtocolsPage).Bind();
+                    await PushAsync(protocolPage);
                 };
             #endregion
 
             #region protocol page
-            ProtocolPage.EditDataStoreTapped += async (o, e) =>
+            ProtocolPage.EditDataStoreTapped += async (protocolPage, args) =>
                 {
-                    if (e.DataStore != null)
-                        await PushAsync(new DataStorePage(e));
+                    if (args.DataStore != null)
+                        await PushAsync(new DataStorePage(args));
                 };
 
-            ProtocolPage.CreateDataStoreTapped += async (o, e) =>
+            ProtocolPage.CreateDataStoreTapped += async (protocolPage, args) =>
                 {
-                    await PushAsync(new CreateDataStorePage(e));
+                    await PushAsync(new CreateDataStorePage(args));
                 };
 
             ProtocolPage.ViewProbesTapped += async (o, protocol) =>
@@ -79,9 +80,11 @@ namespace SensusUI
             #endregion
 
             #region probes page
-            ProbesPage.ProbeTapped += async (o, probe) =>
+            ProbesPage.ProbeTapped += async (probesPage, probe) =>
                 {
-                    await PushAsync(new ProbePage(probe));
+                    ProbePage probePage = new ProbePage(probe);
+                    probePage.Disappearing += (o, e) => { (probesPage as ProbesPage).Bind(); };  // rebind the probes page to pick up changes in the probe
+                    await PushAsync(probePage);
                 };
             #endregion
 

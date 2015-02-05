@@ -20,10 +20,8 @@ using SensusService.Probes.Location;
 using SensusUI.UiProperties;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Xamarin;
@@ -34,7 +32,7 @@ namespace SensusService
     /// <summary>
     /// Provides platform-independent service functionality.
     /// </summary>
-    public abstract class SensusServiceHelper : INotifyPropertyChanged
+    public abstract class SensusServiceHelper
     {
         #region singleton management
         private static SensusServiceHelper _singleton;
@@ -77,11 +75,6 @@ namespace SensusService
         #endregion
 
         protected const string XAMARIN_INSIGHTS_APP_KEY = "97af5c4ab05c6a69d2945fd403ff45535f8bb9bb";
-
-        /// <summary>
-        /// Raised when a UI-relevant property has changed.
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
         /// Raised when the service helper has stopped.
@@ -130,42 +123,21 @@ namespace SensusService
         public int PingDelayMS
         {
             get { return _pingDelayMS; }
-            set
-            {
-                if (value != _pingDelayMS)
-                {
-                    _pingDelayMS = value;
-                    OnPropertyChanged();
-                }
-            }
+            set { _pingDelayMS = value; }
         }
 
         [EntryIntegerUiProperty("Pings Per Report:", true, 10)]
         public int PingsPerProtocolReport
         {
             get { return _pingsPerProtocolReport; }
-            set
-            {
-                if (value != _pingsPerProtocolReport)
-                {
-                    _pingsPerProtocolReport = value;
-                    OnPropertyChanged();
-                }
-            }
+            set { _pingsPerProtocolReport = value; }
         }
 
         [ListUiProperty("Logging Level:", true, 11, new object[] { LoggingLevel.Off, LoggingLevel.Normal, LoggingLevel.Verbose, LoggingLevel.Debug })]
         public LoggingLevel LoggingLevel
         {
             get { return _logger.Level; }
-            set
-            {
-                if (value != _logger.Level)
-                {
-                    _logger.Level = value;
-                    OnPropertyChanged();
-                }
-            }
+            set { _logger.Level = value; }
         }
 
         protected SensusServiceHelper(Geolocator geolocator)
@@ -264,7 +236,7 @@ namespace SensusService
         #endregion
 
         #region running protocol ids
-        private void AddRunningProtocolId(string id)
+        public void AddRunningProtocolId(string id)
         {
             lock (this)
             {
@@ -275,17 +247,22 @@ namespace SensusService
                 {
                     ids.Add(id);
                     SaveRunningProtocolIds(ids);
+
+                    StartSensusPings(_pingDelayMS);
                 }
             }
         }
 
-        private void RemoveRunningProtocolId(string id)
+        public void RemoveRunningProtocolId(string id)
         {
             lock (this)
             {
                 List<string> ids = ReadRunningProtocolIds();
                 if (ids.Remove(id))
                     SaveRunningProtocolIds(ids);
+
+                if (_registeredProtocols.Count(p => p.Running) == 0)
+                    StopSensusPings();
             }
         }
 
@@ -346,71 +323,9 @@ namespace SensusService
                 List<string> runningProtocolIds = ReadRunningProtocolIds();
                 foreach (Protocol protocol in _registeredProtocols)
                     if (!protocol.Running && runningProtocolIds.Contains(protocol.Id))
-                        StartProtocol(protocol);
+                        protocol.Start();
             }
-        }
-
-        public Task StartProtocolAsync(Protocol protocol)
-        {
-            return Task.Run(() => StartProtocol(protocol));
-        }
-
-        public void StartProtocol(Protocol protocol)
-        {
-            lock (this)
-                lock (protocol)
-                {
-                    if (_stopped || protocol.Running)
-                        return;
-
-                    protocol.SetRunning(true);
-
-                    RegisterProtocol(protocol);
-                    AddRunningProtocolId(protocol.Id);
-                    StartSensusPings(_pingDelayMS);
-
-                    _logger.Log("Starting probes for protocol " + protocol.Name + ".", LoggingLevel.Normal);
-                    int probesStarted = 0;
-                    foreach (Probe probe in protocol.Probes)
-                        if (probe.Enabled)
-                            try
-                            {
-                                probe.Start();
-                                probesStarted++;
-                            }
-                            catch (Exception ex) { _logger.Log("Failed to start probe \"" + probe.GetType().FullName + "\":" + ex.Message, LoggingLevel.Normal); }
-
-                    bool stopProtocol = false;
-
-                    if (probesStarted > 0)
-                    {
-                        try
-                        {
-                            protocol.LocalDataStore.Start();
-
-                            try { protocol.RemoteDataStore.Start(); }
-                            catch (Exception ex)
-                            {
-                                _logger.Log("Remote data store failed to start:  " + ex.Message, LoggingLevel.Normal);
-                                stopProtocol = true;
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.Log("Local data store failed to start:  " + ex.Message, LoggingLevel.Normal);
-                            stopProtocol = true;
-                        }
-                    }
-                    else
-                    {
-                        _logger.Log("No probes were started.", LoggingLevel.Normal);
-                        stopProtocol = true;
-                    }
-
-                    if (stopProtocol)
-                        StopProtocol(protocol, false);
-                }
-        }
+        }        
 
         public void RegisterProtocol(Protocol protocol)
         {
@@ -423,75 +338,28 @@ namespace SensusService
                     }
         }
 
-        public void Ping()
+        public Task PingAsync()
         {
-            lock (this)
-            {
-                if (_stopped)
-                    return;
-
-                _logger.Log("Sensus service helper was pinged (count=" + ++_pingCount + ")", LoggingLevel.Normal, _logTag);
-
-                List<string> runningProtocolIds = ReadRunningProtocolIds();
-                foreach (Protocol protocol in _registeredProtocols)
-                    if (runningProtocolIds.Contains(protocol.Id))
-                    {
-                        protocol.Ping();
-
-                        if (_pingCount % _pingsPerProtocolReport == 0)
-                            protocol.StoreMostRecentProtocolReport();
-                    }
-            }
-        }
-
-        public Task StopProtocolAsync(Protocol protocol, bool unregister)
-        {
-            return Task.Run(() => StopProtocol(protocol, unregister));
-        }
-
-        public void StopProtocol(Protocol protocol, bool unregister)
-        {
-            lock (this)
-                lock (protocol)
+            return Task.Run(() =>
                 {
-                    if (_stopped)
-                        return;
-
-                    if (unregister)
-                        UnregisterProtocol(protocol);
-
-                    if (!protocol.Running)
-                        return;
-
-                    protocol.SetRunning(false);
-
-                    RemoveRunningProtocolId(protocol.Id);
-
-                    if (_registeredProtocols.Count(p => p.Running) == 0)
-                        StopSensusPings();
-
-                    _logger.Log("Stopping probes.", LoggingLevel.Normal);
-                    foreach (Probe probe in protocol.Probes)
-                        if (probe.Running)
-                            try { probe.Stop(); }
-                            catch (Exception ex) { _logger.Log("Failed to stop " + probe.GetType().FullName + ":  " + ex.Message, LoggingLevel.Normal); }
-
-                    if (protocol.LocalDataStore != null && protocol.LocalDataStore.Running)
+                    lock (this)
                     {
-                        _logger.Log("Stopping local data store.", LoggingLevel.Normal);
+                        if (_stopped)
+                            return;
 
-                        try { protocol.LocalDataStore.Stop(); }
-                        catch (Exception ex) { _logger.Log("Failed to stop local data store:  " + ex.Message, LoggingLevel.Normal); }
+                        _logger.Log("Sensus service helper was pinged (count=" + ++_pingCount + ")", LoggingLevel.Normal, _logTag);
+
+                        List<string> runningProtocolIds = ReadRunningProtocolIds();
+                        foreach (Protocol protocol in _registeredProtocols)
+                            if (runningProtocolIds.Contains(protocol.Id))
+                            {
+                                protocol.Ping();
+
+                                if (_pingCount % _pingsPerProtocolReport == 0)
+                                    protocol.StoreMostRecentProtocolReport();
+                            }
                     }
-
-                    if (protocol.RemoteDataStore != null && protocol.RemoteDataStore.Running)
-                    {
-                        _logger.Log("Stopping remote data store.", LoggingLevel.Normal);
-
-                        try { protocol.RemoteDataStore.Stop(); }
-                        catch (Exception ex) { _logger.Log("Failed to stop remote data store:  " + ex.Message, LoggingLevel.Normal); }
-                    }
-                }
+                });
         }
 
         public void UnregisterProtocol(Protocol protocol)
@@ -518,7 +386,7 @@ namespace SensusService
                         _logger.Log("Stopping Sensus service.", LoggingLevel.Normal, _logTag);
 
                         foreach (Protocol protocol in _registeredProtocols)
-                            StopProtocol(protocol, false);
+                            protocol.Stop();
 
                         _stopped = true;
                     }
@@ -533,12 +401,6 @@ namespace SensusService
         {
             try { _logger.Close(); }
             catch (Exception) { }
-        }
-
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public string GetSharePath(string extension)

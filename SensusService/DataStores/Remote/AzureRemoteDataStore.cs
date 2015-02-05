@@ -60,28 +60,14 @@ namespace SensusService.DataStores.Remote
         public string URL
         {
             get { return _url; }
-            set
-            {
-                if (value != _url)
-                {
-                    _url = value;
-                    OnPropertyChanged();
-                }
-            }
+            set { _url = value; }
         }
 
         [EntryStringUiProperty("Key:", true, 2)]
         public string Key
         {
             get { return _key; }
-            set
-            {
-                if (value != _key)
-                {
-                    _key = value;
-                    OnPropertyChanged();
-                }
-            }
+            set { _key = value; }
         }
 
         protected override string DisplayName

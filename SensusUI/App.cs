@@ -14,21 +14,24 @@
 // limitations under the License.
 #endregion
 
-using Microsoft.Phone.Controls;
 using Xamarin.Forms;
 
-namespace Sensus.WinPhone
+namespace SensusUI
 {
-    public partial class MainPage : PhoneApplicationPage
+    public class App : Application
     {
-        public MainPage()
-        {
-            InitializeComponent();
+        public SensusNavigationPage _navigationPage;
 
-            Forms.Init();
-            Content = new SensusUI.MainPage().ConvertPageToUIElement(this);
+        public SensusNavigationPage NavigationPage
+        {
+            get { return _navigationPage; }
         }
 
-        // TODO:  App.Get().OnStop()
+        public App()
+        {
+            _navigationPage = new SensusNavigationPage(new MainPage());
+
+            MainPage = _navigationPage;
+        }
     }
 }

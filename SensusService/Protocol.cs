@@ -22,18 +22,18 @@ using SensusService.Probes;
 using SensusUI.UiProperties;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Net;
-using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SensusService
 {
     /// <summary>
-    /// Container for probes.
+    /// Self-contained sensing design, comprising probes and data stores.
     /// </summary>
-    public class Protocol : INotifyPropertyChanged
+    public class Protocol
     {
         #region static members
         private static JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
@@ -44,18 +44,38 @@ namespace SensusService
             ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
         };
 
-        public static Protocol GetFromWebURI(Uri webURI)
+        public static Task<Protocol> GetFromWebURI(Uri webURI)
         {
-            Stream stream = null;
+            return Task.Run<Protocol>(() =>
+                {
+                    try
+                    {
+                        MemoryStream stream = new MemoryStream();
+                        ManualResetEvent streamWait = new ManualResetEvent(false);
 
-            try { stream = new WebClient().OpenRead(webURI); }
-            catch (Exception ex) { throw new SensusException("Failed to open web client to URI \"" + webURI + "\":  " + ex.Message + ". If this is an HTTPS URI, make sure the server's certificate is valid."); }
+                        WebClient client = new WebClient();
 
-            if (stream == null)
-                return null;
-            else
-                return GetFromStream(stream);
+                        client.DownloadStringCompleted += (s, ev) =>
+                        {
+                            using (StreamWriter writer = new StreamWriter(stream))
+                            {
+                                writer.Write(ev.Result);
+                                writer.Close();
+                            }
+
+                            streamWait.Set();
+                        };
+
+                        client.DownloadStringAsync(webURI);
+
+                        streamWait.WaitOne();
+
+                        return GetFromStream(stream);
+                    }
+                    catch (Exception ex) { throw new SensusException("Failed to open web client to URI \"" + webURI + "\":  " + ex.Message + ". If this is an HTTPS URI, make sure the server's certificate is valid."); }
+                });
         }
+
 
         public static Protocol GetFromStream(Stream stream)
         {
@@ -88,10 +108,7 @@ namespace SensusService
         }
         #endregion
 
-        /// <summary>
-        /// Fired when a UI-relevant property is changed.
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event EventHandler<bool> ProtocolRunningChanged;
 
         private string _id;
         private string _name;
@@ -101,7 +118,7 @@ namespace SensusService
         private RemoteDataStore _remoteDataStore;
         private string _storageDirectory;
         private ProtocolReport _mostRecentReport;
-        private bool _alwaysUploadProtocolReportsToRemoteDataStore;
+        private bool _forceProtocolReportsToRemoteDataStore;
 
         public string Id
         {
@@ -113,14 +130,7 @@ namespace SensusService
         public string Name
         {
             get { return _name; }
-            set
-            {
-                if (value != _name)
-                {
-                    _name = value;
-                    OnPropertyChanged();
-                }
-            }
+            set { _name = value; }
         }
 
         public List<Probe> Probes
@@ -129,41 +139,19 @@ namespace SensusService
             set { _probes = value; }
         }
 
-        [OnOffUiProperty("Status:", true, 2)]
         [JsonIgnore]
         public bool Running
         {
             get { return _running; }
             set
             {
-                // we don't actually set the value of _running in this method; rather, the service helper does this via SetRunning.
                 if (value != _running)
                 {
                     if (value)
-                        SensusServiceHelper.Get().StartProtocolAsync(this);
+                        StartAsync();
                     else
-                        SensusServiceHelper.Get().StopProtocolAsync(this, false);  // don't unregister the protocol when stopped via UI interaction
+                        StopAsync();
                 }
-            }
-        }
-
-        /// <summary>
-        /// Sets the value of Running for this protocol. This is provided in addition to the set method of Running since the latter results in a call to the 
-        /// service helper that starts or stops the protocol. We don't always want that to happen, e.g., if the service is starting the protocol, it won't
-        /// want to call Running = true, which would create a recursion.
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns>True if value was changed and false otherwise.</returns>
-        public bool SetRunning(bool value)
-        {
-            if (value == _running)
-                return false;
-            else
-            {
-                _running = value;
-                OnPropertyChanged("Running");
-
-                return true;
             }
         }
 
@@ -176,8 +164,6 @@ namespace SensusService
                 {
                     _localDataStore = value;
                     _localDataStore.Protocol = this;
-
-                    OnPropertyChanged();
                 }
             }
         }
@@ -191,8 +177,6 @@ namespace SensusService
                 {
                     _remoteDataStore = value;
                     _remoteDataStore.Protocol = this;
-
-                    OnPropertyChanged();
                 }
             }
         }
@@ -211,17 +195,10 @@ namespace SensusService
         }
 
         [OnOffUiProperty("Force Reports to Remote:", true, 20)]
-        public bool AlwaysUploadProtocolReportsToRemoteDataStore
+        public bool ForceProtocolReportsToRemoteDataStore
         {
-            get { return _alwaysUploadProtocolReportsToRemoteDataStore; }
-            set
-            {
-                if (value != _alwaysUploadProtocolReportsToRemoteDataStore)
-                {
-                    _alwaysUploadProtocolReportsToRemoteDataStore = value;
-                    OnPropertyChanged();
-                }
-            }
+            get { return _forceProtocolReportsToRemoteDataStore; }
+            set { _forceProtocolReportsToRemoteDataStore = value; }
         }
 
         /// <summary>
@@ -229,7 +206,8 @@ namespace SensusService
         /// </summary>
         private Protocol()
         {
-            _alwaysUploadProtocolReportsToRemoteDataStore = false;
+            _running = false;
+            _forceProtocolReportsToRemoteDataStore = false;
         }
 
         /// <summary>
@@ -238,9 +216,9 @@ namespace SensusService
         /// <param name="name">Name of protocol.</param>
         /// <param name="addAllProbes">Whether or not to add all available probes into the protocol.</param>
         public Protocol(string name, bool addAllProbes)
+            : this()
         {
             _name = name;
-            _running = false;
 
             while (_storageDirectory == null)
             {
@@ -263,18 +241,75 @@ namespace SensusService
                 }
         }
 
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-        }
-
         public void Save(string path)
         {
             using (StreamWriter file = new StreamWriter(path))
             {
                 file.Write(JsonConvert.SerializeObject(this, _jsonSerializerSettings));
                 file.Close();
+            }
+        }
+
+        public Task StartAsync()
+        {
+            return Task.Run(() => Start());
+        }
+
+        public void Start()
+        {
+            lock (this)
+            {
+                if (_running)
+                    return;
+                else
+                    _running = true;
+
+                if (ProtocolRunningChanged != null)
+                    ProtocolRunningChanged(this, _running);
+
+                SensusServiceHelper.Get().RegisterProtocol(this);
+                SensusServiceHelper.Get().AddRunningProtocolId(_id);
+
+                SensusServiceHelper.Get().Logger.Log("Starting probes for protocol " + _name + ".", LoggingLevel.Normal);
+                int probesStarted = 0;
+                foreach (Probe probe in _probes)
+                    if (probe.Enabled)
+                        try
+                        {
+                            probe.Start();
+                            probesStarted++;
+                        }
+                        catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to start probe \"" + probe.GetType().FullName + "\":" + ex.Message, LoggingLevel.Normal); }
+
+                bool stopProtocol = false;
+
+                if (probesStarted > 0)
+                {
+                    try
+                    {
+                        _localDataStore.Start();
+
+                        try { _remoteDataStore.Start(); }
+                        catch (Exception ex)
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Remote data store failed to start:  " + ex.Message, LoggingLevel.Normal);
+                            stopProtocol = true;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Local data store failed to start:  " + ex.Message, LoggingLevel.Normal);
+                        stopProtocol = true;
+                    }
+                }
+                else
+                {
+                    SensusServiceHelper.Get().Logger.Log("No probes were started.", LoggingLevel.Normal);
+                    stopProtocol = true;
+                }
+
+                if (stopProtocol)
+                    Stop();
             }
         }
 
@@ -296,8 +331,8 @@ namespace SensusService
                     error += "Restarting protocol \"" + _name + "\"...";
                     try
                     {
-                        SensusServiceHelper.Get().StopProtocol(this, false);
-                        SensusServiceHelper.Get().StartProtocol(this);
+                        Stop();
+                        Start();
                     }
                     catch (Exception ex) { error += ex.Message + "..."; }
 
@@ -362,12 +397,55 @@ namespace SensusService
                     SensusServiceHelper.Get().Logger.Log("Storing protocol report locally.", LoggingLevel.Normal);
                     _localDataStore.AddNonProbeDatum(_mostRecentReport);
 
-                    if (!_localDataStore.UploadToRemoteDataStore && _alwaysUploadProtocolReportsToRemoteDataStore)
+                    if (!_localDataStore.UploadToRemoteDataStore && _forceProtocolReportsToRemoteDataStore)
                     {
-                        SensusServiceHelper.Get().Logger.Log("Local data aren't pushed to remote, so we're copying the report datum directly to the remote data store cache.", LoggingLevel.Normal);
+                        SensusServiceHelper.Get().Logger.Log("Local data aren't pushed to remote, so we're copying the report datum directly to the remote cache.", LoggingLevel.Normal);
                         _remoteDataStore.AddNonProbeDatum(_mostRecentReport);
                     }
                 }
+        }
+
+        public Task StopAsync()
+        {
+            return Task.Run(() => Stop());
+        }
+
+        public void Stop()
+        {
+            lock (this)
+            {
+                if (_running)
+                    _running = false;
+                else
+                    return;
+
+                if (ProtocolRunningChanged != null)
+                    ProtocolRunningChanged(this, _running);
+
+                SensusServiceHelper.Get().RemoveRunningProtocolId(_id);
+
+                SensusServiceHelper.Get().Logger.Log("Stopping probes.", LoggingLevel.Normal);
+                foreach (Probe probe in _probes)
+                    if (probe.Running)
+                        try { probe.Stop(); }
+                        catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to stop " + probe.GetType().FullName + ":  " + ex.Message, LoggingLevel.Normal); }
+
+                if (_localDataStore != null && _localDataStore.Running)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Stopping local data store.", LoggingLevel.Normal);
+
+                    try { _localDataStore.Stop(); }
+                    catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to stop local data store:  " + ex.Message, LoggingLevel.Normal); }
+                }
+
+                if (_remoteDataStore != null && _remoteDataStore.Running)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Stopping remote data store.", LoggingLevel.Normal);
+
+                    try { _remoteDataStore.Stop(); }
+                    catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to stop remote data store:  " + ex.Message, LoggingLevel.Normal); }
+                }
+            }
         }
 
         public override bool Equals(object obj)

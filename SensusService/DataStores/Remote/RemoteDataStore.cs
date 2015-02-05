@@ -31,28 +31,14 @@ namespace SensusService.DataStores.Remote
         public bool RequireWiFi
         {
             get { return _requireWiFi; }
-            set
-            {
-                if (value != _requireWiFi)
-                {
-                    _requireWiFi = value;
-                    OnPropertyChanged();
-                }
-            }
+            set { _requireWiFi = value; }
         }
 
         [OnOffUiProperty("Require Charging:", true, int.MaxValue)]
         public bool RequireCharging
         {
             get { return _requireCharging; }
-            set
-            {
-                if (value != _requireCharging)
-                {
-                    _requireCharging = value;
-                    OnPropertyChanged();
-                }
-            }
+            set { _requireCharging = value; }
         }
 
         public RemoteDataStore()

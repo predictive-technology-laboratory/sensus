@@ -24,7 +24,7 @@ namespace SensusUI
 {
     public class ProtocolsPage : ContentPage
     {
-        public static event EventHandler EditProtocol;
+        public static event EventHandler<Protocol> OpenProtocol;
 
         private ListView _protocolsList;
 
@@ -35,7 +35,8 @@ namespace SensusUI
             _protocolsList = new ListView();
             _protocolsList.ItemTemplate = new DataTemplate(typeof(TextCell));
             _protocolsList.ItemTemplate.SetBinding(TextCell.TextProperty, "Name");
-            _protocolsList.ItemsSource = UiBoundSensusServiceHelper.Get().RegisteredProtocols;
+
+            Bind();
 
             Content = _protocolsList;
 
@@ -43,7 +44,10 @@ namespace SensusUI
             ToolbarItems.Add(new ToolbarItem("Open", null, () =>
                 {
                     if (_protocolsList.SelectedItem != null)
-                        EditProtocol(_protocolsList.SelectedItem, null);
+                    {
+                        OpenProtocol(this, _protocolsList.SelectedItem as Protocol);
+                        _protocolsList.SelectedItem = null;
+                    }
                 }));
 
             ToolbarItems.Add(new ToolbarItem("+", null, () =>
@@ -62,7 +66,8 @@ namespace SensusUI
 
                         if (await DisplayAlert("Delete " + protocolToRemove.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
                         {
-                            await UiBoundSensusServiceHelper.Get().StopProtocolAsync(protocolToRemove, true);
+                            await protocolToRemove.StopAsync();
+                            UiBoundSensusServiceHelper.Get().UnregisterProtocol(protocolToRemove);
 
                             try { Directory.Delete(protocolToRemove.StorageDirectory, true); }
                             catch (Exception ex) { UiBoundSensusServiceHelper.Get().Logger.Log("Failed to delete protocol storage directory \"" + protocolToRemove.StorageDirectory + "\":  " + ex.Message, LoggingLevel.Normal); }
@@ -73,6 +78,12 @@ namespace SensusUI
                     }
                 }));
             #endregion
+        }
+
+        public void Bind()
+        {
+            _protocolsList.ItemsSource = null;
+            _protocolsList.ItemsSource = UiBoundSensusServiceHelper.Get().RegisteredProtocols;
         }
     }
 }

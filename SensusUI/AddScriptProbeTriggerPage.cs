@@ -44,7 +44,7 @@ namespace SensusUI
         {
             _scriptProbe = scriptProbe;
 
-            Title = "Add Trigger";
+            Title = "Add Trigger to " + _scriptProbe.DisplayName;
 
             List<Probe> enabledProbes = scriptProbe.Protocol.Probes.Where(p => p != _scriptProbe && p.Enabled).ToList();
             if (enabledProbes.Count == 0)
@@ -363,7 +363,7 @@ namespace SensusUI
                 {
                     try
                     {
-                        _scriptProbe.Triggers.Add(new Trigger(_selectedProbe, _selectedDatumProperty.Name, _selectedCondition, _conditionValue, _change, _fireRepeatedly, _useRegularExpression, _ignoreFirstDatum));
+                        _scriptProbe.Triggers.Add(new SensusService.Probes.User.Trigger(_selectedProbe, _selectedDatumProperty.Name, _selectedCondition, _conditionValue, _change, _fireRepeatedly, _useRegularExpression, _ignoreFirstDatum));
 
                         if (TriggerAdded != null)
                             TriggerAdded(o, e);

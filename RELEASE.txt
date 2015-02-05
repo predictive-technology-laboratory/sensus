@@ -10,7 +10,7 @@ The process for publishing a release to GitHub and the app stores is as follows:
 ===== Begin Platform-Specific Steps =====
 
 Android
-* Right-click on the Sensus.Android project, go to Android Manifest, and increment "Version number" by 1.
+* Right-click on the Sensus.Android project, select Properties, go to Android Manifest, and increment "Version number" by 1.
 * Also under Android Manifest, update "Version name" to be [RELVERSION].
 * In Sensus.Android, Properties, AssemblyInfo.cs, update the "Assembly Version" and "Assembly File Version" to be [RELVERSION]. Note that .NET requires version identifiers in a.b.c.d format, but [RELVERSION] follows Semantic Versioning guidelines (a.b.c-xxxx). To get around this, use a.b.c.0 in AssemblyInfo.cs.
 * Build the Android.Sensus project, run tests, resolve any errors, and test Sensus by deploying to a physical device (not an emulator).
@@ -36,6 +36,7 @@ Windows Phone
 
 Android
 * Switch the Solution Configuration to AppStore.
+* Right-click on the Sensus.Android project, select Properties, go to Android Options, and disable "developer instrumentation".
 * Rebuild the Sensus.Android project.
 * Select Tools -> Android -> Publish Android App...
 * Sign the APK with the Sensus keystore and save it locally.
