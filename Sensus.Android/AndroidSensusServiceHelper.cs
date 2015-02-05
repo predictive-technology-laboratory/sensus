@@ -104,6 +104,7 @@ namespace Sensus.Android
                             _service.StartActivity(intent);
                             _mainActivityWait.WaitOne();
 
+                            // wait for the UI to come up -- we don't want it to come up later and hide anything
                             _mainActivity.UiReadyWait.WaitOne();
                         }
 
@@ -227,7 +228,7 @@ namespace Sensus.Android
                                     dialogShowWait.Set();
                                 }));
 
-                            // dismiss the keyguard
+                            // dismiss the keyguard when dialog appears
                             dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.DismissKeyguard);
                             dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.ShowWhenLocked);
                             dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.TurnScreenOn);

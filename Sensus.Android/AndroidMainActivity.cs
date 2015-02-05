@@ -37,7 +37,7 @@ namespace Sensus.Android
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault }, DataMimeType = "application/octet-stream", DataScheme = "content", DataHost = "*")]  // protocols opened from email attachments originating from the sensus app itself -- DataPathPattern doesn't work here, since email apps (e.g., gmail) rename attachments when stored in the local file system
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault }, DataMimeType = "text/plain", DataScheme = "content", DataHost = "*")]  // protocols opened from email attachments originating from non-sensus senders (i.e., the "share" button in sensus) -- DataPathPattern doesn't work here, since email apps (e.g., gmail) rename attachments when stored in the local file system
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault }, DataMimeType = "text/plain", DataScheme = "file", DataHost = "*", DataPathPattern = ".*\\\\.sensus")]  // protocols opened from the local file system
-    public class AndroidMainActivity : AndroidActivity
+    public class AndroidMainActivity : FormsApplicationActivity
     {
         private AndroidSensusServiceConnection _serviceConnection;
         private ManualResetEvent _activityResultWait;
@@ -73,8 +73,8 @@ namespace Sensus.Android
 
             Forms.Init(this, bundle);
 
-            SensusNavigationPage navigationPage = new SensusNavigationPage(new MainPage());
-            SetPage(navigationPage);
+            App app = new App();
+            LoadApplication(app);
 
             // start service -- if it's already running, this will have no effect
             Intent serviceIntent = new Intent(this, typeof(AndroidSensusService));
@@ -94,7 +94,7 @@ namespace Sensus.Android
                     (UiBoundSensusServiceHelper.Get() as AndroidSensusServiceHelper).SetMainActivity(this);  
 
                     // display service helper properties on the main page
-                    navigationPage.MainPage.DisplayServiceHelper(UiBoundSensusServiceHelper.Get());                    
+                    app.NavigationPage.MainPage.DisplayServiceHelper(UiBoundSensusServiceHelper.Get());
 
                     #region open page to view protocol if a protocol was passed to us
                     if (Intent.Data != null)
@@ -126,7 +126,7 @@ namespace Sensus.Android
                             try
                             {
                                 UiBoundSensusServiceHelper.Get().RegisterProtocol(protocol);
-                                await navigationPage.PushAsync(new ProtocolPage(protocol));
+                                await app.NavigationPage.PushAsync(new ProtocolPage(protocol));
                             }
                             catch (Exception ex)
                             {
@@ -149,18 +149,14 @@ namespace Sensus.Android
             BindService(serviceIntent, _serviceConnection, Bind.AutoCreate);
         }
 
-        protected override void OnResume()
+        public override void OnWindowFocusChanged(bool hasFocus)
         {
-            base.OnResume();
+            base.OnWindowFocusChanged(hasFocus);
 
-            _uiReadyWait.Set();
-        }
-
-        protected override void OnPause()
-        {
-            base.OnPause();
-
-            _uiReadyWait.Reset();
+            if (hasFocus)
+                _uiReadyWait.Set();
+            else
+                _uiReadyWait.Reset();
         }
 
         public Task<Tuple<Result, Intent>> GetActivityResultAsync(Intent intent, AndroidActivityResultRequestCode requestCode)

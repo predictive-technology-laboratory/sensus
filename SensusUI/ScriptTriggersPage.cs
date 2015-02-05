@@ -50,7 +50,7 @@ namespace SensusUI
                 {
                     if (triggerList.SelectedItem != null && await DisplayAlert("Confirm Delete", "Are you sure you want to delete the selected trigger?", "Yes", "Cancel"))
                     {
-                        scriptProbe.Triggers.Remove(triggerList.SelectedItem as Trigger);
+                        scriptProbe.Triggers.Remove(triggerList.SelectedItem as SensusService.Probes.User.Trigger);
                         triggerList.SelectedItem = null;
                     }
                 }));

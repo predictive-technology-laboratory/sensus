@@ -363,7 +363,7 @@ namespace SensusUI
                 {
                     try
                     {
-                        _scriptProbe.Triggers.Add(new Trigger(_selectedProbe, _selectedDatumProperty.Name, _selectedCondition, _conditionValue, _change, _fireRepeatedly, _useRegularExpression, _ignoreFirstDatum));
+                        _scriptProbe.Triggers.Add(new SensusService.Probes.User.Trigger(_selectedProbe, _selectedDatumProperty.Name, _selectedCondition, _conditionValue, _change, _fireRepeatedly, _useRegularExpression, _ignoreFirstDatum));
 
                         if (TriggerAdded != null)
                             TriggerAdded(o, e);
