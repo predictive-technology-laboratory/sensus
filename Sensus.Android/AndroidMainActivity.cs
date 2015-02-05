@@ -159,6 +159,13 @@ namespace Sensus.Android
                 _uiReadyWait.Reset();
         }
 
+        protected override void OnPause()
+        {
+            base.OnPause();
+
+            OnWindowFocusChanged(false);
+        }
+
         public Task<Tuple<Result, Intent>> GetActivityResultAsync(Intent intent, AndroidActivityResultRequestCode requestCode)
         {
             return Task.Run<Tuple<Result, Intent>>(() =>

@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using Xamarin.Forms;
 
 namespace SensusUI
@@ -28,7 +29,9 @@ namespace SensusUI
 
         public App()
         {
-            MainPage = new SensusNavigationPage(new MainPage());
+            _navigationPage = new SensusNavigationPage(new MainPage());
+
+            MainPage = _navigationPage;
         }
     }
 }

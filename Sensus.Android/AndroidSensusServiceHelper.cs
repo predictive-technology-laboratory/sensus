@@ -244,6 +244,9 @@ namespace Sensus.Android
                                     // wait for the dialog to be shown so it doesn't hide our speech recognizer activity
                                     dialogShowWait.WaitOne();
 
+                                    // there's a slight race condition between the dialog showing and speech recognition showing. pause here to prevent the dialog from hiding the speech recognizer.
+                                    Thread.Sleep(1000);
+
                                     if (startVoiceRecognizer)
                                     {
                                         Intent intent = new Intent(RecognizerIntent.ActionRecognizeSpeech);
