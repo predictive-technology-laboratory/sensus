@@ -105,7 +105,7 @@ namespace Sensus.Android
                         try
                         {
                             if (Intent.Scheme == "http" || Intent.Scheme == "https")
-                                protocol = await Protocol.GetFromWebURI(new Uri(dataURI.ToString()));
+                                protocol = await Protocol.FromWebUriAsync(new Uri(dataURI.ToString()));
                             else if (Intent.Scheme == "content" || Intent.Scheme == "file")
                             {
                                 Stream stream = null;
@@ -114,7 +114,7 @@ namespace Sensus.Android
                                 catch (Exception ex) { throw new SensusException("Failed to open local protocol file URI \"" + dataURI + "\":  " + ex.Message); }
 
                                 if (stream != null)
-                                    protocol = Protocol.GetFromStream(stream);
+                                    protocol = await Protocol.FromStreamAsync(stream);
                             }
                             else
                                 throw new SensusException("Sensus didn't know what to do with URI \"" + dataURI);
@@ -126,7 +126,11 @@ namespace Sensus.Android
                             try
                             {
                                 UiBoundSensusServiceHelper.Get().RegisterProtocol(protocol);
-                                await app.MainPage.Navigation.PushAsync(new ProtocolPage(protocol));
+
+                                ProtocolPage protocolPage = new ProtocolPage(protocol);
+                                await app.MainPage.Navigation.PushAsync(protocolPage);
+
+                                app.MainPage.Navigation.InsertPageBefore(new ProtocolsPage(), protocolPage);
                             }
                             catch (Exception ex)
                             {

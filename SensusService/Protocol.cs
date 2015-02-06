@@ -26,6 +26,7 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 
 namespace SensusService
 {
@@ -43,67 +44,87 @@ namespace SensusService
             ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
         };
 
-        public static Task<Protocol> GetFromWebURI(Uri webURI)
+        public static Task<Protocol> FromWebUriAsync(Uri webURI)
         {
             return Task.Run<Protocol>(() =>
                 {
+                    Protocol protocol = null;
+                    ManualResetEvent protocolWait = new ManualResetEvent(false);
+
                     try
                     {
-                        MemoryStream stream = new MemoryStream();
-                        ManualResetEvent streamWait = new ManualResetEvent(false);
-
-                        WebClient client = new WebClient();
-
-                        client.DownloadStringCompleted += (s, ev) =>
+                        WebClient downloadClient = new WebClient();
+                        downloadClient.DownloadStringCompleted += async (s, args) =>
                         {
-                            using (StreamWriter writer = new StreamWriter(stream))
-                            {
-                                writer.Write(ev.Result);
-                                writer.Close();
-                            }
-
-                            streamWait.Set();
+                            protocol = await FromJsonAsync(args.Result);
+                            protocolWait.Set();
                         };
 
-                        client.DownloadStringAsync(webURI);
-
-                        streamWait.WaitOne();
-
-                        return GetFromStream(stream);
+                        downloadClient.DownloadStringAsync(webURI);
+                        protocolWait.WaitOne();
                     }
-                    catch (Exception ex) { throw new SensusException("Failed to open web client to URI \"" + webURI + "\":  " + ex.Message + ". If this is an HTTPS URI, make sure the server's certificate is valid."); }
+                    catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to download Protocol from URI \"" + webURI + "\":  " + ex.Message + ". If this is an HTTPS URI, make sure the server's certificate is valid.", LoggingLevel.Normal); }
+
+                    return protocol;
                 });
         }
 
-
-        public static Protocol GetFromStream(Stream stream)
+        public static Task<Protocol> FromStreamAsync(Stream stream)
         {
-            try
-            {
-                using (StreamReader reader = new StreamReader(stream))
+            return Task.Run(async () =>
                 {
-                    string json = reader.ReadToEnd();
-                    reader.Close();
-                    stream.Close();
+                    Protocol protocol = null;
 
-                    Protocol protocol = JsonConvert.DeserializeObject<Protocol>(json, _jsonSerializerSettings);
-
-                    protocol.StorageDirectory = null;
-                    while (protocol.StorageDirectory == null)
+                    try
                     {
-                        protocol.Id = Guid.NewGuid().ToString();
-                        string candidateStorageDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), protocol.Id);
-                        if (!Directory.Exists(candidateStorageDirectory))
+                        using (StreamReader reader = new StreamReader(stream))
                         {
-                            protocol.StorageDirectory = candidateStorageDirectory;
-                            Directory.CreateDirectory(protocol.StorageDirectory);
+                            string json = reader.ReadToEnd();
+                            reader.Close();
+                            protocol = await FromJsonAsync(json);
                         }
                     }
+                    catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to read Protocol from stream:  " + ex.Message, LoggingLevel.Normal); }
 
                     return protocol;
-                }
-            }
-            catch (Exception ex) { throw new SensusException("Failed to extract Protocol from stream:  " + ex.Message); }
+                });
+        }
+
+        public static Task<Protocol> FromJsonAsync(string json)
+        {
+            // start new task, in case this method has been called from the UI thread...we're going to block below after calling the main thread.
+            return Task.Run(() =>
+                {
+                    Protocol protocol = null;
+                    ManualResetEvent protocolWait = new ManualResetEvent(false);
+
+                    // always deserialize protocols on the main thread, since a looper might be required (in the case of android)
+                    Device.BeginInvokeOnMainThread(() =>
+                        {
+                            try
+                            {
+                                protocol = JsonConvert.DeserializeObject<Protocol>(json, _jsonSerializerSettings);
+                                protocol.StorageDirectory = null;
+                                while (protocol.StorageDirectory == null)
+                                {
+                                    protocol.Id = Guid.NewGuid().ToString();
+                                    string candidateStorageDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), protocol.Id);
+                                    if (!Directory.Exists(candidateStorageDirectory))
+                                    {
+                                        protocol.StorageDirectory = candidateStorageDirectory;
+                                        Directory.CreateDirectory(protocol.StorageDirectory);
+                                    }
+                                }
+                            }
+                            catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to deserialize Protocol from JSON:  " + ex.Message, LoggingLevel.Normal); }
+
+                            protocolWait.Set();
+                        });
+
+                    protocolWait.WaitOne();
+
+                    return protocol;
+                });
         }
         #endregion
 
