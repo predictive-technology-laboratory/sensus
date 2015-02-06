@@ -94,7 +94,7 @@ namespace Sensus.Android
                     (UiBoundSensusServiceHelper.Get() as AndroidSensusServiceHelper).SetMainActivity(this);  
 
                     // display service helper properties on the main page
-                    app.NavigationPage.MainPage.DisplayServiceHelper(UiBoundSensusServiceHelper.Get());
+                    app.SensusMainPage.DisplayServiceHelper(UiBoundSensusServiceHelper.Get());
 
                     #region open page to view protocol if a protocol was passed to us
                     if (Intent.Data != null)
@@ -126,7 +126,7 @@ namespace Sensus.Android
                             try
                             {
                                 UiBoundSensusServiceHelper.Get().RegisterProtocol(protocol);
-                                await app.NavigationPage.PushAsync(new ProtocolPage(protocol));
+                                await app.MainPage.Navigation.PushAsync(new ProtocolPage(protocol));
                             }
                             catch (Exception ex)
                             {

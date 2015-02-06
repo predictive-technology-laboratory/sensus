@@ -36,12 +36,12 @@ namespace SensusUI
 
             Content = triggerList;
 
-            ToolbarItems.Add(new ToolbarItem("+", null, () =>
+            ToolbarItems.Add(new ToolbarItem("+", null, async () =>
                 {
                     if (scriptProbe.Protocol.Probes.Where(p => p != scriptProbe && p.Enabled).Count() > 0)
-                        AddTriggerTapped(this, scriptProbe);
+                        await Navigation.PushAsync(new AddScriptProbeTriggerPage(scriptProbe));
                     else
-                        UiBoundSensusServiceHelper.Get().FlashNotificationAsync("You must enable probes before adding triggers.");
+                        await UiBoundSensusServiceHelper.Get().FlashNotificationAsync("You must enable probes before adding triggers.");
                 }));
 
             ToolbarItems.Add(new ToolbarItem("-", null, async () =>

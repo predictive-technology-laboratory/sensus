@@ -16,7 +16,6 @@
 
 using SensusService;
 using SensusUI.UiProperties;
-using System;
 using Xamarin.Forms;
 
 namespace SensusUI
@@ -24,9 +23,9 @@ namespace SensusUI
     /// <summary>
     /// Main Sensus page. First thing the user sees.
     /// </summary>
-    public class MainPage : ContentPage
+    public class SensusMainPage : ContentPage
     {
-        public MainPage()
+        public SensusMainPage()
         {
             Title = "Sensus";
 
@@ -39,7 +38,7 @@ namespace SensusUI
             Button viewProtocolsButton = new Button
             {
                 Text = "View Protocols",
-                Font = Font.SystemFontOfSize(20)
+                FontSize = 20
             };
 
             viewProtocolsButton.Clicked += async (o, e) =>
@@ -52,7 +51,7 @@ namespace SensusUI
             Button viewLogButton = new Button
             {
                 Text = "View Log",
-                Font = Font.SystemFontOfSize(20)
+                FontSize = 20
             };
 
             viewLogButton.Clicked += async (o, e) =>
@@ -65,7 +64,7 @@ namespace SensusUI
             Button stopSensusButton = new Button
             {
                 Text = "Stop Sensus",
-                Font = Font.SystemFontOfSize(20)
+                FontSize = 20
             };
 
             stopSensusButton.Clicked += async (o, e) =>

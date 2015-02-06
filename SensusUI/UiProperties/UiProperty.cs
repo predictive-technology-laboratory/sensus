@@ -44,7 +44,7 @@ namespace SensusUI.UiProperties
                 {
                     Text = uiElement.LabelText,
                     HorizontalOptions = LayoutOptions.Start,
-                    Font = Font.SystemFontOfSize(20)
+                    FontSize = 20
                 };
 
                 bool addParameterValueLabel = false;
@@ -61,7 +61,7 @@ namespace SensusUI.UiProperties
                 {
                     view = new Label
                     {
-                        Font = Font.SystemFontOfSize(20)
+                        FontSize = 20
                     };
 
                     bindingProperty = Label.TextProperty;
@@ -72,7 +72,7 @@ namespace SensusUI.UiProperties
                 {
                     view = new Label
                     {
-                        Font = Font.SystemFontOfSize(20)
+                        FontSize = 20
                     };
 
                     bindingProperty = Label.TextProperty;
@@ -150,7 +150,7 @@ namespace SensusUI.UiProperties
                         Label parameterValueLabel = new Label
                         {
                             HorizontalOptions = LayoutOptions.FillAndExpand,
-                            Font = Font.SystemFontOfSize(20)
+                            FontSize = 20
                         };
                         parameterValueLabel.BindingContext = o;
                         parameterValueLabel.SetBinding(Label.TextProperty, propertyUiElement.Item1.Name);

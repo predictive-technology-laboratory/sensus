@@ -36,7 +36,7 @@ namespace SensusUI
             Button shareButton = new Button
             {
                 Text = "Share",
-                Font = Font.SystemFontOfSize(20),
+                FontSize = 20,
                 HorizontalOptions = LayoutOptions.FillAndExpand
             };
 
@@ -67,7 +67,7 @@ namespace SensusUI
             Button clearButton = new Button
             {
                 Text = "Clear",
-                Font = Font.SystemFontOfSize(20),
+                FontSize = 20,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 IsEnabled = clearCallback != null
             };

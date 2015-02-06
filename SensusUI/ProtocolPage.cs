@@ -40,7 +40,7 @@ namespace SensusUI
             Label onOffLabel = new Label
             {
                 Text = "Status:",
-                Font = Font.SystemFontOfSize(20),
+                FontSize = 20,
                 HorizontalOptions = LayoutOptions.Start
             };
 
@@ -65,7 +65,7 @@ namespace SensusUI
             Button editLocalDataStoreButton = new Button
             {
                 Text = "Local Data Store",
-                Font = Font.SystemFontOfSize(20),
+                FontSize = 20,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 IsEnabled = !_protocol.Running
             };
@@ -79,7 +79,7 @@ namespace SensusUI
             Button createLocalDataStoreButton = new Button
             {
                 Text = "+",
-                Font = Font.SystemFontOfSize(20),
+                FontSize = 20,
                 HorizontalOptions = LayoutOptions.End,
                 IsEnabled = !_protocol.Running
             };
@@ -101,7 +101,7 @@ namespace SensusUI
             Button editRemoteDataStoreButton = new Button
             {
                 Text = "Remote Data Store",
-                Font = Font.SystemFontOfSize(20),
+                FontSize = 20,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 IsEnabled = !_protocol.Running
             };
@@ -115,7 +115,7 @@ namespace SensusUI
             Button createRemoteDataStoreButton = new Button
             {
                 Text = "+",
-                Font = Font.SystemFontOfSize(20),
+                FontSize = 20,
                 HorizontalOptions = LayoutOptions.End,
                 IsEnabled = !_protocol.Running
             };
@@ -139,7 +139,7 @@ namespace SensusUI
             Button viewProbesButton = new Button
             {
                 Text = "Probes",
-                Font = Font.SystemFontOfSize(20)
+                FontSize = 20
             };
 
             viewProbesButton.Clicked += async (o, e) =>

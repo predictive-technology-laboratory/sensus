@@ -16,7 +16,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UiBoundSensusServiceHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CreateDataStorePage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStorePage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)MainPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SensusMainPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProbePage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\DisplayStringUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\DisplayYesNoUiProperty.cs" />
@@ -28,7 +28,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\UiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolsPage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)SensusNavigationPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewTextLinesPage.cs" />
   </ItemGroup>
 </Project>

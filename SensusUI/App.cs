@@ -20,18 +20,18 @@ namespace SensusUI
 {
     public class App : Application
     {
-        public SensusNavigationPage _navigationPage;
+        public SensusMainPage _sensusMainPage;
 
-        public SensusNavigationPage NavigationPage
+        public SensusMainPage SensusMainPage
         {
-            get { return _navigationPage; }
+            get { return _sensusMainPage; }
         }
 
         public App()
         {
-            _navigationPage = new SensusNavigationPage(new MainPage());
+            _sensusMainPage = new SensusMainPage();
 
-            MainPage = _navigationPage;
+            MainPage = new NavigationPage(_sensusMainPage);
         }
     }
 }

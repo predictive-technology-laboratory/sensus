@@ -48,7 +48,7 @@ namespace SensusUI
                 Button loadButton = new Button
                 {
                     Text = scriptProbe.Script == null ? "Load Script" : scriptProbe.Script.Name,
-                    Font = Font.SystemFontOfSize(20),
+                    FontSize = 20,
                     HorizontalOptions = LayoutOptions.FillAndExpand
                 };
 
@@ -61,7 +61,7 @@ namespace SensusUI
                 Button viewScriptTriggersButton = new Button
                 {
                     Text = "View Triggers",
-                    Font = Font.SystemFontOfSize(20),
+                    FontSize = 20,
                     HorizontalOptions = LayoutOptions.FillAndExpand
                 };
 

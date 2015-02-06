@@ -28,8 +28,6 @@ namespace SensusUI
 {
     public class DataStorePage : ContentPage
     {        
-        public static event EventHandler OkTapped;
-
         public DataStorePage(Protocol protocol, DataStore dataStore, bool local)
         {
             Title = (local ? "Local" : "Remote") + " Data Store";
@@ -48,7 +46,7 @@ namespace SensusUI
             {
                 Text = "Clear",
                 HorizontalOptions = LayoutOptions.FillAndExpand,
-                Font = Font.SystemFontOfSize(20),
+                FontSize = 20,
                 IsEnabled = dataStore.Clearable
             };
 
@@ -66,7 +64,7 @@ namespace SensusUI
                 {
                     Text = "Share",
                     HorizontalOptions = LayoutOptions.FillAndExpand,
-                    Font = Font.SystemFontOfSize(20)
+                    FontSize = 20
                 };
 
                 shareLocalDataButton.Clicked += (o, e) =>
@@ -93,17 +91,17 @@ namespace SensusUI
             {
                 Text = "OK",
                 HorizontalOptions = LayoutOptions.FillAndExpand,
-                Font = Font.SystemFontOfSize(20)
+                FontSize = 20
             };
 
-            okayButton.Clicked += (o, e) =>
+            okayButton.Clicked += async (o, e) =>
                 {
                     if (local)
                         protocol.LocalDataStore = dataStore as LocalDataStore;
                     else
                         protocol.RemoteDataStore = dataStore as RemoteDataStore;
 
-                    OkTapped(o, e);
+                    await Navigation.PopAsync();
                 };
 
             buttonStack.Children.Add(okayButton);
