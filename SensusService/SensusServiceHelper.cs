@@ -15,7 +15,6 @@
 #endregion
 
 using Newtonsoft.Json;
-using SensusService.Probes;
 using SensusService.Probes.Location;
 using SensusUI.UiProperties;
 using System;

@@ -17,8 +17,6 @@
 using SensusService.Probes;
 using SensusService.Probes.User;
 using SensusUI.UiProperties;
-using System;
-using System.Linq;
 using Xamarin.Forms;
 
 namespace SensusUI

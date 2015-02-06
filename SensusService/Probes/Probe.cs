@@ -18,10 +18,8 @@ using Newtonsoft.Json;
 using SensusUI.UiProperties;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace SensusService.Probes

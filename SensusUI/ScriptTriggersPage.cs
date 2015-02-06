@@ -15,7 +15,6 @@
 #endregion
 
 using SensusService.Probes.User;
-using System;
 using System.Linq;
 using Xamarin.Forms;
 

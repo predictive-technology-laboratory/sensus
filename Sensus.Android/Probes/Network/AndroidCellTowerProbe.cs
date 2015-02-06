@@ -16,7 +16,6 @@
 
 using Android.App;
 using Android.Telephony;
-using SensusService;
 using SensusService.Probes.Network;
 using System;
 

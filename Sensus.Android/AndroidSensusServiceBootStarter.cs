@@ -16,9 +16,6 @@
 
 using Android.App;
 using Android.Content;
-using Android.Widget;
-using SensusService;
-using System;
 
 namespace Sensus.Android
 {
