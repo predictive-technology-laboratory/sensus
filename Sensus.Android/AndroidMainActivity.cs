@@ -117,7 +117,7 @@ namespace Sensus.Android
                                     protocol = await Protocol.FromStreamAsync(stream);
                             }
                             else
-                                throw new SensusException("Sensus didn't know what to do with URI \"" + dataURI);
+                                throw new SensusException("Sensus didn't know what to do with URI \"" + dataURI + "\".");
                         }
                         catch (Exception ex) { new AlertDialog.Builder(this).SetTitle("Failed to get protocol").SetMessage(ex.Message).Show(); }
 
