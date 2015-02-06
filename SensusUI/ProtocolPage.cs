@@ -15,10 +15,14 @@
 #endregion
 
 using SensusService;
+using SensusService.DataStores;
+using SensusService.DataStores.Local;
+using SensusService.DataStores.Remote;
 using SensusUI.UiProperties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Xamarin.Forms;
 
 namespace SensusUI
@@ -84,10 +88,7 @@ namespace SensusUI
                 IsEnabled = !_protocol.Running
             };
 
-            createLocalDataStoreButton.Clicked += async (o, e) =>
-                {
-                    await Navigation.PushAsync(new CreateDataStorePage(_protocol, true));
-                };
+            createLocalDataStoreButton.Clicked += (o, e) => CreateDataStore(true);
 
             StackLayout localDataStoreStack = new StackLayout
             {
@@ -120,10 +121,7 @@ namespace SensusUI
                 IsEnabled = !_protocol.Running
             };
 
-            createRemoteDataStoreButton.Clicked += async (o, e) =>
-                {
-                    await Navigation.PushAsync(new CreateDataStorePage(_protocol, false));
-                };
+            createRemoteDataStoreButton.Clicked += (o, e) => CreateDataStore(false);
 
             StackLayout remoteDataStoreStack = new StackLayout
             {
@@ -214,6 +212,22 @@ namespace SensusUI
             base.OnAppearing();
 
             _protocol.ProtocolRunningChanged += _protocolRunningChangedAction;
+        }
+
+        private async void CreateDataStore(bool local)
+        {
+            Type dataStoreType = local ? typeof(LocalDataStore) : typeof(RemoteDataStore);
+
+            List<DataStore> dataStores = Assembly.GetExecutingAssembly()
+                                                 .GetTypes()
+                                                 .Where(t => !t.IsAbstract && t.IsSubclassOf(dataStoreType))
+                                                 .Select(t => Activator.CreateInstance(t))
+                                                 .Cast<DataStore>()
+                                                 .ToList();
+
+            string selected = await DisplayActionSheet("Select " + (local ? "Local" : "Remote") + " Data Store", "Cancel", null, dataStores.Select((d, i) => (i + 1) + ") " + d.Name).ToArray());
+            if (selected != null)
+                await Navigation.PushAsync(new DataStorePage(_protocol, dataStores[int.Parse(selected.Substring(0, selected.IndexOf(")"))) - 1], local));
         }
 
         protected override void OnDisappearing()

@@ -99,7 +99,7 @@ namespace Sensus.Android
 
                             // start the activity and wait for it to bind itself to the service
                             Intent intent = new Intent(_service, typeof(AndroidMainActivity));
-                            intent.AddFlags(ActivityFlags.NewTask);
+                            intent.AddFlags(ActivityFlags.NewTask | ActivityFlags.ClearTask);
                             _mainActivityWait.Reset();
                             _service.StartActivity(intent);
                             _mainActivityWait.WaitOne();
