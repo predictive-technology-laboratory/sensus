@@ -26,7 +26,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\IncrementalIntegerUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\OnOffUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\UiProperty.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ProtocolDataStoreEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SensusNavigationPage.cs" />

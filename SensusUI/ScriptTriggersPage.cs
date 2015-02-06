@@ -23,8 +23,6 @@ namespace SensusUI
 {
     public class ScriptTriggersPage : ContentPage
     {
-        public static event EventHandler<ScriptProbe> AddTriggerTapped;
-
         public ScriptTriggersPage(ScriptProbe probe)
         {
             Title = probe.DisplayName + "'s Triggers";

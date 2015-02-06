@@ -35,45 +35,6 @@ namespace SensusUI
         {
             _mainPage = mainPage;
 
-            #region protocol page
-            ProtocolPage.EditDataStoreTapped += async (protocolPage, args) =>
-                {
-                    if (args.DataStore != null)
-                        await PushAsync(new DataStorePage(args));
-                };
-
-            ProtocolPage.CreateDataStoreTapped += async (protocolPage, args) =>
-                {
-                    await PushAsync(new CreateDataStorePage(args));
-                };
-
-            ProtocolPage.ViewProbesTapped += async (o, protocol) =>
-                {
-                    await PushAsync(new ProbesPage(protocol));
-                };
-
-            ProtocolPage.DisplayProtocolReport += async (o, report) =>
-                {
-                    await PushAsync(new ViewTextLinesPage("Protocol Report", report.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList(), null));
-                };
-            #endregion
-
-            #region probes page
-            ProbesPage.ProbeTapped += async (probesPage, probe) =>
-                {
-                    ProbePage probePage = new ProbePage(probe);
-                    probePage.Disappearing += (o, e) => { (probesPage as ProbesPage).Bind(); };  // rebind the probes page to pick up changes in the probe
-                    await PushAsync(probePage);
-                };
-            #endregion
-
-            #region probe page
-            ProbePage.ViewScriptTriggersTapped += async (o, scriptProbe) =>
-                {
-                    await PushAsync(new ScriptTriggersPage(scriptProbe));
-                };
-            #endregion
-
             #region script triggers page
             ScriptTriggersPage.AddTriggerTapped += async (o, scriptProbe) =>
                 {
@@ -85,14 +46,6 @@ namespace SensusUI
             AddScriptProbeTriggerPage.TriggerAdded += async (o, e) =>
                 {
                     await PopAsync();
-                };
-            #endregion
-
-            #region create data store page
-            CreateDataStorePage.CreateTapped += async (o, e) =>
-                {
-                    await PopAsync();
-                    await PushAsync(new DataStorePage(e));
                 };
             #endregion
 

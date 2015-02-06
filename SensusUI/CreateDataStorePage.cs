@@ -14,6 +14,7 @@
 // limitations under the License.
 #endregion
 
+using SensusService;
 using SensusService.DataStores;
 using SensusService.DataStores.Local;
 using SensusService.DataStores.Remote;
@@ -26,11 +27,9 @@ namespace SensusUI
 {
     public class CreateDataStorePage : ContentPage
     {
-        public static event EventHandler<ProtocolDataStoreEventArgs> CreateTapped;
-
-        public CreateDataStorePage(ProtocolDataStoreEventArgs args)
+        public CreateDataStorePage(Protocol protocol, bool local)
         {
-            Title = "Create " + (args.Local ? "Local" : "Remote") + " Data Store";
+            Title = "Create " + (local ? "Local" : "Remote") + " Data Store";
 
             StackLayout contentLayout = new StackLayout
             {
@@ -38,7 +37,7 @@ namespace SensusUI
                 Orientation = StackOrientation.Vertical,
             };
 
-            Type dataStoreType = args.Local ? typeof(LocalDataStore) : typeof(RemoteDataStore);
+            Type dataStoreType = local ? typeof(LocalDataStore) : typeof(RemoteDataStore);
 
             foreach (DataStore dataStore in Assembly.GetExecutingAssembly().GetTypes().Where(t => !t.IsAbstract && t.IsSubclassOf(dataStoreType)).Select(t => Activator.CreateInstance(t)))
             {
@@ -47,9 +46,10 @@ namespace SensusUI
                     Text = dataStore.Name
                 };
 
-                createDataStoreButton.Clicked += (o, e) =>
+                createDataStoreButton.Clicked += async (o, e) =>
                     {
-                        CreateTapped(o, new ProtocolDataStoreEventArgs { Protocol = args.Protocol, DataStore = dataStore, Local = args.Local });
+                        await Navigation.PopAsync();
+                        await Navigation.PushAsync(new DataStorePage(protocol, dataStore, local));
                     };
 
                 contentLayout.Children.Add(createDataStoreButton);

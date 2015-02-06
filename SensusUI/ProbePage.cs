@@ -28,8 +28,6 @@ namespace SensusUI
     /// </summary>
     public class ProbePage : ContentPage
     {
-        public static event EventHandler<ScriptProbe> ViewScriptTriggersTapped;
-
         public ProbePage(Probe probe)
         {
             Title = "Probe";
@@ -67,9 +65,9 @@ namespace SensusUI
                     HorizontalOptions = LayoutOptions.FillAndExpand
                 };
 
-                viewScriptTriggersButton.Clicked += (o, e) =>
+                viewScriptTriggersButton.Clicked += async (o, e) =>
                     {
-                        ViewScriptTriggersTapped(o, scriptProbe);
+                        await Navigation.PushAsync(new ScriptTriggersPage(scriptProbe));
                     };
 
                 contentLayout.Children.Add(new StackLayout

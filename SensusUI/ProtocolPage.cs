@@ -15,22 +15,16 @@
 #endregion
 
 using SensusService;
-using SensusService.DataStores;
-using SensusService.Exceptions;
 using SensusUI.UiProperties;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Xamarin.Forms;
 
 namespace SensusUI
 {
     public class ProtocolPage : ContentPage
     {
-        public static event EventHandler<ProtocolDataStoreEventArgs> EditDataStoreTapped;
-        public static event EventHandler<ProtocolDataStoreEventArgs> CreateDataStoreTapped;
-        public static event EventHandler<Protocol> ViewProbesTapped;
-        public static event EventHandler<ProtocolReport> DisplayProtocolReport;
-
         private Protocol _protocol;
         private EventHandler<bool> _protocolRunningChangedAction;
 
@@ -76,13 +70,10 @@ namespace SensusUI
                 IsEnabled = !_protocol.Running
             };
 
-            editLocalDataStoreButton.Clicked += (o, e) =>
+            editLocalDataStoreButton.Clicked += async (o, e) =>
                 {
-                    DataStore copy = null;
                     if (_protocol.LocalDataStore != null)
-                        copy = _protocol.LocalDataStore.Copy();
-
-                    EditDataStoreTapped(this, new ProtocolDataStoreEventArgs { Protocol = _protocol, DataStore = copy, Local = true });
+                        await Navigation.PushAsync(new DataStorePage(_protocol, _protocol.LocalDataStore.Copy(), true));
                 };
 
             Button createLocalDataStoreButton = new Button
@@ -93,9 +84,9 @@ namespace SensusUI
                 IsEnabled = !_protocol.Running
             };
 
-            createLocalDataStoreButton.Clicked += (o, e) =>
+            createLocalDataStoreButton.Clicked += async (o, e) =>
                 {
-                    CreateDataStoreTapped(this, new ProtocolDataStoreEventArgs { Protocol = _protocol, Local = true });
+                    await Navigation.PushAsync(new CreateDataStorePage(_protocol, true));
                 };
 
             StackLayout localDataStoreStack = new StackLayout
@@ -115,13 +106,10 @@ namespace SensusUI
                 IsEnabled = !_protocol.Running
             };
 
-            editRemoteDataStoreButton.Clicked += (o, e) =>
+            editRemoteDataStoreButton.Clicked += async (o, e) =>
                 {
-                    DataStore copy = null;
                     if (_protocol.RemoteDataStore != null)
-                        copy = _protocol.RemoteDataStore.Copy();
-
-                    EditDataStoreTapped(this, new ProtocolDataStoreEventArgs { Protocol = _protocol, DataStore = copy, Local = false });
+                        await Navigation.PushAsync(new DataStorePage(_protocol, _protocol.RemoteDataStore.Copy(), false));
                 };
 
             Button createRemoteDataStoreButton = new Button
@@ -132,9 +120,9 @@ namespace SensusUI
                 IsEnabled = !_protocol.Running
             };
 
-            createRemoteDataStoreButton.Clicked += (o, e) =>
+            createRemoteDataStoreButton.Clicked += async (o, e) =>
                 {
-                    CreateDataStoreTapped(this, new ProtocolDataStoreEventArgs { Protocol = _protocol, Local = false });
+                    await Navigation.PushAsync(new CreateDataStorePage(_protocol, false));
                 };
 
             StackLayout remoteDataStoreStack = new StackLayout
@@ -154,9 +142,9 @@ namespace SensusUI
                 Font = Font.SystemFontOfSize(20)
             };
 
-            viewProbesButton.Clicked += (o, e) =>
+            viewProbesButton.Clicked += async (o, e) =>
                 {
-                    ViewProbesTapped(o, _protocol);
+                    await Navigation.PushAsync(new ProbesPage(_protocol));
                 };
 
             views.Add(viewProbesButton);
@@ -195,7 +183,7 @@ namespace SensusUI
                         if (_protocol.MostRecentReport == null)
                             await DisplayAlert("No Report", "Ping failed.", "OK");
                         else
-                            DisplayProtocolReport(this, _protocol.MostRecentReport);
+                            await Navigation.PushAsync(new ViewTextLinesPage("Protocol Report", _protocol.MostRecentReport.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList(), null));
                     }
                     else
                         await DisplayAlert("Protocol Not Running", "Cannot ping protocol when it is not running.", "OK");
