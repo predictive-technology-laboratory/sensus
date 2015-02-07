@@ -66,14 +66,16 @@ namespace SensusUI
 
                         if (await DisplayAlert("Delete " + protocolToRemove.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
                         {
-                            await protocolToRemove.StopAsync();
-                            UiBoundSensusServiceHelper.Get().UnregisterProtocol(protocolToRemove);
+                            protocolToRemove.StopAsync(() =>
+                                {
+                                    UiBoundSensusServiceHelper.Get().UnregisterProtocol(protocolToRemove);
 
-                            try { Directory.Delete(protocolToRemove.StorageDirectory, true); }
-                            catch (Exception ex) { UiBoundSensusServiceHelper.Get().Logger.Log("Failed to delete protocol storage directory \"" + protocolToRemove.StorageDirectory + "\":  " + ex.Message, LoggingLevel.Normal); }
+                                    try { Directory.Delete(protocolToRemove.StorageDirectory, true); }
+                                    catch (Exception ex) { UiBoundSensusServiceHelper.Get().Logger.Log("Failed to delete protocol storage directory \"" + protocolToRemove.StorageDirectory + "\":  " + ex.Message, LoggingLevel.Normal); }
 
-                            _protocolsList.ItemsSource = _protocolsList.ItemsSource.Cast<Protocol>().Where(p => p != protocolToRemove);
-                            _protocolsList.SelectedItem = null;
+                                    _protocolsList.ItemsSource = _protocolsList.ItemsSource.Cast<Protocol>().Where(p => p != protocolToRemove);
+                                    _protocolsList.SelectedItem = null;
+                                });
                         }
                     }
                 }));

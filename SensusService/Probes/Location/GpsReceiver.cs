@@ -198,7 +198,7 @@ namespace SensusService.Probes.Location
             {
                 _sharedReadingIsComing = true;  // tell any subsequent, concurrent callers that we're taking a reading
                 _sharedReadingWaitHandle.Reset();  // make them wait
-                Task readingTask = Task.Run(async () =>
+                new Thread(async () =>
                     {
                         try
                         {
@@ -220,7 +220,7 @@ namespace SensusService.Probes.Location
 
                         _sharedReadingIsComing = false;  // direct any future calls to this method to get their own reading
                         _sharedReadingWaitHandle.Set();  // tell anyone waiting on the shared reading that it is ready
-                    });
+                    }).Start();
             }
             else
                 SensusServiceHelper.Get().Logger.Log("A shared reading is coming. Will wait for it.", LoggingLevel.Debug);

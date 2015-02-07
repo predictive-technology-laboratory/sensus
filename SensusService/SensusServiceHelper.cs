@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using Xamarin;
 using Xamarin.Geolocation;
 
@@ -175,7 +174,7 @@ namespace SensusService
         #region platform-specific abstract methods
         protected abstract void InitializeXamarinInsights();
 
-        public abstract Task<string> PromptForAndReadTextFileAsync(string promptTitle);
+        public abstract void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback);
 
         public abstract void ShareFileAsync(string path, string subject);
 
@@ -183,11 +182,11 @@ namespace SensusService
 
         protected abstract void StopSensusPings();
 
-        public abstract Task TextToSpeechAsync(string text);
+        public abstract void TextToSpeechAsync(string text);
 
-        public abstract Task<string> PromptForInputAsync(string prompt, bool startVoiceRecognizer);
+        public abstract void PromptForInputAsync(string prompt, bool startVoiceRecognizer, Action<string> callback);
 
-        public abstract Task FlashNotificationAsync(string message);
+        public abstract void FlashNotificationAsync(string message);
         #endregion
 
         #region save/read protocols
@@ -337,9 +336,9 @@ namespace SensusService
                     }
         }
 
-        public Task PingAsync()
+        public void PingAsync()
         {
-            return Task.Run(() =>
+            new Thread(() =>
                 {
                     lock (this)
                     {
@@ -358,7 +357,7 @@ namespace SensusService
                                     protocol.StoreMostRecentProtocolReport();
                             }
                     }
-                });
+                }).Start();
         }
 
         public void UnregisterProtocol(Protocol protocol)
@@ -373,9 +372,9 @@ namespace SensusService
         /// Stops the service helper, but leaves it in a state in which subsequent calls to Start will succeed. This happens, for example, when the service is stopped and then 
         /// restarted without being destroyed.
         /// </summary>
-        public Task StopAsync()
+        public void StopAsync()
         {
-            return Task.Run(() =>
+            new Thread(() =>
                 {
                     lock (this)
                     {
@@ -393,7 +392,8 @@ namespace SensusService
                     // let others (e.g., platform-specific services and applications) know that we've stopped
                     if (Stopped != null)
                         Stopped(null, null);
-                });
+
+                }).Start();
         }
 
         public virtual void Destroy()

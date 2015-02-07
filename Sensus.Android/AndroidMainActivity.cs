@@ -19,13 +19,11 @@ using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using SensusService;
-using SensusService.Exceptions;
 using SensusUI;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 
@@ -102,24 +100,36 @@ namespace Sensus.Android
                         global::Android.Net.Uri dataURI = Intent.Data;
 
                         Protocol protocol = null;
+                        ManualResetEvent protocolWait = new ManualResetEvent(false);
                         try
                         {
                             if (Intent.Scheme == "http" || Intent.Scheme == "https")
-                                protocol = await Protocol.FromWebUriAsync(new Uri(dataURI.ToString()));
+                                Protocol.FromWebUriAsync(new Uri(dataURI.ToString()), p => { protocol = p; protocolWait.Set(); });
                             else if (Intent.Scheme == "content" || Intent.Scheme == "file")
                             {
                                 Stream stream = null;
 
                                 try { stream = ContentResolver.OpenInputStream(dataURI); }
-                                catch (Exception ex) { throw new SensusException("Failed to open local protocol file URI \"" + dataURI + "\":  " + ex.Message); }
+                                catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to open local protocol file URI \"" + dataURI + "\":  " + ex.Message, LoggingLevel.Normal); }
 
-                                if (stream != null)
-                                    protocol = await Protocol.FromStreamAsync(stream);
+                                if (stream == null)
+                                    protocolWait.Set();
+                                else
+                                    Protocol.FromStreamAsync(stream, p => { protocol = p; protocolWait.Set(); });
                             }
                             else
-                                throw new SensusException("Sensus didn't know what to do with URI \"" + dataURI + "\".");
+                            {
+                                SensusServiceHelper.Get().Logger.Log("Sensus didn't know what to do with URI \"" + dataURI + "\".", LoggingLevel.Normal);
+                                protocolWait.Set();
+                            }
                         }
-                        catch (Exception ex) { new AlertDialog.Builder(this).SetTitle("Failed to get protocol").SetMessage(ex.Message).Show(); }
+                        catch (Exception ex)
+                        {
+                            new AlertDialog.Builder(this).SetTitle("Failed to get protocol").SetMessage(ex.Message).Show();
+                            protocolWait.Set();
+                        }
+
+                        protocolWait.WaitOne();
 
                         if (protocol != null)
                         {
@@ -170,9 +180,9 @@ namespace Sensus.Android
             OnWindowFocusChanged(false);
         }
 
-        public Task<Tuple<Result, Intent>> GetActivityResultAsync(Intent intent, AndroidActivityResultRequestCode requestCode)
+        public void GetActivityResultAsync(Intent intent, AndroidActivityResultRequestCode requestCode, Action<Tuple<Result, Intent>> callback)
         {
-            return Task.Run<Tuple<Result, Intent>>(() =>
+            new Thread(() =>
                 {
                     lock (this)
                     {
@@ -183,9 +193,9 @@ namespace Sensus.Android
                         StartActivityForResult(intent, (int)requestCode);
                         _activityResultWait.WaitOne();
 
-                        return _activityResult;
+                        callback(_activityResult);
                     }
-                });
+                }).Start();
         }
 
         protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)

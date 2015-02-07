@@ -20,7 +20,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace SensusService.Probes.User
 {
@@ -142,7 +141,7 @@ namespace SensusService.Probes.User
             }
         }
 
-        public Task<List<ScriptDatum>> RunAsync(Datum previousDatum, Datum currentDatum)
+        public void RunAsync(Datum previousDatum, Datum currentDatum, Action<List<ScriptDatum>> callback)
         {
             SensusServiceHelper.Get().Logger.Log("Running script \"" + _name + "\".", LoggingLevel.Normal);
 
@@ -152,7 +151,7 @@ namespace SensusService.Probes.User
             if (currentDatum != null)
                 _currentDatum = currentDatum;
 
-            return Task.Run<List<ScriptDatum>>(async () =>
+            new Thread(() =>
                 {
                     if (_delayMS > 0)
                         Thread.Sleep(_delayMS);
@@ -170,15 +169,23 @@ namespace SensusService.Probes.User
                     foreach (Prompt prompt in _prompts)
                         if (prompt.InputDatum == null)
                         {
-                            ScriptDatum datum = await prompt.RunAsync(_previousDatum, _currentDatum, isRerun, _firstRunTimestamp);
-                            if (datum != null)
-                                data.Add(datum);
+                            ManualResetEvent datumWait = new ManualResetEvent(false);
+
+                            prompt.RunAsync(_previousDatum, _currentDatum, isRerun, _firstRunTimestamp, datum =>
+                                {
+                                    if (datum != null)
+                                        data.Add(datum);
+
+                                    datumWait.Set();
+                                });
+
+                            datumWait.WaitOne();
                         }
 
                     SensusServiceHelper.Get().Logger.Log("Script \"" + _name + "\" has finished running.", LoggingLevel.Normal);
 
-                    return data;
-                });
+                    callback(data);
+                }).Start();
         }
 
         public Script Copy()

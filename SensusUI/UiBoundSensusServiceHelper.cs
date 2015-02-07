@@ -16,8 +16,8 @@
 
 using SensusService;
 using SensusService.Exceptions;
+using System;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace SensusUI
 {
@@ -27,9 +27,9 @@ namespace SensusUI
         private static object _getSensusServiceHelperLocker = new object();
         private static ManualResetEvent _sensusServiceHelperWait = new ManualResetEvent(false);
 
-        public static Task<SensusServiceHelper> GetAsync()
+        public static void GetAsync(Action<SensusServiceHelper> callback)
         {
-            return Task.Run(() => { return Get(); });
+            new Thread(() => callback(Get())).Start();
         }
 
         public static SensusServiceHelper Get()

@@ -22,7 +22,6 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace SensusService.Probes.User
 {
@@ -33,15 +32,15 @@ namespace SensusService.Probes.User
         private Script _script;
         private Queue<Script> _incompleteScripts;
         private bool _rerunIncompleteScripts;
-        private Task _scriptRerunTask;
-        private bool _stopScriptRerunTask;
+        private Thread _scriptRerunThread;
+        private bool _stopScriptRerunThread;
         private int _scriptRerunDelayMS;
         private int _maxScriptAgeMinutes;
         private int _numScriptsAgedOut;
         private bool _triggerRandomly;
         private int _randomTriggerDelayMaxMinutes;
-        private Task _randomTriggerTask;
-        private bool _stopRandomTriggerTask;
+        private Thread _randomTriggerThread;
+        private bool _stopRandomTriggerThread;
 
         public ObservableCollection<Trigger> Triggers
         {
@@ -66,9 +65,9 @@ namespace SensusService.Probes.User
 
                     if (Running)
                         if (_rerunIncompleteScripts)
-                            StartScriptRerunTaskAsync();
+                            StartScriptRerunThreadAsync();
                         else
-                            StopScriptRerunTaskAsync();
+                            StopScriptRerunThreadAsync(() => { });
                 }
             }
         }
@@ -99,9 +98,9 @@ namespace SensusService.Probes.User
 
                     if (Running)
                         if (_triggerRandomly)
-                            StartRandomScriptTriggerTaskAsync();
+                            StartRandomScriptTriggerThreadAsync();
                         else
-                            StopRandomScriptTriggerTaskAsync();
+                            StopRandomScriptTriggerThreadAsync(() => { });
                 }
             }
         }
@@ -136,7 +135,7 @@ namespace SensusService.Probes.User
             _incompleteScripts = new Queue<Script>();
             _rerunIncompleteScripts = false;
             _scriptRerunDelayMS = 60000;
-            _stopScriptRerunTask = true;
+            _stopScriptRerunThread = true;
             _maxScriptAgeMinutes = 10;
             _numScriptsAgedOut = 0;
             _triggerRandomly = false;
@@ -151,7 +150,7 @@ namespace SensusService.Probes.User
                             if (_triggerHandler.ContainsKey(addedTrigger))
                                 return;
 
-                            EventHandler<Tuple<Datum, Datum>> handler = async (oo, prevCurrDatum) =>
+                            EventHandler<Tuple<Datum, Datum>> handler = (oo, prevCurrDatum) =>
                                 {
                                     // must be running and must have a current datum
                                     lock (this)
@@ -184,7 +183,7 @@ namespace SensusService.Probes.User
                                     }
 
                                     if (addedTrigger.FireFor(datumValue))
-                                        await RunScriptAsync(_script.Copy(), prevDatum, currDatum);  // run a copy of the pristine script, since it will be filled in when run.
+                                        RunScriptAsync(_script.Copy(), prevDatum, currDatum, () => { });  // run a copy of the pristine script, since it will be filled in when run.
                                 };
 
                             addedTrigger.Probe.MostRecentDatumChanged += handler;
@@ -213,99 +212,123 @@ namespace SensusService.Probes.User
             base.Start();
 
             if (_rerunIncompleteScripts)
-                StartScriptRerunTaskAsync();
+                StartScriptRerunThreadAsync();
 
             if (_triggerRandomly)
-                StartRandomScriptTriggerTaskAsync();
+                StartRandomScriptTriggerThreadAsync();
         }
 
-        private async void StartScriptRerunTaskAsync()
+        private void StartScriptRerunThreadAsync()
         {
-            await StopScriptRerunTaskAsync();
-
-            SensusServiceHelper.Get().Logger.Log("Starting script rerun task.", LoggingLevel.Normal);
-
-            _scriptRerunTask = Task.Run(async () =>
+            StopScriptRerunThreadAsync(() =>
                 {
-                    _stopScriptRerunTask = false;
+                    SensusServiceHelper.Get().Logger.Log("Starting script rerun thread.", LoggingLevel.Normal);
 
-                    while (!_stopScriptRerunTask)
-                    {
-                        int msToSleep = _scriptRerunDelayMS;
-                        while (!_stopScriptRerunTask && msToSleep > 0)
+                    _scriptRerunThread = new Thread(() =>
                         {
-                            Thread.Sleep(1000);
-                            msToSleep -= 1000;
-                        }
+                            _stopScriptRerunThread = false;
 
-                        if (!_stopScriptRerunTask)
-                        {
-                            Script scriptToRerun = null;
-                            lock (_incompleteScripts)
-                                while (scriptToRerun == null && _incompleteScripts.Count > 0)
+                            while (!_stopScriptRerunThread)
+                            {
+                                int msToSleep = _scriptRerunDelayMS;
+                                while (!_stopScriptRerunThread && msToSleep > 0)
                                 {
-                                    scriptToRerun = _incompleteScripts.Dequeue();
-                                    TimeSpan scriptAge = DateTimeOffset.UtcNow - scriptToRerun.FirstRunTimestamp;
-                                    if (scriptAge.TotalMinutes > _maxScriptAgeMinutes)
-                                    {
-                                        SensusServiceHelper.Get().Logger.Log("Script \"" + scriptToRerun.Name + "\" has aged out.", LoggingLevel.Normal);
-                                        scriptToRerun = null;
-                                        ++_numScriptsAgedOut;
-                                    }
+                                    Thread.Sleep(1000);
+                                    msToSleep -= 1000;
                                 }
 
-                            if (scriptToRerun != null)
-                                await RunScriptAsync(scriptToRerun, null, null);
-                        }
-                    }
+                                if (!_stopScriptRerunThread)
+                                {
+                                    Script scriptToRerun = null;
+                                    lock (_incompleteScripts)
+                                        while (scriptToRerun == null && _incompleteScripts.Count > 0)
+                                        {
+                                            scriptToRerun = _incompleteScripts.Dequeue();
+                                            TimeSpan scriptAge = DateTimeOffset.UtcNow - scriptToRerun.FirstRunTimestamp;
+                                            if (scriptAge.TotalMinutes > _maxScriptAgeMinutes)
+                                            {
+                                                SensusServiceHelper.Get().Logger.Log("Script \"" + scriptToRerun.Name + "\" has aged out.", LoggingLevel.Normal);
+                                                scriptToRerun = null;
+                                                ++_numScriptsAgedOut;
+                                            }
+                                        }
 
-                    SensusServiceHelper.Get().Logger.Log("Script rerun task has exited its while-loop.", LoggingLevel.Normal);
+                                    if (scriptToRerun != null)
+                                    {
+                                        ManualResetEvent scriptWait = new ManualResetEvent(false);
+                                        RunScriptAsync(scriptToRerun, null, null, () => scriptWait.Set());
+                                        scriptWait.WaitOne();
+                                    }
+                                }
+                            }
+
+                            SensusServiceHelper.Get().Logger.Log("Script rerun thread has exited its while-loop.", LoggingLevel.Normal);
+                        });
+
+                    _scriptRerunThread.Start();
                 });
         }
 
-        private async void StartRandomScriptTriggerTaskAsync()
+        private void StartRandomScriptTriggerThreadAsync()
         {
-            await StopRandomScriptTriggerTaskAsync();
-
-            SensusServiceHelper.Get().Logger.Log("Starting random script trigger task.", LoggingLevel.Normal);
-
-            _randomTriggerTask = Task.Run(async () =>
+            new Thread(() =>
                 {
-                    _stopRandomTriggerTask = false;
-                    Random random = new Random();
+                    ManualResetEvent stopRandomScriptTriggerWait = new ManualResetEvent(false);
+                    StopRandomScriptTriggerThreadAsync(() => stopRandomScriptTriggerWait.Set());
+                    stopRandomScriptTriggerWait.WaitOne();
 
-                    while(!_stopRandomTriggerTask)
-                    {
-                        int msToSleep = random.Next(_randomTriggerDelayMaxMinutes * 60 * 1000);
-                        while(!_stopRandomTriggerTask && msToSleep > 0)
+                    SensusServiceHelper.Get().Logger.Log("Starting random script trigger thread.", LoggingLevel.Normal);
+
+                    _randomTriggerThread = new Thread(() =>
                         {
-                            Thread.Sleep(1000);
-                            msToSleep -= 1000;
-                        }
+                            _stopRandomTriggerThread = false;
+                            Random random = new Random();
 
-                        if (!_stopRandomTriggerTask)
-                            await RunScriptAsync(_script.Copy(), null, null);
-                    }
+                            while (!_stopRandomTriggerThread)
+                            {
+                                int msToSleep = random.Next(_randomTriggerDelayMaxMinutes * 60 * 1000);
+                                while (!_stopRandomTriggerThread && msToSleep > 0)
+                                {
+                                    Thread.Sleep(1000);
+                                    msToSleep -= 1000;
+                                }
 
-                    SensusServiceHelper.Get().Logger.Log("Random script trigger task has exited its while-loop.", LoggingLevel.Normal);
-                });
+                                if (!_stopRandomTriggerThread)
+                                {
+                                    ManualResetEvent scriptWait = new ManualResetEvent(false);
+                                    RunScriptAsync(_script.Copy(), null, null, () => scriptWait.Set());
+                                    scriptWait.WaitOne();
+                                }
+                            }
+
+                            SensusServiceHelper.Get().Logger.Log("Random script trigger thread has exited its while-loop.", LoggingLevel.Normal);
+                        });
+
+                    _randomTriggerThread.Start();
+
+                }).Start();
         }
 
-        private Task RunScriptAsync(Script script, Datum prevDatum, Datum currDatum)
+        private void RunScriptAsync(Script script, Datum prevDatum, Datum currDatum, Action callback)
         {
-            return Task.Run(async () =>
+            new Thread(() =>
                 {
-                    foreach (ScriptDatum scriptDatum in await script.RunAsync(prevDatum, currDatum))
-                        if (scriptDatum != null)
+                    script.RunAsync(prevDatum, currDatum, scriptData =>
                         {
-                            scriptDatum.ProbeType = GetType().FullName;
-                            StoreDatum(scriptDatum);
-                        }
+                            foreach (ScriptDatum scriptDatum in scriptData)
+                                if (scriptDatum != null)
+                                {
+                                    scriptDatum.ProbeType = GetType().FullName;
+                                    StoreDatum(scriptDatum);
+                                }
 
-                    if (_rerunIncompleteScripts && !script.Complete)
-                        lock (_incompleteScripts)
-                            _incompleteScripts.Enqueue(script);
-                });
+                            if (_rerunIncompleteScripts && !script.Complete)
+                                lock (_incompleteScripts)
+                                    _incompleteScripts.Enqueue(script);
+
+                            callback();
+                        });
+                }).Start();
         }
 
         public override bool Ping(ref string error, ref string warning, ref string misc)
@@ -325,40 +348,52 @@ namespace SensusService.Probes.User
             return restart;
         }
 
-        private Task StopScriptRerunTaskAsync()
+        private void StopScriptRerunThreadAsync(Action callback)
         {
-            return Task.Run(() =>
+            new Thread(() =>
                 {
-                    if (_scriptRerunTask != null)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Stopping incomplete script task.", LoggingLevel.Normal);
+                    StopScriptRerunThread();
+                    callback();
 
-                        _stopScriptRerunTask = true;
-                        _scriptRerunTask.Wait();
-                    }
-                });
+                }).Start();
         }
 
-        private Task StopRandomScriptTriggerTaskAsync()
+        private void StopScriptRerunThread()
         {
-            return Task.Run(() =>
-                {
-                    if (_randomTriggerTask != null)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Stopping random script trigger task.", LoggingLevel.Normal);
+            if (_scriptRerunThread != null)
+            {
+                SensusServiceHelper.Get().Logger.Log("Stopping script rerun thread.", LoggingLevel.Normal);
+                _stopScriptRerunThread = true;
+                _scriptRerunThread.Join();
+            }
+        }
 
-                        _stopRandomTriggerTask = true;
-                        _randomTriggerTask.Wait();
-                    }
-                });
+        private void StopRandomScriptTriggerThreadAsync(Action callback)
+        {
+            new Thread(() =>
+                {
+                    StopRandomScriptTriggerThread();
+                    callback();
+
+                }).Start();
+        }
+
+        private void StopRandomScriptTriggerThread()
+        {
+            if (_randomTriggerThread != null)
+            {
+                SensusServiceHelper.Get().Logger.Log("Stopping random script trigger thread.", LoggingLevel.Normal);
+                _stopRandomTriggerThread = true;
+                _randomTriggerThread.Join();
+            }
         }
 
         public override void Stop()
         {
             base.Stop();
 
-            StopScriptRerunTaskAsync().Wait();
-            StopRandomScriptTriggerTaskAsync().Wait();
+            StopScriptRerunThread();
+            StopRandomScriptTriggerThread();
         }
     }
 }

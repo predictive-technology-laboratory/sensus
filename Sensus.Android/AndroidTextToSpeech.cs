@@ -18,7 +18,6 @@ using Android.Speech.Tts;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Sensus.Android
 {
@@ -46,9 +45,9 @@ namespace Sensus.Android
             _initWait.Set();
         }
 
-        public Task SpeakAsync(string text)
+        public void SpeakAsync(string text)
         {
-            return Task.Run(() =>
+            new Thread(() =>
                 {
                     lock (this)
                     {
@@ -65,7 +64,7 @@ namespace Sensus.Android
                         _textToSpeech.Speak(text, QueueMode.Add, speakParams);
                         _utteranceWait.WaitOne();
                     }
-                });
+                }).Start();
         }
 
         public override void OnStart(string utteranceId)

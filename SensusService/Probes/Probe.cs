@@ -20,7 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace SensusService.Probes
 {
@@ -134,13 +134,13 @@ namespace SensusService.Probes
             _collectedData = new HashSet<Datum>();
         }
 
-        protected Task StartAsync()
+        protected void StartAsync()
         {
-            return Task.Run(() =>
+            new Thread(() =>
                 {
                     try { Start(); }
                     catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to start probe \"" + GetType().FullName + "\":" + ex.Message, LoggingLevel.Normal); }
-                });
+                }).Start();
         }
 
         /// <summary>
@@ -195,13 +195,13 @@ namespace SensusService.Probes
                 }
         }
 
-        protected Task StopAsync()
+        protected void StopAsync()
         {
-            return Task.Run(() =>
+            new Thread(() =>
                 {
                     try { Stop(); }
                     catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to stop probe \"" + GetType().FullName + "\":" + ex.Message, LoggingLevel.Normal); }
-                });
+                }).Start();
         }
 
         /// <summary>

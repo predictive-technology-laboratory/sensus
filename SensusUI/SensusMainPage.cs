@@ -70,7 +70,7 @@ namespace SensusUI
             stopSensusButton.Clicked += async (o, e) =>
                 {
                     if (await DisplayAlert("Stop Sensus?", "Are you sure you want to stop Sensus?", "OK", "Cancel"))
-                        await UiBoundSensusServiceHelper.Get().StopAsync();
+                        UiBoundSensusServiceHelper.Get().StopAsync();
                 };
 
             contentLayout.Children.Add(stopSensusButton);

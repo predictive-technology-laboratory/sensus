@@ -50,10 +50,13 @@ namespace SensusUI
                     HorizontalOptions = LayoutOptions.FillAndExpand
                 };
 
-                loadButton.Clicked += async (oo, e) =>
+                loadButton.Clicked += (oo, e) =>
                     {
-                        scriptProbe.Script = Script.FromJSON(await UiBoundSensusServiceHelper.Get().PromptForAndReadTextFileAsync("Select Script File"));
-                        loadButton.Text = scriptProbe.Script == null ? "Load Script" : scriptProbe.Script.Name;
+                        UiBoundSensusServiceHelper.Get().PromptForAndReadTextFileAsync("Select Script File", scriptContent =>
+                            {
+                                scriptProbe.Script = Script.FromJSON(scriptContent);
+                                loadButton.Text = scriptProbe.Script == null ? "Load Script" : scriptProbe.Script.Name;
+                            });
                     };
 
                 Button viewScriptTriggersButton = new Button
