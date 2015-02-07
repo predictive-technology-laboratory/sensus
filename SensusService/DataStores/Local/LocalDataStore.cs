@@ -69,6 +69,8 @@ namespace SensusService.DataStores.Local
 
             foreach (Probe probe in Protocol.Probes)
                 probe.ClearDataCommittedToLocalDataStore(committedData);
+
+            SensusServiceHelper.Get().Logger.Log("Done clearing committed data elements from probes.", LoggingLevel.Verbose);
         }
 
         public abstract List<Datum> GetDataForRemoteDataStore();

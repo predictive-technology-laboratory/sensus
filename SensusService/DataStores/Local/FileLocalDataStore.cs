@@ -146,7 +146,7 @@ namespace SensusService.DataStores.Local
         {
             lock (this)
             {
-                SensusServiceHelper.Get().Logger.Log("Local data store received " + dataCommittedToRemote.Count + " remote-committed elements to clear.", LoggingLevel.Verbose);
+                SensusServiceHelper.Get().Logger.Log("File local data store received " + dataCommittedToRemote.Count + " remote-committed data elements to clear.", LoggingLevel.Verbose);
 
                 HashSet<Datum> hashDataCommittedToRemote = new HashSet<Datum>(dataCommittedToRemote);  // for quick access via hashing
 
@@ -190,6 +190,8 @@ namespace SensusService.DataStores.Local
                             File.Move(filteredPath, path);
                         }
                     }
+
+                SensusServiceHelper.Get().Logger.Log("File local data store finished clearing remote-committed data elements.", LoggingLevel.Verbose);
             }
         }
 

@@ -103,6 +103,7 @@ namespace SensusService.DataStores
                         while (_running)
                         {
                             // in order to allow the commit thread to be interrupted by Stop, sleep for 1-second intervals.
+                            SensusServiceHelper.Get().Logger.Log(GetType().Name + " is sleeping.", LoggingLevel.Debug);
                             Thread.Sleep(1000);
                             msToSleep -= 1000;
 
