@@ -156,6 +156,7 @@ namespace Sensus.Android
                     }
                     catch (ActivityNotFoundException) { Toast.MakeText(_service, "Please install a file manager from the Apps store.", ToastLength.Long); }
                     catch (Exception ex) { Toast.MakeText(_service, "Something went wrong while prompting you for a file to read:  " + ex.Message, ToastLength.Long); }
+
                 }).Start();
         }
 

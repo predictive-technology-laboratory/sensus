@@ -140,6 +140,7 @@ namespace SensusService.Probes
                 {
                     try { Start(); }
                     catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to start probe \"" + GetType().FullName + "\":" + ex.Message, LoggingLevel.Normal); }
+
                 }).Start();
         }
 
@@ -201,6 +202,7 @@ namespace SensusService.Probes
                 {
                     try { Stop(); }
                     catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to stop probe \"" + GetType().FullName + "\":" + ex.Message, LoggingLevel.Normal); }
+
                 }).Start();
         }
 
