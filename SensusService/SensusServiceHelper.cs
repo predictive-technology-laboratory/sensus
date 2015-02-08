@@ -239,15 +239,13 @@ namespace SensusService
             lock (this)
             {
                 List<string> ids = ReadRunningProtocolIds();
-                if (ids.Contains(id))
-                    return;
-                else
+                if (!ids.Contains(id))
                 {
                     ids.Add(id);
                     SaveRunningProtocolIds(ids);
-
-                    StartSensusPings(_pingDelayMS);
                 }
+
+                StartSensusPings(_pingDelayMS);
             }
         }
 
@@ -259,7 +257,7 @@ namespace SensusService
                 if (ids.Remove(id))
                     SaveRunningProtocolIds(ids);
 
-                if (_registeredProtocols.Count(p => p.Running) == 0)
+                if (ids.Count == 0)
                     StopSensusPings();
             }
         }

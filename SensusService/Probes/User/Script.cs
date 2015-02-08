@@ -106,7 +106,7 @@ namespace SensusService.Probes.User
         [JsonIgnore]
         public bool Complete
         {
-            get { return _prompts.Count == 0 ? true : _prompts.All(p => p.InputDatum != null); }
+            get { return _prompts.Count == 0 ? true : _prompts.All(p => p.Complete); }
         }
 
         /// <summary>
