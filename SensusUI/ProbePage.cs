@@ -55,7 +55,7 @@ namespace SensusUI
                         UiBoundSensusServiceHelper.Get().PromptForAndReadTextFileAsync("Select Script File", scriptContent =>
                             {
                                 scriptProbe.Script = Script.FromJSON(scriptContent);
-                                loadButton.Text = scriptProbe.Script == null ? "Load Script" : scriptProbe.Script.Name;
+                                Device.BeginInvokeOnMainThread(() => loadButton.Text = scriptProbe.Script == null ? "Load Script" : scriptProbe.Script.Name);
                             });
                     };
 

@@ -73,8 +73,11 @@ namespace SensusUI
                                     try { Directory.Delete(protocolToRemove.StorageDirectory, true); }
                                     catch (Exception ex) { UiBoundSensusServiceHelper.Get().Logger.Log("Failed to delete protocol storage directory \"" + protocolToRemove.StorageDirectory + "\":  " + ex.Message, LoggingLevel.Normal); }
 
-                                    _protocolsList.ItemsSource = _protocolsList.ItemsSource.Cast<Protocol>().Where(p => p != protocolToRemove);
-                                    _protocolsList.SelectedItem = null;
+                                    Device.BeginInvokeOnMainThread(() =>
+                                        {
+                                            _protocolsList.ItemsSource = _protocolsList.ItemsSource.Cast<Protocol>().Where(p => p != protocolToRemove);
+                                            _protocolsList.SelectedItem = null;
+                                        });
                                 });
                         }
                     }

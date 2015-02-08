@@ -47,11 +47,11 @@ namespace SensusService
             new Thread(() =>
                 {
                     Protocol protocol = null;
-                    ManualResetEvent protocolWait = new ManualResetEvent(false);
 
                     try
                     {
                         WebClient downloadClient = new WebClient();
+                        ManualResetEvent protocolWait = new ManualResetEvent(false);
                         downloadClient.DownloadStringCompleted += (s, args) =>
                         {
                             FromJsonAsync(args.Result, p =>
@@ -76,7 +76,6 @@ namespace SensusService
             new Thread(() =>
                 {
                     Protocol protocol = null;
-                    ManualResetEvent protocolWait = new ManualResetEvent(false);
 
                     try
                     {
@@ -84,16 +83,19 @@ namespace SensusService
                         {
                             string json = reader.ReadToEnd();
                             reader.Close();
+
+                            ManualResetEvent protocolWait = new ManualResetEvent(false);
                             FromJsonAsync(json, p =>
                                 {
                                     protocol = p;
                                     protocolWait.Set();
                                 });
+
+                            protocolWait.WaitOne();
                         }
                     }
                     catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to read Protocol from stream:  " + ex.Message, LoggingLevel.Normal); }
 
-                    protocolWait.WaitOne();
                     callback(protocol);
 
                 }).Start();

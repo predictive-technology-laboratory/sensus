@@ -80,16 +80,16 @@ namespace Sensus.Android
 
             // bind UI to the service
             _serviceConnection = new AndroidSensusServiceConnection();
-            _serviceConnection.ServiceConnected += async (o, e) =>
+            _serviceConnection.ServiceConnected += (o, e) =>
                 {
                     // get reference to service helper for use within the UI
-                    UiBoundSensusServiceHelper.Set(e.Binder.SensusServiceHelper);  
+                    UiBoundSensusServiceHelper.Set(e.Binder.SensusServiceHelper);
 
                     // stop activity when service stops    
-                    UiBoundSensusServiceHelper.Get().Stopped += (oo, ee) => { Finish(); };  
+                    UiBoundSensusServiceHelper.Get().Stopped += (oo, ee) => { Finish(); };
 
                     // give service a reference to this activity
-                    (UiBoundSensusServiceHelper.Get() as AndroidSensusServiceHelper).SetMainActivity(this);  
+                    (UiBoundSensusServiceHelper.Get() as AndroidSensusServiceHelper).SetMainActivity(this);
 
                     // display service helper properties on the main page
                     app.SensusMainPage.DisplayServiceHelper(UiBoundSensusServiceHelper.Get());
@@ -99,12 +99,31 @@ namespace Sensus.Android
                     {
                         global::Android.Net.Uri dataURI = Intent.Data;
 
-                        Protocol protocol = null;
-                        ManualResetEvent protocolWait = new ManualResetEvent(false);
+                        Action<Protocol> protocolDeserializedCallback = protocol =>
+                            {                                
+                                if (protocol != null)
+                                {
+                                    Device.BeginInvokeOnMainThread(async () =>
+                                        {
+                                            try
+                                            {
+                                                UiBoundSensusServiceHelper.Get().RegisterProtocol(protocol);
+                                                await app.MainPage.Navigation.PushAsync(new ProtocolsPage());
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                string message = "Failed to register/display new protocol:  " + ex.Message;
+                                                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal);
+                                                new AlertDialog.Builder(this).SetTitle("Failed to show protocol").SetMessage(message).Show();
+                                            }
+                                        });
+                                }
+                            };
+
                         try
                         {
                             if (Intent.Scheme == "http" || Intent.Scheme == "https")
-                                Protocol.FromWebUriAsync(new Uri(dataURI.ToString()), p => { protocol = p; protocolWait.Set(); });
+                                Protocol.FromWebUriAsync(new Uri(dataURI.ToString()), protocolDeserializedCallback);
                             else if (Intent.Scheme == "content" || Intent.Scheme == "file")
                             {
                                 Stream stream = null;
@@ -112,43 +131,13 @@ namespace Sensus.Android
                                 try { stream = ContentResolver.OpenInputStream(dataURI); }
                                 catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to open local protocol file URI \"" + dataURI + "\":  " + ex.Message, LoggingLevel.Normal); }
 
-                                if (stream == null)
-                                    protocolWait.Set();
-                                else
-                                    Protocol.FromStreamAsync(stream, p => { protocol = p; protocolWait.Set(); });
+                                if (stream != null)
+                                    Protocol.FromStreamAsync(stream, protocolDeserializedCallback);
                             }
                             else
-                            {
                                 SensusServiceHelper.Get().Logger.Log("Sensus didn't know what to do with URI \"" + dataURI + "\".", LoggingLevel.Normal);
-                                protocolWait.Set();
-                            }
                         }
-                        catch (Exception ex)
-                        {
-                            new AlertDialog.Builder(this).SetTitle("Failed to get protocol").SetMessage(ex.Message).Show();
-                            protocolWait.Set();
-                        }
-
-                        protocolWait.WaitOne();
-
-                        if (protocol != null)
-                        {
-                            try
-                            {
-                                UiBoundSensusServiceHelper.Get().RegisterProtocol(protocol);
-
-                                ProtocolPage protocolPage = new ProtocolPage(protocol);
-                                await app.MainPage.Navigation.PushAsync(protocolPage);
-
-                                app.MainPage.Navigation.InsertPageBefore(new ProtocolsPage(), protocolPage);
-                            }
-                            catch (Exception ex)
-                            {
-                                string message = "Failed to register/display new protocol:  " + ex.Message;
-                                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal);
-                                new AlertDialog.Builder(this).SetTitle("Failed to show protocol").SetMessage(message).Show();
-                            }
-                        }
+                        catch (Exception ex) { new AlertDialog.Builder(this).SetTitle("Failed to get protocol").SetMessage(ex.Message).Show(); }
                     }
                     #endregion
                 };

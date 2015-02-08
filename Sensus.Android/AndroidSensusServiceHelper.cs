@@ -148,7 +148,11 @@ namespace Sensus.Android
                                             try
                                             {
                                                 using (StreamReader file = new StreamReader(_service.ContentResolver.OpenInputStream(result.Item2.Data)))
-                                                    callback(file.ReadToEnd());
+                                                {
+                                                    string content = file.ReadToEnd();
+                                                    file.Close();
+                                                    callback(content);
+                                                }
                                             }
                                             catch (Exception ex) { Toast.MakeText(_service, "Error reading text file:  " + ex.Message, ToastLength.Long); }
                                     });
