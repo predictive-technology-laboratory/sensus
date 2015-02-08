@@ -176,14 +176,17 @@ namespace SensusUI
                 {
                     if (SensusServiceHelper.Get().ProtocolShouldBeRunning(_protocol))
                     {
-                        _protocol.PingAsync(async () =>
+                        _protocol.PingAsync( () =>
                             {
-                                if (_protocol.MostRecentReport == null)
-                                    await DisplayAlert("No Report", "Ping failed.", "OK");
-                                else
-                                    await Navigation.PushAsync(new ViewTextLinesPage("Protocol Report", _protocol.MostRecentReport.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList(), null));
-                            });
-                    }
+								Device.BeginInvokeOnMainThread(async () =>
+									{
+										if (_protocol.MostRecentReport == null)
+											await DisplayAlert("No Report", "Ping failed.", "OK");
+										else
+											await Navigation.PushAsync(new ViewTextLinesPage("Protocol Report", _protocol.MostRecentReport.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList(), null));
+									});
+							});
+					}
                     else
                         await DisplayAlert("Protocol Not Running", "Cannot ping protocol when it is not running.", "OK");
                 }));

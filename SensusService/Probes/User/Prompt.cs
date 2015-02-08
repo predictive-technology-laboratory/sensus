@@ -22,8 +22,10 @@ namespace SensusService.Probes.User
 {
     public class Prompt
     {
+        #region static members
         private static readonly object _staticLockObject = new object();
         private static bool _promptIsRunning = false;
+        #endregion
 
         private PromptOutputType _outputType;
         private string _outputMessage;
@@ -79,6 +81,7 @@ namespace SensusService.Probes.User
         /// </summary>
         private Prompt()
         {
+            _hasRun = false;
         }
 
         public Prompt(PromptOutputType outputType, string outputMessage, string outputMessageRerun, PromptInputType inputType)
@@ -112,6 +115,8 @@ namespace SensusService.Probes.User
                     }
 
                     string message = _outputMessage;
+
+                    #region rerun processing
                     if (isRerun && !string.IsNullOrWhiteSpace(_outputMessageRerun))
                     {
                         TimeSpan promptAge = DateTimeOffset.UtcNow - firstRunTimestamp;
@@ -127,6 +132,7 @@ namespace SensusService.Probes.User
 
                         message = string.Format(_outputMessageRerun, daysAgoStr + " at " + firstRunTimestamp.ToLocalTime().DateTime.ToString("%h:%mm %tt"));
                     }
+                    #endregion
 
                     Action<string> inputCallback = new Action<string>(inputText =>
                         {
@@ -167,6 +173,8 @@ namespace SensusService.Probes.User
                     }
                     else
                         SensusServiceHelper.Get().Logger.Log("Prompt failure:  Unrecognized output/input setup:  " + _outputType + " -> " + _inputType, LoggingLevel.Normal);
+                    
+                    _hasRun = true;
 
                 }).Start();
         }

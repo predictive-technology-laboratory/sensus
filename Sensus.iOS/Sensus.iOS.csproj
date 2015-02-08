@@ -11,7 +11,7 @@
     <RootNamespace>Sensus.iOS</RootNamespace>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
     <AssemblyName>SensusiOS</AssemblyName>
-    <NuGetPackageImportStamp>24bb1e1f</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>dcf0ffd6</NuGetPackageImportStamp>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -108,10 +108,10 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.WindowsAzure.Mobile">
-      <HintPath>..\Components\azure-mobile-services-1.3.0\lib\ios\Microsoft.WindowsAzure.Mobile.dll</HintPath>
+      <HintPath>..\Components\azure-mobile-services-1.3.1\lib\ios\Microsoft.WindowsAzure.Mobile.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.WindowsAzure.Mobile.Ext">
-      <HintPath>..\Components\azure-mobile-services-1.3.0\lib\ios\Microsoft.WindowsAzure.Mobile.Ext.dll</HintPath>
+      <HintPath>..\Components\azure-mobile-services-1.3.1\lib\ios\Microsoft.WindowsAzure.Mobile.Ext.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.6.0.6\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
@@ -134,7 +134,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Xamarin.Forms.1.3.2.6316\lib\MonoTouch10\Xamarin.Forms.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Xamarin.Forms.Platform.iOS.Classic">
+    <Reference Include="Xamarin.Forms.Platform.iOS.Classic, Version=1.3.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Xamarin.Forms.1.3.2.6316\lib\MonoTouch10\Xamarin.Forms.Platform.iOS.Classic.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Forms.Xaml, Version=1.3.2.0, Culture=neutral, processorArchitecture=MSIL">
