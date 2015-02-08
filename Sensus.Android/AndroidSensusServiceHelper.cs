@@ -280,8 +280,8 @@ namespace Sensus.Android
                         }));
 
                     dialogDismissWait.WaitOne();
-
                     callback(input);
+
                 }).Start();
         }
 

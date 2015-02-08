@@ -208,6 +208,7 @@ namespace SensusService.Probes.User
                         _promptIsRunning = false;
 
                     callback(_inputDatum);
+
                 }).Start();
         }
     }

@@ -185,6 +185,7 @@ namespace SensusService.Probes.User
                     SensusServiceHelper.Get().Logger.Log("Script \"" + _name + "\" has finished running.", LoggingLevel.Normal);
 
                     callback(data);
+
                 }).Start();
         }
 

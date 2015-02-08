@@ -220,6 +220,7 @@ namespace SensusService.Probes.Location
 
                         _sharedReadingIsComing = false;  // direct any future calls to this method to get their own reading
                         _sharedReadingWaitHandle.Set();  // tell anyone waiting on the shared reading that it is ready
+
                     }).Start();
             }
             else

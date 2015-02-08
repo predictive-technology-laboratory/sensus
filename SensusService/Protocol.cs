@@ -67,6 +67,7 @@ namespace SensusService
                     catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to download Protocol from URI \"" + webURI + "\":  " + ex.Message + ". If this is an HTTPS URI, make sure the server's certificate is valid.", LoggingLevel.Normal); }
 
                     callback(protocol);
+
                 }).Start();
         }
 
@@ -94,6 +95,7 @@ namespace SensusService
 
                     protocolWait.WaitOne();
                     callback(protocol);
+
                 }).Start();
         }
 
@@ -130,6 +132,7 @@ namespace SensusService
 
                     protocolWait.WaitOne();
                     callback(protocol);
+
                 }).Start();
         }
         #endregion
@@ -452,7 +455,8 @@ namespace SensusService
                 {
                     Stop();
                     callback();
-                });
+
+                }).Start();
         }
 
         public void Stop()
