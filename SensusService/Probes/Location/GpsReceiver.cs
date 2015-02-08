@@ -39,7 +39,7 @@ namespace SensusService.Probes.Location
         private Geolocator _locator;
         private int _desiredAccuracyMeters;
         private bool _sharedReadingIsComing;
-        private ManualResetEvent _sharedReadingWaitHandle;
+        private ManualResetEvent _sharedReadingWait;
         private Position _sharedReading;
         private DateTimeOffset _sharedReadingTimestamp;
         private int _minimumTimeHint;
@@ -108,7 +108,7 @@ namespace SensusService.Probes.Location
         {
             _desiredAccuracyMeters = 50;
             _sharedReadingIsComing = false;
-            _sharedReadingWaitHandle = new ManualResetEvent(false);
+            _sharedReadingWait = new ManualResetEvent(false);
             _sharedReading = null;
             _sharedReadingTimestamp = DateTimeOffset.MinValue;
             _minimumTimeHint = 60000;
@@ -197,7 +197,7 @@ namespace SensusService.Probes.Location
             if (!_sharedReadingIsComing)  // is someone else currently taking a reading? if so, wait for that instead.
             {
                 _sharedReadingIsComing = true;  // tell any subsequent, concurrent callers that we're taking a reading
-                _sharedReadingWaitHandle.Reset();  // make them wait
+                _sharedReadingWait.Reset();  // make them wait
                 new Thread(async () =>
                     {
                         try
@@ -219,14 +219,14 @@ namespace SensusService.Probes.Location
                         }
 
                         _sharedReadingIsComing = false;  // direct any future calls to this method to get their own reading
-                        _sharedReadingWaitHandle.Set();  // tell anyone waiting on the shared reading that it is ready
+                        _sharedReadingWait.Set();  // tell anyone waiting on the shared reading that it is ready
 
                     }).Start();
             }
             else
                 SensusServiceHelper.Get().Logger.Log("A shared reading is coming. Will wait for it.", LoggingLevel.Debug);
 
-            _sharedReadingWaitHandle.WaitOne(timeout * 2);  // wait twice the locator timeout, just to be sure.
+            _sharedReadingWait.WaitOne(timeout * 2);  // wait twice the locator timeout, just to be sure.
 
             Position reading = _sharedReading;
 
