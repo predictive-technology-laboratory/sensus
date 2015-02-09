@@ -169,7 +169,7 @@ namespace SensusService.Probes
                 if (_storeData)
                     lock (_collectedData)
                     {
-                        SensusServiceHelper.Get().Logger.Log("Storing datum in probe cache:  " + datum, LoggingLevel.Debug);
+                        SensusServiceHelper.Get().Logger.Log("Storing datum in probe cache:  " + datum, LoggingLevel.Verbose);
                         _collectedData.Add(datum);
                     }
 

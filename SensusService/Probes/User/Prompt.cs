@@ -153,23 +153,31 @@ namespace SensusService.Probes.User
                         SensusServiceHelper.Get().PromptForInputAsync(message, true, inputCallback);
                     else if (_outputType == PromptOutputType.Text && _inputType == PromptInputType.None)
                     {
-                        SensusServiceHelper.Get().FlashNotificationAsync(message);
-                        _promptIsRunning = false;
+                        SensusServiceHelper.Get().FlashNotificationAsync(message, () =>
+                            {
+                                _promptIsRunning = false;
+                            });
                     }
                     else if (_outputType == PromptOutputType.Voice && _inputType == PromptInputType.Text)
                     {
-                        SensusServiceHelper.Get().TextToSpeechAsync(message);
-                        SensusServiceHelper.Get().PromptForInputAsync(message, false, inputCallback);
+                        SensusServiceHelper.Get().TextToSpeechAsync(message, () =>
+                            {
+                                SensusServiceHelper.Get().PromptForInputAsync(message, false, inputCallback);
+                            });
                     }
                     else if (_outputType == PromptOutputType.Voice && _inputType == PromptInputType.Voice)
                     {
-                        SensusServiceHelper.Get().TextToSpeechAsync(message);
-                        SensusServiceHelper.Get().PromptForInputAsync(message, true, inputCallback);
+                        SensusServiceHelper.Get().TextToSpeechAsync(message, () =>
+                            {
+                                SensusServiceHelper.Get().PromptForInputAsync(message, true, inputCallback);
+                            });
                     }
                     else if (_outputType == PromptOutputType.Voice && _inputType == PromptInputType.None)
                     {
-                        SensusServiceHelper.Get().TextToSpeechAsync(message);
-                        _promptIsRunning = false;
+                        SensusServiceHelper.Get().TextToSpeechAsync(message, () =>
+                            {
+                                _promptIsRunning = false;
+                            });
                     }
                     else
                         SensusServiceHelper.Get().Logger.Log("Prompt failure:  Unrecognized output/input setup:  " + _outputType + " -> " + _inputType, LoggingLevel.Normal);

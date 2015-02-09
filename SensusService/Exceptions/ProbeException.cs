@@ -25,6 +25,12 @@ namespace SensusService.Exceptions
     {
         private Probe _probe;
 
+        public Probe Probe
+        {
+            get { return _probe; }
+            set { _probe = value; }
+        }
+
         public ProbeException(Probe probe, string message)
             : base(message)
         {

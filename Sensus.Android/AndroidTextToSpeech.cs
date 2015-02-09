@@ -45,7 +45,7 @@ namespace Sensus.Android
             _initWait.Set();
         }
 
-        public void SpeakAsync(string text)
+        public void SpeakAsync(string text, Action callback)
         {
             new Thread(() =>
                 {
@@ -63,6 +63,7 @@ namespace Sensus.Android
                         _utteranceWait.Reset();
                         _textToSpeech.Speak(text, QueueMode.Add, speakParams);
                         _utteranceWait.WaitOne();
+                        callback();
                     }
                 }).Start();
         }

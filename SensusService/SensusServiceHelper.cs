@@ -182,11 +182,25 @@ namespace SensusService
 
         protected abstract void StopSensusPings();
 
-        public abstract void TextToSpeechAsync(string text);
+        public void TextToSpeechAsync(string text)
+        {
+            TextToSpeechAsync(text, () =>
+                {
+                });                        
+        }
+
+        public abstract void TextToSpeechAsync(string text, Action callback);
 
         public abstract void PromptForInputAsync(string prompt, bool startVoiceRecognizer, Action<string> callback);
 
-        public abstract void FlashNotificationAsync(string message);
+        public void FlashNotificationAsync(string message)
+        {
+            FlashNotificationAsync(message, () =>
+                {
+                });
+        }
+
+        public abstract void FlashNotificationAsync(string message, Action callback);
         #endregion
 
         #region save/read protocols

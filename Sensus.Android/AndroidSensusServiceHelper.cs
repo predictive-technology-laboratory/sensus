@@ -198,9 +198,9 @@ namespace Sensus.Android
             SetSensusMonitoringAlarm(-1);
         }
 
-        public override void TextToSpeechAsync(string text)
+        public override void TextToSpeechAsync(string text, Action callback)
         {
-            _textToSpeech.SpeakAsync(text);
+            _textToSpeech.SpeakAsync(text, callback);
         }
 
         public override void PromptForInputAsync(string prompt, bool startVoiceRecognizer, Action<string> callback)
@@ -290,13 +290,17 @@ namespace Sensus.Android
                 }).Start();
         }
 
-        public override void FlashNotificationAsync(string message)
+        public override void FlashNotificationAsync(string message, Action callback)
         {
             new Thread(() =>
                 {
                     GetMainActivityAsync(false, mainActivity =>
                         {
-                            mainActivity.RunOnUiThread(() => Toast.MakeText(mainActivity, message, ToastLength.Long).Show());
+                            mainActivity.RunOnUiThread(() =>
+                                {
+                                    Toast.MakeText(mainActivity, message, ToastLength.Long).Show();
+                                    callback();
+                                });
                         });
                 }).Start();
         }
