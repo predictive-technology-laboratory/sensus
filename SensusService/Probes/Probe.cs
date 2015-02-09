@@ -115,8 +115,10 @@ namespace SensusService.Probes
             set { _storeData = value; }
         }
 
+        [JsonIgnore]
         protected abstract string DefaultDisplayName { get; }
 
+        [JsonIgnore]
         public abstract Type DatumType { get; }
 
         protected Probe()

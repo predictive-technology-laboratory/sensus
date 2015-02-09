@@ -50,6 +50,8 @@ namespace SensusUI
                     HorizontalOptions = LayoutOptions.FillAndExpand
                 };
 
+                contentLayout.Children.Add(loadButton);
+
                 loadButton.Clicked += (oo, e) =>
                     {
                         UiBoundSensusServiceHelper.Get().PromptForAndReadTextFileAsync("Select Script File", scriptContent =>
@@ -66,17 +68,12 @@ namespace SensusUI
                     HorizontalOptions = LayoutOptions.FillAndExpand
                 };
 
+                contentLayout.Children.Add(viewScriptTriggersButton);
+
                 viewScriptTriggersButton.Clicked += async (o, e) =>
                     {
                         await Navigation.PushAsync(new ScriptTriggersPage(scriptProbe));
                     };
-
-                contentLayout.Children.Add(new StackLayout
-                {
-                    Orientation = StackOrientation.Horizontal,
-                    HorizontalOptions = LayoutOptions.FillAndExpand,
-                    Children = { loadButton, viewScriptTriggersButton }
-                });
             }
 
             Content = new ScrollView

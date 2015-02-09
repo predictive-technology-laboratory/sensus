@@ -18,6 +18,7 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using SensusService;
+using Xamarin.Geolocation;
 
 namespace Sensus.Android
 {
@@ -37,7 +38,16 @@ namespace Sensus.Android
             _notificationManager = GetSystemService(Context.NotificationService) as NotificationManager;
             _notificationBuilder = new Notification.Builder(this);
 
-            _sensusServiceHelper = new AndroidSensusServiceHelper(this);
+            _sensusServiceHelper = SensusServiceHelper.Load<AndroidSensusServiceHelper>(new Geolocator(this)) as AndroidSensusServiceHelper;
+            if (_sensusServiceHelper == null)
+            {
+                _sensusServiceHelper = new AndroidSensusServiceHelper();
+                _sensusServiceHelper.Initialize(new Geolocator(this));
+                _sensusServiceHelper.Save();
+            }
+
+            _sensusServiceHelper.SetService(this);
+
             _sensusServiceHelper.Stopped += (o, e) =>
                 {
                     _notificationManager.Cancel(ServiceNotificationId);

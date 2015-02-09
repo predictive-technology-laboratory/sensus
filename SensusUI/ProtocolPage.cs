@@ -240,7 +240,7 @@ namespace SensusUI
 
             _protocol.ProtocolRunningChanged -= _protocolRunningChangedAction;
 
-            UiBoundSensusServiceHelper.Get().SaveRegisteredProtocols();
+            UiBoundSensusServiceHelper.Get().Save();
         }
     }
 }

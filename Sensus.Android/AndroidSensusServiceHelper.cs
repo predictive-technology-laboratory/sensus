@@ -14,6 +14,10 @@
 // limitations under the License.
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
@@ -24,12 +28,9 @@ using Android.Speech;
 using Android.Support.V4.Content;
 using Android.Widget;
 using SensusService;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading;
 using Xamarin;
 using Xamarin.Geolocation;
+using Newtonsoft.Json;
 
 namespace Sensus.Android
 {
@@ -39,12 +40,13 @@ namespace Sensus.Android
 
         private AndroidSensusService _service;
         private ConnectivityManager _connectivityManager;
-        private readonly string _deviceId;
+        private string _deviceId;
         private AndroidMainActivity _mainActivity;
         private ManualResetEvent _mainActivityWait;
         private readonly object _getMainActivityLocker = new object();
         private AndroidTextToSpeech _textToSpeech;
 
+        [JsonIgnore]
         public AndroidSensusService Service
         {
             get { return _service; }
@@ -75,14 +77,17 @@ namespace Sensus.Android
             get { return PackageManager.FeatureMicrophone == "android.hardware.microphone"; }
         }
 
-        public AndroidSensusServiceHelper(AndroidSensusService service)
-            : base(new Geolocator(service))
+        public AndroidSensusServiceHelper()
+        {
+            _mainActivityWait = new ManualResetEvent(false);           
+        }           
+
+        public void SetService(AndroidSensusService service)
         {
             _service = service;
             _connectivityManager = _service.GetSystemService(Context.ConnectivityService) as ConnectivityManager;
             _deviceId = Settings.Secure.GetString(_service.ContentResolver, Settings.Secure.AndroidId);
             _textToSpeech = new AndroidTextToSpeech(_service);
-            _mainActivityWait = new ManualResetEvent(false);
         }
 
         public void GetMainActivityAsync(bool foreground, Action<AndroidMainActivity> callback)
@@ -185,6 +190,7 @@ namespace Sensus.Android
                         GetMainActivityAsync(true, mainActivity => mainActivity.StartActivity(intent));
                     }
                     catch (Exception ex) { Logger.Log("Failed to start intent to share file \"" + path + "\":  " + ex.Message, LoggingLevel.Normal); }
+
                 }).Start();
         }
 
