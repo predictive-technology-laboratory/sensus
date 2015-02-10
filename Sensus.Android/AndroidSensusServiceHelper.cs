@@ -229,11 +229,13 @@ namespace Sensus.Android
                                                          input = inputEdit.Text;
                                                      })
                                                  .SetNegativeButton("Cancel", (o, e) => { })
-                                                 .SetOnDismissListener(new AndroidOnDismissListener(() =>
-                                                     {
-                                                         dialogDismissWait.Set();
-                                                     }))
                                                  .Create();
+
+                            // SetOnDismissListener was added to the AlertDialog.Builder class at API level 17. Call it here to keep us at API level 16.
+                            dialog.SetOnDismissListener(new AndroidOnDismissListener(() =>
+                                {
+                                    dialogDismissWait.Set();
+                                }));
 
                             ManualResetEvent dialogShowWait = new ManualResetEvent(false);
 
