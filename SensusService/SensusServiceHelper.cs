@@ -30,7 +30,7 @@ namespace SensusService
     /// <summary>
     /// Provides platform-independent service functionality.
     /// </summary>
-    public abstract class SensusServiceHelper
+    public abstract class SensusServiceHelper : IDisposable
     {
         #region static members
         private static SensusServiceHelper _singleton;
@@ -189,6 +189,10 @@ namespace SensusService
 
         protected SensusServiceHelper()
         {
+            lock (_staticLockObject)
+                if (_singleton != null)
+                    _singleton.Dispose();
+
             _stopped = true;
             _registeredProtocols = new List<Protocol>();
             _runningProtocolIds = new List<string>();
@@ -367,24 +371,29 @@ namespace SensusService
         {
             new Thread(() =>
                 {
-                    lock (this)
-                    {
-                        if (_stopped)
-                            return;
-
-                        _logger.Log("Stopping Sensus service.", LoggingLevel.Normal, _logTag);
-
-                        foreach (Protocol protocol in _registeredProtocols)
-                            protocol.Stop();
-
-                        _stopped = true;
-                    }
-
-                    // let others (e.g., platform-specific services and applications) know that we've stopped
-                    if (Stopped != null)
-                        Stopped(null, null);
+                    Stop();
 
                 }).Start();
+        }
+
+        public void Stop()
+        {
+            lock (this)
+            {
+                if (_stopped)
+                    return;
+
+                _logger.Log("Stopping Sensus service.", LoggingLevel.Normal, _logTag);
+
+                foreach (Protocol protocol in _registeredProtocols)
+                    protocol.Stop();
+
+                _stopped = true;
+            }
+
+            // let others (e.g., platform-specific services and applications) know that we've stopped
+            if (Stopped != null)
+                Stopped(null, null);
         }
 
         public string GetSharePath(string extension)
@@ -402,8 +411,30 @@ namespace SensusService
 
         public virtual void Destroy()
         {
-            try { _logger.Close(); }
-            catch (Exception) { }
+            Dispose();           
         }           
+
+        public void Dispose()
+        {
+            try
+            {
+                Stop();
+            }
+            catch(Exception ex)
+            {
+                Console.Out.WriteLine("Failed to stop service helper:  " + ex.Message);
+            }
+
+            try
+            {
+                _logger.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.Out.WriteLine("Failed to close logger:  " + ex.Message);
+            }
+
+            _singleton = null;
+        }
     }
 }

@@ -56,7 +56,7 @@ namespace SensusUI
 
             viewLogButton.Clicked += async (o, e) =>
                 {
-                    await Navigation.PushAsync(new ViewTextLinesPage("Log", UiBoundSensusServiceHelper.Get().Logger.Read(int.MaxValue), () => UiBoundSensusServiceHelper.Get().Logger.Clear()));
+                    await Navigation.PushAsync(new ViewTextLinesPage("Log", UiBoundSensusServiceHelper.Get(true).Logger.Read(int.MaxValue), () => UiBoundSensusServiceHelper.Get(true).Logger.Clear()));
                 };
 
             contentLayout.Children.Add(viewLogButton);
@@ -70,7 +70,7 @@ namespace SensusUI
             stopSensusButton.Clicked += async (o, e) =>
                 {
                     if (await DisplayAlert("Stop Sensus?", "Are you sure you want to stop Sensus?", "OK", "Cancel"))
-                        UiBoundSensusServiceHelper.Get().StopAsync();
+                        UiBoundSensusServiceHelper.Get(true).StopAsync();
                 };
 
             contentLayout.Children.Add(stopSensusButton);

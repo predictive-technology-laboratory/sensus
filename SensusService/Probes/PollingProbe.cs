@@ -12,6 +12,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+using Newtonsoft.Json;
+
+
 #endregion
 
 using SensusUI.UiProperties;
@@ -33,6 +36,7 @@ namespace SensusService.Probes
             set { _pollingSleepDurationMS = value; }
         }
 
+        [JsonIgnore]
         public abstract int DefaultPollingSleepDurationMS { get; }
 
         protected PollingProbe()

@@ -97,8 +97,6 @@ namespace SensusUI
                     triggerDefinitionLayout.Children.Clear();
 
                     #region datum property picker
-                    Type datumType = _selectedProbe.DatumType;
-
                     Label datumPropertyLabel = new Label
                     {
                         Text = "Property:",
@@ -106,7 +104,7 @@ namespace SensusUI
                     };
 
                     Picker datumPropertyPicker = new Picker { Title = "Select Datum Property", HorizontalOptions = LayoutOptions.FillAndExpand };
-                    PropertyInfo[] datumProperties = datumType.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(p => p.GetCustomAttributes<ProbeTriggerProperty>().Count() > 0).ToArray();
+                    PropertyInfo[] datumProperties = _selectedProbe.DatumType.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(p => p.GetCustomAttributes<ProbeTriggerProperty>().Count() > 0).ToArray();
                     foreach (PropertyInfo triggerProperty in datumProperties)
                         datumPropertyPicker.Items.Add(triggerProperty.Name);
 
@@ -367,8 +365,8 @@ namespace SensusUI
                     catch (Exception ex)
                     {
                         string message = "Failed to add trigger:  " + ex.Message;
-                        UiBoundSensusServiceHelper.Get().FlashNotificationAsync(message);
-                        UiBoundSensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal);
+                        UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync(message);
+                        UiBoundSensusServiceHelper.Get(true).Logger.Log(message, LoggingLevel.Normal);
                     }
                 };
 

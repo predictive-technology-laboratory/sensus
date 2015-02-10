@@ -196,17 +196,17 @@ namespace SensusUI
                     string path = null;
                     try
                     {
-                        path = UiBoundSensusServiceHelper.Get().GetSharePath(".sensus");
+                        path = UiBoundSensusServiceHelper.Get(true).GetSharePath(".sensus");
                         _protocol.Save(path);
                     }
                     catch (Exception ex)
                     {
-                        UiBoundSensusServiceHelper.Get().Logger.Log("Failed to save protocol to file for sharing:  " + ex.Message, LoggingLevel.Normal);
+                        UiBoundSensusServiceHelper.Get(true).Logger.Log("Failed to save protocol to file for sharing:  " + ex.Message, LoggingLevel.Normal);
                         path = null;
                     }
 
                     if (path != null)
-                        UiBoundSensusServiceHelper.Get().ShareFileAsync(path, "Sensus Protocol:  " + _protocol.Name);
+                        UiBoundSensusServiceHelper.Get(true).ShareFileAsync(path, "Sensus Protocol:  " + _protocol.Name);
                 }));
             #endregion
         }
@@ -239,8 +239,6 @@ namespace SensusUI
             base.OnDisappearing();
 
             _protocol.ProtocolRunningChanged -= _protocolRunningChangedAction;
-
-            UiBoundSensusServiceHelper.Get().Save();
         }
     }
 }

@@ -58,9 +58,9 @@ namespace Sensus.Android
             }
         }
 
-        protected override void OnCreate(Bundle bundle)
+        protected override void OnCreate(Bundle savedInstanceState)
         {
-            base.OnCreate(bundle);
+            base.OnCreate(savedInstanceState);
 
             _uiReadyWait = new ManualResetEvent(false);
             _activityResultWait = new ManualResetEvent(false);
@@ -69,7 +69,7 @@ namespace Sensus.Android
             Window.AddFlags(global::Android.Views.WindowManagerFlags.ShowWhenLocked);
             Window.AddFlags(global::Android.Views.WindowManagerFlags.TurnScreenOn);
 
-            Forms.Init(this, bundle);
+            Forms.Init(this, savedInstanceState);
 
             App app = new App();
             LoadApplication(app);
@@ -86,13 +86,13 @@ namespace Sensus.Android
                     UiBoundSensusServiceHelper.Set(e.Binder.SensusServiceHelper);
 
                     // stop activity when service stops    
-                    UiBoundSensusServiceHelper.Get().Stopped += (oo, ee) => { Finish(); };
+                    UiBoundSensusServiceHelper.Get(true).Stopped += (oo, ee) => { Finish(); };
 
                     // give service a reference to this activity
-                    (UiBoundSensusServiceHelper.Get() as AndroidSensusServiceHelper).SetMainActivity(this);
+                    (UiBoundSensusServiceHelper.Get(true) as AndroidSensusServiceHelper).SetMainActivity(this);
 
                     // display service helper properties on the main page
-                    app.SensusMainPage.DisplayServiceHelper(UiBoundSensusServiceHelper.Get());
+                    app.SensusMainPage.DisplayServiceHelper(UiBoundSensusServiceHelper.Get(true));
 
                     #region open page to view protocol if a protocol was passed to us
                     if (Intent.Data != null)
@@ -107,7 +107,7 @@ namespace Sensus.Android
                                         {
                                             try
                                             {
-                                                UiBoundSensusServiceHelper.Get().RegisterProtocol(protocol);
+                                                UiBoundSensusServiceHelper.Get(true).RegisterProtocol(protocol);
                                                 await app.MainPage.Navigation.PushAsync(new ProtocolsPage());
                                             }
                                             catch (Exception ex)

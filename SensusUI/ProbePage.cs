@@ -54,7 +54,7 @@ namespace SensusUI
 
                 loadButton.Clicked += (oo, e) =>
                     {
-                        UiBoundSensusServiceHelper.Get().PromptForAndReadTextFileAsync("Select Script File", scriptContent =>
+                        UiBoundSensusServiceHelper.Get(true).PromptForAndReadTextFileAsync("Select Script File", scriptContent =>
                             {
                                 scriptProbe.Script = Script.FromJSON(scriptContent);
                                 Device.BeginInvokeOnMainThread(() => loadButton.Text = scriptProbe.Script == null ? "Load Script" : scriptProbe.Script.Name);

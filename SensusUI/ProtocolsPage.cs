@@ -52,10 +52,10 @@ namespace SensusUI
 
             ToolbarItems.Add(new ToolbarItem("+", null, () =>
                 {
-                    UiBoundSensusServiceHelper.Get().RegisterProtocol(new Protocol("New Protocol", true));
+                    UiBoundSensusServiceHelper.Get(true).RegisterProtocol(new Protocol("New Protocol", true));
 
                     _protocolsList.ItemsSource = null;
-                    _protocolsList.ItemsSource = UiBoundSensusServiceHelper.Get().RegisteredProtocols;
+                    _protocolsList.ItemsSource = UiBoundSensusServiceHelper.Get(true).RegisteredProtocols;
                 }));
 
             ToolbarItems.Add(new ToolbarItem("-", null, async () =>
@@ -68,10 +68,10 @@ namespace SensusUI
                         {
                             protocolToRemove.StopAsync(() =>
                                 {
-                                    UiBoundSensusServiceHelper.Get().UnregisterProtocol(protocolToRemove);
+                                    UiBoundSensusServiceHelper.Get(true).UnregisterProtocol(protocolToRemove);
 
                                     try { Directory.Delete(protocolToRemove.StorageDirectory, true); }
-                                    catch (Exception ex) { UiBoundSensusServiceHelper.Get().Logger.Log("Failed to delete protocol storage directory \"" + protocolToRemove.StorageDirectory + "\":  " + ex.Message, LoggingLevel.Normal); }
+                                    catch (Exception ex) { UiBoundSensusServiceHelper.Get(true).Logger.Log("Failed to delete protocol storage directory \"" + protocolToRemove.StorageDirectory + "\":  " + ex.Message, LoggingLevel.Normal); }
 
                                     Device.BeginInvokeOnMainThread(() =>
                                         {
@@ -88,7 +88,7 @@ namespace SensusUI
         public void Bind()
         {
             _protocolsList.ItemsSource = null;
-            _protocolsList.ItemsSource = UiBoundSensusServiceHelper.Get().RegisteredProtocols;
+            _protocolsList.ItemsSource = UiBoundSensusServiceHelper.Get(true).RegisteredProtocols;
         }
     }
 }

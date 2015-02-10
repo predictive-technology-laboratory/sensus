@@ -12,6 +12,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+using SensusService;
+
+
 #endregion
 
 using Xamarin.Forms;
@@ -32,6 +35,15 @@ namespace SensusUI
             _sensusMainPage = new SensusMainPage();
 
             MainPage = new NavigationPage(_sensusMainPage);
+        }
+
+        protected override void OnSleep()
+        {
+            base.OnSleep();
+
+            SensusServiceHelper serviceHelper = UiBoundSensusServiceHelper.Get(false);
+            if (serviceHelper != null)
+                serviceHelper.Save();
         }
     }
 }

@@ -71,7 +71,7 @@ namespace SensusUI
                     {
                         try
                         {
-                            string sharePath = UiBoundSensusServiceHelper.Get().GetSharePath(".json");
+                            string sharePath = UiBoundSensusServiceHelper.Get(true).GetSharePath(".json");
                             StreamWriter shareFile = new StreamWriter(sharePath);
                             LocalDataStore localDataStore = dataStore as LocalDataStore;
                             foreach (Datum datum in localDataStore.GetDataForRemoteDataStore())

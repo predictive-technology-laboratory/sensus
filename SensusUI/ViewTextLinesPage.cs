@@ -45,7 +45,7 @@ namespace SensusUI
                     string path = null;
                     try
                     {
-                        path = UiBoundSensusServiceHelper.Get().GetSharePath(".txt");
+                        path = UiBoundSensusServiceHelper.Get(true).GetSharePath(".txt");
                         using (StreamWriter file = new StreamWriter(path))
                         {
                             foreach (string line in lines)
@@ -56,12 +56,12 @@ namespace SensusUI
                     }
                     catch (Exception ex)
                     {
-                        UiBoundSensusServiceHelper.Get().Logger.Log("Failed to write lines to temp file for sharing:  " + ex.Message, SensusService.LoggingLevel.Normal);
+                        UiBoundSensusServiceHelper.Get(true).Logger.Log("Failed to write lines to temp file for sharing:  " + ex.Message, SensusService.LoggingLevel.Normal);
                         path = null;
                     }
 
                     if (path != null)
-                        UiBoundSensusServiceHelper.Get().ShareFileAsync(path, title + ":  " + Path.GetFileName(path));
+                        UiBoundSensusServiceHelper.Get(true).ShareFileAsync(path, title + ":  " + Path.GetFileName(path));
                 };
 
             Button clearButton = new Button
