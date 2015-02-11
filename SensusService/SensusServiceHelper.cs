@@ -45,7 +45,6 @@ namespace SensusService
                 ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
                 TypeNameHandling = TypeNameHandling.All,
                 ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-                TypeNameAssemblyFormat = 
             };
 
         public static SensusServiceHelper Get()
@@ -89,7 +88,7 @@ namespace SensusService
 
             try
             {
-                sensusServiceHelper = JsonConvert.DeserializeObject<T>(File.ReadAllText(_serializationPath));
+                sensusServiceHelper = JsonConvert.DeserializeObject<T>(File.ReadAllText(_serializationPath), _serializationSettings);
                 sensusServiceHelper.Initialize(geolocator);
                 sensusServiceHelper.Logger.Log("Deserialized service helper with " + sensusServiceHelper.RegisteredProtocols.Count + " protocols.", LoggingLevel.Normal, _logTag);  
             }
