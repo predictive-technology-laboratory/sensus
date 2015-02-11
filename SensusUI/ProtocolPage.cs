@@ -229,8 +229,9 @@ namespace SensusUI
                                                  .Cast<DataStore>()
                                                  .ToList();
 
-            string selected = await DisplayActionSheet("Select " + (local ? "Local" : "Remote") + " Data Store", "Cancel", null, dataStores.Select((d, i) => (i + 1) + ") " + d.Name).ToArray());
-            if (selected != null)
+            string cancelButtonName = "Cancel";
+            string selected = await DisplayActionSheet("Select " + (local ? "Local" : "Remote") + " Data Store", cancelButtonName, null, dataStores.Select((d, i) => (i + 1) + ") " + d.Name).ToArray());
+            if (!string.IsNullOrWhiteSpace(selected) && selected != cancelButtonName)
                 await Navigation.PushAsync(new DataStorePage(_protocol, dataStores[int.Parse(selected.Substring(0, selected.IndexOf(")"))) - 1], local));
         }
 

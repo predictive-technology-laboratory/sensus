@@ -28,6 +28,7 @@ namespace SensusService.Probes
     {
         private int _pollingSleepDurationMS;
         private Thread _pollThread;
+        private bool _isPolling;
 
         [EntryIntegerUiProperty("Sleep Duration:", true, 5)]
         public virtual int PollingSleepDurationMS
@@ -42,6 +43,7 @@ namespace SensusService.Probes
         protected PollingProbe()
         {
             _pollingSleepDurationMS = DefaultPollingSleepDurationMS;
+            _isPolling = false;
         }
 
         /// <summary>
@@ -72,6 +74,8 @@ namespace SensusService.Probes
                             // if we're still running, execute a poll.
                             if (Running)
                             {
+                                _isPolling = true;
+
                                 IEnumerable<Datum> data = null;
                                 try { data = Poll(); }
                                 catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to poll probe \"" + GetType().FullName + "\":  " + ex.Message, LoggingLevel.Normal); }
@@ -80,6 +84,8 @@ namespace SensusService.Probes
                                     foreach (Datum datum in data)
                                         try { StoreDatum(datum); }
                                         catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to store datum in probe \"" + GetType().FullName + "\":  " + ex.Message, LoggingLevel.Normal); }
+
+                                _isPolling = false;
                             }
 
                             msToSleep = _pollingSleepDurationMS;
@@ -116,13 +122,13 @@ namespace SensusService.Probes
 
             if (Running)
             {
-                DateTimeOffset mostRecentReadingTimestamp = DateTimeOffset.MinValue;
+                DateTimeOffset mostRecentDatumTimestamp = DateTimeOffset.MinValue;
                 if (MostRecentDatum != null)
-                    mostRecentReadingTimestamp = MostRecentDatum.Timestamp;
+                    mostRecentDatumTimestamp = MostRecentDatum.Timestamp;
 
-                double msElapsedSinceLastPoll = (DateTimeOffset.UtcNow - mostRecentReadingTimestamp).TotalMilliseconds;
-                if (msElapsedSinceLastPoll > _pollingSleepDurationMS)
-                    warning += "Probe \"" + GetType().FullName + "\" has not taken a reading in " + msElapsedSinceLastPoll + "ms (polling delay = " + _pollingSleepDurationMS + "ms)." + Environment.NewLine;
+                double msElapsedSinceLastDatum = (DateTimeOffset.UtcNow - mostRecentDatumTimestamp).TotalMilliseconds;
+                if (!_isPolling && msElapsedSinceLastDatum > _pollingSleepDurationMS)
+                    warning += "Probe \"" + GetType().FullName + "\" has not taken a reading in " + msElapsedSinceLastDatum + "ms (polling delay = " + _pollingSleepDurationMS + "ms)." + Environment.NewLine;
             }
 
             return restart;

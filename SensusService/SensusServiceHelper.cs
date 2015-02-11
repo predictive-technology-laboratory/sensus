@@ -359,8 +359,11 @@ namespace SensusService
         public void UnregisterProtocol(Protocol protocol)
         {
             lock (this)
-                if (!_stopped && _registeredProtocols.Remove(protocol))
-                    Save();
+            {
+                protocol.Stop();
+                _registeredProtocols.Remove(protocol);
+                Save();
+            }
         }
 
         /// <summary>
