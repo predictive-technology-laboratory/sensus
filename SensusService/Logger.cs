@@ -20,6 +20,8 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 
+// TODO:  All calls into the logger should pass one or more log tags.
+
 namespace SensusService
 {
     /// <summary>

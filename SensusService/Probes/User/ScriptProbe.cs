@@ -14,6 +14,8 @@
 // limitations under the License.
 #endregion
 
+// TODO:  Pull out triggering aspects of this class into an abstract "triggered probe", one sub-type of which can trigger an activity.
+
 using Newtonsoft.Json;
 using SensusUI.UiProperties;
 using System;

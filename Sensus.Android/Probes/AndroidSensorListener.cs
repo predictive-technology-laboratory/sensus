@@ -14,9 +14,9 @@
 // limitations under the License.
 #endregion
 
-using Android.Hardware;
-using SensusService.Exceptions;
+using SensusService;
 using System;
+using Android.Hardware;
 
 namespace Sensus.Android.Probes
 {
@@ -41,7 +41,7 @@ namespace Sensus.Android.Probes
 
         public void Initialize()
         {
-            _sensorManager = (AndroidSensusServiceHelper.Get() as AndroidSensusServiceHelper).Service.GetSystemService(global::Android.Content.Context.SensorService) as SensorManager;
+            _sensorManager = (SensusServiceHelper.Get() as AndroidSensusServiceHelper).Service.GetSystemService(global::Android.Content.Context.SensorService) as SensorManager;
 
             _sensor = _sensorManager.GetDefaultSensor(_sensorType);
             if (_sensor == null)

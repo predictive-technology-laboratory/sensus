@@ -29,8 +29,9 @@ using Android.Support.V4.Content;
 using Android.Widget;
 using SensusService;
 using Xamarin;
-using Xamarin.Geolocation;
 using Newtonsoft.Json;
+
+// TODO:  Increase backwards compatibility.
 
 namespace Sensus.Android
 {
