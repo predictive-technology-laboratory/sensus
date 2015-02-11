@@ -106,7 +106,7 @@ namespace SensusService.Probes.Location
 
         private GpsReceiver()
         {
-            _desiredAccuracyMeters = 50;
+            _desiredAccuracyMeters = 10;
             _sharedReadingIsComing = false;
             _sharedReadingWait = new ManualResetEvent(false);
             _sharedReading = null;
