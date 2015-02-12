@@ -15,7 +15,6 @@
 #endregion
 
 using Android.OS;
-using SensusService;
 
 namespace Sensus.Android
 {

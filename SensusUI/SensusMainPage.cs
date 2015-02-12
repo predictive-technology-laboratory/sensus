@@ -16,7 +16,6 @@
 
 using SensusService;
 using SensusUI.UiProperties;
-using System;
 using Xamarin.Forms;
 
 namespace SensusUI
@@ -24,12 +23,9 @@ namespace SensusUI
     /// <summary>
     /// Main Sensus page. First thing the user sees.
     /// </summary>
-    public class MainPage : ContentPage
+    public class SensusMainPage : ContentPage
     {
-        public static event EventHandler ViewProtocolsTapped;
-        public static event EventHandler ViewLogTapped;
-
-        public MainPage()
+        public SensusMainPage()
         {
             Title = "Sensus";
 
@@ -42,12 +38,12 @@ namespace SensusUI
             Button viewProtocolsButton = new Button
             {
                 Text = "View Protocols",
-                Font = Font.SystemFontOfSize(20)
+                FontSize = 20
             };
 
-            viewProtocolsButton.Clicked += (o, e) =>
+            viewProtocolsButton.Clicked += async (o, e) =>
                 {
-                    ViewProtocolsTapped(o, e);
+                    await Navigation.PushAsync(new ProtocolsPage());
                 };
 
             contentLayout.Children.Add(viewProtocolsButton);
@@ -55,12 +51,12 @@ namespace SensusUI
             Button viewLogButton = new Button
             {
                 Text = "View Log",
-                Font = Font.SystemFontOfSize(20)
+                FontSize = 20
             };
 
-            viewLogButton.Clicked += (o, e) =>
+            viewLogButton.Clicked += async (o, e) =>
                 {
-                    ViewLogTapped(o, e);
+                    await Navigation.PushAsync(new ViewTextLinesPage("Log", UiBoundSensusServiceHelper.Get(true).Logger.Read(int.MaxValue), () => UiBoundSensusServiceHelper.Get(true).Logger.Clear()));
                 };
 
             contentLayout.Children.Add(viewLogButton);
@@ -68,13 +64,13 @@ namespace SensusUI
             Button stopSensusButton = new Button
             {
                 Text = "Stop Sensus",
-                Font = Font.SystemFontOfSize(20)
+                FontSize = 20
             };
 
             stopSensusButton.Clicked += async (o, e) =>
                 {
                     if (await DisplayAlert("Stop Sensus?", "Are you sure you want to stop Sensus?", "OK", "Cancel"))
-                        await UiBoundSensusServiceHelper.Get().StopAsync();
+                        UiBoundSensusServiceHelper.Get(true).StopAsync();
                 };
 
             contentLayout.Children.Add(stopSensusButton);

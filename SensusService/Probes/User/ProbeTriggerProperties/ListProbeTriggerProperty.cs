@@ -14,8 +14,6 @@
 // limitations under the License.
 #endregion
 
-using System.Collections.Generic;
-
 namespace SensusService.Probes.User.ProbeTriggerProperties
 {
     public class ListProbeTriggerProperty : ProbeTriggerProperty

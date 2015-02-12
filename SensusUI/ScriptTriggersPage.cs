@@ -15,7 +15,6 @@
 #endregion
 
 using SensusService.Probes.User;
-using System;
 using System.Linq;
 using Xamarin.Forms;
 
@@ -23,8 +22,6 @@ namespace SensusUI
 {
     public class ScriptTriggersPage : ContentPage
     {
-        public static event EventHandler<ScriptProbe> AddTriggerTapped;
-
         public ScriptTriggersPage(ScriptProbe probe)
         {
             Title = probe.DisplayName + "'s Triggers";
@@ -38,12 +35,12 @@ namespace SensusUI
 
             Content = triggerList;
 
-            ToolbarItems.Add(new ToolbarItem("+", null, () =>
+            ToolbarItems.Add(new ToolbarItem("+", null, async () =>
                 {
                     if (scriptProbe.Protocol.Probes.Where(p => p != scriptProbe && p.Enabled).Count() > 0)
-                        AddTriggerTapped(this, scriptProbe);
+                        await Navigation.PushAsync(new AddScriptProbeTriggerPage(scriptProbe));
                     else
-                        UiBoundSensusServiceHelper.Get().FlashNotificationAsync("You must enable probes before adding triggers.");
+                        UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("You must enable probes before adding triggers.");
                 }));
 
             ToolbarItems.Add(new ToolbarItem("-", null, async () =>

@@ -17,9 +17,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+
+// TODO:  All calls into the logger should pass one or more log tags.
 
 namespace SensusService
 {

@@ -55,7 +55,13 @@ namespace Sensus.Android.Probes.Communication
                 string protocol = cursor.GetString(cursor.GetColumnIndex("protocol"));
                 int type = cursor.GetInt(cursor.GetColumnIndex("type"));
 
-                if (protocol != null || type != (int)SmsMessageType.Sent)
+                #if __ANDROID_19__
+                int sentMessageType = (int)SmsMessageType.Sent;
+                #else
+                int sentMessageType = 2;
+                #endif
+
+                if (protocol != null || type != sentMessageType)
                     return;
 
                 string to = cursor.GetString(cursor.GetColumnIndex("address"));

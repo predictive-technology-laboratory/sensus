@@ -16,21 +16,19 @@
 
 using SensusService;
 using SensusService.DataStores;
-using SensusService.Exceptions;
+using SensusService.DataStores.Local;
+using SensusService.DataStores.Remote;
 using SensusUI.UiProperties;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Xamarin.Forms;
 
 namespace SensusUI
 {
     public class ProtocolPage : ContentPage
     {
-        public static event EventHandler<ProtocolDataStoreEventArgs> EditDataStoreTapped;
-        public static event EventHandler<ProtocolDataStoreEventArgs> CreateDataStoreTapped;
-        public static event EventHandler<Protocol> ViewProbesTapped;
-        public static event EventHandler<ProtocolReport> DisplayProtocolReport;
-
         private Protocol _protocol;
         private EventHandler<bool> _protocolRunningChangedAction;
 
@@ -46,7 +44,7 @@ namespace SensusUI
             Label onOffLabel = new Label
             {
                 Text = "Status:",
-                Font = Font.SystemFontOfSize(20),
+                FontSize = 20,
                 HorizontalOptions = LayoutOptions.Start
             };
 
@@ -71,32 +69,26 @@ namespace SensusUI
             Button editLocalDataStoreButton = new Button
             {
                 Text = "Local Data Store",
-                Font = Font.SystemFontOfSize(20),
+                FontSize = 20,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 IsEnabled = !_protocol.Running
             };
 
-            editLocalDataStoreButton.Clicked += (o, e) =>
+            editLocalDataStoreButton.Clicked += async (o, e) =>
                 {
-                    DataStore copy = null;
                     if (_protocol.LocalDataStore != null)
-                        copy = _protocol.LocalDataStore.Copy();
-
-                    EditDataStoreTapped(this, new ProtocolDataStoreEventArgs { Protocol = _protocol, DataStore = copy, Local = true });
+                        await Navigation.PushAsync(new DataStorePage(_protocol, _protocol.LocalDataStore.Copy(), true));
                 };
 
             Button createLocalDataStoreButton = new Button
             {
                 Text = "+",
-                Font = Font.SystemFontOfSize(20),
+                FontSize = 20,
                 HorizontalOptions = LayoutOptions.End,
                 IsEnabled = !_protocol.Running
             };
 
-            createLocalDataStoreButton.Clicked += (o, e) =>
-                {
-                    CreateDataStoreTapped(this, new ProtocolDataStoreEventArgs { Protocol = _protocol, Local = true });
-                };
+            createLocalDataStoreButton.Clicked += (o, e) => CreateDataStore(true);
 
             StackLayout localDataStoreStack = new StackLayout
             {
@@ -110,32 +102,26 @@ namespace SensusUI
             Button editRemoteDataStoreButton = new Button
             {
                 Text = "Remote Data Store",
-                Font = Font.SystemFontOfSize(20),
+                FontSize = 20,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 IsEnabled = !_protocol.Running
             };
 
-            editRemoteDataStoreButton.Clicked += (o, e) =>
+            editRemoteDataStoreButton.Clicked += async (o, e) =>
                 {
-                    DataStore copy = null;
                     if (_protocol.RemoteDataStore != null)
-                        copy = _protocol.RemoteDataStore.Copy();
-
-                    EditDataStoreTapped(this, new ProtocolDataStoreEventArgs { Protocol = _protocol, DataStore = copy, Local = false });
+                        await Navigation.PushAsync(new DataStorePage(_protocol, _protocol.RemoteDataStore.Copy(), false));
                 };
 
             Button createRemoteDataStoreButton = new Button
             {
                 Text = "+",
-                Font = Font.SystemFontOfSize(20),
+                FontSize = 20,
                 HorizontalOptions = LayoutOptions.End,
                 IsEnabled = !_protocol.Running
             };
 
-            createRemoteDataStoreButton.Clicked += (o, e) =>
-                {
-                    CreateDataStoreTapped(this, new ProtocolDataStoreEventArgs { Protocol = _protocol, Local = false });
-                };
+            createRemoteDataStoreButton.Clicked += (o, e) => CreateDataStore(false);
 
             StackLayout remoteDataStoreStack = new StackLayout
             {
@@ -151,12 +137,12 @@ namespace SensusUI
             Button viewProbesButton = new Button
             {
                 Text = "Probes",
-                Font = Font.SystemFontOfSize(20)
+                FontSize = 20
             };
 
-            viewProbesButton.Clicked += (o, e) =>
+            viewProbesButton.Clicked += async (o, e) =>
                 {
-                    ViewProbesTapped(o, _protocol);
+                    await Navigation.PushAsync(new ProbesPage(_protocol));
                 };
 
             views.Add(viewProbesButton);
@@ -190,13 +176,17 @@ namespace SensusUI
                 {
                     if (SensusServiceHelper.Get().ProtocolShouldBeRunning(_protocol))
                     {
-                        await _protocol.PingAsync();
-
-                        if (_protocol.MostRecentReport == null)
-                            await DisplayAlert("No Report", "Ping failed.", "OK");
-                        else
-                            DisplayProtocolReport(this, _protocol.MostRecentReport);
-                    }
+                        _protocol.PingAsync( () =>
+                            {
+								Device.BeginInvokeOnMainThread(async () =>
+									{
+										if (_protocol.MostRecentReport == null)
+											await DisplayAlert("No Report", "Ping failed.", "OK");
+										else
+											await Navigation.PushAsync(new ViewTextLinesPage("Protocol Report", _protocol.MostRecentReport.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList(), null));
+									});
+							});
+					}
                     else
                         await DisplayAlert("Protocol Not Running", "Cannot ping protocol when it is not running.", "OK");
                 }));
@@ -206,17 +196,17 @@ namespace SensusUI
                     string path = null;
                     try
                     {
-                        path = UiBoundSensusServiceHelper.Get().GetSharePath(".sensus");
+                        path = UiBoundSensusServiceHelper.Get(true).GetSharePath(".sensus");
                         _protocol.Save(path);
                     }
                     catch (Exception ex)
                     {
-                        UiBoundSensusServiceHelper.Get().Logger.Log("Failed to save protocol to file for sharing:  " + ex.Message, LoggingLevel.Normal);
+                        UiBoundSensusServiceHelper.Get(true).Logger.Log("Failed to save protocol to file for sharing:  " + ex.Message, LoggingLevel.Normal);
                         path = null;
                     }
 
                     if (path != null)
-                        UiBoundSensusServiceHelper.Get().ShareFileAsync(path, "Sensus Protocol:  " + _protocol.Name);
+                        UiBoundSensusServiceHelper.Get(true).ShareFileAsync(path, "Sensus Protocol:  " + _protocol.Name);
                 }));
             #endregion
         }
@@ -228,13 +218,28 @@ namespace SensusUI
             _protocol.ProtocolRunningChanged += _protocolRunningChangedAction;
         }
 
+        private async void CreateDataStore(bool local)
+        {
+            Type dataStoreType = local ? typeof(LocalDataStore) : typeof(RemoteDataStore);
+
+            List<DataStore> dataStores = Assembly.GetExecutingAssembly()
+                                                 .GetTypes()
+                                                 .Where(t => !t.IsAbstract && t.IsSubclassOf(dataStoreType))
+                                                 .Select(t => Activator.CreateInstance(t))
+                                                 .Cast<DataStore>()
+                                                 .ToList();
+
+            string cancelButtonName = "Cancel";
+            string selected = await DisplayActionSheet("Select " + (local ? "Local" : "Remote") + " Data Store", cancelButtonName, null, dataStores.Select((d, i) => (i + 1) + ") " + d.Name).ToArray());
+            if (!string.IsNullOrWhiteSpace(selected) && selected != cancelButtonName)
+                await Navigation.PushAsync(new DataStorePage(_protocol, dataStores[int.Parse(selected.Substring(0, selected.IndexOf(")"))) - 1], local));
+        }
+
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
 
             _protocol.ProtocolRunningChanged -= _protocolRunningChangedAction;
-
-            UiBoundSensusServiceHelper.Get().SaveRegisteredProtocols();
         }
     }
 }

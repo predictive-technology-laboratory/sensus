@@ -19,13 +19,11 @@ using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using SensusService;
-using SensusService.Exceptions;
 using SensusUI;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 
@@ -60,9 +58,9 @@ namespace Sensus.Android
             }
         }
 
-        protected override void OnCreate(Bundle bundle)
+        protected override void OnCreate(Bundle savedInstanceState)
         {
-            base.OnCreate(bundle);
+            base.OnCreate(savedInstanceState);
 
             _uiReadyWait = new ManualResetEvent(false);
             _activityResultWait = new ManualResetEvent(false);
@@ -71,7 +69,7 @@ namespace Sensus.Android
             Window.AddFlags(global::Android.Views.WindowManagerFlags.ShowWhenLocked);
             Window.AddFlags(global::Android.Views.WindowManagerFlags.TurnScreenOn);
 
-            Forms.Init(this, bundle);
+            Forms.Init(this, savedInstanceState);
 
             App app = new App();
             LoadApplication(app);
@@ -82,59 +80,64 @@ namespace Sensus.Android
 
             // bind UI to the service
             _serviceConnection = new AndroidSensusServiceConnection();
-            _serviceConnection.ServiceConnected += async (o, e) =>
+            _serviceConnection.ServiceConnected += (o, e) =>
                 {
                     // get reference to service helper for use within the UI
-                    UiBoundSensusServiceHelper.Set(e.Binder.SensusServiceHelper);  
+                    UiBoundSensusServiceHelper.Set(e.Binder.SensusServiceHelper);
 
                     // stop activity when service stops    
-                    UiBoundSensusServiceHelper.Get().Stopped += (oo, ee) => { Finish(); };  
+                    UiBoundSensusServiceHelper.Get(true).Stopped += (oo, ee) => { Finish(); };
 
                     // give service a reference to this activity
-                    (UiBoundSensusServiceHelper.Get() as AndroidSensusServiceHelper).SetMainActivity(this);  
+                    (UiBoundSensusServiceHelper.Get(true) as AndroidSensusServiceHelper).SetMainActivity(this);
 
                     // display service helper properties on the main page
-                    app.NavigationPage.MainPage.DisplayServiceHelper(UiBoundSensusServiceHelper.Get());
+                    app.SensusMainPage.DisplayServiceHelper(UiBoundSensusServiceHelper.Get(true));
 
                     #region open page to view protocol if a protocol was passed to us
                     if (Intent.Data != null)
                     {
                         global::Android.Net.Uri dataURI = Intent.Data;
 
-                        Protocol protocol = null;
+                        Action<Protocol> protocolDeserializedCallback = protocol =>
+                            {                                
+                                if (protocol != null)
+                                {
+                                    Device.BeginInvokeOnMainThread(async () =>
+                                        {
+                                            try
+                                            {
+                                                UiBoundSensusServiceHelper.Get(true).RegisterProtocol(protocol);
+                                                await app.MainPage.Navigation.PushAsync(new ProtocolsPage());
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                string message = "Failed to register/display new protocol:  " + ex.Message;
+                                                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal);
+                                                new AlertDialog.Builder(this).SetTitle("Failed to show protocol").SetMessage(message).Show();
+                                            }
+                                        });
+                                }
+                            };
+
                         try
                         {
                             if (Intent.Scheme == "http" || Intent.Scheme == "https")
-                                protocol = await Protocol.GetFromWebURI(new Uri(dataURI.ToString()));
+                                Protocol.FromWebUriAsync(new Uri(dataURI.ToString()), protocolDeserializedCallback);
                             else if (Intent.Scheme == "content" || Intent.Scheme == "file")
                             {
                                 Stream stream = null;
 
                                 try { stream = ContentResolver.OpenInputStream(dataURI); }
-                                catch (Exception ex) { throw new SensusException("Failed to open local protocol file URI \"" + dataURI + "\":  " + ex.Message); }
+                                catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to open local protocol file URI \"" + dataURI + "\":  " + ex.Message, LoggingLevel.Normal); }
 
                                 if (stream != null)
-                                    protocol = Protocol.GetFromStream(stream);
+                                    Protocol.FromStreamAsync(stream, protocolDeserializedCallback);
                             }
                             else
-                                throw new SensusException("Sensus didn't know what to do with URI \"" + dataURI);
+                                SensusServiceHelper.Get().Logger.Log("Sensus didn't know what to do with URI \"" + dataURI + "\".", LoggingLevel.Normal);
                         }
                         catch (Exception ex) { new AlertDialog.Builder(this).SetTitle("Failed to get protocol").SetMessage(ex.Message).Show(); }
-
-                        if (protocol != null)
-                        {
-                            try
-                            {
-                                UiBoundSensusServiceHelper.Get().RegisterProtocol(protocol);
-                                await app.NavigationPage.PushAsync(new ProtocolPage(protocol));
-                            }
-                            catch (Exception ex)
-                            {
-                                string message = "Failed to register/display new protocol:  " + ex.Message;
-                                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal);
-                                new AlertDialog.Builder(this).SetTitle("Failed to show protocol").SetMessage(message).Show();
-                            }
-                        }
                     }
                     #endregion
                 };
@@ -166,9 +169,9 @@ namespace Sensus.Android
             OnWindowFocusChanged(false);
         }
 
-        public Task<Tuple<Result, Intent>> GetActivityResultAsync(Intent intent, AndroidActivityResultRequestCode requestCode)
+        public void GetActivityResultAsync(Intent intent, AndroidActivityResultRequestCode requestCode, Action<Tuple<Result, Intent>> callback)
         {
-            return Task.Run<Tuple<Result, Intent>>(() =>
+            new Thread(() =>
                 {
                     lock (this)
                     {
@@ -179,9 +182,9 @@ namespace Sensus.Android
                         StartActivityForResult(intent, (int)requestCode);
                         _activityResultWait.WaitOne();
 
-                        return _activityResult;
+                        callback(_activityResult);
                     }
-                });
+                }).Start();
         }
 
         protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)

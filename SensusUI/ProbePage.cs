@@ -17,8 +17,6 @@
 using SensusService.Probes;
 using SensusService.Probes.User;
 using SensusUI.UiProperties;
-using System;
-using System.Linq;
 using Xamarin.Forms;
 
 namespace SensusUI
@@ -28,8 +26,6 @@ namespace SensusUI
     /// </summary>
     public class ProbePage : ContentPage
     {
-        public static event EventHandler<ScriptProbe> ViewScriptTriggersTapped;
-
         public ProbePage(Probe probe)
         {
             Title = "Probe";
@@ -50,34 +46,34 @@ namespace SensusUI
                 Button loadButton = new Button
                 {
                     Text = scriptProbe.Script == null ? "Load Script" : scriptProbe.Script.Name,
-                    Font = Font.SystemFontOfSize(20),
+                    FontSize = 20,
                     HorizontalOptions = LayoutOptions.FillAndExpand
                 };
 
-                loadButton.Clicked += async (oo, e) =>
+                contentLayout.Children.Add(loadButton);
+
+                loadButton.Clicked += (oo, e) =>
                     {
-                        scriptProbe.Script = Script.FromJSON(await UiBoundSensusServiceHelper.Get().PromptForAndReadTextFileAsync("Select Script File"));
-                        loadButton.Text = scriptProbe.Script == null ? "Load Script" : scriptProbe.Script.Name;
+                        UiBoundSensusServiceHelper.Get(true).PromptForAndReadTextFileAsync("Select Script File", scriptContent =>
+                            {
+                                scriptProbe.Script = Script.FromJSON(scriptContent);
+                                Device.BeginInvokeOnMainThread(() => loadButton.Text = scriptProbe.Script == null ? "Load Script" : scriptProbe.Script.Name);
+                            });
                     };
 
                 Button viewScriptTriggersButton = new Button
                 {
                     Text = "View Triggers",
-                    Font = Font.SystemFontOfSize(20),
+                    FontSize = 20,
                     HorizontalOptions = LayoutOptions.FillAndExpand
                 };
 
-                viewScriptTriggersButton.Clicked += (o, e) =>
-                    {
-                        ViewScriptTriggersTapped(o, scriptProbe);
-                    };
+                contentLayout.Children.Add(viewScriptTriggersButton);
 
-                contentLayout.Children.Add(new StackLayout
-                {
-                    Orientation = StackOrientation.Horizontal,
-                    HorizontalOptions = LayoutOptions.FillAndExpand,
-                    Children = { loadButton, viewScriptTriggersButton }
-                });
+                viewScriptTriggersButton.Clicked += async (o, e) =>
+                    {
+                        await Navigation.PushAsync(new ScriptTriggersPage(scriptProbe));
+                    };
             }
 
             Content = new ScrollView

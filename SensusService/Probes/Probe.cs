@@ -18,11 +18,9 @@ using Newtonsoft.Json;
 using SensusUI.UiProperties;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace SensusService.Probes
 {
@@ -117,8 +115,10 @@ namespace SensusService.Probes
             set { _storeData = value; }
         }
 
+        [JsonIgnore]
         protected abstract string DefaultDisplayName { get; }
 
+        [JsonIgnore]
         public abstract Type DatumType { get; }
 
         protected Probe()
@@ -136,13 +136,14 @@ namespace SensusService.Probes
             _collectedData = new HashSet<Datum>();
         }
 
-        protected Task StartAsync()
+        protected void StartAsync()
         {
-            return Task.Run(() =>
+            new Thread(() =>
                 {
                     try { Start(); }
                     catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to start probe \"" + GetType().FullName + "\":" + ex.Message, LoggingLevel.Normal); }
-                });
+
+                }).Start();
         }
 
         /// <summary>
@@ -170,7 +171,7 @@ namespace SensusService.Probes
                 if (_storeData)
                     lock (_collectedData)
                     {
-                        SensusServiceHelper.Get().Logger.Log("Storing datum in probe cache:  " + datum, LoggingLevel.Debug);
+                        SensusServiceHelper.Get().Logger.Log("Storing datum in probe cache:  " + datum, LoggingLevel.Verbose);
                         _collectedData.Add(datum);
                     }
 
@@ -197,13 +198,14 @@ namespace SensusService.Probes
                 }
         }
 
-        protected Task StopAsync()
+        protected void StopAsync()
         {
-            return Task.Run(() =>
+            new Thread(() =>
                 {
                     try { Stop(); }
                     catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to stop probe \"" + GetType().FullName + "\":" + ex.Message, LoggingLevel.Normal); }
-                });
+
+                }).Start();
         }
 
         /// <summary>

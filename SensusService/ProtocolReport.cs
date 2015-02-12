@@ -14,10 +14,7 @@
 // limitations under the License.
 #endregion
 
-using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SensusService
 {

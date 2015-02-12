@@ -17,8 +17,6 @@
 using Newtonsoft.Json;
 using SensusService.Probes.User.ProbeTriggerProperties;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SensusService.Probes.Context
 {

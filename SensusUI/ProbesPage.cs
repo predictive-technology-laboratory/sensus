@@ -51,8 +51,6 @@ namespace SensusUI
             }
         }
 
-        public static event EventHandler<Probe> ProbeTapped;
-
         private Protocol _protocol;
         private ListView _probesList;
 
@@ -65,10 +63,12 @@ namespace SensusUI
             _probesList.ItemTemplate.SetBinding(TextCell.TextProperty, "DisplayName");
             _probesList.ItemTemplate.SetBinding(TextCell.TextColorProperty, new Binding("Enabled", converter: new ProbeTextColorValueConverter()));
             _probesList.ItemTemplate.SetBinding(TextCell.DetailProperty, new Binding("MostRecentDatum", converter: new ProbeDetailValueConverter()));
-            _probesList.ItemTapped += (o, e) =>
+            _probesList.ItemTapped += async (o, e) =>
                 {
+                    ProbePage probePage = new ProbePage(e.Item as Probe);
+                    probePage.Disappearing += (oo, ee) => { Bind(); };  // rebind the probes page to pick up changes in the probe
+                    await Navigation.PushAsync(probePage);
                     _probesList.SelectedItem = null;
-                    ProbeTapped(this, e.Item as Probe);
                 };
 
             Bind();

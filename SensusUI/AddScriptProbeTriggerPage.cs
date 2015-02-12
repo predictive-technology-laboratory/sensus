@@ -28,8 +28,6 @@ namespace SensusUI
 {
     public class AddScriptProbeTriggerPage : ContentPage
     {
-        public static event EventHandler TriggerAdded;
-
         private ScriptProbe _scriptProbe;
         private Probe _selectedProbe;
         private PropertyInfo _selectedDatumProperty;
@@ -52,7 +50,7 @@ namespace SensusUI
                 Content = new Label
                 {
                     Text = "No enabled probes. Please enable them before creating triggers.",
-                    Font = Font.SystemFontOfSize(30)
+                    FontSize = 20
                 };
 
                 return;
@@ -67,7 +65,7 @@ namespace SensusUI
             Label probeLabel = new Label
             {
                 Text = "Probe:",
-                Font = Font.SystemFontOfSize(20)
+                FontSize = 20
             };
 
             Picker probePicker = new Picker { Title = "Select Probe", HorizontalOptions = LayoutOptions.FillAndExpand };
@@ -99,16 +97,14 @@ namespace SensusUI
                     triggerDefinitionLayout.Children.Clear();
 
                     #region datum property picker
-                    Type datumType = _selectedProbe.DatumType;
-
                     Label datumPropertyLabel = new Label
                     {
                         Text = "Property:",
-                        Font = Font.SystemFontOfSize(20)
+                        FontSize = 20
                     };
 
                     Picker datumPropertyPicker = new Picker { Title = "Select Datum Property", HorizontalOptions = LayoutOptions.FillAndExpand };
-                    PropertyInfo[] datumProperties = datumType.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(p => p.GetCustomAttributes<ProbeTriggerProperty>().Count() > 0).ToArray();
+                    PropertyInfo[] datumProperties = _selectedProbe.DatumType.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(p => p.GetCustomAttributes<ProbeTriggerProperty>().Count() > 0).ToArray();
                     foreach (PropertyInfo triggerProperty in datumProperties)
                         datumPropertyPicker.Items.Add(triggerProperty.Name);
 
@@ -124,7 +120,7 @@ namespace SensusUI
                     Label conditionLabel = new Label
                     {
                         Text = "Condition:",
-                        Font = Font.SystemFontOfSize(20)
+                        FontSize = 20
                     };
 
                     Picker conditionPicker = new Picker { Title = "Select Condition", HorizontalOptions = LayoutOptions.FillAndExpand };
@@ -232,7 +228,7 @@ namespace SensusUI
                             Label conditionValueStackLabel = new Label
                             {
                                 Text = "Value:",
-                                Font = Font.SystemFontOfSize(20)
+                                FontSize = 20
                             };
 
                             conditionValueStack.Children.Add(new StackLayout
@@ -250,7 +246,7 @@ namespace SensusUI
                                 Label changeLabel = new Label
                                 {
                                     Text = "Change:",
-                                    Font = Font.SystemFontOfSize(20)
+                                    FontSize = 20
                                 };
 
                                 Switch changeSwitch = new Switch
@@ -277,7 +273,7 @@ namespace SensusUI
                                 Label regexLabel = new Label
                                 {
                                     Text = "Regular Expression:",
-                                    Font = Font.SystemFontOfSize(20)
+                                    FontSize = 20
                                 };
 
                                 Switch regexSwitch = new Switch
@@ -302,7 +298,7 @@ namespace SensusUI
                             Label fireRepeatedlyLabel = new Label
                             {
                                 Text = "Fire Repeatedly:",
-                                Font = Font.SystemFontOfSize(20)
+                                FontSize = 20
                             };
 
                             Switch fireRepeatedlySwitch = new Switch
@@ -323,56 +319,54 @@ namespace SensusUI
 
                     datumPropertyPicker.SelectedIndex = 0;
                     #endregion
+
+                    #region ignore first datum
+                    _ignoreFirstDatum = false;
+                    Label ignoreFirstDatumLabel = new Label
+                        {
+                            Text = "Ignore First Datum:",
+                            FontSize = 20
+                        };
+
+                    Switch ignoreFirstDatumSwitch = new Switch
+                        {
+                            IsToggled = _ignoreFirstDatum
+                        };
+
+                    ignoreFirstDatumSwitch.Toggled += (oo, ee) =>
+                        {
+                            _ignoreFirstDatum = ee.Value;
+                        };
+
+                    triggerDefinitionLayout.Children.Add(new StackLayout
+                        {
+                            Orientation = StackOrientation.Horizontal,
+                            HorizontalOptions = LayoutOptions.FillAndExpand,
+                            Children = { ignoreFirstDatumLabel, ignoreFirstDatumSwitch }
+                        });
+                    #endregion
                 };
 
             probePicker.SelectedIndex = 0;
 
-            #region ignore first datum
-            _ignoreFirstDatum = false;
-            Label ignoreFirstDatumLabel = new Label
-            {
-                Text = "Ignore First Datum:",
-                Font = Font.SystemFontOfSize(20)
-            };
-
-            Switch ignoreFirstDatumSwitch = new Switch
-            {
-                IsToggled = _ignoreFirstDatum
-            };
-
-            ignoreFirstDatumSwitch.Toggled += (o, e) =>
-                {
-                    _ignoreFirstDatum = e.Value;
-                };
-
-            contentLayout.Children.Add(new StackLayout
-            {
-                Orientation = StackOrientation.Horizontal,
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                Children = { ignoreFirstDatumLabel, ignoreFirstDatumSwitch }
-            });
-            #endregion
-
             Button okButton = new Button
             {
                 Text = "OK",
-                Font = Font.SystemFontOfSize(20)
+                FontSize = 20
             };
 
-            okButton.Clicked += (o, e) =>
+            okButton.Clicked += async (o, e) =>
                 {
                     try
                     {
                         _scriptProbe.Triggers.Add(new SensusService.Probes.User.Trigger(_selectedProbe, _selectedDatumProperty.Name, _selectedCondition, _conditionValue, _change, _fireRepeatedly, _useRegularExpression, _ignoreFirstDatum));
-
-                        if (TriggerAdded != null)
-                            TriggerAdded(o, e);
+                        await Navigation.PopAsync();
                     }
                     catch (Exception ex)
                     {
                         string message = "Failed to add trigger:  " + ex.Message;
-                        UiBoundSensusServiceHelper.Get().FlashNotificationAsync(message);
-                        UiBoundSensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal);
+                        UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync(message);
+                        UiBoundSensusServiceHelper.Get(true).Logger.Log(message, LoggingLevel.Normal);
                     }
                 };
 

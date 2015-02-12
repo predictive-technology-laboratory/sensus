@@ -15,6 +15,7 @@
 #endregion
 
 using SensusService;
+using SensusService.DataStores;
 using SensusService.DataStores.Local;
 using SensusService.DataStores.Remote;
 using SensusUI.UiProperties;
@@ -27,13 +28,11 @@ namespace SensusUI
 {
     public class DataStorePage : ContentPage
     {        
-        public static event EventHandler OkTapped;
-
-        public DataStorePage(ProtocolDataStoreEventArgs args)
+        public DataStorePage(Protocol protocol, DataStore dataStore, bool local)
         {
-            Title = (args.Local ? "Local" : "Remote") + " Data Store";
+            Title = (local ? "Local" : "Remote") + " Data Store";
 
-            List<StackLayout> stacks = UiProperty.GetPropertyStacks(args.DataStore);
+            List<StackLayout> stacks = UiProperty.GetPropertyStacks(dataStore);
 
             StackLayout buttonStack = new StackLayout
             {
@@ -47,34 +46,34 @@ namespace SensusUI
             {
                 Text = "Clear",
                 HorizontalOptions = LayoutOptions.FillAndExpand,
-                Font = Font.SystemFontOfSize(20),
-                IsEnabled = args.DataStore.Clearable
+                FontSize = 20,
+                IsEnabled = dataStore.Clearable
             };
 
             clearButton.Clicked += async (o, e) =>
                 {
-                    if (await DisplayAlert("Clear data from " + args.DataStore.Name + "?", "This action cannot be undone.", "Clear", "Cancel"))
-                        args.DataStore.Clear();
+                    if (await DisplayAlert("Clear data from " + dataStore.Name + "?", "This action cannot be undone.", "Clear", "Cancel"))
+                        dataStore.Clear();
                 };
 
             buttonStack.Children.Add(clearButton);
 
-            if (args.Local)
+            if (local)
             {
                 Button shareLocalDataButton = new Button
                 {
                     Text = "Share",
                     HorizontalOptions = LayoutOptions.FillAndExpand,
-                    Font = Font.SystemFontOfSize(20)
+                    FontSize = 20
                 };
 
                 shareLocalDataButton.Clicked += (o, e) =>
                     {
                         try
                         {
-                            string sharePath = UiBoundSensusServiceHelper.Get().GetSharePath(".json");
+                            string sharePath = UiBoundSensusServiceHelper.Get(true).GetSharePath(".json");
                             StreamWriter shareFile = new StreamWriter(sharePath);
-                            LocalDataStore localDataStore = args.DataStore as LocalDataStore;
+                            LocalDataStore localDataStore = dataStore as LocalDataStore;
                             foreach (Datum datum in localDataStore.GetDataForRemoteDataStore())
                                 shareFile.WriteLine(datum.JSON);
 
@@ -92,17 +91,17 @@ namespace SensusUI
             {
                 Text = "OK",
                 HorizontalOptions = LayoutOptions.FillAndExpand,
-                Font = Font.SystemFontOfSize(20)
+                FontSize = 20
             };
 
-            okayButton.Clicked += (o, e) =>
+            okayButton.Clicked += async (o, e) =>
                 {
-                    if (args.Local)
-                        args.Protocol.LocalDataStore = args.DataStore as LocalDataStore;
+                    if (local)
+                        protocol.LocalDataStore = dataStore as LocalDataStore;
                     else
-                        args.Protocol.RemoteDataStore = args.DataStore as RemoteDataStore;
+                        protocol.RemoteDataStore = dataStore as RemoteDataStore;
 
-                    OkTapped(o, e);
+                    await Navigation.PopAsync();
                 };
 
             buttonStack.Children.Add(okayButton);

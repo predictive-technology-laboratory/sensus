@@ -14,6 +14,10 @@
 // limitations under the License.
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
@@ -24,13 +28,10 @@ using Android.Speech;
 using Android.Support.V4.Content;
 using Android.Widget;
 using SensusService;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 using Xamarin;
-using Xamarin.Geolocation;
+using Newtonsoft.Json;
+
+// TODO:  Increase backwards compatibility.
 
 namespace Sensus.Android
 {
@@ -40,12 +41,13 @@ namespace Sensus.Android
 
         private AndroidSensusService _service;
         private ConnectivityManager _connectivityManager;
-        private readonly string _deviceId;
+        private string _deviceId;
         private AndroidMainActivity _mainActivity;
         private ManualResetEvent _mainActivityWait;
         private readonly object _getMainActivityLocker = new object();
         private AndroidTextToSpeech _textToSpeech;
 
+        [JsonIgnore]
         public AndroidSensusService Service
         {
             get { return _service; }
@@ -76,20 +78,23 @@ namespace Sensus.Android
             get { return PackageManager.FeatureMicrophone == "android.hardware.microphone"; }
         }
 
-        public AndroidSensusServiceHelper(AndroidSensusService service)
-            : base(new Geolocator(service))
+        public AndroidSensusServiceHelper()
+        {
+            _mainActivityWait = new ManualResetEvent(false);           
+        }           
+
+        public void SetService(AndroidSensusService service)
         {
             _service = service;
             _connectivityManager = _service.GetSystemService(Context.ConnectivityService) as ConnectivityManager;
             _deviceId = Settings.Secure.GetString(_service.ContentResolver, Settings.Secure.AndroidId);
             _textToSpeech = new AndroidTextToSpeech(_service);
-            _mainActivityWait = new ManualResetEvent(false);
         }
 
-        public Task<AndroidMainActivity> GetMainActivityAsync(bool foreground)
+        public void GetMainActivityAsync(bool foreground, Action<AndroidMainActivity> callback)
         {
             // this must be done asynchronously because it blocks waiting for the activity to start. calling this method from the UI would create deadlocks.
-            return Task.Run(() =>
+            new Thread(() =>
                 {
                     lock (_getMainActivityLocker)
                     {
@@ -99,7 +104,7 @@ namespace Sensus.Android
 
                             // start the activity and wait for it to bind itself to the service
                             Intent intent = new Intent(_service, typeof(AndroidMainActivity));
-                            intent.AddFlags(ActivityFlags.NewTask);
+                            intent.AddFlags(ActivityFlags.NewTask | ActivityFlags.ClearTask);
                             _mainActivityWait.Reset();
                             _service.StartActivity(intent);
                             _mainActivityWait.WaitOne();
@@ -108,9 +113,9 @@ namespace Sensus.Android
                             _mainActivity.UiReadyWait.WaitOne();
                         }
 
-                        return _mainActivity;
+                        callback(_mainActivity);
                     }
-                });
+                }).Start();
         }
 
         public void SetMainActivity(AndroidMainActivity value)
@@ -131,9 +136,9 @@ namespace Sensus.Android
             Insights.Initialize(XAMARIN_INSIGHTS_APP_KEY, Application.Context);  // can't reference _service here since this method is called from the base class constructor.
         }
 
-        public override Task<string> PromptForAndReadTextFileAsync(string promptTitle)
+        public override void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
         {
-            return Task.Run<string>(async () =>
+            new Thread(() =>
                 {
                     try
                     {
@@ -141,42 +146,53 @@ namespace Sensus.Android
                         intent.SetType("*/*");
                         intent.AddCategory(Intent.CategoryOpenable);
 
-                        Tuple<Result, Intent> result = await (await GetMainActivityAsync(true)).GetActivityResultAsync(intent, AndroidActivityResultRequestCode.PromptForFile);
-
-                        if (result != null && result.Item1 == Result.Ok)
-                            try
+                        GetMainActivityAsync(true, mainActivity =>
                             {
-                                using (StreamReader file = new StreamReader(_service.ContentResolver.OpenInputStream(result.Item2.Data)))
-                                    return file.ReadToEnd();
-                            }
-                            catch (Exception ex) { Toast.MakeText(_service, "Error reading text file:  " + ex.Message, ToastLength.Long); }
+                                mainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.PromptForFile, result =>
+                                    {
+                                        if (result != null && result.Item1 == Result.Ok)
+                                            try
+                                            {
+                                                using (StreamReader file = new StreamReader(_service.ContentResolver.OpenInputStream(result.Item2.Data)))
+                                                {
+                                                    string content = file.ReadToEnd();
+                                                    file.Close();
+                                                    callback(content);
+                                                }
+                                            }
+                                            catch (Exception ex) { Toast.MakeText(_service, "Error reading text file:  " + ex.Message, ToastLength.Long); }
+                                    });
+                            });
                     }
                     catch (ActivityNotFoundException) { Toast.MakeText(_service, "Please install a file manager from the Apps store.", ToastLength.Long); }
                     catch (Exception ex) { Toast.MakeText(_service, "Something went wrong while prompting you for a file to read:  " + ex.Message, ToastLength.Long); }
 
-                    return null;
-                });
+                }).Start();
         }
 
-        public override async void ShareFileAsync(string path, string subject)
+        public override void ShareFileAsync(string path, string subject)
         {
-            try
-            {
-                Intent intent = new Intent(Intent.ActionSend);
-                intent.SetType("text/plain");
-                intent.AddFlags(ActivityFlags.GrantReadUriPermission);
+            new Thread(() =>
+                {
+                    try
+                    {
+                        Intent intent = new Intent(Intent.ActionSend);
+                        intent.SetType("text/plain");
+                        intent.AddFlags(ActivityFlags.GrantReadUriPermission);
 
-                if (!string.IsNullOrWhiteSpace(subject))
-                    intent.PutExtra(Intent.ExtraSubject, subject);
+                        if (!string.IsNullOrWhiteSpace(subject))
+                            intent.PutExtra(Intent.ExtraSubject, subject);
 
-                Java.IO.File file = new Java.IO.File(path);
-                global::Android.Net.Uri uri = FileProvider.GetUriForFile(_service, "edu.virginia.sie.ptl.sensus.fileprovider", file);
-                intent.PutExtra(Intent.ExtraStream, uri);
+                        Java.IO.File file = new Java.IO.File(path);
+                        global::Android.Net.Uri uri = FileProvider.GetUriForFile(_service, "edu.virginia.sie.ptl.sensus.fileprovider", file);
+                        intent.PutExtra(Intent.ExtraStream, uri);
 
-                // run from main activity to get a smoother transition back to sensus
-                (await GetMainActivityAsync(true)).StartActivity(intent);
-            }
-            catch (Exception ex) { Logger.Log("Failed to start intent to share file \"" + path + "\":  " + ex.Message, LoggingLevel.Normal); }
+                        // run from main activity to get a smoother transition back to sensus
+                        GetMainActivityAsync(true, mainActivity => mainActivity.StartActivity(intent));
+                    }
+                    catch (Exception ex) { Logger.Log("Failed to start intent to share file \"" + path + "\":  " + ex.Message, LoggingLevel.Normal); }
+
+                }).Start();
         }
 
         protected override void StartSensusPings(int ms)
@@ -189,37 +205,38 @@ namespace Sensus.Android
             SetSensusMonitoringAlarm(-1);
         }
 
-        public override Task TextToSpeechAsync(string text)
+        public override void TextToSpeechAsync(string text, Action callback)
         {
-            return _textToSpeech.SpeakAsync(text);
+            _textToSpeech.SpeakAsync(text, callback);
         }
 
-        public override Task<string> PromptForInputAsync(string prompt, bool startVoiceRecognizer)
+        public override void PromptForInputAsync(string prompt, bool startVoiceRecognizer, Action<string> callback)
         {
-            return Task.Run<string>(async () =>
+            new Thread(() =>
                 {
                     string input = null;
                     ManualResetEvent dialogDismissWait = new ManualResetEvent(false);
 
-                    AndroidMainActivity mainActivity = await GetMainActivityAsync(true);
-                    mainActivity.RunOnUiThread(() =>
+                    GetMainActivityAsync(true, mainActivity => mainActivity.RunOnUiThread(() =>
                         {
-                            EditText responseEdit = new EditText(mainActivity);
+                            EditText inputEdit = new EditText(mainActivity);
 
                             AlertDialog dialog = new AlertDialog.Builder(mainActivity)
                                                  .SetTitle("Sensus is Requesting Input")
                                                  .SetMessage(prompt)
-                                                 .SetView(responseEdit)
+                                                 .SetView(inputEdit)
                                                  .SetPositiveButton("OK", (o, e) =>
                                                      {
-                                                         input = responseEdit.Text;
+                                                         input = inputEdit.Text;
                                                      })
                                                  .SetNegativeButton("Cancel", (o, e) => { })
-                                                 .SetOnDismissListener(new AndroidOnDismissListener(() =>
-                                                     {
-                                                         dialogDismissWait.Set();
-                                                     }))
                                                  .Create();
+
+                            // SetOnDismissListener was added to the AlertDialog.Builder class at API level 17. Call it here to keep us at API level 16.
+                            dialog.SetOnDismissListener(new AndroidOnDismissListener(() =>
+                                {
+                                    dialogDismissWait.Set();
+                                }));
 
                             ManualResetEvent dialogShowWait = new ManualResetEvent(false);
 
@@ -239,16 +256,17 @@ namespace Sensus.Android
 
                             dialog.Show();
 
-                            Task.Run(async () =>
-                                {
-                                    // wait for the dialog to be shown so it doesn't hide our speech recognizer activity
-                                    dialogShowWait.WaitOne();
-
-                                    // there's a slight race condition between the dialog showing and speech recognition showing. pause here to prevent the dialog from hiding the speech recognizer.
-                                    Thread.Sleep(1000);
-
-                                    if (startVoiceRecognizer)
+                            #region voice recognizer
+                            if (startVoiceRecognizer)
+                            {
+                                new Thread(() =>
                                     {
+                                        // wait for the dialog to be shown so it doesn't hide our speech recognizer activity
+                                        dialogShowWait.WaitOne();
+
+                                        // there's a slight race condition between the dialog showing and speech recognition showing. pause here to prevent the dialog from hiding the speech recognizer.
+                                        Thread.Sleep(1000);
+
                                         Intent intent = new Intent(RecognizerIntent.ActionRecognizeSpeech);
                                         intent.PutExtra(RecognizerIntent.ExtraLanguageModel, RecognizerIntent.LanguageModelFreeForm);
                                         intent.PutExtra(RecognizerIntent.ExtraSpeechInputCompleteSilenceLengthMillis, 1500);
@@ -258,34 +276,42 @@ namespace Sensus.Android
                                         intent.PutExtra(RecognizerIntent.ExtraLanguage, Java.Util.Locale.Default);
                                         intent.PutExtra(RecognizerIntent.ExtraPrompt, prompt);
 
-                                        Tuple<Result, Intent> result = await mainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.RecognizeSpeech);
-
-                                        if (result != null && result.Item1 == Result.Ok)
-                                        {
-                                            IList<string> matches = result.Item2.GetStringArrayListExtra(RecognizerIntent.ExtraResults);
-                                            if (matches != null && matches.Count > 0)
-                                                mainActivity.RunOnUiThread(() =>
-                                                    {
-                                                        responseEdit.Text = matches[0];
-                                                    });
-                                        }
-                                    }
-                                });
-                        });
+                                        mainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.RecognizeSpeech, result =>
+                                            {
+                                                if (result != null && result.Item1 == Result.Ok)
+                                                {
+                                                    IList<string> matches = result.Item2.GetStringArrayListExtra(RecognizerIntent.ExtraResults);
+                                                    if (matches != null && matches.Count > 0)
+                                                        mainActivity.RunOnUiThread(() =>
+                                                            {
+                                                                inputEdit.Text = matches[0];
+                                                            });
+                                                }
+                                            });
+                                    }).Start();
+                            }
+                            #endregion
+                        }));
 
                     dialogDismissWait.WaitOne();
+                    callback(input);
 
-                    return input;
-                });
+                }).Start();
         }
 
-        public override Task FlashNotificationAsync(string message)
+        public override void FlashNotificationAsync(string message, Action callback)
         {
-            return Task.Run(async () =>
+            new Thread(() =>
                 {
-                    AndroidMainActivity mainActivity = await GetMainActivityAsync(false);
-                    mainActivity.RunOnUiThread(() => Toast.MakeText(mainActivity, message, ToastLength.Long).Show());
-                });
+                    GetMainActivityAsync(false, mainActivity =>
+                        {
+                            mainActivity.RunOnUiThread(() =>
+                                {
+                                    Toast.MakeText(mainActivity, message, ToastLength.Long).Show();
+                                    callback();
+                                });
+                        });
+                }).Start();
         }
 
         private void SetSensusMonitoringAlarm(int ms)
