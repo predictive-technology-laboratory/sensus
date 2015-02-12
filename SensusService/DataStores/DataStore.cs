@@ -55,7 +55,7 @@ namespace SensusService.DataStores
                     _commitDelayMS = value; 
 
                     if (_commitCallbackId != -1)
-                        SensusServiceHelper.Get().UpdateCallback(_commitCallbackId, _commitDelayMS, _commitDelayMS);
+                        SensusServiceHelper.Get().UpdateRepeatingCallback(_commitCallbackId, _commitDelayMS, _commitDelayMS);
                 }
             }
         }
@@ -108,7 +108,7 @@ namespace SensusService.DataStores
 
                 SensusServiceHelper.Get().Logger.Log("Starting " + GetType().Name + " data store:  " + Name, LoggingLevel.Normal);
 
-                _commitCallbackId = SensusServiceHelper.Get().ScheduleCallback(() =>
+                _commitCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(() =>
                     {
                         if (_running)
                         {
@@ -193,7 +193,7 @@ namespace SensusService.DataStores
                     return;
 
                 SensusServiceHelper.Get().Logger.Log("Stopping " + GetType().Name + " data store:  " + Name, LoggingLevel.Normal);
-                SensusServiceHelper.Get().CancelCallback(_commitCallbackId);
+                SensusServiceHelper.Get().CancelRepeatingCallback(_commitCallbackId);
                 _commitCallbackId = -1;
             }
         }

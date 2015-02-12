@@ -89,7 +89,10 @@ namespace Sensus.Android
             {
                 int callbackId = intent.GetIntExtra(AndroidSensusServiceHelper.INTENT_EXTRA_SENSUS_CALLBACK_ID, -1);
                 if (callbackId >= 0)
-                    _sensusServiceHelper.RaiseCallbackAsync(callbackId);
+                {
+                    bool repeating = intent.GetBooleanExtra(AndroidSensusServiceHelper.INTENT_EXTRA_SENSUS_CALLBACK_REPEATING, false);
+                    _sensusServiceHelper.RaiseCallbackAsync(callbackId, repeating);
+                }
             }
 
             return StartCommandResult.RedeliverIntent;

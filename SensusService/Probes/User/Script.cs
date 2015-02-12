@@ -143,26 +143,25 @@ namespace SensusService.Probes.User
 
         public void RunAsync(Datum previousDatum, Datum currentDatum, Action<List<ScriptDatum>> callback)
         {
-            SensusServiceHelper.Get().Logger.Log("Running script \"" + _name + "\".", LoggingLevel.Normal);
-
-            if (previousDatum != null)
-                _previousDatum = previousDatum;
-
-            if (currentDatum != null)
-                _currentDatum = currentDatum;
-
-            new Thread(() =>
+            SensusServiceHelper.Get().ScheduleOneTimeCallback(() =>
                 {
-                    if (_delayMS > 0)
-                        Thread.Sleep(_delayMS);
+                    SensusServiceHelper.Get().Logger.Log("Running script \"" + _name + "\".", LoggingLevel.Normal);
 
                     bool isRerun = true;
                     lock (this)
+                    {
                         if (_firstRunTimestamp == DateTimeOffset.MinValue)
                         {
                             _firstRunTimestamp = DateTimeOffset.UtcNow;
                             isRerun = false;
                         }
+
+                        if (previousDatum != null)
+                            _previousDatum = previousDatum;
+
+                        if (currentDatum != null)
+                            _currentDatum = currentDatum;
+                    }
 
                     List<ScriptDatum> data = new List<ScriptDatum>();
 
@@ -186,7 +185,7 @@ namespace SensusService.Probes.User
 
                     callback(data);
 
-                }).Start();
+                }, _delayMS);
         }
 
         public Script Copy()

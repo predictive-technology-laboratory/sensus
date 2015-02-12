@@ -158,7 +158,7 @@ namespace SensusService
                     _healthTestDelayMS = value;
 
                     if (_healthTestCallbackId != -1)
-                        UpdateCallback(_healthTestCallbackId, _healthTestDelayMS, _healthTestDelayMS);
+                        UpdateRepeatingCallback(_healthTestCallbackId, _healthTestDelayMS, _healthTestDelayMS);
 
                     Save();
                 }
@@ -236,9 +236,11 @@ namespace SensusService
         #region platform-specific methods
         protected abstract void InitializeXamarinInsights();
 
-        protected abstract void ScheduleCallbackInternal(int callbackId, int initialDelayMS, int subsequentDelayMS);
+        protected abstract void ScheduleRepeatingCallback(int callbackId, int initialDelayMS, int subsequentDelayMS);
 
-        protected abstract void CancelCallbackInternal(int callbackId);
+        protected abstract void ScheduleOneTimeCallback(int callbackId, int delay);
+
+        protected abstract void CancelCallback(int callbackId, bool repeating);
 
         public abstract void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback);
 
@@ -277,7 +279,7 @@ namespace SensusService
                 }
 
                 if (_healthTestCallbackId == -1)
-                    _healthTestCallbackId = ScheduleCallback(TestHealth, _healthTestDelayMS, _healthTestDelayMS);
+                    _healthTestCallbackId = ScheduleRepeatingCallback(TestHealth, _healthTestDelayMS, _healthTestDelayMS);
             }
         }
 
@@ -289,7 +291,7 @@ namespace SensusService
                     Save();
 
                 if (_runningProtocolIds.Count == 0)
-                    CancelCallback(_healthTestCallbackId);
+                    CancelRepeatingCallback(_healthTestCallbackId);
             }
         }
 
@@ -342,44 +344,54 @@ namespace SensusService
                 }
         }
 
-        public int ScheduleCallback(Action callback, int initialDelayMS, int subsequentDelayMS)
+        public int ScheduleRepeatingCallback(Action callback, int initialDelayMS, int subsequentDelayMS)
         {
             lock (_idCallback)
             {
-                int callbackId = 0;
-                while (_idCallback.ContainsKey(callbackId))
-                    ++callbackId;
-
-                _idCallback.Add(callbackId, callback);
-                ScheduleCallbackInternal(callbackId, initialDelayMS, subsequentDelayMS);
+                int callbackId = AddCallback(callback);
+                ScheduleRepeatingCallback(callbackId, initialDelayMS, subsequentDelayMS);
 
                 return callbackId;
             }
         }
 
-        public void UpdateCallback(int callbackId, int initialDelayMS, int subsequentDelayMS)
-        {
-            lock (_idCallback)
-                if (_idCallback.ContainsKey(callbackId))
-                    ScheduleCallbackInternal(callbackId, initialDelayMS, subsequentDelayMS);
-        }
-
-        public void CancelCallback(int callbackId)
+        public int ScheduleOneTimeCallback(Action callback, int delay)
         {
             lock (_idCallback)
             {
-                CancelCallbackInternal(callbackId);
+                int callbackId = AddCallback(callback);
+                ScheduleOneTimeCallback(callbackId, delay);
+
+                return callbackId;
+            }
+        }
+
+        public void UpdateRepeatingCallback(int callbackId, int initialDelayMS, int subsequentDelayMS)
+        {
+            lock (_idCallback)
+                if (_idCallback.ContainsKey(callbackId))
+                    ScheduleRepeatingCallback(callbackId, initialDelayMS, subsequentDelayMS);
+        }
+
+        public void CancelRepeatingCallback(int callbackId)
+        {
+            lock (_idCallback)
+            {
+                if (callbackId != -1)
+                    CancelCallback(callbackId, true);
+
                 if (_idCallback.ContainsKey(callbackId))
                     _idCallback.Remove(callbackId);
             }
         }
 
-        public void RaiseCallbackAsync(int callbackId)
+        public void RaiseCallbackAsync(int callbackId, bool repeating)
         {
             lock (_idCallback)
             {
                 Action callback;
                 if (_idCallback.TryGetValue(callbackId, out callback))
+                {
                     new Thread(() =>
                         {
                             if (Monitor.TryEnter(callback))
@@ -399,7 +411,25 @@ namespace SensusService
                             else
                                 _logger.Log("Callback " + callbackId + " was already running. Not running again.", LoggingLevel.Debug);
 
-                        }).Start();
+                            if (!repeating)
+                                _idCallback.Remove(callbackId);
+
+                        }).Start();                           
+                }
+            }
+        }
+
+        private int AddCallback(Action callback)
+        {
+            lock (_idCallback)
+            {
+                int callbackId = 0;
+                while (_idCallback.ContainsKey(callbackId))
+                    ++callbackId;
+
+                _idCallback.Add(callbackId, callback);
+
+                return callbackId;
             }
         }
 
