@@ -34,7 +34,16 @@ namespace SensusService.Probes
         public virtual int PollingSleepDurationMS
         {
             get { return _pollingSleepDurationMS; }
-            set { _pollingSleepDurationMS = value; }
+            set 
+            {
+                if (value != _pollingSleepDurationMS)
+                {
+                    _pollingSleepDurationMS = value; 
+
+                    if (_pollCallbackId != -1)
+                        SensusServiceHelper.Get().UpdateCallback(_pollCallbackId, _pollingSleepDurationMS, _pollingSleepDurationMS);
+                }
+            }
         }
 
         [JsonIgnore]
@@ -99,6 +108,7 @@ namespace SensusService.Probes
                 base.Stop();
 
                 SensusServiceHelper.Get().CancelCallback(_pollCallbackId);
+                _pollCallbackId = -1;
             }
         }
 

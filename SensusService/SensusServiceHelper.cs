@@ -156,7 +156,10 @@ namespace SensusService
                 if (value != _healthTestDelayMS)
                 {
                     _healthTestDelayMS = value;
-                    UpdateCallback(_healthTestCallbackId, _healthTestDelayMS, _healthTestDelayMS);
+
+                    if (_healthTestCallbackId != -1)
+                        UpdateCallback(_healthTestCallbackId, _healthTestDelayMS, _healthTestDelayMS);
+
                     Save();
                 }
             }
