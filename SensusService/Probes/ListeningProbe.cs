@@ -14,6 +14,8 @@
 // limitations under the License.
 #endregion
 
+// TODO:  Do these probes stay on when the device is asleep?
+
 using SensusUI.UiProperties;
 using System;
 
@@ -22,6 +24,8 @@ namespace SensusService.Probes
     public abstract class ListeningProbe : Probe
     {
         private int _maxDataStoresPerSecond;
+
+        private readonly object _locker = new object();
 
         [EntryIntegerUiProperty("Max Data / Second:", true, int.MaxValue)]
         public int MaxDataStoresPerSecond
@@ -37,7 +41,7 @@ namespace SensusService.Probes
 
         public sealed override void Start()
         {
-            lock (this)
+            lock (_locker)
             {
                 base.Start();
 
@@ -49,7 +53,7 @@ namespace SensusService.Probes
 
         public sealed override void Stop()
         {
-            lock (this)
+            lock (_locker)
             {
                 base.Stop();
 

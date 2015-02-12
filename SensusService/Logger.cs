@@ -36,6 +36,8 @@ namespace SensusService
         private TextWriter[] _otherOutputs;
         private StreamWriter _file;
 
+        private readonly object _locker = new object();
+
         public LoggingLevel Level
         {
             get { return _level; }
@@ -59,7 +61,7 @@ namespace SensusService
 
         public void Log(string message, LoggingLevel level, params string[] tags)
         {
-            lock (this)
+            lock (_locker)
             {
                 if (level > _level)
                     return;
@@ -93,7 +95,7 @@ namespace SensusService
 
         public List<string> Read(int mostRecentLines)
         {
-            lock (this)
+            lock (_locker)
             {
                 _file.Close();
 
@@ -123,7 +125,7 @@ namespace SensusService
 
         public virtual void Clear()
         {
-            lock (this)
+            lock (_locker)
             {
                 _file.Close();
                 InitializeFile(_path, false);
@@ -132,7 +134,7 @@ namespace SensusService
 
         public void Close()
         {
-            lock (this)
+            lock (_locker)
                 _file.Close();
         }
     }

@@ -32,6 +32,8 @@ namespace Sensus.Android.Probes.Location
         private float[] _iMatrix;
         private float[] _azimuthPitchRoll;
 
+        private readonly object _locker = new object();
+
         public AndroidCompassProbe()
         {
             _rMatrix = new float[9];
@@ -42,7 +44,7 @@ namespace Sensus.Android.Probes.Location
             _magnetometerListener = new AndroidSensorListener(SensorType.MagneticField, SensorDelay.Normal, null, e =>
                 {
                     if (e.Values != null && e.Values.Count == 3)
-                        lock (this)
+                        lock (_locker)
                         {
                             for (int i = 0; i < 3; i++)
                                 _magneticFieldValues[i] = e.Values[i];
@@ -55,7 +57,7 @@ namespace Sensus.Android.Probes.Location
             _accelerometerListener = new AndroidSensorListener(SensorType.Accelerometer, SensorDelay.Normal, null, e =>
                 {
                     if (e.Values != null && e.Values.Count == 3)
-                        lock (this)
+                        lock (_locker)
                         {
                             for (int i = 0; i < 3; i++)
                                 _accelerometerValues[i] = e.Values[i];

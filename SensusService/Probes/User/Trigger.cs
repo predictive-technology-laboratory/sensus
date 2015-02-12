@@ -38,6 +38,8 @@ namespace SensusService.Probes.User
         private bool _ignoreFirstDatum;
         private bool _firstDatum;
 
+        private readonly object _locker = new object();
+
         public Probe Probe
         {
             get { return _probe; }
@@ -154,7 +156,7 @@ namespace SensusService.Probes.User
 
         public bool FireFor(object value)
         {
-            lock (this)
+            lock (_locker)
             {
                 bool conditionSatisfied;
 

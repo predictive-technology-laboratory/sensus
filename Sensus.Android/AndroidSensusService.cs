@@ -57,7 +57,7 @@ namespace Sensus.Android
 
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
-            _sensusServiceHelper.Logger.Log("Sensus service received start command (startId=" + startId + ").", LoggingLevel.Normal);
+            _sensusServiceHelper.Logger.Log("Sensus service received start command (startId=" + startId + ").", LoggingLevel.Debug);
 
             // the service can be stopped without destroying the service object. in such cases, 
             // subsequent calls to start the service will not call OnCreate, which is why the 
@@ -85,8 +85,15 @@ namespace Sensus.Android
 
             _notificationManager.Notify(ServiceNotificationId, _notificationBuilder.Build());
 
-            if (intent.GetBooleanExtra(AndroidSensusServiceHelper.INTENT_EXTRA_NAME_PING, false))
-                _sensusServiceHelper.PingAsync();
+            if (intent.GetBooleanExtra(AndroidSensusServiceHelper.INTENT_EXTRA_SENSUS_CALLBACK, false))
+            {
+                int callbackId = intent.GetIntExtra(AndroidSensusServiceHelper.INTENT_EXTRA_SENSUS_CALLBACK_ID, -1);
+                if (callbackId >= 0)
+                {
+                    bool repeating = intent.GetBooleanExtra(AndroidSensusServiceHelper.INTENT_EXTRA_SENSUS_CALLBACK_REPEATING, false);
+                    _sensusServiceHelper.RaiseCallbackAsync(callbackId, repeating);
+                }
+            }
 
             return StartCommandResult.RedeliverIntent;
         }

@@ -43,6 +43,8 @@ namespace Sensus.Android
         private Tuple<Result, Intent> _activityResult;
         private ManualResetEvent _uiReadyWait;
 
+        private readonly object _locker = new object();
+
         public ManualResetEvent UiReadyWait
         {
             get { return _uiReadyWait; }
@@ -173,7 +175,7 @@ namespace Sensus.Android
         {
             new Thread(() =>
                 {
-                    lock (this)
+                    lock (_locker)
                     {
                         _activityResultRequestCode = requestCode;
                         _activityResult = null;

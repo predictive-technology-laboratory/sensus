@@ -27,14 +27,25 @@ namespace SensusService.Probes
     public abstract class PollingProbe : Probe
     {
         private int _pollingSleepDurationMS;
-        private Thread _pollThread;
         private bool _isPolling;
+        private int _pollCallbackId;
+
+        private readonly object _locker = new object();
 
         [EntryIntegerUiProperty("Sleep Duration:", true, 5)]
         public virtual int PollingSleepDurationMS
         {
             get { return _pollingSleepDurationMS; }
-            set { _pollingSleepDurationMS = value; }
+            set 
+            {
+                if (value != _pollingSleepDurationMS)
+                {
+                    _pollingSleepDurationMS = value; 
+
+                    if (_pollCallbackId != -1)
+                        SensusServiceHelper.Get().UpdateRepeatingCallback(_pollCallbackId, _pollingSleepDurationMS, _pollingSleepDurationMS);
+                }
+            }
         }
 
         [JsonIgnore]
@@ -44,6 +55,7 @@ namespace SensusService.Probes
         {
             _pollingSleepDurationMS = DefaultPollingSleepDurationMS;
             _isPolling = false;
+            _pollCallbackId = -1;
         }
 
         /// <summary>
@@ -51,74 +63,60 @@ namespace SensusService.Probes
         /// </summary>
         public override void Start()
         {
-            lock (this)
+            lock (_locker)
             {
                 base.Start();
 
-                _pollThread = new Thread(() =>
+                _pollCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(() =>
                     {
-                        PollingStarted();
-
-                        int msToSleep = 0;  // poll immediately the first time
-
-                        while (Running)
+                        if (Running)
                         {
-                            // in order to allow the commit thread to be interrupted by Stop, sleep for 1-second intervals.
-                            Thread.Sleep(1000);
-                            msToSleep -= 1000;
+                            _isPolling = true;
 
-                            // have we slept enough to run a poll? if not, continue the loop.
-                            if (msToSleep > 0)
-                                continue;
-
-                            // if we're still running, execute a poll.
-                            if (Running)
+                            IEnumerable<Datum> data = null;
+                            try
                             {
-                                _isPolling = true;
-
-                                IEnumerable<Datum> data = null;
-                                try { data = Poll(); }
-                                catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to poll probe \"" + GetType().FullName + "\":  " + ex.Message, LoggingLevel.Normal); }
-
-                                if (data != null)
-                                    foreach (Datum datum in data)
-                                        try { StoreDatum(datum); }
-                                        catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to store datum in probe \"" + GetType().FullName + "\":  " + ex.Message, LoggingLevel.Normal); }
-
-                                _isPolling = false;
+                                SensusServiceHelper.Get().Logger.Log("Polling probe \"" + GetType().FullName + "\".", LoggingLevel.Verbose);
+                                data = Poll();
+                            }
+                            catch (Exception ex)
+                            {
+                                SensusServiceHelper.Get().Logger.Log("Failed to poll probe \"" + GetType().FullName + "\":  " + ex.Message, LoggingLevel.Normal);
                             }
 
-                            msToSleep = _pollingSleepDurationMS;
+                            if (data != null)
+                                foreach (Datum datum in data)
+                                    try
+                                    {
+                                        StoreDatum(datum);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        SensusServiceHelper.Get().Logger.Log("Failed to store datum in probe \"" + GetType().FullName + "\":  " + ex.Message, LoggingLevel.Normal);
+                                    }
+
+                            _isPolling = false;
                         }
-
-                        PollingStopped();
-                    });
-
-                _pollThread.Start();
+                    }, 0, _pollingSleepDurationMS);
             }
         }
-
-        protected virtual void PollingStarted() { }
 
         protected abstract IEnumerable<Datum> Poll();
 
         public override void Stop()
         {
-            lock (this)
+            lock (_locker)
             {
                 base.Stop();
 
-                // since Running is now false, the poll thread will be exiting soon. if it's in the middle of a poll, the poll will finish.
-                if (_pollThread != null)
-                    _pollThread.Join();
+                SensusServiceHelper.Get().CancelRepeatingCallback(_pollCallbackId);
+                _pollCallbackId = -1;
             }
         }
 
-        protected virtual void PollingStopped() { }
-
-        public override bool Ping(ref string error, ref string warning, ref string misc)
+        public override bool TestHealth(ref string error, ref string warning, ref string misc)
         {
-            bool restart = base.Ping(ref error, ref warning, ref misc);
+            bool restart = base.TestHealth(ref error, ref warning, ref misc);
 
             if (Running)
             {

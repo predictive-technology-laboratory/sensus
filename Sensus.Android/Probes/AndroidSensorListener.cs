@@ -30,6 +30,8 @@ namespace Sensus.Android.Probes
         private Sensor _sensor;
         private bool _listening;
 
+        private readonly object _locker = new object();
+
         public AndroidSensorListener(SensorType sensorType, SensorDelay sensorDelay, Action<SensorStatus> sensorAccuracyChangedCallback, Action<SensorEvent> sensorValueChangedCallback)
         {
             _sensorType = sensorType;
@@ -53,7 +55,7 @@ namespace Sensus.Android.Probes
             if (_sensor == null)
                 throw new Exception("Android sensor " + _sensorType + " is unsupported on this device.");
 
-            lock (this)
+            lock (_locker)
             {
                 if (_listening)
                     return;
@@ -69,7 +71,7 @@ namespace Sensus.Android.Probes
             if (_sensor == null)
                 throw new Exception("Android sensor " + _sensorType + " is unsupported on this device.");
 
-            lock (this)
+            lock (_locker)
             {
                 if (_listening)
                     _listening = false;

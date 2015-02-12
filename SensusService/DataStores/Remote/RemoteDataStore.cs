@@ -66,7 +66,7 @@ namespace SensusService.DataStores.Remote
             else
             {
                 dataToCommit = Protocol.LocalDataStore.GetDataForRemoteDataStore();
-                SensusServiceHelper.Get().Logger.Log("Retrieved " + dataToCommit.Count + " data elements from local data store.", LoggingLevel.Verbose);
+                SensusServiceHelper.Get().Logger.Log("Retrieved " + dataToCommit.Count + " data elements from local data store.", LoggingLevel.Debug);
             }
 
             return dataToCommit;

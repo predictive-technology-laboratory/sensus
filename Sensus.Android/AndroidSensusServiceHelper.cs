@@ -37,7 +37,9 @@ namespace Sensus.Android
 {
     public class AndroidSensusServiceHelper : SensusServiceHelper
     {
-        public const string INTENT_EXTRA_NAME_PING = "PING-SENSUS";
+        public const string INTENT_EXTRA_SENSUS_CALLBACK = "SENSUS-CALLBACK";
+        public const string INTENT_EXTRA_SENSUS_CALLBACK_ID = "SENSUS-CALLBACK-ID";
+        public const string INTENT_EXTRA_SENSUS_CALLBACK_REPEATING = "SENSUS-CALLBACK-REPEATING";
 
         private AndroidSensusService _service;
         private ConnectivityManager _connectivityManager;
@@ -195,16 +197,6 @@ namespace Sensus.Android
                 }).Start();
         }
 
-        protected override void StartSensusPings(int ms)
-        {
-            SetSensusMonitoringAlarm(ms);
-        }
-
-        protected override void StopSensusPings()
-        {
-            SetSensusMonitoringAlarm(-1);
-        }
-
         public override void TextToSpeechAsync(string text, Action callback)
         {
             _textToSpeech.SpeakAsync(text, callback);
@@ -314,17 +306,31 @@ namespace Sensus.Android
                 }).Start();
         }
 
-        private void SetSensusMonitoringAlarm(int ms)
+        protected override void ScheduleRepeatingCallback(int callbackId, int initialDelayMS, int subsequentDelayMS)
         {
             AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
-            Intent serviceIntent = new Intent(_service, typeof(AndroidSensusService));
-            serviceIntent.PutExtra(INTENT_EXTRA_NAME_PING, true);
-            PendingIntent pendingServiceIntent = PendingIntent.GetService(_service, 0, serviceIntent, PendingIntentFlags.UpdateCurrent);
+            alarmManager.SetRepeating(AlarmType.RtcWakeup, Java.Lang.JavaSystem.CurrentTimeMillis() + initialDelayMS, subsequentDelayMS, GetCallbackIntent(callbackId, true));
+        }
 
-            if (ms > 0)
-                alarmManager.SetRepeating(AlarmType.RtcWakeup, Java.Lang.JavaSystem.CurrentTimeMillis() + ms, ms, pendingServiceIntent);
-            else
-                alarmManager.Cancel(pendingServiceIntent);
+        protected override void ScheduleOneTimeCallback(int callbackId, int delay)
+        {
+            AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
+            alarmManager.Set(AlarmType.RtcWakeup, Java.Lang.JavaSystem.CurrentTimeMillis() + delay, GetCallbackIntent(callbackId, false));
+        }
+
+        protected override void CancelCallback(int callbackId, bool repeating)
+        {
+            AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
+            alarmManager.Cancel(GetCallbackIntent(callbackId, repeating));
+        }
+
+        private PendingIntent GetCallbackIntent(int callbackId, bool repeating)
+        {
+            Intent serviceIntent = new Intent(_service, typeof(AndroidSensusService));
+            serviceIntent.PutExtra(INTENT_EXTRA_SENSUS_CALLBACK, true);
+            serviceIntent.PutExtra(INTENT_EXTRA_SENSUS_CALLBACK_ID, callbackId);
+            serviceIntent.PutExtra(INTENT_EXTRA_SENSUS_CALLBACK_REPEATING, repeating);
+            return PendingIntent.GetService(_service, callbackId, serviceIntent, PendingIntentFlags.CancelCurrent);
         }
 
         public override void Destroy()

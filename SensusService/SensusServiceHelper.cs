@@ -113,9 +113,13 @@ namespace SensusService
         private Logger _logger;
         private List<Protocol> _registeredProtocols;
         private List<string> _runningProtocolIds;
-        private int _pingDelayMS;
-        private int _pingCount;
-        private int _pingsPerProtocolReport;
+        private int _healthTestCallbackId;
+        private int _healthTestDelayMS;
+        private int _healthTestCount;
+        private int _healthTestsPerProtocolReport;
+        private Dictionary<int, Action> _idCallback;
+
+        private readonly object _locker = new object();
 
         [JsonIgnore]
         public Logger Logger
@@ -145,29 +149,33 @@ namespace SensusService
         [JsonIgnore]
         public abstract bool DeviceHasMicrophone { get; }
 
-        [EntryIntegerUiProperty("Ping Delay (MS):", true, 9)]
-        public int PingDelayMS
+        [EntryIntegerUiProperty("Health Test Delay (MS):", true, 9)]
+        public int HealthTestDelayMS
         {
-            get { return _pingDelayMS; }
+            get { return _healthTestDelayMS; }
             set 
             {
-                if (value != _pingDelayMS)
+                if (value != _healthTestDelayMS)
                 {
-                    _pingDelayMS = value; 
+                    _healthTestDelayMS = value;
+
+                    if (_healthTestCallbackId != -1)
+                        UpdateRepeatingCallback(_healthTestCallbackId, _healthTestDelayMS, _healthTestDelayMS);
+
                     Save();
                 }
             }
         }
 
-        [EntryIntegerUiProperty("Pings Per Report:", true, 10)]
-        public int PingsPerProtocolReport
+        [EntryIntegerUiProperty("Health Tests Per Report:", true, 10)]
+        public int HealthTestsPerProtocolReport
         {
-            get { return _pingsPerProtocolReport; }
+            get { return _healthTestsPerProtocolReport; }
             set
             {
-                if (value != _pingsPerProtocolReport)
+                if (value != _healthTestsPerProtocolReport)
                 {
-                    _pingsPerProtocolReport = value; 
+                    _healthTestsPerProtocolReport = value; 
                     Save();
                 }
             }
@@ -196,9 +204,11 @@ namespace SensusService
             _stopped = true;
             _registeredProtocols = new List<Protocol>();
             _runningProtocolIds = new List<string>();
-            _pingDelayMS = 1000 * 60;
-            _pingCount = 0;
-            _pingsPerProtocolReport = 5;
+            _healthTestCallbackId = -1;
+            _healthTestDelayMS = 1000 * 60;
+            _healthTestCount = 0;
+            _healthTestsPerProtocolReport = 5;
+            _idCallback = new Dictionary<int, Action>();
 
             if (!Directory.Exists(_shareDirectory))
                 Directory.CreateDirectory(_shareDirectory); 
@@ -228,13 +238,15 @@ namespace SensusService
         #region platform-specific methods
         protected abstract void InitializeXamarinInsights();
 
+        protected abstract void ScheduleRepeatingCallback(int callbackId, int initialDelayMS, int subsequentDelayMS);
+
+        protected abstract void ScheduleOneTimeCallback(int callbackId, int delay);
+
+        protected abstract void CancelCallback(int callbackId, bool repeating);
+
         public abstract void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback);
 
         public abstract void ShareFileAsync(string path, string subject);
-
-        protected abstract void StartSensusPings(int ms);
-
-        protected abstract void StopSensusPings();
 
         public void TextToSpeechAsync(string text)
         {
@@ -260,7 +272,7 @@ namespace SensusService
         #region add/remove running protocol ids
         public void AddRunningProtocolId(string id)
         {
-            lock (this)
+            lock (_locker)
             {
                 if (!_runningProtocolIds.Contains(id))
                 {
@@ -268,19 +280,20 @@ namespace SensusService
                     Save();
                 }
 
-                StartSensusPings(_pingDelayMS);
+                if (_healthTestCallbackId == -1)
+                    _healthTestCallbackId = ScheduleRepeatingCallback(TestHealth, _healthTestDelayMS, _healthTestDelayMS);
             }
         }
 
         public void RemoveRunningProtocolId(string id)
         {
-            lock (this)
+            lock (_locker)
             {
                 if (_runningProtocolIds.Remove(id))
                     Save();
 
                 if (_runningProtocolIds.Count == 0)
-                    StopSensusPings();
+                    CancelRepeatingCallback(_healthTestCallbackId);
             }
         }
 
@@ -292,7 +305,7 @@ namespace SensusService
 
         public void Save()
         {
-            lock (this)
+            lock (_locker)
             {
                 try
                 {
@@ -310,7 +323,7 @@ namespace SensusService
         /// </summary>
         public void Start()
         {
-            lock (this)
+            lock (_locker)
             {
                 if (_stopped)
                     _stopped = false;
@@ -325,7 +338,7 @@ namespace SensusService
 
         public void RegisterProtocol(Protocol protocol)
         {
-            lock (this)
+            lock (_locker)
                 if (!_stopped && !_registeredProtocols.Contains(protocol))
                 {
                     _registeredProtocols.Add(protocol);
@@ -333,32 +346,118 @@ namespace SensusService
                 }
         }
 
-        public void PingAsync()
+        public int ScheduleRepeatingCallback(Action callback, int initialDelayMS, int subsequentDelayMS)
         {
-            new Thread(() =>
+            lock (_idCallback)
+            {
+                int callbackId = AddCallback(callback);
+                ScheduleRepeatingCallback(callbackId, initialDelayMS, subsequentDelayMS);
+
+                return callbackId;
+            }
+        }
+
+        public int ScheduleOneTimeCallback(Action callback, int delay)
+        {
+            lock (_idCallback)
+            {
+                int callbackId = AddCallback(callback);
+                ScheduleOneTimeCallback(callbackId, delay);
+
+                return callbackId;
+            }
+        }
+
+        public void UpdateRepeatingCallback(int callbackId, int initialDelayMS, int subsequentDelayMS)
+        {
+            lock (_idCallback)
+                if (_idCallback.ContainsKey(callbackId))
+                    ScheduleRepeatingCallback(callbackId, initialDelayMS, subsequentDelayMS);
+        }
+
+        public void CancelRepeatingCallback(int callbackId)
+        {
+            lock (_idCallback)
+            {
+                if (callbackId != -1)
+                    CancelCallback(callbackId, true);
+
+                if (_idCallback.ContainsKey(callbackId))
+                    _idCallback.Remove(callbackId);
+            }
+        }
+
+        public void RaiseCallbackAsync(int callbackId, bool repeating)
+        {
+            lock (_idCallback)
+            {
+                Action callback;
+                if (_idCallback.TryGetValue(callbackId, out callback))
                 {
-                    lock (this)
+                    new Thread(() =>
+                        {
+                            if (Monitor.TryEnter(callback))
+                                try
+                                {
+                                    _logger.Log("Raising callback " + callbackId, LoggingLevel.Debug);
+                                    callback();
+                                }
+                                catch (Exception ex)
+                                {
+                                    _logger.Log("Callback failed:  " + ex.Message, LoggingLevel.Normal);
+                                }
+                                finally
+                                {
+                                    Monitor.Exit(callback);
+                                }
+                            else
+                                _logger.Log("Callback " + callbackId + " was already running. Not running again.", LoggingLevel.Debug);
+
+                            if (!repeating)
+                                _idCallback.Remove(callbackId);
+
+                        }).Start();                           
+                }
+            }
+        }
+
+        private int AddCallback(Action callback)
+        {
+            lock (_idCallback)
+            {
+                int callbackId = 0;
+                while (_idCallback.ContainsKey(callbackId))
+                    ++callbackId;
+
+                _idCallback.Add(callbackId, callback);
+
+                return callbackId;
+            }
+        }
+
+        public void TestHealth()
+        {
+            lock (_locker)
+            {
+                if (_stopped)
+                    return;
+
+                _logger.Log("Sensus health test is running (test " + ++_healthTestCount + ")", LoggingLevel.Normal, _logTag);
+
+                foreach (Protocol protocol in _registeredProtocols)
+                    if (_runningProtocolIds.Contains(protocol.Id))
                     {
-                        if (_stopped)
-                            return;
+                        protocol.TestHealth();
 
-                        _logger.Log("Sensus service helper was pinged (count=" + ++_pingCount + ")", LoggingLevel.Normal, _logTag);
-
-                        foreach (Protocol protocol in _registeredProtocols)
-                            if (_runningProtocolIds.Contains(protocol.Id))
-                            {
-                                protocol.Ping();
-
-                                if (_pingCount % _pingsPerProtocolReport == 0)
-                                    protocol.StoreMostRecentProtocolReport();
-                            }
+                        if (_healthTestCount % _healthTestsPerProtocolReport == 0)
+                            protocol.StoreMostRecentProtocolReport();
                     }
-                }).Start();
+            }
         }
 
         public void UnregisterProtocol(Protocol protocol)
         {
-            lock (this)
+            lock (_locker)
             {
                 protocol.Stop();
                 _registeredProtocols.Remove(protocol);
@@ -381,7 +480,7 @@ namespace SensusService
 
         public void Stop()
         {
-            lock (this)
+            lock (_locker)
             {
                 if (_stopped)
                     return;
@@ -401,7 +500,7 @@ namespace SensusService
 
         public string GetSharePath(string extension)
         {
-            lock (this)
+            lock (_locker)
             {
                 int fileNum = 0;
                 string path = null;

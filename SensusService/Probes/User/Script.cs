@@ -53,6 +53,8 @@ namespace SensusService.Probes.User
         private Datum _previousDatum;
         private Datum _currentDatum;
 
+        private readonly object _locker = new object();
+
         public string Id
         {
             get { return _id; }
@@ -106,7 +108,7 @@ namespace SensusService.Probes.User
         [JsonIgnore]
         public bool Complete
         {
-            get { return _prompts.Count == 0 ? true : _prompts.All(p => p.Complete); }
+            get { return _prompts.Count == 0 || _prompts.All(p => p.Complete); }
         }
 
         /// <summary>
@@ -143,26 +145,25 @@ namespace SensusService.Probes.User
 
         public void RunAsync(Datum previousDatum, Datum currentDatum, Action<List<ScriptDatum>> callback)
         {
-            SensusServiceHelper.Get().Logger.Log("Running script \"" + _name + "\".", LoggingLevel.Normal);
-
-            if (previousDatum != null)
-                _previousDatum = previousDatum;
-
-            if (currentDatum != null)
-                _currentDatum = currentDatum;
-
-            new Thread(() =>
+            SensusServiceHelper.Get().ScheduleOneTimeCallback(() =>
                 {
-                    if (_delayMS > 0)
-                        Thread.Sleep(_delayMS);
+                    SensusServiceHelper.Get().Logger.Log("Running script \"" + _name + "\".", LoggingLevel.Normal);
 
                     bool isRerun = true;
-                    lock (this)
+                    lock (_locker)
+                    {
                         if (_firstRunTimestamp == DateTimeOffset.MinValue)
                         {
                             _firstRunTimestamp = DateTimeOffset.UtcNow;
                             isRerun = false;
                         }
+
+                        if (previousDatum != null)
+                            _previousDatum = previousDatum;
+
+                        if (currentDatum != null)
+                            _currentDatum = currentDatum;
+                    }
 
                     List<ScriptDatum> data = new List<ScriptDatum>();
 
@@ -186,7 +187,7 @@ namespace SensusService.Probes.User
 
                     callback(data);
 
-                }).Start();
+                }, _delayMS);
         }
 
         public Script Copy()

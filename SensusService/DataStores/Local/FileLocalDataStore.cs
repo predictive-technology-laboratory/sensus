@@ -34,6 +34,8 @@ namespace SensusService.DataStores.Local
         /// </summary>
         private string _path;
 
+        private readonly object _locker = new object();
+
         private string StorageDirectory
         {
             get
@@ -61,7 +63,7 @@ namespace SensusService.DataStores.Local
         public override void Start()
         {
             // file needs to be ready to accept data immediately
-            lock (this)
+            lock (_locker)
             {
                 InitializeFile();
 
@@ -71,7 +73,7 @@ namespace SensusService.DataStores.Local
 
         protected override List<Datum> CommitData(List<Datum> data)
         {
-            lock (this)
+            lock (_locker)
             {
                 List<Datum> committedData = new List<Datum>();
 
@@ -113,7 +115,7 @@ namespace SensusService.DataStores.Local
 
         public override List<Datum> GetDataForRemoteDataStore()
         {
-            lock (this)
+            lock (_locker)
             {
                 CloseFile();
 
@@ -144,16 +146,16 @@ namespace SensusService.DataStores.Local
 
         public override void ClearDataCommittedToRemoteDataStore(List<Datum> dataCommittedToRemote)
         {
-            lock (this)
+            lock (_locker)
             {
-                SensusServiceHelper.Get().Logger.Log("File local data store received " + dataCommittedToRemote.Count + " remote-committed data elements to clear.", LoggingLevel.Verbose);
+                SensusServiceHelper.Get().Logger.Log("File local data store received " + dataCommittedToRemote.Count + " remote-committed data elements to clear.", LoggingLevel.Debug);
 
                 HashSet<Datum> hashDataCommittedToRemote = new HashSet<Datum>(dataCommittedToRemote);  // for quick access via hashing
 
                 foreach (string path in Directory.GetFiles(StorageDirectory))
                     if (path != _path)  // don't process the file that's currently being written
                     {
-                        SensusServiceHelper.Get().Logger.Log("Clearing remote-committed data from \"" + path + "\".", LoggingLevel.Verbose);
+                        SensusServiceHelper.Get().Logger.Log("Clearing remote-committed data from \"" + path + "\".", LoggingLevel.Debug);
 
                         string filteredPath = Path.GetTempFileName();
                         int filteredDataWritten = 0;
@@ -177,7 +179,7 @@ namespace SensusService.DataStores.Local
 
                         if (filteredDataWritten == 0)  // all data in local file were committed to remote data store -- delete local and filtered files
                         {
-                            SensusServiceHelper.Get().Logger.Log("Cleared all data from local data store file. Deleting file.", LoggingLevel.Verbose);
+                            SensusServiceHelper.Get().Logger.Log("Cleared all data from local data store file. Deleting file.", LoggingLevel.Debug);
 
                             File.Delete(path);
                             File.Delete(filteredPath);
@@ -197,7 +199,7 @@ namespace SensusService.DataStores.Local
 
         public override void Stop()
         {
-            lock (this)
+            lock (_locker)
             {
                 // stop the commit thread
                 base.Stop();

@@ -53,6 +53,8 @@ namespace SensusService.Probes
         private Protocol _protocol;
         private bool _storeData;
 
+        private readonly object _locker = new object();
+
         [EntryStringUiProperty("Name:", true, 1)]
         public string DisplayName
         {
@@ -151,7 +153,7 @@ namespace SensusService.Probes
         /// </summary>
         public virtual void Start()
         {
-            lock (this)
+            lock (_locker)
             {
                 if (_running)
                     SensusServiceHelper.Get().Logger.Log("Attempted to start probe \"" + GetType().FullName + "\", but it was already running.", LoggingLevel.Normal);
@@ -194,7 +196,7 @@ namespace SensusService.Probes
                         if (_collectedData.Remove(datum))
                             ++cleared;
 
-                    SensusServiceHelper.Get().Logger.Log("Cleared " + cleared + " committed data elements from probe:  " + GetType().FullName, LoggingLevel.Verbose);
+                    SensusServiceHelper.Get().Logger.Log("Cleared " + cleared + " committed data elements from probe:  " + GetType().FullName, LoggingLevel.Debug);
                 }
         }
 
@@ -213,7 +215,7 @@ namespace SensusService.Probes
         /// </summary>
         public virtual void Stop()
         {
-            lock (this)
+            lock (_locker)
             {
                 if (_running)
                 {
@@ -231,14 +233,14 @@ namespace SensusService.Probes
 
         public void Restart()
         {
-            lock (this)
+            lock (_locker)
             {
                 Stop();
                 Start();
             }
         }
 
-        public virtual bool Ping(ref string error, ref string warning, ref string misc)
+        public virtual bool TestHealth(ref string error, ref string warning, ref string misc)
         {
             bool restart = false;
 
