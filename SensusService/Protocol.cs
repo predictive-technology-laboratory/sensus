@@ -344,22 +344,22 @@ namespace SensusService
             }
         }
 
-        public void PingAsync()
+        public void TestHealthAsync()
         {
-            PingAsync(() => { });
+            TestHealthAsync(() => { });
         }
 
-        public void PingAsync(Action callback)
+        public void TestHealthAsync(Action callback)
         {
             new Thread(() =>
                 {
-                    Ping();
+                    TestHealth();
                     callback();
 
                 }).Start();
         }
 
-        public void Ping()
+        public void TestHealth()
         {
             lock (this)
             {
@@ -387,7 +387,7 @@ namespace SensusService
                 {
                     if (_localDataStore == null)
                         error += "No local data store present on protocol." + Environment.NewLine;
-                    else if (_localDataStore.Ping(ref error, ref warning, ref misc))
+                    else if (_localDataStore.TestHealth(ref error, ref warning, ref misc))
                     {
                         error += "Restarting local data store...";
 
@@ -400,7 +400,7 @@ namespace SensusService
 
                     if (_remoteDataStore == null)
                         error += "No remote data store present on protocol." + Environment.NewLine;
-                    else if (_remoteDataStore.Ping(ref error, ref warning, ref misc))
+                    else if (_remoteDataStore.TestHealth(ref error, ref warning, ref misc))
                     {
                         error += "Restarting remote data store...";
 
@@ -412,7 +412,7 @@ namespace SensusService
                     }
 
                     foreach (Probe probe in _probes)
-                        if (probe.Enabled && probe.Ping(ref error, ref warning, ref misc))
+                        if (probe.Enabled && probe.TestHealth(ref error, ref warning, ref misc))
                         {
                             error += "Restarting probe \"" + probe.GetType().FullName + "\"...";
 

@@ -14,6 +14,8 @@
 // limitations under the License.
 #endregion
 
+// TODO:  Do these probes stay on when the device is asleep?
+
 using SensusUI.UiProperties;
 using System;
 

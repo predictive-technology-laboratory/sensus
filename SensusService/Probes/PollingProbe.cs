@@ -116,9 +116,9 @@ namespace SensusService.Probes
 
         protected virtual void PollingStopped() { }
 
-        public override bool Ping(ref string error, ref string warning, ref string misc)
+        public override bool TestHealth(ref string error, ref string warning, ref string misc)
         {
-            bool restart = base.Ping(ref error, ref warning, ref misc);
+            bool restart = base.TestHealth(ref error, ref warning, ref misc);
 
             if (Running)
             {

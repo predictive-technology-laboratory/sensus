@@ -176,7 +176,7 @@ namespace SensusUI
                 {
                     if (SensusServiceHelper.Get().ProtocolShouldBeRunning(_protocol))
                     {
-                        _protocol.PingAsync( () =>
+                        _protocol.TestHealthAsync( () =>
                             {
 								Device.BeginInvokeOnMainThread(async () =>
 									{

@@ -238,7 +238,7 @@ namespace SensusService.Probes
             }
         }
 
-        public virtual bool Ping(ref string error, ref string warning, ref string misc)
+        public virtual bool TestHealth(ref string error, ref string warning, ref string misc)
         {
             bool restart = false;
 

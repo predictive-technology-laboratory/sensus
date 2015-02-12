@@ -85,8 +85,12 @@ namespace Sensus.Android
 
             _notificationManager.Notify(ServiceNotificationId, _notificationBuilder.Build());
 
-            if (intent.GetBooleanExtra(AndroidSensusServiceHelper.INTENT_EXTRA_NAME_PING, false))
-                _sensusServiceHelper.PingAsync();
+            if (intent.GetBooleanExtra(AndroidSensusServiceHelper.INTENT_EXTRA_SENSUS_CALLBACK, false))
+            {
+                int callbackId = intent.GetIntExtra(AndroidSensusServiceHelper.INTENT_EXTRA_SENSUS_CALLBACK_ID, -1);
+                if (callbackId >= 0)
+                    _sensusServiceHelper.RaiseCallbackAsync(callbackId);
+            }
 
             return StartCommandResult.RedeliverIntent;
         }
