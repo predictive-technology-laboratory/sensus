@@ -151,6 +151,8 @@ namespace SensusService
         private ProtocolReport _mostRecentReport;
         private bool _forceProtocolReportsToRemoteDataStore;
 
+        private readonly object _locker = new object();
+
         public string Id
         {
             get { return _id; }
@@ -283,12 +285,12 @@ namespace SensusService
 
         public void StartAsync()
         {
-            new Thread(() => Start()).Start();
+            new Thread(Start).Start();
         }
 
         public void Start()
         {
-            lock (this)
+            lock (_locker)
             {
                 if (_running)
                     return;
@@ -361,7 +363,7 @@ namespace SensusService
 
         public void TestHealth()
         {
-            lock (this)
+            lock (_locker)
             {
                 string error = null;
                 string warning = null;
@@ -432,7 +434,7 @@ namespace SensusService
 
         public void StoreMostRecentProtocolReport()
         {
-            lock (this)
+            lock (_locker)
                 if (_mostRecentReport != null)
                 {
                     SensusServiceHelper.Get().Logger.Log("Storing protocol report locally.", LoggingLevel.Normal);
@@ -463,7 +465,7 @@ namespace SensusService
 
         public void Stop()
         {
-            lock (this)
+            lock (_locker)
             {
                 if (_running)
                     _running = false;

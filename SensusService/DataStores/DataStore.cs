@@ -37,6 +37,8 @@ namespace SensusService.DataStores
         private bool _isCommitting;
         private int _commitCallbackId;
 
+        private readonly object _locker = new object();
+
         [EntryStringUiProperty("Name:", true, 1)]
         public string Name
         {
@@ -77,7 +79,7 @@ namespace SensusService.DataStores
         [JsonIgnore]
         public abstract bool Clearable { get; }
 
-        public DataStore()
+        protected DataStore()
         {
             _name = DisplayName;
             _commitDelayMS = 10000;
@@ -99,7 +101,7 @@ namespace SensusService.DataStores
         /// </summary>
         public virtual void Start()
         {
-            lock (this)
+            lock (_locker)
             {
                 if (_running)
                     return;
@@ -185,7 +187,7 @@ namespace SensusService.DataStores
         /// </summary>
         public virtual void Stop()
         {
-            lock (this)
+            lock (_locker)
             {
                 if (_running)
                     _running = false;
@@ -200,7 +202,7 @@ namespace SensusService.DataStores
 
         public void Restart()
         {
-            lock (this)
+            lock (_locker)
             {
                 Stop();
                 Start();

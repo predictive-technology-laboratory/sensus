@@ -119,6 +119,8 @@ namespace SensusService
         private int _healthTestsPerProtocolReport;
         private Dictionary<int, Action> _idCallback;
 
+        private readonly object _locker = new object();
+
         [JsonIgnore]
         public Logger Logger
         {
@@ -270,7 +272,7 @@ namespace SensusService
         #region add/remove running protocol ids
         public void AddRunningProtocolId(string id)
         {
-            lock (this)
+            lock (_locker)
             {
                 if (!_runningProtocolIds.Contains(id))
                 {
@@ -285,7 +287,7 @@ namespace SensusService
 
         public void RemoveRunningProtocolId(string id)
         {
-            lock (this)
+            lock (_locker)
             {
                 if (_runningProtocolIds.Remove(id))
                     Save();
@@ -303,7 +305,7 @@ namespace SensusService
 
         public void Save()
         {
-            lock (this)
+            lock (_locker)
             {
                 try
                 {
@@ -321,7 +323,7 @@ namespace SensusService
         /// </summary>
         public void Start()
         {
-            lock (this)
+            lock (_locker)
             {
                 if (_stopped)
                     _stopped = false;
@@ -336,7 +338,7 @@ namespace SensusService
 
         public void RegisterProtocol(Protocol protocol)
         {
-            lock (this)
+            lock (_locker)
                 if (!_stopped && !_registeredProtocols.Contains(protocol))
                 {
                     _registeredProtocols.Add(protocol);
@@ -435,7 +437,7 @@ namespace SensusService
 
         public void TestHealth()
         {
-            lock (this)
+            lock (_locker)
             {
                 if (_stopped)
                     return;
@@ -455,7 +457,7 @@ namespace SensusService
 
         public void UnregisterProtocol(Protocol protocol)
         {
-            lock (this)
+            lock (_locker)
             {
                 protocol.Stop();
                 _registeredProtocols.Remove(protocol);
@@ -478,7 +480,7 @@ namespace SensusService
 
         public void Stop()
         {
-            lock (this)
+            lock (_locker)
             {
                 if (_stopped)
                     return;
@@ -498,7 +500,7 @@ namespace SensusService
 
         public string GetSharePath(string extension)
         {
-            lock (this)
+            lock (_locker)
             {
                 int fileNum = 0;
                 string path = null;

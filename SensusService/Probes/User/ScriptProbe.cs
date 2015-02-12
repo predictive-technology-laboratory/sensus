@@ -43,6 +43,8 @@ namespace SensusService.Probes.User
         private int _randomTriggerDelayMaxMinutes;
         private Random _random;
 
+        private readonly object _locker = new object();
+
         public ObservableCollection<Trigger> Triggers
         {
             get { return _triggers; }
@@ -177,7 +179,7 @@ namespace SensusService.Probes.User
                             EventHandler<Tuple<Datum, Datum>> handler = (oo, prevCurrDatum) =>
                                 {
                                     // must be running and must have a current datum
-                                    lock (this)
+                                    lock (_locker)
                                         if (!Running || prevCurrDatum.Item2 == null)
                                             return;
 

@@ -53,8 +53,9 @@ namespace SensusService.DataStores.Remote
         private IMobileServiceTable<CellTowerDatum> _cellTowerTable;
         private IMobileServiceTable<WlanDatum> _wlanTable;
         private IMobileServiceTable<ScriptDatum> _scriptTable;
-
         private IMobileServiceTable<ProtocolReport> _protocolReportTable;
+
+        private readonly object _locker = new object();
 
         [EntryStringUiProperty("URL:", true, 2)]
         public string URL
@@ -83,7 +84,7 @@ namespace SensusService.DataStores.Remote
 
         public override void Start()
         {
-            lock (this)
+            lock (_locker)
             {
                 _client = new MobileServiceClient(_url, _key);
 
@@ -175,7 +176,7 @@ namespace SensusService.DataStores.Remote
 
         public override void Stop()
         {
-            lock (this)
+            lock (_locker)
             {
                 // stop the commit thread
                 base.Stop();

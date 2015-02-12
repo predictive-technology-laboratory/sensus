@@ -24,6 +24,8 @@ namespace SensusService.DataStores.Local
     {
         private HashSet<Datum> _data;
 
+        private readonly object _locker = new object();
+
         protected override string DisplayName
         {
             get { return "RAM"; }
@@ -37,7 +39,7 @@ namespace SensusService.DataStores.Local
 
         public override void Start()
         {
-            lock (this)
+            lock (_locker)
             {
                 _data = new HashSet<Datum>();
 
@@ -81,7 +83,7 @@ namespace SensusService.DataStores.Local
 
         public override void Stop()
         {
-            lock (this)
+            lock (_locker)
             {
                 base.Stop();
 

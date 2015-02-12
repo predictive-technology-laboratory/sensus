@@ -29,6 +29,8 @@ namespace Sensus.Android
         private ManualResetEvent _utteranceWait;
         private bool _disposed;
 
+        private readonly object _locker = new object();
+
         public AndroidTextToSpeech(AndroidSensusService service)
         {
             _textToSpeech = new TextToSpeech(service, this);
@@ -49,7 +51,7 @@ namespace Sensus.Android
         {
             new Thread(() =>
                 {
-                    lock (this)
+                    lock (_locker)
                     {
                         if (_disposed)
                             return;
@@ -86,7 +88,7 @@ namespace Sensus.Android
 
         protected override void Dispose(bool disposing)
         {
-            lock (this)
+            lock (_locker)
             {
                 base.Dispose(disposing);
 

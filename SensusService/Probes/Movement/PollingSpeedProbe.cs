@@ -25,6 +25,8 @@ namespace SensusService.Probes.Movement
         private PollingLocationProbe _locationProbe;
         private LocationDatum _previousLocation;
 
+        private readonly object _locker = new object();
+
         protected sealed override string DefaultDisplayName
         {
             get { return "Speed (Polling)"; }
@@ -55,7 +57,7 @@ namespace SensusService.Probes.Movement
 
         public override void Start()
         {
-            lock (this)
+            lock (_locker)
             {
                 _previousLocation = null;  // do this before starting the base-class poller so it doesn't race to grab a stale previous location.
                 base.Start();               
@@ -75,7 +77,7 @@ namespace SensusService.Probes.Movement
 
         protected override IEnumerable<Datum> Poll()
         {
-            lock (this)
+            lock (_locker)
             {
                 LocationDatum currentLocation = _locationProbe.MostRecentDatum as LocationDatum;
 
@@ -124,7 +126,7 @@ namespace SensusService.Probes.Movement
 
         public override void Stop()
         {
-            lock (this)
+            lock (_locker)
             {
                 base.Stop();
                 _locationProbe.Stop();

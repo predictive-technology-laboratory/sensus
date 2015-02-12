@@ -45,6 +45,8 @@ namespace SensusService.Probes.Location
         private int _minimumTimeHint;
         private int _minimumDistanceHint;
 
+        private readonly object _locker = new object();
+
         public Geolocator Locator
         {
             get { return _locator; }
@@ -117,7 +119,7 @@ namespace SensusService.Probes.Location
 
         public void AddListener(EventHandler<PositionEventArgs> listener)
         {
-            lock (this)
+            lock (_locker)
             {
                 if (_locator == null)
                     throw new SensusException("Locator has not yet been bound to a platform-specific implementation.");
@@ -135,7 +137,7 @@ namespace SensusService.Probes.Location
 
         public void RemoveListener(EventHandler<PositionEventArgs> listener)
         {
-            lock (this)
+            lock (_locker)
             {
                 if (_locator == null)
                     throw new SensusException("Locator has not yet been bound to a platform-specific implementation.");
@@ -154,7 +156,7 @@ namespace SensusService.Probes.Location
 
         public void ClearListeners()
         {
-            lock (this)
+            lock (_locker)
             {
                 _locator.StopListening();
                 PositionChanged = null;

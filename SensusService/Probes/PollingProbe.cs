@@ -30,6 +30,8 @@ namespace SensusService.Probes
         private bool _isPolling;
         private int _pollCallbackId;
 
+        private readonly object _locker = new object();
+
         [EntryIntegerUiProperty("Sleep Duration:", true, 5)]
         public virtual int PollingSleepDurationMS
         {
@@ -61,7 +63,7 @@ namespace SensusService.Probes
         /// </summary>
         public override void Start()
         {
-            lock (this)
+            lock (_locker)
             {
                 base.Start();
 
@@ -103,7 +105,7 @@ namespace SensusService.Probes
 
         public override void Stop()
         {
-            lock (this)
+            lock (_locker)
             {
                 base.Stop();
 

@@ -53,6 +53,8 @@ namespace SensusService.Probes.User
         private Datum _previousDatum;
         private Datum _currentDatum;
 
+        private readonly object _locker = new object();
+
         public string Id
         {
             get { return _id; }
@@ -106,7 +108,7 @@ namespace SensusService.Probes.User
         [JsonIgnore]
         public bool Complete
         {
-            get { return _prompts.Count == 0 ? true : _prompts.All(p => p.Complete); }
+            get { return _prompts.Count == 0 || _prompts.All(p => p.Complete); }
         }
 
         /// <summary>
@@ -148,7 +150,7 @@ namespace SensusService.Probes.User
                     SensusServiceHelper.Get().Logger.Log("Running script \"" + _name + "\".", LoggingLevel.Normal);
 
                     bool isRerun = true;
-                    lock (this)
+                    lock (_locker)
                     {
                         if (_firstRunTimestamp == DateTimeOffset.MinValue)
                         {
