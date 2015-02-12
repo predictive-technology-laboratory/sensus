@@ -239,7 +239,7 @@ namespace SensusService.DataStores.Local
             {
                 _file = null;
                 _path = null;
-                throw new SensusException("Failed to initialize new local data store file:  " + ex.Message);
+                throw new DataStoreException("Failed to initialize new local data store file:  " + ex.Message);
             }
         }
 

@@ -57,9 +57,9 @@ namespace SensusService.Probes.Movement
         {
             lock (this)
             {
+                _previousLocation = null;  // do this before starting the base-class poller so it doesn't race to grab a stale previous location.
+                base.Start();               
                 _locationProbe.Start();
-
-                base.Start();
             }
         }
 
@@ -85,13 +85,21 @@ namespace SensusService.Probes.Movement
                     data = new Datum[] { };
                 else
                 {
-                    double reportedDistKM = Math.Sin(DegreesToRadians(_previousLocation.Latitude)) *
-                                                Math.Sin(DegreesToRadians(currentLocation.Latitude)) +
-                                                Math.Cos(DegreesToRadians(_previousLocation.Latitude)) *
-                                                Math.Cos(DegreesToRadians(currentLocation.Latitude)) *
-                                                Math.Cos(DegreesToRadians(_previousLocation.Longitude - currentLocation.Longitude));
+                    // http://www.movable-type.co.uk/scripts/latlong.html
 
-                    reportedDistKM = RadiansToDegrees(Math.Acos(reportedDistKM)) * 111.18957696;
+                    double φ1 = DegreesToRadians(_previousLocation.Latitude);
+                    double φ2 = DegreesToRadians(currentLocation.Latitude);
+                    double Δφ = DegreesToRadians(currentLocation.Latitude - _previousLocation.Latitude);
+                    double Δλ = DegreesToRadians(currentLocation.Longitude - _previousLocation.Longitude);
+
+                    double a = Math.Pow(Math.Sin(Δφ / 2), 2) +
+                               Math.Cos(φ1) *
+                               Math.Cos(φ2) *
+                               Math.Pow(Math.Sin(Δλ / 2), 2);
+
+                    var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+
+                    var reportedDistKM = 6371 * c;
 
                     double elapsedHours = new TimeSpan(currentLocation.Timestamp.Ticks - _previousLocation.Timestamp.Ticks).TotalHours;
                     double reportedSpeedKPH = reportedDistKM / elapsedHours;
@@ -118,11 +126,9 @@ namespace SensusService.Probes.Movement
         {
             lock (this)
             {
-                _previousLocation = null;
-
-                // make sure the base class has a chance to stop
-                try { _locationProbe.Stop(); }
-                finally { base.Stop(); }
+                base.Stop();
+                _locationProbe.Stop();
+                _previousLocation = null;  // reset previous location so it doesn't get used when this probe is restarted.
             }
         }
     }

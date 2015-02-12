@@ -176,13 +176,17 @@ namespace SensusUI
                 {
                     if (SensusServiceHelper.Get().ProtocolShouldBeRunning(_protocol))
                     {
-                        await _protocol.PingAsync();
-
-                        if (_protocol.MostRecentReport == null)
-                            await DisplayAlert("No Report", "Ping failed.", "OK");
-                        else
-                            await Navigation.PushAsync(new ViewTextLinesPage("Protocol Report", _protocol.MostRecentReport.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList(), null));
-                    }
+                        _protocol.PingAsync( () =>
+                            {
+								Device.BeginInvokeOnMainThread(async () =>
+									{
+										if (_protocol.MostRecentReport == null)
+											await DisplayAlert("No Report", "Ping failed.", "OK");
+										else
+											await Navigation.PushAsync(new ViewTextLinesPage("Protocol Report", _protocol.MostRecentReport.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList(), null));
+									});
+							});
+					}
                     else
                         await DisplayAlert("Protocol Not Running", "Cannot ping protocol when it is not running.", "OK");
                 }));
@@ -192,17 +196,17 @@ namespace SensusUI
                     string path = null;
                     try
                     {
-                        path = UiBoundSensusServiceHelper.Get().GetSharePath(".sensus");
+                        path = UiBoundSensusServiceHelper.Get(true).GetSharePath(".sensus");
                         _protocol.Save(path);
                     }
                     catch (Exception ex)
                     {
-                        UiBoundSensusServiceHelper.Get().Logger.Log("Failed to save protocol to file for sharing:  " + ex.Message, LoggingLevel.Normal);
+                        UiBoundSensusServiceHelper.Get(true).Logger.Log("Failed to save protocol to file for sharing:  " + ex.Message, LoggingLevel.Normal);
                         path = null;
                     }
 
                     if (path != null)
-                        UiBoundSensusServiceHelper.Get().ShareFileAsync(path, "Sensus Protocol:  " + _protocol.Name);
+                        UiBoundSensusServiceHelper.Get(true).ShareFileAsync(path, "Sensus Protocol:  " + _protocol.Name);
                 }));
             #endregion
         }
@@ -225,8 +229,9 @@ namespace SensusUI
                                                  .Cast<DataStore>()
                                                  .ToList();
 
-            string selected = await DisplayActionSheet("Select " + (local ? "Local" : "Remote") + " Data Store", "Cancel", null, dataStores.Select((d, i) => (i + 1) + ") " + d.Name).ToArray());
-            if (selected != null)
+            string cancelButtonName = "Cancel";
+            string selected = await DisplayActionSheet("Select " + (local ? "Local" : "Remote") + " Data Store", cancelButtonName, null, dataStores.Select((d, i) => (i + 1) + ") " + d.Name).ToArray());
+            if (!string.IsNullOrWhiteSpace(selected) && selected != cancelButtonName)
                 await Navigation.PushAsync(new DataStorePage(_protocol, dataStores[int.Parse(selected.Substring(0, selected.IndexOf(")"))) - 1], local));
         }
 
@@ -235,8 +240,6 @@ namespace SensusUI
             base.OnDisappearing();
 
             _protocol.ProtocolRunningChanged -= _protocolRunningChangedAction;
-
-            UiBoundSensusServiceHelper.Get().SaveRegisteredProtocols();
         }
     }
 }

@@ -97,8 +97,6 @@ namespace SensusUI
                     triggerDefinitionLayout.Children.Clear();
 
                     #region datum property picker
-                    Type datumType = _selectedProbe.DatumType;
-
                     Label datumPropertyLabel = new Label
                     {
                         Text = "Property:",
@@ -106,7 +104,7 @@ namespace SensusUI
                     };
 
                     Picker datumPropertyPicker = new Picker { Title = "Select Datum Property", HorizontalOptions = LayoutOptions.FillAndExpand };
-                    PropertyInfo[] datumProperties = datumType.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(p => p.GetCustomAttributes<ProbeTriggerProperty>().Count() > 0).ToArray();
+                    PropertyInfo[] datumProperties = _selectedProbe.DatumType.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(p => p.GetCustomAttributes<ProbeTriggerProperty>().Count() > 0).ToArray();
                     foreach (PropertyInfo triggerProperty in datumProperties)
                         datumPropertyPicker.Items.Add(triggerProperty.Name);
 
@@ -321,35 +319,35 @@ namespace SensusUI
 
                     datumPropertyPicker.SelectedIndex = 0;
                     #endregion
+
+                    #region ignore first datum
+                    _ignoreFirstDatum = false;
+                    Label ignoreFirstDatumLabel = new Label
+                        {
+                            Text = "Ignore First Datum:",
+                            FontSize = 20
+                        };
+
+                    Switch ignoreFirstDatumSwitch = new Switch
+                        {
+                            IsToggled = _ignoreFirstDatum
+                        };
+
+                    ignoreFirstDatumSwitch.Toggled += (oo, ee) =>
+                        {
+                            _ignoreFirstDatum = ee.Value;
+                        };
+
+                    triggerDefinitionLayout.Children.Add(new StackLayout
+                        {
+                            Orientation = StackOrientation.Horizontal,
+                            HorizontalOptions = LayoutOptions.FillAndExpand,
+                            Children = { ignoreFirstDatumLabel, ignoreFirstDatumSwitch }
+                        });
+                    #endregion
                 };
 
             probePicker.SelectedIndex = 0;
-
-            #region ignore first datum
-            _ignoreFirstDatum = false;
-            Label ignoreFirstDatumLabel = new Label
-            {
-                Text = "Ignore First Datum:",
-                FontSize = 20
-            };
-
-            Switch ignoreFirstDatumSwitch = new Switch
-            {
-                IsToggled = _ignoreFirstDatum
-            };
-
-            ignoreFirstDatumSwitch.Toggled += (o, e) =>
-                {
-                    _ignoreFirstDatum = e.Value;
-                };
-
-            contentLayout.Children.Add(new StackLayout
-            {
-                Orientation = StackOrientation.Horizontal,
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                Children = { ignoreFirstDatumLabel, ignoreFirstDatumSwitch }
-            });
-            #endregion
 
             Button okButton = new Button
             {
@@ -367,8 +365,8 @@ namespace SensusUI
                     catch (Exception ex)
                     {
                         string message = "Failed to add trigger:  " + ex.Message;
-                        UiBoundSensusServiceHelper.Get().FlashNotificationAsync(message).Wait();
-                        UiBoundSensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal);
+                        UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync(message);
+                        UiBoundSensusServiceHelper.Get(true).Logger.Log(message, LoggingLevel.Normal);
                     }
                 };
 

@@ -40,7 +40,7 @@ namespace SensusUI
                     if (scriptProbe.Protocol.Probes.Where(p => p != scriptProbe && p.Enabled).Count() > 0)
                         await Navigation.PushAsync(new AddScriptProbeTriggerPage(scriptProbe));
                     else
-                        await UiBoundSensusServiceHelper.Get().FlashNotificationAsync("You must enable probes before adding triggers.");
+                        UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("You must enable probes before adding triggers.");
                 }));
 
             ToolbarItems.Add(new ToolbarItem("-", null, async () =>

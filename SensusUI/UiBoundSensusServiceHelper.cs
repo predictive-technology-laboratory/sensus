@@ -17,7 +17,6 @@
 using SensusService;
 using SensusService.Exceptions;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace SensusUI
 {
@@ -27,16 +26,11 @@ namespace SensusUI
         private static object _getSensusServiceHelperLocker = new object();
         private static ManualResetEvent _sensusServiceHelperWait = new ManualResetEvent(false);
 
-        public static Task<SensusServiceHelper> GetAsync()
-        {
-            return Task.Run(() => { return Get(); });
-        }
-
-        public static SensusServiceHelper Get()
+        public static SensusServiceHelper Get(bool wait)
         {
             lock (_getSensusServiceHelperLocker)
             {
-                if (_sensusServiceHelper == null && !_sensusServiceHelperWait.WaitOne(30000))
+                if (_sensusServiceHelper == null && wait && !_sensusServiceHelperWait.WaitOne(30000))
                     throw new SensusException("Sensus UI failed to bind to service.");
 
                 return _sensusServiceHelper;

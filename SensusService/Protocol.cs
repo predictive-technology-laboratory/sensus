@@ -17,7 +17,6 @@
 using Newtonsoft.Json;
 using SensusService.DataStores.Local;
 using SensusService.DataStores.Remote;
-using SensusService.Exceptions;
 using SensusService.Probes;
 using SensusUI.UiProperties;
 using System;
@@ -25,7 +24,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Threading;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace SensusService
@@ -44,20 +42,23 @@ namespace SensusService
             ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
         };
 
-        public static Task<Protocol> FromWebUriAsync(Uri webURI)
+        public static void FromWebUriAsync(Uri webURI, Action<Protocol> callback)
         {
-            return Task.Run<Protocol>(() =>
+            new Thread(() =>
                 {
                     Protocol protocol = null;
-                    ManualResetEvent protocolWait = new ManualResetEvent(false);
 
                     try
                     {
                         WebClient downloadClient = new WebClient();
-                        downloadClient.DownloadStringCompleted += async (s, args) =>
+                        ManualResetEvent protocolWait = new ManualResetEvent(false);
+                        downloadClient.DownloadStringCompleted += (s, args) =>
                         {
-                            protocol = await FromJsonAsync(args.Result);
-                            protocolWait.Set();
+                            FromJsonAsync(args.Result, p =>
+                                {
+                                    protocol = p;
+                                    protocolWait.Set();
+                                });
                         };
 
                         downloadClient.DownloadStringAsync(webURI);
@@ -65,13 +66,14 @@ namespace SensusService
                     }
                     catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to download Protocol from URI \"" + webURI + "\":  " + ex.Message + ". If this is an HTTPS URI, make sure the server's certificate is valid.", LoggingLevel.Normal); }
 
-                    return protocol;
-                });
+                    callback(protocol);
+
+                }).Start();
         }
 
-        public static Task<Protocol> FromStreamAsync(Stream stream)
+        public static void FromStreamAsync(Stream stream, Action<Protocol> callback)
         {
-            return Task.Run(async () =>
+            new Thread(() =>
                 {
                     Protocol protocol = null;
 
@@ -81,19 +83,28 @@ namespace SensusService
                         {
                             string json = reader.ReadToEnd();
                             reader.Close();
-                            protocol = await FromJsonAsync(json);
+
+                            ManualResetEvent protocolWait = new ManualResetEvent(false);
+                            FromJsonAsync(json, p =>
+                                {
+                                    protocol = p;
+                                    protocolWait.Set();
+                                });
+
+                            protocolWait.WaitOne();
                         }
                     }
                     catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to read Protocol from stream:  " + ex.Message, LoggingLevel.Normal); }
 
-                    return protocol;
-                });
+                    callback(protocol);
+
+                }).Start();
         }
 
-        public static Task<Protocol> FromJsonAsync(string json)
+        public static void FromJsonAsync(string json, Action<Protocol> callback)
         {
-            // start new task, in case this method has been called from the UI thread...we're going to block below after calling the main thread.
-            return Task.Run(() =>
+            // start new thread, in case this method has been called from the UI thread...we're going to block below after calling the main thread.
+            new Thread(() =>
                 {
                     Protocol protocol = null;
                     ManualResetEvent protocolWait = new ManualResetEvent(false);
@@ -122,9 +133,9 @@ namespace SensusService
                         });
 
                     protocolWait.WaitOne();
+                    callback(protocol);
 
-                    return protocol;
-                });
+                }).Start();
         }
         #endregion
 
@@ -270,9 +281,9 @@ namespace SensusService
             }
         }
 
-        public Task StartAsync()
+        public void StartAsync()
         {
-            return Task.Run(() => Start());
+            new Thread(() => Start()).Start();
         }
 
         public void Start()
@@ -333,9 +344,19 @@ namespace SensusService
             }
         }
 
-        public Task PingAsync()
+        public void PingAsync()
         {
-            return Task.Run(() => Ping());
+            PingAsync(() => { });
+        }
+
+        public void PingAsync(Action callback)
+        {
+            new Thread(() =>
+                {
+                    Ping();
+                    callback();
+
+                }).Start();
         }
 
         public void Ping()
@@ -425,9 +446,19 @@ namespace SensusService
                 }
         }
 
-        public Task StopAsync()
+        public void StopAsync()
         {
-            return Task.Run(() => Stop());
+            StopAsync(() => { });
+        }
+
+        public void StopAsync(Action callback)
+        {
+            new Thread(() =>
+                {
+                    Stop();
+                    callback();
+
+                }).Start();
         }
 
         public void Stop()

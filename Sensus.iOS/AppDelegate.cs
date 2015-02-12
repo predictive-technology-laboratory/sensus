@@ -49,7 +49,5 @@ namespace Sensus.iOS
 
             return true;
         }
-
-        // TODO:  App.Get().OnStop()
     }
 }

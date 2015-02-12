@@ -52,10 +52,10 @@ namespace SensusUI
 
             ToolbarItems.Add(new ToolbarItem("+", null, () =>
                 {
-                    UiBoundSensusServiceHelper.Get().RegisterProtocol(new Protocol("New Protocol", true));
+                    UiBoundSensusServiceHelper.Get(true).RegisterProtocol(new Protocol("New Protocol", true));
 
                     _protocolsList.ItemsSource = null;
-                    _protocolsList.ItemsSource = UiBoundSensusServiceHelper.Get().RegisteredProtocols;
+                    _protocolsList.ItemsSource = UiBoundSensusServiceHelper.Get(true).RegisteredProtocols;
                 }));
 
             ToolbarItems.Add(new ToolbarItem("-", null, async () =>
@@ -66,14 +66,19 @@ namespace SensusUI
 
                         if (await DisplayAlert("Delete " + protocolToRemove.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
                         {
-                            await protocolToRemove.StopAsync();
-                            UiBoundSensusServiceHelper.Get().UnregisterProtocol(protocolToRemove);
+                            protocolToRemove.StopAsync(() =>
+                                {
+                                    UiBoundSensusServiceHelper.Get(true).UnregisterProtocol(protocolToRemove);
 
-                            try { Directory.Delete(protocolToRemove.StorageDirectory, true); }
-                            catch (Exception ex) { UiBoundSensusServiceHelper.Get().Logger.Log("Failed to delete protocol storage directory \"" + protocolToRemove.StorageDirectory + "\":  " + ex.Message, LoggingLevel.Normal); }
+                                    try { Directory.Delete(protocolToRemove.StorageDirectory, true); }
+                                    catch (Exception ex) { UiBoundSensusServiceHelper.Get(true).Logger.Log("Failed to delete protocol storage directory \"" + protocolToRemove.StorageDirectory + "\":  " + ex.Message, LoggingLevel.Normal); }
 
-                            _protocolsList.ItemsSource = _protocolsList.ItemsSource.Cast<Protocol>().Where(p => p != protocolToRemove);
-                            _protocolsList.SelectedItem = null;
+                                    Device.BeginInvokeOnMainThread(() =>
+                                        {
+                                            _protocolsList.ItemsSource = _protocolsList.ItemsSource.Cast<Protocol>().Where(p => p != protocolToRemove);
+                                            _protocolsList.SelectedItem = null;
+                                        });
+                                });
                         }
                     }
                 }));
@@ -83,7 +88,7 @@ namespace SensusUI
         public void Bind()
         {
             _protocolsList.ItemsSource = null;
-            _protocolsList.ItemsSource = UiBoundSensusServiceHelper.Get().RegisteredProtocols;
+            _protocolsList.ItemsSource = UiBoundSensusServiceHelper.Get(true).RegisteredProtocols;
         }
     }
 }
