@@ -379,15 +379,22 @@ namespace SensusService
                 if (_idCallback.TryGetValue(callbackId, out callback))
                     new Thread(() =>
                         {
-                            try
-                            {
-                                _logger.Log("Raising callback " + callbackId, LoggingLevel.Verbose);
-                                callback();
-                            }
-                            catch (Exception ex)
-                            {
-                                _logger.Log("Callback failed:  " + ex.Message, LoggingLevel.Normal);
-                            }
+                            if (Monitor.TryEnter(callback))
+                                try
+                                {
+                                    _logger.Log("Raising callback " + callbackId, LoggingLevel.Debug);
+                                    callback();
+                                }
+                                catch (Exception ex)
+                                {
+                                    _logger.Log("Callback failed:  " + ex.Message, LoggingLevel.Normal);
+                                }
+                                finally
+                                {
+                                    Monitor.Exit(callback);
+                                }
+                            else
+                                _logger.Log("Callback " + callbackId + " was already running. Not running again.", LoggingLevel.Debug);
 
                         }).Start();
             }

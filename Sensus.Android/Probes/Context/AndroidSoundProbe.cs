@@ -62,7 +62,7 @@ namespace Sensus.Android.Probes.Context
             }
             catch (Exception)
             {
-                // exception might be thrown if we're doing voice recognition
+                // exception might be thrown if we're doing voice recognition concurrently
                 return new Datum[] { };
             }
             finally

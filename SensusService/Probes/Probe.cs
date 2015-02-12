@@ -194,7 +194,7 @@ namespace SensusService.Probes
                         if (_collectedData.Remove(datum))
                             ++cleared;
 
-                    SensusServiceHelper.Get().Logger.Log("Cleared " + cleared + " committed data elements from probe:  " + GetType().FullName, LoggingLevel.Verbose);
+                    SensusServiceHelper.Get().Logger.Log("Cleared " + cleared + " committed data elements from probe:  " + GetType().FullName, LoggingLevel.Debug);
                 }
         }
 
