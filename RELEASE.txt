@@ -34,6 +34,7 @@ Windows Phone
 * On GitHub, draft a new release based on the commit you just made to master, with release tag "[platform]-v[RELVERSION]" and release title "[platform] Sensus release v[RELVERSION]", where [platform] is "Android", "iOS", or "WinPhone".
 * Pull down the new release tag (e.g., git pull).
 * Check out the new release tag (e.g., git checkout Android-v0.1.0-prerelease). Don't worry about running in "detached head" state. We're not going to make any changes.
+* NOTE:  You cannot make any changes at this point. If you find something that needs to be changed, you must delete the release/tag you just created, go back to develop, and start over.
 * Open the Sensus solution in Visual Studio (Xamarin Studio).
 
 ===== Begin Platform-Specific Steps =====
@@ -43,7 +44,7 @@ Android
 * Right-click on the Sensus.Android project, select Properties, go to Android Options, and disable "developer instrumentation" (change Configuration to Release under Android project Options -> Android Build).
 * Rebuild the Sensus.Android project.
 * Select Tools -> Android -> Publish Android App... (Project -> Publish Android Application...)
-* Sign the APK with the Sensus keystore and save it locally (Visual Studio only).
+* Sign the APK with the Sensus keystore and save it locally.
 * Publish APK to Google Play.
 
 iOS
