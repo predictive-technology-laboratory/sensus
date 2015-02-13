@@ -54,7 +54,7 @@ namespace SensusService.Probes.Location
 
         protected sealed override IEnumerable<Datum> Poll()
         {
-            Position reading = GpsReceiver.Get().GetReading(PollingSleepDurationMS, 30000);
+            Position reading = GpsReceiver.Get().GetReading(PollingSleepDurationMS, 60000);
 
             if (reading == null)
                 return new Datum[] { };

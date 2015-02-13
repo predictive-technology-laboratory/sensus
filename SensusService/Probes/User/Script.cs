@@ -168,7 +168,7 @@ namespace SensusService.Probes.User
                     List<ScriptDatum> data = new List<ScriptDatum>();
 
                     foreach (Prompt prompt in _prompts)
-                        if (prompt.InputDatum == null)
+                        if (!prompt.Complete)
                         {
                             ManualResetEvent datumWait = new ManualResetEvent(false);
 

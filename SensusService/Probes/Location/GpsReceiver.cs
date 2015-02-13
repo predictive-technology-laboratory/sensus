@@ -211,7 +211,7 @@ namespace SensusService.Probes.Location
                             DateTimeOffset end = _sharedReadingTimestamp = DateTimeOffset.UtcNow;
 
                             if (_sharedReading != null)
-                                SensusServiceHelper.Get().Logger.Log("Shared reading obtained in " + (end - start).Milliseconds + " MS:  " + _sharedReading.Latitude + " " + _sharedReading.Longitude, LoggingLevel.Verbose);
+                                SensusServiceHelper.Get().Logger.Log("Shared reading obtained in " + (end - start).TotalMilliseconds + " MS:  " + _sharedReading.Latitude + " " + _sharedReading.Longitude, LoggingLevel.Verbose);
                         }
                         catch (TaskCanceledException ex)
                         {

@@ -387,7 +387,7 @@ namespace SensusService
             }
         }
 
-        public void RaiseCallbackAsync(int callbackId, bool repeating)
+        public void RaiseCallbackAsync(int callbackId, bool repeating, Action onCallbackCompleted)
         {
             lock (_idCallback)
             {
@@ -415,6 +415,9 @@ namespace SensusService
 
                             if (!repeating)
                                 _idCallback.Remove(callbackId);
+
+                            if(onCallbackCompleted != null)
+                                onCallbackCompleted();
 
                         }).Start();                           
                 }
