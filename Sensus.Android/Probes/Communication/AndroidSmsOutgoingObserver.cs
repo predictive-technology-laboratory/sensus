@@ -14,11 +14,12 @@
 // limitations under the License.
 #endregion
 
+using System;
 using Android.Database;
+using Android.OS;
 using Android.Provider;
 using SensusService.Probes;
 using SensusService.Probes.Communication;
-using System;
 
 namespace Sensus.Android.Probes.Communication
 {
@@ -55,11 +56,11 @@ namespace Sensus.Android.Probes.Communication
                 string protocol = cursor.GetString(cursor.GetColumnIndex("protocol"));
                 int type = cursor.GetInt(cursor.GetColumnIndex("type"));
 
-                #if __ANDROID_19__
-                int sentMessageType = (int)SmsMessageType.Sent;
-                #else
-                int sentMessageType = 2;
-                #endif
+                int sentMessageType;
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
+                    sentMessageType = (int)SmsMessageType.Sent;  // API level 19
+                else
+                    sentMessageType = 2;
 
                 if (protocol != null || type != sentMessageType)
                     return;

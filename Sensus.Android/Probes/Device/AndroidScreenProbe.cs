@@ -35,12 +35,10 @@ namespace Sensus.Android.Probes.Device
         protected override IEnumerable<Datum> Poll()
         {
             bool screenOn;
-
-            #if __ANDROID_20__
-            screenOn = _powerManager.IsInteractive;
-            #else
-            screenOn = _powerManager.IsScreenOn;
-            #endif
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+                screenOn = _powerManager.IsInteractive;
+            else
+                screenOn = _powerManager.IsScreenOn;
 
             return new Datum[] { new ScreenDatum(this, DateTimeOffset.UtcNow, screenOn) };
         }
