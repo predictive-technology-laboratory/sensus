@@ -39,11 +39,11 @@ Windows Phone
 ===== Begin Platform-Specific Steps =====
 
 Android
-* Switch the Solution Configuration to AppStore.
-* Right-click on the Sensus.Android project, select Properties, go to Android Options, and disable "developer instrumentation".
+* Switch the Solution Configuration to AppStore (Project -> Active Configuration -> App Store).
+* Right-click on the Sensus.Android project, select Properties, go to Android Options, and disable "developer instrumentation" (change Configuration to Release under Android project Options -> Android Build).
 * Rebuild the Sensus.Android project.
-* Select Tools -> Android -> Publish Android App...
-* Sign the APK with the Sensus keystore and save it locally.
+* Select Tools -> Android -> Publish Android App... (Project -> Publish Android Application...)
+* Sign the APK with the Sensus keystore and save it locally (Visual Studio only).
 * Publish APK to Google Play.
 
 iOS
@@ -54,4 +54,4 @@ Windows Phone
 
 ===== End Platform-Specific Steps =====
 
-* You can now delete the release tag if you wish (e.g., git tag -d Android-v0.1.0-prerelease).
+* You can now delete the release tag from your local repository if you wish (e.g., git tag -d Android-v0.1.0-prerelease).
