@@ -1,7 +1,7 @@
-Current release version:  0.2.0-prerelease
-Current minimum Android API level:  16
+Current release version:  0.3.0-prerelease
+Current minimum Android API level:  16 (Android Framework 4.1)
 
-The process for publishing a release to GitHub and the app stores is as follows:
+The process for publishing a release to GitHub and the app stores is described below. In cases where the steps differ between Visual Studio and Xamarin Studio, the latter is described in parentheses.
 
 * Check out the most recent version of develop.
 * Open the Sensus solution.
@@ -11,8 +11,10 @@ The process for publishing a release to GitHub and the app stores is as follows:
 ===== Begin Platform-Specific Steps =====
 
 Android
-* Right-click on the Sensus.Android project, select Properties, go to Android Manifest, and increment "Version number" by 1.
-* Also under Android Manifest, update "Version name" to be [RELVERSION].
+* Ensure that Sensus can be built at the current minimum Android API level. If it cannot be built, add backwards-compatible code to get it to build.
+* Switch the target framework back to the latest Android version, and ensure that the minimum required API level is set as indicated at the top of this document.
+* Right-click on the Sensus.Android project, select Properties (Options), go to Android Manifest (Android Application), and increment "Version number" by 1.
+* Also under Android Manifest (Android Application), update "Version name" to be [RELVERSION].
 * In Sensus.Android, Properties, AssemblyInfo.cs, update the "Assembly Version" and "Assembly File Version" to be [RELVERSION]. Note that .NET requires version identifiers in a.b.c.d format, but [RELVERSION] follows Semantic Versioning guidelines (a.b.c-xxxx). To get around this, use a.b.c.0 in AssemblyInfo.cs.
 * Build the Android.Sensus project, run tests, resolve any errors, and test Sensus by deploying to a physical device (not an emulator).
 
@@ -24,14 +26,14 @@ Windows Phone
 
 ===== End Platform-Specific Steps =====
 
-* Close Visual Studio.
 * Commit all changes to develop and push develop to GitHub.
 * Merge develop into master.
 * Push master to GitHub.
 * On GitHub, draft a new release based on the commit you just made to master, with release tag "[platform]-v[RELVERSION]" and release title "[platform] Sensus release v[RELVERSION]", where [platform] is "Android", "iOS", or "WinPhone".
 * Pull down the new release tag (e.g., git pull).
+* Close Visual Studio (Xamarin Studio).
 * Check out the new release tag (e.g., git checkout Android-v0.1.0-prerelease). Don't worry about running in "detached head" state. We're not going to make any changes.
-* Open the Sensus solution in Visual Studio.
+* Open the Sensus solution in Visual Studio (Xamarin Studio).
 
 ===== Begin Platform-Specific Steps =====
 
