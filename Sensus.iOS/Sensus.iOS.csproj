@@ -105,12 +105,6 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="monotouch" />
-    <Reference Include="Xamarin.Insights">
-      <HintPath>..\packages\Xamarin.Insights.1.8.3\lib\MonoTouch10\Xamarin.Insights.dll</HintPath>
-    </Reference>
-    <Reference Include="PLCrashReporter">
-      <HintPath>..\packages\Xamarin.Insights.1.8.3\lib\MonoTouch10\PLCrashReporter.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.WindowsAzure.Mobile.Ext">
       <HintPath>..\Components\azure-mobile-services-1.3.1\lib\ios\Microsoft.WindowsAzure.Mobile.Ext.dll</HintPath>
     </Reference>
@@ -131,6 +125,12 @@
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\Components\azure-mobile-services-1.3.1\lib\ios\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Insights">
+      <HintPath>..\packages\Xamarin.Insights.1.9.0.106\lib\MonoTouch10\Xamarin.Insights.dll</HintPath>
+    </Reference>
+    <Reference Include="PLCrashReporter">
+      <HintPath>..\packages\Xamarin.Insights.1.9.0.106\lib\MonoTouch10\PLCrashReporter.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="..\SensusService\SensusService.projitems" Label="Shared" Condition="Exists('..\SensusService\SensusService.projitems')" />
