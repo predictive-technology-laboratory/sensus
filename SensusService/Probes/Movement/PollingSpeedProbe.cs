@@ -20,7 +20,6 @@ namespace SensusService.Probes.Movement
 {
     public class PollingSpeedProbe : PollingProbe
     {
-        private PollingLocationProbe _locationProbe;
         private LocationDatum _previousLocation;
 
         private readonly object _locker = new object();
@@ -28,12 +27,6 @@ namespace SensusService.Probes.Movement
         protected sealed override string DefaultDisplayName
         {
             get { return "Speed (Polling)"; }
-        }
-
-        public sealed override int PollingSleepDurationMS
-        {
-            get { return base.PollingSleepDurationMS; }
-            set { base.PollingSleepDurationMS = _locationProbe.PollingSleepDurationMS = value; }
         }
 
         public sealed override Type DatumType
@@ -48,9 +41,18 @@ namespace SensusService.Probes.Movement
 
         public PollingSpeedProbe()
         {
-            _locationProbe = new PollingLocationProbe();
-            _locationProbe.StoreData = false;
-            _locationProbe.PollingSleepDurationMS = DefaultPollingSleepDurationMS;
+        }
+
+        protected override void Initialize()
+        {
+            base.Initialize();
+
+            if (!GpsReceiver.Get().Locator.IsGeolocationEnabled)
+            {
+                string error = "Geolocation is not enabled on this device. Cannot start speed probe.";
+                SensusServiceHelper.Get().FlashNotificationAsync(error);
+                throw new Exception(error);
+            }
         }
 
         public override void Start()
@@ -59,7 +61,6 @@ namespace SensusService.Probes.Movement
             {
                 _previousLocation = null;  // do this before starting the base-class poller so it doesn't race to grab a stale previous location.
                 base.Start();               
-                _locationProbe.Start();
             }
         }
 
@@ -77,7 +78,7 @@ namespace SensusService.Probes.Movement
         {
             lock (_locker)
             {
-                LocationDatum currentLocation = _locationProbe.MostRecentDatum as LocationDatum;
+                LocationDatum currentLocation = GpsReceiver.Get().GetReading(PollingSleepDurationMS, 
 
                 Datum[] data = null;
 

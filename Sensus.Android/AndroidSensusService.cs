@@ -94,7 +94,7 @@ namespace Sensus.Android
                 {
                     bool repeating = intent.GetBooleanExtra(AndroidSensusServiceHelper.INTENT_EXTRA_SENSUS_CALLBACK_REPEATING, false);
                     _wakeLock.Acquire();
-                    _sensusServiceHelper.RaiseCallbackAsync(callbackId, repeating, () => _wakeLock.Release());
+                    _sensusServiceHelper.RaiseCallbackAsync(callbackId, repeating, _wakeLock.Release);
                 }
             }
 
