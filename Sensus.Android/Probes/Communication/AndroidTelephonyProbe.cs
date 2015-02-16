@@ -43,7 +43,6 @@ namespace Sensus.Android.Probes.Communication
                 {
                     StoreDatum(new TelephonyDatum(this, DateTimeOffset.UtcNow, TelephonyState.Idle, null));
                 };
-
         }
 
         protected override void Initialize()
