@@ -32,7 +32,7 @@ namespace SensusService.Probes.Device
         [JsonIgnore]
         public override string DisplayDetail
         {
-            get { return "Level:  " + _level; }
+            get { return "Level:  " + Math.Round(_level, 2); }
         }
 
         public BatteryDatum(Probe probe, DateTimeOffset timestamp, double level)

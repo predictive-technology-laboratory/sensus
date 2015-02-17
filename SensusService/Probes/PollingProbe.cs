@@ -116,13 +116,9 @@ namespace SensusService.Probes
 
             if (Running)
             {
-                DateTimeOffset mostRecentDatumTimestamp = DateTimeOffset.MinValue;
-                if (MostRecentDatum != null)
-                    mostRecentDatumTimestamp = MostRecentDatum.Timestamp;
-
-                double msElapsedSinceLastDatum = (DateTimeOffset.UtcNow - mostRecentDatumTimestamp).TotalMilliseconds;
-                if (!_isPolling && msElapsedSinceLastDatum > _pollingSleepDurationMS)
-                    warning += "Probe \"" + GetType().FullName + "\" has not taken a reading in " + msElapsedSinceLastDatum + "ms (polling delay = " + _pollingSleepDurationMS + "ms)." + Environment.NewLine;
+                double msElapsedSincePreviousStore = (DateTimeOffset.UtcNow - MostRecentStoreTimestamp).TotalMilliseconds;
+                if (!_isPolling && msElapsedSincePreviousStore > _pollingSleepDurationMS)
+                    warning += "Probe \"" + GetType().FullName + "\" has not stored data in " + msElapsedSincePreviousStore + "ms (polling delay = " + _pollingSleepDurationMS + "ms)." + Environment.NewLine;
             }
 
             return restart;

@@ -39,7 +39,7 @@ namespace SensusService.Probes
         #endregion
 
         /// <summary>
-        /// Fired when the most recent datum is changed.
+        /// Fired when the most recently sensed datum is changed.
         /// </summary>
         public event EventHandler<Tuple<Datum, Datum>> MostRecentDatumChanged;
 
@@ -50,6 +50,7 @@ namespace SensusService.Probes
         private Datum _mostRecentDatum;
         private Protocol _protocol;
         private bool _storeData;
+        private DateTimeOffset _mostRecentStoreTimestamp;
 
         private readonly object _locker = new object();
 
@@ -103,12 +104,19 @@ namespace SensusService.Probes
             }
         }
 
+        [JsonIgnore]
+        public DateTimeOffset MostRecentStoreTimestamp
+        {
+            get{ return _mostRecentStoreTimestamp; }
+        }
+
         public Protocol Protocol
         {
             get { return _protocol; }
             set { _protocol = value; }
         }
 
+        [OnOffUiProperty("Store Data:", true, 3)]
         public bool StoreData
         {
             get { return _storeData; }
@@ -134,6 +142,8 @@ namespace SensusService.Probes
         protected virtual void Initialize()
         {
             _collectedData = new HashSet<Datum>();
+            _mostRecentDatum = null;
+            _mostRecentStoreTimestamp = DateTimeOffset.MinValue;
         }
 
         protected void StartAsync()
@@ -176,6 +186,8 @@ namespace SensusService.Probes
                     }
 
                 MostRecentDatum = datum;
+
+                _mostRecentStoreTimestamp = DateTimeOffset.UtcNow;  // this is outside the _storeData restriction above since we just want to track when this method is called.
             }
         }
 

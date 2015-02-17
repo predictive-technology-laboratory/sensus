@@ -15,25 +15,19 @@
 using SensusService.Probes.Location;
 using System;
 using System.Collections.Generic;
+using Xamarin.Geolocation;
 
 namespace SensusService.Probes.Movement
 {
     public class PollingSpeedProbe : PollingProbe
     {
-        private PollingLocationProbe _locationProbe;
-        private LocationDatum _previousLocation;
+        private Position _previousPosition;
 
         private readonly object _locker = new object();
 
         protected sealed override string DefaultDisplayName
         {
             get { return "Speed (Polling)"; }
-        }
-
-        public sealed override int PollingSleepDurationMS
-        {
-            get { return base.PollingSleepDurationMS; }
-            set { base.PollingSleepDurationMS = _locationProbe.PollingSleepDurationMS = value; }
         }
 
         public sealed override Type DatumType
@@ -48,18 +42,26 @@ namespace SensusService.Probes.Movement
 
         public PollingSpeedProbe()
         {
-            _locationProbe = new PollingLocationProbe();
-            _locationProbe.StoreData = false;
-            _locationProbe.PollingSleepDurationMS = DefaultPollingSleepDurationMS;
+        }
+
+        protected override void Initialize()
+        {
+            base.Initialize();
+
+            if (!GpsReceiver.Get().Locator.IsGeolocationEnabled)
+            {
+                string error = "Geolocation is not enabled on this device. Cannot start speed probe.";
+                SensusServiceHelper.Get().FlashNotificationAsync(error);
+                throw new Exception(error);
+            }
         }
 
         public override void Start()
         {
             lock (_locker)
             {
-                _previousLocation = null;  // do this before starting the base-class poller so it doesn't race to grab a stale previous location.
+                _previousPosition = null;  // do this before starting the base-class poller so it doesn't race to grab a stale previous location.
                 base.Start();               
-                _locationProbe.Start();
             }
         }
 
@@ -77,20 +79,20 @@ namespace SensusService.Probes.Movement
         {
             lock (_locker)
             {
-                LocationDatum currentLocation = _locationProbe.MostRecentDatum as LocationDatum;
+                Position currentPosition = GpsReceiver.Get().GetReading();
 
                 Datum[] data = null;
 
-                if (_previousLocation == null || currentLocation == null || currentLocation.Timestamp == _previousLocation.Timestamp)
+                if (_previousPosition == null || currentPosition == null || currentPosition.Timestamp == _previousPosition.Timestamp)
                     data = new Datum[] { };
                 else
                 {
                     // http://www.movable-type.co.uk/scripts/latlong.html
 
-                    double φ1 = DegreesToRadians(_previousLocation.Latitude);
-                    double φ2 = DegreesToRadians(currentLocation.Latitude);
-                    double Δφ = DegreesToRadians(currentLocation.Latitude - _previousLocation.Latitude);
-                    double Δλ = DegreesToRadians(currentLocation.Longitude - _previousLocation.Longitude);
+                    double φ1 = DegreesToRadians(_previousPosition.Latitude);
+                    double φ2 = DegreesToRadians(currentPosition.Latitude);
+                    double Δφ = DegreesToRadians(currentPosition.Latitude - _previousPosition.Latitude);
+                    double Δλ = DegreesToRadians(currentPosition.Longitude - _previousPosition.Longitude);
 
                     double a = Math.Pow(Math.Sin(Δφ / 2), 2) +
                                Math.Cos(φ1) *
@@ -101,22 +103,22 @@ namespace SensusService.Probes.Movement
 
                     var reportedDistKM = 6371 * c;
 
-                    double elapsedHours = new TimeSpan(currentLocation.Timestamp.Ticks - _previousLocation.Timestamp.Ticks).TotalHours;
+                    double elapsedHours = new TimeSpan(currentPosition.Timestamp.Ticks - _previousPosition.Timestamp.Ticks).TotalHours;
                     double reportedSpeedKPH = reportedDistKM / elapsedHours;
 
                     float accuracy = 0;
-                    if (_previousLocation.Accuracy >= 0 && currentLocation.Accuracy >= 0)
+                    if (_previousPosition.Accuracy >= 0 && currentPosition.Accuracy >= 0)
                     {
-                        double maxDistKM = reportedDistKM + _previousLocation.Accuracy / 1000f + currentLocation.Accuracy / 1000f;
+                        double maxDistKM = reportedDistKM + _previousPosition.Accuracy / 1000f + currentPosition.Accuracy / 1000f;
                         double maxSpeedKPH = maxDistKM / elapsedHours;
                         accuracy = (float)(maxSpeedKPH - reportedSpeedKPH);
                     }
 
-                    data = new SpeedDatum[] { new SpeedDatum(this, currentLocation.Timestamp, accuracy, (float)reportedSpeedKPH) };
+                    data = new SpeedDatum[] { new SpeedDatum(this, currentPosition.Timestamp, accuracy, (float)reportedSpeedKPH) };
                 }
 
-                if (currentLocation != null)
-                    _previousLocation = currentLocation;
+                if (currentPosition != null)
+                    _previousPosition = currentPosition;
 
                 return data;
             }
@@ -127,8 +129,7 @@ namespace SensusService.Probes.Movement
             lock (_locker)
             {
                 base.Stop();
-                _locationProbe.Stop();
-                _previousLocation = null;  // reset previous location so it doesn't get used when this probe is restarted.
+                _previousPosition = null;  // reset previous location so it doesn't get used when this probe is restarted.
             }
         }
     }
