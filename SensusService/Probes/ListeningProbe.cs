@@ -63,11 +63,7 @@ namespace SensusService.Probes
 
         protected sealed override void StoreDatum(Datum datum)
         {
-            DateTimeOffset lastStoreTime = DateTimeOffset.MinValue;
-            if (MostRecentDatum != null)
-                lastStoreTime = MostRecentDatum.Timestamp;
-
-            float storesPerSecond = 1 / (float)(DateTimeOffset.UtcNow - lastStoreTime).TotalSeconds;
+            float storesPerSecond = 1 / (float)(DateTimeOffset.UtcNow - MostRecentStoreTimestamp).TotalSeconds;
             if (storesPerSecond <= _maxDataStoresPerSecond)
                 base.StoreDatum(datum);
         }
