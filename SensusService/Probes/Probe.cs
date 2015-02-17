@@ -116,6 +116,7 @@ namespace SensusService.Probes
             set { _protocol = value; }
         }
 
+        [OnOffUiProperty("Store Data:", true, 3)]
         public bool StoreData
         {
             get { return _storeData; }
