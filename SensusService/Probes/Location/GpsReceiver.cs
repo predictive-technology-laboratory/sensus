@@ -36,10 +36,10 @@ namespace SensusService.Probes.Location
 
         private Geolocator _locator;
         private int _desiredAccuracyMeters;
-        private bool _sharedReadingIsComing;
-        private ManualResetEvent _sharedReadingWait;
-        private Position _sharedReading;
-        private DateTimeOffset _sharedReadingTimestamp;
+        private bool _readingIsComing;
+        private ManualResetEvent _readingWait;
+        private Position _reading;
+        private DateTimeOffset _readingTimestamp;
         private int _readingTimeoutMS;
         private int _minimumTimeHint;
         private int _minimumDistanceHint;
@@ -108,13 +108,13 @@ namespace SensusService.Probes.Location
         private GpsReceiver()
         {
             _desiredAccuracyMeters = 10;
-            _sharedReadingIsComing = false;
-            _sharedReadingWait = new ManualResetEvent(false);
-            _sharedReading = null;
-            _sharedReadingTimestamp = DateTimeOffset.MinValue;
+            _readingIsComing = false;
+            _readingWait = new ManualResetEvent(false);
+            _reading = null;
+            _readingTimestamp = DateTimeOffset.MinValue;
+            _readingTimeoutMS = 120000;
             _minimumTimeHint = 60000;
             _minimumDistanceHint = 100;
-            _readingTimeoutMS = 120000;
         }
 
         public void AddListener(EventHandler<PositionEventArgs> listener)
@@ -168,7 +168,6 @@ namespace SensusService.Probes.Location
         public void Initialize(Geolocator locator)
         {
             _locator = locator;
-
             _locator.DesiredAccuracy = _desiredAccuracyMeters;
 
             _locator.PositionChanged += (o, e) =>
@@ -185,57 +184,60 @@ namespace SensusService.Probes.Location
                 };
         }
 
-        public Position GetReading(int maxSharedReadingAgeForReuseMS)
+        public Position GetReading()
+        {
+            return GetReading(0);
+        }
+
+        public Position GetReading(int maxReadingAgeForReuseMS)
         {
             // reuse a previous reading if it isn't too old
-            TimeSpan sharedReadingAge = DateTimeOffset.UtcNow - _sharedReadingTimestamp;
-            if (sharedReadingAge.TotalMilliseconds < maxSharedReadingAgeForReuseMS)
+            TimeSpan readingAge = DateTimeOffset.UtcNow - _readingTimestamp;
+            if (readingAge.TotalMilliseconds <= maxReadingAgeForReuseMS)
             {
-                SensusServiceHelper.Get().Logger.Log("Reusing previous GPS reading, which is " + sharedReadingAge.TotalMilliseconds + " MS old (maximum=" + maxSharedReadingAgeForReuseMS + ").", LoggingLevel.Verbose);
-
-                return _sharedReading;
+                SensusServiceHelper.Get().Logger.Log("Reusing previous GPS reading, which is " + readingAge.TotalMilliseconds + " MS old (maximum=" + maxReadingAgeForReuseMS + ").", LoggingLevel.Verbose);
+                return _reading;
             }
 
-            if (!_sharedReadingIsComing)  // is someone else currently taking a reading? if so, wait for that instead.
-            {
-                _sharedReadingIsComing = true;  // tell any subsequent, concurrent callers that we're taking a reading
-                _sharedReadingWait.Reset();  // make them wait
-                new Thread(async () =>
-                    {
-                        try
+            lock (_locker)
+                if (_readingIsComing)  // is someone else currently taking a reading? if so, wait for that instead.
+                    SensusServiceHelper.Get().Logger.Log("A GPS reading is coming. Will wait for it.", LoggingLevel.Debug);
+                else
+                {
+                    _readingIsComing = true;  // tell any subsequent, concurrent callers that we're taking a reading
+                    _readingWait.Reset();  // make them wait
+
+                    new Thread(async () =>
                         {
-                            SensusServiceHelper.Get().Logger.Log("Taking shared reading.", LoggingLevel.Debug);
+                            try
+                            {
+                                SensusServiceHelper.Get().Logger.Log("Taking GPS reading.", LoggingLevel.Debug);
 
-                            DateTimeOffset start = DateTimeOffset.UtcNow;
-                            _sharedReading = await _locator.GetPositionAsync(timeout: _readingTimeoutMS);
-                            DateTimeOffset end = _sharedReadingTimestamp = DateTimeOffset.UtcNow;
+                                DateTimeOffset readingStart = DateTimeOffset.UtcNow;
+                                _reading = await _locator.GetPositionAsync(timeout: _readingTimeoutMS);
+                                DateTimeOffset readingEnd = _readingTimestamp = DateTimeOffset.UtcNow;
 
-                            if (_sharedReading != null)
-                                SensusServiceHelper.Get().Logger.Log("Shared reading obtained in " + (end - start).TotalSeconds + " seconds:  " + _sharedReading.Latitude + " " + _sharedReading.Longitude, LoggingLevel.Verbose);
-                        }
-                        catch (TaskCanceledException ex)
-                        {
-                            SensusServiceHelper.Get().Logger.Log("GPS reading task canceled:  " + ex.Message, LoggingLevel.Normal);
+                                if (_reading != null)
+                                    SensusServiceHelper.Get().Logger.Log("GPS reading obtained in " + (readingEnd - readingStart).TotalSeconds + " seconds:  " + _reading.Latitude + " " + _reading.Longitude, LoggingLevel.Verbose);
+                            }
+                            catch (Exception ex)
+                            {
+                                SensusServiceHelper.Get().Logger.Log("GPS reading failed:  " + ex.Message, LoggingLevel.Normal);
+                                _reading = null;
+                            }
 
-                            _sharedReading = null;
-                        }
+                            _readingWait.Set();  // tell anyone waiting on the shared reading that it is ready
+                            _readingIsComing = false;  // direct any future calls to this method to get their own reading
 
-                        _sharedReadingIsComing = false;  // direct any future calls to this method to get their own reading
-                        _sharedReadingWait.Set();  // tell anyone waiting on the shared reading that it is ready
+                        }).Start();
+                }
 
-                    }).Start();
-            }
-            else
-                SensusServiceHelper.Get().Logger.Log("A shared reading is coming. Will wait for it.", LoggingLevel.Debug);
+            _readingWait.WaitOne(_readingTimeoutMS * 2);  // wait twice the locator timeout, just to be sure.
 
-            _sharedReadingWait.WaitOne(_readingTimeoutMS * 2);  // wait twice the locator timeout, just to be sure.
+            if (_reading == null)
+                SensusServiceHelper.Get().Logger.Log("GPS reading is null.", LoggingLevel.Normal);
 
-            Position reading = _sharedReading;
-
-            if (reading == null)
-                SensusServiceHelper.Get().Logger.Log("Shared reading is null.", LoggingLevel.Normal);
-
-            return reading;
+            return _reading;
         }
     }
 }

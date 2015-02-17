@@ -79,7 +79,7 @@ namespace SensusService.Probes.Movement
         {
             lock (_locker)
             {
-                Position currentPosition = GpsReceiver.Get().GetReading(PollingSleepDurationMS);
+                Position currentPosition = GpsReceiver.Get().GetReading();
 
                 Datum[] data = null;
 
