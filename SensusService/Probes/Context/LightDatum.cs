@@ -32,7 +32,7 @@ namespace SensusService.Probes.Context
         [JsonIgnore]
         public override string DisplayDetail
         {
-            get { return "Brightness:  " + _brightness; }
+            get { return "Brightness:  " + Math.Round(_brightness, 2); }
         }
 
         public LightDatum(Probe probe, DateTimeOffset timestamp, double brightness)

@@ -40,7 +40,7 @@ namespace SensusService.Probes.Location
         [JsonIgnore]
         public override string DisplayDetail
         {
-            get { return _latitude + " (lat), " + _longitude + " (lon)"; }
+            get { return Math.Round(_latitude, 2) + " (lat), " + Math.Round(_longitude, 2) + " (lon)"; }
         }
 
         public LocationDatum(Probe probe, DateTimeOffset timestamp, double accuracy, double latitude, double longitude)
