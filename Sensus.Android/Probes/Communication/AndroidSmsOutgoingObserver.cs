@@ -55,9 +55,12 @@ namespace Sensus.Android.Probes.Communication
                 int type = cursor.GetInt(cursor.GetColumnIndex("type"));
 
                 int sentMessageType;
+
+                #if __ANDROID_19__
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
                     sentMessageType = (int)SmsMessageType.Sent;  // API level 19
                 else
+                #endif
                     sentMessageType = 2;
 
                 if (protocol != null || type != sentMessageType)
