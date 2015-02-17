@@ -40,6 +40,7 @@ namespace SensusService.Probes.Location
         private ManualResetEvent _sharedReadingWait;
         private Position _sharedReading;
         private DateTimeOffset _sharedReadingTimestamp;
+        private int _readingTimeoutMS;
         private int _minimumTimeHint;
         private int _minimumDistanceHint;
 
@@ -113,6 +114,7 @@ namespace SensusService.Probes.Location
             _sharedReadingTimestamp = DateTimeOffset.MinValue;
             _minimumTimeHint = 60000;
             _minimumDistanceHint = 100;
+            _readingTimeoutMS = 120000;
         }
 
         public void AddListener(EventHandler<PositionEventArgs> listener)
@@ -183,7 +185,7 @@ namespace SensusService.Probes.Location
                 };
         }
 
-        public Position GetReading(int maxSharedReadingAgeForReuseMS, int timeout)
+        public Position GetReading(int maxSharedReadingAgeForReuseMS)
         {
             // reuse a previous reading if it isn't too old
             TimeSpan sharedReadingAge = DateTimeOffset.UtcNow - _sharedReadingTimestamp;
@@ -205,7 +207,7 @@ namespace SensusService.Probes.Location
                             SensusServiceHelper.Get().Logger.Log("Taking shared reading.", LoggingLevel.Debug);
 
                             DateTimeOffset start = DateTimeOffset.UtcNow;
-                            _sharedReading = await _locator.GetPositionAsync(timeout: timeout);
+                            _sharedReading = await _locator.GetPositionAsync(timeout: _readingTimeoutMS);
                             DateTimeOffset end = _sharedReadingTimestamp = DateTimeOffset.UtcNow;
 
                             if (_sharedReading != null)
@@ -226,7 +228,7 @@ namespace SensusService.Probes.Location
             else
                 SensusServiceHelper.Get().Logger.Log("A shared reading is coming. Will wait for it.", LoggingLevel.Debug);
 
-            _sharedReadingWait.WaitOne(timeout * 2);  // wait twice the locator timeout, just to be sure.
+            _sharedReadingWait.WaitOne(_readingTimeoutMS * 2);  // wait twice the locator timeout, just to be sure.
 
             Position reading = _sharedReading;
 
