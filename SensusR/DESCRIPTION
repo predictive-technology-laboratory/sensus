@@ -1,0 +1,9 @@
+Package: SensusR
+Type: Package
+Title: Sensus Analytics
+Version: 0.1
+Date: 2015-02-17
+Author: Matthew S. Gerber
+Maintainer: Matthew S. Gerber <gerber.matthew@gmail.com>
+Description: This package provides access and analytic functions for Sensus data.
+License: GPL-3
