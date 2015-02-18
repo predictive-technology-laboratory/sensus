@@ -44,11 +44,11 @@ namespace SensusService.DataStores.Remote
             _requireWiFi = true;
             _requireCharging = true;
 
-#if DEBUG
+            #if DEBUG
             CommitDelayMS = 10000;  // 10 seconds...so we can see debugging output quickly
-#else
+            #else
             CommitDelayMS = 1000 * 60 * 30;  // every thirty minutes
-#endif
+            #endif
         }
 
         protected sealed override List<Datum> GetDataToCommit()

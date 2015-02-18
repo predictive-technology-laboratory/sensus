@@ -36,11 +36,11 @@ namespace SensusService.DataStores.Local
         {
             _uploadToRemoteDataStore = true;
 
-#if DEBUG
+            #if DEBUG
             CommitDelayMS = 5000;  // 5 seconds...so we can see debugging output quickly
-#else
+            #else
             CommitDelayMS = 60000;
-#endif
+            #endif
         }
 
         protected sealed override List<Datum> GetDataToCommit()
