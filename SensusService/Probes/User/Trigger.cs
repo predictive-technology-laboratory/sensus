@@ -35,6 +35,8 @@ namespace SensusService.Probes.User
         private Regex _regularExpression;
         private bool _ignoreFirstDatum;
         private bool _firstDatum;
+        private TimeSpan _startTime;
+        private TimeSpan _endTime;
 
         private readonly object _locker = new object();
 
@@ -131,7 +133,7 @@ namespace SensusService.Probes.User
             Reset();
         }
 
-        public Trigger(Probe probe, string datumPropertyName, TriggerValueCondition condition, object conditionValue, bool change, bool fireRepeatedly, bool useRegularExpressions, bool ignoreFirstDatum)
+        public Trigger(Probe probe, string datumPropertyName, TriggerValueCondition condition, object conditionValue, bool change, bool fireRepeatedly, bool useRegularExpressions, bool ignoreFirstDatum, TimeSpan startTime, TimeSpan endTime)
             : this()
         {
             _probe = probe;
@@ -141,6 +143,11 @@ namespace SensusService.Probes.User
             _change = change;
             _fireRepeatedly = fireRepeatedly;
             _ignoreFirstDatum = ignoreFirstDatum;
+            _startTime = startTime;
+            _endTime = endTime;
+
+            if (_endTime < _startTime)
+                throw new Exception("Start time cannot follow end time.");
 
             if (useRegularExpressions)
                 _regularExpression = new Regex(_conditionValue.ToString());
@@ -161,7 +168,10 @@ namespace SensusService.Probes.User
                 if (_regularExpression == null)
                 {
                     int compareTo;
-                    try { compareTo = ((IComparable)value).CompareTo(_conditionValue); }
+                    try
+                    {
+                        compareTo = ((IComparable)value).CompareTo(_conditionValue);
+                    }
                     catch (Exception ex)
                     {
                         SensusServiceHelper.Get().Logger.Log("Trigger failed to compare values:  " + ex.Message, LoggingLevel.Normal);
@@ -169,14 +179,17 @@ namespace SensusService.Probes.User
                     }
 
                     conditionSatisfied = _condition == TriggerValueCondition.Equal && compareTo == 0 ||
-                                         _condition == TriggerValueCondition.GreaterThan && compareTo > 0 ||
-                                         _condition == TriggerValueCondition.GreaterThanOrEqual && compareTo >= 0 ||
-                                         _condition == TriggerValueCondition.LessThan && compareTo < 0 ||
-                                         _condition == TriggerValueCondition.LessThanOrEqual && compareTo <= 0;
+                    _condition == TriggerValueCondition.GreaterThan && compareTo > 0 ||
+                    _condition == TriggerValueCondition.GreaterThanOrEqual && compareTo >= 0 ||
+                    _condition == TriggerValueCondition.LessThan && compareTo < 0 ||
+                    _condition == TriggerValueCondition.LessThanOrEqual && compareTo <= 0;
                 }
                 else
                 {
-                    try { conditionSatisfied = _regularExpression.Match(value.ToString()).Success; }
+                    try
+                    {
+                        conditionSatisfied = _regularExpression.Match(value.ToString()).Success;
+                    }
                     catch (Exception ex)
                     {
                         SensusServiceHelper.Get().Logger.Log("Trigger failed to run Regex.Match:  " + ex.Message, LoggingLevel.Normal);
@@ -187,7 +200,7 @@ namespace SensusService.Probes.User
                 bool fire = false;
 
                 if (!_ignoreFirstDatum || !_firstDatum)  // the user can ignore the first generated datum, e.g., if a probe immediately returns a triggering value that shouldn't be used. if we're not ignoring the first datum, then proceed; otherwise, if we are ignore it but this isn't the first datum, then proceed. in all other cases, do not fire.
-                    if (conditionSatisfied)  // if the condition is satisfied, proceed.
+                    if (conditionSatisfied && DateTime.Now.TimeOfDay >= _startTime && DateTime.Now.TimeOfDay <= _endTime)  // if the condition is satisfied and we're within the interaction window, proceed.
                         if (_fireRepeatedly || !_conditionSatisfiedLastTime)  // some probes return many datum objects, but we only want the trigger to fire if it did not fire for the previous datum (i.e., on changes).
                             fire = true;
 
