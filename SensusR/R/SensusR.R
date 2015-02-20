@@ -4,43 +4,51 @@ read.sensus.json = function(path, convert.to.local.timezone)
   con = file(path, open="r")
   lines = as.matrix(readLines(con))
   close(con)
+  
   local.timezone = Sys.timezone()
   
+  # parse each line to json
   lines = apply(lines, 1, function(line)
   {
     json = jsonlite::fromJSON(line)
     
+    # set short version of type
     datum.type = strsplit(json$"$type", ",")[[1]][1]
     datum.type = tail(strsplit(datum.type, "[.]")[[1]], n=1)
     json$Type = datum.type
     
+    # drop irrelevant columns
     json = json[-which(names(json) %in% c("$id", "$type", "Id", "ProbeType"))]
     
     return(as.data.frame(json, stringsAsFactors = FALSE))
   })
   
+  # split up data by type
   types = as.factor(sapply(lines, function(line) { return(line$Type) }))
   data = split(lines, types)
   
+  # unlist everything
   for(datum.type in levels(types))
   {
     first.row = data[[datum.type]][[1]]
     column.names = names(first.row)
     
+    # build new dataframe
     new.data = data.frame(matrix(nrow=length(data[[datum.type]]), ncol=0))
     for(col in column.names)
     {
       col.data = unlist(sapply(data[[datum.type]], function(row,col) { return(row[[col]])}, col))
       new.data[[col]] = col.data
     }
-        
-    new.data$Timestamp = strptime(new.data$Timestamp, format = "%Y-%m-%dT%H:%M:%OS", tz="UTC")
     
+    # parse/convert all time stamps
+    new.data$Timestamp = strptime(new.data$Timestamp, format = "%Y-%m-%dT%H:%M:%OS", tz="UTC")    
     if(convert.to.local.timezone)
     {
       new.data$Timestamp = lubridate::with_tz(new.data$Timestamp, local.timezone)
     }
     
+    # don't need type anymore, since we've group by type
     new.data$Type = NULL
     
     data[[datum.type]] = new.data
