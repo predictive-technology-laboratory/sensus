@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// TODO:  Pull out triggering aspects of this class into an abstract "triggered probe", one sub-type of which can trigger an activity.
-
 using Newtonsoft.Json;
 using SensusUI.UiProperties;
 using System;

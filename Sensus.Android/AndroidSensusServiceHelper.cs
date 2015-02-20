@@ -25,11 +25,9 @@ using Android.Provider;
 using Android.Speech;
 using Android.Support.V4.Content;
 using Android.Widget;
+using Newtonsoft.Json;
 using SensusService;
 using Xamarin;
-using Newtonsoft.Json;
-
-// TODO:  Increase backwards compatibility.
 
 namespace Sensus.Android
 {
