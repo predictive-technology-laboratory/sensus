@@ -23,9 +23,6 @@ namespace Sensus.Android
     [Service]
     public class AndroidSensusService : Service
     {
-        private const string LOG_TAG = "ANDROID_SENSUS_SERVICE";
-
-        private PowerManager.WakeLock _wakeLock;
         private NotificationManager _notificationManager;
         private Notification.Builder _notificationBuilder;
         private AndroidSensusServiceHelper _sensusServiceHelper;
@@ -36,7 +33,6 @@ namespace Sensus.Android
         {
             base.OnCreate();
 
-            _wakeLock = (GetSystemService(Context.PowerService) as PowerManager).NewWakeLock(WakeLockFlags.Partial, LOG_TAG);
             _notificationManager = GetSystemService(Context.NotificationService) as NotificationManager;
             _notificationBuilder = new Notification.Builder(this);
 
@@ -93,8 +89,7 @@ namespace Sensus.Android
                 if (callbackId >= 0)
                 {
                     bool repeating = intent.GetBooleanExtra(AndroidSensusServiceHelper.INTENT_EXTRA_SENSUS_CALLBACK_REPEATING, false);
-                    _wakeLock.Acquire();
-                    _sensusServiceHelper.RaiseCallbackAsync(callbackId, repeating, _wakeLock.Release);
+                    _sensusServiceHelper.RaiseCallbackAsync(callbackId, repeating);
                 }
             }
 

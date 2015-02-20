@@ -46,6 +46,7 @@ namespace Sensus.Android
         private ManualResetEvent _mainActivityWait;
         private readonly object _getMainActivityLocker = new object();
         private AndroidTextToSpeech _textToSpeech;
+        private PowerManager.WakeLock _wakeLock;
 
         [JsonIgnore]
         public AndroidSensusService Service
@@ -80,7 +81,7 @@ namespace Sensus.Android
 
         public AndroidSensusServiceHelper()
         {
-            _mainActivityWait = new ManualResetEvent(false);           
+            _mainActivityWait = new ManualResetEvent(false);      
         }           
 
         public void SetService(AndroidSensusService service)
@@ -89,6 +90,7 @@ namespace Sensus.Android
             _connectivityManager = _service.GetSystemService(Context.ConnectivityService) as ConnectivityManager;
             _deviceId = Settings.Secure.GetString(_service.ContentResolver, Settings.Secure.AndroidId);
             _textToSpeech = new AndroidTextToSpeech(_service);
+            _wakeLock = (_service.GetSystemService(Context.PowerService) as PowerManager).NewWakeLock(WakeLockFlags.Partial, "SENSUS");
         }
 
         public void GetMainActivityAsync(bool foreground, Action<AndroidMainActivity> callback)
@@ -329,6 +331,18 @@ namespace Sensus.Android
             serviceIntent.PutExtra(INTENT_EXTRA_SENSUS_CALLBACK_ID, callbackId);
             serviceIntent.PutExtra(INTENT_EXTRA_SENSUS_CALLBACK_REPEATING, repeating);
             return PendingIntent.GetService(_service, callbackId, serviceIntent, PendingIntentFlags.CancelCurrent);
+        }
+
+        public override void KeepDeviceAwake()
+        {
+            lock (_wakeLock)
+                _wakeLock.Acquire();
+        }
+
+        public override void LetDeviceSleep()
+        {
+            lock (_wakeLock)
+                _wakeLock.Release();
         }
 
         public override void Destroy()

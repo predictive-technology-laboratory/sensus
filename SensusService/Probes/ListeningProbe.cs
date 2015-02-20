@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// TODO:  Do these probes stay on when the device is asleep?
-
 using SensusUI.UiProperties;
 using System;
 
@@ -43,6 +41,8 @@ namespace SensusService.Probes
             {
                 base.Start();
 
+                SensusServiceHelper.Get().KeepDeviceAwake();  // listening probes are inherently energy inefficient, since the device must stay awake to listen for them.
+
                 StartListening();
             }
         }
@@ -54,6 +54,8 @@ namespace SensusService.Probes
             lock (_locker)
             {
                 base.Stop();
+
+                SensusServiceHelper.Get().LetDeviceSleep();  // we can sleep now...whew!
 
                 StopListening();
             }

@@ -264,6 +264,10 @@ namespace SensusService
         }
 
         public abstract void FlashNotificationAsync(string message, Action callback);
+
+        public abstract void KeepDeviceAwake();
+
+        public abstract void LetDeviceSleep();
         #endregion
 
         #region add/remove running protocol ids
@@ -382,15 +386,17 @@ namespace SensusService
                 if (_idCallback.ContainsKey(callbackId))
                     _idCallback.Remove(callbackId);
             }
-        }
+        }           
 
-        public void RaiseCallbackAsync(int callbackId, bool repeating, Action onCallbackCompleted)
+        public void RaiseCallbackAsync(int callbackId, bool repeating)
         {
             lock (_idCallback)
             {
                 Action callback;
                 if (_idCallback.TryGetValue(callbackId, out callback))
                 {
+                    KeepDeviceAwake();
+
                     new Thread(() =>
                         {
                             if (Monitor.TryEnter(callback))
@@ -415,8 +421,7 @@ namespace SensusService
                             if (!repeating)
                                 _idCallback.Remove(callbackId);
 
-                            if(onCallbackCompleted != null)
-                                onCallbackCompleted();
+                            LetDeviceSleep();
 
                         }).Start();                           
                 }
