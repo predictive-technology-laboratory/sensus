@@ -31,10 +31,6 @@ namespace SensusUI
         private PropertyInfo _selectedDatumProperty;
         private TriggerValueCondition _selectedCondition;
         private object _conditionValue;
-        private bool _change;
-        private bool _fireRepeatedly;
-        private bool _useRegularExpression;
-        private bool _ignoreFirstDatum;
 
         public AddScriptProbeTriggerPage(ScriptProbe scriptProbe)
         {
@@ -84,6 +80,13 @@ namespace SensusUI
             };
 
             contentLayout.Children.Add(triggerDefinitionLayout);
+
+            Switch changeSwitch = new Switch();
+            Switch regexSwitch = new Switch();
+            Switch fireRepeatedlySwitch = new Switch();
+            Switch ignoreFirstDatumSwitch = new Switch();
+            TimePicker startTimePicker = new TimePicker { HorizontalOptions = LayoutOptions.FillAndExpand };
+            TimePicker endTimePicker = new TimePicker { HorizontalOptions = LayoutOptions.FillAndExpand };
 
             probePicker.SelectedIndexChanged += (o, e) =>
                 {
@@ -237,8 +240,6 @@ namespace SensusUI
                             });
 
                             #region change calculation
-                            _change = false;
-
                             if (allowChangeCalculation)
                             {
                                 Label changeLabel = new Label
@@ -247,12 +248,7 @@ namespace SensusUI
                                     FontSize = 20
                                 };
 
-                                Switch changeSwitch = new Switch
-                                {
-                                    IsToggled = _change
-                                };
-
-                                changeSwitch.Toggled += (ooo, eee) => { _change = eee.Value; };
+                                changeSwitch.IsToggled = false;
 
                                 conditionValueStack.Children.Add(new StackLayout
                                 {
@@ -264,8 +260,6 @@ namespace SensusUI
                             #endregion
 
                             #region regular expression
-                            _useRegularExpression = false;
-
                             if (allowRegularExpression)
                             {
                                 Label regexLabel = new Label
@@ -274,12 +268,7 @@ namespace SensusUI
                                     FontSize = 20
                                 };
 
-                                Switch regexSwitch = new Switch
-                                {
-                                    IsToggled = _useRegularExpression
-                                };
-
-                                regexSwitch.Toggled += (ooo, eee) => { _useRegularExpression = eee.Value; };
+                                regexSwitch.IsToggled = false;
 
                                 conditionValueStack.Children.Add(new StackLayout
                                 {
@@ -291,20 +280,13 @@ namespace SensusUI
                             #endregion
 
                             #region fire repeatedly
-                            _fireRepeatedly = false;
-
                             Label fireRepeatedlyLabel = new Label
                             {
                                 Text = "Fire Repeatedly:",
                                 FontSize = 20
                             };
 
-                            Switch fireRepeatedlySwitch = new Switch
-                            {
-                                IsToggled = _fireRepeatedly
-                            };
-
-                            fireRepeatedlySwitch.Toggled += (ooo, eee) => { _fireRepeatedly = eee.Value; };
+                            fireRepeatedlySwitch.IsToggled = false;
 
                             conditionValueStack.Children.Add(new StackLayout
                             {
@@ -319,28 +301,51 @@ namespace SensusUI
                     #endregion
 
                     #region ignore first datum
-                    _ignoreFirstDatum = false;
                     Label ignoreFirstDatumLabel = new Label
                         {
                             Text = "Ignore First Datum:",
                             FontSize = 20
                         };
 
-                    Switch ignoreFirstDatumSwitch = new Switch
-                        {
-                            IsToggled = _ignoreFirstDatum
-                        };
-
-                    ignoreFirstDatumSwitch.Toggled += (oo, ee) =>
-                        {
-                            _ignoreFirstDatum = ee.Value;
-                        };
+                    ignoreFirstDatumSwitch.IsToggled = false;
 
                     triggerDefinitionLayout.Children.Add(new StackLayout
                         {
                             Orientation = StackOrientation.Horizontal,
                             HorizontalOptions = LayoutOptions.FillAndExpand,
                             Children = { ignoreFirstDatumLabel, ignoreFirstDatumSwitch }
+                        });
+                    #endregion
+
+                    #region start/end times
+                    Label startTimeLabel = new Label
+                        {
+                            Text = "Start Time:",
+                            FontSize = 20
+                        };
+
+                    startTimePicker.Time = new TimeSpan(8, 0, 0);
+
+                    triggerDefinitionLayout.Children.Add(new StackLayout
+                        {
+                            Orientation = StackOrientation.Horizontal,
+                            HorizontalOptions = LayoutOptions.FillAndExpand,
+                            Children = { startTimeLabel, startTimePicker }
+                        });
+
+                    Label endTimeLabel = new Label
+                        {
+                            Text = "End Time:",
+                            FontSize = 20
+                        };
+
+                    endTimePicker.Time = new TimeSpan(21, 0, 0);
+
+                    triggerDefinitionLayout.Children.Add(new StackLayout
+                        {
+                            Orientation = StackOrientation.Horizontal,
+                            HorizontalOptions = LayoutOptions.FillAndExpand,
+                            Children = { endTimeLabel, endTimePicker }
                         });
                     #endregion
                 };
@@ -357,7 +362,7 @@ namespace SensusUI
                 {
                     try
                     {
-                        _scriptProbe.Triggers.Add(new SensusService.Probes.User.Trigger(_selectedProbe, _selectedDatumProperty.Name, _selectedCondition, _conditionValue, _change, _fireRepeatedly, _useRegularExpression, _ignoreFirstDatum));
+                        _scriptProbe.Triggers.Add(new SensusService.Probes.User.Trigger(_selectedProbe, _selectedDatumProperty.Name, _selectedCondition, _conditionValue, changeSwitch.IsToggled, fireRepeatedlySwitch.IsToggled, regexSwitch.IsToggled, ignoreFirstDatumSwitch.IsToggled, startTimePicker.Time, endTimePicker.Time));
                         await Navigation.PopAsync();
                     }
                     catch (Exception ex)
