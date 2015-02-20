@@ -39,7 +39,7 @@ namespace SensusService
             Datum datum = null;
 
             try { datum = JsonConvert.DeserializeObject<Datum>(json, _serializationSettings); }
-            catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to convert JSON to datum:  " + ex.Message, LoggingLevel.Normal); }
+            catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to convert JSON to datum:  " + ex.Message, LoggingLevel.Normal, null); }
 
             return datum;
         }

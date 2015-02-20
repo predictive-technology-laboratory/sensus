@@ -54,7 +54,7 @@ namespace SensusUI
                     }
                     catch (Exception ex)
                     {
-                        UiBoundSensusServiceHelper.Get(true).Logger.Log("Failed to write lines to temp file for sharing:  " + ex.Message, SensusService.LoggingLevel.Normal);
+                        UiBoundSensusServiceHelper.Get(true).Logger.Log("Failed to write lines to temp file for sharing:  " + ex.Message, SensusService.LoggingLevel.Normal, GetType());
                         path = null;
                     }
 

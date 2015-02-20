@@ -79,7 +79,7 @@ namespace SensusUI
 
                             SensusServiceHelper.Get().ShareFileAsync(sharePath, "Sensus Data");
                         }
-                        catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to share local data store:  " + ex.Message, LoggingLevel.Normal); }
+                        catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to share local data store:  " + ex.Message, LoggingLevel.Normal, GetType()); }
                     };
 
                 buttonStack.Children.Add(shareLocalDataButton);

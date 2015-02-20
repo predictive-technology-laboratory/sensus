@@ -72,24 +72,26 @@ namespace SensusService.Probes
                             IEnumerable<Datum> data = null;
                             try
                             {
-                                SensusServiceHelper.Get().Logger.Log("Polling probe \"" + GetType().FullName + "\".", LoggingLevel.Verbose);
+                                SensusServiceHelper.Get().Logger.Log("Polling probe \"" + GetType().FullName + "\".", LoggingLevel.Verbose, GetType());
                                 data = Poll();
                             }
                             catch (Exception ex)
                             {
-                                SensusServiceHelper.Get().Logger.Log("Failed to poll probe \"" + GetType().FullName + "\":  " + ex.Message, LoggingLevel.Normal);
+                                SensusServiceHelper.Get().Logger.Log("Failed to poll probe \"" + GetType().FullName + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
                             }
 
                             if (data != null)
                                 foreach (Datum datum in data)
+                                {
                                     try
                                     {
                                         StoreDatum(datum);
                                     }
                                     catch (Exception ex)
                                     {
-                                        SensusServiceHelper.Get().Logger.Log("Failed to store datum in probe \"" + GetType().FullName + "\":  " + ex.Message, LoggingLevel.Normal);
+                                        SensusServiceHelper.Get().Logger.Log("Failed to store datum in probe \"" + GetType().FullName + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
                                     }
+                                }
 
                             _isPolling = false;
                         }

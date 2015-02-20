@@ -62,7 +62,7 @@ namespace SensusService
                         downloadClient.DownloadStringAsync(webURI);
                         protocolWait.WaitOne();
                     }
-                    catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to download Protocol from URI \"" + webURI + "\":  " + ex.Message + ". If this is an HTTPS URI, make sure the server's certificate is valid.", LoggingLevel.Normal); }
+                    catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to download Protocol from URI \"" + webURI + "\":  " + ex.Message + ". If this is an HTTPS URI, make sure the server's certificate is valid.", LoggingLevel.Normal, null); }
 
                     callback(protocol);
 
@@ -92,7 +92,7 @@ namespace SensusService
                             protocolWait.WaitOne();
                         }
                     }
-                    catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to read Protocol from stream:  " + ex.Message, LoggingLevel.Normal); }
+                    catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to read Protocol from stream:  " + ex.Message, LoggingLevel.Normal, null); }
 
                     callback(protocol);
 
@@ -125,7 +125,7 @@ namespace SensusService
                                     }
                                 }
                             }
-                            catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to deserialize Protocol from JSON:  " + ex.Message, LoggingLevel.Normal); }
+                            catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to deserialize Protocol from JSON:  " + ex.Message, LoggingLevel.Normal, null); }
 
                             protocolWait.Set();
                         });
@@ -301,16 +301,21 @@ namespace SensusService
                 SensusServiceHelper.Get().RegisterProtocol(this);
                 SensusServiceHelper.Get().AddRunningProtocolId(_id);
 
-                SensusServiceHelper.Get().Logger.Log("Starting probes for protocol " + _name + ".", LoggingLevel.Normal);
+                SensusServiceHelper.Get().Logger.Log("Starting probes for protocol " + _name + ".", LoggingLevel.Normal, GetType());
                 int probesStarted = 0;
                 foreach (Probe probe in _probes)
                     if (probe.Enabled)
+                    {
                         try
                         {
                             probe.Start();
                             probesStarted++;
                         }
-                        catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to start probe \"" + probe.GetType().FullName + "\":" + ex.Message, LoggingLevel.Normal); }
+                        catch (Exception ex)
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Failed to start probe \"" + probe.GetType().FullName + "\":" + ex.Message, LoggingLevel.Normal, GetType());
+                        }
+                    }
 
                 bool stopProtocol = false;
 
@@ -323,19 +328,19 @@ namespace SensusService
                         try { _remoteDataStore.Start(); }
                         catch (Exception ex)
                         {
-                            SensusServiceHelper.Get().Logger.Log("Remote data store failed to start:  " + ex.Message, LoggingLevel.Normal);
+                            SensusServiceHelper.Get().Logger.Log("Remote data store failed to start:  " + ex.Message, LoggingLevel.Normal, GetType());
                             stopProtocol = true;
                         }
                     }
                     catch (Exception ex)
                     {
-                        SensusServiceHelper.Get().Logger.Log("Local data store failed to start:  " + ex.Message, LoggingLevel.Normal);
+                        SensusServiceHelper.Get().Logger.Log("Local data store failed to start:  " + ex.Message, LoggingLevel.Normal, GetType());
                         stopProtocol = true;
                     }
                 }
                 else
                 {
-                    SensusServiceHelper.Get().Logger.Log("No probes were started.", LoggingLevel.Normal);
+                    SensusServiceHelper.Get().Logger.Log("No probes were started.", LoggingLevel.Normal, GetType());
                     stopProtocol = true;
                 }
 
@@ -426,7 +431,7 @@ namespace SensusService
 
                 _mostRecentReport = new ProtocolReport(DateTimeOffset.UtcNow, error, warning, misc);
 
-                SensusServiceHelper.Get().Logger.Log("Protocol report:" + Environment.NewLine + _mostRecentReport, LoggingLevel.Normal);
+                SensusServiceHelper.Get().Logger.Log("Protocol report:" + Environment.NewLine + _mostRecentReport, LoggingLevel.Normal, GetType());
             }
         }
 
@@ -435,12 +440,12 @@ namespace SensusService
             lock (_locker)
                 if (_mostRecentReport != null)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Storing protocol report locally.", LoggingLevel.Normal);
+                    SensusServiceHelper.Get().Logger.Log("Storing protocol report locally.", LoggingLevel.Normal, GetType());
                     _localDataStore.AddNonProbeDatum(_mostRecentReport);
 
                     if (!_localDataStore.UploadToRemoteDataStore && _forceProtocolReportsToRemoteDataStore)
                     {
-                        SensusServiceHelper.Get().Logger.Log("Local data aren't pushed to remote, so we're copying the report datum directly to the remote cache.", LoggingLevel.Normal);
+                        SensusServiceHelper.Get().Logger.Log("Local data aren't pushed to remote, so we're copying the report datum directly to the remote cache.", LoggingLevel.Normal, GetType());
                         _remoteDataStore.AddNonProbeDatum(_mostRecentReport);
                     }
                 }
@@ -475,26 +480,32 @@ namespace SensusService
 
                 SensusServiceHelper.Get().RemoveRunningProtocolId(_id);
 
-                SensusServiceHelper.Get().Logger.Log("Stopping probes.", LoggingLevel.Normal);
+                SensusServiceHelper.Get().Logger.Log("Stopping probes.", LoggingLevel.Normal, GetType());
                 foreach (Probe probe in _probes)
                     if (probe.Running)
-                        try { probe.Stop(); }
-                        catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to stop " + probe.GetType().FullName + ":  " + ex.Message, LoggingLevel.Normal); }
+                        try 
+                        {
+                            probe.Stop(); 
+                        }
+                        catch (Exception ex)
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Failed to stop " + probe.GetType().FullName + ":  " + ex.Message, LoggingLevel.Normal, GetType());
+                        }
 
                 if (_localDataStore != null && _localDataStore.Running)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Stopping local data store.", LoggingLevel.Normal);
+                    SensusServiceHelper.Get().Logger.Log("Stopping local data store.", LoggingLevel.Normal, GetType());
 
                     try { _localDataStore.Stop(); }
-                    catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to stop local data store:  " + ex.Message, LoggingLevel.Normal); }
+                    catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to stop local data store:  " + ex.Message, LoggingLevel.Normal, GetType()); }
                 }
 
                 if (_remoteDataStore != null && _remoteDataStore.Running)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Stopping remote data store.", LoggingLevel.Normal);
+                    SensusServiceHelper.Get().Logger.Log("Stopping remote data store.", LoggingLevel.Normal, GetType());
 
                     try { _remoteDataStore.Stop(); }
-                    catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to stop remote data store:  " + ex.Message, LoggingLevel.Normal); }
+                    catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to stop remote data store:  " + ex.Message, LoggingLevel.Normal, GetType()); }
                 }
             }
         }

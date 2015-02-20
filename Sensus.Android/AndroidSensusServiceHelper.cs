@@ -100,7 +100,7 @@ namespace Sensus.Android
                     {
                         if (_mainActivity == null || (foreground && !_mainActivity.IsForegrounded))
                         {
-                            Logger.Log("Main activity is not started or is not in the foreground. Starting it.", LoggingLevel.Normal);
+                            Logger.Log("Main activity is not started or is not in the foreground. Starting it.", LoggingLevel.Normal, GetType());
 
                             // start the activity and wait for it to bind itself to the service
                             Intent intent = new Intent(_service, typeof(AndroidMainActivity));
@@ -123,10 +123,10 @@ namespace Sensus.Android
             _mainActivity = value;
 
             if (_mainActivity == null)
-                Logger.Log("Main activity has been unset.", LoggingLevel.Normal);
+                Logger.Log("Main activity has been unset.", LoggingLevel.Normal, GetType());
             else
             {
-                Logger.Log("Main activity has been set.", LoggingLevel.Normal);
+                Logger.Log("Main activity has been set.", LoggingLevel.Normal, GetType());
                 _mainActivityWait.Set();
             }
         }
@@ -190,7 +190,7 @@ namespace Sensus.Android
                         // run from main activity to get a smoother transition back to sensus
                         GetMainActivityAsync(true, mainActivity => mainActivity.StartActivity(intent));
                     }
-                    catch (Exception ex) { Logger.Log("Failed to start intent to share file \"" + path + "\":  " + ex.Message, LoggingLevel.Normal); }
+                    catch (Exception ex) { Logger.Log("Failed to start intent to share file \"" + path + "\":  " + ex.Message, LoggingLevel.Normal, GetType()); }
 
                 }).Start();
         }

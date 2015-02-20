@@ -56,15 +56,15 @@ namespace SensusService.DataStores.Remote
             List<Datum> dataToCommit = new List<Datum>();
 
             if (!Protocol.LocalDataStore.UploadToRemoteDataStore)
-                SensusServiceHelper.Get().Logger.Log("Not committing local data to remote data store.", LoggingLevel.Verbose);
+                SensusServiceHelper.Get().Logger.Log("Not committing local data to remote data store.", LoggingLevel.Verbose, GetType());
             else if (_requireWiFi && !SensusServiceHelper.Get().WiFiConnected)
-                SensusServiceHelper.Get().Logger.Log("Required WiFi but device WiFi is not connected.", LoggingLevel.Verbose);
+                SensusServiceHelper.Get().Logger.Log("Required WiFi but device WiFi is not connected.", LoggingLevel.Verbose, GetType());
             else if (_requireCharging && !SensusServiceHelper.Get().IsCharging)
-                SensusServiceHelper.Get().Logger.Log("Required charging but device is not charging.", LoggingLevel.Verbose);
+                SensusServiceHelper.Get().Logger.Log("Required charging but device is not charging.", LoggingLevel.Verbose, GetType());
             else
             {
                 dataToCommit = Protocol.LocalDataStore.GetDataForRemoteDataStore();
-                SensusServiceHelper.Get().Logger.Log("Retrieved " + dataToCommit.Count + " data elements from local data store.", LoggingLevel.Debug);
+                SensusServiceHelper.Get().Logger.Log("Retrieved " + dataToCommit.Count + " data elements from local data store.", LoggingLevel.Debug, GetType());
             }
 
             return dataToCommit;

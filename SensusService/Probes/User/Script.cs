@@ -36,7 +36,7 @@ namespace SensusService.Probes.User
             Script script = null;
 
             try { script = JsonConvert.DeserializeObject<Script>(json, _jsonSerializerSettings); }
-            catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to deserialize script:  " + ex.Message, LoggingLevel.Normal); }
+            catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to deserialize script:  " + ex.Message, LoggingLevel.Normal, null); }
 
             return script;
         }
@@ -145,7 +145,7 @@ namespace SensusService.Probes.User
         {
             SensusServiceHelper.Get().ScheduleOneTimeCallback(() =>
                 {
-                    SensusServiceHelper.Get().Logger.Log("Running script \"" + _name + "\".", LoggingLevel.Normal);
+                    SensusServiceHelper.Get().Logger.Log("Running script \"" + _name + "\".", LoggingLevel.Normal, GetType());
 
                     bool isRerun = true;
                     lock (_locker)
@@ -181,7 +181,7 @@ namespace SensusService.Probes.User
                             datumWait.WaitOne();
                         }
 
-                    SensusServiceHelper.Get().Logger.Log("Script \"" + _name + "\" has finished running.", LoggingLevel.Normal);
+                    SensusServiceHelper.Get().Logger.Log("Script \"" + _name + "\" has finished running.", LoggingLevel.Normal, GetType());
 
                     callback(data);
 

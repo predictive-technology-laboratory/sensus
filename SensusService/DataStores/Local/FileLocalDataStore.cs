@@ -79,7 +79,7 @@ namespace SensusService.DataStores.Local
                 {
                     string datumJSON = null;
                     try { datumJSON = datum.JSON; }
-                    catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to get JSON for datum:  " + ex.Message, LoggingLevel.Normal); }
+                    catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to get JSON for datum:  " + ex.Message, LoggingLevel.Normal, GetType()); }
 
                     if (datumJSON != null)
                     {
@@ -91,15 +91,15 @@ namespace SensusService.DataStores.Local
                         }
                         catch (Exception ex)
                         {
-                            SensusServiceHelper.Get().Logger.Log("Failed to write datum JSON to local file:  " + ex.Message, LoggingLevel.Normal);
+                            SensusServiceHelper.Get().Logger.Log("Failed to write datum JSON to local file:  " + ex.Message, LoggingLevel.Normal, GetType());
 
                             try
                             {
                                 InitializeFile();
 
-                                SensusServiceHelper.Get().Logger.Log("Initialized new local file.", LoggingLevel.Normal);
+                                SensusServiceHelper.Get().Logger.Log("Initialized new local file.", LoggingLevel.Normal, GetType());
                             }
-                            catch (Exception ex2) { SensusServiceHelper.Get().Logger.Log("Failed to initialize new local data store file after failing to write the old one:  " + ex2.Message, LoggingLevel.Normal); }
+                            catch (Exception ex2) { SensusServiceHelper.Get().Logger.Log("Failed to initialize new local data store file after failing to write the old one:  " + ex2.Message, LoggingLevel.Normal, GetType()); }
                         }
 
                         if (writtenToFile)
@@ -120,6 +120,7 @@ namespace SensusService.DataStores.Local
                 // get local data from all files
                 List<Datum> localData = new List<Datum>();
                 foreach (string path in Directory.GetFiles(StorageDirectory))
+                {
                     try
                     {
                         using (StreamReader file = new StreamReader(path))
@@ -132,7 +133,11 @@ namespace SensusService.DataStores.Local
                             file.Close();
                         }
                     }
-                    catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Exception while reading local data store for transfer to remote:  " + ex.Message, LoggingLevel.Normal); }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Exception while reading local data store for transfer to remote:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
+                }
 
                 // this method is called from a remote data store, which doesn't care whether this local data store is running. don't start a new file unless this local data store is, in fact, running.
                 if (Running)
@@ -146,14 +151,14 @@ namespace SensusService.DataStores.Local
         {
             lock (_locker)
             {
-                SensusServiceHelper.Get().Logger.Log("File local data store received " + dataCommittedToRemote.Count + " remote-committed data elements to clear.", LoggingLevel.Debug);
+                SensusServiceHelper.Get().Logger.Log("File local data store received " + dataCommittedToRemote.Count + " remote-committed data elements to clear.", LoggingLevel.Debug, GetType());
 
                 HashSet<Datum> hashDataCommittedToRemote = new HashSet<Datum>(dataCommittedToRemote);  // for quick access via hashing
 
                 foreach (string path in Directory.GetFiles(StorageDirectory))
                     if (path != _path)  // don't process the file that's currently being written
                     {
-                        SensusServiceHelper.Get().Logger.Log("Clearing remote-committed data from \"" + path + "\".", LoggingLevel.Debug);
+                        SensusServiceHelper.Get().Logger.Log("Clearing remote-committed data from \"" + path + "\".", LoggingLevel.Debug, GetType());
 
                         string filteredPath = Path.GetTempFileName();
                         int filteredDataWritten = 0;
@@ -177,21 +182,21 @@ namespace SensusService.DataStores.Local
 
                         if (filteredDataWritten == 0)  // all data in local file were committed to remote data store -- delete local and filtered files
                         {
-                            SensusServiceHelper.Get().Logger.Log("Cleared all data from local data store file. Deleting file.", LoggingLevel.Debug);
+                            SensusServiceHelper.Get().Logger.Log("Cleared all data from local data store file. Deleting file.", LoggingLevel.Debug, GetType());
 
                             File.Delete(path);
                             File.Delete(filteredPath);
                         }
                         else  // data from local file were not committed to the remote data store -- move filtered path to local path and retry sending to remote store next time
                         {
-                            SensusServiceHelper.Get().Logger.Log(filteredDataWritten + " data elements in local data store file were not committed to remote data store.", LoggingLevel.Normal);
+                            SensusServiceHelper.Get().Logger.Log(filteredDataWritten + " data elements in local data store file were not committed to remote data store.", LoggingLevel.Normal, GetType());
 
                             File.Delete(path);
                             File.Move(filteredPath, path);
                         }
                     }
 
-                SensusServiceHelper.Get().Logger.Log("File local data store finished clearing remote-committed data elements.", LoggingLevel.Verbose);
+                SensusServiceHelper.Get().Logger.Log("File local data store finished clearing remote-committed data elements.", LoggingLevel.Verbose, GetType());
             }
         }
 
@@ -251,7 +256,7 @@ namespace SensusService.DataStores.Local
             if (_file != null)
             {
                 try { _file.Close(); }
-                catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to close file for local data store:  " + ex.Message, LoggingLevel.Normal); }
+                catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to close file for local data store:  " + ex.Message, LoggingLevel.Normal, GetType()); }
 
                 _file = null;
             }
@@ -263,8 +268,16 @@ namespace SensusService.DataStores.Local
         {
             if (Protocol != null)
                 foreach (string path in Directory.GetFiles(StorageDirectory))
-                    try { File.Delete(path); }
-                    catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to delete local data store file \"" + path + "\":  " + ex.Message, LoggingLevel.Normal); }
+                {
+                    try
+                    {
+                        File.Delete(path);
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Failed to delete local data store file \"" + path + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
+                }
         }
     }
 }

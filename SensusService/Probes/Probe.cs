@@ -151,7 +151,7 @@ namespace SensusService.Probes
             new Thread(() =>
                 {
                     try { Start(); }
-                    catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to start probe \"" + GetType().FullName + "\":" + ex.Message, LoggingLevel.Normal); }
+                    catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to start probe \"" + GetType().FullName + "\":" + ex.Message, LoggingLevel.Normal, GetType()); }
 
                 }).Start();
         }
@@ -164,10 +164,10 @@ namespace SensusService.Probes
             lock (_locker)
             {
                 if (_running)
-                    SensusServiceHelper.Get().Logger.Log("Attempted to start probe \"" + GetType().FullName + "\", but it was already running.", LoggingLevel.Normal);
+                    SensusServiceHelper.Get().Logger.Log("Attempted to start probe \"" + GetType().FullName + "\", but it was already running.", LoggingLevel.Normal, GetType());
                 else
                 {
-                    SensusServiceHelper.Get().Logger.Log("Starting probe \"" + GetType().FullName + "\".", LoggingLevel.Normal);
+                    SensusServiceHelper.Get().Logger.Log("Starting probe \"" + GetType().FullName + "\".", LoggingLevel.Normal, GetType());
                     Initialize();
                     _running = true;
                 }
@@ -181,7 +181,7 @@ namespace SensusService.Probes
                 if (_storeData)
                     lock (_collectedData)
                     {
-                        SensusServiceHelper.Get().Logger.Log("Storing datum in probe cache:  " + datum, LoggingLevel.Verbose);
+                        SensusServiceHelper.Get().Logger.Log("Storing datum in probe cache:  " + datum, LoggingLevel.Verbose, GetType());
                         _collectedData.Add(datum);
                     }
 
@@ -206,7 +206,7 @@ namespace SensusService.Probes
                         if (_collectedData.Remove(datum))
                             ++cleared;
 
-                    SensusServiceHelper.Get().Logger.Log("Cleared " + cleared + " committed data elements from probe:  " + GetType().FullName, LoggingLevel.Debug);
+                    SensusServiceHelper.Get().Logger.Log("Cleared " + cleared + " committed data elements from probe:  " + GetType().FullName, LoggingLevel.Debug, GetType());
                 }
         }
 
@@ -215,7 +215,7 @@ namespace SensusService.Probes
             new Thread(() =>
                 {
                     try { Stop(); }
-                    catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to stop probe \"" + GetType().FullName + "\":" + ex.Message, LoggingLevel.Normal); }
+                    catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to stop probe \"" + GetType().FullName + "\":" + ex.Message, LoggingLevel.Normal, GetType()); }
 
                 }).Start();
         }
@@ -229,7 +229,7 @@ namespace SensusService.Probes
             {
                 if (_running)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Stopping probe \"" + GetType().FullName + "\".", LoggingLevel.Normal);
+                    SensusServiceHelper.Get().Logger.Log("Stopping probe \"" + GetType().FullName + "\".", LoggingLevel.Normal, GetType());
                     _running = false;
 
                     // clear out the probe's in-memory storage
@@ -237,7 +237,7 @@ namespace SensusService.Probes
                         _collectedData.Clear();
                 }
                 else
-                    SensusServiceHelper.Get().Logger.Log("Attempted to stop probe \"" + GetType().FullName + "\", but it wasn't running.", LoggingLevel.Normal);
+                    SensusServiceHelper.Get().Logger.Log("Attempted to stop probe \"" + GetType().FullName + "\", but it wasn't running.", LoggingLevel.Normal, GetType());
             }
         }
 

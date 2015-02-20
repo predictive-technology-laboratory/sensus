@@ -69,7 +69,7 @@ namespace SensusUI
                                     UiBoundSensusServiceHelper.Get(true).UnregisterProtocol(protocolToRemove);
 
                                     try { Directory.Delete(protocolToRemove.StorageDirectory, true); }
-                                    catch (Exception ex) { UiBoundSensusServiceHelper.Get(true).Logger.Log("Failed to delete protocol storage directory \"" + protocolToRemove.StorageDirectory + "\":  " + ex.Message, LoggingLevel.Normal); }
+                                    catch (Exception ex) { UiBoundSensusServiceHelper.Get(true).Logger.Log("Failed to delete protocol storage directory \"" + protocolToRemove.StorageDirectory + "\":  " + ex.Message, LoggingLevel.Normal, GetType()); }
 
                                     Device.BeginInvokeOnMainThread(() =>
                                         {

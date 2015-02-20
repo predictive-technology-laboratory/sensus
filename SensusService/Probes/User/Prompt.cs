@@ -178,7 +178,7 @@ namespace SensusService.Probes.User
                             });
                     }
                     else
-                        SensusServiceHelper.Get().Logger.Log("Prompt failure:  Unrecognized output/input setup:  " + _outputType + " -> " + _inputType, LoggingLevel.Normal);
+                        SensusServiceHelper.Get().Logger.Log("Prompt failure:  Unrecognized output/input setup:  " + _outputType + " -> " + _inputType, LoggingLevel.Normal, GetType());
                     
                     _hasRun = true;
 

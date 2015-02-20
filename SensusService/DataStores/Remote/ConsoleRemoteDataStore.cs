@@ -37,7 +37,7 @@ namespace SensusService.DataStores.Remote
             {
                 committedData.Add(datum);
 
-                SensusServiceHelper.Get().Logger.Log("Committed datum to remote console:  " + datum, LoggingLevel.Debug);
+                SensusServiceHelper.Get().Logger.Log("Committed datum to remote console:  " + datum, LoggingLevel.Debug, GetType());
             }
 
             return committedData;

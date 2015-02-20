@@ -199,7 +199,7 @@ namespace SensusUI
                     }
                     catch (Exception ex)
                     {
-                        UiBoundSensusServiceHelper.Get(true).Logger.Log("Failed to save protocol to file for sharing:  " + ex.Message, LoggingLevel.Normal);
+                        UiBoundSensusServiceHelper.Get(true).Logger.Log("Failed to save protocol to file for sharing:  " + ex.Message, LoggingLevel.Normal, GetType());
                         path = null;
                     }
 

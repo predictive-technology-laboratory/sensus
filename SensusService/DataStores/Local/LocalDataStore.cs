@@ -56,19 +56,19 @@ namespace SensusService.DataStores.Local
                             dataToCommit.AddRange(collectedData);
             }
 
-            SensusServiceHelper.Get().Logger.Log("Retrieved " + dataToCommit.Count + " data elements from probes.", LoggingLevel.Debug);
+            SensusServiceHelper.Get().Logger.Log("Retrieved " + dataToCommit.Count + " data elements from probes.", LoggingLevel.Debug, GetType());
 
             return dataToCommit;
         }
 
         protected sealed override void ProcessCommittedData(List<Datum> committedData)
         {
-            SensusServiceHelper.Get().Logger.Log("Clearing " + committedData.Count + " committed data elements from probes.", LoggingLevel.Debug);
+            SensusServiceHelper.Get().Logger.Log("Clearing " + committedData.Count + " committed data elements from probes.", LoggingLevel.Debug, GetType());
 
             foreach (Probe probe in Protocol.Probes)
                 probe.ClearDataCommittedToLocalDataStore(committedData);
 
-            SensusServiceHelper.Get().Logger.Log("Done clearing committed data elements from probes.", LoggingLevel.Verbose);
+            SensusServiceHelper.Get().Logger.Log("Done clearing committed data elements from probes.", LoggingLevel.Verbose, GetType());
         }
 
         public abstract List<Datum> GetDataForRemoteDataStore();

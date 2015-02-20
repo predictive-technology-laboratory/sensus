@@ -188,7 +188,7 @@ namespace SensusService.Probes.User
                                     object datumValue = addedTrigger.DatumProperty.GetValue(currDatum);
                                     if (datumValue == null)
                                     {
-                                        SensusServiceHelper.Get().Logger.Log("Trigger error:  Value of datum property " + addedTrigger.DatumPropertyName + " was null.", LoggingLevel.Normal);
+                                        SensusServiceHelper.Get().Logger.Log("Trigger error:  Value of datum property " + addedTrigger.DatumPropertyName + " was null.", LoggingLevel.Normal, GetType());
                                         return;
                                     }
 
@@ -201,7 +201,7 @@ namespace SensusService.Probes.User
                                         try { datumValue = Convert.ToDouble(datumValue) - Convert.ToDouble(addedTrigger.DatumProperty.GetValue(prevDatum)); }
                                         catch (Exception ex)
                                         {
-                                            SensusServiceHelper.Get().Logger.Log("Trigger error:  Failed to convert datum values to doubles:  " + ex.Message, LoggingLevel.Normal);
+                                            SensusServiceHelper.Get().Logger.Log("Trigger error:  Failed to convert datum values to doubles:  " + ex.Message, LoggingLevel.Normal, GetType());
                                             return;
                                         }
                                     }
@@ -250,7 +250,7 @@ namespace SensusService.Probes.User
                     {
                         StopScriptRerunCallbacks();
 
-                        SensusServiceHelper.Get().Logger.Log("Starting script rerun callbacks.", LoggingLevel.Normal);
+                        SensusServiceHelper.Get().Logger.Log("Starting script rerun callbacks.", LoggingLevel.Normal, GetType());
 
                         _scriptRerunCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(() =>
                             {
@@ -264,7 +264,7 @@ namespace SensusService.Probes.User
                                             TimeSpan scriptAge = DateTimeOffset.UtcNow - scriptToRerun.FirstRunTimestamp;
                                             if (scriptAge.TotalMinutes > _maxScriptAgeMinutes)
                                             {
-                                                SensusServiceHelper.Get().Logger.Log("Script \"" + scriptToRerun.Name + "\" has aged out.", LoggingLevel.Normal);
+                                                SensusServiceHelper.Get().Logger.Log("Script \"" + scriptToRerun.Name + "\" has aged out.", LoggingLevel.Normal, GetType());
                                                 scriptToRerun = null;
                                                 ++_numScriptsAgedOut;
                                             }
@@ -290,7 +290,7 @@ namespace SensusService.Probes.User
                     {
                         StopRandomScriptTriggerCallbacks();
 
-                        SensusServiceHelper.Get().Logger.Log("Starting random script trigger callbacks.", LoggingLevel.Normal);
+                        SensusServiceHelper.Get().Logger.Log("Starting random script trigger callbacks.", LoggingLevel.Normal, GetType());
 
                         _randomTriggerCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(() =>
                             {
@@ -370,7 +370,7 @@ namespace SensusService.Probes.User
 
         private void StopScriptRerunCallbacks()
         {
-            SensusServiceHelper.Get().Logger.Log("Stopping script rerun callbacks.", LoggingLevel.Normal);
+            SensusServiceHelper.Get().Logger.Log("Stopping script rerun callbacks.", LoggingLevel.Normal, GetType());
             SensusServiceHelper.Get().CancelRepeatingCallback(_scriptRerunCallbackId);
             _scriptRerunCallbackId = -1;
         }
@@ -392,7 +392,7 @@ namespace SensusService.Probes.User
 
         private void StopRandomScriptTriggerCallbacks()
         {
-            SensusServiceHelper.Get().Logger.Log("Stopping random script trigger thread.", LoggingLevel.Normal);
+            SensusServiceHelper.Get().Logger.Log("Stopping random script trigger thread.", LoggingLevel.Normal, GetType());
             SensusServiceHelper.Get().CancelRepeatingCallback(_randomTriggerCallbackId);
             _randomTriggerCallbackId = -1;
         }

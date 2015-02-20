@@ -35,7 +35,6 @@ namespace SensusService
         private static object _staticLockObject = new object();
         private static readonly string _shareDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "share");
         private static readonly string _logPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
-        private static readonly string _logTag = "SERVICE-HELPER";
         private static readonly string _serializationPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_service_helper.json");
         private static readonly JsonSerializerSettings _serializationSettings = new JsonSerializerSettings
             {
@@ -88,7 +87,7 @@ namespace SensusService
             {
                 sensusServiceHelper = JsonConvert.DeserializeObject<T>(File.ReadAllText(_serializationPath), _serializationSettings);
                 sensusServiceHelper.Initialize(geolocator);
-                sensusServiceHelper.Logger.Log("Deserialized service helper with " + sensusServiceHelper.RegisteredProtocols.Count + " protocols.", LoggingLevel.Normal, _logTag);  
+                sensusServiceHelper.Logger.Log("Deserialized service helper with " + sensusServiceHelper.RegisteredProtocols.Count + " protocols.", LoggingLevel.Normal, null);  
             }
             catch (Exception ex)
             {
@@ -218,7 +217,7 @@ namespace SensusService
             _logger = new Logger(_logPath, LoggingLevel.Normal, Console.Error);
             #endif
 
-            _logger.Log("Log file started at \"" + _logPath + "\".", LoggingLevel.Normal, _logTag);
+            _logger.Log("Log file started at \"" + _logPath + "\".", LoggingLevel.Normal, GetType());
             #endregion
 
             lock (_staticLockObject)
@@ -230,7 +229,7 @@ namespace SensusService
             GpsReceiver.Get().Initialize(geolocator);
 
             try { InitializeXamarinInsights(); }
-            catch (Exception ex) { _logger.Log("Failed to initialize Xamarin insights:  " + ex.Message, LoggingLevel.Normal); }                              
+            catch (Exception ex) { _logger.Log("Failed to initialize Xamarin insights:  " + ex.Message, LoggingLevel.Normal, GetType()); }                              
         }
 
         #region platform-specific methods
@@ -311,7 +310,7 @@ namespace SensusService
                 }
                 catch (Exception ex)
                 {
-                    _logger.Log("Failed to serialize Sensus service helper:  " + ex.Message, LoggingLevel.Normal);
+                    _logger.Log("Failed to serialize Sensus service helper:  " + ex.Message, LoggingLevel.Normal, GetType());
                 }
             }
         }
@@ -395,21 +394,23 @@ namespace SensusService
                     new Thread(() =>
                         {
                             if (Monitor.TryEnter(callback))
+                            {
                                 try
                                 {
-                                    _logger.Log("Raising callback " + callbackId, LoggingLevel.Debug);
+                                    _logger.Log("Raising callback " + callbackId, LoggingLevel.Debug, GetType());
                                     callback();
                                 }
                                 catch (Exception ex)
                                 {
-                                    _logger.Log("Callback failed:  " + ex.Message, LoggingLevel.Normal);
+                                    _logger.Log("Callback failed:  " + ex.Message, LoggingLevel.Normal, GetType());
                                 }
                                 finally
                                 {
                                     Monitor.Exit(callback);
                                 }
+                            }
                             else
-                                _logger.Log("Callback " + callbackId + " was already running. Not running again.", LoggingLevel.Debug);
+                                _logger.Log("Callback " + callbackId + " was already running. Not running again.", LoggingLevel.Debug, GetType());
 
                             if (!repeating)
                                 _idCallback.Remove(callbackId);
@@ -443,7 +444,7 @@ namespace SensusService
                 if (_stopped)
                     return;
 
-                _logger.Log("Sensus health test is running (test " + ++_healthTestCount + ")", LoggingLevel.Normal, _logTag);
+                _logger.Log("Sensus health test is running (test " + ++_healthTestCount + ")", LoggingLevel.Normal, null);
 
                 foreach (Protocol protocol in _registeredProtocols)
                     if (_runningProtocolIds.Contains(protocol.Id))
@@ -486,7 +487,7 @@ namespace SensusService
                 if (_stopped)
                     return;
 
-                _logger.Log("Stopping Sensus service.", LoggingLevel.Normal, _logTag);
+                _logger.Log("Stopping Sensus service.", LoggingLevel.Normal, null);
 
                 foreach (Protocol protocol in _registeredProtocols)
                     protocol.Stop();

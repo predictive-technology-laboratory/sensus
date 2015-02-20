@@ -50,7 +50,7 @@ namespace SensusService.Probes.Location
         {
             _positionChangedHandler = (o, e) =>
                 {
-                    SensusServiceHelper.Get().Logger.Log("Received position change notification.", LoggingLevel.Verbose);
+                    SensusServiceHelper.Get().Logger.Log("Received position change notification.", LoggingLevel.Verbose, GetType());
 
                     StoreDatum(new LocationDatum(this, e.Position.Timestamp, e.Position.Accuracy, e.Position.Latitude, e.Position.Longitude));
                 };

@@ -113,7 +113,7 @@ namespace Sensus.Android
                                             catch (Exception ex)
                                             {
                                                 string message = "Failed to register/display new protocol:  " + ex.Message;
-                                                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal);
+                                                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
                                                 new AlertDialog.Builder(this).SetTitle("Failed to show protocol").SetMessage(message).Show();
                                             }
                                         });
@@ -129,13 +129,13 @@ namespace Sensus.Android
                                 Stream stream = null;
 
                                 try { stream = ContentResolver.OpenInputStream(dataURI); }
-                                catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to open local protocol file URI \"" + dataURI + "\":  " + ex.Message, LoggingLevel.Normal); }
+                                catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to open local protocol file URI \"" + dataURI + "\":  " + ex.Message, LoggingLevel.Normal, GetType()); }
 
                                 if (stream != null)
                                     Protocol.FromStreamAsync(stream, protocolDeserializedCallback);
                             }
                             else
-                                SensusServiceHelper.Get().Logger.Log("Sensus didn't know what to do with URI \"" + dataURI + "\".", LoggingLevel.Normal);
+                                SensusServiceHelper.Get().Logger.Log("Sensus didn't know what to do with URI \"" + dataURI + "\".", LoggingLevel.Normal, GetType());
                         }
                         catch (Exception ex) { new AlertDialog.Builder(this).SetTitle("Failed to get protocol").SetMessage(ex.Message).Show(); }
                     }

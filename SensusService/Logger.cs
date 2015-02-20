@@ -18,8 +18,6 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 
-// TODO:  All calls into the logger should pass one or more log tags.
-
 namespace SensusService
 {
     /// <summary>
@@ -57,7 +55,7 @@ namespace SensusService
             _file.AutoFlush = true;
         }
 
-        public void Log(string message, LoggingLevel level, params string[] tags)
+        public void Log(string message, LoggingLevel level, Type callingType)
         {
             lock (_locker)
             {
@@ -68,16 +66,7 @@ namespace SensusService
                 if (string.IsNullOrWhiteSpace(message))
                     return;
 
-                StringBuilder tagString = null;
-                if (tags != null && tags.Length > 0)
-                {
-                    tagString = new StringBuilder();
-                    foreach (string tag in tags)
-                        if (!string.IsNullOrWhiteSpace(tag))
-                            tagString.Append((tagString.Length == 0 ? "" : ",") + tag.ToUpper());
-                }
-
-                message = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + " " + (tagString == null || tagString.Length == 0 ? "" : "[" + tagString + "]:  ") + message;
+                message = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + ":  " + (callingType == null ? "" : "[" + callingType.Name + "] ") + message;
 
                 try { _file.WriteLine(message); }
                 catch (Exception) { }
