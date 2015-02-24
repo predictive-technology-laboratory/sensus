@@ -94,9 +94,6 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\Components\azure-mobile-services-1.3.1\lib\ios-unified\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="DataNuage.Aws.S3.iOS-unified">
-      <HintPath>..\Components\DataNuage.Aws.S3-1.5.203.0-trial\lib\ios-unified\DataNuage.Aws.S3.iOS-unified.dll</HintPath>
-    </Reference>
     <Reference Include="Xamarin.Mobile">
       <HintPath>..\Components\xamarin.mobile-0.7.5\lib\ios-unified\Xamarin.Mobile.dll</HintPath>
     </Reference>
@@ -128,6 +125,9 @@
     <Reference Include="Xamarin.Forms.Xaml">
       <HintPath>..\packages\Xamarin.Forms.1.3.4.6332\lib\Xamarin.iOS10\Xamarin.Forms.Xaml.dll</HintPath>
     </Reference>
+    <Reference Include="DataNuage.Aws.S3.iOS-unified">
+      <HintPath>..\Components\DataNuage.Aws.S3-1.5.203.0\lib\ios-unified\DataNuage.Aws.S3.iOS-unified.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Contents.json" />
@@ -154,16 +154,16 @@
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Import Project="..\packages\Xamarin.Forms.1.3.4.6332\build\portable-win+net45+wp80+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.1.3.4.6332\build\portable-win+net45+wp80+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />
   <ItemGroup>
-    <XamarinComponentReference Include="DataNuage.Aws.S3-trial">
-      <Version>1.5.203.0</Version>
-      <Visible>False</Visible>
-    </XamarinComponentReference>
     <XamarinComponentReference Include="xamarin.mobile">
       <Version>0.7.5</Version>
       <Visible>False</Visible>
     </XamarinComponentReference>
     <XamarinComponentReference Include="azure-mobile-services">
       <Version>1.3.1</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
+    <XamarinComponentReference Include="DataNuage.Aws.S3">
+      <Version>1.5.203.0</Version>
       <Visible>False</Visible>
     </XamarinComponentReference>
   </ItemGroup>

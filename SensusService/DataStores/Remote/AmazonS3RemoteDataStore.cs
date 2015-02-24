@@ -22,26 +22,41 @@ namespace SensusService.DataStores.Remote
     public class AmazonS3RemoteDataStore : RemoteDataStore
     {
         private S3 _s3;
-        private string _bucketBase;
+        private string _bucket;
+        private string _folder;
         private string _accessKey;
         private string _secretKey;
 
         private object _locker = new object();
 
+        // TODO:  Make sure bucket name follows restrictions
         [EntryStringUiProperty("Bucket:", true, 2)]
-        public string BucketBase
+        public string Bucket
         {
             get
             {
-                return _bucketBase;
+                return _bucket;
             }
             set
             {
-                _bucketBase = value;
+                _bucket = value;
+            }
+        }
+
+        [EntryStringUiProperty("Folder:", true, 3)]
+        public string Folder
+        {
+            get
+            {
+                return _folder;
+            }
+            set
+            {
+                _folder = value;
             }
         }           
 
-        [EntryStringUiProperty("Access Key:", true, 2)]
+        [EntryStringUiProperty("Access Key:", true, 4)]
         public string AccessKey
         {
             get
@@ -54,7 +69,7 @@ namespace SensusService.DataStores.Remote
             }
         }
 
-        [EntryStringUiProperty("Secret Key:", true, 2)]
+        [EntryStringUiProperty("Secret Key:", true, 5)]
         public string SecretKey
         {
             get
@@ -64,14 +79,6 @@ namespace SensusService.DataStores.Remote
             set
             {
                 _secretKey = value;
-            }
-        }
-
-        private string Bucket
-        {
-            get
-            {
-                return _bucketBase.TrimEnd('/') + "/" + Protocol.Id + "/" + SensusServiceHelper.Get().DeviceId;
             }
         }
 
@@ -96,7 +103,6 @@ namespace SensusService.DataStores.Remote
             lock (_locker)
             {
                 _s3 = new S3(_accessKey, _secretKey);
-                _s3.CreateBucketAsync(Bucket).Wait();
                 base.Start();
             }
         }
@@ -111,7 +117,7 @@ namespace SensusService.DataStores.Remote
             {
                 try
                 {
-                    _s3.PutObjectAsync(Bucket, datum.Id, datum.JSON).Wait();
+                    _s3.PutObjectAsync(Bucket, _folder.Trim('/') + "/" + datum.GetType().Name + "/" + datum.Id, datum.JSON, contentType:"application/json").Wait();
                     committedData.Add(datum);
                 }
                 catch (Exception ex)
