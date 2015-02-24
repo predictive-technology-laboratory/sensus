@@ -29,7 +29,6 @@ namespace SensusService.DataStores.Remote
 
         private object _locker = new object();
 
-        // TODO:  Make sure bucket name follows restrictions
         [EntryStringUiProperty("Bucket:", true, 2)]
         public string Bucket
         {
