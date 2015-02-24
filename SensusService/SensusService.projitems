@@ -74,5 +74,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Logger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolReport.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SensusServiceHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataStores\Remote\AmazonS3RemoteDataStore.cs" />
   </ItemGroup>
 </Project>
