@@ -28,6 +28,8 @@ namespace Sensus.Android
 		{
 			global::Xamarin.InsightsCore.Resource.String.ApplicationName = global::Sensus.Android.Resource.String.ApplicationName;
 			global::Xamarin.InsightsCore.Resource.String.Hello = global::Sensus.Android.Resource.String.Hello;
+			global::DataNuage.Aws.Resource.String.ApplicationName = global::Sensus.Android.Resource.String.ApplicationName;
+			global::DataNuage.Aws.Resource.String.Hello = global::Sensus.Android.Resource.String.Hello;
 		}
 		
 		public partial class Attribute
