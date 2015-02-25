@@ -144,9 +144,6 @@ namespace SensusService
         public abstract string DeviceId { get; }       
 
         [JsonIgnore]
-        public abstract bool DeviceHasMicrophone { get; }
-
-        [JsonIgnore]
         public abstract string OperatingSystem { get; }
 
         [EntryIntegerUiProperty("Health Test Delay (MS):", true, 9)]

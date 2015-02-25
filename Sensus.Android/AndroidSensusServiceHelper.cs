@@ -72,11 +72,6 @@ namespace Sensus.Android
             }
         }
 
-        public override bool DeviceHasMicrophone
-        {
-            get { return PackageManager.FeatureMicrophone == "android.hardware.microphone"; }
-        }
-
         public override string OperatingSystem
         {
             get
