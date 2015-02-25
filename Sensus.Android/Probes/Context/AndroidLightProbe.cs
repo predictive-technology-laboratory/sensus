@@ -26,7 +26,7 @@ namespace Sensus.Android.Probes.Context
         {
             _lightListener = new AndroidSensorListener(SensorType.Light, SensorDelay.Normal, null, e =>
                 {
-                    StoreDatum(new LightDatum(this, DateTimeOffset.UtcNow, e.Values[0]));
+                    StoreDatum(new LightDatum(DateTimeOffset.UtcNow, e.Values[0]));
                 });
         }
 

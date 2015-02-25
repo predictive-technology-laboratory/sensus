@@ -29,19 +29,19 @@ namespace Sensus.Android.Probes.Communication
         {
             _outgoingCallCallback = (sender, outgoingNumber) =>
                 {
-                    StoreDatum(new TelephonyDatum(this, DateTimeOffset.UtcNow, TelephonyState.OutgoingCall, outgoingNumber));
+                    StoreDatum(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.OutgoingCall, outgoingNumber));
                 };
 
             _idleIncomingCallListener = new AndroidTelephonyIdleIncomingListener();
 
             _idleIncomingCallListener.IncomingCall += (o, incomingNumber) =>
                 {
-                    StoreDatum(new TelephonyDatum(this, DateTimeOffset.UtcNow, TelephonyState.IncomingCall, incomingNumber));
+                    StoreDatum(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.IncomingCall, incomingNumber));
                 };
 
             _idleIncomingCallListener.Idle += (o, e) =>
                 {
-                    StoreDatum(new TelephonyDatum(this, DateTimeOffset.UtcNow, TelephonyState.Idle, null));
+                    StoreDatum(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.Idle, null));
                 };
         }
 

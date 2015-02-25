@@ -27,7 +27,7 @@ namespace Sensus.Android.Probes.Communication
 
         public AndroidSmsProbe()
         {
-            _smsOutgoingObserver = new AndroidSmsOutgoingObserver(this, Application.Context, outgoingSmsDatum =>
+            _smsOutgoingObserver = new AndroidSmsOutgoingObserver(Application.Context, outgoingSmsDatum =>
                 {
                     // the observer doesn't set the from number
                     outgoingSmsDatum.FromNumber = _telephonyManager.Line1Number;
@@ -37,8 +37,7 @@ namespace Sensus.Android.Probes.Communication
 
             _incomingSmsCallback = (sender, incomingSmsDatum) =>
                 {
-                    // the observer doesn't set the probe type or destination number (simply the device's primary number)
-                    incomingSmsDatum.ProbeType = GetType().FullName;
+                    // the observer doesn't set the destination number (simply the device's primary number)
                     incomingSmsDatum.ToNumber = _telephonyManager.Line1Number;
 
                     StoreDatum(incomingSmsDatum);

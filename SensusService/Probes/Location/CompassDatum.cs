@@ -35,8 +35,8 @@ namespace SensusService.Probes.Location
             get { return Math.Round(_heading, 0) + " degrees from magnetic north"; }
         }
 
-        public CompassDatum(Probe probe, DateTimeOffset timestamp, double heading)
-            : base(probe, timestamp)
+        public CompassDatum(DateTimeOffset timestamp, double heading)
+            : base(timestamp)
         {
             _heading = heading;
         }

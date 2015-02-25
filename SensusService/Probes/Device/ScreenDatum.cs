@@ -35,8 +35,8 @@ namespace SensusService.Probes.Device
             get { return _on ? "On" : "Off"; }
         }
 
-        public ScreenDatum(Probe probe, DateTimeOffset timestamp, bool on)
-            : base(probe, timestamp)
+        public ScreenDatum(DateTimeOffset timestamp, bool on)
+            : base(timestamp)
         {
             _on = on;
         }

@@ -138,7 +138,7 @@ namespace SensusService.Probes.User
                                 inputText = null;
 
                             if (inputText != null)
-                                _inputDatum = new ScriptDatum(null, DateTimeOffset.UtcNow, inputText, current == null ? null : current.Id);
+                                _inputDatum = new ScriptDatum(DateTimeOffset.UtcNow, inputText, current == null ? null : current.Id);
 
                             callback(_inputDatum);
 

@@ -77,6 +77,14 @@ namespace Sensus.Android
             get { return PackageManager.FeatureMicrophone == "android.hardware.microphone"; }
         }
 
+        public override string OperatingSystem
+        {
+            get
+            {
+                return "Android " + Build.VERSION.SdkInt;
+            }
+        }
+
         public AndroidSensusServiceHelper()
         {
             _mainActivityWait = new ManualResetEvent(false);      

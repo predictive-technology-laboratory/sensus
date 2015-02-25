@@ -35,8 +35,8 @@ namespace SensusService.Probes.Device
             get { return "Level:  " + Math.Round(_level, 2); }
         }
 
-        public BatteryDatum(Probe probe, DateTimeOffset timestamp, double level)
-            : base(probe, timestamp)
+        public BatteryDatum(DateTimeOffset timestamp, double level)
+            : base(timestamp)
         {
             _level = level;
         }

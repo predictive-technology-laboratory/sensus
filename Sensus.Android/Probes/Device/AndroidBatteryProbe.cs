@@ -29,7 +29,7 @@ namespace Sensus.Android.Probes.Device
             if (lastIntent == null)
                 return new BatteryDatum[] { };
             else
-                return new BatteryDatum[] { new BatteryDatum(this, DateTimeOffset.UtcNow, lastIntent.GetIntExtra(BatteryManager.ExtraLevel, -1)) };
+                return new BatteryDatum[] { new BatteryDatum(DateTimeOffset.UtcNow, lastIntent.GetIntExtra(BatteryManager.ExtraLevel, -1)) };
         }
     }
 }

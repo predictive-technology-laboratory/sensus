@@ -89,7 +89,7 @@ namespace Sensus.Android.Probes.Location
                 if (heading < 0)
                     heading = 180 + (180 - Math.Abs(heading));  // convert to [0, 360] degrees from north
 
-                StoreDatum(new CompassDatum(this, DateTimeOffset.UtcNow, heading));
+                StoreDatum(new CompassDatum(DateTimeOffset.UtcNow, heading));
             }
         }
 

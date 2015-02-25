@@ -52,8 +52,8 @@ namespace SensusService.Probes.Communication
             get { return _message; }
         }
 
-        public SmsDatum(Probe probe, DateTimeOffset timestamp, string fromNumber, string toNumber, string message)
-            : base(probe, timestamp)
+        public SmsDatum(DateTimeOffset timestamp, string fromNumber, string toNumber, string message)
+            : base(timestamp)
         {
             FromNumber = fromNumber == null ? "" : fromNumber;
             ToNumber = toNumber == null ? "" : toNumber;

@@ -35,8 +35,8 @@ namespace SensusService.Probes.Context
             get { return Math.Round(_decibels, 0) + " (db)"; }
         }
 
-        public SoundDatum(Probe probe, DateTimeOffset timestamp, double decibels)
-            : base(probe, timestamp)
+        public SoundDatum(DateTimeOffset timestamp, double decibels)
+            : base(timestamp)
         {
             _decibels = decibels;
         }

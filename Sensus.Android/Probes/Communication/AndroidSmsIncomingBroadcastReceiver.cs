@@ -41,7 +41,7 @@ namespace Sensus.Android.Probes.Communication
                         {
                             SmsMessage message = SmsMessage.CreateFromPdu((byte[])pdus[i]);
                             DateTimeOffset timestamp = new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(message.TimestampMillis);
-                            IncomingSMS(this, new SmsDatum(null, timestamp, message.OriginatingAddress, null, message.MessageBody));
+                            IncomingSMS(this, new SmsDatum(timestamp, message.OriginatingAddress, null, message.MessageBody));
                         }
                     }
                     catch (Exception) { }

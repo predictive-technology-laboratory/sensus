@@ -44,7 +44,7 @@ namespace Sensus.Android.Probes.Network
                 string currAccessPointBSSID = GetAccessPointBSSID();
                 if (_firstReceive || currAccessPointBSSID != _previousAccessPointBSSID)
                 {
-                    WifiConnectionChanged(this, new WlanDatum(null, DateTimeOffset.UtcNow, currAccessPointBSSID));
+                    WifiConnectionChanged(this, new WlanDatum(DateTimeOffset.UtcNow, currAccessPointBSSID));
                     _previousAccessPointBSSID = currAccessPointBSSID;
                     _firstReceive = false;
                 }

@@ -29,7 +29,7 @@ namespace Sensus.Android.Probes.Network
             _cellTowerChangeListener = new AndroidCellTowerChangeListener();
             _cellTowerChangeListener.CellTowerChanged += (o, cellTowerLocation) =>
                 {
-                    StoreDatum(new CellTowerDatum(this, DateTimeOffset.UtcNow, cellTowerLocation));
+                    StoreDatum(new CellTowerDatum(DateTimeOffset.UtcNow, cellTowerLocation));
                 };
         }
 

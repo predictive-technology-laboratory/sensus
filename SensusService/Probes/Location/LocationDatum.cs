@@ -43,8 +43,8 @@ namespace SensusService.Probes.Location
             get { return Math.Round(_latitude, 2) + " (lat), " + Math.Round(_longitude, 2) + " (lon)"; }
         }
 
-        public LocationDatum(Probe probe, DateTimeOffset timestamp, double accuracy, double latitude, double longitude)
-            : base(probe, timestamp, accuracy)
+        public LocationDatum(DateTimeOffset timestamp, double accuracy, double latitude, double longitude)
+            : base(timestamp, accuracy)
         {
             _latitude = latitude;
             _longitude = longitude;

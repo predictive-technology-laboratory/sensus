@@ -78,7 +78,7 @@ namespace SensusService.DataStores.Local
                 foreach (Datum datum in data)
                 {
                     string datumJSON = null;
-                    try { datumJSON = datum.JSON; }
+                    try { datumJSON = datum.GetJSON(null); }
                     catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to get JSON for datum:  " + ex.Message, LoggingLevel.Normal, GetType()); }
 
                     if (datumJSON != null)
@@ -171,7 +171,7 @@ namespace SensusService.DataStores.Local
                                 Datum datum = Datum.FromJSON(line);
                                 if (!hashDataCommittedToRemote.Contains(datum))
                                 {
-                                    filteredFile.WriteLine(datum.JSON);
+                                    filteredFile.WriteLine(datum.GetJSON(null));
                                     filteredDataWritten++;
                                 }
                             }

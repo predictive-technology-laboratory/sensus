@@ -35,8 +35,8 @@ namespace SensusService.Probes.Network
             get { return _cellTower; }
         }
 
-        public CellTowerDatum(Probe probe, DateTimeOffset timestamp, string cellTower)
-            : base(probe, timestamp)
+        public CellTowerDatum(DateTimeOffset timestamp, string cellTower)
+            : base(timestamp)
         {
             _cellTower = cellTower == null ? "" : cellTower;
         }

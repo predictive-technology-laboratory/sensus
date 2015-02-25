@@ -25,7 +25,6 @@ namespace Sensus.Android.Probes.Network
         {
             _wlanConnectionChangedCallback = (sender, wlanDatum) =>
                 {
-                    wlanDatum.ProbeType = GetType().FullName;
                     StoreDatum(wlanDatum);
                 };
         }

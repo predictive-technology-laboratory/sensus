@@ -25,8 +25,6 @@ namespace Sensus.Android.Probes.Context
         {
             _deviceFoundCallback = (sender, bluetoothDeviceProximityDatum) =>
                 {
-                    // broadcast receiver doesn't set probe
-                    bluetoothDeviceProximityDatum.ProbeType = GetType().FullName;
                     StoreDatum(bluetoothDeviceProximityDatum);
                 };
         }

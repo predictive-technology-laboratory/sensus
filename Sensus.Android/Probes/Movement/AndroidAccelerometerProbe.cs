@@ -44,7 +44,7 @@ namespace Sensus.Android.Probes.Movement
                     float yAccel = e.Values[1] - _gravity[1];
                     float zAccel = e.Values[2] - _gravity[2];
 
-                    StoreDatum(new AccelerometerDatum(this, DateTimeOffset.UtcNow, xAccel, yAccel, zAccel));
+                    StoreDatum(new AccelerometerDatum(DateTimeOffset.UtcNow, xAccel, yAccel, zAccel));
                 });
         }
 

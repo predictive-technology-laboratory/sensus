@@ -114,7 +114,7 @@ namespace SensusService.Probes.Movement
                         accuracy = (float)(maxSpeedKPH - reportedSpeedKPH);
                     }
 
-                    data = new SpeedDatum[] { new SpeedDatum(this, currentPosition.Timestamp, accuracy, (float)reportedSpeedKPH) };
+                    data = new SpeedDatum[] { new SpeedDatum(currentPosition.Timestamp, accuracy, (float)reportedSpeedKPH) };
                 }
 
                 if (currentPosition != null)

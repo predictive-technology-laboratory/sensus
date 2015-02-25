@@ -31,7 +31,7 @@ namespace Sensus.Android.Probes.Location
                     double stdPressure = 1013.25;
                     double altitude = (1 - Math.Pow((hPa / stdPressure), 0.190284)) * 145366.45;
 
-                    StoreDatum(new AltitudeDatum(this, DateTimeOffset.UtcNow, -1, altitude));
+                    StoreDatum(new AltitudeDatum(DateTimeOffset.UtcNow, -1, altitude));
                 });
         }
 

@@ -38,8 +38,8 @@ namespace SensusService.Probes.User
             get { return _response; }
         }
 
-        public ScriptDatum(Probe probe, DateTimeOffset timestamp, string response, string triggerDatumId)
-            : base(probe, timestamp)
+        public ScriptDatum(DateTimeOffset timestamp, string response, string triggerDatumId)
+            : base(timestamp)
         {
             _response = response == null ? "" : response;
             _triggerDatumId = triggerDatumId == null ? "" : triggerDatumId;

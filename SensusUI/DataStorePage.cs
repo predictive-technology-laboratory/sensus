@@ -73,7 +73,7 @@ namespace SensusUI
                             StreamWriter shareFile = new StreamWriter(sharePath);
                             LocalDataStore localDataStore = dataStore as LocalDataStore;
                             foreach (Datum datum in localDataStore.GetDataForRemoteDataStore())
-                                shareFile.WriteLine(datum.JSON);
+                                shareFile.WriteLine(datum.GetJSON(null));
 
                             shareFile.Close();
 

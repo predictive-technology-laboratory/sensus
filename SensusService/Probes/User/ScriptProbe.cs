@@ -321,7 +321,6 @@ namespace SensusService.Probes.User
                             foreach (ScriptDatum scriptDatum in scriptData)
                                 if (scriptDatum != null)
                                 {
-                                    scriptDatum.ProbeType = GetType().FullName;
                                     StoreDatum(scriptDatum);
                                 }
 

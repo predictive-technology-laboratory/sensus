@@ -42,8 +42,8 @@ namespace SensusService.Probes.Apps
             get { return "Name:  " + _name + " (" + _description + ")"; }
         }
 
-        public RunningAppsDatum(Probe probe, DateTimeOffset timestamp, string name, string description)
-            : base(probe, timestamp)
+        public RunningAppsDatum(DateTimeOffset timestamp, string name, string description)
+            : base(timestamp)
         {
             _name = name == null ? "" : name;
             _description = description == null ? "" : description;

@@ -35,8 +35,8 @@ namespace SensusService.Probes.Network
             get { return "AP BSSID:  " + _accessPointBSSID; }
         }
 
-        public WlanDatum(Probe probe, DateTimeOffset timestamp, string accessPointBSSID)
-            : base(probe, timestamp)
+        public WlanDatum(DateTimeOffset timestamp, string accessPointBSSID)
+            : base(timestamp)
         {
             _accessPointBSSID = accessPointBSSID == null ? "" : accessPointBSSID;
         }

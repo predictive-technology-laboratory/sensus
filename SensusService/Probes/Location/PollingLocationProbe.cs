@@ -57,7 +57,7 @@ namespace SensusService.Probes.Location
             if (reading == null)
                 return new Datum[] { };
             else
-                return new Datum[] { new LocationDatum(this, reading.Timestamp, reading.Accuracy, reading.Latitude, reading.Longitude) };
+                return new Datum[] { new LocationDatum(reading.Timestamp, reading.Accuracy, reading.Latitude, reading.Longitude) };
         }
     }
 }

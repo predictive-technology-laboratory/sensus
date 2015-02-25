@@ -56,7 +56,7 @@ namespace Sensus.Android.Probes.Context
 
                 Thread.Sleep(_sampleLengthMS);
 
-                return new Datum[] { new SoundDatum(this, DateTimeOffset.UtcNow, 20 * Math.Log10(recorder.MaxAmplitude)) };  // http://www.mathworks.com/help/signal/ref/mag2db.html
+                return new Datum[] { new SoundDatum(DateTimeOffset.UtcNow, 20 * Math.Log10(recorder.MaxAmplitude)) };  // http://www.mathworks.com/help/signal/ref/mag2db.html
             }
             catch (Exception)
             {

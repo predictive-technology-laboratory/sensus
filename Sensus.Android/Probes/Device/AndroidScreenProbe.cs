@@ -41,7 +41,7 @@ namespace Sensus.Android.Probes.Device
             #endif
                 screenOn = _powerManager.IsScreenOn;
 
-            return new Datum[] { new ScreenDatum(this, DateTimeOffset.UtcNow, screenOn) };
+            return new Datum[] { new ScreenDatum(DateTimeOffset.UtcNow, screenOn) };
         }
     }
 }

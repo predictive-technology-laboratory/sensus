@@ -33,8 +33,8 @@ namespace SensusService
             set { _accuracy = value; }
         }
 
-        protected ImpreciseDatum(Probe probe, DateTimeOffset timestamp, double accuracy)
-            : base(probe, timestamp)
+        protected ImpreciseDatum(DateTimeOffset timestamp, double accuracy)
+            : base(timestamp)
         {
             _accuracy = accuracy;
         }

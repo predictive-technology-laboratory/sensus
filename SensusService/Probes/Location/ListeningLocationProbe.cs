@@ -52,7 +52,7 @@ namespace SensusService.Probes.Location
                 {
                     SensusServiceHelper.Get().Logger.Log("Received position change notification.", LoggingLevel.Verbose, GetType());
 
-                    StoreDatum(new LocationDatum(this, e.Position.Timestamp, e.Position.Accuracy, e.Position.Latitude, e.Position.Longitude));
+                    StoreDatum(new LocationDatum(e.Position.Timestamp, e.Position.Accuracy, e.Position.Latitude, e.Position.Longitude));
                 };
         }
 

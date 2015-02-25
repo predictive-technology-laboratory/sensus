@@ -36,7 +36,7 @@ namespace Sensus.Android.Probes.Apps
             {
                 string name = task.BaseActivity.PackageName;
                 string desc = task.Description == null ? "" : task.Description.ToString();
-                data.Add(new RunningAppsDatum(this, DateTimeOffset.UtcNow, name, desc));
+                data.Add(new RunningAppsDatum(DateTimeOffset.UtcNow, name, desc));
             }
 
             return data;

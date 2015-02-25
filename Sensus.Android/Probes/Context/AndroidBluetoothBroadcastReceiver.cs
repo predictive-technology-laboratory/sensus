@@ -31,7 +31,7 @@ namespace Sensus.Android.Probes.Context
             if (DeviceFound != null && intent != null && intent.Action == BluetoothDevice.ActionFound)
             {
                 BluetoothDevice device = intent.GetParcelableExtra(BluetoothDevice.ExtraDevice) as BluetoothDevice;
-                DeviceFound(this, new BluetoothDeviceProximityDatum(null, DateTimeOffset.UtcNow, device.Name, device.Address));
+                DeviceFound(this, new BluetoothDeviceProximityDatum(DateTimeOffset.UtcNow, device.Name, device.Address));
             }
         }
     }

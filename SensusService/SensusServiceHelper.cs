@@ -141,10 +141,13 @@ namespace SensusService
         public abstract bool WiFiConnected { get; }
 
         [JsonIgnore]
-        public abstract string DeviceId { get; }
+        public abstract string DeviceId { get; }       
 
         [JsonIgnore]
         public abstract bool DeviceHasMicrophone { get; }
+
+        [JsonIgnore]
+        public abstract string OperatingSystem { get; }
 
         [EntryIntegerUiProperty("Health Test Delay (MS):", true, 9)]
         public int HealthTestDelayMS

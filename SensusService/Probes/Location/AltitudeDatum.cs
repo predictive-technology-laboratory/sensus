@@ -35,8 +35,8 @@ namespace SensusService.Probes.Location
             get { return Math.Round(_altitude, 0) + " feet"; }
         }
 
-        public AltitudeDatum(Probe probe, DateTimeOffset timestamp, double accuracy, double altitude)
-            : base(probe, timestamp, accuracy)
+        public AltitudeDatum(DateTimeOffset timestamp, double accuracy, double altitude)
+            : base(timestamp, accuracy)
         {
             _altitude = altitude;
         }

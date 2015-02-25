@@ -43,8 +43,8 @@ namespace SensusService.Probes.Communication
             get { return _phoneNumber + " (" + _state + ")"; }
         }
 
-        public TelephonyDatum(Probe probe, DateTimeOffset timestamp, TelephonyState state, string phoneNumber)
-            : base(probe, timestamp)
+        public TelephonyDatum(DateTimeOffset timestamp, TelephonyState state, string phoneNumber)
+            : base(timestamp)
         {
             _state = state;
             _phoneNumber = phoneNumber == null ? "" : phoneNumber;

@@ -21,6 +21,7 @@ namespace SensusService
         private string _error;
         private string _warning;
         private string _misc;
+        private string _operatingSystem;
 
         public string Error
         {
@@ -40,17 +41,30 @@ namespace SensusService
             set { _misc = value; }
         }
 
+        public string OperatingSystem
+        {
+            get
+            {
+                return _operatingSystem; 
+            }
+            set
+            {
+                _operatingSystem = value;
+            }
+        }
+
         public override string DisplayDetail
         {
             get { return ""; }
         }
 
         public ProtocolReport(DateTimeOffset timestamp, string error, string warning, string misc)
-            : base(null, timestamp)
+            : base(timestamp)
         {
             _error = error == null ? "" : error;
             _warning = warning == null ? "" : warning;
             _misc = misc == null ? "" : misc;
+            _operatingSystem = SensusServiceHelper.Get().OperatingSystem;
         }
 
         public override string ToString()

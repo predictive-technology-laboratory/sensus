@@ -35,8 +35,8 @@ namespace SensusService.Probes.Context
             get { return "Brightness:  " + Math.Round(_brightness, 2); }
         }
 
-        public LightDatum(Probe probe, DateTimeOffset timestamp, double brightness)
-            : base(probe, timestamp)
+        public LightDatum(DateTimeOffset timestamp, double brightness)
+            : base(timestamp)
         {
             _brightness = brightness;
         }

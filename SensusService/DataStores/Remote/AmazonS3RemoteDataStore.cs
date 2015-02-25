@@ -16,16 +16,30 @@ using System;
 using System.Collections.Generic;
 using DataNuage.Aws;
 using SensusUI.UiProperties;
+using Newtonsoft.Json.Serialization;
+using System.Linq;
 
 namespace SensusService.DataStores.Remote
 {
     public class AmazonS3RemoteDataStore : RemoteDataStore
     {
+        /// <summary>
+        /// Amazon s3 datum contract resolver. Ignores any unnecessary JSON fields within Datum objects.
+        /// </summary>
+        private class AmazonS3DatumContractResolver : DefaultContractResolver
+        {
+            protected override IList<JsonProperty> CreateProperties(Type type, Newtonsoft.Json.MemberSerialization memberSerialization)
+            {
+                return base.CreateProperties(type, memberSerialization).Where(property => property.PropertyName != typeof(Datum).GetProperty("Id").Name).ToList();
+            }
+        }
+
         private S3 _s3;
         private string _bucket;
         private string _folder;
         private string _accessKey;
         private string _secretKey;
+        private AmazonS3DatumContractResolver _jsonContractResolver;
 
         private object _locker = new object();
 
@@ -97,6 +111,11 @@ namespace SensusService.DataStores.Remote
             }
         }
 
+        public AmazonS3RemoteDataStore()
+        {
+            _jsonContractResolver = new AmazonS3DatumContractResolver();
+        }
+
         public override void Start()
         {
             lock (_locker)
@@ -116,7 +135,7 @@ namespace SensusService.DataStores.Remote
             {
                 try
                 {
-                    _s3.PutObjectAsync(Bucket, _folder.Trim('/') + "/" + datum.GetType().Name + "/" + datum.Id, datum.JSON, contentType:"application/json").Wait();
+                    _s3.PutObjectAsync(Bucket, _folder.Trim('/') + "/" + datum.GetType().Name + "/" + datum.Id, datum.GetJSON(_jsonContractResolver), contentType:"application/json").Wait();
                     committedData.Add(datum);
                 }
                 catch (Exception ex)

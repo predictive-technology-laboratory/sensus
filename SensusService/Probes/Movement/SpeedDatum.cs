@@ -35,8 +35,8 @@ namespace SensusService.Probes.Movement
             get { return Math.Round(_kph, 1) + " (+/- " + Math.Round(Accuracy, 1) + ")" + " KPH"; }
         }
 
-        public SpeedDatum(Probe probe, DateTimeOffset timestamp, float accuracy, double kph)
-            : base(probe, timestamp, accuracy)
+        public SpeedDatum(DateTimeOffset timestamp, float accuracy, double kph)
+            : base(timestamp, accuracy)
         {
             _kph = kph;
         }

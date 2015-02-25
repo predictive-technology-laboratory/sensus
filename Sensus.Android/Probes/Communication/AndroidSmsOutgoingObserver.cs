@@ -23,15 +23,13 @@ namespace Sensus.Android.Probes.Communication
 {
     public class AndroidSmsOutgoingObserver : ContentObserver
     {
-        private Probe _probe;
         private global::Android.Content.Context _context;
         private Action<SmsDatum> _outgoingSMS;
         private string _mostRecentlyObservedSmsURI;
 
-        public AndroidSmsOutgoingObserver(Probe probe, global::Android.Content.Context context, Action<SmsDatum> outgoingSmsCallback)
+        public AndroidSmsOutgoingObserver(global::Android.Content.Context context, Action<SmsDatum> outgoingSmsCallback)
             : base(null)
         {
-            _probe = probe;
             _context = context;
             _outgoingSMS = outgoingSmsCallback;
             _mostRecentlyObservedSmsURI = null;
@@ -72,7 +70,7 @@ namespace Sensus.Android.Probes.Communication
                 string message = cursor.GetString(cursor.GetColumnIndex("body"));
                 cursor.Close();
 
-                _outgoingSMS(new SmsDatum(_probe, dotNetDateTime, null, to, message));
+                _outgoingSMS(new SmsDatum(dotNetDateTime, null, to, message));
 
                 _mostRecentlyObservedSmsURI = uri.ToString();
             }
