@@ -18,6 +18,7 @@ using DataNuage.Aws;
 using SensusUI.UiProperties;
 using Newtonsoft.Json.Serialization;
 using System.Linq;
+using System.Text;
 
 namespace SensusService.DataStores.Remote
 {
@@ -129,22 +130,47 @@ namespace SensusService.DataStores.Remote
         {
             List<Datum> committedData = new List<Datum>();
 
-            DateTimeOffset start = DateTimeOffset.UtcNow;
+            DateTimeOffset startTime = DateTimeOffset.UtcNow;
 
+            Dictionary<string, StringBuilder> datumTypeJsonString = new Dictionary<string, StringBuilder>();
+            Dictionary<string, List<Datum>> datumTypeDataSubset = new Dictionary<string, List<Datum>>();
             foreach (Datum datum in data)
+            {
+                string datumType = datum.GetType().Name;
+
+                StringBuilder jsonString;
+                if (!datumTypeJsonString.TryGetValue(datumType, out jsonString))
+                {
+                    jsonString = new StringBuilder();
+                    datumTypeJsonString.Add(datumType, jsonString);
+                }
+
+                jsonString.Append(datum.GetJSON(_jsonContractResolver) + Environment.NewLine);
+
+                List<Datum> dataSubset;
+                if(!datumTypeDataSubset.TryGetValue(datumType, out dataSubset))
+                {
+                    dataSubset = new List<Datum>();
+                    datumTypeDataSubset.Add(datumType, dataSubset);
+                }
+
+                dataSubset.Add(datum);
+            }
+
+            foreach(string datumType in datumTypeJsonString.Keys)
             {
                 try
                 {
-                    _s3.PutObjectAsync(Bucket, _folder.Trim('/') + "/" + datum.GetType().Name + "/" + datum.Id, datum.GetJSON(_jsonContractResolver), contentType:"application/json").Wait();
-                    committedData.Add(datum);
+                    _s3.PutObjectAsync(_bucket, _folder.Trim('/') + "/" + datumType + "/" + Guid.NewGuid(), datumTypeJsonString[datumType].ToString(), contentType:"application/json").Wait();
+                    committedData.AddRange(datumTypeDataSubset[datumType]);
                 }
                 catch (Exception ex)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Failed to insert datum into Amazon S3 bucket:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Get().Logger.Log("Failed to insert datum into Amazon S3 bucket \"" + _bucket + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
                 }
             }
 
-            SensusServiceHelper.Get().Logger.Log("Committed " + committedData.Count + " data items to Amazon S3 bucket in " + (DateTimeOffset.UtcNow - start).TotalSeconds + " seconds.", LoggingLevel.Verbose, GetType());
+            SensusServiceHelper.Get().Logger.Log("Committed " + committedData.Count + " data items to Amazon S3 bucket \"" + _bucket + "\" in " + (DateTimeOffset.UtcNow - startTime).TotalSeconds + " seconds.", LoggingLevel.Verbose, GetType());
 
             return committedData;
         }

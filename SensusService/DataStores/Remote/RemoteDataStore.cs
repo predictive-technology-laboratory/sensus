@@ -39,7 +39,7 @@ namespace SensusService.DataStores.Remote
             set { _requireCharging = value; }
         }
 
-        public RemoteDataStore()
+        protected RemoteDataStore()
         {
             _requireWiFi = true;
             _requireCharging = true;
