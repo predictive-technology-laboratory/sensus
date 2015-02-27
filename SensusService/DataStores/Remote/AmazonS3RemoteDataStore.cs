@@ -161,7 +161,7 @@ namespace SensusService.DataStores.Remote
             {
                 try
                 {
-                    _s3.PutObjectAsync(_bucket, _folder.Trim('/') + "/" + datumType + "/" + Guid.NewGuid(), datumTypeJsonString[datumType].ToString(), contentType:"application/json").Wait();
+                    _s3.PutObjectAsync(_bucket, (string.IsNullOrWhiteSpace(_folder.Trim('/')) ? "" : _folder.Trim('/') + "/") + datumType + "/" + Guid.NewGuid(), datumTypeJsonString[datumType].ToString(), contentType:"application/json").Wait();
                     committedData.AddRange(datumTypeDataSubset[datumType]);
                 }
                 catch (Exception ex)
