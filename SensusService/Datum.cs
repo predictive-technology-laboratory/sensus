@@ -28,8 +28,6 @@ namespace SensusService
         /// </summary>
         private static readonly JsonSerializerSettings _serializationSettings = new JsonSerializerSettings
         {
-            PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
             TypeNameHandling = TypeNameHandling.All,
             ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
         };
@@ -85,9 +83,12 @@ namespace SensusService
 
         public string GetJSON(IContractResolver contractResolver)
         {
+            IContractResolver previousContractResolver = _serializationSettings.ContractResolver;
+
             _serializationSettings.ContractResolver = contractResolver;
             string json = JsonConvert.SerializeObject(this, Formatting.None, _serializationSettings).Replace('\n', ' ').Replace('\r', ' ');
-            _serializationSettings.ContractResolver = null;
+
+            _serializationSettings.ContractResolver = previousContractResolver;
 
             return json;
         }

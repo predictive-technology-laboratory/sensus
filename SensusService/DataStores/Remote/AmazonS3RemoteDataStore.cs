@@ -24,23 +24,11 @@ namespace SensusService.DataStores.Remote
 {
     public class AmazonS3RemoteDataStore : RemoteDataStore
     {
-        /// <summary>
-        /// Amazon s3 datum contract resolver. Ignores any unnecessary JSON fields within Datum objects.
-        /// </summary>
-        private class AmazonS3DatumContractResolver : DefaultContractResolver
-        {
-            protected override IList<JsonProperty> CreateProperties(Type type, Newtonsoft.Json.MemberSerialization memberSerialization)
-            {
-                return base.CreateProperties(type, memberSerialization).Where(property => property.PropertyName != typeof(Datum).GetProperty("Id").Name).ToList();
-            }
-        }
-
         private S3 _s3;
         private string _bucket;
         private string _folder;
         private string _accessKey;
         private string _secretKey;
-        private AmazonS3DatumContractResolver _jsonContractResolver;
 
         private object _locker = new object();
 
@@ -114,7 +102,7 @@ namespace SensusService.DataStores.Remote
 
         public AmazonS3RemoteDataStore()
         {
-            _jsonContractResolver = new AmazonS3DatumContractResolver();
+            _bucket = _folder = "";
         }
 
         public override void Start()
@@ -145,7 +133,7 @@ namespace SensusService.DataStores.Remote
                     datumTypeJsonString.Add(datumType, jsonString);
                 }
 
-                jsonString.Append(datum.GetJSON(_jsonContractResolver) + Environment.NewLine);
+                jsonString.Append(datum.GetJSON(null) + Environment.NewLine);
 
                 List<Datum> dataSubset;
                 if(!datumTypeDataSubset.TryGetValue(datumType, out dataSubset))

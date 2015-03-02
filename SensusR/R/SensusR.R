@@ -1,12 +1,15 @@
 
 read.sensus.json = function(path, convert.to.local.timezone)
 {
-  con = file(path, open="r")
-  lines = as.matrix(readLines(con))
-  close(con)
-  
   local.timezone = Sys.timezone()
   
+  # read all lines, only retaining non-empty lines
+  con = file(path, open="r")
+  lines = as.matrix(readLines(con))
+  lines = apply(lines, 1, trim)
+  lines = as.matrix(lines[sapply(lines, nchar) > 0])
+  close(con)
+
   # parse each line to json
   lines = apply(lines, 1, function(line)
   {
@@ -17,8 +20,8 @@ read.sensus.json = function(path, convert.to.local.timezone)
     datum.type = tail(strsplit(datum.type, "[.]")[[1]], n=1)
     json$Type = datum.type
     
-    # drop irrelevant columns
-    json = json[-which(names(json) %in% c("$id", "$type", "Id", "ProbeType"))]
+    # we no longer need the $type column
+    json = json[-which(names(json) %in% c("$type"))]
     
     return(as.data.frame(json, stringsAsFactors = FALSE))
   })
@@ -33,7 +36,7 @@ read.sensus.json = function(path, convert.to.local.timezone)
     first.row = data[[datum.type]][[1]]
     column.names = names(first.row)
     
-    # build new dataframe
+    # build new dataframe for the current data type
     new.data = data.frame(matrix(nrow=length(data[[datum.type]]), ncol=0))
     for(col in column.names)
     {
@@ -50,6 +53,13 @@ read.sensus.json = function(path, convert.to.local.timezone)
     
     # don't need type anymore, since we've group by type
     new.data$Type = NULL
+    
+    # order by timestamp
+    new.data = new.data[order(new.data$Timestamp),]
+    
+    # filter redundant data by Id and remove Id column
+    new.data = new.data[!duplicated($Id)]
+    new.data$Id = NULL
     
     data[[datum.type]] = new.data
   }
@@ -133,6 +143,24 @@ plot.wlan = function(wlan)
   freqs = plyr::count(wlan$AccessPointBSSID[wlan$AccessPointBSSID != ""])
   pie(freqs$freq, freqs$x, main = "WLAN BSSID")
 }
+
+plot.timestamp.lags = function(data, mfrow = c(4, 4))
+{
+  par(mfrow = mfrow)
+  for(datum.type in names(data))
+  {
+    if(nrow(data[[datum.type]]) > 1)
+    {
+      hist(as.numeric(diff(data[[datum.type]]$Timestamp)), main = datum.type, xlab = "Lag")
+    }
+  }
+}
+
+trim.leading = function (x)  sub("^\\s+", "", x)
+
+trim.trailing = function (x) sub("\\s+$", "", x)
+
+trim = function (x) gsub("^\\s+|\\s+$", "", x)
 
 
 
