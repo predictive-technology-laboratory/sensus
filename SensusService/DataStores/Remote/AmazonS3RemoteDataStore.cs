@@ -118,22 +118,22 @@ namespace SensusService.DataStores.Remote
         {
             List<Datum> committedData = new List<Datum>();
 
-            DateTimeOffset startTime = DateTimeOffset.UtcNow;
+            DateTimeOffset commitStartTime = DateTimeOffset.UtcNow;
 
-            Dictionary<string, StringBuilder> datumTypeJsonString = new Dictionary<string, StringBuilder>();
+            Dictionary<string, StringBuilder> datumTypeJSON = new Dictionary<string, StringBuilder>();
             Dictionary<string, List<Datum>> datumTypeDataSubset = new Dictionary<string, List<Datum>>();
             foreach (Datum datum in data)
             {
                 string datumType = datum.GetType().Name;
 
-                StringBuilder jsonString;
-                if (!datumTypeJsonString.TryGetValue(datumType, out jsonString))
+                StringBuilder json;
+                if (!datumTypeJSON.TryGetValue(datumType, out json))
                 {
-                    jsonString = new StringBuilder();
-                    datumTypeJsonString.Add(datumType, jsonString);
+                    json = new StringBuilder();
+                    datumTypeJSON.Add(datumType, json);
                 }
 
-                jsonString.Append(datum.GetJSON(null) + Environment.NewLine);
+                json.Append(datum.GetJSON(null) + Environment.NewLine);
 
                 List<Datum> dataSubset;
                 if(!datumTypeDataSubset.TryGetValue(datumType, out dataSubset))
@@ -145,11 +145,11 @@ namespace SensusService.DataStores.Remote
                 dataSubset.Add(datum);
             }
 
-            foreach(string datumType in datumTypeJsonString.Keys)
+            foreach(string datumType in datumTypeJSON.Keys)
             {
                 try
                 {
-                    _s3.PutObjectAsync(_bucket, (string.IsNullOrWhiteSpace(_folder.Trim('/')) ? "" : _folder.Trim('/') + "/") + datumType + "/" + Guid.NewGuid(), datumTypeJsonString[datumType].ToString(), contentType:"application/json").Wait();
+                    _s3.PutObjectAsync(_bucket, (string.IsNullOrWhiteSpace(_folder.Trim('/')) ? "" : _folder.Trim('/') + "/") + datumType + "/" + Guid.NewGuid(), datumTypeJSON[datumType].ToString(), contentType:"application/json").Wait();
                     committedData.AddRange(datumTypeDataSubset[datumType]);
                 }
                 catch (Exception ex)
@@ -158,7 +158,7 @@ namespace SensusService.DataStores.Remote
                 }
             }
 
-            SensusServiceHelper.Get().Logger.Log("Committed " + committedData.Count + " data items to Amazon S3 bucket \"" + _bucket + "\" in " + (DateTimeOffset.UtcNow - startTime).TotalSeconds + " seconds.", LoggingLevel.Verbose, GetType());
+            SensusServiceHelper.Get().Logger.Log("Committed " + committedData.Count + " data items to Amazon S3 bucket \"" + _bucket + "\" in " + (DateTimeOffset.UtcNow - commitStartTime).TotalSeconds + " seconds.", LoggingLevel.Verbose, GetType());
 
             return committedData;
         }

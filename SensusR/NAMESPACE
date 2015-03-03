@@ -1,3 +1,2 @@
 exportPattern("^[[:alpha:]]+")
-import(jsonlite)
-import(lubridate)
+import(sp)

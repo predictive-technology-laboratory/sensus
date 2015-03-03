@@ -1,2 +1,0 @@
-To build the SensusR source package for Unix:  R CMD build
-To build the SensusR binary package for OSX or Windows:  R CMD INSTALL --build

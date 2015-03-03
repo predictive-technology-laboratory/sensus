@@ -139,7 +139,7 @@ namespace SensusService.DataStores.Local
                     }
                 }
 
-                // this method is called from a remote data store, which doesn't care whether this local data store is running. don't start a new file unless this local data store is, in fact, running.
+                // reinitialize file if we're running
                 if (Running)
                     InitializeFile();
 
@@ -157,13 +157,14 @@ namespace SensusService.DataStores.Local
 
                 HashSet<Datum> hashDataCommittedToRemote = new HashSet<Datum>(dataCommittedToRemote);  // for quick access via hashing
 
+                // clear remote-committed data from all local files
                 foreach (string path in Directory.GetFiles(StorageDirectory))
                 {
                     SensusServiceHelper.Get().Logger.Log("Clearing remote-committed data from \"" + path + "\".", LoggingLevel.Debug, GetType());
 
-                    string filteredPath = Path.GetTempFileName();
-                    int filteredDataWritten = 0;
-                    using (StreamWriter filteredFile = new StreamWriter(filteredPath))
+                    string uncommittedDataPath = Path.GetTempFileName();
+                    int uncommittedDataCount = 0;
+                    using (StreamWriter uncommittedDataFile = new StreamWriter(uncommittedDataPath))
                     using (StreamReader file = new StreamReader(path))
                     {
                         string line;
@@ -172,31 +173,32 @@ namespace SensusService.DataStores.Local
                             Datum datum = Datum.FromJSON(line);
                             if (!hashDataCommittedToRemote.Contains(datum))
                             {
-                                filteredFile.WriteLine(datum.GetJSON(null));
-                                filteredDataWritten++;
+                                uncommittedDataFile.WriteLine(datum.GetJSON(null));
+                                uncommittedDataCount++;
                             }
                         }
 
-                        filteredFile.Close();
+                        uncommittedDataFile.Close();
                         file.Close();
                     }
 
-                    if (filteredDataWritten == 0)  // all data in local file were committed to remote data store -- delete local and filtered files
+                    if (uncommittedDataCount == 0)  // all data in local file were committed to remote data store -- delete local and filtered files
                     {
                         SensusServiceHelper.Get().Logger.Log("Cleared all data from local data store file. Deleting file.", LoggingLevel.Debug, GetType());
 
                         File.Delete(path);
-                        File.Delete(filteredPath);
+                        File.Delete(uncommittedDataPath);
                     }
                     else  // data from local file were not committed to the remote data store -- move filtered path to local path and retry sending to remote store next time
                     {
-                        SensusServiceHelper.Get().Logger.Log(filteredDataWritten + " data elements in local data store file were not committed to remote data store.", LoggingLevel.Debug, GetType());
+                        SensusServiceHelper.Get().Logger.Log(uncommittedDataCount + " data elements in local data store file were not committed to remote data store.", LoggingLevel.Debug, GetType());
 
                         File.Delete(path);
-                        File.Move(filteredPath, path);
+                        File.Move(uncommittedDataPath, path);
                     }
                 }
 
+                // reinitialize file if we're running
                 if (Running)
                     InitializeFile();
 
