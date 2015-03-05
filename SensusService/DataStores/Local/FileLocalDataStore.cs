@@ -99,7 +99,7 @@ namespace SensusService.DataStores.Local
 
                                 SensusServiceHelper.Get().Logger.Log("Initialized new local file.", LoggingLevel.Normal, GetType());
                             }
-                            catch (Exception ex2) { SensusServiceHelper.Get().Logger.Log("Failed to initialize new local data store file after failing to write the old one:  " + ex2.Message, LoggingLevel.Normal, GetType()); }
+                            catch (Exception ex2) { SensusServiceHelper.Get().Logger.Log("Failed to initialize new file after failing to write the old one:  " + ex2.Message, LoggingLevel.Normal, GetType()); }
                         }
 
                         if (writtenToFile)
@@ -153,7 +153,7 @@ namespace SensusService.DataStores.Local
             {
                 CloseFile();
 
-                SensusServiceHelper.Get().Logger.Log("File local data store received " + dataCommittedToRemote.Count + " remote-committed data elements to clear.", LoggingLevel.Debug, GetType());
+                SensusServiceHelper.Get().Logger.Log("Received " + dataCommittedToRemote.Count + " remote-committed data elements to clear.", LoggingLevel.Debug, GetType());
 
                 HashSet<Datum> hashDataCommittedToRemote = new HashSet<Datum>(dataCommittedToRemote);  // for quick access via hashing
 
@@ -184,14 +184,14 @@ namespace SensusService.DataStores.Local
 
                     if (uncommittedDataCount == 0)  // all data in local file were committed to remote data store -- delete local and filtered files
                     {
-                        SensusServiceHelper.Get().Logger.Log("Cleared all data from local data store file. Deleting file.", LoggingLevel.Debug, GetType());
+                        SensusServiceHelper.Get().Logger.Log("Cleared all data from local file. Deleting file.", LoggingLevel.Debug, GetType());
 
                         File.Delete(path);
                         File.Delete(uncommittedDataPath);
                     }
                     else  // data from local file were not committed to the remote data store -- move filtered path to local path and retry sending to remote store next time
                     {
-                        SensusServiceHelper.Get().Logger.Log(uncommittedDataCount + " data elements in local data store file were not committed to remote data store.", LoggingLevel.Debug, GetType());
+                        SensusServiceHelper.Get().Logger.Log(uncommittedDataCount + " data elements in local file were not committed to remote data store.", LoggingLevel.Debug, GetType());
 
                         File.Delete(path);
                         File.Move(uncommittedDataPath, path);
@@ -202,7 +202,7 @@ namespace SensusService.DataStores.Local
                 if (Running)
                     InitializeFile();
 
-                SensusServiceHelper.Get().Logger.Log("File local data store finished clearing remote-committed data elements.", LoggingLevel.Verbose, GetType());
+                SensusServiceHelper.Get().Logger.Log("Finished clearing remote-committed data elements.", LoggingLevel.Verbose, GetType());
             }
         }
 
@@ -230,7 +230,7 @@ namespace SensusService.DataStores.Local
                 for (int i = 0; _file == null && i < int.MaxValue; ++i)
                 {
                     try { _path = Path.Combine(StorageDirectory, i.ToString()); }  // getting the storage directory creates the directory, which could fail
-                    catch (Exception ex) { throw new DataStoreException("Failed to get path to local data file:  " + ex.Message); }
+                    catch (Exception ex) { throw new DataStoreException("Failed to get path to local file:  " + ex.Message); }
 
                     if (!File.Exists(_path))
                     {
@@ -244,13 +244,13 @@ namespace SensusService.DataStores.Local
                 }
 
                 if (_file == null)
-                    throw new DataStoreException("Failed to open file for local data store.");
+                    throw new DataStoreException("Failed to open file.");
             }
             catch (Exception ex)
             {
                 _file = null;
                 _path = null;
-                throw new DataStoreException("Failed to initialize new local data store file:  " + ex.Message);
+                throw new DataStoreException("Failed to initialize new file:  " + ex.Message);
             }
         }
 
@@ -262,7 +262,7 @@ namespace SensusService.DataStores.Local
             if (_file != null)
             {
                 try { _file.Close(); }
-                catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to close file for local data store:  " + ex.Message, LoggingLevel.Normal, GetType()); }
+                catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to close file:  " + ex.Message, LoggingLevel.Normal, GetType()); }
 
                 _file = null;
             }
@@ -281,7 +281,7 @@ namespace SensusService.DataStores.Local
                     }
                     catch (Exception ex)
                     {
-                        SensusServiceHelper.Get().Logger.Log("Failed to delete local data store file \"" + path + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
+                        SensusServiceHelper.Get().Logger.Log("Failed to delete local file \"" + path + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
                     }
                 }
         }

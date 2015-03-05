@@ -72,12 +72,12 @@ namespace SensusService.Probes
                             IEnumerable<Datum> data = null;
                             try
                             {
-                                SensusServiceHelper.Get().Logger.Log("Polling probe \"" + GetType().FullName + "\".", LoggingLevel.Verbose, GetType());
+                                SensusServiceHelper.Get().Logger.Log("Polling.", LoggingLevel.Verbose, GetType());
                                 data = Poll();
                             }
                             catch (Exception ex)
                             {
-                                SensusServiceHelper.Get().Logger.Log("Failed to poll probe \"" + GetType().FullName + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
+                                SensusServiceHelper.Get().Logger.Log("Failed to poll:  " + ex.Message, LoggingLevel.Normal, GetType());
                             }
 
                             if (data != null)
@@ -89,7 +89,7 @@ namespace SensusService.Probes
                                     }
                                     catch (Exception ex)
                                     {
-                                        SensusServiceHelper.Get().Logger.Log("Failed to store datum in probe \"" + GetType().FullName + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
+                                        SensusServiceHelper.Get().Logger.Log("Failed to store datum:  " + ex.Message, LoggingLevel.Normal, GetType());
                                     }
                                 }
 
@@ -119,7 +119,7 @@ namespace SensusService.Probes
             if (Running)
             {
                 double msElapsedSincePreviousStore = (DateTimeOffset.UtcNow - MostRecentStoreTimestamp).TotalMilliseconds;
-                if (!_isPolling && msElapsedSincePreviousStore > _pollingSleepDurationMS)
+                if (!_isPolling && msElapsedSincePreviousStore > (_pollingSleepDurationMS + 100))  // there's a small amount of latency between the trigger of a poll and setting _isPolling to true, leading to a race condition with the tester method that can result in warnings about polling delays. allow a small fudge factor to ignore these warnings.
                     warning += "Probe \"" + GetType().FullName + "\" has not stored data in " + msElapsedSincePreviousStore + "ms (polling delay = " + _pollingSleepDurationMS + "ms)." + Environment.NewLine;
             }
 

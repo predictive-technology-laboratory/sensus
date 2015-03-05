@@ -106,7 +106,7 @@ namespace SensusService.DataStores
                 else
                     _running = true;
 
-                SensusServiceHelper.Get().Logger.Log("Starting " + GetType().Name + " data store:  " + Name, LoggingLevel.Normal, GetType());
+                SensusServiceHelper.Get().Logger.Log("Starting.", LoggingLevel.Normal, GetType());
 
                 _commitCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(() =>
                     {
@@ -114,7 +114,7 @@ namespace SensusService.DataStores
                         {
                             _isCommitting = true;
 
-                            SensusServiceHelper.Get().Logger.Log(GetType().FullName + " is committing data.", LoggingLevel.Verbose, GetType());
+                            SensusServiceHelper.Get().Logger.Log("Committing data.", LoggingLevel.Verbose, GetType());
 
                             List<Datum> dataToCommit = null;
                             try
@@ -125,7 +125,7 @@ namespace SensusService.DataStores
                             }
                             catch (Exception ex)
                             {
-                                SensusServiceHelper.Get().Logger.Log(GetType().FullName + " failed to get data to commit:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                SensusServiceHelper.Get().Logger.Log("Failed to get data to commit:  " + ex.Message, LoggingLevel.Normal, GetType());
                             }
 
                             if (dataToCommit != null)
@@ -147,7 +147,7 @@ namespace SensusService.DataStores
                                 }
                                 catch (Exception ex)
                                 {
-                                    SensusServiceHelper.Get().Logger.Log(GetType().FullName + " failed to commit data:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                    SensusServiceHelper.Get().Logger.Log("Failed to commit data:  " + ex.Message, LoggingLevel.Normal, GetType());
                                 }
 
                                 if (committedData != null && committedData.Count > 0)
@@ -163,7 +163,7 @@ namespace SensusService.DataStores
                                     }
                                     catch (Exception ex)
                                     {
-                                        SensusServiceHelper.Get().Logger.Log(GetType().FullName + " failed to process committed data:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                        SensusServiceHelper.Get().Logger.Log("Failed to process committed data:  " + ex.Message, LoggingLevel.Normal, GetType());
                                     }
                                 }
                             }
@@ -194,7 +194,7 @@ namespace SensusService.DataStores
                 else
                     return;
 
-                SensusServiceHelper.Get().Logger.Log("Stopping " + GetType().Name + " data store:  " + Name, LoggingLevel.Normal, GetType());
+                SensusServiceHelper.Get().Logger.Log("Stopping.", LoggingLevel.Normal, GetType());
                 SensusServiceHelper.Get().CancelRepeatingCallback(_commitCallbackId);
                 _commitCallbackId = -1;
             }

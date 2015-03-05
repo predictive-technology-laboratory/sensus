@@ -440,12 +440,12 @@ namespace SensusService
             lock (_locker)
                 if (_mostRecentReport != null)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Storing protocol report locally.", LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Get().Logger.Log("Storing protocol report locally.", LoggingLevel.Verbose, GetType());
                     _localDataStore.AddNonProbeDatum(_mostRecentReport);
 
                     if (!_localDataStore.UploadToRemoteDataStore && _forceProtocolReportsToRemoteDataStore)
                     {
-                        SensusServiceHelper.Get().Logger.Log("Local data aren't pushed to remote, so we're copying the report datum directly to the remote cache.", LoggingLevel.Normal, GetType());
+                        SensusServiceHelper.Get().Logger.Log("Local data aren't pushed to remote, so we're copying the report datum directly to the remote cache.", LoggingLevel.Verbose, GetType());
                         _remoteDataStore.AddNonProbeDatum(_mostRecentReport);
                     }
                 }
@@ -480,7 +480,7 @@ namespace SensusService
 
                 SensusServiceHelper.Get().RemoveRunningProtocolId(_id);
 
-                SensusServiceHelper.Get().Logger.Log("Stopping probes.", LoggingLevel.Normal, GetType());
+                SensusServiceHelper.Get().Logger.Log("Stopping protocol \"" + _name + "\".", LoggingLevel.Normal, GetType());
                 foreach (Probe probe in _probes)
                     if (probe.Running)
                         try 
@@ -494,16 +494,12 @@ namespace SensusService
 
                 if (_localDataStore != null && _localDataStore.Running)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Stopping local data store.", LoggingLevel.Normal, GetType());
-
                     try { _localDataStore.Stop(); }
                     catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to stop local data store:  " + ex.Message, LoggingLevel.Normal, GetType()); }
                 }
 
                 if (_remoteDataStore != null && _remoteDataStore.Running)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Stopping remote data store.", LoggingLevel.Normal, GetType());
-
                     try { _remoteDataStore.Stop(); }
                     catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to stop remote data store:  " + ex.Message, LoggingLevel.Normal, GetType()); }
                 }
