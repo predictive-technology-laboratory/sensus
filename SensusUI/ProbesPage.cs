@@ -56,6 +56,8 @@ namespace SensusUI
         {
             _protocol = protocol;
 
+            Title = "Probes";
+
             _probesList = new ListView();
             _probesList.ItemTemplate = new DataTemplate(typeof(TextCell));
             _probesList.ItemTemplate.SetBinding(TextCell.TextProperty, "DisplayName");
@@ -71,6 +73,28 @@ namespace SensusUI
 
             Bind();
 
+            ToolbarItems.Add(new ToolbarItem("All", null, async () =>
+                {
+                    if(await DisplayAlert("Enable All Probes", "Are you sure you want to enable all probes?", "Yes", "No"))
+                    {
+                        foreach(Probe probe in _protocol.Probes)
+                            probe.Enabled = true;
+
+                        Bind();
+                    }
+                }));
+
+            ToolbarItems.Add(new ToolbarItem("None", null, async () =>
+                {
+                    if(await DisplayAlert("Disable All Probes", "Are you sure you want to disable all probes?", "Yes", "No"))
+                    {
+                        foreach(Probe probe in _protocol.Probes)
+                            probe.Enabled = false;
+
+                        Bind();
+                    }
+                }));
+
             ToolbarItems.Add(new ToolbarItem("Refresh", null, () => { Bind(); }));
 
             Content = _probesList;
@@ -78,8 +102,6 @@ namespace SensusUI
 
         public void Bind()
         {
-            Title = _protocol.Name + "'s Probes";
-
             _probesList.ItemsSource = null;
             _probesList.ItemsSource = _protocol.Probes;
         }
