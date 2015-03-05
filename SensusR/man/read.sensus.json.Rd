@@ -4,7 +4,7 @@
 \alias{read.sensus.json}
 \title{Read JSON-formatted Sensus data.}
 \usage{
-read.sensus.json(path, convert.to.local.timezone = FALSE)
+read.sensus.json(path, convert.to.local.timezone = TRUE)
 }
 \arguments{
 \item{path}{Path to JSON file.}
@@ -16,5 +16,8 @@ All data, listed by type.
 }
 \description{
 Read JSON-formatted Sensus data.
+}
+\examples{
+data = read.sensus.json(system.file("extdata", "example.data.txt", package="SensusR"))
 }
 

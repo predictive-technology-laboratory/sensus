@@ -6,7 +6,11 @@
 \alias{SensusR-package}
 \title{SensusR:  Sensus Analytics}
 \description{
-This package provides access and analytic functions for Sensus data.
+Provides access and analytic functions for Sensus data. More information can be found at the
+following URL:
+}
+\details{
+https://github.com/MatthewGerber/sensus/wiki
 }
 \section{SensusR functions}{
 

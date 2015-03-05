@@ -1,12 +1,16 @@
 #' SensusR:  Sensus Analytics
 #'
-#' This package provides access and analytic functions for Sensus data.
+#' Provides access and analytic functions for Sensus data. More information can be found at the
+#' following URL:
+#' 
+#'     https://github.com/MatthewGerber/sensus/wiki
 #' 
 #' @section SensusR functions:
 #' The SensusR functions handle reading, cleaning, plotting, and otherwise analyzing data collected
 #' via the Sensus system.
 #'
 #' @docType package
+#' 
 #' @name SensusR
 NULL
 
@@ -15,7 +19,9 @@ NULL
 #' @param path Path to JSON file.
 #' @param convert.to.local.timezone Whether or not to convert timestamps to the local timezone.
 #' @return All data, listed by type.
-read.sensus.json = function(path, convert.to.local.timezone = FALSE)
+#' @examples
+#' data = read.sensus.json(system.file("extdata", "example.data.txt", package="SensusR"))
+read.sensus.json = function(path, convert.to.local.timezone = TRUE)
 {
   local.timezone = Sys.timezone()
   
@@ -77,156 +83,260 @@ read.sensus.json = function(path, convert.to.local.timezone = FALSE)
     new.data = new.data[!duplicated(new.data$Id),]
     new.data$Id = NULL
     
+    # set class to the datum type, in order for generic plot functions to work
+    class(new.data) = c(datum.type, class(new.data))
+    
     data[[datum.type]] = new.data
   }
   
   return(data)
 }
 
-#' Plot accelerometer data
+#' Plot accelerometer data.
 #' 
-#' @param accelerometer Accelerometer data (e.g., data$AccelerometerDatum)
+#' @method plot AccelerometerDatum
+#' @param x Accelerometer data.
 #' @param pch Plotting character.
 #' @param type Line type. 
-plot.accelerometer = function(accelerometer, pch = ".", type = "l")
-{
+#' @param ... Other plotting parameters.
+#' @examples
+#' data = read.sensus.json(system.file("extdata", "example.data.txt", package="SensusR"))
+#' plot(data$AccelerometerDatum)
+plot.AccelerometerDatum = function(x, pch = ".", type = "l", ...)
+{ 
   par(mfrow=c(2,2))
-  plot(accelerometer$Timestamp, accelerometer$X, main = "Accelerometer", xlab = "Time", ylab = "X", pch = pch, type = type)
-  plot(accelerometer$Timestamp, accelerometer$Y, main = "Accelerometer", xlab = "Time", ylab = "Y", pch = pch, type = type)
-  plot(accelerometer$Timestamp, accelerometer$Y, main = "Accelerometer", xlab = "Time", ylab = "Z", pch = pch, type = type)
+  plot.default(x$Timestamp, x$X, main = "Accelerometer", xlab = "Time", ylab = "X", pch = pch, type = type)
+  plot.default(x$Timestamp, x$Y, main = "Accelerometer", xlab = "Time", ylab = "Y", pch = pch, type = type)
+  plot.default(x$Timestamp, x$Y, main = "Accelerometer", xlab = "Time", ylab = "Z", pch = pch, type = type)
   par(mfrow=c(1,1))
 }
 
 #' Plot altitude data.
 #' 
-#' @param altitude Altitude data (e.g., data$AltitudeDatum)
+#' @method plot AltitudeDatum
+#' @param x Altitude data.
 #' @param pch Plotting character.
 #' @param type Line type. 
-plot.altitude = function(altitude, pch = ".", type = "l")
+#' @param ... Other plotting parameters.
+#' @examples
+#' data = read.sensus.json(system.file("extdata", "example.data.txt", package="SensusR"))
+#' plot(data$AltitudeDatum)
+plot.AltitudeDatum = function(x, pch = ".", type = "l", ...)
 {
-  plot(altitude$Timestamp, altitude$Altitude, main = "Altitude", xlab = "Time", ylab = "Meters", pch = pch, type = type)
+  plot.default(x$Timestamp, x$Altitude, main = "Altitude", xlab = "Time", ylab = "Meters", pch = pch, type = type, ...)
 }
 
 #' Plot battery data.
 #' 
-#' @param batter Battery data (e.g., data$BatteryDatum)
+#' @method plot BatteryDatum
+#' @param x Battery data.
 #' @param pch Plotting character.
 #' @param type Line type. 
-plot.battery = function(battery, pch = ".", type = "l")
+#' @param ... Other plotting parameters.
+#' @examples
+#' data = read.sensus.json(system.file("extdata", "example.data.txt", package="SensusR"))
+#' plot(data$BatteryDatum)
+plot.BatteryDatum = function(x, pch = ".", type = "l", ...)
 {
-  plot(battery$Timestamp, battery$Level, main = "Battery", xlab = "Time", ylab = "Level (%)", pch = pch, type = type)
+  plot(x$Timestamp, x$Level, main = "Battery", xlab = "Time", ylab = "Level (%)", pch = pch, type = type, ...)
 }
 
 #' Plot cell tower data.
 #' 
-#' @param cell.tower Cell tower data (e.g., data$CellTowerDatum)
-plot.cell.tower = function(cell.tower)
+#' @method plot CellTowerDatum
+#' @param x Cell tower data.
+#' @param ... Other plotting arguments.
+#' @examples
+#' data = read.sensus.json(system.file("extdata", "example.data.txt", package="SensusR"))
+#' plot(data$CellTowerDatum)
+plot.CellTowerDatum = function(x, ...)
 {
-  freqs = plyr::count(cell.tower$CellTower)
-  pie(freqs$freq, freqs$x, main = "Cell Tower")
+  freqs = plyr::count(x$CellTower)
+  if(nrow(freqs) > 0)
+  {
+    pie(freqs$freq, freqs$x, main = "Cell Tower", ...)
+  }
 }
 
 #' Plot compass data.
 #' 
-#' @param compass Compass data (e.g., data$CompassDatum)
+#' @method plot CompassDatum
+#' @param x Compass data.
 #' @param pch Plotting character.
 #' @param type Line type. 
-plot.compass = function(compass, pch = ".", type = "l")
+#' @param ... Other plotting parameters.
+#' @examples
+#' data = read.sensus.json(system.file("extdata", "example.data.txt", package="SensusR"))
+#' plot(data$CompassDatum)
+plot.CompassDatum = function(x, pch = ".", type = "l", ...)
 {
-  plot(compass$Timestamp, compass$Heading, main = "Compass", xlab = "Time", ylab = "Heading", pch = pch, type = type)
+  plot(x$Timestamp, x$Heading, main = "Compass", xlab = "Time", ylab = "Heading", pch = pch, type = type, ...)
 }
 
 #' Plot light data.
 #' 
-#' @param light Light data (e.g., data$LightDatum)
+#' @method plot LightDatum
+#' @param x Light data.
 #' @param pch Plotting character.
 #' @param type Line type. 
-plot.light = function(light, pch = ".", type = "l")
+#' @param ... Other plotting parameters.
+#' @examples
+#' data = read.sensus.json(system.file("extdata", "example.data.txt", package="SensusR"))
+#' plot(data$LightDatum)
+plot.LightDatum = function(x, pch = ".", type = "l", ...)
 {
-  plot(light$Timestamp, light$Brightness, main = "Light", xlab = "Time", ylab = "Level", pch = pch, type = type)
+  plot(x$Timestamp, x$Brightness, main = "Light", xlab = "Time", ylab = "Level", pch = pch, type = type, ...)
 }
 
 #' Plot location data.
 #' 
-#' @param location Location data (e.g., data$LocationDatum)
-#' @param resolution Mapping resolution ("low"/"high").
-plot.location = function(location, resolution = "low")
+#' @method plot LocationDatum
+#' @param x Location data.
+#' @param ... Other plotting parameters.
+#' @examples
+#' data = read.sensus.json(system.file("extdata", "example.data.txt", package="SensusR"))
+#' plot(data$LocationDatum)
+plot.LocationDatum = function(x, ...)
 {
-  lon = location$Longitude
-  lat = location$Latitude
-  newmap = rworldmap::getMap(resolution = resolution)
-  plot(newmap, xlim = range(lon), ylim = range(lat), asp = 1)
-  points(lon, lat, col = "red", cex = .6)
+  lon = x$Longitude
+  lat = x$Latitude
+  newmap = rworldmap::getMap(resolution = "high")
+  plot(newmap, xlim = range(lon), ylim = range(lat), asp = 1, ...)
+  points(lon, lat, col = "red", cex = .6, ...)
 }
 
-#' Plot running apps.
+#' Plot running apps data.
 #' 
-#' @param running.apps Running apps data (e.g., data$RunningAppsDatum)
-plot.running.apps = function(running.apps)
+#' @method plot RunningAppsDatum
+#' @param x Apps data.
+#' @param ... Other plotting parameters.
+#' @examples
+#' data = read.sensus.json(system.file("extdata", "example.data.txt", package="SensusR"))
+#' plot(data$RunningAppsDatum)
+plot.RunningAppsDatum = function(x, ...)
 {
-  freqs = plyr::count(running.apps$Name)
-  pie(freqs$freq, freqs$x, main = "Running Apps")
+  freqs = plyr::count(x$Name)
+  if(nrow(freqs) > 0)
+  {
+    pie(freqs$freq, freqs$x, main = "Running Apps", ...)
+  }
 }
 
-#' Plot screen status.
+#' Plot screen data.
 #' 
-#' @param screen Screen status data (e.g., data$ScreenDatum)
-plot.screen = function(screen)
+#' @method plot ScreenDatum
+#' @param x Screen data.
+#' @param ... Other plotting parameters.
+#' @examples
+#' data = read.sensus.json(system.file("extdata", "example.data.txt", package="SensusR"))
+#' plot(data$ScreenDatum)
+plot.ScreenDatum = function(x, ...)
 {
-  plot(screen$Timestamp, screen$On, main = "Screen", xlab = "Time", ylab = "On/Off", pch=".", type = "l")
+  plot(x$Timestamp, x$On, main = "Screen", xlab = "Time", ylab = "On/Off", pch=".", type = "l", ...)
 }
 
 #' Plot sound data.
 #' 
-#' @param sound Sound data (e.g., data$SoundDatum)
+#' @method plot SoundDatum
+#' @param x Sound data.
 #' @param pch Plotting character.
-#' @param type Line type.
-plot.sound = function(sound, pch = ".", type = "l")
+#' @param type Line type. 
+#' @param ... Other plotting parameters.
+#' @examples
+#' data = read.sensus.json(system.file("extdata", "example.data.txt", package="SensusR"))
+#' plot(data$SoundDatum)
+plot.SoundDatum = function(x, pch = ".", type = "l", ...)
 {
-  plot(sound$Timestamp, sound$Decibels, main = "Sound", xlab = "Time", ylab = "Decibels", pch = pch, type = type)
+  plot(x$Timestamp, x$Decibels, main = "Sound", xlab = "Time", ylab = "Decibels", pch = pch, type = type, ...)
 }
 
 #' Plot speed data.
 #' 
-#' @param speed Speed data (e.g., data$SpeedDatum)
+#' @method plot SpeedDatum
+#' @param x Speed data.
 #' @param pch Plotting character.
-#' @param type Line type.
-plot.speed = function(speed, pch = ".", type = "l")
+#' @param type Line type. 
+#' @param ... Other plotting parameters.
+#' @examples
+#' data = read.sensus.json(system.file("extdata", "example.data.txt", package="SensusR"))
+#' plot(data$SpeedDatum)
+plot.SpeedDatum = function(x, pch = ".", type = "l", ...)
 {
-  plot(speed$Timestamp, speed$KPH, main = "Speed", xlab = "Time", ylab = "KPH", pch = pch, type = type)
+  plot(x$Timestamp, x$KPH, main = "Speed", xlab = "Time", ylab = "KPH", pch = pch, type = type, ...)
 }
 
 #' Plot telephony data.
 #' 
-#' @param telephony Telephony data (e.g., data$TelephonyDatum)
-plot.telephony = function(telephony)
+#' @method plot TelephonyDatum
+#' @param x Telephony data.
+#' @param ... Other plotting parameters.
+#' @examples
+#' data = read.sensus.json(system.file("extdata", "example.data.txt", package="SensusR"))
+#' plot(data$TelephonyDatum)
+plot.TelephonyDatum = function(x, ...)
 {
-  freqs = plyr::count(telephony$PhoneNumber[telephony$PhoneNumber != ""])
-  pie(freqs$freq, freqs$x, main = "Phone Numbers")
+  freqs = plyr::count(x$PhoneNumber[x$PhoneNumber != ""])
+  if(nrow(freqs) > 0)
+  {
+    pie(freqs$freq, freqs$x, main = "Phone Numbers", ...)
+  }
 }
 
 #' Plot WLAN data.
 #' 
-#' @param wlan WLAN data (e.g., data$WlanDatum)
-plot.wlan = function(wlan)
+#' @method plot WlanDatum
+#' @param x WLAN data.
+#' @param ... Other plotting parameters.
+#' @examples
+#' data = read.sensus.json(system.file("extdata", "example.data.txt", package="SensusR"))
+#' plot(data$WlanDatum)
+plot.WlanDatum = function(x, ...)
 {
-  freqs = plyr::count(wlan$AccessPointBSSID[wlan$AccessPointBSSID != ""])
-  pie(freqs$freq, freqs$x, main = "WLAN BSSID")
+  freqs = plyr::count(x$AccessPointBSSID[x$AccessPointBSSID != ""])
+  if(nrow(freqs) > 0)
+  {
+    pie(freqs$freq, freqs$x, main = "WLAN BSSID", ...)
+  }
 }
 
-#' Plot timestamp lags for a Sensus data frame.
+#' Get timestamp lags for a Sensus data frame.
 #' 
-#' @param data Data to plot lags for (e.g., the result of \code{read.sensus.json}.)
-plot.timestamp.lags = function(data, mfrow = c(4, 4))
+#' @param data Data to plot lags for (e.g., the result of \code{read.sensus.json}).
+#' @return List of lags organized by datum type.
+#' @examples
+#' data = read.sensus.json(system.file("extdata", "example.data.txt", package="SensusR"))
+#' lags = get.all.timestamp.lags(data)
+#' plot(lags[["AccelerometerDatum"]])
+get.all.timestamp.lags = function(data)
 {
-  par(mfrow = mfrow)
+  lags = list()
   for(datum.type in names(data))
   {
     if(nrow(data[[datum.type]]) > 1)
     {
-      hist(as.numeric(diff(data[[datum.type]]$Timestamp)), main = datum.type, xlab = "Lag (Seconds)")
+      lags[[datum.type]] = hist(as.numeric(diff(data[[datum.type]]$Timestamp)), main = datum.type, xlab = "Lag (Seconds)")
     }
   }
+  
+  return(lags)
+}
+
+#' Get timestamp lags for a Sensus datum.
+#' 
+#' @param datum One element of a Sensus data frame (e.g., data$CompassDatum).
+#' @return List of lags.
+#' @examples
+#' data = read.sensus.json(system.file("extdata", "example.data.txt", package="SensusR"))
+#' plot(get.timestamp.lags(data$AccelerometerDatum))
+get.timestamp.lags = function(datum)
+{
+  lags = NULL
+  if(nrow(datum) > 1)
+  {
+    lags = hist(as.numeric(diff(datum$Timestamp)), xlab = "Lag (Seconds)", main = "Sensus Data")
+  } 
+  
+  return(lags)
 }
 
 #' Trim leading white space from a string.
