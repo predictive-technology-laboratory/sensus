@@ -128,6 +128,18 @@ namespace SensusService.Probes.User
             set { _ignoreFirstDatum = value; }
         }
 
+        public TimeSpan StartTime
+        {
+            get { return _startTime; }
+            set { _startTime = value; }
+        }
+
+        public TimeSpan EndTime
+        {
+            get { return _endTime; }
+            set { _endTime = value; }
+        }
+
         private Trigger()
         {
             Reset();

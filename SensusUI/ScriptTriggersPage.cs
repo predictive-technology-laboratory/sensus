@@ -22,7 +22,7 @@ namespace SensusUI
     {
         public ScriptTriggersPage(ScriptProbe probe)
         {
-            Title = probe.DisplayName + "'s Triggers";
+            Title = "Script Triggers";
 
             ScriptProbe scriptProbe = probe as ScriptProbe;
 

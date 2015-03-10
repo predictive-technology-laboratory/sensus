@@ -36,7 +36,7 @@ namespace SensusUI
         {
             _scriptProbe = scriptProbe;
 
-            Title = "Add Trigger to " + _scriptProbe.DisplayName;
+            Title = "Add Trigger";
 
             List<Probe> enabledProbes = scriptProbe.Protocol.Probes.Where(p => p != _scriptProbe && p.Enabled).ToList();
             if (enabledProbes.Count == 0)
