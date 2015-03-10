@@ -1,1 +1,0 @@
-{"$id":"1","Id":"40d8e912-20cd-413d-b11f-7c2da215fef0","Name":"Voice Output","DelayMS":0,"Prompts":[{"$id":"2","OutputType":0,"OutputMessage":"Hi","OutputMessageRerun":null,"InputType":0,"InputDatum":null,"RequireNonEmptyInput":false,"NumTries":0,"NextPrompt":null,"NextPromptValue":null}],"FirstRunTimestamp":"0001-01-01T00:00:00+00:00","PreviousDatum":null,"CurrentDatum":null}
