@@ -30,7 +30,7 @@ namespace SensusService.Probes.Location
 
         public override int DefaultPollingSleepDurationMS
         {
-            get { return 1000 * 10; }
+            get { return 5000; }
         }
 
         public sealed override Type DatumType
