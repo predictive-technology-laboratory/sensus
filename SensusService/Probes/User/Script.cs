@@ -18,6 +18,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using SensusUI.UiProperties;
+using System.Collections.ObjectModel;
 
 namespace SensusService.Probes.User
 {
@@ -46,7 +48,7 @@ namespace SensusService.Probes.User
         private int _hashCode;
         private string _name;
         private int _delayMS;
-        private List<Prompt> _prompts;
+        private ObservableCollection<Prompt> _prompts;
         private DateTimeOffset _firstRunTimestamp;
         private Datum _previousDatum;
         private Datum _currentDatum;
@@ -67,22 +69,23 @@ namespace SensusService.Probes.User
             }
         } 
 
+        [EntryStringUiProperty("Name:", true, 1)]
         public string Name
         {
             get { return _name; }
             set { _name = value; }
         }
 
+        [EntryIntegerUiProperty("Delay (MS):", true, 2)]
         public int DelayMS
         {
             get { return _delayMS; }
             set { _delayMS = value; }
         }
 
-        public List<Prompt> Prompts
+        public ObservableCollection<Prompt> Prompts
         {
             get { return _prompts; }
-            set { _prompts = value; }
         }
 
         public DateTimeOffset FirstRunTimestamp
@@ -117,7 +120,7 @@ namespace SensusService.Probes.User
             _id = Guid.NewGuid().ToString();
             _hashCode = _id.GetHashCode();
             _delayMS = 0;
-            _prompts = new List<Prompt>();
+            _prompts = new ObservableCollection<Prompt>();
         }
 
         public Script(string name)

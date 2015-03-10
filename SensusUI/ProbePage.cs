@@ -16,6 +16,8 @@ using SensusService.Probes;
 using SensusService.Probes.User;
 using SensusUI.UiProperties;
 using Xamarin.Forms;
+using System.Collections.Generic;
+using System;
 
 namespace SensusUI
 {
@@ -41,27 +43,23 @@ namespace SensusUI
             {
                 ScriptProbe scriptProbe = probe as ScriptProbe;
 
-                Button loadButton = new Button
+                Button editScriptButton = new Button
                 {
-                    Text = scriptProbe.Script == null ? "Load Script" : scriptProbe.Script.Name,
+                    Text = "Edit Script",
                     FontSize = 20,
                     HorizontalOptions = LayoutOptions.FillAndExpand
                 };
 
-                contentLayout.Children.Add(loadButton);
+                contentLayout.Children.Add(editScriptButton);
 
-                loadButton.Clicked += (oo, e) =>
+                editScriptButton.Clicked += async (oo, e) =>
                     {
-                        UiBoundSensusServiceHelper.Get(true).PromptForAndReadTextFileAsync("Select Script File", scriptContent =>
-                            {
-                                scriptProbe.Script = Script.FromJSON(scriptContent);
-                                Device.BeginInvokeOnMainThread(() => loadButton.Text = scriptProbe.Script == null ? "Load Script" : scriptProbe.Script.Name);
-                            });
+                        await Navigation.PushAsync(new ScriptPage(scriptProbe.Script));
                     };
 
                 Button viewScriptTriggersButton = new Button
                 {
-                    Text = "View Triggers",
+                    Text = "Edit Triggers",
                     FontSize = 20,
                     HorizontalOptions = LayoutOptions.FillAndExpand
                 };

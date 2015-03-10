@@ -28,5 +28,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewTextLinesPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ScriptPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PromptsPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PromptPage.cs" />
   </ItemGroup>
 </Project>

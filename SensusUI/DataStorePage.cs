@@ -40,21 +40,23 @@ namespace SensusUI
 
             stacks.Add(buttonStack);
 
-            Button clearButton = new Button
+            if (dataStore.Clearable)
             {
-                Text = "Clear",
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                FontSize = 20,
-                IsEnabled = dataStore.Clearable
-            };
+                Button clearButton = new Button
+                {
+                    Text = "Clear",
+                    HorizontalOptions = LayoutOptions.FillAndExpand,
+                    FontSize = 20
+                };
 
-            clearButton.Clicked += async (o, e) =>
+                clearButton.Clicked += async (o, e) =>
                 {
                     if (await DisplayAlert("Clear data from " + dataStore.Name + "?", "This action cannot be undone.", "Clear", "Cancel"))
                         dataStore.Clear();
                 };
 
-            buttonStack.Children.Add(clearButton);
+                buttonStack.Children.Add(clearButton);
+            }
 
             if (local)
             {

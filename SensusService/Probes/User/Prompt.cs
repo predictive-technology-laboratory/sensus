@@ -15,6 +15,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Threading;
+using SensusUI.UiProperties;
 
 namespace SensusService.Probes.User
 {
@@ -25,6 +26,7 @@ namespace SensusService.Probes.User
         private static bool _promptIsRunning = false;
         #endregion
 
+        private string _name;
         private PromptOutputType _outputType;
         private string _outputMessage;
         private string _outputMessageRerun;
@@ -32,24 +34,35 @@ namespace SensusService.Probes.User
         private ScriptDatum _inputDatum;
         private bool _hasRun;
 
+        [EntryStringUiProperty("Name:", true, 9)]
+        public string Name
+        {
+            get{ return _name; }
+            set{ _name = value; }
+        }
+
+        [ListUiProperty("Output Type:", true, 10, new object[] { PromptOutputType.Text, PromptOutputType.Voice })]
         public PromptOutputType OutputType
         {
             get { return _outputType; }
             set { _outputType = value; }
         }
 
+        [EntryStringUiProperty("Output Message:", true, 11)]
         public string OutputMessage
         {
             get { return _outputMessage; }
             set { _outputMessage = value; }
         }
 
+        [EntryStringUiProperty("Output Message Rerun:", true, 12)]
         public string OutputMessageRerun
         {
             get { return _outputMessageRerun; }
             set { _outputMessageRerun = value; }
         }
 
+        [ListUiProperty("Input Type", true, 13, new object [] { PromptInputType.None, PromptInputType.Text, PromptInputType.Voice })]
         public PromptInputType InputType
         {
             get { return _inputType; }
@@ -82,9 +95,10 @@ namespace SensusService.Probes.User
             _hasRun = false;
         }
 
-        public Prompt(PromptOutputType outputType, string outputMessage, string outputMessageRerun, PromptInputType inputType)
+        public Prompt(string name, PromptOutputType outputType, string outputMessage, string outputMessageRerun, PromptInputType inputType)
             : this()
         {
+            _name = name;
             _outputType = outputType;
             _outputMessage = outputMessage;
             _outputMessageRerun = outputMessageRerun;
@@ -183,6 +197,11 @@ namespace SensusService.Probes.User
                     _hasRun = true;
 
                 }).Start();
+        }
+
+        public override string ToString()
+        {
+            return _name;
         }
     }
 }

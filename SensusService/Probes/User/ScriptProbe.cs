@@ -152,6 +152,7 @@ namespace SensusService.Probes.User
         {
             _triggers = new ObservableCollection<Trigger>();
             _triggerHandler = new Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>>();
+            _script = new Script("Empty Script");
             _incompleteScripts = new Queue<Script>();
             _rerunIncompleteScripts = false;
             _scriptRerunCallbackId = -1;
