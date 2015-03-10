@@ -25,7 +25,7 @@ namespace SensusService.Probes.Location
     {
         protected sealed override string DefaultDisplayName
         {
-            get { return "Location (Polling)"; }
+            get { return "Location"; }
         }
 
         public override int DefaultPollingSleepDurationMS

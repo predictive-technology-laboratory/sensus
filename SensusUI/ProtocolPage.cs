@@ -225,6 +225,7 @@ namespace SensusUI
                                                  .Where(t => !t.IsAbstract && t.IsSubclassOf(dataStoreType))
                                                  .Select(t => Activator.CreateInstance(t))
                                                  .Cast<DataStore>()
+                                                 .OrderBy(d => d.Name)
                                                  .ToList();
 
             string cancelButtonName = "Cancel";

@@ -26,7 +26,7 @@ namespace SensusService.Probes.Location
 
         protected override string DefaultDisplayName
         {
-            get { return "Location (Listening)"; }
+            get { return "Location"; }
         }
 
         public sealed override Type DatumType

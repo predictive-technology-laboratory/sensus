@@ -27,7 +27,7 @@ namespace SensusService.Probes.Movement
 
         protected sealed override string DefaultDisplayName
         {
-            get { return "Speed (Polling)"; }
+            get { return "Speed"; }
         }
 
         public sealed override Type DatumType

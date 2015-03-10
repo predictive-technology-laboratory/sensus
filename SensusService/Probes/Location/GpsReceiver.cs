@@ -25,12 +25,14 @@ namespace SensusService.Probes.Location
     /// </summary>
     public class GpsReceiver
     {
+        #region static members
         public static GpsReceiver _singleton = new GpsReceiver();
 
         public static GpsReceiver Get()
         {
             return _singleton;
         }
+        #endregion
 
         private event EventHandler<PositionEventArgs> PositionChanged;
 
@@ -41,8 +43,7 @@ namespace SensusService.Probes.Location
         private Position _reading;
         private DateTimeOffset _readingTimestamp;
         private int _readingTimeoutMS;
-        private int _minimumTimeHint;
-        private int _minimumDistanceHint;
+        private int _minimumTimeHintMS;
 
         private readonly object _locker = new object();
 
@@ -60,41 +61,23 @@ namespace SensusService.Probes.Location
                 _desiredAccuracyMeters = value;
 
                 if (_locator != null)
-                    _locator.DesiredAccuracy = value;
+                    _locator.DesiredAccuracy = _desiredAccuracyMeters;
             }
         }
 
-        public int MinimumTimeHint
+        public int MinimumTimeHintMS
         {
-            get { return _minimumTimeHint; }
+            get { return _minimumTimeHintMS; }
             set
             {
-                if (value != _minimumTimeHint)
+                if (value != _minimumTimeHintMS)
                 {
-                    _minimumTimeHint = value;
+                    _minimumTimeHintMS = value;
 
                     if (ListeningForChanges)
                     {
                         _locator.StopListening();
-                        _locator.StartListening(_minimumTimeHint, _minimumDistanceHint, true);
-                    }
-                }
-            }
-        }
-
-        public int MinimumDistanceHint
-        {
-            get { return _minimumDistanceHint; }
-            set
-            {
-                if (value != _minimumDistanceHint)
-                {
-                    _minimumDistanceHint = value;
-
-                    if (ListeningForChanges)
-                    {
-                        _locator.StopListening();
-                        _locator.StartListening(_minimumTimeHint, _minimumDistanceHint, true);
+                        _locator.StartListening(_minimumTimeHintMS, _desiredAccuracyMeters, true);
                     }
                 }
             }
@@ -113,56 +96,7 @@ namespace SensusService.Probes.Location
             _reading = null;
             _readingTimestamp = DateTimeOffset.MinValue;
             _readingTimeoutMS = 120000;
-            _minimumTimeHint = 60000;
-            _minimumDistanceHint = 100;
-        }
-
-        public void AddListener(EventHandler<PositionEventArgs> listener)
-        {
-            lock (_locker)
-            {
-                if (_locator == null)
-                    throw new SensusException("Locator has not yet been bound to a platform-specific implementation.");
-
-                if (ListeningForChanges)
-                    _locator.StopListening();
-
-                PositionChanged += listener;
-
-                _locator.StartListening(_minimumTimeHint, _minimumDistanceHint, true);
-
-                SensusServiceHelper.Get().Logger.Log("GPS receiver is now listening for changes.", LoggingLevel.Normal, GetType());
-            }
-        }
-
-        public void RemoveListener(EventHandler<PositionEventArgs> listener)
-        {
-            lock (_locker)
-            {
-                if (_locator == null)
-                    throw new SensusException("Locator has not yet been bound to a platform-specific implementation.");
-
-                if (ListeningForChanges)
-                    _locator.StopListening();
-
-                PositionChanged -= listener;
-
-                if (ListeningForChanges)
-                    _locator.StartListening(_minimumTimeHint, _minimumDistanceHint, true);
-                else
-                    SensusServiceHelper.Get().Logger.Log("All listeners removed from GPS receiver. Stopped listening.", LoggingLevel.Normal, GetType());
-            }
-        }
-
-        public void ClearListeners()
-        {
-            lock (_locker)
-            {
-                _locator.StopListening();
-                PositionChanged = null;
-
-                SensusServiceHelper.Get().Logger.Log("All listeners removed from GPS receiver. Stopped listening.", LoggingLevel.Normal, GetType());
-            }
+            _minimumTimeHintMS = 10000;
         }
 
         public void Initialize(Geolocator locator)
@@ -183,6 +117,54 @@ namespace SensusService.Probes.Location
                     SensusServiceHelper.Get().Logger.Log("Position error from GPS receiver:  " + e.Error, LoggingLevel.Normal, GetType());
                 };
         }
+
+        public void AddListener(EventHandler<PositionEventArgs> listener)
+        {
+            lock (_locker)
+            {
+                if (_locator == null)
+                    throw new SensusException("Locator has not yet been bound to a platform-specific implementation.");
+
+                if (ListeningForChanges)
+                    _locator.StopListening();
+
+                PositionChanged += listener;
+
+                _locator.StartListening(_minimumTimeHintMS, _desiredAccuracyMeters, true);
+
+                SensusServiceHelper.Get().Logger.Log("GPS receiver is now listening for changes.", LoggingLevel.Normal, GetType());
+            }
+        }
+
+        public void RemoveListener(EventHandler<PositionEventArgs> listener)
+        {
+            lock (_locker)
+            {
+                if (_locator == null)
+                    throw new SensusException("Locator has not yet been bound to a platform-specific implementation.");
+
+                if (ListeningForChanges)
+                    _locator.StopListening();
+
+                PositionChanged -= listener;
+
+                if (ListeningForChanges)
+                    _locator.StartListening(_minimumTimeHintMS, _desiredAccuracyMeters, true);
+                else
+                    SensusServiceHelper.Get().Logger.Log("All listeners removed from GPS receiver. Stopped listening.", LoggingLevel.Normal, GetType());
+            }
+        }
+
+        public void ClearListeners()
+        {
+            lock (_locker)
+            {
+                _locator.StopListening();
+                PositionChanged = null;
+
+                SensusServiceHelper.Get().Logger.Log("All listeners removed from GPS receiver. Stopped listening.", LoggingLevel.Normal, GetType());
+            }
+        }           
 
         public Position GetReading()
         {

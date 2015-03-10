@@ -22,11 +22,33 @@ namespace SensusUI
 {
     public class ProbesPage : ContentPage
     {
+        private class ProbeTextValueConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            {
+                Probe probe = value as Probe;
+
+                string type = "";
+                if (probe is ListeningProbe)
+                    type = "Listening";
+                else if (probe is PollingProbe)
+                    type = "Polling";
+
+                return probe.DisplayName + (type == "" ? "" : " (" + type + ")");
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            {
+                throw new SensusException("Invalid call to " + GetType().FullName + ".ConvertBack.");
+            }
+        }
+
         private class ProbeTextColorValueConverter : IValueConverter
         {
             public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
             {
-                return (bool)value ? Color.Green : Color.Red;
+                Probe probe = value as Probe;
+                return probe.Enabled ? Color.Green : Color.Red;
             }
 
             public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -39,8 +61,9 @@ namespace SensusUI
         {
             public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
             {
-                Datum mostRecent = value as Datum;
-                return mostRecent == null ? "----------" : mostRecent.DisplayDetail + Environment.NewLine + mostRecent.Timestamp;
+                Probe probe = value as Probe;
+                Datum mostRecentDatum = probe.MostRecentDatum;
+                return mostRecentDatum == null ? "----------" : mostRecentDatum.DisplayDetail + Environment.NewLine + mostRecentDatum.Timestamp;
             }
 
             public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -60,9 +83,9 @@ namespace SensusUI
 
             _probesList = new ListView();
             _probesList.ItemTemplate = new DataTemplate(typeof(TextCell));
-            _probesList.ItemTemplate.SetBinding(TextCell.TextProperty, "DisplayName");
-            _probesList.ItemTemplate.SetBinding(TextCell.TextColorProperty, new Binding("Enabled", converter: new ProbeTextColorValueConverter()));
-            _probesList.ItemTemplate.SetBinding(TextCell.DetailProperty, new Binding("MostRecentDatum", converter: new ProbeDetailValueConverter()));
+            _probesList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", converter: new ProbeTextValueConverter()));
+            _probesList.ItemTemplate.SetBinding(TextCell.TextColorProperty, new Binding(".", converter: new ProbeTextColorValueConverter()));
+            _probesList.ItemTemplate.SetBinding(TextCell.DetailProperty, new Binding(".", converter: new ProbeDetailValueConverter()));
             _probesList.ItemTapped += async (o, e) =>
                 {
                     ProbePage probePage = new ProbePage(e.Item as Probe);
