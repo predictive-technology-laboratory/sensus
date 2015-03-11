@@ -174,7 +174,7 @@ namespace SensusService.Probes.Location
             lock (_locker)
             {
                 // reuse existing reading if it isn't too old
-                if (_reading != null)
+                if (_reading != null && maxReadingAgeForReuseMS > 0)
                 {
                     double readingAgeMS = (DateTimeOffset.UtcNow - _reading.Timestamp).TotalMilliseconds;
                     if (readingAgeMS <= maxReadingAgeForReuseMS)

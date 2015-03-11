@@ -63,17 +63,7 @@ namespace SensusService.Probes.Movement
                 _previousPosition = null;  // do this before starting the base-class poller so it doesn't race to grab a stale previous location.
                 base.Start();               
             }
-        }
-
-        private double DegreesToRadians(double degrees)
-        {
-            return degrees * Math.PI / 180;
-        }
-
-        private double RadiansToDegrees(double radians)
-        {
-            return radians / Math.PI * 180;
-        }
+        }           
 
         protected override IEnumerable<Datum> Poll()
         {
@@ -122,6 +112,16 @@ namespace SensusService.Probes.Movement
 
                 return data;
             }
+        }
+
+        private double DegreesToRadians(double degrees)
+        {
+            return degrees * Math.PI / 180;
+        }
+
+        private double RadiansToDegrees(double radians)
+        {
+            return radians / Math.PI * 180;
         }
 
         public override void Stop()
