@@ -29,10 +29,6 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
 
-// See RELEASE.txt for details.
-[assembly: AssemblyVersion("0.6.0.0")]
-[assembly: AssemblyFileVersion("0.6.0.0")]
-
 // Disable debugging for release builds.
 #if DEBUG
 [assembly: Application(Debuggable=true)]
