@@ -359,7 +359,9 @@ namespace SensusService
             new Thread(() =>
                 {
                     TestHealth();
-                    callback();
+
+                    if(callback != null)
+                        callback();
 
                 }).Start();
         }
@@ -461,7 +463,9 @@ namespace SensusService
             new Thread(() =>
                 {
                     Stop();
-                    callback();
+
+                    if(callback != null)
+                        callback();
 
                 }).Start();
         }

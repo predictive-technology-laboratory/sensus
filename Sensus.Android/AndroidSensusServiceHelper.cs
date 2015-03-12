@@ -301,7 +301,9 @@ namespace Sensus.Android
                             mainActivity.RunOnUiThread(() =>
                                 {
                                     Toast.MakeText(mainActivity, message, ToastLength.Long).Show();
-                                    callback();
+
+                                    if(callback != null)
+                                        callback();
                                 });
                         });
                 }).Start();

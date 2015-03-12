@@ -329,7 +329,8 @@ namespace SensusService.Probes.User
                                 lock (_incompleteScripts)
                                     _incompleteScripts.Enqueue(script);
 
-                            callback();
+                            if(callback != null)
+                                callback();
                         });
                 }).Start();
         }
@@ -361,7 +362,9 @@ namespace SensusService.Probes.User
             new Thread(() =>
                 {
                     StopScriptRerunCallbacks();
-                    callback();
+
+                    if(callback != null)
+                        callback();
 
                 }).Start();
         }
@@ -383,7 +386,9 @@ namespace SensusService.Probes.User
             new Thread(() =>
                 {
                     StopRandomScriptTriggerCallbacks();
-                    callback();
+
+                    if(callback != null)
+                        callback();
 
                 }).Start();
         }

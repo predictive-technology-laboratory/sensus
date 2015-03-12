@@ -63,7 +63,9 @@ namespace Sensus.Android
                         _utteranceWait.Reset();
                         _textToSpeech.Speak(text, QueueMode.Add, speakParams);
                         _utteranceWait.WaitOne();
-                        callback();
+
+                        if(callback != null)
+                            callback();
                     }
                 }).Start();
         }

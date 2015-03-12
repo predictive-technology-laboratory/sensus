@@ -23,18 +23,30 @@ namespace Sensus.Android
     [Service]
     public class AndroidSensusService : Service
     {
+        private const int SERVICE_NOTIFICATION_ID = 0;
+        private const int NOTIFICATION_PENDING_INTENT_ID = 1;
+
         private NotificationManager _notificationManager;
-        private Notification.Builder _notificationBuilder;
+        private Notification _notification;
         private AndroidSensusServiceHelper _sensusServiceHelper;
-        private const int ServiceNotificationId = 0;
-        private const int NotificationPendingIntentId = 1;
 
         public override void OnCreate()
         {
             base.OnCreate();
 
             _notificationManager = GetSystemService(Context.NotificationService) as NotificationManager;
-            _notificationBuilder = new Notification.Builder(this);
+
+            // build notification for app
+            TaskStackBuilder stackBuilder = TaskStackBuilder.Create(this);
+            stackBuilder.AddParentStack(Java.Lang.Class.FromType(typeof(AndroidMainActivity)));
+            stackBuilder.AddNextIntent(new Intent(this, typeof(AndroidMainActivity)));
+            PendingIntent pendingIntent = stackBuilder.GetPendingIntent(NOTIFICATION_PENDING_INTENT_ID, PendingIntentFlags.OneShot);
+            _notification = new Notification.Builder(this).SetContentTitle("Sensus")
+                                                          .SetContentText("Tap to Open")
+                                                          .SetSmallIcon(Resource.Drawable.ic_launcher)
+                                                          .SetContentIntent(pendingIntent)
+                                                          .SetAutoCancel(true)
+                                                          .SetOngoing(true).Build();
 
             _sensusServiceHelper = SensusServiceHelper.Load<AndroidSensusServiceHelper>(new Geolocator(this)) as AndroidSensusServiceHelper;
             if (_sensusServiceHelper == null)
@@ -48,7 +60,7 @@ namespace Sensus.Android
 
             _sensusServiceHelper.Stopped += (o, e) =>
                 {
-                    _notificationManager.Cancel(ServiceNotificationId);
+                    _notificationManager.Cancel(SERVICE_NOTIFICATION_ID);
                     StopSelf();
                 };
         }
@@ -63,42 +75,30 @@ namespace Sensus.Android
             // the notification. therefore, it's important that any code called here is
             // okay to call multiple times, even if the service is running. calling this when
             // the service is running can happen because sensus receives a signal on device
-            // boot to start the service, and then when the sensus app is started the service
-            // start method is called again.
+            // boot and for any callback alarms that are requested. furthermore, all calls here
+            // should be nonblocking / async so we don't tie up the UI thread.
 
-            _sensusServiceHelper.Start();
-
-            TaskStackBuilder stackBuilder = TaskStackBuilder.Create(this);
-            stackBuilder.AddParentStack(Java.Lang.Class.FromType(typeof(AndroidMainActivity)));
-            stackBuilder.AddNextIntent(new Intent(this, typeof(AndroidMainActivity)));
-
-            PendingIntent pendingIntent = stackBuilder.GetPendingIntent(NotificationPendingIntentId, PendingIntentFlags.OneShot);
-
-            _notificationBuilder.SetContentTitle("Sensus")
-                                .SetContentText("Tap to Open")
-                                .SetSmallIcon(Resource.Drawable.ic_launcher)
-                                .SetContentIntent(pendingIntent)
-                                .SetAutoCancel(true)
-                                .SetOngoing(true);
-
-            _notificationManager.Notify(ServiceNotificationId, _notificationBuilder.Build());
-
-            if (intent.GetBooleanExtra(AndroidSensusServiceHelper.INTENT_EXTRA_SENSUS_CALLBACK, false))
-            {
-                int callbackId = intent.GetIntExtra(AndroidSensusServiceHelper.INTENT_EXTRA_SENSUS_CALLBACK_ID, -1);
-                if (callbackId >= 0)
+            _sensusServiceHelper.StartAsync(() =>
                 {
-                    bool repeating = intent.GetBooleanExtra(AndroidSensusServiceHelper.INTENT_EXTRA_SENSUS_CALLBACK_REPEATING, false);
-                    _sensusServiceHelper.RaiseCallbackAsync(callbackId, repeating);
-                }
-            }
+                    _notificationManager.Notify(SERVICE_NOTIFICATION_ID, _notification);
+
+                    if (intent.GetBooleanExtra(AndroidSensusServiceHelper.INTENT_EXTRA_SENSUS_CALLBACK, false))
+                    {
+                        int callbackId = intent.GetIntExtra(AndroidSensusServiceHelper.INTENT_EXTRA_SENSUS_CALLBACK_ID, -1);
+                        if (callbackId >= 0)
+                        {
+                            bool repeating = intent.GetBooleanExtra(AndroidSensusServiceHelper.INTENT_EXTRA_SENSUS_CALLBACK_REPEATING, false);
+                            _sensusServiceHelper.RaiseCallbackAsync(callbackId, repeating);
+                        }
+                    }
+                });
 
             return StartCommandResult.RedeliverIntent;
         }
 
         public override void OnDestroy()
         {
-            _notificationManager.Cancel(ServiceNotificationId);
+            _notificationManager.Cancel(SERVICE_NOTIFICATION_ID);
 
             _sensusServiceHelper.Destroy();
 

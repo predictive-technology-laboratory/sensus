@@ -319,6 +319,18 @@ namespace SensusService
             }
         }
 
+        public void StartAsync(Action callback)
+        {
+            new Thread(() =>
+                {
+                    Start();
+
+                    if(callback != null)
+                        callback();
+
+                }).Start();
+        }
+
         /// <summary>
         /// Starts platform-independent service functionality, including protocols that should be running. Okay to call multiple times, even if the service is already running.
         /// </summary>
