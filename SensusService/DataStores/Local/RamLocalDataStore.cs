@@ -15,6 +15,7 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace SensusService.DataStores.Local
 {
@@ -59,7 +60,7 @@ namespace SensusService.DataStores.Local
             return committed;
         }
 
-        public override List<Datum> GetDataForRemoteDataStore()
+        public override List<Datum> GetDataForRemoteDataStore(Action<double> progressCallback, Func<bool> cancelCallback)
         {
             lock (_data)
                 return _data.ToList();

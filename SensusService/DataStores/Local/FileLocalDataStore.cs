@@ -111,7 +111,7 @@ namespace SensusService.DataStores.Local
             }
         }
 
-        public override List<Datum> GetDataForRemoteDataStore()
+        public override List<Datum> GetDataForRemoteDataStore(Action<double> progressCallback, Func<bool> cancelCallback)
         {
             lock (_locker)
             {
@@ -119,14 +119,16 @@ namespace SensusService.DataStores.Local
 
                 // get local data from all files
                 List<Datum> localData = new List<Datum>();
-                foreach (string path in Directory.GetFiles(StorageDirectory))
-                {
+                string[] paths = Directory.GetFiles(StorageDirectory);
+                int pathsComplete = 0;
+                foreach (string path in paths)
+                {                                               
                     try
                     {
                         using (StreamReader file = new StreamReader(path))
                         {
                             string line;
-                            while ((line = file.ReadLine()) != null)
+                            while ((cancelCallback == null || !cancelCallback()) && (line = file.ReadLine()) != null)
                                 if (!string.IsNullOrWhiteSpace(line))
                                     localData.Add(Datum.FromJSON(line));
 
@@ -136,8 +138,16 @@ namespace SensusService.DataStores.Local
                     catch (Exception ex)
                     {
                         SensusServiceHelper.Get().Logger.Log("Exception while reading local data store for transfer to remote:  " + ex.Message, LoggingLevel.Normal, GetType());
-                    }
+                    }  
+
+                    ++pathsComplete;
+
+                    if (progressCallback != null)
+                        progressCallback(pathsComplete / (double)paths.Length);
                 }
+
+                if (cancelCallback != null && cancelCallback())
+                    SensusServiceHelper.Get().Logger.Log("Canceled retrieval of local data for remote data store.", LoggingLevel.Normal, GetType());
 
                 // reinitialize file if we're running
                 if (Running)

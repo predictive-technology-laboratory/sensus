@@ -31,5 +31,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)ScriptPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PromptsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PromptPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ShareLocalDataStorePage.cs" />
   </ItemGroup>
 </Project>

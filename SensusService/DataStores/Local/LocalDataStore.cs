@@ -15,6 +15,7 @@
 using SensusService.Probes;
 using SensusUI.UiProperties;
 using System.Collections.Generic;
+using System;
 
 namespace SensusService.DataStores.Local
 {
@@ -71,7 +72,12 @@ namespace SensusService.DataStores.Local
             SensusServiceHelper.Get().Logger.Log("Done clearing committed data elements from probes.", LoggingLevel.Verbose, GetType());
         }
 
-        public abstract List<Datum> GetDataForRemoteDataStore();
+        public List<Datum> GetDataForRemoteDataStore() 
+        {
+            return GetDataForRemoteDataStore(null, null);
+        }
+
+        public abstract List<Datum> GetDataForRemoteDataStore(Action<double> progressCallback, Func<bool> cancelCallback);
 
         public abstract void ClearDataCommittedToRemoteDataStore(List<Datum> dataCommittedToRemote);
     }

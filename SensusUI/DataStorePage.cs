@@ -67,21 +67,9 @@ namespace SensusUI
                     FontSize = 20
                 };
 
-                shareLocalDataButton.Clicked += (o, e) =>
+                shareLocalDataButton.Clicked += async (o, e) =>
                     {
-                        try
-                        {
-                            string sharePath = UiBoundSensusServiceHelper.Get(true).GetSharePath(".json");
-                            StreamWriter shareFile = new StreamWriter(sharePath);
-                            LocalDataStore localDataStore = dataStore as LocalDataStore;
-                            foreach (Datum datum in localDataStore.GetDataForRemoteDataStore())
-                                shareFile.WriteLine(datum.GetJSON(null));
-
-                            shareFile.Close();
-
-                            SensusServiceHelper.Get().ShareFileAsync(sharePath, "Sensus Data");
-                        }
-                        catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to share local data store:  " + ex.Message, LoggingLevel.Normal, GetType()); }
+                        await Navigation.PushAsync(new ShareLocalDataStorePage(dataStore as LocalDataStore));
                     };
 
                 buttonStack.Children.Add(shareLocalDataButton);
