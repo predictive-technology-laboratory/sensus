@@ -22,17 +22,23 @@ namespace SensusService.DataStores.Local
 {
     public class FileLocalDataStore : LocalDataStore
     {
-        /// <summary>
-        /// File being written with local data.
-        /// </summary>
         private StreamWriter _file;
-
-        /// <summary>
-        /// Contains the path to the file currently being written.
-        /// </summary>
         private string _path;
+        private int _numDataStoredInFiles;
 
         private readonly object _locker = new object();
+
+        public int NumDataStoredInFiles
+        {
+            get
+            {
+                return _numDataStoredInFiles;
+            }
+            set
+            {
+                _numDataStoredInFiles = value;
+            }
+        }           
 
         private string StorageDirectory
         {
@@ -51,11 +57,24 @@ namespace SensusService.DataStores.Local
         {
             get { return "File"; }
         }
+
+        public override int DataCount
+        {
+            get
+            {
+                return _numDataStoredInFiles;
+            }
+        }
         
         [JsonIgnore]
         public override bool Clearable
         {
             get { return true; }
+        }
+
+        public FileLocalDataStore()
+        {
+            _numDataStoredInFiles = 0;
         }
 
         public override void Start()
@@ -88,6 +107,7 @@ namespace SensusService.DataStores.Local
                         {
                             _file.WriteLine(datumJSON);
                             writtenToFile = true;
+                            ++_numDataStoredInFiles;
                         }
                         catch (Exception ex)
                         {
@@ -119,9 +139,8 @@ namespace SensusService.DataStores.Local
 
                 // get local data from all files
                 List<Datum> localData = new List<Datum>();
-                string[] paths = Directory.GetFiles(StorageDirectory);
-                int pathsComplete = 0;
-                foreach (string path in paths)
+                int numDataRetrieved = 0;
+                foreach (string path in Directory.GetFiles(StorageDirectory))
                 {                                               
                     try
                     {
@@ -130,7 +149,12 @@ namespace SensusService.DataStores.Local
                             string line;
                             while ((cancelCallback == null || !cancelCallback()) && (line = file.ReadLine()) != null)
                                 if (!string.IsNullOrWhiteSpace(line))
+                                {
                                     localData.Add(Datum.FromJSON(line));
+
+                                    if((++numDataRetrieved % (_numDataStoredInFiles / 10)) == 0 && progressCallback != null)
+                                        progressCallback(numDataRetrieved / (double)_numDataStoredInFiles);
+                                }
 
                             file.Close();
                         }
@@ -138,12 +162,7 @@ namespace SensusService.DataStores.Local
                     catch (Exception ex)
                     {
                         SensusServiceHelper.Get().Logger.Log("Exception while reading local data store for transfer to remote:  " + ex.Message, LoggingLevel.Normal, GetType());
-                    }  
-
-                    ++pathsComplete;
-
-                    if (progressCallback != null)
-                        progressCallback(pathsComplete / (double)paths.Length);
+                    }                         
                 }
 
                 if (cancelCallback != null && cancelCallback())
@@ -181,10 +200,12 @@ namespace SensusService.DataStores.Local
                         while ((line = file.ReadLine()) != null)
                         {
                             Datum datum = Datum.FromJSON(line);
-                            if (!hashDataCommittedToRemote.Contains(datum))
+                            if (hashDataCommittedToRemote.Contains(datum))
+                                --_numDataStoredInFiles;
+                            else
                             {
                                 uncommittedDataFile.WriteLine(datum.GetJSON(null));
-                                uncommittedDataCount++;
+                                ++uncommittedDataCount;
                             }
                         }
 
@@ -283,6 +304,7 @@ namespace SensusService.DataStores.Local
         public override void Clear()
         {
             if (Protocol != null)
+            {
                 foreach (string path in Directory.GetFiles(StorageDirectory))
                 {
                     try
@@ -294,6 +316,9 @@ namespace SensusService.DataStores.Local
                         SensusServiceHelper.Get().Logger.Log("Failed to delete local file \"" + path + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
                     }
                 }
+
+                _numDataStoredInFiles = 0;
+            }
         }
     }
 }

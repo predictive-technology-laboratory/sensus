@@ -69,7 +69,12 @@ namespace SensusUI
 
                 shareLocalDataButton.Clicked += async (o, e) =>
                     {
-                        await Navigation.PushAsync(new ShareLocalDataStorePage(dataStore as LocalDataStore));
+                        LocalDataStore localDataStore = dataStore as LocalDataStore;
+
+                        if(localDataStore.DataCount > 0)
+                            await Navigation.PushAsync(new ShareLocalDataStorePage(dataStore as LocalDataStore));
+                        else
+                            UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Local data store contains no data to share.");
                     };
 
                 buttonStack.Children.Add(shareLocalDataButton);

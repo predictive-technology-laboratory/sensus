@@ -36,15 +36,7 @@ namespace SensusUI
             {
                 Orientation = StackOrientation.Vertical,
                 VerticalOptions = LayoutOptions.FillAndExpand
-            };
-            
-            ProgressBar progressBar = new ProgressBar
-            {
-                Progress = 0,
-                HorizontalOptions = LayoutOptions.FillAndExpand
-            };
-
-            contentLayout.Children.Add(progressBar);
+            };            
 
             Label statusLabel = new Label
             {
@@ -53,6 +45,14 @@ namespace SensusUI
             };
 
             contentLayout.Children.Add(statusLabel);
+
+            ProgressBar progressBar = new ProgressBar
+                {
+                    Progress = 0,
+                    HorizontalOptions = LayoutOptions.FillAndExpand
+                };
+
+            contentLayout.Children.Add(progressBar);
 
             Button cancelButton = new Button
             {
@@ -65,6 +65,8 @@ namespace SensusUI
             {
                 await Navigation.PopAsync();
             };
+
+            contentLayout.Children.Add(cancelButton);
                                       
             new Thread(async () =>
                 {                    
@@ -73,7 +75,16 @@ namespace SensusUI
                     try
                     {              
                         Device.BeginInvokeOnMainThread(() => statusLabel.Text = "Gathering data...");
-                        List<Datum> localData = localDataStore.GetDataForRemoteDataStore(progress => Device.BeginInvokeOnMainThread(() => progressBar.ProgressTo(progress, 250, Easing.Linear)), () => _cancel);
+                        List<Datum> localData = localDataStore.GetDataForRemoteDataStore(progress =>
+                            {
+                                Device.BeginInvokeOnMainThread(() => 
+                                    {
+                                        progressBar.ProgressTo(progress, 250, Easing.Linear);
+                                    });
+                            }, () => 
+                            {
+                                return _cancel;
+                            });                               
 
                         Device.BeginInvokeOnMainThread(() => 
                             {

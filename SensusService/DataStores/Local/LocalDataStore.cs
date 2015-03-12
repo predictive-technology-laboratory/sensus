@@ -16,6 +16,7 @@ using SensusService.Probes;
 using SensusUI.UiProperties;
 using System.Collections.Generic;
 using System;
+using Newtonsoft.Json;
 
 namespace SensusService.DataStores.Local
 {
@@ -32,6 +33,9 @@ namespace SensusService.DataStores.Local
             get { return _uploadToRemoteDataStore; }
             set { _uploadToRemoteDataStore = value; }
         }
+
+        [JsonIgnore]
+        public abstract int DataCount { get; }
 
         public LocalDataStore()
         {
