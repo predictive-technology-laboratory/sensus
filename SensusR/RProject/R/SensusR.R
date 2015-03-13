@@ -202,7 +202,7 @@ plot.LocationDatum = function(x, ...)
   lat = x$Latitude
   newmap = rworldmap::getMap(resolution = "high")
   plot(newmap, xlim = range(lon), ylim = range(lat), asp = 1, ...)
-  points(lon, lat, col = "red", cex = .6, ...)
+  lines(lon, lat, ...)
 }
 
 #' Plot running apps data.

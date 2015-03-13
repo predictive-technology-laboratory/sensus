@@ -19,7 +19,7 @@ using Xamarin.Geolocation;
 
 namespace SensusService.Probes.Movement
 {
-    public class PollingSpeedProbe : PollingProbe
+    public class SpeedProbe : PollingProbe
     {
         private Position _previousPosition;
 
@@ -40,7 +40,7 @@ namespace SensusService.Probes.Movement
             get { return 5000; }
         }
 
-        public PollingSpeedProbe()
+        public SpeedProbe()
         {
         }
 

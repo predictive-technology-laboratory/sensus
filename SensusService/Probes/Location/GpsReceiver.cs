@@ -34,15 +34,12 @@ namespace SensusService.Probes.Location
         }
         #endregion
 
-        private event EventHandler<PositionEventArgs> PositionChanged;
-
         private Geolocator _locator;
         private int _desiredAccuracyMeters;
         private bool _readingIsComing;
         private ManualResetEvent _readingWait;
         private Position _reading;
         private int _readingTimeoutMS;
-        private int _minimumTimeHintMS;
 
         private readonly object _locker = new object();
 
@@ -64,29 +61,6 @@ namespace SensusService.Probes.Location
             }
         }
 
-        public int MinimumTimeHintMS
-        {
-            get { return _minimumTimeHintMS; }
-            set
-            {
-                if (value != _minimumTimeHintMS)
-                {
-                    _minimumTimeHintMS = value;
-
-                    if (ListeningForChanges)
-                    {
-                        _locator.StopListening();
-                        _locator.StartListening(_minimumTimeHintMS, _desiredAccuracyMeters, true);
-                    }
-                }
-            }
-        }
-
-        public bool ListeningForChanges
-        {
-            get { return PositionChanged != null; }
-        }
-
         private GpsReceiver()
         {
             _desiredAccuracyMeters = 10;
@@ -94,75 +68,13 @@ namespace SensusService.Probes.Location
             _readingWait = new ManualResetEvent(false);
             _reading = null;
             _readingTimeoutMS = 120000;
-            _minimumTimeHintMS = 10000;
         }
 
         public void Initialize(Geolocator locator)
         {
             _locator = locator;
             _locator.DesiredAccuracy = _desiredAccuracyMeters;
-
-            _locator.PositionChanged += (o, e) =>
-                {
-                    SensusServiceHelper.Get().Logger.Log("GPS position has changed:  " + e.Position.Latitude + " " + e.Position.Longitude, LoggingLevel.Verbose, GetType());
-
-                    if (PositionChanged != null)
-                        PositionChanged(o, e);
-                };
-
-            _locator.PositionError += (o, e) =>
-                {
-                    SensusServiceHelper.Get().Logger.Log("Position error from GPS receiver:  " + e.Error, LoggingLevel.Normal, GetType());
-                };
         }
-
-        public void AddListener(EventHandler<PositionEventArgs> listener)
-        {
-            lock (_locker)
-            {
-                if (_locator == null)
-                    throw new SensusException("Locator has not yet been bound to a platform-specific implementation.");
-
-                if (ListeningForChanges)
-                    _locator.StopListening();
-
-                PositionChanged += listener;
-
-                _locator.StartListening(_minimumTimeHintMS, _desiredAccuracyMeters, true);
-
-                SensusServiceHelper.Get().Logger.Log("GPS receiver is now listening for changes.", LoggingLevel.Normal, GetType());
-            }
-        }
-
-        public void RemoveListener(EventHandler<PositionEventArgs> listener)
-        {
-            lock (_locker)
-            {
-                if (_locator == null)
-                    throw new SensusException("Locator has not yet been bound to a platform-specific implementation.");
-
-                if (ListeningForChanges)
-                    _locator.StopListening();
-
-                PositionChanged -= listener;
-
-                if (ListeningForChanges)
-                    _locator.StartListening(_minimumTimeHintMS, _desiredAccuracyMeters, true);
-                else
-                    SensusServiceHelper.Get().Logger.Log("All listeners removed from GPS receiver. Stopped listening.", LoggingLevel.Normal, GetType());
-            }
-        }
-
-        public void ClearListeners()
-        {
-            lock (_locker)
-            {
-                _locator.StopListening();
-                PositionChanged = null;
-
-                SensusServiceHelper.Get().Logger.Log("All listeners removed from GPS receiver. Stopped listening.", LoggingLevel.Normal, GetType());
-            }
-        }           
 
         public Position GetReading()
         {
@@ -205,12 +117,6 @@ namespace SensusService.Probes.Location
                                 {                                   
                                     // create copy of new position to keep return references separate, since the same Position object is returned multiple times when a change listener is attached.
                                     _reading = new Position(newReading);                                   
-
-                                    // if we are listening for changes, the new reading will be the one from the most recent change event, timestamped 
-                                    // at that time; however, the caller is expecting a current reading/time. since our position hasn't changed, simply
-                                    // update the time on the previous reading to give the caller the expected result.
-                                    if (ListeningForChanges)
-                                        _reading.Timestamp = DateTimeOffset.UtcNow;
 
                                     SensusServiceHelper.Get().Logger.Log("GPS reading obtained in " + (readingEnd - readingStart).TotalSeconds + " seconds:  " + _reading.Latitude + " " + _reading.Longitude, LoggingLevel.Verbose, GetType());
                                 }

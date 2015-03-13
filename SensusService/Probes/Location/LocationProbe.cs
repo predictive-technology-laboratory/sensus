@@ -19,9 +19,9 @@ using Xamarin.Geolocation;
 namespace SensusService.Probes.Location
 {
     /// <summary>
-    /// Probes location information via polling.
+    /// Probes location information.
     /// </summary>
-    public class PollingLocationProbe : PollingProbe
+    public class LocationProbe : PollingProbe
     {
         protected sealed override string DefaultDisplayName
         {

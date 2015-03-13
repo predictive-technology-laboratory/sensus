@@ -44,13 +44,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\AltitudeDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\CompassDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\GpsReceiver.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\ListeningLocationProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\LocationDatum.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\PollingLocationProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AccelerometerDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AccelerometerProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\SpeedDatum.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\PollingSpeedProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\CellTowerDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\CellTowerProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\WlanDatum.cs" />
@@ -75,5 +72,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolReport.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SensusServiceHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Remote\AmazonS3RemoteDataStore.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\LocationProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\SpeedProbe.cs" />
   </ItemGroup>
 </Project>
