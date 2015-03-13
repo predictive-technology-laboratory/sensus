@@ -22,6 +22,8 @@ using System.Linq;
 using System.Threading;
 using Xamarin;
 using Xamarin.Geolocation;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace SensusService
 {
@@ -115,6 +117,7 @@ namespace SensusService
         private int _healthTestCount;
         private int _healthTestsPerProtocolReport;
         private Dictionary<int, Action> _idCallback;
+        private MD5 _md5Hash;
 
         private readonly object _locker = new object();
 
@@ -220,8 +223,22 @@ namespace SensusService
             _logger.Log("Log file started at \"" + _logPath + "\".", LoggingLevel.Normal, GetType());
             #endregion
 
+            _md5Hash = MD5.Create();
+
             lock (_staticLockObject)
                 _singleton = this;
+        }
+
+        public string GetMd5Hash(string s)
+        {
+            if (s == null)
+                return null;
+            
+            StringBuilder hashBuilder = new StringBuilder();
+            foreach (byte b in _md5Hash.ComputeHash(Encoding.UTF8.GetBytes(s)))
+                hashBuilder.Append(b.ToString("x"));
+
+            return hashBuilder.ToString();
         }
 
         public void Initialize(Geolocator geolocator)
@@ -541,7 +558,7 @@ namespace SensusService
             {
                 Stop();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.Out.WriteLine("Failed to stop service helper:  " + ex.Message);
             }
@@ -554,6 +571,9 @@ namespace SensusService
             {
                 Console.Out.WriteLine("Failed to close logger:  " + ex.Message);
             }
+
+            _md5Hash.Dispose();
+            _md5Hash = null;
 
             _singleton = null;
         }
