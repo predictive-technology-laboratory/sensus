@@ -485,6 +485,7 @@ namespace SensusService
                 SensusServiceHelper.Get().RemoveRunningProtocolId(_id);
 
                 SensusServiceHelper.Get().Logger.Log("Stopping protocol \"" + _name + "\".", LoggingLevel.Normal, GetType());
+
                 foreach (Probe probe in _probes)
                     if (probe.Running)
                         try 
@@ -507,6 +508,8 @@ namespace SensusService
                     try { _remoteDataStore.Stop(); }
                     catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to stop remote data store:  " + ex.Message, LoggingLevel.Normal, GetType()); }
                 }
+
+                SensusServiceHelper.Get().Logger.Log("Stopped protocol \"" + _name + "\".", LoggingLevel.Normal, GetType());
             }
         }
 

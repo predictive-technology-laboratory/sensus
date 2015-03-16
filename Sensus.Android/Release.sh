@@ -6,6 +6,8 @@ if [ $# -ne 4 ]; then
     echo "\t[keystore path]:  Path to keystore file."
     echo "\t[keystore password]:  Password used to open keystore and signing key (assumed to be the same)."
     echo "\t[github prerelease]:  Whether or not the GitHub release should be marked as a prerelease (true/false)."
+    echo ""
+    echo "For example (for a prerelease):  ./Release.sh 0.8.0-prerelease /path/to/sensus.keystore keystore_password true"
     exit 1
 fi
 
