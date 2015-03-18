@@ -285,6 +285,8 @@ namespace SensusService
         public abstract void KeepDeviceAwake();
 
         public abstract void LetDeviceSleep();
+
+        public abstract void UpdateApplicationStatus(string status);
         #endregion
 
         #region add/remove running protocol ids
@@ -296,6 +298,8 @@ namespace SensusService
                 {
                     _runningProtocolIds.Add(id);
                     Save();
+
+                    SensusServiceHelper.Get().UpdateApplicationStatus(_runningProtocolIds.Count + " protocol" + (_runningProtocolIds.Count == 1 ? " is " : "s are") + " running");
                 }
 
                 if (_healthTestCallbackId == -1)
@@ -308,7 +312,11 @@ namespace SensusService
             lock (_locker)
             {
                 if (_runningProtocolIds.Remove(id))
+                {
                     Save();
+
+                    SensusServiceHelper.Get().UpdateApplicationStatus(_runningProtocolIds.Count + " protocol" + (_runningProtocolIds.Count == 1 ? " is " : "s are") + " running");
+                }
 
                 if (_runningProtocolIds.Count == 0)
                     CancelRepeatingCallback(_healthTestCallbackId);

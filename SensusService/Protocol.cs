@@ -434,6 +434,9 @@ namespace SensusService
                 _mostRecentReport = new ProtocolReport(DateTimeOffset.UtcNow, error, warning, misc);
 
                 SensusServiceHelper.Get().Logger.Log("Protocol report:" + Environment.NewLine + _mostRecentReport, LoggingLevel.Normal, GetType());
+
+                int runningProtocols = SensusServiceHelper.Get().RunningProtocolIds.Count;
+                SensusServiceHelper.Get().UpdateApplicationStatus(runningProtocols + " protocol" + (runningProtocols == 1 ? " is " : "s are") + " running");
             }
         }
 

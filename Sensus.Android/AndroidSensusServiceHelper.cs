@@ -348,6 +348,11 @@ namespace Sensus.Android
                 _wakeLock.Release();
         }
 
+        public override void UpdateApplicationStatus(string status)
+        {
+            _service.UpdateNotification("Sensus", status + " (tap to open)");
+        }
+
         public override void Destroy()
         {
             base.Destroy();

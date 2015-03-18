@@ -36,17 +36,7 @@ namespace Sensus.Android
 
             _notificationManager = GetSystemService(Context.NotificationService) as NotificationManager;
 
-            // build notification for app
-            TaskStackBuilder stackBuilder = TaskStackBuilder.Create(this);
-            stackBuilder.AddParentStack(Java.Lang.Class.FromType(typeof(AndroidMainActivity)));
-            stackBuilder.AddNextIntent(new Intent(this, typeof(AndroidMainActivity)));
-            PendingIntent pendingIntent = stackBuilder.GetPendingIntent(NOTIFICATION_PENDING_INTENT_ID, PendingIntentFlags.OneShot);
-            _notification = new Notification.Builder(this).SetContentTitle("Sensus")
-                                                          .SetContentText("Tap to Open")
-                                                          .SetSmallIcon(Resource.Drawable.ic_launcher)
-                                                          .SetContentIntent(pendingIntent)
-                                                          .SetAutoCancel(true)
-                                                          .SetOngoing(true).Build();
+            UpdateNotification("Sensus", "");
 
             _sensusServiceHelper = SensusServiceHelper.Load<AndroidSensusServiceHelper>(new Geolocator(this)) as AndroidSensusServiceHelper;
             if (_sensusServiceHelper == null)
@@ -80,8 +70,6 @@ namespace Sensus.Android
 
             _sensusServiceHelper.StartAsync(() =>
                 {
-                    _notificationManager.Notify(SERVICE_NOTIFICATION_ID, _notification);
-
                     if (intent.GetBooleanExtra(AndroidSensusServiceHelper.INTENT_EXTRA_SENSUS_CALLBACK, false))
                     {
                         int callbackId = intent.GetIntExtra(AndroidSensusServiceHelper.INTENT_EXTRA_SENSUS_CALLBACK_ID, -1);
@@ -108,6 +96,23 @@ namespace Sensus.Android
         public override IBinder OnBind(Intent intent)
         {
             return new AndroidSensusServiceBinder(_sensusServiceHelper);
+        }
+
+        public void UpdateNotification(string title, string text)
+        {
+            TaskStackBuilder stackBuilder = TaskStackBuilder.Create(this);
+            stackBuilder.AddParentStack(Java.Lang.Class.FromType(typeof(AndroidMainActivity)));
+            stackBuilder.AddNextIntent(new Intent(this, typeof(AndroidMainActivity)));
+            PendingIntent pendingIntent = stackBuilder.GetPendingIntent(NOTIFICATION_PENDING_INTENT_ID, PendingIntentFlags.OneShot);
+
+            _notification = new Notification.Builder(this).SetContentTitle(title)
+                                                          .SetContentText(text)
+                                                          .SetSmallIcon(Resource.Drawable.ic_launcher)
+                                                          .SetContentIntent(pendingIntent)
+                                                          .SetAutoCancel(false)
+                                                          .SetOngoing(true).Build();
+
+            _notificationManager.Notify(SERVICE_NOTIFICATION_ID, _notification);
         }
     }
 }
