@@ -35,6 +35,8 @@ namespace SensusService
         #region static members
         private static SensusServiceHelper _singleton;
         private static object _staticLockObject = new object();
+        protected static readonly string XAMARIN_INSIGHTS_APP_KEY = "97af5c4ab05c6a69d2945fd403ff45535f8bb9bb";
+        private static readonly string ENCRYPTION_KEY = "Making stuff private!";
         private static readonly string _shareDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "share");
         private static readonly string _logPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
         private static readonly string _serializationPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_service_helper.json");
@@ -45,6 +47,17 @@ namespace SensusService
                 TypeNameHandling = TypeNameHandling.All,
                 ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
             };
+
+        private static byte[] EncryptionKeyBytes
+        {
+            get
+            {
+                byte[] encryptionKeyBytes = new byte[32];
+                byte[] bytes = Encoding.Default.GetBytes(ENCRYPTION_KEY);
+                Array.Copy(bytes, encryptionKeyBytes, Math.Min(bytes.Length, encryptionKeyBytes.Length));
+                return encryptionKeyBytes;
+            }
+        }
 
         public static SensusServiceHelper Get()
         {
@@ -87,7 +100,7 @@ namespace SensusService
 
             try
             {
-                sensusServiceHelper = JsonConvert.DeserializeObject<T>(File.ReadAllText(_serializationPath), _serializationSettings);
+                sensusServiceHelper = JsonConvert.DeserializeObject<T>(AesDecrypt(File.ReadAllBytes(_serializationPath)), _serializationSettings);
                 sensusServiceHelper.Initialize(geolocator);
                 sensusServiceHelper.Logger.Log("Deserialized service helper with " + sensusServiceHelper.RegisteredProtocols.Count + " protocols.", LoggingLevel.Normal, null);  
             }
@@ -99,9 +112,44 @@ namespace SensusService
 
             return sensusServiceHelper;
         }
-        #endregion
 
-        protected const string XAMARIN_INSIGHTS_APP_KEY = "97af5c4ab05c6a69d2945fd403ff45535f8bb9bb";
+        #region encryption
+        public static byte[] AesEncrypt(string s)
+        {
+            using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
+            {
+                byte[] encryptionKeyBytes = EncryptionKeyBytes;
+                aes.KeySize = encryptionKeyBytes.Length * 8;
+
+                byte[] initialization = new byte[16];
+                aes.BlockSize = initialization.Length * 8;
+
+                using (ICryptoTransform transform = aes.CreateEncryptor(encryptionKeyBytes, initialization))
+                {
+                    byte[] unencrypted = Encoding.Unicode.GetBytes(s);
+                    return transform.TransformFinalBlock(unencrypted, 0, unencrypted.Length);
+                }
+            }
+        }
+
+        public static string AesDecrypt(byte[] bytes)
+        {
+            using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
+            {
+                byte[] encryptionKeyBytes = EncryptionKeyBytes;
+                aes.KeySize = encryptionKeyBytes.Length * 8;
+
+                byte[] initialization = new byte[16];
+                aes.BlockSize = initialization.Length * 8;
+
+                using (ICryptoTransform transform = aes.CreateDecryptor(encryptionKeyBytes, initialization))
+                {
+                    return Encoding.Unicode.GetString(transform.TransformFinalBlock(bytes, 0, bytes.Length));
+                }
+            }
+        }
+        #endregion
+        #endregion
 
         /// <summary>
         /// Raised when the service helper has stopped.
@@ -193,7 +241,7 @@ namespace SensusService
                     Save();
                 }
             }
-        }
+        }           
 
         protected SensusServiceHelper()
         {
@@ -335,7 +383,12 @@ namespace SensusService
             {
                 try
                 {
-                    File.WriteAllText(_serializationPath, JsonConvert.SerializeObject(this, _serializationSettings));
+                    using (FileStream file = new FileStream(_serializationPath, FileMode.Create, FileAccess.Write))
+                    {
+                        byte[] encryptedBytes = AesEncrypt(JsonConvert.SerializeObject(this, _serializationSettings));
+                        file.Write(encryptedBytes, 0, encryptedBytes.Length);
+                        file.Close();
+                    }
                 }
                 catch (Exception ex)
                 {

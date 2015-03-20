@@ -48,11 +48,12 @@ namespace SensusService
 
                     try
                     {
-                        WebClient downloadClient = new WebClient();
                         ManualResetEvent protocolWait = new ManualResetEvent(false);
-                        downloadClient.DownloadStringCompleted += (s, args) =>
+
+                        WebClient downloadClient = new WebClient();
+                        downloadClient.DownloadDataCompleted += (object sender, DownloadDataCompletedEventArgs e) =>
                         {
-                            FromJsonAsync(args.Result, p =>
+                            FromJsonAsync(SensusServiceHelper.AesDecrypt(e.Result), p =>
                                 {
                                     protocol = p;
                                     protocolWait.Set();
@@ -62,7 +63,10 @@ namespace SensusService
                         downloadClient.DownloadStringAsync(webURI);
                         protocolWait.WaitOne();
                     }
-                    catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to download Protocol from URI \"" + webURI + "\":  " + ex.Message + ". If this is an HTTPS URI, make sure the server's certificate is valid.", LoggingLevel.Normal, null); }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Failed to download Protocol from URI \"" + webURI + "\":  " + ex.Message + ". If this is an HTTPS URI, make sure the server's certificate is valid.", LoggingLevel.Normal, null);
+                    }
 
                     callback(protocol);
 
@@ -77,29 +81,35 @@ namespace SensusService
 
                     try
                     {
-                        using (StreamReader reader = new StreamReader(stream))
-                        {
-                            string json = reader.ReadToEnd();
-                            reader.Close();
+                        ManualResetEvent protocolWait = new ManualResetEvent(false);
 
-                            ManualResetEvent protocolWait = new ManualResetEvent(false);
-                            FromJsonAsync(json, p =>
-                                {
-                                    protocol = p;
-                                    protocolWait.Set();
-                                });
+                        MemoryStream byteStream = new MemoryStream();
+                        stream.CopyTo(byteStream);
 
-                            protocolWait.WaitOne();
-                        }
+                        FromJsonAsync(SensusServiceHelper.AesDecrypt(byteStream.ToArray()), p =>
+                            {
+                                protocol = p;
+                                protocolWait.Set();
+                            });
+
+                        protocolWait.WaitOne();
                     }
-                    catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to read Protocol from stream:  " + ex.Message, LoggingLevel.Normal, null); }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Failed to read Protocol from stream:  " + ex.Message, LoggingLevel.Normal, null);
+                    }
 
                     callback(protocol);
 
                 }).Start();
         }
 
-        public static void FromJsonAsync(string json, Action<Protocol> callback)
+        /// <summary>
+        /// Converts JSON to a Protocol object. Private because Protocols should always be serialized as encrypted binary codes, and this function works with unencrypted strings (it's called in service of the former).
+        /// </summary>
+        /// <param name="json">JSON to deserialize.</param>
+        /// <param name="callback">Function to call when deserialization is complete.</param>
+        private static void FromJsonAsync(string json, Action<Protocol> callback)
         {
             // start new thread, in case this method has been called from the UI thread...we're going to block below after calling the main thread.
             new Thread(() =>
@@ -288,9 +298,10 @@ namespace SensusService
 
         public void Save(string path)
         {
-            using (StreamWriter file = new StreamWriter(path))
+            using (FileStream file = new FileStream(path, FileMode.Create, FileAccess.Write))
             {
-                file.Write(JsonConvert.SerializeObject(this, _jsonSerializerSettings));
+                byte[] encryptedBytes = SensusServiceHelper.AesEncrypt(JsonConvert.SerializeObject(this, _jsonSerializerSettings));
+                file.Write(encryptedBytes, 0, encryptedBytes.Length);
                 file.Close();
             }
         }
