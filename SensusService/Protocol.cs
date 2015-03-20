@@ -148,6 +148,7 @@ namespace SensusService
         private string _storageDirectory;
         private ProtocolReport _mostRecentReport;
         private bool _forceProtocolReportsToRemoteDataStore;
+        private string _lockPasswordHash;
 
         private readonly object _locker = new object();
 
@@ -232,6 +233,18 @@ namespace SensusService
             set { _forceProtocolReportsToRemoteDataStore = value; }
         }
 
+        public string LockPasswordHash
+        {
+            get 
+            {
+                return _lockPasswordHash; 
+            }
+            set
+            {
+                _lockPasswordHash = value;
+            }
+        }
+
         /// <summary>
         /// For JSON deserialization
         /// </summary>
@@ -239,6 +252,7 @@ namespace SensusService
         {
             _running = false;
             _forceProtocolReportsToRemoteDataStore = false;
+            _lockPasswordHash = "";
         }
 
         /// <summary>

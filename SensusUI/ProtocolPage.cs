@@ -164,12 +164,45 @@ namespace SensusUI
             foreach (View view in views)
                 stack.Children.Add(view);
 
+            Button lockButton = new Button
+            {
+                Text = _protocol.LockPasswordHash == "" ? "Lock" : "Unlock",
+                FontSize = 20,
+                HorizontalOptions = LayoutOptions.FillAndExpand
+            };
+
+            lockButton.Clicked += (o, e) =>
+            {
+                if (lockButton.Text == "Lock")
+                {
+                    UiBoundSensusServiceHelper.Get(true).PromptForInputAsync("Create password to lock protocol:", false, password =>
+                        {
+                            if (password == null)
+                                return;
+                            else if (string.IsNullOrWhiteSpace(password))
+                                UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Please enter a non-empty password.");
+                            else
+                            {
+                                _protocol.LockPasswordHash = UiBoundSensusServiceHelper.Get(true).GetMd5Hash(password);
+                                Device.BeginInvokeOnMainThread(() => lockButton.Text = "Unlock");
+                            }
+                        });
+                }
+                else if (lockButton.Text == "Unlock")
+                {
+                    _protocol.LockPasswordHash = "";
+                    lockButton.Text = "Lock";
+                }
+            };
+
+            stack.Children.Add(lockButton);
+
             Content = new ScrollView
             {
                 Content = stack
             };
 
-            #region toolbar
+            #region toolbar            
             ToolbarItems.Add(new ToolbarItem("Ping", null, async () =>
                 {
                     if (SensusServiceHelper.Get().ProtocolShouldBeRunning(_protocol))

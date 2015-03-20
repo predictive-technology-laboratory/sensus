@@ -103,7 +103,7 @@ namespace Sensus.Android
             TaskStackBuilder stackBuilder = TaskStackBuilder.Create(this);
             stackBuilder.AddParentStack(Java.Lang.Class.FromType(typeof(AndroidMainActivity)));
             stackBuilder.AddNextIntent(new Intent(this, typeof(AndroidMainActivity)));
-            PendingIntent pendingIntent = stackBuilder.GetPendingIntent(NOTIFICATION_PENDING_INTENT_ID, PendingIntentFlags.OneShot);
+            PendingIntent pendingIntent = stackBuilder.GetPendingIntent(NOTIFICATION_PENDING_INTENT_ID, PendingIntentFlags.UpdateCurrent);
 
             _notification = new Notification.Builder(this).SetContentTitle(title)
                                                           .SetContentText(text)

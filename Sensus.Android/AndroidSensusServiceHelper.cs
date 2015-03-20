@@ -215,7 +215,7 @@ namespace Sensus.Android
                             EditText inputEdit = new EditText(mainActivity);
 
                             AlertDialog dialog = new AlertDialog.Builder(mainActivity)
-                                                 .SetTitle("Sensus is Requesting Input")
+                                                 .SetTitle("Sensus is requesting input...")
                                                  .SetMessage(prompt)
                                                  .SetView(inputEdit)
                                                  .SetPositiveButton("OK", (o, e) =>
@@ -242,6 +242,7 @@ namespace Sensus.Android
                             dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.DismissKeyguard);
                             dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.ShowWhenLocked);
                             dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.TurnScreenOn);
+                            dialog.Window.SetSoftInputMode(global::Android.Views.SoftInput.StateAlwaysVisible);
 
                             // dim whatever is behind the dialog
                             dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.DimBehind);

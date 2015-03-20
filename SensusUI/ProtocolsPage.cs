@@ -37,14 +37,33 @@ namespace SensusUI
             Content = _protocolsList;
 
             #region toolbar
-            ToolbarItems.Add(new ToolbarItem("Open", null, async () =>
+            ToolbarItems.Add(new ToolbarItem("Open", null, () =>
                 {
                     if (_protocolsList.SelectedItem != null)
                     {
-                        ProtocolPage protocolPage = new ProtocolPage(_protocolsList.SelectedItem as Protocol);
-                        protocolPage.Disappearing += (o, e) => Bind();
-                        await Navigation.PushAsync(protocolPage);
-                        _protocolsList.SelectedItem = null;
+                        Protocol protocol = _protocolsList.SelectedItem as Protocol;
+
+                        Action openProtocol = new Action(async() =>
+                            {
+                                ProtocolPage protocolPage = new ProtocolPage(protocol);
+                                protocolPage.Disappearing += (o, e) => Bind();
+                                await Navigation.PushAsync(protocolPage);
+                                _protocolsList.SelectedItem = null;
+                            });
+                        
+                        if(protocol.LockPasswordHash == "")
+                            openProtocol();
+                        else
+                            UiBoundSensusServiceHelper.Get(true).PromptForInputAsync("Enter protocol password to open:", false, password => 
+                                {
+                                    if(password == null)
+                                        return;
+                                    
+                                    if(UiBoundSensusServiceHelper.Get(true).GetMd5Hash(password) == protocol.LockPasswordHash)
+                                        Device.BeginInvokeOnMainThread(openProtocol);
+                                    else
+                                        UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Incorrect password");
+                                });
                     }
                 }));
 
@@ -56,28 +75,45 @@ namespace SensusUI
                     _protocolsList.ItemsSource = UiBoundSensusServiceHelper.Get(true).RegisteredProtocols;
                 }));
 
-            ToolbarItems.Add(new ToolbarItem("-", null, async () =>
+            ToolbarItems.Add(new ToolbarItem("-", null, () =>
                 {
                     if (_protocolsList.SelectedItem != null)
                     {
-                        Protocol protocolToRemove = _protocolsList.SelectedItem as Protocol;
+                        Protocol protocolToDelete = _protocolsList.SelectedItem as Protocol;
 
-                        if (await DisplayAlert("Delete " + protocolToRemove.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
-                        {
-                            protocolToRemove.StopAsync(() =>
+                        Action deleteProtocol = new Action(async () =>
+                            {
+                                if (await DisplayAlert("Delete " + protocolToDelete.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
                                 {
-                                    UiBoundSensusServiceHelper.Get(true).UnregisterProtocol(protocolToRemove);
-
-                                    try { Directory.Delete(protocolToRemove.StorageDirectory, true); }
-                                    catch (Exception ex) { UiBoundSensusServiceHelper.Get(true).Logger.Log("Failed to delete protocol storage directory \"" + protocolToRemove.StorageDirectory + "\":  " + ex.Message, LoggingLevel.Normal, GetType()); }
-
-                                    Device.BeginInvokeOnMainThread(() =>
+                                    protocolToDelete.StopAsync(() =>
                                         {
-                                            _protocolsList.ItemsSource = _protocolsList.ItemsSource.Cast<Protocol>().Where(p => p != protocolToRemove);
-                                            _protocolsList.SelectedItem = null;
+                                            UiBoundSensusServiceHelper.Get(true).UnregisterProtocol(protocolToDelete);
+
+                                            try { Directory.Delete(protocolToDelete.StorageDirectory, true); }
+                                            catch (Exception ex) { UiBoundSensusServiceHelper.Get(true).Logger.Log("Failed to delete protocol storage directory \"" + protocolToDelete.StorageDirectory + "\":  " + ex.Message, LoggingLevel.Normal, GetType()); }
+
+                                            Device.BeginInvokeOnMainThread(() =>
+                                                {
+                                                    _protocolsList.ItemsSource = _protocolsList.ItemsSource.Cast<Protocol>().Where(p => p != protocolToDelete);
+                                                    _protocolsList.SelectedItem = null;
+                                                });
                                         });
+                                }
+                            });
+
+                        if(protocolToDelete.LockPasswordHash == "")
+                            deleteProtocol();
+                        else
+                            UiBoundSensusServiceHelper.Get(true).PromptForInputAsync("Enter protocol password to delete:", false, password => 
+                                {
+                                    if(password == null)
+                                        return;
+                                    
+                                    if(UiBoundSensusServiceHelper.Get(true).GetMd5Hash(password) == protocolToDelete.LockPasswordHash)
+                                        Device.BeginInvokeOnMainThread(deleteProtocol);
+                                    else
+                                        UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Incorrect password"); 
                                 });
-                        }
                     }
                 }));
             #endregion
