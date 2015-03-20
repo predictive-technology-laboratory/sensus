@@ -74,5 +74,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Remote\AmazonS3RemoteDataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\LocationProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\SpeedProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\DatumAnonymizer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />
   </ItemGroup>
 </Project>
