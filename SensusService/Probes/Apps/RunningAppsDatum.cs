@@ -45,8 +45,8 @@ namespace SensusService.Probes.Apps
         public RunningAppsDatum(DateTimeOffset timestamp, string name, string description)
             : base(timestamp)
         {
-            _name = name == null ? "" : name;
-            _description = description == null ? "" : description;
+            _name = name ?? "";
+            _description = description ?? "";
         }
 
         public override string ToString()
