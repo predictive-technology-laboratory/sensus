@@ -20,6 +20,14 @@ namespace SensusService
 {
     public class StringHashAnonymizer : DatumPropertyAnonymizer
     {
+        public override string DisplayText
+        {
+            get
+            {
+                return "Hash with MD5";
+            }
+        }
+       
         public override object Apply(object value)
         {
             if (value == null)

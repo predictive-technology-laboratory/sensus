@@ -18,6 +18,8 @@ namespace SensusService.Anonymization
 {    
     public abstract class DatumPropertyAnonymizer
     {
+        public abstract string DisplayText { get; }
+
         public abstract object Apply(object value);
     }
 }

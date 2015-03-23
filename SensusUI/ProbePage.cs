@@ -18,6 +18,10 @@ using SensusUI.UiProperties;
 using Xamarin.Forms;
 using System.Collections.Generic;
 using System;
+using System.Reflection;
+using System.Linq;
+using SensusService;
+using SensusService.Anonymization;
 
 namespace SensusUI
 {
@@ -39,6 +43,7 @@ namespace SensusUI
             foreach (StackLayout stack in UiProperty.GetPropertyStacks(probe))
                 contentLayout.Children.Add(stack);
 
+            #region script probes
             if (probe is ScriptProbe)
             {
                 ScriptProbe scriptProbe = probe as ScriptProbe;
@@ -71,6 +76,45 @@ namespace SensusUI
                         await Navigation.PushAsync(new ScriptTriggersPage(scriptProbe));
                     };
             }
+            #endregion
+
+            #region anonymization
+            Type datumType = probe.DatumType;
+            foreach(PropertyInfo anonymizableProperty in datumType.GetProperties())
+            {
+                Anonymizable anonymizableAttribute = anonymizableProperty.GetCustomAttribute<Anonymizable>(true);
+                if(anonymizableAttribute == null)
+                    continue;
+
+                Label propertyLabel = new Label
+                    {
+                        Text = anonymizableAttribute.PropertyDisplayName ?? anonymizableProperty.Name,
+                        FontSize = 20
+                    };
+                            
+                Picker anonymizerPicker = new Picker();
+                anonymizerPicker.Items.Add("None");
+                foreach(DatumPropertyAnonymizer anonymizer in anonymizableAttribute.Anonymizers)
+                    anonymizerPicker.Items.Add(anonymizer.DisplayText);
+
+                anonymizerPicker.SelectedIndexChanged += (o,e) =>
+                    {
+                        if(anonymizerPicker.SelectedIndex == 0)
+                            probe.Protocol.JsonAnonymizer.ClearAnonymizer(anonymizableProperty);
+                        else
+                            probe.Protocol.JsonAnonymizer.SetAnonymizer(anonymizableProperty, anonymizableAttribute.Anonymizers[anonymizerPicker.SelectedIndex - 1]);
+                    };
+
+                StackLayout propertyStack = new StackLayout
+                    {
+                        Orientation = StackOrientation.Horizontal,
+                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        Children = { propertyLabel, anonymizerPicker }
+                    };
+
+                contentLayout.Children.Add(propertyStack);
+            }
+            #endregion
 
             Content = new ScrollView
             {

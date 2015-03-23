@@ -56,9 +56,15 @@ namespace SensusService
             _propertyAnonymizer[property] = anonymizer;
         }
 
+        public void ClearAnonymizer(PropertyInfo property)
+        {
+            _propertyAnonymizer.Remove(property);
+        }
+
         protected override IValueProvider CreateMemberValueProvider(MemberInfo member)
         {
             PropertyInfo property = member as PropertyInfo;
+
             DatumPropertyAnonymizer anonymizer;
             if (property != null && _propertyAnonymizer.TryGetValue(property, out anonymizer))
                 return new AnonymizedValueProvider(property, anonymizer);

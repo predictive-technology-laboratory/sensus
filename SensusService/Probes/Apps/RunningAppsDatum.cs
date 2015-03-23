@@ -25,14 +25,14 @@ namespace SensusService.Probes.Apps
         private string _description;
 
         [TextProbeTriggerProperty]
-        [Anonymizable(new object[] { new StringHashAnonymizer() } )]
+        [Anonymizable(null, new object[] { typeof(StringHashAnonymizer) })]
         public string Name
         {
             get { return _name; }
             set { _name = value; }
         }
 
-        [Anonymizable(
+        [Anonymizable(null, new object[] { typeof(StringHashAnonymizer) })]
         public string Description
         {
             get { return _description; }

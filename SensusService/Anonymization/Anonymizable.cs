@@ -14,18 +14,33 @@
 
 using System;
 using SensusService.Anonymization;
+using System.Collections.Generic;
 
 namespace SensusService
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public class Anonymizable : Attribute
     {
-        private DatumPropertyAnonymizer[] _anonymizationOptions;
+        private string _propertyDisplayName;
+        private List<DatumPropertyAnonymizer> _anonymizers;
 
-        public Anonymizable(object[] anonymizerOptions)
+        public string PropertyDisplayName
         {
-            _anonymizationOptions = anonymizerOptions;
+            get { return _propertyDisplayName; }
+        }
+
+        public List<DatumPropertyAnonymizer> Anonymizers
+        {
+            get { return _anonymizers; }
+        }
+
+        public Anonymizable(string propertyDisplayName, object[] anonymizers)
+        {
+            _propertyDisplayName = propertyDisplayName;
+
+            _anonymizers = new List<DatumPropertyAnonymizer>();
+            foreach (Type anonymizerType in anonymizers)
+                _anonymizers.Add(Activator.CreateInstance(anonymizerType) as DatumPropertyAnonymizer);
         }
     }
-}
-
+}  

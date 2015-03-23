@@ -159,6 +159,7 @@ namespace SensusService
         private ProtocolReport _mostRecentReport;
         private bool _forceProtocolReportsToRemoteDataStore;
         private string _lockPasswordHash;
+        private AnonymizedJsonContractResolver _jsonAnonymizer;              
 
         private readonly object _locker = new object();
 
@@ -255,6 +256,12 @@ namespace SensusService
             }
         }
 
+        public AnonymizedJsonContractResolver JsonAnonymizer
+        {
+            get { return _jsonAnonymizer; }
+            set { _jsonAnonymizer = value; }
+        }
+
         /// <summary>
         /// For JSON deserialization
         /// </summary>
@@ -263,6 +270,7 @@ namespace SensusService
             _running = false;
             _forceProtocolReportsToRemoteDataStore = false;
             _lockPasswordHash = "";
+            _jsonAnonymizer = new AnonymizedJsonContractResolver();
         }
 
         /// <summary>
