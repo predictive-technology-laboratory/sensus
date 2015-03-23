@@ -15,10 +15,10 @@
 using System;
 
 namespace SensusService.Anonymization
-{
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    public abstract class DatumAnonymizer : Attribute
+{    
+    public abstract class DatumPropertyAnonymizer
     {
+        public abstract object Apply(object value);
     }
 }
 

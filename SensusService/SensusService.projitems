@@ -74,7 +74,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Remote\AmazonS3RemoteDataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\LocationProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\SpeedProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\DatumAnonymizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\AnonymizedJsonContractResolver.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\StringHashAnonymizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\DatumPropertyAnonymizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizable.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />
