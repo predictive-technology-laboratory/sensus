@@ -15,11 +15,12 @@
 using System;
 using SensusService.Anonymization;
 using SensusService.Exceptions;
+using Newtonsoft.Json;
 
 namespace SensusService
 {
     public class StringHashAnonymizer : DatumPropertyAnonymizer
-    {
+    {        
         public override string DisplayText
         {
             get

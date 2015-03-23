@@ -79,23 +79,42 @@ namespace SensusUI
             #endregion
 
             #region anonymization
+            bool separatorAdded = false;
             Type datumType = probe.DatumType;
             foreach(PropertyInfo anonymizableProperty in datumType.GetProperties())
             {
+                if(!separatorAdded)
+                {
+                    contentLayout.Children.Add(new BoxView() { Color = Color.Gray, WidthRequest = 100, HeightRequest = 2 });
+                    contentLayout.Children.Add(new Label { Text = "Anonymization", FontSize = 20, HorizontalOptions = LayoutOptions.Center });
+                    separatorAdded = true;
+                }
+
                 Anonymizable anonymizableAttribute = anonymizableProperty.GetCustomAttribute<Anonymizable>(true);
                 if(anonymizableAttribute == null)
                     continue;
 
                 Label propertyLabel = new Label
                     {
-                        Text = anonymizableAttribute.PropertyDisplayName ?? anonymizableProperty.Name,
-                        FontSize = 20
+                        Text = (anonymizableAttribute.PropertyDisplayName ?? anonymizableProperty.Name) + ":",
+                        FontSize = 20,
+                        HorizontalOptions = LayoutOptions.FillAndExpand
                     };
                             
-                Picker anonymizerPicker = new Picker();
+                Picker anonymizerPicker = new Picker
+                    {
+                        Title = "Select Anonymization Method",
+                        HorizontalOptions = LayoutOptions.FillAndExpand
+                    };
+                
                 anonymizerPicker.Items.Add("None");
                 foreach(DatumPropertyAnonymizer anonymizer in anonymizableAttribute.Anonymizers)
                     anonymizerPicker.Items.Add(anonymizer.DisplayText);
+
+                anonymizerPicker.SelectedIndex = 0;
+                DatumPropertyAnonymizer selectedAnonymizer = probe.Protocol.JsonAnonymizer.GetAnonymizer(anonymizableProperty);
+                if(selectedAnonymizer != null)
+                    anonymizerPicker.SelectedIndex = anonymizableAttribute.Anonymizers.IndexOf(selectedAnonymizer) + 1;
 
                 anonymizerPicker.SelectedIndexChanged += (o,e) =>
                     {

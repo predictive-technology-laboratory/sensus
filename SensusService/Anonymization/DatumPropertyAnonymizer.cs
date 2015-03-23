@@ -13,14 +13,26 @@
 // limitations under the License.
 
 using System;
+using Newtonsoft.Json;
 
 namespace SensusService.Anonymization
 {    
     public abstract class DatumPropertyAnonymizer
     {
+        [JsonIgnore]
         public abstract string DisplayText { get; }
 
         public abstract object Apply(object value);
+
+        public override bool Equals(object obj)
+        {
+            return GetType() == obj.GetType();
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }
 

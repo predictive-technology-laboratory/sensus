@@ -17,6 +17,7 @@ using Newtonsoft.Json.Serialization;
 using System.Reflection;
 using SensusService.Anonymization;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace SensusService
 {
@@ -46,9 +47,46 @@ namespace SensusService
 
         private Dictionary<PropertyInfo, DatumPropertyAnonymizer> _propertyAnonymizer;
 
+        public ObservableCollection<string> PropertyStringAnonymizerString
+        {
+            get
+            {
+                ObservableCollection<string> propStrAnonStr = new ObservableCollection<string>();
+                foreach (PropertyInfo property in _propertyAnonymizer.Keys)
+                    propStrAnonStr.Add(property.DeclaringType.FullName + "-" + property.Name + ":" + _propertyAnonymizer[property].GetType().FullName);
+
+                propStrAnonStr.CollectionChanged += (o, a) =>
+                {
+                    foreach (string s in a.NewItems)
+                    {
+                        string[] parts = s.Split(':');
+
+                        string[] propertyParts = parts[0].Split('-');
+                        Type propertyType = Type.GetType(propertyParts[0]);
+                        PropertyInfo property = propertyType.GetProperty(propertyParts[1]);
+
+                        Type anonymizerType = Type.GetType(parts[1]);
+                        DatumPropertyAnonymizer anonymizer = Activator.CreateInstance(anonymizerType) as DatumPropertyAnonymizer;
+
+                        _propertyAnonymizer.Add(property, anonymizer);
+                    }
+                };
+
+                return propStrAnonStr;
+            }                
+        }
+
         public AnonymizedJsonContractResolver()
         {
             _propertyAnonymizer = new Dictionary<PropertyInfo, DatumPropertyAnonymizer>();
+        }
+
+        public DatumPropertyAnonymizer GetAnonymizer(PropertyInfo property)
+        {
+            if (_propertyAnonymizer.ContainsKey(property))
+                return _propertyAnonymizer[property];
+            else
+                return null;
         }
 
         public void SetAnonymizer(PropertyInfo property, DatumPropertyAnonymizer anonymizer)
