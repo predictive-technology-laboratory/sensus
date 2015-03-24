@@ -15,21 +15,26 @@
 using System;
 using Newtonsoft.Json;
 
-namespace SensusService.Anonymization
+namespace SensusService.Anonymization.Anonymizers
 {    
     public abstract class Anonymizer
     {
         [JsonIgnore]
         public abstract string DisplayText { get; }
 
-        public abstract object Apply(object value);
+        /// <summary>
+        /// Applies this anonymizer to an object. It is important to always return the same datatype as is passed in.
+        /// </summary>
+        /// <param name="value">Value.</param>
+        public abstract object Apply(object value, Protocol protocol);
 
         public override bool Equals(object obj)
         {
             if (obj == null)
                 return false;
             
-            // compare most-derived types of current and passed object
+            // compare most-derived types of current and passed object -- this comparison is used in the UI when the user is selecting the 
+            // anonymizer to apply to a datum property.
             return GetType() == obj.GetType();
         }
 

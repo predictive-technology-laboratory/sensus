@@ -23,6 +23,7 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using Xamarin.Forms;
+using SensusService.Anonymization;
 
 namespace SensusService
 {
@@ -159,7 +160,8 @@ namespace SensusService
         private ProtocolReport _mostRecentReport;
         private bool _forceProtocolReportsToRemoteDataStore;
         private string _lockPasswordHash;
-        private AnonymizedJsonContractResolver _jsonAnonymizer;              
+        private AnonymizedJsonContractResolver _jsonAnonymizer;
+        private DateTimeOffset _firstStartTimestamp;
 
         private readonly object _locker = new object();
 
@@ -262,6 +264,18 @@ namespace SensusService
             set { _jsonAnonymizer = value; }
         }
 
+        public DateTimeOffset FirstStartTimestamp
+        {
+            get
+            {
+                return _firstStartTimestamp;
+            }
+            set
+            {
+                _firstStartTimestamp = value;
+            }
+        }
+
         /// <summary>
         /// For JSON deserialization
         /// </summary>
@@ -270,7 +284,8 @@ namespace SensusService
             _running = false;
             _forceProtocolReportsToRemoteDataStore = false;
             _lockPasswordHash = "";
-            _jsonAnonymizer = new AnonymizedJsonContractResolver();
+            _jsonAnonymizer = new AnonymizedJsonContractResolver(this);
+            _firstStartTimestamp = DateTimeOffset.MinValue;
         }
 
         /// <summary>
@@ -333,6 +348,9 @@ namespace SensusService
 
                 SensusServiceHelper.Get().RegisterProtocol(this);
                 SensusServiceHelper.Get().AddRunningProtocolId(_id);
+
+                if (_firstStartTimestamp == DateTimeOffset.MinValue)
+                    _firstStartTimestamp = DateTimeOffset.UtcNow;
 
                 SensusServiceHelper.Get().Logger.Log("Starting probes for protocol " + _name + ".", LoggingLevel.Normal, GetType());
                 int probesStarted = 0;

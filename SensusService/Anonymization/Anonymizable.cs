@@ -15,8 +15,10 @@
 using System;
 using SensusService.Anonymization;
 using System.Collections.Generic;
+using SensusService.Anonymization.Anonymizers;
+using SensusService.Exceptions;
 
-namespace SensusService
+namespace SensusService.Anonymization
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public class Anonymizable : Attribute
@@ -34,13 +36,19 @@ namespace SensusService
             get { return _anonymizers; }
         }
 
-        public Anonymizable(string propertyDisplayName, object[] anonymizers)
+        public Anonymizable(string propertyDisplayName, Type[] anonymizerTypes)
         {
             _propertyDisplayName = propertyDisplayName;
 
             _anonymizers = new List<Anonymizer>();
-            foreach (Type anonymizerType in anonymizers)
-                _anonymizers.Add(Activator.CreateInstance(anonymizerType) as Anonymizer);
+            foreach (Type anonymizerType in anonymizerTypes)
+            {
+                Anonymizer anonymizer = Activator.CreateInstance(anonymizerType) as Anonymizer;
+                if (anonymizer == null)
+                    throw new SensusException("Attempted to create an anonymizer that does not derive from Anonymizer.");
+                
+                _anonymizers.Add(anonymizer);
+            }
         }
     }
 }  

@@ -15,6 +15,8 @@
 using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using SensusService.Anonymization;
+using SensusService.Anonymization.Anonymizers;
 
 namespace SensusService
 {
@@ -46,6 +48,7 @@ namespace SensusService
         private string _deviceId;
         private DateTimeOffset _timestamp;
         private int _hashCode;
+        private bool _anonymized;       
 
         public string Id
         {
@@ -57,38 +60,61 @@ namespace SensusService
             }
         }
 
+        [Anonymizable("Device ID", new Type[] { typeof(StringMD5Anonymizer) })]
         public string DeviceId
         {
             get { return _deviceId; }
             set { _deviceId = value; }
         }
 
+        [Anonymizable(null, new Type[] { typeof(DateTimeOffsetTimelineAnonymizer) })]
         public DateTimeOffset Timestamp
         {
             get { return _timestamp; }
             set { _timestamp = value; }
-        }           
+        }   
+
+        public bool Anonymized
+        {
+            get
+            {
+                return _anonymized;
+            }
+            set
+            {
+                _anonymized = value;
+            }
+        }
 
         [JsonIgnore]
         public abstract string DisplayDetail { get; }
 
-        private Datum() { }  // for JSON.NET deserialization
-
-        protected Datum(DateTimeOffset timestamp)
+        /// <summary>
+        /// Parameterless constructor For JSON.NET deserialization.
+        /// </summary>
+        private Datum()
         {
-            _timestamp = timestamp;
             _deviceId = SensusServiceHelper.Get().DeviceId;
+            _anonymized = false;
             Id = Guid.NewGuid().ToString();
         }
 
-        public string GetJSON(IContractResolver contractResolver)
+        protected Datum(DateTimeOffset timestamp)
+            : this()
         {
-            IContractResolver previousContractResolver = _serializationSettings.ContractResolver;
+            _timestamp = timestamp;
+        }
 
-            _serializationSettings.ContractResolver = contractResolver;
+        public string GetJSON(AnonymizedJsonContractResolver anonymizationContractResolver)
+        {
+            _serializationSettings.ContractResolver = anonymizationContractResolver;
+
+            // set _anonymized to true so that the resulting JSON is properly characterized as having been passed through an anonymization
+            // process. however, the current object itself will not be modified, so change _anonymized back to false after we get the JSON
+            // in order for the current object to be properly characterized.
+            _anonymized = true;
             string json = JsonConvert.SerializeObject(this, Formatting.None, _serializationSettings).Replace('\n', ' ').Replace('\r', ' ');
-
-            _serializationSettings.ContractResolver = previousContractResolver;
+            _anonymized = false;
 
             return json;
         }

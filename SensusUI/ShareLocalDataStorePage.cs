@@ -97,7 +97,7 @@ namespace SensusUI
                             int dataWritten = 0;
                             foreach (Datum datum in localData)
                             {
-                                shareFile.WriteLine(datum.GetJSON(null));
+                                shareFile.WriteLine(datum.GetJSON(localDataStore.Protocol.JsonAnonymizer));
 
                                 if((++dataWritten % (localData.Count / 10)) == 0)
                                     Device.BeginInvokeOnMainThread(() => progressBar.ProgressTo(dataWritten / (double)localData.Count, 250, Easing.Linear));

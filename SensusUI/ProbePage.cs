@@ -22,6 +22,7 @@ using System.Reflection;
 using System.Linq;
 using SensusService;
 using SensusService.Anonymization;
+using SensusService.Anonymization.Anonymizers;
 
 namespace SensusUI
 {

@@ -17,7 +17,7 @@ using SensusService.Anonymization;
 using SensusService.Exceptions;
 using Newtonsoft.Json;
 
-namespace SensusService
+namespace SensusService.Anonymization.Anonymizers
 {
     public class StringMD5Anonymizer : Anonymizer
     {        
@@ -29,7 +29,7 @@ namespace SensusService
             }
         }
        
-        public override object Apply(object value)
+        public override object Apply(object value, Protocol Protocol)
         {
             if (value == null)
                 return null;

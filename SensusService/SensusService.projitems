@@ -76,10 +76,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\SpeedProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\AnonymizedJsonContractResolver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizable.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\StringMD5Anonymizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\StringMD5Anonymizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\Anonymizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\DateTimeOffsetTimelineAnonymizer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\" />
   </ItemGroup>
 </Project>

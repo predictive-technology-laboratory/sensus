@@ -18,8 +18,10 @@ using System.Reflection;
 using SensusService.Anonymization;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using SensusService.Exceptions;
+using SensusService.Anonymization.Anonymizers;
 
-namespace SensusService
+namespace SensusService.Anonymization
 {
     public class AnonymizedJsonContractResolver : DefaultContractResolver
     {
@@ -27,11 +29,13 @@ namespace SensusService
         {
             private PropertyInfo _property;
             private Anonymizer _anonymizer;
+            private Protocol _protocol;
 
-            public AnonymizedValueProvider(PropertyInfo property, Anonymizer anonymizer)
+            public AnonymizedValueProvider(PropertyInfo property, Anonymizer anonymizer, Protocol protocol)
             {
                 _property = property;
                 _anonymizer = anonymizer;
+                _protocol = protocol;
             }
 
             public void SetValue(object target, object value)
@@ -41,11 +45,37 @@ namespace SensusService
 
             public object GetValue(object target)
             {
-                return _anonymizer.Apply(_property.GetValue(target));
+                // TODO:  Does this work for timestamps?
+
+                Datum datum = target as Datum;
+
+                if (datum == null)
+                    throw new SensusException("Attempted to apply anonymizer to non-datum object.");
+
+                object propertyValue = _property.GetValue(datum);
+
+                // don't re-anonymize data
+                if (datum.Anonymized)
+                    return propertyValue;
+                else
+                    return _anonymizer.Apply(_property.GetValue(target), _protocol);
             }
         }
 
+        private Protocol _protocol;
         private Dictionary<PropertyInfo, Anonymizer> _propertyAnonymizer;
+
+        public Protocol Protocol
+        {
+            get
+            {
+                return _protocol;
+            }
+            set
+            {
+                _protocol = value;
+            }
+        }
 
         /// <summary>
         /// Allows JSON serialization of the _propertyAnonymizer collection, which includes unserializable
@@ -83,9 +113,15 @@ namespace SensusService
             }                
         }
 
-        public AnonymizedJsonContractResolver()
+        private AnonymizedJsonContractResolver()
         {
             _propertyAnonymizer = new Dictionary<PropertyInfo, Anonymizer>();
+        }
+
+        public AnonymizedJsonContractResolver(Protocol protocol)
+            : this()
+        {
+            _protocol = protocol;
         }
 
         public Anonymizer GetAnonymizer(PropertyInfo property)
@@ -112,7 +148,7 @@ namespace SensusService
 
             Anonymizer anonymizer;
             if (property != null && _propertyAnonymizer.TryGetValue(property, out anonymizer))
-                return new AnonymizedValueProvider(property, anonymizer);
+                return new AnonymizedValueProvider(property, anonymizer, _protocol);
             else
                 return base.CreateMemberValueProvider(member);
         }
