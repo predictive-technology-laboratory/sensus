@@ -23,12 +23,12 @@ namespace SensusService
 {
     public class AnonymizedJsonContractResolver : DefaultContractResolver
     {
-        public class AnonymizedValueProvider : IValueProvider
+        private class AnonymizedValueProvider : IValueProvider
         {
             private PropertyInfo _property;
-            private DatumPropertyAnonymizer _anonymizer;
+            private Anonymizer _anonymizer;
 
-            public AnonymizedValueProvider(PropertyInfo property, DatumPropertyAnonymizer anonymizer)
+            public AnonymizedValueProvider(PropertyInfo property, Anonymizer anonymizer)
             {
                 _property = property;
                 _anonymizer = anonymizer;
@@ -45,43 +45,50 @@ namespace SensusService
             }
         }
 
-        private Dictionary<PropertyInfo, DatumPropertyAnonymizer> _propertyAnonymizer;
+        private Dictionary<PropertyInfo, Anonymizer> _propertyAnonymizer;
 
+        /// <summary>
+        /// Allows JSON serialization of the _propertyAnonymizer collection, which includes unserializable
+        /// PropertyInfo objects.
+        /// </summary>
+        /// <value>The property string anonymizer string.</value>
         public ObservableCollection<string> PropertyStringAnonymizerString
         {
             get
             {
-                ObservableCollection<string> propStrAnonStr = new ObservableCollection<string>();
+                // get specs for current collection -- this is what will be serialized
+                ObservableCollection<string> propertyAnonymizerSpecs = new ObservableCollection<string>();
                 foreach (PropertyInfo property in _propertyAnonymizer.Keys)
-                    propStrAnonStr.Add(property.DeclaringType.FullName + "-" + property.Name + ":" + _propertyAnonymizer[property].GetType().FullName);
+                    propertyAnonymizerSpecs.Add(property.DeclaringType.FullName + "-" + property.Name + ":" + _propertyAnonymizer[property].GetType().FullName);
 
-                propStrAnonStr.CollectionChanged += (o, a) =>
+                // if we're deserializing, then propertyAnonymizerSpecs will be empty here but will shortly be filled -- handle the filling events.
+                propertyAnonymizerSpecs.CollectionChanged += (o, a) =>
                 {
-                    foreach (string s in a.NewItems)
+                    foreach (string propertyAnonymizerSpec in a.NewItems)
                     {
-                        string[] parts = s.Split(':');
+                        string[] propertyAnonymizerParts = propertyAnonymizerSpec.Split(':');
 
-                        string[] propertyParts = parts[0].Split('-');
-                        Type propertyType = Type.GetType(propertyParts[0]);
-                        PropertyInfo property = propertyType.GetProperty(propertyParts[1]);
+                        string[] propertyParts = propertyAnonymizerParts[0].Split('-');
+                        Type datumType = Type.GetType(propertyParts[0]);
+                        PropertyInfo property = datumType.GetProperty(propertyParts[1]);
 
-                        Type anonymizerType = Type.GetType(parts[1]);
-                        DatumPropertyAnonymizer anonymizer = Activator.CreateInstance(anonymizerType) as DatumPropertyAnonymizer;
+                        Type anonymizerType = Type.GetType(propertyAnonymizerParts[1]);
+                        Anonymizer anonymizer = Activator.CreateInstance(anonymizerType) as Anonymizer;
 
                         _propertyAnonymizer.Add(property, anonymizer);
                     }
                 };
 
-                return propStrAnonStr;
+                return propertyAnonymizerSpecs;
             }                
         }
 
         public AnonymizedJsonContractResolver()
         {
-            _propertyAnonymizer = new Dictionary<PropertyInfo, DatumPropertyAnonymizer>();
+            _propertyAnonymizer = new Dictionary<PropertyInfo, Anonymizer>();
         }
 
-        public DatumPropertyAnonymizer GetAnonymizer(PropertyInfo property)
+        public Anonymizer GetAnonymizer(PropertyInfo property)
         {
             if (_propertyAnonymizer.ContainsKey(property))
                 return _propertyAnonymizer[property];
@@ -89,7 +96,7 @@ namespace SensusService
                 return null;
         }
 
-        public void SetAnonymizer(PropertyInfo property, DatumPropertyAnonymizer anonymizer)
+        public void SetAnonymizer(PropertyInfo property, Anonymizer anonymizer)
         {
             _propertyAnonymizer[property] = anonymizer;
         }
@@ -103,7 +110,7 @@ namespace SensusService
         {
             PropertyInfo property = member as PropertyInfo;
 
-            DatumPropertyAnonymizer anonymizer;
+            Anonymizer anonymizer;
             if (property != null && _propertyAnonymizer.TryGetValue(property, out anonymizer))
                 return new AnonymizedValueProvider(property, anonymizer);
             else

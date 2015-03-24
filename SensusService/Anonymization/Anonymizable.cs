@@ -22,14 +22,14 @@ namespace SensusService
     public class Anonymizable : Attribute
     {
         private string _propertyDisplayName;
-        private List<DatumPropertyAnonymizer> _anonymizers;
+        private List<Anonymizer> _anonymizers;
 
         public string PropertyDisplayName
         {
             get { return _propertyDisplayName; }
         }
 
-        public List<DatumPropertyAnonymizer> Anonymizers
+        public List<Anonymizer> Anonymizers
         {
             get { return _anonymizers; }
         }
@@ -38,9 +38,9 @@ namespace SensusService
         {
             _propertyDisplayName = propertyDisplayName;
 
-            _anonymizers = new List<DatumPropertyAnonymizer>();
+            _anonymizers = new List<Anonymizer>();
             foreach (Type anonymizerType in anonymizers)
-                _anonymizers.Add(Activator.CreateInstance(anonymizerType) as DatumPropertyAnonymizer);
+                _anonymizers.Add(Activator.CreateInstance(anonymizerType) as Anonymizer);
         }
     }
 }  

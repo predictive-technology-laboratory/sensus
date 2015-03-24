@@ -13,25 +13,33 @@
 // limitations under the License.
 
 using System;
+using SensusService.Anonymization;
+using SensusService.Exceptions;
 using Newtonsoft.Json;
 
-namespace SensusService.Anonymization
-{    
-    public abstract class DatumPropertyAnonymizer
-    {
-        [JsonIgnore]
-        public abstract string DisplayText { get; }
-
-        public abstract object Apply(object value);
-
-        public override bool Equals(object obj)
+namespace SensusService
+{
+    public class StringMD5Anonymizer : Anonymizer
+    {        
+        public override string DisplayText
         {
-            return GetType() == obj.GetType();
+            get
+            {
+                return "MD5 Hash";
+            }
         }
-
-        public override int GetHashCode()
+       
+        public override object Apply(object value)
         {
-            return base.GetHashCode();
+            if (value == null)
+                return null;
+            
+            string s = value as string;
+
+            if (s == null)
+                throw new SensusException("Attempted to apply string MD5 anonymizer to a non-string value.");
+
+            return SensusServiceHelper.Get().GetMd5Hash(s);
         }
     }
 }

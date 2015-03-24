@@ -75,9 +75,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\LocationProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\SpeedProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\AnonymizedJsonContractResolver.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\StringHashAnonymizer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\DatumPropertyAnonymizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\StringMD5Anonymizer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />

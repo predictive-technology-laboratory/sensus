@@ -58,9 +58,9 @@ namespace SensusUI
                 contentLayout.Children.Add(editScriptButton);
 
                 editScriptButton.Clicked += async (oo, e) =>
-                    {
-                        await Navigation.PushAsync(new ScriptPage(scriptProbe.Script));
-                    };
+                {
+                    await Navigation.PushAsync(new ScriptPage(scriptProbe.Script));
+                };
 
                 Button viewScriptTriggersButton = new Button
                 {
@@ -72,67 +72,70 @@ namespace SensusUI
                 contentLayout.Children.Add(viewScriptTriggersButton);
 
                 viewScriptTriggersButton.Clicked += async (o, e) =>
-                    {
-                        await Navigation.PushAsync(new ScriptTriggersPage(scriptProbe));
-                    };
+                {
+                    await Navigation.PushAsync(new ScriptTriggersPage(scriptProbe));
+                };
             }
             #endregion
 
             #region anonymization
-            bool separatorAdded = false;
-            Type datumType = probe.DatumType;
-            foreach(PropertyInfo anonymizableProperty in datumType.GetProperties())
-            {
-                if(!separatorAdded)
+            List<PropertyInfo> anonymizableProperties = probe.DatumType.GetProperties().Where(property => property.GetCustomAttribute<Anonymizable>() != null).ToList();
+
+            string separatorText = "Anonymization";
+            if (anonymizableProperties.Count == 0)
+                separatorText += " (None Available)";
+            else
+                foreach (PropertyInfo anonymizableProperty in anonymizableProperties)
                 {
-                    contentLayout.Children.Add(new BoxView() { Color = Color.Gray, WidthRequest = 100, HeightRequest = 2 });
-                    contentLayout.Children.Add(new Label { Text = "Anonymization", FontSize = 20, HorizontalOptions = LayoutOptions.Center });
-                    separatorAdded = true;
-                }
+                    Anonymizable anonymizable = anonymizableProperty.GetCustomAttribute<Anonymizable>(true);
 
-                Anonymizable anonymizableAttribute = anonymizableProperty.GetCustomAttribute<Anonymizable>(true);
-                if(anonymizableAttribute == null)
-                    continue;
-
-                Label propertyLabel = new Label
+                    Label propertyLabel = new Label
                     {
-                        Text = (anonymizableAttribute.PropertyDisplayName ?? anonymizableProperty.Name) + ":",
+                        Text = (anonymizable.PropertyDisplayName ?? anonymizableProperty.Name) + ":",
                         FontSize = 20,
                         HorizontalOptions = LayoutOptions.FillAndExpand
                     };
                             
-                Picker anonymizerPicker = new Picker
+                    Picker anonymizerPicker = new Picker
                     {
-                        Title = "Select Anonymization Method",
                         HorizontalOptions = LayoutOptions.FillAndExpand
                     };
                 
-                anonymizerPicker.Items.Add("None");
-                foreach(DatumPropertyAnonymizer anonymizer in anonymizableAttribute.Anonymizers)
-                    anonymizerPicker.Items.Add(anonymizer.DisplayText);
+                    anonymizerPicker.Items.Add("None");
+                    foreach (Anonymizer anonymizer in anonymizable.Anonymizers)
+                        anonymizerPicker.Items.Add(anonymizer.DisplayText);
 
-                anonymizerPicker.SelectedIndex = 0;
-                DatumPropertyAnonymizer selectedAnonymizer = probe.Protocol.JsonAnonymizer.GetAnonymizer(anonymizableProperty);
-                if(selectedAnonymizer != null)
-                    anonymizerPicker.SelectedIndex = anonymizableAttribute.Anonymizers.IndexOf(selectedAnonymizer) + 1;
+                    anonymizerPicker.SelectedIndex = 0;
 
-                anonymizerPicker.SelectedIndexChanged += (o,e) =>
+                    Anonymizer selectedAnonymizer = probe.Protocol.JsonAnonymizer.GetAnonymizer(anonymizableProperty);
+                    if (selectedAnonymizer != null)
+                        anonymizerPicker.SelectedIndex = anonymizable.Anonymizers.IndexOf(selectedAnonymizer) + 1;
+
+                    anonymizerPicker.SelectedIndexChanged += (o, e) =>
                     {
-                        if(anonymizerPicker.SelectedIndex == 0)
+                        if (anonymizerPicker.SelectedIndex == 0)
                             probe.Protocol.JsonAnonymizer.ClearAnonymizer(anonymizableProperty);
                         else
-                            probe.Protocol.JsonAnonymizer.SetAnonymizer(anonymizableProperty, anonymizableAttribute.Anonymizers[anonymizerPicker.SelectedIndex - 1]);
+                            probe.Protocol.JsonAnonymizer.SetAnonymizer(anonymizableProperty, anonymizable.Anonymizers[anonymizerPicker.SelectedIndex - 1]);
                     };
 
-                StackLayout propertyStack = new StackLayout
+                    StackLayout propertyStack = new StackLayout
                     {
                         Orientation = StackOrientation.Horizontal,
                         HorizontalOptions = LayoutOptions.FillAndExpand,
                         Children = { propertyLabel, anonymizerPicker }
                     };
 
-                contentLayout.Children.Add(propertyStack);
-            }
+                    contentLayout.Children.Add(propertyStack);
+                }
+
+            contentLayout.Children.Add(new Label
+                { 
+                    Text = separatorText,
+                    FontSize = 20, 
+                    FontAttributes = FontAttributes.Italic,
+                    HorizontalOptions = LayoutOptions.Center 
+                });
             #endregion
 
             Content = new ScrollView
