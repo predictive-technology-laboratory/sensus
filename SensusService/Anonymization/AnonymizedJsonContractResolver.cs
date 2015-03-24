@@ -89,7 +89,7 @@ namespace SensusService.Anonymization
                 // get specs for current collection -- this is what will be serialized
                 ObservableCollection<string> propertyAnonymizerSpecs = new ObservableCollection<string>();
                 foreach (PropertyInfo property in _propertyAnonymizer.Keys)
-                    propertyAnonymizerSpecs.Add(property.DeclaringType.FullName + "-" + property.Name + ":" + _propertyAnonymizer[property].GetType().FullName);
+                    propertyAnonymizerSpecs.Add(property.ReflectedType.FullName + "-" + property.Name + ":" + _propertyAnonymizer[property].GetType().FullName);
 
                 // if we're deserializing, then propertyAnonymizerSpecs will be empty here but will shortly be filled -- handle the filling events.
                 propertyAnonymizerSpecs.CollectionChanged += (o, a) =>
@@ -126,10 +126,11 @@ namespace SensusService.Anonymization
 
         public Anonymizer GetAnonymizer(PropertyInfo property)
         {
-            if (_propertyAnonymizer.ContainsKey(property))
-                return _propertyAnonymizer[property];
-            else
-                return null;
+            Anonymizer anonymizer;
+
+            _propertyAnonymizer.TryGetValue(property, out anonymizer);
+
+            return anonymizer;
         }
 
         public void SetAnonymizer(PropertyInfo property, Anonymizer anonymizer)
@@ -139,16 +140,16 @@ namespace SensusService.Anonymization
 
         public void ClearAnonymizer(PropertyInfo property)
         {
-            _propertyAnonymizer.Remove(property);
+            if (_propertyAnonymizer.ContainsKey(property))
+                _propertyAnonymizer.Remove(property);
         }
 
         protected override IValueProvider CreateMemberValueProvider(MemberInfo member)
         {
             PropertyInfo property = member as PropertyInfo;
-
             Anonymizer anonymizer;
             if (property != null && _propertyAnonymizer.TryGetValue(property, out anonymizer))
-                return new AnonymizedValueProvider(property, anonymizer, _protocol);
+                return new AnonymizedValueProvider(property, _propertyAnonymizer[key], _protocol);
             else
                 return base.CreateMemberValueProvider(member);
         }

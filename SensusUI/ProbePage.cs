@@ -82,10 +82,17 @@ namespace SensusUI
             #region anonymization
             List<PropertyInfo> anonymizableProperties = probe.DatumType.GetProperties().Where(property => property.GetCustomAttribute<Anonymizable>() != null).ToList();
 
-            string separatorText = "Anonymization";
-            if (anonymizableProperties.Count == 0)
-                separatorText += " (None Available)";
-            else
+            if (anonymizableProperties.Count > 0)
+            {
+                contentLayout.Children.Add(new Label
+                    { 
+                        Text = "Anonymization",
+                        FontSize = 20, 
+                        FontAttributes = FontAttributes.Italic,
+                        TextColor = Color.Accent,
+                        HorizontalOptions = LayoutOptions.Center 
+                    });
+                
                 foreach (PropertyInfo anonymizableProperty in anonymizableProperties)
                 {
                     Anonymizable anonymizable = anonymizableProperty.GetCustomAttribute<Anonymizable>(true);
@@ -94,7 +101,7 @@ namespace SensusUI
                     {
                         Text = (anonymizable.PropertyDisplayName ?? anonymizableProperty.Name) + ":",
                         FontSize = 20,
-                        HorizontalOptions = LayoutOptions.FillAndExpand
+                        HorizontalOptions = LayoutOptions.Start
                     };
                             
                     Picker anonymizerPicker = new Picker
@@ -129,14 +136,7 @@ namespace SensusUI
 
                     contentLayout.Children.Add(propertyStack);
                 }
-
-            contentLayout.Children.Add(new Label
-                { 
-                    Text = separatorText,
-                    FontSize = 20, 
-                    FontAttributes = FontAttributes.Italic,
-                    HorizontalOptions = LayoutOptions.Center 
-                });
+            }
             #endregion
 
             Content = new ScrollView
