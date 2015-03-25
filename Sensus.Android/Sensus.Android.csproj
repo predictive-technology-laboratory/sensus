@@ -111,9 +111,6 @@
     <Reference Include="System.Net.Http.Extensions">
       <HintPath>..\Components\azure-mobile-services-1.3.1\lib\android\System.Net.Http.Extensions.dll</HintPath>
     </Reference>
-    <Reference Include="DataNuage.Aws.S3.Android">
-      <HintPath>..\Components\DataNuage.Aws.S3-1.5.203.0\lib\android\DataNuage.Aws.S3.Android.dll</HintPath>
-    </Reference>
     <Reference Include="Xamarin.Forms.Platform.Android">
       <HintPath>..\packages\Xamarin.Forms.1.4.0.6341\lib\MonoAndroid10\Xamarin.Forms.Platform.Android.dll</HintPath>
     </Reference>
@@ -125,6 +122,9 @@
     </Reference>
     <Reference Include="Xamarin.Forms.Xaml">
       <HintPath>..\packages\Xamarin.Forms.1.4.0.6341\lib\MonoAndroid10\Xamarin.Forms.Xaml.dll</HintPath>
+    </Reference>
+    <Reference Include="DataNuage.Aws.S3.Android">
+      <HintPath>..\Components\DataNuage.Aws.S3-1.5.216.0\lib\android\DataNuage.Aws.S3.Android.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -222,7 +222,7 @@
       <Visible>False</Visible>
     </XamarinComponentReference>
     <XamarinComponentReference Include="DataNuage.Aws.S3">
-      <Version>1.5.203.0</Version>
+      <Version>1.5.216.0</Version>
       <Visible>False</Visible>
     </XamarinComponentReference>
   </ItemGroup>

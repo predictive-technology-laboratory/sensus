@@ -25,40 +25,46 @@ namespace SensusService.Anonymization
 {
     public class AnonymizedJsonContractResolver : DefaultContractResolver
     {
-        private class AnonymizedValueProvider : IValueProvider
+        private class AnonymizedMemberValueProvider : IValueProvider
         {
             private PropertyInfo _property;
-            private Anonymizer _anonymizer;
-            private Protocol _protocol;
-
-            public AnonymizedValueProvider(PropertyInfo property, Anonymizer anonymizer, Protocol protocol)
-            {
+            private AnonymizedJsonContractResolver _contractResolver;
+            private IValueProvider _defaultMemberValueProvider;
+            
+            public AnonymizedMemberValueProvider(PropertyInfo property, IValueProvider defaultMemberValueProvider, AnonymizedJsonContractResolver contractResolver)
+            {                
                 _property = property;
-                _anonymizer = anonymizer;
-                _protocol = protocol;
+                _defaultMemberValueProvider = defaultMemberValueProvider;
+                _contractResolver = contractResolver;
             }
 
             public void SetValue(object target, object value)
             {
-                _property.SetValue(target, value);
+                _defaultMemberValueProvider.SetValue(target, value);
             }
 
             public object GetValue(object target)
             {
-                // TODO:  Does this work for timestamps?
-
                 Datum datum = target as Datum;
 
                 if (datum == null)
-                    throw new SensusException("Attempted to apply anonymizer to non-datum object.");
+                    throw new SensusException("Attempted to apply serialize/anonymize non-datum object.");
 
-                object propertyValue = _property.GetValue(datum);
-
-                // don't re-anonymize data
-                if (datum.Anonymized)
-                    return propertyValue;
+                // if we're processing the Anonymized property, return true so that the output JSON properly reflects the fact that the datum has been passed through an anonymizer.
+                if (_property.DeclaringType == typeof(Datum) && _property.Name == "Anonymized")
+                    return true;
                 else
-                    return _anonymizer.Apply(_property.GetValue(target), _protocol);
+                {
+                    object propertyValue = _defaultMemberValueProvider.GetValue(datum);
+
+                    // don't re-anonymize data, and don't anonymize values for which we have no anonymizer
+                    Anonymizer anonymizer;
+                    if (datum.Anonymized || !_contractResolver._propertyAnonymizer.TryGetValue(datum.GetType().GetProperty(_property.Name), out anonymizer))  // we re-get the PropertyInfo from the datum's type so that it matches our dictionary of PropertyInfo objects (the reflected type needs to be the most-derived, which doesn't happen leading up to this point for some reason).
+                        return propertyValue;
+                    // anonymize!
+                    else
+                        return anonymizer.Apply(propertyValue, _contractResolver.Protocol);
+                }
             }
         }
 
@@ -79,7 +85,8 @@ namespace SensusService.Anonymization
 
         /// <summary>
         /// Allows JSON serialization of the _propertyAnonymizer collection, which includes unserializable
-        /// PropertyInfo objects.
+        /// PropertyInfo objects. Store the type/name of the PropertyInfo objects, along with the type of 
+        /// anonymizer.
         /// </summary>
         /// <value>The property string anonymizer string.</value>
         public ObservableCollection<string> PropertyStringAnonymizerString
@@ -113,6 +120,9 @@ namespace SensusService.Anonymization
             }                
         }
 
+        /// <summary>
+        /// For JSON.NET deserialization.
+        /// </summary>
         private AnonymizedJsonContractResolver()
         {
             _propertyAnonymizer = new Dictionary<PropertyInfo, Anonymizer>();
@@ -140,18 +150,15 @@ namespace SensusService.Anonymization
 
         public void ClearAnonymizer(PropertyInfo property)
         {
-            if (_propertyAnonymizer.ContainsKey(property))
-                _propertyAnonymizer.Remove(property);
+            _propertyAnonymizer.Remove(property);
         }
 
         protected override IValueProvider CreateMemberValueProvider(MemberInfo member)
         {
-            PropertyInfo property = member as PropertyInfo;
-            Anonymizer anonymizer;
-            if (property != null && _propertyAnonymizer.TryGetValue(property, out anonymizer))
-                return new AnonymizedValueProvider(property, _propertyAnonymizer[key], _protocol);
-            else
-                return base.CreateMemberValueProvider(member);
+            if (!(member is PropertyInfo))
+                throw new SensusException("Attempted to serialize/anonymize non-property datum member.");
+
+            return new AnonymizedMemberValueProvider(member as PropertyInfo, base.CreateMemberValueProvider(member), this);
         }
     }
 }

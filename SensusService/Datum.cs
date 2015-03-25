@@ -108,15 +108,8 @@ namespace SensusService
         public string GetJSON(AnonymizedJsonContractResolver anonymizationContractResolver)
         {
             _serializationSettings.ContractResolver = anonymizationContractResolver;
-
-            // set _anonymized to true so that the resulting JSON is properly characterized as having been passed through an anonymization
-            // process. however, the current object itself will not be modified, so change _anonymized back to false after we get the JSON
-            // in order for the current object to be properly characterized.
-            _anonymized = true;
-            string json = JsonConvert.SerializeObject(this, Formatting.None, _serializationSettings).Replace('\n', ' ').Replace('\r', ' ');
-            _anonymized = false;
-
-            return json;
+                       
+            return JsonConvert.SerializeObject(this, Formatting.None, _serializationSettings).Replace('\n', ' ').Replace('\r', ' ');
         }
 
         public override int GetHashCode()
