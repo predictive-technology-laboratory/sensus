@@ -79,6 +79,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\StringMD5Anonymizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\Anonymizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\DateTimeOffsetTimelineAnonymizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\DoubleRoundingAnonymizer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />

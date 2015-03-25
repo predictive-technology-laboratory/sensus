@@ -12,25 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-
 using System;
-using SensusService.Anonymization;
 
 namespace SensusService.Anonymization.Anonymizers
 {
-    public class DateTimeOffsetTimelineAnonymizer : Anonymizer
+    public class DoubleRoundingAnonymizer : Anonymizer
     {
+        private int _places;
+
         public override string DisplayText
         {
             get
             {
-                return "Anonymous Timeline";
+                "Round:  " + _places + " places";
             }
+        }
+
+        public DoubleRoundingAnonymizer(int places)
+        {
+            _places = places;
         }
 
         public override object Apply(object value, Protocol protocol)
         {
-            return DateTimeOffset.MinValue + ((DateTimeOffset)value - protocol.FirstStartTimestamp);
+            double d = (double)value;
+
+            if (_places > 0)
+                return Math.Round(d, _places);
+            else if (_places < 0)
+                return (d / Math.Pow(10, _places)) * _places;
+            else
+                return d;
         }
     }
 }
