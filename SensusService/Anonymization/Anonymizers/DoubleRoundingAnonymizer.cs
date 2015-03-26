@@ -49,4 +49,3 @@ namespace SensusService.Anonymization.Anonymizers
         }
     }
 }
-
