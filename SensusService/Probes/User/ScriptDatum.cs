@@ -13,6 +13,8 @@
 // limitations under the License.
 
 using System;
+using SensusService.Anonymization;
+using SensusService.Anonymization.Anonymizers;
 
 namespace SensusService.Probes.User
 {
@@ -21,12 +23,14 @@ namespace SensusService.Probes.User
         private string _response;
         private string _triggerDatumId;
 
+        [Anonymizable(null, typeof(StringMD5Anonymizer), false)]
         public string Response
         {
             get { return _response; }
             set { _response = value; }
         }
 
+        [Anonymizable("Triggering Datum ID", typeof(StringMD5Anonymizer), false)]
         public string TriggerDatumId
         {
             get { return _triggerDatumId; }

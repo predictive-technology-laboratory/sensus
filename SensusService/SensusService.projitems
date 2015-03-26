@@ -80,6 +80,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\Anonymizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\DateTimeOffsetTimelineAnonymizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\DoubleRoundingAnonymizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\DoubleRoundingHundredsAnonymizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\DoubleRoundingTensAnonymizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\DoubleRoundingTenthsAnonymizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\DoubleRoundingHundredthsAnonymizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\DoubleRoundingThousandthsAnonymizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\DoubleRoundingOnesAnonymizer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />

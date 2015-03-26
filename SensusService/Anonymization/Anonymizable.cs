@@ -25,6 +25,7 @@ namespace SensusService.Anonymization
     {
         private string _propertyDisplayName;
         private List<Anonymizer> _anonymizers;
+        private int _defaultAnonymizer;
 
         public string PropertyDisplayName
         {
@@ -34,11 +35,17 @@ namespace SensusService.Anonymization
         public List<Anonymizer> Anonymizers
         {
             get { return _anonymizers; }
+        }            
+
+        public int DefaultAnonymizer
+        {
+            get { return _defaultAnonymizer; }
         }
 
-        public Anonymizable(string propertyDisplayName, Type[] anonymizerTypes)
+        public Anonymizable(string propertyDisplayName, Type[] anonymizerTypes, int defaultAnonymizer)
         {
             _propertyDisplayName = propertyDisplayName;
+            _defaultAnonymizer = defaultAnonymizer;
 
             _anonymizers = new List<Anonymizer>();
             foreach (Type anonymizerType in anonymizerTypes)
@@ -49,6 +56,11 @@ namespace SensusService.Anonymization
                 
                 _anonymizers.Add(anonymizer);
             }
+        }
+
+        public Anonymizable(string propertyDisplayName, Type anonymizerType, bool anonymizeByDefault)
+            : this(propertyDisplayName, new Type[] { anonymizerType }, anonymizeByDefault ? 0 : -1)
+        {
         }
     }
 }  

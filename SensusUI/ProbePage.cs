@@ -113,7 +113,7 @@ namespace SensusUI
                     foreach (Anonymizer anonymizer in anonymizable.Anonymizers)
                         anonymizerPicker.Items.Add(anonymizer.DisplayText);
 
-                    anonymizerPicker.SelectedIndex = 0;
+                    anonymizerPicker.SelectedIndex = anonymizable.DefaultAnonymizer + 1;
 
                     Anonymizer selectedAnonymizer = probe.Protocol.JsonAnonymizer.GetAnonymizer(anonymizableProperty);
                     if (selectedAnonymizer != null)

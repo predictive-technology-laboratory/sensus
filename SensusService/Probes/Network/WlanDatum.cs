@@ -15,6 +15,8 @@
 using Newtonsoft.Json;
 using SensusService.Probes.User.ProbeTriggerProperties;
 using System;
+using SensusService.Anonymization;
+using SensusService.Anonymization.Anonymizers;
 
 namespace SensusService.Probes.Network
 {
@@ -23,6 +25,7 @@ namespace SensusService.Probes.Network
         private string _accessPointBSSID;
 
         [TextProbeTriggerProperty]
+        [Anonymizable("Wireless Access Point", typeof(StringMD5Anonymizer), false)]
         public string AccessPointBSSID
         {
             get { return _accessPointBSSID; }

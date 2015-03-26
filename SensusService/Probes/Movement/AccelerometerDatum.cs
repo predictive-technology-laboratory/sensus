@@ -15,6 +15,8 @@
 using Newtonsoft.Json;
 using SensusService.Probes.User.ProbeTriggerProperties;
 using System;
+using SensusService.Anonymization;
+using SensusService.Anonymization.Anonymizers;
 
 namespace SensusService.Probes.Movement
 {
@@ -25,6 +27,7 @@ namespace SensusService.Probes.Movement
         private double _z;
 
         [NumberProbeTriggerProperty]
+        [Anonymizable(null, new Type[] { typeof(DoubleRoundingTensAnonymizer), typeof(DoubleRoundingOnesAnonymizer) }, -1)]
         public double X
         {
             get { return _x; }
@@ -32,6 +35,7 @@ namespace SensusService.Probes.Movement
         }
 
         [NumberProbeTriggerProperty]
+        [Anonymizable(null, new Type[] { typeof(DoubleRoundingTensAnonymizer), typeof(DoubleRoundingOnesAnonymizer) }, -1)]
         public double Y
         {
             get { return _y; }
@@ -39,6 +43,7 @@ namespace SensusService.Probes.Movement
         }
 
         [NumberProbeTriggerProperty]
+        [Anonymizable(null, new Type[] { typeof(DoubleRoundingTensAnonymizer), typeof(DoubleRoundingOnesAnonymizer) }, -1)]
         public double Z
         {
             get { return _z; }
@@ -62,9 +67,9 @@ namespace SensusService.Probes.Movement
         public override string ToString()
         {
             return base.ToString() + Environment.NewLine +
-                   "x:  " + _x + Environment.NewLine +
-                   "y:  " + _y + Environment.NewLine +
-                   "z:  " + _z;
+                   "X:  " + _x + Environment.NewLine +
+                   "Y:  " + _y + Environment.NewLine +
+                   "Z:  " + _z;
         }
     }
 }

@@ -16,32 +16,19 @@ using System;
 
 namespace SensusService.Anonymization.Anonymizers
 {
-    public abstract class DoubleRoundingAnonymizer : Anonymizer
+    public class DoubleRoundingHundredthsAnonymizer : DoubleRoundingAnonymizer
     {
-        private int _places;
-
         public override string DisplayText
         {
             get
             {
-                return "Round:  " + _places + " places";
+                return "Rount to Hundredths";
             }
         }
 
-        protected DoubleRoundingAnonymizer(int places)
+        public DoubleRoundingHundredthsAnonymizer()
+            : base(2)
         {
-            _places = places;
-        }
-
-        public override object Apply(object value, Protocol protocol)
-        {
-            double d = (double)value;
-
-            if (_places >= 0)
-                return Math.Round(d, _places);
-            else
-                return (d / Math.Pow(10, _places)) * _places;
         }
     }
 }
-

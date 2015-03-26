@@ -26,7 +26,7 @@ namespace SensusService.Probes.Context
         private string _address;
 
         [TextProbeTriggerProperty]
-        [Anonymizable(null, new Type[] { typeof(StringMD5Anonymizer) })]
+        [Anonymizable(null, typeof(StringMD5Anonymizer), false)]
         public string Name
         {
             get { return _name; }
@@ -34,7 +34,7 @@ namespace SensusService.Probes.Context
         }
 
         [TextProbeTriggerProperty]
-        [Anonymizable(null, new Type[] { typeof(StringMD5Anonymizer) })]
+        [Anonymizable(null, typeof(StringMD5Anonymizer), false)]
         public string Address
         {
             get { return _address; }

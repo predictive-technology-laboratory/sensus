@@ -60,14 +60,14 @@ namespace SensusService
             }
         }
 
-        [Anonymizable("Device ID", new Type[] { typeof(StringMD5Anonymizer) })]
+        [Anonymizable("Device ID", typeof(StringMD5Anonymizer), true)]
         public string DeviceId
         {
             get { return _deviceId; }
             set { _deviceId = value; }
         }
 
-        [Anonymizable(null, new Type[] { typeof(DateTimeOffsetTimelineAnonymizer) })]
+        [Anonymizable(null, typeof(DateTimeOffsetTimelineAnonymizer), false)]
         public DateTimeOffset Timestamp
         {
             get { return _timestamp; }

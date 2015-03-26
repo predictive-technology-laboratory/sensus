@@ -28,7 +28,7 @@ namespace SensusService.Probes.Communication
         private string _message;
 
         [TextProbeTriggerProperty]
-        [Anonymizable(null, new Type[] { typeof(StringMD5Anonymizer) })]
+        [Anonymizable(null, typeof(StringMD5Anonymizer), false)]
         public string FromNumber
         {
             get { return _fromNumber; }
@@ -36,7 +36,7 @@ namespace SensusService.Probes.Communication
         }
 
         [TextProbeTriggerProperty]
-        [Anonymizable(null, new Type[] { typeof(StringMD5Anonymizer) })]
+        [Anonymizable(null, typeof(StringMD5Anonymizer), false)]
         public string ToNumber
         {
             get { return _toNumber; }
@@ -44,7 +44,7 @@ namespace SensusService.Probes.Communication
         }
 
         [TextProbeTriggerProperty]
-        [Anonymizable(null, new Type[] { typeof(StringMD5Anonymizer) })]
+        [Anonymizable(null, typeof(StringMD5Anonymizer), false)]
         public string Message
         {
             get { return _message; }

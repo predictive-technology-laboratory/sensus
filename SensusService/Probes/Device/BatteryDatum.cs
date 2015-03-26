@@ -15,6 +15,8 @@
 using Newtonsoft.Json;
 using SensusService.Probes.User.ProbeTriggerProperties;
 using System;
+using SensusService.Anonymization;
+using SensusService.Anonymization.Anonymizers;
 
 namespace SensusService.Probes.Device
 {
@@ -23,6 +25,7 @@ namespace SensusService.Probes.Device
         private double _level;
 
         [NumberProbeTriggerProperty]
+        [Anonymizable(null, typeof(DoubleRoundingTensAnonymizer), false)]
         public double Level
         {
             get { return _level; }
