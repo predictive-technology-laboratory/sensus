@@ -50,18 +50,16 @@ namespace SensusService.Anonymization
                 if (datum == null)
                     throw new SensusException("Attempted to apply serialize/anonymize non-datum object.");
 
-                // if we're processing the Anonymized property, return true so that the output JSON properly reflects the fact that the datum has been passed through an anonymizer.
+                // if we're processing the Anonymized property, return true so that the output JSON properly reflects the fact that the datum has been passed through an anonymizer (this regardless of whether anonymization of data was actually performed)
                 if (_property.DeclaringType == typeof(Datum) && _property.Name == "Anonymized")
                     return true;
                 else
                 {
                     object propertyValue = _defaultMemberValueProvider.GetValue(datum);
 
-                    // TODO:  Make sure default anonymizers get used (even with no UI interaction.
-
                     // don't re-anonymize data, and don't anonymize values for which we have no anonymizer.
                     Anonymizer anonymizer;
-                    if (datum.Anonymized || !_contractResolver._propertyAnonymizer.TryGetValue(datum.GetType().GetProperty(_property.Name), out anonymizer))  // we re-get the PropertyInfo from the datum's type so that it matches our dictionary of PropertyInfo objects (the reflected type needs to be the most-derived, which doesn't happen leading up to this point for some reason).
+                    if (datum.Anonymized || !_contractResolver._propertyAnonymizer.TryGetValue(datum.GetType().GetProperty(_property.Name), out anonymizer) || anonymizer == null)  // we re-get the PropertyInfo from the datum's type so that it matches our dictionary of PropertyInfo objects (the reflected type needs to be the most-derived, which doesn't happen leading up to this point for some reason).
                         return propertyValue;
                     // anonymize!
                     else
@@ -95,24 +93,37 @@ namespace SensusService.Anonymization
         {
             get
             {
-                // get specs for current collection -- this is what will be serialized
+                // get specs for current collection. in the case of serialization, this will store the current _propertyAnonymizer details. in 
+                // the case of deserialization, this will be empty and will be filled in.
                 ObservableCollection<string> propertyAnonymizerSpecs = new ObservableCollection<string>();
                 foreach (PropertyInfo property in _propertyAnonymizer.Keys)
-                    propertyAnonymizerSpecs.Add(property.ReflectedType.FullName + "-" + property.Name + ":" + _propertyAnonymizer[property].GetType().FullName);
+                {                    
+                    string anonymizerTypeStr = "";
+                    Anonymizer anonymizer = _propertyAnonymizer[property];
+                    if (anonymizer != null)
+                        anonymizerTypeStr = anonymizer.GetType().FullName;
+                    
+                    propertyAnonymizerSpecs.Add(property.ReflectedType.FullName + "-" + property.Name + ":" + anonymizerTypeStr);  // use the reflected type and not the declaring type, because we want different anonymizers for the same base-class property (e.g., DeviceId) within child-class implementations.
+                }
 
-                // if we're deserializing, then propertyAnonymizerSpecs will be empty here but will shortly be filled -- handle the filling events.
+                // if we're deserializing, then propertyAnonymizerSpecs will be filled up after it is returned. handle the addition of 
+                // items to rebuild the _propertyAnonymizer collection.
                 propertyAnonymizerSpecs.CollectionChanged += (o, a) =>
                 {
                     foreach (string propertyAnonymizerSpec in a.NewItems)
                     {
-                        string[] propertyAnonymizerParts = propertyAnonymizerSpec.Split(':');
+                        string[] propertyAnonymizerParts = propertyAnonymizerSpec.Split(new char[]{ ':' }, StringSplitOptions.RemoveEmptyEntries);
 
                         string[] propertyParts = propertyAnonymizerParts[0].Split('-');
                         Type datumType = Type.GetType(propertyParts[0]);
                         PropertyInfo property = datumType.GetProperty(propertyParts[1]);
 
-                        Type anonymizerType = Type.GetType(propertyAnonymizerParts[1]);
-                        Anonymizer anonymizer = Activator.CreateInstance(anonymizerType) as Anonymizer;
+                        Anonymizer anonymizer = null;
+                        if (propertyAnonymizerParts.Length > 1)
+                        {
+                            Type anonymizerType = Type.GetType(propertyAnonymizerParts[1]);
+                            anonymizer = Activator.CreateInstance(anonymizerType) as Anonymizer;
+                        }
 
                         _propertyAnonymizer.Add(property, anonymizer);
                     }
@@ -136,6 +147,11 @@ namespace SensusService.Anonymization
             _protocol = protocol;
         }
 
+        public void SetAnonymizer(PropertyInfo property, Anonymizer anonymizer)
+        {
+            _propertyAnonymizer[property] = anonymizer;
+        }
+
         public Anonymizer GetAnonymizer(PropertyInfo property)
         {
             Anonymizer anonymizer;
@@ -143,16 +159,6 @@ namespace SensusService.Anonymization
             _propertyAnonymizer.TryGetValue(property, out anonymizer);
 
             return anonymizer;
-        }
-
-        public void SetAnonymizer(PropertyInfo property, Anonymizer anonymizer)
-        {
-            _propertyAnonymizer[property] = anonymizer;
-        }
-
-        public void ClearAnonymizer(PropertyInfo property)
-        {
-            _propertyAnonymizer.Remove(property);
         }
 
         protected override IValueProvider CreateMemberValueProvider(MemberInfo member)

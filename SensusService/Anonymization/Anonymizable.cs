@@ -24,38 +24,46 @@ namespace SensusService.Anonymization
     public class Anonymizable : Attribute
     {
         private string _propertyDisplayName;
-        private List<Anonymizer> _anonymizers;
-        private int _defaultAnonymizer;
+        private List<Anonymizer> _availableAnonymizers;
+        private Anonymizer _defaultAnonymizer;
 
         public string PropertyDisplayName
         {
             get { return _propertyDisplayName; }
         }
 
-        public List<Anonymizer> Anonymizers
+        public List<Anonymizer> AvailableAnonymizers
         {
-            get { return _anonymizers; }
+            get { return _availableAnonymizers; }
         }            
 
-        public int DefaultAnonymizer
+        public Anonymizer DefaultAnonymizer
         {
             get { return _defaultAnonymizer; }
         }
 
-        public Anonymizable(string propertyDisplayName, Type[] anonymizerTypes, int defaultAnonymizer)
+        public Anonymizable(string propertyDisplayName, Type[] availableAnonymizerTypes, int defaultAnonymizerIndex)
         {
+            if (defaultAnonymizerIndex < -1 || defaultAnonymizerIndex >= availableAnonymizerTypes.Length)
+                throw new SensusException("Attempted to set default anonymizer for property \"" + propertyDisplayName + "\" outside the bounds of available types:  " + defaultAnonymizerIndex + ".");
+            
             _propertyDisplayName = propertyDisplayName;
-            _defaultAnonymizer = defaultAnonymizer;
 
-            _anonymizers = new List<Anonymizer>();
-            foreach (Type anonymizerType in anonymizerTypes)
+            // instantiate available anonymizers
+            _availableAnonymizers = new List<Anonymizer>();
+            foreach (Type availableAnonymizerType in availableAnonymizerTypes)
             {
-                Anonymizer anonymizer = Activator.CreateInstance(anonymizerType) as Anonymizer;
-                if (anonymizer == null)
-                    throw new SensusException("Attempted to create an anonymizer that does not derive from Anonymizer.");
+                Anonymizer availableAnonymizer = Activator.CreateInstance(availableAnonymizerType) as Anonymizer;
+
+                if (availableAnonymizer == null)
+                    throw new SensusException("Attempted to create an anonymizer from a type that does not derive from Anonymizer.");
                 
-                _anonymizers.Add(anonymizer);
+                _availableAnonymizers.Add(availableAnonymizer);
             }
+
+            // set default anonymizer if requested
+            if (defaultAnonymizerIndex >= 0)
+                _defaultAnonymizer = _availableAnonymizers[defaultAnonymizerIndex];
         }
 
         public Anonymizable(string propertyDisplayName, Type anonymizerType, bool anonymizeByDefault)

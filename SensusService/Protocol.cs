@@ -24,6 +24,8 @@ using System.Net;
 using System.Threading;
 using Xamarin.Forms;
 using SensusService.Anonymization;
+using System.Linq;
+using System.Reflection;
 
 namespace SensusService
 {
@@ -292,8 +294,7 @@ namespace SensusService
         /// Constructor
         /// </summary>
         /// <param name="name">Name of protocol.</param>
-        /// <param name="addAllProbes">Whether or not to add all available probes into the protocol.</param>
-        public Protocol(string name, bool addAllProbes)
+        public Protocol(string name)
             : this()
         {
             _name = name;
@@ -310,13 +311,19 @@ namespace SensusService
             }
 
             _probes = new List<Probe>();
+            foreach (Probe probe in Probe.GetAll())
+            {
+                probe.Protocol = this;
 
-            if (addAllProbes)
-                foreach (Probe probe in Probe.GetAll())
+                // since the new probe was just bound to this protocol, we need to let this protocol know about this probe's default anonymization preferences.
+                foreach (PropertyInfo anonymizableProperty in probe.DatumType.GetProperties().Where(property => property.GetCustomAttribute<Anonymizable>() != null))
                 {
-                    probe.Protocol = this;
-                    _probes.Add(probe);
+                    Anonymizable anonymizableAttribute = anonymizableProperty.GetCustomAttribute<Anonymizable>(true);
+                    _jsonAnonymizer.SetAnonymizer(anonymizableProperty, anonymizableAttribute.DefaultAnonymizer);
                 }
+
+                _probes.Add(probe);
+            }
         }
 
         public void Save(string path)

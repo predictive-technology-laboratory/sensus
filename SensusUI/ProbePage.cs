@@ -95,11 +95,11 @@ namespace SensusUI
                 
                 foreach (PropertyInfo anonymizableProperty in anonymizableProperties)
                 {
-                    Anonymizable anonymizable = anonymizableProperty.GetCustomAttribute<Anonymizable>(true);
+                    Anonymizable anonymizableAttribute = anonymizableProperty.GetCustomAttribute<Anonymizable>(true);
 
                     Label propertyLabel = new Label
                     {
-                        Text = (anonymizable.PropertyDisplayName ?? anonymizableProperty.Name) + ":",
+                        Text = (anonymizableAttribute.PropertyDisplayName ?? anonymizableProperty.Name) + ":",
                         FontSize = 20,
                         HorizontalOptions = LayoutOptions.Start
                     };
@@ -110,32 +110,28 @@ namespace SensusUI
                     };
                 
                     anonymizerPicker.Items.Add("None");
-                    foreach (Anonymizer anonymizer in anonymizable.Anonymizers)
+                    foreach (Anonymizer anonymizer in anonymizableAttribute.AvailableAnonymizers)
                         anonymizerPicker.Items.Add(anonymizer.DisplayText);
 
                     anonymizerPicker.SelectedIndexChanged += (o, e) =>
                         {
-                            if (anonymizerPicker.SelectedIndex == 0)
-                                probe.Protocol.JsonAnonymizer.ClearAnonymizer(anonymizableProperty);
-                            else
-                                probe.Protocol.JsonAnonymizer.SetAnonymizer(anonymizableProperty, anonymizable.Anonymizers[anonymizerPicker.SelectedIndex - 1]);
-                        };                    
+                            Anonymizer selectedAnonymizer = null;
+                            if (anonymizerPicker.SelectedIndex > 0)
+                                selectedAnonymizer = anonymizableAttribute.AvailableAnonymizers[anonymizerPicker.SelectedIndex - 1];  // subtract one from the selected index since the JsonAnonymizer's collection of anonymizers start after the "None" option within the picker.
 
-                    Anonymizer selectedAnonymizer = probe.Protocol.JsonAnonymizer.GetAnonymizer(anonymizableProperty);
+                            probe.Protocol.JsonAnonymizer.SetAnonymizer(anonymizableProperty, selectedAnonymizer);
+                        };
 
-                    if (selectedAnonymizer == null)
-                        anonymizerPicker.SelectedIndex = anonymizable.DefaultAnonymizer + 1;
-                    else
-                        anonymizerPicker.SelectedIndex = anonymizable.Anonymizers.IndexOf(selectedAnonymizer) + 1;
+                    anonymizerPicker.SelectedIndex = anonymizableAttribute.AvailableAnonymizers.IndexOf(probe.Protocol.JsonAnonymizer.GetAnonymizer(anonymizableProperty)) + 1;
 
-                    StackLayout propertyStack = new StackLayout
+                    StackLayout anonymizablePropertyStack = new StackLayout
                     {
                         Orientation = StackOrientation.Horizontal,
                         HorizontalOptions = LayoutOptions.FillAndExpand,
                         Children = { propertyLabel, anonymizerPicker }
                     };
 
-                    contentLayout.Children.Add(propertyStack);
+                    contentLayout.Children.Add(anonymizablePropertyStack);
                 }
             }
             #endregion
