@@ -59,7 +59,7 @@ namespace SensusService.Anonymization
 
                     // don't re-anonymize data, and don't anonymize values for which we have no anonymizer.
                     Anonymizer anonymizer;
-                    if (datum.Anonymized || !_contractResolver._propertyAnonymizer.TryGetValue(datum.GetType().GetProperty(_property.Name), out anonymizer) || anonymizer == null)  // we re-get the PropertyInfo from the datum's type so that it matches our dictionary of PropertyInfo objects (the reflected type needs to be the most-derived, which doesn't happen leading up to this point for some reason).
+                    if (datum.Anonymized || (anonymizer = _contractResolver.GetAnonymizer(datum.GetType().GetProperty(_property.Name))) == null)  // we re-get the PropertyInfo from the datum's type so that it matches our dictionary of PropertyInfo objects (the reflected type needs to be the most-derived, which doesn't happen leading up to this point for some reason).
                         return propertyValue;
                     // anonymize!
                     else
@@ -93,43 +93,46 @@ namespace SensusService.Anonymization
         {
             get
             {
-                // get specs for current collection. in the case of serialization, this will store the current _propertyAnonymizer details. in 
-                // the case of deserialization, this will be empty and will be filled in.
-                ObservableCollection<string> propertyAnonymizerSpecs = new ObservableCollection<string>();
-                foreach (PropertyInfo property in _propertyAnonymizer.Keys)
-                {                    
-                    string anonymizerTypeStr = "";
-                    Anonymizer anonymizer = _propertyAnonymizer[property];
-                    if (anonymizer != null)
-                        anonymizerTypeStr = anonymizer.GetType().FullName;
-                    
-                    propertyAnonymizerSpecs.Add(property.ReflectedType.FullName + "-" + property.Name + ":" + anonymizerTypeStr);  // use the reflected type and not the declaring type, because we want different anonymizers for the same base-class property (e.g., DeviceId) within child-class implementations.
-                }
-
-                // if we're deserializing, then propertyAnonymizerSpecs will be filled up after it is returned. handle the addition of 
-                // items to rebuild the _propertyAnonymizer collection.
-                propertyAnonymizerSpecs.CollectionChanged += (o, a) =>
+                lock (_propertyAnonymizer)
                 {
-                    foreach (string propertyAnonymizerSpec in a.NewItems)
-                    {
-                        string[] propertyAnonymizerParts = propertyAnonymizerSpec.Split(new char[]{ ':' }, StringSplitOptions.RemoveEmptyEntries);
-
-                        string[] propertyParts = propertyAnonymizerParts[0].Split('-');
-                        Type datumType = Type.GetType(propertyParts[0]);
-                        PropertyInfo property = datumType.GetProperty(propertyParts[1]);
-
-                        Anonymizer anonymizer = null;
-                        if (propertyAnonymizerParts.Length > 1)
-                        {
-                            Type anonymizerType = Type.GetType(propertyAnonymizerParts[1]);
-                            anonymizer = Activator.CreateInstance(anonymizerType) as Anonymizer;
-                        }
-
-                        _propertyAnonymizer.Add(property, anonymizer);
+                    // get specs for current collection. in the case of serialization, this will store the current _propertyAnonymizer details. in 
+                    // the case of deserialization, this will be empty and will be filled in.
+                    ObservableCollection<string> propertyAnonymizerSpecs = new ObservableCollection<string>();
+                    foreach (PropertyInfo property in _propertyAnonymizer.Keys)
+                    {                    
+                        string anonymizerTypeStr = "";
+                        Anonymizer anonymizer = _propertyAnonymizer[property];
+                        if (anonymizer != null)
+                            anonymizerTypeStr = anonymizer.GetType().FullName;
+                    
+                        propertyAnonymizerSpecs.Add(property.ReflectedType.FullName + "-" + property.Name + ":" + anonymizerTypeStr);  // use the reflected type and not the declaring type, because we want different anonymizers for the same base-class property (e.g., DeviceId) within child-class implementations.
                     }
-                };
 
-                return propertyAnonymizerSpecs;
+                    // if we're deserializing, then propertyAnonymizerSpecs will be filled up after it is returned. handle the addition of 
+                    // items to rebuild the _propertyAnonymizer collection.
+                    propertyAnonymizerSpecs.CollectionChanged += (o, a) =>
+                    {
+                        foreach (string propertyAnonymizerSpec in a.NewItems)
+                        {
+                            string[] propertyAnonymizerParts = propertyAnonymizerSpec.Split(new char[]{ ':' }, StringSplitOptions.RemoveEmptyEntries);
+
+                            string[] propertyParts = propertyAnonymizerParts[0].Split('-');
+                            Type datumType = Type.GetType(propertyParts[0]);
+                            PropertyInfo property = datumType.GetProperty(propertyParts[1]);
+
+                            Anonymizer anonymizer = null;
+                            if (propertyAnonymizerParts.Length > 1)
+                            {
+                                Type anonymizerType = Type.GetType(propertyAnonymizerParts[1]);
+                                anonymizer = Activator.CreateInstance(anonymizerType) as Anonymizer;
+                            }
+
+                            _propertyAnonymizer.Add(property, anonymizer);
+                        }
+                    };
+
+                    return propertyAnonymizerSpecs;
+                }
             }                
         }
 
@@ -149,16 +152,22 @@ namespace SensusService.Anonymization
 
         public void SetAnonymizer(PropertyInfo property, Anonymizer anonymizer)
         {
-            _propertyAnonymizer[property] = anonymizer;
+            lock (_propertyAnonymizer)
+            {
+                _propertyAnonymizer[property] = anonymizer;
+            }
         }
 
         public Anonymizer GetAnonymizer(PropertyInfo property)
         {
-            Anonymizer anonymizer;
+            lock (_propertyAnonymizer)
+            {
+                Anonymizer anonymizer;
 
-            _propertyAnonymizer.TryGetValue(property, out anonymizer);
+                _propertyAnonymizer.TryGetValue(property, out anonymizer);
 
-            return anonymizer;
+                return anonymizer;
+            }
         }
 
         protected override IValueProvider CreateMemberValueProvider(MemberInfo member)

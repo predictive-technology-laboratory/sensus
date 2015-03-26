@@ -103,7 +103,8 @@ namespace SensusUI
                         FontSize = 20,
                         HorizontalOptions = LayoutOptions.Start
                     };
-                            
+                       
+                    // populate a picker of anonymizers for the current property
                     Picker anonymizerPicker = new Picker
                     {
                         HorizontalOptions = LayoutOptions.FillAndExpand
@@ -122,7 +123,13 @@ namespace SensusUI
                             probe.Protocol.JsonAnonymizer.SetAnonymizer(anonymizableProperty, selectedAnonymizer);
                         };
 
-                    anonymizerPicker.SelectedIndex = anonymizableAttribute.AvailableAnonymizers.IndexOf(probe.Protocol.JsonAnonymizer.GetAnonymizer(anonymizableProperty)) + 1;
+                    // set the picker's index to the current anonymizer (or "None" if there is no current)
+                    Anonymizer currentAnonymizer = probe.Protocol.JsonAnonymizer.GetAnonymizer(anonymizableProperty);
+                    int currentIndex = 0;
+                    if(currentAnonymizer != null)
+                        currentIndex = anonymizableAttribute.AvailableAnonymizers.IndexOf(currentAnonymizer) + 1;
+                    
+                    anonymizerPicker.SelectedIndex = currentIndex;
 
                     StackLayout anonymizablePropertyStack = new StackLayout
                     {

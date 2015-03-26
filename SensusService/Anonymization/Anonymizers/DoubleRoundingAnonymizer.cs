@@ -35,12 +35,17 @@ namespace SensusService.Anonymization.Anonymizers
 
         public override object Apply(object value, Protocol protocol)
         {
-            double d = (double)value;
+            double doubleValue = (double)value;
 
             if (_places >= 0)
-                return Math.Round(d, _places);
+                return Math.Round(doubleValue, _places);
             else
-                return (d / Math.Pow(10, _places)) * _places;
+            {
+                // round number to nearest 10^(-_places). for example, -1 would round to tens place, -2 to hundreds, etc.
+                doubleValue = doubleValue * Math.Pow(10d, (double)_places);  // shift target place into one position (remember, _places is negative)
+                doubleValue = Math.Round(doubleValue, 0);                    // round off fractional part
+                return doubleValue / Math.Pow(10d, (double)_places);         // shift target place back to its proper location (remember, _places is negative)
+            }
         }
     }
 }
