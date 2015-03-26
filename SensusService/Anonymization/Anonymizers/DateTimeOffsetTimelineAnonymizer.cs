@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System;
-using SensusService.Anonymization;
 
 namespace SensusService.Anonymization.Anonymizers
 {

@@ -113,19 +113,20 @@ namespace SensusUI
                     foreach (Anonymizer anonymizer in anonymizable.Anonymizers)
                         anonymizerPicker.Items.Add(anonymizer.DisplayText);
 
-                    anonymizerPicker.SelectedIndex = anonymizable.DefaultAnonymizer + 1;
+                    anonymizerPicker.SelectedIndexChanged += (o, e) =>
+                        {
+                            if (anonymizerPicker.SelectedIndex == 0)
+                                probe.Protocol.JsonAnonymizer.ClearAnonymizer(anonymizableProperty);
+                            else
+                                probe.Protocol.JsonAnonymizer.SetAnonymizer(anonymizableProperty, anonymizable.Anonymizers[anonymizerPicker.SelectedIndex - 1]);
+                        };                    
 
                     Anonymizer selectedAnonymizer = probe.Protocol.JsonAnonymizer.GetAnonymizer(anonymizableProperty);
-                    if (selectedAnonymizer != null)
-                        anonymizerPicker.SelectedIndex = anonymizable.Anonymizers.IndexOf(selectedAnonymizer) + 1;
 
-                    anonymizerPicker.SelectedIndexChanged += (o, e) =>
-                    {
-                        if (anonymizerPicker.SelectedIndex == 0)
-                            probe.Protocol.JsonAnonymizer.ClearAnonymizer(anonymizableProperty);
-                        else
-                            probe.Protocol.JsonAnonymizer.SetAnonymizer(anonymizableProperty, anonymizable.Anonymizers[anonymizerPicker.SelectedIndex - 1]);
-                    };
+                    if (selectedAnonymizer == null)
+                        anonymizerPicker.SelectedIndex = anonymizable.DefaultAnonymizer + 1;
+                    else
+                        anonymizerPicker.SelectedIndex = anonymizable.Anonymizers.IndexOf(selectedAnonymizer) + 1;
 
                     StackLayout propertyStack = new StackLayout
                     {

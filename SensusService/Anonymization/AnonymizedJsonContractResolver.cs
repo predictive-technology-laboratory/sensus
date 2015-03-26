@@ -57,7 +57,9 @@ namespace SensusService.Anonymization
                 {
                     object propertyValue = _defaultMemberValueProvider.GetValue(datum);
 
-                    // don't re-anonymize data, and don't anonymize values for which we have no anonymizer
+                    // TODO:  Make sure default anonymizers get used (even with no UI interaction.
+
+                    // don't re-anonymize data, and don't anonymize values for which we have no anonymizer.
                     Anonymizer anonymizer;
                     if (datum.Anonymized || !_contractResolver._propertyAnonymizer.TryGetValue(datum.GetType().GetProperty(_property.Name), out anonymizer))  // we re-get the PropertyInfo from the datum's type so that it matches our dictionary of PropertyInfo objects (the reflected type needs to be the most-derived, which doesn't happen leading up to this point for some reason).
                         return propertyValue;

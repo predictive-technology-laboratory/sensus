@@ -13,9 +13,7 @@
 // limitations under the License.
 
 using System;
-using SensusService.Anonymization;
 using SensusService.Exceptions;
-using Newtonsoft.Json;
 
 namespace SensusService.Anonymization.Anonymizers
 {
