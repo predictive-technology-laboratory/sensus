@@ -27,7 +27,7 @@ namespace SensusService.Probes.Movement
         private double _z;
 
         [NumberProbeTriggerProperty]
-        [Anonymizable(null, new Type[] { typeof(DoubleRoundingTensAnonymizer), typeof(DoubleRoundingOnesAnonymizer) }, -1)]
+        [Anonymizable(null, new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
         public double X
         {
             get { return _x; }
@@ -35,7 +35,7 @@ namespace SensusService.Probes.Movement
         }
 
         [NumberProbeTriggerProperty]
-        [Anonymizable(null, new Type[] { typeof(DoubleRoundingTensAnonymizer), typeof(DoubleRoundingOnesAnonymizer) }, -1)]
+        [Anonymizable(null, new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
         public double Y
         {
             get { return _y; }
@@ -43,7 +43,7 @@ namespace SensusService.Probes.Movement
         }
 
         [NumberProbeTriggerProperty]
-        [Anonymizable(null, new Type[] { typeof(DoubleRoundingTensAnonymizer), typeof(DoubleRoundingOnesAnonymizer) }, -1)]
+        [Anonymizable(null, new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
         public double Z
         {
             get { return _z; }

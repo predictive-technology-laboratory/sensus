@@ -25,7 +25,7 @@ namespace SensusService.Probes.Context
         private double _decibels;
 
         [NumberProbeTriggerProperty]
-        [Anonymizable(null, new Type[] { typeof(DoubleRoundingTensAnonymizer), typeof(DoubleRoundingOnesAnonymizer) }, -1)]
+        [Anonymizable(null, new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
         public double Decibels
         {
             get { return _decibels; }

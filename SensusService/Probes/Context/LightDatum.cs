@@ -25,7 +25,7 @@ namespace SensusService.Probes.Context
         private double _brightness;
 
         [NumberProbeTriggerProperty]
-        [Anonymizable(null, new Type[] { typeof(DoubleRoundingHundredsAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
+        [Anonymizable(null, new Type[] { typeof(DoubleRoundingTensAnonymizer), typeof(DoubleRoundingHundredsAnonymizer) }, -1)]
         public double Brightness
         {
             get { return _brightness; }

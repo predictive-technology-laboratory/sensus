@@ -25,7 +25,7 @@ namespace SensusService.Probes.Location
         private double _altitude;
 
         [NumberProbeTriggerProperty]
-        [Anonymizable(null, new Type[] { typeof(DoubleRoundingHundredsAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
+        [Anonymizable(null, new Type[] { typeof(DoubleRoundingTensAnonymizer), typeof(DoubleRoundingHundredsAnonymizer) }, -1)]
         public double Altitude
         {
             get { return _altitude; }
