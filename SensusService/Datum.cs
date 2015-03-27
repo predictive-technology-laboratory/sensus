@@ -60,7 +60,7 @@ namespace SensusService
             }
         }
 
-        [Anonymizable("Device ID", typeof(StringMD5Anonymizer), false)]
+        [Anonymizable("Device ID", typeof(StringMD5Anonymizer), true)]
         public string DeviceId
         {
             get { return _deviceId; }

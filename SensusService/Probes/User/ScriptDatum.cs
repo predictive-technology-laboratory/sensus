@@ -23,7 +23,7 @@ namespace SensusService.Probes.User
         private string _response;
         private string _triggerDatumId;
 
-        [Anonymizable(null, typeof(StringMD5Anonymizer), false)]
+        [Anonymizable(null, typeof(StringMD5Anonymizer), true)]
         public string Response
         {
             get { return _response; }
