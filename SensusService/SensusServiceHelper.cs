@@ -253,7 +253,7 @@ namespace SensusService
             _registeredProtocols = new List<Protocol>();
             _runningProtocolIds = new List<string>();
             _healthTestCallbackId = -1;
-            _healthTestDelayMS = 1000 * 60;
+            _healthTestDelayMS = 60000;
             _healthTestCount = 0;
             _healthTestsPerProtocolReport = 5;
             _idCallback = new Dictionary<int, Action>();           
