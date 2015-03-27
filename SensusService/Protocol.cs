@@ -353,11 +353,12 @@ namespace SensusService
                 if (ProtocolRunningChanged != null)
                     ProtocolRunningChanged(this, _running);
 
-                SensusServiceHelper.Get().RegisterProtocol(this);
-                SensusServiceHelper.Get().AddRunningProtocolId(_id);
-
                 if (_firstStartTimestamp == DateTimeOffset.MinValue)
                     _firstStartTimestamp = DateTimeOffset.UtcNow;
+
+                // let the service helper know that the current protocol is running (saves helper)
+                SensusServiceHelper.Get().RegisterProtocol(this);
+                SensusServiceHelper.Get().AddRunningProtocolId(_id);
 
                 SensusServiceHelper.Get().Logger.Log("Starting probes for protocol " + _name + ".", LoggingLevel.Normal, GetType());
                 int probesStarted = 0;

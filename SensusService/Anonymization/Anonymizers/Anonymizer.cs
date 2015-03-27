@@ -23,9 +23,10 @@ namespace SensusService.Anonymization.Anonymizers
         public abstract string DisplayText { get; }
 
         /// <summary>
-        /// Applies this anonymizer to an object. It is important to always return the same datatype as is passed in.
+        /// Applies this anonymizer the value of a datum property. It is important to always return the same datatype as is passed in.
         /// </summary>
-        /// <param name="value">Value.</param>
+        /// <param name="value">Datum property value to anonymize.</param>
+        /// <param name="protocol">Protocol that owns the datum being anonymized.</param>
         public abstract object Apply(object value, Protocol protocol);
 
         public override bool Equals(object obj)
