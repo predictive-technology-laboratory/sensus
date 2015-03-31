@@ -133,7 +133,7 @@ namespace SensusService.DataStores.Remote
                     datumTypeJSON.Add(datumType, json);
                 }
 
-                json.Append(datum.GetJSON(null) + Environment.NewLine);
+                json.Append(datum.GetJSON(Protocol.JsonAnonymizer) + Environment.NewLine);
 
                 List<Datum> dataSubset;
                 if(!datumTypeDataSubset.TryGetValue(datumType, out dataSubset))

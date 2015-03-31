@@ -15,6 +15,8 @@
 using Newtonsoft.Json;
 using SensusService.Probes.User.ProbeTriggerProperties;
 using System;
+using SensusService.Anonymization;
+using SensusService.Anonymization.Anonymizers;
 
 namespace SensusService.Probes.Location
 {
@@ -23,6 +25,7 @@ namespace SensusService.Probes.Location
         private double _altitude;
 
         [NumberProbeTriggerProperty]
+        [Anonymizable(null, new Type[] { typeof(DoubleRoundingTensAnonymizer), typeof(DoubleRoundingHundredsAnonymizer) }, -1)]
         public double Altitude
         {
             get { return _altitude; }

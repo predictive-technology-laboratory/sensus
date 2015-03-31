@@ -18,6 +18,11 @@ using SensusUI.UiProperties;
 using Xamarin.Forms;
 using System.Collections.Generic;
 using System;
+using System.Reflection;
+using System.Linq;
+using SensusService;
+using SensusService.Anonymization;
+using SensusService.Anonymization.Anonymizers;
 
 namespace SensusUI
 {
@@ -39,6 +44,7 @@ namespace SensusUI
             foreach (StackLayout stack in UiProperty.GetPropertyStacks(probe))
                 contentLayout.Children.Add(stack);
 
+            #region script probes
             if (probe is ScriptProbe)
             {
                 ScriptProbe scriptProbe = probe as ScriptProbe;
@@ -53,9 +59,9 @@ namespace SensusUI
                 contentLayout.Children.Add(editScriptButton);
 
                 editScriptButton.Clicked += async (oo, e) =>
-                    {
-                        await Navigation.PushAsync(new ScriptPage(scriptProbe.Script));
-                    };
+                {
+                    await Navigation.PushAsync(new ScriptPage(scriptProbe.Script));
+                };
 
                 Button viewScriptTriggersButton = new Button
                 {
@@ -67,10 +73,75 @@ namespace SensusUI
                 contentLayout.Children.Add(viewScriptTriggersButton);
 
                 viewScriptTriggersButton.Clicked += async (o, e) =>
-                    {
-                        await Navigation.PushAsync(new ScriptTriggersPage(scriptProbe));
-                    };
+                {
+                    await Navigation.PushAsync(new ScriptTriggersPage(scriptProbe));
+                };
             }
+            #endregion
+
+            #region anonymization
+            List<PropertyInfo> anonymizableProperties = probe.DatumType.GetProperties().Where(property => property.GetCustomAttribute<Anonymizable>() != null).ToList();
+
+            if (anonymizableProperties.Count > 0)
+            {
+                contentLayout.Children.Add(new Label
+                    { 
+                        Text = "Anonymization",
+                        FontSize = 20, 
+                        FontAttributes = FontAttributes.Italic,
+                        TextColor = Color.Accent,
+                        HorizontalOptions = LayoutOptions.Center 
+                    });
+                
+                foreach (PropertyInfo anonymizableProperty in anonymizableProperties)
+                {
+                    Anonymizable anonymizableAttribute = anonymizableProperty.GetCustomAttribute<Anonymizable>(true);
+
+                    Label propertyLabel = new Label
+                    {
+                        Text = (anonymizableAttribute.PropertyDisplayName ?? anonymizableProperty.Name) + ":",
+                        FontSize = 20,
+                        HorizontalOptions = LayoutOptions.Start
+                    };
+                       
+                    // populate a picker of anonymizers for the current property
+                    Picker anonymizerPicker = new Picker
+                    {
+                        HorizontalOptions = LayoutOptions.FillAndExpand
+                    };
+                
+                    anonymizerPicker.Items.Add("None");
+                    foreach (Anonymizer anonymizer in anonymizableAttribute.AvailableAnonymizers)
+                        anonymizerPicker.Items.Add(anonymizer.DisplayText);
+
+                    anonymizerPicker.SelectedIndexChanged += (o, e) =>
+                        {
+                            Anonymizer selectedAnonymizer = null;
+                            if (anonymizerPicker.SelectedIndex > 0)
+                                selectedAnonymizer = anonymizableAttribute.AvailableAnonymizers[anonymizerPicker.SelectedIndex - 1];  // subtract one from the selected index since the JsonAnonymizer's collection of anonymizers start after the "None" option within the picker.
+
+                            probe.Protocol.JsonAnonymizer.SetAnonymizer(anonymizableProperty, selectedAnonymizer);
+                        };
+
+                    // set the picker's index to the current anonymizer (or "None" if there is no current)
+                    Anonymizer currentAnonymizer = probe.Protocol.JsonAnonymizer.GetAnonymizer(anonymizableProperty);
+                    int currentIndex = 0;
+                    if(currentAnonymizer != null)
+                        currentIndex = anonymizableAttribute.AvailableAnonymizers.IndexOf(currentAnonymizer) + 1;
+                    
+                    anonymizerPicker.SelectedIndex = currentIndex;
+
+                    StackLayout anonymizablePropertyStack = new StackLayout
+                    {
+                        Orientation = StackOrientation.Horizontal,
+                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        Children = { propertyLabel, anonymizerPicker }
+                    };
+
+                    contentLayout.Children.Add(anonymizablePropertyStack);
+                }
+            }
+            #endregion
 
             Content = new ScrollView
             {

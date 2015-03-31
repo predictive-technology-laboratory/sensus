@@ -15,6 +15,8 @@
 using Newtonsoft.Json;
 using SensusService.Probes.User.ProbeTriggerProperties;
 using System;
+using SensusService.Anonymization;
+using SensusService.Anonymization.Anonymizers;
 
 namespace SensusService.Probes.Apps
 {
@@ -24,12 +26,15 @@ namespace SensusService.Probes.Apps
         private string _description;
 
         [TextProbeTriggerProperty]
+        [Anonymizable(null, typeof(StringMD5Anonymizer), false)]
         public string Name
         {
             get { return _name; }
             set { _name = value; }
         }
 
+        [TextProbeTriggerProperty]
+        [Anonymizable(null, typeof(StringMD5Anonymizer), false)]
         public string Description
         {
             get { return _description; }

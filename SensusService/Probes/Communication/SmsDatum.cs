@@ -16,6 +16,8 @@ using Newtonsoft.Json;
 using SensusService.Probes.User.ProbeTriggerProperties;
 using System;
 using System.Text.RegularExpressions;
+using SensusService.Anonymization;
+using SensusService.Anonymization.Anonymizers;
 
 namespace SensusService.Probes.Communication
 {
@@ -26,6 +28,7 @@ namespace SensusService.Probes.Communication
         private string _message;
 
         [TextProbeTriggerProperty]
+        [Anonymizable("From #", typeof(StringMD5Anonymizer), true)]
         public string FromNumber
         {
             get { return _fromNumber; }
@@ -33,6 +36,7 @@ namespace SensusService.Probes.Communication
         }
 
         [TextProbeTriggerProperty]
+        [Anonymizable("To #", typeof(StringMD5Anonymizer), true)]
         public string ToNumber
         {
             get { return _toNumber; }
@@ -40,6 +44,7 @@ namespace SensusService.Probes.Communication
         }
 
         [TextProbeTriggerProperty]
+        [Anonymizable(null, typeof(StringMD5Anonymizer), true)]
         public string Message
         {
             get { return _message; }

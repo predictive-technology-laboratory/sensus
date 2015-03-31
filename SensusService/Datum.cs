@@ -15,6 +15,8 @@
 using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using SensusService.Anonymization;
+using SensusService.Anonymization.Anonymizers;
 
 namespace SensusService
 {
@@ -46,6 +48,7 @@ namespace SensusService
         private string _deviceId;
         private DateTimeOffset _timestamp;
         private int _hashCode;
+        private bool _anonymized;       
 
         public string Id
         {
@@ -57,40 +60,56 @@ namespace SensusService
             }
         }
 
+        [Anonymizable("Device ID", typeof(StringMD5Anonymizer), true)]
         public string DeviceId
         {
             get { return _deviceId; }
             set { _deviceId = value; }
         }
 
+        [Anonymizable(null, typeof(DateTimeOffsetTimelineAnonymizer), false)]
         public DateTimeOffset Timestamp
         {
             get { return _timestamp; }
             set { _timestamp = value; }
-        }           
+        }   
+
+        public bool Anonymized
+        {
+            get
+            {
+                return _anonymized;
+            }
+            set
+            {
+                _anonymized = value;
+            }
+        }
 
         [JsonIgnore]
         public abstract string DisplayDetail { get; }
 
-        private Datum() { }  // for JSON.NET deserialization
-
-        protected Datum(DateTimeOffset timestamp)
+        /// <summary>
+        /// Parameterless constructor For JSON.NET deserialization.
+        /// </summary>
+        private Datum()
         {
-            _timestamp = timestamp;
             _deviceId = SensusServiceHelper.Get().DeviceId;
+            _anonymized = false;
             Id = Guid.NewGuid().ToString();
         }
 
-        public string GetJSON(IContractResolver contractResolver)
+        protected Datum(DateTimeOffset timestamp)
+            : this()
         {
-            IContractResolver previousContractResolver = _serializationSettings.ContractResolver;
+            _timestamp = timestamp;
+        }
 
-            _serializationSettings.ContractResolver = contractResolver;
-            string json = JsonConvert.SerializeObject(this, Formatting.None, _serializationSettings).Replace('\n', ' ').Replace('\r', ' ');
-
-            _serializationSettings.ContractResolver = previousContractResolver;
-
-            return json;
+        public string GetJSON(AnonymizedJsonContractResolver anonymizationContractResolver)
+        {
+            _serializationSettings.ContractResolver = anonymizationContractResolver;
+                       
+            return JsonConvert.SerializeObject(this, Formatting.None, _serializationSettings).Replace('\n', ' ').Replace('\r', ' ');
         }
 
         public override int GetHashCode()

@@ -69,7 +69,7 @@ namespace SensusUI
 
             ToolbarItems.Add(new ToolbarItem("+", null, () =>
                 {
-                    UiBoundSensusServiceHelper.Get(true).RegisterProtocol(new Protocol("New Protocol", true));
+                    UiBoundSensusServiceHelper.Get(true).RegisterProtocol(new Protocol("New Protocol"));
 
                     _protocolsList.ItemsSource = null;
                     _protocolsList.ItemsSource = UiBoundSensusServiceHelper.Get(true).RegisteredProtocols;

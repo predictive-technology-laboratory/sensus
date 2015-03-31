@@ -15,6 +15,8 @@
 using Newtonsoft.Json;
 using SensusService.Probes.User.ProbeTriggerProperties;
 using System;
+using SensusService.Anonymization;
+using SensusService.Anonymization.Anonymizers;
 
 namespace SensusService.Probes.Network
 {
@@ -23,6 +25,7 @@ namespace SensusService.Probes.Network
         private string _cellTower;
 
         [TextProbeTriggerProperty]
+        [Anonymizable("Cellular Tower", typeof(StringMD5Anonymizer), false)]
         public string CellTower
         {
             get { return _cellTower; }

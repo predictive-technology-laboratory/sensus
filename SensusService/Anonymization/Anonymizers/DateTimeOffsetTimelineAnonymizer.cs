@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,23 +14,22 @@
 
 using System;
 
-namespace SensusService.Probes.Context
+namespace SensusService.Anonymization.Anonymizers
 {
-    public abstract class SoundProbe : PollingProbe
+    public class DateTimeOffsetTimelineAnonymizer : Anonymizer
     {
-        protected sealed override string DefaultDisplayName
+        public override string DisplayText
         {
-            get { return "Sound"; }
+            get
+            {
+                return "Anonymous Timeline";
+            }
         }
 
-        public override int DefaultPollingSleepDurationMS
+        public override object Apply(object value, Protocol protocol)
         {
-            get { return 5000; }
-        }
-
-        public sealed override Type DatumType
-        {
-            get { return typeof(SoundDatum); }
+            return DateTimeOffset.MinValue + ((DateTimeOffset)value - protocol.FirstStartTimestamp);
         }
     }
 }
+
