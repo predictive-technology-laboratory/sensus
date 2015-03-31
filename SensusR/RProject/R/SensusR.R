@@ -275,11 +275,21 @@ plot.SpeedDatum = function(x, pch = ".", type = "l", ...)
 #' plot(data$TelephonyDatum)
 plot.TelephonyDatum = function(x, ...)
 {
-  freqs = plyr::count(x$PhoneNumber[x$PhoneNumber != ""])
-  if(nrow(freqs) > 0)
+  par(mfrow = c(2,1))
+  
+  outgoing.freqs = plyr::count(x$PhoneNumber[x$PhoneNumber != "" & x$State == 1])
+  if(nrow(outgoing.freqs) > 0)
   {
-    pie(freqs$freq, freqs$x, main = "Phone Numbers", ...)
+    pie(outgoing.freqs$freq, outgoing.freqs$x, main = "Outgoing Calls", ...)
   }
+  
+  incoming.freqs = plyr::count(x$PhoneNumber[x$PhoneNumber != "" & x$State == 2])
+  if(nrow(incoming.freqs) > 0)
+  {
+    pie(incoming.freqs$freq, incoming.freqs$x, main = "Incoming Calls", ...)
+  }
+  
+  par(mfrow = c(1,1))
 }
 
 #' Plot WLAN data.
