@@ -148,6 +148,7 @@
     <Compile Include="Sensus.iOSViewController.designer.cs">
       <DependentUpon>Sensus.iOSViewController.cs</DependentUpon>
     </Compile>
+    <Compile Include="iOSSensusServiceHelper.cs" />
   </ItemGroup>
   <Import Project="..\SensusService\SensusService.projitems" Label="Shared" Condition="Exists('..\SensusService\SensusService.projitems')" />
   <Import Project="..\SensusUI\SensusUI.projitems" Label="Shared" Condition="Exists('..\SensusUI\SensusUI.projitems')" />

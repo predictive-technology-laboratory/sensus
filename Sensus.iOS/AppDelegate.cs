@@ -1,22 +1,27 @@
-﻿// // Copyright 2014 The Rector & Visitors of the University of Virginia
-// //
-// // Licensed under the Apache License, Version 2.0 (the "License");
-// // you may not use this file except in compliance with the License.
-// // You may obtain a copy of the License at
-// //
-// //     http://www.apache.org/licenses/LICENSE-2.0
-// //
-// // Unless required by applicable law or agreed to in writing, software
-// // distributed under the License is distributed on an "AS IS" BASIS,
-// // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// // See the License for the specific language governing permissions and
-// // limitations under the License.
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 using System;
 using System.Linq;
 using System.Collections.Generic;
 
 using Foundation;
 using UIKit;
+using Xamarin.Forms.Platform.iOS;
+using Xamarin.Forms;
+using SensusUI;
+using SensusService;
 
 namespace Sensus.iOS
 {
@@ -24,7 +29,7 @@ namespace Sensus.iOS
     // User Interface of the application, as well as listening (and optionally responding) to
     // application events from iOS.
     [Register("AppDelegate")]
-    public partial class AppDelegate : UIApplicationDelegate
+    public partial class AppDelegate : FormsApplicationDelegate
     {
         // class-level declarations
 		
@@ -32,6 +37,20 @@ namespace Sensus.iOS
         {
             get;
             set;
+        }
+
+        public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
+        {
+            Forms.Init();
+
+            Window = new UIWindow(UIScreen.MainScreen.Bounds);
+
+            LoadApplication(new App());
+
+            //UiBoundSensusServiceHelper.Set(new iOSSensusServiceHelper());
+            //app.SensusMainPage.DisplayServiceHelper(UiBoundSensusServiceHelper.Get(true));
+
+            return base.FinishedLaunching(uiApplication, launchOptions);
         }
 		
         // This method is invoked when the application is about to move from active to inactive state.
