@@ -33,4 +33,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)PromptPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ShareLocalDataStorePage.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Icons\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)Icons\pencil.png" />
+  </ItemGroup>
 </Project>

@@ -33,7 +33,7 @@ namespace SensusUI
 
             Content = triggerList;
 
-            ToolbarItems.Add(new ToolbarItem("+", null, async () =>
+            ToolbarItems.Add(new ToolbarItem(null, "plus.png", async () =>
                 {
                     if (scriptProbe.Protocol.Probes.Where(p => p != scriptProbe && p.Enabled).Count() > 0)
                         await Navigation.PushAsync(new AddScriptProbeTriggerPage(scriptProbe));
@@ -41,7 +41,7 @@ namespace SensusUI
                         UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("You must enable probes before adding triggers.");
                 }));
 
-            ToolbarItems.Add(new ToolbarItem("-", null, async () =>
+            ToolbarItems.Add(new ToolbarItem(null, "minus.png", async () =>
                 {
                     if (triggerList.SelectedItem != null && await DisplayAlert("Confirm Delete", "Are you sure you want to delete the selected trigger?", "Yes", "Cancel"))
                     {

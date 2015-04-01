@@ -22,7 +22,7 @@ namespace SensusService.Anonymization.Anonymizers
         {
             get
             {
-                return "Rount to Hundredths";
+                return "Round to Hundredths";
             }
         }
 

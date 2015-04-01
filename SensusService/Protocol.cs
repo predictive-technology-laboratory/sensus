@@ -164,6 +164,7 @@ namespace SensusService
         private string _lockPasswordHash;
         private AnonymizedJsonContractResolver _jsonAnonymizer;
         private DateTimeOffset _firstStartTimestamp;
+        private bool _shareable;
 
         private readonly object _locker = new object();
 
@@ -278,6 +279,20 @@ namespace SensusService
             }
         }
 
+        [OnOffUiProperty("Shareable:", true, 10)]
+        public bool Shareable
+        {
+            get
+            {
+                return _shareable;
+            }
+            set
+            {
+                _shareable = value;
+            }
+        }
+        
+
         /// <summary>
         /// For JSON deserialization
         /// </summary>
@@ -288,6 +303,7 @@ namespace SensusService
             _lockPasswordHash = "";
             _jsonAnonymizer = new AnonymizedJsonContractResolver(this);
             _firstStartTimestamp = DateTimeOffset.MinValue;
+            _shareable = true;
         }
 
         /// <summary>

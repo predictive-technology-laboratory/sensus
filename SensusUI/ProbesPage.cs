@@ -81,7 +81,11 @@ namespace SensusUI
 
             Title = "Probes";
 
-            _probesList = new ListView();
+            _probesList = new ListView
+            {
+                IsPullToRefreshEnabled = true
+            };
+            
             _probesList.ItemTemplate = new DataTemplate(typeof(TextCell));
             _probesList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", converter: new ProbeTextValueConverter()));
             _probesList.ItemTemplate.SetBinding(TextCell.TextColorProperty, new Binding(".", converter: new ProbeTextColorValueConverter()));
@@ -93,6 +97,12 @@ namespace SensusUI
                     await Navigation.PushAsync(probePage);
                     _probesList.SelectedItem = null;
                 };
+
+            _probesList.Refreshing += (o, e) =>
+            {
+                Bind();
+                _probesList.IsRefreshing = false;
+            };
 
             Bind();
 
@@ -117,8 +127,6 @@ namespace SensusUI
                         Bind();
                     }
                 }));
-
-            ToolbarItems.Add(new ToolbarItem("Refresh", null, () => { Bind(); }));
 
             Content = _probesList;
         }

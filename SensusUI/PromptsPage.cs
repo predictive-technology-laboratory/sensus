@@ -35,23 +35,12 @@ namespace SensusUI
             _promptsList.ItemTemplate = new DataTemplate(typeof(TextCell));
             _promptsList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", stringFormat: "{0}"));
 
-            ToolbarItems.Add(new ToolbarItem("Open", null, async () =>
-                {
-                    if (_promptsList.SelectedItem != null)
-                    {
-                        PromptPage promptPage = new PromptPage(_promptsList.SelectedItem as Prompt);
-                        promptPage.Disappearing += (oo, ee) => { Bind(); };  // rebind the prompts page to pick up changes in the prompt
-                        await Navigation.PushAsync(promptPage);
-                        _promptsList.SelectedItem = null;
-                    }
-                }));
-
-            ToolbarItems.Add(new ToolbarItem("+", null, () =>
+            ToolbarItems.Add(new ToolbarItem(null, "plus.png", () =>
                 {
                     _prompts.Add(new Prompt("New Prompt", PromptOutputType.Text, "", "", PromptInputType.Text));
                 }));
 
-            ToolbarItems.Add(new ToolbarItem("-", null, async () =>
+            ToolbarItems.Add(new ToolbarItem(null, "minus.png", async () =>
                 {
                     if(_promptsList.SelectedItem != null)
                     {
@@ -62,6 +51,17 @@ namespace SensusUI
                         }
                     }
                 }));
+            
+            ToolbarItems.Add(new ToolbarItem(null, "pencil.png", async () =>
+                {
+                    if (_promptsList.SelectedItem != null)
+                    {
+                        PromptPage promptPage = new PromptPage(_promptsList.SelectedItem as Prompt);
+                        promptPage.Disappearing += (oo, ee) => { Bind(); };  // rebind the prompts page to pick up changes in the prompt
+                        await Navigation.PushAsync(promptPage);
+                        _promptsList.SelectedItem = null;
+                    }
+                }));                    
 
             Bind();
 

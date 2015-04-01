@@ -37,37 +37,7 @@ namespace SensusUI
             Content = _protocolsList;
 
             #region toolbar
-            ToolbarItems.Add(new ToolbarItem("Open", null, () =>
-                {
-                    if (_protocolsList.SelectedItem != null)
-                    {
-                        Protocol protocol = _protocolsList.SelectedItem as Protocol;
-
-                        Action openProtocol = new Action(async() =>
-                            {
-                                ProtocolPage protocolPage = new ProtocolPage(protocol);
-                                protocolPage.Disappearing += (o, e) => Bind();
-                                await Navigation.PushAsync(protocolPage);
-                                _protocolsList.SelectedItem = null;
-                            });
-                        
-                        if(protocol.LockPasswordHash == "")
-                            openProtocol();
-                        else
-                            UiBoundSensusServiceHelper.Get(true).PromptForInputAsync("Enter protocol password to open:", false, password => 
-                                {
-                                    if(password == null)
-                                        return;
-                                    
-                                    if(UiBoundSensusServiceHelper.Get(true).GetMd5Hash(password) == protocol.LockPasswordHash)
-                                        Device.BeginInvokeOnMainThread(openProtocol);
-                                    else
-                                        UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Incorrect password");
-                                });
-                    }
-                }));
-
-            ToolbarItems.Add(new ToolbarItem("+", null, () =>
+            ToolbarItems.Add(new ToolbarItem(null, "plus.png", () =>
                 {
                     UiBoundSensusServiceHelper.Get(true).RegisterProtocol(new Protocol("New Protocol"));
 
@@ -75,7 +45,7 @@ namespace SensusUI
                     _protocolsList.ItemsSource = UiBoundSensusServiceHelper.Get(true).RegisteredProtocols;
                 }));
 
-            ToolbarItems.Add(new ToolbarItem("-", null, () =>
+            ToolbarItems.Add(new ToolbarItem(null, "minus.png", () =>
                 {
                     if (_protocolsList.SelectedItem != null)
                     {
@@ -108,11 +78,81 @@ namespace SensusUI
                                 {
                                     if(password == null)
                                         return;
-                                    
+
                                     if(UiBoundSensusServiceHelper.Get(true).GetMd5Hash(password) == protocolToDelete.LockPasswordHash)
                                         Device.BeginInvokeOnMainThread(deleteProtocol);
                                     else
                                         UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Incorrect password"); 
+                                });
+                    }
+                }));
+            
+            ToolbarItems.Add(new ToolbarItem(null, "pencil.png", () =>
+                {
+                    if (_protocolsList.SelectedItem != null)
+                    {
+                        Protocol protocol = _protocolsList.SelectedItem as Protocol;
+
+                        Action openProtocol = new Action(async() =>
+                            {
+                                ProtocolPage protocolPage = new ProtocolPage(protocol);
+                                protocolPage.Disappearing += (o, e) => Bind();
+                                await Navigation.PushAsync(protocolPage);
+                                _protocolsList.SelectedItem = null;
+                            });
+                        
+                        if(protocol.LockPasswordHash == "")
+                            openProtocol();
+                        else
+                            UiBoundSensusServiceHelper.Get(true).PromptForInputAsync("Enter protocol password to open:", false, password => 
+                                {
+                                    if(password == null)
+                                        return;
+                                    
+                                    if(UiBoundSensusServiceHelper.Get(true).GetMd5Hash(password) == protocol.LockPasswordHash)
+                                        Device.BeginInvokeOnMainThread(openProtocol);
+                                    else
+                                        UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Incorrect password");
+                                });
+                    }
+                }));
+
+            ToolbarItems.Add(new ToolbarItem(null, "share.png", () =>
+                {
+                    if (_protocolsList.SelectedItem != null)
+                    {
+                        Protocol protocol = _protocolsList.SelectedItem as Protocol;
+
+                        Action shareProtocol = new Action(() =>
+                            {
+                                string path = null;
+                                try
+                                {
+                                    path = UiBoundSensusServiceHelper.Get(true).GetSharePath(".sensus");
+                                    protocol.Save(path);
+                                }
+                                catch (Exception ex)
+                                {
+                                    UiBoundSensusServiceHelper.Get(true).Logger.Log("Failed to save protocol to file for sharing:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                    path = null;
+                                }
+
+                                if (path != null)
+                                    UiBoundSensusServiceHelper.Get(true).ShareFileAsync(path, "Sensus Protocol:  " + protocol.Name);
+                            });
+                        
+                        if(protocol.Shareable || protocol.LockPasswordHash == "")
+                            shareProtocol();
+                        else
+                            UiBoundSensusServiceHelper.Get(true).PromptForInputAsync("Enter protocol password to share:", false, password => 
+                                {
+                                    if(password == null)
+                                        return;
+
+                                    if(UiBoundSensusServiceHelper.Get(true).GetMd5Hash(password) == protocol.LockPasswordHash)
+                                        Device.BeginInvokeOnMainThread(shareProtocol);
+                                    else
+                                        UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Incorrect password");
                                 });
                     }
                 }));

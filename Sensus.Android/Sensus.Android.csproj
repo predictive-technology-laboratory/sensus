@@ -187,6 +187,18 @@
     <None Include="Resources\app-store\launcher_ic_hi_res_512.png" />
     <None Include="Resources\app-store\screenshot_main_page.png" />
     <None Include="Resources\app-store\screenshot_probes_page.png" />
+    <AndroidResource Include="..\SensusUI\Icons\pencil.png">
+      <Link>Resources\drawable\pencil.png</Link>
+    </AndroidResource>
+    <AndroidResource Include="..\SensusUI\Icons\minus.png">
+      <Link>Resources\drawable\minus.png</Link>
+    </AndroidResource>
+    <AndroidResource Include="..\SensusUI\Icons\plus.png">
+      <Link>Resources\drawable\plus.png</Link>
+    </AndroidResource>
+    <AndroidResource Include="..\SensusUI\Icons\share.png">
+      <Link>Resources\drawable\share.png</Link>
+    </AndroidResource>
   </ItemGroup>
   <Import Project="..\SensusService\SensusService.projitems" Label="Shared" Condition="Exists('..\SensusService\SensusService.projitems')" />
   <Import Project="..\SensusUI\SensusUI.projitems" Label="Shared" Condition="Exists('..\SensusUI\SensusUI.projitems')" />
@@ -225,5 +237,8 @@
       <Version>1.5.216.0</Version>
       <Visible>False</Visible>
     </XamarinComponentReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\drawable\" />
   </ItemGroup>
 </Project>

@@ -203,7 +203,7 @@ namespace SensusUI
             };
 
             #region toolbar            
-            ToolbarItems.Add(new ToolbarItem("Ping", null, async () =>
+            ToolbarItems.Add(new ToolbarItem("Status", null, async () =>
                 {
                     if (SensusServiceHelper.Get().ProtocolShouldBeRunning(_protocol))
                     {
@@ -212,33 +212,15 @@ namespace SensusUI
 								Device.BeginInvokeOnMainThread(async () =>
 									{
 										if (_protocol.MostRecentReport == null)
-											await DisplayAlert("No Report", "Ping failed.", "OK");
+											await DisplayAlert("No Report", "Status check failed.", "OK");
 										else
 											await Navigation.PushAsync(new ViewTextLinesPage("Protocol Report", _protocol.MostRecentReport.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList(), null));
 									});
 							});
 					}
                     else
-                        await DisplayAlert("Protocol Not Running", "Cannot ping protocol when it is not running.", "OK");
-                }));
-
-            ToolbarItems.Add(new ToolbarItem("Share", null, () =>
-                {
-                    string path = null;
-                    try
-                    {
-                        path = UiBoundSensusServiceHelper.Get(true).GetSharePath(".sensus");
-                        _protocol.Save(path);
-                    }
-                    catch (Exception ex)
-                    {
-                        UiBoundSensusServiceHelper.Get(true).Logger.Log("Failed to save protocol to file for sharing:  " + ex.Message, LoggingLevel.Normal, GetType());
-                        path = null;
-                    }
-
-                    if (path != null)
-                        UiBoundSensusServiceHelper.Get(true).ShareFileAsync(path, "Sensus Protocol:  " + _protocol.Name);
-                }));
+                        await DisplayAlert("Protocol Not Running", "Cannot check status of protocol when protocol is not running.", "OK");
+                }));                    
             #endregion
         }
 

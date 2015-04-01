@@ -51,6 +51,18 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f020000
 			public const int ic_launcher = 2130837504;
 			
+			// aapt resource value: 0x7f020001
+			public const int minus = 2130837505;
+			
+			// aapt resource value: 0x7f020002
+			public const int pencil = 2130837506;
+			
+			// aapt resource value: 0x7f020003
+			public const int plus = 2130837507;
+			
+			// aapt resource value: 0x7f020004
+			public const int share = 2130837508;
+			
 			static Drawable()
 			{
 				global::Android.Runtime.ResourceIdManager.UpdateIdValues();
