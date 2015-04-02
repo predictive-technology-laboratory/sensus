@@ -37,7 +37,7 @@ namespace SensusService.DataStores.Local
         [JsonIgnore]
         public abstract int DataCount { get; }
 
-        public LocalDataStore()
+        protected LocalDataStore()
         {
             _uploadToRemoteDataStore = true;
 
