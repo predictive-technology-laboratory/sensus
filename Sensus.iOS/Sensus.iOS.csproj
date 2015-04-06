@@ -20,9 +20,13 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <MtouchArch>i386</MtouchArch>
-    <MtouchLink>None</MtouchLink>
     <MtouchDebug>true</MtouchDebug>
     <MtouchProfiling>true</MtouchProfiling>
+    <CodesignKey>iPhone Developer</CodesignKey>
+    <MtouchUseRefCounting>true</MtouchUseRefCounting>
+    <MtouchI18n>
+    </MtouchI18n>
+    <MtouchLink>None</MtouchLink>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>full</DebugType>
@@ -48,6 +52,8 @@
     <MtouchProfiling>true</MtouchProfiling>
     <CodesignKey>iPhone Developer</CodesignKey>
     <MtouchDebug>true</MtouchDebug>
+    <IpaPackageName>
+    </IpaPackageName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>full</DebugType>
@@ -167,5 +173,19 @@
       <Version>1.5.216.0</Version>
       <Visible>False</Visible>
     </XamarinComponentReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="..\SensusUI\Icons\minus.png">
+      <Link>Resources\minus.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\SensusUI\Icons\pencil.png">
+      <Link>Resources\pencil.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\SensusUI\Icons\plus.png">
+      <Link>Resources\plus.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\SensusUI\Icons\share.png">
+      <Link>Resources\share.png</Link>
+    </BundleResource>
   </ItemGroup>
 </Project>

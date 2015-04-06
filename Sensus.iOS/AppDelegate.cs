@@ -32,23 +32,20 @@ namespace Sensus.iOS
     public partial class AppDelegate : FormsApplicationDelegate
     {
         // class-level declarations
-		
-        public override UIWindow Window
-        {
-            get;
-            set;
-        }
+
+        private UIWindow _window;            
 
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
             Forms.Init();
 
-            Window = new UIWindow(UIScreen.MainScreen.Bounds);
+            _window = new UIWindow(UIScreen.MainScreen.Bounds);
 
-            LoadApplication(new App());
+            App app = new App();
+            LoadApplication(app);
 
-            //UiBoundSensusServiceHelper.Set(new iOSSensusServiceHelper());
-            //app.SensusMainPage.DisplayServiceHelper(UiBoundSensusServiceHelper.Get(true));
+            UiBoundSensusServiceHelper.Set(new iOSSensusServiceHelper());
+            app.SensusMainPage.DisplayServiceHelper(UiBoundSensusServiceHelper.Get(true));
 
             return base.FinishedLaunching(uiApplication, launchOptions);
         }
