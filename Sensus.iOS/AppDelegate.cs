@@ -31,8 +31,6 @@ namespace Sensus.iOS
     [Register("AppDelegate")]
     public partial class AppDelegate : FormsApplicationDelegate
     {
-        // class-level declarations
-
         private UIWindow _window;            
 
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
@@ -46,6 +44,7 @@ namespace Sensus.iOS
 
             UiBoundSensusServiceHelper.Set(new iOSSensusServiceHelper());
             app.SensusMainPage.DisplayServiceHelper(UiBoundSensusServiceHelper.Get(true));
+            UiBoundSensusServiceHelper.Get(true).StartAsync(null);
 
             return base.FinishedLaunching(uiApplication, launchOptions);
         }
