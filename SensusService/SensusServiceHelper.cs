@@ -24,6 +24,7 @@ using Xamarin;
 using Xamarin.Geolocation;
 using System.Security.Cryptography;
 using System.Text;
+using SensusService.Probes;
 
 namespace SensusService
 {
@@ -307,6 +308,8 @@ namespace SensusService
 
         #region platform-specific methods
         protected abstract void InitializeXamarinInsights();
+
+        public abstract bool Use(Probe probe);
 
         protected abstract void ScheduleRepeatingCallback(int callbackId, int initialDelayMS, int subsequentDelayMS);
 

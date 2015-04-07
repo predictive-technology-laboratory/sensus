@@ -15,6 +15,8 @@ using System;
 using SensusService;
 using Xamarin.Geolocation;
 using Xamarin;
+using SensusService.Probes.Location;
+using SensusService.Probes;
 
 namespace Sensus.iOS
 {
@@ -67,6 +69,11 @@ namespace Sensus.iOS
         protected override void InitializeXamarinInsights()
         {
             Insights.Initialize(XAMARIN_INSIGHTS_APP_KEY);
+        }
+
+        public override bool Use(Probe probe)
+        {
+            return !(probe is PollingLocationProbe);  // polling doesn't work with iOS
         }
 
         protected override void ScheduleRepeatingCallback(int callbackId, int initialDelayMS, int subsequentDelayMS)

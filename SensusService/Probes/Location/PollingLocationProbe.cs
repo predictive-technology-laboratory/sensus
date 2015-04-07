@@ -21,7 +21,7 @@ namespace SensusService.Probes.Location
     /// <summary>
     /// Probes location information.
     /// </summary>
-    public class LocationProbe : PollingProbe
+    public class PollingLocationProbe : PollingProbe
     {
         protected sealed override string DefaultDisplayName
         {

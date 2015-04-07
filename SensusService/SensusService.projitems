@@ -72,7 +72,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolReport.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SensusServiceHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Remote\AmazonS3RemoteDataStore.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\LocationProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\SpeedProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\AnonymizedJsonContractResolver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizable.cs" />
@@ -86,6 +85,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\DoubleRoundingHundredthsAnonymizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\DoubleRoundingThousandthsAnonymizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\DoubleRoundingOnesAnonymizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\PollingLocationProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\ListeningLocationProbe.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />

@@ -29,6 +29,8 @@ using Newtonsoft.Json;
 using SensusService;
 using Xamarin;
 using Xamarin.Geolocation;
+using SensusService.Probes.Location;
+using SensusService.Probes;
 
 namespace Sensus.Android
 {
@@ -146,6 +148,11 @@ namespace Sensus.Android
         protected override void InitializeXamarinInsights()
         {
             Insights.Initialize(XAMARIN_INSIGHTS_APP_KEY, Application.Context);  // can't reference _service here since this method is called from the base class constructor, before the service is set.
+        }
+
+        public override bool Use(Probe probe)
+        {
+            return !(probe is ListeningLocationProbe);  // the listening probe creates strange conflicts with the GpsReceiver and the polling probe. don't use it for android.
         }
 
         public override void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)

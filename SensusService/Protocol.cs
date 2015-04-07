@@ -328,18 +328,19 @@ namespace SensusService
 
             _probes = new List<Probe>();
             foreach (Probe probe in Probe.GetAll())
-            {
-                probe.Protocol = this;
-
-                // since the new probe was just bound to this protocol, we need to let this protocol know about this probe's default anonymization preferences.
-                foreach (PropertyInfo anonymizableProperty in probe.DatumType.GetProperties().Where(property => property.GetCustomAttribute<Anonymizable>() != null))
+                if (SensusServiceHelper.Get().Use(probe))
                 {
-                    Anonymizable anonymizableAttribute = anonymizableProperty.GetCustomAttribute<Anonymizable>(true);
-                    _jsonAnonymizer.SetAnonymizer(anonymizableProperty, anonymizableAttribute.DefaultAnonymizer);
-                }
+                    probe.Protocol = this;
 
-                _probes.Add(probe);
-            }
+                    // since the new probe was just bound to this protocol, we need to let this protocol know about this probe's default anonymization preferences.
+                    foreach (PropertyInfo anonymizableProperty in probe.DatumType.GetProperties().Where(property => property.GetCustomAttribute<Anonymizable>() != null))
+                    {
+                        Anonymizable anonymizableAttribute = anonymizableProperty.GetCustomAttribute<Anonymizable>(true);
+                        _jsonAnonymizer.SetAnonymizer(anonymizableProperty, anonymizableAttribute.DefaultAnonymizer);
+                    }
+
+                    _probes.Add(probe);
+                }
         }
 
         public void Save(string path)
