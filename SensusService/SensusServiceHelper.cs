@@ -108,8 +108,15 @@ namespace SensusService
                 Console.Out.WriteLine("Failed to deserialize Sensus service helper:  " + ex.Message);
                 Console.Out.WriteLine("Creating new Sensus service helper.");
 
-                sensusServiceHelper = new T();
-                sensusServiceHelper.Save();
+                try
+                {
+                    sensusServiceHelper = new T();
+                    sensusServiceHelper.Save();
+                }
+                catch (Exception ex2)
+                {
+                    Console.Out.WriteLine("Failed to create/save new Sensus service helper:  " + ex2.Message);
+                }
             }
 
             return sensusServiceHelper;
