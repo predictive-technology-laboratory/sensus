@@ -13,6 +13,8 @@
 // limitations under the License.
 using System;
 using SensusService;
+using Xamarin.Geolocation;
+using Xamarin;
 
 namespace Sensus.iOS
 {
@@ -22,7 +24,7 @@ namespace Sensus.iOS
         {
             get
             {
-                return false;
+                return false;  // TODO:  Check status
             }
         }
 
@@ -30,7 +32,7 @@ namespace Sensus.iOS
         {
             get
             {
-                return false;
+                return false;  // TODO:  Check status
             }
         }
 
@@ -38,7 +40,7 @@ namespace Sensus.iOS
         {
             get
             {
-                return "device";
+                return "device";  // TODO:  Get ID
             }
         }
 
@@ -46,7 +48,15 @@ namespace Sensus.iOS
         {
             get
             {
-                return "ios";
+                return "ios";  // TODO:  Get version
+            }
+        }
+
+        protected override Geolocator Geolocator
+        {
+            get
+            {
+                return new Geolocator();
             }
         }
 
@@ -56,6 +66,7 @@ namespace Sensus.iOS
 
         protected override void InitializeXamarinInsights()
         {
+            Insights.Initialize(XAMARIN_INSIGHTS_APP_KEY);
         }
 
         protected override void ScheduleRepeatingCallback(int callbackId, int initialDelayMS, int subsequentDelayMS)

@@ -28,6 +28,7 @@ using Android.Widget;
 using Newtonsoft.Json;
 using SensusService;
 using Xamarin;
+using Xamarin.Geolocation;
 
 namespace Sensus.Android
 {
@@ -80,10 +81,18 @@ namespace Sensus.Android
             }
         }
 
+        protected override Geolocator Geolocator
+        {
+            get
+            {
+                return new Geolocator(Application.Context);
+            }
+        }
+
         public AndroidSensusServiceHelper()
         {
             _mainActivityWait = new ManualResetEvent(false);      
-        }           
+        }          
 
         public void SetService(AndroidSensusService service)
         {
@@ -136,7 +145,7 @@ namespace Sensus.Android
 
         protected override void InitializeXamarinInsights()
         {
-            Insights.Initialize(XAMARIN_INSIGHTS_APP_KEY, Application.Context);  // can't reference _service here since this method is called from the base class constructor.
+            Insights.Initialize(XAMARIN_INSIGHTS_APP_KEY, Application.Context);  // can't reference _service here since this method is called from the base class constructor, before the service is set.
         }
 
         public override void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)

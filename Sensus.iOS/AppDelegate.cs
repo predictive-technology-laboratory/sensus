@@ -44,19 +44,19 @@ namespace Sensus.iOS
             App app = new App();
             LoadApplication(app);
 
-            _sensusServiceHelper = SensusServiceHelper.Load<iOSSensusServiceHelper>(new Geolocator(this)) as iOSSensusServiceHelper;
-            if (_sensusServiceHelper == null)
-            {
-                _sensusServiceHelper = new iOSSensusServiceHelper();
-                _sensusServiceHelper.Initialize(new Geolocator());
-                _sensusServiceHelper.Save();
-            }
+            _sensusServiceHelper = SensusServiceHelper.Load<iOSSensusServiceHelper>() as iOSSensusServiceHelper;
 
-            UiBoundSensusServiceHelper.Set(new iOSSensusServiceHelper());
+            UiBoundSensusServiceHelper.Set(_sensusServiceHelper);
             app.SensusMainPage.DisplayServiceHelper(UiBoundSensusServiceHelper.Get(true));
-            UiBoundSensusServiceHelper.Get(true).StartAsync(null);
 
             return base.FinishedLaunching(uiApplication, launchOptions);
+        }
+
+        public override void OnActivated(UIApplication uiApplication)
+        {
+            UiBoundSensusServiceHelper.Get(true).StartAsync(null);
+
+            base.OnActivated(uiApplication);
         }
 		
         // This method is invoked when the application is about to move from active to inactive state.
@@ -70,16 +70,19 @@ namespace Sensus.iOS
         // when the user quits.
         public override void DidEnterBackground(UIApplication application)
         {
+            // TODO:  Stop probes that are not allowed to run in background
         }
 		
         // This method is called as part of the transiton from background to active state.
         public override void WillEnterForeground(UIApplication application)
         {
+            // TODO:  Restart all probes that weren't allowed to run in the background
         }
 		
         // This method is called when the application is about to terminate. Save data, if needed.
         public override void WillTerminate(UIApplication application)
         {
+            _sensusServiceHelper.Destroy();
         }
     }
 }

@@ -38,16 +38,8 @@ namespace Sensus.Android
 
             UpdateNotification("Sensus", "");
 
-            _sensusServiceHelper = SensusServiceHelper.Load<AndroidSensusServiceHelper>(new Geolocator(this)) as AndroidSensusServiceHelper;
-            if (_sensusServiceHelper == null)
-            {
-                _sensusServiceHelper = new AndroidSensusServiceHelper();
-                _sensusServiceHelper.Initialize(new Geolocator(this));
-                _sensusServiceHelper.Save();
-            }
-
+            _sensusServiceHelper = SensusServiceHelper.Load<AndroidSensusServiceHelper>() as AndroidSensusServiceHelper;
             _sensusServiceHelper.SetService(this);
-
             _sensusServiceHelper.Stopped += (o, e) =>
                 {
                     _notificationManager.Cancel(SERVICE_NOTIFICATION_ID);

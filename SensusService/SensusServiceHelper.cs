@@ -94,20 +94,22 @@ namespace SensusService
             return _singleton;
         }
 
-        public static SensusServiceHelper Load<T>(Geolocator geolocator) where T : SensusServiceHelper
+        public static SensusServiceHelper Load<T>() where T : SensusServiceHelper, new()
         {
             SensusServiceHelper sensusServiceHelper = null;
 
             try
             {
                 sensusServiceHelper = JsonConvert.DeserializeObject<T>(AesDecrypt(File.ReadAllBytes(_serializationPath)), _serializationSettings);
-                sensusServiceHelper.Initialize(geolocator);
                 sensusServiceHelper.Logger.Log("Deserialized service helper with " + sensusServiceHelper.RegisteredProtocols.Count + " protocols.", LoggingLevel.Normal, null);  
             }
             catch (Exception ex)
             {
                 Console.Out.WriteLine("Failed to deserialize Sensus service helper:  " + ex.Message);
-                sensusServiceHelper = null;
+                Console.Out.WriteLine("Creating new Sensus service helper.");
+
+                sensusServiceHelper = new T();
+                sensusServiceHelper.Save();
             }
 
             return sensusServiceHelper;
@@ -183,19 +185,7 @@ namespace SensusService
         public List<string> RunningProtocolIds
         {
             get{ return _runningProtocolIds; }
-        }
-
-        [JsonIgnore]
-        public abstract bool IsCharging { get; }
-
-        [JsonIgnore]
-        public abstract bool WiFiConnected { get; }
-
-        [JsonIgnore]
-        public abstract string DeviceId { get; }       
-
-        [JsonIgnore]
-        public abstract string OperatingSystem { get; }
+        }                  
 
         [EntryIntegerUiProperty("Health Test Delay (MS):", true, 9)]
         public int HealthTestDelayMS
@@ -241,7 +231,23 @@ namespace SensusService
                     Save();
                 }
             }
-        }              
+        } 
+
+        #region platform-specific properties
+        [JsonIgnore]
+        public abstract bool IsCharging { get; }
+
+        [JsonIgnore]
+        public abstract bool WiFiConnected { get; }
+
+        [JsonIgnore]
+        public abstract string DeviceId { get; }       
+
+        [JsonIgnore]
+        public abstract string OperatingSystem { get; }
+
+        protected abstract Geolocator Geolocator { get; }
+        #endregion
 
         protected SensusServiceHelper()
         {
@@ -256,22 +262,25 @@ namespace SensusService
             _healthTestDelayMS = 60000;
             _healthTestCount = 0;
             _healthTestsPerProtocolReport = 5;
-            _idCallback = new Dictionary<int, Action>();           
+            _idCallback = new Dictionary<int, Action>();   
+            _md5Hash = MD5.Create();
 
             if (!Directory.Exists(_shareDirectory))
                 Directory.CreateDirectory(_shareDirectory); 
 
-            #region logger
             #if DEBUG
-            _logger = new Logger(_logPath, LoggingLevel.Debug, Console.Error);
+            LoggingLevel loggingLevel = LoggingLevel.Debug;
             #else
-            _logger = new Logger(_logPath, LoggingLevel.Normal, Console.Error);
+            LoggingLevel loggingLevel = LoggingLevel.Normal;
             #endif
 
+            _logger = new Logger(_logPath, loggingLevel, Console.Error);
             _logger.Log("Log file started at \"" + _logPath + "\".", LoggingLevel.Normal, GetType());
-            #endregion
 
-            _md5Hash = MD5.Create();
+            GpsReceiver.Get().Initialize(Geolocator);  // initialize GPS receiver with platform-specific geolocator
+
+            try { InitializeXamarinInsights(); }
+            catch (Exception ex) { _logger.Log("Failed to initialize Xamarin insights:  " + ex.Message, LoggingLevel.Normal, GetType()); }   
 
             lock (_staticLockObject)
                 _singleton = this;
@@ -287,15 +296,7 @@ namespace SensusService
                 hashBuilder.Append(b.ToString("x"));
 
             return hashBuilder.ToString();
-        }
-
-        public void Initialize(Geolocator geolocator)
-        {
-            GpsReceiver.Get().Initialize(geolocator);
-
-            try { InitializeXamarinInsights(); }
-            catch (Exception ex) { _logger.Log("Failed to initialize Xamarin insights:  " + ex.Message, LoggingLevel.Normal, GetType()); }                              
-        }
+        }           
 
         #region platform-specific methods
         protected abstract void InitializeXamarinInsights();
@@ -310,23 +311,9 @@ namespace SensusService
 
         public abstract void ShareFileAsync(string path, string subject);
 
-        public void TextToSpeechAsync(string text)
-        {
-            TextToSpeechAsync(text, () =>
-                {
-                });                        
-        }
-
         public abstract void TextToSpeechAsync(string text, Action callback);
 
         public abstract void PromptForInputAsync(string prompt, bool startVoiceRecognizer, Action<string> callback);
-
-        public void FlashNotificationAsync(string message)
-        {
-            FlashNotificationAsync(message, () =>
-                {
-                });
-        }
 
         public abstract void FlashNotificationAsync(string message, Action callback);
 
@@ -459,24 +446,26 @@ namespace SensusService
             }
         }
 
+        private int AddCallback(Action callback)
+        {
+            lock (_idCallback)
+            {
+                int callbackId = 0;
+                while (_idCallback.ContainsKey(callbackId))
+                    ++callbackId;
+
+                _idCallback.Add(callbackId, callback);
+
+                return callbackId;
+            }
+        }
+
         public void UpdateRepeatingCallback(int callbackId, int initialDelayMS, int subsequentDelayMS)
         {
             lock (_idCallback)
                 if (_idCallback.ContainsKey(callbackId))
                     ScheduleRepeatingCallback(callbackId, initialDelayMS, subsequentDelayMS);
-        }
-
-        public void CancelRepeatingCallback(int callbackId)
-        {
-            lock (_idCallback)
-            {
-                if (callbackId != -1)
-                    CancelCallback(callbackId, true);
-
-                if (_idCallback.ContainsKey(callbackId))
-                    _idCallback.Remove(callbackId);
-            }
-        }           
+        }                      
 
         public void RaiseCallbackAsync(int callbackId, bool repeating)
         {
@@ -516,20 +505,32 @@ namespace SensusService
                         }).Start();                           
                 }
             }
-        }
+        }            
 
-        private int AddCallback(Action callback)
+        public void CancelRepeatingCallback(int callbackId)
         {
             lock (_idCallback)
             {
-                int callbackId = 0;
-                while (_idCallback.ContainsKey(callbackId))
-                    ++callbackId;
+                if (callbackId != -1)
+                    CancelCallback(callbackId, true);
 
-                _idCallback.Add(callbackId, callback);
-
-                return callbackId;
+                if (_idCallback.ContainsKey(callbackId))
+                    _idCallback.Remove(callbackId);
             }
+        } 
+
+        public void TextToSpeechAsync(string text)
+        {
+            TextToSpeechAsync(text, () =>
+                {
+                });                        
+        }
+
+        public void FlashNotificationAsync(string message)
+        {
+            FlashNotificationAsync(message, () =>
+                {
+                });
         }
 
         public void TestHealth()
