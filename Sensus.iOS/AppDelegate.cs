@@ -22,6 +22,7 @@ using Xamarin.Forms.Platform.iOS;
 using Xamarin.Forms;
 using SensusUI;
 using SensusService;
+using Xamarin.Geolocation;
 
 namespace Sensus.iOS
 {
@@ -31,7 +32,8 @@ namespace Sensus.iOS
     [Register("AppDelegate")]
     public partial class AppDelegate : FormsApplicationDelegate
     {
-        private UIWindow _window;            
+        private UIWindow _window;    
+        private iOSSensusServiceHelper _sensusServiceHelper;
 
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
@@ -41,6 +43,14 @@ namespace Sensus.iOS
 
             App app = new App();
             LoadApplication(app);
+
+            _sensusServiceHelper = SensusServiceHelper.Load<iOSSensusServiceHelper>(new Geolocator(this)) as iOSSensusServiceHelper;
+            if (_sensusServiceHelper == null)
+            {
+                _sensusServiceHelper = new iOSSensusServiceHelper();
+                _sensusServiceHelper.Initialize(new Geolocator());
+                _sensusServiceHelper.Save();
+            }
 
             UiBoundSensusServiceHelper.Set(new iOSSensusServiceHelper());
             app.SensusMainPage.DisplayServiceHelper(UiBoundSensusServiceHelper.Get(true));
