@@ -49,6 +49,16 @@ namespace Sensus.iOS
             UiBoundSensusServiceHelper.Set(_sensusServiceHelper);
             app.SensusMainPage.DisplayServiceHelper(UiBoundSensusServiceHelper.Get(true));
 
+            // if this app was started by a local notification, service that notification
+            NSObject launchingNotification;
+            if (launchOptions != null && launchOptions.TryGetValue(UIApplication.LaunchOptionsLocalNotificationKey, out launchingNotification))
+                ServiceNotification(launchingNotification as UILocalNotification);
+
+            // service all other notifications whose fire time has passed
+            foreach (UILocalNotification notification in UIApplication.SharedApplication.ScheduledLocalNotifications)
+                if (notification.FireDate.ToDateTime() <= DateTime.Now)
+                    ServiceNotification(notification);
+
             return base.FinishedLaunching(uiApplication, launchOptions);
         }
 
@@ -57,6 +67,34 @@ namespace Sensus.iOS
             UiBoundSensusServiceHelper.Get(true).StartAsync(null);
 
             base.OnActivated(uiApplication);
+        }
+
+        public override void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)
+        {
+            ServiceNotification(notification);
+        }
+
+        private void ServiceNotification(UILocalNotification notification)
+        {
+            bool isCallback = (notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_KEY)) as NSNumber).BoolValue;
+            if (isCallback)
+            {              
+                int callbackId = (notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_ID_KEY)) as NSNumber).Int32Value;
+                bool repeating = (notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber).BoolValue;
+
+                // TODO:  Run callbacks in background:  http://developer.xamarin.com/guides/ios/application_fundamentals/backgrounding/part_3_ios_backgrounding_techniques/ios_backgrounding_with_tasks/
+
+                UiBoundSensusServiceHelper.Get(true).RaiseCallbackAsync(callbackId, repeating, () =>
+                    {
+                        UIApplication.SharedApplication.CancelLocalNotification(notification);  
+
+                        if (repeating)
+                            UIApplication.SharedApplication.ScheduleLocalNotification(notification);
+                    });
+            }
+
+            if (UIApplication.SharedApplication.ScheduledLocalNotifications.Length == 0)
+                UIApplication.SharedApplication.ApplicationIconBadgeNumber = 0;
         }
 		
         // This method is invoked when the application is about to move from active to inactive state.

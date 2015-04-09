@@ -17,6 +17,9 @@ using Xamarin.Geolocation;
 using Xamarin;
 using SensusService.Probes.Location;
 using SensusService.Probes;
+using Xamarin.Forms.Platform.iOS;
+using UIKit;
+using Foundation;
 
 namespace Sensus.iOS
 {
@@ -73,15 +76,30 @@ namespace Sensus.iOS
 
         public override bool Use(Probe probe)
         {
-            return !(probe is PollingLocationProbe);  // polling doesn't work with iOS
+            return true;
         }
 
         protected override void ScheduleRepeatingCallback(int callbackId, int initialDelayMS, int subsequentDelayMS)
         {
         }
 
-        protected override void ScheduleOneTimeCallback(int callbackId, int delay)
+        protected override void ScheduleOneTimeCallback(int callbackId, int delayMS)
         {
+            UILocalNotification notification = new UILocalNotification
+            {
+                FireDate = DateTime.Now.AddMilliseconds(delayMS).ToNSDate(),
+                AlertAction = "Sensus Alert",
+                AlertBody = "Sensus is requesting information.",
+                SoundName = UILocalNotification.DefaultSoundName,
+                ApplicationIconBadgeNumber = 1
+            };
+
+            notification.UserInfo = new NSDictionary(
+                SENSUS_CALLBACK_KEY, true, 
+                SENSUS_CALLBACK_ID_KEY, callbackId,
+                SENSUS_CALLBACK_REPEATING_KEY, false);
+
+            UIApplication.SharedApplication.ScheduleLocalNotification(notification);
         }
 
         protected override void CancelCallback(int callbackId, bool repeating)

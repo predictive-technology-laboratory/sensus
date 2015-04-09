@@ -36,10 +36,6 @@ namespace Sensus.Android
 {
     public class AndroidSensusServiceHelper : SensusServiceHelper
     {
-        public const string INTENT_EXTRA_SENSUS_CALLBACK = "SENSUS-CALLBACK";
-        public const string INTENT_EXTRA_SENSUS_CALLBACK_ID = "SENSUS-CALLBACK-ID";
-        public const string INTENT_EXTRA_SENSUS_CALLBACK_REPEATING = "SENSUS-CALLBACK-REPEATING";
-
         private AndroidSensusService _service;
         private ConnectivityManager _connectivityManager;
         private string _deviceId;
@@ -332,10 +328,10 @@ namespace Sensus.Android
             alarmManager.SetRepeating(AlarmType.RtcWakeup, Java.Lang.JavaSystem.CurrentTimeMillis() + initialDelayMS, subsequentDelayMS, GetCallbackIntent(callbackId, true));
         }
 
-        protected override void ScheduleOneTimeCallback(int callbackId, int delay)
+        protected override void ScheduleOneTimeCallback(int callbackId, int delayMS)
         {
             AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
-            alarmManager.Set(AlarmType.RtcWakeup, Java.Lang.JavaSystem.CurrentTimeMillis() + delay, GetCallbackIntent(callbackId, false));
+            alarmManager.Set(AlarmType.RtcWakeup, Java.Lang.JavaSystem.CurrentTimeMillis() + delayMS, GetCallbackIntent(callbackId, false));
         }
 
         protected override void CancelCallback(int callbackId, bool repeating)
@@ -347,9 +343,9 @@ namespace Sensus.Android
         private PendingIntent GetCallbackIntent(int callbackId, bool repeating)
         {
             Intent serviceIntent = new Intent(_service, typeof(AndroidSensusService));
-            serviceIntent.PutExtra(INTENT_EXTRA_SENSUS_CALLBACK, true);
-            serviceIntent.PutExtra(INTENT_EXTRA_SENSUS_CALLBACK_ID, callbackId);
-            serviceIntent.PutExtra(INTENT_EXTRA_SENSUS_CALLBACK_REPEATING, repeating);
+            serviceIntent.PutExtra(SENSUS_CALLBACK_KEY, true);
+            serviceIntent.PutExtra(SENSUS_CALLBACK_ID_KEY, callbackId);
+            serviceIntent.PutExtra(SENSUS_CALLBACK_REPEATING_KEY, repeating);
             return PendingIntent.GetService(_service, callbackId, serviceIntent, PendingIntentFlags.CancelCurrent);
         }
 

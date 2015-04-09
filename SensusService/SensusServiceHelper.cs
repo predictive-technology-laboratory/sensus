@@ -34,6 +34,10 @@ namespace SensusService
     public abstract class SensusServiceHelper : IDisposable
     {
         #region static members
+        public const string SENSUS_CALLBACK_KEY = "SENSUS-CALLBACK";
+        public const string SENSUS_CALLBACK_ID_KEY = "SENSUS-CALLBACK-ID";
+        public const string SENSUS_CALLBACK_REPEATING_KEY = "SENSUS-CALLBACK-REPEATING";
+
         private static SensusServiceHelper _singleton;
         private static object _staticLockObject = new object();
         protected static readonly string XAMARIN_INSIGHTS_APP_KEY = "97af5c4ab05c6a69d2945fd403ff45535f8bb9bb";
@@ -313,7 +317,7 @@ namespace SensusService
 
         protected abstract void ScheduleRepeatingCallback(int callbackId, int initialDelayMS, int subsequentDelayMS);
 
-        protected abstract void ScheduleOneTimeCallback(int callbackId, int delay);
+        protected abstract void ScheduleOneTimeCallback(int callbackId, int delayMS);
 
         protected abstract void CancelCallback(int callbackId, bool repeating);
 
@@ -475,25 +479,30 @@ namespace SensusService
             lock (_idCallback)
                 if (_idCallback.ContainsKey(callbackId))
                     ScheduleRepeatingCallback(callbackId, initialDelayMS, subsequentDelayMS);
-        }                      
+        }  
 
         public void RaiseCallbackAsync(int callbackId, bool repeating)
         {
+            RaiseCallbackAsync(callbackId, repeating, null);
+        }    
+
+        public void RaiseCallbackAsync(int callbackId, bool repeating, Action callback)
+        {
             lock (_idCallback)
             {
-                Action callback;
-                if (_idCallback.TryGetValue(callbackId, out callback))
+                Action callbackToRaise;
+                if (_idCallback.TryGetValue(callbackId, out callbackToRaise))
                 {
                     KeepDeviceAwake();
 
                     new Thread(() =>
                         {
-                            if (Monitor.TryEnter(callback))
+                            if (Monitor.TryEnter(callbackToRaise))
                             {
                                 try
                                 {
                                     _logger.Log("Raising callback " + callbackId, LoggingLevel.Debug, GetType());
-                                    callback();
+                                    callbackToRaise();
                                 }
                                 catch (Exception ex)
                                 {
@@ -501,7 +510,7 @@ namespace SensusService
                                 }
                                 finally
                                 {
-                                    Monitor.Exit(callback);
+                                    Monitor.Exit(callbackToRaise);
                                 }
                             }
                             else
@@ -512,10 +521,13 @@ namespace SensusService
 
                             LetDeviceSleep();
 
+                            if(callback != null)
+                                callback();
+
                         }).Start();                           
                 }
             }
-        }            
+        }                            
 
         public void CancelRepeatingCallback(int callbackId)
         {
