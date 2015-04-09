@@ -315,7 +315,7 @@ namespace SensusService
 
         public abstract bool Use(Probe probe);
 
-        protected abstract void ScheduleRepeatingCallback(int callbackId, int initialDelayMS, int subsequentDelayMS);
+        protected abstract void ScheduleRepeatingCallback(int callbackId, int initialDelayMS, int repeatDelayMS);
 
         protected abstract void ScheduleOneTimeCallback(int callbackId, int delayMS);
 

@@ -322,10 +322,10 @@ namespace Sensus.Android
                 }).Start();
         }
 
-        protected override void ScheduleRepeatingCallback(int callbackId, int initialDelayMS, int subsequentDelayMS)
+        protected override void ScheduleRepeatingCallback(int callbackId, int initialDelayMS, int repeatDelayMS)
         {
             AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
-            alarmManager.SetRepeating(AlarmType.RtcWakeup, Java.Lang.JavaSystem.CurrentTimeMillis() + initialDelayMS, subsequentDelayMS, GetCallbackIntent(callbackId, true));
+            alarmManager.SetRepeating(AlarmType.RtcWakeup, Java.Lang.JavaSystem.CurrentTimeMillis() + initialDelayMS, repeatDelayMS, GetCallbackIntent(callbackId, true));
         }
 
         protected override void ScheduleOneTimeCallback(int callbackId, int delayMS)

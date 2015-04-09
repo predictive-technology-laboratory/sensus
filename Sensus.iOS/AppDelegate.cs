@@ -44,6 +44,8 @@ namespace Sensus.iOS
             App app = new App();
             LoadApplication(app);
 
+            uiApplication.RegisterUserNotificationSettings(UIUserNotificationSettings.GetSettingsForTypes(UIUserNotificationType.Badge | UIUserNotificationType.Sound | UIUserNotificationType.Alert, new NSSet()));
+
             _sensusServiceHelper = SensusServiceHelper.Load<iOSSensusServiceHelper>() as iOSSensusServiceHelper;
 
             UiBoundSensusServiceHelper.Set(_sensusServiceHelper);
@@ -55,8 +57,8 @@ namespace Sensus.iOS
                 ServiceNotification(launchingNotification as UILocalNotification);
 
             // service all other notifications whose fire time has passed
-            foreach (UILocalNotification notification in UIApplication.SharedApplication.ScheduledLocalNotifications)
-                if (notification.FireDate.ToDateTime() <= DateTime.Now)
+            foreach (UILocalNotification notification in uiApplication.ScheduledLocalNotifications)
+                if (notification.FireDate.ToDateTime() <= DateTime.UtcNow)
                     ServiceNotification(notification);
 
             return base.FinishedLaunching(uiApplication, launchOptions);
@@ -64,8 +66,9 @@ namespace Sensus.iOS
 
         public override void OnActivated(UIApplication uiApplication)
         {
-            UiBoundSensusServiceHelper.Get(true).StartAsync(null);
-
+            iOSSensusServiceHelper sensusServiceHelper = UiBoundSensusServiceHelper.Get(true) as iOSSensusServiceHelper;
+            sensusServiceHelper.StartAsync(null);
+            sensusServiceHelper.RescheduleCallbackNotifications();
             base.OnActivated(uiApplication);
         }
 
@@ -81,20 +84,24 @@ namespace Sensus.iOS
             {              
                 int callbackId = (notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_ID_KEY)) as NSNumber).Int32Value;
                 bool repeating = (notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber).BoolValue;
+                int repeatDelayMS = (notification.UserInfo.ValueForKey(new NSString(iOSSensusServiceHelper.SENSUS_CALLBACK_REPEAT_DELAY)) as NSNumber).Int32Value;
 
                 // TODO:  Run callbacks in background:  http://developer.xamarin.com/guides/ios/application_fundamentals/backgrounding/part_3_ios_backgrounding_techniques/ios_backgrounding_with_tasks/
 
                 UiBoundSensusServiceHelper.Get(true).RaiseCallbackAsync(callbackId, repeating, () =>
                     {
-                        UIApplication.SharedApplication.CancelLocalNotification(notification);  
+                        Device.BeginInvokeOnMainThread(() =>
+                            {
+                                UIApplication.SharedApplication.CancelLocalNotification(notification);  
 
-                        if (repeating)
-                            UIApplication.SharedApplication.ScheduleLocalNotification(notification);
+                                if (repeating)
+                                {
+                                    notification.FireDate = DateTime.UtcNow.AddMilliseconds((double)repeatDelayMS).ToNSDate();
+                                    UIApplication.SharedApplication.ScheduleLocalNotification(notification);
+                                }
+                            });
                     });
             }
-
-            if (UIApplication.SharedApplication.ScheduledLocalNotifications.Length == 0)
-                UIApplication.SharedApplication.ApplicationIconBadgeNumber = 0;
         }
 		
         // This method is invoked when the application is about to move from active to inactive state.

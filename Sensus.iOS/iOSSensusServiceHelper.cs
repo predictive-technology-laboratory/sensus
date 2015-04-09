@@ -20,11 +20,17 @@ using SensusService.Probes;
 using Xamarin.Forms.Platform.iOS;
 using UIKit;
 using Foundation;
+using Xamarin.Forms;
+using System.Collections.Generic;
 
 namespace Sensus.iOS
 {
     public class iOSSensusServiceHelper : SensusServiceHelper
     {
+        public const string SENSUS_CALLBACK_REPEAT_DELAY = "SENSUS-CALLBACK-REPEAT-DELAY";
+
+        private Dictionary<int, UILocalNotification> _callbackIdNotification;
+
         public override bool IsCharging
         {
             get
@@ -67,6 +73,7 @@ namespace Sensus.iOS
 
         public iOSSensusServiceHelper()
         {
+            _callbackIdNotification = new Dictionary<int, UILocalNotification>();
         }
 
         protected override void InitializeXamarinInsights()
@@ -79,31 +86,54 @@ namespace Sensus.iOS
             return true;
         }
 
-        protected override void ScheduleRepeatingCallback(int callbackId, int initialDelayMS, int subsequentDelayMS)
+        protected override void ScheduleRepeatingCallback(int callbackId, int initialDelayMS, int repeatDelayMS)
         {
+            ScheduleCallback(callbackId, initialDelayMS, true, repeatDelayMS);
         }
 
         protected override void ScheduleOneTimeCallback(int callbackId, int delayMS)
         {
-            UILocalNotification notification = new UILocalNotification
-            {
-                FireDate = DateTime.Now.AddMilliseconds(delayMS).ToNSDate(),
-                AlertAction = "Sensus Alert",
-                AlertBody = "Sensus is requesting information.",
-                SoundName = UILocalNotification.DefaultSoundName,
-                ApplicationIconBadgeNumber = 1
-            };
+            ScheduleCallback(callbackId, delayMS, false, -1);
+        }
 
-            notification.UserInfo = new NSDictionary(
-                SENSUS_CALLBACK_KEY, true, 
-                SENSUS_CALLBACK_ID_KEY, callbackId,
-                SENSUS_CALLBACK_REPEATING_KEY, false);
+        private void ScheduleCallback(int callbackId, int delayMS, bool repeating, int repeatDelayMS)
+        {
+            Device.BeginInvokeOnMainThread(() =>
+                {
+                    UILocalNotification notification = new UILocalNotification
+                    {
+                        FireDate = DateTime.UtcNow.AddMilliseconds((double)delayMS).ToNSDate(),
+                        SoundName = UILocalNotification.DefaultSoundName
+                    };
 
-            UIApplication.SharedApplication.ScheduleLocalNotification(notification);
+                    notification.UserInfo = new NSDictionary(
+                        SENSUS_CALLBACK_KEY, true, 
+                        SENSUS_CALLBACK_ID_KEY, callbackId,
+                        SENSUS_CALLBACK_REPEATING_KEY, repeating,
+                        SENSUS_CALLBACK_REPEAT_DELAY, repeatDelayMS);
+
+                    if(repeating)
+                        _callbackIdNotification.Add(callbackId, notification);
+
+                    UIApplication.SharedApplication.ScheduleLocalNotification(notification);
+                });
         }
 
         protected override void CancelCallback(int callbackId, bool repeating)
         {
+            Device.BeginInvokeOnMainThread(() =>
+                {
+                    UIApplication.SharedApplication.CancelLocalNotification(_callbackIdNotification[callbackId]);
+                });
+        }
+
+        public void RescheduleCallbackNotifications()
+        {
+            Device.BeginInvokeOnMainThread(() =>
+                {
+                    foreach (UILocalNotification notification in _callbackIdNotification.Values)
+                        UIApplication.SharedApplication.ScheduleLocalNotification(notification);
+                });
         }
 
         public override void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
