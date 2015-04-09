@@ -86,12 +86,16 @@ namespace Sensus.iOS
                 bool repeating = (notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber).BoolValue;
                 int repeatDelayMS = (notification.UserInfo.ValueForKey(new NSString(iOSSensusServiceHelper.SENSUS_CALLBACK_REPEAT_DELAY)) as NSNumber).Int32Value;
 
-                // TODO:  Run callbacks in background:  http://developer.xamarin.com/guides/ios/application_fundamentals/backgrounding/part_3_ios_backgrounding_techniques/ios_backgrounding_with_tasks/
+                nint taskId = UIApplication.SharedApplication.BeginBackgroundTask(() =>
+                    {
+                        //UiBoundSensusServiceHelper.Get(true).Cancel(callbackId);
+                    });
 
                 UiBoundSensusServiceHelper.Get(true).RaiseCallbackAsync(callbackId, repeating, () =>
                     {
                         Device.BeginInvokeOnMainThread(() =>
                             {
+                                UIApplication.SharedApplication.EndBackgroundTask(taskId);
                                 UIApplication.SharedApplication.CancelLocalNotification(notification);  
 
                                 if (repeating)

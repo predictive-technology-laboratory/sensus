@@ -195,7 +195,7 @@ namespace SensusService.DataStores
                     return;
 
                 SensusServiceHelper.Get().Logger.Log("Stopping.", LoggingLevel.Normal, GetType());
-                SensusServiceHelper.Get().CancelRepeatingCallback(_commitCallbackId);
+                SensusServiceHelper.Get().UnscheduleRepeatingCallback(_commitCallbackId);
                 _commitCallbackId = -1;
             }
         }

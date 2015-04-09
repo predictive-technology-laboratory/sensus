@@ -372,7 +372,7 @@ namespace SensusService.Probes.User
         private void StopScriptRerunCallbacks()
         {
             SensusServiceHelper.Get().Logger.Log("Stopping script rerun callbacks.", LoggingLevel.Normal, GetType());
-            SensusServiceHelper.Get().CancelRepeatingCallback(_scriptRerunCallbackId);
+            SensusServiceHelper.Get().UnscheduleRepeatingCallback(_scriptRerunCallbackId);
             _scriptRerunCallbackId = -1;
         }
 
@@ -396,7 +396,7 @@ namespace SensusService.Probes.User
         private void StopRandomScriptTriggerCallbacks()
         {
             SensusServiceHelper.Get().Logger.Log("Stopping random script trigger thread.", LoggingLevel.Normal, GetType());
-            SensusServiceHelper.Get().CancelRepeatingCallback(_randomTriggerCallbackId);
+            SensusServiceHelper.Get().UnscheduleRepeatingCallback(_randomTriggerCallbackId);
             _randomTriggerCallbackId = -1;
         }
 

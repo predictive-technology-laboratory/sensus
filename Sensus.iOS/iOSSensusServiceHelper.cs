@@ -119,7 +119,7 @@ namespace Sensus.iOS
                 });
         }
 
-        protected override void CancelCallback(int callbackId, bool repeating)
+        protected override void UnscheduleCallback(int callbackId, bool repeating)
         {
             Device.BeginInvokeOnMainThread(() =>
                 {
