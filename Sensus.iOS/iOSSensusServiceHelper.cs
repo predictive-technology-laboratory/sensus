@@ -88,6 +88,7 @@ namespace Sensus.iOS
             return true;
         }
 
+        #region callback scheduling
         protected override void ScheduleRepeatingCallback(int callbackId, int initialDelayMS, int repeatDelayMS)
         {
             ScheduleCallbackAsync(callbackId, initialDelayMS, true, repeatDelayMS);
@@ -157,6 +158,7 @@ namespace Sensus.iOS
                         }
                 });
         }
+        #endregion
 
         public override void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
         {
@@ -164,6 +166,12 @@ namespace Sensus.iOS
 
         public override void ShareFileAsync(string path, string subject)
         {
+            Device.BeginInvokeOnMainThread(() =>
+                {
+                    // TODO:  Test on physical device. Crashes simulator.
+                    UIActivityViewController shareActivity = new UIActivityViewController(new NSObject[] { new NSString("Subject"), NSUrl.FromFilename(path) }, null);
+                    UIApplication.SharedApplication.KeyWindow.RootViewController.PresentViewController(shareActivity, true, null);
+                });
         }
 
         public override void TextToSpeechAsync(string text, Action callback)

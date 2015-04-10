@@ -32,14 +32,11 @@ namespace Sensus.iOS
     [Register("AppDelegate")]
     public partial class AppDelegate : FormsApplicationDelegate
     {
-        private UIWindow _window;    
         private iOSSensusServiceHelper _sensusServiceHelper;
 
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
             Forms.Init();
-
-            _window = new UIWindow(UIScreen.MainScreen.Bounds);
 
             App app = new App();
             LoadApplication(app);

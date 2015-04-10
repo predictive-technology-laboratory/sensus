@@ -130,8 +130,11 @@ namespace SensusUI
                     }
                     else if (!errorWritingShareFile)
                     {
-                        Device.BeginInvokeOnMainThread(async () => await Navigation.PopAsync());
-                        SensusServiceHelper.Get().ShareFileAsync(sharePath, "Sensus Data");
+                        Device.BeginInvokeOnMainThread(async () => 
+                            {
+                                await Navigation.PopAsync();
+                                SensusServiceHelper.Get().ShareFileAsync(sharePath, "Sensus Data");
+                            });
                     }
 
                 }).Start();
