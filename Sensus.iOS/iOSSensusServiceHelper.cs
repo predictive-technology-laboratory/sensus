@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 using System;
 using SensusService;
 using Xamarin.Geolocation;
@@ -35,7 +36,8 @@ namespace Sensus.iOS
         {
             get
             {
-                return false;  // TODO:  Check status
+                // TODO:  Check on actual device...is "unknown" in simulator.
+                return UIDevice.CurrentDevice.BatteryState == UIDeviceBatteryState.Charging || UIDevice.CurrentDevice.BatteryState == UIDeviceBatteryState.Full;
             }
         }
 
@@ -43,7 +45,7 @@ namespace Sensus.iOS
         {
             get
             {
-                return false;  // TODO:  Check status
+                return NetworkConnectivity.LocalWifiConnectionStatus() == NetworkStatus.ReachableViaWiFiNetwork;
             }
         }
 
@@ -51,7 +53,7 @@ namespace Sensus.iOS
         {
             get
             {
-                return "device";  // TODO:  Get ID
+                return UIDevice.CurrentDevice.IdentifierForVendor.AsString();
             }
         }
 
@@ -59,7 +61,7 @@ namespace Sensus.iOS
         {
             get
             {
-                return "ios";  // TODO:  Get version
+                return UIDevice.CurrentDevice.SystemName + " " + UIDevice.CurrentDevice.SystemVersion;
             }
         }
 
