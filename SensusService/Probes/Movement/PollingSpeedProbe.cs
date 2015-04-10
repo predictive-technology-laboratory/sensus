@@ -20,7 +20,7 @@ using System.Threading;
 
 namespace SensusService.Probes.Movement
 {
-    public class SpeedProbe : PollingProbe
+    public class PollingSpeedProbe : PollingProbe
     {
         private Position _previousPosition;
 
@@ -41,7 +41,7 @@ namespace SensusService.Probes.Movement
             get { return 5000; }
         }
 
-        public SpeedProbe()
+        public PollingSpeedProbe()
         {
         }
 
@@ -77,53 +77,14 @@ namespace SensusService.Probes.Movement
                 if (_previousPosition == null || currentPosition == null || currentPosition.Timestamp == _previousPosition.Timestamp)
                     data = new Datum[] { };
                 else
-                {
-                    // http://www.movable-type.co.uk/scripts/latlong.html
-
-                    double φ1 = DegreesToRadians(_previousPosition.Latitude);
-                    double φ2 = DegreesToRadians(currentPosition.Latitude);
-                    double Δφ = DegreesToRadians(currentPosition.Latitude - _previousPosition.Latitude);
-                    double Δλ = DegreesToRadians(currentPosition.Longitude - _previousPosition.Longitude);
-
-                    double a = Math.Pow(Math.Sin(Δφ / 2), 2) +
-                               Math.Cos(φ1) *
-                               Math.Cos(φ2) *
-                               Math.Pow(Math.Sin(Δλ / 2), 2);
-
-                    var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
-
-                    var reportedDistKM = 6371 * c;
-
-                    double elapsedHours = new TimeSpan(currentPosition.Timestamp.Ticks - _previousPosition.Timestamp.Ticks).TotalHours;
-                    double reportedSpeedKPH = reportedDistKM / elapsedHours;
-
-                    float accuracy = 0;
-                    if (_previousPosition.Accuracy >= 0 && currentPosition.Accuracy >= 0)
-                    {
-                        double maxDistKM = reportedDistKM + _previousPosition.Accuracy / 1000f + currentPosition.Accuracy / 1000f;
-                        double maxSpeedKPH = maxDistKM / elapsedHours;
-                        accuracy = (float)(maxSpeedKPH - reportedSpeedKPH);
-                    }
-
-                    data = new SpeedDatum[] { new SpeedDatum(currentPosition.Timestamp, accuracy, (float)reportedSpeedKPH) };
-                }
+                    data = new SpeedDatum[] { new SpeedDatum(currentPosition.Timestamp, _previousPosition, currentPosition) };
 
                 if (currentPosition != null)
                     _previousPosition = currentPosition;
 
                 return data;
             }
-        }
-
-        private double DegreesToRadians(double degrees)
-        {
-            return degrees * Math.PI / 180;
-        }
-
-        private double RadiansToDegrees(double radians)
-        {
-            return radians / Math.PI * 180;
-        }
+        }            
 
         public override void Stop()
         {

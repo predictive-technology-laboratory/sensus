@@ -57,6 +57,11 @@ namespace SensusService.Probes.Communication
             get { return _message; }
         }
 
+        /// <summary>
+        /// For JSON deserialization.
+        /// </summary>
+        private SmsDatum() { }
+
         public SmsDatum(DateTimeOffset timestamp, string fromNumber, string toNumber, string message)
             : base(timestamp)
         {

@@ -38,6 +38,11 @@ namespace SensusService.Probes.Context
             get { return "Brightness:  " + Math.Round(_brightness, 2); }
         }
 
+        /// <summary>
+        /// For JSON deserialization.
+        /// </summary>
+        private LightDatum() { }
+
         public LightDatum(DateTimeOffset timestamp, double brightness)
             : base(timestamp)
         {

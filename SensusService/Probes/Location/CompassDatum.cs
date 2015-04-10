@@ -38,6 +38,11 @@ namespace SensusService.Probes.Location
             get { return Math.Round(_heading, 0) + " degrees from magnetic north"; }
         }
 
+        /// <summary>
+        /// For JSON deserialization.
+        /// </summary>
+        private CompassDatum() { }
+
         public CompassDatum(DateTimeOffset timestamp, double heading)
             : base(timestamp)
         {

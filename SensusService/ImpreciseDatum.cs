@@ -33,6 +33,11 @@ namespace SensusService
             set { _accuracy = value; }
         }
 
+        /// <summary>
+        /// For JSON deserialization.
+        /// </summary>
+        protected ImpreciseDatum() { }
+
         protected ImpreciseDatum(DateTimeOffset timestamp, double accuracy)
             : base(timestamp)
         {

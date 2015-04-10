@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using AVFoundation;
 using System.Threading;
 using Toasts.Forms.Plugin.Abstractions;
+using SensusService.Probes.Movement;
 
 namespace Sensus.iOS
 {
@@ -88,7 +89,8 @@ namespace Sensus.iOS
 
         public override bool Use(Probe probe)
         {
-            return true;
+            return !(probe is PollingLocationProbe) &&  // polling isn't supported very well in iOS
+                   !(probe is PollingSpeedProbe);       // ditto
         }
 
         #region callback scheduling
@@ -197,6 +199,7 @@ namespace Sensus.iOS
             DependencyService.Get<IToastNotificator>().Notify(ToastNotificationType.Info, "", message + Environment.NewLine, TimeSpan.FromSeconds(2));
         }
 
+        #region methods not implemented in ios
         public override void UpdateApplicationStatus(string status)
         {
         }   
@@ -208,6 +211,7 @@ namespace Sensus.iOS
         public override void LetDeviceSleep()
         {
         }                        
+        #endregion
     }
 }
 

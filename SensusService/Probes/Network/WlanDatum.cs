@@ -38,6 +38,11 @@ namespace SensusService.Probes.Network
             get { return "AP BSSID:  " + _accessPointBSSID; }
         }
 
+        /// <summary>
+        /// For JSON deserialization.
+        /// </summary>
+        private WlanDatum() { }
+
         public WlanDatum(DateTimeOffset timestamp, string accessPointBSSID)
             : base(timestamp)
         {

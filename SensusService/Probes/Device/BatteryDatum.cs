@@ -38,6 +38,11 @@ namespace SensusService.Probes.Device
             get { return "Level:  " + Math.Round(_level, 2); }
         }
 
+        /// <summary>
+        /// For JSON deserialization.
+        /// </summary>
+        private BatteryDatum() { }
+
         public BatteryDatum(DateTimeOffset timestamp, double level)
             : base(timestamp)
         {

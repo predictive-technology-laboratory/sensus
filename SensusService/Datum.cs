@@ -92,7 +92,7 @@ namespace SensusService
         /// <summary>
         /// Parameterless constructor For JSON.NET deserialization.
         /// </summary>
-        private Datum()
+        protected Datum()
         {
             _deviceId = SensusServiceHelper.Get().DeviceId;
             _anonymized = false;

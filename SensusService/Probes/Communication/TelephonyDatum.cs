@@ -46,6 +46,11 @@ namespace SensusService.Probes.Communication
             get { return _phoneNumber + " (" + _state + ")"; }
         }
 
+        /// <summary>
+        /// For JSON deserialization.
+        /// </summary>
+        private TelephonyDatum() { }
+
         public TelephonyDatum(DateTimeOffset timestamp, TelephonyState state, string phoneNumber)
             : base(timestamp)
         {

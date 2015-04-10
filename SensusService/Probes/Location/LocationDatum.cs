@@ -47,6 +47,11 @@ namespace SensusService.Probes.Location
             get { return Math.Round(_latitude, 2) + " (lat), " + Math.Round(_longitude, 2) + " (lon)"; }
         }
 
+        /// <summary>
+        /// For JSON deserialization.
+        /// </summary>
+        private LocationDatum() { }
+
         public LocationDatum(DateTimeOffset timestamp, double accuracy, double latitude, double longitude)
             : base(timestamp, accuracy)
         {

@@ -35,6 +35,11 @@ namespace SensusService.Probes.Device
             get { return _on ? "On" : "Off"; }
         }
 
+        /// <summary>
+        /// For JSON deserialization.
+        /// </summary>
+        private ScreenDatum() { }
+
         public ScreenDatum(DateTimeOffset timestamp, bool on)
             : base(timestamp)
         {

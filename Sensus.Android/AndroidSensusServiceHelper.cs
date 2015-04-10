@@ -31,6 +31,7 @@ using Xamarin;
 using Xamarin.Geolocation;
 using SensusService.Probes.Location;
 using SensusService.Probes;
+using SensusService.Probes.Movement;
 
 namespace Sensus.Android
 {
@@ -148,7 +149,8 @@ namespace Sensus.Android
 
         public override bool Use(Probe probe)
         {
-            return !(probe is ListeningLocationProbe);  // the listening probe creates strange conflicts with the GpsReceiver and the polling probe. don't use it for android.
+            return !(probe is ListeningLocationProbe) && // the listening probe creates strange conflicts with the GpsReceiver and the polling probe. don't use it for android.
+                   !(probe is ListeningSpeedProbe);      // the listening speed probe uses the listening location probe. see above comment.
         }
 
         public override void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)

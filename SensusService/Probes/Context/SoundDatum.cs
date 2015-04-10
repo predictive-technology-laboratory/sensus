@@ -38,6 +38,11 @@ namespace SensusService.Probes.Context
             get { return Math.Round(_decibels, 0) + " (db)"; }
         }
 
+        /// <summary>
+        /// For JSON deserialization.
+        /// </summary>
+        private SoundDatum() { }
+
         public SoundDatum(DateTimeOffset timestamp, double decibels)
             : base(timestamp)
         {
