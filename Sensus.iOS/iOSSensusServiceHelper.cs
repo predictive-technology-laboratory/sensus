@@ -23,6 +23,8 @@ using UIKit;
 using Foundation;
 using Xamarin.Forms;
 using System.Collections.Generic;
+using AVFoundation;
+using System.Threading;
 
 namespace Sensus.iOS
 {
@@ -176,6 +178,12 @@ namespace Sensus.iOS
 
         public override void TextToSpeechAsync(string text, Action callback)
         {
+            new Thread(() =>
+                {
+                    // TODO:  Test on physical device.
+                    new AVSpeechSynthesizer().SpeakUtterance(new AVSpeechUtterance(text));
+
+                }).Start();
         }
 
         public override void PromptForInputAsync(string prompt, bool startVoiceRecognizer, Action<string> callback)
