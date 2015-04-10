@@ -54,12 +54,12 @@ namespace Sensus.iOS
             // if this app was started by a local notification, service that notification
             NSObject launchingNotification;
             if (launchOptions != null && launchOptions.TryGetValue(UIApplication.LaunchOptionsLocalNotificationKey, out launchingNotification))
-                ServiceNotification(launchingNotification as UILocalNotification);
+                ServiceNotificationAsync(launchingNotification as UILocalNotification);
 
             // service all other notifications whose fire time has passed
             foreach (UILocalNotification notification in uiApplication.ScheduledLocalNotifications)
                 if (notification.FireDate.ToDateTime() <= DateTime.UtcNow)
-                    ServiceNotification(notification);
+                    ServiceNotificationAsync(notification);
 
             return base.FinishedLaunching(uiApplication, launchOptions);
         }
@@ -67,17 +67,21 @@ namespace Sensus.iOS
         public override void OnActivated(UIApplication uiApplication)
         {
             iOSSensusServiceHelper sensusServiceHelper = UiBoundSensusServiceHelper.Get(true) as iOSSensusServiceHelper;
-            sensusServiceHelper.StartAsync(null);
-            sensusServiceHelper.RefreshCallbackNotifications();
+
+            sensusServiceHelper.StartAsync(() =>
+                {
+                    sensusServiceHelper.RefreshCallbackNotificationsAsync();
+                });
+            
             base.OnActivated(uiApplication);
         }
 
         public override void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)
         {
-            ServiceNotification(notification);
+            ServiceNotificationAsync(notification);
         }
 
-        private void ServiceNotification(UILocalNotification notification)
+        private void ServiceNotificationAsync(UILocalNotification notification)
         {
             bool isCallback = (notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_KEY)) as NSNumber).BoolValue;
             if (isCallback)

@@ -88,21 +88,23 @@ namespace Sensus.iOS
 
         protected override void ScheduleRepeatingCallback(int callbackId, int initialDelayMS, int repeatDelayMS)
         {
-            ScheduleCallback(callbackId, initialDelayMS, true, repeatDelayMS);
+            ScheduleCallbackAsync(callbackId, initialDelayMS, true, repeatDelayMS);
         }
 
         protected override void ScheduleOneTimeCallback(int callbackId, int delayMS)
         {
-            ScheduleCallback(callbackId, delayMS, false, -1);
+            ScheduleCallbackAsync(callbackId, delayMS, false, -1);
         }
 
         public override void RescheduleRepeatingCallback(int callbackId, int initialDelayMS, int repeatDelayMS)
         {
-            UnscheduleCallback(callbackId, true);
-            ScheduleRepeatingCallback(callbackId, initialDelayMS, repeatDelayMS);
+            UnscheduleCallbackAsync(callbackId, true, () =>
+                {
+                    ScheduleRepeatingCallback(callbackId, initialDelayMS, repeatDelayMS);
+                });
         }
 
-        private void ScheduleCallback(int callbackId, int delayMS, bool repeating, int repeatDelayMS)
+        private void ScheduleCallbackAsync(int callbackId, int delayMS, bool repeating, int repeatDelayMS)
         {
             Device.BeginInvokeOnMainThread(() =>
                 {
@@ -126,16 +128,19 @@ namespace Sensus.iOS
                 });
         }
 
-        protected override void UnscheduleCallback(int callbackId, bool repeating)
+        protected override void UnscheduleCallbackAsync(int callbackId, bool repeating, Action callback)
         {
             Device.BeginInvokeOnMainThread(() =>
                 {
                     lock(_callbackIdNotification)
                         UIApplication.SharedApplication.CancelLocalNotification(_callbackIdNotification[callbackId]);
+
+                    if(callback != null)
+                        callback();
                 });
         }
 
-        public void RefreshCallbackNotifications()
+        public void RefreshCallbackNotificationsAsync()
         {
             Device.BeginInvokeOnMainThread(() =>
                 {
