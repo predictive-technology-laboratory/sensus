@@ -140,13 +140,17 @@ namespace Sensus.iOS
         {
             Device.BeginInvokeOnMainThread(() =>
                 {
-                    lock(_callbackIdNotification)
+                    lock (_callbackIdNotification)
                     {
-                        UIApplication.SharedApplication.CancelLocalNotification(_callbackIdNotification[callbackId]);
-                        _callbackIdNotification.Remove(callbackId);
+                        // there are race conditions on this collection, and the key might be removed elsewhere
+                        if (_callbackIdNotification.ContainsKey(callbackId))
+                        {
+                            UIApplication.SharedApplication.CancelLocalNotification(_callbackIdNotification[callbackId]);
+                            _callbackIdNotification.Remove(callbackId);
+                        }
                     }
 
-                    if(callback != null)
+                    if (callback != null)
                         callback();
                 });
         }
