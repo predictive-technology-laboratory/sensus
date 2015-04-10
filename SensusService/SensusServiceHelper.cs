@@ -484,6 +484,7 @@ namespace SensusService
         {
             lock (_idCallbackCancellationTokenSource)
             {
+                // do we have callback information for the passed callbackId? we might not, in the case where the callback is canceled by the user and the system fires it subsequently.
                 Tuple<Action<CancellationToken>, CancellationTokenSource> callbackCancellationTokenSource;
                 if (_idCallbackCancellationTokenSource.TryGetValue(callbackId, out callbackCancellationTokenSource))
                 {
@@ -491,17 +492,22 @@ namespace SensusService
 
                     new Thread(() =>
                         {
-                            if (Monitor.TryEnter(callbackCancellationTokenSource))
+                            Action<CancellationToken> callbackToRaise = callbackCancellationTokenSource.Item1;
+
+                            // callbacks cannot be raised concurrently -- drop the callback if it is already in progress.
+                            if (Monitor.TryEnter(callbackToRaise))
                             {
+                                // initialize a new cancellation token source for this call, since they cannot be reset
+                                CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+
+                                // set cancellation token source in collection, so that someone can call CancelRaisedCallback
+                                lock(_idCallbackCancellationTokenSource)
+                                    _idCallbackCancellationTokenSource[callbackId] = new Tuple<Action<CancellationToken>, CancellationTokenSource>(callbackToRaise, cancellationTokenSource);
+
                                 try
                                 {
                                     _logger.Log("Raising callback " + callbackId, LoggingLevel.Debug, GetType());
-
-                                    // initialize a new cancellation token source for this call (they cannot be reset from call to call)
-                                    lock(_idCallbackCancellationTokenSource)
-                                        _idCallbackCancellationTokenSource[callbackId] = new Tuple<Action<CancellationToken>, CancellationTokenSource>(callbackCancellationTokenSource.Item1, new CancellationTokenSource());
-                                    
-                                    callbackCancellationTokenSource.Item1(callbackCancellationTokenSource.Item2.Token);
+                                    callbackToRaise(cancellationTokenSource.Token);
                                 }
                                 catch (Exception ex)
                                 {
@@ -509,7 +515,11 @@ namespace SensusService
                                 }
                                 finally
                                 {
-                                    Monitor.Exit(callbackCancellationTokenSource);
+                                    Monitor.Exit(callbackToRaise);
+
+                                    // reset cancellation token to null since there is nothing to cancel
+                                    lock(_idCallbackCancellationTokenSource)
+                                        _idCallbackCancellationTokenSource[callbackId] = new Tuple<Action<CancellationToken>, CancellationTokenSource>(callbackToRaise, null);
                                 }
                             }
                             else
@@ -534,7 +544,7 @@ namespace SensusService
             lock (_idCallbackCancellationTokenSource)
             {
                 Tuple<Action<CancellationToken>, CancellationTokenSource> callbackCancellationTokenSource;
-                if (_idCallbackCancellationTokenSource.TryGetValue(callbackId, out callbackCancellationTokenSource) && callbackCancellationTokenSource.Item2 != null)  // the cancellation source might be null if the callback has never been called.
+                if (_idCallbackCancellationTokenSource.TryGetValue(callbackId, out callbackCancellationTokenSource) && callbackCancellationTokenSource.Item2 != null)  // the cancellation source will be null if the callback is not currently being raised
                     callbackCancellationTokenSource.Item2.Cancel();
             }
         }
