@@ -112,9 +112,9 @@ namespace SensusService.DataStores.Remote
 
         protected override List<Datum> CommitData(List<Datum> data, CancellationToken cancellationToken)
         {
-            List<Datum> committedData = new List<Datum>();
-
             DateTimeOffset start = DateTimeOffset.UtcNow;
+
+            List<Datum> committedData = new List<Datum>();
 
             foreach (Datum datum in data)
             {

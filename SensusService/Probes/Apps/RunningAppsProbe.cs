@@ -15,6 +15,7 @@
 using SensusUI.UiProperties;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace SensusService.Probes.Apps
 {
@@ -49,11 +50,11 @@ namespace SensusService.Probes.Apps
             _maxAppsPerPoll = 10;
         }
 
-        protected abstract List<RunningAppsDatum> GetRunningAppsData();
+        protected abstract List<RunningAppsDatum> GetRunningAppsData(CancellationToken cancellationToken);
 
-        protected sealed override IEnumerable<Datum> Poll()
+        protected sealed override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
         {
-            List<RunningAppsDatum> data = GetRunningAppsData();
+            List<RunningAppsDatum> data = GetRunningAppsData(cancellationToken);
 
             if (data != null && data.Count > _maxAppsPerPoll)
                 data = data.GetRange(0, _maxAppsPerPoll);

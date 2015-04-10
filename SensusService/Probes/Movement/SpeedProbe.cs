@@ -16,6 +16,7 @@ using SensusService.Probes.Location;
 using System;
 using System.Collections.Generic;
 using Xamarin.Geolocation;
+using System.Threading;
 
 namespace SensusService.Probes.Movement
 {
@@ -65,11 +66,11 @@ namespace SensusService.Probes.Movement
             }
         }           
 
-        protected override IEnumerable<Datum> Poll()
+        protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
         {
             lock (_locker)
             {
-                Position currentPosition = GpsReceiver.Get().GetReading();
+                Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken);
 
                 Datum[] data = null;
 

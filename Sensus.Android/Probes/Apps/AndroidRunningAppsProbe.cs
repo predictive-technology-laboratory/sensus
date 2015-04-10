@@ -16,6 +16,7 @@ using Android.App;
 using SensusService.Probes.Apps;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Sensus.Android.Probes.Apps
 {
@@ -28,12 +29,15 @@ namespace Sensus.Android.Probes.Apps
             _activityManager = Application.Context.GetSystemService(global::Android.Content.Context.ActivityService) as ActivityManager;
         }
 
-        protected override List<RunningAppsDatum> GetRunningAppsData()
+        protected override List<RunningAppsDatum> GetRunningAppsData(CancellationToken cancellationToken)
         {
             List<RunningAppsDatum> data = new List<RunningAppsDatum>();
 
             foreach (ActivityManager.RunningTaskInfo task in _activityManager.GetRunningTasks(int.MaxValue))
             {
+                if (cancellationToken.IsCancellationRequested)
+                    break;
+                
                 string name = task.BaseActivity.PackageName;
                 string desc = task.Description == null ? "" : task.Description.ToString();
                 data.Add(new RunningAppsDatum(DateTimeOffset.UtcNow, name, desc));

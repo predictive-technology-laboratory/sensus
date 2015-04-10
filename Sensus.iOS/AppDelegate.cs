@@ -96,9 +96,11 @@ namespace Sensus.iOS
                     {
                         Device.BeginInvokeOnMainThread(() =>
                             {
+                                // notification has been serviced, so end background task and cancel notification
                                 UIApplication.SharedApplication.EndBackgroundTask(taskId);
                                 UIApplication.SharedApplication.CancelLocalNotification(notification);  
 
+                                // update and schedule notification again if it was a repeating callback
                                 if (repeating)
                                 {
                                     notification.FireDate = DateTime.UtcNow.AddMilliseconds((double)repeatDelayMS).ToNSDate();

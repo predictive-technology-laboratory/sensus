@@ -469,7 +469,7 @@ namespace SensusService
                 while (_idCallbackCancellationTokenSource.ContainsKey(callbackId))
                     ++callbackId;
 
-                _idCallbackCancellationTokenSource.Add(callbackId, new Tuple<Action<CancellationToken>, CancellationTokenSource>(callback, new CancellationTokenSource()));
+                _idCallbackCancellationTokenSource.Add(callbackId, new Tuple<Action<CancellationToken>, CancellationTokenSource>(callback, null));
 
                 return callbackId;
             }
@@ -496,6 +496,11 @@ namespace SensusService
                                 try
                                 {
                                     _logger.Log("Raising callback " + callbackId, LoggingLevel.Debug, GetType());
+
+                                    // initialize a new cancellation token source for this call (they cannot be reset from call to call)
+                                    lock(_idCallbackCancellationTokenSource)
+                                        _idCallbackCancellationTokenSource[callbackId] = new Tuple<Action<CancellationToken>, CancellationTokenSource>(callbackCancellationTokenSource.Item1, new CancellationTokenSource());
+                                    
                                     callbackCancellationTokenSource.Item1(callbackCancellationTokenSource.Item2.Token);
                                 }
                                 catch (Exception ex)
@@ -511,7 +516,8 @@ namespace SensusService
                                 _logger.Log("Callback " + callbackId + " was already running. Not running again.", LoggingLevel.Debug, GetType());
 
                             if (!repeating)
-                                _idCallbackCancellationTokenSource.Remove(callbackId);
+                                lock(_idCallbackCancellationTokenSource)
+                                    _idCallbackCancellationTokenSource.Remove(callbackId);
 
                             LetDeviceSleep();
 
@@ -528,7 +534,7 @@ namespace SensusService
             lock (_idCallbackCancellationTokenSource)
             {
                 Tuple<Action<CancellationToken>, CancellationTokenSource> callbackCancellationTokenSource;
-                if (_idCallbackCancellationTokenSource.TryGetValue(callbackId, out callbackCancellationTokenSource))
+                if (_idCallbackCancellationTokenSource.TryGetValue(callbackId, out callbackCancellationTokenSource) && callbackCancellationTokenSource.Item2 != null)  // the cancellation source might be null if the callback has never been called.
                     callbackCancellationTokenSource.Item2.Cancel();
             }
         }
@@ -540,8 +546,7 @@ namespace SensusService
                 if (callbackId != -1)
                     UnscheduleCallback(callbackId, true);
 
-                if (_idCallbackCancellationTokenSource.ContainsKey(callbackId))
-                    _idCallbackCancellationTokenSource.Remove(callbackId);
+                _idCallbackCancellationTokenSource.Remove(callbackId);
             }
         }
         #endregion

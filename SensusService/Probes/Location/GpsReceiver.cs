@@ -130,12 +130,12 @@ namespace SensusService.Probes.Location
             }      
         }
 
-        public Position GetReading()
+        public Position GetReading(CancellationToken cancellationToken)
         {
-            return GetReading(0);
+            return GetReading(0, cancellationToken);
         }
 
-        public Position GetReading(int maxReadingAgeForReuseMS)
+        public Position GetReading(int maxReadingAgeForReuseMS, CancellationToken cancellationToken)
         {  
             lock (_locker)
             {
@@ -164,7 +164,7 @@ namespace SensusService.Probes.Location
                                 SensusServiceHelper.Get().Logger.Log("Taking GPS reading.", LoggingLevel.Debug, GetType());
 
                                 DateTimeOffset readingStart = DateTimeOffset.UtcNow;
-                                Position newReading = await _locator.GetPositionAsync(timeout: _readingTimeoutMS);
+                                Position newReading = await _locator.GetPositionAsync(timeout: _readingTimeoutMS, cancelToken: cancellationToken);
                                 DateTimeOffset readingEnd = DateTimeOffset.UtcNow;
 
                                 if (newReading != null)

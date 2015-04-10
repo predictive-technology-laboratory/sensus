@@ -73,7 +73,7 @@ namespace SensusService.Probes
                             try
                             {
                                 SensusServiceHelper.Get().Logger.Log("Polling.", LoggingLevel.Verbose, GetType());
-                                data = Poll();
+                                data = Poll(cancellationToken);
                             }
                             catch (Exception ex)
                             {
@@ -83,6 +83,9 @@ namespace SensusService.Probes
                             if (data != null)
                                 foreach (Datum datum in data)
                                 {
+                                    if(cancellationToken.IsCancellationRequested)
+                                        break;
+                                    
                                     try
                                     {
                                         StoreDatum(datum);
@@ -99,7 +102,7 @@ namespace SensusService.Probes
             }
         }
 
-        protected abstract IEnumerable<Datum> Poll();
+        protected abstract IEnumerable<Datum> Poll(CancellationToken cancellationToken);
 
         public override void Stop()
         {

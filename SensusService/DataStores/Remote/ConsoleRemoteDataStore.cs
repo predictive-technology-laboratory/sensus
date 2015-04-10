@@ -34,6 +34,7 @@ namespace SensusService.DataStores.Remote
         protected override List<Datum> CommitData(List<Datum> data, CancellationToken cancellationToken)
         {
             List<Datum> committedData = new List<Datum>();
+
             foreach (Datum datum in data)
             {
                 if (cancellationToken.IsCancellationRequested)

@@ -38,7 +38,7 @@ namespace Sensus.Android.Probes.Context
             _sampleLengthMS = 5000;
         }
 
-        protected override IEnumerable<SensusService.Datum> Poll()
+        protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
         {
             MediaRecorder recorder = null;
             try
@@ -51,7 +51,7 @@ namespace Sensus.Android.Probes.Context
                 recorder.Prepare();
                 recorder.Start();
 
-                // mark start time of amplitude measurement -- see documentation for MaxAmplitude
+                // mark start time of amplitude measurement -- MaxAmplitude is always computed from previous call to MaxAmplitude
                 int dummy = recorder.MaxAmplitude;
 
                 Thread.Sleep(_sampleLengthMS);

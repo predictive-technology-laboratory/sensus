@@ -150,7 +150,7 @@ namespace SensusService.DataStores
                                     SensusServiceHelper.Get().Logger.Log("Failed to commit data:  " + ex.Message, LoggingLevel.Normal, GetType());
                                 }
 
-                                // don't check cancellation token here, since we've committed data and need to process the results
+                                // don't check cancellation token here, since we've committed data and need to process the results (i.e., remove from probe caches or delete from local data store). if we don't always do this we'll end up committing duplicate data on next commit.
                                 if (committedData != null && committedData.Count > 0)
                                 {
                                     try

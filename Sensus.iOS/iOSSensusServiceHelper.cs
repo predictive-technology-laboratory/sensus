@@ -119,7 +119,8 @@ namespace Sensus.iOS
                         SENSUS_CALLBACK_REPEAT_DELAY, repeatDelayMS);
 
                     if(repeating)
-                        _callbackIdNotification.Add(callbackId, notification);
+                        lock(_callbackIdNotification)
+                            _callbackIdNotification.Add(callbackId, notification);
 
                     UIApplication.SharedApplication.ScheduleLocalNotification(notification);
                 });
@@ -129,7 +130,8 @@ namespace Sensus.iOS
         {
             Device.BeginInvokeOnMainThread(() =>
                 {
-                    UIApplication.SharedApplication.CancelLocalNotification(_callbackIdNotification[callbackId]);
+                    lock(_callbackIdNotification)
+                        UIApplication.SharedApplication.CancelLocalNotification(_callbackIdNotification[callbackId]);
                 });
         }
 
@@ -137,11 +139,12 @@ namespace Sensus.iOS
         {
             Device.BeginInvokeOnMainThread(() =>
                 {
-                    foreach (UILocalNotification notification in _callbackIdNotification.Values)
-                    {
-                        UIApplication.SharedApplication.CancelLocalNotification(notification);
-                        UIApplication.SharedApplication.ScheduleLocalNotification(notification);
-                    }
+                    lock (_callbackIdNotification)
+                        foreach (UILocalNotification notification in _callbackIdNotification.Values)
+                        {
+                            UIApplication.SharedApplication.CancelLocalNotification(notification);
+                            UIApplication.SharedApplication.ScheduleLocalNotification(notification);
+                        }
                 });
         }
 

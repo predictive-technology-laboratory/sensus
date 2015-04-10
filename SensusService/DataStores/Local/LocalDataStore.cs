@@ -52,17 +52,18 @@ namespace SensusService.DataStores.Local
         protected sealed override List<Datum> GetDataToCommit(CancellationToken cancellationToken)
         {
             List<Datum> dataToCommit = new List<Datum>();
+
             foreach (Probe probe in Protocol.Probes)
             {
+                if (cancellationToken.IsCancellationRequested)
+                    break;
+                
                 // the collected data object comes directly from the probe, so lock it down before working with it.
                 ICollection<Datum> collectedData = probe.GetCollectedData();
                 if (collectedData != null)
                     lock (collectedData)
                         if (collectedData.Count > 0)
                             dataToCommit.AddRange(collectedData);
-
-                if (cancellationToken.IsCancellationRequested)
-                    break;
             }
 
             SensusServiceHelper.Get().Logger.Log("Retrieved " + dataToCommit.Count + " data elements from probes.", LoggingLevel.Debug, GetType());
@@ -80,12 +81,12 @@ namespace SensusService.DataStores.Local
             SensusServiceHelper.Get().Logger.Log("Done clearing committed data elements from probes.", LoggingLevel.Verbose, GetType());
         }
 
-        public List<Datum> GetDataForRemoteDataStore() 
+        public List<Datum> GetDataForRemoteDataStore(CancellationToken cancellationToken) 
         {
-            return GetDataForRemoteDataStore(null, null);
+            return GetDataForRemoteDataStore(cancellationToken, null);
         }
 
-        public abstract List<Datum> GetDataForRemoteDataStore(Action<double> progressCallback, Func<bool> cancelCallback);
+        public abstract List<Datum> GetDataForRemoteDataStore(CancellationToken cancellationToken, Action<double> progressCallback);
 
         public abstract void ClearDataCommittedToRemoteDataStore(List<Datum> dataCommittedToRemote);
     }

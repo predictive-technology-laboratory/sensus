@@ -62,17 +62,17 @@ namespace SensusService.DataStores.Local
             lock (_data)
                 foreach (Datum datum in data)
                 {
-                    _data.Add(datum);
-                    committed.Add(datum);
-
                     if (cancellationToken.IsCancellationRequested)
                         break;
+                    
+                    _data.Add(datum);
+                    committed.Add(datum);
                 }
 
             return committed;
         }
 
-        public override List<Datum> GetDataForRemoteDataStore(Action<double> progressCallback, Func<bool> cancelCallback)
+        public override List<Datum> GetDataForRemoteDataStore(CancellationToken cancellationToken, Action<double> progressCallback)
         {
             lock (_data)
                 return _data.ToList();
