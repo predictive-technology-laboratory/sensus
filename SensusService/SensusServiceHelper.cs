@@ -321,7 +321,7 @@ namespace SensusService
 
         public abstract void RescheduleRepeatingCallback(int callbackId, int initialDelayMS, int repeatDelayMS);
 
-        protected abstract void UnscheduleCallbackAsync(int callbackId, bool repeating);
+        protected abstract void UnscheduleCallbackAsync(int callbackId, bool repeating, Action callback);
 
         public abstract void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback);
 
@@ -554,7 +554,7 @@ namespace SensusService
             lock (_idCallbackCancellationTokenSource)
             {
                 if (callbackId != -1)
-                    UnscheduleCallbackAsync(callbackId, true);
+                    UnscheduleCallbackAsync(callbackId, true, null);
 
                 _idCallbackCancellationTokenSource.Remove(callbackId);
             }

@@ -133,7 +133,10 @@ namespace Sensus.iOS
             Device.BeginInvokeOnMainThread(() =>
                 {
                     lock(_callbackIdNotification)
+                    {
                         UIApplication.SharedApplication.CancelLocalNotification(_callbackIdNotification[callbackId]);
+                        _callbackIdNotification.Remove(callbackId);
+                    }
 
                     if(callback != null)
                         callback();

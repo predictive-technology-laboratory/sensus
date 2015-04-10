@@ -339,10 +339,13 @@ namespace Sensus.Android
             ScheduleRepeatingCallback(callbackId, initialDelayMS, repeatDelayMS);
         }
 
-        protected override void UnscheduleCallback(int callbackId, bool repeating)
+        protected override void UnscheduleCallbackAsync(int callbackId, bool repeating, Action callback)
         {
             AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
             alarmManager.Cancel(GetCallbackIntent(callbackId, repeating));
+
+            if (callback != null)
+                callback();
         }
 
         private PendingIntent GetCallbackIntent(int callbackId, bool repeating)
