@@ -324,6 +324,8 @@ namespace SensusService.DataStores.Local
                 }
 
                 _numDataStoredInFiles = 0;
+
+                SensusServiceHelper.Get().Save();  // update num data stored within the JSON file
             }
         }
     }

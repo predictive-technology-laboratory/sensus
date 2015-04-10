@@ -25,6 +25,7 @@ using Xamarin.Forms;
 using System.Collections.Generic;
 using AVFoundation;
 using System.Threading;
+using Toasts.Forms.Plugin.Abstractions;
 
 namespace Sensus.iOS
 {
@@ -188,11 +189,17 @@ namespace Sensus.iOS
 
         public override void PromptForInputAsync(string prompt, bool startVoiceRecognizer, Action<string> callback)
         {
+            // TODO
         }
 
         public override void FlashNotificationAsync(string message, Action callback)
         {
+            DependencyService.Get<IToastNotificator>().Notify(ToastNotificationType.Info, "", message + Environment.NewLine, TimeSpan.FromSeconds(2));
         }
+
+        public override void UpdateApplicationStatus(string status)
+        {
+        }   
 
         public override void KeepDeviceAwake()
         {
@@ -200,11 +207,7 @@ namespace Sensus.iOS
 
         public override void LetDeviceSleep()
         {
-        }
-
-        public override void UpdateApplicationStatus(string status)
-        {
-        }                           
+        }                        
     }
 }
 

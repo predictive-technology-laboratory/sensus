@@ -23,6 +23,7 @@ using Xamarin.Forms;
 using SensusUI;
 using SensusService;
 using Xamarin.Geolocation;
+using Toasts.Forms.Plugin.iOS;
 
 namespace Sensus.iOS
 {
@@ -37,6 +38,8 @@ namespace Sensus.iOS
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
             Forms.Init();
+
+            ToastNotificatorImplementation.Init();
 
             App app = new App();
             LoadApplication(app);

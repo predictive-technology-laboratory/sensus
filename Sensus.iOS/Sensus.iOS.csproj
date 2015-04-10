@@ -137,6 +137,12 @@
     <Reference Include="Xamarin.Forms.Xaml">
       <HintPath>..\packages\Xamarin.Forms.1.4.1.6349\lib\Xamarin.iOS10\Xamarin.Forms.Xaml.dll</HintPath>
     </Reference>
+    <Reference Include="Toasts.Forms.Plugin.Abstractions">
+      <HintPath>..\packages\Toasts.Forms.Plugin.1.0.6.18\lib\Xamarin.iOS10\Toasts.Forms.Plugin.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Toasts.Forms.Plugin.iOS">
+      <HintPath>..\packages\Toasts.Forms.Plugin.1.0.6.18\lib\Xamarin.iOS10\Toasts.Forms.Plugin.iOS.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Contents.json" />
