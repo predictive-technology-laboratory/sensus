@@ -19,6 +19,7 @@ using SensusUI.UiProperties;
 using Newtonsoft.Json.Serialization;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace SensusService.DataStores.Remote
 {
@@ -114,7 +115,7 @@ namespace SensusService.DataStores.Remote
             }
         }
 
-        protected override List<Datum> CommitData(List<Datum> data)
+        protected override List<Datum> CommitData(List<Datum> data, CancellationToken cancellationToken)
         {
             List<Datum> committedData = new List<Datum>();
 
@@ -124,6 +125,9 @@ namespace SensusService.DataStores.Remote
             Dictionary<string, List<Datum>> datumTypeDataSubset = new Dictionary<string, List<Datum>>();
             foreach (Datum datum in data)
             {
+                if (cancellationToken.IsCancellationRequested)
+                    break;
+                
                 string datumType = datum.GetType().Name;
 
                 StringBuilder json;
@@ -147,6 +151,9 @@ namespace SensusService.DataStores.Remote
 
             foreach(string datumType in datumTypeJSON.Keys)
             {
+                if (cancellationToken.IsCancellationRequested)
+                    break;
+                
                 try
                 {
                     _s3.PutObjectAsync(_bucket, (string.IsNullOrWhiteSpace(_folder.Trim('/')) ? "" : _folder.Trim('/') + "/") + datumType + "/" + Guid.NewGuid(), datumTypeJSON[datumType].ToString(), contentType:"application/json").Wait();

@@ -17,6 +17,7 @@ using SensusService.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 
 namespace SensusService.DataStores.Local
 {
@@ -88,7 +89,7 @@ namespace SensusService.DataStores.Local
             }
         }
 
-        protected override List<Datum> CommitData(List<Datum> data)
+        protected override List<Datum> CommitData(List<Datum> data, CancellationToken cancellationToken)
         {
             lock (_locker)
             {
@@ -125,6 +126,9 @@ namespace SensusService.DataStores.Local
                         if (writtenToFile)
                             committedData.Add(datum);
                     }
+
+                    if (cancellationToken.IsCancellationRequested)
+                        break;
                 }
 
                 return committedData;

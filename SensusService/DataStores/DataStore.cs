@@ -55,7 +55,7 @@ namespace SensusService.DataStores
                     _commitDelayMS = value; 
 
                     if (_commitCallbackId != -1)
-                        SensusServiceHelper.Get().UpdateRepeatingCallback(_commitCallbackId, _commitDelayMS, _commitDelayMS);
+                        SensusServiceHelper.Get().RescheduleRepeatingCallback(_commitCallbackId, _commitDelayMS, _commitDelayMS);
                 }
             }
         }
@@ -108,7 +108,7 @@ namespace SensusService.DataStores
 
                 SensusServiceHelper.Get().Logger.Log("Starting.", LoggingLevel.Normal, GetType());
 
-                _commitCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(() =>
+                _commitCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(cancellationToken =>
                     {
                         if (_running)
                         {
@@ -119,7 +119,7 @@ namespace SensusService.DataStores
                             List<Datum> dataToCommit = null;
                             try
                             {
-                                dataToCommit = GetDataToCommit();
+                                dataToCommit = GetDataToCommit(cancellationToken);
                                 if (dataToCommit == null)
                                     throw new DataStoreException("Null collection returned by GetDataToCommit");
                             }
@@ -128,7 +128,7 @@ namespace SensusService.DataStores
                                 SensusServiceHelper.Get().Logger.Log("Failed to get data to commit:  " + ex.Message, LoggingLevel.Normal, GetType());
                             }
 
-                            if (dataToCommit != null)
+                            if (dataToCommit != null && !cancellationToken.IsCancellationRequested)
                             {
                                 // add in non-probe data (e.g., that from protocol reports)
                                 lock (_nonProbeDataToCommit)
@@ -138,7 +138,7 @@ namespace SensusService.DataStores
                                 List<Datum> committedData = null;
                                 try
                                 {
-                                    committedData = CommitData(dataToCommit);                                                                             
+                                    committedData = CommitData(dataToCommit, cancellationToken);                                                                             
 
                                     if (committedData == null)
                                         throw new DataStoreException("Null collection returned by CommitData");
@@ -150,6 +150,7 @@ namespace SensusService.DataStores
                                     SensusServiceHelper.Get().Logger.Log("Failed to commit data:  " + ex.Message, LoggingLevel.Normal, GetType());
                                 }
 
+                                // don't check cancellation token here, since we've committed data and need to process the results
                                 if (committedData != null && committedData.Count > 0)
                                 {
                                     try
@@ -174,9 +175,9 @@ namespace SensusService.DataStores
             }
         }
 
-        protected abstract List<Datum> GetDataToCommit();
+        protected abstract List<Datum> GetDataToCommit(CancellationToken cancellationToken);
 
-        protected abstract List<Datum> CommitData(List<Datum> data);
+        protected abstract List<Datum> CommitData(List<Datum> data, CancellationToken cancellationToken);
 
         protected abstract void ProcessCommittedData(List<Datum> committedData);
 

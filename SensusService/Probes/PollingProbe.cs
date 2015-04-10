@@ -39,7 +39,7 @@ namespace SensusService.Probes
                     _pollingSleepDurationMS = value; 
 
                     if (_pollCallbackId != -1)
-                        SensusServiceHelper.Get().UpdateRepeatingCallback(_pollCallbackId, _pollingSleepDurationMS, _pollingSleepDurationMS);
+                        SensusServiceHelper.Get().RescheduleRepeatingCallback(_pollCallbackId, _pollingSleepDurationMS, _pollingSleepDurationMS);
                 }
             }
         }
@@ -63,7 +63,7 @@ namespace SensusService.Probes
             {
                 base.Start();
 
-                _pollCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(() =>
+                _pollCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(cancellationToken =>
                     {
                         if (Running)
                         {

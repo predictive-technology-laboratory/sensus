@@ -82,7 +82,7 @@ namespace SensusService.Probes.User
                     _scriptRerunDelayMS = value; 
 
                     if (_scriptRerunCallbackId != -1)
-                        SensusServiceHelper.Get().UpdateRepeatingCallback(_scriptRerunCallbackId, _scriptRerunDelayMS, _scriptRerunDelayMS);
+                        SensusServiceHelper.Get().RescheduleRepeatingCallback(_scriptRerunCallbackId, _scriptRerunDelayMS, _scriptRerunDelayMS);
                 }
             }
         }
@@ -126,7 +126,7 @@ namespace SensusService.Probes.User
                     if (_randomTriggerCallbackId != -1)
                     {
                         int newRandomCallbackDelayMS = _random.Next(_randomTriggerDelayMaxMinutes * 60000);
-                        SensusServiceHelper.Get().UpdateRepeatingCallback(_randomTriggerCallbackId, newRandomCallbackDelayMS, newRandomCallbackDelayMS);
+                        SensusServiceHelper.Get().RescheduleRepeatingCallback(_randomTriggerCallbackId, newRandomCallbackDelayMS, newRandomCallbackDelayMS);
                     }
                 }
             }
@@ -251,7 +251,7 @@ namespace SensusService.Probes.User
 
                         SensusServiceHelper.Get().Logger.Log("Starting script rerun callbacks.", LoggingLevel.Normal, GetType());
 
-                        _scriptRerunCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(() =>
+                        _scriptRerunCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(cancellationToken =>
                             {
                                 if (Running && _rerunIncompleteScripts)
                                 {
@@ -291,7 +291,7 @@ namespace SensusService.Probes.User
 
                         SensusServiceHelper.Get().Logger.Log("Starting random script trigger callbacks.", LoggingLevel.Normal, GetType());
 
-                        _randomTriggerCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(() =>
+                        _randomTriggerCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(cancellationToken =>
                             {
                                 if (Running && _triggerRandomly)
                                 {
@@ -300,7 +300,7 @@ namespace SensusService.Probes.User
                                     scriptWait.WaitOne();
 
                                     int newRandomCallbackDelayMS = _random.Next(_randomTriggerDelayMaxMinutes * 60000);
-                                    SensusServiceHelper.Get().UpdateRepeatingCallback(_randomTriggerCallbackId, newRandomCallbackDelayMS, newRandomCallbackDelayMS);
+                                    SensusServiceHelper.Get().RescheduleRepeatingCallback(_randomTriggerCallbackId, newRandomCallbackDelayMS, newRandomCallbackDelayMS);
                                 }
                             
                             }, _randomTriggerDelayMaxMinutes * 60000, _randomTriggerDelayMaxMinutes * 60000);

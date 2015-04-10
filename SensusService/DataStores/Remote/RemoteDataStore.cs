@@ -14,6 +14,7 @@
 
 using SensusUI.UiProperties;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace SensusService.DataStores.Remote
 {
@@ -51,11 +52,13 @@ namespace SensusService.DataStores.Remote
             #endif
         }
 
-        protected sealed override List<Datum> GetDataToCommit()
+        protected sealed override List<Datum> GetDataToCommit(CancellationToken cancellationToken)
         {
             List<Datum> dataToCommit = new List<Datum>();
 
-            if (!Protocol.LocalDataStore.UploadToRemoteDataStore)
+            if (cancellationToken.IsCancellationRequested)
+                SensusServiceHelper.Get().Logger.Log("Remote data store retrieval of data cancelled.", LoggingLevel.Verbose, GetType());
+            else if (!Protocol.LocalDataStore.UploadToRemoteDataStore)
                 SensusServiceHelper.Get().Logger.Log("Not committing local data to remote data store.", LoggingLevel.Verbose, GetType());
             else if (_requireWiFi && !SensusServiceHelper.Get().WiFiConnected)
                 SensusServiceHelper.Get().Logger.Log("Required WiFi but device WiFi is not connected.", LoggingLevel.Verbose, GetType());

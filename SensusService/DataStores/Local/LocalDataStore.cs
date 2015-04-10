@@ -17,6 +17,7 @@ using SensusUI.UiProperties;
 using System.Collections.Generic;
 using System;
 using Newtonsoft.Json;
+using System.Threading;
 
 namespace SensusService.DataStores.Local
 {
@@ -48,7 +49,7 @@ namespace SensusService.DataStores.Local
             #endif
         }
 
-        protected sealed override List<Datum> GetDataToCommit()
+        protected sealed override List<Datum> GetDataToCommit(CancellationToken cancellationToken)
         {
             List<Datum> dataToCommit = new List<Datum>();
             foreach (Probe probe in Protocol.Probes)
@@ -59,6 +60,9 @@ namespace SensusService.DataStores.Local
                     lock (collectedData)
                         if (collectedData.Count > 0)
                             dataToCommit.AddRange(collectedData);
+
+                if (cancellationToken.IsCancellationRequested)
+                    break;
             }
 
             SensusServiceHelper.Get().Logger.Log("Retrieved " + dataToCommit.Count + " data elements from probes.", LoggingLevel.Debug, GetType());

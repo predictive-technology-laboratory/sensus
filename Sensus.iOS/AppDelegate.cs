@@ -68,7 +68,7 @@ namespace Sensus.iOS
         {
             iOSSensusServiceHelper sensusServiceHelper = UiBoundSensusServiceHelper.Get(true) as iOSSensusServiceHelper;
             sensusServiceHelper.StartAsync(null);
-            sensusServiceHelper.RescheduleCallbackNotifications();
+            sensusServiceHelper.RefreshCallbackNotifications();
             base.OnActivated(uiApplication);
         }
 
@@ -88,7 +88,8 @@ namespace Sensus.iOS
 
                 nint taskId = UIApplication.SharedApplication.BeginBackgroundTask(() =>
                     {
-                        //UiBoundSensusServiceHelper.Get(true).Cancel(callbackId);
+                        // if we're out of time running in the background, cancel the callback.
+                        UiBoundSensusServiceHelper.Get(true).CancelRaisedCallback(callbackId);
                     });
 
                 UiBoundSensusServiceHelper.Get(true).RaiseCallbackAsync(callbackId, repeating, () =>

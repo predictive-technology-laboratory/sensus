@@ -96,6 +96,12 @@ namespace Sensus.iOS
             ScheduleCallback(callbackId, delayMS, false, -1);
         }
 
+        public override void RescheduleRepeatingCallback(int callbackId, int initialDelayMS, int repeatDelayMS)
+        {
+            UnscheduleCallback(callbackId, true);
+            ScheduleRepeatingCallback(callbackId, initialDelayMS, repeatDelayMS);
+        }
+
         private void ScheduleCallback(int callbackId, int delayMS, bool repeating, int repeatDelayMS)
         {
             Device.BeginInvokeOnMainThread(() =>
@@ -127,12 +133,15 @@ namespace Sensus.iOS
                 });
         }
 
-        public void RescheduleCallbackNotifications()
+        public void RefreshCallbackNotifications()
         {
             Device.BeginInvokeOnMainThread(() =>
                 {
                     foreach (UILocalNotification notification in _callbackIdNotification.Values)
+                    {
+                        UIApplication.SharedApplication.CancelLocalNotification(notification);
                         UIApplication.SharedApplication.ScheduleLocalNotification(notification);
+                    }
                 });
         }
 

@@ -16,6 +16,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using System.Threading;
 
 namespace SensusService.DataStores.Local
 {
@@ -54,7 +55,7 @@ namespace SensusService.DataStores.Local
             }
         }
 
-        protected override List<Datum> CommitData(List<Datum> data)
+        protected override List<Datum> CommitData(List<Datum> data, CancellationToken cancellationToken)
         {
             List<Datum> committed = new List<Datum>();
 
@@ -63,6 +64,9 @@ namespace SensusService.DataStores.Local
                 {
                     _data.Add(datum);
                     committed.Add(datum);
+
+                    if (cancellationToken.IsCancellationRequested)
+                        break;
                 }
 
             return committed;

@@ -146,7 +146,7 @@ namespace SensusService.Probes.User
 
         public void RunAsync(Datum previousDatum, Datum currentDatum, Action<List<ScriptDatum>> callback)
         {
-            SensusServiceHelper.Get().ScheduleOneTimeCallback(() =>
+            SensusServiceHelper.Get().ScheduleOneTimeCallback(cancellationToken =>
                 {
                     SensusServiceHelper.Get().Logger.Log("Running script \"" + _name + "\".", LoggingLevel.Normal, GetType());
 

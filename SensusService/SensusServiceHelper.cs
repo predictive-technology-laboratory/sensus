@@ -178,8 +178,7 @@ namespace SensusService
         private int _healthTestDelayMS;
         private int _healthTestCount;
         private int _healthTestsPerProtocolReport;
-        private Dictionary<int, Action<CancellationToken>> _idCallback;
-        private Dictionary<int, CancellationTokenSource> _callbackIdCancellationTokenSource;
+        private Dictionary<int, Tuple<Action<CancellationToken>, CancellationTokenSource>> _idCallbackCancellationTokenSource;
         private MD5 _md5Hash;
 
         private readonly object _locker = new object();
@@ -211,7 +210,7 @@ namespace SensusService
                     _healthTestDelayMS = value;
 
                     if (_healthTestCallbackId != -1)
-                        UpdateRepeatingCallback(_healthTestCallbackId, _healthTestDelayMS, _healthTestDelayMS);
+                        RescheduleRepeatingCallback(_healthTestCallbackId, _healthTestDelayMS, _healthTestDelayMS);
 
                     Save();
                 }
@@ -275,8 +274,7 @@ namespace SensusService
             _healthTestDelayMS = 60000;
             _healthTestCount = 0;
             _healthTestsPerProtocolReport = 5;
-            _idCallback = new Dictionary<int, Action<CancellationToken>>();
-            _callbackIdCancellationTokenSource = new Dictionary<int, CancellationTokenSource>();
+            _idCallbackCancellationTokenSource = new Dictionary<int, Tuple<Action<CancellationToken>, CancellationTokenSource>>();
             _md5Hash = MD5.Create();
 
             if (!Directory.Exists(_shareDirectory))
@@ -320,6 +318,8 @@ namespace SensusService
         protected abstract void ScheduleRepeatingCallback(int callbackId, int initialDelayMS, int repeatDelayMS);
 
         protected abstract void ScheduleOneTimeCallback(int callbackId, int delayMS);
+
+        public abstract void RescheduleRepeatingCallback(int callbackId, int initialDelayMS, int repeatDelayMS);
 
         protected abstract void UnscheduleCallback(int callbackId, bool repeating);
 
@@ -440,48 +440,40 @@ namespace SensusService
                 }
         }
 
-        public int ScheduleRepeatingCallback(Action<CancellationToken> callback, int initialDelayMS, int subsequentDelayMS)
+        #region callback scheduling
+        public int ScheduleRepeatingCallback(Action<CancellationToken> callback, int initialDelayMS, int repeatDelayMS)
         {
-            lock (_idCallback)
+            lock (_idCallbackCancellationTokenSource)
             {
                 int callbackId = AddCallback(callback);
-                ScheduleRepeatingCallback(callbackId, initialDelayMS, subsequentDelayMS);
-
+                ScheduleRepeatingCallback(callbackId, initialDelayMS, repeatDelayMS);
                 return callbackId;
             }
         }
 
         public int ScheduleOneTimeCallback(Action<CancellationToken> callback, int delay)
         {
-            lock (_idCallback)
+            lock (_idCallbackCancellationTokenSource)
             {
                 int callbackId = AddCallback(callback);
                 ScheduleOneTimeCallback(callbackId, delay);
-
                 return callbackId;
             }
         }
 
         private int AddCallback(Action<CancellationToken> callback)
         {
-            lock (_idCallback)
+            lock (_idCallbackCancellationTokenSource)
             {
                 int callbackId = 0;
-                while (_idCallback.ContainsKey(callbackId))
+                while (_idCallbackCancellationTokenSource.ContainsKey(callbackId))
                     ++callbackId;
 
-                _idCallback.Add(callbackId, callback);
+                _idCallbackCancellationTokenSource.Add(callbackId, new Tuple<Action<CancellationToken>, CancellationTokenSource>(callback, new CancellationTokenSource()));
 
                 return callbackId;
             }
         }
-
-        public void UpdateRepeatingCallback(int callbackId, int initialDelayMS, int subsequentDelayMS)
-        {
-            lock (_idCallback)
-                if (_idCallback.ContainsKey(callbackId))
-                    ScheduleRepeatingCallback(callbackId, initialDelayMS, subsequentDelayMS);
-        }  
 
         public void RaiseCallbackAsync(int callbackId, bool repeating)
         {
@@ -490,26 +482,21 @@ namespace SensusService
 
         public void RaiseCallbackAsync(int callbackId, bool repeating, Action callback)
         {
-            lock (_idCallback)
+            lock (_idCallbackCancellationTokenSource)
             {
-                Action<CancellationToken> callbackToRaise;
-                if (_idCallback.TryGetValue(callbackId, out callbackToRaise))
+                Tuple<Action<CancellationToken>, CancellationTokenSource> callbackCancellationTokenSource;
+                if (_idCallbackCancellationTokenSource.TryGetValue(callbackId, out callbackCancellationTokenSource))
                 {
                     KeepDeviceAwake();
 
                     new Thread(() =>
                         {
-                            if (Monitor.TryEnter(callbackToRaise))
+                            if (Monitor.TryEnter(callbackCancellationTokenSource))
                             {
                                 try
                                 {
                                     _logger.Log("Raising callback " + callbackId, LoggingLevel.Debug, GetType());
-
-                                    CancellationTokenSource tokenSource = new CancellationTokenSource();
-                                    lock(_callbackIdCancellationTokenSource)
-                                        _callbackIdCancellationTokenSource.Add(callbackId, tokenSource);
-                                    
-                                    callbackToRaise(tokenSource.Token);
+                                    callbackCancellationTokenSource.Item1(callbackCancellationTokenSource.Item2.Token);
                                 }
                                 catch (Exception ex)
                                 {
@@ -517,21 +504,14 @@ namespace SensusService
                                 }
                                 finally
                                 {
-                                    Monitor.Exit(callbackToRaise);
-
-                                    try
-                                    {
-                                        lock(_callbackIdCancellationTokenSource)
-                                            _callbackIdCancellationTokenSource.Remove(callbackId);
-                                    }
-                                    catch(Exception) { }
+                                    Monitor.Exit(callbackCancellationTokenSource);
                                 }
                             }
                             else
                                 _logger.Log("Callback " + callbackId + " was already running. Not running again.", LoggingLevel.Debug, GetType());
 
                             if (!repeating)
-                                _idCallback.Remove(callbackId);
+                                _idCallbackCancellationTokenSource.Remove(callbackId);
 
                             LetDeviceSleep();
 
@@ -545,25 +525,26 @@ namespace SensusService
 
         public void CancelRaisedCallback(int callbackId)
         {
-            lock (_callbackIdCancellationTokenSource)
+            lock (_idCallbackCancellationTokenSource)
             {
-                CancellationTokenSource tokenSource;
-                if (_callbackIdCancellationTokenSource.TryGetValue(callbackId, out tokenSource))
-                    tokenSource.Cancel();
+                Tuple<Action<CancellationToken>, CancellationTokenSource> callbackCancellationTokenSource;
+                if (_idCallbackCancellationTokenSource.TryGetValue(callbackId, out callbackCancellationTokenSource))
+                    callbackCancellationTokenSource.Item2.Cancel();
             }
         }
 
         public void UnscheduleRepeatingCallback(int callbackId)
         {
-            lock (_idCallback)
+            lock (_idCallbackCancellationTokenSource)
             {
                 if (callbackId != -1)
                     UnscheduleCallback(callbackId, true);
 
-                if (_idCallback.ContainsKey(callbackId))
-                    _idCallback.Remove(callbackId);
+                if (_idCallbackCancellationTokenSource.ContainsKey(callbackId))
+                    _idCallbackCancellationTokenSource.Remove(callbackId);
             }
-        } 
+        }
+        #endregion
 
         public void TextToSpeechAsync(string text)
         {
@@ -579,7 +560,7 @@ namespace SensusService
                 });
         }
 
-        public void TestHealth()
+        public void TestHealth(CancellationToken cancellationToken)
         {
             lock (_locker)
             {
@@ -589,6 +570,10 @@ namespace SensusService
                 _logger.Log("Sensus health test is running (test " + ++_healthTestCount + ")", LoggingLevel.Normal, null);
 
                 foreach (Protocol protocol in _registeredProtocols)
+                {
+                    if (cancellationToken.IsCancellationRequested)
+                        break;
+                    
                     if (_runningProtocolIds.Contains(protocol.Id))
                     {
                         protocol.TestHealth();
@@ -596,6 +581,7 @@ namespace SensusService
                         if (_healthTestCount % _healthTestsPerProtocolReport == 0)
                             protocol.StoreMostRecentProtocolReport();
                     }
+                }
             }
         }
 
