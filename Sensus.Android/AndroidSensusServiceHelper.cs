@@ -320,11 +320,19 @@ namespace Sensus.Android
 
         public override void IssueNotificationAsync(string message, int id)
         {
+            if (id < 0)
+                Logger.Log("WARNING:  Notification id < 0. Message=" + message + "; id=" + id, LoggingLevel.Normal, GetType());
+            
+            // notification requests come from two source:  the android service (the sticky notification) and the underlying
+            // sensus system. the latter arrive through the current method. to ensure that IDs from the latter don't collide 
+            // with the ID of the former, start the latter after the former.
+            id = SERVICE_NOTIFICATION_ID + 1 + id;
+
             IssueNotification("Sensus", message, false, id);
         }
 
         private void IssueNotification(string title, string body, bool sticky, int id)
-        {
+        {            
             if (body == null)
                 _notificationManager.Cancel(id);
             else
