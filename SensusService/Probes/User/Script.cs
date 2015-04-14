@@ -38,7 +38,7 @@ namespace SensusService.Probes.User
             Script script = null;
 
             try { script = JsonConvert.DeserializeObject<Script>(json, _jsonSerializerSettings); }
-            catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to deserialize script:  " + ex.Message, LoggingLevel.Normal, null); }
+            catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to deserialize script:  " + ex.Message, LoggingLevel.Normal, typeof(Script)); }
 
             return script;
         }

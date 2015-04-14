@@ -68,7 +68,7 @@ namespace SensusService
                     }
                     catch (Exception ex)
                     {
-                        SensusServiceHelper.Get().Logger.Log("Failed to download Protocol from URI \"" + webURI + "\":  " + ex.Message + ". If this is an HTTPS URI, make sure the server's certificate is valid.", LoggingLevel.Normal, null);
+                        SensusServiceHelper.Get().Logger.Log("Failed to download Protocol from URI \"" + webURI + "\":  " + ex.Message + ". If this is an HTTPS URI, make sure the server's certificate is valid.", LoggingLevel.Normal, typeof(Protocol));
                     }
 
                     callback(protocol);
@@ -99,7 +99,7 @@ namespace SensusService
                     }
                     catch (Exception ex)
                     {
-                        SensusServiceHelper.Get().Logger.Log("Failed to read Protocol from stream:  " + ex.Message, LoggingLevel.Normal, null);
+                        SensusServiceHelper.Get().Logger.Log("Failed to read Protocol from stream:  " + ex.Message, LoggingLevel.Normal, typeof(Protocol));
                     }
 
                     callback(protocol);
@@ -138,7 +138,7 @@ namespace SensusService
                                     }
                                 }
                             }
-                            catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to deserialize Protocol from JSON:  " + ex.Message, LoggingLevel.Normal, null); }
+                            catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to deserialize Protocol from JSON:  " + ex.Message, LoggingLevel.Normal, typeof(Protocol)); }
 
                             protocolWait.Set();
                         });

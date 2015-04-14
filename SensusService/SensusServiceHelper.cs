@@ -106,7 +106,7 @@ namespace SensusService
             try
             {
                 sensusServiceHelper = JsonConvert.DeserializeObject<T>(AesDecrypt(File.ReadAllBytes(_serializationPath)), _serializationSettings);
-                sensusServiceHelper.Logger.Log("Deserialized service helper with " + sensusServiceHelper.RegisteredProtocols.Count + " protocols.", LoggingLevel.Normal, null);  
+                sensusServiceHelper.Logger.Log("Deserialized service helper with " + sensusServiceHelper.RegisteredProtocols.Count + " protocols.", LoggingLevel.Normal, typeof(T));  
             }
             catch (Exception ex)
             {
@@ -291,8 +291,20 @@ namespace SensusService
 
             GpsReceiver.Get().Initialize(Geolocator);  // initialize GPS receiver with platform-specific geolocator
 
-            try { InitializeXamarinInsights(); }
-            catch (Exception ex) { _logger.Log("Failed to initialize Xamarin insights:  " + ex.Message, LoggingLevel.Normal, GetType()); }   
+            if (Insights.IsInitialized)
+                _logger.Log("Xamarin Insights is already initialized.", LoggingLevel.Normal, GetType());
+            else
+            {
+                try
+                {
+                    _logger.Log("Initializing Xamarin Insights.", LoggingLevel.Normal, GetType());
+                    InitializeXamarinInsights();
+                }
+                catch (Exception ex)
+                {
+                    _logger.Log("Failed to initialize Xamarin insights:  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
+            }
 
             lock (_staticLockObject)
                 _singleton = this;
@@ -599,7 +611,7 @@ namespace SensusService
                 if (_stopped)
                     return;
 
-                _logger.Log("Sensus health test is running (test " + ++_healthTestCount + ")", LoggingLevel.Normal, null);
+                _logger.Log("Sensus health test is running (test " + ++_healthTestCount + ")", LoggingLevel.Normal, GetType());
 
                 foreach (Protocol protocol in _registeredProtocols)
                 {
@@ -647,7 +659,7 @@ namespace SensusService
                 if (_stopped)
                     return;
 
-                _logger.Log("Stopping Sensus service.", LoggingLevel.Normal, null);
+                _logger.Log("Stopping Sensus service.", LoggingLevel.Normal, GetType());
 
                 foreach (Protocol protocol in _registeredProtocols)
                     protocol.Stop();
