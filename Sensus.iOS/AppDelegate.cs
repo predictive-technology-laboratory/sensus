@@ -66,6 +66,8 @@ namespace Sensus.iOS
 
         public override void OnActivated(UIApplication uiApplication)
         {
+            _sensusServiceHelper.ActivationId = Guid.NewGuid().ToString();
+
             iOSSensusServiceHelper sensusServiceHelper = UiBoundSensusServiceHelper.Get(true) as iOSSensusServiceHelper;
 
             sensusServiceHelper.StartAsync(() =>
@@ -85,10 +87,17 @@ namespace Sensus.iOS
         {
             bool isCallback = (notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_KEY)) as NSNumber).BoolValue;
             if (isCallback)
-            {              
-                int callbackId = (notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_ID_KEY)) as NSNumber).Int32Value;
+            {      
+                // cancel notification, since it has served its purpose
+                UIApplication.SharedApplication.CancelLocalNotification(notification); 
+
+                string callbackId = (notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_ID_KEY)) as NSString).ToString();
                 bool repeating = (notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber).BoolValue;
                 int repeatDelayMS = (notification.UserInfo.ValueForKey(new NSString(iOSSensusServiceHelper.SENSUS_CALLBACK_REPEAT_DELAY)) as NSNumber).Int32Value;
+                string activationId = (notification.UserInfo.ValueForKey(new NSString(iOSSensusServiceHelper.SENSUS_CALLBACK_ACTIVATION_ID)) as NSString).ToString();
+
+                if (activationId != _sensusServiceHelper.ActivationId)
+                    return;                        
 
                 nint taskId = UIApplication.SharedApplication.BeginBackgroundTask(() =>
                     {
@@ -100,9 +109,8 @@ namespace Sensus.iOS
                     {
                         Device.BeginInvokeOnMainThread(() =>
                             {
-                                // notification has been serviced, so end background task and cancel notification
+                                // notification has been serviced, so end background task
                                 UIApplication.SharedApplication.EndBackgroundTask(taskId);
-                                UIApplication.SharedApplication.CancelLocalNotification(notification);  
 
                                 // update and schedule notification again if it was a repeating callback
                                 if (repeating)
@@ -113,12 +121,6 @@ namespace Sensus.iOS
                             });
                     });
             }
-        }
-		
-        // This method is invoked when the application is about to move from active to inactive state.
-        // OpenGL applications should use this method to pause.
-        public override void OnResignActivation(UIApplication application)
-        {
         }
 		
         // This method should be used to release shared resources and it should store the application state.

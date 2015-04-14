@@ -161,6 +161,7 @@
     <Compile Include="iOSSensusServiceHelper.cs" />
     <Compile Include="NetworkConnectivity.cs" />
     <Compile Include="Probes\Context\iOSSoundProbe.cs" />
+    <Compile Include="Probes\Device\iOSBatteryProbe.cs" />
   </ItemGroup>
   <Import Project="..\SensusService\SensusService.projitems" Label="Shared" Condition="Exists('..\SensusService\SensusService.projitems')" />
   <Import Project="..\SensusUI\SensusUI.projitems" Label="Shared" Condition="Exists('..\SensusUI\SensusUI.projitems')" />

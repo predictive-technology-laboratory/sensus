@@ -33,7 +33,7 @@ namespace SensusService.DataStores
         private DateTimeOffset _mostRecentCommitTimestamp;
         private List<Datum> _nonProbeDataToCommit;
         private bool _isCommitting;
-        private int _commitCallbackId;
+        private string _commitCallbackId;
 
         private readonly object _locker = new object();
 
@@ -50,12 +50,15 @@ namespace SensusService.DataStores
             get { return _commitDelayMS; }
             set
             {
+                if (value <= 1000)
+                    value = 1000;
+                
                 if (value != _commitDelayMS)
                 {
                     _commitDelayMS = value; 
 
-                    if (_commitCallbackId != -1)
-                        SensusServiceHelper.Get().RescheduleRepeatingCallback(_commitCallbackId, _commitDelayMS, _commitDelayMS);
+                    if (_commitCallbackId != null)
+                        _commitCallbackId = SensusServiceHelper.Get().RescheduleRepeatingCallback(_commitCallbackId, _commitDelayMS, _commitDelayMS);
                 }
             }
         }
@@ -85,7 +88,7 @@ namespace SensusService.DataStores
             _mostRecentCommitTimestamp = DateTimeOffset.MinValue;
             _nonProbeDataToCommit = new List<Datum>();
             _isCommitting = false;     
-            _commitCallbackId = -1;
+            _commitCallbackId = null;
         }
 
         public void AddNonProbeDatum(Datum datum)
@@ -196,8 +199,8 @@ namespace SensusService.DataStores
                     return;
 
                 SensusServiceHelper.Get().Logger.Log("Stopping.", LoggingLevel.Normal, GetType());
-                SensusServiceHelper.Get().UnscheduleRepeatingCallback(_commitCallbackId);
-                _commitCallbackId = -1;
+                SensusServiceHelper.Get().UnscheduleRepeatingCallbackAsync(_commitCallbackId);
+                _commitCallbackId = null;
             }
         }
 

@@ -23,6 +23,9 @@ using System.Threading;
 
 namespace Sensus.iOS.Probes.Context
 {
+    /// <summary>
+    /// Probes sound level (decibels) from microphone. http://developer.xamarin.com/recipes/ios/media/sound/record_sound
+    /// </summary>
     public class iOSSoundProbe : SoundProbe
     {
         NSDictionary _settings;          

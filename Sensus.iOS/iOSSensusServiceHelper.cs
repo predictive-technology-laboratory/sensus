@@ -33,8 +33,22 @@ namespace Sensus.iOS
     public class iOSSensusServiceHelper : SensusServiceHelper
     {
         public const string SENSUS_CALLBACK_REPEAT_DELAY = "SENSUS-CALLBACK-REPEAT-DELAY";
+        public const string SENSUS_CALLBACK_ACTIVATION_ID = "SENSUS-CALLBACK-ACTIVATION-ID";
 
-        private Dictionary<int, UILocalNotification> _callbackIdNotification;
+        private Dictionary<string, UILocalNotification> _callbackIdNotification;
+        private string _activationId;
+
+        public string ActivationId
+        {
+            get
+            {
+                return _activationId;
+            }
+            set
+            {
+                _activationId = value;
+            }
+        }
 
         public override bool IsCharging
         {
@@ -79,7 +93,7 @@ namespace Sensus.iOS
 
         public iOSSensusServiceHelper()
         {
-            _callbackIdNotification = new Dictionary<int, UILocalNotification>();
+            _callbackIdNotification = new Dictionary<string, UILocalNotification>();
         }
 
         protected override void InitializeXamarinInsights()
@@ -94,30 +108,17 @@ namespace Sensus.iOS
         }
 
         #region callback scheduling
-        protected override void ScheduleRepeatingCallback(int callbackId, int initialDelayMS, int repeatDelayMS, string userNotificationMessage)
+        protected override void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, string userNotificationMessage)
         {
             ScheduleCallbackAsync(callbackId, initialDelayMS, true, repeatDelayMS, userNotificationMessage);
         }
 
-        protected override void ScheduleOneTimeCallback(int callbackId, int delayMS, string userNotificationMessage)
+        protected override void ScheduleOneTimeCallback(string callbackId, int delayMS, string userNotificationMessage)
         {
             ScheduleCallbackAsync(callbackId, delayMS, false, -1, userNotificationMessage);
         }
-
-        public override void RescheduleRepeatingCallback(int callbackId, int initialDelayMS, int repeatDelayMS)
-        {
-            string userNotificationMessage = null;
-            lock (_callbackIdNotification)
-                if (_callbackIdNotification.ContainsKey(callbackId))
-                    userNotificationMessage = _callbackIdNotification[callbackId].AlertBody;
-            
-            UnscheduleCallbackAsync(callbackId, true, () =>
-                {
-                    ScheduleRepeatingCallback(callbackId, initialDelayMS, repeatDelayMS, userNotificationMessage);
-                });
-        }
-
-        private void ScheduleCallbackAsync(int callbackId, int delayMS, bool repeating, int repeatDelayMS, string userNotificationMessage)
+                   
+        private void ScheduleCallbackAsync(string callbackId, int delayMS, bool repeating, int repeatDelayMS, string userNotificationMessage)
         {
             Device.BeginInvokeOnMainThread(() =>
                 {
@@ -128,16 +129,14 @@ namespace Sensus.iOS
                     };
 
                     if (userNotificationMessage != null)
-                    {
-                        notification.AlertTitle = "Sensus";
                         notification.AlertBody = userNotificationMessage;
-                    }
 
                     notification.UserInfo = new NSDictionary(
                         SENSUS_CALLBACK_KEY, true, 
                         SENSUS_CALLBACK_ID_KEY, callbackId,
                         SENSUS_CALLBACK_REPEATING_KEY, repeating,
-                        SENSUS_CALLBACK_REPEAT_DELAY, repeatDelayMS);
+                        SENSUS_CALLBACK_REPEAT_DELAY, repeatDelayMS,
+                        SENSUS_CALLBACK_ACTIVATION_ID, _activationId);
 
                     if (repeating)
                         lock (_callbackIdNotification)
@@ -147,7 +146,7 @@ namespace Sensus.iOS
                 });
         }
 
-        protected override void UnscheduleCallbackAsync(int callbackId, bool repeating, Action callback)
+        protected override void UnscheduleCallbackAsync(string callbackId, bool repeating, Action callback)
         {
             Device.BeginInvokeOnMainThread(() =>
                 {
@@ -205,7 +204,7 @@ namespace Sensus.iOS
             // TODO
         }
 
-        public override void IssueNotificationAsync(string message, int id)
+        public override void IssueNotificationAsync(string message, string id)
         {
             Device.BeginInvokeOnMainThread(() =>
                 {

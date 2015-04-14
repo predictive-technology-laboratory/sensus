@@ -37,8 +37,7 @@ namespace Sensus.Android
 {
     public class AndroidSensusServiceHelper : SensusServiceHelper
     {
-        private const int SERVICE_NOTIFICATION_ID = 0;
-        private const int NOTIFICATION_PENDING_INTENT_ID = 1;
+        private const string SERVICE_NOTIFICATION_TAG = "SENSUS-SERVICE-NOTIFICATION";
 
         private AndroidSensusService _service;
         private ConnectivityManager _connectivityManager;
@@ -315,32 +314,24 @@ namespace Sensus.Android
         #region notifications
         public override void UpdateApplicationStatus(string status)
         {
-            IssueNotification("Sensus", status == null ? null : (status + " (tap to open)"), true, SERVICE_NOTIFICATION_ID);
+            IssueNotification("Sensus", status == null ? null : (status + " (tap to open)"), true, SERVICE_NOTIFICATION_TAG);
         }
 
-        public override void IssueNotificationAsync(string message, int id)
+        public override void IssueNotificationAsync(string message, string id)
         {
-            if (id < 0)
-                Logger.Log("WARNING:  Notification id < 0. Message=" + message + "; id=" + id, LoggingLevel.Normal, GetType());
-            
-            // notification requests come from two source:  the android service (the sticky notification) and the underlying
-            // sensus system. the latter arrive through the current method. to ensure that IDs from the latter don't collide 
-            // with the ID of the former, start the latter after the former.
-            id = SERVICE_NOTIFICATION_ID + 1 + id;
-
             IssueNotification("Sensus", message, false, id);
         }
 
-        private void IssueNotification(string title, string body, bool sticky, int id)
+        private void IssueNotification(string title, string body, bool sticky, string tag)
         {            
             if (body == null)
-                _notificationManager.Cancel(id);
+                _notificationManager.Cancel(tag, 0);
             else
             {
                 TaskStackBuilder stackBuilder = TaskStackBuilder.Create(_service);
                 stackBuilder.AddParentStack(Java.Lang.Class.FromType(typeof(AndroidMainActivity)));
                 stackBuilder.AddNextIntent(new Intent(_service, typeof(AndroidMainActivity)));
-                PendingIntent pendingIntent = stackBuilder.GetPendingIntent(NOTIFICATION_PENDING_INTENT_ID, PendingIntentFlags.UpdateCurrent);
+                PendingIntent pendingIntent = stackBuilder.GetPendingIntent(0, PendingIntentFlags.UpdateCurrent);
 
                 Notification notification = new Notification.Builder(_service)
                     .SetContentTitle(title)
@@ -350,7 +341,7 @@ namespace Sensus.Android
                     .SetAutoCancel(!sticky)
                     .SetOngoing(sticky).Build();
 
-                _notificationManager.Notify(id, notification);
+                _notificationManager.Notify(tag, 0, notification);
             }
         }
 
@@ -373,24 +364,19 @@ namespace Sensus.Android
         #endregion
 
         #region callback scheduling
-        protected override void ScheduleRepeatingCallback(int callbackId, int initialDelayMS, int repeatDelayMS, string userNotificationMessage)
+        protected override void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, string userNotificationMessage)
         {
             AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
             alarmManager.SetRepeating(AlarmType.RtcWakeup, Java.Lang.JavaSystem.CurrentTimeMillis() + initialDelayMS, repeatDelayMS, GetCallbackIntent(callbackId, true));
         }
 
-        protected override void ScheduleOneTimeCallback(int callbackId, int delayMS, string userNotificationMessage)
+        protected override void ScheduleOneTimeCallback(string callbackId, int delayMS, string userNotificationMessage)
         {
             AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
             alarmManager.Set(AlarmType.RtcWakeup, Java.Lang.JavaSystem.CurrentTimeMillis() + delayMS, GetCallbackIntent(callbackId, false));
         }
 
-        public override void RescheduleRepeatingCallback(int callbackId, int initialDelayMS, int repeatDelayMS)
-        {
-            ScheduleRepeatingCallback(callbackId, initialDelayMS, repeatDelayMS, null);
-        }
-
-        protected override void UnscheduleCallbackAsync(int callbackId, bool repeating, Action callback)
+        protected override void UnscheduleCallbackAsync(string callbackId, bool repeating, Action callback)
         {
             AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
             alarmManager.Cancel(GetCallbackIntent(callbackId, repeating));
@@ -399,14 +385,14 @@ namespace Sensus.Android
                 callback();
         }
 
-        private PendingIntent GetCallbackIntent(int callbackId, bool repeating)
+        private PendingIntent GetCallbackIntent(string callbackId, bool repeating)
         {
             Intent serviceIntent = new Intent(_service, typeof(AndroidSensusService));
             serviceIntent.PutExtra(SENSUS_CALLBACK_KEY, true);
             serviceIntent.PutExtra(SENSUS_CALLBACK_ID_KEY, callbackId);
             serviceIntent.PutExtra(SENSUS_CALLBACK_REPEATING_KEY, repeating);
 
-            return PendingIntent.GetService(_service, callbackId, serviceIntent, PendingIntentFlags.CancelCurrent);
+            return PendingIntent.GetService(_service, callbackId.GetHashCode(), serviceIntent, PendingIntentFlags.CancelCurrent);  // upon hash collisions, the previous intent will simply be canceled.
         }
         #endregion
 
