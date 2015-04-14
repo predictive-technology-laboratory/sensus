@@ -178,7 +178,7 @@ namespace SensusService
         private int _healthTestDelayMS;
         private int _healthTestCount;
         private int _healthTestsPerProtocolReport;
-        private Dictionary<int, Tuple<Action<CancellationToken>, CancellationTokenSource>> _idCallbackCancellationTokenSource;
+        private Dictionary<int, Tuple<Action<CancellationToken>, CancellationTokenSource, string>> _idCallbackCancellerMessage;
         private MD5 _md5Hash;
 
         private readonly object _locker = new object();
@@ -274,7 +274,7 @@ namespace SensusService
             _healthTestDelayMS = 60000;
             _healthTestCount = 0;
             _healthTestsPerProtocolReport = 5;
-            _idCallbackCancellationTokenSource = new Dictionary<int, Tuple<Action<CancellationToken>, CancellationTokenSource>>();
+            _idCallbackCancellerMessage = new Dictionary<int, Tuple<Action<CancellationToken>, CancellationTokenSource, string>>();
             _md5Hash = MD5.Create();
 
             if (!Directory.Exists(_shareDirectory))
@@ -315,9 +315,9 @@ namespace SensusService
 
         public abstract bool Use(Probe probe);
 
-        protected abstract void ScheduleRepeatingCallback(int callbackId, int initialDelayMS, int repeatDelayMS);
+        protected abstract void ScheduleRepeatingCallback(int callbackId, int initialDelayMS, int repeatDelayMS, string userNotificationMessage);
 
-        protected abstract void ScheduleOneTimeCallback(int callbackId, int delayMS);
+        protected abstract void ScheduleOneTimeCallback(int callbackId, int delayMS, string userNotificationMessage);
 
         public abstract void RescheduleRepeatingCallback(int callbackId, int initialDelayMS, int repeatDelayMS);
 
@@ -330,6 +330,8 @@ namespace SensusService
         public abstract void TextToSpeechAsync(string text, Action callback);
 
         public abstract void PromptForInputAsync(string prompt, bool startVoiceRecognizer, Action<string> callback);
+
+        public abstract void IssueNotificationAsync(string message, int id);
 
         public abstract void FlashNotificationAsync(string message, Action callback);
 
@@ -443,56 +445,67 @@ namespace SensusService
         #region callback scheduling
         public int ScheduleRepeatingCallback(Action<CancellationToken> callback, int initialDelayMS, int repeatDelayMS)
         {
-            lock (_idCallbackCancellationTokenSource)
+            return ScheduleRepeatingCallback(callback, initialDelayMS, repeatDelayMS, null);
+        }
+
+        public int ScheduleRepeatingCallback(Action<CancellationToken> callback, int initialDelayMS, int repeatDelayMS, string userNotificationMessage)
+        {
+            lock (_idCallbackCancellerMessage)
             {
-                int callbackId = AddCallback(callback);
-                ScheduleRepeatingCallback(callbackId, initialDelayMS, repeatDelayMS);
+                int callbackId = AddCallback(callback, userNotificationMessage);
+                ScheduleRepeatingCallback(callbackId, initialDelayMS, repeatDelayMS, userNotificationMessage);
                 return callbackId;
             }
         }
 
         public int ScheduleOneTimeCallback(Action<CancellationToken> callback, int delay)
         {
-            lock (_idCallbackCancellationTokenSource)
+            return ScheduleOneTimeCallback(callback, delay, null);
+        }
+
+        public int ScheduleOneTimeCallback(Action<CancellationToken> callback, int delay, string userNotificationMessage)
+        {
+            lock (_idCallbackCancellerMessage)
             {
-                int callbackId = AddCallback(callback);
-                ScheduleOneTimeCallback(callbackId, delay);
+                int callbackId = AddCallback(callback, userNotificationMessage);
+                ScheduleOneTimeCallback(callbackId, delay, userNotificationMessage);
                 return callbackId;
             }
         }
 
-        private int AddCallback(Action<CancellationToken> callback)
+        private int AddCallback(Action<CancellationToken> callback, string userNotificationMessage)
         {
-            lock (_idCallbackCancellationTokenSource)
+            lock (_idCallbackCancellerMessage)
             {
                 int callbackId = 0;
-                while (_idCallbackCancellationTokenSource.ContainsKey(callbackId))
+                while (_idCallbackCancellerMessage.ContainsKey(callbackId))
                     ++callbackId;
 
-                _idCallbackCancellationTokenSource.Add(callbackId, new Tuple<Action<CancellationToken>, CancellationTokenSource>(callback, null));
+                _idCallbackCancellerMessage.Add(callbackId, new Tuple<Action<CancellationToken>, CancellationTokenSource, string>(callback, null, userNotificationMessage));
 
                 return callbackId;
             }
         }
 
-        public void RaiseCallbackAsync(int callbackId, bool repeating)
+        public void RaiseCallbackAsync(int callbackId, bool repeating, bool notifyUser)
         {
-            RaiseCallbackAsync(callbackId, repeating, null);
+            RaiseCallbackAsync(callbackId, repeating, notifyUser, null);
         }    
 
-        public void RaiseCallbackAsync(int callbackId, bool repeating, Action callback)
+        public void RaiseCallbackAsync(int callbackId, bool repeating, bool notifyUser, Action callback)
         {
-            lock (_idCallbackCancellationTokenSource)
+            lock (_idCallbackCancellerMessage)
             {
                 // do we have callback information for the passed callbackId? we might not, in the case where the callback is canceled by the user and the system fires it subsequently.
-                Tuple<Action<CancellationToken>, CancellationTokenSource> callbackCancellationTokenSource;
-                if (_idCallbackCancellationTokenSource.TryGetValue(callbackId, out callbackCancellationTokenSource))
+                Tuple<Action<CancellationToken>, CancellationTokenSource, string> callbackCancellationTokenSource;
+                if (_idCallbackCancellerMessage.TryGetValue(callbackId, out callbackCancellationTokenSource))
                 {
-                    KeepDeviceAwake();
+                    KeepDeviceAwake();  // not all OSs support this (e.g., iOS), but call it anyway
 
                     new Thread(() =>
                         {
                             Action<CancellationToken> callbackToRaise = callbackCancellationTokenSource.Item1;
+                            string userNotificationMessage = callbackCancellationTokenSource.Item3;
 
                             // callbacks cannot be raised concurrently -- drop the current callback if it is already in progress.
                             if (Monitor.TryEnter(callbackToRaise))
@@ -501,12 +514,16 @@ namespace SensusService
                                 CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
                                 // set cancellation token source in collection, so that someone can call CancelRaisedCallback
-                                lock (_idCallbackCancellationTokenSource)
-                                    _idCallbackCancellationTokenSource[callbackId] = new Tuple<Action<CancellationToken>, CancellationTokenSource>(callbackToRaise, cancellationTokenSource);
+                                lock (_idCallbackCancellerMessage)
+                                    _idCallbackCancellerMessage[callbackId] = new Tuple<Action<CancellationToken>, CancellationTokenSource, string>(callbackToRaise, cancellationTokenSource, userNotificationMessage);
 
                                 try
                                 {
                                     _logger.Log("Raising callback " + callbackId, LoggingLevel.Debug, GetType());
+
+                                    if(notifyUser)
+                                        IssueNotificationAsync(userNotificationMessage, callbackId);
+
                                     callbackToRaise(cancellationTokenSource.Token);
                                 }
                                 catch (Exception ex)
@@ -518,16 +535,16 @@ namespace SensusService
                                     Monitor.Exit(callbackToRaise);
 
                                     // reset cancellation token to null since there is nothing to cancel
-                                    lock (_idCallbackCancellationTokenSource)
-                                        _idCallbackCancellationTokenSource[callbackId] = new Tuple<Action<CancellationToken>, CancellationTokenSource>(callbackToRaise, null);
+                                    lock (_idCallbackCancellerMessage)
+                                        _idCallbackCancellerMessage[callbackId] = new Tuple<Action<CancellationToken>, CancellationTokenSource, string>(callbackToRaise, null, userNotificationMessage);
                                 }
                             }
                             else
                                 _logger.Log("Callback " + callbackId + " was already running. Not running again.", LoggingLevel.Debug, GetType());
 
                             if (!repeating)
-                                lock (_idCallbackCancellationTokenSource)
-                                    _idCallbackCancellationTokenSource.Remove(callbackId);
+                                lock (_idCallbackCancellerMessage)
+                                    _idCallbackCancellerMessage.Remove(callbackId);
 
                             LetDeviceSleep();
 
@@ -541,22 +558,22 @@ namespace SensusService
 
         public void CancelRaisedCallback(int callbackId)
         {
-            lock (_idCallbackCancellationTokenSource)
+            lock (_idCallbackCancellerMessage)
             {
-                Tuple<Action<CancellationToken>, CancellationTokenSource> callbackCancellationTokenSource;
-                if (_idCallbackCancellationTokenSource.TryGetValue(callbackId, out callbackCancellationTokenSource) && callbackCancellationTokenSource.Item2 != null)  // the cancellation source will be null if the callback is not currently being raised
-                    callbackCancellationTokenSource.Item2.Cancel();
+                Tuple<Action<CancellationToken>, CancellationTokenSource, string> callbackCancellerMessage;
+                if (_idCallbackCancellerMessage.TryGetValue(callbackId, out callbackCancellerMessage) && callbackCancellerMessage.Item2 != null)  // the cancellation source will be null if the callback is not currently being raised
+                    callbackCancellerMessage.Item2.Cancel();
             }
         }
 
         public void UnscheduleRepeatingCallback(int callbackId)
         {
-            lock (_idCallbackCancellationTokenSource)
+            lock (_idCallbackCancellerMessage)
             {
                 if (callbackId != -1)
                     UnscheduleCallbackAsync(callbackId, true, null);
 
-                _idCallbackCancellationTokenSource.Remove(callbackId);
+                _idCallbackCancellerMessage.Remove(callbackId);
             }
         }
         #endregion

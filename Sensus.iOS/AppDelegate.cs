@@ -96,7 +96,7 @@ namespace Sensus.iOS
                         UiBoundSensusServiceHelper.Get(true).CancelRaisedCallback(callbackId);
                     });
 
-                UiBoundSensusServiceHelper.Get(true).RaiseCallbackAsync(callbackId, repeating, () =>
+                UiBoundSensusServiceHelper.Get(true).RaiseCallbackAsync(callbackId, repeating, false, () =>
                     {
                         Device.BeginInvokeOnMainThread(() =>
                             {

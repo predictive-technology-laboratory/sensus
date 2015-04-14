@@ -94,25 +94,30 @@ namespace Sensus.iOS
         }
 
         #region callback scheduling
-        protected override void ScheduleRepeatingCallback(int callbackId, int initialDelayMS, int repeatDelayMS)
+        protected override void ScheduleRepeatingCallback(int callbackId, int initialDelayMS, int repeatDelayMS, string userNotificationMessage)
         {
-            ScheduleCallbackAsync(callbackId, initialDelayMS, true, repeatDelayMS);
+            ScheduleCallbackAsync(callbackId, initialDelayMS, true, repeatDelayMS, userNotificationMessage);
         }
 
-        protected override void ScheduleOneTimeCallback(int callbackId, int delayMS)
+        protected override void ScheduleOneTimeCallback(int callbackId, int delayMS, string userNotificationMessage)
         {
-            ScheduleCallbackAsync(callbackId, delayMS, false, -1);
+            ScheduleCallbackAsync(callbackId, delayMS, false, -1, userNotificationMessage);
         }
 
         public override void RescheduleRepeatingCallback(int callbackId, int initialDelayMS, int repeatDelayMS)
         {
+            string userNotificationMessage = null;
+            lock (_callbackIdNotification)
+                if (_callbackIdNotification.ContainsKey(callbackId))
+                    userNotificationMessage = _callbackIdNotification[callbackId].AlertBody;
+            
             UnscheduleCallbackAsync(callbackId, true, () =>
                 {
-                    ScheduleRepeatingCallback(callbackId, initialDelayMS, repeatDelayMS);
+                    ScheduleRepeatingCallback(callbackId, initialDelayMS, repeatDelayMS, userNotificationMessage);
                 });
         }
 
-        private void ScheduleCallbackAsync(int callbackId, int delayMS, bool repeating, int repeatDelayMS)
+        private void ScheduleCallbackAsync(int callbackId, int delayMS, bool repeating, int repeatDelayMS, string userNotificationMessage)
         {
             Device.BeginInvokeOnMainThread(() =>
                 {
@@ -122,14 +127,20 @@ namespace Sensus.iOS
                         SoundName = UILocalNotification.DefaultSoundName
                     };
 
+                    if (userNotificationMessage != null)
+                    {
+                        notification.AlertTitle = "Sensus";
+                        notification.AlertBody = userNotificationMessage;
+                    }
+
                     notification.UserInfo = new NSDictionary(
                         SENSUS_CALLBACK_KEY, true, 
                         SENSUS_CALLBACK_ID_KEY, callbackId,
                         SENSUS_CALLBACK_REPEATING_KEY, repeating,
                         SENSUS_CALLBACK_REPEAT_DELAY, repeatDelayMS);
 
-                    if(repeating)
-                        lock(_callbackIdNotification)
+                    if (repeating)
+                        lock (_callbackIdNotification)
                             _callbackIdNotification.Add(callbackId, notification);
 
                     UIApplication.SharedApplication.ScheduleLocalNotification(notification);
@@ -192,6 +203,25 @@ namespace Sensus.iOS
         public override void PromptForInputAsync(string prompt, bool startVoiceRecognizer, Action<string> callback)
         {
             // TODO
+        }
+
+        public override void IssueNotificationAsync(string message, int id)
+        {
+            Device.BeginInvokeOnMainThread(() =>
+                {
+                    UILocalNotification notification = new UILocalNotification
+                    {
+                        AlertAction = id.ToString(),
+                        AlertTitle = "Sensus",
+                        AlertBody = message,
+                        FireDate = DateTime.UtcNow.ToNSDate()
+                    };
+
+                    if (message == null)
+                        UIApplication.SharedApplication.CancelLocalNotification(notification);
+                    else
+                        UIApplication.SharedApplication.ScheduleLocalNotification(notification);
+                });
         }
 
         public override void FlashNotificationAsync(string message, Action callback)
