@@ -15,7 +15,6 @@
 using Android.Media;
 using SensusService;
 using SensusService.Probes.Context;
-using SensusUI.UiProperties;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -24,20 +23,6 @@ namespace Sensus.Android.Probes.Context
 {
     public class AndroidSoundProbe : SoundProbe
     {
-        private int _sampleLengthMS;
-
-        [EntryIntegerUiProperty("Sample Length (MS):", true, 5)]
-        public int SampleLengthMS
-        {
-            get { return _sampleLengthMS; }
-            set { _sampleLengthMS = value; }
-        }
-
-        public AndroidSoundProbe()
-        {
-            _sampleLengthMS = 5000;
-        }
-
         protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
         {
             MediaRecorder recorder = null;
@@ -54,7 +39,7 @@ namespace Sensus.Android.Probes.Context
                 // mark start time of amplitude measurement -- MaxAmplitude is always computed from previous call to MaxAmplitude
                 int dummy = recorder.MaxAmplitude;
 
-                Thread.Sleep(_sampleLengthMS);
+                Thread.Sleep(SampleLengthMS);
 
                 return new Datum[] { new SoundDatum(DateTimeOffset.UtcNow, 20 * Math.Log10(recorder.MaxAmplitude)) };  // http://www.mathworks.com/help/signal/ref/mag2db.html
             }
