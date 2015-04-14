@@ -169,10 +169,6 @@ namespace Sensus.iOS
         }
         #endregion
 
-        public override void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
-        {
-        }
-
         public override void ShareFileAsync(string path, string subject)
         {
             Device.BeginInvokeOnMainThread(() =>
@@ -204,6 +200,10 @@ namespace Sensus.iOS
         }
 
         #region methods not implemented in ios
+        public override void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
+        {
+        }
+
         public override void UpdateApplicationStatus(string status)
         {
         }   

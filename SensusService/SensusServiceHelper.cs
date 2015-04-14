@@ -494,14 +494,14 @@ namespace SensusService
                         {
                             Action<CancellationToken> callbackToRaise = callbackCancellationTokenSource.Item1;
 
-                            // callbacks cannot be raised concurrently -- drop the callback if it is already in progress.
+                            // callbacks cannot be raised concurrently -- drop the current callback if it is already in progress.
                             if (Monitor.TryEnter(callbackToRaise))
                             {
                                 // initialize a new cancellation token source for this call, since they cannot be reset
                                 CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
                                 // set cancellation token source in collection, so that someone can call CancelRaisedCallback
-                                lock(_idCallbackCancellationTokenSource)
+                                lock (_idCallbackCancellationTokenSource)
                                     _idCallbackCancellationTokenSource[callbackId] = new Tuple<Action<CancellationToken>, CancellationTokenSource>(callbackToRaise, cancellationTokenSource);
 
                                 try
@@ -518,7 +518,7 @@ namespace SensusService
                                     Monitor.Exit(callbackToRaise);
 
                                     // reset cancellation token to null since there is nothing to cancel
-                                    lock(_idCallbackCancellationTokenSource)
+                                    lock (_idCallbackCancellationTokenSource)
                                         _idCallbackCancellationTokenSource[callbackId] = new Tuple<Action<CancellationToken>, CancellationTokenSource>(callbackToRaise, null);
                                 }
                             }
@@ -526,18 +526,18 @@ namespace SensusService
                                 _logger.Log("Callback " + callbackId + " was already running. Not running again.", LoggingLevel.Debug, GetType());
 
                             if (!repeating)
-                                lock(_idCallbackCancellationTokenSource)
+                                lock (_idCallbackCancellationTokenSource)
                                     _idCallbackCancellationTokenSource.Remove(callbackId);
 
                             LetDeviceSleep();
 
-                            if(callback != null)
+                            if (callback != null)
                                 callback();
 
                         }).Start();                           
                 }
             }
-        }  
+        }
 
         public void CancelRaisedCallback(int callbackId)
         {
