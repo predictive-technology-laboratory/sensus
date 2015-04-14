@@ -497,15 +497,15 @@ namespace SensusService
             lock (_idCallbackCancellerMessage)
             {
                 // do we have callback information for the passed callbackId? we might not, in the case where the callback is canceled by the user and the system fires it subsequently.
-                Tuple<Action<CancellationToken>, CancellationTokenSource, string> callbackCancellationTokenSource;
-                if (_idCallbackCancellerMessage.TryGetValue(callbackId, out callbackCancellationTokenSource))
+                Tuple<Action<CancellationToken>, CancellationTokenSource, string> callbackCancellerMessage;
+                if (_idCallbackCancellerMessage.TryGetValue(callbackId, out callbackCancellerMessage))
                 {
                     KeepDeviceAwake();  // not all OSs support this (e.g., iOS), but call it anyway
 
                     new Thread(() =>
                         {
-                            Action<CancellationToken> callbackToRaise = callbackCancellationTokenSource.Item1;
-                            string userNotificationMessage = callbackCancellationTokenSource.Item3;
+                            Action<CancellationToken> callbackToRaise = callbackCancellerMessage.Item1;
+                            string userNotificationMessage = callbackCancellerMessage.Item3;
 
                             // callbacks cannot be raised concurrently -- drop the current callback if it is already in progress.
                             if (Monitor.TryEnter(callbackToRaise))

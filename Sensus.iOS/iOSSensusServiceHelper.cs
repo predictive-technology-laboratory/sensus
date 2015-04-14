@@ -209,18 +209,17 @@ namespace Sensus.iOS
         {
             Device.BeginInvokeOnMainThread(() =>
                 {
-                    UILocalNotification notification = new UILocalNotification
+                    if (message != null)
                     {
-                        AlertAction = id.ToString(),
-                        AlertTitle = "Sensus",
-                        AlertBody = message,
-                        FireDate = DateTime.UtcNow.ToNSDate()
-                    };
-
-                    if (message == null)
-                        UIApplication.SharedApplication.CancelLocalNotification(notification);
-                    else
+                        UILocalNotification notification = new UILocalNotification
+                        {
+                            AlertTitle = "Sensus",
+                            AlertBody = message,
+                            FireDate = DateTime.UtcNow.ToNSDate()
+                        };
+                        
                         UIApplication.SharedApplication.ScheduleLocalNotification(notification);
+                    }
                 });
         }
 
