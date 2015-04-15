@@ -499,6 +499,12 @@ namespace SensusService
             }
         }
 
+        public bool CallbackIsScheduled(string callbackId)
+        {
+            lock(_idCallbackCancellerMessage)
+                return _idCallbackCancellerMessage.ContainsKey(callbackId);
+        }
+
         public string RescheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS)
         {
             lock (_idCallbackCancellerMessage)
@@ -506,8 +512,18 @@ namespace SensusService
                 Tuple<Action<CancellationToken>, CancellationTokenSource, string> callbackCancellerMessage;
                 if (_idCallbackCancellerMessage.TryGetValue(callbackId, out callbackCancellerMessage))
                 {
-                    UnscheduleRepeatingCallbackAsync(callbackId);
-                    return ScheduleRepeatingCallback(callbackCancellerMessage.Item1, initialDelayMS, repeatDelayMS, callbackCancellerMessage.Item3);
+                    string newCallbackId = null;
+                    ManualResetEvent newCallbackIdWait = new ManualResetEvent(false);
+
+                    UnscheduleRepeatingCallbackAsync(callbackId, () =>
+                        {
+                            newCallbackId = ScheduleRepeatingCallback(callbackCancellerMessage.Item1, initialDelayMS, repeatDelayMS, callbackCancellerMessage.Item3);
+                            newCallbackIdWait.Set();
+                        });
+
+                    newCallbackIdWait.WaitOne();
+
+                    return newCallbackId;
                 }
                 else
                     return null;
@@ -599,19 +615,20 @@ namespace SensusService
         }
 
         public void UnscheduleRepeatingCallbackAsync(string callbackId, Action callback)
-        {
-                          
+        {                          
             if (callbackId == null)
             {
                 if (callback != null)
                     callback();
             }
             else
+            {
                 lock (_idCallbackCancellerMessage)
                 {
                     _idCallbackCancellerMessage.Remove(callbackId);
                     UnscheduleCallbackAsync(callbackId, true, callback);
                 }
+            }
         }
         #endregion
 

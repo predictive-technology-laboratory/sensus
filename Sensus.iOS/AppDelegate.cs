@@ -87,17 +87,18 @@ namespace Sensus.iOS
         {
             bool isCallback = (notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_KEY)) as NSNumber).BoolValue;
             if (isCallback)
-            {      
+            {   
                 // cancel notification, since it has served its purpose
-                UIApplication.SharedApplication.CancelLocalNotification(notification); 
+                UIApplication.SharedApplication.CancelLocalNotification(notification);
 
                 string callbackId = (notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_ID_KEY)) as NSString).ToString();
                 bool repeating = (notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber).BoolValue;
                 int repeatDelayMS = (notification.UserInfo.ValueForKey(new NSString(iOSSensusServiceHelper.SENSUS_CALLBACK_REPEAT_DELAY)) as NSNumber).Int32Value;
                 string activationId = (notification.UserInfo.ValueForKey(new NSString(iOSSensusServiceHelper.SENSUS_CALLBACK_ACTIVATION_ID)) as NSString).ToString();
 
-                if (activationId != _sensusServiceHelper.ActivationId)
-                    return;                        
+                // only raise callback if it's from the current activation and if it is scheduled
+                if (activationId != _sensusServiceHelper.ActivationId || !iOSSensusServiceHelper.Get().CallbackIsScheduled(callbackId))
+                    return;                      
 
                 nint taskId = UIApplication.SharedApplication.BeginBackgroundTask(() =>
                     {
@@ -128,13 +129,11 @@ namespace Sensus.iOS
         // when the user quits.
         public override void DidEnterBackground(UIApplication application)
         {
-            // TODO:  Stop probes that are not allowed to run in background
         }
 		
         // This method is called as part of the transiton from background to active state.
         public override void WillEnterForeground(UIApplication application)
         {
-            // TODO:  Restart all probes that weren't allowed to run in the background
         }
 		
         // This method is called when the application is about to terminate. Save data, if needed.

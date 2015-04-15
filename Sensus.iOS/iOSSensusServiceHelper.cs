@@ -125,13 +125,10 @@ namespace Sensus.iOS
                     UILocalNotification notification = new UILocalNotification
                     {
                         FireDate = DateTime.UtcNow.AddMilliseconds((double)delayMS).ToNSDate(),
-                        SoundName = UILocalNotification.DefaultSoundName
+                        SoundName = UILocalNotification.DefaultSoundName,
+                        AlertBody = userNotificationMessage,
+                        UserInfo = GetNotificationUserInfoDictionary(callbackId, repeating, repeatDelayMS)
                     };
-
-                    if (userNotificationMessage != null)
-                        notification.AlertBody = userNotificationMessage;
-
-                    notification.UserInfo = GetNotificationUserInfoDictionary(callbackId, repeating, repeatDelayMS);
 
                     if (repeating)
                         lock (_callbackIdNotification)
@@ -227,6 +224,9 @@ namespace Sensus.iOS
         public override void PromptForInputAsync(string prompt, bool startVoiceRecognizer, Action<string> callback)
         {
             // TODO
+
+            callback("Fake input.");
+
         }
 
         public override void IssueNotificationAsync(string message, string id)

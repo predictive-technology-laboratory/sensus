@@ -146,6 +146,14 @@ namespace SensusService.Probes.User
 
         public void RunAsync(Datum previousDatum, Datum currentDatum, Action<List<ScriptDatum>> callback)
         {
+            #if __IOS__
+            string userNotificationMessage = "Your input is requested.";
+            #elif __ANDROID__
+            string userNotificationMessage = null;
+            #elif __WINDOWS_PHONE__
+            TODO:  Should we use a message?
+            #endif
+
             SensusServiceHelper.Get().ScheduleOneTimeCallback(cancellationToken =>
                 {
                     SensusServiceHelper.Get().Logger.Log("Running script \"" + _name + "\".", LoggingLevel.Normal, GetType());
@@ -188,7 +196,7 @@ namespace SensusService.Probes.User
 
                     callback(data);
 
-                }, _delayMS);
+                }, _delayMS, userNotificationMessage);
         }
 
         public Script Copy()
