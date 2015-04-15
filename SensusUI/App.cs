@@ -39,7 +39,7 @@ namespace SensusUI
 
             SensusServiceHelper serviceHelper = UiBoundSensusServiceHelper.Get(false);  // OnSleep can be called before the activity has actually had a chance to start up and bind to the service.
             if (serviceHelper != null)
-                serviceHelper.Save();
+                serviceHelper.OnSleep();               
         }
     }
 }

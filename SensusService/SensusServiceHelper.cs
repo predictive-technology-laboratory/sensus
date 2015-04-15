@@ -654,6 +654,13 @@ namespace SensusService
             }
         }
 
+        public virtual void OnSleep()
+        {
+            _logger.Log("About to sleep.", LoggingLevel.Normal, GetType());
+
+            Save();
+        }
+
         public void UnregisterProtocol(Protocol protocol)
         {
             lock (_locker)

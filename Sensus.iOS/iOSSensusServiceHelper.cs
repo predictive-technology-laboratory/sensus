@@ -131,12 +131,7 @@ namespace Sensus.iOS
                     if (userNotificationMessage != null)
                         notification.AlertBody = userNotificationMessage;
 
-                    notification.UserInfo = new NSDictionary(
-                        SENSUS_CALLBACK_KEY, true, 
-                        SENSUS_CALLBACK_ID_KEY, callbackId,
-                        SENSUS_CALLBACK_REPEATING_KEY, repeating,
-                        SENSUS_CALLBACK_REPEAT_DELAY, repeatDelayMS,
-                        SENSUS_CALLBACK_ACTIVATION_ID, _activationId);
+                    notification.UserInfo = GetNotificationUserInfoDictionary(callbackId, repeating, repeatDelayMS);
 
                     if (repeating)
                         lock (_callbackIdNotification)
@@ -163,19 +158,49 @@ namespace Sensus.iOS
                     if (callback != null)
                         callback();
                 });
-        }
+        }            
 
         public void RefreshCallbackNotificationsAsync()
         {
             Device.BeginInvokeOnMainThread(() =>
                 {
+                    // this method will be called in one of three conditions:  (1) after sensus has been started and is running, (2)
+                    // after sensus has been reactivated and was already running, and (3) after a start attempt was made but failed.
+                    // in all three situations, there will be zero or more notifications present in the _callbackIdNotification lookup.
+                    // in (1), the notifications will have just been created and will have activation IDs set to the activation ID of
+                    // the current object. in (2), the notifications will have stale activation IDs. in (3), there will be no notifications.
+                    // the required post-condition of this method is that any present notification objects have activation IDs set to
+                    // the activation ID of the current object. so...let's make that happen.
                     lock (_callbackIdNotification)
-                        foreach (UILocalNotification notification in _callbackIdNotification.Values)
+                        foreach (string callbackId in _callbackIdNotification.Keys)
                         {
-                            UIApplication.SharedApplication.CancelLocalNotification(notification);
-                            UIApplication.SharedApplication.ScheduleLocalNotification(notification);
+                            UILocalNotification notification = _callbackIdNotification[callbackId];
+
+                            // get activation ID and check for condition (2) above
+                            string activationId = (notification.UserInfo.ValueForKey(new NSString(iOSSensusServiceHelper.SENSUS_CALLBACK_ACTIVATION_ID)) as NSString).ToString();
+                            if (activationId != _activationId)
+                            {
+                                // cancel stale notification and issue new notification using current activation ID
+                                UIApplication.SharedApplication.CancelLocalNotification(notification);
+
+                                bool repeating = (notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber).BoolValue;
+                                int repeatDelayMS = (notification.UserInfo.ValueForKey(new NSString(iOSSensusServiceHelper.SENSUS_CALLBACK_REPEAT_DELAY)) as NSNumber).Int32Value;
+                                notification.UserInfo = GetNotificationUserInfoDictionary(callbackId, repeating, repeatDelayMS);
+
+                                UIApplication.SharedApplication.ScheduleLocalNotification(notification);
+                            }
                         }
                 });
+        }
+
+        public NSDictionary GetNotificationUserInfoDictionary(string callbackId, bool repeating, int repeatDelayMS)
+        {
+            return new NSDictionary(
+                SENSUS_CALLBACK_KEY, true, 
+                SENSUS_CALLBACK_ID_KEY, callbackId,
+                SENSUS_CALLBACK_REPEATING_KEY, repeating,
+                SENSUS_CALLBACK_REPEAT_DELAY, repeatDelayMS,
+                SENSUS_CALLBACK_ACTIVATION_ID, _activationId);
         }
         #endregion
 
@@ -225,6 +250,14 @@ namespace Sensus.iOS
         public override void FlashNotificationAsync(string message, Action callback)
         {
             DependencyService.Get<IToastNotificator>().Notify(ToastNotificationType.Info, "", message + Environment.NewLine, TimeSpan.FromSeconds(2));
+        }
+
+        public override void OnSleep()
+        {
+            base.OnSleep();
+
+            // app is no longer active, so reset the activation ID
+            _activationId = null;
         }
 
         #region methods not implemented in ios
