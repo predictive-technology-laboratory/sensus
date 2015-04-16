@@ -161,6 +161,9 @@ namespace Sensus.iOS
         {
             Device.BeginInvokeOnMainThread(() =>
                 {
+                    // since all notifications are about to be rescheduled, clear any pending notifications from the notification center
+                    UIApplication.SharedApplication.ApplicationIconBadgeNumber = 0;
+
                     // this method will be called in one of three conditions:  (1) after sensus has been started and is running, (2)
                     // after sensus has been reactivated and was already running, and (3) after a start attempt was made but failed.
                     // in all three situations, there will be zero or more notifications present in the _callbackIdNotification lookup.
@@ -249,7 +252,10 @@ namespace Sensus.iOS
 
         public override void FlashNotificationAsync(string message, Action callback)
         {
-            DependencyService.Get<IToastNotificator>().Notify(ToastNotificationType.Info, "", message + Environment.NewLine, TimeSpan.FromSeconds(2));
+            Device.BeginInvokeOnMainThread(() =>
+                {
+                    DependencyService.Get<IToastNotificator>().Notify(ToastNotificationType.Info, "", message + Environment.NewLine, TimeSpan.FromSeconds(2));
+                });
         }
 
         public override void OnSleep()

@@ -13,20 +13,26 @@
 // limitations under the License.
 
 using System;
-using SensusService.Probes.Device;
+using SensusService.Probes.Network;
+using Foundation;
+using SystemConfiguration;
+using System.Collections.Generic;
 using SensusService;
 using System.Threading;
-using UIKit;
-using System.Collections.Generic;
 
-namespace Sensus.iOS.Probes.Device
+namespace Sensus.iOS.Network.Probes
 {
-    public class iOSBatteryProbe : BatteryProbe
+    public class iOSPollingWlanProbe : PollingWlanProbe
     {
         protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
         {
-            // TODO:  Check on physical device. -1 on simulator.
-            return new Datum[] { new BatteryDatum(DateTimeOffset.UtcNow, UIDevice.CurrentDevice.BatteryLevel) };
+            NSDictionary networkInfo;
+
+            // TODO:  Null in simulator
+            if (CaptiveNetwork.TryCopyCurrentNetworkInfo("en0", out networkInfo) == StatusCode.NoKey || networkInfo == null)
+                return new Datum[] { };
+
+            return new Datum[] { new WlanDatum(DateTimeOffset.UtcNow, networkInfo[CaptiveNetwork.NetworkInfoKeyBSSID].ToString()) };
         }
     }
 }

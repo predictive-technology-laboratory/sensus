@@ -51,7 +51,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\CellTowerDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\CellTowerProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\WlanDatum.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\WlanProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\PollingProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Probe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ProbeTriggerProperties\BooleanProbeTriggerProperty.cs" />
@@ -88,6 +87,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\ListeningLocationProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\PollingSpeedProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\ListeningSpeedProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\ListeningWlanProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\PollingWlanProbe.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />

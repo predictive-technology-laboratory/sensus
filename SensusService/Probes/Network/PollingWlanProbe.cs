@@ -12,31 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using SensusService.Probes.Network;
 using System;
 
-namespace Sensus.Android.Probes.Network
+namespace SensusService.Probes.Network
 {
-    public class AndroidListeningWlanProbe : ListeningWlanProbe
+    /// <summary>
+    /// Probes information about WLAN access points.
+    /// </summary>
+    public abstract class PollingWlanProbe : PollingProbe
     {
-        private EventHandler<WlanDatum> _wlanConnectionChangedCallback;
-
-        public AndroidListeningWlanProbe()
+        protected sealed override string DefaultDisplayName
         {
-            _wlanConnectionChangedCallback = (sender, wlanDatum) =>
-                {
-                    StoreDatum(wlanDatum);
-                };
+            get { return "Wireless LAN"; }
         }
 
-        protected override void StartListening()
+        public sealed override Type DatumType
         {
-            AndroidWlanBroadcastReceiver.WifiConnectionChanged += _wlanConnectionChangedCallback;
+            get { return typeof(WlanDatum); }
         }
 
-        protected override void StopListening()
+        public sealed override int DefaultPollingSleepDurationMS
         {
-            AndroidWlanBroadcastReceiver.WifiConnectionChanged -= _wlanConnectionChangedCallback;
+            get
+            {
+                return 60000;
+            }
         }
     }
 }
