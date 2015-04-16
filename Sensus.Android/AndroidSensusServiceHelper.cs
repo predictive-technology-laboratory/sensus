@@ -365,15 +365,23 @@ namespace Sensus.Android
 
         #region callback scheduling
         protected override void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, string userNotificationMessage)
-        {
+        {            
+            long initialTimeMS = Java.Lang.JavaSystem.CurrentTimeMillis() + initialDelayMS;
+
+            Logger.Log("Callback " + callbackId + " scheduled for " + (new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(initialTimeMS)) + " (repeating).", LoggingLevel.Debug, GetType());
+
             AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
-            alarmManager.SetRepeating(AlarmType.RtcWakeup, Java.Lang.JavaSystem.CurrentTimeMillis() + initialDelayMS, repeatDelayMS, GetCallbackIntent(callbackId, true));
+            alarmManager.SetRepeating(AlarmType.RtcWakeup, initialTimeMS, repeatDelayMS, GetCallbackIntent(callbackId, true));
         }
 
         protected override void ScheduleOneTimeCallback(string callbackId, int delayMS, string userNotificationMessage)
         {
+            long timeMS = Java.Lang.JavaSystem.CurrentTimeMillis() + delayMS;
+
+            Logger.Log("Callback " + callbackId + " scheduled for " + (new DateTimeOffset(1970, 1, 1, 0, 0, 0, 0, new TimeSpan()).AddMilliseconds(timeMS)) + " (one-time).", LoggingLevel.Debug, GetType());
+
             AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
-            alarmManager.Set(AlarmType.RtcWakeup, Java.Lang.JavaSystem.CurrentTimeMillis() + delayMS, GetCallbackIntent(callbackId, false));
+            alarmManager.Set(AlarmType.RtcWakeup, timeMS, GetCallbackIntent(callbackId, false));
         }
 
         protected override void UnscheduleCallback(string callbackId, bool repeating)
