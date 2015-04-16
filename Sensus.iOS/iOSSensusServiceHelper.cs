@@ -134,6 +134,8 @@ namespace Sensus.iOS
                         _callbackIdNotification.Add(callbackId, notification);
 
                     UIApplication.SharedApplication.ScheduleLocalNotification(notification);
+
+                    Logger.Log("Callback " + callbackId + " scheduled for " + notification.FireDate + " (" + (repeating ? "repeating" : "one-time") + ")", LoggingLevel.Debug, GetType());
                 });
         }
 

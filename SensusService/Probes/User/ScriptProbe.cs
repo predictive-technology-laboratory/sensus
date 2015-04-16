@@ -126,14 +126,13 @@ namespace SensusService.Probes.User
                     value = 1;
                 
                 if (value != _randomTriggerDelayMaxMinutes)
-                {                                       
+                {        
+                    bool reschedule = value < _randomTriggerDelayMaxMinutes && _randomTriggerCallbackId != null;
+
                     _randomTriggerDelayMaxMinutes = value; 
 
-                    if (_randomTriggerCallbackId != null)
-                    {
-                        int newRandomCallbackDelayMS = _random.Next(_randomTriggerDelayMaxMinutes * 60000);
-                        _randomTriggerCallbackId = SensusServiceHelper.Get().RescheduleRepeatingCallback(_randomTriggerCallbackId, newRandomCallbackDelayMS, newRandomCallbackDelayMS);
-                    }
+                    if (reschedule)
+                        ScheduleRandomScriptTriggerCallbackAsync();
                 }
             }
         }
@@ -407,7 +406,7 @@ namespace SensusService.Probes.User
 
         private void StopRandomScriptTriggerCallback()
         {
-            SensusServiceHelper.Get().Logger.Log("Stopping random script trigger callbacks.", LoggingLevel.Normal, GetType());
+            SensusServiceHelper.Get().Logger.Log("Stopping random script trigger callback.", LoggingLevel.Normal, GetType());
             SensusServiceHelper.Get().UnscheduleOneTimeCallback(_randomTriggerCallbackId);
             _randomTriggerCallbackId = null;
         }
