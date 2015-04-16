@@ -130,32 +130,30 @@ namespace Sensus.iOS
                         UserInfo = GetNotificationUserInfoDictionary(callbackId, repeating, repeatDelayMS)
                     };
 
-                    if (repeating)
-                        lock (_callbackIdNotification)
-                            _callbackIdNotification.Add(callbackId, notification);
+                    lock (_callbackIdNotification)
+                        _callbackIdNotification.Add(callbackId, notification);
 
                     UIApplication.SharedApplication.ScheduleLocalNotification(notification);
                 });
         }
 
-        protected override void UnscheduleCallbackAsync(string callbackId, bool repeating, Action callback)
-        {
-            Device.BeginInvokeOnMainThread(() =>
+        protected override void UnscheduleCallback(string callbackId, bool repeating)
+        {            
+            lock (_callbackIdNotification)
+            {
+                // there are race conditions on this collection, and the key might be removed elsewhere
+                UILocalNotification notification;
+                if (_callbackIdNotification.TryGetValue(callbackId, out notification))
                 {
-                    lock (_callbackIdNotification)
-                    {
-                        // there are race conditions on this collection, and the key might be removed elsewhere
-                        if (_callbackIdNotification.ContainsKey(callbackId))
+                    Device.BeginInvokeOnMainThread(() =>
                         {
-                            UIApplication.SharedApplication.CancelLocalNotification(_callbackIdNotification[callbackId]);
-                            _callbackIdNotification.Remove(callbackId);
-                        }
-                    }
-
-                    if (callback != null)
-                        callback();
-                });
-        }            
+                            UIApplication.SharedApplication.CancelLocalNotification(notification);
+                        });
+                    
+                    _callbackIdNotification.Remove(callbackId);
+                }
+            }
+        }
 
         public void RefreshCallbackNotificationsAsync()
         {

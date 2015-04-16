@@ -119,6 +119,8 @@ namespace Sensus.iOS
                                     notification.FireDate = DateTime.UtcNow.AddMilliseconds((double)repeatDelayMS).ToNSDate();
                                     UIApplication.SharedApplication.ScheduleLocalNotification(notification);
                                 }
+                                else
+                                    _sensusServiceHelper.UnscheduleOneTimeCallback(callbackId);
                             });
                     });
             }

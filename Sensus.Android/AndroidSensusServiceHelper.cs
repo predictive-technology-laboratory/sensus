@@ -376,13 +376,10 @@ namespace Sensus.Android
             alarmManager.Set(AlarmType.RtcWakeup, Java.Lang.JavaSystem.CurrentTimeMillis() + delayMS, GetCallbackIntent(callbackId, false));
         }
 
-        protected override void UnscheduleCallbackAsync(string callbackId, bool repeating, Action callback)
+        protected override void UnscheduleCallback(string callbackId, bool repeating)
         {
             AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
             alarmManager.Cancel(GetCallbackIntent(callbackId, repeating));
-
-            if (callback != null)
-                callback();
         }
 
         private PendingIntent GetCallbackIntent(string callbackId, bool repeating)

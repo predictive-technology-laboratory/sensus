@@ -121,7 +121,7 @@ namespace SensusService.Probes
             {
                 base.Stop();
 
-                SensusServiceHelper.Get().UnscheduleRepeatingCallbackAsync(_pollCallbackId);
+                SensusServiceHelper.Get().UnscheduleRepeatingCallback(_pollCallbackId);
                 _pollCallbackId = null;
             }
         }

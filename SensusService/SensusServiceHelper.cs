@@ -334,7 +334,7 @@ namespace SensusService
 
         protected abstract void ScheduleOneTimeCallback(string callbackId, int delayMS, string userNotificationMessage);
 
-        protected abstract void UnscheduleCallbackAsync(string callbackId, bool repeating, Action callback);
+        protected abstract void UnscheduleCallback(string callbackId, bool repeating);
 
         public abstract void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback);
 
@@ -386,7 +386,7 @@ namespace SensusService
 
                 if (_runningProtocolIds.Count == 0)
                 {
-                    UnscheduleRepeatingCallbackAsync(_healthTestCallbackId);
+                    UnscheduleRepeatingCallback(_healthTestCallbackId);
                     _healthTestCallbackId = null;
                 }
             }
@@ -512,18 +512,8 @@ namespace SensusService
                 Tuple<Action<CancellationToken>, CancellationTokenSource, string> callbackCancellerMessage;
                 if (_idCallbackCancellerMessage.TryGetValue(callbackId, out callbackCancellerMessage))
                 {
-                    string newCallbackId = null;
-                    ManualResetEvent newCallbackIdWait = new ManualResetEvent(false);
-
-                    UnscheduleRepeatingCallbackAsync(callbackId, () =>
-                        {
-                            newCallbackId = ScheduleRepeatingCallback(callbackCancellerMessage.Item1, initialDelayMS, repeatDelayMS, callbackCancellerMessage.Item3);
-                            newCallbackIdWait.Set();
-                        });
-
-                    newCallbackIdWait.WaitOne();
-
-                    return newCallbackId;
+                    UnscheduleRepeatingCallback(callbackId);
+                    return ScheduleRepeatingCallback(callbackCancellerMessage.Item1, initialDelayMS, repeatDelayMS, callbackCancellerMessage.Item3);
                 }
                 else
                     return null;
@@ -609,24 +599,26 @@ namespace SensusService
             }
         }
 
-        public void UnscheduleRepeatingCallbackAsync(string callbackId)
+        public void UnscheduleOneTimeCallback(string callbackId)
         {
-            UnscheduleRepeatingCallbackAsync(callbackId, null);
-        }
-
-        public void UnscheduleRepeatingCallbackAsync(string callbackId, Action callback)
-        {                          
-            if (callbackId == null)
+            lock (_idCallbackCancellerMessage)
             {
-                if (callback != null)
-                    callback();
-            }
-            else
-            {
-                lock (_idCallbackCancellerMessage)
+                if (callbackId != null)
                 {
                     _idCallbackCancellerMessage.Remove(callbackId);
-                    UnscheduleCallbackAsync(callbackId, true, callback);
+                    UnscheduleCallback(callbackId, false);
+                }
+            }
+        }
+
+        public void UnscheduleRepeatingCallback(string callbackId)
+        {                          
+            lock (_idCallbackCancellerMessage)
+            {
+                if (callbackId != null)
+                {
+                    _idCallbackCancellerMessage.Remove(callbackId);
+                    UnscheduleCallback(callbackId, true);
                 }
             }
         }
