@@ -208,7 +208,7 @@ namespace Sensus.iOS
         {
             Device.BeginInvokeOnMainThread(() =>
                 {
-                    // TODO:  Test on physical device. Crashes simulator.
+                    // TODO:  Test on physical device.
                     UIActivityViewController shareActivity = new UIActivityViewController(new NSObject[] { new NSString("Subject"), NSUrl.FromFilename(path) }, null);
                     UIApplication.SharedApplication.KeyWindow.RootViewController.PresentViewController(shareActivity, true, null);
                 });
@@ -226,10 +226,49 @@ namespace Sensus.iOS
 
         public override void PromptForInputAsync(string prompt, bool startVoiceRecognizer, Action<string> callback)
         {
-            // TODO
+            new Thread(() =>
+                {
+                    string input = null;
+                    ManualResetEvent dialogDismissWait = new ManualResetEvent(false);
 
-            callback("Fake input.");
+                    Device.BeginInvokeOnMainThread(() =>
+                        {
+                            ManualResetEvent dialogShowWait = new ManualResetEvent(false);
 
+                            UIAlertView dialog = new UIAlertView("Sensus is requesting input...", prompt, null, "Cancel", "OK");
+                            dialog.AlertViewStyle = UIAlertViewStyle.PlainTextInput;
+                            dialog.Dismissed += (o,e) => { dialogDismissWait.Set(); };
+                            dialog.Presented += (o,e) => { dialogShowWait.Set(); };
+                            dialog.Clicked += (o,e) => 
+                                { 
+                                    if(e.ButtonIndex == 1)
+                                        input = dialog.GetTextField(0).Text;
+                                };
+                            
+                            dialog.Show();
+
+                            #region voice recognizer
+                            if (startVoiceRecognizer)
+                            {
+                                new Thread(() =>
+                                    {
+                                        // wait for the dialog to be shown so it doesn't hide our speech recognizer activity
+                                        dialogShowWait.WaitOne();
+
+                                        // there's a slight race condition between the dialog showing and speech recognition showing. pause here to prevent the dialog from hiding the speech recognizer.
+                                        Thread.Sleep(1000);
+
+                                        // TODO:  Add speech recognition
+
+                                    }).Start();
+                            }
+                            #endregion
+                        });
+
+                    dialogDismissWait.WaitOne();
+                    callback(input);
+
+                }).Start();
         }
 
         public override void IssueNotificationAsync(string message, string id)
