@@ -416,7 +416,9 @@ namespace SensusService
                 }
                 else
                 {
-                    SensusServiceHelper.Get().Logger.Log("No probes were started.", LoggingLevel.Normal, GetType());
+                    string message = "No probes have been enabled. Will not start protocol.";
+                    SensusServiceHelper.Get().FlashNotificationAsync(message);
+                    SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
                     stopProtocol = true;
                 }
 

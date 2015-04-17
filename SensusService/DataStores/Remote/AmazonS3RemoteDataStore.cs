@@ -120,7 +120,7 @@ namespace SensusService.DataStores.Remote
             DateTimeOffset commitStartTime = DateTimeOffset.UtcNow;
 
             Dictionary<string, StringBuilder> datumTypeJSON = new Dictionary<string, StringBuilder>();
-            Dictionary<string, List<Datum>> datumTypeDataSubset = new Dictionary<string, List<Datum>>();
+            Dictionary<string, List<Datum>> datumTypeData = new Dictionary<string, List<Datum>>();
             foreach (Datum datum in data)
             {
                 if (cancellationToken.IsCancellationRequested)
@@ -138,10 +138,10 @@ namespace SensusService.DataStores.Remote
                 json.Append(datum.GetJSON(Protocol.JsonAnonymizer) + Environment.NewLine);
 
                 List<Datum> dataSubset;
-                if(!datumTypeDataSubset.TryGetValue(datumType, out dataSubset))
+                if(!datumTypeData.TryGetValue(datumType, out dataSubset))
                 {
                     dataSubset = new List<Datum>();
-                    datumTypeDataSubset.Add(datumType, dataSubset);
+                    datumTypeData.Add(datumType, dataSubset);
                 }
 
                 dataSubset.Add(datum);
@@ -156,8 +156,8 @@ namespace SensusService.DataStores.Remote
                 
                 try
                 {
-                    _s3.PutObjectAsync(_bucket, (string.IsNullOrWhiteSpace(_folder.Trim('/')) ? "" : _folder.Trim('/') + "/") + datumType + "/" + Guid.NewGuid(), datumTypeJSON[datumType].ToString(), contentType:"application/json").Wait();
-                    committedData.AddRange(datumTypeDataSubset[datumType]);
+                    _s3.PutObjectAsync(_bucket, (string.IsNullOrWhiteSpace(_folder.Trim('/')) ? "" : _folder.Trim('/') + "/") + datumType + "/" + Guid.NewGuid(), datumTypeJSON[datumType].ToString(), contentType:"application/json").Wait(cancellationToken);
+                    committedData.AddRange(datumTypeData[datumType]);
                 }
                 catch (Exception ex)
                 {
