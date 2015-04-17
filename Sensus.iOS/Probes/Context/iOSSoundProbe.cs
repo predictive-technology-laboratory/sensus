@@ -28,31 +28,21 @@ namespace Sensus.iOS.Probes.Context
     /// </summary>
     public class iOSSoundProbe : SoundProbe
     {
-        NSDictionary _settings;          
+        NSDictionary _settings;
 
         protected override void Initialize()
         {
             base.Initialize();
 
-            AVAudioSession audioSession = AVAudioSession.SharedInstance();
-
-            NSError error = audioSession.SetCategory(AVAudioSessionCategory.Record);
-            if (error != null)
-                throw new Exception("Failed to initialize iOS audio session:  " + error.LocalizedDescription);
-
-            error = audioSession.SetActive(true);
-            if (error != null)
-                throw new Exception("Failed to make audio session active:  " + error.LocalizedDescription);
-
             NSObject[] settingsKeys = new NSObject[]
-                {
-                    AVAudioSettings.AVSampleRateKey,
-                    AVAudioSettings.AVFormatIDKey,
-                    AVAudioSettings.AVNumberOfChannelsKey,
-                    AVAudioSettings.AVLinearPCMBitDepthKey,
-                    AVAudioSettings.AVLinearPCMIsBigEndianKey,
-                    AVAudioSettings.AVLinearPCMIsFloatKey
-                };
+            {
+                AVAudioSettings.AVSampleRateKey,
+                AVAudioSettings.AVFormatIDKey,
+                AVAudioSettings.AVNumberOfChannelsKey,
+                AVAudioSettings.AVLinearPCMBitDepthKey,
+                AVAudioSettings.AVLinearPCMIsBigEndianKey,
+                AVAudioSettings.AVLinearPCMIsFloatKey
+            };
             
             NSObject[] settingsValues = new NSObject[]
             {
@@ -68,26 +58,42 @@ namespace Sensus.iOS.Probes.Context
         }
 
         protected override IEnumerable<Datum> Poll(System.Threading.CancellationToken cancellationToken)
-        {
+        {            
+            float decibels = float.NaN;
+
             AVAudioRecorder recorder = null;
+            ManualResetEvent recorderWait = new ManualResetEvent(false);
             try
             {
-                NSError error;
-                recorder = AVAudioRecorder.Create(NSUrl.FromFilename("/dev/null"), new AudioSettings(_settings), out error);
-                if(error != null)
-                    throw new Exception("Failed to create sound recorder:  " + error.LocalizedDescription);
+                AVAudioSession audioSession = AVAudioSession.SharedInstance();
+
+                audioSession.RequestRecordPermission(granted => SensusServiceHelper.Get().Logger.Log("Audio record permission granted:  " + granted, LoggingLevel.Verbose, GetType()));
+
+                NSError error = audioSession.SetCategory(AVAudioSessionCategory.Record);
+                if (error != null)
+                    throw new Exception("Failed to initialize iOS audio session:  " + error.LocalizedDescription);
+
+                error = audioSession.SetActive(true);
+                if (error != null)
+                    throw new Exception("Failed to make audio session active:  " + error.LocalizedDescription);
                 
+                recorder = AVAudioRecorder.Create(NSUrl.FromFilename("/dev/null"), new AudioSettings(_settings), out error);
+                if (error != null)
+                    throw new Exception("Failed to create sound recorder:  " + error.LocalizedDescription);
+
+                recorder.FinishedRecording += (o,e) => { recorderWait.Set(); };
                 recorder.MeteringEnabled = true;
-                recorder.PrepareToRecord();
-                recorder.Record();
 
-                Thread.Sleep(SampleLengthMS);
-
-                recorder.UpdateMeters();
-
-                float decibels = recorder.AveragePower(0) + 160; // range looks to be [-160 - 0] from http://b2cloud.com.au/tutorial/obtaining-decibels-from-the-ios-microphone
-
-                return new Datum[] { new SoundDatum(DateTimeOffset.UtcNow, decibels) };
+                if (recorder.RecordFor(SampleLengthMS / 1000d))
+                {
+                    recorderWait.WaitOne();
+                    recorder.UpdateMeters();
+                    decibels = recorder.AveragePower(0) + 160; // range looks to be [-160 - 0] from http://b2cloud.com.au/tutorial/obtaining-decibels-from-the-ios-microphone
+    
+                    return new Datum[] { new SoundDatum(DateTimeOffset.UtcNow, decibels) };
+                }
+                else
+                    throw new Exception("Failed to record.");
             }
             catch (Exception)
             {
@@ -97,13 +103,23 @@ namespace Sensus.iOS.Probes.Context
             {
                 if (recorder != null)
                 {
-                    try { recorder.Stop(); }
-                    catch (Exception) { }
+                    try
+                    {
+                        recorder.Stop();
+                    }
+                    catch (Exception)
+                    {
+                    }
 
-                    try { recorder.Dispose(); }
-                    catch (Exception) { }
+                    try
+                    {
+                        recorder.Dispose();
+                    }
+                    catch (Exception)
+                    {
+                    }
                 }
-            }
+            }                
         }
     }
 }
