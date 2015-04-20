@@ -37,21 +37,13 @@ namespace Sensus.iOS.Probes.Context
             NSObject[] settingsKeys = new NSObject[]
             {
                 AVAudioSettings.AVSampleRateKey,
-                AVAudioSettings.AVFormatIDKey,
-                AVAudioSettings.AVNumberOfChannelsKey,
-                AVAudioSettings.AVLinearPCMBitDepthKey,
-                AVAudioSettings.AVLinearPCMIsBigEndianKey,
-                AVAudioSettings.AVLinearPCMIsFloatKey
+                AVAudioSettings.AVFormatIDKey
             };
             
             NSObject[] settingsValues = new NSObject[]
             {
-                NSNumber.FromFloat(44100.0f),
+                NSNumber.FromFloat(16000.0f),
                 NSNumber.FromInt32((int)AudioToolbox.AudioFormatType.LinearPCM),
-                NSNumber.FromInt32(2),
-                NSNumber.FromInt32(16),
-                NSNumber.FromBoolean(false),
-                NSNumber.FromBoolean(false)
             };
 
             _settings = NSDictionary.FromObjectsAndKeys(settingsValues, settingsKeys);
@@ -59,10 +51,8 @@ namespace Sensus.iOS.Probes.Context
 
         protected override IEnumerable<Datum> Poll(System.Threading.CancellationToken cancellationToken)
         {            
-            float decibels = float.NaN;
-
             AVAudioRecorder recorder = null;
-            ManualResetEvent recorderWait = new ManualResetEvent(false);
+            string recordPath = Path.GetTempFileName();
             try
             {
                 AVAudioSession audioSession = AVAudioSession.SharedInstance();
@@ -71,29 +61,27 @@ namespace Sensus.iOS.Probes.Context
 
                 NSError error = audioSession.SetCategory(AVAudioSessionCategory.Record);
                 if (error != null)
-                    throw new Exception("Failed to initialize iOS audio session:  " + error.LocalizedDescription);
+                    throw new Exception("Failed to initialize iOS audio recording session:  " + error.LocalizedDescription);
 
                 error = audioSession.SetActive(true);
                 if (error != null)
                     throw new Exception("Failed to make audio session active:  " + error.LocalizedDescription);
                 
-                recorder = AVAudioRecorder.Create(NSUrl.FromFilename("/dev/null"), new AudioSettings(_settings), out error);
+                recorder = AVAudioRecorder.Create(NSUrl.FromFilename(recordPath), new AudioSettings(_settings), out error);
                 if (error != null)
                     throw new Exception("Failed to create sound recorder:  " + error.LocalizedDescription);
 
-                recorder.FinishedRecording += (o,e) => { recorderWait.Set(); };
                 recorder.MeteringEnabled = true;
 
-                if (recorder.RecordFor(SampleLengthMS / 1000d))
+                // we need to take a meter reading while the recorder is running, so record for one second beyond the sample length
+                if (recorder.RecordFor(SampleLengthMS / 1000d + 1))
                 {
-                    recorderWait.WaitOne();
+                    Thread.Sleep(SampleLengthMS);
                     recorder.UpdateMeters();
-                    decibels = recorder.AveragePower(0) + 160; // range looks to be [-160 - 0] from http://b2cloud.com.au/tutorial/obtaining-decibels-from-the-ios-microphone
-    
-                    return new Datum[] { new SoundDatum(DateTimeOffset.UtcNow, decibels) };
+                    return new Datum[] { new SoundDatum(DateTimeOffset.UtcNow, (recorder.PeakPower(0) + 160) / 160f) };  // range looks to be [-160 - 0] from http://b2cloud.com.au/tutorial/obtaining-decibels-from-the-ios-microphone
                 }
                 else
-                    throw new Exception("Failed to record.");
+                    throw new Exception("Failed to start recording.");
             }
             catch (Exception)
             {
@@ -101,6 +89,15 @@ namespace Sensus.iOS.Probes.Context
             }
             finally
             {
+                try
+                {
+                    File.Delete(recordPath);
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Failed to delete sound file:  " + ex.Message, LoggingLevel.Debug, GetType());
+                }
+
                 if (recorder != null)
                 {
                     try
