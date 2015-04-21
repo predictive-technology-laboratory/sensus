@@ -24,11 +24,11 @@ namespace SensusUI
 {
     public class ShareLocalDataStorePage : ContentPage
     {
-        private bool _cancel;
+        private CancellationTokenSource _cancellationTokenSource;
 
         public ShareLocalDataStorePage(LocalDataStore localDataStore)
         {
-            _cancel = false;
+            _cancellationTokenSource = new CancellationTokenSource();
 
             Title = "Sharing Local Data Store";
 
@@ -47,10 +47,10 @@ namespace SensusUI
             contentLayout.Children.Add(statusLabel);
 
             ProgressBar progressBar = new ProgressBar
-                {
-                    Progress = 0,
-                    HorizontalOptions = LayoutOptions.FillAndExpand
-                };
+            {
+                Progress = 0,
+                HorizontalOptions = LayoutOptions.FillAndExpand
+            };
 
             contentLayout.Children.Add(progressBar);
 
@@ -75,35 +75,38 @@ namespace SensusUI
                     try
                     {              
                         Device.BeginInvokeOnMainThread(() => statusLabel.Text = "Gathering data...");
-                        List<Datum> localData = localDataStore.GetDataForRemoteDataStore(progress =>
+                        List<Datum> localData = localDataStore.GetDataForRemoteDataStore(_cancellationTokenSource.Token, progress =>
                             {
-                                Device.BeginInvokeOnMainThread(() => 
+                                Device.BeginInvokeOnMainThread(() =>
                                     {
                                         progressBar.ProgressTo(progress, 250, Easing.Linear);
                                     });
-                            }, () => 
-                            {
-                                return _cancel;
-                            });                               
+                            });                                
 
-                        Device.BeginInvokeOnMainThread(() => 
-                            {
-                                progressBar.ProgressTo(0, 0, Easing.Linear);
-                                statusLabel.Text = "Writing data to file...";
-                            });
-                        
-                        using(StreamWriter shareFile = new StreamWriter(sharePath))
+                        if (!_cancellationTokenSource.IsCancellationRequested)
                         {
-                            int dataWritten = 0;
-                            foreach (Datum datum in localData)
+                            Device.BeginInvokeOnMainThread(() =>
+                                {
+                                    progressBar.ProgressTo(0, 0, Easing.Linear);
+                                    statusLabel.Text = "Writing data to file...";
+                                });
+                            
+                            using (StreamWriter shareFile = new StreamWriter(sharePath))
                             {
-                                shareFile.WriteLine(datum.GetJSON(localDataStore.Protocol.JsonAnonymizer));
+                                int dataWritten = 0;
+                                foreach (Datum localDatum in localData)
+                                {
+                                    if (_cancellationTokenSource.IsCancellationRequested)
+                                        break;
+                                    
+                                    shareFile.WriteLine(localDatum.GetJSON(localDataStore.Protocol.JsonAnonymizer));
 
-                                if((++dataWritten % (localData.Count / 10)) == 0)
-                                    Device.BeginInvokeOnMainThread(() => progressBar.ProgressTo(dataWritten / (double)localData.Count, 250, Easing.Linear));
+                                    if ((++dataWritten % (localData.Count / 10)) == 0)
+                                        Device.BeginInvokeOnMainThread(() => progressBar.ProgressTo(dataWritten / (double)localData.Count, 250, Easing.Linear));
+                                }
+
+                                shareFile.Close();
                             }
-
-                            shareFile.Close();
                         }
                     }
                     catch (Exception ex)
@@ -115,10 +118,23 @@ namespace SensusUI
                         await Navigation.PopAsync();
                     }
 
-                    if (!_cancel && !errorWritingShareFile)
+                    if (_cancellationTokenSource.IsCancellationRequested)
                     {
-                        Device.BeginInvokeOnMainThread(async () => await Navigation.PopAsync());
-                        SensusServiceHelper.Get().ShareFileAsync(sharePath, "Sensus Data");
+                        try
+                        {
+                            File.Delete(sharePath);
+                        }
+                        catch (Exception)
+                        {
+                        }
+                    }
+                    else if (!errorWritingShareFile)
+                    {
+                        Device.BeginInvokeOnMainThread(async () => 
+                            {
+                                await Navigation.PopAsync();
+                                SensusServiceHelper.Get().ShareFileAsync(sharePath, "Sensus Data");
+                            });
                     }
 
                 }).Start();
@@ -133,7 +149,7 @@ namespace SensusUI
         {
             base.OnDisappearing();
 
-            _cancel = true;
+            _cancellationTokenSource.Cancel();
         }
     }
 }

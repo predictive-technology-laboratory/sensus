@@ -47,6 +47,11 @@ namespace SensusService.Probes.Context
             get { return _name + " (" + _address + ")"; }
         }
 
+        /// <summary>
+        /// For JSON deserialization.
+        /// </summary>
+        private BluetoothDeviceProximityDatum() { }
+
         public BluetoothDeviceProximityDatum(DateTimeOffset timestamp, string name, string address)
             : base(timestamp)
         {

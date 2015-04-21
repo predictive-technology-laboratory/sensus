@@ -30,12 +30,12 @@ namespace SensusService.Probes.User
         private Script _script;
         private Queue<Script> _incompleteScripts;
         private bool _rerunIncompleteScripts;
-        private int _scriptRerunCallbackId;
+        private string _scriptRerunCallbackId;
         private int _scriptRerunDelayMS;
         private int _maxScriptAgeMinutes;
         private int _numScriptsAgedOut;
         private bool _triggerRandomly;
-        private int _randomTriggerCallbackId;
+        private string _randomTriggerCallbackId;
         private int _randomTriggerDelayMaxMinutes;
         private Random _random;
 
@@ -77,12 +77,15 @@ namespace SensusService.Probes.User
             get { return _scriptRerunDelayMS; }
             set
             {
+                if (value <= 1000)
+                    value = 1000;
+                
                 if (value != _scriptRerunDelayMS)
                 {
                     _scriptRerunDelayMS = value; 
 
-                    if (_scriptRerunCallbackId != -1)
-                        SensusServiceHelper.Get().UpdateRepeatingCallback(_scriptRerunCallbackId, _scriptRerunDelayMS, _scriptRerunDelayMS);
+                    if (_scriptRerunCallbackId != null)
+                        _scriptRerunCallbackId = SensusServiceHelper.Get().RescheduleRepeatingCallback(_scriptRerunCallbackId, _scriptRerunDelayMS, _scriptRerunDelayMS);
                 }
             }
         }
@@ -106,9 +109,9 @@ namespace SensusService.Probes.User
 
                     if (Running)
                         if (_triggerRandomly)
-                            StartRandomScriptTriggerCallbacksAsync();
+                            ScheduleRandomScriptTriggerCallbackAsync();
                         else
-                            StopRandomScriptTriggerCallbacksAsync();
+                            StopRandomScriptTriggerCallbackAsync();
                 }
             }
         }
@@ -119,15 +122,17 @@ namespace SensusService.Probes.User
             get { return _randomTriggerDelayMaxMinutes; }
             set
             {
+                if (value <= 0)
+                    value = 1;
+                
                 if (value != _randomTriggerDelayMaxMinutes)
-                {
+                {        
+                    bool reschedule = value < _randomTriggerDelayMaxMinutes && _randomTriggerCallbackId != null;
+
                     _randomTriggerDelayMaxMinutes = value; 
 
-                    if (_randomTriggerCallbackId != -1)
-                    {
-                        int newRandomCallbackDelayMS = _random.Next(_randomTriggerDelayMaxMinutes * 60000);
-                        SensusServiceHelper.Get().UpdateRepeatingCallback(_randomTriggerCallbackId, newRandomCallbackDelayMS, newRandomCallbackDelayMS);
-                    }
+                    if (reschedule)
+                        ScheduleRandomScriptTriggerCallbackAsync();
                 }
             }
         }
@@ -155,12 +160,12 @@ namespace SensusService.Probes.User
             _script = new Script("Empty Script");
             _incompleteScripts = new Queue<Script>();
             _rerunIncompleteScripts = false;
-            _scriptRerunCallbackId = -1;
+            _scriptRerunCallbackId = null;
             _scriptRerunDelayMS = 60000;
             _maxScriptAgeMinutes = 10;
             _numScriptsAgedOut = 0;
             _triggerRandomly = false;
-            _randomTriggerCallbackId = -1;
+            _randomTriggerCallbackId = null;
             _randomTriggerDelayMaxMinutes = 1;
             _random = new Random();
 
@@ -238,7 +243,7 @@ namespace SensusService.Probes.User
                 StartScriptRerunCallbacksAsync();
 
             if (_triggerRandomly)
-                StartRandomScriptTriggerCallbacksAsync();
+                ScheduleRandomScriptTriggerCallbackAsync();
         }
 
         private void StartScriptRerunCallbacksAsync()
@@ -251,7 +256,15 @@ namespace SensusService.Probes.User
 
                         SensusServiceHelper.Get().Logger.Log("Starting script rerun callbacks.", LoggingLevel.Normal, GetType());
 
-                        _scriptRerunCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(() =>
+                        #if __IOS__
+                        string userNotificationMessage = "Your input is requested.";
+                        #elif __ANDROID__
+                        string userNotificationMessage = null;
+                        #elif __WINDOWS_PHONE__
+                        TODO:  Should we use a message?
+                        #endif
+
+                        _scriptRerunCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(cancellationToken =>
                             {
                                 if (Running && _rerunIncompleteScripts)
                                 {
@@ -276,36 +289,44 @@ namespace SensusService.Probes.User
                                         scriptWait.WaitOne();
                                     }
                                 }
-                            }, _scriptRerunDelayMS, _scriptRerunDelayMS);
+                            }, _scriptRerunDelayMS, _scriptRerunDelayMS, userNotificationMessage);
                     }
                 }).Start();
         }
 
-        private void StartRandomScriptTriggerCallbacksAsync()
+        private void ScheduleRandomScriptTriggerCallbackAsync()
         {
             new Thread(() =>
                 {
                     lock (_script)
                     {
-                        StopRandomScriptTriggerCallbacks();
+                        StopRandomScriptTriggerCallback();
 
                         SensusServiceHelper.Get().Logger.Log("Starting random script trigger callbacks.", LoggingLevel.Normal, GetType());
 
-                        _randomTriggerCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(() =>
-                            {
-                                if (Running && _triggerRandomly)
-                                {
-                                    ManualResetEvent scriptWait = new ManualResetEvent(false);
-                                    RunScriptAsync(_script.Copy(), null, null, () => scriptWait.Set());
-                                    scriptWait.WaitOne();
+                        #if __IOS__
+                        string userNotificationMessage = "Your input is requested.";
+                        #elif __ANDROID__
+                        string userNotificationMessage = null;
+                        #elif __WINDOWS_PHONE__
+                        TODO:  Should we use a message?
+                        #endif
 
-                                    int newRandomCallbackDelayMS = _random.Next(_randomTriggerDelayMaxMinutes * 60000);
-                                    SensusServiceHelper.Get().UpdateRepeatingCallback(_randomTriggerCallbackId, newRandomCallbackDelayMS, newRandomCallbackDelayMS);
-                                }
-                            
-                            }, _randomTriggerDelayMaxMinutes * 60000, _randomTriggerDelayMaxMinutes * 60000);
+                        _randomTriggerCallbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(RandomScriptTriggerCallback, _random.Next(_randomTriggerDelayMaxMinutes * 60000), userNotificationMessage);
                     }
                 }).Start();
+        }
+
+        private void RandomScriptTriggerCallback(CancellationToken cancellationToken)
+        {
+            if (Running && _triggerRandomly)
+            {
+                ManualResetEvent scriptWait = new ManualResetEvent(false);
+                RunScriptAsync(_script.Copy(), null, null, () => scriptWait.Set());
+                scriptWait.WaitOne();
+
+                ScheduleRandomScriptTriggerCallbackAsync();
+            }
         }
 
         private void RunScriptAsync(Script script, Datum prevDatum, Datum currDatum)
@@ -321,9 +342,7 @@ namespace SensusService.Probes.User
                         {
                             foreach (ScriptDatum scriptDatum in scriptData)
                                 if (scriptDatum != null)
-                                {
                                     StoreDatum(scriptDatum);
-                                }
 
                             if (_rerunIncompleteScripts && !script.Complete)
                                 lock (_incompleteScripts)
@@ -372,32 +391,24 @@ namespace SensusService.Probes.User
         private void StopScriptRerunCallbacks()
         {
             SensusServiceHelper.Get().Logger.Log("Stopping script rerun callbacks.", LoggingLevel.Normal, GetType());
-            SensusServiceHelper.Get().CancelRepeatingCallback(_scriptRerunCallbackId);
-            _scriptRerunCallbackId = -1;
+            SensusServiceHelper.Get().UnscheduleOneTimeCallback(_scriptRerunCallbackId);
+            _scriptRerunCallbackId = null;
         }
 
-        private void StopRandomScriptTriggerCallbacksAsync()
-        {
-            StopRandomScriptTriggerCallbacksAsync(() => { });
-        }
-
-        private void StopRandomScriptTriggerCallbacksAsync(Action callback)
+        private void StopRandomScriptTriggerCallbackAsync()
         {
             new Thread(() =>
                 {
-                    StopRandomScriptTriggerCallbacks();
-
-                    if(callback != null)
-                        callback();
+                    StopRandomScriptTriggerCallback();
 
                 }).Start();
         }
 
-        private void StopRandomScriptTriggerCallbacks()
+        private void StopRandomScriptTriggerCallback()
         {
-            SensusServiceHelper.Get().Logger.Log("Stopping random script trigger thread.", LoggingLevel.Normal, GetType());
-            SensusServiceHelper.Get().CancelRepeatingCallback(_randomTriggerCallbackId);
-            _randomTriggerCallbackId = -1;
+            SensusServiceHelper.Get().Logger.Log("Stopping random script trigger callback.", LoggingLevel.Normal, GetType());
+            SensusServiceHelper.Get().UnscheduleOneTimeCallback(_randomTriggerCallbackId);
+            _randomTriggerCallbackId = null;
         }
 
         public override void Stop()
@@ -405,7 +416,7 @@ namespace SensusService.Probes.User
             base.Stop();
 
             StopScriptRerunCallbacks();
-            StopRandomScriptTriggerCallbacks();
+            StopRandomScriptTriggerCallback();
         }
     }
 }

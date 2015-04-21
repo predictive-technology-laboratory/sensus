@@ -56,6 +56,11 @@ namespace SensusService.Probes.Movement
             get { return Math.Round(_x, 2) + " (x), " + Math.Round(_y, 2) + " (y), " + Math.Round(_z, 2) + " (z)"; }
         }
 
+        /// <summary>
+        /// For JSON deserialization.
+        /// </summary>
+        private AccelerometerDatum() { }
+
         public AccelerometerDatum(DateTimeOffset timestamp, double x, double y, double z)
             : base(timestamp)
         {

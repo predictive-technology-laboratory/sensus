@@ -17,11 +17,11 @@ using System;
 
 namespace Sensus.Android.Probes.Network
 {
-    public class AndroidWlanProbe : WlanProbe
+    public class AndroidListeningWlanProbe : ListeningWlanProbe
     {
         private EventHandler<WlanDatum> _wlanConnectionChangedCallback;
 
-        public AndroidWlanProbe()
+        public AndroidListeningWlanProbe()
         {
             _wlanConnectionChangedCallback = (sender, wlanDatum) =>
                 {

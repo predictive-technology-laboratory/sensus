@@ -26,6 +26,7 @@ using Xamarin.Forms;
 using SensusService.Anonymization;
 using System.Linq;
 using System.Reflection;
+using SensusUI;
 
 namespace SensusService
 {
@@ -43,66 +44,41 @@ namespace SensusService
             ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
         };
 
-        public static void FromWebUriAsync(Uri webURI, Action<Protocol> callback)
+        public static void DisplayFromWebUriAsync(Uri webURI)
         {
             new Thread(() =>
                 {
-                    Protocol protocol = null;
-
                     try
                     {
-                        ManualResetEvent protocolWait = new ManualResetEvent(false);
-
                         WebClient downloadClient = new WebClient();
+
                         downloadClient.DownloadDataCompleted += (object sender, DownloadDataCompletedEventArgs e) =>
                         {
-                            FromJsonAsync(SensusServiceHelper.AesDecrypt(e.Result), p =>
-                                {
-                                    protocol = p;
-                                    protocolWait.Set();
-                                });
+                            DisplayFromBytesAsync(e.Result);
                         };
 
                         downloadClient.DownloadStringAsync(webURI);
-                        protocolWait.WaitOne();
                     }
                     catch (Exception ex)
                     {
-                        SensusServiceHelper.Get().Logger.Log("Failed to download Protocol from URI \"" + webURI + "\":  " + ex.Message + ". If this is an HTTPS URI, make sure the server's certificate is valid.", LoggingLevel.Normal, null);
+                        SensusServiceHelper.Get().Logger.Log("Failed to download Protocol from URI \"" + webURI + "\":  " + ex.Message + ". If this is an HTTPS URI, make sure the server's certificate is valid.", LoggingLevel.Normal, typeof(Protocol));
                     }
-
-                    callback(protocol);
 
                 }).Start();
         }
 
-        public static void FromStreamAsync(Stream stream, Action<Protocol> callback)
+        public static void DisplayFromBytesAsync(byte[] bytes)
         {
             new Thread(() =>
                 {
-                    Protocol protocol = null;
-
                     try
                     {
-                        ManualResetEvent protocolWait = new ManualResetEvent(false);
-
-                        MemoryStream byteStream = new MemoryStream();
-                        stream.CopyTo(byteStream);
-
-                        FromJsonAsync(SensusServiceHelper.AesDecrypt(byteStream.ToArray()), p =>
-                            {
-                                protocol = p;
-                                protocolWait.Set();
-                            });
-
-                        protocolWait.WaitOne();
+                        DisplayFromJsonAsync(SensusServiceHelper.AesDecrypt(bytes));
                     }
                     catch (Exception ex)
                     {
-                        SensusServiceHelper.Get().Logger.Log("Failed to read Protocol from stream:  " + ex.Message, LoggingLevel.Normal, null);
-                    }
-
-                    callback(protocol);
+                        SensusServiceHelper.Get().Logger.Log("Failed to decrypt protocol from bytes:  " + ex.Message, LoggingLevel.Normal, typeof(Protocol));
+                    }                        
 
                 }).Start();
         }
@@ -111,42 +87,35 @@ namespace SensusService
         /// Converts JSON to a Protocol object. Private because Protocols should always be serialized as encrypted binary codes, and this function works with unencrypted strings (it's called in service of the former).
         /// </summary>
         /// <param name="json">JSON to deserialize.</param>
-        /// <param name="callback">Function to call when deserialization is complete.</param>
-        private static void FromJsonAsync(string json, Action<Protocol> callback)
+        private static void DisplayFromJsonAsync(string json)
         {
-            // start new thread, in case this method has been called from the UI thread...we're going to block below after calling the main thread.
-            new Thread(() =>
+            // always deserialize protocols on the main thread (e.g., since a looper might be required for android)
+            Device.BeginInvokeOnMainThread(async() =>
                 {
-                    Protocol protocol = null;
-                    ManualResetEvent protocolWait = new ManualResetEvent(false);
-
-                    // always deserialize protocols on the main thread, since a looper might be required (in the case of android)
-                    Device.BeginInvokeOnMainThread(() =>
+                    try
+                    {
+                        Protocol protocol = JsonConvert.DeserializeObject<Protocol>(json, _jsonSerializerSettings);
+                        protocol.StorageDirectory = null;
+                        while (protocol.StorageDirectory == null)
                         {
-                            try
+                            protocol.Id = Guid.NewGuid().ToString();
+                            string candidateStorageDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), protocol.Id);
+                            if (!Directory.Exists(candidateStorageDirectory))
                             {
-                                protocol = JsonConvert.DeserializeObject<Protocol>(json, _jsonSerializerSettings);
-                                protocol.StorageDirectory = null;
-                                while (protocol.StorageDirectory == null)
-                                {
-                                    protocol.Id = Guid.NewGuid().ToString();
-                                    string candidateStorageDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), protocol.Id);
-                                    if (!Directory.Exists(candidateStorageDirectory))
-                                    {
-                                        protocol.StorageDirectory = candidateStorageDirectory;
-                                        Directory.CreateDirectory(protocol.StorageDirectory);
-                                    }
-                                }
+                                protocol.StorageDirectory = candidateStorageDirectory;
+                                Directory.CreateDirectory(protocol.StorageDirectory);
                             }
-                            catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to deserialize Protocol from JSON:  " + ex.Message, LoggingLevel.Normal, null); }
+                        }
 
-                            protocolWait.Set();
-                        });
+                        UiBoundSensusServiceHelper.Get(true).RegisterProtocol(protocol);
 
-                    protocolWait.WaitOne();
-                    callback(protocol);
-
-                }).Start();
+                        await App.Current.MainPage.Navigation.PushAsync(new ProtocolsPage());
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Failed to deserialize/display protocol from JSON:  " + ex.Message, LoggingLevel.Normal, typeof(Protocol));
+                    }
+                });
         }
         #endregion
 
@@ -328,18 +297,19 @@ namespace SensusService
 
             _probes = new List<Probe>();
             foreach (Probe probe in Probe.GetAll())
-            {
-                probe.Protocol = this;
-
-                // since the new probe was just bound to this protocol, we need to let this protocol know about this probe's default anonymization preferences.
-                foreach (PropertyInfo anonymizableProperty in probe.DatumType.GetProperties().Where(property => property.GetCustomAttribute<Anonymizable>() != null))
+                if (SensusServiceHelper.Get().Use(probe))
                 {
-                    Anonymizable anonymizableAttribute = anonymizableProperty.GetCustomAttribute<Anonymizable>(true);
-                    _jsonAnonymizer.SetAnonymizer(anonymizableProperty, anonymizableAttribute.DefaultAnonymizer);
-                }
+                    probe.Protocol = this;
 
-                _probes.Add(probe);
-            }
+                    // since the new probe was just bound to this protocol, we need to let this protocol know about this probe's default anonymization preferences.
+                    foreach (PropertyInfo anonymizableProperty in probe.DatumType.GetProperties().Where(property => property.GetCustomAttribute<Anonymizable>() != null))
+                    {
+                        Anonymizable anonymizableAttribute = anonymizableProperty.GetCustomAttribute<Anonymizable>(true);
+                        _jsonAnonymizer.SetAnonymizer(anonymizableProperty, anonymizableAttribute.DefaultAnonymizer);
+                    }
+
+                    _probes.Add(probe);
+                }
         }
 
         public void Save(string path)
@@ -415,7 +385,9 @@ namespace SensusService
                 }
                 else
                 {
-                    SensusServiceHelper.Get().Logger.Log("No probes were started.", LoggingLevel.Normal, GetType());
+                    string message = "No probes have been enabled. Will not start protocol.";
+                    SensusServiceHelper.Get().FlashNotificationAsync(message);
+                    SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
                     stopProtocol = true;
                 }
 

@@ -47,6 +47,11 @@ namespace SensusService.Probes.Apps
             get { return "Name:  " + _name + " (" + _description + ")"; }
         }
 
+        /// <summary>
+        /// For JSON deserialization.
+        /// </summary>
+        private RunningAppsDatum() { }
+
         public RunningAppsDatum(DateTimeOffset timestamp, string name, string description)
             : base(timestamp)
         {

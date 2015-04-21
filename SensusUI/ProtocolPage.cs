@@ -75,7 +75,7 @@ namespace SensusUI
             editLocalDataStoreButton.Clicked += async (o, e) =>
                 {
                     if (_protocol.LocalDataStore != null)
-                        await Navigation.PushAsync(new DataStorePage(_protocol, _protocol.LocalDataStore.Copy(), true));
+                        await Navigation.PushAsync(new DataStorePage(_protocol, _protocol.LocalDataStore.Copy(), true, false));
                 };
 
             Button createLocalDataStoreButton = new Button
@@ -108,7 +108,7 @@ namespace SensusUI
             editRemoteDataStoreButton.Clicked += async (o, e) =>
                 {
                     if (_protocol.RemoteDataStore != null)
-                        await Navigation.PushAsync(new DataStorePage(_protocol, _protocol.RemoteDataStore.Copy(), false));
+                        await Navigation.PushAsync(new DataStorePage(_protocol, _protocol.RemoteDataStore.Copy(), false, false));
                 };
 
             Button createRemoteDataStoreButton = new Button
@@ -246,7 +246,7 @@ namespace SensusUI
             string cancelButtonName = "Cancel";
             string selected = await DisplayActionSheet("Select " + (local ? "Local" : "Remote") + " Data Store", cancelButtonName, null, dataStores.Select((d, i) => (i + 1) + ") " + d.Name).ToArray());
             if (!string.IsNullOrWhiteSpace(selected) && selected != cancelButtonName)
-                await Navigation.PushAsync(new DataStorePage(_protocol, dataStores[int.Parse(selected.Substring(0, selected.IndexOf(")"))) - 1], local));
+                await Navigation.PushAsync(new DataStorePage(_protocol, dataStores[int.Parse(selected.Substring(0, selected.IndexOf(")"))) - 1], local, true));
         }
 
         protected override void OnDisappearing()

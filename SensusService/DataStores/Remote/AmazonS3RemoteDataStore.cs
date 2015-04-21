@@ -19,6 +19,7 @@ using SensusUI.UiProperties;
 using Newtonsoft.Json.Serialization;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace SensusService.DataStores.Remote
 {
@@ -114,16 +115,17 @@ namespace SensusService.DataStores.Remote
             }
         }
 
-        protected override List<Datum> CommitData(List<Datum> data)
+        protected override List<Datum> CommitData(List<Datum> data, CancellationToken cancellationToken)
         {
-            List<Datum> committedData = new List<Datum>();
-
             DateTimeOffset commitStartTime = DateTimeOffset.UtcNow;
 
             Dictionary<string, StringBuilder> datumTypeJSON = new Dictionary<string, StringBuilder>();
-            Dictionary<string, List<Datum>> datumTypeDataSubset = new Dictionary<string, List<Datum>>();
+            Dictionary<string, List<Datum>> datumTypeData = new Dictionary<string, List<Datum>>();
             foreach (Datum datum in data)
             {
+                if (cancellationToken.IsCancellationRequested)
+                    break;
+                
                 string datumType = datum.GetType().Name;
 
                 StringBuilder json;
@@ -136,21 +138,26 @@ namespace SensusService.DataStores.Remote
                 json.Append(datum.GetJSON(Protocol.JsonAnonymizer) + Environment.NewLine);
 
                 List<Datum> dataSubset;
-                if(!datumTypeDataSubset.TryGetValue(datumType, out dataSubset))
+                if(!datumTypeData.TryGetValue(datumType, out dataSubset))
                 {
                     dataSubset = new List<Datum>();
-                    datumTypeDataSubset.Add(datumType, dataSubset);
+                    datumTypeData.Add(datumType, dataSubset);
                 }
 
                 dataSubset.Add(datum);
             }
 
+            List<Datum> committedData = new List<Datum>();
+
             foreach(string datumType in datumTypeJSON.Keys)
             {
+                if (cancellationToken.IsCancellationRequested)
+                    break;
+                
                 try
                 {
-                    _s3.PutObjectAsync(_bucket, (string.IsNullOrWhiteSpace(_folder.Trim('/')) ? "" : _folder.Trim('/') + "/") + datumType + "/" + Guid.NewGuid(), datumTypeJSON[datumType].ToString(), contentType:"application/json").Wait();
-                    committedData.AddRange(datumTypeDataSubset[datumType]);
+                    _s3.PutObjectAsync(_bucket, (string.IsNullOrWhiteSpace(_folder.Trim('/')) ? "" : _folder.Trim('/') + "/") + datumType + "/" + Guid.NewGuid(), datumTypeJSON[datumType].ToString(), contentType:"application/json").Wait(cancellationToken);
+                    committedData.AddRange(datumTypeData[datumType]);
                 }
                 catch (Exception ex)
                 {

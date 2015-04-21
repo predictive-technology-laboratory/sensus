@@ -28,17 +28,20 @@ using Android.Widget;
 using Newtonsoft.Json;
 using SensusService;
 using Xamarin;
+using Xamarin.Geolocation;
+using SensusService.Probes.Location;
+using SensusService.Probes;
+using SensusService.Probes.Movement;
 
 namespace Sensus.Android
 {
     public class AndroidSensusServiceHelper : SensusServiceHelper
     {
-        public const string INTENT_EXTRA_SENSUS_CALLBACK = "SENSUS-CALLBACK";
-        public const string INTENT_EXTRA_SENSUS_CALLBACK_ID = "SENSUS-CALLBACK-ID";
-        public const string INTENT_EXTRA_SENSUS_CALLBACK_REPEATING = "SENSUS-CALLBACK-REPEATING";
+        private const string SERVICE_NOTIFICATION_TAG = "SENSUS-SERVICE-NOTIFICATION";
 
         private AndroidSensusService _service;
         private ConnectivityManager _connectivityManager;
+        private NotificationManager _notificationManager;
         private string _deviceId;
         private AndroidMainActivity _mainActivity;
         private ManualResetEvent _mainActivityWait;
@@ -80,15 +83,24 @@ namespace Sensus.Android
             }
         }
 
+        protected override Geolocator Geolocator
+        {
+            get
+            {
+                return new Geolocator(Application.Context);
+            }
+        }
+
         public AndroidSensusServiceHelper()
         {
             _mainActivityWait = new ManualResetEvent(false);      
-        }           
+        }          
 
         public void SetService(AndroidSensusService service)
         {
             _service = service;
             _connectivityManager = _service.GetSystemService(Context.ConnectivityService) as ConnectivityManager;
+            _notificationManager = _service.GetSystemService(Context.NotificationService) as NotificationManager;
             _deviceId = Settings.Secure.GetString(_service.ContentResolver, Settings.Secure.AndroidId);
             _textToSpeech = new AndroidTextToSpeech(_service);
             _wakeLock = (_service.GetSystemService(Context.PowerService) as PowerManager).NewWakeLock(WakeLockFlags.Partial, "SENSUS");           
@@ -136,7 +148,13 @@ namespace Sensus.Android
 
         protected override void InitializeXamarinInsights()
         {
-            Insights.Initialize(XAMARIN_INSIGHTS_APP_KEY, Application.Context);  // can't reference _service here since this method is called from the base class constructor.
+            Insights.Initialize(XAMARIN_INSIGHTS_APP_KEY, Application.Context);  // can't reference _service here since this method is called from the base class constructor, before the service is set.
+        }
+
+        public override bool Use(Probe probe)
+        {
+            return !(probe is ListeningLocationProbe) && // the listening probe creates strange conflicts with the GpsReceiver and the polling probe. don't use it for android.
+                   !(probe is ListeningSpeedProbe);      // the listening speed probe uses the listening location probe. see above comment.
         }
 
         public override void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
@@ -293,6 +311,40 @@ namespace Sensus.Android
                 }).Start();
         }
 
+        #region notifications
+        public override void UpdateApplicationStatus(string status)
+        {
+            IssueNotification("Sensus", status == null ? null : (status + " (tap to open)"), true, SERVICE_NOTIFICATION_TAG);
+        }
+
+        public override void IssueNotificationAsync(string message, string id)
+        {
+            IssueNotification("Sensus", message, false, id);
+        }
+
+        private void IssueNotification(string title, string body, bool sticky, string tag)
+        {            
+            if (body == null)
+                _notificationManager.Cancel(tag, 0);
+            else
+            {
+                TaskStackBuilder stackBuilder = TaskStackBuilder.Create(_service);
+                stackBuilder.AddParentStack(Java.Lang.Class.FromType(typeof(AndroidMainActivity)));
+                stackBuilder.AddNextIntent(new Intent(_service, typeof(AndroidMainActivity)));
+                PendingIntent pendingIntent = stackBuilder.GetPendingIntent(0, PendingIntentFlags.UpdateCurrent);
+
+                Notification notification = new Notification.Builder(_service)
+                    .SetContentTitle(title)
+                    .SetContentText(body)
+                    .SetSmallIcon(Resource.Drawable.ic_launcher)
+                    .SetContentIntent(pendingIntent)
+                    .SetAutoCancel(!sticky)
+                    .SetOngoing(sticky).Build();
+
+                _notificationManager.Notify(tag, 0, notification);
+            }
+        }
+
         public override void FlashNotificationAsync(string message, Action callback)
         {
             new Thread(() =>
@@ -308,35 +360,48 @@ namespace Sensus.Android
                                 });
                         });
                 }).Start();
-        }
+        } 
+        #endregion
 
-        protected override void ScheduleRepeatingCallback(int callbackId, int initialDelayMS, int subsequentDelayMS)
-        {
+        #region callback scheduling
+        protected override void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, string userNotificationMessage)
+        {            
+            long initialTimeMS = Java.Lang.JavaSystem.CurrentTimeMillis() + initialDelayMS;
+
+            Logger.Log("Callback " + callbackId + " scheduled for " + (new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(initialTimeMS)) + " (repeating).", LoggingLevel.Debug, GetType());
+
             AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
-            alarmManager.SetRepeating(AlarmType.RtcWakeup, Java.Lang.JavaSystem.CurrentTimeMillis() + initialDelayMS, subsequentDelayMS, GetCallbackIntent(callbackId, true));
+            alarmManager.SetRepeating(AlarmType.RtcWakeup, initialTimeMS, repeatDelayMS, GetCallbackIntent(callbackId, true));
         }
 
-        protected override void ScheduleOneTimeCallback(int callbackId, int delay)
+        protected override void ScheduleOneTimeCallback(string callbackId, int delayMS, string userNotificationMessage)
         {
+            long timeMS = Java.Lang.JavaSystem.CurrentTimeMillis() + delayMS;
+
+            Logger.Log("Callback " + callbackId + " scheduled for " + (new DateTimeOffset(1970, 1, 1, 0, 0, 0, 0, new TimeSpan()).AddMilliseconds(timeMS)) + " (one-time).", LoggingLevel.Debug, GetType());
+
             AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
-            alarmManager.Set(AlarmType.RtcWakeup, Java.Lang.JavaSystem.CurrentTimeMillis() + delay, GetCallbackIntent(callbackId, false));
+            alarmManager.Set(AlarmType.RtcWakeup, timeMS, GetCallbackIntent(callbackId, false));
         }
 
-        protected override void CancelCallback(int callbackId, bool repeating)
+        protected override void UnscheduleCallback(string callbackId, bool repeating)
         {
             AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
             alarmManager.Cancel(GetCallbackIntent(callbackId, repeating));
         }
 
-        private PendingIntent GetCallbackIntent(int callbackId, bool repeating)
+        private PendingIntent GetCallbackIntent(string callbackId, bool repeating)
         {
             Intent serviceIntent = new Intent(_service, typeof(AndroidSensusService));
-            serviceIntent.PutExtra(INTENT_EXTRA_SENSUS_CALLBACK, true);
-            serviceIntent.PutExtra(INTENT_EXTRA_SENSUS_CALLBACK_ID, callbackId);
-            serviceIntent.PutExtra(INTENT_EXTRA_SENSUS_CALLBACK_REPEATING, repeating);
-            return PendingIntent.GetService(_service, callbackId, serviceIntent, PendingIntentFlags.CancelCurrent);
-        }
+            serviceIntent.PutExtra(SENSUS_CALLBACK_KEY, true);
+            serviceIntent.PutExtra(SENSUS_CALLBACK_ID_KEY, callbackId);
+            serviceIntent.PutExtra(SENSUS_CALLBACK_REPEATING_KEY, repeating);
 
+            return PendingIntent.GetService(_service, callbackId.GetHashCode(), serviceIntent, PendingIntentFlags.CancelCurrent);  // upon hash collisions, the previous intent will simply be canceled.
+        }
+        #endregion
+
+        #region device awake / sleep
         public override void KeepDeviceAwake()
         {
             lock (_wakeLock)
@@ -347,18 +412,16 @@ namespace Sensus.Android
         {
             lock (_wakeLock)
                 _wakeLock.Release();
-        }
-
-        public override void UpdateApplicationStatus(string status)
-        {
-            _service.UpdateNotification("Sensus", status + " (tap to open)");
-        }
+        }            
+        #endregion
 
         public override void Destroy()
         {
-            base.Destroy();
+            UpdateApplicationStatus(null);
 
             _textToSpeech.Dispose();
+
+            base.Destroy();
         }
     }
 }

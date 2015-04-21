@@ -17,6 +17,7 @@ using SensusService.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 
 namespace SensusService.DataStores.Local
 {
@@ -88,7 +89,7 @@ namespace SensusService.DataStores.Local
             }
         }
 
-        protected override List<Datum> CommitData(List<Datum> data)
+        protected override List<Datum> CommitData(List<Datum> data, CancellationToken cancellationToken)
         {
             lock (_locker)
             {
@@ -96,6 +97,9 @@ namespace SensusService.DataStores.Local
 
                 foreach (Datum datum in data)
                 {
+                    if (cancellationToken.IsCancellationRequested)
+                        break;
+                    
                     string datumJSON = null;
                     try { datumJSON = datum.GetJSON(Protocol.JsonAnonymizer); }
                     catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to get JSON for datum:  " + ex.Message, LoggingLevel.Normal, GetType()); }
@@ -124,14 +128,14 @@ namespace SensusService.DataStores.Local
 
                         if (writtenToFile)
                             committedData.Add(datum);
-                    }
+                    }                        
                 }
 
                 return committedData;
             }
         }
 
-        public override List<Datum> GetDataForRemoteDataStore(Action<double> progressCallback, Func<bool> cancelCallback)
+        public override List<Datum> GetDataForRemoteDataStore(CancellationToken cancellationToken, Action<double> progressCallback)
         {
             lock (_locker)
             {
@@ -139,21 +143,23 @@ namespace SensusService.DataStores.Local
 
                 // get local data from all files
                 List<Datum> localData = new List<Datum>();
-                int numDataRetrieved = 0;
                 foreach (string path in Directory.GetFiles(StorageDirectory))
-                {                                               
+                {   
+                    if (cancellationToken.IsCancellationRequested)
+                        break;
+                    
                     try
                     {
                         using (StreamReader file = new StreamReader(path))
                         {
                             string line;
-                            while ((cancelCallback == null || !cancelCallback()) && (line = file.ReadLine()) != null)
+                            while (!cancellationToken.IsCancellationRequested && (line = file.ReadLine()) != null)
                                 if (!string.IsNullOrWhiteSpace(line))
                                 {
                                     localData.Add(Datum.FromJSON(line));
 
-                                    if((++numDataRetrieved % (_numDataStoredInFiles / 10)) == 0 && progressCallback != null)
-                                        progressCallback(numDataRetrieved / (double)_numDataStoredInFiles);
+                                    if(progressCallback != null && (localData.Count % (_numDataStoredInFiles / 10)) == 0)
+                                        progressCallback(localData.Count / (double)_numDataStoredInFiles);
                                 }
 
                             file.Close();
@@ -165,7 +171,7 @@ namespace SensusService.DataStores.Local
                     }                         
                 }
 
-                if (cancelCallback != null && cancelCallback())
+                if (cancellationToken.IsCancellationRequested)
                     SensusServiceHelper.Get().Logger.Log("Canceled retrieval of local data for remote data store.", LoggingLevel.Normal, GetType());
 
                 // reinitialize file if we're running
@@ -318,6 +324,8 @@ namespace SensusService.DataStores.Local
                 }
 
                 _numDataStoredInFiles = 0;
+
+                SensusServiceHelper.Get().Save();  // update num data stored within the JSON file
             }
         }
     }

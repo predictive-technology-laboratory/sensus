@@ -13,11 +13,21 @@
 // limitations under the License.
 
 using System;
+using SensusUI.UiProperties;
 
 namespace SensusService.Probes.Context
 {
     public abstract class SoundProbe : PollingProbe
     {
+        private int _sampleLengthMS;
+
+        [EntryIntegerUiProperty("Sample Length (MS):", true, 5)]
+        public int SampleLengthMS
+        {
+            get { return _sampleLengthMS; }
+            set { _sampleLengthMS = value; }
+        }
+
         protected sealed override string DefaultDisplayName
         {
             get { return "Sound"; }
@@ -31,6 +41,11 @@ namespace SensusService.Probes.Context
         public sealed override Type DatumType
         {
             get { return typeof(SoundDatum); }
+        }
+
+        protected SoundProbe()
+        {
+            _sampleLengthMS = 5000;
         }
     }
 }

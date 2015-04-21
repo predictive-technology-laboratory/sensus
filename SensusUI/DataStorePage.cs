@@ -26,10 +26,11 @@ namespace SensusUI
 {
     public class DataStorePage : ContentPage
     {        
-        public DataStorePage(Protocol protocol, DataStore dataStore, bool local)
+        public DataStorePage(Protocol protocol, DataStore dataStore, bool local, bool newDataStore)
         {
             Title = (local ? "Local" : "Remote") + " Data Store";
 
+            // property stacks all come from the data store passed in (i.e., a copy of the original on the protocol, if there is one)
             List<StackLayout> stacks = UiProperty.GetPropertyStacks(dataStore);
 
             StackLayout buttonStack = new StackLayout
@@ -40,7 +41,8 @@ namespace SensusUI
 
             stacks.Add(buttonStack);
 
-            if (dataStore.Clearable)
+            // clearing only applies to local data stores that already exist on protocols and are clearable. new local data stores don't have this option.
+            if (local && !newDataStore && protocol.LocalDataStore.Clearable)
             {
                 Button clearButton = new Button
                 {
@@ -51,14 +53,16 @@ namespace SensusUI
 
                 clearButton.Clicked += async (o, e) =>
                 {
+                    // display the name as it's currently shown on the form (i.e., in the passed-in data store rather than the protocols)
                     if (await DisplayAlert("Clear data from " + dataStore.Name + "?", "This action cannot be undone.", "Clear", "Cancel"))
-                        dataStore.Clear();
+                        protocol.LocalDataStore.Clear();  // clear the protocol's local data store
                 };
 
                 buttonStack.Children.Add(clearButton);
             }
 
-            if (local)
+            // sharing only applies to local data stores that already exist on protocols. new local data stores don't have this option.
+            if (local && !newDataStore)
             {
                 Button shareLocalDataButton = new Button
                 {
@@ -69,10 +73,9 @@ namespace SensusUI
 
                 shareLocalDataButton.Clicked += async (o, e) =>
                     {
-                        LocalDataStore localDataStore = dataStore as LocalDataStore;
-
-                        if(localDataStore.DataCount > 0)
-                            await Navigation.PushAsync(new ShareLocalDataStorePage(dataStore as LocalDataStore));
+                        // share the protocol's local data store if it has data in it
+                        if(protocol.LocalDataStore.DataCount > 0)
+                            await Navigation.PushAsync(new ShareLocalDataStorePage(protocol.LocalDataStore));
                         else
                             UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Local data store contains no data to share.");
                     };

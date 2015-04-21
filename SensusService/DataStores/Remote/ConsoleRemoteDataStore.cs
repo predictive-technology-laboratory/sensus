@@ -14,6 +14,7 @@
 
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace SensusService.DataStores.Remote
 {
@@ -30,11 +31,15 @@ namespace SensusService.DataStores.Remote
             get { return false; }
         }
 
-        protected override List<Datum> CommitData(List<Datum> data)
+        protected override List<Datum> CommitData(List<Datum> data, CancellationToken cancellationToken)
         {
             List<Datum> committedData = new List<Datum>();
+
             foreach (Datum datum in data)
             {
+                if (cancellationToken.IsCancellationRequested)
+                    break;
+                
                 committedData.Add(datum);
 
                 SensusServiceHelper.Get().Logger.Log("Committed datum to remote console:  " + datum, LoggingLevel.Debug, GetType());

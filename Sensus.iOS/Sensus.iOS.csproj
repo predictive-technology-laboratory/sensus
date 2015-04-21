@@ -20,9 +20,13 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <MtouchArch>i386</MtouchArch>
-    <MtouchLink>None</MtouchLink>
     <MtouchDebug>true</MtouchDebug>
     <MtouchProfiling>true</MtouchProfiling>
+    <CodesignKey>iPhone Developer</CodesignKey>
+    <MtouchUseRefCounting>true</MtouchUseRefCounting>
+    <MtouchI18n>
+    </MtouchI18n>
+    <MtouchLink>None</MtouchLink>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>full</DebugType>
@@ -33,6 +37,9 @@
     <MtouchArch>i386</MtouchArch>
     <ConsolePause>false</ConsolePause>
     <MtouchLink>None</MtouchLink>
+    <MtouchUseRefCounting>true</MtouchUseRefCounting>
+    <MtouchI18n>
+    </MtouchI18n>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
     <DebugSymbols>true</DebugSymbols>
@@ -48,6 +55,8 @@
     <MtouchProfiling>true</MtouchProfiling>
     <CodesignKey>iPhone Developer</CodesignKey>
     <MtouchDebug>true</MtouchDebug>
+    <IpaPackageName>
+    </IpaPackageName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>full</DebugType>
@@ -128,13 +137,18 @@
     <Reference Include="Xamarin.Forms.Xaml">
       <HintPath>..\packages\Xamarin.Forms.1.4.1.6349\lib\Xamarin.iOS10\Xamarin.Forms.Xaml.dll</HintPath>
     </Reference>
+    <Reference Include="Toasts.Forms.Plugin.Abstractions">
+      <HintPath>..\packages\Toasts.Forms.Plugin.1.0.6.18\lib\Xamarin.iOS10\Toasts.Forms.Plugin.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Toasts.Forms.Plugin.iOS">
+      <HintPath>..\packages\Toasts.Forms.Plugin.1.0.6.18\lib\Xamarin.iOS10\Toasts.Forms.Plugin.iOS.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Contents.json" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.xib" />
-    <InterfaceDefinition Include="MainStoryboard.storyboard" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
@@ -144,11 +158,14 @@
   <ItemGroup>
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
-    <Compile Include="Sensus.iOSViewController.cs" />
-    <Compile Include="Sensus.iOSViewController.designer.cs">
-      <DependentUpon>Sensus.iOSViewController.cs</DependentUpon>
-    </Compile>
     <Compile Include="iOSSensusServiceHelper.cs" />
+    <Compile Include="NetworkConnectivity.cs" />
+    <Compile Include="Probes\Context\iOSSoundProbe.cs" />
+    <Compile Include="Probes\Device\iOSBatteryProbe.cs" />
+    <Compile Include="Probes\Location\iOSCompassProbe.cs" />
+    <Compile Include="Probes\Movement\iOSAccelerometerProbe.cs" />
+    <Compile Include="Probes\Network\iOSPollingWlanProbe.cs" />
+    <Compile Include="ShareFileActivityItemSource.cs" />
   </ItemGroup>
   <Import Project="..\SensusService\SensusService.projitems" Label="Shared" Condition="Exists('..\SensusService\SensusService.projitems')" />
   <Import Project="..\SensusUI\SensusUI.projitems" Label="Shared" Condition="Exists('..\SensusUI\SensusUI.projitems')" />
@@ -167,5 +184,28 @@
       <Version>1.5.216.0</Version>
       <Visible>False</Visible>
     </XamarinComponentReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="..\SensusUI\Icons\minus.png">
+      <Link>Resources\minus.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\SensusUI\Icons\pencil.png">
+      <Link>Resources\pencil.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\SensusUI\Icons\plus.png">
+      <Link>Resources\plus.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\SensusUI\Icons\share.png">
+      <Link>Resources\share.png</Link>
+    </BundleResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Probes\" />
+    <Folder Include="Probes\Communication\" />
+    <Folder Include="Probes\Context\" />
+    <Folder Include="Probes\Device\" />
+    <Folder Include="Probes\Location\" />
+    <Folder Include="Probes\Movement\" />
+    <Folder Include="Probes\Network\" />
   </ItemGroup>
 </Project>

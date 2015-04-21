@@ -38,6 +38,11 @@ namespace SensusService.Probes.Location
             get { return Math.Round(_altitude, 0) + " feet"; }
         }
 
+        /// <summary>
+        /// For JSON deserialization.
+        /// </summary>
+        private AltitudeDatum() { }
+
         public AltitudeDatum(DateTimeOffset timestamp, double accuracy, double altitude)
             : base(timestamp, accuracy)
         {

@@ -26,6 +26,7 @@ using SensusService.Probes.User;
 using SensusUI.UiProperties;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace SensusService.DataStores.Remote
 {
@@ -109,14 +110,17 @@ namespace SensusService.DataStores.Remote
             }
         }
 
-        protected override List<Datum> CommitData(List<Datum> data)
+        protected override List<Datum> CommitData(List<Datum> data, CancellationToken cancellationToken)
         {
-            List<Datum> committedData = new List<Datum>();
-
             DateTimeOffset start = DateTimeOffset.UtcNow;
+
+            List<Datum> committedData = new List<Datum>();
 
             foreach (Datum datum in data)
             {
+                if (cancellationToken.IsCancellationRequested)
+                    break;
+                
                 try
                 {
                     if (datum is RunningAppsDatum)

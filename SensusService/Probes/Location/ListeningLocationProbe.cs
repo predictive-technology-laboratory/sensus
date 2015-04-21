@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,29 +13,32 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using Xamarin.Geolocation;
 
 namespace SensusService.Probes.Location
 {
-    /// <summary>
-    /// Probes location information.
-    /// </summary>
-    public class LocationProbe : PollingProbe
+    public class ListeningLocationProbe : ListeningProbe
     {
-        protected sealed override string DefaultDisplayName
+        private EventHandler<PositionEventArgs> _positionChangedHandler;
+
+        protected override string DefaultDisplayName
         {
             get { return "Location"; }
-        }
-
-        public override int DefaultPollingSleepDurationMS
-        {
-            get { return 5000; }
         }
 
         public sealed override Type DatumType
         {
             get { return typeof(LocationDatum); }
+        }            
+
+        public ListeningLocationProbe()
+        {
+            _positionChangedHandler = (o, e) =>
+                {
+                    SensusServiceHelper.Get().Logger.Log("Received position change notification.", LoggingLevel.Verbose, GetType());
+
+                    StoreDatum(new LocationDatum(e.Position.Timestamp, e.Position.Accuracy, e.Position.Latitude, e.Position.Longitude));
+                };
         }
 
         protected override void Initialize()
@@ -50,14 +53,15 @@ namespace SensusService.Probes.Location
             }
         }
 
-        protected sealed override IEnumerable<Datum> Poll()
+        protected sealed override void StartListening()
         {
-            Position reading = GpsReceiver.Get().GetReading();
+            GpsReceiver.Get().AddListener(_positionChangedHandler);
+        }
 
-            if (reading == null)
-                return new Datum[] { };
-            else
-                return new Datum[] { new LocationDatum(reading.Timestamp, reading.Accuracy, reading.Latitude, reading.Longitude) };
+        protected sealed override void StopListening()
+        {
+            GpsReceiver.Get().RemoveListener(_positionChangedHandler);
         }
     }
 }
+

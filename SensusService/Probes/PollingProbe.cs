@@ -24,7 +24,7 @@ namespace SensusService.Probes
     {
         private int _pollingSleepDurationMS;
         private bool _isPolling;
-        private int _pollCallbackId;
+        private string _pollCallbackId;
 
         private readonly object _locker = new object();
 
@@ -34,12 +34,15 @@ namespace SensusService.Probes
             get { return _pollingSleepDurationMS; }
             set 
             {
+                if (value <= 1000)
+                    value = 1000;
+                
                 if (value != _pollingSleepDurationMS)
                 {
                     _pollingSleepDurationMS = value; 
 
-                    if (_pollCallbackId != -1)
-                        SensusServiceHelper.Get().UpdateRepeatingCallback(_pollCallbackId, _pollingSleepDurationMS, _pollingSleepDurationMS);
+                    if (_pollCallbackId != null)
+                        _pollCallbackId = SensusServiceHelper.Get().RescheduleRepeatingCallback(_pollCallbackId, _pollingSleepDurationMS, _pollingSleepDurationMS);
                 }
             }
         }
@@ -51,7 +54,7 @@ namespace SensusService.Probes
         {
             _pollingSleepDurationMS = DefaultPollingSleepDurationMS;
             _isPolling = false;
-            _pollCallbackId = -1;
+            _pollCallbackId = null;
         }
 
         /// <summary>
@@ -63,7 +66,15 @@ namespace SensusService.Probes
             {
                 base.Start();
 
-                _pollCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(() =>
+                #if __IOS__
+                string userNotificationMessage = DisplayName + " data requested.";
+                #elif __ANDROID__
+                string userNotificationMessage = null;
+                #elif __WINDOWS_PHONE__
+                TODO:  Should we use a message?
+                #endif
+
+                _pollCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(cancellationToken =>
                     {
                         if (Running)
                         {
@@ -73,7 +84,7 @@ namespace SensusService.Probes
                             try
                             {
                                 SensusServiceHelper.Get().Logger.Log("Polling.", LoggingLevel.Verbose, GetType());
-                                data = Poll();
+                                data = Poll(cancellationToken);
                             }
                             catch (Exception ex)
                             {
@@ -83,6 +94,9 @@ namespace SensusService.Probes
                             if (data != null)
                                 foreach (Datum datum in data)
                                 {
+                                    if(cancellationToken.IsCancellationRequested)
+                                        break;
+                                    
                                     try
                                     {
                                         StoreDatum(datum);
@@ -95,11 +109,11 @@ namespace SensusService.Probes
 
                             _isPolling = false;
                         }
-                    }, 0, _pollingSleepDurationMS);
+                    }, 0, _pollingSleepDurationMS, userNotificationMessage);
             }
         }
 
-        protected abstract IEnumerable<Datum> Poll();
+        protected abstract IEnumerable<Datum> Poll(CancellationToken cancellationToken);
 
         public override void Stop()
         {
@@ -107,8 +121,8 @@ namespace SensusService.Probes
             {
                 base.Stop();
 
-                SensusServiceHelper.Get().CancelRepeatingCallback(_pollCallbackId);
-                _pollCallbackId = -1;
+                SensusServiceHelper.Get().UnscheduleRepeatingCallback(_pollCallbackId);
+                _pollCallbackId = null;
             }
         }
 

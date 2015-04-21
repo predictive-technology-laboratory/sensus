@@ -42,6 +42,11 @@ namespace SensusService.Probes.User
             get { return _response; }
         }
 
+        /// <summary>
+        /// For JSON deserialization.
+        /// </summary>
+        private ScriptDatum() { }
+
         public ScriptDatum(DateTimeOffset timestamp, string response, string triggerDatumId)
             : base(timestamp)
         {

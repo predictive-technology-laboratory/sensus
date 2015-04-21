@@ -38,6 +38,11 @@ namespace SensusService.Probes.Network
             get { return _cellTower; }
         }
 
+        /// <summary>
+        /// For JSON deserialization.
+        /// </summary>
+        private CellTowerDatum() { }
+
         public CellTowerDatum(DateTimeOffset timestamp, string cellTower)
             : base(timestamp)
         {

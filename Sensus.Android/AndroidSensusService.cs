@@ -22,35 +22,19 @@ namespace Sensus.Android
 {
     [Service]
     public class AndroidSensusService : Service
-    {
-        private const int SERVICE_NOTIFICATION_ID = 0;
-        private const int NOTIFICATION_PENDING_INTENT_ID = 1;
-
-        private NotificationManager _notificationManager;
-        private Notification _notification;
+    {        
         private AndroidSensusServiceHelper _sensusServiceHelper;
 
         public override void OnCreate()
         {
             base.OnCreate();
 
-            _notificationManager = GetSystemService(Context.NotificationService) as NotificationManager;
-
-            UpdateNotification("Sensus", "");
-
-            _sensusServiceHelper = SensusServiceHelper.Load<AndroidSensusServiceHelper>(new Geolocator(this)) as AndroidSensusServiceHelper;
-            if (_sensusServiceHelper == null)
-            {
-                _sensusServiceHelper = new AndroidSensusServiceHelper();
-                _sensusServiceHelper.Initialize(new Geolocator(this));
-                _sensusServiceHelper.Save();
-            }
-
+            _sensusServiceHelper = SensusServiceHelper.Load<AndroidSensusServiceHelper>() as AndroidSensusServiceHelper;
             _sensusServiceHelper.SetService(this);
-
+            _sensusServiceHelper.UpdateApplicationStatus("");
             _sensusServiceHelper.Stopped += (o, e) =>
-                {
-                    _notificationManager.Cancel(SERVICE_NOTIFICATION_ID);
+                {      
+                    _sensusServiceHelper.UpdateApplicationStatus(null);
                     StopSelf();
                 };
         }
@@ -70,13 +54,13 @@ namespace Sensus.Android
 
             _sensusServiceHelper.StartAsync(() =>
                 {
-                    if (intent.GetBooleanExtra(AndroidSensusServiceHelper.INTENT_EXTRA_SENSUS_CALLBACK, false))
+                    if (intent.GetBooleanExtra(AndroidSensusServiceHelper.SENSUS_CALLBACK_KEY, false))
                     {
-                        int callbackId = intent.GetIntExtra(AndroidSensusServiceHelper.INTENT_EXTRA_SENSUS_CALLBACK_ID, -1);
-                        if (callbackId >= 0)
+                        string callbackId = intent.GetStringExtra(AndroidSensusServiceHelper.SENSUS_CALLBACK_ID_KEY);
+                        if (callbackId != null)
                         {
-                            bool repeating = intent.GetBooleanExtra(AndroidSensusServiceHelper.INTENT_EXTRA_SENSUS_CALLBACK_REPEATING, false);
-                            _sensusServiceHelper.RaiseCallbackAsync(callbackId, repeating);
+                            bool repeating = intent.GetBooleanExtra(AndroidSensusServiceHelper.SENSUS_CALLBACK_REPEATING_KEY, false);
+                            _sensusServiceHelper.RaiseCallbackAsync(callbackId, repeating, true);
                         }
                     }
                 });
@@ -86,8 +70,6 @@ namespace Sensus.Android
 
         public override void OnDestroy()
         {
-            _notificationManager.Cancel(SERVICE_NOTIFICATION_ID);
-
             _sensusServiceHelper.Destroy();
 
             base.OnDestroy();
@@ -96,23 +78,6 @@ namespace Sensus.Android
         public override IBinder OnBind(Intent intent)
         {
             return new AndroidSensusServiceBinder(_sensusServiceHelper);
-        }
-
-        public void UpdateNotification(string title, string text)
-        {
-            TaskStackBuilder stackBuilder = TaskStackBuilder.Create(this);
-            stackBuilder.AddParentStack(Java.Lang.Class.FromType(typeof(AndroidMainActivity)));
-            stackBuilder.AddNextIntent(new Intent(this, typeof(AndroidMainActivity)));
-            PendingIntent pendingIntent = stackBuilder.GetPendingIntent(NOTIFICATION_PENDING_INTENT_ID, PendingIntentFlags.UpdateCurrent);
-
-            _notification = new Notification.Builder(this).SetContentTitle(title)
-                                                          .SetContentText(text)
-                                                          .SetSmallIcon(Resource.Drawable.ic_launcher)
-                                                          .SetContentIntent(pendingIntent)
-                                                          .SetAutoCancel(false)
-                                                          .SetOngoing(true).Build();
-
-            _notificationManager.Notify(SERVICE_NOTIFICATION_ID, _notification);
-        }
+        }                    
     }
 }

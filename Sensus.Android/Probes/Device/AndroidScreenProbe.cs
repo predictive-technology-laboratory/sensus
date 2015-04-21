@@ -18,6 +18,7 @@ using SensusService;
 using SensusService.Probes.Device;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Sensus.Android.Probes.Device
 {
@@ -30,7 +31,7 @@ namespace Sensus.Android.Probes.Device
             _powerManager = Application.Context.GetSystemService(global::Android.Content.Context.PowerService) as PowerManager;
         }
 
-        protected override IEnumerable<Datum> Poll()
+        protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
         {
             bool screenOn;
 

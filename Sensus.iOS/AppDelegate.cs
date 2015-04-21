@@ -22,6 +22,9 @@ using Xamarin.Forms.Platform.iOS;
 using Xamarin.Forms;
 using SensusUI;
 using SensusService;
+using Xamarin.Geolocation;
+using Toasts.Forms.Plugin.iOS;
+using System.IO;
 
 namespace Sensus.iOS
 {
@@ -31,32 +34,108 @@ namespace Sensus.iOS
     [Register("AppDelegate")]
     public partial class AppDelegate : FormsApplicationDelegate
     {
-        // class-level declarations
-		
-        public override UIWindow Window
-        {
-            get;
-            set;
-        }
+        private iOSSensusServiceHelper _sensusServiceHelper;
 
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
             Forms.Init();
 
-            Window = new UIWindow(UIScreen.MainScreen.Bounds);
+            ToastNotificatorImplementation.Init();
 
-            LoadApplication(new App());
+            App app = new App();
+            LoadApplication(app);
 
-            //UiBoundSensusServiceHelper.Set(new iOSSensusServiceHelper());
-            //app.SensusMainPage.DisplayServiceHelper(UiBoundSensusServiceHelper.Get(true));
+            uiApplication.RegisterUserNotificationSettings(UIUserNotificationSettings.GetSettingsForTypes(UIUserNotificationType.Badge | UIUserNotificationType.Sound | UIUserNotificationType.Alert, new NSSet()));
+
+            _sensusServiceHelper = SensusServiceHelper.Load<iOSSensusServiceHelper>() as iOSSensusServiceHelper;
+
+            UiBoundSensusServiceHelper.Set(_sensusServiceHelper);
+            app.SensusMainPage.DisplayServiceHelper(UiBoundSensusServiceHelper.Get(true));
+
+            if (launchOptions != null)
+            {                
+                NSObject launchOptionValue;
+                if (launchOptions.TryGetValue(UIApplication.LaunchOptionsLocalNotificationKey, out launchOptionValue))
+                    ServiceNotificationAsync(launchOptionValue as UILocalNotification);
+                else if (launchOptions.TryGetValue(UIApplication.LaunchOptionsUrlKey, out launchOptionValue))
+                    Protocol.DisplayFromBytesAsync(File.ReadAllBytes((launchOptionValue as NSUrl).Path));
+            }
+
+            // service all other notifications whose fire time has passed
+            foreach (UILocalNotification notification in uiApplication.ScheduledLocalNotifications)
+                if (notification.FireDate.ToDateTime() <= DateTime.UtcNow)
+                    ServiceNotificationAsync(notification);
 
             return base.FinishedLaunching(uiApplication, launchOptions);
         }
-		
-        // This method is invoked when the application is about to move from active to inactive state.
-        // OpenGL applications should use this method to pause.
-        public override void OnResignActivation(UIApplication application)
+
+        public override bool OpenUrl(UIApplication application, NSUrl url, string sourceApplication, NSObject annotation)
         {
+            Protocol.DisplayFromBytesAsync(File.ReadAllBytes(url.Path));
+
+            return true;
+        }
+
+        public override void OnActivated(UIApplication uiApplication)
+        {
+            _sensusServiceHelper.ActivationId = Guid.NewGuid().ToString();
+
+            iOSSensusServiceHelper sensusServiceHelper = UiBoundSensusServiceHelper.Get(true) as iOSSensusServiceHelper;
+
+            sensusServiceHelper.StartAsync(() =>
+                {
+                    sensusServiceHelper.RefreshCallbackNotificationsAsync();
+                });
+            
+            base.OnActivated(uiApplication);
+        }
+
+        public override void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)
+        {
+            ServiceNotificationAsync(notification);
+        }
+
+        private void ServiceNotificationAsync(UILocalNotification notification)
+        {
+            bool isCallback = (notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_KEY)) as NSNumber).BoolValue;
+            if (isCallback)
+            {   
+                // cancel notification, since it has served its purpose
+                UIApplication.SharedApplication.CancelLocalNotification(notification);
+
+                string callbackId = (notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_ID_KEY)) as NSString).ToString();
+                bool repeating = (notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber).BoolValue;
+                int repeatDelayMS = (notification.UserInfo.ValueForKey(new NSString(iOSSensusServiceHelper.SENSUS_CALLBACK_REPEAT_DELAY)) as NSNumber).Int32Value;
+                string activationId = (notification.UserInfo.ValueForKey(new NSString(iOSSensusServiceHelper.SENSUS_CALLBACK_ACTIVATION_ID)) as NSString).ToString();
+
+                // only raise callback if it's from the current activation and if it is scheduled
+                if (activationId != _sensusServiceHelper.ActivationId || !iOSSensusServiceHelper.Get().CallbackIsScheduled(callbackId))
+                    return;                      
+
+                nint taskId = UIApplication.SharedApplication.BeginBackgroundTask(() =>
+                    {
+                        // if we're out of time running in the background, cancel the callback.
+                        UiBoundSensusServiceHelper.Get(true).CancelRaisedCallback(callbackId);
+                    });
+
+                UiBoundSensusServiceHelper.Get(true).RaiseCallbackAsync(callbackId, repeating, false, () =>
+                    {
+                        Device.BeginInvokeOnMainThread(() =>
+                            {
+                                // notification has been serviced, so end background task
+                                UIApplication.SharedApplication.EndBackgroundTask(taskId);
+
+                                // update and schedule notification again if it was a repeating callback
+                                if (repeating)
+                                {
+                                    notification.FireDate = DateTime.UtcNow.AddMilliseconds((double)repeatDelayMS).ToNSDate();
+                                    UIApplication.SharedApplication.ScheduleLocalNotification(notification);
+                                }
+                                else
+                                    _sensusServiceHelper.UnscheduleOneTimeCallback(callbackId);
+                            });
+                    });
+            }
         }
 		
         // This method should be used to release shared resources and it should store the application state.
@@ -74,6 +153,7 @@ namespace Sensus.iOS
         // This method is called when the application is about to terminate. Save data, if needed.
         public override void WillTerminate(UIApplication application)
         {
+            _sensusServiceHelper.Destroy();
         }
     }
 }

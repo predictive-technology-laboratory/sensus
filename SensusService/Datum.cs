@@ -39,7 +39,7 @@ namespace SensusService
             Datum datum = null;
 
             try { datum = JsonConvert.DeserializeObject<Datum>(json, _serializationSettings); }
-            catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to convert JSON to datum:  " + ex.Message, LoggingLevel.Normal, null); }
+            catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to convert JSON to datum:  " + ex.Message, LoggingLevel.Normal, typeof(Datum)); }
 
             return datum;
         }
@@ -92,7 +92,7 @@ namespace SensusService
         /// <summary>
         /// Parameterless constructor For JSON.NET deserialization.
         /// </summary>
-        private Datum()
+        protected Datum()
         {
             _deviceId = SensusServiceHelper.Get().DeviceId;
             _anonymized = false;

@@ -16,6 +16,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using System.Threading;
 
 namespace SensusService.DataStores.Local
 {
@@ -54,13 +55,16 @@ namespace SensusService.DataStores.Local
             }
         }
 
-        protected override List<Datum> CommitData(List<Datum> data)
+        protected override List<Datum> CommitData(List<Datum> data, CancellationToken cancellationToken)
         {
             List<Datum> committed = new List<Datum>();
 
             lock (_data)
                 foreach (Datum datum in data)
                 {
+                    if (cancellationToken.IsCancellationRequested)
+                        break;
+                    
                     _data.Add(datum);
                     committed.Add(datum);
                 }
@@ -68,7 +72,7 @@ namespace SensusService.DataStores.Local
             return committed;
         }
 
-        public override List<Datum> GetDataForRemoteDataStore(Action<double> progressCallback, Func<bool> cancelCallback)
+        public override List<Datum> GetDataForRemoteDataStore(CancellationToken cancellationToken, Action<double> progressCallback)
         {
             lock (_data)
                 return _data.ToList();

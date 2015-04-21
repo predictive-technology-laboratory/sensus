@@ -31,8 +31,7 @@ namespace Sensus.Android
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault, Intent.CategoryBrowsable }, DataScheme = "http", DataHost = "*", DataPathPattern = ".*\\\\.sensus")]  // protocols downloaded from an http web link
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault, Intent.CategoryBrowsable }, DataScheme = "https", DataHost = "*", DataPathPattern = ".*\\\\.sensus")]  // protocols downloaded from an https web link
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault }, DataMimeType = "application/octet-stream", DataScheme = "content", DataHost = "*")]  // protocols opened from email attachments originating from the sensus app itself -- DataPathPattern doesn't work here, since email apps (e.g., gmail) rename attachments when stored in the local file system
-    [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault }, DataMimeType = "text/plain", DataScheme = "content", DataHost = "*")]  // protocols opened from email attachments originating from non-sensus senders (i.e., the "share" button in sensus) -- DataPathPattern doesn't work here, since email apps (e.g., gmail) rename attachments when stored in the local file system
-    [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault }, DataMimeType = "text/plain", DataScheme = "file", DataHost = "*", DataPathPattern = ".*\\\\.sensus")]  // protocols opened from the local file system
+    [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault }, DataMimeType = "application/octet-stream", DataScheme = "file", DataHost = "*", DataPathPattern = ".*\\\\.sensus")]  // protocols opened from the local file system
     public class AndroidMainActivity : FormsApplicationActivity
     {
         private AndroidSensusServiceConnection _serviceConnection;
@@ -99,40 +98,26 @@ namespace Sensus.Android
                     {
                         global::Android.Net.Uri dataURI = Intent.Data;
 
-                        Action<Protocol> protocolDeserializedCallback = protocol =>
-                            {                                
-                                if (protocol != null)
-                                {
-                                    Device.BeginInvokeOnMainThread(async () =>
-                                        {
-                                            try
-                                            {
-                                                UiBoundSensusServiceHelper.Get(true).RegisterProtocol(protocol);
-                                                await app.MainPage.Navigation.PushAsync(new ProtocolsPage());
-                                            }
-                                            catch (Exception ex)
-                                            {
-                                                string message = "Failed to register/display new protocol:  " + ex.Message;
-                                                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
-                                                new AlertDialog.Builder(this).SetTitle("Failed to show protocol").SetMessage(message).Show();
-                                            }
-                                        });
-                                }
-                            };
-
                         try
                         {
                             if (Intent.Scheme == "http" || Intent.Scheme == "https")
-                                Protocol.FromWebUriAsync(new Uri(dataURI.ToString()), protocolDeserializedCallback);
+                                Protocol.DisplayFromWebUriAsync(new Uri(dataURI.ToString()));
                             else if (Intent.Scheme == "content" || Intent.Scheme == "file")
                             {
-                                Stream stream = null;
+                                byte[] bytes = null;
 
-                                try { stream = ContentResolver.OpenInputStream(dataURI); }
-                                catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to open local protocol file URI \"" + dataURI + "\":  " + ex.Message, LoggingLevel.Normal, GetType()); }
+                                try 
+                                {
+                                    MemoryStream memoryStream = new MemoryStream();
+                                    Stream inputStream = ContentResolver.OpenInputStream(dataURI);
+                                    inputStream.CopyTo(memoryStream);
+                                    inputStream.Close();
+                                    bytes = memoryStream.ToArray();
+                                }
+                                catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to read bytes from local file URI \"" + dataURI + "\":  " + ex.Message, LoggingLevel.Normal, GetType()); }
 
-                                if (stream != null)
-                                    Protocol.FromStreamAsync(stream, protocolDeserializedCallback);
+                                if(bytes !=  null)
+                                    Protocol.DisplayFromBytesAsync(bytes);
                             }
                             else
                                 SensusServiceHelper.Get().Logger.Log("Sensus didn't know what to do with URI \"" + dataURI + "\".", LoggingLevel.Normal, GetType());

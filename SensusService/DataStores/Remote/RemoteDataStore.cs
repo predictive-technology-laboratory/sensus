@@ -14,6 +14,7 @@
 
 using SensusUI.UiProperties;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace SensusService.DataStores.Remote
 {
@@ -47,23 +48,25 @@ namespace SensusService.DataStores.Remote
             #if DEBUG
             CommitDelayMS = 10000;  // 10 seconds...so we can see debugging output quickly
             #else
-            CommitDelayMS = 1000 * 60 * 30;  // every thirty minutes
+            CommitDelayMS = 1000 * 60 * 30;  // every 30 minutes
             #endif
         }
 
-        protected sealed override List<Datum> GetDataToCommit()
+        protected sealed override List<Datum> GetDataToCommit(CancellationToken cancellationToken)
         {
             List<Datum> dataToCommit = new List<Datum>();
 
-            if (!Protocol.LocalDataStore.UploadToRemoteDataStore)
-                SensusServiceHelper.Get().Logger.Log("Not committing local data to remote data store.", LoggingLevel.Verbose, GetType());
+            if (cancellationToken.IsCancellationRequested)
+                SensusServiceHelper.Get().Logger.Log("Cancelled retrieval of data from local data store.", LoggingLevel.Verbose, GetType());
+            else if (!Protocol.LocalDataStore.UploadToRemoteDataStore)
+                SensusServiceHelper.Get().Logger.Log("Remote data store upload is disabled.", LoggingLevel.Verbose, GetType());
             else if (_requireWiFi && !SensusServiceHelper.Get().WiFiConnected)
                 SensusServiceHelper.Get().Logger.Log("Required WiFi but device WiFi is not connected.", LoggingLevel.Verbose, GetType());
             else if (_requireCharging && !SensusServiceHelper.Get().IsCharging)
                 SensusServiceHelper.Get().Logger.Log("Required charging but device is not charging.", LoggingLevel.Verbose, GetType());
             else
             {
-                dataToCommit = Protocol.LocalDataStore.GetDataForRemoteDataStore();
+                dataToCommit = Protocol.LocalDataStore.GetDataForRemoteDataStore(cancellationToken);
                 SensusServiceHelper.Get().Logger.Log("Retrieved " + dataToCommit.Count + " data elements from local data store.", LoggingLevel.Debug, GetType());
             }
 

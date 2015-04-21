@@ -18,12 +18,13 @@ using Android.OS;
 using SensusService.Probes.Device;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Sensus.Android.Probes.Device
 {
     public class AndroidBatteryProbe : BatteryProbe
     {
-        protected override IEnumerable<SensusService.Datum> Poll()
+        protected override IEnumerable<SensusService.Datum> Poll(CancellationToken cancellationToken)
         {
             Intent lastIntent = Application.Context.RegisterReceiver(null, new IntentFilter(Intent.ActionBatteryChanged));
             if (lastIntent == null)

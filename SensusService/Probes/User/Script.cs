@@ -38,7 +38,7 @@ namespace SensusService.Probes.User
             Script script = null;
 
             try { script = JsonConvert.DeserializeObject<Script>(json, _jsonSerializerSettings); }
-            catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to deserialize script:  " + ex.Message, LoggingLevel.Normal, null); }
+            catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to deserialize script:  " + ex.Message, LoggingLevel.Normal, typeof(Script)); }
 
             return script;
         }
@@ -146,7 +146,15 @@ namespace SensusService.Probes.User
 
         public void RunAsync(Datum previousDatum, Datum currentDatum, Action<List<ScriptDatum>> callback)
         {
-            SensusServiceHelper.Get().ScheduleOneTimeCallback(() =>
+            #if __IOS__
+            string userNotificationMessage = "Your input is requested.";
+            #elif __ANDROID__
+            string userNotificationMessage = null;
+            #elif __WINDOWS_PHONE__
+            TODO:  Should we use a message?
+            #endif
+
+            SensusServiceHelper.Get().ScheduleOneTimeCallback(cancellationToken =>
                 {
                     SensusServiceHelper.Get().Logger.Log("Running script \"" + _name + "\".", LoggingLevel.Normal, GetType());
 
@@ -188,7 +196,7 @@ namespace SensusService.Probes.User
 
                     callback(data);
 
-                }, _delayMS);
+                }, _delayMS, userNotificationMessage);
         }
 
         public Script Copy()
