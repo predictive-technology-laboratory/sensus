@@ -125,11 +125,13 @@ namespace Sensus.iOS
                 {
                     UILocalNotification notification = new UILocalNotification
                     {
-                        FireDate = DateTime.UtcNow.AddMilliseconds((double)delayMS).ToNSDate(),
-                        SoundName = UILocalNotification.DefaultSoundName,
+                        FireDate = DateTime.UtcNow.AddMilliseconds((double)delayMS).ToNSDate(),                        
                         AlertBody = userNotificationMessage,
                         UserInfo = GetNotificationUserInfoDictionary(callbackId, repeating, repeatDelayMS)
                     };
+
+                    if(userNotificationMessage != null)
+                        notification.SoundName = UILocalNotification.DefaultSoundName;
 
                     lock (_callbackIdNotification)
                         _callbackIdNotification.Add(callbackId, notification);

@@ -201,7 +201,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Probes\" />
-    <Folder Include="Probes\Apps\" />
     <Folder Include="Probes\Communication\" />
     <Folder Include="Probes\Context\" />
     <Folder Include="Probes\Device\" />
