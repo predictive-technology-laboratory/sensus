@@ -78,7 +78,7 @@ namespace Sensus.iOS.Probes.Context
                 {
                     Thread.Sleep(SampleLengthMS);
                     recorder.UpdateMeters();
-                    return new Datum[] { new SoundDatum(DateTimeOffset.UtcNow, (recorder.PeakPower(0) + 160) / 160f) };  // range looks to be [-160 - 0] from http://b2cloud.com.au/tutorial/obtaining-decibels-from-the-ios-microphone
+                    return new Datum[] { new SoundDatum(DateTimeOffset.UtcNow, 100 * (recorder.PeakPower(0) + 160) / 160f) };  // range looks to be [-160 - 0] from http://b2cloud.com.au/tutorial/obtaining-decibels-from-the-ios-microphone
                 }
                 else
                     throw new Exception("Failed to start recording.");
