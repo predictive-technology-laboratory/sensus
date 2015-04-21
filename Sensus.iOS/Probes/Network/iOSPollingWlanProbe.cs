@@ -28,7 +28,6 @@ namespace Sensus.iOS.Network.Probes
         {
             NSDictionary networkInfo;
 
-            // TODO:  Null in simulator
             if (CaptiveNetwork.TryCopyCurrentNetworkInfo("en0", out networkInfo) == StatusCode.NoKey || networkInfo == null)
                 return new Datum[] { };
 

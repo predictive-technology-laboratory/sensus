@@ -35,14 +35,14 @@ namespace SensusUI
             }
         }
 
-        public static void Set(SensusServiceHelper value)
+        public static void Set(SensusServiceHelper sensusServiceHelper)
         {
-            _sensusServiceHelper = value;
+            _sensusServiceHelper = sensusServiceHelper;
 
             if (_sensusServiceHelper == null)
                 _sensusServiceHelperWait.Reset();
             else
                 _sensusServiceHelperWait.Set();
-        }
+        }            
     }
 }

@@ -24,6 +24,7 @@ using SensusUI;
 using SensusService;
 using Xamarin.Geolocation;
 using Toasts.Forms.Plugin.iOS;
+using System.IO;
 
 namespace Sensus.iOS
 {
@@ -51,10 +52,14 @@ namespace Sensus.iOS
             UiBoundSensusServiceHelper.Set(_sensusServiceHelper);
             app.SensusMainPage.DisplayServiceHelper(UiBoundSensusServiceHelper.Get(true));
 
-            // if this app was started by a local notification, service that notification
-            NSObject launchingNotification;
-            if (launchOptions != null && launchOptions.TryGetValue(UIApplication.LaunchOptionsLocalNotificationKey, out launchingNotification))
-                ServiceNotificationAsync(launchingNotification as UILocalNotification);
+            if (launchOptions != null)
+            {                
+                NSObject launchOptionValue;
+                if (launchOptions.TryGetValue(UIApplication.LaunchOptionsLocalNotificationKey, out launchOptionValue))
+                    ServiceNotificationAsync(launchOptionValue as UILocalNotification);
+                else if (launchOptions.TryGetValue(UIApplication.LaunchOptionsUrlKey, out launchOptionValue))
+                    Protocol.DisplayFromBytesAsync(File.ReadAllBytes((launchOptionValue as NSUrl).Path));
+            }
 
             // service all other notifications whose fire time has passed
             foreach (UILocalNotification notification in uiApplication.ScheduledLocalNotifications)
@@ -62,6 +67,13 @@ namespace Sensus.iOS
                     ServiceNotificationAsync(notification);
 
             return base.FinishedLaunching(uiApplication, launchOptions);
+        }
+
+        public override bool OpenUrl(UIApplication application, NSUrl url, string sourceApplication, NSObject annotation)
+        {
+            Protocol.DisplayFromBytesAsync(File.ReadAllBytes(url.Path));
+
+            return true;
         }
 
         public override void OnActivated(UIApplication uiApplication)

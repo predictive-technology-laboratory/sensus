@@ -40,5 +40,36 @@
 	<array>
 		<string>location</string>
 	</array>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>CFBundleTypeName</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>edu.virginia.sie.ptl.sensus.protocol</string>
+			</array>
+		</dict>
+	</array>
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeDescription</key>
+			<string>Sensus Protocol</string>
+			<key>UTTypeIdentifier</key>
+			<string>edu.virginia.sie.ptl.sensus.protocol</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<string>sensus</string>
+				<key>public.mime-type</key>
+				<string>application/octet-stream</string>
+			</dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

@@ -165,6 +165,7 @@
     <Compile Include="Probes\Location\iOSCompassProbe.cs" />
     <Compile Include="Probes\Movement\iOSAccelerometerProbe.cs" />
     <Compile Include="Probes\Network\iOSPollingWlanProbe.cs" />
+    <Compile Include="ShareFileActivityItemSource.cs" />
   </ItemGroup>
   <Import Project="..\SensusService\SensusService.projitems" Label="Shared" Condition="Exists('..\SensusService\SensusService.projitems')" />
   <Import Project="..\SensusUI\SensusUI.projitems" Label="Shared" Condition="Exists('..\SensusUI\SensusUI.projitems')" />

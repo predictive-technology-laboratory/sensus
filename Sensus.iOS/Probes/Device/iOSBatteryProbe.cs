@@ -23,13 +23,6 @@ namespace Sensus.iOS.Probes.Device
 {
     public class iOSBatteryProbe : BatteryProbe
     {
-        protected override void Initialize()
-        {
-            base.Initialize();
-
-            UIDevice.CurrentDevice.BatteryMonitoringEnabled = true;
-        }
-
         protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
         {
             return new Datum[] { new BatteryDatum(DateTimeOffset.UtcNow, UIDevice.CurrentDevice.BatteryLevel) };

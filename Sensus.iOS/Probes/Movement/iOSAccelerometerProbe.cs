@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 using System;
 using SensusService.Probes.Movement;
 using CoreMotion;
@@ -33,7 +34,6 @@ namespace Sensus.iOS.Probes.Movement
                 {
                     _motionManager.StartAccelerometerUpdates(NSOperationQueue.CurrentQueue, (data, error) =>
                         {
-                            // TODO:  Doesn't fire in simulator.
                             StoreDatum(new AccelerometerDatum(DateTimeOffset.UtcNow, data.Acceleration.X, data.Acceleration.Y, data.Acceleration.Z));
                         });
                 });

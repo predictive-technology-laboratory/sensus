@@ -54,7 +54,6 @@ namespace Sensus.iOS
         {
             get
             {
-                // TODO:  Check on actual device...is "unknown" in simulator.
                 return UIDevice.CurrentDevice.BatteryState == UIDeviceBatteryState.Charging || UIDevice.CurrentDevice.BatteryState == UIDeviceBatteryState.Full;
             }
         }
@@ -94,6 +93,8 @@ namespace Sensus.iOS
         public iOSSensusServiceHelper()
         {
             _callbackIdNotification = new Dictionary<string, UILocalNotification>();
+
+            UIDevice.CurrentDevice.BatteryMonitoringEnabled = true;
         }
 
         protected override void InitializeXamarinInsights()
@@ -208,8 +209,8 @@ namespace Sensus.iOS
         {
             Device.BeginInvokeOnMainThread(() =>
                 {
-                    // TODO:  Test on physical device.
-                    UIActivityViewController shareActivity = new UIActivityViewController(new NSObject[] { new NSString("Subject"), NSUrl.FromFilename(path) }, null);
+                    ShareFileActivityItemSource activityItemSource = new ShareFileActivityItemSource(path, subject);
+                    UIActivityViewController shareActivity = new UIActivityViewController(new NSObject[] { activityItemSource }, null);
                     UIApplication.SharedApplication.KeyWindow.RootViewController.PresentViewController(shareActivity, true, null);
                 });
         }
