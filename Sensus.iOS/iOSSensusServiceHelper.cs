@@ -221,8 +221,10 @@ namespace Sensus.iOS
         {
             new Thread(() =>
                 {
-                    // TODO:  Test on physical device.
                     new AVSpeechSynthesizer().SpeakUtterance(new AVSpeechUtterance(text));
+
+                    if(callback != null)
+                        callback();
 
                 }).Start();
         }

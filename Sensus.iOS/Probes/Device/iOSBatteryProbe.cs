@@ -13,11 +13,11 @@
 // limitations under the License.
 
 using System;
-using SensusService.Probes.Device;
-using SensusService;
-using System.Threading;
-using UIKit;
 using System.Collections.Generic;
+using System.Threading;
+using SensusService;
+using SensusService.Probes.Device;
+using UIKit;
 
 namespace Sensus.iOS.Probes.Device
 {
