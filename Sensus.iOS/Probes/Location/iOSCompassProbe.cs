@@ -26,9 +26,7 @@ namespace Sensus.iOS.Probes.Location
         {
             _positionChangedHandler = (o, e) =>
                 {
-                    // TODO:  Doesn't work in simulator.
                     SensusServiceHelper.Get().Logger.Log("Received compass change notification.", LoggingLevel.Verbose, GetType());
-
                     StoreDatum(new CompassDatum(e.Position.Timestamp, e.Position.Heading));
                 };
         }
