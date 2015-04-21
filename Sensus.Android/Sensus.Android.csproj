@@ -129,6 +129,9 @@
     <Reference Include="Xamarin.Forms.Platform">
       <HintPath>..\packages\Xamarin.Forms.1.4.2.6355\lib\MonoAndroid10\Xamarin.Forms.Platform.dll</HintPath>
     </Reference>
+    <Reference Include="Xamarin.Facebook">
+      <HintPath>..\packages\Xamarin.Facebook.4.0.1.1\lib\MonoAndroid40\Xamarin.Facebook.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AndroidActivityResultRequestCode.cs" />
@@ -166,6 +169,7 @@
     <Compile Include="AndroidSensusServiceBinder.cs" />
     <Compile Include="AndroidSensusServiceConnection.cs" />
     <Compile Include="AndroidServiceConnectedEventArgs.cs" />
+    <Compile Include="Probes\Communication\AndroidFacebookProbe.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -202,6 +206,7 @@
     <AndroidResource Include="..\SensusUI\Icons\share.png">
       <Link>Resources\drawable\share.png</Link>
     </AndroidResource>
+    <AndroidResource Include="Resources\values\strings.xml" />
   </ItemGroup>
   <Import Project="..\SensusService\SensusService.projitems" Label="Shared" Condition="Exists('..\SensusService\SensusService.projitems')" />
   <Import Project="..\SensusUI\SensusUI.projitems" Label="Shared" Condition="Exists('..\SensusUI\SensusUI.projitems')" />
@@ -240,8 +245,13 @@
       <Version>1.5.216.0</Version>
       <Visible>False</Visible>
     </XamarinComponentReference>
+    <XamarinComponentReference Include="facebookandroid">
+      <Version>4.0.1.0</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable\" />
+    <Folder Include="Resources\values\" />
   </ItemGroup>
 </Project>

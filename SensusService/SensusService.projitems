@@ -89,6 +89,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\ListeningSpeedProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\ListeningWlanProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\PollingWlanProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\FacebookProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\FacebookDatum.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />
