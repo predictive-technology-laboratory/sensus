@@ -19,10 +19,14 @@ using Xamarin.Facebook.Login;
 using Android.Runtime;
 using Android.App;
 using System.Threading;
+using System.Collections.Generic;
+using SensusService;
+using Android.OS;
+using Org.Json;
 
 namespace Sensus.Android.Probes.Communication
 {
-    public class AndroidListeningFacebookProbe : ListeningFacebookProbe
+    public class AndroidFacebookProbe : FacebookProbe
     {
         private class FacebookCallback<TResult> : Java.Lang.Object, IFacebookCallback where TResult : Java.Lang.Object
         {
@@ -49,11 +53,25 @@ namespace Sensus.Android.Probes.Communication
             }                
         }
 
+        private class JsonCallbackHandler : Java.Lang.Object, GraphRequest.ICallback
+        {
+            private Action<GraphResponse> _callback;
+
+            public JsonCallbackHandler(Action<GraphResponse> callback)
+            {
+                _callback = callback;
+            }
+
+            public void OnCompleted(GraphResponse response)
+            {
+                if (_callback != null)
+                    _callback(response);
+            }
+        }
+
         private ICallbackManager _callbackManager;
 
-        static readonly string [] PERMISSIONS = new string[] { "public_profile", "user_friends" };
-
-        public AndroidListeningFacebookProbe()
+        public AndroidFacebookProbe()
         {
         }
 
@@ -91,20 +109,26 @@ namespace Sensus.Android.Probes.Communication
                 {
                     Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
                         {
-                            LoginManager.Instance.LogInWithPublishPermissions(mainActivity, PERMISSIONS);
+                            LoginManager.Instance.LogInWithReadPermissions(mainActivity, GetEnabledPermissions());
                             loginWait.Set();
                         });
                 });
 
             loginWait.WaitOne();
-        }
+        }            
 
-        protected override void StartListening()
+        protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
         {
-        }
+            /*GraphRequest request = new GraphRequest(AccessToken.CurrentAccessToken, new JsonCallbackHandler(response =>
+                    {
+                    }));
+            
+            Bundle parameters = new Bundle();
+            parameters.PutString("fields", "id,name,link");
+            request.Parameters = parameters;
+            request.ExecuteAsync();*/
 
-        protected override void StopListening()
-        {
-        }
+            return null;
+        }            
     }
 }
