@@ -18,6 +18,7 @@ using Xamarin.Facebook;
 using Xamarin.Facebook.Login;
 using Android.Runtime;
 using Android.App;
+using System.Threading;
 
 namespace Sensus.Android.Probes.Communication
 {
@@ -48,21 +49,9 @@ namespace Sensus.Android.Probes.Communication
             }                
         }
 
-        private class CustomProfileTracker : ProfileTracker
-        {
-            public Action<Profile, Profile> HandleCurrentProfileChanged { get; set; }
-
-            protected override void OnCurrentProfileChanged(Profile oldProfile, Profile currentProfile)
-            {
-                if (HandleCurrentProfileChanged != null)
-                    HandleCurrentProfileChanged(oldProfile, currentProfile);
-            }
-        }
-
         private ICallbackManager _callbackManager;
-        private ProfileTracker _profileTracker;
 
-        static readonly string [] PERMISSIONS = new string[] { };
+        static readonly string [] PERMISSIONS = new string[] { "public_profile", "user_friends" };
 
         public AndroidListeningFacebookProbe()
         {
@@ -96,28 +85,26 @@ namespace Sensus.Android.Probes.Communication
 
             LoginManager.Instance.RegisterCallback(_callbackManager, loginCallback);
 
+            ManualResetEvent loginWait = new ManualResetEvent(false);
+
             (AndroidSensusServiceHelper.Get() as AndroidSensusServiceHelper).GetMainActivityAsync(true, mainActivity =>
                 {
-                    LoginManager.Instance.LogInWithPublishPermissions(mainActivity, PERMISSIONS);
-
-                    _profileTracker = new CustomProfileTracker
-                    {
-                        HandleCurrentProfileChanged = (oldProfile, currentProfile) =>
+                    Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
                         {
-                            AndroidSensusServiceHelper.Get().Logger.Log("Facebook profile changed.", SensusService.LoggingLevel.Normal, GetType());
-                        }
-                    };
+                            LoginManager.Instance.LogInWithPublishPermissions(mainActivity, PERMISSIONS);
+                            loginWait.Set();
+                        });
                 });
+
+            loginWait.WaitOne();
         }
 
         protected override void StartListening()
         {
-            _profileTracker.StartTracking();
         }
 
         protected override void StopListening()
         {
-            _profileTracker.StopTracking();
         }
     }
 }
