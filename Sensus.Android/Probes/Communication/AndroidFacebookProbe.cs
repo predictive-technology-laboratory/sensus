@@ -23,36 +23,12 @@ using System.Collections.Generic;
 using SensusService;
 using Android.OS;
 using Org.Json;
+using System.Linq;
 
 namespace Sensus.Android.Probes.Communication
 {
     public class AndroidFacebookProbe : FacebookProbe
     {
-        private class FacebookCallback<TResult> : Java.Lang.Object, IFacebookCallback where TResult : Java.Lang.Object
-        {
-            public Action<TResult> HandleSuccess { get; set; }
-            public Action HandleCancel { get; set; }
-            public Action<FacebookException> HandleError { get; set; }
-
-            public void OnSuccess(Java.Lang.Object result)
-            {
-                if (HandleSuccess != null)
-                    HandleSuccess(result.JavaCast<TResult>());
-            }
-
-            public void OnCancel()
-            {
-                if (HandleCancel != null)
-                    HandleCancel();
-            }
-
-            public void OnError(FacebookException error)
-            {
-                if (HandleError != null)
-                    HandleError(error);
-            }                
-        }
-
         private class JsonCallbackHandler : Java.Lang.Object, GraphRequest.ICallback
         {
             private Action<GraphResponse> _callback;
@@ -71,10 +47,6 @@ namespace Sensus.Android.Probes.Communication
 
         private ICallbackManager _callbackManager;
 
-        public AndroidFacebookProbe()
-        {
-        }
-
         protected override void Initialize()
         {
             base.Initialize();
@@ -83,25 +55,7 @@ namespace Sensus.Android.Probes.Communication
 
             _callbackManager = CallbackManagerFactory.Create();
 
-            FacebookCallback<LoginResult> loginCallback = new FacebookCallback<LoginResult>
-            {
-                HandleSuccess = result =>
-                {
-                    AndroidSensusServiceHelper.Get().Logger.Log("Facebook login succeeded.", SensusService.LoggingLevel.Normal, GetType());
-                },
-                    
-                HandleCancel = () =>
-                {
-                    AndroidSensusServiceHelper.Get().Logger.Log("Facebook login cancelled.", SensusService.LoggingLevel.Normal, GetType());
-                },
-                    
-                HandleError = error =>
-                {
-                    AndroidSensusServiceHelper.Get().Logger.Log("Facebook login failed.", SensusService.LoggingLevel.Normal, GetType());
-                }
-            };
-
-            LoginManager.Instance.RegisterCallback(_callbackManager, loginCallback);
+            LoginManager.Instance.RegisterCallback(_callbackManager, LoginCallback);
 
             ManualResetEvent loginWait = new ManualResetEvent(false);
 
@@ -109,26 +63,34 @@ namespace Sensus.Android.Probes.Communication
                 {
                     Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
                         {
-                            LoginManager.Instance.LogInWithReadPermissions(mainActivity, GetEnabledPermissions());
+                            LoginManager.Instance.LogInWithReadPermissions(mainActivity, GetEnabledPermissionNames());
                             loginWait.Set();
                         });
                 });
 
             loginWait.WaitOne();
-        }            
+        }          
 
-        protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
-        {
-            /*GraphRequest request = new GraphRequest(AccessToken.CurrentAccessToken, new JsonCallbackHandler(response =>
-                    {
-                    }));
-            
-            Bundle parameters = new Bundle();
-            parameters.PutString("fields", "id,name,link");
-            request.Parameters = parameters;
-            request.ExecuteAsync();*/
+        protected override GraphRequestBatch GetGraphRequestBatch(Action<GraphResponse> responseHandler)
+        {          
+            GraphRequestBatch requestBatch = new GraphRequestBatch();
 
-            return null;
-        }            
+            foreach (Tuple<string, List<string>> edgeFieldQuery in GetEdgeFieldQueries())
+            {
+
+                Bundle parameters = new Bundle();
+                parameters.PutString("fields", string.Concat(edgeFieldQuery.Item2.Select(field => field + ",")).Trim(','));
+
+                GraphRequest request = new GraphRequest(
+                                           AccessToken.CurrentAccessToken,
+                                           "/me" + (edgeFieldQuery.Item1 == null ? "" : "/" + edgeFieldQuery.Item1),
+                                           parameters,
+                                           new JsonCallbackHandler(responseHandler));
+
+                requestBatch.Add(request);
+            }
+
+            return requestBatch;
+        }
     }
 }

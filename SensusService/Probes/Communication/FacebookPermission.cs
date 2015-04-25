@@ -17,20 +17,15 @@ using System;
 namespace SensusService.Probes.Communication
 {
     [AttributeUsage(AttributeTargets.Property, Inherited = true, AllowMultiple = false)]
-    public class FacebookPermissionName : Attribute
+    public class FacebookPermission : Attribute
     {
         private string _name;
-        private string[] _fields;
         private string[] _edges;
+        private string[] _fields;
 
         public string Name
         {
             get { return _name; }
-        }
-
-        public string[] Fields
-        {
-            get { return _fields; }
         }
 
         public string[] Edges
@@ -38,7 +33,12 @@ namespace SensusService.Probes.Communication
             get { return _edges; }
         }
 
-        public FacebookPermissionName(string name, string[] edges, string[] fields)
+        public string[] Fields
+        {
+            get { return _fields; }
+        }            
+
+        public FacebookPermission(string name, string[] edges, string[] fields)
             : base()
         {
             _name = name;
@@ -46,20 +46,19 @@ namespace SensusService.Probes.Communication
             _fields = fields;
         }
 
-        public FacebookPermissionName(string name, string edge, string[] fields)
+        public FacebookPermission(string name, string edge, string[] fields)
             : this(name, new string[] { edge }, fields)
         {
         }
 
-        public FacebookPermissionName(string name, string[] edges, string field)
+        public FacebookPermission(string name, string[] edges, string field)
             : this(name, edges, new string[] { field })
         {
         }
 
-        public FacebookPermissionName(string name, string edge, string field)
+        public FacebookPermission(string name, string edge, string field)
             : this(name, new string[] { edge }, new string[] { field })
         {
         }
     }
 }
-
