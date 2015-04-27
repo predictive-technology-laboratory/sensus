@@ -47,17 +47,23 @@ namespace SensusService.Probes.Communication
         }
 
         public FacebookPermission(string name, string edge, string[] fields)
-            : this(name, new string[] { edge }, fields)
+            : this(name, 
+                   edge == null ? new string[0] : new string[] { edge }, 
+                   fields ?? new string[0])
         {
         }
 
         public FacebookPermission(string name, string[] edges, string field)
-            : this(name, edges, new string[] { field })
+            : this(name, 
+                   edges ?? new string[0], 
+                   field == null ? new string[0] : new string[] { field })
         {
         }
 
         public FacebookPermission(string name, string edge, string field)
-            : this(name, new string[] { edge }, new string[] { field })
+            : this(name,
+                   edge == null ? new string[0] : new string[] { edge },
+                   field == null ? new string[0] : new string[] { field })
         {
         }
     }

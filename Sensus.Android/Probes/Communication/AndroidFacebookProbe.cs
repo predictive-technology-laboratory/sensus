@@ -13,50 +13,86 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using Android.App;
+using Android.OS;
+using Android.Runtime;
+using Org.Json;
+using SensusService;
 using SensusService.Probes.Communication;
 using Xamarin.Facebook;
 using Xamarin.Facebook.Login;
-using Android.Runtime;
-using Android.App;
-using System.Threading;
-using System.Collections.Generic;
-using SensusService;
-using Android.OS;
-using Org.Json;
-using System.Linq;
 
 namespace Sensus.Android.Probes.Communication
 {
     public class AndroidFacebookProbe : FacebookProbe
     {
-        private class JsonCallbackHandler : Java.Lang.Object, GraphRequest.ICallback
+        private class FacebookCallback<TResult> : Java.Lang.Object, IFacebookCallback where TResult : Java.Lang.Object
         {
-            private Action<GraphResponse> _callback;
+            public Action<TResult> HandleSuccess { get; set; }
+            public Action HandleCancel { get; set; }
+            public Action<FacebookException> HandleError { get; set; }
 
-            public JsonCallbackHandler(Action<GraphResponse> callback)
+            public void OnSuccess(Java.Lang.Object result)
             {
-                _callback = callback;
+                if (HandleSuccess != null)
+                    HandleSuccess(result.JavaCast<TResult>());
             }
 
-            public void OnCompleted(GraphResponse response)
+            public void OnCancel()
             {
-                if (_callback != null)
-                    _callback(response);
+                if (HandleCancel != null)
+                    HandleCancel();
             }
+
+            public void OnError(FacebookException error)
+            {
+                if (HandleError != null)
+                    HandleError(error);
+            }                
         }
-
-        private ICallbackManager _callbackManager;
 
         protected override void Initialize()
         {
             base.Initialize();
 
-            FacebookSdk.SdkInitialize((AndroidSensusServiceHelper.Get() as AndroidSensusServiceHelper).Service);
+            FacebookSdk.SdkInitialize((AndroidSensusServiceHelper.Get() as AndroidSensusServiceHelper).Service);                  
 
-            _callbackManager = CallbackManagerFactory.Create();
+            FacebookCallback<LoginResult> loginCallback = new FacebookCallback<LoginResult>
+                {
+                    HandleSuccess = result =>
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Facebook login succeeded.", SensusService.LoggingLevel.Normal, GetType());
+                            LoggedIn = true;
+                        },
 
-            LoginManager.Instance.RegisterCallback(_callbackManager, LoginCallback);
+                    HandleCancel = () =>
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Facebook login cancelled.", SensusService.LoggingLevel.Normal, GetType());
+                            LoggedIn = false;
+                        },
 
+                    HandleError = error =>
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Facebook login failed.", SensusService.LoggingLevel.Normal, GetType());
+                            LoggedIn = false;
+                        }
+                };
+
+            LoginManager.Instance.RegisterCallback(CallbackManagerFactory.Create(), loginCallback);
+
+            // TODO:  Load access token.
+
+            Login();
+        }   
+
+        private void Login()
+        {
+            if (AccessToken.CurrentAccessToken != null && !AccessToken.CurrentAccessToken.IsExpired)
+                return;
+            
             ManualResetEvent loginWait = new ManualResetEvent(false);
 
             (AndroidSensusServiceHelper.Get() as AndroidSensusServiceHelper).GetMainActivityAsync(true, mainActivity =>
@@ -64,33 +100,57 @@ namespace Sensus.Android.Probes.Communication
                     Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
                         {
                             LoginManager.Instance.LogInWithReadPermissions(mainActivity, GetEnabledPermissionNames());
+
+                            // TODO:  save access token
+
                             loginWait.Set();
                         });
                 });
 
             loginWait.WaitOne();
-        }          
+        }
 
-        protected override GraphRequestBatch GetGraphRequestBatch(Action<GraphResponse> responseHandler)
-        {          
-            GraphRequestBatch requestBatch = new GraphRequestBatch();
+        protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
+        {
+            List<Datum> data = new List<Datum>();
 
-            foreach (Tuple<string, List<string>> edgeFieldQuery in GetEdgeFieldQueries())
+            if (!LoggedIn)
+                Login();
+
+            if(LoggedIn)
             {
+                GraphRequestBatch graphRequestBatch = new GraphRequestBatch();
 
-                Bundle parameters = new Bundle();
-                parameters.PutString("fields", string.Concat(edgeFieldQuery.Item2.Select(field => field + ",")).Trim(','));
+                foreach (Tuple<string, List<string>> edgeFieldQuery in GetEdgeFieldQueries())
+                {
+                    Bundle parameters = new Bundle();
 
-                GraphRequest request = new GraphRequest(
+                    if (edgeFieldQuery.Item2.Count > 0)
+                        parameters.PutString("fields", string.Concat(edgeFieldQuery.Item2.Select(field => field + ",")).Trim(','));
+
+                    GraphRequest request = new GraphRequest(
                                            AccessToken.CurrentAccessToken,
                                            "/me" + (edgeFieldQuery.Item1 == null ? "" : "/" + edgeFieldQuery.Item1),
                                            parameters,
-                                           new JsonCallbackHandler(responseHandler));
+                                           HttpMethod.Get);
 
-                requestBatch.Add(request);
+                    graphRequestBatch.Add(request);
+                }
+
+                if (graphRequestBatch.Size() == 0)
+                    SensusServiceHelper.Get().Logger.Log("Facebook request batch contained zero requests.", LoggingLevel.Normal, GetType());
+                else
+                    foreach (GraphResponse response in graphRequestBatch.ExecuteAndWait())
+                        data.Add(new FacebookDatum(DateTimeOffset.UtcNow, response.JSONObject.ToString()));
+            }
+            else
+            {
+                SensusServiceHelper.Get().Logger.Log("Not logged into Facebook.", LoggingLevel.Normal, GetType());
+
+                // TODO:  Log user in.
             }
 
-            return requestBatch;
-        }
+            return data;
+        }            
     }
 }

@@ -39,7 +39,7 @@ namespace SensusUI.UiProperties
 
                 Label parameterNameLabel = new Label
                 {
-                    Text = uiElement.LabelText,
+                    Text = uiElement.LabelText ?? propertyUiElement.Item1.Name + ":",
                     HorizontalOptions = LayoutOptions.Start,
                     FontSize = 20
                 };

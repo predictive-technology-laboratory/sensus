@@ -13,26 +13,34 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
+using SensusService.Anonymization;
+using SensusService.Anonymization.Anonymizers;
 
 namespace SensusService
 {
     public class FacebookDatum : Datum
     {
-        private Dictionary<string, string> _payload;
+        private string _json;
+
+        [Anonymizable("JSON", typeof(StringMD5Anonymizer), false)]
+        public string JSON
+        {
+            get { return _json; }
+            set { _json = value; }
+        }
 
         public override string DisplayDetail
         {
             get
             {
-                return _payload.Count + " items";
+                return _json;
             }
         }
 
-        public FacebookDatum(DateTimeOffset timestamp, Dictionary<string, string> payload)
+        public FacebookDatum(DateTimeOffset timestamp, string json)
             : base(timestamp)
         {
-            _payload = payload;
+            _json = json;
         }
     }
 }
