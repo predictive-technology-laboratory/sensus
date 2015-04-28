@@ -38,6 +38,7 @@ namespace Sensus.Android
     public class AndroidSensusServiceHelper : SensusServiceHelper
     {
         private const string SERVICE_NOTIFICATION_TAG = "SENSUS-SERVICE-NOTIFICATION";
+        public const string MAIN_ACTIVITY_WILL_BE_SET = "MAIN-ACTIVITY-WILL-BE-SET";
 
         private AndroidSensusService _service;
         private ConnectivityManager _connectivityManager;
@@ -48,6 +49,7 @@ namespace Sensus.Android
         private readonly object _getMainActivityLocker = new object();
         private AndroidTextToSpeech _textToSpeech;
         private PowerManager.WakeLock _wakeLock;
+        private bool _mainActivityWillBeSet;
 
         [JsonIgnore]
         public AndroidSensusService Service
@@ -91,9 +93,21 @@ namespace Sensus.Android
             }
         }
 
+        public bool MainActivityWillBeSet
+        {
+            get
+            {
+                return _mainActivityWillBeSet;
+            }
+            set
+            {
+                _mainActivityWillBeSet = value;
+            }
+        }
+
         public AndroidSensusServiceHelper()
         {
-            _mainActivityWait = new ManualResetEvent(false);      
+            _mainActivityWait = new ManualResetEvent(false);   
         }          
 
         public void SetService(AndroidSensusService service)
@@ -114,14 +128,23 @@ namespace Sensus.Android
                     lock (_getMainActivityLocker)
                     {
                         if (_mainActivity == null || (foreground && !_mainActivity.IsForegrounded))
-                        {
-                            Logger.Log("Main activity is not started or is not in the foreground. Starting it.", LoggingLevel.Normal, GetType());
+                        {                            
+                            Logger.Log("Main activity is not started or is not in the foreground.", LoggingLevel.Normal, GetType());
 
-                            // start the activity and wait for it to bind itself to the service
-                            Intent intent = new Intent(_service, typeof(AndroidMainActivity));
-                            intent.AddFlags(ActivityFlags.NewTask | ActivityFlags.ClearTask);
-                            _mainActivityWait.Reset();
-                            _service.StartActivity(intent);
+                            if(_mainActivityWillBeSet)
+                                Logger.Log("Main activity is about to be set. Will wait for it.", LoggingLevel.Normal, GetType());
+                            else
+                            {
+                                Logger.Log("Starting main activity.", LoggingLevel.Normal, GetType());
+
+                                // start the activity and wait for it to bind itself to the service
+                                Intent intent = new Intent(_service, typeof(AndroidMainActivity));
+                                intent.AddFlags(ActivityFlags.NewTask | ActivityFlags.ClearTask);
+                                _mainActivityWait.Reset();
+                                _service.StartActivity(intent);
+                            }
+
+                            // wait for main activity to be set
                             _mainActivityWait.WaitOne();
 
                             // wait for the UI to come up -- we don't want it to come up later and hide anything

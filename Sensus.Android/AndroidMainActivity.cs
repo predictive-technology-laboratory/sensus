@@ -85,6 +85,7 @@ namespace Sensus.Android
 
             // start service -- if it's already running, this will have no effect
             Intent serviceIntent = new Intent(this, typeof(AndroidSensusService));
+            serviceIntent.PutExtra(AndroidSensusServiceHelper.MAIN_ACTIVITY_WILL_BE_SET, true);
             StartService(serviceIntent);
 
             // bind UI to the service
@@ -97,7 +98,8 @@ namespace Sensus.Android
                     // stop activity when service stops    
                     UiBoundSensusServiceHelper.Get(true).Stopped += (oo, ee) => { Finish(); };
 
-                    // give service a reference to this activity
+                    // give service helper a reference to this activity
+                    (UiBoundSensusServiceHelper.Get(true) as AndroidSensusServiceHelper).MainActivityWillBeSet = false;
                     (UiBoundSensusServiceHelper.Get(true) as AndroidSensusServiceHelper).SetMainActivity(this);
 
                     // display service helper properties on the main page

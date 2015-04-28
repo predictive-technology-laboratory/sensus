@@ -80,7 +80,10 @@ namespace Sensus.Android.Probes.Communication
                     try
                     {                        
                         if (!FacebookSdk.IsInitialized)
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Facebook SDK is not initialized. Initializing it.", LoggingLevel.Normal, GetType());
                             FacebookSdk.SdkInitialize(mainActivity);
+                        }
 
                         // the above sdk initialization will load the access token if one has been cached
                         if (LoggedIn)
