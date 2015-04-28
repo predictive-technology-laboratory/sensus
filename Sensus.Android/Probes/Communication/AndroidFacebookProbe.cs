@@ -56,7 +56,7 @@ namespace Sensus.Android.Probes.Communication
             }
         }
 
-        private bool LoggedIn
+        private bool HasValidAccessToken
         {
             get { return FacebookSdk.IsInitialized && AccessToken.CurrentAccessToken != null && !AccessToken.CurrentAccessToken.IsExpired; }
         }
@@ -65,13 +65,8 @@ namespace Sensus.Android.Probes.Communication
         {
             base.Initialize();
 
-            LogIn();
-        }
-
-        public bool LogIn()
-        {
-            if (LoggedIn)
-                return true;
+            if (HasValidAccessToken)
+                return;
 
             ManualResetEvent accessTokenWait = new ManualResetEvent(false);
             string accessTokenError = null;
@@ -80,7 +75,9 @@ namespace Sensus.Android.Probes.Communication
                 {
                     try
                     {                            
-                        if (!FacebookSdk.IsInitialized)
+                        if (FacebookSdk.IsInitialized)
+                            SensusServiceHelper.Get().Logger.Log("Facebook SDK is already initialized.", LoggingLevel.Normal, GetType());
+                        else 
                         {
                             SensusServiceHelper.Get().Logger.Log("Initializing Facebook SDK.", LoggingLevel.Normal, GetType());
                             FacebookSdk.SdkInitialize(mainActivity);
@@ -88,7 +85,7 @@ namespace Sensus.Android.Probes.Communication
                         }
 
                         // if the access token was read from cache, we're done.
-                        if (LoggedIn)
+                        if (HasValidAccessToken)
                         {
                             SensusServiceHelper.Get().Logger.Log("Facebook access token read from cache.", LoggingLevel.Normal, GetType());
                             accessTokenWait.Set();
@@ -97,28 +94,28 @@ namespace Sensus.Android.Probes.Communication
                         else
                         {
                             FacebookCallback<LoginResult> loginCallback = new FacebookCallback<LoginResult>
-                            {
-                                HandleSuccess = loginResult =>
                                 {
-                                    AndroidSensusServiceHelper.Get().Logger.Log("Facebook login succeeded.", SensusService.LoggingLevel.Normal, GetType());
-                                    AccessToken.CurrentAccessToken = loginResult.AccessToken;
-                                    accessTokenWait.Set();
-                                },
+                                    HandleSuccess = loginResult =>
+                                        {
+                                            AndroidSensusServiceHelper.Get().Logger.Log("Facebook login succeeded.", SensusService.LoggingLevel.Normal, GetType());
+                                            AccessToken.CurrentAccessToken = loginResult.AccessToken;
+                                            accessTokenWait.Set();
+                                        },
 
-                                HandleCancel = () =>
-                                {
-                                    AndroidSensusServiceHelper.Get().Logger.Log("Facebook login cancelled.", SensusService.LoggingLevel.Normal, GetType());
-                                    AccessToken.CurrentAccessToken = null;
-                                    accessTokenWait.Set();
-                                },
+                                    HandleCancel = () =>
+                                        {
+                                            AndroidSensusServiceHelper.Get().Logger.Log("Facebook login cancelled.", SensusService.LoggingLevel.Normal, GetType());
+                                            AccessToken.CurrentAccessToken = null;
+                                            accessTokenWait.Set();
+                                        },
 
-                                HandleError = loginResult =>
-                                {
-                                    AndroidSensusServiceHelper.Get().Logger.Log("Facebook login failed.", SensusService.LoggingLevel.Normal, GetType());
-                                    AccessToken.CurrentAccessToken = null;
-                                    accessTokenWait.Set();
-                                }
-                            };
+                                    HandleError = loginResult =>
+                                        {
+                                            AndroidSensusServiceHelper.Get().Logger.Log("Facebook login failed.", SensusService.LoggingLevel.Normal, GetType());
+                                            AccessToken.CurrentAccessToken = null;
+                                            accessTokenWait.Set();
+                                        }
+                                };
 
                             LoginManager.Instance.RegisterCallback(mainActivity.FacebookCallbackManager, loginCallback);
                             LoginManager.Instance.LogInWithReadPermissions(mainActivity, GetEnabledPermissionNames());
@@ -135,11 +132,13 @@ namespace Sensus.Android.Probes.Communication
 
             accessTokenWait.WaitOne();
 
-            if (!LoggedIn)
-                SensusServiceHelper.Get().Logger.Log("Failed to log in to Facebook.", LoggingLevel.Normal, GetType());
-
-            return LoggedIn;
-        }
+            if (!HasValidAccessToken)
+            {
+                string message = "Failed to obtain access token.";
+                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+                throw new Exception(message);
+            }
+        }            
 
         protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
         {
