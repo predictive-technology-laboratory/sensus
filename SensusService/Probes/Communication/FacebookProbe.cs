@@ -23,8 +23,6 @@ namespace SensusService.Probes.Communication
 {
     public abstract class FacebookProbe : PollingProbe
     {             
-        private bool _loggedIn;
-
         // below are the various permission settings and the fields/edges that they provide access to. the
         // list is taken from https://developers.facebook.com/docs/facebook-login/permissions/v2.3#reference
 
@@ -134,12 +132,6 @@ namespace SensusService.Probes.Communication
         [FacebookPermission("user_videos", "videos", new string[0])]
         public bool Videos { get; set; }
 
-        protected bool LoggedIn
-        {
-            get { return _loggedIn; }
-            set { _loggedIn = value; }
-        }
-
         public sealed override Type DatumType
         {
             get
@@ -163,11 +155,6 @@ namespace SensusService.Probes.Communication
                 return 60000;
             }
         }   
-
-        protected FacebookProbe()
-        {
-            _loggedIn = false;
-        }
 
         public ICollection<FacebookPermission> GetEnabledFacebookPermissions()
         {
@@ -226,6 +213,6 @@ namespace SensusService.Probes.Communication
             }
 
             return edgeFieldQueries;
-        }                            
+        } 
     }
 }
