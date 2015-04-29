@@ -15,6 +15,7 @@
 using SensusService;
 using SensusUI.UiProperties;
 using Xamarin.Forms;
+using System.Collections.Generic;
 
 namespace SensusUI
 {
@@ -23,6 +24,8 @@ namespace SensusUI
     /// </summary>
     public class SensusMainPage : ContentPage
     {
+        private List<StackLayout> _serviceHelperStacks;
+
         public SensusMainPage()
         {
             Title = "Sensus";
@@ -81,9 +84,17 @@ namespace SensusUI
 
         public void DisplayServiceHelper(SensusServiceHelper serviceHelper)
         {
-            // add service helper ui elements to main page
-            foreach (StackLayout serviceStack in UiProperty.GetPropertyStacks(serviceHelper))
+            _serviceHelperStacks = UiProperty.GetPropertyStacks(serviceHelper);
+
+            foreach (StackLayout serviceStack in _serviceHelperStacks)
                 ((Content as ScrollView).Content as StackLayout).Children.Add(serviceStack);
+        }
+
+        public void RemoveServiceHelper()
+        {
+            if (_serviceHelperStacks != null)
+                foreach (StackLayout serviceStack in _serviceHelperStacks)
+                    ((Content as ScrollView).Content as StackLayout).Children.Remove(serviceStack);
         }
     }
 }

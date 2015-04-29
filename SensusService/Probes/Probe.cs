@@ -164,7 +164,7 @@ namespace SensusService.Probes
             lock (_locker)
             {
                 if (_running)
-                    SensusServiceHelper.Get().Logger.Log("Attempted to start, but was already running.", LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Get().Logger.Log("Attempted to start probe, but it was already running.", LoggingLevel.Normal, GetType());
                 else
                 {
                     SensusServiceHelper.Get().Logger.Log("Starting.", LoggingLevel.Normal, GetType());
@@ -237,7 +237,7 @@ namespace SensusService.Probes
                         _collectedData.Clear();
                 }
                 else
-                    SensusServiceHelper.Get().Logger.Log("Attempted to stop, but wasn't running.", LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Get().Logger.Log("Attempted to stop probe, but it wasn't running.", LoggingLevel.Normal, GetType());
             }
         }
 

@@ -116,7 +116,7 @@ namespace SensusService
                 try
                 {
                     sensusServiceHelper = new T();
-                    sensusServiceHelper.Save();
+                    sensusServiceHelper.SaveAsync();
                 }
                 catch (Exception ex2)
                 {
@@ -165,11 +165,6 @@ namespace SensusService
         #endregion
         #endregion
 
-        /// <summary>
-        /// Raised when the service helper has stopped.
-        /// </summary>
-        public event EventHandler Stopped;       
-
         private bool _stopped;
         private Logger _logger;
         private List<Protocol> _registeredProtocols;
@@ -215,7 +210,7 @@ namespace SensusService
                     if (_healthTestCallbackId != null)
                         _healthTestCallbackId = RescheduleRepeatingCallback(_healthTestCallbackId, _healthTestDelayMS, _healthTestDelayMS);
 
-                    Save();
+                    SaveAsync();
                 }
             }
         }
@@ -229,7 +224,7 @@ namespace SensusService
                 if (value != _healthTestsPerProtocolReport)
                 {
                     _healthTestsPerProtocolReport = value; 
-                    Save();
+                    SaveAsync();
                 }
             }
         }
@@ -243,7 +238,7 @@ namespace SensusService
                 if (value != _logger.Level)
                 {
                     _logger.Level = value; 
-                    Save();
+                    SaveAsync();
                 }
             }
         } 
@@ -363,7 +358,7 @@ namespace SensusService
                 if (!_runningProtocolIds.Contains(id))
                 {
                     _runningProtocolIds.Add(id);
-                    Save();
+                    SaveAsync();
 
                     SensusServiceHelper.Get().UpdateApplicationStatus(_runningProtocolIds.Count + " protocol" + (_runningProtocolIds.Count == 1 ? " is " : "s are") + " running");
                 }
@@ -379,7 +374,7 @@ namespace SensusService
             {
                 if (_runningProtocolIds.Remove(id))
                 {
-                    Save();
+                    SaveAsync();
 
                     SensusServiceHelper.Get().UpdateApplicationStatus(_runningProtocolIds.Count + " protocol" + (_runningProtocolIds.Count == 1 ? " is " : "s are") + " running");
                 }
@@ -398,24 +393,28 @@ namespace SensusService
         }
         #endregion
 
-        public void Save()
+        public void SaveAsync()
         {
-            lock (_locker)
-            {
-                try
+            new Thread(() =>
                 {
-                    using (FileStream file = new FileStream(_serializationPath, FileMode.Create, FileAccess.Write))
+                    lock (_locker)
                     {
-                        byte[] encryptedBytes = AesEncrypt(JsonConvert.SerializeObject(this, _serializationSettings));
-                        file.Write(encryptedBytes, 0, encryptedBytes.Length);
-                        file.Close();
+                        try
+                        {
+                            using (FileStream file = new FileStream(_serializationPath, FileMode.Create, FileAccess.Write))
+                            {
+                                byte[] encryptedBytes = AesEncrypt(JsonConvert.SerializeObject(this, _serializationSettings));
+                                file.Write(encryptedBytes, 0, encryptedBytes.Length);
+                                file.Close();
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.Log("Failed to serialize Sensus service helper:  " + ex.Message, LoggingLevel.Normal, GetType());
+                        }
                     }
-                }
-                catch (Exception ex)
-                {
-                    _logger.Log("Failed to serialize Sensus service helper:  " + ex.Message, LoggingLevel.Normal, GetType());
-                }
-            }
+
+                }).Start();
         }
 
         public void StartAsync(Action callback)
@@ -454,7 +453,7 @@ namespace SensusService
                 if (!_stopped && !_registeredProtocols.Contains(protocol))
                 {
                     _registeredProtocols.Add(protocol);
-                    Save();
+                    SaveAsync();
                 }
         }
 
@@ -663,20 +662,13 @@ namespace SensusService
             }
         }
 
-        public virtual void OnSleep()
-        {
-            _logger.Log("About to sleep.", LoggingLevel.Normal, GetType());
-
-            Save();
-        }
-
         public void UnregisterProtocol(Protocol protocol)
         {
             lock (_locker)
             {
                 protocol.Stop();
                 _registeredProtocols.Remove(protocol);
-                Save();
+                SaveAsync();
             }
         }
 
@@ -693,7 +685,7 @@ namespace SensusService
                 }).Start();
         }
 
-        public void Stop()
+        public virtual void Stop()
         {
             lock (_locker)
             {
@@ -707,10 +699,6 @@ namespace SensusService
 
                 _stopped = true;
             }
-
-            // let others (e.g., platform-specific services and applications) know that we've stopped
-            if (Stopped != null)
-                Stopped(null, null);
         }
 
         public string GetSharePath(string extension)

@@ -113,8 +113,8 @@ namespace SensusUI
                     {
                         errorWritingShareFile = true;
                         string message = "Error writing share file:  " + ex.Message;
-                        SensusServiceHelper.Get().FlashNotificationAsync(message);
-                        SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+                        UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync(message);
+                        UiBoundSensusServiceHelper.Get(true).Logger.Log(message, LoggingLevel.Normal, GetType());
                         await Navigation.PopAsync();
                     }
 
@@ -133,7 +133,7 @@ namespace SensusUI
                         Device.BeginInvokeOnMainThread(async () => 
                             {
                                 await Navigation.PopAsync();
-                                SensusServiceHelper.Get().ShareFileAsync(sharePath, "Sensus Data");
+                                UiBoundSensusServiceHelper.Get(true).ShareFileAsync(sharePath, "Sensus Data");
                             });
                     }
 

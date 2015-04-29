@@ -358,7 +358,7 @@ namespace SensusService
                         }
                         catch (Exception ex)
                         {
-                            SensusServiceHelper.Get().Logger.Log("Failed to start probe \"" + probe.GetType().FullName + "\":" + ex.Message, LoggingLevel.Normal, GetType());
+                            SensusServiceHelper.Get().Logger.Log("Failed to start probe \"" + probe.GetType().FullName + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
                         }
                     }
 

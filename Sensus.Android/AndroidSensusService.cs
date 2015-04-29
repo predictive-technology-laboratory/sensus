@@ -32,11 +32,6 @@ namespace Sensus.Android
             _sensusServiceHelper = SensusServiceHelper.Load<AndroidSensusServiceHelper>() as AndroidSensusServiceHelper;
             _sensusServiceHelper.SetService(this);
             _sensusServiceHelper.UpdateApplicationStatus("");
-            _sensusServiceHelper.Stopped += (o, e) =>
-                {      
-                    _sensusServiceHelper.UpdateApplicationStatus(null);
-                    StopSelf();
-                };
         }
 
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)

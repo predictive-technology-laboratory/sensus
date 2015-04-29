@@ -205,9 +205,9 @@ namespace SensusUI
             #region toolbar            
             ToolbarItems.Add(new ToolbarItem("Status", null, async () =>
                 {
-                    if (SensusServiceHelper.Get().ProtocolShouldBeRunning(_protocol))
+                    if (UiBoundSensusServiceHelper.Get(true).ProtocolShouldBeRunning(_protocol))
                     {
-                        _protocol.TestHealthAsync( () =>
+                        _protocol.TestHealthAsync(() =>
                             {
 								Device.BeginInvokeOnMainThread(async () =>
 									{
@@ -216,7 +216,7 @@ namespace SensusUI
 										else
 											await Navigation.PushAsync(new ViewTextLinesPage("Protocol Report", _protocol.MostRecentReport.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList(), null));
 									});
-							});
+                            });
 					}
                     else
                         await DisplayAlert("Protocol Not Running", "Cannot check status of protocol when protocol is not running.", "OK");

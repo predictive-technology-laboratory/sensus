@@ -19,7 +19,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)ProbePage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\DisplayStringUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\DisplayYesNoUiProperty.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UiProperties\EntryIntegerUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\EntryStringUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\ListUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\IncrementalIntegerUiProperty.cs" />
@@ -32,6 +31,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)PromptsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PromptPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ShareLocalDataStorePage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UiProperties\EntryIntegerUiProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UiProperties\EntryFloatUiProperty.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Icons\" />

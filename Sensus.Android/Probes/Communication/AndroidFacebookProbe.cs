@@ -59,7 +59,7 @@ namespace Sensus.Android.Probes.Communication
         private bool HasValidAccessToken
         {
             get { return FacebookSdk.IsInitialized && AccessToken.CurrentAccessToken != null && !AccessToken.CurrentAccessToken.IsExpired; }
-        }
+        }               
 
         protected override void Initialize()
         {
@@ -71,7 +71,7 @@ namespace Sensus.Android.Probes.Communication
             ManualResetEvent accessTokenWait = new ManualResetEvent(false);
             string accessTokenError = null;
 
-            (AndroidSensusServiceHelper.Get() as AndroidSensusServiceHelper).GetMainActivityAsync(true, mainActivity =>
+            (AndroidSensusServiceHelper.Get() as AndroidSensusServiceHelper).GetMainActivityAsync(true, mainActivity => mainActivity.RunOnUiThread(() =>
                 {
                     try
                     {                            
@@ -124,7 +124,7 @@ namespace Sensus.Android.Probes.Communication
                     {
                         accessTokenError = ex.Message;
                     }
-                });
+                }));
 
             if (accessTokenError != null)
                 SensusServiceHelper.Get().Logger.Log("Error while initializing Facebook SDK and/or logging in:  " + accessTokenError, LoggingLevel.Normal, GetType());

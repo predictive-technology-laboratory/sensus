@@ -336,22 +336,19 @@ namespace SensusService.Probes.User
 
         private void RunScriptAsync(Script script, Datum prevDatum, Datum currDatum, Action callback)
         {
-            new Thread(() =>
+            script.RunAsync(prevDatum, currDatum, scriptData =>
                 {
-                    script.RunAsync(prevDatum, currDatum, scriptData =>
-                        {
-                            foreach (ScriptDatum scriptDatum in scriptData)
-                                if (scriptDatum != null)
-                                    StoreDatum(scriptDatum);
+                    foreach (ScriptDatum scriptDatum in scriptData)
+                        if (scriptDatum != null)
+                            StoreDatum(scriptDatum);
 
-                            if (_rerunIncompleteScripts && !script.Complete)
-                                lock (_incompleteScripts)
-                                    _incompleteScripts.Enqueue(script);
+                    if (_rerunIncompleteScripts && !script.Complete)
+                        lock (_incompleteScripts)
+                            _incompleteScripts.Enqueue(script);
 
-                            if(callback != null)
-                                callback();
-                        });
-                }).Start();
+                    if (callback != null)
+                        callback();
+                });
         }
 
         public override bool TestHealth(ref string error, ref string warning, ref string misc)

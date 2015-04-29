@@ -19,12 +19,12 @@ namespace SensusService.Probes
 {
     public abstract class ListeningProbe : Probe
     {
-        private int _maxDataStoresPerSecond;
+        private float _maxDataStoresPerSecond;
 
         private readonly object _locker = new object();
 
-        [EntryIntegerUiProperty("Max Data / Second:", true, int.MaxValue)]
-        public int MaxDataStoresPerSecond
+        [EntryFloatUiProperty("Max Data / Second:", true, int.MaxValue)]
+        public float MaxDataStoresPerSecond
         {
             get { return _maxDataStoresPerSecond; }
             set { _maxDataStoresPerSecond = value; }

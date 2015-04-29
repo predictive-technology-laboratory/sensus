@@ -137,18 +137,21 @@ namespace Sensus.Android
                             {
                                 Logger.Log("Starting main activity.", LoggingLevel.Normal, GetType());
 
+                                _mainActivityWait.Reset();
+
                                 // start the activity and wait for it to bind itself to the service
                                 Intent intent = new Intent(_service, typeof(AndroidMainActivity));
-                                intent.AddFlags(ActivityFlags.NewTask | ActivityFlags.ClearTask);
-                                _mainActivityWait.Reset();
+                                intent.AddFlags(ActivityFlags.FromBackground | ActivityFlags.NewTask);
                                 _service.StartActivity(intent);
                             }
 
                             // wait for main activity to be set
                             _mainActivityWait.WaitOne();
+                            Logger.Log("Main activity has been set.", LoggingLevel.Normal, GetType());
 
                             // wait for the UI to come up -- we don't want it to come up later and hide anything
                             _mainActivity.UiReadyWait.WaitOne();
+                            Logger.Log("UI is ready.", LoggingLevel.Normal, GetType());
                         }
 
                         callback(_mainActivity);
@@ -163,10 +166,7 @@ namespace Sensus.Android
             if (_mainActivity == null)
                 Logger.Log("Main activity has been unset.", LoggingLevel.Normal, GetType());
             else
-            {
-                Logger.Log("Main activity has been set.", LoggingLevel.Normal, GetType());
                 _mainActivityWait.Set();
-            }
         }
 
         protected override void InitializeXamarinInsights()
@@ -437,6 +437,19 @@ namespace Sensus.Android
                 _wakeLock.Release();
         }            
         #endregion
+
+        public override void Stop()
+        {
+            base.Stop();
+
+            UpdateApplicationStatus(null);
+
+            if (_mainActivity != null)
+                _mainActivity.Finish();
+
+            if (_service != null)
+                _service.StopSelf();
+        }
 
         public override void Destroy()
         {

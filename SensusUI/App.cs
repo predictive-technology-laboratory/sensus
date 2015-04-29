@@ -32,14 +32,5 @@ namespace SensusUI
 
             MainPage = new NavigationPage(_sensusMainPage);
         }
-
-        protected override void OnSleep()
-        {
-            base.OnSleep();
-
-            SensusServiceHelper serviceHelper = UiBoundSensusServiceHelper.Get(false);  // OnSleep can be called before the activity has actually had a chance to start up and bind to the service.
-            if (serviceHelper != null)
-                serviceHelper.OnSleep();  
-        }
     }
 }

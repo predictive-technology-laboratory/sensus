@@ -30,7 +30,7 @@ using Xamarin.Facebook;
 
 namespace Sensus.Android
 {
-    [Activity(Label = "@string/app_name", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Label = "@string/app_name", MainLauncher = true, LaunchMode = LaunchMode.SingleTask, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault, Intent.CategoryBrowsable }, DataScheme = "http", DataHost = "*", DataPathPattern = ".*\\\\.sensus")]  // protocols downloaded from an http web link
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault, Intent.CategoryBrowsable }, DataScheme = "https", DataHost = "*", DataPathPattern = ".*\\\\.sensus")]  // protocols downloaded from an https web link
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault }, DataMimeType = "application/octet-stream", DataScheme = "content", DataHost = "*")]  // protocols opened from email attachments originating from the sensus app itself -- DataPathPattern doesn't work here, since email apps (e.g., gmail) rename attachments when stored in the local file system
@@ -43,6 +43,7 @@ namespace Sensus.Android
         private Tuple<Result, Intent> _activityResult;
         private ManualResetEvent _uiReadyWait;
         private ICallbackManager _facebookCallbackManager;
+        private App _app;
 
         private readonly object _locker = new object();
 
@@ -80,72 +81,79 @@ namespace Sensus.Android
 
             Forms.Init(this, savedInstanceState);
 
-            App app = new App();
-            LoadApplication(app);
+            _app = new App();
+            LoadApplication(_app);
+
+            _serviceConnection = new AndroidSensusServiceConnection();
+
+            _serviceConnection.ServiceConnected += (o, e) =>
+            {
+                // get reference to service helper for use within the UI
+                UiBoundSensusServiceHelper.Set(e.Binder.SensusServiceHelper);
+
+                // give service helper a reference to this activity
+                e.Binder.SensusServiceHelper.MainActivityWillBeSet = false;
+                e.Binder.SensusServiceHelper.SetMainActivity(this);
+
+                // display service helper properties on the main page
+                _app.SensusMainPage.DisplayServiceHelper(e.Binder.SensusServiceHelper);
+
+                #region open page to view protocol if a protocol was passed to us
+                if (Intent.Data != null)
+                {
+                    global::Android.Net.Uri dataURI = Intent.Data;
+
+                    try
+                    {
+                        if (Intent.Scheme == "http" || Intent.Scheme == "https")
+                            Protocol.DisplayFromWebUriAsync(new Uri(dataURI.ToString()));
+                        else if (Intent.Scheme == "content" || Intent.Scheme == "file")
+                        {
+                            byte[] bytes = null;
+
+                            try
+                            {
+                                MemoryStream memoryStream = new MemoryStream();
+                                Stream inputStream = ContentResolver.OpenInputStream(dataURI);
+                                inputStream.CopyTo(memoryStream);
+                                inputStream.Close();
+                                bytes = memoryStream.ToArray();
+                            }
+                            catch (Exception ex)
+                            {
+                                SensusServiceHelper.Get().Logger.Log("Failed to read bytes from local file URI \"" + dataURI + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
+                            }
+
+                            if (bytes != null)
+                                Protocol.DisplayFromBytesAsync(bytes);
+                        }
+                        else
+                            SensusServiceHelper.Get().Logger.Log("Sensus didn't know what to do with URI \"" + dataURI + "\".", LoggingLevel.Normal, GetType());
+                    }
+                    catch (Exception ex)
+                    {
+                        new AlertDialog.Builder(this).SetTitle("Failed to get protocol").SetMessage(ex.Message).Show();
+                    }
+                }
+                #endregion
+            };
+
+            _serviceConnection.ServiceDisconnected += (o, e) =>
+            {
+                DisconnectFromService();                
+            };
+        }
+
+        protected override void OnResume()
+        {
+            base.OnResume();
 
             // start service -- if it's already running, this will have no effect
             Intent serviceIntent = new Intent(this, typeof(AndroidSensusService));
             serviceIntent.PutExtra(AndroidSensusServiceHelper.MAIN_ACTIVITY_WILL_BE_SET, true);
             StartService(serviceIntent);
 
-            // bind UI to the service
-            _serviceConnection = new AndroidSensusServiceConnection();
-            _serviceConnection.ServiceConnected += (o, e) =>
-                {
-                    // get reference to service helper for use within the UI
-                    UiBoundSensusServiceHelper.Set(e.Binder.SensusServiceHelper);
-
-                    // stop activity when service stops    
-                    UiBoundSensusServiceHelper.Get(true).Stopped += (oo, ee) => { Finish(); };
-
-                    // give service helper a reference to this activity
-                    (UiBoundSensusServiceHelper.Get(true) as AndroidSensusServiceHelper).MainActivityWillBeSet = false;
-                    (UiBoundSensusServiceHelper.Get(true) as AndroidSensusServiceHelper).SetMainActivity(this);
-
-                    // display service helper properties on the main page
-                    app.SensusMainPage.DisplayServiceHelper(UiBoundSensusServiceHelper.Get(true));
-
-                    #region open page to view protocol if a protocol was passed to us
-                    if (Intent.Data != null)
-                    {
-                        global::Android.Net.Uri dataURI = Intent.Data;
-
-                        try
-                        {
-                            if (Intent.Scheme == "http" || Intent.Scheme == "https")
-                                Protocol.DisplayFromWebUriAsync(new Uri(dataURI.ToString()));
-                            else if (Intent.Scheme == "content" || Intent.Scheme == "file")
-                            {
-                                byte[] bytes = null;
-
-                                try 
-                                {
-                                    MemoryStream memoryStream = new MemoryStream();
-                                    Stream inputStream = ContentResolver.OpenInputStream(dataURI);
-                                    inputStream.CopyTo(memoryStream);
-                                    inputStream.Close();
-                                    bytes = memoryStream.ToArray();
-                                }
-                                catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to read bytes from local file URI \"" + dataURI + "\":  " + ex.Message, LoggingLevel.Normal, GetType()); }
-
-                                if(bytes !=  null)
-                                    Protocol.DisplayFromBytesAsync(bytes);
-                            }
-                            else
-                                SensusServiceHelper.Get().Logger.Log("Sensus didn't know what to do with URI \"" + dataURI + "\".", LoggingLevel.Normal, GetType());
-                        }
-                        catch (Exception ex) { new AlertDialog.Builder(this).SetTitle("Failed to get protocol").SetMessage(ex.Message).Show(); }
-                    }
-                    #endregion
-                };
-
-            _serviceConnection.ServiceDisconnected += (o, e) =>
-                {
-                    // do the opposite of what's in ServiceConnected
-                    UiBoundSensusServiceHelper.Set(null);
-                    e.Binder.SensusServiceHelper.SetMainActivity(null);
-                };
-
+            // bind to service
             BindService(serviceIntent, _serviceConnection, Bind.AutoCreate);
         }
 
@@ -157,13 +165,6 @@ namespace Sensus.Android
                 _uiReadyWait.Set();
             else
                 _uiReadyWait.Reset();
-        }
-
-        protected override void OnPause()
-        {
-            base.OnPause();
-
-            OnWindowFocusChanged(false);
         }
 
         public void GetActivityResultAsync(Intent intent, AndroidActivityResultRequestCode requestCode, Action<Tuple<Result, Intent>> callback)
@@ -197,12 +198,33 @@ namespace Sensus.Android
             _facebookCallbackManager.OnActivityResult(requestCode, (int)resultCode, data);
         }
 
-        protected override void OnDestroy()
+        protected override void OnPause()
         {
-            base.OnDestroy();
+            base.OnPause();
 
-            if (_serviceConnection.Binder.IsBound)
-                UnbindService(_serviceConnection);
+            // reset the UI ready wait handle            
+            OnWindowFocusChanged(false);
+
+            DisconnectFromService();
+        }   
+
+        private void DisconnectFromService()
+        {
+            // remove service helper from UI
+            _app.SensusMainPage.RemoveServiceHelper();
+
+            // make service helper inaccessible to UI
+            UiBoundSensusServiceHelper.Set(null);
+
+            // unbind from service
+            if (_serviceConnection.Binder != null)
+            {                   
+                _serviceConnection.Binder.SensusServiceHelper.SetMainActivity(null);
+                _serviceConnection.Binder.SensusServiceHelper.SaveAsync();
+
+                if (_serviceConnection.Binder.IsBound)
+                    UnbindService(_serviceConnection);
+            }
         }
     }
 }

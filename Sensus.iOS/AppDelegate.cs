@@ -143,6 +143,9 @@ namespace Sensus.iOS
         // when the user quits.
         public override void DidEnterBackground(UIApplication application)
         {
+            SensusServiceHelper serviceHelper = UiBoundSensusServiceHelper.Get(false);
+            if (serviceHelper != null)
+                serviceHelper.SaveAsync();
         }
 		
         // This method is called as part of the transiton from background to active state.
