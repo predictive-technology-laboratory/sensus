@@ -180,23 +180,27 @@ namespace SensusService.Probes.Communication
             List<string> userFields = new List<string>();
             Dictionary<string, List<string>> edgeFields = new Dictionary<string, List<string>>();
 
-            foreach (FacebookPermission enabledPermission in GetEnabledFacebookPermissions())
-            {
-                if (enabledPermission.Edges.Length == 0)
-                    userFields.AddRange(enabledPermission.Fields);
-                else
-                    foreach (string edge in enabledPermission.Edges)
-                    {
-                        List<string> fields;
-                        if (!edgeFields.TryGetValue(edge, out fields))
-                        {
-                            fields = new List<string>();
-                            edgeFields.Add(edge, fields);
-                        }
+            ICollection<string> grantedPermissions = GetGrantedPermissions();
 
-                        fields.AddRange(enabledPermission.Fields);
-                    }
-            }                
+            // get query for all enabled permissions that have been granted
+            foreach (FacebookPermission enabledPermission in GetEnabledFacebookPermissions())
+                if (grantedPermissions.Contains(enabledPermission.Name))
+                {
+                    if (enabledPermission.Edges.Length == 0)
+                        userFields.AddRange(enabledPermission.Fields);
+                    else
+                        foreach (string edge in enabledPermission.Edges)
+                        {
+                            List<string> fields;
+                            if (!edgeFields.TryGetValue(edge, out fields))
+                            {
+                                fields = new List<string>();
+                                edgeFields.Add(edge, fields);
+                            }
+
+                            fields.AddRange(enabledPermission.Fields);
+                        }
+                }
 
             List<Tuple<string, List<string>>> edgeFieldQueries = new List<Tuple<string, List<string>>>();
 
@@ -213,6 +217,8 @@ namespace SensusService.Probes.Communication
             }
 
             return edgeFieldQueries;
-        } 
+        }
+
+        protected abstract ICollection<string> GetGrantedPermissions();
     }
 }
