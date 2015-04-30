@@ -111,9 +111,6 @@
     <Reference Include="DataNuage.Aws.S3.Android">
       <HintPath>..\Components\DataNuage.Aws.S3-1.5.216.0\lib\android\DataNuage.Aws.S3.Android.dll</HintPath>
     </Reference>
-    <Reference Include="Xamarin.Android.Support.v4">
-      <HintPath>..\packages\Xamarin.Android.Support.v4.22.0.0.0\lib\MonoAndroid10\Xamarin.Android.Support.v4.dll</HintPath>
-    </Reference>
     <Reference Include="Xamarin.Forms.Platform.Android">
       <HintPath>..\packages\Xamarin.Forms.1.4.2.6355\lib\MonoAndroid10\Xamarin.Forms.Platform.Android.dll</HintPath>
     </Reference>
@@ -130,7 +127,10 @@
       <HintPath>..\packages\Xamarin.Forms.1.4.2.6355\lib\MonoAndroid10\Xamarin.Forms.Platform.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Facebook">
-      <HintPath>..\packages\Xamarin.Facebook.4.0.1.1\lib\MonoAndroid40\Xamarin.Facebook.dll</HintPath>
+      <HintPath>..\packages\Xamarin.Facebook.4.0.1.4\lib\MonoAndroid40\Xamarin.Facebook.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Android.Support.v4">
+      <HintPath>..\packages\Xamarin.Android.Support.v4.22.1.1.1\lib\MonoAndroid403\Xamarin.Android.Support.v4.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

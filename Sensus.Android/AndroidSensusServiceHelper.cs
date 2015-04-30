@@ -147,7 +147,6 @@ namespace Sensus.Android
 
                             // wait for main activity to be set
                             _mainActivityWait.WaitOne();
-                            Logger.Log("Main activity has been set.", LoggingLevel.Normal, GetType());
 
                             // wait for the UI to come up -- we don't want it to come up later and hide anything
                             _mainActivity.UiReadyWait.WaitOne();
@@ -164,9 +163,15 @@ namespace Sensus.Android
             _mainActivity = value;
 
             if (_mainActivity == null)
+            {
+                _mainActivityWait.Reset();
                 Logger.Log("Main activity has been unset.", LoggingLevel.Normal, GetType());
+            }
             else
+            {
                 _mainActivityWait.Set();
+                Logger.Log("Main activity has been set.", LoggingLevel.Normal, GetType());
+            }
         }
 
         protected override void InitializeXamarinInsights()

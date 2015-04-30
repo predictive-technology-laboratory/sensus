@@ -124,6 +124,7 @@ namespace Sensus.Android.Probes.Communication
                     {
                         accessTokenError = ex.Message;
                     }
+
                 }));
 
             if (accessTokenError != null)
