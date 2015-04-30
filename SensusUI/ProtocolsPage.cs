@@ -163,7 +163,7 @@ namespace SensusUI
         {
             _protocolsList.ItemsSource = null;
 
-            // don't wait for service helper -- it might be disconnected before we get the OnDisappearing event that calls Bind
+            // don't wait for service helper -- it might get disconnected before we get the OnDisappearing event that calls Bind
             SensusServiceHelper serviceHelper = UiBoundSensusServiceHelper.Get(false);
             if (serviceHelper != null)
                 _protocolsList.ItemsSource = serviceHelper.RegisteredProtocols;

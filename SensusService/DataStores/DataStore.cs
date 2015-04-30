@@ -111,6 +111,8 @@ namespace SensusService.DataStores
 
                 SensusServiceHelper.Get().Logger.Log("Starting.", LoggingLevel.Normal, GetType());
 
+                _mostRecentCommitTimestamp = DateTimeOffset.UtcNow;
+
                 _commitCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(cancellationToken =>
                     {
                         if (_running)

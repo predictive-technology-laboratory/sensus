@@ -96,46 +96,7 @@ namespace Sensus.Android
                 e.Binder.SensusServiceHelper.SetMainActivity(this);
 
                 // display service helper properties on the main page
-                _app.SensusMainPage.DisplayServiceHelper(e.Binder.SensusServiceHelper);
-
-                #region open page to view protocol if a protocol was passed to us
-                if (Intent.Data != null)
-                {
-                    global::Android.Net.Uri dataURI = Intent.Data;
-
-                    try
-                    {
-                        if (Intent.Scheme == "http" || Intent.Scheme == "https")
-                            Protocol.DisplayFromWebUriAsync(new Uri(dataURI.ToString()));
-                        else if (Intent.Scheme == "content" || Intent.Scheme == "file")
-                        {
-                            byte[] bytes = null;
-
-                            try
-                            {
-                                MemoryStream memoryStream = new MemoryStream();
-                                Stream inputStream = ContentResolver.OpenInputStream(dataURI);
-                                inputStream.CopyTo(memoryStream);
-                                inputStream.Close();
-                                bytes = memoryStream.ToArray();
-                            }
-                            catch (Exception ex)
-                            {
-                                SensusServiceHelper.Get().Logger.Log("Failed to read bytes from local file URI \"" + dataURI + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
-                            }
-
-                            if (bytes != null)
-                                Protocol.DisplayFromBytesAsync(bytes);
-                        }
-                        else
-                            SensusServiceHelper.Get().Logger.Log("Sensus didn't know what to do with URI \"" + dataURI + "\".", LoggingLevel.Normal, GetType());
-                    }
-                    catch (Exception ex)
-                    {
-                        new AlertDialog.Builder(this).SetTitle("Failed to get protocol").SetMessage(ex.Message).Show();
-                    }
-                }
-                #endregion
+                _app.SensusMainPage.DisplayServiceHelper(e.Binder.SensusServiceHelper);                                    
             };
 
             _serviceConnection.ServiceDisconnected += (o, e) =>
@@ -155,6 +116,49 @@ namespace Sensus.Android
 
             // bind to service
             BindService(serviceIntent, _serviceConnection, Bind.AutoCreate);
+        }
+
+        protected override void OnNewIntent(Intent intent)
+        {
+            base.OnNewIntent(intent);
+
+            // open page to view protocol if a protocol was passed to us
+            if (intent.Data != null)
+            {
+                global::Android.Net.Uri dataURI = intent.Data;
+
+                try
+                {
+                    if (intent.Scheme == "http" || intent.Scheme == "https")
+                        Protocol.DisplayFromWebUriAsync(new Uri(dataURI.ToString()));
+                    else if (intent.Scheme == "content" || intent.Scheme == "file")
+                    {
+                        byte[] bytes = null;
+
+                        try
+                        {
+                            MemoryStream memoryStream = new MemoryStream();
+                            Stream inputStream = ContentResolver.OpenInputStream(dataURI);
+                            inputStream.CopyTo(memoryStream);
+                            inputStream.Close();
+                            bytes = memoryStream.ToArray();
+                        }
+                        catch (Exception ex)
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Failed to read bytes from local file URI \"" + dataURI + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
+                        }
+
+                        if (bytes != null)
+                            Protocol.DisplayFromBytesAsync(bytes);
+                    }
+                    else
+                        SensusServiceHelper.Get().Logger.Log("Sensus didn't know what to do with URI \"" + dataURI + "\".", LoggingLevel.Normal, GetType());
+                }
+                catch (Exception ex)
+                {
+                    new AlertDialog.Builder(this).SetTitle("Failed to get protocol").SetMessage(ex.Message).Show();
+                }
+            }
         }
 
         public override void OnWindowFocusChanged(bool hasFocus)

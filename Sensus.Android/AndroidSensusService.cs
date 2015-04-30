@@ -31,7 +31,7 @@ namespace Sensus.Android
 
             _sensusServiceHelper = SensusServiceHelper.Load<AndroidSensusServiceHelper>() as AndroidSensusServiceHelper;
             _sensusServiceHelper.SetService(this);
-            _sensusServiceHelper.UpdateApplicationStatus("");
+            _sensusServiceHelper.UpdateApplicationStatus("0 protocols are running");
         }
 
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)

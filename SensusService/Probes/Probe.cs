@@ -143,7 +143,7 @@ namespace SensusService.Probes
         {
             _collectedData = new HashSet<Datum>();
             _mostRecentDatum = null;
-            _mostRecentStoreTimestamp = DateTimeOffset.MinValue;
+            _mostRecentStoreTimestamp = DateTimeOffset.UtcNow;  // mark storage delay from initialization of probe
         }
 
         protected void StartAsync()
