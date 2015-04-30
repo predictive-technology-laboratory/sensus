@@ -29,6 +29,11 @@ using Android.Content;
 
 namespace Sensus.Android.Probes.Communication
 {
+    /// <summary>
+    /// Probes Facebook information. To generate key hashes:
+    ///   * Debug:  keytool -exportcert -alias androiddebugkey -keystore ~/.local/share/Xamarin/Mono\ for\ Android/debug.keystore | openssl sha1 -binary | openssl base64
+    ///   * Play store:  TODO
+    /// </summary>
     public class AndroidFacebookProbe : FacebookProbe
     {
         private class FacebookCallback<TResult> : Java.Lang.Object, IFacebookCallback where TResult : Java.Lang.Object
@@ -66,7 +71,10 @@ namespace Sensus.Android.Probes.Communication
             base.Initialize();
 
             if (HasValidAccessToken)
+            {
+                SensusServiceHelper.Get().Logger.Log("Already have valid Facebook access token. No need to initialize.", LoggingLevel.Normal, GetType());
                 return;
+            }
 
             ManualResetEvent accessTokenWait = new ManualResetEvent(false);
             string accessTokenError = null;
@@ -144,7 +152,7 @@ namespace Sensus.Android.Probes.Communication
         {
             List<Datum> data = new List<Datum>();
 
-            /*if (ValidAccessToken || Login())
+            if (HasValidAccessToken)
             {
                 GraphRequestBatch graphRequestBatch = new GraphRequestBatch();
 
@@ -168,10 +176,15 @@ namespace Sensus.Android.Probes.Communication
                     SensusServiceHelper.Get().Logger.Log("Facebook request batch contained zero requests.", LoggingLevel.Normal, GetType());
                 else
                     foreach (GraphResponse response in graphRequestBatch.ExecuteAndWait())
-                        data.Add(new FacebookDatum(DateTimeOffset.UtcNow, response.JSONObject.ToString()));
-            }*/
+                        if (response.Error == null)
+                            data.Add(new FacebookDatum(DateTimeOffset.UtcNow, response.JSONObject.ToString()));
+                        else
+                            SensusServiceHelper.Get().Logger.Log("Error received while querying Facebook graph API:  " + response.Error.ErrorMessage, LoggingLevel.Normal, GetType());
+            }
+            else
+                SensusServiceHelper.Get().Logger.Log("Attempted to poll Facebook probe without a valid access token.", LoggingLevel.Normal, GetType());
 
             return data;
-        }            
+        }
     }
 }
