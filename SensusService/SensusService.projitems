@@ -92,6 +92,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\FacebookDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\FacebookPermission.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\FacebookProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\ValueOmittingAnonymizer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />

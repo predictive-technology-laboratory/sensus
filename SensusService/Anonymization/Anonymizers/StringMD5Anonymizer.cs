@@ -14,6 +14,7 @@
 
 using System;
 using SensusService.Exceptions;
+using System.Collections.Generic;
 
 namespace SensusService.Anonymization.Anonymizers
 {
@@ -32,12 +33,19 @@ namespace SensusService.Anonymization.Anonymizers
             if (value == null)
                 return null;
             
-            string s = value as string;
+            if (value is string)
+                return SensusServiceHelper.Get().GetMd5Hash(value as string);
+            else if (value is IEnumerable<string>)
+            {
+                List<string> md5Hashes = new List<string>();
 
-            if (s == null)
+                foreach (string s in (value as IEnumerable<string>))
+                    md5Hashes.Add(SensusServiceHelper.Get().GetMd5Hash(s));
+                  
+                return md5Hashes;
+            }
+            else
                 throw new SensusException("Attempted to apply string MD5 anonymizer to a non-string value.");
-
-            return SensusServiceHelper.Get().GetMd5Hash(s);
         }
     }
 }

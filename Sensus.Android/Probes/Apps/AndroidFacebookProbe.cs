@@ -135,7 +135,7 @@ namespace Sensus.Android.Probes.Apps
                             }
                             // prompt user to log in with all enabled permissions
                             else
-                                LoginManager.Instance.LogInWithReadPermissions(mainActivity, GetEnabledPermissionNames());
+                                LoginManager.Instance.LogInWithReadPermissions(mainActivity, GetRequiredPermissionNames());
                         }
                         catch (Exception ex)
                         {
@@ -164,7 +164,7 @@ namespace Sensus.Android.Probes.Apps
             if (HasValidAccessToken)
             {
                 // prompt user for any missing permissions
-                ICollection<string> missingPermissions = GetEnabledPermissionNames().Where(p => !AccessToken.CurrentAccessToken.Permissions.Contains(p)).ToArray();
+                ICollection<string> missingPermissions = GetRequiredPermissionNames().Where(p => !AccessToken.CurrentAccessToken.Permissions.Contains(p)).ToArray();
                 if (missingPermissions.Count > 0)
                 {
                     _loginWait.Reset();
@@ -200,7 +200,10 @@ namespace Sensus.Android.Probes.Apps
                 else
                     foreach (GraphResponse response in graphRequestBatch.ExecuteAndWait())
                         if (response.Error == null)
-                            data.Add(new FacebookDatum(DateTimeOffset.UtcNow, response.JSONObject.ToString()));
+                            data.Add(new FacebookDatum(DateTimeOffset.UtcNow)
+                                {
+                                    // TODO:  Set fields
+                                });
                         else
                             SensusServiceHelper.Get().Logger.Log("Error received while querying Facebook graph API:  " + response.Error.ErrorMessage, LoggingLevel.Normal, GetType());
             }

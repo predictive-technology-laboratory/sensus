@@ -18,120 +18,13 @@ using System.Linq;
 using System.Reflection;
 using SensusUI.UiProperties;
 using System.Threading;
+using SensusService.Anonymization;
+using SensusService.Anonymization.Anonymizers;
 
 namespace SensusService.Probes.Apps
 {
     public abstract class FacebookProbe : PollingProbe
-    {             
-        // below are the various permission settings and the fields/edges that they provide access to. the
-        // list is taken from https://developers.facebook.com/docs/facebook-login/permissions/v2.3#reference
-
-        // user fields
-        [OnOffUiProperty("Public Profile:", true, 20)]
-        [FacebookPermission("public_profile", new string[0], new string[] { "id", "name", "first_name", "last_name", "age_range", "link", "gender", "locale", "timezone", "updated_time", "verified" })]
-        public bool PublicProfile { get; set; }
-
-        [OnOffUiProperty(null, true, 20)]
-        [FacebookPermission("email", new string[0], "email" )]
-        public bool Email { get; set; }
-
-        [OnOffUiProperty("Bio:", true, 20)]
-        [FacebookPermission("user_about_me", new string[0], "bio")]
-        public bool AboutMe { get; set; }
-
-        [OnOffUiProperty(null, true, 20)]
-        [FacebookPermission("user_education_history", new string[0], "education")]
-        public bool Education { get; set; }
-
-        [OnOffUiProperty(null, true, 20)]
-        [FacebookPermission("user_hometown", new string[0], "hometown")]
-        public bool Hometown { get; set; }
-
-        [OnOffUiProperty(null, true, 20)]
-        [FacebookPermission("user_location", new string[0], "location")]
-        public bool Location { get; set; }
-
-        [OnOffUiProperty(null, true, 20)]
-        [FacebookPermission("user_relationships", new string[0], new string[] { "relationship_status", "significant_other" })]
-        public bool Relationships { get; set; }
-
-        [OnOffUiProperty(null, true, 20)]
-        [FacebookPermission("user_religion_politics", new string[0], new string[] { "religion" })]
-        public bool Religion { get; set; }
-
-        [OnOffUiProperty(null, true, 20)]
-        [FacebookPermission("user_religion_politics", new string[0], new string[] { "political" })]
-        public bool Politics { get; set; }
-
-        [OnOffUiProperty(null, true, 20)]
-        [FacebookPermission("user_website", new string[0], "website")]
-        public bool Website { get; set; }
-
-        [OnOffUiProperty(null, true, 20)]
-        [FacebookPermission("user_work_history", new string[0], "work")]
-        public bool Employment { get; set; }
-
-        // user edges
-        [OnOffUiProperty(null, true, 20)]
-        [FacebookPermission("user_friends", "friends", new string[0])]
-        public bool Friends { get; set; }
-
-        [OnOffUiProperty(null, true, 20)]
-        [FacebookPermission("user_actions.books", "book.reads", new string[0])]
-        public bool Books { get; set; }
-
-        [OnOffUiProperty(null, true, 20)]
-        [FacebookPermission("user_actions.fitness", new string[] { "fitness.runs", "fitness.walks", "fitness.bikes" }, new string[0])]
-        public bool Fitness { get; set; }
-
-        [OnOffUiProperty(null, true, 20)]
-        [FacebookPermission("user_actions.music", new string[] { "music.listens", "music.playlists" }, new string[0])]
-        public bool Music { get; set; }
-
-        [OnOffUiProperty(null, true, 20)]
-        [FacebookPermission("user_actions.news", new string[] { "news.reads", "news.publishes" }, new string[0])]
-        public bool News { get; set; }
-
-        [OnOffUiProperty("Video Viewing", true, 20)]
-        [FacebookPermission("user_actions.video", new string[] { "video.watches", "video.rates", "video.wants_to_watch" }, new string[0])]
-        public bool VideoActions { get; set; }
-
-        [OnOffUiProperty(null, true, 20)]
-        [FacebookPermission("user_events", "events", new string[0])]
-        public bool Events { get; set; }
-
-        [OnOffUiProperty(null, true, 20)]
-        [FacebookPermission("user_games_activity", "games", new string[0])]
-        public bool Games { get; set; }
-
-        [OnOffUiProperty(null, true, 20)]
-        [FacebookPermission("user_groups", "groups", new string[0])]
-        public bool Groups { get; set; }
-
-        [OnOffUiProperty(null, true, 20)]
-        [FacebookPermission("user_likes", "likes", new string[0])]
-        public bool Likes { get; set; }
-
-        [OnOffUiProperty(null, true, 20)]
-        [FacebookPermission("user_photos", "photos", new string[0])]
-        public bool Photos { get; set; }
-
-        [OnOffUiProperty(null, true, 20)]
-        [FacebookPermission("user_posts", "photos", new string[0])]
-        public bool Posts { get; set; }
-
-        [OnOffUiProperty(null, true, 20)]
-        [FacebookPermission("user_status", "statuses", new string[0])]
-        public bool Status { get; set; }
-
-        [OnOffUiProperty(null, true, 20)]
-        [FacebookPermission("user_tagged_places", "tagged_places", new string[0])]
-        public bool Places { get; set; }
-
-        [OnOffUiProperty(null, true, 20)]
-        [FacebookPermission("user_videos", "videos", new string[0])]
-        public bool Videos { get; set; }
-
+    {                     
         public sealed override Type DatumType
         {
             get
@@ -156,23 +49,24 @@ namespace SensusService.Probes.Apps
             }
         }   
 
-        public ICollection<FacebookPermission> GetEnabledFacebookPermissions()
+        public ICollection<FacebookPermission> GetRequiredFacebookPermissions()
         {
-            List<FacebookPermission> enabledFacebookPermissions = new List<FacebookPermission>();
+            List<FacebookPermission> requiredFacebookPermissions = new List<FacebookPermission>();
 
-            foreach (PropertyInfo property in GetType().GetProperties())
+            foreach (PropertyInfo facebookDatumProperty in typeof(FacebookDatum).GetProperties())
             {
-                FacebookPermission permissionAttribute = property.GetCustomAttribute<FacebookPermission>();
-                if (permissionAttribute != null && (bool)property.GetValue(this))
-                    enabledFacebookPermissions.Add(permissionAttribute);
+                FacebookPermission permission = facebookDatumProperty.GetCustomAttribute<FacebookPermission>();
+                Anonymizer propertyAnonymizer = Protocol.JsonAnonymizer.GetAnonymizer(facebookDatumProperty);
+                if (permission != null && (propertyAnonymizer == null || !(propertyAnonymizer is ValueOmittingAnonymizer)))
+                    requiredFacebookPermissions.Add(permission);
             }
 
-            return enabledFacebookPermissions;
+            return requiredFacebookPermissions;
         }
 
-        public ICollection<string> GetEnabledPermissionNames()
+        public ICollection<string> GetRequiredPermissionNames()
         {
-            return GetEnabledFacebookPermissions().Select(permission => permission.Name).Distinct().ToArray();
+            return GetRequiredFacebookPermissions().Select(permission => permission.Name).Distinct().ToArray();
         }   
 
         public List<Tuple<string, List<string>>> GetEdgeFieldQueries()
@@ -183,7 +77,7 @@ namespace SensusService.Probes.Apps
             ICollection<string> grantedPermissions = GetGrantedPermissions();
 
             // get query for all enabled permissions that have been granted
-            foreach (FacebookPermission enabledPermission in GetEnabledFacebookPermissions())
+            foreach (FacebookPermission enabledPermission in GetRequiredFacebookPermissions())
                 if (grantedPermissions.Contains(enabledPermission.Name))
                 {
                     if (enabledPermission.Edges.Length == 0)

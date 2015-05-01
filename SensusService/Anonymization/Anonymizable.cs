@@ -43,14 +43,12 @@ namespace SensusService.Anonymization
         }
 
         public Anonymizable(string propertyDisplayName, Type[] availableAnonymizerTypes, int defaultAnonymizerIndex)
-        {
-            if (defaultAnonymizerIndex < -1 || defaultAnonymizerIndex >= availableAnonymizerTypes.Length)
-                throw new SensusException("Attempted to set default anonymizer for property \"" + propertyDisplayName + "\" outside the bounds of available types:  " + defaultAnonymizerIndex + ".");
-            
+        {                       
             _propertyDisplayName = propertyDisplayName;
 
             // instantiate available anonymizers
             _availableAnonymizers = new List<Anonymizer>();
+            _availableAnonymizers.Add(new ValueOmittingAnonymizer());
             foreach (Type availableAnonymizerType in availableAnonymizerTypes)
             {
                 Anonymizer availableAnonymizer = Activator.CreateInstance(availableAnonymizerType) as Anonymizer;
@@ -61,13 +59,16 @@ namespace SensusService.Anonymization
                 _availableAnonymizers.Add(availableAnonymizer);
             }
 
+            if (defaultAnonymizerIndex < -1 || defaultAnonymizerIndex >= _availableAnonymizers.Count)
+                throw new SensusException("Attempted to set default anonymizer for property outside the bounds of available types:  " + defaultAnonymizerIndex);
+
             // set default anonymizer if requested
             if (defaultAnonymizerIndex >= 0)
                 _defaultAnonymizer = _availableAnonymizers[defaultAnonymizerIndex];
         }
 
         public Anonymizable(string propertyDisplayName, Type anonymizerType, bool anonymizeByDefault)
-            : this(propertyDisplayName, new Type[] { anonymizerType }, anonymizeByDefault ? 0 : -1)
+            : this(propertyDisplayName, anonymizerType == null ? new Type[0] : new Type[] { anonymizerType }, anonymizeByDefault ? 0 : -1)
         {
         }
     }

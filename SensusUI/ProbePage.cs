@@ -99,7 +99,7 @@ namespace SensusUI
 
                     Label propertyLabel = new Label
                     {
-                        Text = (anonymizableAttribute.PropertyDisplayName ?? anonymizableProperty.Name) + ":",
+                        Text = anonymizableAttribute.PropertyDisplayName ?? anonymizableProperty.Name + ":",
                         FontSize = 20,
                         HorizontalOptions = LayoutOptions.Start
                     };
@@ -110,7 +110,7 @@ namespace SensusUI
                         HorizontalOptions = LayoutOptions.FillAndExpand
                     };
                 
-                    anonymizerPicker.Items.Add("None");
+                    anonymizerPicker.Items.Add("Do Not Anonymize");
                     foreach (Anonymizer anonymizer in anonymizableAttribute.AvailableAnonymizers)
                         anonymizerPicker.Items.Add(anonymizer.DisplayText);
 
@@ -123,7 +123,7 @@ namespace SensusUI
                             probe.Protocol.JsonAnonymizer.SetAnonymizer(anonymizableProperty, selectedAnonymizer);
                         };
 
-                    // set the picker's index to the current anonymizer (or "None" if there is no current)
+                    // set the picker's index to the current anonymizer (or "Do Not Anonymize" if there is no current)
                     Anonymizer currentAnonymizer = probe.Protocol.JsonAnonymizer.GetAnonymizer(anonymizableProperty);
                     int currentIndex = 0;
                     if(currentAnonymizer != null)
