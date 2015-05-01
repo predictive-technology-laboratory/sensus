@@ -14,7 +14,7 @@
 
 using System;
 
-namespace SensusService.Probes.Communication
+namespace SensusService.Probes.Apps
 {
     [AttributeUsage(AttributeTargets.Property, Inherited = true, AllowMultiple = false)]
     public class FacebookPermission : Attribute
@@ -65,6 +65,11 @@ namespace SensusService.Probes.Communication
                    edge == null ? new string[0] : new string[] { edge },
                    field == null ? new string[0] : new string[] { field })
         {
+        }
+
+        public override string ToString()
+        {
+            return _name;
         }
     }
 }

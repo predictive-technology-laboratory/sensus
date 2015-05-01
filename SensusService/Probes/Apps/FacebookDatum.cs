@@ -16,7 +16,7 @@ using System;
 using SensusService.Anonymization;
 using SensusService.Anonymization.Anonymizers;
 
-namespace SensusService
+namespace SensusService.Probes.Apps
 {
     public class FacebookDatum : Datum
     {

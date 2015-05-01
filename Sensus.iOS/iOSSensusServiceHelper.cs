@@ -300,15 +300,7 @@ namespace Sensus.iOS
                 {
                     DependencyService.Get<IToastNotificator>().Notify(ToastNotificationType.Info, "", message + Environment.NewLine, TimeSpan.FromSeconds(2));
                 });
-        }
-
-        public override void OnSleep()
-        {
-            base.OnSleep();
-
-            // app is no longer active, so reset the activation ID
-            _activationId = null;
-        }
+        }            
 
         #region methods not implemented in ios
         public override void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)

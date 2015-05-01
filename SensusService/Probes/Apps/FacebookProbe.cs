@@ -19,7 +19,7 @@ using System.Reflection;
 using SensusUI.UiProperties;
 using System.Threading;
 
-namespace SensusService.Probes.Communication
+namespace SensusService.Probes.Apps
 {
     public abstract class FacebookProbe : PollingProbe
     {             

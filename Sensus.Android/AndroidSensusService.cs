@@ -17,6 +17,7 @@ using Android.Content;
 using Android.OS;
 using SensusService;
 using Xamarin.Geolocation;
+using System;
 
 namespace Sensus.Android
 {
@@ -34,6 +35,7 @@ namespace Sensus.Android
             _sensusServiceHelper.UpdateApplicationStatus("0 protocols are running");
         }
 
+        [Obsolete]
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
             _sensusServiceHelper.Logger.Log("Sensus service received start command (startId=" + startId + ").", LoggingLevel.Debug, GetType());

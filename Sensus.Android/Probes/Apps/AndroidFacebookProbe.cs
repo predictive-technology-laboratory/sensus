@@ -21,13 +21,13 @@ using Android.OS;
 using Android.Runtime;
 using Org.Json;
 using SensusService;
-using SensusService.Probes.Communication;
+using SensusService.Probes.Apps;
 using Xamarin.Facebook;
 using Xamarin.Facebook.Login;
 using Android.Provider;
 using Android.Content;
 
-namespace Sensus.Android.Probes.Communication
+namespace Sensus.Android.Probes.Apps
 {
     /// <summary>
     /// Probes Facebook information. To generate key hashes:
