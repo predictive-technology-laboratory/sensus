@@ -20,7 +20,7 @@ namespace SensusService.Probes.Apps
     public class FacebookPermission : Attribute
     {
         private string _name;
-        private string[] _edges;
+        private string _edge;
         private string[] _fields;
 
         public string Name
@@ -28,9 +28,9 @@ namespace SensusService.Probes.Apps
             get { return _name; }
         }
 
-        public string[] Edges
+        public string Edge
         {
-            get { return _edges; }
+            get { return _edge; }
         }
 
         public string[] Fields
@@ -38,31 +38,17 @@ namespace SensusService.Probes.Apps
             get { return _fields; }
         }            
 
-        public FacebookPermission(string name, string[] edges, string[] fields)
+        public FacebookPermission(string name, string edge, string[] fields)
             : base()
         {
             _name = name;
-            _edges = edges;
+            _edge = edge;
             _fields = fields;
         }
 
-        public FacebookPermission(string name, string edge, string[] fields)
-            : this(name, 
-                   edge == null ? new string[0] : new string[] { edge }, 
-                   fields ?? new string[0])
-        {
-        }
-
-        public FacebookPermission(string name, string[] edges, string field)
-            : this(name, 
-                   edges ?? new string[0], 
-                   field == null ? new string[0] : new string[] { field })
-        {
-        }
-
         public FacebookPermission(string name, string edge, string field)
-            : this(name,
-                   edge == null ? new string[0] : new string[] { edge },
+            : this(name, 
+                   edge,
                    field == null ? new string[0] : new string[] { field })
         {
         }

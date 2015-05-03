@@ -48,7 +48,7 @@ namespace SensusService.Anonymization
 
             // instantiate available anonymizers
             _availableAnonymizers = new List<Anonymizer>();
-            _availableAnonymizers.Add(new ValueOmittingAnonymizer());
+            _availableAnonymizers.Add(new ValueOmittingAnonymizer());  // omitting the value is always an option
             foreach (Type availableAnonymizerType in availableAnonymizerTypes)
             {
                 Anonymizer availableAnonymizer = Activator.CreateInstance(availableAnonymizerType) as Anonymizer;

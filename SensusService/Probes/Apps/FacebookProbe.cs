@@ -49,6 +49,11 @@ namespace SensusService.Probes.Apps
             }
         }   
 
+        /// <summary>
+        /// Gets the required Facebook permissions, as determined by the Facebook probe's configuration and
+        /// anonymization setup.
+        /// </summary>
+        /// <returns>The required Facebook permissions.</returns>
         public ICollection<FacebookPermission> GetRequiredFacebookPermissions()
         {
             List<FacebookPermission> requiredFacebookPermissions = new List<FacebookPermission>();
@@ -76,24 +81,23 @@ namespace SensusService.Probes.Apps
 
             ICollection<string> grantedPermissions = GetGrantedPermissions();
 
-            // get query for all enabled permissions that have been granted
-            foreach (FacebookPermission enabledPermission in GetRequiredFacebookPermissions())
-                if (grantedPermissions.Contains(enabledPermission.Name))
+            // get query for all required permissions that have been granted
+            foreach (FacebookPermission permission in GetRequiredFacebookPermissions())
+                if (grantedPermissions.Contains(permission.Name))
                 {
-                    if (enabledPermission.Edges.Length == 0)
-                        userFields.AddRange(enabledPermission.Fields);
+                    if (permission.Edge == null)
+                        userFields.AddRange(permission.Fields);
                     else
-                        foreach (string edge in enabledPermission.Edges)
+                    {
+                        List<string> fields;
+                        if (!edgeFields.TryGetValue(permission.Edge, out fields))
                         {
-                            List<string> fields;
-                            if (!edgeFields.TryGetValue(edge, out fields))
-                            {
-                                fields = new List<string>();
-                                edgeFields.Add(edge, fields);
-                            }
-
-                            fields.AddRange(enabledPermission.Fields);
+                            fields = new List<string>();
+                            edgeFields.Add(permission.Edge, fields);
                         }
+
+                        fields.AddRange(permission.Fields);
+                    }
                 }
 
             List<Tuple<string, List<string>>> edgeFieldQueries = new List<Tuple<string, List<string>>>();

@@ -200,10 +200,14 @@ namespace Sensus.Android.Probes.Apps
                 else
                     foreach (GraphResponse response in graphRequestBatch.ExecuteAndWait())
                         if (response.Error == null)
-                            data.Add(new FacebookDatum(DateTimeOffset.UtcNow)
-                                {
-                                    // TODO:  Set fields
-                                });
+                        {
+                            FacebookDatum datum = new FacebookDatum(DateTimeOffset.UtcNow);
+                            JSONObject responseJSON = response.JSONObject;
+
+                            // TODO:  Set fields
+
+                            data.Add(datum);
+                        }
                         else
                             SensusServiceHelper.Get().Logger.Log("Error received while querying Facebook graph API:  " + response.Error.ErrorMessage, LoggingLevel.Normal, GetType());
             }

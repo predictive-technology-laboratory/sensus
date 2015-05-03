@@ -16,101 +16,110 @@ using System;
 using SensusService.Anonymization;
 using SensusService.Anonymization.Anonymizers;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace SensusService.Probes.Apps
 {
     public class FacebookDatum : Datum
     {
-        // below are the various permissions and the fields/edges that they provide access to. the
-        // list is taken from https://developers.facebook.com/docs/facebook-login/permissions/v2.3#reference
+        public PropertyInfo GetProperty(string graphLabel)
+        {
+            return null;
+        }
+
+        // below are the various permissions, the fields/edges that they provide access to, and the anonymization
+        // options that sensus will provide. the list is taken from the following URL:
+        //
+        //   https://developers.facebook.com/docs/facebook-login/permissions/v2.3#reference
+
 
         // user object fields
         [Anonymizable("Age Range:", typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("public_profile", new string[0], "age_range")]
+        [FacebookPermission("public_profile", null, "age_range")]
         public string AgeRange { get; set; }
 
         [Anonymizable("First Name:", typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("public_profile", new string[0], "first_name")]
+        [FacebookPermission("public_profile", null, "first_name")]
         public string FirstName { get; set; }
 
         [Anonymizable(null, typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("public_profile", new string[0], "gender")]
+        [FacebookPermission("public_profile", null, "gender")]
         public string Gender { get; set; }
 
         [Anonymizable("User ID:", typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("public_profile", new string[0], "id")]
+        [FacebookPermission("public_profile", null, "id")]
         public new string Id { get; set; }
 
         [Anonymizable("Last Name:", typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("public_profile", new string[0], "last_name")]
+        [FacebookPermission("public_profile", null, "last_name")]
         public string LastName { get; set; }
 
         [Anonymizable("Link to Timeline:", typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("public_profile", new string[0], "link")]
+        [FacebookPermission("public_profile", null, "link")]
         public string TimelineLink { get; set; }
 
         [Anonymizable(null, typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("public_profile", new string[0], "locale")]
+        [FacebookPermission("public_profile", null, "locale")]
         public string Locale { get; set; }
 
         [Anonymizable("Full Name:", typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("public_profile", new string[0], "name")]
+        [FacebookPermission("public_profile", null, "name")]
         public string FullName { get; set; }
 
         [Anonymizable(null, typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("public_profile", new string[0], "timezone")]
+        [FacebookPermission("public_profile", null, "timezone")]
         public string Timezone { get; set; }
 
         [Anonymizable("Time of Last Update:", typeof(DateTimeOffsetTimelineAnonymizer), true)]
-        [FacebookPermission("public_profile", new string[0], "updated_time")]
+        [FacebookPermission("public_profile", null, "updated_time")]
         public DateTimeOffset UpdatedTime { get; set; }
 
         [Anonymizable("Whether User is Verified:", null, true)]
-        [FacebookPermission("public_profile", new string[0], "verified")]
+        [FacebookPermission("public_profile", null, "verified")]
         public bool Verified { get; set; }
 
         [Anonymizable("Email Address:", typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("email", new string[0], "email")]
+        [FacebookPermission("email", null, "email")]
         public string Email { get; set; }
 
         [Anonymizable("Biography:", typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("user_about_me", new string[0], "bio")]
+        [FacebookPermission("user_about_me", null, "bio")]
         public string Biography { get; set; }
 
         [Anonymizable(null, typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("user_education_history", new string[0], "education")]
+        [FacebookPermission("user_education_history", null, "education")]
         public List<string> Education { get; set; }
 
         [Anonymizable(null, typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("user_hometown", new string[0], "hometown")]
+        [FacebookPermission("user_hometown", null, "hometown")]
         public string Hometown { get; set; }
 
         [Anonymizable(null, typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("user_location", new string[0], "location")]
+        [FacebookPermission("user_location", null, "location")]
         public string Location { get; set; }
 
         [Anonymizable("Relationship Status:", typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("user_relationships", new string[0], "relationship_status")]
+        [FacebookPermission("user_relationships", null, "relationship_status")]
         public string RelationshipStatus { get; set; }
 
         [Anonymizable("Significant Other:", typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("user_relationships", new string[0], "significant_other")]
+        [FacebookPermission("user_relationships", null, "significant_other")]
         public string SignificantOther { get; set; }
 
         [Anonymizable(null, typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("user_religion_politics", new string[0], "religion")]
+        [FacebookPermission("user_religion_politics", null, "religion")]
         public string Religion { get; set; }
 
         [Anonymizable(null, typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("user_religion_politics", new string[0], "political")]
+        [FacebookPermission("user_religion_politics", null, "political")]
         public string Politics { get; set; }
 
         [Anonymizable(null, typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("user_website", new string[0], "website")]
+        [FacebookPermission("user_website", null, "website")]
         public string Website { get; set; }
 
         [Anonymizable("Employment History:", typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("user_work_history", new string[0], "work")]
+        [FacebookPermission("user_work_history", null, "work")]
         public List<string> Employment { get; set; }
 
         // user edges

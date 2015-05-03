@@ -31,7 +31,8 @@ namespace SensusService
         private static readonly JsonSerializerSettings _serializationSettings = new JsonSerializerSettings
         {
             TypeNameHandling = TypeNameHandling.All,
-            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
+            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+            NullValueHandling = NullValueHandling.Ignore
         };
 
         public static Datum FromJSON(string json)
