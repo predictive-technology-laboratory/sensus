@@ -22,16 +22,29 @@ namespace SensusService.Probes.Apps
 {
     public class FacebookDatum : Datum
     {
-        public PropertyInfo GetProperty(string graphLabel)
+        private static Dictionary<string, PropertyInfo> _jsonFieldDatumProperty;
+
+        static FacebookDatum()
         {
-            return null;
+            _jsonFieldDatumProperty = new Dictionary<string, PropertyInfo>();
+
+            foreach (PropertyInfo property in typeof(FacebookDatum).GetProperties())
+            {
+                FacebookPermission permission = property.GetCustomAttribute<FacebookPermission>();
+                if (permission != null)
+                    _jsonFieldDatumProperty.Add(permission.Edge ?? permission.Field, property);
+            }
+        }
+
+        public static bool TryGetProperty(string jsonField, out PropertyInfo property)
+        {
+            return _jsonFieldDatumProperty.TryGetValue(jsonField, out property);
         }
 
         // below are the various permissions, the fields/edges that they provide access to, and the anonymization
         // options that sensus will provide. the list is taken from the following URL:
         //
         //   https://developers.facebook.com/docs/facebook-login/permissions/v2.3#reference
-
 
         // user object fields
         [Anonymizable("Age Range:", typeof(StringMD5Anonymizer), true)]
@@ -48,7 +61,7 @@ namespace SensusService.Probes.Apps
 
         [Anonymizable("User ID:", typeof(StringMD5Anonymizer), true)]
         [FacebookPermission("public_profile", null, "id")]
-        public new string Id { get; set; }
+        public string UserId { get; set; }
 
         [Anonymizable("Last Name:", typeof(StringMD5Anonymizer), true)]
         [FacebookPermission("public_profile", null, "last_name")]
@@ -124,87 +137,87 @@ namespace SensusService.Probes.Apps
 
         // user edges
         [Anonymizable(null, typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("user_friends", "friends", new string[0])]
+        [FacebookPermission("user_friends", "friends", null)]
         public List<string> Friends { get; set; }
 
         [Anonymizable("Books Read:", typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("user_actions.books", "book.reads", new string[0])]
+        [FacebookPermission("user_actions.books", "book.reads", null)]
         public List<string> Books { get; set; }
 
         [Anonymizable(null, typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("user_actions.fitness", "fitness.runs", new string[0])]
+        [FacebookPermission("user_actions.fitness", "fitness.runs", null)]
         public List<string> Runs { get; set; }
 
         [Anonymizable(null, typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("user_actions.fitness", "fitness.walks", new string[0])]
+        [FacebookPermission("user_actions.fitness", "fitness.walks", null)]
         public List<string> Walks { get; set; }
 
         [Anonymizable("Bike Rides:", typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("user_actions.fitness", "fitness.bikes", new string[0])]
+        [FacebookPermission("user_actions.fitness", "fitness.bikes", null)]
         public List<string> Bikes { get; set; }
 
         [Anonymizable("Songs Listened To:", typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("user_actions.music", "music.listens", new string[0])]
+        [FacebookPermission("user_actions.music", "music.listens", null)]
         public List<string> Songs { get; set; }
 
         [Anonymizable(null, typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("user_actions.music", "music.playlists", new string[0])]
+        [FacebookPermission("user_actions.music", "music.playlists", null)]
         public List<string> Playlists { get; set; }
 
         [Anonymizable("News Read:", typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("user_actions.news", "news.reads", new string[0])]
+        [FacebookPermission("user_actions.news", "news.reads", null)]
         public List<string> NewsReads { get; set; }
 
         [Anonymizable("News Published:", typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("user_actions.news", "news.publishes", new string[0])]
+        [FacebookPermission("user_actions.news", "news.publishes", null)]
         public List<string> NewsPublishes { get; set; }
 
         [Anonymizable("Videos Watched:", typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("user_actions.video", "video.watches", new string[0])]
+        [FacebookPermission("user_actions.video", "video.watches", null)]
         public List<string> VideosWatched { get; set; }
 
         [Anonymizable("Video Ratings:", typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("user_actions.video", "video.rates", new string[0])]
+        [FacebookPermission("user_actions.video", "video.rates", null)]
         public List<string> VideoRatings { get; set; }
 
         [Anonymizable("Video Wish List:", typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("user_actions.video", "video.wants_to_watch", new string[0])]
+        [FacebookPermission("user_actions.video", "video.wants_to_watch", null)]
         public List<string> VideoWishList { get; set; }
 
         [Anonymizable(null, typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("user_events", "events", new string[0])]
+        [FacebookPermission("user_events", "events", null)]
         public List<string> Events { get; set; }
 
         [Anonymizable(null, typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("user_games_activity", "games", new string[0])]
+        [FacebookPermission("user_games_activity", "games", null)]
         public List<string> Games { get; set; }
 
         [Anonymizable(null, typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("user_groups", "groups", new string[0])]
+        [FacebookPermission("user_groups", "groups", null)]
         public List<string> Groups { get; set; }
 
         [Anonymizable(null, typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("user_likes", "likes", new string[0])]
+        [FacebookPermission("user_likes", "likes", null)]
         public List<string> Likes { get; set; }
 
         [Anonymizable("Captions of Posted Photos:", typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("user_photos", "photos", new string[0])]
+        [FacebookPermission("user_photos", "photos", null)]
         public List<string> PhotoCaptions { get; set; }
 
         [Anonymizable(null, typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("user_posts", "posts", new string[0])]
+        [FacebookPermission("user_posts", "posts", null)]
         public List<string> Posts { get; set; }
 
         [Anonymizable("Status Updates:", typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("user_status", "statuses", new string[0])]
+        [FacebookPermission("user_status", "statuses", null)]
         public List<string> StatusUpdates { get; set; }
 
         [Anonymizable("Tagged Places:", typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("user_tagged_places", "tagged_places", new string[0])]
+        [FacebookPermission("user_tagged_places", "tagged_places", null)]
         public List<string> TaggedPlaces { get; set; }
 
         [Anonymizable("Titles of Posted Videos:", typeof(StringMD5Anonymizer), true)]
-        [FacebookPermission("user_videos", "videos", new string[0])]
+        [FacebookPermission("user_videos", "videos", null)]
         public List<string> VideoTitles { get; set; }
 
         public override string DisplayDetail

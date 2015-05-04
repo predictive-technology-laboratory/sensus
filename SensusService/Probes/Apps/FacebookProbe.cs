@@ -86,7 +86,7 @@ namespace SensusService.Probes.Apps
                 if (grantedPermissions.Contains(permission.Name))
                 {
                     if (permission.Edge == null)
-                        userFields.AddRange(permission.Fields);
+                        userFields.Add(permission.Field);
                     else
                     {
                         List<string> fields;
@@ -96,7 +96,7 @@ namespace SensusService.Probes.Apps
                             edgeFields.Add(permission.Edge, fields);
                         }
 
-                        fields.AddRange(permission.Fields);
+                        fields.Add(permission.Field);
                     }
                 }
 
@@ -110,8 +110,7 @@ namespace SensusService.Probes.Apps
             {
                 List<string> fields = edgeFields[edge];
                 fields.RemoveAll(s => string.IsNullOrWhiteSpace(s));
-                if (fields.Count > 0)
-                    edgeFieldQueries.Add(new Tuple<string, List<string>>(edge, fields.Distinct().ToList()));
+                edgeFieldQueries.Add(new Tuple<string, List<string>>(edge, fields.Distinct().ToList()));
             }
 
             return edgeFieldQueries;

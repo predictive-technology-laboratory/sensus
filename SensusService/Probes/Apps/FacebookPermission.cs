@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using SensusService.Exceptions;
 
 namespace SensusService.Probes.Apps
 {
@@ -21,7 +22,7 @@ namespace SensusService.Probes.Apps
     {
         private string _name;
         private string _edge;
-        private string[] _fields;
+        private string _field;
 
         public string Name
         {
@@ -33,24 +34,20 @@ namespace SensusService.Probes.Apps
             get { return _edge; }
         }
 
-        public string[] Fields
+        public string Field
         {
-            get { return _fields; }
+            get { return _field; }
         }            
 
-        public FacebookPermission(string name, string edge, string[] fields)
+        public FacebookPermission(string name, string edge, string field)
             : base()
         {
             _name = name;
             _edge = edge;
-            _fields = fields;
-        }
+            _field = field;
 
-        public FacebookPermission(string name, string edge, string field)
-            : this(name, 
-                   edge,
-                   field == null ? new string[0] : new string[] { field })
-        {
+            if (_edge == null && _field == null)
+                throw new SensusException("Facebook permission edge and field are both null for permission \"" + _name + "\".");
         }
 
         public override string ToString()

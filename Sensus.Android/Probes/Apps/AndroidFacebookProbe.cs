@@ -26,6 +26,8 @@ using Xamarin.Facebook;
 using Xamarin.Facebook.Login;
 using Android.Provider;
 using Android.Content;
+using System.Reflection;
+using SensusService.Exceptions;
 
 namespace Sensus.Android.Probes.Apps
 {
@@ -202,11 +204,49 @@ namespace Sensus.Android.Probes.Apps
                         if (response.Error == null)
                         {
                             FacebookDatum datum = new FacebookDatum(DateTimeOffset.UtcNow);
+
                             JSONObject responseJSON = response.JSONObject;
+                            JSONArray jsonFields = responseJSON.Names();
+                            bool valuesSet = false;
+                            for (int i = 0; i < jsonFields.Length(); ++i)
+                            {
+                                string jsonField = jsonFields.GetString(i);
 
-                            // TODO:  Set fields
+                                PropertyInfo property;
+                                if (FacebookDatum.TryGetProperty(jsonField, out property))
+                                {
+                                    object value = null;
 
-                            data.Add(datum);
+                                    if (property.PropertyType == typeof(string))
+                                        value = responseJSON.GetString(jsonField);
+                                    else if (property.PropertyType == typeof(bool))
+                                        value = responseJSON.GetBoolean(jsonField);
+                                    else if (property.PropertyType == typeof(DateTimeOffset))
+                                        value = DateTimeOffset.Parse(responseJSON.GetString(jsonField));
+                                    else if (property.PropertyType == typeof(List<string>))
+                                    {
+                                        List<string> values = new List<string>();
+                                        JSONArray jsonValues = responseJSON.GetJSONArray(jsonField);
+                                        for (int j = 0; j < jsonValues.Length(); ++j)
+                                            values.Add(jsonValues.GetString(j));
+
+                                        value = values;
+                                    }
+                                    else
+                                        throw new SensusException("Unrecognized FacebookDatum property type:  " + property.PropertyType.ToString());
+
+                                    if (value != null)
+                                    {
+                                        property.SetValue(datum, value);
+                                        valuesSet = true;
+                                    }
+                                }
+                                else
+                                    SensusServiceHelper.Get().Logger.Log("Unrecognized JSON field in Facebook query response:  " + jsonField, LoggingLevel.Normal, GetType());
+                            }
+
+                            if (valuesSet)
+                                data.Add(datum);
                         }
                         else
                             SensusServiceHelper.Get().Logger.Log("Error received while querying Facebook graph API:  " + response.Error.ErrorMessage, LoggingLevel.Normal, GetType());
