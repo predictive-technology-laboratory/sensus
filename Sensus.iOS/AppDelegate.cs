@@ -25,6 +25,7 @@ using SensusService;
 using Xamarin.Geolocation;
 using Toasts.Forms.Plugin.iOS;
 using System.IO;
+using Facebook.CoreKit;
 
 namespace Sensus.iOS
 {
@@ -38,6 +39,9 @@ namespace Sensus.iOS
 
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
+            Settings.AppID = "873948892650954";
+            Settings.DisplayName = "Sensus";
+
             Forms.Init();
 
             ToastNotificatorImplementation.Init();
@@ -163,6 +167,11 @@ namespace Sensus.iOS
         {
             _sensusServiceHelper.Destroy();
         }
+
+        public override bool OpenUrl (UIApplication application, NSUrl url, string sourceApplication, NSObject annotation)
+        {
+            // We need to handle URLs by passing them to their own OpenUrl in order to make the Facebook SSO authentication works.
+            return ApplicationDelegate.SharedInstance.OpenUrl (application, url, sourceApplication, annotation);
+        }
     }
 }
-

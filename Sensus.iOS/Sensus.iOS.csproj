@@ -193,6 +193,7 @@
     <Compile Include="Probes\Movement\iOSAccelerometerProbe.cs" />
     <Compile Include="Probes\Network\iOSPollingWlanProbe.cs" />
     <Compile Include="ShareFileActivityItemSource.cs" />
+    <Compile Include="Probes\Apps\iOSFacebookProbe.cs" />
   </ItemGroup>
   <Import Project="..\SensusService\SensusService.projitems" Label="Shared" Condition="Exists('..\SensusService\SensusService.projitems')" />
   <Import Project="..\SensusUI\SensusUI.projitems" Label="Shared" Condition="Exists('..\SensusUI\SensusUI.projitems')" />
@@ -238,5 +239,6 @@
     <Folder Include="Probes\Location\" />
     <Folder Include="Probes\Movement\" />
     <Folder Include="Probes\Network\" />
+    <Folder Include="Probes\Apps\" />
   </ItemGroup>
 </Project>
