@@ -26,8 +26,6 @@ namespace Sensus.Android
 		
 		public static void UpdateIdValues()
 		{
-			global::Xamarin.InsightsCore.Resource.String.ApplicationName = global::Sensus.Android.Resource.String.ApplicationName;
-			global::Xamarin.InsightsCore.Resource.String.Hello = global::Sensus.Android.Resource.String.Hello;
 			global::DataNuage.Aws.Resource.String.ApplicationName = global::Sensus.Android.Resource.String.ApplicationName;
 			global::DataNuage.Aws.Resource.String.Hello = global::Sensus.Android.Resource.String.Hello;
 			global::Xamarin.Forms.Platform.Resource.String.ApplicationName = global::Sensus.Android.Resource.String.ApplicationName;
@@ -38,40 +36,40 @@ namespace Sensus.Android
 		{
 			
 			// aapt resource value: 0x7f010004
-			public const int auxiliary_view_position = 2130771972;
+			public const int com_facebook_auxiliary_view_position = 2130771972;
 			
 			// aapt resource value: 0x7f010006
-			public const int confirm_logout = 2130771974;
+			public const int com_facebook_confirm_logout = 2130771974;
 			
 			// aapt resource value: 0x7f010000
-			public const int foreground_color = 2130771968;
+			public const int com_facebook_foreground_color = 2130771968;
 			
 			// aapt resource value: 0x7f010005
-			public const int horizontal_alignment = 2130771973;
+			public const int com_facebook_horizontal_alignment = 2130771973;
 			
 			// aapt resource value: 0x7f01000b
-			public const int is_cropped = 2130771979;
+			public const int com_facebook_is_cropped = 2130771979;
 			
 			// aapt resource value: 0x7f010007
-			public const int login_text = 2130771975;
+			public const int com_facebook_login_text = 2130771975;
 			
 			// aapt resource value: 0x7f010008
-			public const int logout_text = 2130771976;
+			public const int com_facebook_logout_text = 2130771976;
 			
 			// aapt resource value: 0x7f010001
-			public const int object_id = 2130771969;
+			public const int com_facebook_object_id = 2130771969;
 			
 			// aapt resource value: 0x7f010002
-			public const int object_type = 2130771970;
+			public const int com_facebook_object_type = 2130771970;
 			
 			// aapt resource value: 0x7f01000a
-			public const int preset_size = 2130771978;
+			public const int com_facebook_preset_size = 2130771978;
 			
 			// aapt resource value: 0x7f010003
-			public const int style = 2130771971;
+			public const int com_facebook_style = 2130771971;
 			
 			// aapt resource value: 0x7f010009
-			public const int tooltip_mode = 2130771977;
+			public const int com_facebook_tooltip_mode = 2130771977;
 			
 			static Attribute()
 			{
@@ -448,11 +446,11 @@ namespace Sensus.Android
 		public partial class String
 		{
 			
-			// aapt resource value: 0x7f050003
-			public const int ApplicationName = 2131034115;
+			// aapt resource value: 0x7f050014
+			public const int ApplicationName = 2131034132;
 			
-			// aapt resource value: 0x7f050002
-			public const int Hello = 2131034114;
+			// aapt resource value: 0x7f050013
+			public const int Hello = 2131034131;
 			
 			// aapt resource value: 0x7f050000
 			public const int app_id = 2131034112;
@@ -460,56 +458,56 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f050001
 			public const int app_name = 2131034113;
 			
+			// aapt resource value: 0x7f050002
+			public const int com_facebook_image_download_unknown_error = 2131034114;
+			
+			// aapt resource value: 0x7f050003
+			public const int com_facebook_internet_permission_error_message = 2131034115;
+			
 			// aapt resource value: 0x7f050004
-			public const int com_facebook_image_download_unknown_error = 2131034116;
+			public const int com_facebook_internet_permission_error_title = 2131034116;
 			
 			// aapt resource value: 0x7f050005
-			public const int com_facebook_internet_permission_error_message = 2131034117;
+			public const int com_facebook_like_button_liked = 2131034117;
 			
 			// aapt resource value: 0x7f050006
-			public const int com_facebook_internet_permission_error_title = 2131034118;
+			public const int com_facebook_like_button_not_liked = 2131034118;
 			
 			// aapt resource value: 0x7f050007
-			public const int com_facebook_like_button_liked = 2131034119;
+			public const int com_facebook_loading = 2131034119;
 			
 			// aapt resource value: 0x7f050008
-			public const int com_facebook_like_button_not_liked = 2131034120;
+			public const int com_facebook_loginview_cancel_action = 2131034120;
 			
 			// aapt resource value: 0x7f050009
-			public const int com_facebook_loading = 2131034121;
+			public const int com_facebook_loginview_log_in_button = 2131034121;
 			
 			// aapt resource value: 0x7f05000a
-			public const int com_facebook_loginview_cancel_action = 2131034122;
+			public const int com_facebook_loginview_log_in_button_long = 2131034122;
 			
 			// aapt resource value: 0x7f05000b
-			public const int com_facebook_loginview_log_in_button = 2131034123;
+			public const int com_facebook_loginview_log_out_action = 2131034123;
 			
 			// aapt resource value: 0x7f05000c
-			public const int com_facebook_loginview_log_in_button_long = 2131034124;
+			public const int com_facebook_loginview_log_out_button = 2131034124;
 			
 			// aapt resource value: 0x7f05000d
-			public const int com_facebook_loginview_log_out_action = 2131034125;
+			public const int com_facebook_loginview_logged_in_as = 2131034125;
 			
 			// aapt resource value: 0x7f05000e
-			public const int com_facebook_loginview_log_out_button = 2131034126;
+			public const int com_facebook_loginview_logged_in_using_facebook = 2131034126;
 			
 			// aapt resource value: 0x7f05000f
-			public const int com_facebook_loginview_logged_in_as = 2131034127;
+			public const int com_facebook_send_button_text = 2131034127;
 			
 			// aapt resource value: 0x7f050010
-			public const int com_facebook_loginview_logged_in_using_facebook = 2131034128;
+			public const int com_facebook_share_button_text = 2131034128;
 			
 			// aapt resource value: 0x7f050011
-			public const int com_facebook_send_button_text = 2131034129;
+			public const int com_facebook_tooltip_default = 2131034129;
 			
 			// aapt resource value: 0x7f050012
-			public const int com_facebook_share_button_text = 2131034130;
-			
-			// aapt resource value: 0x7f050013
-			public const int com_facebook_tooltip_default = 2131034131;
-			
-			// aapt resource value: 0x7f050014
-			public const int messenger_send_button_text = 2131034132;
+			public const int messenger_send_button_text = 2131034130;
 			
 			static String()
 			{
@@ -626,22 +624,22 @@ namespace Sensus.Android
 					2130771973};
 			
 			// aapt resource value: 4
-			public const int com_facebook_like_view_auxiliary_view_position = 4;
+			public const int com_facebook_like_view_com_facebook_auxiliary_view_position = 4;
 			
 			// aapt resource value: 0
-			public const int com_facebook_like_view_foreground_color = 0;
+			public const int com_facebook_like_view_com_facebook_foreground_color = 0;
 			
 			// aapt resource value: 5
-			public const int com_facebook_like_view_horizontal_alignment = 5;
+			public const int com_facebook_like_view_com_facebook_horizontal_alignment = 5;
 			
 			// aapt resource value: 1
-			public const int com_facebook_like_view_object_id = 1;
+			public const int com_facebook_like_view_com_facebook_object_id = 1;
 			
 			// aapt resource value: 2
-			public const int com_facebook_like_view_object_type = 2;
+			public const int com_facebook_like_view_com_facebook_object_type = 2;
 			
 			// aapt resource value: 3
-			public const int com_facebook_like_view_style = 3;
+			public const int com_facebook_like_view_com_facebook_style = 3;
 			
 			public static int[] com_facebook_login_view = new int[]
 			{
@@ -651,16 +649,16 @@ namespace Sensus.Android
 					2130771977};
 			
 			// aapt resource value: 0
-			public const int com_facebook_login_view_confirm_logout = 0;
+			public const int com_facebook_login_view_com_facebook_confirm_logout = 0;
 			
 			// aapt resource value: 1
-			public const int com_facebook_login_view_login_text = 1;
+			public const int com_facebook_login_view_com_facebook_login_text = 1;
 			
 			// aapt resource value: 2
-			public const int com_facebook_login_view_logout_text = 2;
+			public const int com_facebook_login_view_com_facebook_logout_text = 2;
 			
 			// aapt resource value: 3
-			public const int com_facebook_login_view_tooltip_mode = 3;
+			public const int com_facebook_login_view_com_facebook_tooltip_mode = 3;
 			
 			public static int[] com_facebook_profile_picture_view = new int[]
 			{
@@ -668,10 +666,10 @@ namespace Sensus.Android
 					2130771979};
 			
 			// aapt resource value: 1
-			public const int com_facebook_profile_picture_view_is_cropped = 1;
+			public const int com_facebook_profile_picture_view_com_facebook_is_cropped = 1;
 			
 			// aapt resource value: 0
-			public const int com_facebook_profile_picture_view_preset_size = 0;
+			public const int com_facebook_profile_picture_view_com_facebook_preset_size = 0;
 			
 			static Styleable()
 			{

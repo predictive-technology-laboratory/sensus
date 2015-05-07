@@ -242,7 +242,7 @@ namespace Sensus.Android.Probes.Apps
                                     }
                                 }
                                 else
-                                    SensusServiceHelper.Get().Logger.Log("Unrecognized JSON field in Facebook query response:  " + jsonField, LoggingLevel.Normal, GetType());
+                                    SensusServiceHelper.Get().Logger.Log("Unrecognized JSON field in Facebook query response:  " + jsonField, LoggingLevel.Verbose, GetType());
                             }
 
                             if (valuesSet)

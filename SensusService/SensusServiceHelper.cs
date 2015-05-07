@@ -90,7 +90,7 @@ namespace SensusService
 
                     Exception ex = new Exception(error);
 
-                    try { Insights.Report(ex, ReportSeverity.Error); }
+                    try { Insights.Report(ex, Xamarin.Insights.Severity.Error); }
                     catch (Exception ex2) { Console.Error.WriteLine("Failed to report exception to Xamarin Insights:  " + ex2.Message); }
 
                     throw ex;
