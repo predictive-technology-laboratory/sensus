@@ -39,6 +39,7 @@ namespace Sensus.iOS
 
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
+            // facebook settings
             Settings.AppID = "873948892650954";
             Settings.DisplayName = "Sensus";
 
@@ -77,7 +78,8 @@ namespace Sensus.iOS
         {
             Protocol.DisplayFromBytesAsync(File.ReadAllBytes(url.Path));
 
-            return true;
+            // We need to handle URLs by passing them to their own OpenUrl in order to make the Facebook SSO authentication works.
+            return ApplicationDelegate.SharedInstance.OpenUrl(application, url, sourceApplication, annotation);
         }
 
         public override void OnActivated(UIApplication uiApplication)
@@ -166,12 +168,6 @@ namespace Sensus.iOS
         public override void WillTerminate(UIApplication application)
         {
             _sensusServiceHelper.Destroy();
-        }
-
-        public override bool OpenUrl (UIApplication application, NSUrl url, string sourceApplication, NSObject annotation)
-        {
-            // We need to handle URLs by passing them to their own OpenUrl in order to make the Facebook SSO authentication works.
-            return ApplicationDelegate.SharedInstance.OpenUrl (application, url, sourceApplication, annotation);
-        }
+        }            
     }
 }

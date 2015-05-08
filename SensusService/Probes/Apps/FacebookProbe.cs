@@ -47,7 +47,7 @@ namespace SensusService.Probes.Apps
             {
                 return 60000;
             }
-        }   
+        }  
 
         /// <summary>
         /// Gets the required Facebook permissions, as determined by the Facebook probe's configuration and
@@ -69,7 +69,7 @@ namespace SensusService.Probes.Apps
             return requiredFacebookPermissions;
         }
 
-        public ICollection<string> GetRequiredPermissionNames()
+        public string[] GetRequiredPermissionNames()
         {
             return GetRequiredFacebookPermissions().Select(permission => permission.Name).Distinct().ToArray();
         }   
