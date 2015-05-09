@@ -70,7 +70,6 @@ namespace Sensus.iOS
                     try
                     {
                         LoginManager loginManager = new LoginManager();
-                        loginManager.LoginBehavior = LoginBehavior.Browser;
                         loginManager.LogInWithReadPermissions(GetRequiredPermissionNames(), loginResultHandler);
                         loginWait.Set();
                     }
