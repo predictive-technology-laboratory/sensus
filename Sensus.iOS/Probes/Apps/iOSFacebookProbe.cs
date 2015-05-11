@@ -41,6 +41,8 @@ namespace Sensus.iOS
                 return;
             }
 
+            ManualResetEvent loginWait = new ManualResetEvent(false);
+
             LoginManagerRequestTokenHandler loginResultHandler = new LoginManagerRequestTokenHandler((loginResult, error) =>
                 {
                     if (error == null && loginResult.Token != null)
@@ -61,23 +63,18 @@ namespace Sensus.iOS
                             AccessToken.CurrentAccessToken = null;
                         }
                     }
+
+                    loginWait.Set();
                 });
 
-            ManualResetEvent loginWait = new ManualResetEvent(false);
-
-            Device.BeginInvokeOnMainThread(() =>
-                {
-                    try
-                    {
-                        LoginManager loginManager = new LoginManager();
-                        loginManager.LogInWithReadPermissions(GetRequiredPermissionNames(), loginResultHandler);
-                        loginWait.Set();
-                    }
-                    catch (Exception ex)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Error while initializing Facebook SDK and/or logging in:  " + ex.Message, LoggingLevel.Normal, GetType());
-                    }
-                });
+            try
+            {
+                new LoginManager().LogInWithReadPermissions(GetRequiredPermissionNames(), loginResultHandler);
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Error while initializing Facebook SDK and/or logging in:  " + ex.Message, LoggingLevel.Normal, GetType());
+            }
 
             loginWait.WaitOne();
 

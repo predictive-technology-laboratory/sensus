@@ -233,7 +233,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Probes\" />
-    <Folder Include="Probes\Communication\" />
     <Folder Include="Probes\Context\" />
     <Folder Include="Probes\Device\" />
     <Folder Include="Probes\Location\" />
