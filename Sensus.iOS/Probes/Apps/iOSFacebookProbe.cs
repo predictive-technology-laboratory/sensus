@@ -41,8 +41,6 @@ namespace Sensus.iOS
                 return;
             }
 
-            ManualResetEvent loginWait = new ManualResetEvent(false);
-
             LoginManagerRequestTokenHandler loginResultHandler = new LoginManagerRequestTokenHandler((loginResult, error) =>
                 {
                     if (error == null && loginResult.Token != null)
@@ -63,8 +61,6 @@ namespace Sensus.iOS
                             AccessToken.CurrentAccessToken = null;
                         }
                     }
-
-                    loginWait.Set();
                 });
 
             try
@@ -74,15 +70,6 @@ namespace Sensus.iOS
             catch (Exception ex)
             {
                 SensusServiceHelper.Get().Logger.Log("Error while initializing Facebook SDK and/or logging in:  " + ex.Message, LoggingLevel.Normal, GetType());
-            }
-
-            loginWait.WaitOne();
-
-            if (!HasValidAccessToken)
-            {
-                string message = "Failed to obtain access token.";
-                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
-                throw new Exception(message);
             }
         }
 
