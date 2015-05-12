@@ -16,6 +16,7 @@ using Android.Speech.Tts;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Android.OS;
 
 namespace Sensus.Android
 {
@@ -55,16 +56,24 @@ namespace Sensus.Android
                             return;
 
                         _initWait.WaitOne();
-
-                        _utteranceIdToWaitFor = Guid.NewGuid().ToString();
-                        Dictionary<string, string> speakParams = new Dictionary<string, string>();
-                        speakParams.Add(TextToSpeech.Engine.KeyParamUtteranceId, _utteranceIdToWaitFor);
-
                         _utteranceWait.Reset();
-                        _textToSpeech.Speak(text, QueueMode.Add, speakParams);
+                        _utteranceIdToWaitFor = Guid.NewGuid().ToString();
+
+                        // TODO:  Test on Android 21 (or greater) device to make sure the following works
+                        #if __ANDROID_21__
+                        if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+                            _textToSpeech.Speak(text, QueueMode.Add, null, _utteranceIdToWaitFor);
+                        else
+                        #endif
+                        {
+                            Dictionary<string, string> speakParams = new Dictionary<string, string>();
+                            speakParams.Add(TextToSpeech.Engine.KeyParamUtteranceId, _utteranceIdToWaitFor);
+                            _textToSpeech.Speak(text, QueueMode.Add, speakParams);
+                        }
+
                         _utteranceWait.WaitOne();
 
-                        if(callback != null)
+                        if (callback != null)
                             callback();
                     }
                 }).Start();

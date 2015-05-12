@@ -80,5 +80,9 @@
 	<string>1</string>
 	<key>XSAppIconAssets</key>
 	<string>Resources/Images.xcassets/AppIcons.appiconset</string>
+	<key>FacebookAppID</key>
+	<string>873948892650954</string>
+	<key>FacebookDisplayName</key>
+	<string>Sensus</string>
 </dict>
 </plist>

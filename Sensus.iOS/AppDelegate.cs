@@ -165,7 +165,7 @@ namespace Sensus.iOS
                 // app is no longer active, so reset the activation ID
                 serviceHelper.ActivationId = null;
             }
-        }
+        }            
 		
         // This method is called as part of the transiton from background to active state.
         public override void WillEnterForeground(UIApplication application)
