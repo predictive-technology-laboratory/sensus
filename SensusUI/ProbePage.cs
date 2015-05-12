@@ -23,6 +23,7 @@ using System.Linq;
 using SensusService;
 using SensusService.Anonymization;
 using SensusService.Anonymization.Anonymizers;
+using SensusService.Probes.Location;
 
 namespace SensusUI
 {
@@ -58,7 +59,7 @@ namespace SensusUI
 
                 contentLayout.Children.Add(editScriptButton);
 
-                editScriptButton.Clicked += async (oo, e) =>
+                editScriptButton.Clicked += async (o, e) =>
                 {
                     await Navigation.PushAsync(new ScriptPage(scriptProbe.Script));
                 };
@@ -76,6 +77,25 @@ namespace SensusUI
                 {
                     await Navigation.PushAsync(new ScriptTriggersPage(scriptProbe));
                 };
+            }
+            #endregion
+
+            #region proximity probe
+            if (probe is IPointsOfInterestProximityProbe)
+            {
+                Button editTriggersButton = new Button
+                    {
+                        Text = "Edit Triggers",
+                        FontSize = 20,
+                        HorizontalOptions = LayoutOptions.FillAndExpand
+                    };
+
+                contentLayout.Children.Add(editTriggersButton);
+
+                editTriggersButton.Clicked += async (o, e) =>
+                    {
+                        await Navigation.PushAsync(new ProximityTriggersPage(probe as IPointsOfInterestProximityProbe));
+                    };
             }
             #endregion
 

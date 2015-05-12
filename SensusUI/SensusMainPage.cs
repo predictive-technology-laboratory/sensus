@@ -36,31 +36,44 @@ namespace SensusUI
                 VerticalOptions = LayoutOptions.FillAndExpand
             };
 
-            Button viewProtocolsButton = new Button
+            Button protocolsButton = new Button
             {
-                Text = "View Protocols",
+                Text = "Protocols",
                 FontSize = 20
             };
 
-            viewProtocolsButton.Clicked += async (o, e) =>
+            protocolsButton.Clicked += async (o, e) =>
                 {
                     await Navigation.PushAsync(new ProtocolsPage());
                 };
 
-            contentLayout.Children.Add(viewProtocolsButton);
+            contentLayout.Children.Add(protocolsButton);
 
-            Button viewLogButton = new Button
+            Button pointsOfInterestButton = new Button
+                {
+                    Text = "Points Of Interest",
+                    FontSize = 20
+                };
+
+            pointsOfInterestButton.Clicked += async (o, e) =>
+                {
+                    await Navigation.PushAsync(new PointsOfInterestPage());
+                };
+
+            contentLayout.Children.Add(pointsOfInterestButton);
+
+            Button logButton = new Button
             {
-                Text = "View Log",
+                Text = "Log",
                 FontSize = 20
             };
 
-            viewLogButton.Clicked += async (o, e) =>
+            logButton.Clicked += async (o, e) =>
                 {
                     await Navigation.PushAsync(new ViewTextLinesPage("Log", UiBoundSensusServiceHelper.Get(true).Logger.Read(int.MaxValue), () => UiBoundSensusServiceHelper.Get(true).Logger.Clear()));
                 };
 
-            contentLayout.Children.Add(viewLogButton);
+            contentLayout.Children.Add(logButton);
 
             Button stopSensusButton = new Button
             {

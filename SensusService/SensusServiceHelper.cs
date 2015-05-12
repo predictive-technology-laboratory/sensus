@@ -175,6 +175,7 @@ namespace SensusService
         private int _healthTestsPerProtocolReport;
         private Dictionary<string, Tuple<Action<CancellationToken>, CancellationTokenSource, string>> _idCallbackCancellerMessage;
         private MD5 _md5Hash;
+        private List<PointOfInterest> _pointsOfInterest;
 
         private readonly object _locker = new object();
 
@@ -241,7 +242,12 @@ namespace SensusService
                     SaveAsync();
                 }
             }
-        } 
+        }
+
+        public List<PointOfInterest> PointsOfInterest
+        {
+            get { return _pointsOfInterest; }
+        }
 
         #region platform-specific properties
         [JsonIgnore]
@@ -274,6 +280,7 @@ namespace SensusService
             _healthTestsPerProtocolReport = 5;
             _idCallbackCancellerMessage = new Dictionary<string, Tuple<Action<CancellationToken>, CancellationTokenSource, string>>();
             _md5Hash = MD5.Create();
+            _pointsOfInterest = new List<PointOfInterest>();
 
             if (!Directory.Exists(_shareDirectory))
                 Directory.CreateDirectory(_shareDirectory); 
