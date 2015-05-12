@@ -25,6 +25,7 @@ using SensusService;
 using Xamarin.Geolocation;
 using Toasts.Forms.Plugin.iOS;
 using System.IO;
+using Facebook.CoreKit;
 
 namespace Sensus.iOS
 {
@@ -38,6 +39,10 @@ namespace Sensus.iOS
 
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
+            // facebook settings
+            Settings.AppID = "873948892650954";
+            Settings.DisplayName = "Sensus";
+
             Forms.Init();
 
             ToastNotificatorImplementation.Init();
@@ -71,9 +76,18 @@ namespace Sensus.iOS
 
         public override bool OpenUrl(UIApplication application, NSUrl url, string sourceApplication, NSObject annotation)
         {
-            Protocol.DisplayFromBytesAsync(File.ReadAllBytes(url.Path));
+            if (url.AbsoluteString.EndsWith(".sensus"))
+                try
+                {
+                    Protocol.DisplayFromBytesAsync(File.ReadAllBytes(url.Path));
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Failed to display Sensus Protocol from URL \"" + url.AbsoluteString + "\":  " + ex.Message, LoggingLevel.Verbose, GetType());
+                }
 
-            return true;
+            // We need to handle URLs by passing them to their own OpenUrl in order to make the Facebook SSO authentication works.
+            return ApplicationDelegate.SharedInstance.OpenUrl(application, url, sourceApplication, annotation);
         }
 
         public override void OnActivated(UIApplication uiApplication)
@@ -151,7 +165,7 @@ namespace Sensus.iOS
                 // app is no longer active, so reset the activation ID
                 serviceHelper.ActivationId = null;
             }
-        }
+        }            
 		
         // This method is called as part of the transiton from background to active state.
         public override void WillEnterForeground(UIApplication application)
@@ -162,7 +176,6 @@ namespace Sensus.iOS
         public override void WillTerminate(UIApplication application)
         {
             _sensusServiceHelper.Destroy();
-        }
+        }            
     }
 }
-

@@ -29,10 +29,19 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string></string>
+	<string>Sensus would like to use your location information, even when the device is asleep.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>
+	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb873948892650954</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleDocumentTypes</key>
 	<array>
@@ -71,5 +80,9 @@
 	<string>1</string>
 	<key>XSAppIconAssets</key>
 	<string>Resources/Images.xcassets/AppIcons.appiconset</string>
+	<key>FacebookAppID</key>
+	<string>873948892650954</string>
+	<key>FacebookDisplayName</key>
+	<string>Sensus</string>
 </dict>
 </plist>

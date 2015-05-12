@@ -144,14 +144,14 @@
     <Reference Include="Xamarin.Forms.Platform">
       <HintPath>..\packages\Xamarin.Forms.1.4.2.6359\lib\Xamarin.iOS10\Xamarin.Forms.Platform.dll</HintPath>
     </Reference>
-    <Reference Include="Xamarin.Insights">
-      <HintPath>..\packages\Xamarin.Insights.1.10.0.108\lib\Xamarin.iOS10\Xamarin.Insights.dll</HintPath>
-    </Reference>
-    <Reference Include="PLCrashReporterUnifiedBinding">
-      <HintPath>..\packages\Xamarin.Insights.1.10.0.108\lib\Xamarin.iOS10\PLCrashReporterUnifiedBinding.dll</HintPath>
-    </Reference>
     <Reference Include="Facebook">
       <HintPath>..\packages\Xamarin.Facebook.4.1.0.0\lib\Xamarin.iOS10\Facebook.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Insights">
+      <HintPath>..\packages\Xamarin.Insights.1.10.1.109\lib\Xamarin.iOS10\Xamarin.Insights.dll</HintPath>
+    </Reference>
+    <Reference Include="PLCrashReporterUnifiedBinding">
+      <HintPath>..\packages\Xamarin.Insights.1.10.1.109\lib\Xamarin.iOS10\PLCrashReporterUnifiedBinding.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -193,6 +193,7 @@
     <Compile Include="Probes\Movement\iOSAccelerometerProbe.cs" />
     <Compile Include="Probes\Network\iOSPollingWlanProbe.cs" />
     <Compile Include="ShareFileActivityItemSource.cs" />
+    <Compile Include="Probes\Apps\iOSFacebookProbe.cs" />
   </ItemGroup>
   <Import Project="..\SensusService\SensusService.projitems" Label="Shared" Condition="Exists('..\SensusService\SensusService.projitems')" />
   <Import Project="..\SensusUI\SensusUI.projitems" Label="Shared" Condition="Exists('..\SensusUI\SensusUI.projitems')" />
@@ -232,11 +233,11 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Probes\" />
-    <Folder Include="Probes\Communication\" />
     <Folder Include="Probes\Context\" />
     <Folder Include="Probes\Device\" />
     <Folder Include="Probes\Location\" />
     <Folder Include="Probes\Movement\" />
     <Folder Include="Probes\Network\" />
+    <Folder Include="Probes\Apps\" />
   </ItemGroup>
 </Project>
