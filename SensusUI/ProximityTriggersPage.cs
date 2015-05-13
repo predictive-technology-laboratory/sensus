@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,38 +12,40 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using SensusService.Probes.User;
-using System.Linq;
+using System;
 using Xamarin.Forms;
+using SensusService.Probes.Location;
+using System.Linq;
 
 namespace SensusUI
 {
-    public class ScriptTriggersPage : ContentPage
+    public class ProximityTriggersPage : ContentPage
     {
-        public ScriptTriggersPage(ScriptProbe scriptProbe)
+        public ProximityTriggersPage(IPointsOfInterestProximityProbe proximityProbe)
         {
-            Title = "Script Triggers";
+            Title = "Proximity Triggers";
 
             ListView triggerList = new ListView();
             triggerList.ItemTemplate = new DataTemplate(typeof(TextCell));
             triggerList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", stringFormat: "{0}"));
-            triggerList.ItemsSource = scriptProbe.Triggers;
+            triggerList.ItemsSource = proximityProbe.Triggers;
 
             Content = triggerList;
 
             ToolbarItems.Add(new ToolbarItem(null, "plus.png", async () =>
-                {
-                    if (scriptProbe.Protocol.Probes.Where(p => p != scriptProbe && p.Enabled).Count() > 0)
-                        await Navigation.PushAsync(new AddScriptProbeTriggerPage(scriptProbe));
-                    else
-                        UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("You must enable probes before adding triggers.");
-                }));
+                    {
+                        if (UiBoundSensusServiceHelper.Get(true).PointsOfInterest.Union(proximityProbe.Protocol.PointsOfInterest).Count() > 0)
+                            await Navigation.PushAsync(new AddProximityTriggerPage(proximityProbe));
+                        else
+                            UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("You must define points of interest before adding triggers.");
+                    }));
 
             ToolbarItems.Add(new ToolbarItem(null, "minus.png", async () =>
                 {
                     if (triggerList.SelectedItem != null && await DisplayAlert("Confirm Delete", "Are you sure you want to delete the selected trigger?", "Yes", "Cancel"))
                     {
-                        scriptProbe.Triggers.Remove(triggerList.SelectedItem as SensusService.Probes.User.Trigger);
+                        proximityProbe.Triggers.Remove(triggerList.SelectedItem as PointOfInterestProximityTrigger);
+                        UiBoundSensusServiceHelper.Get(true).SaveAsync();
                         triggerList.SelectedItem = null;
                     }
                 }));

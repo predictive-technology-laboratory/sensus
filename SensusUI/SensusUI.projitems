@@ -33,6 +33,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)ShareLocalDataStorePage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\EntryIntegerUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\EntryFloatUiProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PointsOfInterestPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ProximityTriggersPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AddProximityTriggerPage.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Icons\" />

@@ -23,6 +23,7 @@ using System.Linq;
 using SensusService;
 using SensusService.Anonymization;
 using SensusService.Anonymization.Anonymizers;
+using SensusService.Probes.Location;
 
 namespace SensusUI
 {
@@ -58,7 +59,7 @@ namespace SensusUI
 
                 contentLayout.Children.Add(editScriptButton);
 
-                editScriptButton.Clicked += async (oo, e) =>
+                editScriptButton.Clicked += async (o, e) =>
                 {
                     await Navigation.PushAsync(new ScriptPage(scriptProbe.Script));
                 };
@@ -79,6 +80,25 @@ namespace SensusUI
             }
             #endregion
 
+            #region proximity probe
+            if (probe is IPointsOfInterestProximityProbe)
+            {
+                Button editTriggersButton = new Button
+                    {
+                        Text = "Edit Triggers",
+                        FontSize = 20,
+                        HorizontalOptions = LayoutOptions.FillAndExpand
+                    };
+
+                contentLayout.Children.Add(editTriggersButton);
+
+                editTriggersButton.Clicked += async (o, e) =>
+                    {
+                        await Navigation.PushAsync(new ProximityTriggersPage(probe as IPointsOfInterestProximityProbe));
+                    };
+            }
+            #endregion
+
             #region anonymization
             List<PropertyInfo> anonymizableProperties = probe.DatumType.GetProperties().Where(property => property.GetCustomAttribute<Anonymizable>() != null).ToList();
 
@@ -92,7 +112,9 @@ namespace SensusUI
                         TextColor = Color.Accent,
                         HorizontalOptions = LayoutOptions.Center 
                     });
-                
+
+                List<StackLayout> anonymizablePropertyStacks = new List<StackLayout>();
+
                 foreach (PropertyInfo anonymizableProperty in anonymizableProperties)
                 {
                     Anonymizable anonymizableAttribute = anonymizableProperty.GetCustomAttribute<Anonymizable>(true);
@@ -122,7 +144,7 @@ namespace SensusUI
 
                             probe.Protocol.JsonAnonymizer.SetAnonymizer(anonymizableProperty, selectedAnonymizer);
                         };
-
+                    
                     // set the picker's index to the current anonymizer (or "Do Not Anonymize" if there is no current)
                     Anonymizer currentAnonymizer = probe.Protocol.JsonAnonymizer.GetAnonymizer(anonymizableProperty);
                     int currentIndex = 0;
@@ -138,8 +160,11 @@ namespace SensusUI
                         Children = { propertyLabel, anonymizerPicker }
                     };
 
-                    contentLayout.Children.Add(anonymizablePropertyStack);
+                    anonymizablePropertyStacks.Add(anonymizablePropertyStack);
                 }
+
+                foreach(StackLayout anonymizablePropertyStack in anonymizablePropertyStacks.OrderBy(s => (s.Children[0] as Label).Text))
+                    contentLayout.Children.Add(anonymizablePropertyStack);
             }
             #endregion
 

@@ -131,6 +131,23 @@ namespace SensusUI
             views.Add(remoteDataStoreStack);
             #endregion
 
+            #region points of interest
+            Button pointsOfInterestButton = new Button
+                {
+                    Text = "Points of Interest",
+                    FontSize = 20
+                };
+
+            pointsOfInterestButton.Clicked += async (o, e) =>
+                {
+                    await Navigation.PushAsync(new PointsOfInterestPage(
+                        _protocol.PointsOfInterest,
+                        () => UiBoundSensusServiceHelper.Get(true).SaveAsync()));
+                };
+
+            views.Add(pointsOfInterestButton);
+            #endregion
+
             #region view probes
             Button viewProbesButton = new Button
             {

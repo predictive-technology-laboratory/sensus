@@ -14,46 +14,61 @@
 
 using System;
 using Xamarin.Geolocation;
-using SensusService.Probes.Location;
+using System.Linq;
+using System.Collections.ObjectModel;
 
-namespace SensusService.Probes.Movement
+namespace SensusService.Probes.Location
 {
-    public class ListeningSpeedProbe : ListeningProbe
-    {        
+    public class ListeningPointsOfInterestProximityProbe : ListeningProbe, IPointsOfInterestProximityProbe
+    {
+        private ObservableCollection<PointOfInterestProximityTrigger> _triggers;
         private EventHandler<PositionEventArgs> _positionChangedHandler;
-        private Position _previousPosition;
 
         private readonly object _locker = new object();
 
-        protected sealed override string DefaultDisplayName
+        public ObservableCollection<PointOfInterestProximityTrigger> Triggers
+        {
+            get { return _triggers; }
+        }            
+
+        protected override string DefaultDisplayName
         {
             get
             {
-                return "Speed";
+                return "Points of Interest Proximity";
             }
         }
 
-        public sealed override Type DatumType
+        public override Type DatumType
         {
             get
             {
-                return typeof(SpeedDatum);
+                return typeof(PointOfInterestProximityDatum);
             }
         }
 
-        public ListeningSpeedProbe()
+        public ListeningPointsOfInterestProximityProbe()
         {
+            _triggers = new ObservableCollection<PointOfInterestProximityTrigger>();
+
             _positionChangedHandler = (o, e) =>
             {
                 lock (_locker)
                 {
                     SensusServiceHelper.Get().Logger.Log("Received position change notification.", LoggingLevel.Verbose, GetType());
 
-                    if (_previousPosition != null && e.Position != null && e.Position.Timestamp != _previousPosition.Timestamp)
-                        StoreDatum(new SpeedDatum(e.Position.Timestamp, _previousPosition, e.Position));
-
                     if (e.Position != null)
-                        _previousPosition = e.Position;
+                        foreach (PointOfInterest pointOfInterest in SensusServiceHelper.Get().PointsOfInterest.Union(Protocol.PointsOfInterest))  // POIs are stored on the service helper (e.g., home locations) and the Protocol (e.g., bars), since the former are user-specific and the latter are universal.
+                        {
+                            double distanceToPointOfInterestMeters = pointOfInterest.KmDistanceTo(e.Position) * 1000;
+
+                            foreach (PointOfInterestProximityTrigger trigger in _triggers)
+                                if (pointOfInterest.Triggers(trigger, distanceToPointOfInterestMeters))
+                                {   
+                                    StoreDatum(new PointOfInterestProximityDatum(e.Position.Timestamp, pointOfInterest, distanceToPointOfInterestMeters, trigger.DistanceThresholdDirection));
+                                    break;
+                                }
+                        }
                 }
             };
         }
@@ -64,7 +79,7 @@ namespace SensusService.Probes.Movement
 
             if (!GpsReceiver.Get().Locator.IsGeolocationEnabled)
             {
-                string error = "Geolocation is not enabled on this device. Cannot start speed probe.";
+                string error = "Geolocation is not enabled on this device. Cannot start proximity probe.";
                 SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
@@ -72,14 +87,12 @@ namespace SensusService.Probes.Movement
 
         protected sealed override void StartListening()
         {
-            _previousPosition = null;
             GpsReceiver.Get().AddListener(_positionChangedHandler);
         }
 
         protected sealed override void StopListening()
         {
             GpsReceiver.Get().RemoveListener(_positionChangedHandler);
-            _previousPosition = null;
         }
     }
 }
