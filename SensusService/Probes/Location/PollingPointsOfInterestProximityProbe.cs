@@ -20,6 +20,7 @@ using Xamarin.Geolocation;
 using SensusService.Probes.Location;
 using System.Threading;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace SensusService.Probes.Location
 {
@@ -68,7 +69,7 @@ namespace SensusService.Probes.Location
             Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken);
 
             if (currentPosition != null)
-                foreach (PointOfInterest pointOfInterest in SensusServiceHelper.Get().PointsOfInterest)
+                foreach (PointOfInterest pointOfInterest in SensusServiceHelper.Get().PointsOfInterest.Union(Protocol.PointsOfInterest))
                     foreach (PointOfInterestProximityTrigger trigger in _triggers)
                         if (trigger.PointOfInterestName == pointOfInterest.Name)
                         {

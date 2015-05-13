@@ -18,15 +18,19 @@ using SensusService.Probes.Location;
 using SensusService;
 using System.Linq;
 using System.Threading;
+using System.Collections.Generic;
 
 namespace SensusUI
 {
     public class PointsOfInterestPage : ContentPage
     {
+        private List<PointOfInterest> _pointsOfInterest;
         private ListView _pointsOfInterestList;
 
-        public PointsOfInterestPage()
+        public PointsOfInterestPage(List<PointOfInterest> pointsOfInterest, Action modificationCallback)
         {
+            _pointsOfInterest = pointsOfInterest;
+
             Title = "Points Of Interest";
 
             _pointsOfInterestList = new ListView();
@@ -39,15 +43,20 @@ namespace SensusUI
 
             ToolbarItems.Add(new ToolbarItem(null, "plus.png", () =>
                     {
-                        UiBoundSensusServiceHelper.Get(true).PromptForInputAsync("Enter a name for this point of interest:", false, input =>
+                        UiBoundSensusServiceHelper.Get(true).PromptForInputAsync("Enter a name for this point of interest:", false, name =>
                             {
-                                if (!string.IsNullOrWhiteSpace(input))
-                                {
-                                    UiBoundSensusServiceHelper.Get(true).PointsOfInterest.Add(new PointOfInterest(input, GpsReceiver.Get().GetReading(default(CancellationToken))));
-                                    UiBoundSensusServiceHelper.Get(true).SaveAsync();
+                                UiBoundSensusServiceHelper.Get(true).PromptForInputAsync("Enter a type for this point of interest:", false, type =>
+                                    {
+                                        if (!string.IsNullOrWhiteSpace(name) || !string.IsNullOrWhiteSpace(type))
+                                        {
+                                            _pointsOfInterest.Add(new PointOfInterest(name, type, GpsReceiver.Get().GetReading(default(CancellationToken))));
 
-                                    Bind();
-                                }
+                                            if (modificationCallback != null)
+                                                modificationCallback();
+                                
+                                            Bind();
+                                        }
+                                    });
                             });
                     }));
 
@@ -59,8 +68,10 @@ namespace SensusUI
 
                             if (await DisplayAlert("Delete " + pointOfInterestToDelete.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
                             {
-                                UiBoundSensusServiceHelper.Get(true).PointsOfInterest.Remove(pointOfInterestToDelete);
-                                UiBoundSensusServiceHelper.Get(true).SaveAsync();
+                                _pointsOfInterest.Remove(pointOfInterestToDelete);
+                                
+                                if (modificationCallback != null)
+                                    modificationCallback();
 
                                 Bind();
                             }
@@ -73,9 +84,8 @@ namespace SensusUI
             Device.BeginInvokeOnMainThread(() =>
                 {
                     _pointsOfInterestList.ItemsSource = null;
-                    _pointsOfInterestList.ItemsSource = UiBoundSensusServiceHelper.Get(true).PointsOfInterest;
+                    _pointsOfInterestList.ItemsSource = _pointsOfInterest;
                 });
         }
     }
 }
-

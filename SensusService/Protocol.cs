@@ -27,6 +27,7 @@ using SensusService.Anonymization;
 using System.Linq;
 using System.Reflection;
 using SensusUI;
+using SensusService.Probes.Location;
 
 namespace SensusService
 {
@@ -134,6 +135,7 @@ namespace SensusService
         private AnonymizedJsonContractResolver _jsonAnonymizer;
         private DateTimeOffset _firstStartTimestamp;
         private bool _shareable;
+        private List<PointOfInterest> _pointsOfInterest;
 
         private readonly object _locker = new object();
 
@@ -260,7 +262,11 @@ namespace SensusService
                 _shareable = value;
             }
         }
-        
+
+        public List<PointOfInterest> PointsOfInterest
+        {
+            get { return _pointsOfInterest; }
+        }        
 
         /// <summary>
         /// For JSON deserialization
@@ -273,6 +279,7 @@ namespace SensusService
             _jsonAnonymizer = new AnonymizedJsonContractResolver(this);
             _firstStartTimestamp = DateTimeOffset.MinValue;
             _shareable = true;
+            _pointsOfInterest = new List<PointOfInterest>();
         }
 
         /// <summary>

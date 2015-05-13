@@ -57,7 +57,9 @@ namespace SensusUI
 
             pointsOfInterestButton.Clicked += async (o, e) =>
                 {
-                    await Navigation.PushAsync(new PointsOfInterestPage());
+                    await Navigation.PushAsync(new PointsOfInterestPage(
+                        UiBoundSensusServiceHelper.Get(true).PointsOfInterest,
+                        () =>  UiBoundSensusServiceHelper.Get(true).SaveAsync()));
                 };
 
             contentLayout.Children.Add(pointsOfInterestButton);

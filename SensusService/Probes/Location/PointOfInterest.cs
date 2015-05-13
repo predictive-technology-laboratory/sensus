@@ -21,6 +21,7 @@ namespace SensusService.Probes.Location
     public class PointOfInterest
     {
         private string _name;
+        private string _type;
         private Position _position;
 
         public string Name
@@ -32,6 +33,18 @@ namespace SensusService.Probes.Location
             set
             {
                 _name = value;
+            }
+        }
+
+        public string Type
+        {
+            get
+            {
+                return _type;
+            }
+            set
+            {
+                _type = value;
             }
         }
 
@@ -54,9 +67,10 @@ namespace SensusService.Probes.Location
         {
         }
 
-        public PointOfInterest(string name, Position position)
+        public PointOfInterest(string name, string type, Position position)
         {
             _name = name;
+            _type = type;
             _position = position;
         }
 
@@ -67,7 +81,7 @@ namespace SensusService.Probes.Location
 
         public override string ToString()
         {
-            return _name;
+            return _name + " (" + _type + ")";
         }
     }
 }

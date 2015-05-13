@@ -13,27 +13,58 @@
 // limitations under the License.
 
 using System;
+using Xamarin.Geolocation;
+using SensusService.Probes.User.ProbeTriggerProperties;
 
 namespace SensusService.Probes.Location
 {
     public class PointOfInterestProximityDatum : Datum
     {
-        private PointOfInterest _pointOfInterest;
+        private string _name;
+        private string _type;
+        private Position _position;
         private double _distanceMeters;
         private ProximityThresholdDirection _direction;
 
-        public PointOfInterest PointOfInterest
+        [TextProbeTriggerProperty]
+        public string Name
         {
             get
             {
-                return _pointOfInterest;
+                return _name;
             }
             set
             {
-                _pointOfInterest = value;
+                _name = value;
             }
         }
 
+        [TextProbeTriggerProperty]
+        public string Type
+        {
+            get
+            {
+                return _type;
+            }
+            set
+            {
+                _type = value;
+            }
+        }
+
+        public Position Position
+        {
+            get
+            {
+                return _position;
+            }
+            set
+            {
+                _position = value;
+            }
+        }
+
+        [NumberProbeTriggerProperty]
         public double DistanceMeters
         {
             get
@@ -62,9 +93,9 @@ namespace SensusService.Probes.Location
         {
             get
             {
-                return _pointOfInterest + " (" + _distanceMeters + " meters)";;
+                return _name + " (" + _distanceMeters + " meters)";
             }
-        }
+        }        
 
         /// <summary>
         /// For JSON deserialization.
@@ -76,7 +107,9 @@ namespace SensusService.Probes.Location
         public PointOfInterestProximityDatum(DateTimeOffset timestamp, PointOfInterest pointOfInterest, double distanceMeters, ProximityThresholdDirection direction)
             : base(timestamp)
         {
-            _pointOfInterest = pointOfInterest;
+            _name = pointOfInterest.Name;
+            _type = pointOfInterest.Type;
+            _position = pointOfInterest.Position;
             _distanceMeters = distanceMeters;
             _direction = direction;
         }
