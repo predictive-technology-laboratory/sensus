@@ -31,7 +31,7 @@ namespace SensusService.Probes.Location
         public ObservableCollection<PointOfInterestProximityTrigger> Triggers
         {
             get { return _triggers; }
-        }               
+        }  
 
         protected override string DefaultDisplayName
         {
@@ -69,18 +69,17 @@ namespace SensusService.Probes.Location
             Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken);
 
             if (currentPosition != null)
-                foreach (PointOfInterest pointOfInterest in SensusServiceHelper.Get().PointsOfInterest.Union(Protocol.PointsOfInterest))
-                    foreach (PointOfInterestProximityTrigger trigger in _triggers)
-                        if (trigger.PointOfInterestName == pointOfInterest.Name)
-                        {
-                            double distanceMeters = pointOfInterest.KmDistanceTo(currentPosition) * 1000;
+                foreach (PointOfInterest pointOfInterest in SensusServiceHelper.Get().PointsOfInterest.Union(Protocol.PointsOfInterest))  // POIs are stored on the service helper (e.g., home locations) and the Protocol (e.g., bars), since the former are user-specific and the latter are universal.
+                {
+                    double distanceToPointOfInterestMeters = pointOfInterest.KmDistanceTo(currentPosition) * 1000;
 
-                            if (trigger.DistanceThresholdDirection == ProximityThresholdDirection.Within && distanceMeters <= trigger.DistanceThresholdMeters ||
-                                trigger.DistanceThresholdDirection == ProximityThresholdDirection.Outside && distanceMeters > trigger.DistanceThresholdMeters)
-                            {
-                                data.Add(new PointOfInterestProximityDatum(currentPosition.Timestamp, pointOfInterest, distanceMeters, trigger.DistanceThresholdDirection));
-                            }
+                    foreach (PointOfInterestProximityTrigger trigger in _triggers)
+                        if (pointOfInterest.Triggers(trigger, distanceToPointOfInterestMeters))
+                        {                            
+                            data.Add(new PointOfInterestProximityDatum(currentPosition.Timestamp, pointOfInterest, distanceToPointOfInterestMeters, trigger.DistanceThresholdDirection));
+                            break;
                         }
+                }
 
             return data;
         }

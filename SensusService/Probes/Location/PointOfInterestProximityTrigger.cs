@@ -19,6 +19,7 @@ namespace SensusService.Probes.Location
     public class PointOfInterestProximityTrigger
     {
         private string _pointOfInterestName;
+        private string _pointOfInterestType;
         private double _distanceThresholdMeters;
         private ProximityThresholdDirection _distanceThresholdDirection;
 
@@ -31,6 +32,18 @@ namespace SensusService.Probes.Location
             set
             {
                 _pointOfInterestName = value; 
+            }
+        }
+
+        public string PointOfInterestType
+        {
+            get
+            {
+                return _pointOfInterestType;
+            }
+            set
+            {
+                _pointOfInterestType = value;
             }
         }
 
@@ -65,21 +78,23 @@ namespace SensusService.Probes.Location
         {
         }
 
-        public PointOfInterestProximityTrigger(string pointOfInterestName, double distanceThresholdMeters, ProximityThresholdDirection distanceThresholdDirection)
+        public PointOfInterestProximityTrigger(string pointOfInterestName, string pointOfInterestType, double distanceThresholdMeters, ProximityThresholdDirection distanceThresholdDirection)
+            : this()
         {
-            if (string.IsNullOrEmpty(pointOfInterestName))
-                throw new Exception("Invalid point of interest.");
+            if (string.IsNullOrWhiteSpace(pointOfInterestName) && string.IsNullOrWhiteSpace(pointOfInterestType))
+                throw new Exception("Points of interest must have a name or type (or both).");
             else if (distanceThresholdMeters <= 0)
                 throw new Exception("Invalid distance threshold. Must be greater than zero.");
             
             _pointOfInterestName = pointOfInterestName;
+            _pointOfInterestType = pointOfInterestType;
             _distanceThresholdMeters = distanceThresholdMeters;
             _distanceThresholdDirection = distanceThresholdDirection;
         }
 
         public override string ToString()
         {
-            return _pointOfInterestName;
+            return _pointOfInterestName + " (" + _pointOfInterestType + ")";
         }
     }
 }

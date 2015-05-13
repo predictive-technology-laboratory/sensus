@@ -20,6 +20,7 @@ namespace SensusService.Probes.Location
     public interface IPointsOfInterestProximityProbe
     {
         ObservableCollection<PointOfInterestProximityTrigger> Triggers { get; }
+
+        Protocol Protocol { get; }
     }
 }
-

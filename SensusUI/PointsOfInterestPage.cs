@@ -13,12 +13,12 @@
 // limitations under the License.
 
 using System;
-using Xamarin.Forms;
-using SensusService.Probes.Location;
-using SensusService;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Collections.Generic;
+using SensusService;
+using SensusService.Probes.Location;
+using Xamarin.Forms;
 
 namespace SensusUI
 {
@@ -27,11 +27,11 @@ namespace SensusUI
         private List<PointOfInterest> _pointsOfInterest;
         private ListView _pointsOfInterestList;
 
-        public PointsOfInterestPage(List<PointOfInterest> pointsOfInterest, Action modificationCallback)
+        public PointsOfInterestPage(List<PointOfInterest> pointsOfInterest, Action changeCallback)
         {
             _pointsOfInterest = pointsOfInterest;
 
-            Title = "Points Of Interest";
+            Title = "Points of Interest";
 
             _pointsOfInterestList = new ListView();
             _pointsOfInterestList.ItemTemplate = new DataTemplate(typeof(TextCell));
@@ -43,16 +43,16 @@ namespace SensusUI
 
             ToolbarItems.Add(new ToolbarItem(null, "plus.png", () =>
                     {
-                        UiBoundSensusServiceHelper.Get(true).PromptForInputAsync("Enter a name for this point of interest:", false, name =>
+                        UiBoundSensusServiceHelper.Get(true).PromptForInputAsync("Enter a name for the new point of interest:", false, name =>
                             {
-                                UiBoundSensusServiceHelper.Get(true).PromptForInputAsync("Enter a type for this point of interest:", false, type =>
+                                UiBoundSensusServiceHelper.Get(true).PromptForInputAsync("Enter a type for the new point of interest:", false, type =>
                                     {
                                         if (!string.IsNullOrWhiteSpace(name) || !string.IsNullOrWhiteSpace(type))
                                         {
                                             _pointsOfInterest.Add(new PointOfInterest(name, type, GpsReceiver.Get().GetReading(default(CancellationToken))));
 
-                                            if (modificationCallback != null)
-                                                modificationCallback();
+                                            if (changeCallback != null)
+                                                changeCallback();
                                 
                                             Bind();
                                         }
@@ -70,8 +70,8 @@ namespace SensusUI
                             {
                                 _pointsOfInterest.Remove(pointOfInterestToDelete);
                                 
-                                if (modificationCallback != null)
-                                    modificationCallback();
+                                if (changeCallback != null)
+                                    changeCallback();
 
                                 Bind();
                             }

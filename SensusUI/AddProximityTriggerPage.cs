@@ -27,6 +27,7 @@ namespace SensusUI
     {
         private IPointsOfInterestProximityProbe _proximityProbe;
         private string _pointOfInterestName;
+        private string _pointOfInterestType;
         private double _distanceThresholdMeters;
         private ProximityThresholdDirection _thresholdDirection;
 
@@ -36,7 +37,7 @@ namespace SensusUI
 
             Title = "Add Trigger";
 
-            List<PointOfInterest> pointsOfInterest = UiBoundSensusServiceHelper.Get(true).PointsOfInterest;
+            List<PointOfInterest> pointsOfInterest = UiBoundSensusServiceHelper.Get(true).PointsOfInterest.Union(_proximityProbe.Protocol.PointsOfInterest).ToList();
             if (pointsOfInterest.Count == 0)
             {
                 Content = new Label
@@ -54,9 +55,10 @@ namespace SensusUI
                 VerticalOptions = LayoutOptions.FillAndExpand
             };
 
+            #region point of interest
             Label pointOfInterestLabel = new Label
             {
-                Text = "Point of Interest:",
+                Text = "Point of Interest Name:",
                 FontSize = 20
             };
 
@@ -65,15 +67,19 @@ namespace SensusUI
                 HorizontalOptions = LayoutOptions.FillAndExpand,                
             };
 
-            foreach (string poiName in pointsOfInterest.Select(poi => poi.Name))
-                pointOfInterestPicker.Items.Add(poiName);
+            foreach (string poiDesc in pointsOfInterest.Select(poi => poi.Name + " (" + poi.Type + ")"))
+                pointOfInterestPicker.Items.Add(poiDesc);
 
             pointOfInterestPicker.SelectedIndexChanged += (o, e) =>
             {
-                    if(pointOfInterestPicker.SelectedIndex < 0)
-                        _pointOfInterestName = null;
-                    else
-                        _pointOfInterestName = pointsOfInterest[pointOfInterestPicker.SelectedIndex].Name;
+                if (pointOfInterestPicker.SelectedIndex < 0)
+                    _pointOfInterestName = _pointOfInterestType = null;
+                else
+                {
+                    PointOfInterest poi = pointsOfInterest[pointOfInterestPicker.SelectedIndex];
+                    _pointOfInterestName = poi.Name;
+                    _pointOfInterestType = poi.Type;
+                }
             };
 
             contentLayout.Children.Add(new StackLayout
@@ -82,7 +88,9 @@ namespace SensusUI
                     HorizontalOptions = LayoutOptions.FillAndExpand,
                     Children = { pointOfInterestLabel, pointOfInterestPicker }
                 });
+            #endregion
 
+            #region distance threshold
             Label distanceThresholdLabel = new Label
             {
                 Text = "Distance Threshold (Meters):",
@@ -107,7 +115,9 @@ namespace SensusUI
                     HorizontalOptions = LayoutOptions.FillAndExpand,
                     Children = { distanceThresholdLabel, distanceThresholdEntry }
                 });
+            #endregion
 
+            #region threshold direction
             Label thresholdDirectionLabel = new Label
             {
                 Text = "Threshold Direction:",
@@ -137,6 +147,7 @@ namespace SensusUI
                     HorizontalOptions = LayoutOptions.FillAndExpand,
                     Children = { thresholdDirectionLabel, thresholdDirectionPicker }
                 });
+            #endregion
 
             Button okButton = new Button
             {
@@ -148,7 +159,7 @@ namespace SensusUI
                 {
                     try
                     {
-                        _proximityProbe.Triggers.Add(new PointOfInterestProximityTrigger(_pointOfInterestName, _distanceThresholdMeters, _thresholdDirection));
+                        _proximityProbe.Triggers.Add(new PointOfInterestProximityTrigger(_pointOfInterestName, _pointOfInterestType, _distanceThresholdMeters, _thresholdDirection));
                         await Navigation.PopAsync();
                     }
                     catch (Exception ex)

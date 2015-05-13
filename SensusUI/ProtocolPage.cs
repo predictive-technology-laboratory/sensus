@@ -134,7 +134,7 @@ namespace SensusUI
             #region points of interest
             Button pointsOfInterestButton = new Button
                 {
-                    Text = "Points Of Interest",
+                    Text = "Points of Interest",
                     FontSize = 20
                 };
 

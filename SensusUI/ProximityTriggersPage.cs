@@ -43,11 +43,10 @@ namespace SensusUI
                 {
                     if (triggerList.SelectedItem != null && await DisplayAlert("Confirm Delete", "Are you sure you want to delete the selected trigger?", "Yes", "Cancel"))
                     {
-                        proximityProbe.Triggers.Remove(triggerList.SelectedItem as SensusService.Probes.Location.PointOfInterestProximityTrigger);
+                        proximityProbe.Triggers.Remove(triggerList.SelectedItem as PointOfInterestProximityTrigger);
                         triggerList.SelectedItem = null;
                     }
                 }));
         }
     }
 }
-

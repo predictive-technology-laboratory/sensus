@@ -51,7 +51,7 @@ namespace SensusUI
 
             Button pointsOfInterestButton = new Button
                 {
-                    Text = "Points Of Interest",
+                    Text = "Points of Interest",
                     FontSize = 20
                 };
 
@@ -59,7 +59,7 @@ namespace SensusUI
                 {
                     await Navigation.PushAsync(new PointsOfInterestPage(
                         UiBoundSensusServiceHelper.Get(true).PointsOfInterest,
-                        () =>  UiBoundSensusServiceHelper.Get(true).SaveAsync()));
+                        () => UiBoundSensusServiceHelper.Get(true).SaveAsync()));
                 };
 
             contentLayout.Children.Add(pointsOfInterestButton);

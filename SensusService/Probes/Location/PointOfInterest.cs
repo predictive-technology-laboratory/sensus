@@ -13,8 +13,8 @@
 // limitations under the License.
 
 using System;
-using Xamarin.Geolocation;
 using SensusService.Probes.Movement;
+using Xamarin.Geolocation;
 
 namespace SensusService.Probes.Location
 {
@@ -68,10 +68,20 @@ namespace SensusService.Probes.Location
         }
 
         public PointOfInterest(string name, string type, Position position)
+            : this()
         {
-            _name = name;
-            _type = type;
+            _name = name ?? "";
+            _type = type ?? "";
             _position = position;
+        }
+
+        public bool Triggers(PointOfInterestProximityTrigger trigger, double distanceMeters)
+        {
+            return 
+            (string.IsNullOrWhiteSpace(trigger.PointOfInterestName) || _name == trigger.PointOfInterestName) &&
+            (string.IsNullOrWhiteSpace(trigger.PointOfInterestType) || _type == trigger.PointOfInterestType) &&
+            (trigger.DistanceThresholdDirection == ProximityThresholdDirection.Within && distanceMeters <= trigger.DistanceThresholdMeters ||
+            trigger.DistanceThresholdDirection == ProximityThresholdDirection.Outside && distanceMeters > trigger.DistanceThresholdMeters);
         }
 
         public double KmDistanceTo(Position position)
