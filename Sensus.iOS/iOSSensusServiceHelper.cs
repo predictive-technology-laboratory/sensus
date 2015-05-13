@@ -104,8 +104,9 @@ namespace Sensus.iOS
 
         public override bool Use(Probe probe)
         {
-            return !(probe is PollingLocationProbe) &&  // polling isn't supported very well in iOS
-                   !(probe is PollingSpeedProbe);       // ditto
+            return !(probe is PollingLocationProbe) &&                // location polling isn't supported very well in iOS
+                   !(probe is PollingSpeedProbe) &&                   // speed polling is based on location polling (see previous comment)
+                   !(probe is PollingPointsOfInterestProximityProbe); // proximity polling is based on location polling (see previous comment)
         }
 
         #region callback scheduling
