@@ -82,7 +82,7 @@ namespace SensusService.Probes.Location
             : this()
         {
             if (string.IsNullOrWhiteSpace(pointOfInterestName) && string.IsNullOrWhiteSpace(pointOfInterestType))
-                throw new Exception("Points of interest must have a name or type (or both).");
+                throw new Exception("No POI was supplied.");
             else if (distanceThresholdMeters <= 0)
                 throw new Exception("Invalid distance threshold. Must be greater than zero.");
             
@@ -94,7 +94,7 @@ namespace SensusService.Probes.Location
 
         public override string ToString()
         {
-            return _pointOfInterestName + " (" + _pointOfInterestType + ")";
+            return _distanceThresholdDirection + " " + _distanceThresholdMeters + "m of " + _pointOfInterestName + (string.IsNullOrWhiteSpace(_pointOfInterestType) ? "" : " (" + _pointOfInterestType + ")");
         }
     }
 }

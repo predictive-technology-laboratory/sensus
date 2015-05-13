@@ -58,7 +58,7 @@ namespace SensusUI
             #region point of interest
             Label pointOfInterestLabel = new Label
             {
-                Text = "Point of Interest Name:",
+                Text = "POI:",
                 FontSize = 20
             };
 
@@ -67,7 +67,7 @@ namespace SensusUI
                 HorizontalOptions = LayoutOptions.FillAndExpand,                
             };
 
-            foreach (string poiDesc in pointsOfInterest.Select(poi => poi.Name + " (" + poi.Type + ")"))
+            foreach (string poiDesc in pointsOfInterest.Select(poi => poi.ToString()))
                 pointOfInterestPicker.Items.Add(poiDesc);
 
             pointOfInterestPicker.SelectedIndexChanged += (o, e) =>
@@ -106,7 +106,7 @@ namespace SensusUI
             distanceThresholdEntry.TextChanged += (o, e) =>
             {
                 if (!double.TryParse(distanceThresholdEntry.Text, out _distanceThresholdMeters))
-                    _distanceThresholdMeters = 100;
+                    _distanceThresholdMeters = -1;
             };
 
             contentLayout.Children.Add(new StackLayout
@@ -160,6 +160,7 @@ namespace SensusUI
                     try
                     {
                         _proximityProbe.Triggers.Add(new PointOfInterestProximityTrigger(_pointOfInterestName, _pointOfInterestType, _distanceThresholdMeters, _thresholdDirection));
+                        UiBoundSensusServiceHelper.Get(true).SaveAsync();
                         await Navigation.PopAsync();
                     }
                     catch (Exception ex)

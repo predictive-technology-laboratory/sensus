@@ -112,7 +112,9 @@ namespace SensusUI
                         TextColor = Color.Accent,
                         HorizontalOptions = LayoutOptions.Center 
                     });
-                
+
+                List<StackLayout> anonymizablePropertyStacks = new List<StackLayout>();
+
                 foreach (PropertyInfo anonymizableProperty in anonymizableProperties)
                 {
                     Anonymizable anonymizableAttribute = anonymizableProperty.GetCustomAttribute<Anonymizable>(true);
@@ -142,7 +144,7 @@ namespace SensusUI
 
                             probe.Protocol.JsonAnonymizer.SetAnonymizer(anonymizableProperty, selectedAnonymizer);
                         };
-
+                    
                     // set the picker's index to the current anonymizer (or "Do Not Anonymize" if there is no current)
                     Anonymizer currentAnonymizer = probe.Protocol.JsonAnonymizer.GetAnonymizer(anonymizableProperty);
                     int currentIndex = 0;
@@ -158,8 +160,11 @@ namespace SensusUI
                         Children = { propertyLabel, anonymizerPicker }
                     };
 
-                    contentLayout.Children.Add(anonymizablePropertyStack);
+                    anonymizablePropertyStacks.Add(anonymizablePropertyStack);
                 }
+
+                foreach(StackLayout anonymizablePropertyStack in anonymizablePropertyStacks.OrderBy(s => (s.Children[0] as Label).Text))
+                    contentLayout.Children.Add(anonymizablePropertyStack);
             }
             #endregion
 

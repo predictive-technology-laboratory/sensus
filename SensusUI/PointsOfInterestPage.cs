@@ -35,7 +35,7 @@ namespace SensusUI
 
             _pointsOfInterestList = new ListView();
             _pointsOfInterestList.ItemTemplate = new DataTemplate(typeof(TextCell));
-            _pointsOfInterestList.ItemTemplate.SetBinding(TextCell.TextProperty, "Name");
+            _pointsOfInterestList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", stringFormat: "{0}"));
 
             Bind();
 

@@ -91,7 +91,7 @@ namespace SensusService.Probes.Location
 
         public override string ToString()
         {
-            return _name + " (" + _type + ")";
+            return _name + (string.IsNullOrWhiteSpace(_type) ? "" : " (" + _type + ")") + ":  " + Math.Round(_position.Latitude, 4) + "," + Math.Round(_position.Longitude, 4);
         }
     }
 }

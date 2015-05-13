@@ -20,9 +20,10 @@ namespace SensusService.Probes.Location
 {
     public class PointOfInterestProximityDatum : Datum
     {
-        private string _name;
-        private string _type;
-        private Position _position;
+        private string _pointOfInterestName;
+        private string _pointOfInterestType;
+        private double _pointOfInterestLatitude;
+        private double _pointOfInterestLongitude;
         private double _distanceMeters;
         private ProximityThresholdDirection _direction;
 
@@ -31,11 +32,11 @@ namespace SensusService.Probes.Location
         {
             get
             {
-                return _name;
+                return _pointOfInterestName;
             }
             set
             {
-                _name = value;
+                _pointOfInterestName = value;
             }
         }
 
@@ -44,23 +45,37 @@ namespace SensusService.Probes.Location
         {
             get
             {
-                return _type;
+                return _pointOfInterestType;
             }
             set
             {
-                _type = value;
+                _pointOfInterestType = value;
             }
         }
 
-        public Position Position
+        [NumberProbeTriggerProperty]
+        public double PointOfInterestLatitude
         {
             get
             {
-                return _position;
+                return _pointOfInterestLatitude;
             }
             set
             {
-                _position = value;
+                _pointOfInterestLatitude = value;
+            }
+        }
+
+        [NumberProbeTriggerProperty]
+        public double PointOfInterestLongitude
+        {
+            get
+            {
+                return _pointOfInterestLongitude;
+            }
+            set
+            {
+                _pointOfInterestLongitude = value;
             }
         }
 
@@ -93,7 +108,7 @@ namespace SensusService.Probes.Location
         {
             get
             {
-                return _name + " (" + _distanceMeters + " meters)";
+                return Math.Round(_distanceMeters) + "m from " + _pointOfInterestName + (string.IsNullOrWhiteSpace(_pointOfInterestType) ? "" : " (" + _pointOfInterestType + ")");
             }
         }        
 
@@ -107,9 +122,10 @@ namespace SensusService.Probes.Location
         public PointOfInterestProximityDatum(DateTimeOffset timestamp, PointOfInterest pointOfInterest, double distanceMeters, ProximityThresholdDirection direction)
             : base(timestamp)
         {
-            _name = pointOfInterest.Name;
-            _type = pointOfInterest.Type;
-            _position = pointOfInterest.Position;
+            _pointOfInterestName = pointOfInterest.Name;
+            _pointOfInterestType = pointOfInterest.Type;
+            _pointOfInterestLatitude = pointOfInterest.Position.Latitude;
+            _pointOfInterestLongitude = pointOfInterest.Position.Longitude;
             _distanceMeters = distanceMeters;
             _direction = direction;
         }
