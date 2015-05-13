@@ -46,6 +46,17 @@ namespace SensusService.Anonymization
         {                       
             _propertyDisplayName = propertyDisplayName;
 
+            if (availableAnonymizerTypes == null)
+                availableAnonymizerTypes = new Type[0];            
+
+            // we're always going to add the value omitting anonymizer at the start of the anonymizers list. if 
+            // the default is >= 0 add 1 to produce the result that the caller desires. only do this if the 
+            // caller has passed in anonymizer types. if they didn't and they set the default anonymizer to
+            // 0, then they are asking for the value omitting anonymizer by default -- in this case we should
+            // not increment.
+            if (defaultAnonymizerIndex >= 0 && availableAnonymizerTypes.Length > 0)
+                ++defaultAnonymizerIndex;
+
             // instantiate available anonymizers
             _availableAnonymizers = new List<Anonymizer>();
             _availableAnonymizers.Add(new ValueOmittingAnonymizer());  // omitting the value is always an option

@@ -15,6 +15,8 @@
 using System;
 using Xamarin.Geolocation;
 using SensusService.Probes.User.ProbeTriggerProperties;
+using SensusService.Anonymization;
+using SensusService.Anonymization.Anonymizers;
 
 namespace SensusService.Probes.Location
 {
@@ -27,6 +29,7 @@ namespace SensusService.Probes.Location
         private double _distanceMeters;
         private ProximityThresholdDirection _direction;
 
+        [Anonymizable("POI Name:", typeof(StringMD5Anonymizer), false)]
         [TextProbeTriggerProperty]
         public string Name
         {
@@ -40,6 +43,7 @@ namespace SensusService.Probes.Location
             }
         }
 
+        [Anonymizable("POI Type:", typeof(StringMD5Anonymizer), false)]
         [TextProbeTriggerProperty]
         public string Type
         {
@@ -53,6 +57,7 @@ namespace SensusService.Probes.Location
             }
         }
 
+        [Anonymizable("POI Latitude:", new Type[] { typeof(DoubleRoundingTenthsAnonymizer), typeof(DoubleRoundingHundredthsAnonymizer), typeof(DoubleRoundingThousandthsAnonymizer) }, 1)]  // rounding to hundredths is roughly 1km
         [NumberProbeTriggerProperty]
         public double PointOfInterestLatitude
         {
@@ -66,6 +71,7 @@ namespace SensusService.Probes.Location
             }
         }
 
+        [Anonymizable("POI Longitude:", new Type[] { typeof(DoubleRoundingTenthsAnonymizer), typeof(DoubleRoundingHundredthsAnonymizer), typeof(DoubleRoundingThousandthsAnonymizer) }, 1)]  // rounding to hundredths is roughly 1km
         [NumberProbeTriggerProperty]
         public double PointOfInterestLongitude
         {
@@ -79,6 +85,7 @@ namespace SensusService.Probes.Location
             }
         }
 
+        [Anonymizable("Distance (Meters):", new Type[] { typeof(DoubleRoundingTensAnonymizer), typeof(DoubleRoundingHundredsAnonymizer)}, -1)]
         [NumberProbeTriggerProperty]
         public double DistanceMeters
         {
