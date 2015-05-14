@@ -31,12 +31,12 @@ namespace Sensus.Android.Probes.Context
 
         protected override void StartListening()
         {
-            AndroidBluetoothBroadcastReceiver.DeviceFound += _deviceFoundCallback;
+            AndroidBluetoothBroadcastReceiver.DEVICE_FOUND += _deviceFoundCallback;
         }
 
         protected override void StopListening()
         {
-            AndroidBluetoothBroadcastReceiver.DeviceFound -= _deviceFoundCallback;
+            AndroidBluetoothBroadcastReceiver.DEVICE_FOUND -= _deviceFoundCallback;
         }
     }
 }

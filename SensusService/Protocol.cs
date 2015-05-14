@@ -37,7 +37,7 @@ namespace SensusService
     public class Protocol
     {
         #region static members
-        private static JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
+        private static JsonSerializerSettings JSON_SERIALIZER_SETTINGS = new JsonSerializerSettings
         {
             PreserveReferencesHandling = PreserveReferencesHandling.Objects,
             ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
@@ -95,7 +95,7 @@ namespace SensusService
                 {
                     try
                     {
-                        Protocol protocol = JsonConvert.DeserializeObject<Protocol>(json, _jsonSerializerSettings);
+                        Protocol protocol = JsonConvert.DeserializeObject<Protocol>(json, JSON_SERIALIZER_SETTINGS);
                         protocol.StorageDirectory = null;
                         while (protocol.StorageDirectory == null)
                         {
@@ -323,7 +323,7 @@ namespace SensusService
         {
             using (FileStream file = new FileStream(path, FileMode.Create, FileAccess.Write))
             {
-                byte[] encryptedBytes = SensusServiceHelper.AesEncrypt(JsonConvert.SerializeObject(this, _jsonSerializerSettings));
+                byte[] encryptedBytes = SensusServiceHelper.AesEncrypt(JsonConvert.SerializeObject(this, JSON_SERIALIZER_SETTINGS));
                 file.Write(encryptedBytes, 0, encryptedBytes.Length);
                 file.Close();
             }

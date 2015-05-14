@@ -56,13 +56,13 @@ namespace Sensus.Android.Probes.Communication
         protected override void StartListening()
         {
             Application.Context.ContentResolver.RegisterContentObserver(global::Android.Net.Uri.Parse("content://sms"), true, _smsOutgoingObserver);
-            AndroidSmsIncomingBroadcastReceiver.IncomingSMS += _incomingSmsCallback;
+            AndroidSmsIncomingBroadcastReceiver.INCOMING_SMS += _incomingSmsCallback;
         }
 
         protected override void StopListening()
         {
             Application.Context.ContentResolver.UnregisterContentObserver(_smsOutgoingObserver);
-            AndroidSmsIncomingBroadcastReceiver.IncomingSMS -= _incomingSmsCallback;
+            AndroidSmsIncomingBroadcastReceiver.INCOMING_SMS -= _incomingSmsCallback;
         }
     }
 }

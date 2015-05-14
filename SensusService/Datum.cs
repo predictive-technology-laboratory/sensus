@@ -28,7 +28,7 @@ namespace SensusService
         /// <summary>
         /// Settings for serializing Datum objects
         /// </summary>
-        private static readonly JsonSerializerSettings _serializationSettings = new JsonSerializerSettings
+        private static readonly JsonSerializerSettings JSON_SERIALIZER_SETTINGS = new JsonSerializerSettings
         {
             TypeNameHandling = TypeNameHandling.All,
             ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
@@ -39,7 +39,7 @@ namespace SensusService
         {
             Datum datum = null;
 
-            try { datum = JsonConvert.DeserializeObject<Datum>(json, _serializationSettings); }
+            try { datum = JsonConvert.DeserializeObject<Datum>(json, JSON_SERIALIZER_SETTINGS); }
             catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to convert JSON to datum:  " + ex.Message, LoggingLevel.Normal, typeof(Datum)); }
 
             return datum;
@@ -108,9 +108,9 @@ namespace SensusService
 
         public string GetJSON(AnonymizedJsonContractResolver anonymizationContractResolver)
         {
-            _serializationSettings.ContractResolver = anonymizationContractResolver;
+            JSON_SERIALIZER_SETTINGS.ContractResolver = anonymizationContractResolver;
                        
-            return JsonConvert.SerializeObject(this, Formatting.None, _serializationSettings).Replace('\n', ' ').Replace('\r', ' ');
+            return JsonConvert.SerializeObject(this, Formatting.None, JSON_SERIALIZER_SETTINGS).Replace('\n', ' ').Replace('\r', ' ');
         }
 
         public override int GetHashCode()

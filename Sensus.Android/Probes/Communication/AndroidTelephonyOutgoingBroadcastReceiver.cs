@@ -22,12 +22,12 @@ namespace Sensus.Android.Probes.Communication
     [IntentFilter(new string[] { Intent.ActionNewOutgoingCall }, Categories = new string[] { Intent.CategoryDefault })]
     public class AndroidTelephonyOutgoingBroadcastReceiver : BroadcastReceiver
     {
-        public static event EventHandler<string> OutgoingCall;
+        public static event EventHandler<string> OUTGOING_CALL;
 
         public override void OnReceive(global::Android.Content.Context context, Intent intent)
         {
-            if (OutgoingCall != null && intent != null && intent.Action == Intent.ActionNewOutgoingCall)
-                OutgoingCall(this, intent.GetStringExtra(Intent.ExtraPhoneNumber));
+            if (OUTGOING_CALL != null && intent != null && intent.Action == Intent.ActionNewOutgoingCall)
+                OUTGOING_CALL(this, intent.GetStringExtra(Intent.ExtraPhoneNumber));
         }
     }
 }

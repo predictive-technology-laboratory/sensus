@@ -26,7 +26,7 @@ namespace SensusService.Probes.User
     public class Script
     {
         #region static members
-        private static JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
+        private static JsonSerializerSettings JSON_SERIALIZER_SETTINGS = new JsonSerializerSettings
         {
             PreserveReferencesHandling = PreserveReferencesHandling.Objects,
             ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
@@ -37,7 +37,7 @@ namespace SensusService.Probes.User
         {
             Script script = null;
 
-            try { script = JsonConvert.DeserializeObject<Script>(json, _jsonSerializerSettings); }
+            try { script = JsonConvert.DeserializeObject<Script>(json, JSON_SERIALIZER_SETTINGS); }
             catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to deserialize script:  " + ex.Message, LoggingLevel.Normal, typeof(Script)); }
 
             return script;
@@ -139,7 +139,7 @@ namespace SensusService.Probes.User
         {
             using (StreamWriter file = new StreamWriter(path))
             {
-                file.Write(JsonConvert.SerializeObject(this, _jsonSerializerSettings));
+                file.Write(JsonConvert.SerializeObject(this, JSON_SERIALIZER_SETTINGS));
                 file.Close();
             }
         }
@@ -201,7 +201,7 @@ namespace SensusService.Probes.User
 
         public Script Copy()
         {
-            return JsonConvert.DeserializeObject<Script>(JsonConvert.SerializeObject(this, _jsonSerializerSettings));
+            return JsonConvert.DeserializeObject<Script>(JsonConvert.SerializeObject(this, JSON_SERIALIZER_SETTINGS));
         }
 
         public override bool Equals(object obj)

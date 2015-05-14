@@ -26,11 +26,11 @@ namespace SensusService.Probes.Location
     public class GpsReceiver
     {
         #region static members
-        public static GpsReceiver _singleton = new GpsReceiver();
+        public static readonly GpsReceiver SINGLETON = new GpsReceiver();
 
         public static GpsReceiver Get()
         {
-            return _singleton;
+            return SINGLETON;
         }
         #endregion
 

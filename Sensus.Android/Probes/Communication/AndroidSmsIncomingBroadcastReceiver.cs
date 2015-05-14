@@ -25,11 +25,11 @@ namespace Sensus.Android.Probes.Communication
     [IntentFilter(new string[] { "android.provider.Telephony.SMS_RECEIVED" }, Categories = new string[] { Intent.CategoryDefault })]
     public class AndroidSmsIncomingBroadcastReceiver : BroadcastReceiver
     {
-        public static event EventHandler<SmsDatum> IncomingSMS;
+        public static event EventHandler<SmsDatum> INCOMING_SMS;
 
         public override void OnReceive(global::Android.Content.Context context, Intent intent)
         {
-            if (IncomingSMS != null && intent != null && intent.Action == "android.provider.Telephony.SMS_RECEIVED")
+            if (INCOMING_SMS != null && intent != null && intent.Action == "android.provider.Telephony.SMS_RECEIVED")
             {
                 Bundle bundle = intent.Extras;
                 if (bundle != null)
@@ -41,7 +41,7 @@ namespace Sensus.Android.Probes.Communication
                         {
                             SmsMessage message = SmsMessage.CreateFromPdu((byte[])pdus[i]);
                             DateTimeOffset timestamp = new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(message.TimestampMillis);
-                            IncomingSMS(this, new SmsDatum(timestamp, message.OriginatingAddress, null, message.MessageBody));
+                            INCOMING_SMS(this, new SmsDatum(timestamp, message.OriginatingAddress, null, message.MessageBody));
                         }
                     }
                     catch (Exception) { }

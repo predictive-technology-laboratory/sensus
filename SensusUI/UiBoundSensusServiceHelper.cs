@@ -20,29 +20,29 @@ namespace SensusUI
 {
     public static class UiBoundSensusServiceHelper
     {
-        private static SensusServiceHelper _sensusServiceHelper;
-        private static object _getSensusServiceHelperLocker = new object();
-        private static ManualResetEvent _sensusServiceHelperWait = new ManualResetEvent(false);
+        private static SensusServiceHelper SENSUS_SERVICE_HELPER;
+        private static object GET_SENSUS_SERVICE_HELPER_LOCKER = new object();
+        private static ManualResetEvent SENSUS_SERVICE_HELPER_WAIT = new ManualResetEvent(false);
 
         public static SensusServiceHelper Get(bool wait)
         {
-            lock (_getSensusServiceHelperLocker)
+            lock (GET_SENSUS_SERVICE_HELPER_LOCKER)
             {
-                if (_sensusServiceHelper == null && wait && !_sensusServiceHelperWait.WaitOne(30000))
+                if (SENSUS_SERVICE_HELPER == null && wait && !SENSUS_SERVICE_HELPER_WAIT.WaitOne(30000))
                     throw new SensusException("Sensus UI failed to bind to service.");
 
-                return _sensusServiceHelper;
+                return SENSUS_SERVICE_HELPER;
             }
         }
 
         public static void Set(SensusServiceHelper sensusServiceHelper)
         {
-            _sensusServiceHelper = sensusServiceHelper;
+            SENSUS_SERVICE_HELPER = sensusServiceHelper;
 
-            if (_sensusServiceHelper == null)
-                _sensusServiceHelperWait.Reset();
+            if (SENSUS_SERVICE_HELPER == null)
+                SENSUS_SERVICE_HELPER_WAIT.Reset();
             else
-                _sensusServiceHelperWait.Set();
+                SENSUS_SERVICE_HELPER_WAIT.Set();
         }            
     }
 }

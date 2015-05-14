@@ -22,8 +22,8 @@ namespace SensusUI
 {
     public class PromptsPage : ContentPage
     {
-        ObservableCollection<Prompt> _prompts;
-        ListView _promptsList;
+        private ObservableCollection<Prompt> _prompts;
+        private ListView _promptsList;
 
         public PromptsPage(ObservableCollection<Prompt> prompts)
         {

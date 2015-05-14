@@ -36,6 +36,7 @@ namespace SensusService.DataStores.Remote
         private string _url;
         private string _key;
 
+        private IMobileServiceTable<FacebookDatum> _facebookTable;
         private IMobileServiceTable<RunningAppsDatum> _runningAppsTable;
         private IMobileServiceTable<SmsDatum> _smsTable;
         private IMobileServiceTable<TelephonyDatum> _telephonyTable;
@@ -47,6 +48,7 @@ namespace SensusService.DataStores.Remote
         private IMobileServiceTable<AltitudeDatum> _altitudeTable;
         private IMobileServiceTable<CompassDatum> _compassTable;
         private IMobileServiceTable<LocationDatum> _locationTable;
+        private IMobileServiceTable<PointOfInterestProximityDatum> _pointOfInterestTable;
         private IMobileServiceTable<AccelerometerDatum> _accelerometerTable;
         private IMobileServiceTable<SpeedDatum> _speedTable;
         private IMobileServiceTable<CellTowerDatum> _cellTowerTable;
@@ -87,6 +89,7 @@ namespace SensusService.DataStores.Remote
             {
                 _client = new MobileServiceClient(_url, _key);
 
+                _facebookTable = _client.GetTable<FacebookDatum>();
                 _runningAppsTable = _client.GetTable<RunningAppsDatum>();
                 _smsTable = _client.GetTable<SmsDatum>();
                 _telephonyTable = _client.GetTable<TelephonyDatum>();
@@ -98,6 +101,7 @@ namespace SensusService.DataStores.Remote
                 _altitudeTable = _client.GetTable<AltitudeDatum>();
                 _compassTable = _client.GetTable<CompassDatum>();
                 _locationTable = _client.GetTable<LocationDatum>();
+                _pointOfInterestTable = _client.GetTable<PointOfInterestProximityDatum>();
                 _accelerometerTable = _client.GetTable<AccelerometerDatum>();
                 _speedTable = _client.GetTable<SpeedDatum>();
                 _cellTowerTable = _client.GetTable<CellTowerDatum>();
@@ -123,7 +127,9 @@ namespace SensusService.DataStores.Remote
                 
                 try
                 {
-                    if (datum is RunningAppsDatum)
+                    if(datum is FacebookDatum)
+                        _facebookTable.InsertAsync(datum as FacebookDatum).Wait();
+                    else if (datum is RunningAppsDatum)
                         _runningAppsTable.InsertAsync(datum as RunningAppsDatum).Wait();
                     else if (datum is SmsDatum)
                         _smsTable.InsertAsync(datum as SmsDatum).Wait();
@@ -145,6 +151,8 @@ namespace SensusService.DataStores.Remote
                         _compassTable.InsertAsync(datum as CompassDatum).Wait();
                     else if (datum is LocationDatum)
                         _locationTable.InsertAsync(datum as LocationDatum).Wait();
+                    else if (datum is PointOfInterestProximityDatum)
+                        _pointOfInterestTable.InsertAsync(datum as PointOfInterestProximityDatum).Wait();
                     else if (datum is AccelerometerDatum)
                         _accelerometerTable.InsertAsync(datum as AccelerometerDatum).Wait();
                     else if (datum is SpeedDatum)

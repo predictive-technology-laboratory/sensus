@@ -22,8 +22,8 @@ namespace SensusService.Probes.User
     public class Prompt
     {
         #region static members
-        private static readonly object _staticLockObject = new object();
-        private static bool _promptIsRunning = false;
+        private static readonly object LOCKER = new object();
+        private static bool PROMPT_IS_RUNNING = false;
         #endregion
 
         private string _name;
@@ -109,7 +109,7 @@ namespace SensusService.Probes.User
         {
             new Thread(() =>
                 {
-                    lock (_staticLockObject)
+                    lock (LOCKER)
                     {
                         if (_inputDatum != null)
                         {
@@ -117,13 +117,13 @@ namespace SensusService.Probes.User
                             return;
                         }
 
-                        if (_promptIsRunning)
+                        if (PROMPT_IS_RUNNING)
                         {
                             callback(null);
                             return;
                         }
                         else
-                            _promptIsRunning = true;
+                            PROMPT_IS_RUNNING = true;
                     }
 
                     string message = _outputMessage;
@@ -156,7 +156,7 @@ namespace SensusService.Probes.User
 
                             callback(_inputDatum);
 
-                            _promptIsRunning = false;
+                            PROMPT_IS_RUNNING = false;
                         });
 
                     if (_outputType == PromptOutputType.Text && _inputType == PromptInputType.Text)
@@ -167,7 +167,7 @@ namespace SensusService.Probes.User
                     {
                         SensusServiceHelper.Get().FlashNotificationAsync(message, () =>
                             {
-                                _promptIsRunning = false;
+                                PROMPT_IS_RUNNING = false;
                             });
                     }
                     else if (_outputType == PromptOutputType.Voice && _inputType == PromptInputType.Text)
@@ -188,7 +188,7 @@ namespace SensusService.Probes.User
                     {
                         SensusServiceHelper.Get().TextToSpeechAsync(message, () =>
                             {
-                                _promptIsRunning = false;
+                                PROMPT_IS_RUNNING = false;
                             });
                     }
                     else

@@ -24,14 +24,14 @@ namespace Sensus.Android.Probes.Context
     [IntentFilter(new string[] { BluetoothDevice.ActionFound }, Categories = new string[] { Intent.CategoryDefault })]
     public class AndroidBluetoothBroadcastReceiver : BroadcastReceiver
     {
-        public static event EventHandler<BluetoothDeviceProximityDatum> DeviceFound;
+        public static event EventHandler<BluetoothDeviceProximityDatum> DEVICE_FOUND;
 
         public override void OnReceive(global::Android.Content.Context context, Intent intent)
         {
-            if (DeviceFound != null && intent != null && intent.Action == BluetoothDevice.ActionFound)
+            if (DEVICE_FOUND != null && intent != null && intent.Action == BluetoothDevice.ActionFound)
             {
                 BluetoothDevice device = intent.GetParcelableExtra(BluetoothDevice.ExtraDevice) as BluetoothDevice;
-                DeviceFound(this, new BluetoothDeviceProximityDatum(DateTimeOffset.UtcNow, device.Name, device.Address));
+                DEVICE_FOUND(this, new BluetoothDeviceProximityDatum(DateTimeOffset.UtcNow, device.Name, device.Address));
             }
         }
     }

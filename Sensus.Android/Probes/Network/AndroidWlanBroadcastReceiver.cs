@@ -25,10 +25,9 @@ namespace Sensus.Android.Probes.Network
     [IntentFilter(new string[] { ConnectivityManager.ConnectivityAction }, Categories = new string[] { Intent.CategoryDefault })]
     public class AndroidWlanBroadcastReceiver : BroadcastReceiver
     {
-        public static event EventHandler<WlanDatum> WifiConnectionChanged;
-
-        private static string _previousAccessPointBSSID = null;
-        private static bool _firstReceive = true;
+        public static event EventHandler<WlanDatum> WIFI_CONNECTION_CHANGED;
+        private static string PREVIOUS_ACCESS_POINT_BSSID = null;
+        private static bool FIRST_RECEIVE = true;
 
         private ConnectivityManager _connectivityManager;
 
@@ -39,14 +38,14 @@ namespace Sensus.Android.Probes.Network
 
         public override void OnReceive(global::Android.Content.Context context, Intent intent)
         {
-            if (WifiConnectionChanged != null && intent != null && intent.Action == ConnectivityManager.ConnectivityAction)
+            if (WIFI_CONNECTION_CHANGED != null && intent != null && intent.Action == ConnectivityManager.ConnectivityAction)
             {
                 string currAccessPointBSSID = GetAccessPointBSSID();
-                if (_firstReceive || currAccessPointBSSID != _previousAccessPointBSSID)
+                if (FIRST_RECEIVE || currAccessPointBSSID != PREVIOUS_ACCESS_POINT_BSSID)
                 {
-                    WifiConnectionChanged(this, new WlanDatum(DateTimeOffset.UtcNow, currAccessPointBSSID));
-                    _previousAccessPointBSSID = currAccessPointBSSID;
-                    _firstReceive = false;
+                    WIFI_CONNECTION_CHANGED(this, new WlanDatum(DateTimeOffset.UtcNow, currAccessPointBSSID));
+                    PREVIOUS_ACCESS_POINT_BSSID = currAccessPointBSSID;
+                    FIRST_RECEIVE = false;
                 }
             }
         }

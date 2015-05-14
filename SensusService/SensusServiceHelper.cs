@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Newtonsoft.Json;
-using SensusService.Probes.Location;
-using SensusUI.UiProperties;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
-using Xamarin;
-using Xamarin.Geolocation;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
+using Newtonsoft.Json;
 using SensusService.Probes;
+using SensusService.Probes.Location;
+using SensusUI.UiProperties;
+using Xamarin;
+using Xamarin.Geolocation;
 
 namespace SensusService
 {
@@ -37,21 +37,21 @@ namespace SensusService
         public const string SENSUS_CALLBACK_KEY = "SENSUS-CALLBACK";
         public const string SENSUS_CALLBACK_ID_KEY = "SENSUS-CALLBACK-ID";
         public const string SENSUS_CALLBACK_REPEATING_KEY = "SENSUS-CALLBACK-REPEATING";
-
-        private static SensusServiceHelper _singleton;
-        private static object _staticLockObject = new object();
-        protected static readonly string XAMARIN_INSIGHTS_APP_KEY = "97af5c4ab05c6a69d2945fd403ff45535f8bb9bb";
-        private static readonly string ENCRYPTION_KEY = "Making stuff private!";
-        private static readonly string _shareDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "share");
-        private static readonly string _logPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
-        private static readonly string _serializationPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_service_helper.json");
-        private static readonly JsonSerializerSettings _serializationSettings = new JsonSerializerSettings
+        protected const string XAMARIN_INSIGHTS_APP_KEY = "97af5c4ab05c6a69d2945fd403ff45535f8bb9bb";
+        private const string ENCRYPTION_KEY = "Making stuff private!";
+        private static readonly object LOCKER = new object();
+        private static readonly string SHARE_DIRECTORY = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "share");
+        private static readonly string LOG_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
+        private static readonly string SERIALIZATION_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_service_helper.json");
+        private static readonly JsonSerializerSettings SERIALIZATION_SETTINGS = new JsonSerializerSettings
             {
                 PreserveReferencesHandling = PreserveReferencesHandling.Objects,
                 ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
                 TypeNameHandling = TypeNameHandling.All,
                 ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
             };
+
+        private static SensusServiceHelper SINGLETON;
 
         private static byte[] EncryptionKeyBytes
         {
@@ -70,8 +70,8 @@ namespace SensusService
             int triesLeft = 10;
             while (triesLeft-- > 0)
             {
-                lock (_staticLockObject)
-                    if (_singleton == null)
+                lock (LOCKER)
+                    if (SINGLETON == null)
                     {
                         Console.Error.WriteLine("Waiting for service to construct helper object.");
                         Thread.Sleep(1000);
@@ -80,8 +80,8 @@ namespace SensusService
                         break;
             }
 
-            lock (_staticLockObject)
-                if (_singleton == null)
+            lock (LOCKER)
+                if (SINGLETON == null)
                 {
                     string error = "Failed to get service helper.";
 
@@ -96,7 +96,7 @@ namespace SensusService
                     throw ex;
                 }
 
-            return _singleton;
+            return SINGLETON;
         }
 
         public static SensusServiceHelper Load<T>() where T : SensusServiceHelper, new()
@@ -105,7 +105,7 @@ namespace SensusService
 
             try
             {
-                sensusServiceHelper = JsonConvert.DeserializeObject<T>(AesDecrypt(File.ReadAllBytes(_serializationPath)), _serializationSettings);
+                sensusServiceHelper = JsonConvert.DeserializeObject<T>(AesDecrypt(File.ReadAllBytes(SERIALIZATION_PATH)), SERIALIZATION_SETTINGS);
                 sensusServiceHelper.Logger.Log("Deserialized service helper with " + sensusServiceHelper.RegisteredProtocols.Count + " protocols.", LoggingLevel.Normal, typeof(T));  
             }
             catch (Exception ex)
@@ -267,9 +267,9 @@ namespace SensusService
 
         protected SensusServiceHelper()
         {
-            lock (_staticLockObject)
-                if (_singleton != null)
-                    _singleton.Dispose();
+            lock (LOCKER)
+                if (SINGLETON != null)
+                    SINGLETON.Dispose();
 
             _stopped = true;
             _registeredProtocols = new List<Protocol>();
@@ -282,8 +282,8 @@ namespace SensusService
             _md5Hash = MD5.Create();
             _pointsOfInterest = new List<PointOfInterest>();
 
-            if (!Directory.Exists(_shareDirectory))
-                Directory.CreateDirectory(_shareDirectory); 
+            if (!Directory.Exists(SHARE_DIRECTORY))
+                Directory.CreateDirectory(SHARE_DIRECTORY); 
 
             #if DEBUG
             LoggingLevel loggingLevel = LoggingLevel.Debug;
@@ -291,8 +291,8 @@ namespace SensusService
             LoggingLevel loggingLevel = LoggingLevel.Normal;
             #endif
 
-            _logger = new Logger(_logPath, loggingLevel, Console.Error);
-            _logger.Log("Log file started at \"" + _logPath + "\".", LoggingLevel.Normal, GetType());
+            _logger = new Logger(LOG_PATH, loggingLevel, Console.Error);
+            _logger.Log("Log file started at \"" + LOG_PATH + "\".", LoggingLevel.Normal, GetType());
 
             GpsReceiver.Get().Initialize(Geolocator);  // initialize GPS receiver with platform-specific geolocator
 
@@ -311,8 +311,8 @@ namespace SensusService
                 }
             }
 
-            lock (_staticLockObject)
-                _singleton = this;
+            lock (LOCKER)
+                SINGLETON = this;
         }
 
         public string GetMd5Hash(string s)
@@ -408,9 +408,9 @@ namespace SensusService
                     {
                         try
                         {
-                            using (FileStream file = new FileStream(_serializationPath, FileMode.Create, FileAccess.Write))
+                            using (FileStream file = new FileStream(SERIALIZATION_PATH, FileMode.Create, FileAccess.Write))
                             {
-                                byte[] encryptedBytes = AesEncrypt(JsonConvert.SerializeObject(this, _serializationSettings));
+                                byte[] encryptedBytes = AesEncrypt(JsonConvert.SerializeObject(this, SERIALIZATION_SETTINGS));
                                 file.Write(encryptedBytes, 0, encryptedBytes.Length);
                                 file.Close();
                             }
@@ -715,7 +715,7 @@ namespace SensusService
                 int fileNum = 0;
                 string path = null;
                 while (path == null || File.Exists(path))
-                    path = Path.Combine(_shareDirectory, fileNum++ + (string.IsNullOrWhiteSpace(extension) ? "" : "." + extension.Trim('.')));
+                    path = Path.Combine(SHARE_DIRECTORY, fileNum++ + (string.IsNullOrWhiteSpace(extension) ? "" : "." + extension.Trim('.')));
 
                 return path;
             }
@@ -749,7 +749,7 @@ namespace SensusService
             _md5Hash.Dispose();
             _md5Hash = null;
 
-            _singleton = null;
+            SINGLETON = null;
         }
     }
 }

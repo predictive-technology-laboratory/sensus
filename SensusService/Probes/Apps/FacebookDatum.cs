@@ -22,23 +22,23 @@ namespace SensusService.Probes.Apps
 {
     public class FacebookDatum : Datum
     {
-        private static Dictionary<string, PropertyInfo> _jsonFieldDatumProperty;
+        private static Dictionary<string, PropertyInfo> JSON_FIELD_DATUM_PROPERTY;
 
         static FacebookDatum()
         {
-            _jsonFieldDatumProperty = new Dictionary<string, PropertyInfo>();
+            JSON_FIELD_DATUM_PROPERTY = new Dictionary<string, PropertyInfo>();
 
             foreach (PropertyInfo property in typeof(FacebookDatum).GetProperties())
             {
                 FacebookPermission permission = property.GetCustomAttribute<FacebookPermission>();
                 if (permission != null)
-                    _jsonFieldDatumProperty.Add(permission.Edge ?? permission.Field, property);
+                    JSON_FIELD_DATUM_PROPERTY.Add(permission.Edge ?? permission.Field, property);
             }
         }
 
         public static bool TryGetProperty(string jsonField, out PropertyInfo property)
         {
-            return _jsonFieldDatumProperty.TryGetValue(jsonField, out property);
+            return JSON_FIELD_DATUM_PROPERTY.TryGetValue(jsonField, out property);
         }
 
         // below are the various permissions, the fields/edges that they provide access to, and the anonymization

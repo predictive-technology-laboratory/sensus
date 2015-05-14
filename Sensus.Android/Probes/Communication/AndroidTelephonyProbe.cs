@@ -56,13 +56,13 @@ namespace Sensus.Android.Probes.Communication
 
         protected override void StartListening()
         {
-            AndroidTelephonyOutgoingBroadcastReceiver.OutgoingCall += _outgoingCallCallback;
+            AndroidTelephonyOutgoingBroadcastReceiver.OUTGOING_CALL += _outgoingCallCallback;
             _telephonyManager.Listen(_idleIncomingCallListener, PhoneStateListenerFlags.CallState);
         }
 
         protected override void StopListening()
         {
-            AndroidTelephonyOutgoingBroadcastReceiver.OutgoingCall -= _outgoingCallCallback;
+            AndroidTelephonyOutgoingBroadcastReceiver.OUTGOING_CALL -= _outgoingCallCallback;
             _telephonyManager.Listen(_idleIncomingCallListener, PhoneStateListenerFlags.None);
         }
     }

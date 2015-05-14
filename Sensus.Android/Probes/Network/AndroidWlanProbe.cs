@@ -31,12 +31,12 @@ namespace Sensus.Android.Probes.Network
 
         protected override void StartListening()
         {
-            AndroidWlanBroadcastReceiver.WifiConnectionChanged += _wlanConnectionChangedCallback;
+            AndroidWlanBroadcastReceiver.WIFI_CONNECTION_CHANGED += _wlanConnectionChangedCallback;
         }
 
         protected override void StopListening()
         {
-            AndroidWlanBroadcastReceiver.WifiConnectionChanged -= _wlanConnectionChangedCallback;
+            AndroidWlanBroadcastReceiver.WIFI_CONNECTION_CHANGED -= _wlanConnectionChangedCallback;
         }
     }
 }
