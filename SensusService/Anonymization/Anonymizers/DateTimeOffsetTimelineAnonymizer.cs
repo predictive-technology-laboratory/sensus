@@ -28,8 +28,21 @@ namespace SensusService.Anonymization.Anonymizers
 
         public override object Apply(object value, Protocol protocol)
         {
-            return DateTimeOffset.MinValue + ((DateTimeOffset)value - protocol.FirstStartTimestamp);
+            DateTimeOffset dateTimeOffsetValue = (DateTimeOffset)value;
+
+            // the random anchor time is chosen from the first 1000 years AD. if the value passed in 
+            // precedes the random time anchor, the result of the subtraction will not be representable
+            // and will throw an exception. there probably isn't a good case for anonymizing dates
+            // within the first 1000 years AD, so the user has probably misconfigured the protocol; 
+            // however, we must return a value, so default to the minimum.
+
+            if(dateTimeOffsetValue >= protocol.RandomTimeAnchor)
+                return DateTimeOffset.MinValue + (dateTimeOffsetValue - protocol.RandomTimeAnchor);
+            else
+            {
+                SensusServiceHelper.Get().Logger.Log("Attempted to anonymize a value that preceded the random anchor time.", LoggingLevel.Normal, GetType());
+                return DateTimeOffset.MinValue;
+            }
         }
     }
-}
-
+}    

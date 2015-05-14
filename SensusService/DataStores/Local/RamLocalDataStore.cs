@@ -67,9 +67,34 @@ namespace SensusService.DataStores.Local
 
                     // all locally stored data, whether on disk or in RAM, should be anonymized as required
                     // by the protocol. convert datum to/from JSON in order to apply anonymization.
-                    _data.Add(Datum.FromJSON(datum.GetJSON(Protocol.JsonAnonymizer)));
 
-                    committed.Add(datum);
+                    try
+                    {
+                        string json = datum.GetJSON(Protocol.JsonAnonymizer);
+
+                        try
+                        {
+                            Datum anonymizedDatum = Datum.FromJSON(json);
+
+                            try
+                            {
+                                _data.Add(anonymizedDatum);
+                                committed.Add(datum);
+                            }
+                            catch (Exception ex)
+                            {
+                                SensusServiceHelper.Get().Logger.Log("Failed to add datum to collection:  " + ex.Message, LoggingLevel.Normal, GetType());
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Failed to get datum from JSON:  " + ex.Message, LoggingLevel.Normal, GetType());
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Failed to get JSON from datum:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
                 }
 
             return committed;

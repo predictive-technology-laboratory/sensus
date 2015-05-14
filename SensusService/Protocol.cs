@@ -96,6 +96,11 @@ namespace SensusService
                     try
                     {
                         Protocol protocol = JsonConvert.DeserializeObject<Protocol>(json, JSON_SERIALIZER_SETTINGS);
+
+                        // reset the random time anchor -- we shouldn't use the same one that someone else used
+                        protocol.ResetRandomTimeAnchor();
+
+                        // reset the storage directory
                         protocol.StorageDirectory = null;
                         while (protocol.StorageDirectory == null)
                         {
@@ -133,7 +138,7 @@ namespace SensusService
         private bool _forceProtocolReportsToRemoteDataStore;
         private string _lockPasswordHash;
         private AnonymizedJsonContractResolver _jsonAnonymizer;
-        private DateTimeOffset _firstStartTimestamp;
+        private DateTimeOffset _randomTimeAnchor;
         private bool _shareable;
         private List<PointOfInterest> _pointsOfInterest;
 
@@ -238,15 +243,15 @@ namespace SensusService
             set { _jsonAnonymizer = value; }
         }
 
-        public DateTimeOffset FirstStartTimestamp
+        public DateTimeOffset RandomTimeAnchor
         {
             get
             {
-                return _firstStartTimestamp;
+                return _randomTimeAnchor;
             }
             set
             {
-                _firstStartTimestamp = value;
+                _randomTimeAnchor = value;
             }
         }
 
@@ -277,19 +282,16 @@ namespace SensusService
             _forceProtocolReportsToRemoteDataStore = false;
             _lockPasswordHash = "";
             _jsonAnonymizer = new AnonymizedJsonContractResolver(this);
-            _firstStartTimestamp = DateTimeOffset.MinValue;
             _shareable = true;
             _pointsOfInterest = new List<PointOfInterest>();
         }
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="name">Name of protocol.</param>
         public Protocol(string name)
             : this()
         {
             _name = name;
+
+            ResetRandomTimeAnchor();            
 
             while (_storageDirectory == null)
             {
@@ -319,6 +321,12 @@ namespace SensusService
                 }
         }
 
+        private void ResetRandomTimeAnchor()
+        {
+            // pick a random time within the first 1000 years AD.
+            _randomTimeAnchor = new DateTimeOffset((long)(new Random().NextDouble() * new DateTimeOffset(1000, 1, 1, 0, 0, 0, new TimeSpan()).Ticks), new TimeSpan());
+        }
+
         public void Save(string path)
         {
             using (FileStream file = new FileStream(path, FileMode.Create, FileAccess.Write))
@@ -345,9 +353,6 @@ namespace SensusService
 
                 if (ProtocolRunningChanged != null)
                     ProtocolRunningChanged(this, _running);
-
-                if (_firstStartTimestamp == DateTimeOffset.MinValue)
-                    _firstStartTimestamp = DateTimeOffset.UtcNow;
 
                 // let the service helper know that the current protocol is running (saves helper)
                 SensusServiceHelper.Get().RegisterProtocol(this);
