@@ -178,6 +178,8 @@ namespace SensusService.Probes
         {
             if (datum != null)
             {
+                datum.ProtocolId = Protocol.Id;
+
                 if (_storeData)
                     lock (_collectedData)
                     {

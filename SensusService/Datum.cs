@@ -48,6 +48,7 @@ namespace SensusService
         private string _id;
         private string _deviceId;
         private DateTimeOffset _timestamp;
+        private string _protocolId;
         private int _hashCode;
         private bool _anonymized;       
 
@@ -73,7 +74,19 @@ namespace SensusService
         {
             get { return _timestamp; }
             set { _timestamp = value; }
-        }   
+        } 
+
+        public string ProtocolId
+        {
+            get
+            {
+                return _protocolId;
+            }
+            set
+            {
+                _protocolId = value;
+            }
+        }  
 
         public bool Anonymized
         {
