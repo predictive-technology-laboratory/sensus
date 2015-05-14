@@ -176,7 +176,7 @@ namespace SensusService.DataStores
 
                             _isCommitting = false;
                         }
-                    }, _commitDelayMS, _commitDelayMS);
+                    }, GetType().FullName + " Commit", _commitDelayMS, _commitDelayMS);
             }
         }
 

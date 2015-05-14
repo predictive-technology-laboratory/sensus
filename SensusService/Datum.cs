@@ -94,16 +94,15 @@ namespace SensusService
         /// Parameterless constructor For JSON.NET deserialization.
         /// </summary>
         protected Datum()
+        {            
+        }
+
+        protected Datum(DateTimeOffset timestamp)     
         {
+            _timestamp = timestamp;
             _deviceId = SensusServiceHelper.Get().DeviceId;
             _anonymized = false;
             Id = Guid.NewGuid().ToString();
-        }
-
-        protected Datum(DateTimeOffset timestamp)
-            : this()
-        {
-            _timestamp = timestamp;
         }
 
         public string GetJSON(AnonymizedJsonContractResolver anonymizationContractResolver)

@@ -109,7 +109,7 @@ namespace SensusService.Probes
 
                             _isPolling = false;
                         }
-                    }, 0, _pollingSleepDurationMS, userNotificationMessage);
+                    }, GetType().FullName + " Poll", 0, _pollingSleepDurationMS, userNotificationMessage);
             }
         }
 

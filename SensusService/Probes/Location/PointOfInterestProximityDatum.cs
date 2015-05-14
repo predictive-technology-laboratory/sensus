@@ -136,5 +136,16 @@ namespace SensusService.Probes.Location
             _distanceMeters = distanceMeters;
             _direction = direction;
         }
+
+        public override string ToString()
+        {
+            return base.ToString() + Environment.NewLine +
+            "Name:  " + _pointOfInterestName + Environment.NewLine +
+            "Type:  " + _pointOfInterestType + Environment.NewLine +
+            "Lat:  " + _pointOfInterestLatitude + Environment.NewLine +
+            "Lon:  " + _pointOfInterestLongitude + Environment.NewLine +
+            "Distance:  " + _distanceMeters + Environment.NewLine +
+            "Direction:  " + _direction;
+        }
     }
 }

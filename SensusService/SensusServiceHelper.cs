@@ -33,25 +33,40 @@ namespace SensusService
     /// </summary>
     public abstract class SensusServiceHelper : IDisposable
     {
+        private class ScheduledCallback
+        {
+            public Action<CancellationToken> Action { get; set; }
+            public string Name { get; set; }
+            public CancellationTokenSource Canceller { get; set; }
+            public string UserNotificationMessage { get; set; }
+
+            public ScheduledCallback(Action<CancellationToken> action, string name, CancellationTokenSource canceller, string userNotificationMessage)
+            {
+                Action = action;
+                Name = name;
+                Canceller = canceller;
+                UserNotificationMessage = userNotificationMessage;
+            }
+        }
+
         #region static members
         public const string SENSUS_CALLBACK_KEY = "SENSUS-CALLBACK";
         public const string SENSUS_CALLBACK_ID_KEY = "SENSUS-CALLBACK-ID";
         public const string SENSUS_CALLBACK_REPEATING_KEY = "SENSUS-CALLBACK-REPEATING";
         protected const string XAMARIN_INSIGHTS_APP_KEY = "97af5c4ab05c6a69d2945fd403ff45535f8bb9bb";
+        private static SensusServiceHelper SINGLETON;
         private const string ENCRYPTION_KEY = "Making stuff private!";
         private static readonly object LOCKER = new object();
         private static readonly string SHARE_DIRECTORY = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "share");
         private static readonly string LOG_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
         private static readonly string SERIALIZATION_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_service_helper.json");
-        private static readonly JsonSerializerSettings SERIALIZATION_SETTINGS = new JsonSerializerSettings
+        private static readonly JsonSerializerSettings JSON_SERIALIZATION_SETTINGS = new JsonSerializerSettings
             {
                 PreserveReferencesHandling = PreserveReferencesHandling.Objects,
                 ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
                 TypeNameHandling = TypeNameHandling.All,
                 ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-            };
-
-        private static SensusServiceHelper SINGLETON;
+            };                
 
         private static byte[] EncryptionKeyBytes
         {
@@ -105,7 +120,7 @@ namespace SensusService
 
             try
             {
-                sensusServiceHelper = JsonConvert.DeserializeObject<T>(AesDecrypt(File.ReadAllBytes(SERIALIZATION_PATH)), SERIALIZATION_SETTINGS);
+                sensusServiceHelper = JsonConvert.DeserializeObject<T>(AesDecrypt(File.ReadAllBytes(SERIALIZATION_PATH)), JSON_SERIALIZATION_SETTINGS);
                 sensusServiceHelper.Logger.Log("Deserialized service helper with " + sensusServiceHelper.RegisteredProtocols.Count + " protocols.", LoggingLevel.Normal, typeof(T));  
             }
             catch (Exception ex)
@@ -173,7 +188,7 @@ namespace SensusService
         private int _healthTestDelayMS;
         private int _healthTestCount;
         private int _healthTestsPerProtocolReport;
-        private Dictionary<string, Tuple<Action<CancellationToken>, CancellationTokenSource, string>> _idCallbackCancellerMessage;
+        private Dictionary<string, ScheduledCallback> _idCallback;
         private MD5 _md5Hash;
         private List<PointOfInterest> _pointsOfInterest;
 
@@ -278,7 +293,7 @@ namespace SensusService
             _healthTestDelayMS = 60000;
             _healthTestCount = 0;
             _healthTestsPerProtocolReport = 5;
-            _idCallbackCancellerMessage = new Dictionary<string, Tuple<Action<CancellationToken>, CancellationTokenSource, string>>();
+            _idCallback = new Dictionary<string, ScheduledCallback>();
             _md5Hash = MD5.Create();
             _pointsOfInterest = new List<PointOfInterest>();
 
@@ -371,7 +386,7 @@ namespace SensusService
                 }
 
                 if (_healthTestCallbackId == null)
-                    _healthTestCallbackId = ScheduleRepeatingCallback(TestHealth, _healthTestDelayMS, _healthTestDelayMS);
+                    _healthTestCallbackId = ScheduleRepeatingCallback(TestHealth, "Test Health", _healthTestDelayMS, _healthTestDelayMS);
             }
         }
 
@@ -410,7 +425,7 @@ namespace SensusService
                         {
                             using (FileStream file = new FileStream(SERIALIZATION_PATH, FileMode.Create, FileAccess.Write))
                             {
-                                byte[] encryptedBytes = AesEncrypt(JsonConvert.SerializeObject(this, SERIALIZATION_SETTINGS));
+                                byte[] encryptedBytes = AesEncrypt(JsonConvert.SerializeObject(this, JSON_SERIALIZATION_SETTINGS));
                                 file.Write(encryptedBytes, 0, encryptedBytes.Length);
                                 file.Close();
                             }
@@ -465,61 +480,61 @@ namespace SensusService
         }
 
         #region callback scheduling
-        public string ScheduleRepeatingCallback(Action<CancellationToken> callback, int initialDelayMS, int repeatDelayMS)
+        public string ScheduleRepeatingCallback(Action<CancellationToken> callback, string name, int initialDelayMS, int repeatDelayMS)
         {
-            return ScheduleRepeatingCallback(callback, initialDelayMS, repeatDelayMS, null);
+            return ScheduleRepeatingCallback(callback, name, initialDelayMS, repeatDelayMS, null);
         }
 
-        public string ScheduleRepeatingCallback(Action<CancellationToken> callback, int initialDelayMS, int repeatDelayMS, string userNotificationMessage)
+        public string ScheduleRepeatingCallback(Action<CancellationToken> callback, string name, int initialDelayMS, int repeatDelayMS, string userNotificationMessage)
         {
-            lock (_idCallbackCancellerMessage)
+            lock (_idCallback)
             {
-                string callbackId = AddCallback(callback, userNotificationMessage);
+                string callbackId = AddCallback(callback, name, userNotificationMessage);
                 ScheduleRepeatingCallback(callbackId, initialDelayMS, repeatDelayMS, userNotificationMessage);
                 return callbackId;
             }
         }
 
-        public string ScheduleOneTimeCallback(Action<CancellationToken> callback, int delay)
+        public string ScheduleOneTimeCallback(Action<CancellationToken> callback, string name, int delay)
         {
-            return ScheduleOneTimeCallback(callback, delay, null);
+            return ScheduleOneTimeCallback(callback, name, delay, null);
         }
 
-        public string ScheduleOneTimeCallback(Action<CancellationToken> callback, int delay, string userNotificationMessage)
+        public string ScheduleOneTimeCallback(Action<CancellationToken> callback, string name, int delay, string userNotificationMessage)
         {
-            lock (_idCallbackCancellerMessage)
+            lock (_idCallback)
             {
-                string callbackId = AddCallback(callback, userNotificationMessage);
+                string callbackId = AddCallback(callback, name, userNotificationMessage);
                 ScheduleOneTimeCallback(callbackId, delay, userNotificationMessage);
                 return callbackId;
             }
         }
 
-        private string AddCallback(Action<CancellationToken> callback, string userNotificationMessage)
+        private string AddCallback(Action<CancellationToken> callback, string name, string userNotificationMessage)
         {
-            lock (_idCallbackCancellerMessage)
+            lock (_idCallback)
             {
                 string callbackId = Guid.NewGuid().ToString();
-                _idCallbackCancellerMessage.Add(callbackId, new Tuple<Action<CancellationToken>, CancellationTokenSource, string>(callback, null, userNotificationMessage));
+                _idCallback.Add(callbackId, new ScheduledCallback(callback, name, null, userNotificationMessage));
                 return callbackId;
             }
         }
 
         public bool CallbackIsScheduled(string callbackId)
         {
-            lock(_idCallbackCancellerMessage)
-                return _idCallbackCancellerMessage.ContainsKey(callbackId);
+            lock(_idCallback)
+                return _idCallback.ContainsKey(callbackId);
         }
 
         public string RescheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS)
         {
-            lock (_idCallbackCancellerMessage)
+            lock (_idCallback)
             {
-                Tuple<Action<CancellationToken>, CancellationTokenSource, string> callbackCancellerMessage;
-                if (_idCallbackCancellerMessage.TryGetValue(callbackId, out callbackCancellerMessage))
+                ScheduledCallback scheduledCallback;
+                if (_idCallback.TryGetValue(callbackId, out scheduledCallback))
                 {
                     UnscheduleRepeatingCallback(callbackId);
-                    return ScheduleRepeatingCallback(callbackCancellerMessage.Item1, initialDelayMS, repeatDelayMS, callbackCancellerMessage.Item3);
+                    return ScheduleRepeatingCallback(scheduledCallback.Action, scheduledCallback.Name, initialDelayMS, repeatDelayMS, scheduledCallback.UserNotificationMessage);
                 }
                 else
                     return null;
@@ -533,57 +548,54 @@ namespace SensusService
 
         public void RaiseCallbackAsync(string callbackId, bool repeating, bool notifyUser, Action callback)
         {
-            lock (_idCallbackCancellerMessage)
+            lock (_idCallback)
             {
                 // do we have callback information for the passed callbackId? we might not, in the case where the callback is canceled by the user and the system fires it subsequently.
-                Tuple<Action<CancellationToken>, CancellationTokenSource, string> callbackCancellerMessage;
-                if (_idCallbackCancellerMessage.TryGetValue(callbackId, out callbackCancellerMessage))
+                ScheduledCallback scheduledCallback;
+                if (_idCallback.TryGetValue(callbackId, out scheduledCallback))
                 {
                     KeepDeviceAwake();  // not all OSs support this (e.g., iOS), but call it anyway
 
                     new Thread(() =>
                         {
-                            Action<CancellationToken> callbackToRaise = callbackCancellerMessage.Item1;
-                            string userNotificationMessage = callbackCancellerMessage.Item3;
-
                             // callbacks cannot be raised concurrently -- drop the current callback if it is already in progress.
-                            if (Monitor.TryEnter(callbackToRaise))
+                            if (Monitor.TryEnter(scheduledCallback.Action))
                             {
                                 // initialize a new cancellation token source for this call, since they cannot be reset
                                 CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
-                                // set cancellation token source in collection, so that someone can call CancelRaisedCallback
-                                lock (_idCallbackCancellerMessage)
-                                    _idCallbackCancellerMessage[callbackId] = new Tuple<Action<CancellationToken>, CancellationTokenSource, string>(callbackToRaise, cancellationTokenSource, userNotificationMessage);
+                                // set cancellation token source in collection, so that someone can call CancelRaisedCallback -- lock the containing collection since we lock it within CancelRaisedCallback
+                                lock (_idCallback)
+                                    scheduledCallback.Canceller = cancellationTokenSource;
 
                                 try
                                 {
-                                    _logger.Log("Raising callback " + callbackId, LoggingLevel.Debug, GetType());
+                                    _logger.Log("Raising callback \"" + scheduledCallback.Name + "\" (" + callbackId + ").", LoggingLevel.Debug, GetType());
 
                                     if(notifyUser)
-                                        IssueNotificationAsync(userNotificationMessage, callbackId);
+                                        IssueNotificationAsync(scheduledCallback.UserNotificationMessage, callbackId);
 
-                                    callbackToRaise(cancellationTokenSource.Token);
+                                    scheduledCallback.Action(cancellationTokenSource.Token);
                                 }
                                 catch (Exception ex)
                                 {
-                                    _logger.Log("Callback failed:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                    _logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") failed:  " + ex.Message, LoggingLevel.Normal, GetType());
                                 }
                                 finally
                                 {
-                                    Monitor.Exit(callbackToRaise);
+                                    Monitor.Exit(scheduledCallback.Action);
 
-                                    // reset cancellation token to null since there is nothing to cancel
-                                    lock (_idCallbackCancellerMessage)
-                                        _idCallbackCancellerMessage[callbackId] = new Tuple<Action<CancellationToken>, CancellationTokenSource, string>(callbackToRaise, null, userNotificationMessage);
+                                    // reset cancellation token to null since there is nothing to cancel -- lock the containing collection since we lock it within CancelRaisedCallback
+                                    lock (_idCallback)
+                                        scheduledCallback.Canceller = null;
                                 }
                             }
                             else
-                                _logger.Log("Callback " + callbackId + " was already running. Not running again.", LoggingLevel.Debug, GetType());
+                                _logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") was already running. Not running again.", LoggingLevel.Debug, GetType());
 
                             if (!repeating)
-                                lock (_idCallbackCancellerMessage)
-                                    _idCallbackCancellerMessage.Remove(callbackId);
+                                lock (_idCallback)
+                                    _idCallback.Remove(callbackId);
 
                             LetDeviceSleep();
 
@@ -597,36 +609,32 @@ namespace SensusService
 
         public void CancelRaisedCallback(string callbackId)
         {
-            lock (_idCallbackCancellerMessage)
+            lock (_idCallback)
             {
-                Tuple<Action<CancellationToken>, CancellationTokenSource, string> callbackCancellerMessage;
-                if (_idCallbackCancellerMessage.TryGetValue(callbackId, out callbackCancellerMessage) && callbackCancellerMessage.Item2 != null)  // the cancellation source will be null if the callback is not currently being raised
-                    callbackCancellerMessage.Item2.Cancel();
+                ScheduledCallback scheduledCallback;
+                if (_idCallback.TryGetValue(callbackId, out scheduledCallback) && scheduledCallback.Canceller != null)  // the cancellation source will be null if the callback is not currently being raised
+                    scheduledCallback.Canceller.Cancel();
             }
         }
 
         public void UnscheduleOneTimeCallback(string callbackId)
         {
-            lock (_idCallbackCancellerMessage)
-            {
-                if (callbackId != null)
+            if (callbackId != null)
+                lock (_idCallback)
                 {
-                    _idCallbackCancellerMessage.Remove(callbackId);
+                    _idCallback.Remove(callbackId);
                     UnscheduleCallback(callbackId, false);
                 }
-            }
         }
 
         public void UnscheduleRepeatingCallback(string callbackId)
-        {                          
-            lock (_idCallbackCancellerMessage)
-            {
-                if (callbackId != null)
+        {                                      
+            if (callbackId != null)
+                lock (_idCallback)
                 {
-                    _idCallbackCancellerMessage.Remove(callbackId);
+                    _idCallback.Remove(callbackId);
                     UnscheduleCallback(callbackId, true);
                 }
-            }
         }
         #endregion
 

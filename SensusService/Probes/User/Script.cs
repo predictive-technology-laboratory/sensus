@@ -196,7 +196,7 @@ namespace SensusService.Probes.User
 
                     callback(data);
 
-                }, _delayMS, userNotificationMessage);
+                }, "Run Script", _delayMS, userNotificationMessage);
         }
 
         public Script Copy()

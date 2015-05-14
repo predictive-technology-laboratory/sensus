@@ -289,7 +289,7 @@ namespace SensusService.Probes.User
                                         scriptWait.WaitOne();
                                     }
                                 }
-                            }, _scriptRerunDelayMS, _scriptRerunDelayMS, userNotificationMessage);
+                            }, "Rerun Script", _scriptRerunDelayMS, _scriptRerunDelayMS, userNotificationMessage);
                     }
                 }).Start();
         }
@@ -312,7 +312,7 @@ namespace SensusService.Probes.User
                         TODO:  Should we use a message?
                         #endif
 
-                        _randomTriggerCallbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(RandomScriptTriggerCallback, _random.Next(_randomTriggerDelayMaxMinutes * 60000), userNotificationMessage);
+                        _randomTriggerCallbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(RandomScriptTriggerCallback, "Randomly Rerun Script", _random.Next(_randomTriggerDelayMaxMinutes * 60000), userNotificationMessage);
                     }
                 }).Start();
         }

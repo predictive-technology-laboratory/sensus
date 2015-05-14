@@ -64,8 +64,11 @@ namespace SensusService.DataStores.Local
                 {
                     if (cancellationToken.IsCancellationRequested)
                         break;
-                    
-                    _data.Add(datum);
+
+                    // all locally stored data, whether on disk or in RAM, should be anonymized as required
+                    // by the protocol. convert datum to/from JSON in order to apply anonymization.
+                    _data.Add(Datum.FromJSON(datum.GetJSON(Protocol.JsonAnonymizer)));
+
                     committed.Add(datum);
                 }
 

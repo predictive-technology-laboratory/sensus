@@ -181,7 +181,7 @@ namespace SensusService.Probes
                 if (_storeData)
                     lock (_collectedData)
                     {
-                        SensusServiceHelper.Get().Logger.Log("Storing datum in cache:  " + datum, LoggingLevel.Verbose, GetType());
+                        SensusServiceHelper.Get().Logger.Log("Storing datum in cache.", LoggingLevel.Verbose, GetType());
                         _collectedData.Add(datum);
                     }
 
