@@ -30,7 +30,7 @@ using System.Threading;
 
 namespace SensusService.DataStores.Remote
 {
-    public class AzureRemoteDataStore : RemoteDataStore
+    public class MicrosoftAzureRemoteDataStore : RemoteDataStore
     {
         private MobileServiceClient _client;
         private string _url;
@@ -74,7 +74,7 @@ namespace SensusService.DataStores.Remote
 
         protected override string DisplayName
         {
-            get { return "Azure"; }
+            get { return "Microsoft Azure"; }
         }
 
         [JsonIgnore]

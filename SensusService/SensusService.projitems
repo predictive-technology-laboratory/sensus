@@ -13,7 +13,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Local\FileLocalDataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Local\LocalDataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Local\RamLocalDataStore.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DataStores\Remote\AzureRemoteDataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Remote\ConsoleRemoteDataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Remote\RemoteDataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Datum.cs" />
@@ -100,6 +99,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\PointOfInterestProximityTrigger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\PointOfInterestProximityDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\ListeningPointsOfInterestProximityProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataStores\Remote\MicrosoftAzureRemoteDataStore.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />
