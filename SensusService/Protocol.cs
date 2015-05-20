@@ -105,7 +105,7 @@ namespace SensusService
                 {
                     try
                     {
-                        #region allow protocols to be opened across platforms by editing the namespaces manually and adding platform-specific probes
+                        #region allow protocols to be opened across platforms by editing the namespaces manually
                         string newJSON;
                         switch (SensusServiceHelper.Get().GetType().Name)
                         {
@@ -129,6 +129,7 @@ namespace SensusService
                             SensusServiceHelper.Get().Logger.Log("Performed cross-platform conversion of service helper JSON.", LoggingLevel.Normal, typeof(Protocol));
                             json = newJSON;
                         }
+                        #endregion
                         
                         Protocol protocol = JsonConvert.DeserializeObject<Protocol>(json, JSON_SERIALIZER_SETTINGS);
 
@@ -139,8 +140,7 @@ namespace SensusService
                             {
                                 SensusServiceHelper.Get().Logger.Log("Adding missing probe to protocol:  " + probe.GetType().FullName, LoggingLevel.Normal, typeof(Protocol));
                                 protocol.AddProbe(probe);
-                            }
-                        #endregion
+                            }                        
 
                         // reset the random time anchor -- we shouldn't use the same one that someone else used
                         protocol.ResetRandomTimeAnchor();
