@@ -345,8 +345,6 @@ namespace SensusService
         #region platform-specific methods
         protected abstract void InitializeXamarinInsights();
 
-        public abstract bool Use(Probe probe);
-
         protected abstract void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, string userNotificationMessage);
 
         protected abstract void ScheduleOneTimeCallback(string callbackId, int delayMS, string userNotificationMessage);

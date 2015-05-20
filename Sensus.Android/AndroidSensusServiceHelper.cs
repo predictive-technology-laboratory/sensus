@@ -179,13 +179,6 @@ namespace Sensus.Android
             Insights.Initialize(XAMARIN_INSIGHTS_APP_KEY, Application.Context);  // can't reference _service here since this method is called from the base class constructor, before the service is set.
         }
 
-        public override bool Use(Probe probe)
-        {
-            return !(probe is ListeningLocationProbe) &&                 // the listening probe creates strange conflicts with the GpsReceiver and the polling probe. don't use it for android.
-                   !(probe is ListeningSpeedProbe) &&                    // the listening speed probe uses a listener on the GPS receiver. see above comment.
-                   !(probe is ListeningPointsOfInterestProximityProbe);  // the listening proximity probe uses a listener on the GPS receiver. see above comment.
-        }
-
         public override void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
         {
             new Thread(() =>

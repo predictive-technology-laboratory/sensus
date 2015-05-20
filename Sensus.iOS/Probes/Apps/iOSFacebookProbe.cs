@@ -25,7 +25,7 @@ using SensusService.Exceptions;
 using SensusService.Probes.Apps;
 using Xamarin.Forms;
 
-namespace Sensus.iOS
+namespace Sensus.iOS.Probes.Apps
 {
     public class iOSFacebookProbe : FacebookProbe
     {
@@ -88,7 +88,7 @@ namespace Sensus.iOS
                 ManualResetEvent startWait = new ManualResetEvent(false);
                 List<ManualResetEvent> responseWaits = new List<ManualResetEvent>();
 
-                Device.BeginInvokeOnMainThread(() =>
+                Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
                     {
                         try
                         {

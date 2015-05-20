@@ -28,6 +28,7 @@ using System.Linq;
 using System.Reflection;
 using SensusUI;
 using SensusService.Probes.Location;
+using SensusService.Exceptions;
 
 namespace SensusService
 {
@@ -38,11 +39,20 @@ namespace SensusService
     {
         #region static members
         private static JsonSerializerSettings JSON_SERIALIZER_SETTINGS = new JsonSerializerSettings
-        {
+        {        
             PreserveReferencesHandling = PreserveReferencesHandling.Objects,
             ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
             TypeNameHandling = TypeNameHandling.All,
-            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
+            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+
+            // need the following in order to deserialize protocols between OSs, whose objects contain different members (e.g., iOS service helper has ActivationId, which Android does not)
+            Error = (o, e) =>
+            {
+                SensusServiceHelper.Get().Logger.Log("Failed to deserialize some part of the Protocol JSON:  " + e.ErrorContext.Error.ToString(), LoggingLevel.Normal, typeof(Protocol));
+                e.ErrorContext.Handled = true;
+            },
+                
+            MissingMemberHandling = MissingMemberHandling.Ignore  
         };
 
         public static void DisplayFromWebUriAsync(Uri webURI)
@@ -95,7 +105,42 @@ namespace SensusService
                 {
                     try
                     {
+                        #region allow protocols to be opened across platforms by editing the namespaces manually and adding platform-specific probes
+                        string newJSON;
+                        switch (SensusServiceHelper.Get().GetType().Name)
+                        {
+                            case "AndroidSensusServiceHelper":
+                                newJSON = json.Replace(".iOS", ".Android").Replace(".WinPhone", ".Android");
+                                break;
+                            case "iOSSensusServiceHelper":
+                                newJSON = json.Replace(".Android", ".iOS").Replace(".WinPhone", ".iOS");
+                                break;
+                            case "WinPhone":
+                                newJSON = json.Replace(".Android", ".WinPhone").Replace(".iOS", ".WinPhone");
+                                break;
+                            default:
+                                throw new SensusException("Attempted to deserialize JSON into unknown service helper type:  " + SensusServiceHelper.Get().GetType().FullName);
+                        }
+
+                        if (newJSON == json)
+                            SensusServiceHelper.Get().Logger.Log("No cross-platform conversion required for service helper JSON.", LoggingLevel.Normal, typeof(Protocol));
+                        else
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Performed cross-platform conversion of service helper JSON.", LoggingLevel.Normal, typeof(Protocol));
+                            json = newJSON;
+                        }
+                        
                         Protocol protocol = JsonConvert.DeserializeObject<Protocol>(json, JSON_SERIALIZER_SETTINGS);
+
+                        // add any probes for the current platform that didn't come through when deserializing. for example, android has a listening WLAN probe, but iOS has a polling WLAN probe. neither will come through on the other platform when deserializing, since the types are not defined.
+                        List<Type> deserializedProbeTypes = protocol.Probes.Select(p => p.GetType()).ToList();
+                        foreach (Probe probe in Probe.GetAll())
+                            if (!deserializedProbeTypes.Contains(probe.GetType()))
+                            {
+                                SensusServiceHelper.Get().Logger.Log("Adding missing probe to protocol:  " + probe.GetType().FullName, LoggingLevel.Normal, typeof(Protocol));
+                                protocol.AddProbe(probe);
+                            }
+                        #endregion
 
                         // reset the random time anchor -- we shouldn't use the same one that someone else used
                         protocol.ResetRandomTimeAnchor();
@@ -227,7 +272,7 @@ namespace SensusService
 
         public string LockPasswordHash
         {
-            get 
+            get
             {
                 return _lockPasswordHash; 
             }
@@ -271,7 +316,7 @@ namespace SensusService
         public List<PointOfInterest> PointsOfInterest
         {
             get { return _pointsOfInterest; }
-        }        
+        }
 
         /// <summary>
         /// For JSON deserialization
@@ -306,19 +351,21 @@ namespace SensusService
 
             _probes = new List<Probe>();
             foreach (Probe probe in Probe.GetAll())
-                if (SensusServiceHelper.Get().Use(probe))
-                {
-                    probe.Protocol = this;
+                AddProbe(probe);
+        }
 
-                    // since the new probe was just bound to this protocol, we need to let this protocol know about this probe's default anonymization preferences.
-                    foreach (PropertyInfo anonymizableProperty in probe.DatumType.GetProperties().Where(property => property.GetCustomAttribute<Anonymizable>() != null))
-                    {
-                        Anonymizable anonymizableAttribute = anonymizableProperty.GetCustomAttribute<Anonymizable>(true);
-                        _jsonAnonymizer.SetAnonymizer(anonymizableProperty, anonymizableAttribute.DefaultAnonymizer);
-                    }
+        private void AddProbe(Probe probe)
+        {
+            probe.Protocol = this;
 
-                    _probes.Add(probe);
-                }
+            // since the new probe was just bound to this protocol, we need to let this protocol know about this probe's default anonymization preferences.
+            foreach (PropertyInfo anonymizableProperty in probe.DatumType.GetProperties().Where(property => property.GetCustomAttribute<Anonymizable>() != null))
+            {
+                Anonymizable anonymizableAttribute = anonymizableProperty.GetCustomAttribute<Anonymizable>(true);
+                _jsonAnonymizer.SetAnonymizer(anonymizableProperty, anonymizableAttribute.DefaultAnonymizer);
+            }
+
+            _probes.Add(probe);
         }
 
         private void ResetRandomTimeAnchor()
@@ -382,7 +429,10 @@ namespace SensusService
                     {
                         _localDataStore.Start();
 
-                        try { _remoteDataStore.Start(); }
+                        try
+                        {
+                            _remoteDataStore.Start();
+                        }
                         catch (Exception ex)
                         {
                             SensusServiceHelper.Get().Logger.Log("Remote data store failed to start:  " + ex.Message, LoggingLevel.Normal, GetType());
@@ -410,7 +460,9 @@ namespace SensusService
 
         public void TestHealthAsync()
         {
-            TestHealthAsync(() => { });
+            TestHealthAsync(() =>
+                {
+                });
         }
 
         public void TestHealthAsync(Action callback)
@@ -419,7 +471,7 @@ namespace SensusService
                 {
                     TestHealth();
 
-                    if(callback != null)
+                    if (callback != null)
                         callback();
 
                 }).Start();
@@ -441,7 +493,10 @@ namespace SensusService
                         Stop();
                         Start();
                     }
-                    catch (Exception ex) { error += ex.Message + "..."; }
+                    catch (Exception ex)
+                    {
+                        error += ex.Message + "...";
+                    }
 
                     if (_running)
                         error += "restarted protocol." + Environment.NewLine;
@@ -457,8 +512,14 @@ namespace SensusService
                     {
                         error += "Restarting local data store...";
 
-                        try { _localDataStore.Restart(); }
-                        catch (Exception ex) { error += ex.Message + "..."; }
+                        try
+                        {
+                            _localDataStore.Restart();
+                        }
+                        catch (Exception ex)
+                        {
+                            error += ex.Message + "...";
+                        }
 
                         if (!_localDataStore.Running)
                             error += "failed to restart local data store." + Environment.NewLine;
@@ -470,8 +531,14 @@ namespace SensusService
                     {
                         error += "Restarting remote data store...";
 
-                        try { _remoteDataStore.Restart(); }
-                        catch (Exception ex) { error += ex.Message + "..."; }
+                        try
+                        {
+                            _remoteDataStore.Restart();
+                        }
+                        catch (Exception ex)
+                        {
+                            error += ex.Message + "...";
+                        }
 
                         if (!_remoteDataStore.Running)
                             error += "failed to restart remote data store." + Environment.NewLine;
@@ -482,8 +549,14 @@ namespace SensusService
                         {
                             error += "Restarting probe \"" + probe.GetType().FullName + "\"...";
 
-                            try { probe.Restart(); }
-                            catch (Exception ex) { error += ex.Message + "..."; }
+                            try
+                            {
+                                probe.Restart();
+                            }
+                            catch (Exception ex)
+                            {
+                                error += ex.Message + "...";
+                            }
 
                             if (!probe.Running)
                                 error += "failed to restart probe \"" + probe.GetType().FullName + "\"." + Environment.NewLine;
@@ -517,7 +590,9 @@ namespace SensusService
 
         public void StopAsync()
         {
-            StopAsync(() => { });
+            StopAsync(() =>
+                {
+                });
         }
 
         public void StopAsync(Action callback)
@@ -526,7 +601,7 @@ namespace SensusService
                 {
                     Stop();
 
-                    if(callback != null)
+                    if (callback != null)
                         callback();
 
                 }).Start();
@@ -550,7 +625,7 @@ namespace SensusService
 
                 foreach (Probe probe in _probes)
                     if (probe.Running)
-                        try 
+                        try
                         {
                             probe.Stop(); 
                         }
@@ -561,14 +636,26 @@ namespace SensusService
 
                 if (_localDataStore != null && _localDataStore.Running)
                 {
-                    try { _localDataStore.Stop(); }
-                    catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to stop local data store:  " + ex.Message, LoggingLevel.Normal, GetType()); }
+                    try
+                    {
+                        _localDataStore.Stop();
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Failed to stop local data store:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
                 }
 
                 if (_remoteDataStore != null && _remoteDataStore.Running)
                 {
-                    try { _remoteDataStore.Stop(); }
-                    catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to stop remote data store:  " + ex.Message, LoggingLevel.Normal, GetType()); }
+                    try
+                    {
+                        _remoteDataStore.Stop();
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Failed to stop remote data store:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
                 }
 
                 SensusServiceHelper.Get().Logger.Log("Stopped protocol \"" + _name + "\".", LoggingLevel.Normal, GetType());

@@ -102,13 +102,6 @@ namespace Sensus.iOS
             Insights.Initialize(XAMARIN_INSIGHTS_APP_KEY);
         }
 
-        public override bool Use(Probe probe)
-        {
-            return !(probe is PollingLocationProbe) &&                // location polling isn't supported very well in iOS
-                   !(probe is PollingSpeedProbe) &&                   // speed polling is based on location polling (see previous comment)
-                   !(probe is PollingPointsOfInterestProximityProbe); // proximity polling is based on location polling (see previous comment)
-        }
-
         #region callback scheduling
         protected override void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, string userNotificationMessage)
         {
