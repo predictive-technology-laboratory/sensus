@@ -19,5 +19,28 @@ namespace SensusService.Probes.User.ProbeTriggerProperties
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public abstract class ProbeTriggerProperty : Attribute
     {
+        private string _name;
+
+        public string Name
+        {
+            get
+            {
+                return _name;
+            }
+            set
+            {
+                _name = value;
+            }
+        }
+
+        public ProbeTriggerProperty()
+        {
+        }
+
+        public ProbeTriggerProperty(string name)
+            : this()
+        {
+            _name = name;
+        }
     }
 }

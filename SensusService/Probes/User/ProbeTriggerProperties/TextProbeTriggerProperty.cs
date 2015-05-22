@@ -16,5 +16,14 @@ namespace SensusService.Probes.User.ProbeTriggerProperties
 {
     public class TextProbeTriggerProperty : ProbeTriggerProperty
     {
+        public TextProbeTriggerProperty()
+            : base()
+        {
+        }
+
+        public TextProbeTriggerProperty(string name)
+            : base(name)
+        {
+        }
     }
 }

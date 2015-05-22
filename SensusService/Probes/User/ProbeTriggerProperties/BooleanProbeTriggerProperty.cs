@@ -16,5 +16,14 @@ namespace SensusService.Probes.User.ProbeTriggerProperties
 {
     public class BooleanProbeTriggerProperty : ProbeTriggerProperty
     {
+        public BooleanProbeTriggerProperty()
+            : base()
+        {
+        }
+
+        public BooleanProbeTriggerProperty(string name)
+            : base(name)
+        {
+        }        
     }
 }

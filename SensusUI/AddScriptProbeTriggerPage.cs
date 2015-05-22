@@ -90,13 +90,21 @@ namespace SensusUI
 
             probePicker.SelectedIndexChanged += (o, e) =>
                 {
+                    _selectedProbe = null;
+                    _selectedDatumProperty = null;
+                    _conditionValue = null;
+
+                    triggerDefinitionLayout.Children.Clear();
+
                     if (probePicker.SelectedIndex < 0)
                         return;
 
                     _selectedProbe = enabledProbes[probePicker.SelectedIndex];
 
-                    triggerDefinitionLayout.Children.Clear();
-
+                    PropertyInfo[] datumProperties = _selectedProbe.DatumType.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(p => p.GetCustomAttributes<ProbeTriggerProperty>().Count() > 0).ToArray();
+                    if(datumProperties.Length == 0)
+                        return;
+                    
                     #region datum property picker
                     Label datumPropertyLabel = new Label
                     {
@@ -105,9 +113,11 @@ namespace SensusUI
                     };
 
                     Picker datumPropertyPicker = new Picker { Title = "Select Datum Property", HorizontalOptions = LayoutOptions.FillAndExpand };
-                    PropertyInfo[] datumProperties = _selectedProbe.DatumType.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(p => p.GetCustomAttributes<ProbeTriggerProperty>().Count() > 0).ToArray();
-                    foreach (PropertyInfo triggerProperty in datumProperties)
-                        datumPropertyPicker.Items.Add(triggerProperty.Name);
+                    foreach (PropertyInfo datumProperty in datumProperties)
+                    {
+                        ProbeTriggerProperty triggerProperty = datumProperty.GetCustomAttributes<ProbeTriggerProperty>().First();
+                        datumPropertyPicker.Items.Add(triggerProperty.Name ?? datumProperty.Name);
+                    }
 
                     triggerDefinitionLayout.Children.Add(new StackLayout
                     {
@@ -156,12 +166,15 @@ namespace SensusUI
 
                     datumPropertyPicker.SelectedIndexChanged += (oo, ee) =>
                         {
+                            _selectedDatumProperty = null;
+                            _conditionValue = null;
+
+                            conditionValueStack.Children.Clear();
+
                             if (datumPropertyPicker.SelectedIndex < 0)
                                 return;
 
                             _selectedDatumProperty = datumProperties[datumPropertyPicker.SelectedIndex];
-
-                            conditionValueStack.Children.Clear();
 
                             ProbeTriggerProperty datumTriggerAttribute = _selectedDatumProperty.GetCustomAttribute<ProbeTriggerProperty>();
 
@@ -362,7 +375,7 @@ namespace SensusUI
                 {
                     try
                     {
-                        _scriptProbe.Triggers.Add(new SensusService.Probes.User.Trigger(_selectedProbe, _selectedDatumProperty.Name, _selectedCondition, _conditionValue, changeSwitch.IsToggled, fireRepeatedlySwitch.IsToggled, regexSwitch.IsToggled, ignoreFirstDatumSwitch.IsToggled, startTimePicker.Time, endTimePicker.Time));
+                        _scriptProbe.Triggers.Add(new SensusService.Probes.User.Trigger(_selectedProbe, _selectedDatumProperty, _selectedCondition, _conditionValue, changeSwitch.IsToggled, fireRepeatedlySwitch.IsToggled, regexSwitch.IsToggled, ignoreFirstDatumSwitch.IsToggled, startTimePicker.Time, endTimePicker.Time));
                         await Navigation.PopAsync();
                     }
                     catch (Exception ex)

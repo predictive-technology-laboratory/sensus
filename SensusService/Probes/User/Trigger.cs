@@ -145,11 +145,20 @@ namespace SensusService.Probes.User
             Reset();
         }
 
-        public Trigger(Probe probe, string datumPropertyName, TriggerValueCondition condition, object conditionValue, bool change, bool fireRepeatedly, bool useRegularExpressions, bool ignoreFirstDatum, TimeSpan startTime, TimeSpan endTime)
+        public Trigger(Probe probe, PropertyInfo datumProperty, TriggerValueCondition condition, object conditionValue, bool change, bool fireRepeatedly, bool useRegularExpressions, bool ignoreFirstDatum, TimeSpan startTime, TimeSpan endTime)
             : this()
         {
+            if (probe == null)
+                throw new Exception("Trigger is missing Probe selection.");
+            else if (datumProperty == null)
+                throw new Exception("Trigger is missing Property selection.");
+            else if (conditionValue == null)
+                throw new Exception("Trigger is missing Value selection.");
+            else if (endTime < startTime)
+                throw new Exception("Trigger Start Time cannot follow End Time.");
+            
             _probe = probe;
-            _datumPropertyName = datumPropertyName;
+            _datumPropertyName = datumProperty.Name;
             _condition = condition;
             _conditionValue = conditionValue;
             _change = change;
@@ -157,9 +166,6 @@ namespace SensusService.Probes.User
             _ignoreFirstDatum = ignoreFirstDatum;
             _startTime = startTime;
             _endTime = endTime;
-
-            if (_endTime < _startTime)
-                throw new Exception("Start time cannot follow end time.");
 
             if (useRegularExpressions)
                 _regularExpression = new Regex(_conditionValue.ToString());

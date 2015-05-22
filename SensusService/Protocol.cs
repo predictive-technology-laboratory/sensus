@@ -427,21 +427,31 @@ namespace SensusService
                 {
                     try
                     {
+                        if(_localDataStore == null)
+                            throw new Exception("Local data store not defined.");
+                        
                         _localDataStore.Start();
 
                         try
                         {
+                            if(_remoteDataStore == null)
+                                throw new Exception("Remote data store not defined.");
+                            
                             _remoteDataStore.Start();
                         }
                         catch (Exception ex)
                         {
-                            SensusServiceHelper.Get().Logger.Log("Remote data store failed to start:  " + ex.Message, LoggingLevel.Normal, GetType());
+                            string message = "Remote data store failed to start:  " + ex.Message;
+                            SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+                            SensusServiceHelper.Get().FlashNotificationAsync(message);
                             stopProtocol = true;
                         }
                     }
                     catch (Exception ex)
                     {
-                        SensusServiceHelper.Get().Logger.Log("Local data store failed to start:  " + ex.Message, LoggingLevel.Normal, GetType());
+                        string message = "Local data store failed to start:  " + ex.Message;
+                        SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+                        SensusServiceHelper.Get().FlashNotificationAsync(message);
                         stopProtocol = true;
                     }
                 }

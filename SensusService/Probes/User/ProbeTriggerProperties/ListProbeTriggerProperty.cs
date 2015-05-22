@@ -25,6 +25,12 @@ namespace SensusService.Probes.User.ProbeTriggerProperties
         }
 
         public ListProbeTriggerProperty(object[] items)
+            : this(null, items)
+        {
+        }
+
+        public ListProbeTriggerProperty(string name, object[] items)
+            : base(name)
         {
             _items = items;
         }

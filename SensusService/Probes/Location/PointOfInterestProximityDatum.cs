@@ -58,7 +58,7 @@ namespace SensusService.Probes.Location
         }
 
         [Anonymizable("POI Latitude:", new Type[] { typeof(DoubleRoundingTenthsAnonymizer), typeof(DoubleRoundingHundredthsAnonymizer), typeof(DoubleRoundingThousandthsAnonymizer) }, 1)]  // rounding to hundredths is roughly 1km
-        [NumberProbeTriggerProperty]
+        [NumberProbeTriggerProperty("POI Latitude")]
         public double PointOfInterestLatitude
         {
             get
@@ -72,7 +72,7 @@ namespace SensusService.Probes.Location
         }
 
         [Anonymizable("POI Longitude:", new Type[] { typeof(DoubleRoundingTenthsAnonymizer), typeof(DoubleRoundingHundredthsAnonymizer), typeof(DoubleRoundingThousandthsAnonymizer) }, 1)]  // rounding to hundredths is roughly 1km
-        [NumberProbeTriggerProperty]
+        [NumberProbeTriggerProperty("POI Longitude")]
         public double PointOfInterestLongitude
         {
             get
@@ -86,7 +86,7 @@ namespace SensusService.Probes.Location
         }
 
         [Anonymizable("Distance (Meters):", new Type[] { typeof(DoubleRoundingTensAnonymizer), typeof(DoubleRoundingHundredsAnonymizer)}, -1)]
-        [NumberProbeTriggerProperty]
+        [NumberProbeTriggerProperty("Distance (Meters)")]
         public double DistanceMeters
         {
             get
