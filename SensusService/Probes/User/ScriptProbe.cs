@@ -183,7 +183,10 @@ namespace SensusService.Probes.User
                                     // must be running and must have a current datum
                                     lock (_locker)
                                         if (!Running || prevCurrDatum.Item2 == null)
+                                        {
+                                            addedTrigger.ConditionSatisfiedLastTime = false;  // this covers the case when the current datum is null. some probes need to emit a null datum in order for their state to be tracked appropriately (e.g., POI probe).
                                             return;
+                                        }
 
                                     Datum prevDatum = prevCurrDatum.Item1;
                                     Datum currDatum = prevCurrDatum.Item2;
@@ -199,7 +202,7 @@ namespace SensusService.Probes.User
                                     // if we're triggering based on datum value changes instead of absolute values, calculate the change now
                                     if (addedTrigger.Change)
                                     {
-                                        if (prevDatum == null)
+                                        if (prevDatum == null) // don't need to set ConditionSatisfiedLastTime = false, since it cannot be the case that it's true and prevDatum == null (we must have had a currDatum last time in order to set ConditionSatisfiedLastTime = true.
                                             return;
 
                                         try { currDatumValue = Convert.ToDouble(currDatumValue) - Convert.ToDouble(addedTrigger.DatumProperty.GetValue(prevDatum)); }

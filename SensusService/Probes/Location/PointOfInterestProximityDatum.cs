@@ -22,92 +22,105 @@ namespace SensusService.Probes.Location
 {
     public class PointOfInterestProximityDatum : Datum
     {
-        private string _pointOfInterestName;
-        private string _pointOfInterestType;
-        private double _pointOfInterestLatitude;
-        private double _pointOfInterestLongitude;
-        private double _distanceMeters;
-        private ProximityThresholdDirection _direction;
+        private string _poiName;
+        private string _poiType;
+        private double _poiLatitude;
+        private double _poiLongitude;
+        private double _distanceToPoiMeters;
+        private double _triggerDistanceMeters;
+        private ProximityThresholdDirection _triggerDistanceDirection;
 
         [Anonymizable("POI Name:", typeof(StringMD5Anonymizer), false)]
-        [TextProbeTriggerProperty]
-        public string Name
+        [TextProbeTriggerProperty("POI Name")]
+        public string PoiName
         {
             get
             {
-                return _pointOfInterestName;
+                return _poiName;
             }
             set
             {
-                _pointOfInterestName = value;
+                _poiName = value;
             }
         }
 
         [Anonymizable("POI Type:", typeof(StringMD5Anonymizer), false)]
-        [TextProbeTriggerProperty]
-        public string Type
+        [TextProbeTriggerProperty("POI Type")]
+        public string PoiType
         {
             get
             {
-                return _pointOfInterestType;
+                return _poiType;
             }
             set
             {
-                _pointOfInterestType = value;
+                _poiType = value;
             }
         }
 
         [Anonymizable("POI Latitude:", new Type[] { typeof(DoubleRoundingTenthsAnonymizer), typeof(DoubleRoundingHundredthsAnonymizer), typeof(DoubleRoundingThousandthsAnonymizer) }, 1)]  // rounding to hundredths is roughly 1km
         [NumberProbeTriggerProperty("POI Latitude")]
-        public double PointOfInterestLatitude
+        public double PoiLatitude
         {
             get
             {
-                return _pointOfInterestLatitude;
+                return _poiLatitude;
             }
             set
             {
-                _pointOfInterestLatitude = value;
+                _poiLatitude = value;
             }
         }
 
         [Anonymizable("POI Longitude:", new Type[] { typeof(DoubleRoundingTenthsAnonymizer), typeof(DoubleRoundingHundredthsAnonymizer), typeof(DoubleRoundingThousandthsAnonymizer) }, 1)]  // rounding to hundredths is roughly 1km
         [NumberProbeTriggerProperty("POI Longitude")]
-        public double PointOfInterestLongitude
+        public double PoiLongitude
         {
             get
             {
-                return _pointOfInterestLongitude;
+                return _poiLongitude;
             }
             set
             {
-                _pointOfInterestLongitude = value;
+                _poiLongitude = value;
             }
         }
 
         [Anonymizable("Distance (Meters):", new Type[] { typeof(DoubleRoundingTensAnonymizer), typeof(DoubleRoundingHundredsAnonymizer)}, -1)]
         [NumberProbeTriggerProperty("Distance (Meters)")]
-        public double DistanceMeters
+        public double DistanceToPoiMeters
         {
             get
             {
-                return _distanceMeters;
+                return _distanceToPoiMeters;
             }
             set
             {
-                _distanceMeters = value;
+                _distanceToPoiMeters = value;
             }
         }
 
-        public ProximityThresholdDirection Direction
+        public double TriggerDistanceMeters
         {
             get
             {
-                return _direction;
+                return _triggerDistanceMeters;
             }
             set
             {
-                _direction = value;
+                _triggerDistanceMeters = value;
+            }
+        }
+
+        public ProximityThresholdDirection TriggerDistanceDirection
+        {
+            get
+            {
+                return _triggerDistanceDirection;
+            }
+            set
+            {
+                _triggerDistanceDirection = value;
             }
         }
 
@@ -115,7 +128,7 @@ namespace SensusService.Probes.Location
         {
             get
             {
-                return Math.Round(_distanceMeters) + "m from " + _pointOfInterestName + (string.IsNullOrWhiteSpace(_pointOfInterestType) ? "" : " (" + _pointOfInterestType + ")");
+                return Math.Round(_distanceToPoiMeters) + "m from " + _poiName + (string.IsNullOrWhiteSpace(_poiType) ? "" : " (" + _poiType + ")");
             }
         }        
 
@@ -126,26 +139,28 @@ namespace SensusService.Probes.Location
         {
         }
 
-        public PointOfInterestProximityDatum(DateTimeOffset timestamp, PointOfInterest pointOfInterest, double distanceMeters, ProximityThresholdDirection direction)
+        public PointOfInterestProximityDatum(DateTimeOffset timestamp, PointOfInterest pointOfInterest, double distanceMeters, PointOfInterestProximityTrigger trigger)
             : base(timestamp)
         {
-            _pointOfInterestName = pointOfInterest.Name;
-            _pointOfInterestType = pointOfInterest.Type;
-            _pointOfInterestLatitude = pointOfInterest.Position.Latitude;
-            _pointOfInterestLongitude = pointOfInterest.Position.Longitude;
-            _distanceMeters = distanceMeters;
-            _direction = direction;
+            _poiName = pointOfInterest.Name;
+            _poiType = pointOfInterest.Type;
+            _poiLatitude = pointOfInterest.Position.Latitude;
+            _poiLongitude = pointOfInterest.Position.Longitude;
+            _distanceToPoiMeters = distanceMeters;
+            _triggerDistanceMeters = trigger.DistanceThresholdMeters;
+            _triggerDistanceDirection = trigger.DistanceThresholdDirection;
         }
 
         public override string ToString()
         {
             return base.ToString() + Environment.NewLine +
-            "Name:  " + _pointOfInterestName + Environment.NewLine +
-            "Type:  " + _pointOfInterestType + Environment.NewLine +
-            "Lat:  " + _pointOfInterestLatitude + Environment.NewLine +
-            "Lon:  " + _pointOfInterestLongitude + Environment.NewLine +
-            "Distance:  " + _distanceMeters + Environment.NewLine +
-            "Direction:  " + _direction;
+            "Name:  " + _poiName + Environment.NewLine +
+            "Type:  " + _poiType + Environment.NewLine +
+            "Lat:  " + _poiLatitude + Environment.NewLine +
+            "Lon:  " + _poiLongitude + Environment.NewLine +
+            "Distance:  " + _distanceToPoiMeters + Environment.NewLine +
+            "Trigger Distance:  " + _triggerDistanceMeters + Environment.NewLine +
+            "Trigger Direction:  " + _triggerDistanceDirection;
         }
     }
 }

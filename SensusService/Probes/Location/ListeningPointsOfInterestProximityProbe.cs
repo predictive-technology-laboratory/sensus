@@ -57,6 +57,8 @@ namespace SensusService.Probes.Location
                 {
                     SensusServiceHelper.Get().Logger.Log("Received position change notification.", LoggingLevel.Verbose, GetType());
 
+                    bool datumStored = false;
+
                     if (e.Position != null)
                         foreach (PointOfInterest pointOfInterest in SensusServiceHelper.Get().PointsOfInterest.Union(Protocol.PointsOfInterest))  // POIs are stored on the service helper (e.g., home locations) and the Protocol (e.g., bars), since the former are user-specific and the latter are universal.
                         {
@@ -64,11 +66,14 @@ namespace SensusService.Probes.Location
 
                             foreach (PointOfInterestProximityTrigger trigger in _triggers)
                                 if (pointOfInterest.Triggers(trigger, distanceToPointOfInterestMeters))
-                                {   
-                                    StoreDatum(new PointOfInterestProximityDatum(e.Position.Timestamp, pointOfInterest, distanceToPointOfInterestMeters, trigger.DistanceThresholdDirection));
-                                    break;
+                                {
+                                    StoreDatum(new PointOfInterestProximityDatum(e.Position.Timestamp, pointOfInterest, distanceToPointOfInterestMeters, trigger));
+                                    datumStored = true;
                                 }
                         }
+
+                    if (!datumStored)
+                        StoreDatum(null);
                 }
             };
         }

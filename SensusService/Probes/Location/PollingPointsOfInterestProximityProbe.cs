@@ -75,11 +75,11 @@ namespace SensusService.Probes.Location
 
                     foreach (PointOfInterestProximityTrigger trigger in _triggers)
                         if (pointOfInterest.Triggers(trigger, distanceToPointOfInterestMeters))
-                        {                            
-                            data.Add(new PointOfInterestProximityDatum(currentPosition.Timestamp, pointOfInterest, distanceToPointOfInterestMeters, trigger.DistanceThresholdDirection));
-                            break;
-                        }
+                            data.Add(new PointOfInterestProximityDatum(currentPosition.Timestamp, pointOfInterest, distanceToPointOfInterestMeters, trigger));
                 }
+
+            if (data.Count == 0)
+                data.Add(null);
 
             return data;
         }

@@ -112,6 +112,18 @@ namespace SensusService.Probes.User
             set { _fireRepeatedly = value; }
         }
 
+        public bool ConditionSatisfiedLastTime
+        {
+            get
+            {
+                return _conditionSatisfiedLastTime;
+            }
+            set
+            {
+                _conditionSatisfiedLastTime = value;
+            }
+        }
+
         public string RegularExpressionText
         {
             get { return _regularExpression == null ? null : _regularExpression.ToString(); }

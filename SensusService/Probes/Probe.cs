@@ -186,11 +186,10 @@ namespace SensusService.Probes
                         SensusServiceHelper.Get().Logger.Log("Storing datum in cache.", LoggingLevel.Verbose, GetType());
                         _collectedData.Add(datum);
                     }
-
-                MostRecentDatum = datum;
-
-                _mostRecentStoreTimestamp = DateTimeOffset.UtcNow;  // this is outside the _storeData restriction above since we just want to track when this method is called.
             }
+
+            MostRecentDatum = datum;
+            _mostRecentStoreTimestamp = DateTimeOffset.UtcNow;  // this is outside the _storeData restriction above since we just want to track when this method is called.
         }
 
         public ICollection<Datum> GetCollectedData()
