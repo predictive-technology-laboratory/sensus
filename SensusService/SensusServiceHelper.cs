@@ -620,6 +620,8 @@ namespace SensusService
             if (callbackId != null)
                 lock (_idCallback)
                 {
+                    SensusServiceHelper.Get().Logger.Log("Unscheduling one-time callback \"" + callbackId + "\".", LoggingLevel.Debug, GetType());
+
                     _idCallback.Remove(callbackId);
                     UnscheduleCallback(callbackId, false);
                 }
@@ -630,6 +632,8 @@ namespace SensusService
             if (callbackId != null)
                 lock (_idCallback)
                 {
+                    SensusServiceHelper.Get().Logger.Log("Unscheduling repeating callback \"" + callbackId + "\".", LoggingLevel.Debug, GetType());
+
                     _idCallback.Remove(callbackId);
                     UnscheduleCallback(callbackId, true);
                 }

@@ -154,49 +154,57 @@ namespace SensusService.Probes.User
             TODO:  Should we use a message?
             #endif
 
-            SensusServiceHelper.Get().ScheduleOneTimeCallback(cancellationToken =>
+            Action<CancellationToken> runAction = cancellationToken =>
+            {
+                SensusServiceHelper.Get().Logger.Log("Running script \"" + _name + "\".", LoggingLevel.Normal, GetType());
+
+                bool isRerun = true;
+                lock (_locker)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Running script \"" + _name + "\".", LoggingLevel.Normal, GetType());
-
-                    bool isRerun = true;
-                    lock (_locker)
+                    if (_firstRunTimestamp == DateTimeOffset.MinValue)
                     {
-                        if (_firstRunTimestamp == DateTimeOffset.MinValue)
-                        {
-                            _firstRunTimestamp = DateTimeOffset.UtcNow;
-                            isRerun = false;
-                        }
-
-                        if (previousDatum != null)
-                            _previousDatum = previousDatum;
-
-                        if (currentDatum != null)
-                            _currentDatum = currentDatum;
+                        _firstRunTimestamp = DateTimeOffset.UtcNow;
+                        isRerun = false;
                     }
 
-                    List<ScriptDatum> data = new List<ScriptDatum>();
+                    if (previousDatum != null)
+                        _previousDatum = previousDatum;
 
-                    foreach (Prompt prompt in _prompts)
-                        if (!prompt.Complete)
-                        {
-                            ManualResetEvent datumWait = new ManualResetEvent(false);
+                    if (currentDatum != null)
+                        _currentDatum = currentDatum;
+                }
 
-                            prompt.RunAsync(_previousDatum, _currentDatum, isRerun, _firstRunTimestamp, datum =>
-                                {
-                                    if (datum != null)
-                                        data.Add(datum);
+                List<ScriptDatum> data = new List<ScriptDatum>();
 
-                                    datumWait.Set();
-                                });
+                foreach (Prompt prompt in _prompts)
+                    if (!prompt.Complete)
+                    {
+                        ManualResetEvent datumWait = new ManualResetEvent(false);
 
-                            datumWait.WaitOne();
-                        }
+                        prompt.RunAsync(_previousDatum, _currentDatum, isRerun, _firstRunTimestamp, datum =>
+                            {
+                                if (datum != null)
+                                    data.Add(datum);
 
-                    SensusServiceHelper.Get().Logger.Log("Script \"" + _name + "\" has finished running.", LoggingLevel.Normal, GetType());
+                                datumWait.Set();
+                            });
 
-                    callback(data);
+                        datumWait.WaitOne();
+                    }
 
-                }, "Run Script", _delayMS, userNotificationMessage);
+                SensusServiceHelper.Get().Logger.Log("Script \"" + _name + "\" has finished running.", LoggingLevel.Normal, GetType());
+
+                callback(data);
+            };
+
+            if (_delayMS > 0)
+                SensusServiceHelper.Get().ScheduleOneTimeCallback(runAction, "Run Script", _delayMS, userNotificationMessage);
+            else
+                new Thread(() =>
+                    {
+                        runAction(default(CancellationToken));
+
+                    }).Start();
         }
 
         public Script Copy()
