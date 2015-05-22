@@ -188,9 +188,9 @@ namespace SensusService.Probes.User
                                     Datum prevDatum = prevCurrDatum.Item1;
                                     Datum currDatum = prevCurrDatum.Item2;
 
-                                    // get the object that might trigger the script
-                                    object datumValue = addedTrigger.DatumProperty.GetValue(currDatum);
-                                    if (datumValue == null)
+                                    // get the value that might trigger the script
+                                    object currDatumValue = addedTrigger.DatumProperty.GetValue(currDatum);
+                                    if (currDatumValue == null)
                                     {
                                         SensusServiceHelper.Get().Logger.Log("Trigger error:  Value of datum property " + addedTrigger.DatumPropertyName + " was null.", LoggingLevel.Normal, GetType());
                                         return;
@@ -202,7 +202,7 @@ namespace SensusService.Probes.User
                                         if (prevDatum == null)
                                             return;
 
-                                        try { datumValue = Convert.ToDouble(datumValue) - Convert.ToDouble(addedTrigger.DatumProperty.GetValue(prevDatum)); }
+                                        try { currDatumValue = Convert.ToDouble(currDatumValue) - Convert.ToDouble(addedTrigger.DatumProperty.GetValue(prevDatum)); }
                                         catch (Exception ex)
                                         {
                                             SensusServiceHelper.Get().Logger.Log("Trigger error:  Failed to convert datum values to doubles:  " + ex.Message, LoggingLevel.Normal, GetType());
@@ -210,7 +210,7 @@ namespace SensusService.Probes.User
                                         }
                                     }
 
-                                    if (addedTrigger.FireFor(datumValue))
+                                    if (addedTrigger.FireFor(currDatumValue))
                                         RunScriptAsync(_script.Copy(), prevDatum, currDatum);  // run a copy of the pristine script, since it will be filled in when run.
                                 };
 

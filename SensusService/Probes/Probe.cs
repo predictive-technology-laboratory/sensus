@@ -94,12 +94,12 @@ namespace SensusService.Probes
             {
                 if (value != _mostRecentDatum)
                 {
-                    Datum oldDatum = _mostRecentDatum;
+                    Datum previousDatum = _mostRecentDatum;
 
                     _mostRecentDatum = value;
 
                     if (MostRecentDatumChanged != null)
-                        MostRecentDatumChanged(this, new Tuple<Datum, Datum>(oldDatum, _mostRecentDatum));
+                        MostRecentDatumChanged(this, new Tuple<Datum, Datum>(previousDatum, _mostRecentDatum));
                 }
             }
         }

@@ -154,8 +154,8 @@ namespace SensusService.Probes.User
                 throw new Exception("Trigger is missing Property selection.");
             else if (conditionValue == null)
                 throw new Exception("Trigger is missing Value selection.");
-            else if (endTime < startTime)
-                throw new Exception("Trigger Start Time cannot follow End Time.");
+            else if (endTime <= startTime)
+                throw new Exception("Trigger Start Time must precede End Time.");
             
             _probe = probe;
             _datumPropertyName = datumProperty.Name;
