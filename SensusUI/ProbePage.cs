@@ -61,7 +61,7 @@ namespace SensusUI
 
                 editScriptButton.Clicked += async (o, e) =>
                 {
-                    await Navigation.PushAsync(new ScriptPage(scriptProbe.Script));
+                    await Navigation.PushAsync(new ScriptPage(scriptProbe.Scripts));
                 };
 
                 Button viewScriptTriggersButton = new Button
