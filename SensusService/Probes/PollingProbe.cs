@@ -28,7 +28,7 @@ namespace SensusService.Probes
 
         private readonly object _locker = new object();
 
-        [EntryIntegerUiProperty("Sleep Duration:", true, 5)]
+        [EntryIntegerUiProperty("Sleep Duration (MS):", true, 5)]
         public virtual int PollingSleepDurationMS
         {
             get { return _pollingSleepDurationMS; }

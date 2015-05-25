@@ -37,10 +37,15 @@ read.sensus.json = function(path, convert.to.local.timezone = TRUE)
   {
     json = jsonlite::fromJSON(line)
     
+    # split the type, which contains the full class name and assembly name
+    type.split = strsplit(json$"$type", ",")[[1]]
+    
     # set short version of type
-    datum.type = strsplit(json$"$type", ",")[[1]][1]
-    datum.type = tail(strsplit(datum.type, "[.]")[[1]], n=1)
+    datum.type = tail(strsplit(type.split[1], ".", fixed=TRUE)[[1]], n=1)
     json$Type = datum.type
+    
+    # set OS
+    json$OS = strsplit(type.split[2], ".", fixed=TRUE)[[1]][2]
     
     # we no longer need the $type column
     json = json[-which(names(json) %in% c("$type"))]
