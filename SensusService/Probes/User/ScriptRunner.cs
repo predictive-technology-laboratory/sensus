@@ -115,7 +115,7 @@ namespace SensusService.Probes.User
             get { return _incompleteScripts; }
         }
 
-        [OnOffUiProperty("Rerun Incompletes:", true, 4)]
+        [OnOffUiProperty("Rerun Incomplete Scripts:", true, 4)]
         public bool RerunIncompletes
         {
             get { return _rerun; }
