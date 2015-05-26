@@ -30,7 +30,7 @@ namespace SensusService.Probes.User
             set { _response = value; }
         }
 
-        [Anonymizable("Triggering Datum ID", typeof(StringMD5Anonymizer), false)]
+        [Anonymizable("Triggering Datum ID:", typeof(StringMD5Anonymizer), false)]
         public string TriggerDatumId
         {
             get { return _triggerDatumId; }

@@ -19,6 +19,7 @@ using System.Threading;
 using SensusService;
 using SensusService.Probes.Location;
 using Xamarin.Forms;
+using Xamarin.Geolocation;
 
 namespace SensusUI
 {
@@ -49,12 +50,16 @@ namespace SensusUI
                                     {
                                         if (!string.IsNullOrWhiteSpace(name) || !string.IsNullOrWhiteSpace(type))
                                         {
-                                            _pointsOfInterest.Add(new PointOfInterest(name, type, GpsReceiver.Get().GetReading(default(CancellationToken))));
+                                            Position position = GpsReceiver.Get().GetReading(default(CancellationToken));
+                                            if (position != null)
+                                            {
+                                                _pointsOfInterest.Add(new PointOfInterest(name, type, position));
 
-                                            if (changeCallback != null)
-                                                changeCallback();
+                                                if (changeCallback != null)
+                                                    changeCallback();
                                 
-                                            Bind();
+                                                Bind();
+                                            }
                                         }
                                     });
                             });

@@ -174,7 +174,7 @@ namespace SensusService.Probes
             }
         }
 
-        protected virtual void StoreDatum(Datum datum)
+        public virtual void StoreDatum(Datum datum)
         {
             if (datum != null)
             {

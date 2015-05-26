@@ -63,7 +63,7 @@ namespace SensusService.Probes
 
         protected abstract void StopListening();
 
-        protected sealed override void StoreDatum(Datum datum)
+        public sealed override void StoreDatum(Datum datum)
         {
             float storesPerSecond = 1 / (float)(DateTimeOffset.UtcNow - MostRecentStoreTimestamp).TotalSeconds;
             if (storesPerSecond <= _maxDataStoresPerSecond)

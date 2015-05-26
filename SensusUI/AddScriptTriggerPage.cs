@@ -24,21 +24,21 @@ using Xamarin.Forms;
 
 namespace SensusUI
 {
-    public class AddScriptProbeTriggerPage : ContentPage
+    public class AddScriptTriggerPage : ContentPage
     {
-        private ScriptProbe _scriptProbe;
+        private ScriptRunner _scriptRunner;
         private Probe _selectedProbe;
         private PropertyInfo _selectedDatumProperty;
         private TriggerValueCondition _selectedCondition;
         private object _conditionValue;
 
-        public AddScriptProbeTriggerPage(ScriptProbe scriptProbe)
+        public AddScriptTriggerPage(ScriptRunner scriptRunner)
         {
-            _scriptProbe = scriptProbe;
+            _scriptRunner = scriptRunner;
 
             Title = "Add Trigger";
 
-            List<Probe> enabledProbes = scriptProbe.Protocol.Probes.Where(p => p != _scriptProbe && p.Enabled).ToList();
+            List<Probe> enabledProbes = _scriptRunner.Probe.Protocol.Probes.Where(p => p != _scriptRunner.Probe && p.Enabled).ToList();
             if (enabledProbes.Count == 0)
             {
                 Content = new Label
@@ -291,26 +291,26 @@ namespace SensusUI
                                 });
                             }
                             #endregion
-
-                            #region fire repeatedly
-                            Label fireRepeatedlyLabel = new Label
-                            {
-                                Text = "Fire Repeatedly:",
-                                FontSize = 20
-                            };
-
-                            fireRepeatedlySwitch.IsToggled = false;
-
-                            conditionValueStack.Children.Add(new StackLayout
-                            {
-                                Orientation = StackOrientation.Horizontal,
-                                HorizontalOptions = LayoutOptions.FillAndExpand,
-                                Children = { fireRepeatedlyLabel, fireRepeatedlySwitch }
-                            });
-                            #endregion
                         };
 
                     datumPropertyPicker.SelectedIndex = 0;
+                    #endregion
+
+                    #region fire repeatedly
+                    Label fireRepeatedlyLabel = new Label
+                        {
+                            Text = "Fire Repeatedly:",
+                            FontSize = 20
+                        };
+
+                    fireRepeatedlySwitch.IsToggled = false;
+
+                    triggerDefinitionLayout.Children.Add(new StackLayout
+                        {
+                            Orientation = StackOrientation.Horizontal,
+                            HorizontalOptions = LayoutOptions.FillAndExpand,
+                            Children = { fireRepeatedlyLabel, fireRepeatedlySwitch }
+                        });
                     #endregion
 
                     #region ignore first datum
@@ -375,7 +375,7 @@ namespace SensusUI
                 {
                     try
                     {
-                        _scriptProbe.Triggers.Add(new SensusService.Probes.User.Trigger(_selectedProbe, _selectedDatumProperty, _selectedCondition, _conditionValue, changeSwitch.IsToggled, fireRepeatedlySwitch.IsToggled, regexSwitch.IsToggled, ignoreFirstDatumSwitch.IsToggled, startTimePicker.Time, endTimePicker.Time));
+                        _scriptRunner.Triggers.Add(new SensusService.Probes.User.Trigger(_selectedProbe, _selectedDatumProperty, _selectedCondition, _conditionValue, changeSwitch.IsToggled, fireRepeatedlySwitch.IsToggled, regexSwitch.IsToggled, ignoreFirstDatumSwitch.IsToggled, startTimePicker.Time, endTimePicker.Time));
                         await Navigation.PopAsync();
                     }
                     catch (Exception ex)
