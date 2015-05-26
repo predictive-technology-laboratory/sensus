@@ -56,7 +56,7 @@ namespace SensusUI
 
                 editScriptsButton.Clicked += async (o,e) =>
                     {
-                        await Navigation.PushAsync(new ScriptsPage(probe as ScriptProbe));
+                        await Navigation.PushAsync(new ScriptRunnersPage(probe as ScriptProbe));
                     };
                    
                 contentLayout.Children.Add(editScriptsButton);

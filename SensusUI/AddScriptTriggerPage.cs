@@ -38,7 +38,7 @@ namespace SensusUI
 
             Title = "Add Trigger";
 
-            List<Probe> enabledProbes = scriptRunner.Probe.Protocol.Probes.Where(p => p != _scriptRunner.Probe && p.Enabled).ToList();
+            List<Probe> enabledProbes = _scriptRunner.Probe.Protocol.Probes.Where(p => p != _scriptRunner.Probe && p.Enabled).ToList();
             if (enabledProbes.Count == 0)
             {
                 Content = new Label

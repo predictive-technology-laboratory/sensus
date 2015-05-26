@@ -64,7 +64,6 @@ namespace SensusUI
                 }));                    
 
             Bind();
-
             Content = _promptsList;
         }
 

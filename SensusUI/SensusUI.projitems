@@ -35,8 +35,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)ProximityTriggersPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)AddProximityTriggerPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)AddScriptTriggerPage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ScriptsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ScriptRunnerPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ScriptRunnersPage.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Icons\" />

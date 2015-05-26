@@ -26,17 +26,17 @@ namespace SensusService.Probes.User
     public class ScriptRunner
     {
         private string _name;
-        private Script _script;
-        private int _maximumAgeMinutes;
         private ScriptProbe _probe;
-        private int _delayMS;
+        private Script _script;
         private bool _enabled;
+        private int _delayMS;
         private ObservableCollection<Trigger> _triggers;
         private Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>> _triggerHandler;
         private Queue<Script> _incompleteScripts;
         private bool _rerun;
         private string _rerunCallbackId;
         private int _rerunDelayMS;
+        private int _maximumAgeMinutes;
         private int _numScriptsAgedOut;
         private bool _triggerRandomly;
         private string _randomTriggerCallbackId;
@@ -90,7 +90,7 @@ namespace SensusService.Probes.User
                 {
                     _enabled = value;
 
-                    if (_probe.Running && _enabled)
+                    if (_probe != null && _probe.Running && _enabled) // probe can be null when deserializing, if set after this property.
                         Start();
                     else
                         Stop();
@@ -98,31 +98,24 @@ namespace SensusService.Probes.User
             }
         }
 
-        public ObservableCollection<Trigger> Triggers
-        {
-            get { return _triggers; }
-        }
-
         [EntryIntegerUiProperty("Delay (MS):", true, 3)]
         public int DelayMS
         {
             get { return _delayMS; }
             set { _delayMS = value; }
-        }
+        } 
 
-        [EntryIntegerUiProperty("Maximum Age (Mins.):", true, 4)]
-        public int MaximumAgeMinutes
+        public ObservableCollection<Trigger> Triggers
         {
-            get { return _maximumAgeMinutes; }
-            set { _maximumAgeMinutes = value; }
-        }   
+            get { return _triggers; }
+        }                                         
 
         public Queue<Script> IncompleteScripts
         {
             get { return _incompleteScripts; }
         }
 
-        [OnOffUiProperty("Rerun Incompletes:", true, 5)]
+        [OnOffUiProperty("Rerun Incompletes:", true, 4)]
         public bool RerunIncompletes
         {
             get { return _rerun; }
@@ -132,7 +125,7 @@ namespace SensusService.Probes.User
                 {
                     _rerun = value;
 
-                    if (_probe.Running && _enabled && _rerun)
+                    if (_probe != null && _probe.Running && _enabled && _rerun) // probe can be null when deserializing, if set after this property.
                         StartRerunCallbacksAsync();
                     else
                         StopRerunCallbacksAsync();
@@ -140,7 +133,7 @@ namespace SensusService.Probes.User
             }
         }
 
-        [EntryIntegerUiProperty("Rerun Delay (MS):", true, 6)]
+        [EntryIntegerUiProperty("Rerun Delay (MS):", true, 5)]
         public int RerunDelayMS
         {
             get { return _rerunDelayMS; }
@@ -158,6 +151,13 @@ namespace SensusService.Probes.User
                 }
             }
         }
+
+        [EntryIntegerUiProperty("Maximum Age (Mins.):", true, 6)]
+        public int MaximumAgeMinutes
+        {
+            get { return _maximumAgeMinutes; }
+            set { _maximumAgeMinutes = value; }
+        } 
 
         public int NumScriptsAgedOut
         {
@@ -181,7 +181,7 @@ namespace SensusService.Probes.User
                 {
                     _triggerRandomly = value;
 
-                    if (_probe.Running && _enabled && _triggerRandomly)
+                    if (_probe != null && _probe.Running && _enabled && _triggerRandomly) // probe can be null when deserializing, if set after this property.
                         StartRandomTriggerCallbacksAsync();
                     else
                         StopRandomTriggerCallbackAsync();
@@ -211,20 +211,21 @@ namespace SensusService.Probes.User
         }
         #endregion
 
-        public ScriptRunner(string name, Script script, int maximumAgeMinutes, ScriptProbe probe, int delayMS)
+        /// <summary>
+        /// For JSON.NET deserialization.
+        /// </summary>
+        private ScriptRunner()
         {
-            _name = name;
-            _script = script;
-            _maximumAgeMinutes = maximumAgeMinutes;
-            _probe = probe;
-            _delayMS = delayMS;
+            _script = new Script();
             _enabled = false;
+            _delayMS = 0;
             _triggers = new ObservableCollection<Trigger>();
             _triggerHandler = new Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>>();
             _incompleteScripts = new Queue<Script>();
             _rerun = false;
             _rerunCallbackId = null;
             _rerunDelayMS = 60000;
+            _maximumAgeMinutes = 1;
             _numScriptsAgedOut = 0;
             _triggerRandomly = false;
             _randomTriggerCallbackId = null;
@@ -232,69 +233,76 @@ namespace SensusService.Probes.User
             _random = new Random();
 
             _triggers.CollectionChanged += (o, e) =>
-                {
-                    if (e.Action == NotifyCollectionChangedAction.Add)
-                        foreach (Trigger trigger in e.NewItems)
+            {
+                if (e.Action == NotifyCollectionChangedAction.Add)
+                    foreach (Trigger trigger in e.NewItems)
+                    {
+                        // ignore duplicate triggers -- the user should delete and re-add them instead.
+                        if (_triggerHandler.ContainsKey(trigger))
+                            return;
+
+                        EventHandler<Tuple<Datum, Datum>> handler = (oo, previousCurrentDatum) =>
                         {
-                            // ignore duplicate triggers -- the user should delete and re-add them instead.
-                            if (_triggerHandler.ContainsKey(trigger))
-                                return;
-
-                            EventHandler<Tuple<Datum, Datum>> handler = (oo, previousCurrentDatum) =>
+                            // must be running and must have a current datum
+                            lock (_locker)
+                                if (!_probe.Running || !_enabled || previousCurrentDatum.Item2 == null)
                                 {
-                                    // must be running and must have a current datum
-                                    lock (_locker)
-                                        if (!_probe.Running || !_enabled || previousCurrentDatum.Item2 == null)
-                                        {
-                                            trigger.ConditionSatisfiedLastTime = false;  // this covers the case when the current datum is null. for some probes, the null datum is meaningful and is emitted in order for their state to be tracked appropriately (e.g., POI probe).
-                                            return;
-                                        }
+                                    trigger.ConditionSatisfiedLastTime = false;  // this covers the case when the current datum is null. for some probes, the null datum is meaningful and is emitted in order for their state to be tracked appropriately (e.g., POI probe).
+                                    return;
+                                }
 
-                                    Datum previousDatum = previousCurrentDatum.Item1;
-                                    Datum currentDatum = previousCurrentDatum.Item2;
+                            Datum previousDatum = previousCurrentDatum.Item1;
+                            Datum currentDatum = previousCurrentDatum.Item2;
 
-                                    // get the value that might trigger the script
-                                    object currentDatumValue = trigger.DatumProperty.GetValue(currentDatum);
-                                    if (currentDatumValue == null)
-                                    {
-                                        SensusServiceHelper.Get().Logger.Log("Trigger error:  Value of datum property " + trigger.DatumPropertyName + " was null.", LoggingLevel.Normal, GetType());
-                                        return;
-                                    }
-
-                                    // if we're triggering based on datum value changes instead of absolute values, calculate the change now
-                                    if (trigger.Change)
-                                    {
-                                        // don't need to set ConditionSatisfiedLastTime = false here, since it cannot be the case that it's true and prevDatum == null (we must have had a currDatum last time in order to set ConditionSatisfiedLastTime = true).
-                                        if (previousDatum == null)
-                                            return;
-
-                                        try
-                                        {
-                                            currentDatumValue = Convert.ToDouble(currentDatumValue) - Convert.ToDouble(trigger.DatumProperty.GetValue(previousDatum));
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            SensusServiceHelper.Get().Logger.Log("Trigger error:  Failed to convert datum values to doubles for change calculation:  " + ex.Message, LoggingLevel.Normal, GetType());
-                                            return;
-                                        }
-                                    }
-
-                                    // if the trigger fires, run a copy of the script so that we can retain a pristine version of the original
-                                    if (trigger.FireFor(currentDatumValue))
-                                        RunAsync(_script.Copy(), previousDatum, currentDatum);
-                                };
-
-                            trigger.Probe.MostRecentDatumChanged += handler;
-                            _triggerHandler.Add(trigger, handler);
-                        }
-                    else if (e.Action == NotifyCollectionChangedAction.Remove)
-                        foreach (Trigger trigger in e.OldItems)
-                            if (_triggerHandler.ContainsKey(trigger))
+                            // get the value that might trigger the script
+                            object currentDatumValue = trigger.DatumProperty.GetValue(currentDatum);
+                            if (currentDatumValue == null)
                             {
-                                trigger.Probe.MostRecentDatumChanged -= _triggerHandler[trigger];
-                                _triggerHandler.Remove(trigger);
+                                SensusServiceHelper.Get().Logger.Log("Trigger error:  Value of datum property " + trigger.DatumPropertyName + " was null.", LoggingLevel.Normal, GetType());
+                                return;
                             }
-                };
+
+                            // if we're triggering based on datum value changes instead of absolute values, calculate the change now
+                            if (trigger.Change)
+                            {
+                                // don't need to set ConditionSatisfiedLastTime = false here, since it cannot be the case that it's true and prevDatum == null (we must have had a currDatum last time in order to set ConditionSatisfiedLastTime = true).
+                                if (previousDatum == null)
+                                    return;
+
+                                try
+                                {
+                                    currentDatumValue = Convert.ToDouble(currentDatumValue) - Convert.ToDouble(trigger.DatumProperty.GetValue(previousDatum));
+                                }
+                                catch (Exception ex)
+                                {
+                                    SensusServiceHelper.Get().Logger.Log("Trigger error:  Failed to convert datum values to doubles for change calculation:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                    return;
+                                }
+                            }
+
+                            // if the trigger fires, run a copy of the script so that we can retain a pristine version of the original
+                            if (trigger.FireFor(currentDatumValue))
+                                RunAsync(_script.Copy(), previousDatum, currentDatum);
+                        };
+
+                        trigger.Probe.MostRecentDatumChanged += handler;
+                        _triggerHandler.Add(trigger, handler);
+                    }
+                else if (e.Action == NotifyCollectionChangedAction.Remove)
+                    foreach (Trigger trigger in e.OldItems)
+                        if (_triggerHandler.ContainsKey(trigger))
+                        {
+                            trigger.Probe.MostRecentDatumChanged -= _triggerHandler[trigger];
+                            _triggerHandler.Remove(trigger);
+                        }
+            };
+        }
+
+        public ScriptRunner(string name, ScriptProbe probe)
+            : this()
+        {
+            _name = name;
+            _probe = probe;
         }
 
         public void Start()
