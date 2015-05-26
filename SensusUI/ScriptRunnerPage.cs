@@ -20,9 +20,9 @@ using System.Collections.Generic;
 
 namespace SensusUI
 {
-    public class ScriptPage : ContentPage
+    public class ScriptRunnerPage : ContentPage
     {
-        public ScriptPage(Script script)
+        public ScriptRunnerPage(ScriptRunner scriptRunner)
         {
             Title = "Script";                  
 
@@ -32,7 +32,7 @@ namespace SensusUI
                     VerticalOptions = LayoutOptions.FillAndExpand
                 };
 
-            foreach (StackLayout stack in UiProperty.GetPropertyStacks(script))
+            foreach (StackLayout stack in UiProperty.GetPropertyStacks(scriptRunner))
                 contentLayout.Children.Add(stack);
 
             Button editPromptsButton = new Button
@@ -44,7 +44,7 @@ namespace SensusUI
 
             editPromptsButton.Clicked += async (o, e) =>
             {
-                await Navigation.PushAsync(new PromptsPage(script.Prompts));
+                await Navigation.PushAsync(new PromptsPage(scriptRunner.Script.Prompts));
             };
 
             contentLayout.Children.Add(editPromptsButton);
@@ -58,7 +58,7 @@ namespace SensusUI
 
             editTriggersButton.Clicked += async (o, e) =>
             {
-                await Navigation.PushAsync(new ScriptTriggersPage(script));
+                await Navigation.PushAsync(new ScriptTriggersPage(scriptRunner));
             };
 
             contentLayout.Children.Add(editTriggersButton);

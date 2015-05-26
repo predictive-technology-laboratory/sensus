@@ -20,21 +20,21 @@ namespace SensusUI
 {
     public class ScriptTriggersPage : ContentPage
     {
-        public ScriptTriggersPage(Script script)
+        public ScriptTriggersPage(ScriptRunner scriptRunner)
         {
             Title = "Script Triggers";
 
             ListView triggerList = new ListView();
             triggerList.ItemTemplate = new DataTemplate(typeof(TextCell));
             triggerList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", stringFormat: "{0}"));
-            triggerList.ItemsSource = script.Triggers;
+            triggerList.ItemsSource = scriptRunner.Triggers;
 
             Content = triggerList;
 
             ToolbarItems.Add(new ToolbarItem(null, "plus.png", async () =>
                 {
-                    if (script.Probe.Protocol.Probes.Where(p => p != script.Probe && p.Enabled).Count() > 0)
-                        await Navigation.PushAsync(new AddScriptTriggerPage(script));
+                    if (scriptRunner.Probe.Protocol.Probes.Where(p => p != scriptRunner.Probe && p.Enabled).Count() > 0)
+                        await Navigation.PushAsync(new AddScriptTriggerPage(scriptRunner));
                     else
                         UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("You must enable other probes before adding triggers.");
                 }));
@@ -43,7 +43,7 @@ namespace SensusUI
                 {
                     if (triggerList.SelectedItem != null && await DisplayAlert("Confirm Delete", "Are you sure you want to delete the selected trigger?", "Yes", "Cancel"))
                     {
-                        script.Triggers.Remove(triggerList.SelectedItem as SensusService.Probes.User.Trigger);
+                        scriptRunner.Triggers.Remove(triggerList.SelectedItem as SensusService.Probes.User.Trigger);
                         triggerList.SelectedItem = null;
                     }
                 }));

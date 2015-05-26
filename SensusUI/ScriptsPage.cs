@@ -25,28 +25,32 @@ namespace SensusUI
         {
             Title = "Scripts";
 
-            ListView scriptsList = new ListView();
-            scriptsList.ItemTemplate = new DataTemplate(typeof(TextCell));
-            scriptsList.ItemTemplate.SetBinding(TextCell.TextProperty, "Name");
-            scriptsList.ItemsSource = probe.Scripts;
+            ListView scriptRunnersList = new ListView();
+            scriptRunnersList.ItemTemplate = new DataTemplate(typeof(TextCell));
+            scriptRunnersList.ItemTemplate.SetBinding(TextCell.TextProperty, "Name");
+            scriptRunnersList.ItemsSource = probe.ScriptRunners;
 
-            Content = scriptsList;
+            Content = scriptRunnersList;
 
             ToolbarItems.Add(new ToolbarItem(null, "plus.png", () =>
                     {
-                        probe.Scripts.Add(new Script("New Script", 0, probe));
+                        probe.ScriptRunners.Add(new ScriptRunner("New Script", new Script(), 1, probe, 0));
                     }));
 
             ToolbarItems.Add(new ToolbarItem(null, "minus.png", () =>
                     {
-                        if (scriptsList.SelectedItem != null)
-                            probe.Scripts.Remove(scriptsList.SelectedItem as Script);
+                        if (scriptRunnersList.SelectedItem != null)
+                        {
+                            ScriptRunner scriptRunner = scriptRunnersList.SelectedItem as ScriptRunner;
+                            scriptRunner.Stop();
+                            probe.ScriptRunners.Remove(scriptRunner);
+                        }
                     }));
 
             ToolbarItems.Add(new ToolbarItem(null, "pencil.png", async () =>
                     {
-                        if (scriptsList.SelectedItem != null)
-                            await Navigation.PushAsync(new ScriptPage(scriptsList.SelectedItem as Script));
+                        if (scriptRunnersList.SelectedItem != null)
+                            await Navigation.PushAsync(new ScriptRunnerPage(scriptRunnersList.SelectedItem as ScriptRunner));
                     }));
         }
     }

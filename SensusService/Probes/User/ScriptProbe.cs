@@ -14,18 +14,16 @@
 
 using System;
 using System.Collections.ObjectModel;
-using Newtonsoft.Json;
 
 namespace SensusService.Probes.User
 {
     public class ScriptProbe : Probe
     {        
-        private ObservableCollection<Script> _scripts;
-        private int _numScriptsAgedOut;
+        private ObservableCollection<ScriptRunner> _scriptRunners;
 
-        public ObservableCollection<Script> Scripts
+        public ObservableCollection<ScriptRunner> ScriptRunners
         {
-            get { return _scripts; }
+            get { return _scriptRunners; }
         }            
 
         protected override string DefaultDisplayName
@@ -33,19 +31,6 @@ namespace SensusService.Probes.User
             get { return "Scripted Interactions"; }
         }
 
-        public int NumScriptsAgedOut
-        {
-            get
-            {
-                return _numScriptsAgedOut;
-            }
-            set
-            {
-                _numScriptsAgedOut = value;
-            }
-        }
-
-        [JsonIgnore]
         public sealed override Type DatumType
         {
             get { return typeof(ScriptDatum); }
@@ -53,24 +38,15 @@ namespace SensusService.Probes.User
 
         public ScriptProbe()
         {            
-            _scripts = new ObservableCollection<Script>();
-            _numScriptsAgedOut = 0;
-        }
-
-        protected override void Initialize()
-        {
-            base.Initialize();
-
-            if (_scripts == null)
-                _scripts = new ObservableCollection<Script>();
+            _scriptRunners = new ObservableCollection<ScriptRunner>();
         }
 
         public override void Start()
         {
             base.Start();
 
-            foreach (Script script in _scripts)
-                script.Start();            
+            foreach (ScriptRunner scriptRunner in _scriptRunners)
+                scriptRunner.Start();            
         }
 
         public override bool TestHealth(ref string error, ref string warning, ref string misc)
@@ -79,24 +55,21 @@ namespace SensusService.Probes.User
 
             if (Running)
             {
-                foreach (Script script in _scripts)
-                    if (script.TestHealth(ref error, ref warning, ref misc))
+                foreach (ScriptRunner scriptRunner in _scriptRunners)
+                    if (scriptRunner.TestHealth(ref error, ref warning, ref misc))
                     {
-                        warning += "Restarting script \"" + script.Name + "\"." + Environment.NewLine;
+                        warning += "Restarting script runner \"" + scriptRunner.Name + "\"." + Environment.NewLine;
 
                         try
                         {
-                            script.Restart();
+                            scriptRunner.Restart();
                         }
                         catch (Exception ex)
                         {
-                            warning += "Error restarting script \"" + script.Name + "\":  " + ex.Message;
+                            warning += "Error restarting script runner \"" + scriptRunner.Name + "\":  " + ex.Message;
                             SensusServiceHelper.Get().Logger.Log(warning, LoggingLevel.Normal, GetType());
                         }
                     }
-
-                if (_numScriptsAgedOut > 0)
-                    misc += _numScriptsAgedOut + " scripts have aged out." + Environment.NewLine;
             }
 
             return restart;
@@ -106,8 +79,8 @@ namespace SensusService.Probes.User
         {
             base.Stop();
 
-            foreach (Script script in _scripts)
-                script.Stop();
+            foreach (ScriptRunner scriptRunner in _scriptRunners)
+                scriptRunner.Stop();
         }
     }
 }
