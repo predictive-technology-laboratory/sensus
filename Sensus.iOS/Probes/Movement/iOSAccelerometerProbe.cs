@@ -16,16 +16,26 @@ using System;
 using SensusService.Probes.Movement;
 using CoreMotion;
 using Foundation;
+using System.Threading;
+using SensusService;
 
 namespace Sensus.iOS.Probes.Movement
 {
     public class iOSAccelerometerProbe : AccelerometerProbe
     {
         private CMMotionManager _motionManager;
+        private bool _stabilizing;
 
         public iOSAccelerometerProbe()
         {
             _motionManager = new CMMotionManager();
+        }
+
+        protected override void Initialize()
+        {
+            base.Initialize();
+
+            _stabilizing = true;
         }
 
         protected override void StartListening()
@@ -34,9 +44,19 @@ namespace Sensus.iOS.Probes.Movement
                 {
                     _motionManager.StartAccelerometerUpdates(NSOperationQueue.CurrentQueue, (data, error) =>
                         {
-                            StoreDatum(new AccelerometerDatum(DateTimeOffset.UtcNow, data.Acceleration.X, data.Acceleration.Y, data.Acceleration.Z));
+                            if (!_stabilizing)
+                                StoreDatum(new AccelerometerDatum(DateTimeOffset.UtcNow, data.Acceleration.X, data.Acceleration.Y, data.Acceleration.Z));
                         });
                 });
+
+            // wait while the sensor stabilizes
+            new Thread(() =>
+                {
+                    Thread.Sleep(2000);
+                    _stabilizing = false;
+                    SensusServiceHelper.Get().Logger.Log("Accelerometer has finished stabilization period.", LoggingLevel.Verbose, GetType());
+
+                }).Start();
         }
 
         protected override void StopListening()
