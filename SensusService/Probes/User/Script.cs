@@ -434,7 +434,7 @@ namespace SensusService.Probes.User
                                         }
 
                                     if (scriptToRerun != null)
-                                        scriptToRerun.RunAsync(scriptToRerun.Copy(), null, null);
+                                        RunAsync(scriptToRerun.Copy(), null, null);
                                 }
 
                             }, "Rerun Script", _rerunDelayMS, _rerunDelayMS, null);  // no user notification message, since there might not be any scripts to rerun
@@ -475,11 +475,15 @@ namespace SensusService.Probes.User
             }
         }            
 
-        public void TestHealth(ref string error, ref string warning, ref string misc)
+        public bool TestHealth(ref string error, ref string warning, ref string misc)
         {
+            bool restart = false;
+
             lock (_incompletes)
                 if (_incompletes.Count > 0)
                     misc += "Script is holding " + _incompletes.Count + " copies, the oldest being run first on " + _incompletes.Select(s => s.FirstRunTimestamp).Min() + "." + Environment.NewLine;
+
+            return restart;
         }
 
         public void Restart()
