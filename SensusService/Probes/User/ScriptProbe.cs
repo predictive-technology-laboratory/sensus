@@ -12,14 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Newtonsoft.Json;
-using SensusUI.UiProperties;
 using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Threading;
 using System.Collections.ObjectModel;
+using Newtonsoft.Json;
 
 namespace SensusService.Probes.User
 {
@@ -27,8 +22,6 @@ namespace SensusService.Probes.User
     {        
         private ObservableCollection<Script> _scripts;
         private int _numScriptsAgedOut;
-
-        private readonly object _locker = new object();
 
         public ObservableCollection<Script> Scripts
         {
@@ -78,7 +71,7 @@ namespace SensusService.Probes.User
 
             foreach (Script script in _scripts)
                 script.Start();            
-        }                                         
+        }
 
         public override bool TestHealth(ref string error, ref string warning, ref string misc)
         {

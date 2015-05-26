@@ -24,37 +24,44 @@ namespace SensusUI
     {
         public ScriptPage(Script script)
         {
-            Title = "Script";
+            Title = "Script";                  
 
-            List<StackLayout> stacks = UiProperty.GetPropertyStacks(script);
+            StackLayout contentLayout = new StackLayout
+                {
+                    Orientation = StackOrientation.Vertical,
+                    VerticalOptions = LayoutOptions.FillAndExpand
+                };
 
-            Button promptsButton = new Button
+            foreach (StackLayout stack in UiProperty.GetPropertyStacks(script))
+                contentLayout.Children.Add(stack);
+
+            Button editPromptsButton = new Button
             {
                 Text = "Edit Prompts",
                 FontSize = 20,
                 HorizontalOptions = LayoutOptions.FillAndExpand
             };
 
-            promptsButton.Clicked += async (o, e) =>
+            editPromptsButton.Clicked += async (o, e) =>
             {
                 await Navigation.PushAsync(new PromptsPage(script.Prompts));
             };
 
-            stacks.Add(new StackLayout
-                {
-                    Orientation = StackOrientation.Horizontal,
-                    HorizontalOptions = LayoutOptions.FillAndExpand,
-                    Children = { promptsButton }
-                });
+            contentLayout.Children.Add(editPromptsButton);
 
-            StackLayout contentLayout = new StackLayout
+            Button editTriggersButton = new Button
             {
-                Orientation = StackOrientation.Vertical,
-                VerticalOptions = LayoutOptions.FillAndExpand
+                Text = "Edit Triggers",
+                FontSize = 20,
+                HorizontalOptions = LayoutOptions.FillAndExpand
             };
 
-            foreach (StackLayout stack in stacks)
-                contentLayout.Children.Add(stack);
+            editTriggersButton.Clicked += async (o, e) =>
+            {
+                await Navigation.PushAsync(new ScriptTriggersPage(script));
+            };
+
+            contentLayout.Children.Add(editTriggersButton);
 
             Content = new ScrollView
             { 
@@ -63,5 +70,3 @@ namespace SensusUI
         }
     }
 }
-
-

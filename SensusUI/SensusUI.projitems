@@ -9,7 +9,6 @@
     <Import_RootNamespace>SensusUI</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)AddScriptProbeTriggerPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)App.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProbesPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ScriptTriggersPage.cs" />
@@ -36,6 +35,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)PointsOfInterestPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProximityTriggersPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)AddProximityTriggerPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AddScriptTriggerPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ScriptsPage.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Icons\" />

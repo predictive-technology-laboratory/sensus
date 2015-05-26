@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using Newtonsoft.Json;
 using SensusUI.UiProperties;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 
 namespace SensusService.Probes.User
 {
@@ -28,78 +28,11 @@ namespace SensusService.Probes.User
     {
         #region static members
         private static JsonSerializerSettings JSON_SERIALIZER_SETTINGS = new JsonSerializerSettings
-            {
-                PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-                ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-                ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
-            };
-
-        private static void RunAsync(Script script, Datum previousDatum, Datum currentDatum)
         {
-            #if __IOS__
-            string userNotificationMessage = "Your input is requested.";
-            #elif __ANDROID__
-            string userNotificationMessage = null;
-            #elif __WINDOWS_PHONE__
-            TODO:  Should we use a message?
-            #endif
-
-            Action<CancellationToken> runAction = cancellationToken =>
-            {
-                SensusServiceHelper.Get().Logger.Log("Running \"" + script.Name + "\".", LoggingLevel.Normal, typeof(Script));
-
-                bool isRerun = true;
-
-                if (script.FirstRunTimestamp == DateTimeOffset.MinValue)
-                {
-                    script.FirstRunTimestamp = DateTimeOffset.UtcNow;
-                    isRerun = false;
-                }
-
-                if (previousDatum != null)
-                    script.PreviousDatum = previousDatum;
-
-                if (currentDatum != null)
-                    script.CurrentDatum = currentDatum;
-
-                List<ScriptDatum> data = new List<ScriptDatum>();
-
-                foreach (Prompt prompt in script.Prompts)
-                    if (!prompt.Complete)
-                    {
-                        ManualResetEvent datumWait = new ManualResetEvent(false);
-
-                        prompt.RunAsync(script.PreviousDatum, script.CurrentDatum, isRerun, script.FirstRunTimestamp, datum =>
-                            {
-                                if (datum != null)
-                                    data.Add(datum);
-
-                                datumWait.Set();
-                            });
-
-                        datumWait.WaitOne();
-                    }
-
-                SensusServiceHelper.Get().Logger.Log("Script \"" + script.Name + "\" has finished running.", LoggingLevel.Normal, typeof(Script));
-
-                foreach (ScriptDatum datum in data)
-                    if (datum != null)
-                        script.Probe.StoreDatum(datum);
-
-                if (script.RerunIncompletes && !script.Complete)
-                    lock (script.Incompletes)
-                        script.Incompletes.Enqueue(script);
-            };
-
-            if (script.DelayMS > 0)
-                SensusServiceHelper.Get().ScheduleOneTimeCallback(runAction, "Run Script", script.DelayMS, userNotificationMessage);
-            else
-                new Thread(() =>
-                    {
-                        runAction(default(CancellationToken));
-
-                    }).Start();
-        }
+            PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
+        };
         #endregion
 
         private ScriptProbe _probe;
@@ -150,7 +83,7 @@ namespace SensusService.Probes.User
                 else
                     _hashCode = _id.GetHashCode();
             }
-        } 
+        }
 
         [EntryStringUiProperty("Name:", true, 1)]
         public string Name
@@ -169,6 +102,9 @@ namespace SensusService.Probes.User
             set
             {
                 _enabled = value;
+
+                if (_probe.Running && _enabled)
+                    Start();
             }
         }
 
@@ -247,7 +183,7 @@ namespace SensusService.Probes.User
                         _rerunCallbackId = SensusServiceHelper.Get().RescheduleRepeatingCallback(_rerunCallbackId, _rerunDelayMS, _rerunDelayMS);
                 }
             }
-        }                        
+        }
 
         [EntryIntegerUiProperty("Maximum Age (Mins.):", true, 12)]
         public int MaximumAgeMinutes
@@ -302,7 +238,7 @@ namespace SensusService.Probes.User
         }
 
         [JsonIgnore]
-        public TimeSpan AgeMinutes
+        public TimeSpan Age
         {
             get { return DateTimeOffset.UtcNow - _firstRunTimestamp; }
         }
@@ -329,64 +265,68 @@ namespace SensusService.Probes.User
             _random = new Random();
 
             _triggers.CollectionChanged += (o, e) =>
-                {
-                    if (e.Action == NotifyCollectionChangedAction.Add)
-                        foreach (Trigger addedTrigger in e.NewItems)
+            {
+                if (e.Action == NotifyCollectionChangedAction.Add)
+                    foreach (Trigger addedTrigger in e.NewItems)
+                    {
+                        // ignore duplicate triggers -- the user should delete and re-add them instead.
+                        if (_triggerHandler.ContainsKey(addedTrigger))
+                            return;
+
+                        EventHandler<Tuple<Datum, Datum>> handler = (oo, prevCurrDatum) =>
                         {
-                            // ignore duplicate triggers -- the user should delete and re-add them instead.
-                            if (_triggerHandler.ContainsKey(addedTrigger))
-                                return;
-
-                            EventHandler<Tuple<Datum, Datum>> handler = (oo, prevCurrDatum) =>
+                            // must be running and must have a current datum
+                            lock (_locker)
+                                if (!_probe.Running || !_enabled || prevCurrDatum.Item2 == null)
                                 {
-                                    // must be running and must have a current datum
-                                    lock (_locker)
-                                        if (!_probe.Running || !_enabled || prevCurrDatum.Item2 == null)
-                                        {
-                                            addedTrigger.ConditionSatisfiedLastTime = false;  // this covers the case when the current datum is null. some probes need to emit a null datum in order for their state to be tracked appropriately (e.g., POI probe).
-                                            return;
-                                        }
+                                    addedTrigger.ConditionSatisfiedLastTime = false;  // this covers the case when the current datum is null. some probes need to emit a null datum in order for their state to be tracked appropriately (e.g., POI probe).
+                                    return;
+                                }
 
-                                    Datum prevDatum = prevCurrDatum.Item1;
-                                    Datum currDatum = prevCurrDatum.Item2;
+                            Datum prevDatum = prevCurrDatum.Item1;
+                            Datum currDatum = prevCurrDatum.Item2;
 
-                                    // get the value that might trigger the script
-                                    object currDatumValue = addedTrigger.DatumProperty.GetValue(currDatum);
-                                    if (currDatumValue == null)
-                                    {
-                                        SensusServiceHelper.Get().Logger.Log("Trigger error:  Value of datum property " + addedTrigger.DatumPropertyName + " was null.", LoggingLevel.Normal, GetType());
-                                        return;
-                                    }
-
-                                    // if we're triggering based on datum value changes instead of absolute values, calculate the change now
-                                    if (addedTrigger.Change)
-                                    {
-                                        if (prevDatum == null) // don't need to set ConditionSatisfiedLastTime = false here, since it cannot be the case that it's true and prevDatum == null (we must have had a currDatum last time in order to set ConditionSatisfiedLastTime = true.
-                                            return;
-
-                                        try { currDatumValue = Convert.ToDouble(currDatumValue) - Convert.ToDouble(addedTrigger.DatumProperty.GetValue(prevDatum)); }
-                                        catch (Exception ex)
-                                        {
-                                            SensusServiceHelper.Get().Logger.Log("Trigger error:  Failed to convert datum values to doubles:  " + ex.Message, LoggingLevel.Normal, GetType());
-                                            return;
-                                        }
-                                    }
-
-                                    if (addedTrigger.FireFor(currDatumValue))
-                                        RunAsync(Copy(), prevDatum, currDatum);  // run a copy of the pristine script, since it will be filled in when run.
-                                };
-
-                            addedTrigger.Probe.MostRecentDatumChanged += handler;
-                            _triggerHandler.Add(addedTrigger, handler);
-                        }
-                    else if (e.Action == NotifyCollectionChangedAction.Remove)
-                        foreach (Trigger removedTrigger in e.OldItems)
-                            if (_triggerHandler.ContainsKey(removedTrigger))
+                            // get the value that might trigger the script
+                            object currDatumValue = addedTrigger.DatumProperty.GetValue(currDatum);
+                            if (currDatumValue == null)
                             {
-                                removedTrigger.Probe.MostRecentDatumChanged -= _triggerHandler[removedTrigger];
-                                _triggerHandler.Remove(removedTrigger);
+                                SensusServiceHelper.Get().Logger.Log("Trigger error:  Value of datum property " + addedTrigger.DatumPropertyName + " was null.", LoggingLevel.Normal, GetType());
+                                return;
                             }
-                };
+
+                            // if we're triggering based on datum value changes instead of absolute values, calculate the change now
+                            if (addedTrigger.Change)
+                            {
+                                // don't need to set ConditionSatisfiedLastTime = false here, since it cannot be the case that it's true and prevDatum == null (we must have had a currDatum last time in order to set ConditionSatisfiedLastTime = true.
+                                if (prevDatum == null)
+                                    return;
+
+                                try
+                                {
+                                    currDatumValue = Convert.ToDouble(currDatumValue) - Convert.ToDouble(addedTrigger.DatumProperty.GetValue(prevDatum));
+                                }
+                                catch (Exception ex)
+                                {
+                                    SensusServiceHelper.Get().Logger.Log("Trigger error:  Failed to convert datum values to doubles:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                    return;
+                                }
+                            }
+
+                            if (addedTrigger.FireFor(currDatumValue))
+                                RunAsync(prevDatum, currDatum, null);
+                        };
+
+                        addedTrigger.Probe.MostRecentDatumChanged += handler;
+                        _triggerHandler.Add(addedTrigger, handler);
+                    }
+                else if (e.Action == NotifyCollectionChangedAction.Remove)
+                    foreach (Trigger removedTrigger in e.OldItems)
+                        if (_triggerHandler.ContainsKey(removedTrigger))
+                        {
+                            removedTrigger.Probe.MostRecentDatumChanged -= _triggerHandler[removedTrigger];
+                            _triggerHandler.Remove(removedTrigger);
+                        }
+            };
         }
 
         public Script(string name, int delayMS, ScriptProbe probe)
@@ -425,7 +365,7 @@ namespace SensusService.Probes.User
                                         while (scriptToRerun == null && _incompletes.Count > 0)
                                         {
                                             scriptToRerun = _incompletes.Dequeue();                     
-                                            if (scriptToRerun.AgeMinutes.TotalMinutes > scriptToRerun.MaximumAgeMinutes)
+                                            if (scriptToRerun.Age.TotalMinutes > scriptToRerun.MaximumAgeMinutes)
                                             {
                                                 SensusServiceHelper.Get().Logger.Log("Script \"" + scriptToRerun.Name + "\" has aged out.", LoggingLevel.Normal, GetType());
                                                 scriptToRerun = null;
@@ -434,7 +374,7 @@ namespace SensusService.Probes.User
                                         }
 
                                     if (scriptToRerun != null)
-                                        RunAsync(scriptToRerun.Copy(), null, null);
+                                        scriptToRerun.RunAsync(null, null, null);
                                 }
 
                             }, "Rerun Script", _rerunDelayMS, _rerunDelayMS, null);  // no user notification message, since there might not be any scripts to rerun
@@ -461,19 +401,81 @@ namespace SensusService.Probes.User
                         TODO:  Should we use a message?
                         #endif
 
-                        _randomTriggerCallbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(RandomTriggerCallback, "Randomly Rerun", _random.Next(_maximumRandomTriggerDelayMinutes * 60000), userNotificationMessage);
+                        _randomTriggerCallbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(cancellationToken =>
+                            {
+                                if (_probe.Running && _enabled && _triggerRandomly)
+                                    RunAsync(null, null, StartRandomTriggerCallbacksAsync);
+                            }
+                            , "Randomly Rerun", _random.Next(_maximumRandomTriggerDelayMinutes * 60000), userNotificationMessage);
                     }
                 }).Start();
         }
 
-        private void RandomTriggerCallback(CancellationToken cancellationToken)
+        private void RunAsync(Datum previousDatum, Datum currentDatum, Action callback)
         {
-            if (_probe.Running && _enabled && _triggerRandomly)
+            Script script = Copy();
+
+            #if __IOS__
+            string userNotificationMessage = "Your input is requested.";
+            #elif __ANDROID__
+            string userNotificationMessage = null;
+            #elif __WINDOWS_PHONE__
+            TODO:  Should we use a message?
+            #endif
+
+            Action<CancellationToken> runAction = cancellationToken =>
             {
-                RunAsync(Copy(), null, null);
-                StartRandomTriggerCallbacksAsync();
-            }
-        }            
+                SensusServiceHelper.Get().Logger.Log("Running \"" + script.Name + "\".", LoggingLevel.Normal, typeof(Script));
+
+                bool isRerun = true;
+
+                if (script.FirstRunTimestamp == DateTimeOffset.MinValue)
+                {
+                    script.FirstRunTimestamp = DateTimeOffset.UtcNow;
+                    isRerun = false;
+                }
+
+                if (previousDatum != null)
+                    script.PreviousDatum = previousDatum;
+
+                if (currentDatum != null)
+                    script.CurrentDatum = currentDatum;
+
+                foreach (Prompt prompt in script.Prompts)
+                    if (!prompt.Complete)
+                    {
+                        ManualResetEvent datumWait = new ManualResetEvent(false);
+
+                        prompt.RunAsync(script.PreviousDatum, script.CurrentDatum, isRerun, script.FirstRunTimestamp, datum =>
+                            {
+                                if (datum != null)
+                                    script.Probe.StoreDatum(datum);
+
+                                datumWait.Set();
+                            });
+
+                        datumWait.WaitOne();
+                    }
+
+                SensusServiceHelper.Get().Logger.Log("\"" + script.Name + "\" has finished running.", LoggingLevel.Normal, typeof(Script));
+
+                if (script.RerunIncompletes && !script.Complete)
+                    lock (script.Incompletes)
+                        script.Incompletes.Enqueue(script);
+
+                if (callback != null)
+                    callback();
+            };
+
+            if (script.DelayMS > 0)
+                SensusServiceHelper.Get().ScheduleOneTimeCallback(runAction, "Run Script", script.DelayMS, userNotificationMessage);
+            else
+                new Thread(() =>
+                    {
+                        runAction(default(CancellationToken));
+
+                    }).Start();
+        }
 
         public bool TestHealth(ref string error, ref string warning, ref string misc)
         {

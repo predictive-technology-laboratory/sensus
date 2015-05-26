@@ -48,36 +48,19 @@ namespace SensusUI
             #region script probes
             if (probe is ScriptProbe)
             {
-                ScriptProbe scriptProbe = probe as ScriptProbe;
+                Button editScriptsButton = new Button
+                    {
+                        Text = "Edit Scripts",
+                        FontSize = 20
+                    };
 
-                Button editScriptButton = new Button
-                {
-                    Text = "Edit Script",
-                    FontSize = 20,
-                    HorizontalOptions = LayoutOptions.FillAndExpand
-                };
-
-                contentLayout.Children.Add(editScriptButton);
-
-                editScriptButton.Clicked += async (o, e) =>
-                {
-                    await Navigation.PushAsync(new ScriptPage(scriptProbe.Scripts));
-                };
-
-                Button viewScriptTriggersButton = new Button
-                {
-                    Text = "Edit Triggers",
-                    FontSize = 20,
-                    HorizontalOptions = LayoutOptions.FillAndExpand
-                };
-
-                contentLayout.Children.Add(viewScriptTriggersButton);
-
-                viewScriptTriggersButton.Clicked += async (o, e) =>
-                {
-                    await Navigation.PushAsync(new ScriptTriggersPage(scriptProbe));
-                };
-            }
+                editScriptsButton.Clicked += async (o,e) =>
+                    {
+                        await Navigation.PushAsync(new ScriptsPage(probe as ScriptProbe));
+                    };
+                   
+                contentLayout.Children.Add(editScriptsButton);
+            }                       
             #endregion
 
             #region proximity probe

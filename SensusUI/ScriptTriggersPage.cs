@@ -20,30 +20,30 @@ namespace SensusUI
 {
     public class ScriptTriggersPage : ContentPage
     {
-        public ScriptTriggersPage(ScriptProbe scriptProbe)
+        public ScriptTriggersPage(Script script)
         {
             Title = "Script Triggers";
 
             ListView triggerList = new ListView();
             triggerList.ItemTemplate = new DataTemplate(typeof(TextCell));
             triggerList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", stringFormat: "{0}"));
-            triggerList.ItemsSource = scriptProbe.Triggers;
+            triggerList.ItemsSource = script.Triggers;
 
             Content = triggerList;
 
             ToolbarItems.Add(new ToolbarItem(null, "plus.png", async () =>
                 {
-                    if (scriptProbe.Protocol.Probes.Where(p => p != scriptProbe && p.Enabled).Count() > 0)
-                        await Navigation.PushAsync(new AddScriptProbeTriggerPage(scriptProbe));
+                    if (script.Probe.Protocol.Probes.Where(p => p != script.Probe && p.Enabled).Count() > 0)
+                        await Navigation.PushAsync(new AddScriptTriggerPage(script));
                     else
-                        UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("You must enable probes before adding triggers.");
+                        UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("You must enable other probes before adding triggers.");
                 }));
 
             ToolbarItems.Add(new ToolbarItem(null, "minus.png", async () =>
                 {
                     if (triggerList.SelectedItem != null && await DisplayAlert("Confirm Delete", "Are you sure you want to delete the selected trigger?", "Yes", "Cancel"))
                     {
-                        scriptProbe.Triggers.Remove(triggerList.SelectedItem as SensusService.Probes.User.Trigger);
+                        script.Triggers.Remove(triggerList.SelectedItem as SensusService.Probes.User.Trigger);
                         triggerList.SelectedItem = null;
                     }
                 }));
