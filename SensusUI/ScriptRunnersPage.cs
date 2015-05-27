@@ -39,13 +39,17 @@ namespace SensusUI
                         _probe.ScriptRunners.Add(new ScriptRunner("New Script", _probe));
                     }));
 
-            ToolbarItems.Add(new ToolbarItem(null, "minus.png", () =>
+            ToolbarItems.Add(new ToolbarItem(null, "minus.png", async () =>
                     {
                         if (_scriptRunnersList.SelectedItem != null)
                         {
-                            ScriptRunner scriptRunner = _scriptRunnersList.SelectedItem as ScriptRunner;
-                            scriptRunner.Stop();
-                            _probe.ScriptRunners.Remove(scriptRunner);
+                            ScriptRunner scriptRunnerToDelete = _scriptRunnersList.SelectedItem as ScriptRunner;
+
+                            if (await DisplayAlert("Delete " + scriptRunnerToDelete.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
+                            {
+                                scriptRunnerToDelete.Stop();
+                                _probe.ScriptRunners.Remove(scriptRunnerToDelete);
+                            }
                         }
                     }));
 

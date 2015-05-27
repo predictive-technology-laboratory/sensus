@@ -31,7 +31,7 @@ namespace SensusService.Probes.User
         private string _outputMessage;
         private string _outputMessageRerun;
         private PromptInputType _inputType;
-        private ScriptDatum _inputDatum;
+        private ScriptDatum _responseDatum;
         private bool _hasRun;
 
         [EntryStringUiProperty("Name:", true, 9)]
@@ -69,10 +69,10 @@ namespace SensusService.Probes.User
             set { _inputType = value; }
         }
 
-        public ScriptDatum InputDatum
+        public ScriptDatum ResponseDatum
         {
-            get { return _inputDatum; }
-            set { _inputDatum = value; }
+            get { return _responseDatum; }
+            set { _responseDatum = value; }
         }
 
         public bool HasRun
@@ -84,7 +84,7 @@ namespace SensusService.Probes.User
         [JsonIgnore]
         public bool Complete
         {
-            get { return _hasRun && (_inputType == PromptInputType.None || _inputDatum != null); }
+            get { return _hasRun && (_inputType == PromptInputType.None || _responseDatum != null); }
         }
 
         /// <summary>
@@ -105,18 +105,20 @@ namespace SensusService.Probes.User
             _inputType = inputType;
         }
 
-        public void RunAsync(Datum previous, Datum current, bool isRerun, DateTimeOffset firstRunTimestamp, Action<ScriptDatum> callback)
+        public void RunAsync(Datum previousDatum, Datum currentDatum, bool isRerun, DateTimeOffset firstRunTimestamp, Action<ScriptDatum> callback)
         {
             new Thread(() =>
                 {
                     lock (LOCKER)
                     {
-                        if (_inputDatum != null)
+                        // calling after a previous call has completed returns the same response
+                        if (_responseDatum != null)
                         {
-                            callback(_inputDatum);
+                            callback(_responseDatum);
                             return;
                         }
 
+                        // calling while a previous call is in progress returns null
                         if (PROMPT_IS_RUNNING)
                         {
                             callback(null);
@@ -126,9 +128,9 @@ namespace SensusService.Probes.User
                             PROMPT_IS_RUNNING = true;
                     }
 
-                    string message = _outputMessage;
+                    string outputMessage = _outputMessage;
 
-                    #region rerun processing
+                    #region rerun temporal analysis
                     if (isRerun && !string.IsNullOrWhiteSpace(_outputMessageRerun))
                     {
                         TimeSpan promptAge = DateTimeOffset.UtcNow - firstRunTimestamp;
@@ -142,51 +144,51 @@ namespace SensusService.Probes.User
                         else
                             daysAgoStr = promptAge.TotalDays + " days ago";
 
-                        message = string.Format(_outputMessageRerun, daysAgoStr + " at " + firstRunTimestamp.ToLocalTime().DateTime.ToString("h:mm tt"));
+                        outputMessage = string.Format(_outputMessageRerun, daysAgoStr + " at " + firstRunTimestamp.ToLocalTime().DateTime.ToString("h:mm tt"));
                     }
                     #endregion
 
-                    Action<string> inputCallback = new Action<string>(inputText =>
+                    Action<string> responseCallback = new Action<string>(responseText =>
                         {
-                            if (string.IsNullOrWhiteSpace(inputText))
-                                inputText = null;
+                            if (string.IsNullOrWhiteSpace(responseText))
+                                responseText = null;
 
-                            if (inputText != null)
-                                _inputDatum = new ScriptDatum(DateTimeOffset.UtcNow, inputText, current == null ? null : current.Id);
+                            if (responseText != null)
+                                _responseDatum = new ScriptDatum(DateTimeOffset.UtcNow, responseText, currentDatum == null ? null : currentDatum.Id);
 
-                            callback(_inputDatum);
+                            callback(_responseDatum);
 
                             PROMPT_IS_RUNNING = false;
                         });
 
                     if (_outputType == PromptOutputType.Text && _inputType == PromptInputType.Text)
-                        SensusServiceHelper.Get().PromptForInputAsync(message, false, inputCallback);
+                        SensusServiceHelper.Get().PromptForInputAsync(outputMessage, false, responseCallback);
                     else if (_outputType == PromptOutputType.Text && _inputType == PromptInputType.Voice)
-                        SensusServiceHelper.Get().PromptForInputAsync(message, true, inputCallback);
+                        SensusServiceHelper.Get().PromptForInputAsync(outputMessage, true, responseCallback);
                     else if (_outputType == PromptOutputType.Text && _inputType == PromptInputType.None)
                     {
-                        SensusServiceHelper.Get().FlashNotificationAsync(message, () =>
+                        SensusServiceHelper.Get().FlashNotificationAsync(outputMessage, () =>
                             {
                                 PROMPT_IS_RUNNING = false;
                             });
                     }
                     else if (_outputType == PromptOutputType.Voice && _inputType == PromptInputType.Text)
                     {
-                        SensusServiceHelper.Get().TextToSpeechAsync(message, () =>
+                        SensusServiceHelper.Get().TextToSpeechAsync(outputMessage, () =>
                             {
-                                SensusServiceHelper.Get().PromptForInputAsync(message, false, inputCallback);
+                                SensusServiceHelper.Get().PromptForInputAsync(outputMessage, false, responseCallback);
                             });
                     }
                     else if (_outputType == PromptOutputType.Voice && _inputType == PromptInputType.Voice)
                     {
-                        SensusServiceHelper.Get().TextToSpeechAsync(message, () =>
+                        SensusServiceHelper.Get().TextToSpeechAsync(outputMessage, () =>
                             {
-                                SensusServiceHelper.Get().PromptForInputAsync(message, true, inputCallback);
+                                SensusServiceHelper.Get().PromptForInputAsync(outputMessage, true, responseCallback);
                             });
                     }
                     else if (_outputType == PromptOutputType.Voice && _inputType == PromptInputType.None)
                     {
-                        SensusServiceHelper.Get().TextToSpeechAsync(message, () =>
+                        SensusServiceHelper.Get().TextToSpeechAsync(outputMessage, () =>
                             {
                                 PROMPT_IS_RUNNING = false;
                             });
