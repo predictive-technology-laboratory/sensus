@@ -265,18 +265,31 @@ namespace Sensus.Android
                                                  .SetNegativeButton("Cancel", (o, e) => { })
                                                  .Create();
 
-                            // SetOnDismissListener was added to the AlertDialog.Builder class at API level 17. Call it here to keep us at API level 16.
-                            dialog.SetOnDismissListener(new AndroidOnDismissListener(() =>
+                            // for some reason, stopping the activity with the home button doesn't raise the alert dialog's dismiss 
+                            // event. so, we'll manually trap the activity stop and dismiss the dialog ourselves. this is important
+                            // because the caller of this method might be blocking itself or others (e.g., other prompts) until
+                            // the dialog is dismissed. if we don't trap the activity stop then those blocks could go on indefinitely.
+                            EventHandler activityStoppedHandler = (o,e) =>
                                 {
+                                    dialog.Dismiss();
+                                };                            
+
+                            mainActivity.Stopped += activityStoppedHandler;
+
+                            dialog.DismissEvent += (o,e) =>
+                                {
+                                    // we don't need the dismiss event anymore, since the dialog has closed
+                                    mainActivity.Stopped -= activityStoppedHandler;
+
                                     dialogDismissWait.Set();
-                                }));
+                                };                                    
 
                             ManualResetEvent dialogShowWait = new ManualResetEvent(false);
 
-                            dialog.SetOnShowListener(new AndroidOnShowListener(() =>
+                            dialog.ShowEvent += (o,e) =>
                                 {
                                     dialogShowWait.Set();
-                                }));
+                                };
 
                             // dismiss the keyguard when dialog appears
                             dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.DismissKeyguard);
@@ -322,9 +335,11 @@ namespace Sensus.Android
                                                             });
                                                 }
                                             });
+                                        
                                     }).Start();
                             }
                             #endregion
+
                         }));
 
                     dialogDismissWait.WaitOne();

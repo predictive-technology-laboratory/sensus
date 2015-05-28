@@ -37,6 +37,8 @@ namespace Sensus.Android
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault }, DataMimeType = "application/octet-stream", DataScheme = "file", DataHost = "*", DataPathPattern = ".*\\\\.sensus")]  // protocols opened from the local file system
     public class AndroidMainActivity : FormsApplicationActivity
     {
+        public event EventHandler Stopped;
+
         private AndroidSensusServiceConnection _serviceConnection;
         private ManualResetEvent _activityResultWait;
         private AndroidActivityResultRequestCode _activityResultRequestCode;
@@ -205,12 +207,20 @@ namespace Sensus.Android
         protected override void OnPause()
         {
             base.OnPause();
-
+                
             // reset the UI ready wait handle            
             OnWindowFocusChanged(false);
 
             DisconnectFromService();
         }   
+
+        protected override void OnStop()
+        {
+            base.OnStop();
+
+            if (Stopped != null)
+                Stopped(this, null);
+        }
 
         private void DisconnectFromService()
         {

@@ -109,6 +109,7 @@ namespace SensusService.Probes.User
         {
             new Thread(() =>
                 {
+                    // only one prompt can run at a time...enforce that here.
                     lock (LOCKER)
                     {
                         // calling after a previous call has completed returns the same response
@@ -130,7 +131,7 @@ namespace SensusService.Probes.User
 
                     string outputMessage = _outputMessage;
 
-                    #region rerun temporal analysis
+                    #region temporal analysis for rerun
                     if (isRerun && !string.IsNullOrWhiteSpace(_outputMessageRerun))
                     {
                         TimeSpan promptAge = DateTimeOffset.UtcNow - firstRunTimestamp;
@@ -148,16 +149,20 @@ namespace SensusService.Probes.User
                     }
                     #endregion
 
+                    // action to execute when user has provided a response
                     Action<string> responseCallback = new Action<string>(responseText =>
                         {
+                            // don't treat null/whitespace the same as no input
                             if (string.IsNullOrWhiteSpace(responseText))
                                 responseText = null;
 
+                            // set datum for this prompt if we got something
                             if (responseText != null)
                                 _responseDatum = new ScriptDatum(DateTimeOffset.UtcNow, responseText, currentDatum == null ? null : currentDatum.Id);
 
                             callback(_responseDatum);
 
+                            // allow other prompts to run
                             PROMPT_IS_RUNNING = false;
                         });
 
