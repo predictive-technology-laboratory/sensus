@@ -215,9 +215,16 @@ namespace Sensus.iOS
         {
             new Thread(() =>
                 {
-                    new AVSpeechSynthesizer().SpeakUtterance(new AVSpeechUtterance(text));
+                    try
+                    {
+                        new AVSpeechSynthesizer().SpeakUtterance(new AVSpeechUtterance(text));
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Failed to speak utterance:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
 
-                    if(callback != null)
+                    if (callback != null)
                         callback();
 
                 }).Start();
@@ -292,7 +299,7 @@ namespace Sensus.iOS
         {
             Device.BeginInvokeOnMainThread(() =>
                 {
-                    DependencyService.Get<IToastNotificator>().Notify(ToastNotificationType.Info, "", message + Environment.NewLine, TimeSpan.FromSeconds(2));
+                    DependencyService.Get<IToastNotificator>().Notify(ToastNotificationType.Info, "", message + Environment.NewLine, TimeSpan.FromSeconds(5));
                 });
         }            
 
