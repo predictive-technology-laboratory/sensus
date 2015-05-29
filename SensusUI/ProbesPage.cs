@@ -111,7 +111,8 @@ namespace SensusUI
                     if(await DisplayAlert("Enable All Probes", "Are you sure you want to enable all probes?", "Yes", "No"))
                     {
                         foreach(Probe probe in _protocol.Probes)
-                            probe.Enabled = true;
+                            if(SensusServiceHelper.Get().EnableProbeWhenEnablingAll(probe))
+                                probe.Enabled = true;
 
                         Bind();
                     }

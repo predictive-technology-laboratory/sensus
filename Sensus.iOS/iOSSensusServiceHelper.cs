@@ -301,7 +301,15 @@ namespace Sensus.iOS
                 {
                     DependencyService.Get<IToastNotificator>().Notify(ToastNotificationType.Info, "", message + Environment.NewLine, TimeSpan.FromSeconds(5));
                 });
-        }            
+        }
+
+        public override bool EnableProbeWhenEnablingAll(Probe probe)
+        {
+            // polling for locations doesn't work very well in iOS, since it depends on the user. don't enable probes that need location polling by default.
+            return !(probe is PollingLocationProbe) &&
+            !(probe is PollingSpeedProbe) &&
+            !(probe is PollingPointsOfInterestProximityProbe);
+        }
 
         #region methods not implemented in ios
         public override void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)

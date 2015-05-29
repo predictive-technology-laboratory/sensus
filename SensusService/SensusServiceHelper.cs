@@ -654,6 +654,8 @@ namespace SensusService
                 });
         }
 
+        public abstract bool EnableProbeWhenEnablingAll(Probe probe);
+
         public void TestHealth(CancellationToken cancellationToken)
         {
             lock (_locker)

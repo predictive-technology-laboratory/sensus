@@ -398,6 +398,14 @@ namespace Sensus.Android
                         });
                 }).Start();
         } 
+
+        public override bool EnableProbeWhenEnablingAll(Probe probe)
+        {
+            // listening for locations doesn't work very well in android, since it conflicts with polling and uses more power. don't enable probes that need location listening by default.
+            return !(probe is ListeningLocationProbe) &&
+            !(probe is ListeningSpeedProbe) &&
+            !(probe is ListeningPointsOfInterestProximityProbe);
+        }
         #endregion
 
         #region callback scheduling
