@@ -29,6 +29,22 @@ namespace SensusUI
             triggerList.ItemTemplate = new DataTemplate(typeof(TextCell));
             triggerList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", stringFormat: "{0}"));
             triggerList.ItemsSource = proximityProbe.Triggers;
+            triggerList.ItemTapped += async (o, e) =>
+            {
+                if (triggerList.SelectedItem == null)
+                    return;
+
+                PointOfInterestProximityTrigger selectedTrigger = triggerList.SelectedItem as PointOfInterestProximityTrigger;
+
+                string selectedAction = await DisplayActionSheet(selectedTrigger.ToString(), "Cancel", null, "Delete");
+
+                if (selectedAction == "Delete")
+                {
+                    proximityProbe.Triggers.Remove(selectedTrigger);
+                    triggerList.SelectedItem = null;  // reset manually since it isn't done automatically
+                    UiBoundSensusServiceHelper.Get(true).SaveAsync();
+                }                        
+            };
 
             Content = triggerList;
 
@@ -39,16 +55,6 @@ namespace SensusUI
                         else
                             UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("You must define points of interest before adding triggers.");
                     }));
-
-            ToolbarItems.Add(new ToolbarItem(null, "minus.png", async () =>
-                {
-                    if (triggerList.SelectedItem != null && await DisplayAlert("Confirm Delete", "Are you sure you want to delete the selected trigger?", "Yes", "Cancel"))
-                    {
-                        proximityProbe.Triggers.Remove(triggerList.SelectedItem as PointOfInterestProximityTrigger);
-                        UiBoundSensusServiceHelper.Get(true).SaveAsync();
-                        triggerList.SelectedItem = null;
-                    }
-                }));
         }
     }
 }

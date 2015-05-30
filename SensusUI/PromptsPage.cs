@@ -34,34 +34,40 @@ namespace SensusUI
             _promptsList = new ListView();
             _promptsList.ItemTemplate = new DataTemplate(typeof(TextCell));
             _promptsList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", stringFormat: "{0}"));
+            _promptsList.ItemTapped += async (o, e) =>
+            {
+                if (_promptsList.SelectedItem == null)
+                    return;
+
+                Prompt selectedPrompt = _promptsList.SelectedItem as Prompt;
+
+                string selectedAction = await DisplayActionSheet(selectedPrompt.Name, "Cancel", null, "Edit", "Delete");
+
+                if (selectedAction == "Edit")
+                {
+                    PromptPage promptPage = new PromptPage(selectedPrompt);
+                    promptPage.Disappearing += (oo, ee) =>
+                    {
+                        Bind();
+                    };
+                        
+                    await Navigation.PushAsync(promptPage);
+                    _promptsList.SelectedItem = null;
+                }
+                else if (selectedAction == "Delete")
+                {
+                    if (await DisplayAlert("Delete " + selectedPrompt.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
+                    {
+                        _prompts.Remove(selectedPrompt);
+                        _promptsList.SelectedItem = null;  // manually reset, since it isn't done automatically.
+                    }
+                }
+            };
 
             ToolbarItems.Add(new ToolbarItem(null, "plus.png", () =>
                 {
                     _prompts.Add(new Prompt("New Prompt", PromptOutputType.Text, "", "", PromptInputType.Text));
                 }));
-
-            ToolbarItems.Add(new ToolbarItem(null, "minus.png", async () =>
-                {
-                    if(_promptsList.SelectedItem != null)
-                    {
-                        Prompt promptToRemove = _promptsList.SelectedItem as Prompt;
-                        if (await DisplayAlert("Delete " + promptToRemove.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
-                        {
-                            _prompts.Remove(promptToRemove);
-                        }
-                    }
-                }));
-            
-            ToolbarItems.Add(new ToolbarItem(null, "pencil.png", async () =>
-                {
-                    if (_promptsList.SelectedItem != null)
-                    {
-                        PromptPage promptPage = new PromptPage(_promptsList.SelectedItem as Prompt);
-                        promptPage.Disappearing += (oo, ee) => { Bind(); };  // rebind the prompts page to pick up changes in the prompt
-                        await Navigation.PushAsync(promptPage);
-                        _promptsList.SelectedItem = null;
-                    }
-                }));                    
 
             Bind();
             Content = _promptsList;

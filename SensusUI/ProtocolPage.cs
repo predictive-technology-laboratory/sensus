@@ -38,29 +38,6 @@ namespace SensusUI
 
             List<View> views = new List<View>();
 
-            #region on/off
-            Label onOffLabel = new Label
-            {
-                Text = "Status:",
-                FontSize = 20,
-                HorizontalOptions = LayoutOptions.Start
-            };
-
-            Switch onOffSwitch = new Switch
-            {
-                IsToggled = _protocol.Running
-            };
-
-            onOffSwitch.Toggled += (o, e) => _protocol.Running = e.Value;
-
-            views.Add(new StackLayout
-            {
-                Orientation = StackOrientation.Horizontal,
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                Children = { onOffLabel, onOffSwitch }
-            });
-            #endregion
-
             views.AddRange(UiProperty.GetPropertyStacks(_protocol));
 
             #region data stores
@@ -167,7 +144,6 @@ namespace SensusUI
                 {
                     Device.BeginInvokeOnMainThread(() =>
                         {
-                            onOffSwitch.IsToggled = running;
                             editLocalDataStoreButton.IsEnabled = createLocalDataStoreButton.IsEnabled = editRemoteDataStoreButton.IsEnabled = createRemoteDataStoreButton.IsEnabled = !running;
                         });
                 };
@@ -217,28 +193,7 @@ namespace SensusUI
             Content = new ScrollView
             {
                 Content = stack
-            };
-
-            #region toolbar            
-            ToolbarItems.Add(new ToolbarItem("Status", null, async () =>
-                {
-                    if (UiBoundSensusServiceHelper.Get(true).ProtocolShouldBeRunning(_protocol))
-                    {
-                        _protocol.TestHealthAsync(() =>
-                            {
-								Device.BeginInvokeOnMainThread(async () =>
-									{
-										if (_protocol.MostRecentReport == null)
-											await DisplayAlert("No Report", "Status check failed.", "OK");
-										else
-											await Navigation.PushAsync(new ViewTextLinesPage("Protocol Report", _protocol.MostRecentReport.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList(), null));
-									});
-                            });
-					}
-                    else
-                        await DisplayAlert("Protocol Not Running", "Cannot check status of protocol when protocol is not running.", "OK");
-                }));                    
-            #endregion
+            };                        
         }
 
         protected override void OnAppearing()

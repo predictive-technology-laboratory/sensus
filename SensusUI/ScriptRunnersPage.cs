@@ -33,38 +33,39 @@ namespace SensusUI
             _scriptRunnersList = new ListView();
             _scriptRunnersList.ItemTemplate = new DataTemplate(typeof(TextCell));
             _scriptRunnersList.ItemTemplate.SetBinding(TextCell.TextProperty, "Name");
+            _scriptRunnersList.ItemTapped += async (o, e) =>
+            {
+                if (_scriptRunnersList.SelectedItem == null)
+                    return;
+
+                ScriptRunner selectedScriptRunner = _scriptRunnersList.SelectedItem as ScriptRunner;
+
+                string selectedAction = await DisplayActionSheet(selectedScriptRunner.Name, "Cancel", null, "Edit", "Delete");
+
+                if (selectedAction == "Edit")
+                {
+                    ScriptRunnerPage scriptRunnerPage = new ScriptRunnerPage(selectedScriptRunner);
+                    scriptRunnerPage.Disappearing += (oo, ee) =>
+                    {
+                        Bind();
+                    };
+
+                    await Navigation.PushAsync(scriptRunnerPage);
+                }
+                else if (selectedAction == "Delete")
+                {
+                    if (await DisplayAlert("Delete " + selectedScriptRunner.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
+                    {
+                        selectedScriptRunner.Stop();
+                        _probe.ScriptRunners.Remove(selectedScriptRunner);
+                        _scriptRunnersList.SelectedItem = null;  // reset manually since it's not done automatically
+                    }
+                }
+            };
 
             ToolbarItems.Add(new ToolbarItem(null, "plus.png", () =>
                     {
                         _probe.ScriptRunners.Add(new ScriptRunner("New Script", _probe));
-                    }));
-
-            ToolbarItems.Add(new ToolbarItem(null, "minus.png", async () =>
-                    {
-                        if (_scriptRunnersList.SelectedItem != null)
-                        {
-                            ScriptRunner scriptRunnerToDelete = _scriptRunnersList.SelectedItem as ScriptRunner;
-
-                            if (await DisplayAlert("Delete " + scriptRunnerToDelete.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
-                            {
-                                scriptRunnerToDelete.Stop();
-                                _probe.ScriptRunners.Remove(scriptRunnerToDelete);
-                            }
-                        }
-                    }));
-
-            ToolbarItems.Add(new ToolbarItem(null, "pencil.png", async () =>
-                    {
-                        if (_scriptRunnersList.SelectedItem != null)
-                        {
-                            ScriptRunnerPage scriptRunnerPage = new ScriptRunnerPage(_scriptRunnersList.SelectedItem as ScriptRunner);
-                            scriptRunnerPage.Disappearing += (o, e) =>
-                            {
-                                Bind();
-                            };
-                        
-                            await Navigation.PushAsync(scriptRunnerPage);
-                        }
                     }));
 
             Bind();

@@ -37,7 +37,30 @@ namespace SensusUI
             _pointsOfInterestList = new ListView();
             _pointsOfInterestList.ItemTemplate = new DataTemplate(typeof(TextCell));
             _pointsOfInterestList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", stringFormat: "{0}"));
+            _pointsOfInterestList.ItemTapped += async (o, e) =>
+            {
+                    if(_pointsOfInterestList.SelectedItem == null)
+                        return;
 
+                    PointOfInterest selectedPointOfInterest = _pointsOfInterestList.SelectedItem as PointOfInterest;
+
+                    string selectedAction = await DisplayActionSheet(selectedPointOfInterest.ToString(), "Cancel", null, "Delete");
+
+                    if(selectedAction == "Delete")
+                    {
+                        if (await DisplayAlert("Delete " + selectedPointOfInterest.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
+                        {
+                            _pointsOfInterest.Remove(selectedPointOfInterest);
+                            _pointsOfInterestList.SelectedItem = null;  // reset it manually, since it isn't done automatically.
+
+                            if (changeCallback != null)
+                                changeCallback();
+
+                            Bind();
+                        }
+                    }
+            };
+            
             Bind();
 
             Content = _pointsOfInterestList;
@@ -63,24 +86,6 @@ namespace SensusUI
                                         }
                                     });
                             });
-                    }));
-
-            ToolbarItems.Add(new ToolbarItem(null, "minus.png", async () =>
-                    {
-                        if (_pointsOfInterestList.SelectedItem != null)
-                        {
-                            PointOfInterest pointOfInterestToDelete = _pointsOfInterestList.SelectedItem as PointOfInterest;
-
-                            if (await DisplayAlert("Delete " + pointOfInterestToDelete.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
-                            {
-                                _pointsOfInterest.Remove(pointOfInterestToDelete);
-                                
-                                if (changeCallback != null)
-                                    changeCallback();
-
-                                Bind();
-                            }
-                        }
                     }));
         }
 

@@ -28,25 +28,34 @@ namespace SensusUI
             triggerList.ItemTemplate = new DataTemplate(typeof(TextCell));
             triggerList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", stringFormat: "{0}"));
             triggerList.ItemsSource = scriptRunner.Triggers;
+            triggerList.ItemTapped += async (o, e) =>
+            {
+                if (triggerList.SelectedItem == null)
+                    return;
 
+                SensusService.Probes.User.Trigger selectedTrigger = triggerList.SelectedItem as SensusService.Probes.User.Trigger;
+
+                string selectedAction = await DisplayActionSheet(selectedTrigger.ToString(), "Cancel", null, "Delete");
+
+                if (selectedAction == "Delete")
+                {
+                    if (await DisplayAlert("Confirm Delete", "Are you sure you want to delete the selected trigger?", "Yes", "Cancel"))
+                    {
+                        scriptRunner.Triggers.Remove(selectedTrigger);
+                        triggerList.SelectedItem = null;  // must reset this, since it isn't reset automatically
+                    }
+                }
+            };
+            
             Content = triggerList;
 
             ToolbarItems.Add(new ToolbarItem(null, "plus.png", async () =>
-                {
-                    if (scriptRunner.Probe.Protocol.Probes.Where(p => p != scriptRunner.Probe && p.Enabled).Count() > 0)
-                        await Navigation.PushAsync(new AddScriptTriggerPage(scriptRunner));
-                    else
-                        UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("You must enable other probes before adding triggers.");
-                }));
-
-            ToolbarItems.Add(new ToolbarItem(null, "minus.png", async () =>
-                {
-                    if (triggerList.SelectedItem != null && await DisplayAlert("Confirm Delete", "Are you sure you want to delete the selected trigger?", "Yes", "Cancel"))
                     {
-                        scriptRunner.Triggers.Remove(triggerList.SelectedItem as SensusService.Probes.User.Trigger);
-                        triggerList.SelectedItem = null;
-                    }
-                }));
+                        if (scriptRunner.Probe.Protocol.Probes.Where(p => p != scriptRunner.Probe && p.Enabled).Count() > 0)
+                            await Navigation.PushAsync(new AddScriptTriggerPage(scriptRunner));
+                        else
+                            UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("You must enable other probes before adding triggers.");
+                    }));
         }
     }
 }

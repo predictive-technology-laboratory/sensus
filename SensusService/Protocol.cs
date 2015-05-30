@@ -160,6 +160,9 @@ namespace SensusService
 
                         UiBoundSensusServiceHelper.Get(true).RegisterProtocol(protocol);
 
+                        if (await App.Current.MainPage.DisplayAlert("Start Protocol", "Would you like to start the protocol you just opened?", "Yes", "No"))
+                            protocol.Running = true;
+
                         await App.Current.MainPage.Navigation.PushAsync(new ProtocolsPage());
                     }
                     catch (Exception ex)
@@ -405,61 +408,74 @@ namespace SensusService
                 SensusServiceHelper.Get().RegisterProtocol(this);
                 SensusServiceHelper.Get().AddRunningProtocolId(_id);
 
-                SensusServiceHelper.Get().Logger.Log("Starting probes for protocol " + _name + ".", LoggingLevel.Normal, GetType());
-                int probesStarted = 0;
-                foreach (Probe probe in _probes)
-                    if (probe.Enabled)
-                    {
-                        try
-                        {
-                            probe.Start();
-                            probesStarted++;
-                        }
-                        catch (Exception ex)
-                        {
-                            SensusServiceHelper.Get().Logger.Log("Failed to start probe \"" + probe.GetType().FullName + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
-                        }
-                    }
-
                 bool stopProtocol = false;
 
-                if (probesStarted > 0)
+                // start local data store
+                try
                 {
+                    if (_localDataStore == null)
+                        throw new Exception("Local data store not defined.");
+                        
+                    _localDataStore.Start();
+
+                    // start remote data store
                     try
                     {
-                        if(_localDataStore == null)
-                            throw new Exception("Local data store not defined.");
-                        
-                        _localDataStore.Start();
+                        if (_remoteDataStore == null)
+                            throw new Exception("Remote data store not defined.");
+                            
+                        _remoteDataStore.Start();
 
+                        // start probes
                         try
                         {
-                            if(_remoteDataStore == null)
-                                throw new Exception("Remote data store not defined.");
-                            
-                            _remoteDataStore.Start();
+                            SensusServiceHelper.Get().Logger.Log("Starting probes for protocol " + _name + ".", LoggingLevel.Normal, GetType());
+                            int probesEnabled = 0;
+                            int probesStarted = 0;
+                            foreach (Probe probe in _probes)
+                                if (probe.Enabled)
+                                {
+                                    ++probesEnabled;
+
+                                    try
+                                    {
+                                        probe.Start();
+                                        probesStarted++;
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        string message = "Failed to start probe \"" + probe.GetType().FullName + "\":  " + ex.Message;
+                                        SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+                                        SensusServiceHelper.Get().FlashNotificationAsync(message);
+                                    }
+                                }
+
+                            if (probesEnabled == 0)
+                                throw new Exception("No probes were enabled.");
+                            else if (probesStarted == 0)
+                                throw new Exception("No probes started.");
                         }
                         catch (Exception ex)
                         {
-                            string message = "Remote data store failed to start:  " + ex.Message;
+                            string message = "Failure while starting probes:  " + ex.Message;
                             SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
                             SensusServiceHelper.Get().FlashNotificationAsync(message);
                             stopProtocol = true;
-                        }
+                        }                            
                     }
                     catch (Exception ex)
                     {
-                        string message = "Local data store failed to start:  " + ex.Message;
+                        string message = "Remote data store failed to start:  " + ex.Message;
                         SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
                         SensusServiceHelper.Get().FlashNotificationAsync(message);
                         stopProtocol = true;
                     }
                 }
-                else
+                catch (Exception ex)
                 {
-                    string message = "No probes have been enabled. Will not start protocol.";
-                    SensusServiceHelper.Get().FlashNotificationAsync(message);
+                    string message = "Local data store failed to start:  " + ex.Message;
                     SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Get().FlashNotificationAsync(message);
                     stopProtocol = true;
                 }
 
