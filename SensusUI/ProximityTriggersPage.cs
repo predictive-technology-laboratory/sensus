@@ -40,9 +40,12 @@ namespace SensusUI
 
                 if (selectedAction == "Delete")
                 {
-                    proximityProbe.Triggers.Remove(selectedTrigger);
-                    triggerList.SelectedItem = null;  // reset manually since it isn't done automatically
-                    UiBoundSensusServiceHelper.Get(true).SaveAsync();
+                    if (await DisplayAlert("Delete " + selectedTrigger + "?", "This action cannot be undone.", "Delete", "Cancel"))
+                    {
+                        proximityProbe.Triggers.Remove(selectedTrigger);
+                        triggerList.SelectedItem = null;  // reset manually since it isn't done automatically
+                        UiBoundSensusServiceHelper.Get(true).SaveAsync();
+                    }
                 }                        
             };
 

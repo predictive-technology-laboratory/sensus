@@ -134,8 +134,11 @@ namespace SensusUI
 
             ToolbarItems.Add(new ToolbarItem(null, "plus.png", () =>
                     {
-                        UiBoundSensusServiceHelper.Get(true).RegisterProtocol(new Protocol("New Protocol"));
-                        Bind();
+                        Protocol.CreateAsync("New Protocol", protocol =>
+                            {
+                                UiBoundSensusServiceHelper.Get(true).RegisterProtocol(protocol);
+                                Device.BeginInvokeOnMainThread(() => Bind());
+                            });
                     }));
         }
 

@@ -28,13 +28,25 @@ namespace SensusService.Probes
     public abstract class Probe
     {
         #region static members
-        /// <summary>
-        /// Gets a list of all probes, uninitialized and with default parameter values.
-        /// </summary>
-        /// <returns></returns>
-        public static List<Probe> GetAll()
+        public static void GetAllAsync(Action<List<Probe>> callback)
         {
-            return Assembly.GetExecutingAssembly().GetTypes().Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(Probe))).Select(t => Activator.CreateInstance(t) as Probe).OrderBy(p => p.DisplayName).ToList();
+            new Thread(() =>
+                {
+                    List<Probe> probes = null;
+                    ManualResetEvent probesWait = new ManualResetEvent(false);
+
+                    // the reflection stuff we do below (at least on android) needs to be run on the main thread.
+                    Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+                        {
+                            probes = Assembly.GetExecutingAssembly().GetTypes().Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(Probe))).Select(t => Activator.CreateInstance(t) as Probe).OrderBy(p => p.DisplayName).ToList();
+                            probesWait.Set();
+                        });
+
+                    probesWait.WaitOne();
+
+                    callback(probes);
+
+                }).Start();
         }
         #endregion
 

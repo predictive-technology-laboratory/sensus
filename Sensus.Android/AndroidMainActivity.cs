@@ -105,6 +105,8 @@ namespace Sensus.Android
             {
                 DisconnectFromService();                
             };
+
+            OpenIntentAsync(Intent);
         }
 
         protected override void OnResume()
@@ -124,43 +126,55 @@ namespace Sensus.Android
         {
             base.OnNewIntent(intent);
 
-            // open page to view protocol if a protocol was passed to us
-            if (intent.Data != null)
-            {
-                global::Android.Net.Uri dataURI = intent.Data;
+            OpenIntentAsync(intent);
+        }
 
-                try
+        private void OpenIntentAsync(Intent intent)
+        {
+            new Thread(() =>
                 {
-                    if (intent.Scheme == "http" || intent.Scheme == "https")
-                        Protocol.DisplayFromWebUriAsync(new Uri(dataURI.ToString()));
-                    else if (intent.Scheme == "content" || intent.Scheme == "file")
+                    // open page to view protocol if a protocol was passed to us
+                    if (intent.Data != null)
                     {
-                        byte[] bytes = null;
+                        global::Android.Net.Uri dataURI = intent.Data;
 
                         try
                         {
-                            MemoryStream memoryStream = new MemoryStream();
-                            Stream inputStream = ContentResolver.OpenInputStream(dataURI);
-                            inputStream.CopyTo(memoryStream);
-                            inputStream.Close();
-                            bytes = memoryStream.ToArray();
+                            if (intent.Scheme == "http" || intent.Scheme == "https")
+                                Protocol.DisplayFromWebUriAsync(new Uri(dataURI.ToString()));
+                            else if (intent.Scheme == "content" || intent.Scheme == "file")
+                            {
+                                byte[] bytes = null;
+
+                                try
+                                {
+                                    MemoryStream memoryStream = new MemoryStream();
+                                    Stream inputStream = ContentResolver.OpenInputStream(dataURI);
+                                    inputStream.CopyTo(memoryStream);
+                                    inputStream.Close();
+                                    bytes = memoryStream.ToArray();
+                                }
+                                catch (Exception ex)
+                                {
+                                    SensusServiceHelper.Get().Logger.Log("Failed to read bytes from local file URI \"" + dataURI + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
+                                }
+
+                                if (bytes != null)
+                                    Protocol.DisplayFromBytesAsync(bytes);
+                            }
+                            else
+                                SensusServiceHelper.Get().Logger.Log("Sensus didn't know what to do with URI \"" + dataURI + "\".", LoggingLevel.Normal, GetType());
                         }
                         catch (Exception ex)
                         {
-                            SensusServiceHelper.Get().Logger.Log("Failed to read bytes from local file URI \"" + dataURI + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
+                            Device.BeginInvokeOnMainThread(() =>
+                                {
+                                    new AlertDialog.Builder(this).SetTitle("Failed to get protocol").SetMessage(ex.Message).Show();
+                                });
                         }
-
-                        if (bytes != null)
-                            Protocol.DisplayFromBytesAsync(bytes);
                     }
-                    else
-                        SensusServiceHelper.Get().Logger.Log("Sensus didn't know what to do with URI \"" + dataURI + "\".", LoggingLevel.Normal, GetType());
-                }
-                catch (Exception ex)
-                {
-                    new AlertDialog.Builder(this).SetTitle("Failed to get protocol").SetMessage(ex.Message).Show();
-                }
-            }
+
+                }).Start();
         }
 
         public override void OnWindowFocusChanged(bool hasFocus)
