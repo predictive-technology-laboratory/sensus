@@ -25,6 +25,7 @@ using SensusService.Probes.Location;
 using SensusUI.UiProperties;
 using Xamarin;
 using Xamarin.Geolocation;
+using System.Collections.ObjectModel;
 
 namespace SensusService
 {
@@ -182,7 +183,7 @@ namespace SensusService
 
         private bool _stopped;
         private Logger _logger;
-        private List<Protocol> _registeredProtocols;
+        private ObservableCollection<Protocol> _registeredProtocols;
         private List<string> _runningProtocolIds;
         private string _healthTestCallbackId;
         private int _healthTestDelayMS;
@@ -200,7 +201,7 @@ namespace SensusService
             get { return _logger; }
         }
 
-        public List<Protocol> RegisteredProtocols
+        public ObservableCollection<Protocol> RegisteredProtocols
         {
             get { return _registeredProtocols; }
         }
@@ -287,7 +288,7 @@ namespace SensusService
                     SINGLETON.Dispose();
 
             _stopped = true;
-            _registeredProtocols = new List<Protocol>();
+            _registeredProtocols = new ObservableCollection<Protocol>();
             _runningProtocolIds = new List<string>();
             _healthTestCallbackId = null;
             _healthTestDelayMS = 60000;

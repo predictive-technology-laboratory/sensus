@@ -202,7 +202,8 @@ namespace SensusService
                                         if (await App.Current.MainPage.DisplayAlert("Start Protocol", "Would you like to start the protocol you just opened?", "Yes", "No"))
                                             protocol.Running = true;
 
-                                        await App.Current.MainPage.Navigation.PushAsync(new ProtocolsPage());
+                                        if (!(App.Current.MainPage.Navigation.NavigationStack.Last() is ProtocolsPage))
+                                            await App.Current.MainPage.Navigation.PushAsync(new ProtocolsPage());
                                     });
                             });
                     }

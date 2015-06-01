@@ -49,7 +49,7 @@ namespace SensusUI
                     Action editAction = new Action(async() =>
                         {
                             ProtocolPage protocolPage = new ProtocolPage(selectedProtocol);
-                            protocolPage.Disappearing += (oo, ee) => Bind();
+                            protocolPage.Disappearing += (oo, ee) => Bind();  // rebind to pick up name changes
                             await Navigation.PushAsync(protocolPage);
                             _protocolsList.SelectedItem = null;
                         });
@@ -120,7 +120,6 @@ namespace SensusUI
 
                                 Device.BeginInvokeOnMainThread(() =>
                                     {
-                                        _protocolsList.ItemsSource = _protocolsList.ItemsSource.Cast<Protocol>().Where(p => p != selectedProtocol);
                                         _protocolsList.SelectedItem = null;  // must reset this manually, since it isn't reset automatically
                                     });
                             });
@@ -137,7 +136,6 @@ namespace SensusUI
                         Protocol.CreateAsync("New Protocol", protocol =>
                             {
                                 UiBoundSensusServiceHelper.Get(true).RegisterProtocol(protocol);
-                                Device.BeginInvokeOnMainThread(() => Bind());
                             });
                     }));
         }
