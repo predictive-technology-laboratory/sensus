@@ -199,11 +199,11 @@ namespace SensusService
 
                                 Device.BeginInvokeOnMainThread(async () =>
                                     {
-                                        if (await App.Current.MainPage.DisplayAlert("Start Protocol", "Would you like to start the protocol you just opened?", "Yes", "No"))
-                                            protocol.Running = true;
-
                                         if (!(App.Current.MainPage.Navigation.NavigationStack.Last() is ProtocolsPage))
                                             await App.Current.MainPage.Navigation.PushAsync(new ProtocolsPage());
+                                        
+                                        if (await App.Current.MainPage.DisplayAlert("Start Protocol", "Would you like to start the protocol (" + protocol.Name + ") you just opened with Sensus?", "Yes", "No"))
+                                            protocol.Running = true;
                                     });
                             });
                     }

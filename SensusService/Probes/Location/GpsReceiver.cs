@@ -86,7 +86,7 @@ namespace SensusService.Probes.Location
 
             _locator.PositionChanged += (o, e) =>
             {
-                SensusServiceHelper.Get().Logger.Log("GPS position has changed:  " + e.Position.Latitude + " " + e.Position.Longitude, LoggingLevel.Verbose, GetType());
+                SensusServiceHelper.Get().Logger.Log("GPS position has changed.", LoggingLevel.Verbose, GetType());
                 
                 if (PositionChanged != null)
                     PositionChanged(o, e);

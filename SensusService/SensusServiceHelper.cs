@@ -62,12 +62,12 @@ namespace SensusService
         private static readonly string LOG_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
         private static readonly string SERIALIZATION_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_service_helper.json");
         private static readonly JsonSerializerSettings JSON_SERIALIZATION_SETTINGS = new JsonSerializerSettings
-            {
-                PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-                ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-                TypeNameHandling = TypeNameHandling.All,
-                ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-            };                
+        {
+            PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+            TypeNameHandling = TypeNameHandling.All,
+            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+        };
 
         private static byte[] EncryptionKeyBytes
         {
@@ -80,67 +80,62 @@ namespace SensusService
             }
         }
 
-        public static SensusServiceHelper Get()
+        /// <summary>
+        /// Initializes the sensus service helper. Must be called when app first starts, from the main / UI thread.
+        /// </summary>
+        /// <param name="createNew">Create new.</param>
+        public static void Initialize(Func<SensusServiceHelper> createNew)
         {
-            // service helper be null for a brief period between the time when the app starts and when the service constructs the helper object.
-            int triesLeft = 10;
-            while (triesLeft-- > 0)
-            {
-                lock (LOCKER)
-                    if (SINGLETON == null)
-                    {
-                        Console.Error.WriteLine("Waiting for service to construct helper object.");
-                        Thread.Sleep(1000);
-                    }
-                    else
-                        break;
-            }
-
-            lock (LOCKER)
-                if (SINGLETON == null)
-                {
-                    string error = "Failed to get service helper.";
-
-                    // don't try to access/write the logger or raise a sensus-based exception, since these will call back into the current method
-                    Console.Error.WriteLine(error);
-
-                    Exception ex = new Exception(error);
-
-                    try { Insights.Report(ex, Xamarin.Insights.Severity.Error); }
-                    catch (Exception ex2) { Console.Error.WriteLine("Failed to report exception to Xamarin Insights:  " + ex2.Message); }
-
-                    throw ex;
-                }
-
-            return SINGLETON;
-        }
-
-        public static SensusServiceHelper Load<T>() where T : SensusServiceHelper, new()
-        {
-            SensusServiceHelper sensusServiceHelper = null;
-
             try
             {
-                sensusServiceHelper = JsonConvert.DeserializeObject<T>(AesDecrypt(File.ReadAllBytes(SERIALIZATION_PATH)), JSON_SERIALIZATION_SETTINGS);
-                sensusServiceHelper.Logger.Log("Deserialized service helper with " + sensusServiceHelper.RegisteredProtocols.Count + " protocols.", LoggingLevel.Normal, typeof(T));  
+                SINGLETON = JsonConvert.DeserializeObject<SensusServiceHelper>(AesDecrypt(File.ReadAllBytes(SERIALIZATION_PATH)), JSON_SERIALIZATION_SETTINGS);
+                SINGLETON.Logger.Log("Deserialized service helper with " + SINGLETON.RegisteredProtocols.Count + " protocols.", LoggingLevel.Normal, SINGLETON.GetType());
             }
-            catch (Exception ex)
+            catch (Exception deserializeException)
             {
-                Console.Out.WriteLine("Failed to deserialize Sensus service helper:  " + ex.Message);
-                Console.Out.WriteLine("Creating new Sensus service helper.");
+                Console.Out.WriteLine("Failed to deserialize Sensus service helper:  " + deserializeException.Message + System.Environment.NewLine +
+                    "Creating new Sensus service helper.");
 
                 try
                 {
-                    sensusServiceHelper = new T();
-                    sensusServiceHelper.SaveAsync();
+                    SINGLETON = createNew();
                 }
-                catch (Exception ex2)
+                catch (Exception singletonCreationException)
                 {
-                    Console.Out.WriteLine("Failed to create/save new Sensus service helper:  " + ex2.Message);
-                }
-            }
+                    #region crash app and report to insights
+                    string error = "Failed to construct service helper:  " + singletonCreationException.Message + System.Environment.NewLine + singletonCreationException.StackTrace;
+                    Console.Error.WriteLine(error);
+                    Exception exceptionToReport = new Exception(error);
 
-            return sensusServiceHelper;
+                    try
+                    {
+                        Insights.Report(exceptionToReport, Xamarin.Insights.Severity.Error);
+                    }
+                    catch (Exception insightsReportException)
+                    {
+                        Console.Error.WriteLine("Failed to report exception to Xamarin Insights:  " + insightsReportException.Message);
+                    }
+
+                    throw exceptionToReport;
+                    #endregion
+                }
+
+                #region save helper
+                try
+                {
+                    SINGLETON.SaveAsync();
+                }
+                catch (Exception singletonSaveException)
+                {
+                    Console.Out.WriteLine("Failed to save new Sensus service helper:  " + singletonSaveException.Message);
+                }
+                #endregion
+            }  
+        }
+
+        public static SensusServiceHelper Get()
+        {
+            return SINGLETON;
         }
 
         #region encryption
@@ -209,13 +204,13 @@ namespace SensusService
         public List<string> RunningProtocolIds
         {
             get{ return _runningProtocolIds; }
-        }                  
+        }
 
         [EntryIntegerUiProperty("Health Test Delay (MS):", true, 9)]
         public int HealthTestDelayMS
         {
             get { return _healthTestDelayMS; }
-            set 
+            set
             {
                 if (value <= 1000)
                     value = 1000;
@@ -250,7 +245,7 @@ namespace SensusService
         public LoggingLevel LoggingLevel
         {
             get { return _logger.Level; }
-            set 
+            set
             {
                 if (value != _logger.Level)
                 {
@@ -273,7 +268,7 @@ namespace SensusService
         public abstract bool WiFiConnected { get; }
 
         [JsonIgnore]
-        public abstract string DeviceId { get; }       
+        public abstract string DeviceId { get; }
 
         [JsonIgnore]
         public abstract string OperatingSystem { get; }
@@ -341,7 +336,7 @@ namespace SensusService
                 hashBuilder.Append(b.ToString("x"));
 
             return hashBuilder.ToString();
-        }           
+        }
 
         #region platform-specific methods
         protected abstract void InitializeXamarinInsights();
@@ -412,8 +407,8 @@ namespace SensusService
         {
             return _runningProtocolIds.Contains(protocol.Id);
         }
-        #endregion
 
+        #endregion
         public void SaveAsync()
         {
             new Thread(() =>
@@ -444,7 +439,7 @@ namespace SensusService
                 {
                     Start();
 
-                    if(callback != null)
+                    if (callback != null)
                         callback();
 
                 }).Start();
@@ -466,7 +461,7 @@ namespace SensusService
                     if (!protocol.Running && _runningProtocolIds.Contains(protocol.Id))
                         protocol.Start();
             }
-        }        
+        }
 
         public void RegisterProtocol(Protocol protocol)
         {
@@ -521,7 +516,7 @@ namespace SensusService
 
         public bool CallbackIsScheduled(string callbackId)
         {
-            lock(_idCallback)
+            lock (_idCallback)
                 return _idCallback.ContainsKey(callbackId);
         }
 
@@ -543,7 +538,7 @@ namespace SensusService
         public void RaiseCallbackAsync(string callbackId, bool repeating, bool notifyUser)
         {
             RaiseCallbackAsync(callbackId, repeating, notifyUser, null);
-        }    
+        }
 
         public void RaiseCallbackAsync(string callbackId, bool repeating, bool notifyUser, Action callback)
         {
@@ -571,7 +566,7 @@ namespace SensusService
                                 {
                                     _logger.Log("Raising callback \"" + scheduledCallback.Name + "\" (" + callbackId + ").", LoggingLevel.Debug, GetType());
 
-                                    if(notifyUser)
+                                    if (notifyUser)
                                         IssueNotificationAsync(scheduledCallback.UserNotificationMessage, callbackId);
 
                                     scheduledCallback.Action(cancellationTokenSource.Token);
@@ -758,6 +753,6 @@ namespace SensusService
             _md5Hash = null;
 
             SINGLETON = null;
-        }           
+        }
     }
 }

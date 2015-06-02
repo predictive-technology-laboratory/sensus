@@ -73,6 +73,8 @@ namespace Sensus.Android
         {
             base.OnCreate(savedInstanceState);
 
+            SensusServiceHelper.Initialize(() => new AndroidSensusServiceHelper());
+
             _uiReadyWait = new ManualResetEvent(false);
             _activityResultWait = new ManualResetEvent(false);
             _facebookCallbackManager = CallbackManagerFactory.Create();
@@ -234,6 +236,20 @@ namespace Sensus.Android
 
             if (Stopped != null)
                 Stopped(this, null);
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+
+            try
+            {
+                SensusServiceHelper.Get().Dispose();
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine("Error while disposing service helper:  " + ex.Message);
+            }
         }
 
         private void DisconnectFromService()

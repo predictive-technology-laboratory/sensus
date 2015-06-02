@@ -24,22 +24,21 @@ namespace Sensus.Android
     [Service]
     public class AndroidSensusService : Service
     {        
-        private AndroidSensusServiceHelper _sensusServiceHelper;
-
+        private AndroidSensusServiceHelper _serviceHelper;
         public override void OnCreate()
         {
             base.OnCreate();
 
-            _sensusServiceHelper = SensusServiceHelper.Load<AndroidSensusServiceHelper>() as AndroidSensusServiceHelper;
-            _sensusServiceHelper.SetService(this);
-            _sensusServiceHelper.UpdateApplicationStatus("0 protocols are running");
+            _serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
+            _serviceHelper.SetService(this);
+            _serviceHelper.UpdateApplicationStatus("0 protocols are running");
         }
 
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
-            _sensusServiceHelper.Logger.Log("Sensus service received start command (startId=" + startId + ").", LoggingLevel.Debug, GetType());
+            _serviceHelper.Logger.Log("Sensus service received start command (startId=" + startId + ").", LoggingLevel.Debug, GetType());
 
-            _sensusServiceHelper.MainActivityWillBeSet = intent.GetBooleanExtra(AndroidSensusServiceHelper.MAIN_ACTIVITY_WILL_BE_SET, false);
+            _serviceHelper.MainActivityWillBeSet = intent.GetBooleanExtra(AndroidSensusServiceHelper.MAIN_ACTIVITY_WILL_BE_SET, false);
 
             // the service can be stopped without destroying the service object. in such cases, 
             // subsequent calls to start the service will not call OnCreate, which is why the 
@@ -50,7 +49,7 @@ namespace Sensus.Android
             // boot and for any callback alarms that are requested. furthermore, all calls here
             // should be nonblocking / async so we don't tie up the UI thread.
 
-            _sensusServiceHelper.StartAsync(() =>
+            _serviceHelper.StartAsync(() =>
                 {
                     if (intent.GetBooleanExtra(AndroidSensusServiceHelper.SENSUS_CALLBACK_KEY, false))
                     {
@@ -58,7 +57,7 @@ namespace Sensus.Android
                         if (callbackId != null)
                         {
                             bool repeating = intent.GetBooleanExtra(AndroidSensusServiceHelper.SENSUS_CALLBACK_REPEATING_KEY, false);
-                            _sensusServiceHelper.RaiseCallbackAsync(callbackId, repeating, true);
+                            _serviceHelper.RaiseCallbackAsync(callbackId, repeating, true);
                         }
                     }
                 });
@@ -66,16 +65,9 @@ namespace Sensus.Android
             return StartCommandResult.RedeliverIntent;
         }
 
-        public override void OnDestroy()
-        {
-            _sensusServiceHelper.Dispose();
-
-            base.OnDestroy();
-        }
-
         public override IBinder OnBind(Intent intent)
         {
-            return new AndroidSensusServiceBinder(_sensusServiceHelper);
+            return new AndroidSensusServiceBinder(_serviceHelper);
         }                    
     }
 }

@@ -35,10 +35,12 @@ namespace Sensus.iOS
     [Register("AppDelegate")]
     public partial class AppDelegate : FormsApplicationDelegate
     {
-        private iOSSensusServiceHelper _sensusServiceHelper;
+        private iOSSensusServiceHelper _serviceHelper;
 
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
+            SensusServiceHelper.Initialize(() => new iOSSensusServiceHelper());
+
             // facebook settings
             Settings.AppID = "873948892650954";
             Settings.DisplayName = "Sensus";
@@ -52,9 +54,9 @@ namespace Sensus.iOS
 
             uiApplication.RegisterUserNotificationSettings(UIUserNotificationSettings.GetSettingsForTypes(UIUserNotificationType.Badge | UIUserNotificationType.Sound | UIUserNotificationType.Alert, new NSSet()));
 
-            _sensusServiceHelper = SensusServiceHelper.Load<iOSSensusServiceHelper>() as iOSSensusServiceHelper;
+            _serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
 
-            UiBoundSensusServiceHelper.Set(_sensusServiceHelper);
+            UiBoundSensusServiceHelper.Set(_serviceHelper);
             app.SensusMainPage.DisplayServiceHelper(UiBoundSensusServiceHelper.Get(true));
 
             if (launchOptions != null)
@@ -92,7 +94,7 @@ namespace Sensus.iOS
 
         public override void OnActivated(UIApplication uiApplication)
         {
-            _sensusServiceHelper.ActivationId = Guid.NewGuid().ToString();
+            _serviceHelper.ActivationId = Guid.NewGuid().ToString();
 
             iOSSensusServiceHelper sensusServiceHelper = UiBoundSensusServiceHelper.Get(true) as iOSSensusServiceHelper;
 
@@ -123,7 +125,7 @@ namespace Sensus.iOS
                 string activationId = (notification.UserInfo.ValueForKey(new NSString(iOSSensusServiceHelper.SENSUS_CALLBACK_ACTIVATION_ID)) as NSString).ToString();
 
                 // only raise callback if it's from the current activation and if it is scheduled
-                if (activationId != _sensusServiceHelper.ActivationId || !iOSSensusServiceHelper.Get().CallbackIsScheduled(callbackId))
+                if (activationId != _serviceHelper.ActivationId || !iOSSensusServiceHelper.Get().CallbackIsScheduled(callbackId))
                     return;                      
 
                 nint taskId = UIApplication.SharedApplication.BeginBackgroundTask(() =>
@@ -146,7 +148,7 @@ namespace Sensus.iOS
                                     UIApplication.SharedApplication.ScheduleLocalNotification(notification);
                                 }
                                 else
-                                    _sensusServiceHelper.UnscheduleOneTimeCallback(callbackId);
+                                    _serviceHelper.UnscheduleOneTimeCallback(callbackId);
                             });
                     });
             }
@@ -175,7 +177,7 @@ namespace Sensus.iOS
         // This method is called when the application is about to terminate. Save data, if needed.
         public override void WillTerminate(UIApplication application)
         {
-            _sensusServiceHelper.Dispose();
+            _serviceHelper.Dispose();
         }            
     }
 }
