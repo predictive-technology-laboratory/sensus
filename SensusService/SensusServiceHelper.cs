@@ -734,12 +734,7 @@ namespace SensusService
             }
         }
 
-        public virtual void Destroy()
-        {
-            Dispose();           
-        }           
-
-        public void Dispose()
+        public virtual void Dispose()
         {
             try
             {
@@ -763,6 +758,6 @@ namespace SensusService
             _md5Hash = null;
 
             SINGLETON = null;
-        }
+        }           
     }
 }

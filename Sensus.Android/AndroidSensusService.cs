@@ -68,7 +68,7 @@ namespace Sensus.Android
 
         public override void OnDestroy()
         {
-            _sensusServiceHelper.Destroy();
+            _sensusServiceHelper.Dispose();
 
             base.OnDestroy();
         }

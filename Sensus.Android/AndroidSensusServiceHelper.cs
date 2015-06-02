@@ -473,13 +473,13 @@ namespace Sensus.Android
                 _service.StopSelf();
         }
 
-        public override void Destroy()
+        public override void Dispose()
         {
             UpdateApplicationStatus(null);
 
             _textToSpeech.Dispose();
 
-            base.Destroy();
+            base.Dispose();
         }
     }
 }
