@@ -74,7 +74,7 @@ namespace SensusService
             get
             {
                 byte[] encryptionKeyBytes = new byte[32];
-                byte[] bytes = Encoding.Unicode.GetBytes(ENCRYPTION_KEY);
+                byte[] bytes = Encoding.UTF8.GetBytes(ENCRYPTION_KEY);
                 Array.Copy(bytes, encryptionKeyBytes, Math.Min(bytes.Length, encryptionKeyBytes.Length));
                 return encryptionKeyBytes;
             }
@@ -88,23 +88,28 @@ namespace SensusService
         {
             try
             {
-                FileStream file = new FileStream(SERIALIZATION_PATH, FileMode.Open, FileAccess.Read);
-                byte[] bytes = new byte[file.Length];
-                int blockSize = 1024;
-                int bytesRead = file.Read(bytes, 0, blockSize);
-                var blocksRead = 1;
-                while (bytesRead > 0)
+                using (FileStream file = new FileStream(SERIALIZATION_PATH, FileMode.Open, FileAccess.Read))
                 {
-                    bytesRead = file.Read(bytes, blocksRead * blockSize, blockSize);
-                    ++blocksRead;
+                    byte[] bytes = new byte[file.Length];
+                    int blockSize = 1024;
+                    byte[] block = new byte[blockSize];
+                    int bytesRead;
+                    int totalBytesRead = 0;
+                    while((bytesRead = file.Read(block, 0, block.Length)) > 0)
+                    {
+                        Array.Copy(block, 0, bytes, totalBytesRead, bytesRead);
+                        totalBytesRead += bytesRead;
+                    }
+
+                    file.Close();
+
+                    SINGLETON = JsonConvert.DeserializeObject<SensusServiceHelper>(Decrypt(bytes), JSON_SERIALIZATION_SETTINGS);
+                    SINGLETON.Logger.Log("Deserialized service helper with " + SINGLETON.RegisteredProtocols.Count + " protocols.", LoggingLevel.Normal, SINGLETON.GetType());
                 }
-                
-                SINGLETON = JsonConvert.DeserializeObject<SensusServiceHelper>(Decrypt(bytes), JSON_SERIALIZATION_SETTINGS);
-                SINGLETON.Logger.Log("Deserialized service helper with " + SINGLETON.RegisteredProtocols.Count + " protocols.", LoggingLevel.Normal, SINGLETON.GetType());
             }
             catch (Exception deserializeException)
             {
-                Console.Out.WriteLine("Failed to deserialize Sensus service helper:  " + deserializeException.Message + System.Environment.NewLine +
+                Console.Error.WriteLine("Failed to deserialize Sensus service helper:  " + deserializeException.Message + System.Environment.NewLine +
                     "Creating new Sensus service helper.");
 
                 try
@@ -151,7 +156,7 @@ namespace SensusService
 
         public static byte[] Encrypt(string unencryptedString)
         {
-#if (__ANDROID__ || __IOS__)
+            #if (__ANDROID__ || __IOS__)
             using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
             {
                 byte[] encryptionKeyBytes = EncryptionKeyBytes;
@@ -162,19 +167,20 @@ namespace SensusService
 
                 using (ICryptoTransform transform = aes.CreateEncryptor(encryptionKeyBytes, initialization))
                 {
-                    byte[] unencrypted = Encoding.Unicode.GetBytes(unencryptedString);
-                    return transform.TransformFinalBlock(unencrypted, 0, unencrypted.Length);
+                    byte[] unencryptedBytes = Encoding.Unicode.GetBytes(unencryptedString);
+                    return transform.TransformFinalBlock(unencryptedBytes, 0, unencryptedBytes.Length);
                 }
             }
-#elif WINDOWS_PHONE
-            return ProtectedData.Protect(Encoding.Unicode.GetBytes(unencryptedString), EncryptionKeyBytes);
-#else
-#endif
+            #elif WINDOWS_PHONE
+                return ProtectedData.Protect(Encoding.Unicode.GetBytes(unencryptedString), EncryptionKeyBytes);
+            #else
+                #error "Unknown platform."
+            #endif
         }
 
         public static string Decrypt(byte[] encryptedBytes)
         {
-#if __ANDROID__ || __IOS__
+            #if __ANDROID__ || __IOS__
             using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
             {
                 byte[] encryptionKeyBytes = EncryptionKeyBytes;
@@ -188,11 +194,12 @@ namespace SensusService
                     return Encoding.Unicode.GetString(transform.TransformFinalBlock(encryptedBytes, 0, encryptedBytes.Length));
                 }
             }
-#elif WINDOWS_PHONE
-            byte[] unencryptedBytes = ProtectedData.Unprotect(encryptedBytes, EncryptionKeyBytes);
-            return Encoding.Unicode.GetString(unencryptedBytes, 0, unencryptedBytes.Length);
-#else
-#endif
+            #elif WINDOWS_PHONE
+                byte[] unencryptedBytes = ProtectedData.Unprotect(encryptedBytes, EncryptionKeyBytes);
+                return Encoding.Unicode.GetString(unencryptedBytes, 0, unencryptedBytes.Length);
+            #else
+                #error "Unknown platform."
+            #endif
         }
         #endregion
 
@@ -205,7 +212,7 @@ namespace SensusService
         private int _healthTestCount;
         private int _healthTestsPerProtocolReport;
         private Dictionary<string, ScheduledCallback> _idCallback;
-        private SHA256Managed _md5Hash;
+        private SHA256Managed _hasher;
         private List<PointOfInterest> _pointsOfInterest;
 
         private readonly object _locker = new object();
@@ -310,7 +317,7 @@ namespace SensusService
             _healthTestCount = 0;
             _healthTestsPerProtocolReport = 5;
             _idCallback = new Dictionary<string, ScheduledCallback>();
-            _md5Hash = new SHA256Managed();
+            _hasher = new SHA256Managed();
             _pointsOfInterest = new List<PointOfInterest>();
 
             if (!Directory.Exists(SHARE_DIRECTORY))
@@ -346,13 +353,13 @@ namespace SensusService
                 SINGLETON = this;
         }
 
-        public string GetMd5Hash(string s)
+        public string GetHash(string s)
         {
             if (s == null)
                 return null;
             
             StringBuilder hashBuilder = new StringBuilder();
-            foreach (byte b in _md5Hash.ComputeHash(Encoding.UTF8.GetBytes(s)))
+            foreach (byte b in _hasher.ComputeHash(Encoding.UTF8.GetBytes(s)))
                 hashBuilder.Append(b.ToString("x"));
 
             return hashBuilder.ToString();
@@ -769,7 +776,7 @@ namespace SensusService
                 Console.Out.WriteLine("Failed to close logger:  " + ex.Message);
             }
 
-            _md5Hash = null;
+            _hasher = null;
             SINGLETON = null;
         }
     }

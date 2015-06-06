@@ -176,7 +176,7 @@ namespace SensusUI
                                 UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Please enter a non-empty password.");
                             else
                             {
-                                _protocol.LockPasswordHash = UiBoundSensusServiceHelper.Get(true).GetMd5Hash(password);
+                                _protocol.LockPasswordHash = UiBoundSensusServiceHelper.Get(true).GetHash(password);
                                 Device.BeginInvokeOnMainThread(() => lockButton.Text = "Unlock");
                             }
                         });

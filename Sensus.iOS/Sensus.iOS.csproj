@@ -104,9 +104,6 @@
     </MtouchI18n>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Facebook">
-      <HintPath>..\packages\Xamarin.Facebook.4.1.0.0\lib\Xamarin.iOS10\Facebook.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
@@ -152,10 +149,13 @@
       <HintPath>..\packages\Xamarin.Forms.1.4.2.6359\lib\Xamarin.iOS10\Xamarin.Forms.Platform.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Insights">
-      <HintPath>..\packages\Xamarin.Insights.1.10.2.110\lib\Xamarin.iOS10\Xamarin.Insights.dll</HintPath>
+      <HintPath>..\packages\Xamarin.Insights.1.10.3.111\lib\Xamarin.iOS10\Xamarin.Insights.dll</HintPath>
     </Reference>
     <Reference Include="PLCrashReporterUnifiedBinding">
-      <HintPath>..\packages\Xamarin.Insights.1.10.2.110\lib\Xamarin.iOS10\PLCrashReporterUnifiedBinding.dll</HintPath>
+      <HintPath>..\packages\Xamarin.Insights.1.10.3.111\lib\Xamarin.iOS10\PLCrashReporterUnifiedBinding.dll</HintPath>
+    </Reference>
+    <Reference Include="Facebook">
+      <HintPath>..\packages\Xamarin.Facebook.4.1.0.0\lib\Xamarin.iOS10\Facebook.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -244,10 +244,6 @@
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Import Project="..\packages\Xamarin.Forms.1.4.2.6359\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.1.4.2.6359\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />
   <ItemGroup>
-    <XamarinComponentReference Include="facebookios">
-      <Visible>False</Visible>
-      <Version>4.1.0</Version>
-    </XamarinComponentReference>
     <XamarinComponentReference Include="xamarin.mobile">
       <Version>0.7.5</Version>
       <Visible>False</Visible>
@@ -258,6 +254,10 @@
     </XamarinComponentReference>
     <XamarinComponentReference Include="DataNuage.Aws.S3">
       <Version>1.5.216.0</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
+    <XamarinComponentReference Include="facebookios">
+      <Version>4.1.0</Version>
       <Visible>False</Visible>
     </XamarinComponentReference>
   </ItemGroup>

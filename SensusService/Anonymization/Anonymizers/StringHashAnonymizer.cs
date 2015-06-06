@@ -18,13 +18,13 @@ using System.Collections.Generic;
 
 namespace SensusService.Anonymization.Anonymizers
 {
-    public class StringMD5Anonymizer : Anonymizer
+    public class StringHashAnonymizer : Anonymizer
     {        
         public override string DisplayText
         {
             get
             {
-                return "MD5 Hash";
+                return "One-way Hash";
             }
         }
        
@@ -34,18 +34,18 @@ namespace SensusService.Anonymization.Anonymizers
                 return null;
             
             if (value is string)
-                return SensusServiceHelper.Get().GetMd5Hash(value as string);
+                return SensusServiceHelper.Get().GetHash(value as string);
             else if (value is IEnumerable<string>)
             {
-                List<string> md5Hashes = new List<string>();
+                List<string> hashes = new List<string>();
 
                 foreach (string s in (value as IEnumerable<string>))
-                    md5Hashes.Add(SensusServiceHelper.Get().GetMd5Hash(s));
+                    hashes.Add(SensusServiceHelper.Get().GetHash(s));
                   
-                return md5Hashes;
+                return hashes;
             }
             else
-                throw new SensusException("Attempted to apply string MD5 anonymizer to a non-string value.");
+                throw new SensusException("Attempted to apply string hash anonymizer to a non-string value.");
         }
     }
 }

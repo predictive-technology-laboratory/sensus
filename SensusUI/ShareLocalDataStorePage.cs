@@ -119,19 +119,7 @@ namespace SensusUI
 
                     Device.BeginInvokeOnMainThread(async () =>
                         {
-                            await Navigation.PopAsync();
-
-                            if (_cancellationTokenSource.IsCancellationRequested)
-                            {
-                                try
-                                {
-                                    File.Delete(sharePath);
-                                }
-                                catch (Exception)
-                                {
-                                }
-                            }
-                            else if (!errorWritingShareFile)
+                            if (!_cancellationTokenSource.IsCancellationRequested && !errorWritingShareFile)
                                 UiBoundSensusServiceHelper.Get(true).ShareFileAsync(sharePath, "Sensus Data");
                         });
 

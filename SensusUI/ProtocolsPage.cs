@@ -160,7 +160,7 @@ namespace SensusUI
                         if (password == null)
                             return;
 
-                        if (UiBoundSensusServiceHelper.Get(true).GetMd5Hash(password) == protocol.LockPasswordHash)
+                        if (UiBoundSensusServiceHelper.Get(true).GetHash(password) == protocol.LockPasswordHash)
                             Device.BeginInvokeOnMainThread(action);
                         else
                             UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("The password you entered was not correct."); 

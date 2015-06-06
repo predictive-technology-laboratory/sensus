@@ -25,7 +25,7 @@ namespace SensusService.Probes.Network
         private string _cellTower;
 
         [TextProbeTriggerProperty("Cellular Tower")]
-        [Anonymizable("Cellular Tower", typeof(StringMD5Anonymizer), false)]
+        [Anonymizable("Cellular Tower", typeof(StringHashAnonymizer), false)]
         public string CellTower
         {
             get { return _cellTower; }
