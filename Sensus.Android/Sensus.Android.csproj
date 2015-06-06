@@ -232,7 +232,19 @@
       <Visible>False</Visible>
     </XamarinComponentReference>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Resources\drawable\" />
+    <AndroidResource Include="..\SensusUI\Icons\minus.png">
+      <Link>Resources\drawable\minus.png</Link>
+    </AndroidResource>
+    <AndroidResource Include="..\SensusUI\Icons\pencil.png">
+      <Link>Resources\drawable\pencil.png</Link>
+    </AndroidResource>
+    <AndroidResource Include="..\SensusUI\Icons\plus.png">
+      <Link>Resources\drawable\plus.png</Link>
+    </AndroidResource>
+    <AndroidResource Include="..\SensusUI\Icons\share.png">
+      <Link>Resources\drawable\share.png</Link>
+    </AndroidResource>
   </ItemGroup>
 </Project>

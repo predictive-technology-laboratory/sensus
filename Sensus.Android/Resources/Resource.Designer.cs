@@ -290,6 +290,18 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f02001b
 			public const int messenger_button_white_bg_selector = 2130837531;
 			
+			// aapt resource value: 0x7f02001c
+			public const int minus = 2130837532;
+			
+			// aapt resource value: 0x7f02001d
+			public const int pencil = 2130837533;
+			
+			// aapt resource value: 0x7f02001e
+			public const int plus = 2130837534;
+			
+			// aapt resource value: 0x7f02001f
+			public const int share = 2130837535;
+			
 			static Drawable()
 			{
 				global::Android.Runtime.ResourceIdManager.UpdateIdValues();
