@@ -83,6 +83,14 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="Xamarin.Android.Support.v4">
+      <HintPath>..\packages\Xamarin.Android.Support.v4.22.0.0.0\lib\MonoAndroid10\Xamarin.Android.Support.v4.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xamarin.Facebook">
+      <HintPath>..\packages\Xamarin.Facebook.4.0.1.1\lib\MonoAndroid40\Xamarin.Facebook.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Xamarin.Forms.Platform.Android">
       <HintPath>..\packages\Xamarin.Forms.1.4.2.6359\lib\MonoAndroid10\Xamarin.Forms.Platform.Android.dll</HintPath>
     </Reference>
@@ -120,13 +128,7 @@
       <HintPath>..\Components\DataNuage.Aws.S3-1.5.216.0\lib\android\DataNuage.Aws.S3.Android.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Insights">
-      <HintPath>..\packages\Xamarin.Insights.1.10.3.111\lib\MonoAndroid10\Xamarin.Insights.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Android.Support.v4">
-      <HintPath>..\packages\Xamarin.Android.Support.v4.22.1.1.1\lib\MonoAndroid403\Xamarin.Android.Support.v4.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Facebook">
-      <HintPath>..\packages\Xamarin.Facebook.4.1.2.0\lib\MonoAndroid403\Xamarin.Facebook.dll</HintPath>
+      <HintPath>..\packages\Xamarin.Insights.1.10.2.110\lib\MonoAndroid10\Xamarin.Insights.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -230,6 +232,11 @@
   </Target>
   -->
   <ItemGroup>
+    <XamarinComponentReference Include="facebookandroid">
+      <Visible>False</Visible>
+      <Version>4.1.2.0</Version>
+      <InstallationInProgress>True</InstallationInProgress>
+    </XamarinComponentReference>
     <XamarinComponentReference Include="xamarin.mobile">
       <Version>0.7.5</Version>
       <Visible>False</Visible>
@@ -240,10 +247,6 @@
     </XamarinComponentReference>
     <XamarinComponentReference Include="DataNuage.Aws.S3">
       <Version>1.5.216.0</Version>
-      <Visible>False</Visible>
-    </XamarinComponentReference>
-    <XamarinComponentReference Include="facebookandroid">
-      <Version>4.1.2.0</Version>
       <Visible>False</Visible>
     </XamarinComponentReference>
   </ItemGroup>

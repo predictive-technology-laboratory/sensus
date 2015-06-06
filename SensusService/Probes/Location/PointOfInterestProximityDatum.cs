@@ -30,7 +30,7 @@ namespace SensusService.Probes.Location
         private double _triggerDistanceMeters;
         private ProximityThresholdDirection _triggerDistanceDirection;
 
-        [Anonymizable("POI Name:", typeof(StringHashAnonymizer), false)]
+        [Anonymizable("POI Name:", typeof(StringMD5Anonymizer), false)]
         [TextProbeTriggerProperty("POI Name")]
         public string PoiName
         {
@@ -44,7 +44,7 @@ namespace SensusService.Probes.Location
             }
         }
 
-        [Anonymizable("POI Type:", typeof(StringHashAnonymizer), false)]
+        [Anonymizable("POI Type:", typeof(StringMD5Anonymizer), false)]
         [TextProbeTriggerProperty("POI Type")]
         public string PoiType
         {
