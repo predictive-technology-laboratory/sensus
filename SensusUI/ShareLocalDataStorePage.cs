@@ -68,7 +68,7 @@ namespace SensusUI
 
             contentLayout.Children.Add(cancelButton);
                                       
-            new Thread(async () =>
+            new Thread(() =>
                 {                    
                     string sharePath = UiBoundSensusServiceHelper.Get(true).GetSharePath(".json");
                     bool errorWritingShareFile = false;
@@ -106,6 +106,8 @@ namespace SensusUI
                                 }
 
                                 shareFile.Close();
+
+                                throw null;
                             }
                         }
                     }
@@ -115,11 +117,11 @@ namespace SensusUI
                         string message = "Error writing share file:  " + ex.Message;
                         UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync(message);
                         UiBoundSensusServiceHelper.Get(true).Logger.Log(message, LoggingLevel.Normal, GetType());
-                        await Navigation.PopAsync();
                     }
 
-                    if (_cancellationTokenSource.IsCancellationRequested)
+                    if (_cancellationTokenSource.IsCancellationRequested || errorWritingShareFile)
                     {
+                        // always delete the file on cancel / error
                         try
                         {
                             File.Delete(sharePath);
@@ -127,8 +129,12 @@ namespace SensusUI
                         catch (Exception)
                         {
                         }
+
+                        // the only way to get a cancel is to back out of the window, so only pop if there was an error
+                        if(errorWritingShareFile)
+                            Device.BeginInvokeOnMainThread(async () => await Navigation.PopAsync());
                     }
-                    else if (!errorWritingShareFile)
+                    else
                     {
                         Device.BeginInvokeOnMainThread(async () => 
                             {
@@ -153,5 +159,3 @@ namespace SensusUI
         }
     }
 }
-
-

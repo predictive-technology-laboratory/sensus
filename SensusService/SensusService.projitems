@@ -72,7 +72,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Remote\AmazonS3RemoteDataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\AnonymizedJsonContractResolver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizable.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\StringMD5Anonymizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\Anonymizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\DateTimeOffsetTimelineAnonymizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\DoubleRoundingAnonymizer.cs" />
@@ -101,6 +100,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\ListeningPointsOfInterestProximityProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Remote\MicrosoftAzureRemoteDataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ScriptRunner.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\StringHashAnonymizer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />

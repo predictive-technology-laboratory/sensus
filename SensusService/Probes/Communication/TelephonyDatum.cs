@@ -33,7 +33,7 @@ namespace SensusService.Probes.Communication
         }
 
         [TextProbeTriggerProperty("Phone #")]
-        [Anonymizable("Phone #:", typeof(StringMD5Anonymizer), true)]
+        [Anonymizable("Phone #:", typeof(StringHashAnonymizer), true)]
         public string PhoneNumber
         {
             get { return _phoneNumber; }

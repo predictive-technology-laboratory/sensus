@@ -172,7 +172,7 @@ namespace SensusService.Probes.Location
                                     // create copy of new position to keep return references separate, since the same Position object is returned multiple times when a change listener is attached.
                                     _reading = new Position(newReading);                                   
 
-                                    SensusServiceHelper.Get().Logger.Log("GPS reading obtained in " + (readingEnd - readingStart).TotalSeconds + " seconds:  " + _reading.Latitude + " " + _reading.Longitude, LoggingLevel.Verbose, GetType());
+                                    SensusServiceHelper.Get().Logger.Log("GPS reading obtained in " + (readingEnd - readingStart).TotalSeconds + " seconds.", LoggingLevel.Verbose, GetType());
                                 }
                             }
                             catch (Exception ex)
