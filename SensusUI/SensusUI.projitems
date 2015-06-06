@@ -38,13 +38,4 @@
     <Compile Include="$(MSBuildThisFileDirectory)ScriptRunnerPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ScriptRunnersPage.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Icons\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)Icons\pencil.png" />
-    <None Include="$(MSBuildThisFileDirectory)Icons\minus.png" />
-    <None Include="$(MSBuildThisFileDirectory)Icons\plus.png" />
-    <None Include="$(MSBuildThisFileDirectory)Icons\share.png" />
-  </ItemGroup>
 </Project>
