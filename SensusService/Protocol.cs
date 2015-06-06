@@ -78,16 +78,10 @@ namespace SensusService
             {
                 WebClient downloadClient = new WebClient();
 
-                #if __ANDROID__ || __IOS__
                 downloadClient.DownloadDataCompleted += (object sender, DownloadDataCompletedEventArgs e) =>
                 {
                     DisplayFromBytesAsync(e.Result);
                 };
-                #elif WINDOWS_PHONE
-                // TODO:  Read bytes and display.
-                #else
-                    #error "Unrecognized platform."
-                #endif
 
                 downloadClient.DownloadStringAsync(webURI);
             }
@@ -101,7 +95,7 @@ namespace SensusService
         {
             try
             {
-                DisplayFromJsonAsync(SensusServiceHelper.Decrypt(bytes));
+                DisplayFromJsonAsync(SensusServiceHelper.AesDecrypt(bytes));
             }
             catch (Exception ex)
             {
@@ -432,7 +426,7 @@ namespace SensusService
         {
             using (FileStream file = new FileStream(path, FileMode.Create, FileAccess.Write))
             {
-                byte[] encryptedBytes = SensusServiceHelper.Encrypt(JsonConvert.SerializeObject(this, JSON_SERIALIZER_SETTINGS));
+                byte[] encryptedBytes = SensusServiceHelper.AesEncrypt(JsonConvert.SerializeObject(this, JSON_SERIALIZER_SETTINGS));
                 file.Write(encryptedBytes, 0, encryptedBytes.Length);
                 file.Close();
             }

@@ -366,8 +366,8 @@ namespace SensusService.Probes.User
                         string userNotificationMessage = "Your input is requested.";
                         #elif __ANDROID__
                         string userNotificationMessage = null;
-                        #elif WINDOWS_PHONE
-                        string userNotificationMessage = null; // TODO:  Should we use a message?
+                        #elif __WINDOWS_PHONE__
+                        TODO:  Should we use a message?
                         #endif
 
                         _randomTriggerCallbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(cancellationToken =>
@@ -376,7 +376,7 @@ namespace SensusService.Probes.User
                                 if (_probe.Running && _enabled && _triggerRandomly)
                                     RunAsync(_script.Copy(), StartRandomTriggerCallbacksAsync);
                             }
-                            , "Randomly Run", _random.Next(_maximumRandomTriggerDelayMinutes * 60000), userNotificationMessage);
+                            , "Randomly Rerun", _random.Next(_maximumRandomTriggerDelayMinutes * 60000), userNotificationMessage);
                     }
                 }).Start();
         }
@@ -402,8 +402,8 @@ namespace SensusService.Probes.User
             string userNotificationMessage = "Your input is requested.";
             #elif __ANDROID__
             string userNotificationMessage = null;
-            #elif WINDOWS_PHONE
-            string userNotificationMessage = null; // TODO:  Should we use a message?
+            #elif __WINDOWS_PHONE__
+            TODO:  Should we use a message?
             #endif
 
             Action<CancellationToken> runAction = cancellationToken =>
