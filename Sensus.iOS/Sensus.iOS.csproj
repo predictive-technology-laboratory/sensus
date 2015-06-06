@@ -240,6 +240,10 @@
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Import Project="..\packages\Xamarin.Forms.1.4.2.6359\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.1.4.2.6359\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />
   <ItemGroup>
+    <XamarinComponentReference Include="facebookios">
+      <Visible>False</Visible>
+      <Version>4.1.0</Version>
+    </XamarinComponentReference>
     <XamarinComponentReference Include="xamarin.mobile">
       <Version>0.7.5</Version>
       <Visible>False</Visible>
@@ -250,10 +254,6 @@
     </XamarinComponentReference>
     <XamarinComponentReference Include="DataNuage.Aws.S3">
       <Version>1.5.216.0</Version>
-      <Visible>False</Visible>
-    </XamarinComponentReference>
-    <XamarinComponentReference Include="facebookios">
-      <Version>4.0.1.3</Version>
       <Visible>False</Visible>
     </XamarinComponentReference>
   </ItemGroup>
