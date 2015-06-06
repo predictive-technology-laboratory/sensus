@@ -74,7 +74,7 @@ namespace SensusService
             get
             {
                 byte[] encryptionKeyBytes = new byte[32];
-                byte[] bytes = Encoding.Default.GetBytes(ENCRYPTION_KEY);
+                byte[] bytes = Encoding.Unicode.GetBytes(ENCRYPTION_KEY);
                 Array.Copy(bytes, encryptionKeyBytes, Math.Min(bytes.Length, encryptionKeyBytes.Length));
                 return encryptionKeyBytes;
             }
@@ -88,7 +88,18 @@ namespace SensusService
         {
             try
             {
-                SINGLETON = JsonConvert.DeserializeObject<SensusServiceHelper>(AesDecrypt(File.ReadAllBytes(SERIALIZATION_PATH)), JSON_SERIALIZATION_SETTINGS);
+                FileStream file = new FileStream(SERIALIZATION_PATH, FileMode.Open, FileAccess.Read);
+                byte[] bytes = new byte[file.Length];
+                int blockSize = 1024;
+                int bytesRead = file.Read(bytes, 0, blockSize);
+                var blocksRead = 1;
+                while (bytesRead > 0)
+                {
+                    bytesRead = file.Read(bytes, blocksRead * blockSize, blockSize);
+                    ++blocksRead;
+                }
+                
+                SINGLETON = JsonConvert.DeserializeObject<SensusServiceHelper>(Decrypt(bytes), JSON_SERIALIZATION_SETTINGS);
                 SINGLETON.Logger.Log("Deserialized service helper with " + SINGLETON.RegisteredProtocols.Count + " protocols.", LoggingLevel.Normal, SINGLETON.GetType());
             }
             catch (Exception deserializeException)
@@ -138,9 +149,9 @@ namespace SensusService
             return SINGLETON;
         }
 
-        #region encryption
-        public static byte[] AesEncrypt(string s)
+        public static byte[] Encrypt(string unencryptedString)
         {
+#if (__ANDROID__ || __IOS__)
             using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
             {
                 byte[] encryptionKeyBytes = EncryptionKeyBytes;
@@ -151,14 +162,19 @@ namespace SensusService
 
                 using (ICryptoTransform transform = aes.CreateEncryptor(encryptionKeyBytes, initialization))
                 {
-                    byte[] unencrypted = Encoding.Unicode.GetBytes(s);
+                    byte[] unencrypted = Encoding.Unicode.GetBytes(unencryptedString);
                     return transform.TransformFinalBlock(unencrypted, 0, unencrypted.Length);
                 }
             }
+#elif WINDOWS_PHONE
+            return ProtectedData.Protect(Encoding.Unicode.GetBytes(unencryptedString), EncryptionKeyBytes);
+#else
+#endif
         }
 
-        public static string AesDecrypt(byte[] bytes)
+        public static string Decrypt(byte[] encryptedBytes)
         {
+#if __ANDROID__ || __IOS__
             using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
             {
                 byte[] encryptionKeyBytes = EncryptionKeyBytes;
@@ -169,11 +185,15 @@ namespace SensusService
 
                 using (ICryptoTransform transform = aes.CreateDecryptor(encryptionKeyBytes, initialization))
                 {
-                    return Encoding.Unicode.GetString(transform.TransformFinalBlock(bytes, 0, bytes.Length));
+                    return Encoding.Unicode.GetString(transform.TransformFinalBlock(encryptedBytes, 0, encryptedBytes.Length));
                 }
             }
+#elif WINDOWS_PHONE
+            byte[] unencryptedBytes = ProtectedData.Unprotect(encryptedBytes, EncryptionKeyBytes);
+            return Encoding.Unicode.GetString(unencryptedBytes, 0, unencryptedBytes.Length);
+#else
+#endif
         }
-        #endregion
         #endregion
 
         private bool _stopped;
@@ -185,7 +205,7 @@ namespace SensusService
         private int _healthTestCount;
         private int _healthTestsPerProtocolReport;
         private Dictionary<string, ScheduledCallback> _idCallback;
-        private MD5 _md5Hash;
+        private SHA256Managed _md5Hash;
         private List<PointOfInterest> _pointsOfInterest;
 
         private readonly object _locker = new object();
@@ -290,7 +310,7 @@ namespace SensusService
             _healthTestCount = 0;
             _healthTestsPerProtocolReport = 5;
             _idCallback = new Dictionary<string, ScheduledCallback>();
-            _md5Hash = MD5.Create();
+            _md5Hash = new SHA256Managed();
             _pointsOfInterest = new List<PointOfInterest>();
 
             if (!Directory.Exists(SHARE_DIRECTORY))
@@ -419,7 +439,7 @@ namespace SensusService
                         {
                             using (FileStream file = new FileStream(SERIALIZATION_PATH, FileMode.Create, FileAccess.Write))
                             {
-                                byte[] encryptedBytes = AesEncrypt(JsonConvert.SerializeObject(this, JSON_SERIALIZATION_SETTINGS));
+                                byte[] encryptedBytes = Encrypt(JsonConvert.SerializeObject(this, JSON_SERIALIZATION_SETTINGS));
                                 file.Write(encryptedBytes, 0, encryptedBytes.Length);
                                 file.Close();
                             }
@@ -749,9 +769,7 @@ namespace SensusService
                 Console.Out.WriteLine("Failed to close logger:  " + ex.Message);
             }
 
-            _md5Hash.Dispose();
             _md5Hash = null;
-
             SINGLETON = null;
         }
     }

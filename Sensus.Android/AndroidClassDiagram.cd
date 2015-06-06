@@ -1,0 +1,1187 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
+  <Class Name="SensusService.Anonymization.Anonymizable" Collapsed="true">
+    <Position X="124.75" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAEAAAQEACAAAAAAAAAAAABAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Anonymization\Anonymizable.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Anonymization.AnonymizedJsonContractResolver" Collapsed="true">
+    <Position X="126.5" Y="10.25" Width="1.5" />
+    <NestedTypes>
+      <Class Name="SensusService.Anonymization.AnonymizedJsonContractResolver.AnonymizedMemberValueProvider" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Anonymization\AnonymizedJsonContractResolver.cs</NewMemberFileName>
+        </TypeIdentifier>
+        <Lollipop Position="0.2" />
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAAAAAAAQAAAAAABCAKAAAAAAAAAAAAAIAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Anonymization\AnonymizedJsonContractResolver.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Anonymization.Anonymizers.Anonymizer">
+    <Position X="17" Y="51.25" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAABAAAAAAgAAAAAAAAAAAAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Anonymization\Anonymizers\Anonymizer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Anonymization.Anonymizers.DateTimeOffsetTimelineAnonymizer">
+    <Position X="2.25" Y="54" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Anonymization\Anonymizers\DateTimeOffsetTimelineAnonymizer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Anonymization.Anonymizers.DoubleRoundingAnonymizer">
+    <Position X="15" Y="54" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAABAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Anonymization\Anonymizers\DoubleRoundingAnonymizer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Anonymization.Anonymizers.DoubleRoundingHundredsAnonymizer">
+    <Position X="6.25" Y="57" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Anonymization\Anonymizers\DoubleRoundingHundredsAnonymizer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Anonymization.Anonymizers.DoubleRoundingHundredthsAnonymizer">
+    <Position X="10" Y="57" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Anonymization\Anonymizers\DoubleRoundingHundredthsAnonymizer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Anonymization.Anonymizers.DoubleRoundingOnesAnonymizer">
+    <Position X="13.75" Y="57" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Anonymization\Anonymizers\DoubleRoundingOnesAnonymizer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Anonymization.Anonymizers.DoubleRoundingTensAnonymizer">
+    <Position X="17.25" Y="57" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Anonymization\Anonymizers\DoubleRoundingTensAnonymizer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Anonymization.Anonymizers.DoubleRoundingTenthsAnonymizer">
+    <Position X="20.5" Y="57" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Anonymization\Anonymizers\DoubleRoundingTenthsAnonymizer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Anonymization.Anonymizers.DoubleRoundingThousandthsAnonymizer">
+    <Position X="24" Y="57" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Anonymization\Anonymizers\DoubleRoundingThousandthsAnonymizer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Anonymization.Anonymizers.StringMD5Anonymizer">
+    <Position X="27.75" Y="54" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Anonymization\Anonymizers\StringMD5Anonymizer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Anonymization.Anonymizers.ValueOmittingAnonymizer">
+    <Position X="31.75" Y="54" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Anonymization\Anonymizers\ValueOmittingAnonymizer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.DataStores.DataStore">
+    <Position X="52.5" Y="51.25" Width="5.5" />
+    <TypeIdentifier>
+      <HashCode>EAQAMAAAACBAAAARAAkAQAVAAgAAKAgIIABAAABBAQE=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\DataStores\DataStore.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.DataStores.Local.FileLocalDataStore">
+    <Position X="38.25" Y="62.5" Width="7.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAACACAAABAAAAAAAAAAAACCQBIBAAQABBEJA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\DataStores\Local\FileLocalDataStore.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.DataStores.Local.LocalDataStore">
+    <Position X="42.25" Y="58.5" Width="7.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAEAAIAAAAAAAQgBAAAAQAAAAIA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\DataStores\Local\LocalDataStore.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.DataStores.Local.RamLocalDataStore">
+    <Position X="46.25" Y="62.5" Width="7.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAABCAAAAABAAAAAAAAAAAACAABIAAAQABBAIA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\DataStores\Local\RamLocalDataStore.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.DataStores.Remote.AmazonS3RemoteDataStore">
+    <Position X="54.25" Y="62" Width="5.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAFCAAACAAAACBgACAAAAAAAEAiAAAAAAAAAAJBAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\DataStores\Remote\AmazonS3RemoteDataStore.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.DataStores.Remote.ConsoleRemoteDataStore">
+    <Position X="60.5" Y="62" Width="5.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAABAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\DataStores\Remote\ConsoleRemoteDataStore.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.DataStores.Remote.MicrosoftAzureRemoteDataStore">
+    <Position X="66.75" Y="62" Width="5.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAMIACQEwEQJAACSAAgACCQACAAEMACAEAgBAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\DataStores\Remote\MicrosoftAzureRemoteDataStore.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.DataStores.Remote.RemoteDataStore">
+    <Position X="61" Y="58.5" Width="4.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQAAAAAAAQAAEAAAAAAAAAAAgAAAAAAAgAIAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\DataStores\Remote\RemoteDataStore.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Datum">
+    <Position X="59.5" Y="8.25" Width="5.5" />
+    <TypeIdentifier>
+      <HashCode>EIACAAEABAAAQAAEgABCAAAAEgAAAIAAEQAgCAACAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Datum.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.ImpreciseDatum">
+    <Position X="67.5" Y="14.25" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAIAAAAAAAAAAAAAAAEAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\ImpreciseDatum.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Logger" Collapsed="true">
+    <Position X="123" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACAAAAAAAAAQAgAggACAABIAIAAADAEAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Logger.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Protocol" Collapsed="true">
+    <Position X="126.5" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAASILCAACAIVAAAgQhCAAUGEAQECKA4oRABoIEEASA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Protocol.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.ProtocolReport">
+    <Position X="6.25" Y="14.25" Width="5.25" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAAAABIQAEAAAAABAAAAAAMAAAAAAAAAECAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\ProtocolReport.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.SensusServiceHelper">
+    <Position X="1" Y="59.25" Width="9.5" />
+    <NestedTypes>
+      <Class Name="SensusService.SensusServiceHelper.ScheduledCallback" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\SensusServiceHelper.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>UwACBArGASICAQRQAAiigFEGKIAAHXGcPQGiMABMmQA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\SensusServiceHelper.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SensusService.Exceptions.DataStoreException">
+    <Position X="0.75" Y="10.25" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Exceptions\DataStoreException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Exceptions.SensusException">
+    <Position X="0.75" Y="8.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Exceptions\SensusException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Apps.FacebookDatum">
+    <Position X="34" Y="14.25" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>RMARCEAABCCAkIDAhAKEAAkkggBAAAATAEgiAiICEEg=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Apps\FacebookDatum.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Apps.FacebookPermission" Collapsed="true">
+    <Position X="119.5" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAAAAAEAABAAAQEAAAABAAAAAAAAAAAgAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Apps\FacebookPermission.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Apps.FacebookProbe">
+    <Position X="77.75" Y="39" Width="4.75" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAQAAAAAEAAAAAAAAQAAAAAIAAAAAAAIABAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Apps\FacebookProbe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Apps.RunningAppsDatum">
+    <Position X="44" Y="14.25" Width="5.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAgAAAEAAAAAAQAAAAAAAAAAAAAAAACAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Apps\RunningAppsDatum.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Apps.RunningAppsProbe">
+    <Position X="93.75" Y="39" Width="5.75" />
+    <TypeIdentifier>
+      <HashCode>AAQAEAAAAQAAAAAAAAAAAAAAQAAADAAAAAAAAAAQAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Apps\RunningAppsProbe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Communication.SmsDatum">
+    <Position X="80.5" Y="14.25" Width="6" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAQAAAAAAAAAAAAEEAAAKAADAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Communication\SmsDatum.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Communication.SmsProbe">
+    <Position X="52.75" Y="38.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Communication\SmsProbe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Communication.TelephonyDatum">
+    <Position X="97.5" Y="14.25" Width="5.75" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAEAAAASAAAAAAAAAAAAAAABAACAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Communication\TelephonyDatum.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Communication.TelephonyProbe">
+    <Position X="62.75" Y="38.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Communication\TelephonyProbe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Context.BluetoothDeviceProximityDatum">
+    <Position X="12.25" Y="14.25" Width="5.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAAAAAEAAAAAAQAAAAAAAACAAAAAEACAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Context\BluetoothDeviceProximityDatum.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Context.BluetoothDeviceProximityProbe">
+    <Position X="12.25" Y="38.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Context\BluetoothDeviceProximityProbe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Context.LightDatum">
+    <Position X="18.75" Y="14.25" Width="4" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAIAAAAAAACAIA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Context\LightDatum.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Context.LightProbe">
+    <Position X="20.5" Y="38.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Context\LightProbe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Context.SoundDatum">
+    <Position X="39.25" Y="14.25" Width="4" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAIAAAAEAAAAAAAAAAAAAAAAAAAAAAACAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Context\SoundDatum.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Context.SoundProbe">
+    <Position X="84" Y="39" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAEQAAAAAAAEAAAAAAQAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Context\SoundProbe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Device.BatteryDatum">
+    <Position X="50" Y="14.25" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAQAAAAAAAAABAAAAAAACAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Device\BatteryDatum.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Device.BatteryProbe">
+    <Position X="101" Y="39" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAQAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Device\BatteryProbe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Device.ScreenDatum">
+    <Position X="87.25" Y="14.25" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAEAAAAAAAAAACAIA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Device\ScreenDatum.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Device.ScreenProbe">
+    <Position X="106.25" Y="39" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAQAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Device\ScreenProbe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.ListeningProbe">
+    <Position X="37.25" Y="34.75" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAIAABAAAACAAAIAAAEAAAEIA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\ListeningProbe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.PollingProbe">
+    <Position X="88" Y="34.75" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAACCAAAAAAAAAAEAEAQgAACAAAIAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\PollingProbe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Probe">
+    <Position X="57.5" Y="26.25" Width="4.75" />
+    <TypeIdentifier>
+      <HashCode>FA0QEAAAgSAAAYAQBQgAACVBAAAACAAYIQAAAAAAAQg=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Probe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Location.AltitudeDatum">
+    <Position X="59.5" Y="17.5" Width="5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABAAAAAAAEAAAAgAAAAAAAAAAAAAAAAAACAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Location\AltitudeDatum.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Location.AltitudeProbe">
+    <Position X="17" Y="38.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Location\AltitudeProbe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Location.CompassDatum">
+    <Position X="23.5" Y="14.25" Width="4" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAgAAAAAAAAAACACAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Location\CompassDatum.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Location.CompassProbe">
+    <Position X="24.25" Y="38.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Location\CompassProbe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Location.GpsReceiver" Collapsed="true">
+    <Position X="121.25" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAACQIEgRBAAAAAAACAAAAhKAAAAAAAAAAAAYA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Location\GpsReceiver.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Location.ListeningLocationProbe">
+    <Position X="37" Y="38.75" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAQAQAAAQAAAAAAAAAAAAAAAAAAAAAAEAAAAIA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Location\ListeningLocationProbe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Location.ListeningPointsOfInterestProximityProbe">
+    <Position X="42" Y="38.75" Width="4.75" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAQAQAAAQAAAAAAAAAACAAACAAAAAAAEAAAQIA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Location\ListeningPointsOfInterestProximityProbe.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SensusService.Probes.Location.LocationDatum">
+    <Position X="73.75" Y="17.5" Width="6" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAEAAAAAEAIAIAAAAAAAAAAAAAAAAAAACEAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Location\LocationDatum.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Location.PointOfInterest" Collapsed="true">
+    <Position X="124.75" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAAAAQkAAAAAAQBCAAAAAAAAQAAgAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Location\PointOfInterest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Location.PointOfInterestProximityDatum">
+    <Position X="109" Y="14.25" Width="9.5" />
+    <TypeIdentifier>
+      <HashCode>AAACIAggAAAECAAEAAgAAgABQgAAAAAAAAAAAAASwAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Location\PointOfInterestProximityDatum.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Location.PointOfInterestProximityTrigger" Collapsed="true">
+    <Position X="126.5" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAIAAAACAAEAAAAAAAAAAAAAAAIQAAAEAIAAAI=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Location\PointOfInterestProximityTrigger.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Location.PollingLocationProbe">
+    <Position X="67" Y="39" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAQAAAQAAAAAAAAAAQAAACAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Location\PollingLocationProbe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Location.PollingPointsOfInterestProximityProbe">
+    <Position X="72.25" Y="39" Width="4.75" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAQAAAAAAAAAAAAAASAAACAAAAAAAAAAAQAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Location\PollingPointsOfInterestProximityProbe.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SensusService.Probes.Movement.AccelerometerDatum">
+    <Position X="28.25" Y="14.25" Width="5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAAQAAAAEAAAAAAAAAAAAAAAAAAAAAAACYAE=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Movement\AccelerometerDatum.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Movement.AccelerometerProbe">
+    <Position X="28.25" Y="38.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Movement\AccelerometerProbe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Movement.ListeningSpeedProbe">
+    <Position X="32" Y="38.75" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAQAQAACQAAAAAAAAAAAAAACAAAAAAAEAAAAIA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Movement\ListeningSpeedProbe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Movement.PollingSpeedProbe">
+    <Position X="88.5" Y="39" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAASAACQAAAAAAAAAAQAAACAAAIAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Movement\PollingSpeedProbe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Movement.SpeedDatum">
+    <Position X="65.25" Y="17.5" Width="7.75" />
+    <TypeIdentifier>
+      <HashCode>CAAAIAAAAAAAAAAEAAEAAAAAgAAAAAAAAAAAQAICAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Movement\SpeedDatum.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Network.CellTowerDatum">
+    <Position X="54.5" Y="14.25" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAAAAEEAAAAAAAAAAAAAAAAAAAAAACAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Network\CellTowerDatum.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Network.CellTowerProbe">
+    <Position X="48.25" Y="38.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Network\CellTowerProbe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Network.ListeningWlanProbe">
+    <Position X="57.5" Y="38.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Network\ListeningWlanProbe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Network.PollingWlanProbe">
+    <Position X="110.75" Y="39" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAQAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Network\PollingWlanProbe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.Network.WlanDatum">
+    <Position X="104" Y="14.25" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAACAAI=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Network\WlanDatum.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.User.ProbeTriggerProperties.BooleanProbeTriggerProperty">
+    <Position X="1.25" Y="22.25" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\User\ProbeTriggerProperties\BooleanProbeTriggerProperty.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.User.ProbeTriggerProperties.ListProbeTriggerProperty">
+    <Position X="5" Y="22.25" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACAAAAAAAAAAAABAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\User\ProbeTriggerProperties\ListProbeTriggerProperty.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.User.ProbeTriggerProperties.NumberProbeTriggerProperty">
+    <Position X="9.5" Y="22.25" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\User\ProbeTriggerProperties\NumberProbeTriggerProperty.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.User.ProbeTriggerProperties.ProbeTriggerProperty">
+    <Position X="7.5" Y="19.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\User\ProbeTriggerProperties\ProbeTriggerProperty.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.User.ProbeTriggerProperties.TextProbeTriggerProperty">
+    <Position X="13.25" Y="22.25" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\User\ProbeTriggerProperties\TextProbeTriggerProperty.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.User.Prompt" Collapsed="true">
+    <Position X="121.25" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AMAA4QIAGAQAAAIEMAoAAAQAAAAAAAAAAAAAAABACAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\User\Prompt.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.User.Script" Collapsed="true">
+    <Position X="123" Y="13.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABCAAAAYIAAEAAAAgAEgAAAAAAEEAAAAAABAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\User\Script.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.User.ScriptDatum">
+    <Position X="91.5" Y="14.25" Width="5.25" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAABAACAEAAAAAAAAAAAAQAAAAAAAAAACAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\User\ScriptDatum.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.User.ScriptProbe">
+    <Position X="6" Y="34.75" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAASAAAAAAAAABAAEAAAAAAAAAIEAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\User\ScriptProbe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.User.ScriptRunner" Collapsed="true">
+    <Position X="124.75" Y="13.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EEIAIQDCACAAAJABQAQEAMUAGFEQGFAQIICBAAgoQgM=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\User\ScriptRunner.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusService.Probes.User.Trigger" Collapsed="true">
+    <Position X="124.75" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEMEAADAKADQBAAMyAQgBAAAIAkkCIAAAAACAACAEQA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\User\Trigger.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusUI.AddProximityTriggerPage" Collapsed="true">
+    <Position X="119.5" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACAAAAAAAABAAAAAAAAAAAAAAEAIAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusUI\AddProximityTriggerPage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusUI.AddScriptTriggerPage" Collapsed="true">
+    <Position X="121.25" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAIAAAAAAAQAAAAAIAAAAAAAAIAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusUI\AddScriptTriggerPage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusUI.App" Collapsed="true">
+    <Position X="128.25" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusUI\App.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusUI.DataStorePage" Collapsed="true">
+    <Position X="130" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusUI\DataStorePage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusUI.PointsOfInterestPage" Collapsed="true">
+    <Position X="128.25" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAIAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusUI\PointsOfInterestPage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusUI.ProbePage" Collapsed="true">
+    <Position X="130" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusUI\ProbePage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusUI.ProbesPage" Collapsed="true">
+    <Position X="119.5" Y="12.25" Width="1.5" />
+    <NestedTypes>
+      <Class Name="SensusUI.ProbesPage.ProbeTextValueConverter" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusUI\ProbesPage.cs</NewMemberFileName>
+        </TypeIdentifier>
+        <Lollipop Position="0.2" />
+      </Class>
+      <Class Name="SensusUI.ProbesPage.ProbeTextColorValueConverter" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusUI\ProbesPage.cs</NewMemberFileName>
+        </TypeIdentifier>
+        <Lollipop Position="0.2" />
+      </Class>
+      <Class Name="SensusUI.ProbesPage.ProbeDetailValueConverter" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusUI\ProbesPage.cs</NewMemberFileName>
+        </TypeIdentifier>
+        <Lollipop Position="0.2" />
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AQAAgAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusUI\ProbesPage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusUI.PromptPage" Collapsed="true">
+    <Position X="123" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusUI\PromptPage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusUI.PromptsPage" Collapsed="true">
+    <Position X="124.75" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAQAAAAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusUI\PromptsPage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusUI.ProtocolPage" Collapsed="true">
+    <Position X="128.25" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACAgQAAAQAABAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusUI\ProtocolPage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusUI.ProtocolsPage" Collapsed="true">
+    <Position X="130" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAABAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusUI\ProtocolsPage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusUI.ProximityTriggersPage" Collapsed="true">
+    <Position X="119.5" Y="13.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusUI\ProximityTriggersPage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusUI.ScriptRunnerPage" Collapsed="true">
+    <Position X="126.5" Y="13.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusUI\ScriptRunnerPage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusUI.ScriptRunnersPage" Collapsed="true">
+    <Position X="128.25" Y="13.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAAAAAAAAAAAAAAEAAQAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusUI\ScriptRunnersPage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusUI.ScriptTriggersPage" Collapsed="true">
+    <Position X="130" Y="13.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusUI\ScriptTriggersPage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusUI.SensusMainPage" Collapsed="true">
+    <Position X="119.5" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAAAAIAAQAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusUI\SensusMainPage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusUI.ShareLocalDataStorePage" Collapsed="true">
+    <Position X="121.25" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusUI\ShareLocalDataStorePage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusUI.UiBoundSensusServiceHelper" Collapsed="true">
+    <Position X="126.5" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAAABABAAAAAAAAAAAAAAACAAAAAAAAgAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusUI\UiBoundSensusServiceHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusUI.ViewTextLinesPage" Collapsed="true">
+    <Position X="128.25" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusUI\ViewTextLinesPage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusUI.UiProperties.DisplayStringUiProperty">
+    <Position X="40.5" Y="48" Width="3.5" />
+    <NestedTypes>
+      <Class Name="SensusUI.UiProperties.DisplayStringUiProperty.ValueConverter" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusUI\UiProperties\DisplayStringUiProperty.cs</NewMemberFileName>
+        </TypeIdentifier>
+        <Lollipop Position="0.2" />
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusUI\UiProperties\DisplayStringUiProperty.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusUI.UiProperties.DisplayYesNoUiProperty">
+    <Position X="44.75" Y="48" Width="3.5" />
+    <NestedTypes>
+      <Class Name="SensusUI.UiProperties.DisplayYesNoUiProperty.ValueConverter" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusUI\UiProperties\DisplayYesNoUiProperty.cs</NewMemberFileName>
+        </TypeIdentifier>
+        <Lollipop Position="0.2" />
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusUI\UiProperties\DisplayYesNoUiProperty.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusUI.UiProperties.EntryFloatUiProperty">
+    <Position X="49" Y="48" Width="4" />
+    <NestedTypes>
+      <Class Name="SensusUI.UiProperties.EntryFloatUiProperty.ValueConverter" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusUI\UiProperties\EntryFloatUiProperty.cs</NewMemberFileName>
+        </TypeIdentifier>
+        <Lollipop Position="0.2" />
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusUI\UiProperties\EntryFloatUiProperty.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusUI.UiProperties.EntryIntegerUiProperty">
+    <Position X="53.75" Y="48" Width="4.25" />
+    <NestedTypes>
+      <Class Name="SensusUI.UiProperties.EntryIntegerUiProperty.ValueConverter" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusUI\UiProperties\EntryIntegerUiProperty.cs</NewMemberFileName>
+        </TypeIdentifier>
+        <Lollipop Position="0.2" />
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusUI\UiProperties\EntryIntegerUiProperty.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusUI.UiProperties.EntryStringUiProperty">
+    <Position X="58.75" Y="48" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusUI\UiProperties\EntryStringUiProperty.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusUI.UiProperties.IncrementalIntegerUiProperty">
+    <Position X="63.75" Y="48" Width="7" />
+    <TypeIdentifier>
+      <HashCode>gAAAAACAAAAAAAAAIAAAIAAAAAAAAAAAAAAIAAAAAAI=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusUI\UiProperties\IncrementalIntegerUiProperty.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusUI.UiProperties.ListUiProperty">
+    <Position X="30.5" Y="48" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACAAAAAAAAAAAABAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusUI\UiProperties\ListUiProperty.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusUI.UiProperties.OnOffUiProperty">
+    <Position X="35.75" Y="48" Width="4" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusUI\UiProperties\OnOffUiProperty.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SensusUI.UiProperties.UiProperty">
+    <Position X="49" Y="44.25" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACAAAAACAAAAAAAAACAAgAAAAAAAACAIAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusUI\UiProperties\UiProperty.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sensus.Android.TextCellRendererFix" Collapsed="true">
+    <Position X="123" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AndroidExportRendererFix.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sensus.Android.AndroidMainActivity" Collapsed="true">
+    <Position X="126.5" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAKBCCgBAgAQACEEAGBACAUAAEAgCBAAAAA=</HashCode>
+      <FileName>AndroidMainActivity.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sensus.Android.AndroidSensusService" Collapsed="true">
+    <Position X="130" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAIAAAAAAEABAACAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AndroidSensusService.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sensus.Android.AndroidSensusServiceBinder" Collapsed="true">
+    <Position X="119.5" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAEAQAAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>AndroidSensusServiceBinder.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sensus.Android.AndroidSensusServiceBootStarter" Collapsed="true">
+    <Position X="121.25" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AndroidSensusServiceBootStarter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sensus.Android.AndroidSensusServiceConnection" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="123" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAQAAAAABAAgAAgAAAAAAAAAAAAAAABAAAAA=</HashCode>
+      <FileName>AndroidSensusServiceConnection.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Sensus.Android.AndroidSensusServiceHelper">
+    <Position X="2" Y="77.75" Width="7.5" />
+    <TypeIdentifier>
+      <HashCode>gAAABALSRKAAAERQQgCCgAAABAAGUFAcMAACNABAoAA=</HashCode>
+      <FileName>AndroidSensusServiceHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sensus.Android.AndroidServiceConnectedEventArgs" Collapsed="true">
+    <Position X="124.75" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AndroidServiceConnectedEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sensus.Android.AndroidTextToSpeech" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="121.25" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAKCEAAAAEQAAQAAAAAAACAQAgAAAACAAAAA=</HashCode>
+      <FileName>AndroidTextToSpeech.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Sensus.Android.Resource" Collapsed="true">
+    <Position X="121.25" Y="13.25" Width="1.5" />
+    <NestedTypes>
+      <Class Name="Sensus.Android.Resource.Id" Collapsed="true">
+        <TypeIdentifier />
+      </Class>
+      <Class Name="Sensus.Android.Resource.Drawable" Collapsed="true">
+        <TypeIdentifier />
+      </Class>
+      <Class Name="Sensus.Android.Resource.Dimension" Collapsed="true">
+        <TypeIdentifier />
+      </Class>
+      <Class Name="Sensus.Android.Resource.Attribute" Collapsed="true">
+        <TypeIdentifier />
+      </Class>
+      <Class Name="Sensus.Android.Resource.String" Collapsed="true">
+        <TypeIdentifier />
+      </Class>
+      <Class Name="Sensus.Android.Resource.Xml" Collapsed="true">
+        <TypeIdentifier />
+      </Class>
+      <Class Name="Sensus.Android.Resource.Layout" Collapsed="true">
+        <TypeIdentifier />
+      </Class>
+      <Class Name="Sensus.Android.Resource.Styleable" Collapsed="true">
+        <TypeIdentifier />
+      </Class>
+      <Class Name="Sensus.Android.Resource.Color" Collapsed="true">
+        <TypeIdentifier />
+      </Class>
+      <Class Name="Sensus.Android.Resource.Style" Collapsed="true">
+        <TypeIdentifier />
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sensus.Android.Probes.AndroidSensorListener" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="128.25" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAEAgAAECAAAQAUAABAAEAAAAAACAAAIAAAAAAAIAA=</HashCode>
+      <FileName>Probes\AndroidSensorListener.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Sensus.Android.Probes.Apps.AndroidFacebookProbe">
+    <Position X="77.75" Y="42.5" Width="4.5" />
+    <NestedTypes>
+      <Class Name="Sensus.Android.Probes.Apps.AndroidFacebookProbe.FacebookCallback&lt;TResult&gt;" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Probes\Apps\AndroidFacebookProbe.cs</NewMemberFileName>
+        </TypeIdentifier>
+        <Lollipop Position="0.2" />
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAAAAAAAAEAACAACAAAAAAAAAIAAAg=</HashCode>
+      <FileName>Probes\Apps\AndroidFacebookProbe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sensus.Android.Probes.Apps.AndroidRunningAppsProbe">
+    <Position X="93.75" Y="43" Width="5.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAEAA=</HashCode>
+      <FileName>Probes\Apps\AndroidRunningAppsProbe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sensus.Android.Probes.Communication.AndroidSmsIncomingBroadcastReceiver" Collapsed="true">
+    <Position X="126.5" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAQAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Probes\Communication\AndroidSmsIncomingBroadcastReceiver.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sensus.Android.Probes.Communication.AndroidSmsOutgoingObserver" Collapsed="true">
+    <Position X="128.25" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQACBAAAAAAAAAAAAAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>Probes\Communication\AndroidSmsOutgoingObserver.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sensus.Android.Probes.Communication.AndroidSmsProbe">
+    <Position X="52.25" Y="40.75" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAAAAAAAAAAAAAACAAAAACAECAAAIA=</HashCode>
+      <FileName>Probes\Communication\AndroidSmsProbe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sensus.Android.Probes.Communication.AndroidTelephonyIdleIncomingListener" Collapsed="true">
+    <Position X="130" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAIIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Probes\Communication\AndroidTelephonyIdleIncomingListener.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sensus.Android.Probes.Communication.AndroidTelephonyOutgoingBroadcastReceiver" Collapsed="true">
+    <Position X="119.5" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Probes\Communication\AndroidTelephonyOutgoingBroadcastReceiver.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sensus.Android.Probes.Communication.AndroidTelephonyProbe">
+    <Position X="61.75" Y="40.75" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAAAAAAAQAAAAAAAAAIAAAAAAAAAAAAECAAAIA=</HashCode>
+      <FileName>Probes\Communication\AndroidTelephonyProbe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sensus.Android.Probes.Context.AndroidBluetoothBroadcastReceiver" Collapsed="true">
+    <Position X="123" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Probes\Context\AndroidBluetoothBroadcastReceiver.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe">
+    <Position X="11.25" Y="40.75" Width="4.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAEAAAAIA=</HashCode>
+      <FileName>Probes\Context\AndroidBluetoothDeviceProximityProbe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sensus.Android.Probes.Context.AndroidLightProbe">
+    <Position X="20.5" Y="40.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAEAAAAIg=</HashCode>
+      <FileName>Probes\Context\AndroidLightProbe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sensus.Android.Probes.Context.AndroidSoundProbe">
+    <Position X="83.25" Y="42.5" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Probes\Context\AndroidSoundProbe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sensus.Android.Probes.Device.AndroidBatteryProbe">
+    <Position X="100.25" Y="41.5" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Probes\Device\AndroidBatteryProbe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sensus.Android.Probes.Device.AndroidScreenProbe">
+    <Position X="105.5" Y="41.5" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAACAAAAAAAAAAAAACAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Probes\Device\AndroidScreenProbe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sensus.Android.Probes.Location.AndroidAltitudeProbe">
+    <Position X="16.75" Y="40.75" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAEIAAAIA=</HashCode>
+      <FileName>Probes\Location\AndroidAltitudeProbe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sensus.Android.Probes.Location.AndroidCompassProbe">
+    <Position X="24" Y="40.75" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAgAAAAQABAAAAAAAAAAAAiAACAAAAkAhAAIA=</HashCode>
+      <FileName>Probes\Location\AndroidCompassProbe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sensus.Android.Probes.Movement.AndroidAccelerometerProbe">
+    <Position X="28" Y="40.75" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAAAAAQAAAAABAAAAAAAAAAAAAAAAEAgAAIA=</HashCode>
+      <FileName>Probes\Movement\AndroidAccelerometerProbe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sensus.Android.Probes.Network.AndroidCellTowerChangeListener" Collapsed="true">
+    <Position X="124.75" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Probes\Network\AndroidCellTowerChangeListener.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sensus.Android.Probes.Network.AndroidCellTowerProbe">
+    <Position X="47.5" Y="40.75" Width="4" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAAAAAAAAAAAAAAIAAAAAAAECAAAIA=</HashCode>
+      <FileName>Probes\Network\AndroidCellTowerProbe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sensus.Android.Probes.Network.AndroidWlanBroadcastReceiver" Collapsed="true">
+    <Position X="123" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAABAAAAAAAQAEAAAAAAAAAAAAAAAAAAIAAAAAAAAAI=</HashCode>
+      <FileName>Probes\Network\AndroidWlanBroadcastReceiver.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sensus.Android.Probes.Network.AndroidListeningWlanProbe">
+    <Position X="56.75" Y="40.75" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAIA=</HashCode>
+      <FileName>Probes\Network\AndroidWlanProbe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="SensusService.Probes.Location.IPointsOfInterestProximityProbe" Collapsed="true">
+    <Position X="119.5" Y="15.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAABACAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Location\IPointsOfInterestProximityProbe.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="SensusService.LoggingLevel" Collapsed="true">
+    <Position X="121.25" Y="16.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAIAAAIAAAAAAAAAAAAAIAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\LoggingLevel.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SensusService.Probes.Communication.TelephonyState" Collapsed="true">
+    <Position X="128.25" Y="16.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABABAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Communication\TelephonyState.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SensusService.Probes.Location.ProximityThresholdDirection" Collapsed="true">
+    <Position X="126.5" Y="16.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Location\ProximityThresholdDirection.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SensusService.Probes.User.PromptInputType" Collapsed="true">
+    <Position X="123" Y="16.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAEAAAg=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\User\PromptInputType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SensusService.Probes.User.PromptOutputType" Collapsed="true">
+    <Position X="124.75" Y="16.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAg=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\User\PromptOutputType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SensusService.Probes.User.TriggerValueCondition" Collapsed="true">
+    <Position X="130" Y="16.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAQBAACA=</HashCode>
+      <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\User\TriggerValueCondition.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Sensus.Android.AndroidActivityResultRequestCode" Collapsed="true">
+    <Position X="119.5" Y="16.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAQAAAA=</HashCode>
+      <FileName>AndroidActivityResultRequestCode.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

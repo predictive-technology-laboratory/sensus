@@ -36,7 +36,7 @@ namespace SensusUI
             {
                 Orientation = StackOrientation.Vertical,
                 VerticalOptions = LayoutOptions.FillAndExpand
-            };            
+            };
 
             Label statusLabel = new Label
             {
@@ -60,20 +60,20 @@ namespace SensusUI
                 FontSize = 20,
                 HorizontalOptions = LayoutOptions.FillAndExpand
             };
-                        
+
             cancelButton.Clicked += async (o, e) =>
             {
                 await Navigation.PopAsync();
             };
 
             contentLayout.Children.Add(cancelButton);
-                                      
-            new Thread(async () =>
-                {                    
+
+            new Thread(() =>
+                {
                     string sharePath = UiBoundSensusServiceHelper.Get(true).GetSharePath(".json");
                     bool errorWritingShareFile = false;
                     try
-                    {              
+                    {
                         Device.BeginInvokeOnMainThread(() => statusLabel.Text = "Gathering data...");
                         List<Datum> localData = localDataStore.GetDataForRemoteDataStore(_cancellationTokenSource.Token, progress =>
                             {
@@ -81,7 +81,7 @@ namespace SensusUI
                                     {
                                         progressBar.ProgressTo(progress, 250, Easing.Linear);
                                     });
-                            });                                
+                            });
 
                         if (!_cancellationTokenSource.IsCancellationRequested)
                         {
@@ -90,7 +90,7 @@ namespace SensusUI
                                     progressBar.ProgressTo(0, 0, Easing.Linear);
                                     statusLabel.Text = "Writing data to file...";
                                 });
-                            
+
                             using (StreamWriter shareFile = new StreamWriter(sharePath))
                             {
                                 int dataWritten = 0;
@@ -98,7 +98,7 @@ namespace SensusUI
                                 {
                                     if (_cancellationTokenSource.IsCancellationRequested)
                                         break;
-                                    
+
                                     shareFile.WriteLine(localDatum.GetJSON(localDataStore.Protocol.JsonAnonymizer));
 
                                     if ((++dataWritten % (localData.Count / 10)) == 0)
@@ -115,32 +115,30 @@ namespace SensusUI
                         string message = "Error writing share file:  " + ex.Message;
                         UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync(message);
                         UiBoundSensusServiceHelper.Get(true).Logger.Log(message, LoggingLevel.Normal, GetType());
-                        await Navigation.PopAsync();
                     }
 
-                    if (_cancellationTokenSource.IsCancellationRequested)
-                    {
-                        try
+                    Device.BeginInvokeOnMainThread(async () =>
                         {
-                            File.Delete(sharePath);
-                        }
-                        catch (Exception)
-                        {
-                        }
-                    }
-                    else if (!errorWritingShareFile)
-                    {
-                        Device.BeginInvokeOnMainThread(async () => 
+                            await Navigation.PopAsync();
+
+                            if (_cancellationTokenSource.IsCancellationRequested)
                             {
-                                await Navigation.PopAsync();
+                                try
+                                {
+                                    File.Delete(sharePath);
+                                }
+                                catch (Exception)
+                                {
+                                }
+                            }
+                            else if (!errorWritingShareFile)
                                 UiBoundSensusServiceHelper.Get(true).ShareFileAsync(sharePath, "Sensus Data");
-                            });
-                    }
+                        });
 
                 }).Start();
 
             Content = new ScrollView
-            { 
+            {
                 Content = contentLayout
             };
         }

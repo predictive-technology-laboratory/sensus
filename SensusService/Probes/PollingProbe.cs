@@ -70,8 +70,8 @@ namespace SensusService.Probes
                 string userNotificationMessage = DisplayName + " data requested.";
                 #elif __ANDROID__
                 string userNotificationMessage = null;
-                #elif __WINDOWS_PHONE__
-                TODO:  Should we use a message?
+                #elif WINDOWS_PHONE
+                string userNotificationMessage = null; // TODO:  Should we use a message?
                 #endif
 
                 _pollCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(cancellationToken =>
