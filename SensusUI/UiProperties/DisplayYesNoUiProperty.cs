@@ -18,6 +18,9 @@ using Xamarin.Forms;
 
 namespace SensusUI.UiProperties
 {
+    /// <summary>
+    /// Decorated members should be rendered as display-only yes/no values.
+    /// </summary>
     public class DisplayYesNoUiProperty : UiProperty
     {
         public class ValueConverter : IValueConverter

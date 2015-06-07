@@ -24,6 +24,9 @@ using Xamarin.Forms;
 
 namespace SensusUI
 {
+    /// <summary>
+    /// Allows the user to add a script trigger to a script runner.
+    /// </summary>
     public class AddScriptTriggerPage : ContentPage
     {
         private ScriptRunner _scriptRunner;
@@ -32,6 +35,10 @@ namespace SensusUI
         private TriggerValueCondition _selectedCondition;
         private object _conditionValue;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SensusUI.AddScriptTriggerPage"/> class.
+        /// </summary>
+        /// <param name="scriptRunner">Script runner to add trigger to.</param>
         public AddScriptTriggerPage(ScriptRunner scriptRunner)
         {
             _scriptRunner = scriptRunner;

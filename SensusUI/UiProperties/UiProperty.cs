@@ -20,9 +20,18 @@ using Xamarin.Forms;
 
 namespace SensusUI.UiProperties
 {
+    /// <summary>
+    /// Attribute used to declare that a property should be rendered within the UI.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public abstract class UiProperty : Attribute
     {
+        /// <summary>
+        /// Gets a list of StackLayout objects associated with properties in an object that have been 
+        /// decorated with a UiProperty attribute.
+        /// </summary>
+        /// <returns>The property stacks.</returns>
+        /// <param name="o">Object to get StackLayouts for.</param>
         public static List<StackLayout> GetPropertyStacks(object o)
         {
             List<StackLayout> propertyStacks = new List<StackLayout>();

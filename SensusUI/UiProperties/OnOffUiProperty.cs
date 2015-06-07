@@ -14,6 +14,9 @@
 
 namespace SensusUI.UiProperties
 {
+    /// <summary>
+    /// Decorated members should be rendered as On/Off values.
+    /// </summary>
     public class OnOffUiProperty : UiProperty
     {
         public OnOffUiProperty(string labelText, bool editable, int order)

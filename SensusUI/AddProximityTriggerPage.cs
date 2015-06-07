@@ -23,6 +23,9 @@ using SensusService.Probes.Location;
 
 namespace SensusUI
 {
+    /// <summary>
+    /// Allows the user to add a proximity trigger to a proximity probe.
+    /// </summary>
     public class AddProximityTriggerPage : ContentPage
     {
         private IPointsOfInterestProximityProbe _proximityProbe;
@@ -31,6 +34,10 @@ namespace SensusUI
         private double _distanceThresholdMeters;
         private ProximityThresholdDirection _thresholdDirection;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SensusUI.AddProximityTriggerPage"/> class.
+        /// </summary>
+        /// <param name="proximityProbe">Proximity probe to add trigger to.</param>
         public AddProximityTriggerPage(IPointsOfInterestProximityProbe proximityProbe)
         {
             _proximityProbe = proximityProbe;

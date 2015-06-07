@@ -24,8 +24,18 @@ using Xamarin.Forms;
 
 namespace SensusUI
 {
+    /// <summary>
+    /// Displays a data store.
+    /// </summary>
     public class DataStorePage : ContentPage
     {        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SensusUI.DataStorePage"/> class.
+        /// </summary>
+        /// <param name="protocol">Protocol to which data store is to be bound.</param>
+        /// <param name="dataStore">Data store to display.</param>
+        /// <param name="local">If set to <c>true</c>, the data store will be treated as a local data store.</param>
+        /// <param name="newDataStore">If set to <c>true</c>, the data store will be treated as a new data store.</param>
         public DataStorePage(Protocol protocol, DataStore dataStore, bool local, bool newDataStore)
         {
             Title = (local ? "Local" : "Remote") + " Data Store";

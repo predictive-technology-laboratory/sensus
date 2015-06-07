@@ -20,11 +20,18 @@ using System.Collections.ObjectModel;
 
 namespace SensusUI
 {
+    /// <summary>
+    /// Displays a list of prompts.
+    /// </summary>
     public class PromptsPage : ContentPage
     {
         private ObservableCollection<Prompt> _prompts;
         private ListView _promptsList;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SensusUI.PromptsPage"/> class.
+        /// </summary>
+        /// <param name="prompts">Prompts to display.</param>
         public PromptsPage(ObservableCollection<Prompt> prompts)
         {
             _prompts = prompts;

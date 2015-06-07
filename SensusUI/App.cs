@@ -17,6 +17,9 @@ using Xamarin.Forms;
 
 namespace SensusUI
 {
+    /// <summary>
+    /// Xamarin Forms App, which abstracts some of the life cycle events.
+    /// </summary>
     public class App : Application
     {
         public SensusMainPage _sensusMainPage;

@@ -25,11 +25,18 @@ using Xamarin.Forms;
 
 namespace SensusUI
 {
+    /// <summary>
+    /// Displays a single protocol.
+    /// </summary>
     public class ProtocolPage : ContentPage
     {
         private Protocol _protocol;
         private EventHandler<bool> _protocolRunningChangedAction;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SensusUI.ProtocolPage"/> class.
+        /// </summary>
+        /// <param name="protocol">Protocol to display.</param>
         public ProtocolPage(Protocol protocol)
         {
             _protocol = protocol;

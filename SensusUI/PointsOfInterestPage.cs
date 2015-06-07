@@ -23,11 +23,19 @@ using Xamarin.Geolocation;
 
 namespace SensusUI
 {
+    /// <summary>
+    /// Displays points of interest, allowing the user to add/delete them.
+    /// </summary>
     public class PointsOfInterestPage : ContentPage
     {
         private List<PointOfInterest> _pointsOfInterest;
         private ListView _pointsOfInterestList;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SensusUI.PointsOfInterestPage"/> class.
+        /// </summary>
+        /// <param name="pointsOfInterest">Points of interest to display.</param>
+        /// <param name="changeCallback">Called when a POI is added/deleted.</param>
         public PointsOfInterestPage(List<PointOfInterest> pointsOfInterest, Action changeCallback)
         {
             _pointsOfInterest = pointsOfInterest;

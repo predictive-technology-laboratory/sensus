@@ -20,8 +20,15 @@ using System.Collections.Generic;
 
 namespace SensusUI
 {
+    /// <summary>
+    /// Displays a script runner, allowing the user to edit its prompts and triggers.
+    /// </summary>
     public class ScriptRunnerPage : ContentPage
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SensusUI.ScriptRunnerPage"/> class.
+        /// </summary>
+        /// <param name="scriptRunner">Script runner to display.</param>
         public ScriptRunnerPage(ScriptRunner scriptRunner)
         {
             Title = "Script";                  

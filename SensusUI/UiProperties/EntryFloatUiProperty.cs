@@ -17,6 +17,9 @@ using Xamarin.Forms;
 
 namespace SensusUI.UiProperties
 {
+    /// <summary>
+    /// Decorated members should be rendered as editable floating-point values.
+    /// </summary>
     public class EntryFloatUiProperty : UiProperty
     {
         public class ValueConverter : IValueConverter

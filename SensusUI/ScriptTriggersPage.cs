@@ -18,8 +18,15 @@ using Xamarin.Forms;
 
 namespace SensusUI
 {
+    /// <summary>
+    /// Displays  triggers for a script runner.
+    /// </summary>
     public class ScriptTriggersPage : ContentPage
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SensusUI.ScriptTriggersPage"/> class.
+        /// </summary>
+        /// <param name="scriptRunner">Script runner to display.</param>
         public ScriptTriggersPage(ScriptRunner scriptRunner)
         {
             Title = "Script Triggers";

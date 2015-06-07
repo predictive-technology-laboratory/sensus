@@ -28,10 +28,14 @@ using SensusService.Probes.Location;
 namespace SensusUI
 {
     /// <summary>
-    /// Displays properties for a single probe.
+    /// Displays a single probe.
     /// </summary>
     public class ProbePage : ContentPage
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SensusUI.ProbePage"/> class.
+        /// </summary>
+        /// <param name="probe">Probe to display.</param>
         public ProbePage(Probe probe)
         {
             Title = "Probe";

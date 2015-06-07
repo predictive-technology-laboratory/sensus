@@ -20,8 +20,15 @@ using SensusService.Probes.User;
 
 namespace SensusUI
 {
+    /// <summary>
+    /// Displays a prompt.
+    /// </summary>
     public class PromptPage : ContentPage
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SensusUI.PromptPage"/> class.
+        /// </summary>
+        /// <param name="prompt">Prompt to display.</param>
         public PromptPage(Prompt prompt)
         {
             Title = "Prompt";

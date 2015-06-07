@@ -14,6 +14,9 @@
 
 namespace SensusUI.UiProperties
 {
+    /// <summary>
+    /// Decorated members should be rendered as lists.
+    /// </summary>
     public class ListUiProperty : UiProperty
     {
         private object[] _items;

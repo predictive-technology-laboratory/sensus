@@ -19,11 +19,18 @@ using Xamarin.Forms;
 
 namespace SensusUI
 {
+    /// <summary>
+    /// Displays script runners for a script probe.
+    /// </summary>
     public class ScriptRunnersPage : ContentPage
     {
         private ScriptProbe _probe;
         private ListView _scriptRunnersList;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SensusUI.ScriptRunnersPage"/> class.
+        /// </summary>
+        /// <param name="probe">Probe to display.</param>
         public ScriptRunnersPage(ScriptProbe probe)
         {
             _probe = probe;

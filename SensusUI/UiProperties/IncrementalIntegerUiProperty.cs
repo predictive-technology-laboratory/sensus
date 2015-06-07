@@ -14,6 +14,9 @@
 
 namespace SensusUI.UiProperties
 {
+    /// <summary>
+    /// Decorated members should be rendered as incrementable integer values.
+    /// </summary>
     public abstract class IncrementalIntegerUiProperty : UiProperty
     {
         private int _minimum;

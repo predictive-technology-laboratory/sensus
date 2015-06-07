@@ -20,6 +20,9 @@ using Xamarin.Forms;
 
 namespace SensusUI
 {
+    /// <summary>
+    /// Displays a list of probes for a protocol.
+    /// </summary>
     public class ProbesPage : ContentPage
     {
         private class ProbeTextValueConverter : IValueConverter
@@ -75,6 +78,10 @@ namespace SensusUI
         private Protocol _protocol;
         private ListView _probesList;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SensusUI.ProbesPage"/> class.
+        /// </summary>
+        /// <param name="protocol">Protocol to display probes for.</param>
         public ProbesPage(Protocol protocol)
         {
             _protocol = protocol;

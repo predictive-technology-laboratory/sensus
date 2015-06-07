@@ -22,10 +22,19 @@ using System.Collections.Generic;
 
 namespace SensusUI
 {
+    /// <summary>
+    /// Displays the progress of sharing a local data store. Data must be collected and written to a file
+    /// that is shared, and this could take some time. This gives the user something to look at while
+    /// these things happen.
+    /// </summary>
     public class ShareLocalDataStorePage : ContentPage
     {
         private CancellationTokenSource _cancellationTokenSource;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SensusUI.ShareLocalDataStorePage"/> class.
+        /// </summary>
+        /// <param name="localDataStore">Local data store to display.</param>
         public ShareLocalDataStorePage(LocalDataStore localDataStore)
         {
             _cancellationTokenSource = new CancellationTokenSource();
@@ -73,7 +82,8 @@ namespace SensusUI
                     string sharePath = UiBoundSensusServiceHelper.Get(true).GetSharePath(".json");
                     bool errorWritingShareFile = false;
                     try
-                    {              
+                    {     
+                        // step 1:  gather data.
                         Device.BeginInvokeOnMainThread(() => statusLabel.Text = "Gathering data...");
                         List<Datum> localData = localDataStore.GetDataForRemoteDataStore(_cancellationTokenSource.Token, progress =>
                             {
@@ -83,6 +93,7 @@ namespace SensusUI
                                     });
                             });                                
 
+                        // step 2:  write gathered data to file.
                         if (!_cancellationTokenSource.IsCancellationRequested)
                         {
                             Device.BeginInvokeOnMainThread(() =>

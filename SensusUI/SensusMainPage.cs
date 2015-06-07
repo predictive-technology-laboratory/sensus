@@ -20,7 +20,7 @@ using System.Collections.Generic;
 namespace SensusUI
 {
     /// <summary>
-    /// Main Sensus page. First thing the user sees.
+    /// First thing the user sees.
     /// </summary>
     public class SensusMainPage : ContentPage
     {

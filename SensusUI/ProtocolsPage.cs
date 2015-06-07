@@ -20,6 +20,9 @@ using Xamarin.Forms;
 
 namespace SensusUI
 {
+    /// <summary>
+    /// Displays all protocols.
+    /// </summary>
     public class ProtocolsPage : ContentPage
     {
         private ListView _protocolsList;

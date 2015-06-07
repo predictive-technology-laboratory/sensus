@@ -18,6 +18,9 @@ using Xamarin.Forms;
 
 namespace SensusUI.UiProperties
 {
+    /// <summary>
+    /// Decorated members should be rendered as display-only text.
+    /// </summary>
     public class DisplayStringUiProperty : UiProperty
     {
         public class ValueConverter : IValueConverter

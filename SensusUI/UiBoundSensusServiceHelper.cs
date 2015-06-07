@@ -18,6 +18,11 @@ using System.Threading;
 
 namespace SensusUI
 {
+    /// <summary>
+    /// Provides a means for the UI to access the underlying service helper object. This is set when the app starts
+    /// up. Some platforms (e.g., Android) formally separate the UI from the model classes, and this class accommodates
+    /// such a constraint.
+    /// </summary>
     public static class UiBoundSensusServiceHelper
     {
         private static SensusServiceHelper SENSUS_SERVICE_HELPER;
@@ -28,6 +33,7 @@ namespace SensusUI
         {
             lock (GET_SENSUS_SERVICE_HELPER_LOCKER)
             {
+                // the helper might be set from another thread, so we can wait for it here.
                 if (SENSUS_SERVICE_HELPER == null && wait && !SENSUS_SERVICE_HELPER_WAIT.WaitOne(30000))
                     throw new SensusException("Sensus UI failed to bind to service.");
 
@@ -39,6 +45,7 @@ namespace SensusUI
         {
             SENSUS_SERVICE_HELPER = sensusServiceHelper;
 
+            // the helper is set to null, e.g., when the app is stopped.
             if (SENSUS_SERVICE_HELPER == null)
                 SENSUS_SERVICE_HELPER_WAIT.Reset();
             else

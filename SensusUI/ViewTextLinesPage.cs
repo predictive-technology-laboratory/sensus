@@ -20,8 +20,17 @@ using Xamarin.Forms;
 
 namespace SensusUI
 {
+    /// <summary>
+    /// Displays lines of text.
+    /// </summary>
     public class ViewTextLinesPage : ContentPage
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SensusUI.ViewTextLinesPage"/> class.
+        /// </summary>
+        /// <param name="title">Title of page.</param>
+        /// <param name="lines">Lines to display.</param>
+        /// <param name="clearCallback">Called when the user clicks the Clear button.</param>
         public ViewTextLinesPage(string title, List<string> lines, Action clearCallback)
         {
             Title = title;

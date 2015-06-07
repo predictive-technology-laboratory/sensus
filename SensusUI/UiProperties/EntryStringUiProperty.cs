@@ -14,6 +14,9 @@
 
 namespace SensusUI.UiProperties
 {
+    /// <summary>
+    /// Decorated members should be rendered as editable strings.
+    /// </summary>
     public class EntryStringUiProperty : UiProperty
     {
         public EntryStringUiProperty(string labelText, bool editable, int order)
