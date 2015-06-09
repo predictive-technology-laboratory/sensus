@@ -34,13 +34,42 @@ namespace SensusService
     /// </summary>
     public abstract class SensusServiceHelper : IDisposable
     {
+        /// <summary>
+        /// Encapsulates information needed to run a scheduled callback.
+        /// </summary>
         private class ScheduledCallback
         {
+            /// <summary>
+            /// Action to invoke.
+            /// </summary>
+            /// <value>The action.</value>
             public Action<CancellationToken> Action { get; set; }
+
+            /// <summary>
+            /// Name of callback.
+            /// </summary>
+            /// <value>The name.</value>
             public string Name { get; set; }
+
+            /// <summary>
+            /// Source of cancellation tokens when Action is invoked.
+            /// </summary>
+            /// <value>The canceller.</value>
             public CancellationTokenSource Canceller { get; set; }
+
+            /// <summary>
+            /// Notification message that should be displayed to the user when the callback is invoked.
+            /// </summary>
+            /// <value>The user notification message.</value>
             public string UserNotificationMessage { get; set; }
 
+            /// <summary>
+            /// Initializes a new instance of the <see cref="SensusService.SensusServiceHelper+ScheduledCallback"/> class.
+            /// </summary>
+            /// <param name="action">Action.</param>
+            /// <param name="name">Name.</param>
+            /// <param name="canceller">Canceller.</param>
+            /// <param name="userNotificationMessage">User notification message.</param>
             public ScheduledCallback(Action<CancellationToken> action, string name, CancellationTokenSource canceller, string userNotificationMessage)
             {
                 Action = action;
@@ -83,7 +112,7 @@ namespace SensusService
         /// <summary>
         /// Initializes the sensus service helper. Must be called when app first starts, from the main / UI thread.
         /// </summary>
-        /// <param name="createNew">Create new.</param>
+        /// <param name="createNew">Function for creating a new service helper, if one is needed.</param>
         public static void Initialize(Func<SensusServiceHelper> createNew)
         {
             try
@@ -141,7 +170,7 @@ namespace SensusService
         /// <summary>
         /// Reads all bytes from a file. There's a File.ReadAllBytes method in Android / iOS, but not in WinPhone.
         /// </summary>
-        /// <returns>The all bytes.</returns>
+        /// <returns>The bytes.</returns>
         /// <param name="path">Path.</param>
         public static byte[] ReadAllBytes(string path)
         {
@@ -219,15 +248,15 @@ namespace SensusService
 
         private bool _stopped;
         private Logger _logger;
-        private ObservableCollection<Protocol> _registeredProtocols;
-        private List<string> _runningProtocolIds;
+        private ObservableCollection<Protocol> _registeredProtocols;  // protocol defined for the sensus app
+        private List<string> _runningProtocolIds;                     // which protocols should be running right now?
         private string _healthTestCallbackId;
         private int _healthTestDelayMS;
         private int _healthTestCount;
         private int _healthTestsPerProtocolReport;
         private Dictionary<string, ScheduledCallback> _idCallback;
         private SHA256Managed _hasher;
-        private List<PointOfInterest> _pointsOfInterest;
+        private List<PointOfInterest> _pointsOfInterest;  // points of interest defined at the sensus app level
 
         private readonly object _locker = new object();
 
@@ -339,8 +368,10 @@ namespace SensusService
 
             #if DEBUG
             LoggingLevel loggingLevel = LoggingLevel.Debug;
-            #else
+            #elif RELEASE
             LoggingLevel loggingLevel = LoggingLevel.Normal;
+            #else
+            #error "Unrecognized compilation mode."
             #endif
 
             _logger = new Logger(LOG_PATH, loggingLevel, Console.Error);
@@ -379,7 +410,7 @@ namespace SensusService
             return hashBuilder.ToString();
         }
 
-        #region platform-specific methods
+        #region platform-specific methods. this functionality cannot be implemented in a cross-platform way. it must be done separately for each platform.
         protected abstract void InitializeXamarinInsights();
 
         protected abstract void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, string userNotificationMessage);
@@ -691,6 +722,13 @@ namespace SensusService
                 });
         }
 
+        /// <summary>
+        /// The user can enable all probes at once. When this is done, it doesn't make sense to enable, e.g., the
+        /// listening location probe as well as the polling location probe. This method allows the platforms to
+        /// decide which probes to enable when enabling all probes.
+        /// </summary>
+        /// <returns><c>true</c>, if probe should be enabled, <c>false</c> otherwise.</returns>
+        /// <param name="probe">Probe.</param>
         public abstract bool EnableProbeWhenEnablingAll(Probe probe);
 
         public void TestHealth(CancellationToken cancellationToken)

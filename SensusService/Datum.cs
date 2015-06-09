@@ -32,7 +32,7 @@ namespace SensusService
         {
             TypeNameHandling = TypeNameHandling.All,
             ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-            NullValueHandling = NullValueHandling.Ignore
+            NullValueHandling = NullValueHandling.Ignore  // datum objects can be anonymized by omitting values. this is accomplished by setting them to null, which means they aren't even rendered into JSON given this option.
         };
 
         public static Datum FromJSON(string json)

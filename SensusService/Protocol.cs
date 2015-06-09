@@ -33,7 +33,7 @@ using SensusService.Exceptions;
 namespace SensusService
 {
     /// <summary>
-    /// Self-contained sensing design, comprising probes and data stores.
+    /// Container for probes, data stores, and all other information needed to run a collection experiment.
     /// </summary>
     public class Protocol
     {
