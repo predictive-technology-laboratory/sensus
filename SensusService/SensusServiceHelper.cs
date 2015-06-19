@@ -26,6 +26,7 @@ using SensusUI.UiProperties;
 using Xamarin;
 using Xamarin.Geolocation;
 using System.Collections.ObjectModel;
+using SensusUI;
 
 namespace SensusService
 {
@@ -720,6 +721,11 @@ namespace SensusService
             FlashNotificationAsync(message, () =>
                 {
                 });
+        }
+
+        public void PromptForInputsAsync(string windowTitle, List<string> labels, List<Tuple<PromptForInputsPage.InputType, List<object>>> inputTypesOptions, Action<List<object>> callback)
+        {
+
         }
 
         /// <summary>
