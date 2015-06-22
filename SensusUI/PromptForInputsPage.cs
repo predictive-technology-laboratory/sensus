@@ -17,25 +17,14 @@ using Xamarin.Forms;
 using System.Collections.Generic;
 using SensusService.Exceptions;
 using System.Linq;
+using SensusUI.Inputs;
 
 namespace SensusUI
 {
     public class PromptForInputsPage : ContentPage
     {
-        public enum InputType
+        public PromptForInputsPage(string title, List<Input> inputs, Action<List<object>> callback)
         {
-            Text,
-            YesNo,
-            NumberSlider,
-            NumberEntry,
-            ItemPicker
-        }
-
-        public PromptForInputsPage(string title, List<string> labels, List<Tuple<InputType, List<object>>> inputTypesOptions, Action<List<object>> callback)
-        {
-            if (labels == null || inputTypesOptions == null || labels.Count != inputTypesOptions.Count)
-                throw new SensusException("Invalid construction of PromptForInputsPage.");
-            
             Title = title;
 
             StackLayout contentLayout = new StackLayout
@@ -46,92 +35,64 @@ namespace SensusUI
 
             List<Func<object>> inputRetrievers = new List<Func<object>>();
 
-            for (int i = 0; i < labels.Count; ++i)
+            foreach (Input input in inputs)
             {
-                string label = labels[i];
-                Tuple<InputType, List<object>> inputTypeOptions = inputTypesOptions[i];
 
-                View inputView = null;
                 Func<object> inputRetriever = null;
 
-                if (inputTypeOptions.Item1 == InputType.ItemPicker)
+                if (input is ItemPickerInput)
                 {
-                    Picker picker = new Picker
-                    {
-                        HorizontalOptions = LayoutOptions.FillAndExpand,
-                    };
-
-                    foreach (string s in inputTypeOptions.Item2)
-                        picker.Items.Add(s);
-
-                    inputView = picker;
+                    Picker picker = input.View as Picker;
                     inputRetriever = new Func<object>(() => picker.SelectedIndex >= 0 ? picker.Items[picker.SelectedIndex] : null);
                 }
-                if (inputTypeOptions.Item1 == InputType.NumberEntry)
-                {
-                    Entry entry = new Entry
-                    {
-                        Keyboard = Keyboard.Numeric,
-                        HorizontalOptions = LayoutOptions.FillAndExpand
-                    };
-
-                    inputView = entry;
+                else if (input is NumberEntryInput)
+                {                    
+                    Entry entry = input.View as Entry;
                     inputRetriever = new Func<object>(() =>
                         {
                             int value;
                             int.TryParse(entry.Text, out value);
-
                             return value;
                         });
                 }
-                else if (inputTypeOptions.Item1 == InputType.NumberSlider)
+                else if (input is NumberSliderInput)
                 {
-                    float[] options = inputTypeOptions.Item2.Select(o => float.Parse(o.ToString())).ToArray();
-
-                    Slider slider = new Slider
-                    {
-                        HorizontalOptions = LayoutOptions.FillAndExpand,
-                        Minimum = options[0],
-                        Maximum = options[1]
-                    };
-
-                    inputView = slider;
+                    Slider slider = input.View as Slider;
                     inputRetriever = new Func<object>(() => slider.Value);
                 }
-                else if (inputTypeOptions.Item1 == InputType.Text)
+                else if (input is TextInput)
                 {
-                    Entry entry = new Entry
-                    {
-                        
-                        Keyboard = Keyboard.Default,
-                        HorizontalOptions = LayoutOptions.FillAndExpand
-                    };
-
-                    inputView = entry;
+                    Entry entry = input.View as Entry;
                     inputRetriever = new Func<object>(() => entry.Text);
                 }
-                else if (inputTypeOptions.Item1 == InputType.YesNo)
+                else if (input is YesNoInput)
                 {
-                    Switch toggle = new Switch();
-
-                    inputView = toggle;
+                    Switch toggle = input.View as Switch;
                     inputRetriever = new Func<object>(() => toggle.IsToggled);
                 }
-                
-                contentLayout.Children.Add(new StackLayout
+                else if (input is LabelOnlyInput)
+                {
+                    // there is no view for label-only inputs -- just display the label
+                }
+                else
+                    throw new SensusException("Unrecognized input type:  " + input.GetType().FullName);
+
+                StackLayout inputStack = new StackLayout
+                {
+                    Orientation = StackOrientation.Horizontal,
+                    HorizontalOptions = LayoutOptions.FillAndExpand,
+                };
+
+                inputStack.Children.Add(new Label
                     {
-                        Orientation = StackOrientation.Horizontal,
-                        HorizontalOptions = LayoutOptions.FillAndExpand,
-                        Children =
-                        {
-                            new Label
-                            {
-                                Text = label,
-                                FontSize = 20
-                            },
-                            inputView
-                        }
+                        Text = input.Label,
+                        FontSize = 20
                     });
+
+                if (input.View != null)
+                    inputStack.Children.Add(input.View);
+
+                contentLayout.Children.Add(inputStack);
 
                 inputRetrievers.Add(inputRetriever);
             }
@@ -158,11 +119,11 @@ namespace SensusUI
             okButton.Clicked += async (o, e) =>
             {
                 await Navigation.PopAsync();
-                List<object> inputs = new List<object>();
+                List<object> inputValues = new List<object>();
                 foreach (Func<object> inputRetriever in inputRetrievers)
-                    inputs.Add(inputRetriever());
+                    inputValues.Add(inputRetriever());
 
-                callback(inputs);
+                callback(inputValues);
             };
                 
             contentLayout.Children.Add(new StackLayout

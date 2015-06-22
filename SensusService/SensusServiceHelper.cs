@@ -27,6 +27,7 @@ using Xamarin;
 using Xamarin.Geolocation;
 using System.Collections.ObjectModel;
 using SensusUI;
+using SensusUI.Inputs;
 
 namespace SensusService
 {
@@ -723,9 +724,8 @@ namespace SensusService
                 });
         }
 
-        public void PromptForInputsAsync(string windowTitle, List<string> labels, List<Tuple<PromptForInputsPage.InputType, List<object>>> inputTypesOptions, Action<List<object>> callback)
+        public void PromptForInputsAsync(string windowTitle, List<Input> inputs, Action<List<object>> callback)
         {
-
         }
 
         /// <summary>
