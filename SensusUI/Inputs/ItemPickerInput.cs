@@ -19,18 +19,26 @@ namespace SensusUI.Inputs
 {
     public class ItemPickerInput : Input
     {
-        public ItemPickerInput(string label, string[] items)
+        public ItemPickerInput(string label, string tipText, string[] items)
             : base(label)
         {
             Picker picker = new Picker
             {
-                HorizontalOptions = LayoutOptions.FillAndExpand,
+                Title = tipText,
+                HorizontalOptions = LayoutOptions.FillAndExpand
             };
 
             foreach (string item in items)
                 picker.Items.Add(item);
 
-            View = picker;
+            View = new StackLayout
+            {
+                Orientation = StackOrientation.Horizontal,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                Children = { Label, picker }
+            };
+
+            ValueRetriever = new Func<object>(() => picker.SelectedIndex >= 0 ? picker.Items[picker.SelectedIndex] : null);
         }
     }
 }

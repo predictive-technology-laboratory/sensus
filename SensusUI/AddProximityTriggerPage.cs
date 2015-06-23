@@ -71,7 +71,8 @@ namespace SensusUI
 
             Picker pointOfInterestPicker = new Picker
             {
-                HorizontalOptions = LayoutOptions.FillAndExpand,                
+                Title = "Select POI",
+                HorizontalOptions = LayoutOptions.FillAndExpand
             };
 
             foreach (string poiDesc in pointsOfInterest.Select(poi => poi.ToString()))
@@ -134,7 +135,8 @@ namespace SensusUI
             ProximityThresholdDirection[] thresholdDirections = new ProximityThresholdDirection[]{ ProximityThresholdDirection.Within, ProximityThresholdDirection.Outside };
             Picker thresholdDirectionPicker = new Picker
             {
-                HorizontalOptions = LayoutOptions.FillAndExpand,
+                Title = "Select Threshold Direction",
+                HorizontalOptions = LayoutOptions.FillAndExpand
             };
 
             foreach (ProximityThresholdDirection thresholdDirection in thresholdDirections)
@@ -163,20 +165,20 @@ namespace SensusUI
             };
 
             okButton.Clicked += async (o, e) =>
+            {
+                try
                 {
-                    try
-                    {
-                        _proximityProbe.Triggers.Add(new PointOfInterestProximityTrigger(_pointOfInterestName, _pointOfInterestType, _distanceThresholdMeters, _thresholdDirection));
-                        UiBoundSensusServiceHelper.Get(true).SaveAsync();
-                        await Navigation.PopAsync();
-                    }
-                    catch (Exception ex)
-                    {
-                        string message = "Failed to add trigger:  " + ex.Message;
-                        UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync(message);
-                        UiBoundSensusServiceHelper.Get(true).Logger.Log(message, LoggingLevel.Normal, GetType());
-                    }
-                };
+                    _proximityProbe.Triggers.Add(new PointOfInterestProximityTrigger(_pointOfInterestName, _pointOfInterestType, _distanceThresholdMeters, _thresholdDirection));
+                    UiBoundSensusServiceHelper.Get(true).SaveAsync();
+                    await Navigation.PopAsync();
+                }
+                catch (Exception ex)
+                {
+                    string message = "Failed to add trigger:  " + ex.Message;
+                    UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync(message);
+                    UiBoundSensusServiceHelper.Get(true).Logger.Log(message, LoggingLevel.Normal, GetType());
+                }
+            };
 
             contentLayout.Children.Add(okButton);
 

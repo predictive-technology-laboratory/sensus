@@ -22,11 +22,25 @@ namespace SensusUI.Inputs
         public NumberEntryInput(string label)
             : base(label)
         {
-            View = new Entry
+            Entry entry = new Entry
+                {
+                    Keyboard = Keyboard.Numeric,
+                    HorizontalOptions = LayoutOptions.FillAndExpand
+                };
+            
+            View = new StackLayout
             {
-                Keyboard = Keyboard.Numeric,
-                HorizontalOptions = LayoutOptions.FillAndExpand
+                Orientation = StackOrientation.Horizontal,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                Children = { Label, entry }
             };
+
+            ValueRetriever = new Func<object>(() =>
+                {
+                    int value;
+                    int.TryParse(entry.Text, out value);
+                    return value;
+                });
         }
     }
 }

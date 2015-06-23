@@ -22,12 +22,43 @@ namespace SensusUI.Inputs
         public NumberSliderInput(string label, double minimum, double maximum)
             : base(label)
         {
-            View = new Slider
+            Slider slider = new Slider
             {
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 Minimum = minimum,
                 Maximum = maximum
             };
+
+            Label sliderValueLabel = new Label
+            {
+                Text = slider.Value.ToString(),
+                HorizontalOptions = LayoutOptions.CenterAndExpand,
+                FontSize = 20
+            };
+
+            slider.ValueChanged += (o, e) =>
+            {
+                sliderValueLabel.Text = e.NewValue.ToString();
+            };
+
+            View = new StackLayout
+            {
+                Orientation = StackOrientation.Horizontal,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                Children =
+                { 
+                    Label,
+                    new StackLayout
+                    {
+                        Orientation = StackOrientation.Vertical,
+                        VerticalOptions = LayoutOptions.FillAndExpand,
+                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        Children = { slider, sliderValueLabel }
+                    }
+                }
+            };
+            
+            ValueRetriever = new Func<object>(() => slider.Value);
         }
     }
 }

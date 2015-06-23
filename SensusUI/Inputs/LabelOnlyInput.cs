@@ -21,6 +21,7 @@ namespace SensusUI.Inputs
         public LabelOnlyInput(string label)
             : base(label)
         {
+            View = Label;
         }
     }
 }

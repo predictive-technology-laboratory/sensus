@@ -20,10 +20,11 @@ namespace SensusUI.Inputs
 {
     public abstract class Input
     {
-        private string _label;
+        private Label _label;
         private View _view;
+        private Func<object> _valueRetriever;
 
-        public string Label
+        protected Label Label
         {
             get { return _label; }
         }
@@ -43,9 +44,25 @@ namespace SensusUI.Inputs
             }
         }
 
+        public Func<object> ValueRetriever
+        {
+            get
+            {
+                return _valueRetriever;
+            }
+            set
+            {
+                _valueRetriever = value;
+            }
+        }
+
         public Input(string label)
         {
-            _label = label;
+            _label = new Label
+            {
+                Text = label,
+                FontSize = 20
+            };
         }
     }
 }

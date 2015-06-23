@@ -22,12 +22,20 @@ namespace SensusUI.Inputs
         public TextInput(string label)
             : base(label)
         {
-            View = new Entry
+            Entry entry = new Entry
             {
-
                 Keyboard = Keyboard.Default,
                 HorizontalOptions = LayoutOptions.FillAndExpand
             };
+            
+            View = new StackLayout
+            {
+                Orientation = StackOrientation.Horizontal,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                Children = { Label, entry }
+            };
+
+            ValueRetriever = new Func<object>(() => entry.Text);
         }
     }
 }

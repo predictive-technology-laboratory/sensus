@@ -37,64 +37,11 @@ namespace SensusUI
 
             foreach (Input input in inputs)
             {
-
-                Func<object> inputRetriever = null;
-
-                if (input is ItemPickerInput)
-                {
-                    Picker picker = input.View as Picker;
-                    inputRetriever = new Func<object>(() => picker.SelectedIndex >= 0 ? picker.Items[picker.SelectedIndex] : null);
-                }
-                else if (input is NumberEntryInput)
-                {                    
-                    Entry entry = input.View as Entry;
-                    inputRetriever = new Func<object>(() =>
-                        {
-                            int value;
-                            int.TryParse(entry.Text, out value);
-                            return value;
-                        });
-                }
-                else if (input is NumberSliderInput)
-                {
-                    Slider slider = input.View as Slider;
-                    inputRetriever = new Func<object>(() => slider.Value);
-                }
-                else if (input is TextInput)
-                {
-                    Entry entry = input.View as Entry;
-                    inputRetriever = new Func<object>(() => entry.Text);
-                }
-                else if (input is YesNoInput)
-                {
-                    Switch toggle = input.View as Switch;
-                    inputRetriever = new Func<object>(() => toggle.IsToggled);
-                }
-                else if (input is LabelOnlyInput)
-                {
-                    // there is no view for label-only inputs -- just display the label
-                }
-                else
-                    throw new SensusException("Unrecognized input type:  " + input.GetType().FullName);
-
-                StackLayout inputStack = new StackLayout
-                {
-                    Orientation = StackOrientation.Horizontal,
-                    HorizontalOptions = LayoutOptions.FillAndExpand,
-                };
-
-                inputStack.Children.Add(new Label
-                    {
-                        Text = input.Label,
-                        FontSize = 20
-                    });
-
                 if (input.View != null)
-                    inputStack.Children.Add(input.View);
+                    contentLayout.Children.Add(input.View);
 
-                contentLayout.Children.Add(inputStack);
-
-                inputRetrievers.Add(inputRetriever);
+                if (input.ValueRetriever != null)
+                    inputRetrievers.Add(input.ValueRetriever);
             }
 
             Button cancelButton = new Button
@@ -119,6 +66,7 @@ namespace SensusUI
             okButton.Clicked += async (o, e) =>
             {
                 await Navigation.PopAsync();
+
                 List<object> inputValues = new List<object>();
                 foreach (Func<object> inputRetriever in inputRetrievers)
                     inputValues.Add(inputRetriever());

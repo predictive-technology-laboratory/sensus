@@ -100,7 +100,7 @@ namespace Sensus.Android
                 e.Binder.SensusServiceHelper.SetMainActivity(this);
 
                 // display service helper properties on the main page
-                _app.SensusMainPage.DisplayServiceHelper(e.Binder.SensusServiceHelper);                                    
+                _app.SensusMainPage.DisplayServiceHelper(e.Binder.SensusServiceHelper);                                     
             };
 
             _serviceConnection.ServiceDisconnected += (o, e) =>

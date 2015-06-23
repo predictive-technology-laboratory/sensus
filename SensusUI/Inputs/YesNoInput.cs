@@ -22,7 +22,16 @@ namespace SensusUI.Inputs
         public YesNoInput(string label)
             : base(label)
         {
-            View = new Switch();
+            Switch toggle = new Switch();
+
+            View = new StackLayout
+            {
+                Orientation = StackOrientation.Horizontal,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                Children = { Label, toggle }
+            };
+
+            ValueRetriever = new Func<object>(() => toggle.IsToggled);
         }
     }
 }

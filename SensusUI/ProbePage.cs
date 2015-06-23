@@ -53,15 +53,15 @@ namespace SensusUI
             if (probe is ScriptProbe)
             {
                 Button editScriptsButton = new Button
-                    {
-                        Text = "Edit Scripts",
-                        FontSize = 20
-                    };
+                {
+                    Text = "Edit Scripts",
+                    FontSize = 20
+                };
 
-                editScriptsButton.Clicked += async (o,e) =>
-                    {
-                        await Navigation.PushAsync(new ScriptRunnersPage(probe as ScriptProbe));
-                    };
+                editScriptsButton.Clicked += async (o, e) =>
+                {
+                    await Navigation.PushAsync(new ScriptRunnersPage(probe as ScriptProbe));
+                };
                    
                 contentLayout.Children.Add(editScriptsButton);
             }                       
@@ -71,18 +71,18 @@ namespace SensusUI
             if (probe is IPointsOfInterestProximityProbe)
             {
                 Button editTriggersButton = new Button
-                    {
-                        Text = "Edit Triggers",
-                        FontSize = 20,
-                        HorizontalOptions = LayoutOptions.FillAndExpand
-                    };
+                {
+                    Text = "Edit Triggers",
+                    FontSize = 20,
+                    HorizontalOptions = LayoutOptions.FillAndExpand
+                };
 
                 contentLayout.Children.Add(editTriggersButton);
 
                 editTriggersButton.Clicked += async (o, e) =>
-                    {
-                        await Navigation.PushAsync(new ProximityTriggersPage(probe as IPointsOfInterestProximityProbe));
-                    };
+                {
+                    await Navigation.PushAsync(new ProximityTriggersPage(probe as IPointsOfInterestProximityProbe));
+                };
             }
             #endregion
 
@@ -116,6 +116,7 @@ namespace SensusUI
                     // populate a picker of anonymizers for the current property
                     Picker anonymizerPicker = new Picker
                     {
+                        Title = "Select Anonymizer",
                         HorizontalOptions = LayoutOptions.FillAndExpand
                     };
                 
@@ -124,18 +125,18 @@ namespace SensusUI
                         anonymizerPicker.Items.Add(anonymizer.DisplayText);
 
                     anonymizerPicker.SelectedIndexChanged += (o, e) =>
-                        {
-                            Anonymizer selectedAnonymizer = null;
-                            if (anonymizerPicker.SelectedIndex > 0)
-                                selectedAnonymizer = anonymizableAttribute.AvailableAnonymizers[anonymizerPicker.SelectedIndex - 1];  // subtract one from the selected index since the JsonAnonymizer's collection of anonymizers start after the "None" option within the picker.
+                    {
+                        Anonymizer selectedAnonymizer = null;
+                        if (anonymizerPicker.SelectedIndex > 0)
+                            selectedAnonymizer = anonymizableAttribute.AvailableAnonymizers[anonymizerPicker.SelectedIndex - 1];  // subtract one from the selected index since the JsonAnonymizer's collection of anonymizers start after the "None" option within the picker.
 
-                            probe.Protocol.JsonAnonymizer.SetAnonymizer(anonymizableProperty, selectedAnonymizer);
-                        };
+                        probe.Protocol.JsonAnonymizer.SetAnonymizer(anonymizableProperty, selectedAnonymizer);
+                    };
                     
                     // set the picker's index to the current anonymizer (or "Do Not Anonymize" if there is no current)
                     Anonymizer currentAnonymizer = probe.Protocol.JsonAnonymizer.GetAnonymizer(anonymizableProperty);
                     int currentIndex = 0;
-                    if(currentAnonymizer != null)
+                    if (currentAnonymizer != null)
                         currentIndex = anonymizableAttribute.AvailableAnonymizers.IndexOf(currentAnonymizer) + 1;
                     
                     anonymizerPicker.SelectedIndex = currentIndex;
@@ -150,7 +151,7 @@ namespace SensusUI
                     anonymizablePropertyStacks.Add(anonymizablePropertyStack);
                 }
 
-                foreach(StackLayout anonymizablePropertyStack in anonymizablePropertyStacks.OrderBy(s => (s.Children[0] as Label).Text))
+                foreach (StackLayout anonymizablePropertyStack in anonymizablePropertyStacks.OrderBy(s => (s.Children[0] as Label).Text))
                     contentLayout.Children.Add(anonymizablePropertyStack);
             }
             #endregion
