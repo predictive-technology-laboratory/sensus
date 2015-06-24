@@ -18,12 +18,13 @@ using System.Collections.Generic;
 using SensusService.Exceptions;
 using System.Linq;
 using SensusUI.Inputs;
+using System.Threading;
 
 namespace SensusUI
 {
     public class PromptForInputsPage : ContentPage
     {
-        public PromptForInputsPage(string title, List<Input> inputs, Action<List<object>> callback)
+        public PromptForInputsPage(string title, IEnumerable<Input> inputs, Action<List<object>> callback)
         {
             Title = title;
 
@@ -44,6 +45,27 @@ namespace SensusUI
                     inputRetrievers.Add(input.ValueRetriever);
             }
 
+            bool canceled = false;
+
+            Thread returnThread = new Thread(() =>
+                {
+                    Device.BeginInvokeOnMainThread(async () =>
+                        {
+                            await Navigation.PopAsync();
+                        });
+
+                    List<object> inputValues = null;
+
+                    if (!canceled)
+                    {
+                        inputValues = new List<object>();
+                        foreach (Func<object> inputRetriever in inputRetrievers)
+                            inputValues.Add(inputRetriever());
+                    }
+
+                    callback(inputValues);
+                });
+
             Button cancelButton = new Button
             {
                 HorizontalOptions = LayoutOptions.FillAndExpand,
@@ -51,9 +73,10 @@ namespace SensusUI
                 Text = "Cancel"
             };
 
-            cancelButton.Clicked += async (o, e) =>
+            cancelButton.Clicked += (o, e) =>
             {
-                await Navigation.PopAsync();
+                canceled = true;
+                returnThread.Start();
             };
 
             Button okButton = new Button
@@ -63,15 +86,9 @@ namespace SensusUI
                 Text = "OK"
             };
 
-            okButton.Clicked += async (o, e) =>
+            okButton.Clicked += (o, e) =>
             {
-                await Navigation.PopAsync();
-
-                List<object> inputValues = new List<object>();
-                foreach (Func<object> inputRetriever in inputRetrievers)
-                    inputValues.Add(inputRetriever());
-
-                callback(inputValues);
+                returnThread.Start();
             };
                 
             contentLayout.Children.Add(new StackLayout

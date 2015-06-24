@@ -439,6 +439,10 @@ namespace SensusService
         public abstract void LetDeviceSleep();
 
         public abstract void UpdateApplicationStatus(string status);
+
+        public abstract void GetPositionFromMapAsync(Position address, Action<Position> callback);
+
+        public abstract void GetPositionFromMapAsync(string address, Action<Position> callback);
         #endregion
 
         #region add/remove running protocol ids
@@ -725,7 +729,7 @@ namespace SensusService
                 });
         }
 
-        public void PromptForInputsAsync(string windowTitle, List<Input> inputs, Action<List<object>> callback)
+        public void PromptForInputsAsync(string windowTitle, IEnumerable<Input> inputs, Action<List<object>> callback)
         {
             Device.BeginInvokeOnMainThread(async () =>
                 {

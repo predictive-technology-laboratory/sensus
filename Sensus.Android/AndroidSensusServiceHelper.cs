@@ -406,6 +406,14 @@ namespace Sensus.Android
             !(probe is ListeningSpeedProbe) &&
             !(probe is ListeningPointsOfInterestProximityProbe);
         }
+
+        public override void GetPositionFromMapAsync(Position address, Action<Position> callback)
+        {
+        }
+
+        public override void GetPositionFromMapAsync(string address, Action<Position> callback)
+        {
+        }
         #endregion
 
         #region callback scheduling

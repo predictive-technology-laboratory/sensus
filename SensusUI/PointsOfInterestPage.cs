@@ -20,6 +20,7 @@ using SensusService;
 using SensusService.Probes.Location;
 using Xamarin.Forms;
 using Xamarin.Geolocation;
+using SensusUI.Inputs;
 
 namespace SensusUI
 {
@@ -47,26 +48,26 @@ namespace SensusUI
             _pointsOfInterestList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", stringFormat: "{0}"));
             _pointsOfInterestList.ItemTapped += async (o, e) =>
             {
-                    if(_pointsOfInterestList.SelectedItem == null)
-                        return;
+                if (_pointsOfInterestList.SelectedItem == null)
+                    return;
 
-                    PointOfInterest selectedPointOfInterest = _pointsOfInterestList.SelectedItem as PointOfInterest;
+                PointOfInterest selectedPointOfInterest = _pointsOfInterestList.SelectedItem as PointOfInterest;
 
-                    string selectedAction = await DisplayActionSheet(selectedPointOfInterest.ToString(), "Cancel", null, "Delete");
+                string selectedAction = await DisplayActionSheet(selectedPointOfInterest.ToString(), "Cancel", null, "Delete");
 
-                    if(selectedAction == "Delete")
+                if (selectedAction == "Delete")
+                {
+                    if (await DisplayAlert("Delete " + selectedPointOfInterest.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
                     {
-                        if (await DisplayAlert("Delete " + selectedPointOfInterest.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
-                        {
-                            _pointsOfInterest.Remove(selectedPointOfInterest);
-                            _pointsOfInterestList.SelectedItem = null;  // reset it manually, since it isn't done automatically.
+                        _pointsOfInterest.Remove(selectedPointOfInterest);
+                        _pointsOfInterestList.SelectedItem = null;  // reset it manually, since it isn't done automatically.
 
-                            if (changeCallback != null)
-                                changeCallback();
+                        if (changeCallback != null)
+                            changeCallback();
 
-                            Bind();
-                        }
+                        Bind();
                     }
+                }
             };
             
             Bind();
@@ -75,24 +76,53 @@ namespace SensusUI
 
             ToolbarItems.Add(new ToolbarItem(null, "plus.png", () =>
                     {
-                        UiBoundSensusServiceHelper.Get(true).PromptForInputAsync("Enter a name for the new point of interest:", false, name =>
+                        UiBoundSensusServiceHelper.Get(true).PromptForInputsAsync("Define Point Of Interest", 
+
+                            new Input[]
                             {
-                                UiBoundSensusServiceHelper.Get(true).PromptForInputAsync("Enter a type for the new point of interest:", false, type =>
-                                    {
-                                        if (!string.IsNullOrWhiteSpace(name) || !string.IsNullOrWhiteSpace(type))
+                                new TextInput("POI Name:"),
+                                new TextInput("POI Type:"),
+                                new TextInput("Address:"),
+                                new YesNoInput("View Map:")
+                            },
+
+                            inputs =>
+                            {
+                                if (inputs == null)
+                                    return;
+                            
+                                string name = inputs[0].ToString();
+                                string type = inputs[1].ToString();
+                                string address = inputs[2].ToString();
+                                bool viewMap = (bool)inputs[3];
+
+                                if (!string.IsNullOrWhiteSpace(name) || !string.IsNullOrWhiteSpace(type))
+                                {
+                                    Action<Position> addPOI = new Action<Position>(poiPosition =>
                                         {
-                                            Position position = GpsReceiver.Get().GetReading(default(CancellationToken));
-                                            if (position != null)
+                                            if (poiPosition != null)
                                             {
-                                                _pointsOfInterest.Add(new PointOfInterest(name, type, position));
+                                                _pointsOfInterest.Add(new PointOfInterest(name, type, poiPosition));
 
                                                 if (changeCallback != null)
                                                     changeCallback();
-                                
+
                                                 Bind();
                                             }
-                                        }
-                                    });
+                                        });
+                                
+                                    if (string.IsNullOrWhiteSpace(address))
+                                    {
+                                        Position position = GpsReceiver.Get().GetReading(default(CancellationToken));
+
+                                        if (viewMap)
+                                            UiBoundSensusServiceHelper.Get(true).GetPositionFromMapAsync(position, addPOI);
+                                        else
+                                            addPOI(position);
+                                    }
+                                    else
+                                        UiBoundSensusServiceHelper.Get(true).GetPositionFromMapAsync(address, addPOI);
+                                }
                             });
                     }));
         }
