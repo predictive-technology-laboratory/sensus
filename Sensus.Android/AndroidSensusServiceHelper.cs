@@ -32,7 +32,6 @@ using Xamarin.Geolocation;
 using SensusService.Probes.Location;
 using SensusService.Probes;
 using SensusService.Probes.Movement;
-using Android.Gms.Maps;
 
 namespace Sensus.Android
 {
