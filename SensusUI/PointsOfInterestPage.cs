@@ -116,7 +116,7 @@ namespace SensusUI
                                         Position position = GpsReceiver.Get().GetReading(default(CancellationToken));
 
                                         if (viewMap)
-                                            UiBoundSensusServiceHelper.Get(true).GetPositionFromMapAsync(position, addPOI);
+                                            UiBoundSensusServiceHelper.Get(true).GetPositionFromMapAsync(new Xamarin.Forms.Maps.Position(position.Latitude, position.Longitude), name + (string.IsNullOrWhiteSpace(type) ? "" : " (" + type + ")"), addPOI);
                                         else
                                             addPOI(position);
                                     }

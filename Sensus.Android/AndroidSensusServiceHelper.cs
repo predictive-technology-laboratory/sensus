@@ -32,6 +32,7 @@ using Xamarin.Geolocation;
 using SensusService.Probes.Location;
 using SensusService.Probes;
 using SensusService.Probes.Movement;
+using Android.Gms.Maps;
 
 namespace Sensus.Android
 {
@@ -405,14 +406,6 @@ namespace Sensus.Android
             return !(probe is ListeningLocationProbe) &&
             !(probe is ListeningSpeedProbe) &&
             !(probe is ListeningPointsOfInterestProximityProbe);
-        }
-
-        public override void GetPositionFromMapAsync(Position address, Action<Position> callback)
-        {
-        }
-
-        public override void GetPositionFromMapAsync(string address, Action<Position> callback)
-        {
         }
         #endregion
 

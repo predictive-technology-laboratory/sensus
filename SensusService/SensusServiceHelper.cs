@@ -440,9 +440,14 @@ namespace SensusService
 
         public abstract void UpdateApplicationStatus(string status);
 
-        public abstract void GetPositionFromMapAsync(Position address, Action<Position> callback);
-
-        public abstract void GetPositionFromMapAsync(string address, Action<Position> callback);
+        /// <summary>
+        /// The user can enable all probes at once. When this is done, it doesn't make sense to enable, e.g., the
+        /// listening location probe as well as the polling location probe. This method allows the platforms to
+        /// decide which probes to enable when enabling all probes.
+        /// </summary>
+        /// <returns><c>true</c>, if probe should be enabled, <c>false</c> otherwise.</returns>
+        /// <param name="probe">Probe.</param>
+        public abstract bool EnableProbeWhenEnablingAll(Probe probe);
         #endregion
 
         #region add/remove running protocol ids
@@ -735,16 +740,19 @@ namespace SensusService
                 {
                     await App.Current.MainPage.Navigation.PushAsync(new PromptForInputsPage(windowTitle, inputs, callback));
                 });
+        }                    
+
+            public void GetPositionFromMapAsync(Xamarin.Forms.Maps.Position address, string newPinName, Action<Position> callback)
+        {
+            Device.BeginInvokeOnMainThread(async () =>
+                {
+                    await App.Current.MainPage.Navigation.PushAsync(new MapPage(address, newPinName));
+                });
         }
 
-        /// <summary>
-        /// The user can enable all probes at once. When this is done, it doesn't make sense to enable, e.g., the
-        /// listening location probe as well as the polling location probe. This method allows the platforms to
-        /// decide which probes to enable when enabling all probes.
-        /// </summary>
-        /// <returns><c>true</c>, if probe should be enabled, <c>false</c> otherwise.</returns>
-        /// <param name="probe">Probe.</param>
-        public abstract bool EnableProbeWhenEnablingAll(Probe probe);
+        public void GetPositionFromMapAsync(string address, Action<Position> callback)
+        {
+        }
 
         public void TestHealth(CancellationToken cancellationToken)
         {

@@ -311,16 +311,6 @@ namespace Sensus.iOS
             !(probe is PollingPointsOfInterestProximityProbe);
         }
 
-        public override void GetPositionFromMapAsync(Position address, Action<Position> callback)
-        {
-            // TODO
-        }
-
-        public override void GetPositionFromMapAsync(string address, Action<Position> callback)
-        {
-            // TODO
-        }
-
         #region methods not implemented in ios
         public override void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
         {
