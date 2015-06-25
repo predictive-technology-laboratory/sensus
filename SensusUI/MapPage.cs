@@ -17,24 +17,32 @@ using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 using Xam.Plugin.MapExtend.Abstractions;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 
 namespace SensusUI
 {
     public class MapPage : ContentPage
     {
-        public MapPage(Position position, string newPinName)
-        {            
-            MapExtend map = new MapExtend(
-                          MapSpan.FromCenterAndRadius(
-                              position, Distance.FromMiles(0.3)))
+        private MapExtend _map;
+        private Entry _searchEntry;
+
+        public IList<Pin> Pins
+        {
+            get { return _map.Pins; }
+        }
+
+        private MapPage(string newPinName)
+        {
+            _map = new MapExtend
             {
                 IsShowingUser = true,
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
             };
 
-            ((ObservableCollection<Pin>)map.Pins).CollectionChanged += (o, e) =>
+            ((ObservableCollection<Pin>)_map.Pins).CollectionChanged += (o, e) =>
             {
+                // reset pin names to be the provided name
                 if (e.NewItems != null)
                     foreach (Pin pin in e.NewItems)
                         pin.Label = newPinName;
@@ -47,7 +55,7 @@ namespace SensusUI
                 FontSize = 20
             };
 
-            Entry searchEntry = new Entry
+            _searchEntry = new Entry
             {
                 HorizontalOptions = LayoutOptions.FillAndExpand
             };
@@ -60,10 +68,10 @@ namespace SensusUI
 
             searchGoButton.Clicked += (o, e) =>
             {
-                if (!string.IsNullOrWhiteSpace(searchEntry.Text))
-                    map.SearchAdress(searchEntry.Text);
+                if (!string.IsNullOrWhiteSpace(_searchEntry.Text))
+                    _map.SearchAdress(_searchEntry.Text);
             };
-            
+
             StackLayout searchStack = new StackLayout
             {
                 Orientation = StackOrientation.Horizontal,
@@ -71,7 +79,7 @@ namespace SensusUI
                 Children =
                 {
                     searchLabel,
-                    searchEntry,
+                    _searchEntry,
                     searchGoButton
                 }
             };
@@ -86,17 +94,33 @@ namespace SensusUI
 
             clearPinsButton.Clicked += (o, e) =>
             {
-                map.Pins.Clear();
+                _map.Pins.Clear();
             };
-            
+
             StackLayout mapStack = new StackLayout
             { 
                 Orientation = StackOrientation.Vertical,
                 VerticalOptions = LayoutOptions.FillAndExpand,
-                Children = { map, searchStack, clearPinsButton }
+                Children = { _map, searchStack, clearPinsButton }
             };
-            
+
             Content = mapStack;
+        }
+
+        public MapPage(Position position, string newPinName)
+            : this(newPinName)
+        {
+            _map.MoveToRegion(MapSpan.FromCenterAndRadius(position, Distance.FromMiles(0.3)));
+        }
+
+        public MapPage(string address, string newPinName)
+            : this(newPinName)
+        {
+            if (!string.IsNullOrWhiteSpace(address))
+            {
+                _searchEntry.Text = address.Trim();
+                _map.SearchAdress(_searchEntry.Text);
+            }
         }
     }
 }

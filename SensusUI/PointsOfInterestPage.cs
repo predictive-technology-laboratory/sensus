@@ -98,30 +98,33 @@ namespace SensusUI
 
                                 if (!string.IsNullOrWhiteSpace(name) || !string.IsNullOrWhiteSpace(type))
                                 {
-                                    Action<Position> addPOI = new Action<Position>(poiPosition =>
+                                    Action<List<Xamarin.Forms.Maps.Position>> addPOI = new Action<List<Xamarin.Forms.Maps.Position>>(poiPositions =>
                                         {
-                                            if (poiPosition != null)
-                                            {
-                                                _pointsOfInterest.Add(new PointOfInterest(name, type, poiPosition));
+                                            if (poiPositions != null)
+                                                foreach (Xamarin.Forms.Maps.Position poiPosition in poiPositions)
+                                                {
+                                                    _pointsOfInterest.Add(new PointOfInterest(name, type, poiPosition));
 
-                                                if (changeCallback != null)
-                                                    changeCallback();
+                                                    if (changeCallback != null)
+                                                        changeCallback();
 
-                                                Bind();
-                                            }
+                                                    Bind();
+                                                }
                                         });
-                                
+
+                                    string newPinName = name + (string.IsNullOrWhiteSpace(type) ? "" : " (" + type + ")");
+
                                     if (string.IsNullOrWhiteSpace(address))
                                     {
                                         Position position = GpsReceiver.Get().GetReading(default(CancellationToken));
 
                                         if (viewMap)
-                                            UiBoundSensusServiceHelper.Get(true).GetPositionFromMapAsync(new Xamarin.Forms.Maps.Position(position.Latitude, position.Longitude), name + (string.IsNullOrWhiteSpace(type) ? "" : " (" + type + ")"), addPOI);
+                                            UiBoundSensusServiceHelper.Get(true).GetPositionsFromMapAsync(new Xamarin.Forms.Maps.Position(position.Latitude, position.Longitude), newPinName, addPOI);
                                         else
-                                            addPOI(position);
+                                            addPOI(new Xamarin.Forms.Maps.Position[] { position.ToFormsPosition() }.ToList());
                                     }
                                     else
-                                        UiBoundSensusServiceHelper.Get(true).GetPositionFromMapAsync(address, addPOI);
+                                        UiBoundSensusServiceHelper.Get(true).GetPositionsFromMapAsync(address, newPinName, addPOI);
                                 }
                             });
                     }));

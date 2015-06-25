@@ -742,16 +742,34 @@ namespace SensusService
                 });
         }                    
 
-            public void GetPositionFromMapAsync(Xamarin.Forms.Maps.Position address, string newPinName, Action<Position> callback)
+        public void GetPositionsFromMapAsync(Xamarin.Forms.Maps.Position address, string newPinName, Action<List<Xamarin.Forms.Maps.Position>> callback)
         {
             Device.BeginInvokeOnMainThread(async () =>
                 {
-                    await App.Current.MainPage.Navigation.PushAsync(new MapPage(address, newPinName));
+                    MapPage mapPage = new MapPage(address, newPinName);
+
+                    mapPage.Disappearing += (o, e) =>
+                    {
+                        callback(mapPage.Pins.Select(pin => pin.Position).ToList());
+                    };
+
+                    await App.Current.MainPage.Navigation.PushAsync(mapPage);
                 });
         }
 
-        public void GetPositionFromMapAsync(string address, Action<Position> callback)
+        public void GetPositionsFromMapAsync(string address, string newPinName, Action<List<Xamarin.Forms.Maps.Position>> callback)
         {
+            Device.BeginInvokeOnMainThread(async () =>
+                {
+                    MapPage mapPage = new MapPage(address, newPinName);
+
+                    mapPage.Disappearing += (o, e) =>
+                    {
+                        callback(mapPage.Pins.Select(pin => pin.Position).ToList());
+                    };
+
+                    await App.Current.MainPage.Navigation.PushAsync(mapPage);
+                });
         }
 
         public void TestHealth(CancellationToken cancellationToken)

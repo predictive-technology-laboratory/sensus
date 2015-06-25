@@ -14,7 +14,7 @@
 
 using System;
 using SensusService.Probes.Movement;
-using Xamarin.Geolocation;
+using Xamarin.Forms.Maps;
 
 namespace SensusService.Probes.Location
 {
@@ -84,9 +84,9 @@ namespace SensusService.Probes.Location
             trigger.DistanceThresholdDirection == ProximityThresholdDirection.Outside && distanceMeters > trigger.DistanceThresholdMeters);
         }
 
-        public double KmDistanceTo(Position position)
+        public double KmDistanceTo(Xamarin.Geolocation.Position position)
         {
-            return SpeedDatum.CalculateDistanceKM(_position, position);
+            return SpeedDatum.CalculateDistanceKM(_position.ToGeolocationPosition(), position);
         }
 
         public override string ToString()
