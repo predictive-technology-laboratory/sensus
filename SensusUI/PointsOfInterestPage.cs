@@ -19,8 +19,8 @@ using System.Threading;
 using SensusService;
 using SensusService.Probes.Location;
 using Xamarin.Forms;
-using Xamarin.Geolocation;
 using SensusUI.Inputs;
+using Xamarin.Forms.Maps;
 
 namespace SensusUI
 {
@@ -98,12 +98,12 @@ namespace SensusUI
 
                                 if (!string.IsNullOrWhiteSpace(name) || !string.IsNullOrWhiteSpace(type))
                                 {
-                                    Action<List<Xamarin.Forms.Maps.Position>> addPOI = new Action<List<Xamarin.Forms.Maps.Position>>(poiPositions =>
-                                        {
-                                            if (poiPositions != null)
-                                                foreach (Xamarin.Forms.Maps.Position poiPosition in poiPositions)
+                                    Action<List<Position>> addPOI = new Action<List<Position>>(async poiPositions =>
+                                        {                                        
+                                            if (poiPositions != null && poiPositions.Count > 0 && await DisplayAlert("Add POI?", "Would you like to add " + poiPositions.Count + " point(s) of interest?", "Yes", "No"))
+                                                foreach (Position poiPosition in poiPositions)
                                                 {
-                                                    _pointsOfInterest.Add(new PointOfInterest(name, type, poiPosition));
+                                                    _pointsOfInterest.Add(new PointOfInterest(name, type, poiPosition.ToGeolocationPosition()));
 
                                                     if (changeCallback != null)
                                                         changeCallback();
@@ -116,12 +116,17 @@ namespace SensusUI
 
                                     if (string.IsNullOrWhiteSpace(address))
                                     {
-                                        Position position = GpsReceiver.Get().GetReading(default(CancellationToken));
+                                        Xamarin.Geolocation.Position gpsPosition = GpsReceiver.Get().GetReading(default(CancellationToken));
 
-                                        if (viewMap)
-                                            UiBoundSensusServiceHelper.Get(true).GetPositionsFromMapAsync(new Xamarin.Forms.Maps.Position(position.Latitude, position.Longitude), newPinName, addPOI);
-                                        else
-                                            addPOI(new Xamarin.Forms.Maps.Position[] { position.ToFormsPosition() }.ToList());
+                                        if (gpsPosition != null)
+                                        {                                            
+                                            Position formsPosition = gpsPosition.ToFormsPosition();
+
+                                            if (viewMap)
+                                                UiBoundSensusServiceHelper.Get(true).GetPositionsFromMapAsync(formsPosition, newPinName, addPOI);
+                                            else
+                                                addPOI(new Position[] { formsPosition }.ToList());
+                                        }
                                     }
                                     else
                                         UiBoundSensusServiceHelper.Get(true).GetPositionsFromMapAsync(address, newPinName, addPOI);

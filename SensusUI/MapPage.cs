@@ -70,19 +70,7 @@ namespace SensusUI
             {
                 if (!string.IsNullOrWhiteSpace(_searchEntry.Text))
                     _map.SearchAdress(_searchEntry.Text);
-            };
-
-            StackLayout searchStack = new StackLayout
-            {
-                Orientation = StackOrientation.Horizontal,
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                Children =
-                {
-                    searchLabel,
-                    _searchEntry,
-                    searchGoButton
-                }
-            };
+            };                          
             #endregion
 
             Button clearPinsButton = new Button
@@ -97,20 +85,29 @@ namespace SensusUI
                 _map.Pins.Clear();
             };
 
-            StackLayout mapStack = new StackLayout
+            Content = new StackLayout
             { 
                 Orientation = StackOrientation.Vertical,
                 VerticalOptions = LayoutOptions.FillAndExpand,
-                Children = { _map, searchStack, clearPinsButton }
+                Children =
+                { 
+                    _map,
+                    new StackLayout
+                    {
+                        Orientation = StackOrientation.Horizontal,
+                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        Children = { searchLabel, _searchEntry, searchGoButton }
+                    }, 
+                    clearPinsButton
+                }
             };
-
-            Content = mapStack;
         }
 
         public MapPage(Position position, string newPinName)
             : this(newPinName)
         {
             _map.MoveToRegion(MapSpan.FromCenterAndRadius(position, Distance.FromMiles(0.3)));
+            _map.Pins.Add(new Pin { Label = newPinName, Position = position });
         }
 
         public MapPage(string address, string newPinName)
