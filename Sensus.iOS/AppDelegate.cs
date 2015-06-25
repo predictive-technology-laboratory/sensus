@@ -26,6 +26,8 @@ using Xamarin.Geolocation;
 using Toasts.Forms.Plugin.iOS;
 using System.IO;
 using Facebook.CoreKit;
+using Xamarin;
+using Xam.Plugin.MapExtend.iOSUnified;
 
 namespace Sensus.iOS
 {
@@ -46,6 +48,8 @@ namespace Sensus.iOS
             Settings.DisplayName = "Sensus";
 
             Forms.Init();
+            FormsMaps.Init();
+            MapExtendRenderer.Init();
 
             ToastNotificatorImplementation.Init();
 

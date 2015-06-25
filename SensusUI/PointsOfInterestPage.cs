@@ -19,7 +19,8 @@ using System.Threading;
 using SensusService;
 using SensusService.Probes.Location;
 using Xamarin.Forms;
-using Xamarin.Geolocation;
+using SensusUI.Inputs;
+using Xamarin.Forms.Maps;
 
 namespace SensusUI
 {
@@ -47,26 +48,26 @@ namespace SensusUI
             _pointsOfInterestList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", stringFormat: "{0}"));
             _pointsOfInterestList.ItemTapped += async (o, e) =>
             {
-                    if(_pointsOfInterestList.SelectedItem == null)
-                        return;
+                if (_pointsOfInterestList.SelectedItem == null)
+                    return;
 
-                    PointOfInterest selectedPointOfInterest = _pointsOfInterestList.SelectedItem as PointOfInterest;
+                PointOfInterest selectedPointOfInterest = _pointsOfInterestList.SelectedItem as PointOfInterest;
 
-                    string selectedAction = await DisplayActionSheet(selectedPointOfInterest.ToString(), "Cancel", null, "Delete");
+                string selectedAction = await DisplayActionSheet(selectedPointOfInterest.ToString(), "Cancel", null, "Delete");
 
-                    if(selectedAction == "Delete")
+                if (selectedAction == "Delete")
+                {
+                    if (await DisplayAlert("Delete " + selectedPointOfInterest.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
                     {
-                        if (await DisplayAlert("Delete " + selectedPointOfInterest.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
-                        {
-                            _pointsOfInterest.Remove(selectedPointOfInterest);
-                            _pointsOfInterestList.SelectedItem = null;  // reset it manually, since it isn't done automatically.
+                        _pointsOfInterest.Remove(selectedPointOfInterest);
+                        _pointsOfInterestList.SelectedItem = null;  // reset it manually, since it isn't done automatically.
 
-                            if (changeCallback != null)
-                                changeCallback();
+                        if (changeCallback != null)
+                            changeCallback();
 
-                            Bind();
-                        }
+                        Bind();
                     }
+                }
             };
             
             Bind();
@@ -75,24 +76,61 @@ namespace SensusUI
 
             ToolbarItems.Add(new ToolbarItem(null, "plus.png", () =>
                     {
-                        UiBoundSensusServiceHelper.Get(true).PromptForInputAsync("Enter a name for the new point of interest:", false, name =>
-                            {
-                                UiBoundSensusServiceHelper.Get(true).PromptForInputAsync("Enter a type for the new point of interest:", false, type =>
-                                    {
-                                        if (!string.IsNullOrWhiteSpace(name) || !string.IsNullOrWhiteSpace(type))
-                                        {
-                                            Position position = GpsReceiver.Get().GetReading(default(CancellationToken));
-                                            if (position != null)
-                                            {
-                                                _pointsOfInterest.Add(new PointOfInterest(name, type, position));
+                        UiBoundSensusServiceHelper.Get(true).PromptForInputsAsync("Define Point Of Interest", 
 
-                                                if (changeCallback != null)
-                                                    changeCallback();
-                                
-                                                Bind();
-                                            }
+                            new Input[]
+                            {
+                                new TextInput("POI Name:"),
+                                new TextInput("POI Type:"),
+                                new TextInput("Address:"),
+                                new YesNoInput("View Map:")
+                            },
+
+                            inputs =>
+                            {
+                                if (inputs == null)
+                                    return;
+                            
+                                string name = inputs[0].ToString();
+                                string type = inputs[1].ToString();
+                                string address = inputs[2].ToString();
+                                bool viewMap = (bool)inputs[3];
+
+                                if (!string.IsNullOrWhiteSpace(name) || !string.IsNullOrWhiteSpace(type))
+                                {
+                                    Action<List<Position>> addPOI = new Action<List<Position>>(async poiPositions =>
+                                        {                                        
+                                            if (poiPositions != null && poiPositions.Count > 0 && await DisplayAlert("Add POI?", "Would you like to add " + poiPositions.Count + " point(s) of interest?", "Yes", "No"))
+                                                foreach (Position poiPosition in poiPositions)
+                                                {
+                                                    _pointsOfInterest.Add(new PointOfInterest(name, type, poiPosition.ToGeolocationPosition()));
+
+                                                    if (changeCallback != null)
+                                                        changeCallback();
+
+                                                    Bind();
+                                                }
+                                        });
+
+                                    string newPinName = name + (string.IsNullOrWhiteSpace(type) ? "" : " (" + type + ")");
+
+                                    if (string.IsNullOrWhiteSpace(address))
+                                    {
+                                        Xamarin.Geolocation.Position gpsPosition = GpsReceiver.Get().GetReading(default(CancellationToken));
+
+                                        if (gpsPosition != null)
+                                        {                                            
+                                            Position formsPosition = gpsPosition.ToFormsPosition();
+
+                                            if (viewMap)
+                                                UiBoundSensusServiceHelper.Get(true).GetPositionsFromMapAsync(formsPosition, newPinName, addPOI);
+                                            else
+                                                addPOI(new Position[] { formsPosition }.ToList());
                                         }
-                                    });
+                                    }
+                                    else
+                                        UiBoundSensusServiceHelper.Get(true).GetPositionsFromMapAsync(address, newPinName, addPOI);
+                                }
                             });
                     }));
         }

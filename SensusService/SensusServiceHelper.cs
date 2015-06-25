@@ -26,6 +26,9 @@ using SensusUI.UiProperties;
 using Xamarin;
 using Xamarin.Geolocation;
 using System.Collections.ObjectModel;
+using SensusUI;
+using SensusUI.Inputs;
+using Xamarin.Forms;
 
 namespace SensusService
 {
@@ -436,6 +439,15 @@ namespace SensusService
         public abstract void LetDeviceSleep();
 
         public abstract void UpdateApplicationStatus(string status);
+
+        /// <summary>
+        /// The user can enable all probes at once. When this is done, it doesn't make sense to enable, e.g., the
+        /// listening location probe as well as the polling location probe. This method allows the platforms to
+        /// decide which probes to enable when enabling all probes.
+        /// </summary>
+        /// <returns><c>true</c>, if probe should be enabled, <c>false</c> otherwise.</returns>
+        /// <param name="probe">Probe.</param>
+        public abstract bool EnableProbeWhenEnablingAll(Probe probe);
         #endregion
 
         #region add/remove running protocol ids
@@ -722,14 +734,43 @@ namespace SensusService
                 });
         }
 
-        /// <summary>
-        /// The user can enable all probes at once. When this is done, it doesn't make sense to enable, e.g., the
-        /// listening location probe as well as the polling location probe. This method allows the platforms to
-        /// decide which probes to enable when enabling all probes.
-        /// </summary>
-        /// <returns><c>true</c>, if probe should be enabled, <c>false</c> otherwise.</returns>
-        /// <param name="probe">Probe.</param>
-        public abstract bool EnableProbeWhenEnablingAll(Probe probe);
+        public void PromptForInputsAsync(string windowTitle, IEnumerable<Input> inputs, Action<List<object>> callback)
+        {
+            Device.BeginInvokeOnMainThread(async () =>
+                {
+                    await App.Current.MainPage.Navigation.PushAsync(new PromptForInputsPage(windowTitle, inputs, callback));
+                });
+        }                    
+
+        public void GetPositionsFromMapAsync(Xamarin.Forms.Maps.Position address, string newPinName, Action<List<Xamarin.Forms.Maps.Position>> callback)
+        {
+            Device.BeginInvokeOnMainThread(async () =>
+                {
+                    MapPage mapPage = new MapPage(address, newPinName);
+
+                    mapPage.Disappearing += (o, e) =>
+                    {
+                        callback(mapPage.Pins.Select(pin => pin.Position).ToList());
+                    };
+
+                    await App.Current.MainPage.Navigation.PushAsync(mapPage);
+                });
+        }
+
+        public void GetPositionsFromMapAsync(string address, string newPinName, Action<List<Xamarin.Forms.Maps.Position>> callback)
+        {
+            Device.BeginInvokeOnMainThread(async () =>
+                {
+                    MapPage mapPage = new MapPage(address, newPinName);
+
+                    mapPage.Disappearing += (o, e) =>
+                    {
+                        callback(mapPage.Pins.Select(pin => pin.Position).ToList());
+                    };
+
+                    await App.Current.MainPage.Navigation.PushAsync(mapPage);
+                });
+        }
 
         public void TestHealth(CancellationToken cancellationToken)
         {
