@@ -242,20 +242,6 @@ namespace Sensus.Android
                 Stopped(this, null);
         }
 
-        protected override void OnDestroy()
-        {
-            base.OnDestroy();
-
-            try
-            {
-                SensusServiceHelper.Get().Dispose();
-            }
-            catch (Exception ex)
-            {
-                Console.Error.WriteLine("Error while disposing service helper:  " + ex.Message);
-            }
-        }
-
         private void DisconnectFromService()
         {
             // remove service helper from UI

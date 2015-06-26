@@ -29,6 +29,7 @@ using System.Collections.ObjectModel;
 using SensusUI;
 using SensusUI.Inputs;
 using Xamarin.Forms;
+using SensusService.Exceptions;
 
 namespace SensusService
 {
@@ -89,7 +90,6 @@ namespace SensusService
         protected const string XAMARIN_INSIGHTS_APP_KEY = "97af5c4ab05c6a69d2945fd403ff45535f8bb9bb";
         private static SensusServiceHelper SINGLETON;
         private const string ENCRYPTION_KEY = "Making stuff private!";
-        private static readonly object LOCKER = new object();
         private static readonly string SHARE_DIRECTORY = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "share");
         private static readonly string LOG_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
         private static readonly string SERIALIZATION_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_service_helper.json");
@@ -118,6 +118,12 @@ namespace SensusService
         /// <param name="createNew">Function for creating a new service helper, if one is needed.</param>
         public static void Initialize(Func<SensusServiceHelper> createNew)
         {
+            if (SINGLETON != null)
+            {
+                SINGLETON.Logger.Log("Serivce helper already initialized. Nothing to do.", LoggingLevel.Normal, SINGLETON.GetType());
+                return;
+            }
+            
             try
             {
                 SINGLETON = JsonConvert.DeserializeObject<SensusServiceHelper>(Decrypt(ReadAllBytes(SERIALIZATION_PATH)), JSON_SERIALIZATION_SETTINGS);
@@ -351,9 +357,8 @@ namespace SensusService
 
         protected SensusServiceHelper()
         {
-            lock (LOCKER)
-                if (SINGLETON != null)
-                    SINGLETON.Dispose();
+            if (SINGLETON != null)
+                throw new SensusException("Attempted to construct new service helper when singleton already existed.");
 
             _stopped = true;
             _registeredProtocols = new ObservableCollection<Protocol>();
@@ -396,9 +401,6 @@ namespace SensusService
                     _logger.Log("Failed to initialize Xamarin insights:  " + ex.Message, LoggingLevel.Normal, GetType());
                 }
             }
-
-            lock (LOCKER)
-                SINGLETON = this;
         }
 
         public string GetHash(string s)
@@ -459,9 +461,9 @@ namespace SensusService
                 {
                     _runningProtocolIds.Add(id);
                     SaveAsync();
-
-                    SensusServiceHelper.Get().UpdateApplicationStatus(_runningProtocolIds.Count + " protocol" + (_runningProtocolIds.Count == 1 ? " is " : "s are") + " running");
                 }
+
+                SensusServiceHelper.Get().UpdateApplicationStatus(_runningProtocolIds.Count + " protocol" + (_runningProtocolIds.Count == 1 ? " is " : "s are") + " running");
 
                 if (_healthTestCallbackId == null)
                     _healthTestCallbackId = ScheduleRepeatingCallback(TestHealth, "Test Health", _healthTestDelayMS, _healthTestDelayMS);
@@ -473,11 +475,9 @@ namespace SensusService
             lock (_locker)
             {
                 if (_runningProtocolIds.Remove(id))
-                {
                     SaveAsync();
 
-                    SensusServiceHelper.Get().UpdateApplicationStatus(_runningProtocolIds.Count + " protocol" + (_runningProtocolIds.Count == 1 ? " is " : "s are") + " running");
-                }
+                SensusServiceHelper.Get().UpdateApplicationStatus(_runningProtocolIds.Count + " protocol" + (_runningProtocolIds.Count == 1 ? " is " : "s are") + " running");
 
                 if (_runningProtocolIds.Count == 0)
                 {
@@ -702,7 +702,9 @@ namespace SensusService
                 {
                     SensusServiceHelper.Get().Logger.Log("Unscheduling one-time callback \"" + callbackId + "\".", LoggingLevel.Debug, GetType());
 
+                    CancelRaisedCallback(callbackId);
                     _idCallback.Remove(callbackId);
+
                     UnscheduleCallback(callbackId, false);
                 }
         }
@@ -714,7 +716,9 @@ namespace SensusService
                 {
                     SensusServiceHelper.Get().Logger.Log("Unscheduling repeating callback \"" + callbackId + "\".", LoggingLevel.Debug, GetType());
 
+                    CancelRaisedCallback(callbackId);
                     _idCallback.Remove(callbackId);
+
                     UnscheduleCallback(callbackId, true);
                 }
         }

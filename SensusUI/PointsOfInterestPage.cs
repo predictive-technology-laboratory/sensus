@@ -31,6 +31,7 @@ namespace SensusUI
     {
         private List<PointOfInterest> _pointsOfInterest;
         private ListView _pointsOfInterestList;
+        private CancellationTokenSource _gpsCancellationTokenSource;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SensusUI.PointsOfInterestPage"/> class.
@@ -98,25 +99,36 @@ namespace SensusUI
 
                                 if (!string.IsNullOrWhiteSpace(name) || !string.IsNullOrWhiteSpace(type))
                                 {
-                                    Action<List<Position>> addPOI = new Action<List<Position>>(async poiPositions =>
-                                        {                                        
-                                            if (poiPositions != null && poiPositions.Count > 0 && await DisplayAlert("Add POI?", "Would you like to add " + poiPositions.Count + " point(s) of interest?", "Yes", "No"))
-                                                foreach (Position poiPosition in poiPositions)
+                                    Action<List<Position>> addPOI = new Action<List<Position>>(poiPositions =>
+                                        {        
+                                            Device.BeginInvokeOnMainThread(async () =>
                                                 {
-                                                    _pointsOfInterest.Add(new PointOfInterest(name, type, poiPosition.ToGeolocationPosition()));
+                                                    if (poiPositions != null && poiPositions.Count > 0 && await DisplayAlert("Add POI?", "Would you like to add " + poiPositions.Count + " point(s) of interest?", "Yes", "No"))
+                                                        foreach (Position poiPosition in poiPositions)
+                                                        {
+                                                            _pointsOfInterest.Add(new PointOfInterest(name, type, poiPosition.ToGeolocationPosition()));
 
-                                                    if (changeCallback != null)
-                                                        changeCallback();
+                                                            if (changeCallback != null)
+                                                                changeCallback();
 
-                                                    Bind();
-                                                }
+                                                            Bind();
+                                                        }
+                                                });
                                         });
 
                                     string newPinName = name + (string.IsNullOrWhiteSpace(type) ? "" : " (" + type + ")");
 
                                     if (string.IsNullOrWhiteSpace(address))
                                     {
-                                        Xamarin.Geolocation.Position gpsPosition = GpsReceiver.Get().GetReading(default(CancellationToken));
+                                        // set up a new cancellation token source, cancelling the existing one if present.
+                                        if (_gpsCancellationTokenSource == null)
+                                            _gpsCancellationTokenSource = new CancellationTokenSource();
+                                        else if (!_gpsCancellationTokenSource.IsCancellationRequested)
+                                            _gpsCancellationTokenSource.Cancel();
+
+                                        _gpsCancellationTokenSource = new CancellationTokenSource();
+                                        
+                                        Xamarin.Geolocation.Position gpsPosition = GpsReceiver.Get().GetReading(_gpsCancellationTokenSource.Token);
 
                                         if (gpsPosition != null)
                                         {                                            
@@ -133,6 +145,12 @@ namespace SensusUI
                                 }
                             });
                     }));
+
+            Disappearing += (o, e) =>
+            {
+                if (_gpsCancellationTokenSource != null && !_gpsCancellationTokenSource.IsCancellationRequested)
+                    _gpsCancellationTokenSource.Cancel();
+            };
         }
 
         private void Bind()
