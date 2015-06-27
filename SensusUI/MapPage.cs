@@ -90,15 +90,15 @@ namespace SensusUI
                 Orientation = StackOrientation.Vertical,
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 Children =
-                { 
-                    _map,
+                {                     
                     new StackLayout
                     {
                         Orientation = StackOrientation.Horizontal,
                         HorizontalOptions = LayoutOptions.FillAndExpand,
                         Children = { searchLabel, _searchEntry, searchGoButton }
-                    }, 
-                    clearPinsButton
+                    },
+                    clearPinsButton,
+                    _map,
                 }
             };
         }

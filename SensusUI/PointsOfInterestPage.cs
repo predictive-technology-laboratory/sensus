@@ -92,9 +92,9 @@ namespace SensusUI
                                 if (inputs == null)
                                     return;
                             
-                                string name = inputs[0].ToString();
-                                string type = inputs[1].ToString();
-                                string address = inputs[2].ToString();
+                                string name = inputs[0] == null ? "" : inputs[0].ToString();
+                                string type = inputs[1] == null ? "" : inputs[1].ToString();
+                                string address = inputs[2] == null ? "" : inputs[2].ToString();
                                 bool viewMap = (bool)inputs[3];
 
                                 if (!string.IsNullOrWhiteSpace(name) || !string.IsNullOrWhiteSpace(type))

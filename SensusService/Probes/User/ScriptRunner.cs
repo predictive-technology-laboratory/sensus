@@ -92,7 +92,7 @@ namespace SensusService.Probes.User
 
                     if (_probe != null && _probe.Running && _enabled) // probe can be null when deserializing, if set after this property.
                         Start();
-                    else
+                    else if (SensusServiceHelper.Get() != null)  // service helper is null when deserializing
                         Stop();
                 }
             }
@@ -127,7 +127,7 @@ namespace SensusService.Probes.User
 
                     if (_probe != null && _probe.Running && _enabled && _rerun) // probe can be null when deserializing, if set after this property.
                         StartRerunCallbacksAsync();
-                    else
+                    else if (SensusServiceHelper.Get() != null)  // service helper is null when deserializing
                         StopRerunCallbacksAsync();
                 }
             }
@@ -183,7 +183,7 @@ namespace SensusService.Probes.User
 
                     if (_probe != null && _probe.Running && _enabled && _triggerRandomly) // probe can be null when deserializing, if set after this property.
                         StartRandomTriggerCallbacksAsync();
-                    else
+                    else if (SensusServiceHelper.Get() != null)  // service helper is null when deserializing
                         StopRandomTriggerCallbackAsync();
                 }
             }
