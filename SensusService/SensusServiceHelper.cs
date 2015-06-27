@@ -397,7 +397,17 @@ namespace SensusService
                 try
                 {
                     _logger.Log("Initializing Xamarin Insights.", LoggingLevel.Normal, GetType());
+
+                    // wait for startup crash to be logged -- https://insights.xamarin.com/docs
+                    Insights.HasPendingCrashReport += (sender, isStartupCrash) =>
+                    {
+                        if (isStartupCrash)
+                            Insights.PurgePendingCrashReports().Wait();
+                    };
+
                     InitializeXamarinInsights();
+
+                    Insights.Identify(DeviceId, "Device ID", DeviceId);
                 }
                 catch (Exception ex)
                 {
