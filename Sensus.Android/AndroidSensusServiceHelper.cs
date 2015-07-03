@@ -203,12 +203,21 @@ namespace Sensus.Android
                                                     callback(content);
                                                 }
                                             }
-                                            catch (Exception ex) { Toast.MakeText(_service, "Error reading text file:  " + ex.Message, ToastLength.Long); }
+                                            catch (Exception ex)
+                                            {
+                                                FlashNotificationAsync("Error reading text file:  " + ex.Message);
+                                            }
                                     });
                             });
                     }
-                    catch (ActivityNotFoundException) { Toast.MakeText(_service, "Please install a file manager from the Apps store.", ToastLength.Long); }
-                    catch (Exception ex) { Toast.MakeText(_service, "Something went wrong while prompting you for a file to read:  " + ex.Message, ToastLength.Long); }
+                    catch (ActivityNotFoundException)
+                    {
+                        FlashNotificationAsync("Please install a file manager from the Apps store.");
+                    }
+                    catch (Exception ex)
+                    {
+                        FlashNotificationAsync("Something went wrong while prompting you for a file to read:  " + ex.Message);
+                    }
 
                 }).Start();
         }
