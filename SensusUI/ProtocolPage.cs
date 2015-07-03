@@ -57,10 +57,10 @@ namespace SensusUI
             };
 
             editLocalDataStoreButton.Clicked += async (o, e) =>
-                {
-                    if (_protocol.LocalDataStore != null)
-                        await Navigation.PushAsync(new DataStorePage(_protocol, _protocol.LocalDataStore.Copy(), true, false));
-                };
+            {
+                if (_protocol.LocalDataStore != null)
+                    await Navigation.PushAsync(new DataStorePage(_protocol, _protocol.LocalDataStore.Copy(), true, false));
+            };
 
             Button createLocalDataStoreButton = new Button
             {
@@ -90,10 +90,10 @@ namespace SensusUI
             };
 
             editRemoteDataStoreButton.Clicked += async (o, e) =>
-                {
-                    if (_protocol.RemoteDataStore != null)
-                        await Navigation.PushAsync(new DataStorePage(_protocol, _protocol.RemoteDataStore.Copy(), false, false));
-                };
+            {
+                if (_protocol.RemoteDataStore != null)
+                    await Navigation.PushAsync(new DataStorePage(_protocol, _protocol.RemoteDataStore.Copy(), false, false));
+            };
 
             Button createRemoteDataStoreButton = new Button
             {
@@ -117,17 +117,17 @@ namespace SensusUI
 
             #region points of interest
             Button pointsOfInterestButton = new Button
-                {
-                    Text = "Points of Interest",
-                    FontSize = 20
-                };
+            {
+                Text = "Points of Interest",
+                FontSize = 20
+            };
 
             pointsOfInterestButton.Clicked += async (o, e) =>
-                {
-                    await Navigation.PushAsync(new PointsOfInterestPage(
+            {
+                await Navigation.PushAsync(new PointsOfInterestPage(
                         _protocol.PointsOfInterest,
                         () => UiBoundSensusServiceHelper.Get(true).SaveAsync()));
-                };
+            };
 
             views.Add(pointsOfInterestButton);
             #endregion
@@ -140,20 +140,20 @@ namespace SensusUI
             };
 
             viewProbesButton.Clicked += async (o, e) =>
-                {
-                    await Navigation.PushAsync(new ProbesPage(_protocol));
-                };
+            {
+                await Navigation.PushAsync(new ProbesPage(_protocol));
+            };
 
             views.Add(viewProbesButton);
             #endregion
 
             _protocolRunningChangedAction = (o, running) =>
-                {
-                    Device.BeginInvokeOnMainThread(() =>
-                        {
-                            editLocalDataStoreButton.IsEnabled = createLocalDataStoreButton.IsEnabled = editRemoteDataStoreButton.IsEnabled = createRemoteDataStoreButton.IsEnabled = !running;
-                        });
-                };
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                    {
+                        editLocalDataStoreButton.IsEnabled = createLocalDataStoreButton.IsEnabled = editRemoteDataStoreButton.IsEnabled = createRemoteDataStoreButton.IsEnabled = !running;
+                    });
+            };
 
             StackLayout stack = new StackLayout
             {
@@ -196,6 +196,23 @@ namespace SensusUI
             };
 
             stack.Children.Add(lockButton);
+
+            #if __ANDROID__  // Sensus for iOS doesn't have ability to prompt for and read text files
+            Button importConfigurationButton = new Button
+            {
+                Text = "Import Configuration",
+                FontSize = 20,
+                HorizontalOptions = LayoutOptions.FillAndExpand
+            };
+
+            importConfigurationButton.Clicked += (o, e) =>
+            {
+                UiBoundSensusServiceHelper.Get(true).PromptForAndReadTextFileAsync("Select Configuration File", text =>
+                    {
+                        Dictionary<string, string> keyValue = new Dictionary<string, string>();
+                    });
+            };
+            #endif
 
             Content = new ScrollView
             {
