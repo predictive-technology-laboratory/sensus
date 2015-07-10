@@ -25,6 +25,7 @@ namespace Sensus.iOS.Probes.Device
     {
         protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
         {
+            Console.Out.WriteLine("Hello1");
             return new Datum[] { new BatteryDatum(DateTimeOffset.UtcNow, (int)(UIDevice.CurrentDevice.BatteryLevel * 100)) };  // report value [0,100] to be same as android
         }
     }

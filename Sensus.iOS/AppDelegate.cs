@@ -15,7 +15,6 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-
 using Foundation;
 using UIKit;
 using Xamarin.Forms.Platform.iOS;
@@ -28,7 +27,7 @@ using System.IO;
 using Facebook.CoreKit;
 using Xamarin;
 using Xam.Plugin.MapExtend.iOSUnified;
-
+using CoreTelephony;
 namespace Sensus.iOS
 {
     // The UIApplicationDelegate for the application. This class is responsible for launching the
@@ -37,10 +36,15 @@ namespace Sensus.iOS
     [Register("AppDelegate")]
     public partial class AppDelegate : FormsApplicationDelegate
     {
+        
         private iOSSensusServiceHelper _serviceHelper;
 
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
+
+            // telephony probe
+            var data = CallLogger.Instance;
+
             SensusServiceHelper.Initialize(() => new iOSSensusServiceHelper());
 
             // facebook settings
@@ -171,6 +175,10 @@ namespace Sensus.iOS
                 // app is no longer active, so reset the activation ID
                 serviceHelper.ActivationId = null;
             }
+
+            //Voip app
+
+            UIApplication.SharedApplication.SetKeepAliveTimeout(600, () => { /* keep alive handler code*/ });
         }            
 		
         // This method is called as part of the transiton from background to active state.
