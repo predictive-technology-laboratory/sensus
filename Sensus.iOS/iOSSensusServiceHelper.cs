@@ -314,6 +314,7 @@ namespace Sensus.iOS
         #region methods not implemented in ios
         public override void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
         {
+            new Thread(() => callback(null)).Start();
         }
 
         public override void UpdateApplicationStatus(string status)
@@ -330,4 +331,3 @@ namespace Sensus.iOS
         #endregion
     }
 }
-

@@ -101,6 +101,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Remote\MicrosoftAzureRemoteDataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ScriptRunner.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\StringHashAnonymizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ExtensionMethods.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />

@@ -25,6 +25,8 @@ using System.Threading;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 using Xamarin.Facebook;
+using Xamarin;
+using Xam.Plugin.MapExtend.Droid;
 
 [assembly:MetaData ("com.facebook.sdk.ApplicationId", Value ="@string/app_id")]
 
@@ -84,6 +86,8 @@ namespace Sensus.Android
             Window.AddFlags(global::Android.Views.WindowManagerFlags.TurnScreenOn);
 
             Forms.Init(this, savedInstanceState);
+            FormsMaps.Init(this, savedInstanceState);
+            MapExtendRenderer.Init(this, savedInstanceState);
 
             _app = new App();
             LoadApplication(_app);
@@ -100,7 +104,7 @@ namespace Sensus.Android
                 e.Binder.SensusServiceHelper.SetMainActivity(this);
 
                 // display service helper properties on the main page
-                _app.SensusMainPage.DisplayServiceHelper(e.Binder.SensusServiceHelper);                                    
+                _app.SensusMainPage.DisplayServiceHelper(e.Binder.SensusServiceHelper);                                     
             };
 
             _serviceConnection.ServiceDisconnected += (o, e) =>
@@ -236,20 +240,6 @@ namespace Sensus.Android
 
             if (Stopped != null)
                 Stopped(this, null);
-        }
-
-        protected override void OnDestroy()
-        {
-            base.OnDestroy();
-
-            try
-            {
-                SensusServiceHelper.Get().Dispose();
-            }
-            catch (Exception ex)
-            {
-                Console.Error.WriteLine("Error while disposing service helper:  " + ex.Message);
-            }
         }
 
         private void DisconnectFromService()
