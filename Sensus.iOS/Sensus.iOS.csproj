@@ -108,7 +108,19 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="Xamarin.iOS" />
+    <Reference Include="Xamarin.Mobile">
+      <HintPath>..\Components\xamarin.mobile-0.7.5\lib\ios-unified\Xamarin.Mobile.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAzure.Mobile.Ext">
+      <HintPath>..\Components\azure-mobile-services-1.3.1\lib\ios-unified\Microsoft.WindowsAzure.Mobile.Ext.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAzure.Mobile">
+      <HintPath>..\Components\azure-mobile-services-1.3.1\lib\ios-unified\Microsoft.WindowsAzure.Mobile.dll</HintPath>
+    </Reference>
     <Reference Include="System.Net.Http" />
+    <Reference Include="DataNuage.Aws.S3.iOS-unified">
+      <HintPath>..\Components\DataNuage.Aws.S3-1.5.216.0\lib\ios-unified\DataNuage.Aws.S3.iOS-unified.dll</HintPath>
+    </Reference>
     <Reference Include="Toasts.Forms.Plugin.Abstractions">
       <HintPath>..\packages\Toasts.Forms.Plugin.1.0.6.18\lib\Xamarin.iOS10\Toasts.Forms.Plugin.Abstractions.dll</HintPath>
     </Reference>
@@ -116,10 +128,10 @@
       <HintPath>..\packages\Toasts.Forms.Plugin.1.0.6.18\lib\Xamarin.iOS10\Toasts.Forms.Plugin.iOS.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http.Primitives">
-      <HintPath>..\Components\azure-mobile-services-1.3.1\lib\ios-unified\System.Net.Http.Primitives.dll</HintPath>
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\Xamarin.iOS10\System.Net.Http.Primitives.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http.Extensions">
-      <HintPath>..\Components\azure-mobile-services-1.3.1\lib\ios-unified\System.Net.Http.Extensions.dll</HintPath>
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\Xamarin.iOS10\System.Net.Http.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="Xam.Plugin.MapExtend.Abstractions">
       <HintPath>..\packages\Xam.Plugin.MapExtend.1.2.0.0\lib\Xamarin.iOS10\Xam.Plugin.MapExtend.Abstractions.dll</HintPath>
@@ -137,7 +149,7 @@
       <HintPath>..\packages\Xamarin.Facebook.4.2.0.0\lib\Xamarin.iOS10\Facebook.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\Components\azure-mobile-services-1.3.1\lib\ios-unified\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Forms.Platform.iOS">
       <HintPath>..\packages\Xamarin.Forms.1.4.3.6374\lib\Xamarin.iOS10\Xamarin.Forms.Platform.iOS.dll</HintPath>
@@ -156,18 +168,6 @@
     </Reference>
     <Reference Include="Xamarin.Forms.Maps">
       <HintPath>..\packages\Xamarin.Forms.Maps.1.4.3.6374\lib\Xamarin.iOS10\Xamarin.Forms.Maps.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Mobile">
-      <HintPath>..\Components\xamarin.mobile-0.7.5\lib\ios-unified\Xamarin.Mobile.dll</HintPath>
-    </Reference>
-    <Reference Include="DataNuage.Aws.S3.iOS-unified">
-      <HintPath>..\Components\DataNuage.Aws.S3-1.5.216.0\lib\ios-unified\DataNuage.Aws.S3.iOS-unified.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.WindowsAzure.Mobile.Ext">
-      <HintPath>..\Components\azure-mobile-services-1.3.1\lib\ios-unified\Microsoft.WindowsAzure.Mobile.Ext.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.WindowsAzure.Mobile">
-      <HintPath>..\Components\azure-mobile-services-1.3.1\lib\ios-unified\Microsoft.WindowsAzure.Mobile.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -247,8 +247,6 @@
     <Compile Include="Probes\Network\iOSPollingWlanProbe.cs" />
     <Compile Include="ShareFileActivityItemSource.cs" />
     <Compile Include="Probes\Apps\iOSFacebookProbe.cs" />
-    <Compile Include="CallLogger.cs" />
-    <Compile Include="Probes\Communication\iOSTelephonyProbe.cs" />
   </ItemGroup>
   <Import Project="..\SensusService\SensusService.projitems" Label="Shared" Condition="Exists('..\SensusService\SensusService.projitems')" />
   <Import Project="..\SensusUI\SensusUI.projitems" Label="Shared" Condition="Exists('..\SensusUI\SensusUI.projitems')" />
@@ -295,7 +293,4 @@
     </PropertyGroup>
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
   </Target>
-  <ItemGroup>
-    <Folder Include="Probes\Communication\" />
-  </ItemGroup>
 </Project>
