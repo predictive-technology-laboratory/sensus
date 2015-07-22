@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,17 +13,21 @@
 // limitations under the License.
 
 using System;
+using SensusService.Probes;
+using SensusService.Probes.Communication;
 
-namespace SensusService.Probes.Communication
+namespace SensusService
 {
-    /// <summary>
-    /// Probes information about incoming and outgoing phone calls.
-    /// </summary>
-    public abstract class TelephonyProbe : ListeningProbe
+    public abstract class PollingTelephonyProbe : PollingProbe
     {
         protected sealed override string DefaultDisplayName
         {
             get { return "Phone Calls"; }
+        }
+
+        public override int DefaultPollingSleepDurationMS
+        {
+            get { return 600000; }
         }
 
         public sealed override Type DatumType

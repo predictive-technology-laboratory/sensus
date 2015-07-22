@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,44 +21,33 @@ using SensusService.Probes;
 using CoreTelephony;
 using SensusService.Probes.Communication;
 
-namespace Sensus.iOS
+namespace Sensus.iOS.Probes.Communication
 {
-    public class iOSTelephonyProbe : PollingProbe
+    public class iOSTelephonyProbe : PollingTelephonyProbe
     {
-
-        static List <CTCall> calls = new List<CTCall>();    // list of calls made or received
-        static List <CTCall> temp = new List<CTCall>();     // copy of calls list, to perform duplicate filtering
-
-        TelephonyState state = TelephonyState.Idle;         // Default set to Idle (temporary, TODO maybe pull call state info out and pass to TelephonyDatum object)
-        int datumListIndex = 0;
+        private CTCallCenter _callCenter;
+        private List <CTCall> _calls;
 
         protected override void Initialize()
         {
             base.Initialize();
-        }
 
-        protected sealed override string DefaultDisplayName
-        {
-            get {
-                return "Telephony";
-            }
-        }
+            _calls = new List<CTCall>();
 
-        public override int DefaultPollingSleepDurationMS
-        {
-            get { return 600000; }
-        }
-
-        public sealed override Type DatumType
-        {
-            get { return typeof(TelephonyDatum); }
+            _callCenter = new CTCallCenter();
+            _callCenter.CallEventHandler += call =>
+            {
+                _calls.Add(call);
+            };
         }
 
         protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
         {
-            var data1 = CallLogger.Instance;
-            calls = data1.CallLog();                // calls receives list of call events from Singleton (CallLogger)
-            temp = data1.CallLog();                 // duplicate to temp
+            return new TelephonyDatum[] { };
+
+            /*var data1 = CallLogger.Singleton;
+            calls = data1.Calls();                // calls receives list of call events from Singleton (CallLogger)
+            temp = data1.Calls();                 // duplicate to temp
             datumListIndex = calls.Count;
             Datum[] datumList = new Datum[datumListIndex];
             int i = 0;
@@ -85,7 +75,7 @@ namespace Sensus.iOS
             }
             calls.Clear();
             temp.Clear();
-            return datumList;
+            return datumList;*/
         }
     }
 }

@@ -40,9 +40,6 @@ namespace Sensus.iOS
 
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
-            // telephony probe
-            var data = CallLogger.Instance;
-
             SensusServiceHelper.Initialize(() => new iOSSensusServiceHelper());
 
             // facebook settings
@@ -174,9 +171,11 @@ namespace Sensus.iOS
                 serviceHelper.ActivationId = null;
             }
 
-            // VOIP
-            UIApplication.SharedApplication.SetKeepAliveTimeout(600, () => { /* keep alive handler code*/ });
-        }            
+            // set up the VOIP timeout to wake the app up in 10 minutes
+            UIApplication.SharedApplication.SetKeepAliveTimeout(600, () =>
+                {
+                });
+        }
 		
         // This method is called as part of the transiton from background to active state.
         public override void WillEnterForeground(UIApplication application)

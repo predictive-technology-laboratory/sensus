@@ -19,7 +19,7 @@ using System;
 
 namespace Sensus.Android.Probes.Communication
 {
-    public class AndroidTelephonyProbe : TelephonyProbe
+    public class AndroidTelephonyProbe : ListeningTelephonyProbe
     {
         private TelephonyManager _telephonyManager;
         private EventHandler<string> _outgoingCallCallback;
