@@ -15,7 +15,6 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-
 using Foundation;
 using UIKit;
 using Xamarin.Forms.Platform.iOS;
@@ -41,6 +40,9 @@ namespace Sensus.iOS
 
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
+            // telephony probe
+            var data = CallLogger.Instance;
+
             SensusServiceHelper.Initialize(() => new iOSSensusServiceHelper());
 
             // facebook settings
@@ -171,6 +173,9 @@ namespace Sensus.iOS
                 // app is no longer active, so reset the activation ID
                 serviceHelper.ActivationId = null;
             }
+
+            // VOIP
+            UIApplication.SharedApplication.SetKeepAliveTimeout(600, () => { /* keep alive handler code*/ });
         }            
 		
         // This method is called as part of the transiton from background to active state.
