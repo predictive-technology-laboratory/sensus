@@ -197,29 +197,6 @@ namespace SensusUI
 
             stack.Children.Add(lockButton);
 
-            #if __ANDROID__  // Sensus for iOS doesn't have ability to prompt for and read text files
-            Button importConfigurationButton = new Button
-            {
-                Text = "Import Configuration",
-                FontSize = 20,
-                HorizontalOptions = LayoutOptions.FillAndExpand
-            };
-
-            importConfigurationButton.Clicked += (o, e) =>
-            {
-                UiBoundSensusServiceHelper.Get(true).PromptForAndReadTextFileAsync("Select Configuration File", text =>
-                    {
-                        // the text variable should contain information from the submission of our Google Form survey. the text should contain 
-                        // two lines:  the first with the variable names and the second with the variable values.
-
-                        // step 1:  parse the two lines into a key-value store
-                        Dictionary<string, string> keyValue = new Dictionary<string, string>();
-
-                        // step 2:  based on the key-value pairs from step 1, configure the protocol that is held in the _protocol variable in this class.
-                    });
-            };
-            #endif
-
             Content = new ScrollView
             {
                 Content = stack
