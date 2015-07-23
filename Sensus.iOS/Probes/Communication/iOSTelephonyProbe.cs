@@ -25,8 +25,9 @@ namespace Sensus.iOS.Probes.Communication
 {
     public class iOSTelephonyProbe : PollingTelephonyProbe
     {
-        private CTCallCenter _callCenter;
         private List <CTCall> _calls;
+        private CTCallCenter _callCenter1;
+        private CTCallCenter _callCenter2;
 
         protected override void Initialize()
         {
@@ -34,50 +35,48 @@ namespace Sensus.iOS.Probes.Communication
 
             _calls = new List<CTCall>();
 
-            _callCenter = new CTCallCenter();
-            _callCenter.CallEventHandler += call =>
-            {
-                _calls.Add(call);
-            };
+            Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+                {
+                    // for some reason, using a single CTCallCenter misses calls when the app is resumed from
+                    // background. if we use two CTCallCenters, the calls that occurred in the background
+                    // are passed to the second CTCallCenter. more on this here:
+                    //
+                    // http://stackoverflow.com/questions/21195732/how-to-get-a-call-event-using-ctcallcentersetcalleventhandler-that-occurred-wh
+                    //
+                    // since all call activity is logged via the second call center, just use it to gather call data.
+
+                    _callCenter1 = new CTCallCenter();
+                    _callCenter1.CallEventHandler += call =>
+                    {
+                    };
+
+                    _callCenter2 = new CTCallCenter();
+                    _callCenter2.CallEventHandler += call =>
+                    {
+                        _calls.Add(call);
+                    };
+                });
         }
 
         protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
         {
-            return new TelephonyDatum[] { };
-
-            /*var data1 = CallLogger.Singleton;
-            calls = data1.Calls();                // calls receives list of call events from Singleton (CallLogger)
-            temp = data1.Calls();                 // duplicate to temp
-            datumListIndex = calls.Count;
-            Datum[] datumList = new Datum[datumListIndex];
-            int i = 0;
-            int j = 0;
-            int count = 0;
-
-            // filter out duplicates (call events), determine # of calls
-            for (i = 0; i < temp.Count; ++i)
+            List<TelephonyDatum> data = new List<TelephonyDatum>();
+            foreach (CTCall call in _calls)
             {
-                for (j = i+1; j < temp.Count; ++j)
-                {
-                    if (temp.ElementAt(i).CallID == temp.ElementAt(j).CallID)
-                    {
-                        temp.RemoveAt(j);
-                        --j;
-                    }
-                }
+                TelephonyState state;
+                if (call.CallState == call.StateDialing)
+                    state = TelephonyState.OutgoingCall;
+                else if (call.CallState == call.StateIncoming)
+                    state = TelephonyState.IncomingCall;
+                else if (call.CallState == call.StateDisconnected)
+                    state = TelephonyState.Idle;
+                else
+                    continue;
+                
+                data.Add(new TelephonyDatum(DateTimeOffset.Now, state, ""));
             }
 
-            // creates TelephonyDatum objects
-            while (count < temp.Count)
-            {
-                datumList[count] = new TelephonyDatum(DateTimeOffset.UtcNow, state, null);
-                ++count;
-            }
-            calls.Clear();
-            temp.Clear();
-            return datumList;*/
+            return data;
         }
     }
 }
-
-
