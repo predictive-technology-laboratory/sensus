@@ -314,6 +314,8 @@ namespace Sensus.iOS
         #region methods not implemented in ios
         public override void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
         {
+            FlashNotificationAsync("This is not supported on iOS.");
+
             new Thread(() => callback(null)).Start();
         }
 
