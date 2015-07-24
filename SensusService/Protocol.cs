@@ -38,6 +38,7 @@ namespace SensusService
     public class Protocol
     {
         #region static members
+
         private static JsonSerializerSettings JSON_SERIALIZER_SETTINGS = new JsonSerializerSettings
         {        
             PreserveReferencesHandling = PreserveReferencesHandling.Objects,
@@ -79,10 +80,10 @@ namespace SensusService
                 WebClient downloadClient = new WebClient();
 
                 #if __ANDROID__ || __IOS__
-                downloadClient.DownloadDataCompleted += (o,e) =>
-                    {
-                        DisplayFromBytesAsync(e.Result);
-                    };
+                downloadClient.DownloadDataCompleted += (o, e) =>
+                {
+                    DisplayFromBytesAsync(e.Result);
+                };
                 #elif WINDOWS_PHONE
                 // TODO:  Read bytes and display.
                 #else
@@ -220,6 +221,7 @@ namespace SensusService
 
                 }).Start();
         }
+
         #endregion
 
         public event EventHandler<bool> ProtocolRunningChanged;
@@ -238,6 +240,7 @@ namespace SensusService
         private DateTimeOffset _randomTimeAnchor;
         private bool _shareable;
         private List<PointOfInterest> _pointsOfInterest;
+        private string _startupAgreement;
 
         private readonly object _locker = new object();
 
@@ -365,6 +368,20 @@ namespace SensusService
             }
         }
 
+        [EditorUiProperty("Startup Agreement:", true, 15)]
+        public string StartupAgreement
+        {
+            get
+            {
+                return _startupAgreement;
+            }
+            set
+            {
+                _startupAgreement = value;
+            }
+        }
+
+
         public List<PointOfInterest> PointsOfInterest
         {
             get { return _pointsOfInterest; }
@@ -381,7 +398,7 @@ namespace SensusService
             _jsonAnonymizer = new AnonymizedJsonContractResolver(this);
             _shareable = true;
             _pointsOfInterest = new List<PointOfInterest>();
-        }   
+        }
 
         /// <summary>
         /// Called by static CreateAsync. Should not be called directly by outside callers.
@@ -420,7 +437,7 @@ namespace SensusService
             }
 
             _probes.Add(probe);
-        }               
+        }
 
         private void ResetRandomTimeAnchor()
         {

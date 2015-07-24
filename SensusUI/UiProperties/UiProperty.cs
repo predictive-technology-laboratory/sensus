@@ -107,6 +107,16 @@ namespace SensusUI.UiProperties
                     bindingProperty = Entry.TextProperty;
                     converter = new EntryFloatUiProperty.ValueConverter();
                 }
+                else if (uiElement is EditorUiProperty)
+                {
+                    view = new Editor
+                    {
+                        Keyboard = Keyboard.Default,
+                        HorizontalOptions = LayoutOptions.FillAndExpand
+                    };
+
+                    bindingProperty = Editor.TextProperty;
+                }
                 else if (uiElement is IncrementalIntegerUiProperty)
                 {
                     IncrementalIntegerUiProperty p = uiElement as IncrementalIntegerUiProperty;

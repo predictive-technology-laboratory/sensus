@@ -48,32 +48,53 @@ namespace Sensus.iOS.Probes.Communication
                     _callCenter1 = new CTCallCenter();
                     _callCenter1.CallEventHandler += call =>
                     {
+                        lock (_calls)
+                            if (!ContainsCall(call))
+                                _calls.Add(call);
                     };
 
                     _callCenter2 = new CTCallCenter();
                     _callCenter2.CallEventHandler += call =>
                     {
-                        _calls.Add(call);
+                        lock (_calls)
+                            if (!ContainsCall(call))
+                                _calls.Add(call);
                     };
                 });
+        }
+
+        private bool ContainsCall(CTCall call)
+        {
+            lock (_calls)
+                foreach (CTCall c in _calls)
+                    if (c.CallID == call.CallID && c.CallState == call.CallState)
+                        return true;
+
+            return false;
         }
 
         protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
         {
             List<TelephonyDatum> data = new List<TelephonyDatum>();
-            foreach (CTCall call in _calls)
+
+            lock (_calls)
             {
-                TelephonyState state;
-                if (call.CallState == call.StateDialing)
-                    state = TelephonyState.OutgoingCall;
-                else if (call.CallState == call.StateIncoming)
-                    state = TelephonyState.IncomingCall;
-                else if (call.CallState == call.StateDisconnected)
-                    state = TelephonyState.Idle;
-                else
-                    continue;
+                foreach (CTCall call in _calls)
+                {
+                    TelephonyState state;
+                    if (call.CallState == call.StateDialing)
+                        state = TelephonyState.OutgoingCall;
+                    else if (call.CallState == call.StateIncoming)
+                        state = TelephonyState.IncomingCall;
+                    else if (call.CallState == call.StateDisconnected)
+                        state = TelephonyState.Idle;
+                    else
+                        continue;
                 
-                data.Add(new TelephonyDatum(DateTimeOffset.Now, state, ""));
+                    data.Add(new TelephonyDatum(DateTimeOffset.Now, state, ""));
+                }
+
+                _calls.Clear();
             }
 
             return data;

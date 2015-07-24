@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Threading;
 
 namespace SensusService.Probes.Movement
 {
@@ -21,6 +22,13 @@ namespace SensusService.Probes.Movement
     /// </summary>
     public abstract class AccelerometerProbe : ListeningProbe
     {
+        private bool _stabilizing;
+
+        protected bool Stabilizing
+        {
+            get { return _stabilizing; }
+        }
+
         protected sealed override string DefaultDisplayName
         {
             get { return "Accelerometer"; }
@@ -29,6 +37,25 @@ namespace SensusService.Probes.Movement
         public sealed override Type DatumType
         {
             get { return typeof(AccelerometerDatum); }
+        }
+
+        protected override void Initialize()
+        {
+            base.Initialize();
+
+            _stabilizing = true;
+        }
+
+        protected override void StartListening()
+        {
+            // allow the accelerometer to stabilize...the first few readings can be extremely erratic
+            new Thread(() =>
+                {
+                    Thread.Sleep(5000);
+                    _stabilizing = false;
+                    SensusServiceHelper.Get().Logger.Log("Accelerometer has finished stabilization period.", LoggingLevel.Verbose, GetType());
+
+                }).Start();
         }
     }
 }
