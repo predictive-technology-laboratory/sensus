@@ -208,9 +208,26 @@ namespace SensusService
                                     {
                                         if (!(App.Current.MainPage.Navigation.NavigationStack.Last() is ProtocolsPage))
                                             await App.Current.MainPage.Navigation.PushAsync(new ProtocolsPage());
-                                        
-                                        if (await App.Current.MainPage.DisplayAlert("Start Protocol", "Would you like to start the protocol (" + protocol.Name + ") you just opened with Sensus?", "Yes", "No"))
+
+                                        if (string.IsNullOrWhiteSpace(protocol.StartupAgreement))
                                             protocol.Running = true;
+                                        else
+                                        {
+                                            int agreementCode = new Random().Next(1000, 10000);
+
+                                            UiBoundSensusServiceHelper.Get(true).PromptForInputAsync(
+
+                                                "Would you like to start the protocol (" + protocol.Name + ") you just opened with Sensus? If so, agree to the following terms:" + Environment.NewLine + Environment.NewLine +
+                                                protocol.StartupAgreement + Environment.NewLine + Environment.NewLine +
+                                                "If you agree to the above terms and conditions, please enter the following code:  " + agreementCode, false, agreementCodeEnteredStr =>
+                                                {
+                                                    int agreementCodeEnteredInt;
+                                                    if (int.TryParse(agreementCodeEnteredStr, out agreementCodeEnteredInt) && agreementCodeEnteredInt == agreementCode)
+                                                        protocol.Running = true;
+                                                    else
+                                                        UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Incorrect agreement code entered.");
+                                                });
+                                        }
                                     });
                             });
                     }
