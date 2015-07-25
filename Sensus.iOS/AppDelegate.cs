@@ -170,11 +170,6 @@ namespace Sensus.iOS
                 // app is no longer active, so reset the activation ID
                 serviceHelper.ActivationId = null;
             }
-
-            // set up the VOIP timeout to wake the app up in 10 minutes
-            UIApplication.SharedApplication.SetKeepAliveTimeout(600, () =>
-                {
-                });
         }
 		
         // This method is called as part of the transiton from background to active state.
