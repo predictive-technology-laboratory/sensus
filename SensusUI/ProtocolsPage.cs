@@ -44,22 +44,7 @@ namespace SensusUI
                 string selectedAction = await DisplayActionSheet(selectedProtocol.Name, "Cancel", null, selectedProtocol.Running ? "Stop" : "Start", "Edit", "Status", "Share", "Delete");
 
                 if (selectedAction == "Start")
-                {
-                    if (string.IsNullOrWhiteSpace(selectedProtocol.StartupAgreement))
-                        selectedProtocol.Running = true;
-                    else
-                    {
-                        int agreementCode = new Random().Next(1000, 10000);
-                        UiBoundSensusServiceHelper.Get(true).PromptForInputAsync(selectedProtocol.StartupAgreement + Environment.NewLine + Environment.NewLine + "If you agree to the above terms and conditions, please enter the following code:  " + agreementCode, false, agreementCodeEnteredStr =>
-                            {
-                                int agreementCodeEnteredInt;
-                                if (int.TryParse(agreementCodeEnteredStr, out agreementCodeEnteredInt) && agreementCodeEnteredInt == agreementCode)
-                                    selectedProtocol.Running = true;
-                                else
-                                    UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Incorrect agreement code entered.");
-                            });
-                    }
-                }
+                    selectedProtocol.StartWithUserAgreement(null);
                 else if (selectedAction == "Stop")
                     selectedProtocol.Running = false;
                 else if (selectedAction == "Edit")

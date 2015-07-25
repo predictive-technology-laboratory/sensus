@@ -209,25 +209,7 @@ namespace SensusService
                                         if (!(App.Current.MainPage.Navigation.NavigationStack.Last() is ProtocolsPage))
                                             await App.Current.MainPage.Navigation.PushAsync(new ProtocolsPage());
 
-                                        if (string.IsNullOrWhiteSpace(protocol.StartupAgreement))
-                                            protocol.Running = true;
-                                        else
-                                        {
-                                            int agreementCode = new Random().Next(1000, 10000);
-
-                                            UiBoundSensusServiceHelper.Get(true).PromptForInputAsync(
-
-                                                "Would you like to start the protocol (" + protocol.Name + ") you just opened with Sensus? If so, agree to the following terms:" + Environment.NewLine + Environment.NewLine +
-                                                protocol.StartupAgreement + Environment.NewLine + Environment.NewLine +
-                                                "If you agree to the above terms and conditions, please enter the following code:  " + agreementCode, false, agreementCodeEnteredStr =>
-                                                {
-                                                    int agreementCodeEnteredInt;
-                                                    if (int.TryParse(agreementCodeEnteredStr, out agreementCodeEnteredInt) && agreementCodeEnteredInt == agreementCode)
-                                                        protocol.Running = true;
-                                                    else
-                                                        UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Incorrect agreement code entered.");
-                                                });
-                                        }
+                                        protocol.StartWithUserAgreement("You just opened a protocol named \"" + protocol.Name + "\" within Sensus." + (string.IsNullOrWhiteSpace(protocol.StartupAgreement) ? "" : " Please read the following terms and conditions."));
                                     });
                             });
                     }
@@ -566,6 +548,34 @@ namespace SensusService
 
                 if (stopProtocol)
                     Stop();
+            }
+        }
+
+        public void StartWithUserAgreement(string message)
+        {
+            if (string.IsNullOrWhiteSpace(message) && string.IsNullOrWhiteSpace(_startupAgreement))
+                Running = true;
+            else
+            {
+                int agreementCode = new Random().Next(1000, 10000);
+
+                SensusServiceHelper.Get().PromptForInputAsync(
+
+                    (string.IsNullOrWhiteSpace(message) ? "" : message + Environment.NewLine + Environment.NewLine) +
+
+                    (string.IsNullOrWhiteSpace(_startupAgreement) ? "" : _startupAgreement + Environment.NewLine + Environment.NewLine) +
+
+                    "If you wish to start this protocol, please enter the following code:  " + agreementCode, false, agreementCodeEnteredStr =>
+                    {
+                        if (agreementCodeEnteredStr == null)
+                            return;
+
+                        int agreementCodeEnteredInt;
+                        if (int.TryParse(agreementCodeEnteredStr, out agreementCodeEnteredInt) && agreementCodeEnteredInt == agreementCode)
+                            Running = true;
+                        else
+                            SensusServiceHelper.Get().FlashNotificationAsync("Incorrect agreement code entered.");
+                    });
             }
         }
 
