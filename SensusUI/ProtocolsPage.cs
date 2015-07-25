@@ -44,7 +44,7 @@ namespace SensusUI
                 string selectedAction = await DisplayActionSheet(selectedProtocol.Name, "Cancel", null, selectedProtocol.Running ? "Stop" : "Start", "Edit", "Status", "Share", "Delete");
 
                 if (selectedAction == "Start")
-                    selectedProtocol.Running = true;
+                    selectedProtocol.StartWithUserAgreement(null);
                 else if (selectedAction == "Stop")
                     selectedProtocol.Running = false;
                 else if (selectedAction == "Edit")

@@ -24,7 +24,6 @@ namespace Sensus.Android.Probes.Movement
     {
         private AndroidSensorListener _accelerometerListener;
         private float[] _gravity;
-        private bool _stabilizing;
 
         public AndroidAccelerometerProbe()
         {
@@ -45,7 +44,7 @@ namespace Sensus.Android.Probes.Movement
                     _gravity[2] = alpha * _gravity[2] + (1 - alpha) * e.Values[2];
 
                     // ignore values if the sensor is stabilizing -- do this here because _gravity is the variable that is stabilizing
-                    if (_stabilizing)
+                    if (Stabilizing)
                         return;
                     
                     float xAccel = e.Values[0] - _gravity[0];
@@ -61,21 +60,13 @@ namespace Sensus.Android.Probes.Movement
             base.Initialize();
 
             _accelerometerListener.Initialize();
-            _stabilizing = true;
         }
 
         protected override void StartListening()
-        {
+        {           
+            base.StartListening();
+
             _accelerometerListener.Start();
-
-            // wait while the sensor stabilizes
-            new Thread(() =>
-                {
-                    Thread.Sleep(2000);
-                    _stabilizing = false;
-                    SensusServiceHelper.Get().Logger.Log("Accelerometer has finished stabilization period.", LoggingLevel.Verbose, GetType());
-
-                }).Start();
         }
 
         protected override void StopListening()

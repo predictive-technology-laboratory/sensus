@@ -46,6 +46,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\TextInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\YesNoInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MapPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UiProperties\EditorUiProperty.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Inputs\" />

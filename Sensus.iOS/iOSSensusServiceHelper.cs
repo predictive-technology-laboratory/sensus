@@ -240,7 +240,7 @@ namespace Sensus.iOS
                     Device.BeginInvokeOnMainThread(() =>
                         {
                             ManualResetEvent dialogShowWait = new ManualResetEvent(false);
-
+                            
                             UIAlertView dialog = new UIAlertView("Sensus is requesting input...", prompt, null, "Cancel", "OK");
                             dialog.AlertViewStyle = UIAlertViewStyle.PlainTextInput;
                             dialog.Dismissed += (o,e) => { dialogDismissWait.Set(); };
@@ -250,7 +250,7 @@ namespace Sensus.iOS
                                     if(e.ButtonIndex == 1)
                                         input = dialog.GetTextField(0).Text;
                                 };
-                            
+
                             dialog.Show();
 
                             #region voice recognizer
