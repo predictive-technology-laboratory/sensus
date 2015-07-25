@@ -50,7 +50,6 @@ namespace SensusService.Probes.Movement
             set { _z = value; }
         }
 
-        [JsonIgnore]
         public override string DisplayDetail
         {
             get { return Math.Round(_x, 2) + " (x), " + Math.Round(_y, 2) + " (y), " + Math.Round(_z, 2) + " (z)"; }

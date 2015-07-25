@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,46 +12,57 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Newtonsoft.Json;
-using SensusService.Probes.User.ProbeTriggerProperties;
 using System;
+using SensusService.Probes.User.ProbeTriggerProperties;
+using Newtonsoft.Json;
 using SensusService.Anonymization;
 using SensusService.Anonymization.Anonymizers;
 
-namespace SensusService.Probes.Context
+namespace SensusService
 {
-    public class SoundDatum : Datum
+    public class AmbientTemperatureDatum : Datum
     {
-        private double _decibels;
+        private double _degreesCelsius;
 
-        [NumberProbeTriggerProperty]
-        [Anonymizable(null, new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
-        public double Decibels
+        [Anonymizable("Degrees (C)", new Type[] { typeof(DoubleRoundingTensAnonymizer) }, -1)]
+        [NumberProbeTriggerProperty("Degrees (C)")]
+        public double DegreesCelsius
         {
-            get { return _decibels; }
-            set { _decibels = value; }
+            get
+            {
+                return _degreesCelsius;
+            }
+            set
+            {
+                _degreesCelsius = value;
+            }
         }
 
         public override string DisplayDetail
         {
-            get { return Math.Round(_decibels, 0) + " (db)"; }
+            get
+            {
+                return "Degrees (C):  " + Math.Round(_degreesCelsius, 1);
+            }
         }
 
         /// <summary>
         /// For JSON deserialization.
         /// </summary>
-        private SoundDatum() { }
+        private AmbientTemperatureDatum() 
+        {
+        } 
 
-        public SoundDatum(DateTimeOffset timestamp, double decibels)
+        public AmbientTemperatureDatum(DateTimeOffset timestamp, double degreesCelcius)
             : base(timestamp)
         {
-            _decibels = decibels;
+            _degreesCelsius = degreesCelcius;
         }
 
         public override string ToString()
         {
             return base.ToString() + Environment.NewLine +
-                   "Decibels:  " + _decibels;
+            "Degrees (C):  " + _degreesCelsius;
         }
     }
 }

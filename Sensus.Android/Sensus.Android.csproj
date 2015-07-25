@@ -245,6 +245,7 @@
     <Compile Include="AndroidSensusServiceConnection.cs" />
     <Compile Include="AndroidServiceConnectedEventArgs.cs" />
     <Compile Include="Probes\Apps\AndroidFacebookProbe.cs" />
+    <Compile Include="Probes\Context\AndroidAmbientTemperatureProbe.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

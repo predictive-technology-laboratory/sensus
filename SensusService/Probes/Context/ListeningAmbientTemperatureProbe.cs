@@ -11,14 +11,28 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 using System;
+using SensusService.Probes;
 
 namespace SensusService
 {
-    public class AmbientTemperatureProbe
+    public abstract class ListeningAmbientTemperatureProbe : ListeningProbe
     {
-        public AmbientTemperatureProbe()
+        public sealed override Type DatumType
         {
+            get
+            {
+                return typeof(AmbientTemperatureDatum);
+            }
+        }
+
+        protected override string DefaultDisplayName
+        {
+            get
+            {
+                return "Temperature";
+            }
         }
     }
 }   

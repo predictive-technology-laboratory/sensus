@@ -32,7 +32,6 @@ namespace SensusService.Probes.Context
             set { _brightness = value; }
         }
 
-        [JsonIgnore]
         public override string DisplayDetail
         {
             get { return "Brightness:  " + Math.Round(_brightness, 2); }

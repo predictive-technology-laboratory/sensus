@@ -32,7 +32,6 @@ namespace SensusService.Probes.Location
             set { _heading = value; }
         }
 
-        [JsonIgnore]
         public override string DisplayDetail
         {
             get { return Math.Round(_heading, 0) + " degrees from magnetic north"; }

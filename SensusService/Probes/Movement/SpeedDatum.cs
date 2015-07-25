@@ -76,7 +76,6 @@ namespace SensusService.Probes.Movement
             set { _kph = value; }
         }
 
-        [JsonIgnore]
         public override string DisplayDetail
         {
             get { return Math.Round(_kph, 1) + " (+/- " + Math.Round(Accuracy, 1) + ")" + " KPH"; }

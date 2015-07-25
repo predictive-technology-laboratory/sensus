@@ -29,7 +29,6 @@ namespace SensusService.Probes.Device
             set { _on = value; }
         }
 
-        [JsonIgnore]
         public override string DisplayDetail
         {
             get { return _on ? "On" : "Off"; }

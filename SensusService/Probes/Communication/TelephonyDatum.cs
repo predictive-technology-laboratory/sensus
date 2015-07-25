@@ -40,7 +40,6 @@ namespace SensusService.Probes.Communication
             set { _phoneNumber = value; }
         }
 
-        [JsonIgnore]
         public override string DisplayDetail
         {
             get { return _phoneNumber + " (" + _state + ")"; }

@@ -32,7 +32,6 @@ namespace SensusService.Probes.Device
             set { _level = value; }
         }
 
-        [JsonIgnore]
         public override string DisplayDetail
         {
             get { return "Level:  " + Math.Round(_level, 2); }

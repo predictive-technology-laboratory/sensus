@@ -41,7 +41,6 @@ namespace SensusService.Probes.Context
             set { _address = value; }
         }
 
-        [JsonIgnore]
         public override string DisplayDetail
         {
             get { return _name + " (" + _address + ")"; }

@@ -41,7 +41,6 @@ namespace SensusService.Probes.Location
             set { _longitude = value; }
         }
 
-        [JsonIgnore]
         public override string DisplayDetail
         {
             get { return Math.Round(_latitude, 2) + " (lat), " + Math.Round(_longitude, 2) + " (lon)"; }

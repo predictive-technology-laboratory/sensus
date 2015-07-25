@@ -51,7 +51,6 @@ namespace SensusService.Probes.Communication
             set { _message = value; }
         }
 
-        [JsonIgnore]
         public override string DisplayDetail
         {
             get { return _message; }

@@ -32,7 +32,6 @@ namespace SensusService.Probes.Location
             set { _altitude = value; }
         }
 
-        [JsonIgnore]
         public override string DisplayDetail
         {
             get { return Math.Round(_altitude, 0) + " feet"; }

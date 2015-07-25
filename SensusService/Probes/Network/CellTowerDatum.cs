@@ -32,7 +32,6 @@ namespace SensusService.Probes.Network
             set { _cellTower = value; }
         }
 
-        [JsonIgnore]
         public override string DisplayDetail
         {
             get { return _cellTower; }

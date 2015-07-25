@@ -32,7 +32,6 @@ namespace SensusService.Probes.Network
             set { _accessPointBSSID = value; }
         }
 
-        [JsonIgnore]
         public override string DisplayDetail
         {
             get { return "AP BSSID:  " + _accessPointBSSID; }

@@ -41,7 +41,6 @@ namespace SensusService.Probes.Apps
             set { _description = value; }
         }
 
-        [JsonIgnore]
         public override string DisplayDetail
         {
             get { return "Name:  " + _name + " (" + _description + ")"; }
