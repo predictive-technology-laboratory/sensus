@@ -176,9 +176,6 @@
     <Reference Include="GooglePlayServicesLib">
       <HintPath>..\packages\Xamarin.GooglePlayServices.25.0.0.0\lib\MonoAndroid41\GooglePlayServicesLib.dll</HintPath>
     </Reference>
-    <Reference Include="Xamarin.Facebook">
-      <HintPath>..\packages\Xamarin.Facebook.Android.4.4.0.1\lib\MonoAndroid403\Xamarin.Facebook.dll</HintPath>
-    </Reference>
     <Reference Include="Xamarin.Forms.Platform.Android">
       <HintPath>..\packages\Xamarin.Forms.1.4.3.6376\lib\MonoAndroid10\Xamarin.Forms.Platform.Android.dll</HintPath>
     </Reference>
@@ -208,6 +205,9 @@
     </Reference>
     <Reference Include="Xamarin.Android.Support.v7.MediaRouter">
       <HintPath>..\packages\Xamarin.Android.Support.v7.MediaRouter.22.2.1.0\lib\MonoAndroid403\Xamarin.Android.Support.v7.MediaRouter.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Facebook">
+      <HintPath>..\packages\Xamarin.Facebook.Android.4.4.0.1\lib\MonoAndroid403\Xamarin.Facebook.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -298,10 +298,6 @@
   </Target>
   -->
   <ItemGroup>
-    <XamarinComponentReference Include="facebookandroid">
-      <Version>4.1.2.0</Version>
-      <Visible>False</Visible>
-    </XamarinComponentReference>
     <XamarinComponentReference Include="xamarin.mobile">
       <Version>0.7.5</Version>
       <Visible>False</Visible>
@@ -312,6 +308,10 @@
     </XamarinComponentReference>
     <XamarinComponentReference Include="DataNuage.Aws.S3">
       <Version>1.5.216.0</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
+    <XamarinComponentReference Include="facebookandroid">
+      <Version>4.4.0.0</Version>
       <Visible>False</Visible>
     </XamarinComponentReference>
   </ItemGroup>

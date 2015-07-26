@@ -166,6 +166,9 @@
     <Reference Include="Xamarin.Forms.Maps">
       <HintPath>..\packages\Xamarin.Forms.Maps.1.4.3.6376\lib\Xamarin.iOS10\Xamarin.Forms.Maps.dll</HintPath>
     </Reference>
+    <Reference Include="Facebook">
+      <HintPath>..\packages\Xamarin.Facebook.iOS.4.4.0.0\lib\Xamarin.iOS10\Facebook.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Contents.json">
@@ -250,10 +253,6 @@
   <Import Project="..\SensusUI\SensusUI.projitems" Label="Shared" Condition="Exists('..\SensusUI\SensusUI.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
-    <XamarinComponentReference Include="facebookios">
-      <Version>4.1.0</Version>
-      <Visible>False</Visible>
-    </XamarinComponentReference>
     <XamarinComponentReference Include="xamarin.mobile">
       <Version>0.7.5</Version>
       <Visible>False</Visible>
@@ -264,6 +263,10 @@
     </XamarinComponentReference>
     <XamarinComponentReference Include="DataNuage.Aws.S3">
       <Version>1.5.216.0</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
+    <XamarinComponentReference Include="facebookios">
+      <Version>4.4.0</Version>
       <Visible>False</Visible>
     </XamarinComponentReference>
   </ItemGroup>

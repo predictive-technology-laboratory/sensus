@@ -193,10 +193,6 @@ namespace SensusService.Probes.Apps
         public List<string> Games { get; set; }
 
         [Anonymizable(null, typeof(StringHashAnonymizer), true)]
-        [FacebookPermission("user_groups", "groups", null)]
-        public List<string> Groups { get; set; }
-
-        [Anonymizable(null, typeof(StringHashAnonymizer), true)]
         [FacebookPermission("user_likes", "likes", null)]
         public List<string> Likes { get; set; }
 
@@ -207,10 +203,6 @@ namespace SensusService.Probes.Apps
         [Anonymizable(null, typeof(StringHashAnonymizer), true)]
         [FacebookPermission("user_posts", "posts", null)]
         public List<string> Posts { get; set; }
-
-        [Anonymizable("Status Updates:", typeof(StringHashAnonymizer), true)]
-        [FacebookPermission("user_status", "statuses", null)]
-        public List<string> StatusUpdates { get; set; }
 
         [Anonymizable("Tagged Places:", typeof(StringHashAnonymizer), true)]
         [FacebookPermission("user_tagged_places", "tagged_places", null)]
