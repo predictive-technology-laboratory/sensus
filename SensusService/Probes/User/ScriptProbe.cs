@@ -41,6 +41,14 @@ namespace SensusService.Probes.User
             _scriptRunners = new ObservableCollection<ScriptRunner>();
         }
 
+        protected override void Initialize()
+        {
+            base.Initialize();
+
+            foreach (ScriptRunner scriptRunner in _scriptRunners)
+                scriptRunner.Initialize();
+        }
+
         public override void Start()
         {
             base.Start();

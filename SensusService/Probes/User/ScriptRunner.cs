@@ -305,6 +305,12 @@ namespace SensusService.Probes.User
             _probe = probe;
         }
 
+        public void Initialize()
+        {
+            foreach(Trigger trigger in _triggers)
+                trigger.Reset();
+        }
+
         public void Start()
         {
             if (_rerun)
