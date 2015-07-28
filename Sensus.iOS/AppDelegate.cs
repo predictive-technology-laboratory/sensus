@@ -97,13 +97,17 @@ namespace Sensus.iOS
 
         public override void OnActivated(UIApplication uiApplication)
         {
+            // since all notifications are about to be rescheduled, clear any pending notifications from the notification center
+            UIApplication.SharedApplication.CancelAllLocalNotifications();
+            UIApplication.SharedApplication.ApplicationIconBadgeNumber = 0;
+
             _serviceHelper.ActivationId = Guid.NewGuid().ToString();
 
             iOSSensusServiceHelper sensusServiceHelper = UiBoundSensusServiceHelper.Get(true) as iOSSensusServiceHelper;
 
             sensusServiceHelper.StartAsync(() =>
                 {
-                    sensusServiceHelper.RefreshCallbackNotificationsAsync();
+                    sensusServiceHelper.UpdateCallbackNotificationActivationIdsAsync();
                 });
             
             base.OnActivated(uiApplication);
