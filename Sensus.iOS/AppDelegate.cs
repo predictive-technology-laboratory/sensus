@@ -120,7 +120,7 @@ namespace Sensus.iOS
             if (isCallback)
             {   
                 // cancel notification, since it has served its purpose
-                UIApplication.SharedApplication.CancelLocalNotification(notification);
+                iOSSensusServiceHelper.CancelLocalNotification(notification);
 
                 string callbackId = (notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_ID_KEY)) as NSString).ToString();
                 bool repeating = (notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber).BoolValue;
@@ -181,6 +181,6 @@ namespace Sensus.iOS
         public override void WillTerminate(UIApplication application)
         {
             _serviceHelper.Dispose();
-        }            
+        }                
     }
 }

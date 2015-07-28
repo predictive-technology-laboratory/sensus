@@ -32,8 +32,27 @@ namespace Sensus.iOS
 {
     public class iOSSensusServiceHelper : SensusServiceHelper
     {
+        #region static members
+
         public const string SENSUS_CALLBACK_REPEAT_DELAY = "SENSUS-CALLBACK-REPEAT-DELAY";
         public const string SENSUS_CALLBACK_ACTIVATION_ID = "SENSUS-CALLBACK-ACTIVATION-ID";
+
+        public static void CancelLocalNotification(UILocalNotification notification)
+        {
+            Device.BeginInvokeOnMainThread(() =>
+                {
+                    string notificationId = notification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ID_KEY)).ToString();
+
+                    foreach (UILocalNotification scheduledNotification in UIApplication.SharedApplication.ScheduledLocalNotifications)
+                    {
+                        string scheduledNotificationId = scheduledNotification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ID_KEY)).ToString();
+                        if (scheduledNotificationId == notificationId)
+                            UIApplication.SharedApplication.CancelLocalNotification(scheduledNotification);
+                    }
+                });
+        }
+
+        #endregion
 
         private Dictionary<string, UILocalNotification> _callbackIdNotification;
         private string _activationId;
@@ -144,11 +163,7 @@ namespace Sensus.iOS
                 UILocalNotification notification;
                 if (_callbackIdNotification.TryGetValue(callbackId, out notification))
                 {
-                    Device.BeginInvokeOnMainThread(() =>
-                        {
-                            UIApplication.SharedApplication.CancelLocalNotification(notification);
-                        });
-                    
+                    CancelLocalNotification(notification);
                     _callbackIdNotification.Remove(callbackId);
                 }
             }
@@ -178,7 +193,7 @@ namespace Sensus.iOS
                             if (activationId != _activationId)
                             {
                                 // cancel stale notification and issue new notification using current activation ID
-                                UIApplication.SharedApplication.CancelLocalNotification(notification);
+                                CancelLocalNotification(notification);
 
                                 bool repeating = (notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber).BoolValue;
                                 int repeatDelayMS = (notification.UserInfo.ValueForKey(new NSString(iOSSensusServiceHelper.SENSUS_CALLBACK_REPEAT_DELAY)) as NSNumber).Int32Value;
