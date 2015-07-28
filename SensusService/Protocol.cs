@@ -553,7 +553,7 @@ namespace SensusService
 
         public void StartWithUserAgreement(string message)
         {
-            int startupCode = new Random().Next(1000, 10000);
+            int consentCode = new Random().Next(1000, 10000);
 
             SensusServiceHelper.Get().PromptForInputAsync(
 
@@ -561,13 +561,13 @@ namespace SensusService
 
                 (string.IsNullOrWhiteSpace(_startupAgreement) ? "" : _startupAgreement + Environment.NewLine + Environment.NewLine) +
 
-                "To start this protocol, please enter the following code:  " + startupCode, false, startupCodeStr =>
+                "To start this protocol, please indicate your consent by entering the following code:  " + consentCode, false, consentCodeStr =>
                 {
-                    if (startupCodeStr == null)
+                    if (consentCodeStr == null)
                         return;
 
-                    int startupCodeInt;
-                    if (int.TryParse(startupCodeStr, out startupCodeInt) && startupCodeInt == startupCode)
+                    int consentCodeInt;
+                    if (int.TryParse(consentCodeStr, out consentCodeInt) && consentCodeInt == consentCode)
                         Running = true;
                     else
                         SensusServiceHelper.Get().FlashNotificationAsync("Incorrect code entered.");
