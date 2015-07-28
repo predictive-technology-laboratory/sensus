@@ -553,30 +553,25 @@ namespace SensusService
 
         public void StartWithUserAgreement(string message)
         {
-            if (string.IsNullOrWhiteSpace(message) && string.IsNullOrWhiteSpace(_startupAgreement))
-                Running = true;
-            else
-            {
-                int agreementCode = new Random().Next(1000, 10000);
+            int startupCode = new Random().Next(1000, 10000);
 
-                SensusServiceHelper.Get().PromptForInputAsync(
+            SensusServiceHelper.Get().PromptForInputAsync(
 
-                    (string.IsNullOrWhiteSpace(message) ? "" : message + Environment.NewLine + Environment.NewLine) +
+                (string.IsNullOrWhiteSpace(message) ? "" : message + Environment.NewLine + Environment.NewLine) +
 
-                    (string.IsNullOrWhiteSpace(_startupAgreement) ? "" : _startupAgreement + Environment.NewLine + Environment.NewLine) +
+                (string.IsNullOrWhiteSpace(_startupAgreement) ? "" : _startupAgreement + Environment.NewLine + Environment.NewLine) +
 
-                    "If you wish to start this protocol, please enter the following code:  " + agreementCode, false, agreementCodeEnteredStr =>
-                    {
-                        if (agreementCodeEnteredStr == null)
-                            return;
+                "To start this protocol, please enter the following code:  " + startupCode, false, startupCodeStr =>
+                {
+                    if (startupCodeStr == null)
+                        return;
 
-                        int agreementCodeEnteredInt;
-                        if (int.TryParse(agreementCodeEnteredStr, out agreementCodeEnteredInt) && agreementCodeEnteredInt == agreementCode)
-                            Running = true;
-                        else
-                            SensusServiceHelper.Get().FlashNotificationAsync("Incorrect agreement code entered.");
-                    });
-            }
+                    int startupCodeInt;
+                    if (int.TryParse(startupCodeStr, out startupCodeInt) && startupCodeInt == startupCode)
+                        Running = true;
+                    else
+                        SensusServiceHelper.Get().FlashNotificationAsync("Incorrect code entered.");
+                });
         }
 
         public void TestHealthAsync()
