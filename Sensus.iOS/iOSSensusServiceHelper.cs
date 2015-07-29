@@ -37,18 +37,40 @@ namespace Sensus.iOS
         public const string SENSUS_CALLBACK_REPEAT_DELAY = "SENSUS-CALLBACK-REPEAT-DELAY";
         public const string SENSUS_CALLBACK_ACTIVATION_ID = "SENSUS-CALLBACK-ACTIVATION-ID";
 
+        /// <summary>
+        /// Cancels a UILocalNotification. This will succeed in one of two conditions:  (1) if the notification to be
+        /// cancelled is scheduled (i.e., not delivered); and (2) if the notification to be cancelled has been delivered
+        /// and if the object passed in is the actual notification and not, for example, the one that was passed to
+        /// ScheduleLocalNotification -- once passed to this method, a copy is made and the objects won't test equal
+        /// for cancellation.
+        /// </summary>
+        /// <param name="notification">Notification to cancel.</param>
         public static void CancelLocalNotification(UILocalNotification notification)
         {
             Device.BeginInvokeOnMainThread(() =>
                 {
                     string notificationId = notification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ID_KEY)).ToString();
 
+                    // a local notification can be one of two types:  (1) scheduled, in which case it hasn't yet been delivered and should reside
+                    // within the shared application's list of scheduled notifications. the tricky part here is that these notification objects
+                    // aren't reference-equal, so we can't just pass `notification` to CancelLocalNotification. instead, we must search for the 
+                    // notification by id and cancel the appropriate scheduled notification object.
+                    bool notificationCanceled = false;
                     foreach (UILocalNotification scheduledNotification in UIApplication.SharedApplication.ScheduledLocalNotifications)
                     {
                         string scheduledNotificationId = scheduledNotification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ID_KEY)).ToString();
                         if (scheduledNotificationId == notificationId)
+                        {
                             UIApplication.SharedApplication.CancelLocalNotification(scheduledNotification);
+                            notificationCanceled = true;
+                        }
                     }
+
+                    // if we didn't cancel the notification above, then it isn't scheduled and should have already been delivered. if it has been 
+                    // delivered, then our only option for cancelling it is to pass `notification` itself to CancelLocalNotification. this assumes
+                    // that `notification` is the actual notification object and not, for example, the one originally passed to ScheduleLocalNotification.
+                    if (!notificationCanceled)
+                        UIApplication.SharedApplication.CancelLocalNotification(notification);
                 });
         }
 
