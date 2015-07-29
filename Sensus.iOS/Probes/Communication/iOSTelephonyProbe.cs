@@ -97,6 +97,10 @@ namespace Sensus.iOS.Probes.Communication
                 _calls.Clear();
             }
 
+            // if we didn't find any calls, return a null to indicate that the poll went through but didn't find anything.
+            if (data.Count == 0)
+                data.Add(null);
+
             return data;
         }
     }

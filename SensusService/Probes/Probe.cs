@@ -188,6 +188,7 @@ namespace SensusService.Probes
 
         public virtual void StoreDatum(Datum datum)
         {
+            // datum is allowed to be null, indicating the the probe attempted to obtain data but it didn't find any (in the case of polling probes).
             if (datum != null)
             {
                 datum.ProtocolId = Protocol.Id;
