@@ -53,7 +53,7 @@ namespace SensusService.Probes.Location
         {
             get
             {
-                return 30000;
+                return 30000; // every 30 seconds
             }
         }            
 

@@ -28,7 +28,10 @@ namespace SensusService.Probes.Device
 
         public override int DefaultPollingSleepDurationMS
         {
-            get { return 5000; }
+            get
+            {
+                return 15000; // screens usually stay on for a minimum of 15 seconds or so. poll at this interval to catch changes.
+            }
         }
 
         public sealed override Type DatumType

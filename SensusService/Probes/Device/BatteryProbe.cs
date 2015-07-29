@@ -28,7 +28,10 @@ namespace SensusService.Probes.Device
 
         public override int DefaultPollingSleepDurationMS
         {
-            get { return 60000; }
+            get
+            {
+                return 60000 * 15; // every 15 minutes
+            }
         }
 
         public sealed override Type DatumType

@@ -27,7 +27,10 @@ namespace SensusService
 
         public override int DefaultPollingSleepDurationMS
         {
-            get { return 600000; }
+            get 
+            {
+                return 60000 * 60; // once per hour
+            }
         }
 
         public sealed override Type DatumType

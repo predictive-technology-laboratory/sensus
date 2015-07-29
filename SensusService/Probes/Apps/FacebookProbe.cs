@@ -45,7 +45,7 @@ namespace SensusService.Probes.Apps
         {
             get
             {
-                return 60000;
+                return 60000 * 60 * 24; // once per day
             }
         }  
 

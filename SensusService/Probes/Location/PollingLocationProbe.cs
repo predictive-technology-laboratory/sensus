@@ -31,7 +31,10 @@ namespace SensusService.Probes.Location
 
         public override int DefaultPollingSleepDurationMS
         {
-            get { return 5000; }
+            get
+            {
+                return 15000; // every 15 seconds
+            }
         }
 
         public sealed override Type DatumType

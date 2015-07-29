@@ -38,7 +38,10 @@ namespace SensusService.Probes.Movement
 
         public sealed override int DefaultPollingSleepDurationMS
         {
-            get { return 5000; }
+            get 
+            {
+                return 15000; // every 15 seconds
+            }
         }
 
         public PollingSpeedProbe()

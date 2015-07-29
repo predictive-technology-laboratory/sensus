@@ -37,7 +37,10 @@ namespace SensusService.Probes.Apps
 
         public sealed override int DefaultPollingSleepDurationMS
         {
-            get { return 30000; }
+            get
+            {
+                return 30000; 
+            }
         }
 
         public sealed override Type DatumType
@@ -47,7 +50,7 @@ namespace SensusService.Probes.Apps
 
         public RunningAppsProbe()
         {
-            _maxAppsPerPoll = 10;
+            _maxAppsPerPoll = 50;
         }
 
         protected abstract List<RunningAppsDatum> GetRunningAppsData(CancellationToken cancellationToken);
