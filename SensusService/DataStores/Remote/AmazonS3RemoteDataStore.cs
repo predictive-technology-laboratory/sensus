@@ -55,6 +55,9 @@ namespace SensusService.DataStores.Remote
             }
             set
             {
+                if (value != null)
+                    value = value.Trim().Trim('/');
+                
                 _folder = value;
             }
         }           
@@ -156,7 +159,10 @@ namespace SensusService.DataStores.Remote
                 
                 try
                 {
-                    _s3.PutObjectAsync(_bucket, (string.IsNullOrWhiteSpace(_folder.Trim('/')) ? "" : _folder.Trim('/') + "/") + datumType + "/" + Guid.NewGuid(), datumTypeJSON[datumType].ToString(), contentType:"application/json").Wait(cancellationToken);
+                    string name = (_folder + "/" + datumType + "/" + Guid.NewGuid()).Trim('/');  // trim in case folder is blank
+                    string json = datumTypeJSON[datumType].ToString();
+                    _s3.PutObjectAsync(_bucket, name, json, contentType:"application/json").Wait(cancellationToken);
+
                     committedData.AddRange(datumTypeData[datumType]);
                 }
                 catch (Exception ex)
