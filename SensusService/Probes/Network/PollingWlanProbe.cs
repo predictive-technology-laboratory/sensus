@@ -35,7 +35,7 @@ namespace SensusService.Probes.Network
         {
             get
             {
-                return 60000;
+                return 60000 * 15; // every 15 minutes
             }
         }
     }
