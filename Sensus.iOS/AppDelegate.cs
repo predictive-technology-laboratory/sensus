@@ -97,7 +97,7 @@ namespace Sensus.iOS
 
         public override void OnActivated(UIApplication uiApplication)
         {
-            // since all notifications are about to be rescheduled, clear any pending notifications from the notification center
+            // since all notifications are about to be rescheduled, clear any scheduled / delivered notifications.
             UIApplication.SharedApplication.CancelAllLocalNotifications();
             UIApplication.SharedApplication.ApplicationIconBadgeNumber = 0;
 

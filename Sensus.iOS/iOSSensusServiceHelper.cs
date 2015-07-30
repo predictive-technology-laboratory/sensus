@@ -211,11 +211,12 @@ namespace Sensus.iOS
                             string activationId = (notification.UserInfo.ValueForKey(new NSString(iOSSensusServiceHelper.SENSUS_CALLBACK_ACTIVATION_ID)) as NSString).ToString();
                             if (activationId != _activationId)
                             {
+                                // reset the UserInfo to include the current activation ID
                                 bool repeating = (notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber).BoolValue;
                                 int repeatDelayMS = (notification.UserInfo.ValueForKey(new NSString(iOSSensusServiceHelper.SENSUS_CALLBACK_REPEAT_DELAY)) as NSNumber).Int32Value;
                                 notification.UserInfo = GetNotificationUserInfoDictionary(callbackId, repeating, repeatDelayMS);
 
-                                // since we set the UILocalNotification's FireDate earlier upon construction, if it's currently in the past it will fire immediately when scheduled again with the new activation ID.
+                                // since we set the UILocalNotification's FireDate when it was constructed, if it's currently in the past it will fire immediately when scheduled again with the new activation ID.
                                 UIApplication.SharedApplication.ScheduleLocalNotification(notification);
                             }
                         }

@@ -395,7 +395,7 @@ namespace SensusService
             _forceProtocolReportsToRemoteDataStore = false;
             _lockPasswordHash = "";
             _jsonAnonymizer = new AnonymizedJsonContractResolver(this);
-            _shareable = true;
+            _shareable = false;
             _pointsOfInterest = new List<PointOfInterest>();
         }
 
