@@ -117,7 +117,7 @@ namespace Sensus.Android
             _notificationManager = _service.GetSystemService(Context.NotificationService) as NotificationManager;
             _deviceId = Settings.Secure.GetString(_service.ContentResolver, Settings.Secure.AndroidId);
             _textToSpeech = new AndroidTextToSpeech(_service);
-            _wakeLock = (_service.GetSystemService(Context.PowerService) as PowerManager).NewWakeLock(WakeLockFlags.Partial, "SENSUS");           
+            _wakeLock = (_service.GetSystemService(Context.PowerService) as PowerManager).NewWakeLock(WakeLockFlags.Partial, "SENSUS");  
         }
 
         public void GetMainActivityAsync(bool foreground, Action<AndroidMainActivity> callback)

@@ -20,6 +20,7 @@ namespace SensusService.Probes
     public abstract class ListeningProbe : Probe
     {
         private float _maxDataStoresPerSecond;
+        private bool _wakeLockAcquired;
 
         private readonly object _locker = new object();
 
@@ -33,6 +34,7 @@ namespace SensusService.Probes
         protected ListeningProbe()
         {
             _maxDataStoresPerSecond = 1;
+            _wakeLockAcquired = false;
         }
 
         public sealed override void Start()
@@ -41,9 +43,10 @@ namespace SensusService.Probes
             {
                 base.Start();
 
-                SensusServiceHelper.Get().KeepDeviceAwake();  // listening probes are inherently energy inefficient, since the device must stay awake to listen for them.
-
                 StartListening();
+
+                SensusServiceHelper.Get().KeepDeviceAwake();  // listening probes are inherently energy inefficient, since the device must stay awake to listen for them.
+                _wakeLockAcquired = true;
             }
         }
 
@@ -53,9 +56,13 @@ namespace SensusService.Probes
         {
             lock (_locker)
             {
+                if (_wakeLockAcquired)
+                {
+                    SensusServiceHelper.Get().LetDeviceSleep();  // we can sleep now...whew!
+                    _wakeLockAcquired = false;
+                }
+                
                 base.Stop();
-
-                SensusServiceHelper.Get().LetDeviceSleep();  // we can sleep now...whew!
 
                 StopListening();
             }

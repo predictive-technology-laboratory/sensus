@@ -516,6 +516,16 @@ namespace SensusService
                                     }
                                     catch (Exception ex)
                                     {
+                                        // stop probe to clean up any inconsistent state information
+                                        try
+                                        {
+                                            probe.Stop();
+                                        }
+                                        catch (Exception ex2)
+                                        {
+                                            SensusServiceHelper.Get().Logger.Log("Failed to stop probe after failing to start it:  " + ex2.Message, LoggingLevel.Normal, GetType());
+                                        }
+
                                         string message = "Failed to start probe \"" + probe.GetType().FullName + "\":  " + ex.Message;
                                         SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
                                         SensusServiceHelper.Get().FlashNotificationAsync(message);

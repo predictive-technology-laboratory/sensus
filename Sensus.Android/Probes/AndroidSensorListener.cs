@@ -51,7 +51,7 @@ namespace Sensus.Android.Probes
         public void Start()
         {
             if (_sensor == null)
-                throw new Exception("Android sensor " + _sensorType + " is unsupported on this device.");
+                return;
 
             lock (_locker)
             {
@@ -67,7 +67,7 @@ namespace Sensus.Android.Probes
         public void Stop()
         {
             if (_sensor == null)
-                throw new Exception("Android sensor " + _sensorType + " is unsupported on this device.");
+                return;
 
             lock (_locker)
             {

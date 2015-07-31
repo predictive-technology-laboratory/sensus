@@ -25,6 +25,7 @@ namespace Sensus.Android
     public class AndroidSensusService : Service
     {        
         private AndroidSensusServiceHelper _serviceHelper;
+
         public override void OnCreate()
         {
             base.OnCreate();
