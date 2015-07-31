@@ -29,6 +29,9 @@ namespace SensusUI
         {
             public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
             {
+                if (value == null)
+                    return "";
+                
                 Probe probe = value as Probe;
 
                 string type = "";
@@ -50,6 +53,9 @@ namespace SensusUI
         {
             public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
             {
+                if (value == null)
+                    return Color.Default;
+                
                 Probe probe = value as Probe;
                 return probe.Enabled ? Color.Green : Color.Red;
             }
@@ -64,6 +70,9 @@ namespace SensusUI
         {
             public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
             {
+                if (value == null)
+                    return "";
+                
                 Probe probe = value as Probe;
                 Datum mostRecentDatum = probe.MostRecentDatum;
                 return mostRecentDatum == null ? "----------" : mostRecentDatum.DisplayDetail + Environment.NewLine + mostRecentDatum.Timestamp;

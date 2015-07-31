@@ -95,6 +95,7 @@ namespace SensusService
             catch (Exception ex)
             {
                 SensusServiceHelper.Get().Logger.Log("Failed to download Protocol from URI \"" + webURI + "\":  " + ex.Message + ". If this is an HTTPS URI, make sure the server's certificate is valid.", LoggingLevel.Normal, typeof(Protocol));
+                SensusServiceHelper.Get().FlashNotificationAsync("Failed to download protocol.");
             }
         }
 
@@ -107,6 +108,7 @@ namespace SensusService
             catch (Exception ex)
             {
                 SensusServiceHelper.Get().Logger.Log("Failed to decrypt protocol from bytes:  " + ex.Message, LoggingLevel.Normal, typeof(Protocol));
+                SensusServiceHelper.Get().FlashNotificationAsync("Failed to decrypt protocol.");
             }                        
         }
 
@@ -170,7 +172,8 @@ namespace SensusService
 
                         if (protocol == null)
                         {
-                            SensusServiceHelper.Get().Logger.Log("Failed to get protocol from JSON.", LoggingLevel.Normal, typeof(Protocol));
+                            SensusServiceHelper.Get().Logger.Log("Failed to deserialize protocol.", LoggingLevel.Normal, typeof(Protocol));
+                            SensusServiceHelper.Get().FlashNotificationAsync("Failed to deserialize protocol.");
                             return;
                         }
 
@@ -204,6 +207,7 @@ namespace SensusService
 
                                 SensusServiceHelper.Get().RegisterProtocol(protocol);
 
+                                // open protocol in UI and prompt to start
                                 Device.BeginInvokeOnMainThread(async () =>
                                     {
                                         if (!(App.Current.MainPage.Navigation.NavigationStack.Last() is ProtocolsPage))
@@ -216,6 +220,7 @@ namespace SensusService
                     catch (Exception ex)
                     {
                         SensusServiceHelper.Get().Logger.Log("Failed to deserialize/display protocol from JSON:  " + ex.Message, LoggingLevel.Normal, typeof(Protocol));
+                        SensusServiceHelper.Get().FlashNotificationAsync("Failed to deserialize and/or display protocol.");
                     }
 
                 }).Start();
