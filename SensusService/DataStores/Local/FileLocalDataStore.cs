@@ -158,7 +158,7 @@ namespace SensusService.DataStores.Local
                                 {
                                     localData.Add(Datum.FromJSON(line));
 
-                                    if(progressCallback != null && (localData.Count % (_numDataStoredInFiles / 10)) == 0)
+                                    if(progressCallback != null && _numDataStoredInFiles >= 10 && (localData.Count % (_numDataStoredInFiles / 10)) == 0)
                                         progressCallback(localData.Count / (double)_numDataStoredInFiles);
                                 }
 

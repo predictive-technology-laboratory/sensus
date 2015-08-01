@@ -112,13 +112,11 @@ namespace SensusUI
                                     
                                     shareFile.WriteLine(localDatum.GetJSON(localDataStore.Protocol.JsonAnonymizer));
 
-                                    if ((++dataWritten % (localData.Count / 10)) == 0)
+                                    if (localData.Count >= 10 && (++dataWritten % (localData.Count / 10)) == 0)
                                         Device.BeginInvokeOnMainThread(() => progressBar.ProgressTo(dataWritten / (double)localData.Count, 250, Easing.Linear));
                                 }
 
                                 shareFile.Close();
-
-                                throw null;
                             }
                         }
                     }
@@ -141,7 +139,7 @@ namespace SensusUI
                         {
                         }
 
-                        // the only way to get a cancel is to back out of the window, so only pop if there was an error
+                        // the only way to get a cancellation event is to back out of the window, so only pop if there was an error
                         if(errorWritingShareFile)
                             Device.BeginInvokeOnMainThread(async () => await Navigation.PopAsync());
                     }
