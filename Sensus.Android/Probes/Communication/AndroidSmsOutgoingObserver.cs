@@ -46,6 +46,10 @@ namespace Sensus.Android.Probes.Communication
             if (_mostRecentlyObservedSmsURI != null && uri.ToString() == _mostRecentlyObservedSmsURI)
                 return;
 
+            // TODO:  Fix issue #75 -- need to handle MMS. they are structured differently than SMS, and the code below does not work.
+            if (uri.ToString() == "content://sms/raw")
+                return;
+
             ICursor cursor = _context.ContentResolver.Query(uri, null, null, null, null);
             if (cursor.MoveToNext())
             {
