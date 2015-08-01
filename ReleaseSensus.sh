@@ -57,7 +57,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # upload APK to developer console (beta)
-python ~/Dropbox/sensus/basic_upload_apks.py edu.virginia.sie.ptl.sensus ./Sensus.Android/bin/Release/edu.virginia.sie.ptl.sensus-Signed.apk
+python ./basic_upload_apks.py edu.virginia.sie.ptl.sensus ./Sensus.Android/bin/Release/edu.virginia.sie.ptl.sensus-Signed.apk
 if [ $? -ne 0 ]; then
     echo "Error uploading APK to developer console."
     exit $?;
