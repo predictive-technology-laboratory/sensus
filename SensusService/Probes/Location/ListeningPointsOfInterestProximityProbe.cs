@@ -84,6 +84,8 @@ namespace SensusService.Probes.Location
 
             if (!GpsReceiver.Get().Locator.IsGeolocationEnabled)
             {
+                // throw standard exception instead of NotSupportedException, since the user might decide to enable GPS in the future
+                // and we'd like the probe to be restarted at that time.
                 string error = "Geolocation is not enabled on this device. Cannot start proximity probe.";
                 SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);

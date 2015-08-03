@@ -50,6 +50,9 @@ read.sensus.json = function(path, convert.to.local.timezone = TRUE)
     # we no longer need the $type column
     json = json[-which(names(json) %in% c("$type"))]
     
+    # ignore sub-list data...no simple and obvious way to handle them
+    json = json[sapply(json, typeof) != "list"]
+    
     return(as.data.frame(json, stringsAsFactors = FALSE))
   })
   
@@ -329,7 +332,8 @@ get.all.timestamp.lags = function(data)
   {
     if(nrow(data[[datum.type]]) > 1)
     {
-      lags[[datum.type]] = hist(as.numeric(diff(data[[datum.type]]$Timestamp)), main = datum.type, xlab = "Lag (Seconds)")
+      time.differences = diff(data[[datum.type]]$Timestamp)
+      lags[[datum.type]] = hist(as.numeric(time.differences), main = datum.type, xlab = paste("Lag (", units(time.differences), ")", sep=""))
     }
   }
   
@@ -348,7 +352,8 @@ get.timestamp.lags = function(datum)
   lags = NULL
   if(nrow(datum) > 1)
   {
-    lags = hist(as.numeric(diff(datum$Timestamp)), xlab = "Lag (Seconds)", main = "Sensus Data")
+    time.differences = diff(datum$Timestamp)
+    lags = hist(as.numeric(time.differences), xlab = paste("Lag (", units(time.differences), ")", sep=""), main = "Sensus Data")
   } 
   
   return(lags)

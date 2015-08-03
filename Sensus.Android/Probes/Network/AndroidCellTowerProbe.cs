@@ -39,7 +39,7 @@ namespace Sensus.Android.Probes.Network
 
             _telephonyManager = Application.Context.GetSystemService(global::Android.Content.Context.TelephonyService) as TelephonyManager;
             if (_telephonyManager == null)
-                throw new Exception("No telephony present.");
+                throw new NotSupportedException("No telephony present.");
         }
 
         protected override void StartListening()

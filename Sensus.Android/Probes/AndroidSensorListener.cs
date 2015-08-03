@@ -45,7 +45,7 @@ namespace Sensus.Android.Probes
 
             _sensor = _sensorManager.GetDefaultSensor(_sensorType);
             if (_sensor == null)
-                throw new Exception("No sensors present for sensor type " + _sensorType);
+                throw new NotSupportedException("No sensors present for sensor type " + _sensorType);
         }
 
         public void Start()

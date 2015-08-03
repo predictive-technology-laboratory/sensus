@@ -153,8 +153,16 @@ namespace Sensus.Android
                             Logger.Log("UI is ready.", LoggingLevel.Normal, GetType());
                         }
 
+                        if (_mainActivity == null)
+                        {
+                            string errorMessage = "Failed to get main activity.";
+                            Logger.Log(errorMessage + " Stacktrace:  " + System.Environment.StackTrace, LoggingLevel.Normal, GetType());
+                            Insights.Report(new Exception(errorMessage), Insights.Severity.Error);
+                        }
+                        
                         callback(_mainActivity);
                     }
+
                 }).Start();
         }
 
@@ -191,23 +199,26 @@ namespace Sensus.Android
 
                         GetMainActivityAsync(true, mainActivity =>
                             {
-                                mainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.PromptForFile, result =>
-                                    {
-                                        if (result != null && result.Item1 == Result.Ok)
-                                            try
-                                            {
-                                                using (StreamReader file = new StreamReader(_service.ContentResolver.OpenInputStream(result.Item2.Data)))
+                                if (mainActivity == null)
+                                    callback(null);
+                                else
+                                    mainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.PromptForFile, result =>
+                                        {
+                                            if (result != null && result.Item1 == Result.Ok)
+                                                try
                                                 {
-                                                    string content = file.ReadToEnd();
-                                                    file.Close();
-                                                    callback(content);
+                                                    using (StreamReader file = new StreamReader(_service.ContentResolver.OpenInputStream(result.Item2.Data)))
+                                                    {
+                                                        string content = file.ReadToEnd();
+                                                        file.Close();
+                                                        callback(content);
+                                                    }
                                                 }
-                                            }
-                                            catch (Exception ex)
-                                            {
-                                                FlashNotificationAsync("Error reading text file:  " + ex.Message);
-                                            }
-                                    });
+                                                catch (Exception ex)
+                                                {
+                                                    FlashNotificationAsync("Error reading text file:  " + ex.Message);
+                                                }
+                                        });
                             });
                     }
                     catch (ActivityNotFoundException)
@@ -240,7 +251,11 @@ namespace Sensus.Android
                         intent.PutExtra(Intent.ExtraStream, uri);
 
                         // run from main activity to get a smoother transition back to sensus
-                        GetMainActivityAsync(true, mainActivity => mainActivity.StartActivity(intent));
+                        GetMainActivityAsync(true, mainActivity =>
+                            {
+                                if (mainActivity != null)
+                                    mainActivity.StartActivity(intent);
+                            });
                     }
                     catch (Exception ex)
                     {
@@ -262,104 +277,110 @@ namespace Sensus.Android
                     string input = null;
                     ManualResetEvent dialogDismissWait = new ManualResetEvent(false);
 
-                    GetMainActivityAsync(true, mainActivity => mainActivity.RunOnUiThread(() =>
-                            {   
-                                TextView promptView = new TextView(mainActivity) { Text = prompt, TextSize = 20 };
-                                EditText inputEdit = new EditText(mainActivity) { TextSize = 20 };
-                                LinearLayout scrollLayout = new LinearLayout(mainActivity){ Orientation = Orientation.Vertical };
-                                scrollLayout.AddView(promptView);                                
-                                scrollLayout.AddView(inputEdit);
-                                ScrollView scrollView = new ScrollView(mainActivity);
-                                scrollView.AddView(scrollLayout);
+                    GetMainActivityAsync(true, mainActivity =>
+                        {
+                            if (mainActivity != null)
+                                mainActivity.RunOnUiThread(() =>
+                                    {   
+                                        #region set up dialog
 
-                                AlertDialog dialog = new AlertDialog.Builder(mainActivity)
+                                        TextView promptView = new TextView(mainActivity) { Text = prompt, TextSize = 20 };
+                                        EditText inputEdit = new EditText(mainActivity) { TextSize = 20 };
+                                        LinearLayout scrollLayout = new LinearLayout(mainActivity){ Orientation = Orientation.Vertical };
+                                        scrollLayout.AddView(promptView);                                
+                                        scrollLayout.AddView(inputEdit);
+                                        ScrollView scrollView = new ScrollView(mainActivity);
+                                        scrollView.AddView(scrollLayout);
+
+                                        AlertDialog dialog = new AlertDialog.Builder(mainActivity)
                                                  .SetTitle("Sensus is requesting input...")
                                                  .SetView(scrollView)
                                                  .SetPositiveButton("OK", (o, e) =>
-                                    {
-                                        input = inputEdit.Text;
-                                    })
+                                            {
+                                                input = inputEdit.Text;
+                                            })
                                                  .SetNegativeButton("Cancel", (o, e) =>
-                                    {
-                                    })
+                                            {
+                                            })
                                                  .Create();                                                               
 
-                                // for some reason, stopping the activity with the home button doesn't raise the alert dialog's dismiss 
-                                // event. so, we'll manually trap the activity stop and dismiss the dialog ourselves. this is important
-                                // because the caller of this method might be blocking itself or others (e.g., other prompts) until
-                                // the dialog is dismissed. if we don't trap the activity stop then those blocks could go on indefinitely.
-                                EventHandler activityStoppedHandler = (o, e) =>
-                                {
-                                    dialog.Dismiss();
-                                };                            
-
-                                mainActivity.Stopped += activityStoppedHandler;
-
-                                dialog.DismissEvent += (o, e) =>
-                                {
-                                    // we don't need the dismiss event anymore, since the dialog has closed
-                                    mainActivity.Stopped -= activityStoppedHandler;
-
-                                    dialogDismissWait.Set();
-                                };                                    
-
-                                ManualResetEvent dialogShowWait = new ManualResetEvent(false);
-
-                                dialog.ShowEvent += (o, e) =>
-                                {                                    
-                                    dialogShowWait.Set();
-                                };
-
-                                // dismiss the keyguard when dialog appears
-                                dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.DismissKeyguard);
-                                dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.ShowWhenLocked);
-                                dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.TurnScreenOn);
-                                dialog.Window.SetSoftInputMode(global::Android.Views.SoftInput.AdjustResize | global::Android.Views.SoftInput.StateAlwaysHidden);
-
-                                // dim whatever is behind the dialog
-                                dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.DimBehind);
-                                dialog.Window.Attributes.DimAmount = 0.75f;
-
-                                dialog.Show();                                
-
-                                #region voice recognizer
-                                if (startVoiceRecognizer)
-                                {
-                                    new Thread(() =>
+                                        // for some reason, stopping the activity with the home button doesn't raise the alert dialog's dismiss 
+                                        // event. so, we'll manually trap the activity stop and dismiss the dialog ourselves. this is important
+                                        // because the caller of this method might be blocking itself or others (e.g., other prompts) until
+                                        // the dialog is dismissed. if we don't trap the activity stop then those blocks could go on indefinitely.
+                                        EventHandler activityStoppedHandler = (o, e) =>
                                         {
-                                            // wait for the dialog to be shown so it doesn't hide our speech recognizer activity
-                                            dialogShowWait.WaitOne();
+                                            dialog.Dismiss();
+                                        };                            
 
-                                            // there's a slight race condition between the dialog showing and speech recognition showing. pause here to prevent the dialog from hiding the speech recognizer.
-                                            Thread.Sleep(1000);
+                                        mainActivity.Stopped += activityStoppedHandler;
 
-                                            Intent intent = new Intent(RecognizerIntent.ActionRecognizeSpeech);
-                                            intent.PutExtra(RecognizerIntent.ExtraLanguageModel, RecognizerIntent.LanguageModelFreeForm);
-                                            intent.PutExtra(RecognizerIntent.ExtraSpeechInputCompleteSilenceLengthMillis, 1500);
-                                            intent.PutExtra(RecognizerIntent.ExtraSpeechInputPossiblyCompleteSilenceLengthMillis, 1500);
-                                            intent.PutExtra(RecognizerIntent.ExtraSpeechInputMinimumLengthMillis, 15000);
-                                            intent.PutExtra(RecognizerIntent.ExtraMaxResults, 1);
-                                            intent.PutExtra(RecognizerIntent.ExtraLanguage, Java.Util.Locale.Default);
-                                            intent.PutExtra(RecognizerIntent.ExtraPrompt, prompt);
+                                        dialog.DismissEvent += (o, e) =>
+                                        {
+                                            // we don't need the dismiss event anymore, since the dialog has closed
+                                            mainActivity.Stopped -= activityStoppedHandler;
 
-                                            mainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.RecognizeSpeech, result =>
+                                            dialogDismissWait.Set();
+                                        };                                    
+
+                                        ManualResetEvent dialogShowWait = new ManualResetEvent(false);
+
+                                        dialog.ShowEvent += (o, e) =>
+                                        {                                    
+                                            dialogShowWait.Set();
+                                        };
+
+                                        // dismiss the keyguard when dialog appears
+                                        dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.DismissKeyguard);
+                                        dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.ShowWhenLocked);
+                                        dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.TurnScreenOn);
+                                        dialog.Window.SetSoftInputMode(global::Android.Views.SoftInput.AdjustResize | global::Android.Views.SoftInput.StateAlwaysHidden);
+
+                                        // dim whatever is behind the dialog
+                                        dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.DimBehind);
+                                        dialog.Window.Attributes.DimAmount = 0.75f;
+
+                                        dialog.Show();   
+                                        #endregion
+
+                                        #region voice recognizer
+                                        if (startVoiceRecognizer)
+                                        {
+                                            new Thread(() =>
                                                 {
-                                                    if (result != null && result.Item1 == Result.Ok)
-                                                    {
-                                                        IList<string> matches = result.Item2.GetStringArrayListExtra(RecognizerIntent.ExtraResults);
-                                                        if (matches != null && matches.Count > 0)
-                                                            mainActivity.RunOnUiThread(() =>
-                                                                {
-                                                                    inputEdit.Text = matches[0];
-                                                                });
-                                                    }
-                                                });
-                                        
-                                        }).Start();
-                                }
-                                #endregion
+                                                    // wait for the dialog to be shown so it doesn't hide our speech recognizer activity
+                                                    dialogShowWait.WaitOne();
 
-                            }));
+                                                    // there's a slight race condition between the dialog showing and speech recognition showing. pause here to prevent the dialog from hiding the speech recognizer.
+                                                    Thread.Sleep(1000);
+
+                                                    Intent intent = new Intent(RecognizerIntent.ActionRecognizeSpeech);
+                                                    intent.PutExtra(RecognizerIntent.ExtraLanguageModel, RecognizerIntent.LanguageModelFreeForm);
+                                                    intent.PutExtra(RecognizerIntent.ExtraSpeechInputCompleteSilenceLengthMillis, 1500);
+                                                    intent.PutExtra(RecognizerIntent.ExtraSpeechInputPossiblyCompleteSilenceLengthMillis, 1500);
+                                                    intent.PutExtra(RecognizerIntent.ExtraSpeechInputMinimumLengthMillis, 15000);
+                                                    intent.PutExtra(RecognizerIntent.ExtraMaxResults, 1);
+                                                    intent.PutExtra(RecognizerIntent.ExtraLanguage, Java.Util.Locale.Default);
+                                                    intent.PutExtra(RecognizerIntent.ExtraPrompt, prompt);
+
+                                                    mainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.RecognizeSpeech, result =>
+                                                        {
+                                                            if (result != null && result.Item1 == Result.Ok)
+                                                            {
+                                                                IList<string> matches = result.Item2.GetStringArrayListExtra(RecognizerIntent.ExtraResults);
+                                                                if (matches != null && matches.Count > 0)
+                                                                    mainActivity.RunOnUiThread(() =>
+                                                                        {
+                                                                            inputEdit.Text = matches[0];
+                                                                        });
+                                                            }
+                                                        });
+                                        
+                                                }).Start();
+                                        }
+                                        #endregion
+                                    });
+                        });
 
                     dialogDismissWait.WaitOne();
                     callback(input);
@@ -408,14 +429,16 @@ namespace Sensus.Android
                 {
                     GetMainActivityAsync(false, mainActivity =>
                         {
-                            mainActivity.RunOnUiThread(() =>
-                                {
-                                    Toast.MakeText(mainActivity, message, ToastLength.Long).Show();
+                            if (mainActivity != null)
+                                mainActivity.RunOnUiThread(() =>
+                                    {
+                                        Toast.MakeText(mainActivity, message, ToastLength.Long).Show();
 
-                                    if (callback != null)
-                                        callback();
-                                });
+                                        if (callback != null)
+                                            callback();
+                                    });
                         });
+                    
                 }).Start();
         }
 

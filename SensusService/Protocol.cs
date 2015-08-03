@@ -529,6 +529,10 @@ namespace SensusService
                                         string message = "Failed to start probe \"" + probe.GetType().FullName + "\":  " + ex.Message;
                                         SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
                                         SensusServiceHelper.Get().FlashNotificationAsync(message);
+
+                                        // disable probe if it is not supported on the device
+                                        if (ex is NotSupportedException)
+                                            probe.Enabled = false;
                                     }
                                 }
 

@@ -90,61 +90,65 @@ namespace Sensus.Android.Probes.Apps
             _loginWait.Reset();
             string accessTokenError = null;
 
-            (AndroidSensusServiceHelper.Get() as AndroidSensusServiceHelper).GetMainActivityAsync(true, mainActivity => mainActivity.RunOnUiThread(() =>
-                    {
-                        try
-                        {                            
-                            if (FacebookSdk.IsInitialized)
-                                SensusServiceHelper.Get().Logger.Log("Facebook SDK is already initialized.", LoggingLevel.Normal, GetType());
-                            else
+            (AndroidSensusServiceHelper.Get() as AndroidSensusServiceHelper).GetMainActivityAsync(true, mainActivity =>
+                {
+                    if (mainActivity != null)
+                        mainActivity.RunOnUiThread(() =>
                             {
-                                SensusServiceHelper.Get().Logger.Log("Initializing Facebook SDK.", LoggingLevel.Normal, GetType());
-                                FacebookSdk.SdkInitialize(mainActivity);
-                                Thread.Sleep(5000);  // give sdk intialization a few seconds to read the access token
-
-                                FacebookCallback<LoginResult> loginCallback = new FacebookCallback<LoginResult>
-                                {
-                                    HandleSuccess = loginResult =>
+                                try
+                                {                            
+                                    if (FacebookSdk.IsInitialized)
+                                        SensusServiceHelper.Get().Logger.Log("Facebook SDK is already initialized.", LoggingLevel.Normal, GetType());
+                                    else
                                     {
-                                        AndroidSensusServiceHelper.Get().Logger.Log("Facebook login succeeded.", SensusService.LoggingLevel.Normal, GetType());
-                                        AccessToken.CurrentAccessToken = loginResult.AccessToken;
-                                        _loginWait.Set();
-                                    },
+                                        SensusServiceHelper.Get().Logger.Log("Initializing Facebook SDK.", LoggingLevel.Normal, GetType());
+                                        FacebookSdk.SdkInitialize(mainActivity);
+                                        Thread.Sleep(5000);  // give sdk intialization a few seconds to read the access token
 
-                                    HandleCancel = () =>
-                                    {
-                                        AndroidSensusServiceHelper.Get().Logger.Log("Facebook login cancelled.", SensusService.LoggingLevel.Normal, GetType());
-                                        AccessToken.CurrentAccessToken = null;
-                                        _loginWait.Set();
-                                    },
+                                        FacebookCallback<LoginResult> loginCallback = new FacebookCallback<LoginResult>
+                                        {
+                                            HandleSuccess = loginResult =>
+                                            {
+                                                AndroidSensusServiceHelper.Get().Logger.Log("Facebook login succeeded.", SensusService.LoggingLevel.Normal, GetType());
+                                                AccessToken.CurrentAccessToken = loginResult.AccessToken;
+                                                _loginWait.Set();
+                                            },
 
-                                    HandleError = loginResult =>
+                                            HandleCancel = () =>
+                                            {
+                                                AndroidSensusServiceHelper.Get().Logger.Log("Facebook login cancelled.", SensusService.LoggingLevel.Normal, GetType());
+                                                AccessToken.CurrentAccessToken = null;
+                                                _loginWait.Set();
+                                            },
+
+                                            HandleError = loginResult =>
+                                            {
+                                                AndroidSensusServiceHelper.Get().Logger.Log("Facebook login failed.", SensusService.LoggingLevel.Normal, GetType());
+                                                AccessToken.CurrentAccessToken = null;
+                                                _loginWait.Set();
+                                            }
+                                        };
+
+                                        LoginManager.Instance.RegisterCallback(mainActivity.FacebookCallbackManager, loginCallback);
+                                    }
+
+                                    // if the access token was read from cache, we're done.
+                                    if (HasValidAccessToken)
                                     {
-                                        AndroidSensusServiceHelper.Get().Logger.Log("Facebook login failed.", SensusService.LoggingLevel.Normal, GetType());
-                                        AccessToken.CurrentAccessToken = null;
+                                        SensusServiceHelper.Get().Logger.Log("Facebook access token read from cache.", LoggingLevel.Normal, GetType());
                                         _loginWait.Set();
                                     }
-                                };
+                                    // prompt user to log in with all enabled permissions
+                                    else
+                                        LoginManager.Instance.LogInWithReadPermissions(mainActivity, GetRequiredPermissionNames());
+                                }
+                                catch (Exception ex)
+                                {
+                                    accessTokenError = ex.Message;
+                                }
 
-                                LoginManager.Instance.RegisterCallback(mainActivity.FacebookCallbackManager, loginCallback);
-                            }
-
-                            // if the access token was read from cache, we're done.
-                            if (HasValidAccessToken)
-                            {
-                                SensusServiceHelper.Get().Logger.Log("Facebook access token read from cache.", LoggingLevel.Normal, GetType());
-                                _loginWait.Set();
-                            }
-                            // prompt user to log in with all enabled permissions
-                            else
-                                LoginManager.Instance.LogInWithReadPermissions(mainActivity, GetRequiredPermissionNames());
-                        }
-                        catch (Exception ex)
-                        {
-                            accessTokenError = ex.Message;
-                        }
-
-                    }));
+                            });
+                });
 
             if (accessTokenError != null)
                 SensusServiceHelper.Get().Logger.Log("Error while initializing Facebook SDK and/or logging in:  " + accessTokenError, LoggingLevel.Normal, GetType());
@@ -171,10 +175,14 @@ namespace Sensus.Android.Probes.Apps
                 {
                     _loginWait.Reset();
 
-                    (AndroidSensusServiceHelper.Get() as AndroidSensusServiceHelper).GetMainActivityAsync(true, mainActivity => mainActivity.RunOnUiThread(() =>
-                            {
-                                LoginManager.Instance.LogInWithReadPermissions(mainActivity, missingPermissions);
-                            }));
+                    (AndroidSensusServiceHelper.Get() as AndroidSensusServiceHelper).GetMainActivityAsync(true, mainActivity =>
+                        {
+                            if (mainActivity != null)
+                                mainActivity.RunOnUiThread(() =>
+                                    {
+                                        LoginManager.Instance.LogInWithReadPermissions(mainActivity, missingPermissions);
+                                    });
+                        });
 
                     _loginWait.WaitOne();
                 }

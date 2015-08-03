@@ -38,6 +38,8 @@ namespace Sensus.iOS.Probes.Location
 
             if (!GpsReceiver.Get().Locator.IsGeolocationEnabled || !GpsReceiver.Get().Locator.SupportsHeading)
             {
+                // throw standard exception instead of NotSupportedException, since the user might decide to enable GPS in the future
+                // and we'd like the probe to be restarted at that time.
                 string error = "Geolocation / heading are not enabled on this device. Cannot start compass probe.";
                 SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);

@@ -20,6 +20,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using SensusService.Exceptions;
 using SensusService.Anonymization.Anonymizers;
+using Newtonsoft.Json;
+using System.Linq;
 
 namespace SensusService.Anonymization
 {
@@ -168,6 +170,14 @@ namespace SensusService.Anonymization
 
                 return anonymizer;
             }
+        }
+
+        protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
+        {
+            // for some reason, even JsonIgnore'd properties like the DisplayDetail are serialized if the datum class
+            // inherits from ImpreciseDatum. to cover this, simply ignore get-only properties.
+            IList<JsonProperty> properties = base.CreateProperties(type, memberSerialization);
+            return properties.Where(p => p.Writable).ToList();
         }
 
         protected override IValueProvider CreateMemberValueProvider(MemberInfo member)
