@@ -46,7 +46,10 @@ namespace SensusUI
                 if (selectedAction == "Start")
                     selectedProtocol.StartWithUserAgreement(null);
                 else if (selectedAction == "Stop")
-                    selectedProtocol.Running = false;
+                {
+                    if (await DisplayAlert("Confirm Stop", "Are you sure you want to stop " + selectedProtocol.Name + "?", "Yes", "No"))
+                        selectedProtocol.Running = false;
+                }
                 else if (selectedAction == "Edit")
                 {
                     Action editAction = new Action(async() =>

@@ -71,7 +71,7 @@ namespace SensusService.Probes.Location
 
         private GpsReceiver()
         {
-            _desiredAccuracyMeters = 10;
+            _desiredAccuracyMeters = 50;  // setting this too low appears to result in very delayed GPS fixes.
             _readingIsComing = false;
             _readingWait = new ManualResetEvent(false);
             _reading = null;
