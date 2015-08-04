@@ -679,16 +679,6 @@ namespace SensusService
 
                                 scheduledCallback.Action(scheduledCallback.Canceller.Token);
                             }
-
-                            // if this is a repeating callback, then we'll need to reset the cancellation token source with a new instance, since they cannot be reused. if
-                            // we enter the _idCallback lock before CancelRaisedCallback, then the next raising will be cancelled. if CancelRaisedCallback enters the 
-                            // _idCallback lock first, then the cancellation token source will be overwritten here and the cancel will not have any effect. however,
-                            // the latter case is a reasonable outcome, since the purpose of CancelRaisedCallback is to terminate any callbacks that are currently in 
-                            // progress, and the current callback is no longer in progress. if the desired outcome is complete discontinuation of the repeating callback
-                            // then UnscheduleRepeatingCallback should be used -- this method first cancels any raised callbacks and then removes the callback entirely.
-                            lock (_idCallback)
-                                if (repeating)
-                                    scheduledCallback.Canceller = new CancellationTokenSource();
                         }
                         catch (Exception ex)
                         {
@@ -696,13 +686,31 @@ namespace SensusService
                         }
                         finally
                         {
-                            Monitor.Exit(scheduledCallback.Action);
+                            // if this is a repeating callback, then we'll need to reset the cancellation token source with a new instance, since they cannot be reused. if
+                            // we enter the _idCallback lock before CancelRaisedCallback, then the next raise will be cancelled. if CancelRaisedCallback enters the 
+                            // _idCallback lock first, then the cancellation token source will be overwritten here and the cancel will not have any effect. however,
+                            // the latter case is a reasonable outcome, since the purpose of CancelRaisedCallback is to terminate any callbacks that are currently in 
+                            // progress, and the current callback is no longer in progress. if the desired outcome is complete discontinuation of the repeating callback
+                            // then UnscheduleRepeatingCallback should be used -- this method first cancels any raised callbacks and then removes the callback entirely.
+                            try
+                            {
+                                if (repeating)
+                                    lock (_idCallback)
+                                        scheduledCallback.Canceller = new CancellationTokenSource();
+                            }
+                            catch (Exception)
+                            {
+                            }
+                            finally
+                            {
+                                Monitor.Exit(scheduledCallback.Action);
+                            }
                         }
                     }
                     else
                         _logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") is already running. Not running again.", LoggingLevel.Debug, GetType());
                     
-                    // if this was a one-time callback, remove it from our collection
+                    // if this was a one-time callback, remove it from our collection. it is no longer needed.
                     if (!repeating)
                         lock (_idCallback)
                             _idCallback.Remove(callbackId);                               
