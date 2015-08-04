@@ -135,7 +135,7 @@ namespace SensusService.Probes
             if (Running)
             {
                 double msElapsedSincePreviousStore = (DateTimeOffset.UtcNow - MostRecentStoreTimestamp).TotalMilliseconds;
-                if (!_isPolling && msElapsedSincePreviousStore > (_pollingSleepDurationMS + 100))  // there's a small amount of latency between the trigger of a poll and setting _isPolling to true, leading to a race condition with the tester method that can result in warnings about polling delays. allow a small fudge factor to ignore these warnings.
+                if (!_isPolling && msElapsedSincePreviousStore > (_pollingSleepDurationMS + 5000))  // system timer callbacks aren't always fired exactly as scheduled, resulting in health tests that identify warning conditions for delayed polling. allow a small fudge factor to ignore these warnings.
                     warning += "Probe \"" + GetType().FullName + "\" has not stored data in " + msElapsedSincePreviousStore + "ms (polling delay = " + _pollingSleepDurationMS + "ms)." + Environment.NewLine;
             }
 

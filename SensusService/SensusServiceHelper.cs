@@ -84,6 +84,7 @@ namespace SensusService
         }
 
         #region static members
+
         public const string SENSUS_CALLBACK_KEY = "SENSUS-CALLBACK";
         public const string SENSUS_CALLBACK_ID_KEY = "SENSUS-CALLBACK-ID";
         public const string SENSUS_CALLBACK_REPEATING_KEY = "SENSUS-CALLBACK-REPEATING";
@@ -208,6 +209,7 @@ namespace SensusService
         }
 
         #region encryption
+
         public static byte[] Encrypt(string unencryptedString)
         {
             #if (__ANDROID__ || __IOS__)
@@ -255,20 +257,22 @@ namespace SensusService
             #error "Unrecognized platform."
             #endif
         }
+
         #endregion
+
         #endregion
 
         private bool _stopped;
         private Logger _logger;
-        private ObservableCollection<Protocol> _registeredProtocols;  // protocol defined for the sensus app
-        private List<string> _runningProtocolIds;                     // which protocols should be running right now?
+        private ObservableCollection<Protocol> _registeredProtocols;
+        private List<string> _runningProtocolIds;
         private string _healthTestCallbackId;
         private int _healthTestDelayMS;
         private int _healthTestCount;
         private int _healthTestsPerProtocolReport;
         private Dictionary<string, ScheduledCallback> _idCallback;
         private SHA256Managed _hasher;
-        private List<PointOfInterest> _pointsOfInterest;  // points of interest defined at the sensus app level
+        private List<PointOfInterest> _pointsOfInterest;
 
         private readonly object _locker = new object();
 
@@ -343,6 +347,7 @@ namespace SensusService
         }
 
         #region platform-specific properties
+
         [JsonIgnore]
         public abstract bool IsCharging { get; }
 
@@ -356,6 +361,7 @@ namespace SensusService
         public abstract string OperatingSystem { get; }
 
         protected abstract Geolocator Geolocator { get; }
+
         #endregion
 
         protected SensusServiceHelper()
@@ -429,6 +435,7 @@ namespace SensusService
         }
 
         #region platform-specific methods. this functionality cannot be implemented in a cross-platform way. it must be done separately for each platform.
+
         protected abstract void InitializeXamarinInsights();
 
         protected abstract void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, string userNotificationMessage);
@@ -463,9 +470,11 @@ namespace SensusService
         /// <returns><c>true</c>, if probe should be enabled, <c>false</c> otherwise.</returns>
         /// <param name="probe">Probe.</param>
         public abstract bool EnableProbeWhenEnablingAll(Probe probe);
+
         #endregion
 
         #region add/remove running protocol ids
+
         public void AddRunningProtocolId(string id)
         {
             lock (_locker)
@@ -506,6 +515,7 @@ namespace SensusService
         }
 
         #endregion
+
         public void SaveAsync()
         {
             new Thread(() =>
@@ -571,6 +581,7 @@ namespace SensusService
         }
 
         #region callback scheduling
+
         public string ScheduleRepeatingCallback(Action<CancellationToken> callback, string name, int initialDelayMS, int repeatDelayMS)
         {
             return ScheduleRepeatingCallback(callback, name, initialDelayMS, repeatDelayMS, null);
@@ -606,7 +617,7 @@ namespace SensusService
             lock (_idCallback)
             {
                 string callbackId = Guid.NewGuid().ToString();
-                _idCallback.Add(callbackId, new ScheduledCallback(callback, name, null, userNotificationMessage));
+                _idCallback.Add(callbackId, new ScheduledCallback(callback, name, new CancellationTokenSource(), userNotificationMessage));
                 return callbackId;
             }
         }
@@ -638,72 +649,82 @@ namespace SensusService
         }
 
         public void RaiseCallbackAsync(string callbackId, bool repeating, bool notifyUser, Action callback)
-        {
-            lock (_idCallback)
-            {
-                // do we have callback information for the passed callbackId? we might not, in the case where the callback is canceled by the user and the system fires it subsequently.
-                ScheduledCallback scheduledCallback;
-                if (_idCallback.TryGetValue(callbackId, out scheduledCallback))
+        {         
+            KeepDeviceAwake();  // call this before we start up the new thread, just in case the system decides to sleep before the thread is started.
+
+            new Thread(() =>
                 {
-                    KeepDeviceAwake();  // not all OSs support this (e.g., iOS), but call it anyway
+                    ScheduledCallback scheduledCallback;
 
-                    new Thread(() =>
+                    lock (_idCallback)
+                    {
+                        // do we have callback information for the passed callbackId? we might not, in the case where the callback is canceled by the user and the system fires it subsequently.
+                        if (!_idCallback.TryGetValue(callbackId, out scheduledCallback))
+                            return;
+                    }
+
+                    // callback actions cannot be raised concurrently -- drop the current callback if it is already in progress
+                    if (Monitor.TryEnter(scheduledCallback.Action))
+                    {
+                        try
                         {
-                            // callbacks cannot be raised concurrently -- drop the current callback if it is already in progress.
-                            if (Monitor.TryEnter(scheduledCallback.Action))
-                            {
-                                // initialize a new cancellation token source for this call, since they cannot be reset
-                                CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-
-                                // set cancellation token source in collection, so that someone can call CancelRaisedCallback -- lock the containing collection since we lock it within CancelRaisedCallback
-                                lock (_idCallback)
-                                    scheduledCallback.Canceller = cancellationTokenSource;
-
-                                try
-                                {
-                                    _logger.Log("Raising callback \"" + scheduledCallback.Name + "\" (" + callbackId + ").", LoggingLevel.Debug, GetType());
-
-                                    if (notifyUser)
-                                        IssueNotificationAsync(scheduledCallback.UserNotificationMessage, callbackId);
-
-                                    scheduledCallback.Action(cancellationTokenSource.Token);
-                                }
-                                catch (Exception ex)
-                                {
-                                    _logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") failed:  " + ex.Message, LoggingLevel.Normal, GetType());
-                                }
-                                finally
-                                {
-                                    Monitor.Exit(scheduledCallback.Action);
-
-                                    // reset cancellation token to null since there is nothing to cancel -- lock the containing collection since we lock it within CancelRaisedCallback
-                                    lock (_idCallback)
-                                        scheduledCallback.Canceller = null;
-                                }
-                            }
+                            if (scheduledCallback.Canceller.IsCancellationRequested)
+                                _logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") was cancelled before it was started.", LoggingLevel.Debug, GetType());
                             else
-                                _logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") was already running. Not running again.", LoggingLevel.Debug, GetType());
+                            {
+                                _logger.Log("Raising callback \"" + scheduledCallback.Name + "\" (" + callbackId + ").", LoggingLevel.Debug, GetType());
 
-                            if (!repeating)
-                                lock (_idCallback)
-                                    _idCallback.Remove(callbackId);
+                                if (notifyUser)
+                                    IssueNotificationAsync(scheduledCallback.UserNotificationMessage, callbackId);
 
-                            LetDeviceSleep();
+                                scheduledCallback.Action(scheduledCallback.Canceller.Token);
+                            }
 
-                            if (callback != null)
-                                callback();
+                            // if this is a repeating callback, then we'll need to reset the cancellation token source with a new instance, since they cannot be reused. if
+                            // we enter the _idCallback lock before CancelRaisedCallback, then the next raising will be cancelled. if CancelRaisedCallback enters the 
+                            // _idCallback lock first, then the cancellation token source will be overwritten here and the cancel will not have any effect. however,
+                            // the latter case is a reasonable outcome, since the purpose of CancelRaisedCallback is to terminate any callbacks that are currently in 
+                            // progress, and the current callback is no longer in progress. if the desired outcome is complete discontinuation of the repeating callback
+                            // then UnscheduleRepeatingCallback should be used -- this method first cancels any raised callbacks and then removes the callback entirely.
+                            lock (_idCallback)
+                                if (repeating)
+                                    scheduledCallback.Canceller = new CancellationTokenSource();
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") failed:  " + ex.Message, LoggingLevel.Normal, GetType());
+                        }
+                        finally
+                        {
+                            Monitor.Exit(scheduledCallback.Action);
+                        }
+                    }
+                    else
+                        _logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") is already running. Not running again.", LoggingLevel.Debug, GetType());
+                    
+                    // if this was a one-time callback, remove it from our collection
+                    if (!repeating)
+                        lock (_idCallback)
+                            _idCallback.Remove(callbackId);                               
 
-                        }).Start();                           
-                }
-            }
+                    if (callback != null)
+                        callback();
+
+                    LetDeviceSleep();
+
+                }).Start();                           
         }
 
+        /// <summary>
+        /// Cancels a callback that has been raised and is currently executing.
+        /// </summary>
+        /// <param name="callbackId">Callback identifier.</param>
         public void CancelRaisedCallback(string callbackId)
         {
             lock (_idCallback)
             {
                 ScheduledCallback scheduledCallback;
-                if (_idCallback.TryGetValue(callbackId, out scheduledCallback) && scheduledCallback.Canceller != null)  // the cancellation source will be null if the callback is not currently being raised
+                if (_idCallback.TryGetValue(callbackId, out scheduledCallback))
                     scheduledCallback.Canceller.Cancel();
             }
         }
@@ -735,6 +756,7 @@ namespace SensusService
                     UnscheduleCallback(callbackId, true);
                 }
         }
+
         #endregion
 
         public void TextToSpeechAsync(string text)
@@ -757,7 +779,7 @@ namespace SensusService
                 {
                     await App.Current.MainPage.Navigation.PushAsync(new PromptForInputsPage(windowTitle, inputs, callback));
                 });
-        }                    
+        }
 
         public void GetPositionsFromMapAsync(Xamarin.Forms.Maps.Position address, string newPinName, Action<List<Xamarin.Forms.Maps.Position>> callback)
         {
