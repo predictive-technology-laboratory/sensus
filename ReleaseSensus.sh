@@ -40,7 +40,7 @@ sed -E -i '' "s/android:versionCode=\"[^\"]+\"/android:versionCode=\"$new_versio
 
 # show updates that will be used to build the release
 echo "The following differences will be used to build the Android release."
-git difftool
+git difftool ./Sensus.Android
 
 # build APK
 xbuild /p:Configuration=Release ./Sensus.Android/Sensus.Android.csproj
@@ -73,7 +73,7 @@ awk "/<key>CFBundleShortVersionString<\/key>/ {f=1; print; next} f {\$1=\"\t<str
 
 # show updates that will be used to build the release
 echo "The following differences will be used to build the iOS release."
-git difftool
+git difftool ./Sensus.iOS
 
 # build IPA
 xbuild /p:Configuration=Release /p:Platform=iPhone /p:BuildIpa=true /target:Build ./Sensus.iOS/Sensus.iOS.csproj
