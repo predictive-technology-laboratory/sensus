@@ -254,7 +254,6 @@
     <Compile Include="Probes\Location\iOSCompassProbe.cs" />
     <Compile Include="Probes\Movement\iOSAccelerometerProbe.cs" />
     <Compile Include="Probes\Network\iOSPollingWlanProbe.cs" />
-    <Compile Include="ShareFileActivityItemSource.cs" />
     <Compile Include="Probes\Apps\iOSFacebookProbe.cs" />
     <Compile Include="Probes\Communication\iOSTelephonyProbe.cs" />
   </ItemGroup>

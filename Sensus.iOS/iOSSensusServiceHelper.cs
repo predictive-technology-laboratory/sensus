@@ -27,6 +27,8 @@ using AVFoundation;
 using System.Threading;
 using Toasts.Forms.Plugin.Abstractions;
 using SensusService.Probes.Movement;
+using MessageUI;
+using System.IO;
 
 namespace Sensus.iOS
 {
@@ -238,9 +240,10 @@ namespace Sensus.iOS
         {
             Device.BeginInvokeOnMainThread(() =>
                 {
-                    ShareFileActivityItemSource activityItemSource = new ShareFileActivityItemSource(path, subject);
-                    UIActivityViewController shareActivity = new UIActivityViewController(new NSObject[] { activityItemSource }, null);
-                    UIApplication.SharedApplication.KeyWindow.RootViewController.PresentViewController(shareActivity, true, null);
+                    MFMailComposeViewController mailer = new MFMailComposeViewController();
+                    mailer.SetSubject(subject);
+                    mailer.AddAttachmentData(NSData.FromUrl(NSUrl.FromFilename(path)), "application/json", Path.GetFileName(path));
+                    UIApplication.SharedApplication.KeyWindow.RootViewController.PresentViewController(mailer, true, null);
                 });
         }
 
