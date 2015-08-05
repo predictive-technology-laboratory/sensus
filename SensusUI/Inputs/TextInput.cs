@@ -29,8 +29,16 @@ namespace SensusUI.Inputs
             }
         }
 
-        public TextInput(string label)
-            : base(label)
+        public override string DisplayName
+        {
+            get
+            {
+                return "Text Entry";
+            }
+        }
+
+        public TextInput(string name, string label)
+            : base(name, label)
         {            
         }
 

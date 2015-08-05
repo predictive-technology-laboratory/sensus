@@ -73,7 +73,7 @@ namespace SensusService.Probes.User
 
         public Script()
         {                        
-            _inputGroups = new ObservableCollection<PromptInput>();
+            _inputGroups = new ObservableCollection<InputGroup>();
         }
 
         public Script Copy()

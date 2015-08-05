@@ -26,8 +26,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewTextLinesPage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)PromptsPage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)PromptPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ShareLocalDataStorePage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\EntryIntegerUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\EntryFloatUiProperty.cs" />
@@ -53,6 +51,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\PromptInputType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\PromptOutputType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\PromptInput.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ScriptInputsPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ScriptInputPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ScriptInputGroupsPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ScriptInputGroupPage.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Inputs\" />

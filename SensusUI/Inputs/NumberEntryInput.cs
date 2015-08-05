@@ -30,8 +30,16 @@ namespace SensusUI.Inputs
             }
         }
 
-        public NumberEntryInput(string label)
-            : base(label)
+        public override string DisplayName
+        {
+            get
+            {
+                return "Number Entry";
+            }
+        }
+
+        public NumberEntryInput(string name, string label)
+            : base(name, label)
         {            
         }
 

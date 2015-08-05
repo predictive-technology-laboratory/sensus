@@ -784,33 +784,58 @@ namespace SensusService
         public void PromptForInputsAsync(string windowTitle, IEnumerable<Input> inputs, Action<List<object>> callback)
         {
             InputGroup inputGroup = new InputGroup("");
-            inputGroup.Inputs.AddRange(inputs);
 
-            PromptForInputsAsync(windowTitle, new InputGroup[] { inputGroup }.ToList(), groupResponses =>
+            foreach (Input input in inputs)
+                inputGroup.Inputs.Add(input);
+
+            PromptForInputsAsync(null, false, DateTimeOffset.MinValue, windowTitle, new InputGroup[] { inputGroup }.ToList(), groupResponses =>
                 {
                     callback(groupResponses.Select(groupResponse => groupResponse.Item2).ToList());
                 });
         }
 
-        public void PromptForInputsAsync(string windowTitle, List<InputGroup> inputGroups, Action<List<Tuple<string, object>>> callback)
+        public void PromptForInputsAsync(Datum triggeringDatum, bool isReprompt, DateTimeOffset firstPromptTimestamp, string windowTitle, IEnumerable<InputGroup> inputGroups, Action<List<Tuple<Input, object>>> callback)
         {
-            Device.BeginInvokeOnMainThread(async () =>
+            new Thread(() =>
                 {
-                    List<Tuple<string, object>> groupResponses = new List<Tuple<string, object>>();
+                    List<Tuple<Input, object>> inputResponses = new List<Tuple<Input, object>>();
 
-                    for (int i = 0; i < inputGroups.Count; ++i)
+                    int groupNum = 0;
+                    int totalGroups = inputGroups.Count();
+
+                    foreach (InputGroup inputGroup in inputGroups)
                     {
-                        InputGroup inputGroup = inputGroups[i];
+                        ++groupNum;
 
-                        await App.Current.MainPage.Navigation.PushAsync(new PromptForInputsPage(windowTitle, i / (double)inputGroups.Count, inputGroup, responses =>
+                        if (inputGroup.Inputs.Count == 1 && inputGroup.Inputs[0] is PromptInput)
+                        {
+                            PromptInput promptInput = inputGroup.Inputs[0] as PromptInput;
+
+                            ManualResetEvent responseWait = new ManualResetEvent(false);
+
+                            promptInput.RunAsync(triggeringDatum, isReprompt, firstPromptTimestamp, response =>
+                                {                
+                                    inputResponses.Add(new Tuple<Input, object>(promptInput, response));
+                                    responseWait.Set();
+                                });
+
+                            responseWait.WaitOne();
+                        }
+                        else
+                        {
+                            Device.BeginInvokeOnMainThread(async () =>
                                 {
-                                    foreach (object response in responses)
-                                        groupResponses.Add(new Tuple<string, object>(inputGroup.Id, response));
-                                }));
+                                    await App.Current.MainPage.Navigation.PushAsync(new PromptForInputsPage(windowTitle, groupNum / (double)totalGroups, inputGroup, responses =>
+                                            {
+                                                inputResponses.AddRange(responses);
+                                            }));
+                                });
+                        }
                     }
 
-                    callback(groupResponses);            
-                });
+                    callback(inputResponses);    
+
+                }).Start();
         }
 
         public void GetPositionsFromMapAsync(Xamarin.Forms.Maps.Position address, string newPinName, Action<List<Xamarin.Forms.Maps.Position>> callback)

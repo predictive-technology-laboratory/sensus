@@ -14,33 +14,39 @@
 
 using System;
 using Xamarin.Forms;
+using SensusUI.Inputs;
 using SensusUI.UiProperties;
-using System.Collections.Generic;
-using SensusService.Probes.User;
 
 namespace SensusUI
 {
-    /// <summary>
-    /// Displays a prompt.
-    /// </summary>
-    public class PromptPage : ContentPage
+    public class ScriptInputGroupPage : ContentPage
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SensusUI.PromptPage"/> class.
-        /// </summary>
-        /// <param name="prompt">Prompt to display.</param>
-        public PromptPage(PromptInput prompt)
+        public ScriptInputGroupPage(InputGroup inputGroup)
         {
-            Title = "Prompt";
+            Title = "Input Group";
 
             StackLayout contentLayout = new StackLayout
+                {
+                    Orientation = StackOrientation.Vertical,
+                    VerticalOptions = LayoutOptions.FillAndExpand
+                };
+
+            foreach (StackLayout stack in UiProperty.GetPropertyStacks(inputGroup))
+                contentLayout.Children.Add(stack);
+
+            Button editInputsButton = new Button
             {
-                Orientation = StackOrientation.Vertical,
-                VerticalOptions = LayoutOptions.FillAndExpand
+                Text = "Edit Inputs",
+                FontSize = 20,
+                HorizontalOptions = LayoutOptions.FillAndExpand
             };
 
-            foreach (StackLayout stack in UiProperty.GetPropertyStacks(prompt))
-                contentLayout.Children.Add(stack);
+            editInputsButton.Clicked += async (o, e) =>
+            {
+                await Navigation.PushAsync(new ScriptInputsPage(inputGroup));
+            };
+
+            contentLayout.Children.Add(editInputsButton);
 
             Content = new ScrollView
             {
@@ -49,5 +55,3 @@ namespace SensusUI
         }
     }
 }
-
-

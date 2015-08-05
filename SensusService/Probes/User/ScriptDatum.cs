@@ -20,11 +20,36 @@ namespace SensusService.Probes.User
 {
     public class ScriptDatum : Datum
     {
-        private string _response;
+        private string _groupId;
+        private string _inputId;
+        private object _response;
         private string _triggerDatumId;
 
-        [Anonymizable(null, typeof(StringHashAnonymizer), true)]
-        public string Response
+        public string GroupId
+        {
+            get
+            {
+                return _groupId;
+            }
+            set
+            {
+                _groupId = value;
+            }
+        }
+
+        public string InputId
+        {
+            get
+            {
+                return _inputId;
+            }
+            set
+            {
+                _inputId = value;
+            }
+        }
+
+        public object Response
         {
             get { return _response; }
             set { _response = value; }
@@ -39,7 +64,7 @@ namespace SensusService.Probes.User
 
         public override string DisplayDetail
         {
-            get { return _response; }
+            get { return _response.ToString(); }
         }
 
         /// <summary>
@@ -47,16 +72,20 @@ namespace SensusService.Probes.User
         /// </summary>
         private ScriptDatum() { }
 
-        public ScriptDatum(DateTimeOffset timestamp, string response, string triggerDatumId)
+        public ScriptDatum(DateTimeOffset timestamp, string groupId, string inputId, object response, string triggerDatumId)
             : base(timestamp)
         {
-            _response = response == null ? "" : response;
+            _groupId = groupId;
+            _inputId = inputId;
+            _response = response;
             _triggerDatumId = triggerDatumId == null ? "" : triggerDatumId;
         }
 
         public override string ToString()
         {
             return base.ToString() + Environment.NewLine +
+                   "Group:  " + _groupId + Environment.NewLine + 
+                   "Input:  " + _inputId + Environment.NewLine +
                    "Response:  " + _response;
         }
     }

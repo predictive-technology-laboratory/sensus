@@ -18,6 +18,7 @@ using System.Threading;
 using SensusUI.UiProperties;
 using SensusService.Probes.User;
 using SensusService;
+using Xamarin.Forms;
 
 namespace SensusUI.Inputs
 {
@@ -32,7 +33,7 @@ namespace SensusUI.Inputs
         private string _outputMessage;
         private string _outputMessageRerun;
         private PromptInputType _inputType;
-        private ScriptDatum _responseDatum;
+        private string _response;
         private bool _hasRun;
 
         [ListUiProperty("Output Type:", true, 10, new object[] { PromptOutputType.Text, PromptOutputType.Voice })]
@@ -63,10 +64,10 @@ namespace SensusUI.Inputs
             set { _inputType = value; }
         }
 
-        public ScriptDatum ResponseDatum
+        public string Response
         {
-            get { return _responseDatum; }
-            set { _responseDatum = value; }
+            get { return _response; }
+            set { _response = value; }
         }
 
         public bool HasRun
@@ -77,7 +78,15 @@ namespace SensusUI.Inputs
 
         public override bool Complete
         {
-            get { return _hasRun && (_inputType == PromptInputType.None || _responseDatum != null); }
+            get { return _hasRun && (_inputType == PromptInputType.None || _response != null); }
+        }
+
+        public override string DisplayName
+        {
+            get
+            {
+                return "Voice Prompt";
+            }
         }
 
         /// <summary>
@@ -85,20 +94,23 @@ namespace SensusUI.Inputs
         /// </summary>
         protected PromptInput()
         {
+            _outputType = PromptOutputType.Text;
+            _outputMessage = "";
+            _outputMessageRerun = "";
+            _inputType = PromptInputType.Text;
             _hasRun = false;
         }
 
         public PromptInput(string name, PromptOutputType outputType, string outputMessage, string outputMessageRerun, PromptInputType inputType)
-            : this()
+            : base(name, null)
         {
-            _name = name;
             _outputType = outputType;
             _outputMessage = outputMessage;
             _outputMessageRerun = outputMessageRerun;
             _inputType = inputType;
         }
 
-        public void RunAsync(Datum previousDatum, Datum currentDatum, bool isRerun, DateTimeOffset firstRunTimestamp, Action<ScriptDatum> callback)
+        public void RunAsync(Datum triggeringDatum, bool isRerun, DateTimeOffset firstRunTimestamp, Action<string> callback)
         {
             new Thread(() =>
                 {
@@ -106,9 +118,9 @@ namespace SensusUI.Inputs
                     lock (LOCKER)
                     {
                         // calling after a previous call has completed returns the same response
-                        if (_responseDatum != null)
+                        if (_response != null)
                         {
-                            callback(_responseDatum);
+                            callback(_response);
                             return;
                         }
 
@@ -143,17 +155,15 @@ namespace SensusUI.Inputs
                     #endregion
 
                     // action to execute when user has provided a response
-                    Action<string> responseCallback = new Action<string>(responseText =>
+                    Action<string> responseCallback = new Action<string>(response =>
                         {
                             // don't treat null/whitespace the same as no input
-                            if (string.IsNullOrWhiteSpace(responseText))
-                                responseText = null;
+                            if (string.IsNullOrWhiteSpace(response))
+                                response = null;
 
-                            // set datum for this prompt if we got something
-                            if (responseText != null)
-                                _responseDatum = new ScriptDatum(DateTimeOffset.UtcNow, responseText, currentDatum == null ? null : currentDatum.Id);
+                            _response = response;
 
-                            callback(_responseDatum);
+                            callback(_response);
 
                             // allow other prompts to run
                             PROMPT_IS_RUNNING = false;
@@ -199,9 +209,10 @@ namespace SensusUI.Inputs
                 }).Start();
         }
 
-        public override string ToString()
+        public override View CreateView(out Func<object> valueRetriever)
         {
-            return _name;
+            valueRetriever = null;
+            return null;
         }
     }
 }

@@ -60,6 +60,14 @@ namespace SensusUI.Inputs
             }
         }
 
+        public override string DisplayName
+        {
+            get
+            {
+                return "Picker";
+            }
+        }
+
         /// <summary>
         /// For JSON.NET deserialization.
         /// </summary>
@@ -68,8 +76,8 @@ namespace SensusUI.Inputs
             _items = new List<string>();
         }
 
-        public ItemPickerInput(string label, string tipText, List<string> items)
-            : base(label)
+        public ItemPickerInput(string name, string label, string tipText, List<string> items)
+            : base(name, label)
         {
             _items = items;                
         }

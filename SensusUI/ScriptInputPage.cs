@@ -14,37 +14,32 @@
 
 using System;
 using Xamarin.Forms;
+using SensusUI.UiProperties;
+using System.Collections.Generic;
+using SensusService.Probes.User;
+using SensusUI.Inputs;
 
-namespace SensusUI.Inputs
+namespace SensusUI
 {
-    public class LabelOnlyInput : Input
+    public class ScriptInputPage : ContentPage
     {
-        public override bool Complete
+        public ScriptInputPage(Input input)
         {
-            get
+            Title = "Input";
+
+            StackLayout contentLayout = new StackLayout
             {
-                return true;
-            }
-        }
+                Orientation = StackOrientation.Vertical,
+                VerticalOptions = LayoutOptions.FillAndExpand
+            };
 
-        public override string DisplayName
-        {
-            get
+            foreach (StackLayout stack in UiProperty.GetPropertyStacks(input))
+                contentLayout.Children.Add(stack);
+
+            Content = new ScrollView
             {
-                return "Read-only Text";
-            }
-        }
-
-        public LabelOnlyInput(string name, string label)
-            : base(name, label)
-        {
-        }
-
-        public override View CreateView(out Func<object> valueRetriever)
-        {
-            valueRetriever = null;
-
-            return Label;
+                Content = contentLayout
+            };
         }
     }
 }

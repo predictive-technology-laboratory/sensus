@@ -29,8 +29,16 @@ namespace SensusUI.Inputs
             }
         }
 
-        public YesNoInput(string label)
-            : base(label)
+        public override string DisplayName
+        {
+            get
+            {
+                return "Yes/No";
+            }
+        }
+
+        public YesNoInput(string name, string label)
+            : base(name, label)
         {
         }
 

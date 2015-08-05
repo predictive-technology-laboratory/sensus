@@ -24,7 +24,7 @@ namespace SensusUI
 {
     public class PromptForInputsPage : ContentPage
     {
-        public PromptForInputsPage(string title, double progress, InputGroup inputGroup, Action<List<object>> callback)
+        public PromptForInputsPage(string title, double progress, InputGroup inputGroup, Action<List<Tuple<Input, object>>> callback)
         {
             Title = title;
 
@@ -40,6 +40,7 @@ namespace SensusUI
                     HorizontalOptions = LayoutOptions.FillAndExpand
                 });
 
+            List<Input> inputs = new List<Input>();
             List<Func<object>> inputRetrievers = new List<Func<object>>();
 
             foreach (Input input in inputGroup.Inputs)
@@ -51,7 +52,10 @@ namespace SensusUI
                     contentLayout.Children.Add(view);
 
                 if (valueRetriever != null)
+                {
+                    inputs.Add(input);
                     inputRetrievers.Add(valueRetriever);
+                }
             }
 
             bool canceled = false;
@@ -63,13 +67,13 @@ namespace SensusUI
                             await Navigation.PopAsync();
                         });
 
-                    List<object> inputValues = null;
+                    List<Tuple<Input, object>> inputValues = null;
 
                     if (!canceled)
                     {
-                        inputValues = new List<object>();
-                        foreach (Func<object> inputRetriever in inputRetrievers)
-                            inputValues.Add(inputRetriever());
+                        inputValues = new List<Tuple<Input, object>>();
+                        for (int i = 0; i < inputRetrievers.Count; ++i)
+                            inputValues.Add(new Tuple<Input, object>(inputs[i], inputRetrievers[i]()));
                     }
 
                     callback(inputValues);

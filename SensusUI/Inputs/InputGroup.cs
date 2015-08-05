@@ -15,13 +15,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using SensusUI.UiProperties;
 
 namespace SensusUI.Inputs
 {
     public class InputGroup
     {
         private string _id;
-        private List<Input> _inputs;
+        private string _name;
+        private ObservableCollection<Input> _inputs;
 
         public string Id
         {
@@ -35,7 +39,20 @@ namespace SensusUI.Inputs
             }
         }
 
-        public List<Input> Inputs
+        [EntryStringUiProperty(null, true, 0)]
+        public string Name
+        {
+            get
+            {
+                return _name;
+            }
+            set
+            {
+                _name = value;
+            }
+        }
+
+        public ObservableCollection<Input> Inputs
         {
             get { return _inputs; }
         }
@@ -50,37 +67,36 @@ namespace SensusUI.Inputs
         /// </summary>
         protected InputGroup()
         {
-            _inputs = new List<Input>();
+            _id = Guid.NewGuid().ToString();
+
+            _inputs = new ObservableCollection<Input>();
+
+            _inputs.CollectionChanged += (o, e) =>
+            {
+                if (e.Action == NotifyCollectionChangedAction.Add)
+                    foreach (Input input in e.NewItems)
+                        input.GroupId = _id;
+                else if (e.Action == NotifyCollectionChangedAction.Remove)
+                    foreach (Input input in e.OldItems)
+                        input.GroupId = null;
+            };
         }
 
-        public InputGroup(string id)
+        public InputGroup(string name)
             : this()
         {
-            _id = id;
+            _name = name;
         }
 
-        public InputGroup(string id, Input input)
-            : this(id)
+        public InputGroup(string name, Input input)
+            : this(name)
         {
-            AddInput(input);
-        }
-
-        public void AddInput(Input input)
-        {
-            input.GroupId = _id;
-
             _inputs.Add(input);
         }
 
-        public bool RemoveInput(Input input)
+        public override string ToString()
         {
-            input.GroupId = null;
-
-            return _inputs.Remove(input);
-        }
-
-        public void RunAsync()
-        {
+            return _name;
         }
     }
 }

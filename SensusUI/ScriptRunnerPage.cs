@@ -42,19 +42,19 @@ namespace SensusUI
             foreach (StackLayout stack in UiProperty.GetPropertyStacks(scriptRunner))
                 contentLayout.Children.Add(stack);
 
-            Button editPromptsButton = new Button
+            Button editInputsButton = new Button
             {
-                Text = "Edit Prompts",
+                Text = "Edit Inputs",
                 FontSize = 20,
                 HorizontalOptions = LayoutOptions.FillAndExpand
             };
 
-            editPromptsButton.Clicked += async (o, e) =>
+            editInputsButton.Clicked += async (o, e) =>
             {
-                await Navigation.PushAsync(new PromptsPage(scriptRunner.Script.InputGroups));
+                await Navigation.PushAsync(new ScriptInputGroupsPage(scriptRunner.Script));
             };
 
-            contentLayout.Children.Add(editPromptsButton);
+            contentLayout.Children.Add(editInputsButton);
 
             Button editTriggersButton = new Button
             {

@@ -58,8 +58,16 @@ namespace SensusUI.Inputs
             }
         }
 
-        public NumberSliderInput(string label, double minimum, double maximum)
-            : base(label)
+        public override string DisplayName
+        {
+            get
+            {
+                return "Number Slider";
+            }
+        }
+
+        public NumberSliderInput(string name, string label, double minimum, double maximum)
+            : base(name, label)
         {
             _minimum = minimum;
             _maximum = maximum;

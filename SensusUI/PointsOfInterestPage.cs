@@ -81,10 +81,10 @@ namespace SensusUI
 
                             new Input[]
                             {
-                                new TextInput("POI Name:"),
-                                new TextInput("POI Type:"),
-                                new TextInput("Address:"),
-                                new YesNoInput("View Map:")
+                                new TextInput(null, "POI Name:"),
+                                new TextInput(null, "POI Type:"),
+                                new TextInput(null, "Address:"),
+                                new YesNoInput(null, "View Map:")
                             },
 
                             inputs =>

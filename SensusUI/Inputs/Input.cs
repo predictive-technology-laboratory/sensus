@@ -23,6 +23,7 @@ namespace SensusUI.Inputs
     public abstract class Input
     {
         private string _name;
+        private string _id;
         private string _groupId;
         private string _labelText;
 
@@ -31,6 +32,18 @@ namespace SensusUI.Inputs
         {
             get{ return _name; }
             set{ _name = value; }
+        }
+
+        public string Id
+        {
+            get
+            {
+                return _id;
+            }
+            set
+            {
+                _id = value;
+            }
         }
 
         public string GroupId
@@ -73,17 +86,28 @@ namespace SensusUI.Inputs
         [JsonIgnore]
         public abstract bool Complete { get; }
 
+        public abstract string DisplayName { get; }
+
         /// <summary>
-        /// For JSON.NET deserialization.
+        /// For JSON.NET deserialization and reflection-based instantiation.
         /// </summary>
-        protected Input() { }
+        protected Input()
+        {
+            _name = DisplayName;
+        }
 
         public Input(string name, string labelText)
         {
             _name = name;
             _labelText = labelText;
+            _id = Guid.NewGuid().ToString();
         }
 
         public abstract View CreateView(out Func<object> valueRetriever);
+
+        public override string ToString()
+        {
+            return _name + " (" + GetType().Name + ")";
+        }
     }
 }
