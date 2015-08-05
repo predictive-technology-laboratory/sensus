@@ -803,9 +803,9 @@ namespace SensusService
                     List<Tuple<Input, object>> inputResponses = new List<Tuple<Input, object>>();
 
                     int groupNum = 0;
-                    int totalGroups = inputGroups.Count();
+                    int incompleteGroups = inputGroups.Count(g => !g.Complete);
 
-                    foreach (InputGroup inputGroup in inputGroups)
+                    foreach (InputGroup inputGroup in inputGroups.Where(g => !g.Complete))
                     {
                         ++groupNum;
 
@@ -827,7 +827,7 @@ namespace SensusService
 
                             Device.BeginInvokeOnMainThread(async () =>
                                 {
-                                    await App.Current.MainPage.Navigation.PushAsync(new PromptForInputsPage(windowTitle, groupNum / (double)totalGroups, inputGroup, responses =>
+                                    await App.Current.MainPage.Navigation.PushAsync(new PromptForInputsPage(windowTitle, groupNum / (double)incompleteGroups, inputGroup, responses =>
                                             {
                                                 if (responses != null)
                                                     inputResponses.AddRange(responses);
