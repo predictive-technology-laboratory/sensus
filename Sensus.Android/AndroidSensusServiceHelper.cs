@@ -506,6 +506,18 @@ namespace Sensus.Android
                 _wakeLock.Release();
         }
 
+        public override void BringToForeground()
+        {
+            ManualResetEvent foregroundWait = new ManualResetEvent(false);
+
+            GetMainActivityAsync(true, mainActivity =>
+                {
+                    foregroundWait.Set();
+                });
+
+            foregroundWait.WaitOne();
+        }
+
         #endregion
 
         public override void Stop()

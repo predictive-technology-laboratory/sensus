@@ -365,7 +365,11 @@ namespace Sensus.iOS
 
         public override void LetDeviceSleep()
         {
-        }                        
+        }        
+
+        public override void BringToForeground()
+        {            
+        }
         #endregion
     }
 }

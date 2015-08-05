@@ -26,6 +26,7 @@ namespace SensusService.Probes.User
         #region static members
         private static JsonSerializerSettings JSON_SERIALIZER_SETTINGS = new JsonSerializerSettings
         {
+            TypeNameHandling = TypeNameHandling.All,
             PreserveReferencesHandling = PreserveReferencesHandling.Objects,
             ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
         };
@@ -78,7 +79,7 @@ namespace SensusService.Probes.User
 
         public Script Copy()
         {
-            return JsonConvert.DeserializeObject<Script>(JsonConvert.SerializeObject(this, JSON_SERIALIZER_SETTINGS));
+            return JsonConvert.DeserializeObject<Script>(JsonConvert.SerializeObject(this, JSON_SERIALIZER_SETTINGS), JSON_SERIALIZER_SETTINGS);
         }
     }
 }

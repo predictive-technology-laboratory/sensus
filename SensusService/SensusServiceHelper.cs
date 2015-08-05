@@ -460,6 +460,8 @@ namespace SensusService
 
         public abstract void LetDeviceSleep();
 
+        public abstract void BringToForeground();
+
         public abstract void UpdateApplicationStatus(string status);
 
         /// <summary>
@@ -821,11 +823,15 @@ namespace SensusService
                         }
                         else
                         {
+                            BringToForeground();
+
                             Device.BeginInvokeOnMainThread(async () =>
                                 {
                                     await App.Current.MainPage.Navigation.PushAsync(new PromptForInputsPage(windowTitle, groupNum / (double)totalGroups, inputGroup, responses =>
                                             {
-                                                inputResponses.AddRange(responses);
+                                                if (responses != null)
+                                                    inputResponses.AddRange(responses);
+
                                                 responseWait.Set();
                                             }));
                                 });
