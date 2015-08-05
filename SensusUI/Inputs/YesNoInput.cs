@@ -19,19 +19,33 @@ namespace SensusUI.Inputs
 {
     public class YesNoInput : Input
     {
+        private Switch _toggle;
+
+        public override bool Complete
+        {
+            get
+            {
+                return _toggle != null;
+            }
+        }
+
         public YesNoInput(string label)
             : base(label)
         {
-            Switch toggle = new Switch();
+        }
 
-            View = new StackLayout
+        public override View CreateView(out Func<object> valueRetriever)
+        {
+            _toggle = new Switch();
+
+            valueRetriever = new Func<object>(() => _toggle.IsToggled);
+
+            return new StackLayout
             {
                 Orientation = StackOrientation.Horizontal,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
-                Children = { Label, toggle }
+                Children = { Label, _toggle }
             };
-
-            ValueRetriever = new Func<object>(() => toggle.IsToggled);
         }
     }
 }

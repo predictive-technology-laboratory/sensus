@@ -12,11 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace SensusService.Probes.User
+namespace SensusUI.Inputs
 {
-    public enum PromptInputType
+    public enum PromptOutputType
     {
-        None,
         Voice,
         Text
     }

@@ -13,12 +13,73 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SensusUI.Inputs
 {
     public class InputGroup
     {
-        public InputGroup()
+        private string _id;
+        private List<Input> _inputs;
+
+        public string Id
+        {
+            get
+            {
+                return _id;
+            }
+            set
+            {
+                _id = value;
+            }
+        }
+
+        public List<Input> Inputs
+        {
+            get { return _inputs; }
+        }
+
+        public bool Complete
+        {
+            get { return _inputs.All(i => i.Complete); }
+        }
+
+        /// <summary>
+        /// For JSON.NET deserialization.
+        /// </summary>
+        protected InputGroup()
+        {
+            _inputs = new List<Input>();
+        }
+
+        public InputGroup(string id)
+            : this()
+        {
+            _id = id;
+        }
+
+        public InputGroup(string id, Input input)
+            : this(id)
+        {
+            AddInput(input);
+        }
+
+        public void AddInput(Input input)
+        {
+            input.GroupId = _id;
+
+            _inputs.Add(input);
+        }
+
+        public bool RemoveInput(Input input)
+        {
+            input.GroupId = null;
+
+            return _inputs.Remove(input);
+        }
+
+        public void RunAsync()
         {
         }
     }

@@ -48,6 +48,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)MapPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\EditorUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\InputGroup.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UiProperties\EditableListUiProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UiProperties\EntryDoubleUiProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Inputs\PromptInputType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Inputs\PromptOutputType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Inputs\PromptInput.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Inputs\" />

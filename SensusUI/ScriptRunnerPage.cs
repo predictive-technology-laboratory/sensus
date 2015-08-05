@@ -51,7 +51,7 @@ namespace SensusUI
 
             editPromptsButton.Clicked += async (o, e) =>
             {
-                await Navigation.PushAsync(new PromptsPage(scriptRunner.Script.Prompts));
+                await Navigation.PushAsync(new PromptsPage(scriptRunner.Script.InputGroups));
             };
 
             contentLayout.Children.Add(editPromptsButton);

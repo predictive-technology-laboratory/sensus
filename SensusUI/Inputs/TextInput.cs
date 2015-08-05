@@ -19,23 +19,37 @@ namespace SensusUI.Inputs
 {
     public class TextInput : Input
     {
+        private Entry _entry;
+
+        public override bool Complete
+        {
+            get
+            {
+                return _entry != null && !string.IsNullOrWhiteSpace(_entry.Text);
+            }
+        }
+
         public TextInput(string label)
             : base(label)
+        {            
+        }
+
+        public override View CreateView(out Func<object> valueRetriever)
         {
-            Entry entry = new Entry
+            _entry = new Entry
             {
                 Keyboard = Keyboard.Default,
                 HorizontalOptions = LayoutOptions.FillAndExpand
             };
-            
-            View = new StackLayout
+
+            valueRetriever = new Func<object>(() => _entry.Text);
+
+            return new StackLayout
             {
                 Orientation = StackOrientation.Horizontal,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
-                Children = { Label, entry }
+                Children = { Label, _entry }
             };
-
-            ValueRetriever = new Func<object>(() => entry.Text);
         }
     }
 }

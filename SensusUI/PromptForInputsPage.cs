@@ -24,7 +24,7 @@ namespace SensusUI
 {
     public class PromptForInputsPage : ContentPage
     {
-        public PromptForInputsPage(string title, IEnumerable<Input> inputs, Action<List<object>> callback)
+        public PromptForInputsPage(string title, double progress, InputGroup inputGroup, Action<List<object>> callback)
         {
             Title = title;
 
@@ -34,15 +34,24 @@ namespace SensusUI
                 VerticalOptions = LayoutOptions.FillAndExpand
             };
 
+            contentLayout.Children.Add(new ProgressBar
+                {
+                    Progress = progress,
+                    HorizontalOptions = LayoutOptions.FillAndExpand
+                });
+
             List<Func<object>> inputRetrievers = new List<Func<object>>();
 
-            foreach (Input input in inputs)
+            foreach (Input input in inputGroup.Inputs)
             {
-                if (input.View != null)
-                    contentLayout.Children.Add(input.View);
+                Func<object> valueRetriever;
+                View view = input.CreateView(out valueRetriever);
 
-                if (input.ValueRetriever != null)
-                    inputRetrievers.Add(input.ValueRetriever);
+                if (view != null)
+                    contentLayout.Children.Add(view);
+
+                if (valueRetriever != null)
+                    inputRetrievers.Add(valueRetriever);
             }
 
             bool canceled = false;

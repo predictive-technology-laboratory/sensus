@@ -14,31 +14,90 @@
 
 using System;
 using Xamarin.Forms;
+using SensusUI.UiProperties;
+using System.Collections.Generic;
 
 namespace SensusUI.Inputs
 {
     public class ItemPickerInput : Input
     {
-        public ItemPickerInput(string label, string tipText, string[] items)
+        private string _tipText;
+        private List<string> _items;
+        private Picker _picker;
+
+        [EntryStringUiProperty("Tip Text:", true, 10)]
+        public string TipText
+        {
+            get
+            {
+                return _tipText;
+            }
+            set
+            {
+                _tipText = value;
+            }
+        }
+
+        [EditableListUiProperty(null, true, 11)]
+        public List<string> Items
+        {
+            get
+            {
+                return _items;
+            }
+            // need set method so auto-binding can set the list via the EditableListUiProperty
+            set
+            {
+                _items = value;
+            }
+        }
+
+        public override bool Complete
+        {
+            get
+            {
+                return _picker != null && _picker.SelectedIndex >= 0;
+            }
+        }
+
+        /// <summary>
+        /// For JSON.NET deserialization.
+        /// </summary>
+        protected ItemPickerInput()
+        {
+            _items = new List<string>();
+        }
+
+        public ItemPickerInput(string label, string tipText, List<string> items)
             : base(label)
         {
-            Picker picker = new Picker
+            _items = items;                
+        }
+
+        public override View CreateView(out Func<object> valueRetriever)
+        {
+            valueRetriever = null;
+
+            if (_items.Count == 0)
+                return null;
+            
+            _picker = new Picker
             {
-                Title = tipText,
+                Title = _tipText,
                 HorizontalOptions = LayoutOptions.FillAndExpand
             };
 
-            foreach (string item in items)
-                picker.Items.Add(item);
+            foreach (string item in _items)
+                _picker.Items.Add(item);
 
-            View = new StackLayout
+            valueRetriever = new Func<object>(() => _picker.SelectedIndex >= 0 ? _picker.Items[_picker.SelectedIndex] : null);
+
+            return new StackLayout
             {
                 Orientation = StackOrientation.Horizontal,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
-                Children = { Label, picker }
+                Children = { Label, _picker }
             };
-
-            ValueRetriever = new Func<object>(() => picker.SelectedIndex >= 0 ? picker.Items[picker.SelectedIndex] : null);
         }
     }
 }

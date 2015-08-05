@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Newtonsoft.Json;
+using SensusUI.Inputs;
 
 namespace SensusService.Probes.User
 {
@@ -30,14 +31,14 @@ namespace SensusService.Probes.User
         };
         #endregion
 
-        private ObservableCollection<Prompt> _prompts;
+        private ObservableCollection<InputGroup> _inputGroups;
         private DateTimeOffset _firstRunTimestamp;
         private Datum _previousDatum;
         private Datum _currentDatum;
 
-        public ObservableCollection<Prompt> Prompts
+        public ObservableCollection<InputGroup> InputGroups
         {
-            get { return _prompts; }
+            get { return _inputGroups; }
         }
 
         public DateTimeOffset FirstRunTimestamp
@@ -61,7 +62,7 @@ namespace SensusService.Probes.User
         [JsonIgnore]
         public bool Complete
         {
-            get { return _prompts.Count == 0 || _prompts.All(p => p.Complete); }
+            get { return _inputGroups.Count == 0 || _inputGroups.All(g => g.Complete); }
         }
 
         [JsonIgnore]
@@ -72,7 +73,7 @@ namespace SensusService.Probes.User
 
         public Script()
         {                        
-            _prompts = new ObservableCollection<Prompt>();
+            _inputGroups = new ObservableCollection<PromptInput>();
         }
 
         public Script Copy()

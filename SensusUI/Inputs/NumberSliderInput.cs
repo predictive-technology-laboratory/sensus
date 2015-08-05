@@ -14,34 +14,81 @@
 
 using System;
 using Xamarin.Forms;
+using SensusUI.UiProperties;
 
 namespace SensusUI.Inputs
 {
     public class NumberSliderInput : Input
     {
+        private double _minimum;
+        private double _maximum;
+        private Slider _slider;
+
+        [EntryDoubleUiProperty(null, true, 10)]
+        public double Minimum
+        {
+            get
+            {
+                return _minimum;
+            }
+            set
+            {
+                _minimum = value;
+            }
+        }
+
+        [EntryDoubleUiProperty(null, true, 11)]
+        public double Maximum
+        {
+            get
+            {
+                return _maximum;
+            }
+            set
+            {
+                _maximum = value;
+            }
+        }
+
+        public override bool Complete
+        {
+            get
+            {
+                return _slider != null;
+            }
+        }
+
         public NumberSliderInput(string label, double minimum, double maximum)
             : base(label)
         {
-            Slider slider = new Slider
+            _minimum = minimum;
+            _maximum = maximum;
+        }
+
+        public override View CreateView(out Func<object> valueRetriever)
+        {
+            _slider = new Slider
             {
                 HorizontalOptions = LayoutOptions.FillAndExpand,
-                Minimum = minimum,
-                Maximum = maximum
+                Minimum = _minimum,
+                Maximum = _maximum
             };
 
             Label sliderValueLabel = new Label
             {
-                Text = slider.Value.ToString(),
+                Text = _slider.Value.ToString(),
                 HorizontalOptions = LayoutOptions.CenterAndExpand,
                 FontSize = 20
             };
 
-            slider.ValueChanged += (o, e) =>
+            _slider.ValueChanged += (o, e) =>
             {
                 sliderValueLabel.Text = e.NewValue.ToString();
             };
 
-            View = new StackLayout
+            valueRetriever = new Func<object>(() => _slider.Value);
+
+            return new StackLayout
             {
                 Orientation = StackOrientation.Horizontal,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
@@ -53,12 +100,10 @@ namespace SensusUI.Inputs
                         Orientation = StackOrientation.Vertical,
                         VerticalOptions = LayoutOptions.FillAndExpand,
                         HorizontalOptions = LayoutOptions.FillAndExpand,
-                        Children = { slider, sliderValueLabel }
+                        Children = { _slider, sliderValueLabel }
                     }
                 }
             };
-            
-            ValueRetriever = new Func<object>(() => slider.Value);
         }
     }
 }

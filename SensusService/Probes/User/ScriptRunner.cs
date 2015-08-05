@@ -438,7 +438,7 @@ namespace SensusService.Probes.User
                 if (currentDatum != null)
                     script.CurrentDatum = currentDatum;
 
-                foreach (Prompt prompt in script.Prompts)
+                foreach (PromptInput prompt in script.InputGroups)
                     if (!prompt.Complete)
                     {
                         ManualResetEvent datumWait = new ManualResetEvent(false);

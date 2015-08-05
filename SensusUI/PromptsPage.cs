@@ -25,14 +25,14 @@ namespace SensusUI
     /// </summary>
     public class PromptsPage : ContentPage
     {
-        private ObservableCollection<Prompt> _prompts;
+        private ObservableCollection<PromptInput> _prompts;
         private ListView _promptsList;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SensusUI.PromptsPage"/> class.
         /// </summary>
         /// <param name="prompts">Prompts to display.</param>
-        public PromptsPage(ObservableCollection<Prompt> prompts)
+        public PromptsPage(ObservableCollection<PromptInput> prompts)
         {
             _prompts = prompts;
 
@@ -46,7 +46,7 @@ namespace SensusUI
                 if (_promptsList.SelectedItem == null)
                     return;
 
-                Prompt selectedPrompt = _promptsList.SelectedItem as Prompt;
+                PromptInput selectedPrompt = _promptsList.SelectedItem as PromptInput;
 
                 string selectedAction = await DisplayActionSheet(selectedPrompt.Name, "Cancel", null, "Edit", "Delete");
 
@@ -73,7 +73,7 @@ namespace SensusUI
 
             ToolbarItems.Add(new ToolbarItem(null, "plus.png", () =>
                 {
-                    _prompts.Add(new Prompt("New Prompt", PromptOutputType.Text, "", "", PromptInputType.Text));
+                    _prompts.Add(new PromptInput("New Prompt", PromptOutputType.Text, "", "", PromptInputType.Text));
                 }));
 
             Bind();

@@ -16,30 +16,24 @@ using Newtonsoft.Json;
 using System;
 using System.Threading;
 using SensusUI.UiProperties;
+using SensusService.Probes.User;
+using SensusService;
 
-namespace SensusService.Probes.User
+namespace SensusUI.Inputs
 {
-    public class Prompt
+    public class PromptInput : Input
     {
         #region static members
         private static readonly object LOCKER = new object();
         private static bool PROMPT_IS_RUNNING = false;
         #endregion
 
-        private string _name;
         private PromptOutputType _outputType;
         private string _outputMessage;
         private string _outputMessageRerun;
         private PromptInputType _inputType;
         private ScriptDatum _responseDatum;
         private bool _hasRun;
-
-        [EntryStringUiProperty("Name:", true, 9)]
-        public string Name
-        {
-            get{ return _name; }
-            set{ _name = value; }
-        }
 
         [ListUiProperty("Output Type:", true, 10, new object[] { PromptOutputType.Text, PromptOutputType.Voice })]
         public PromptOutputType OutputType
@@ -81,21 +75,20 @@ namespace SensusService.Probes.User
             set { _hasRun = value; }
         }
 
-        [JsonIgnore]
-        public bool Complete
+        public override bool Complete
         {
             get { return _hasRun && (_inputType == PromptInputType.None || _responseDatum != null); }
         }
 
         /// <summary>
-        /// Constructor for JSON deserialization.
+        /// For JSON.NET deserialization.
         /// </summary>
-        private Prompt()
+        protected PromptInput()
         {
             _hasRun = false;
         }
 
-        public Prompt(string name, PromptOutputType outputType, string outputMessage, string outputMessageRerun, PromptInputType inputType)
+        public PromptInput(string name, PromptOutputType outputType, string outputMessage, string outputMessageRerun, PromptInputType inputType)
             : this()
         {
             _name = name;

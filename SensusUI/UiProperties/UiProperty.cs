@@ -74,6 +74,12 @@ namespace SensusUI.UiProperties
                     converter = new DisplayYesNoUiProperty.ValueConverter();
                     uiElement.Editable = true;  // just makes the label text non-dimmed. a label's text is never editable.
                 }
+                else if (uiElement is EditableListUiProperty)
+                {
+                    view = new Editor();
+                    bindingProperty = Editor.TextProperty;
+                    converter = new EditableListUiProperty.ValueConverter();
+                }
                 else if (uiElement is DisplayStringUiProperty)
                 {
                     view = new Label
@@ -95,6 +101,17 @@ namespace SensusUI.UiProperties
 
                     bindingProperty = Entry.TextProperty;
                     converter = new EntryIntegerUiProperty.ValueConverter();
+                }
+                else if (uiElement is EntryDoubleUiProperty)
+                {
+                    view = new Entry
+                    {
+                        Keyboard = Keyboard.Numeric,
+                        HorizontalOptions = LayoutOptions.FillAndExpand
+                    };
+
+                    bindingProperty = Entry.TextProperty;
+                    converter = new EntryDoubleUiProperty.ValueConverter();
                 }
                 else if (uiElement is EntryFloatUiProperty)
                 {

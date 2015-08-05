@@ -783,9 +783,33 @@ namespace SensusService
 
         public void PromptForInputsAsync(string windowTitle, IEnumerable<Input> inputs, Action<List<object>> callback)
         {
+            InputGroup inputGroup = new InputGroup("");
+            inputGroup.Inputs.AddRange(inputs);
+
+            PromptForInputsAsync(windowTitle, new InputGroup[] { inputGroup }.ToList(), groupResponses =>
+                {
+                    callback(groupResponses.Select(groupResponse => groupResponse.Item2).ToList());
+                });
+        }
+
+        public void PromptForInputsAsync(string windowTitle, List<InputGroup> inputGroups, Action<List<Tuple<string, object>>> callback)
+        {
             Device.BeginInvokeOnMainThread(async () =>
                 {
-                    await App.Current.MainPage.Navigation.PushAsync(new PromptForInputsPage(windowTitle, inputs, callback));
+                    List<Tuple<string, object>> groupResponses = new List<Tuple<string, object>>();
+
+                    for (int i = 0; i < inputGroups.Count; ++i)
+                    {
+                        InputGroup inputGroup = inputGroups[i];
+
+                        await App.Current.MainPage.Navigation.PushAsync(new PromptForInputsPage(windowTitle, i / (double)inputGroups.Count, inputGroup, responses =>
+                                {
+                                    foreach (object response in responses)
+                                        groupResponses.Add(new Tuple<string, object>(inputGroup.Id, response));
+                                }));
+                    }
+
+                    callback(groupResponses);            
                 });
         }
 

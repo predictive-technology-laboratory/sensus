@@ -19,28 +19,43 @@ namespace SensusUI.Inputs
 {
     public class NumberEntryInput : Input
     {
+        Entry _entry;
+
+        public override bool Complete
+        {
+            get
+            {
+                int value;
+                return _entry != null && int.TryParse(_entry.Text, out value);
+            }
+        }
+
         public NumberEntryInput(string label)
             : base(label)
+        {            
+        }
+
+        public override View CreateView(out Func<object> valueRetriever)
         {
-            Entry entry = new Entry
+            _entry = new Entry
                 {
                     Keyboard = Keyboard.Numeric,
                     HorizontalOptions = LayoutOptions.FillAndExpand
                 };
-            
-            View = new StackLayout
+
+            valueRetriever = new Func<object>(() =>
+                {
+                    int value;
+                    int.TryParse(_entry.Text, out value);
+                    return value;
+                });
+
+            return new StackLayout
             {
                 Orientation = StackOrientation.Horizontal,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
-                Children = { Label, entry }
+                Children = { Label, _entry }
             };
-
-            ValueRetriever = new Func<object>(() =>
-                {
-                    int value;
-                    int.TryParse(entry.Text, out value);
-                    return value;
-                });
         }
     }
 }

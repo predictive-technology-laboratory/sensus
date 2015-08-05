@@ -29,7 +29,7 @@ namespace SensusUI
         /// Initializes a new instance of the <see cref="SensusUI.PromptPage"/> class.
         /// </summary>
         /// <param name="prompt">Prompt to display.</param>
-        public PromptPage(Prompt prompt)
+        public PromptPage(PromptInput prompt)
         {
             Title = "Prompt";
 

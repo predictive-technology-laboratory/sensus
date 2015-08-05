@@ -15,54 +15,75 @@
 using System;
 using Xamarin.Forms;
 using SensusService.Exceptions;
+using SensusUI.UiProperties;
+using Newtonsoft.Json;
 
 namespace SensusUI.Inputs
 {
     public abstract class Input
     {
-        private Label _label;
-        private View _view;
-        private Func<object> _valueRetriever;
+        private string _name;
+        private string _groupId;
+        private string _labelText;
+
+        [EntryStringUiProperty("Name:", true, 0)]
+        public string Name
+        {
+            get{ return _name; }
+            set{ _name = value; }
+        }
+
+        public string GroupId
+        {
+            get
+            {
+                return _groupId;
+            }
+            set
+            {
+                _groupId = value;
+            }
+        }
+
+        [EntryStringUiProperty("Label Text:", true, 1)]
+        public string LabelText
+        {
+            get
+            {
+                return _labelText;
+            }
+            set
+            {
+                _labelText = value;
+            }
+        }
 
         protected Label Label
         {
-            get { return _label; }
-        }
-
-        public View View 
-        { 
             get
             {
-                if (_view == null)
-                    throw new SensusException("View not set for \"" + GetType().FullName + "\".");
-                
-                return _view; 
-            }
-            set
-            {
-                _view = value;
+                return new Label
+                {
+                    Text = _labelText,
+                    FontSize = 20
+                };
             }
         }
 
-        public Func<object> ValueRetriever
+        [JsonIgnore]
+        public abstract bool Complete { get; }
+
+        /// <summary>
+        /// For JSON.NET deserialization.
+        /// </summary>
+        protected Input() { }
+
+        public Input(string name, string labelText)
         {
-            get
-            {
-                return _valueRetriever;
-            }
-            set
-            {
-                _valueRetriever = value;
-            }
+            _name = name;
+            _labelText = labelText;
         }
 
-        public Input(string label)
-        {
-            _label = new Label
-            {
-                Text = label,
-                FontSize = 20
-            };
-        }
+        public abstract View CreateView(out Func<object> valueRetriever);
     }
 }

@@ -13,15 +13,30 @@
 // limitations under the License.
 
 using System;
+using Xamarin.Forms;
 
 namespace SensusUI.Inputs
 {
     public class LabelOnlyInput : Input
     {
+        public override bool Complete
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         public LabelOnlyInput(string label)
             : base(label)
         {
-            View = Label;
+        }
+
+        public override View CreateView(out Func<object> valueRetriever)
+        {
+            valueRetriever = null;
+
+            return Label;
         }
     }
 }
