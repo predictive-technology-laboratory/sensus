@@ -68,17 +68,16 @@ namespace SensusUI.Inputs
             }
         }
 
-        /// <summary>
-        /// For JSON.NET deserialization.
-        /// </summary>
-        protected ItemPickerInput()
+        public ItemPickerInput()
         {
+            _tipText = "Please Make Selection";
             _items = new List<string>();
         }
 
         public ItemPickerInput(string name, string label, string tipText, List<string> items)
             : base(name, label)
         {
+            _tipText = tipText;
             _items = items;                
         }
 

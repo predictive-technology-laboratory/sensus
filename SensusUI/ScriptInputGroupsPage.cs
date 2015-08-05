@@ -67,7 +67,7 @@ namespace SensusUI
 
             ToolbarItems.Add(new ToolbarItem(null, "plus.png", () =>
                     {
-                        _script.InputGroups.Add(new InputGroup("Input Group " + _script.InputGroups.Count + 1));
+                        _script.InputGroups.Add(new InputGroup("New Input Group"));
                     }));
 
             Bind();

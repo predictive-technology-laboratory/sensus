@@ -37,6 +37,10 @@ namespace SensusUI.Inputs
             }
         }
 
+        public YesNoInput()
+        {
+        }
+
         public YesNoInput(string name, string label)
             : base(name, label)
         {

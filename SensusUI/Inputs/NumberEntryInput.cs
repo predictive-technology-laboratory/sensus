@@ -19,7 +19,7 @@ namespace SensusUI.Inputs
 {
     public class NumberEntryInput : Input
     {
-        Entry _entry;
+        private Entry _entry;
 
         public override bool Complete
         {
@@ -38,6 +38,10 @@ namespace SensusUI.Inputs
             }
         }
 
+        public NumberEntryInput()
+        {
+        }
+
         public NumberEntryInput(string name, string label)
             : base(name, label)
         {            
@@ -46,16 +50,18 @@ namespace SensusUI.Inputs
         public override View CreateView(out Func<object> valueRetriever)
         {
             _entry = new Entry
-                {
-                    Keyboard = Keyboard.Numeric,
-                    HorizontalOptions = LayoutOptions.FillAndExpand
-                };
+            {
+                Keyboard = Keyboard.Numeric,
+                HorizontalOptions = LayoutOptions.FillAndExpand
+            };
 
             valueRetriever = new Func<object>(() =>
                 {
                     int value;
-                    int.TryParse(_entry.Text, out value);
-                    return value;
+                    if (int.TryParse(_entry.Text, out value))
+                        return value;
+                    else
+                        return null;
                 });
 
             return new StackLayout

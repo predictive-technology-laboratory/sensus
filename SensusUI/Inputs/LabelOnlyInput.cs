@@ -35,6 +35,10 @@ namespace SensusUI.Inputs
             }
         }
 
+        public LabelOnlyInput()
+        {
+        }
+
         public LabelOnlyInput(string name, string label)
             : base(name, label)
         {

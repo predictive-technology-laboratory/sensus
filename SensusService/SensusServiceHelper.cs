@@ -807,19 +807,17 @@ namespace SensusService
                     {
                         ++groupNum;
 
+                        ManualResetEvent responseWait = new ManualResetEvent(false);
+
                         if (inputGroup.Inputs.Count == 1 && inputGroup.Inputs[0] is PromptInput)
                         {
                             PromptInput promptInput = inputGroup.Inputs[0] as PromptInput;
-
-                            ManualResetEvent responseWait = new ManualResetEvent(false);
 
                             promptInput.RunAsync(triggeringDatum, isReprompt, firstPromptTimestamp, response =>
                                 {                
                                     inputResponses.Add(new Tuple<Input, object>(promptInput, response));
                                     responseWait.Set();
                                 });
-
-                            responseWait.WaitOne();
                         }
                         else
                         {
@@ -828,9 +826,12 @@ namespace SensusService
                                     await App.Current.MainPage.Navigation.PushAsync(new PromptForInputsPage(windowTitle, groupNum / (double)totalGroups, inputGroup, responses =>
                                             {
                                                 inputResponses.AddRange(responses);
+                                                responseWait.Set();
                                             }));
                                 });
                         }
+
+                        responseWait.WaitOne();
                     }
 
                     callback(inputResponses);    

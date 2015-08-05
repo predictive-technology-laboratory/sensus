@@ -33,6 +33,9 @@ namespace SensusUI.Inputs
             }
             set
             {
+                if (value >= _maximum)
+                    UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Number slider input minimum must be greater than maximum.");
+                
                 _minimum = value;
             }
         }
@@ -46,6 +49,9 @@ namespace SensusUI.Inputs
             }
             set
             {
+                if (value <= _minimum)
+                    UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Number slider input maximum must be less than minimum.");
+                
                 _maximum = value;
             }
         }
@@ -66,6 +72,10 @@ namespace SensusUI.Inputs
             }
         }
 
+        public NumberSliderInput()
+        {
+        }
+
         public NumberSliderInput(string name, string label, double minimum, double maximum)
             : base(name, label)
         {
@@ -75,6 +85,11 @@ namespace SensusUI.Inputs
 
         public override View CreateView(out Func<object> valueRetriever)
         {
+            valueRetriever = null;
+
+            if (_maximum <= _minimum)
+                return null;
+            
             _slider = new Slider
             {
                 HorizontalOptions = LayoutOptions.FillAndExpand,

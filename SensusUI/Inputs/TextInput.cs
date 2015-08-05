@@ -37,6 +37,10 @@ namespace SensusUI.Inputs
             }
         }
 
+        public TextInput()
+        {
+        }
+
         public TextInput(string name, string label)
             : base(name, label)
         {            

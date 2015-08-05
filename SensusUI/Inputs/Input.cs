@@ -86,12 +86,10 @@ namespace SensusUI.Inputs
         [JsonIgnore]
         public abstract bool Complete { get; }
 
+        [JsonIgnore]
         public abstract string DisplayName { get; }
 
-        /// <summary>
-        /// For JSON.NET deserialization and reflection-based instantiation.
-        /// </summary>
-        protected Input()
+        public Input()
         {
             _name = DisplayName;
         }

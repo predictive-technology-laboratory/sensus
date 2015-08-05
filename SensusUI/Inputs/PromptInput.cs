@@ -89,16 +89,12 @@ namespace SensusUI.Inputs
             }
         }
 
-        /// <summary>
-        /// For JSON.NET deserialization.
-        /// </summary>
-        protected PromptInput()
+        public PromptInput()
         {
             _outputType = PromptOutputType.Text;
             _outputMessage = "";
             _outputMessageRerun = "";
             _inputType = PromptInputType.Text;
-            _hasRun = false;
         }
 
         public PromptInput(string name, PromptOutputType outputType, string outputMessage, string outputMessageRerun, PromptInputType inputType)
@@ -157,7 +153,6 @@ namespace SensusUI.Inputs
                     // action to execute when user has provided a response
                     Action<string> responseCallback = new Action<string>(response =>
                         {
-                            // don't treat null/whitespace the same as no input
                             if (string.IsNullOrWhiteSpace(response))
                                 response = null;
 

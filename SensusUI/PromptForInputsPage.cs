@@ -58,15 +58,10 @@ namespace SensusUI
                 }
             }
 
-            bool canceled = false;
+            bool canceled = true;
 
             Thread returnThread = new Thread(() =>
                 {
-                    Device.BeginInvokeOnMainThread(async () =>
-                        {
-                            await Navigation.PopAsync();
-                        });
-
                     List<Tuple<Input, object>> inputValues = null;
 
                     if (!canceled)
@@ -79,6 +74,11 @@ namespace SensusUI
                     callback(inputValues);
                 });
 
+            Disappearing += (o, e) =>
+            {
+                returnThread.Start();
+            };
+
             Button cancelButton = new Button
             {
                 HorizontalOptions = LayoutOptions.FillAndExpand,
@@ -86,10 +86,9 @@ namespace SensusUI
                 Text = "Cancel"
             };
 
-            cancelButton.Clicked += (o, e) =>
+            cancelButton.Clicked += async (o, e) =>
             {
-                canceled = true;
-                returnThread.Start();
+                await Navigation.PopAsync();
             };
 
             Button okButton = new Button
@@ -99,9 +98,10 @@ namespace SensusUI
                 Text = "OK"
             };
 
-            okButton.Clicked += (o, e) =>
+            okButton.Clicked += async (o, e) =>
             {
-                returnThread.Start();
+                canceled = false;
+                await Navigation.PopAsync();
             };
                 
             contentLayout.Children.Add(new StackLayout

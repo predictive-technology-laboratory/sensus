@@ -83,7 +83,14 @@ namespace SensusUI
                         {
                             Input input = inputs[int.Parse(selected.Substring(0, selected.IndexOf(")"))) - 1];
                             inputGroup.Inputs.Add(input);
-                            await Navigation.PushAsync(new ScriptInputPage(input));
+
+                            ScriptInputPage inputPage = new ScriptInputPage(input);
+                            inputPage.Disappearing += (o, e) =>
+                            {
+                                Bind();
+                            };
+                        
+                            await Navigation.PushAsync(inputPage);
                         }
                     }));
 
