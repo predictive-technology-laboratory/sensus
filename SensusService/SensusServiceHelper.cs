@@ -85,6 +85,8 @@ namespace SensusService
 
         #region static members
 
+        private static readonly object PROMPT_FOR_INPUTS_LOCKER = new object();
+        private static bool PROMPT_FOR_INPUTS_RUNNING = false;
         public const string SENSUS_CALLBACK_KEY = "SENSUS-CALLBACK";
         public const string SENSUS_CALLBACK_ID_KEY = "SENSUS-CALLBACK-ID";
         public const string SENSUS_CALLBACK_REPEATING_KEY = "SENSUS-CALLBACK-REPEATING";
@@ -94,12 +96,22 @@ namespace SensusService
         private static readonly string SHARE_DIRECTORY = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "share");
         private static readonly string LOG_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
         private static readonly string SERIALIZATION_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_service_helper.json");
-        private static readonly JsonSerializerSettings JSON_SERIALIZATION_SETTINGS = new JsonSerializerSettings
+
+        public static readonly JsonSerializerSettings JSON_SERIALIZER_SETTINGS = new JsonSerializerSettings
         {
             PreserveReferencesHandling = PreserveReferencesHandling.Objects,
             ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
             TypeNameHandling = TypeNameHandling.All,
             ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+
+            // need the following in order to deserialize protocols between OSs, whose objects contain different members (e.g., iOS service helper has ActivationId, which Android does not)
+            Error = (o, e) =>
+            {
+                SensusServiceHelper.Get().Logger.Log("Failed to deserialize some part of the JSON:  " + e.ErrorContext.Error.ToString(), LoggingLevel.Normal, typeof(Protocol));
+                e.ErrorContext.Handled = true;
+            },
+
+            MissingMemberHandling = MissingMemberHandling.Ignore  
         };
 
         private static byte[] EncryptionKeyBytes
@@ -127,7 +139,7 @@ namespace SensusService
             
             try
             {
-                SINGLETON = JsonConvert.DeserializeObject<SensusServiceHelper>(Decrypt(ReadAllBytes(SERIALIZATION_PATH)), JSON_SERIALIZATION_SETTINGS);
+                SINGLETON = JsonConvert.DeserializeObject<SensusServiceHelper>(Decrypt(ReadAllBytes(SERIALIZATION_PATH)), JSON_SERIALIZER_SETTINGS);
                 SINGLETON.Logger.Log("Deserialized service helper with " + SINGLETON.RegisteredProtocols.Count + " protocols.", LoggingLevel.Normal, SINGLETON.GetType());
             }
             catch (Exception deserializeException)
@@ -450,7 +462,7 @@ namespace SensusService
 
         public abstract void TextToSpeechAsync(string text, Action callback);
 
-        public abstract void PromptForInputAsync(string prompt, bool startVoiceRecognizer, Action<string> callback);
+        public abstract void RunVoicePromptAsync(string prompt, Action<string> callback);
 
         public abstract void IssueNotificationAsync(string message, string id);
 
@@ -459,6 +471,8 @@ namespace SensusService
         public abstract void KeepDeviceAwake();
 
         public abstract void LetDeviceSleep();
+
+        public abstract void BringToForeground();
 
         public abstract void UpdateApplicationStatus(string status);
 
@@ -526,7 +540,7 @@ namespace SensusService
                         {
                             using (FileStream file = new FileStream(SERIALIZATION_PATH, FileMode.Create, FileAccess.Write))
                             {
-                                byte[] encryptedBytes = Encrypt(JsonConvert.SerializeObject(this, JSON_SERIALIZATION_SETTINGS));
+                                byte[] encryptedBytes = Encrypt(JsonConvert.SerializeObject(this, JSON_SERIALIZER_SETTINGS));
                                 file.Write(encryptedBytes, 0, encryptedBytes.Length);
                                 file.Close();
                             }
@@ -781,12 +795,106 @@ namespace SensusService
                 });
         }
 
-        public void PromptForInputsAsync(string windowTitle, IEnumerable<Input> inputs, Action<List<object>> callback)
+        public void PromptForInputAsync(string windowTitle, Input input, Action<Input> callback)
         {
-            Device.BeginInvokeOnMainThread(async () =>
+            PromptForInputsAsync(windowTitle, new Input[] { input }, inputs =>
                 {
-                    await App.Current.MainPage.Navigation.PushAsync(new PromptForInputsPage(windowTitle, inputs, callback));
+                    if (inputs == null)
+                        callback(null);
+                    else
+                        callback(inputs[0]);
                 });
+        }
+
+        public void PromptForInputsAsync(string windowTitle, IEnumerable<Input> inputs, Action<List<Input>> callback)
+        {
+            InputGroup inputGroup = new InputGroup(windowTitle);
+
+            foreach (Input input in inputs)
+                inputGroup.Inputs.Add(input);
+
+            PromptForInputsAsync(null, false, DateTimeOffset.MinValue, new InputGroup[] { inputGroup }.ToList(), inputGroups =>
+                {
+                    if (inputGroups == null)
+                        callback(null);
+                    else
+                        callback(inputGroups.SelectMany(g => g.Inputs).ToList());
+                });
+        }
+
+        public void PromptForInputsAsync(Datum triggeringDatum, bool isReprompt, DateTimeOffset firstPromptTimestamp, IEnumerable<InputGroup> inputGroups, Action<IEnumerable<InputGroup>> callback)
+        {
+            new Thread(() =>
+                {
+                    if (inputGroups == null || inputGroups.All(g => g == null))
+                    {
+                        callback(inputGroups);
+                        return;
+                    }
+
+                    // only one prompt can run at a time...enforce that here.
+                    lock (PROMPT_FOR_INPUTS_LOCKER)
+                    {
+                        if (PROMPT_FOR_INPUTS_RUNNING)
+                        {
+                            callback(inputGroups);
+                            return;
+                        }
+                        else
+                            PROMPT_FOR_INPUTS_RUNNING = true;
+                    }
+
+                    InputGroup[] incompleteGroups = inputGroups.Where(g => !g.Complete).ToArray();
+
+                    for (int incompleteGroupNum = 0; incompleteGroupNum < incompleteGroups.Length; ++incompleteGroupNum)
+                    {
+                        InputGroup incompleteGroup = incompleteGroups[incompleteGroupNum];
+
+                        ManualResetEvent responseWait = new ManualResetEvent(false);
+
+                        if (incompleteGroup.Inputs.Count == 1 && incompleteGroup.Inputs[0] is VoiceInput)
+                        {
+                            VoiceInput promptInput = incompleteGroup.Inputs[0] as VoiceInput;
+
+                            promptInput.RunAsync(triggeringDatum, isReprompt, firstPromptTimestamp, response =>
+                                {                
+                                    responseWait.Set();
+                                });
+                        }
+                        else
+                        {
+                            BringToForeground();
+
+                            Device.BeginInvokeOnMainThread(async () =>
+                                {
+                                    PromptForInputsPage promptForInputsPage = new PromptForInputsPage(incompleteGroup, incompleteGroupNum + 1, incompleteGroups.Length, async result =>
+                                        {
+                                            if (result == PromptForInputsPage.Result.Cancel || result == PromptForInputsPage.Result.NavigateBackward && incompleteGroupNum == 0)
+                                                inputGroups = null;
+                                            else if (result == PromptForInputsPage.Result.NavigateBackward)
+                                            {
+                                                await App.Current.MainPage.Navigation.PopAsync(true);
+                                                incompleteGroupNum -= 2;
+                                            }
+
+                                            responseWait.Set();
+                                        });
+
+                                    await App.Current.MainPage.Navigation.PushAsync(promptForInputsPage, true);
+                                });
+                        }
+
+                        responseWait.WaitOne();
+
+                        if (inputGroups == null)
+                            break;
+                    }
+
+                    callback(inputGroups);
+
+                    PROMPT_FOR_INPUTS_RUNNING = false;
+
+                }).Start();
         }
 
         public void GetPositionsFromMapAsync(Xamarin.Forms.Maps.Position address, string newPinName, Action<List<Xamarin.Forms.Maps.Position>> callback)

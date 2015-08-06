@@ -85,6 +85,8 @@ namespace SensusService.Probes.Location
                 throw new Exception("No POI was supplied.");
             else if (distanceThresholdMeters <= 0)
                 throw new Exception("Invalid distance threshold. Must be greater than zero.");
+            else if (distanceThresholdMeters < GpsReceiver.Get().MinimumDistanceThreshold)
+                throw new Exception("Distance threshold must be at least " + GpsReceiver.Get().MinimumDistanceThreshold + ".");
             
             _pointOfInterestName = pointOfInterestName;
             _pointOfInterestType = pointOfInterestType;

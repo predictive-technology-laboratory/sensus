@@ -28,7 +28,7 @@ using Xamarin.Facebook;
 using Xamarin;
 using Xam.Plugin.MapExtend.Droid;
 
-[assembly:MetaData ("com.facebook.sdk.ApplicationId", Value ="@string/app_id")]
+[assembly:MetaData("com.facebook.sdk.ApplicationId", Value = "@string/app_id")]
 
 namespace Sensus.Android
 {
@@ -203,7 +203,17 @@ namespace Sensus.Android
                         _activityResult = null;
 
                         _activityResultWait.Reset();
-                        StartActivityForResult(intent, (int)requestCode);
+
+                        try
+                        {
+                            StartActivityForResult(intent, (int)requestCode);
+                        }
+                        catch (Exception ex)
+                        {
+                            Insights.Report(ex, Insights.Severity.Error);
+                            _activityResultWait.Set();
+                        }
+
                         _activityResultWait.WaitOne();
 
                         callback(_activityResult);
@@ -232,7 +242,7 @@ namespace Sensus.Android
             OnWindowFocusChanged(false);
 
             DisconnectFromService();
-        }   
+        }
 
         protected override void OnStop()
         {

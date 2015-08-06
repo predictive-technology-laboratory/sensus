@@ -19,19 +19,70 @@ namespace SensusUI.Inputs
 {
     public class YesNoInput : Input
     {
-        public YesNoInput(string label)
-            : base(label)
+        private Switch _toggle;
+
+        public override View View
         {
-            Switch toggle = new Switch();
-
-            View = new StackLayout
+            get
             {
-                Orientation = StackOrientation.Horizontal,
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                Children = { Label, toggle }
-            };
+                if (base.View == null)
+                {
+                    _toggle = new Switch();
 
-            ValueRetriever = new Func<object>(() => toggle.IsToggled);
+                    _toggle.Toggled += (o, e) => Complete = Value != null;
+
+                    base.View = new StackLayout
+                    {
+                        Orientation = StackOrientation.Horizontal,
+                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        Children = { Label, _toggle }
+                    };
+                }
+
+                return base.View;
+            }
         }
+
+        public override object Value
+        {
+            get
+            {
+                return _toggle == null ? null : (object)_toggle.IsToggled;
+            }
+        }
+
+        public override bool Enabled
+        {
+            get
+            {
+                return _toggle.IsEnabled;
+            }
+            set
+            {
+                _toggle.IsEnabled = value;
+            }
+        }
+
+        public override string DefaultName
+        {
+            get
+            {
+                return "Yes/No Switch";
+            }
+        }
+
+        public YesNoInput()
+        {
+        }
+
+        public YesNoInput(string labelText)
+            : base(labelText)
+        {
+        }
+
+        public YesNoInput(string name, string labelText)
+            : base(name, labelText)
+        {
+        }            
     }
 }

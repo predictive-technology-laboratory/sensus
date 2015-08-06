@@ -14,51 +14,176 @@
 
 using System;
 using Xamarin.Forms;
+using SensusUI.UiProperties;
 
 namespace SensusUI.Inputs
 {
     public class NumberSliderInput : Input
     {
-        public NumberSliderInput(string label, double minimum, double maximum)
-            : base(label)
+        private double _minimum;
+        private double _maximum;
+        private double _increment;
+        private Slider _slider;
+
+        [EntryDoubleUiProperty(null, true, 10)]
+        public double Minimum
         {
-            Slider slider = new Slider
+            get
             {
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                Minimum = minimum,
-                Maximum = maximum
-            };
+                return _minimum;
+            }
+            set
+            {
+                if (value >= _maximum)
+                {
+                    UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Number slider input minimum must be less than maximum.");
+                    value = _maximum - 1;
+                }
+                
+                _minimum = value;
+            }
+        }
 
-            Label sliderValueLabel = new Label
+        [EntryDoubleUiProperty(null, true, 11)]
+        public double Maximum
+        {
+            get
             {
-                Text = slider.Value.ToString(),
-                HorizontalOptions = LayoutOptions.CenterAndExpand,
-                FontSize = 20
-            };
+                return _maximum;
+            }
+            set
+            {
+                if (value <= _minimum)
+                {
+                    UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Number slider input maximum must be greater than minimum.");
+                    value = _minimum + 1;
+                }
+                
+                _maximum = value;
+            }
+        }
 
-            slider.ValueChanged += (o, e) =>
+        [EntryDoubleUiProperty(null, true, 12)]
+        public double Increment
+        {
+            get
             {
-                sliderValueLabel.Text = e.NewValue.ToString();
-            };
+                return _increment;
+            }
+            set
+            {
+                _increment = value;
+            }
+        }
 
-            View = new StackLayout
+        public override View View
+        {
+            get
             {
-                Orientation = StackOrientation.Horizontal,
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                Children =
-                { 
-                    Label,
-                    new StackLayout
+                if (base.View == null && _maximum > _minimum)
+                {
+                    _slider = new Slider
+                    {
+                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        Minimum = double.MinValue,
+                        Maximum = double.MaxValue
+                    };
+
+                    _slider.Minimum = _minimum;
+                    _slider.Maximum = _maximum;
+
+                    Label sliderValueLabel = new Label
+                    {
+                        Text = _slider.Value.ToString(),
+                        HorizontalOptions = LayoutOptions.End,
+                        FontSize = 20
+                    };                                
+
+                    _slider.Value = (_maximum - _minimum) / 2d;
+
+                    _slider.ValueChanged += (o, e) =>
+                    {
+                        _slider.Value = Math.Round(_slider.Value / _increment) * _increment;
+                        sliderValueLabel.Text = e.NewValue.ToString();
+                        Complete = Value != null;
+                    };
+
+                    base.View = new StackLayout
                     {
                         Orientation = StackOrientation.Vertical,
-                        VerticalOptions = LayoutOptions.FillAndExpand,
-                        HorizontalOptions = LayoutOptions.FillAndExpand,
-                        Children = { slider, sliderValueLabel }
-                    }
+                        VerticalOptions = LayoutOptions.Start,
+                        Children =
+                        { 
+                            Label,
+                            new StackLayout
+                            {
+                                Orientation = StackOrientation.Horizontal,
+                                HorizontalOptions = LayoutOptions.FillAndExpand,
+                                Children = { _slider, sliderValueLabel }
+                            }
+                        }
+                    };
                 }
-            };
-            
-            ValueRetriever = new Func<object>(() => slider.Value);
+
+                return base.View;
+            }
+        }
+
+        public override object Value
+        {
+            get
+            {
+                return _slider == null ? null : (object)_slider.Value;
+            }
+        }
+
+        public override bool Enabled
+        {
+            get
+            {
+                return _slider.IsEnabled;
+            }
+            set
+            {
+                _slider.IsEnabled = value;
+            }
+        }
+
+        public override string DefaultName
+        {
+            get
+            {
+                return "Number Slider";
+            }
+        }
+
+        public NumberSliderInput()
+        {
+            Construct(1, 10);
+        }
+
+        public NumberSliderInput(string labelText, double minimum, double maximum)
+            : base(labelText)
+        {
+            Construct(minimum, maximum);
+        }
+
+        public NumberSliderInput(string name, string labelText, double minimum, double maximum)
+            : base(name, labelText)
+        {
+            Construct(minimum, maximum);
+        }
+
+        private void Construct(double minimum, double maximum)
+        {
+            _minimum = minimum;
+            _maximum = maximum;
+            _increment = (_maximum - _minimum + 1) / 10;
+        }
+
+        public override string ToString()
+        {
+            return base.ToString() + " -- " + _minimum + " to " + _maximum;
         }
     }
 }

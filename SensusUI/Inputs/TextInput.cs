@@ -19,23 +19,74 @@ namespace SensusUI.Inputs
 {
     public class TextInput : Input
     {
-        public TextInput(string label)
-            : base(label)
-        {
-            Entry entry = new Entry
-            {
-                Keyboard = Keyboard.Default,
-                HorizontalOptions = LayoutOptions.FillAndExpand
-            };
-            
-            View = new StackLayout
-            {
-                Orientation = StackOrientation.Horizontal,
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                Children = { Label, entry }
-            };
+        private Entry _entry;
 
-            ValueRetriever = new Func<object>(() => entry.Text);
+        public override View View
+        {
+            get
+            {
+                if (base.View == null)
+                {
+                    _entry = new Entry
+                    {
+                        Keyboard = Keyboard.Default,
+                        HorizontalOptions = LayoutOptions.FillAndExpand
+                    };
+
+                    _entry.TextChanged += (o, e) => Complete = Value != null;
+
+                    base.View = new StackLayout
+                    {
+                        Orientation = StackOrientation.Horizontal,
+                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        Children = { Label, _entry }
+                    };
+                }
+
+                return base.View;
+            }
         }
+
+        public override object Value
+        {
+            get
+            {
+                return _entry == null ? null : _entry.Text;
+            }
+        }
+
+        public override bool Enabled
+        {
+            get
+            {
+                return _entry.IsEnabled;
+            }
+            set
+            {
+                _entry.IsEnabled = value;
+            }
+        }
+
+        public override string DefaultName
+        {
+            get
+            {
+                return "Text Entry";
+            }
+        }
+
+        public TextInput()
+        {
+        }
+
+        public TextInput(string labelText)
+            : base(labelText)
+        {
+        }
+
+        public TextInput(string name, string labelText)
+            : base(name, labelText)
+        {            
+        }            
     }
 }

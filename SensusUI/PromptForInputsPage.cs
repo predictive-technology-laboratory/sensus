@@ -24,47 +24,40 @@ namespace SensusUI
 {
     public class PromptForInputsPage : ContentPage
     {
-        public PromptForInputsPage(string title, IEnumerable<Input> inputs, Action<List<object>> callback)
+        public enum Result
         {
-            Title = title;
+            NavigateBackward,
+            NavigateForward,
+            Cancel
+        }
+
+        public PromptForInputsPage(InputGroup inputGroup, int stepNumber, int totalSteps, Action<Result> callback)
+        {
+            Title = inputGroup.Name;
 
             StackLayout contentLayout = new StackLayout
             {
                 Orientation = StackOrientation.Vertical,
-                VerticalOptions = LayoutOptions.FillAndExpand
+                VerticalOptions = LayoutOptions.FillAndExpand,
+                Padding = new Thickness(0, 10, 0, 0)
             };
 
-            List<Func<object>> inputRetrievers = new List<Func<object>>();
+            contentLayout.Children.Add(new Label
+                {
+                    Text = "Step " + stepNumber + " of " + totalSteps,
+                    FontSize = 15,
+                    HorizontalOptions = LayoutOptions.CenterAndExpand
+                });
 
-            foreach (Input input in inputs)
-            {
+            contentLayout.Children.Add(new ProgressBar
+                {
+                    Progress = stepNumber / (double)totalSteps,
+                    HorizontalOptions = LayoutOptions.FillAndExpand
+                });
+
+            foreach (Input input in inputGroup.Inputs)
                 if (input.View != null)
                     contentLayout.Children.Add(input.View);
-
-                if (input.ValueRetriever != null)
-                    inputRetrievers.Add(input.ValueRetriever);
-            }
-
-            bool canceled = false;
-
-            Thread returnThread = new Thread(() =>
-                {
-                    Device.BeginInvokeOnMainThread(async () =>
-                        {
-                            await Navigation.PopAsync();
-                        });
-
-                    List<object> inputValues = null;
-
-                    if (!canceled)
-                    {
-                        inputValues = new List<object>();
-                        foreach (Func<object> inputRetriever in inputRetrievers)
-                            inputValues.Add(inputRetriever());
-                    }
-
-                    callback(inputValues);
-                });
 
             Button cancelButton = new Button
             {
@@ -73,30 +66,45 @@ namespace SensusUI
                 Text = "Cancel"
             };
 
-            cancelButton.Clicked += (o, e) =>
+            bool cancelButtonTapped = false;
+
+            cancelButton.Clicked += async (o, e) =>
             {
-                canceled = true;
-                returnThread.Start();
+                cancelButtonTapped = true;
+                await Navigation.PopAsync();
             };
 
-            Button okButton = new Button
+            Button nextButton = new Button
             {
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 FontSize = 20,
-                Text = "OK"
+                Text = stepNumber < totalSteps ? "Next" : "Submit"
             };
 
-            okButton.Clicked += (o, e) =>
+            bool nextButtonTapped = false;
+
+            nextButton.Clicked += async (o, e) =>
             {
-                returnThread.Start();
+                nextButtonTapped = true;
+                await Navigation.PopAsync();
             };
                 
             contentLayout.Children.Add(new StackLayout
                 {
                     Orientation = StackOrientation.Horizontal,
                     HorizontalOptions = LayoutOptions.FillAndExpand,
-                    Children = { cancelButton, okButton }
+                    Children = { cancelButton, nextButton }
                 });
+
+            Disappearing += (o, e) =>
+            {
+                if (cancelButtonTapped)
+                    callback(Result.Cancel);
+                else if (nextButtonTapped)
+                    callback(Result.NavigateForward);
+                else
+                    callback(Result.NavigateBackward);
+            };
 
             Content = new ScrollView
             {

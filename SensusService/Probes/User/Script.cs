@@ -17,27 +17,20 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Newtonsoft.Json;
+using SensusUI.Inputs;
 
 namespace SensusService.Probes.User
 {
     public class Script
     {
-        #region static members
-        private static JsonSerializerSettings JSON_SERIALIZER_SETTINGS = new JsonSerializerSettings
-        {
-            PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
-        };
-        #endregion
-
-        private ObservableCollection<Prompt> _prompts;
+        private ObservableCollection<InputGroup> _inputGroups;
         private DateTimeOffset _firstRunTimestamp;
         private Datum _previousDatum;
         private Datum _currentDatum;
 
-        public ObservableCollection<Prompt> Prompts
+        public ObservableCollection<InputGroup> InputGroups
         {
-            get { return _prompts; }
+            get { return _inputGroups; }
         }
 
         public DateTimeOffset FirstRunTimestamp
@@ -61,7 +54,7 @@ namespace SensusService.Probes.User
         [JsonIgnore]
         public bool Complete
         {
-            get { return _prompts.Count == 0 || _prompts.All(p => p.Complete); }
+            get { return _inputGroups.Count == 0 || _inputGroups.All(g => g.Complete); }
         }
 
         [JsonIgnore]
@@ -72,12 +65,12 @@ namespace SensusService.Probes.User
 
         public Script()
         {                        
-            _prompts = new ObservableCollection<Prompt>();
+            _inputGroups = new ObservableCollection<InputGroup>();
         }
 
         public Script Copy()
         {
-            return JsonConvert.DeserializeObject<Script>(JsonConvert.SerializeObject(this, JSON_SERIALIZER_SETTINGS));
+            return JsonConvert.DeserializeObject<Script>(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
         }
     }
 }

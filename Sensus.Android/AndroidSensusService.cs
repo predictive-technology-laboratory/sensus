@@ -69,6 +69,14 @@ namespace Sensus.Android
         public override IBinder OnBind(Intent intent)
         {
             return new AndroidSensusServiceBinder(_serviceHelper);
-        }                    
+        }
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+
+            if (_serviceHelper != null)
+                _serviceHelper.Dispose();
+        }
     }
 }

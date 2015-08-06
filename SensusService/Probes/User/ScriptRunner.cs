@@ -20,6 +20,7 @@ using SensusUI.UiProperties;
 using System.Collections.Specialized;
 using System.Threading;
 using System.Linq;
+using SensusUI.Inputs;
 
 namespace SensusService.Probes.User
 {
@@ -46,6 +47,7 @@ namespace SensusService.Probes.User
         private readonly object _locker = new object();
 
         #region properties
+
         public ScriptProbe Probe
         {
             get
@@ -103,12 +105,12 @@ namespace SensusService.Probes.User
         {
             get { return _delayMS; }
             set { _delayMS = value; }
-        } 
+        }
 
         public ObservableCollection<Trigger> Triggers
         {
             get { return _triggers; }
-        }                                         
+        }
 
         public Queue<Script> IncompleteScripts
         {
@@ -157,7 +159,7 @@ namespace SensusService.Probes.User
         {
             get { return _maximumAgeMinutes; }
             set { _maximumAgeMinutes = value; }
-        } 
+        }
 
         public int NumScriptsAgedOut
         {
@@ -209,6 +211,7 @@ namespace SensusService.Probes.User
                 }
             }
         }
+
         #endregion
 
         /// <summary>
@@ -307,7 +310,7 @@ namespace SensusService.Probes.User
 
         public void Initialize()
         {
-            foreach(Trigger trigger in _triggers)
+            foreach (Trigger trigger in _triggers)
                 trigger.Reset();
         }
 
@@ -438,21 +441,24 @@ namespace SensusService.Probes.User
                 if (currentDatum != null)
                     script.CurrentDatum = currentDatum;
 
-                foreach (Prompt prompt in script.Prompts)
-                    if (!prompt.Complete)
+                ManualResetEvent inputWait = new ManualResetEvent(false);
+
+                SensusServiceHelper.Get().PromptForInputsAsync(script.CurrentDatum, isRerun, script.FirstRunTimestamp, script.InputGroups, inputGroups =>
                     {
-                        ManualResetEvent datumWait = new ManualResetEvent(false);
+                        if (inputGroups != null)
+                            foreach (InputGroup inputGroup in inputGroups)
+                                foreach (Input input in inputGroup.Inputs)
+                                    if (!(input is LabelOnlyInput) && input.Complete)
+                                    {
+                                        _probe.StoreDatum(new ScriptDatum(DateTimeOffset.UtcNow, input.GroupId, input.Id, input.Value, script.CurrentDatum == null ? null : script.CurrentDatum.Id));
 
-                        prompt.RunAsync(script.PreviousDatum, script.CurrentDatum, isRerun, script.FirstRunTimestamp, datum =>
-                            {
-                                if (datum != null)
-                                    _probe.StoreDatum(datum);
+                                        Xamarin.Forms.Device.BeginInvokeOnMainThread(() => input.Enabled = false);
+                                    }
 
-                                datumWait.Set();
-                            });
+                        inputWait.Set();
+                    });
 
-                        datumWait.WaitOne();
-                    }
+                inputWait.WaitOne();
 
                 SensusServiceHelper.Get().Logger.Log("\"" + _name + "\" has finished running.", LoggingLevel.Normal, typeof(Script));
 

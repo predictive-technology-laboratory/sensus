@@ -26,8 +26,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewTextLinesPage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)PromptsPage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)PromptPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ShareLocalDataStorePage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\EntryIntegerUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\EntryFloatUiProperty.cs" />
@@ -47,6 +45,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\YesNoInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MapPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\EditorUiProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Inputs\InputGroup.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UiProperties\EditableListUiProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UiProperties\EntryDoubleUiProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ScriptInputsPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ScriptInputPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ScriptInputGroupsPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ScriptInputGroupPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Inputs\VoiceInput.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Inputs\" />
