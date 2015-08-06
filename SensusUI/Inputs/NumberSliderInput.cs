@@ -123,6 +123,18 @@ namespace SensusUI.Inputs
             }
         }
 
+        public override bool Enabled
+        {
+            get
+            {
+                return _slider.IsEnabled;
+            }
+            set
+            {
+                _slider.IsEnabled = value;
+            }
+        }
+
         public override string DefaultName
         {
             get

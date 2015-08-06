@@ -63,6 +63,17 @@ namespace SensusUI.Inputs
             }
         }
 
+        public override bool Enabled
+        {
+            get
+            {
+                return true;
+            }
+            set
+            {
+            }
+        }
+
         public override string DefaultName
         {
             get

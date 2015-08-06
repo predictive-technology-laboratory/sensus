@@ -789,7 +789,10 @@ namespace SensusService
         {
             PromptForInputsAsync(windowTitle, new Input[] { input }, inputs =>
                 {
-                    callback(inputs[0]);
+                    if (inputs == null)
+                        callback(null);
+                    else
+                        callback(inputs[0]);
                 });
         }
 
@@ -802,7 +805,10 @@ namespace SensusService
 
             PromptForInputsAsync(null, false, DateTimeOffset.MinValue, new InputGroup[] { inputGroup }.ToList(), inputGroups =>
                 {
-                    callback(inputGroups.SelectMany(g => g.Inputs).ToList());
+                    if (inputGroups == null)
+                        callback(null);
+                    else
+                        callback(inputGroups.SelectMany(g => g.Inputs).ToList());
                 });
         }
 
@@ -828,18 +834,17 @@ namespace SensusService
                             PROMPT_FOR_INPUTS_RUNNING = true;
                     }
 
-                    int currGroup = 0;
-                    int incompleteGroups = inputGroups.Count(g => !g.Complete);
+                    InputGroup[] incompleteGroups = inputGroups.Where(g => !g.Complete).ToArray();
 
-                    foreach (InputGroup inputGroup in inputGroups.Where(g => !g.Complete))
+                    for (int incompleteGroupNum = 0; incompleteGroupNum < incompleteGroups.Length; ++incompleteGroupNum)
                     {
-                        ++currGroup;
+                        InputGroup incompleteGroup = incompleteGroups[incompleteGroupNum];
 
                         ManualResetEvent responseWait = new ManualResetEvent(false);
 
-                        if (inputGroup.Inputs.Count == 1 && inputGroup.Inputs[0] is VoiceInput)
+                        if (incompleteGroup.Inputs.Count == 1 && incompleteGroup.Inputs[0] is VoiceInput)
                         {
-                            VoiceInput promptInput = inputGroup.Inputs[0] as VoiceInput;
+                            VoiceInput promptInput = incompleteGroup.Inputs[0] as VoiceInput;
 
                             promptInput.RunAsync(triggeringDatum, isReprompt, firstPromptTimestamp, response =>
                                 {                
@@ -852,13 +857,27 @@ namespace SensusService
 
                             Device.BeginInvokeOnMainThread(async () =>
                                 {
-                                    PromptForInputsPage promptForInputsPage = new PromptForInputsPage(inputGroup, currGroup, incompleteGroups);
-                                    promptForInputsPage.Disappearing += (o, e) => responseWait.Set();
-                                    await App.Current.MainPage.Navigation.PushAsync(promptForInputsPage);
+                                    PromptForInputsPage promptForInputsPage = new PromptForInputsPage(incompleteGroup, incompleteGroupNum + 1, incompleteGroups.Length, async result =>
+                                        {
+                                            if (result == PromptForInputsPage.Result.Cancel || result == PromptForInputsPage.Result.NavigateBackward && incompleteGroupNum == 0)
+                                                inputGroups = null;
+                                            else if (result == PromptForInputsPage.Result.NavigateBackward)
+                                            {
+                                                await App.Current.MainPage.Navigation.PopAsync(false);
+                                                incompleteGroupNum -= 2;
+                                            }
+
+                                            responseWait.Set();
+                                        });
+
+                                    await App.Current.MainPage.Navigation.PushAsync(promptForInputsPage, false);
                                 });
                         }
 
                         responseWait.WaitOne();
+
+                        if (inputGroups == null)
+                            break;
                     }
 
                     callback(inputGroups);

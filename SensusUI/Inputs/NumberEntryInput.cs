@@ -43,6 +43,8 @@ namespace SensusUI.Inputs
                     };
                 }
 
+                base.View.IsEnabled = false;
+
                 return base.View;
             }
         }
@@ -56,6 +58,18 @@ namespace SensusUI.Inputs
                     return null;
                 else
                     return value;
+            }
+        }
+
+        public override bool Enabled
+        {
+            get
+            {
+                return _entry.IsEnabled;
+            }
+            set
+            {
+                _entry.IsEnabled = value;
             }
         }
 

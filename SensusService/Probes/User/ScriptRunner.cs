@@ -445,13 +445,14 @@ namespace SensusService.Probes.User
 
                 SensusServiceHelper.Get().PromptForInputsAsync(script.CurrentDatum, isRerun, script.FirstRunTimestamp, script.InputGroups, inputGroups =>
                     {
-                        foreach (InputGroup inputGroup in inputGroups)
-                            foreach (Input input in inputGroup.Inputs)
-                                if (input.Complete)
-                                {
-                                    _probe.StoreDatum(new ScriptDatum(DateTimeOffset.UtcNow, input.GroupId, input.Id, input.Value, script.CurrentDatum == null ? null : script.CurrentDatum.Id));
-                                    input.Readonly = true;
-                                }
+                        if (inputGroups != null)
+                            foreach (InputGroup inputGroup in inputGroups)
+                                foreach (Input input in inputGroup.Inputs)
+                                    if (!(input is LabelOnlyInput) && input.Complete)
+                                    {
+                                        _probe.StoreDatum(new ScriptDatum(DateTimeOffset.UtcNow, input.GroupId, input.Id, input.Value, script.CurrentDatum == null ? null : script.CurrentDatum.Id));
+                                        input.Enabled = false;
+                                    }
 
                         inputWait.Set();
                     });

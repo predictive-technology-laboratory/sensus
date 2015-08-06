@@ -591,6 +591,9 @@ namespace SensusService
 
                 inputs =>
                 {
+                    if (inputs == null)
+                        return;
+
                     string consentCodeStr = inputs[1].Value as string;
 
                     int consentCodeInt;

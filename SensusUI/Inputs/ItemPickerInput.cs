@@ -89,6 +89,18 @@ namespace SensusUI.Inputs
             }
         }
 
+        public override bool Enabled
+        {
+            get
+            {
+                return _picker.IsEnabled;
+            }
+            set
+            {
+                _picker.IsEnabled = value;
+            }
+        }
+
         public override string DefaultName
         {
             get

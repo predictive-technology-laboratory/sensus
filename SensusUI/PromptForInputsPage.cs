@@ -24,7 +24,14 @@ namespace SensusUI
 {
     public class PromptForInputsPage : ContentPage
     {
-        public PromptForInputsPage(InputGroup inputGroup, int stepNumber, int totalSteps)
+        public enum Result
+        {
+            NavigateBackward,
+            NavigateForward,
+            Cancel
+        }
+
+        public PromptForInputsPage(InputGroup inputGroup, int stepNumber, int totalSteps, Action<Result> callback)
         {
             Title = inputGroup.Name;
 
@@ -58,20 +65,26 @@ namespace SensusUI
                 Text = "Cancel"
             };
 
+            bool cancelButtonTapped = false;
+
             cancelButton.Clicked += async (o, e) =>
             {
+                cancelButtonTapped = true;
                 await Navigation.PopAsync();
             };
 
-            Button okButton = new Button
+            Button nextButton = new Button
             {
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 FontSize = 20,
-                Text = "OK"
+                Text = stepNumber < totalSteps ? "Next" : "Submit"
             };
 
-            okButton.Clicked += async (o, e) =>
+            bool nextButtonTapped = false;
+
+            nextButton.Clicked += async (o, e) =>
             {
+                nextButtonTapped = true;
                 await Navigation.PopAsync();
             };
                 
@@ -79,8 +92,18 @@ namespace SensusUI
                 {
                     Orientation = StackOrientation.Horizontal,
                     HorizontalOptions = LayoutOptions.FillAndExpand,
-                    Children = { cancelButton, okButton }
+                    Children = { cancelButton, nextButton }
                 });
+
+            Disappearing += (o, e) =>
+            {
+                if (cancelButtonTapped)
+                    callback(Result.Cancel);
+                else if (nextButtonTapped)
+                    callback(Result.NavigateForward);
+                else
+                    callback(Result.NavigateBackward);
+            };
 
             Content = new ScrollView
             {

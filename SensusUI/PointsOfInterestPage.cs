@@ -91,6 +91,9 @@ namespace SensusUI
 
                             inputs =>
                             {
+                                if (inputs == null)
+                                    return;
+                            
                                 string name = inputs[0].Value as string;
                                 string type = inputs[1].Value as string;
                                 string address = inputs[2].Value as string;

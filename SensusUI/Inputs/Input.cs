@@ -102,11 +102,8 @@ namespace SensusUI.Inputs
             protected set { _complete = value; }
         }
 
-        public bool Readonly
-        {
-            get { return View.IsEnabled; }
-            set { View.IsEnabled = value; }
-        }
+        [JsonIgnore]
+        public abstract bool Enabled { get; set; }
 
         [JsonIgnore]
         public abstract string DefaultName { get; }
