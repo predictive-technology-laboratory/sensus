@@ -115,6 +115,8 @@ namespace SensusUI
             {
                 if (!double.TryParse(distanceThresholdEntry.Text, out _distanceThresholdMeters))
                     _distanceThresholdMeters = -1;
+                else if (_distanceThresholdMeters < GpsReceiver.Get().MinimumDistanceThreshold)
+                    UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Distance threshold must be at least " + GpsReceiver.Get().MinimumDistanceThreshold + ".");
             };
 
             contentLayout.Children.Add(new StackLayout

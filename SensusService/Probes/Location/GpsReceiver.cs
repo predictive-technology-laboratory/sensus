@@ -69,6 +69,14 @@ namespace SensusService.Probes.Location
             get { return PositionChanged != null; }        
         }
 
+        public int MinimumDistanceThreshold
+        {
+            // because GPS is only so accurate, successive readings can fire the trigger even if one is not moving -- if the threshold is too small. theoretically
+            // the minimum value of the threshold should be equal to the desired accuracy; however, the desired accuracy is just a request. use 2x the desired
+            // accuracy just to be sure.
+            get { return 2 * _desiredAccuracyMeters; }
+        }
+
         private GpsReceiver()
         {
             _desiredAccuracyMeters = 50;  // setting this too low appears to result in very delayed GPS fixes.
