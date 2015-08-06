@@ -24,60 +24,32 @@ namespace SensusUI
 {
     public class PromptForInputsPage : ContentPage
     {
-        public PromptForInputsPage(InputGroup inputGroup, double progress, Action<List<Tuple<Input, object>>> callback)
+        public PromptForInputsPage(InputGroup inputGroup, int stepNumber, int totalSteps)
         {
             Title = inputGroup.Name;
 
             StackLayout contentLayout = new StackLayout
             {
                 Orientation = StackOrientation.Vertical,
-                VerticalOptions = LayoutOptions.FillAndExpand
+                VerticalOptions = LayoutOptions.FillAndExpand,
+                Padding = new Thickness(0, 10, 0, 0)
             };
+
+            contentLayout.Children.Add(new Label
+                {
+                    Text = "Step " + stepNumber + " of " + totalSteps,
+                    FontSize = 15,
+                    HorizontalOptions = LayoutOptions.CenterAndExpand
+                });
 
             contentLayout.Children.Add(new ProgressBar
                 {
-                    Progress = progress,
+                    Progress = stepNumber / (double)totalSteps,
                     HorizontalOptions = LayoutOptions.FillAndExpand
                 });
 
-            List<Input> inputs = new List<Input>();
-            List<Func<object>> inputRetrievers = new List<Func<object>>();
-
             foreach (Input input in inputGroup.Inputs)
-            {
-                Func<object> valueRetriever;
-                View view = input.CreateView(out valueRetriever);
-
-                if (view != null)
-                    contentLayout.Children.Add(view);
-
-                if (valueRetriever != null)
-                {
-                    inputs.Add(input);
-                    inputRetrievers.Add(valueRetriever);
-                }
-            }
-
-            bool canceled = true;
-
-            Thread returnThread = new Thread(() =>
-                {
-                    List<Tuple<Input, object>> inputValues = null;
-
-                    if (!canceled)
-                    {
-                        inputValues = new List<Tuple<Input, object>>();
-                        for (int i = 0; i < inputRetrievers.Count; ++i)
-                            inputValues.Add(new Tuple<Input, object>(inputs[i], inputRetrievers[i]()));
-                    }
-
-                    callback(inputValues);
-                });
-
-            Disappearing += (o, e) =>
-            {
-                returnThread.Start();
-            };
+                contentLayout.Children.Add(input.View);
 
             Button cancelButton = new Button
             {
@@ -100,7 +72,6 @@ namespace SensusUI
 
             okButton.Clicked += async (o, e) =>
             {
-                canceled = false;
                 await Navigation.PopAsync();
             };
                 

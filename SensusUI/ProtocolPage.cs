@@ -184,7 +184,7 @@ namespace SensusUI
                             
                         input =>
                         {
-                            string password = input as string;
+                            string password = input.Value as string;
 
                             if (password == null)
                                 return;

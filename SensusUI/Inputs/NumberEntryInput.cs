@@ -21,12 +21,41 @@ namespace SensusUI.Inputs
     {
         private Entry _entry;
 
-        public override bool Complete
+        public override View View
+        {
+            get
+            {
+                if (base.View == null)
+                {
+                    _entry = new Entry
+                    {
+                        Keyboard = Keyboard.Numeric,
+                        HorizontalOptions = LayoutOptions.FillAndExpand
+                    };  
+
+                    _entry.TextChanged += (o, e) => Complete = Value != null;
+
+                    base.View = new StackLayout
+                    {
+                        Orientation = StackOrientation.Horizontal,
+                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        Children = { Label, _entry }
+                    };
+                }
+
+                return base.View;
+            }
+        }
+
+        public override object Value
         {
             get
             {
                 double value;
-                return _entry != null && double.TryParse(_entry.Text, out value);
+                if (_entry == null || !double.TryParse(_entry.Text, out value))
+                    return null;
+                else
+                    return value;
             }
         }
 
@@ -50,31 +79,6 @@ namespace SensusUI.Inputs
         public NumberEntryInput(string name, string labelText)
             : base(name, labelText)
         {            
-        }
-
-        public override View CreateView(out Func<object> valueRetriever)
-        {
-            _entry = new Entry
-            {
-                Keyboard = Keyboard.Numeric,
-                HorizontalOptions = LayoutOptions.FillAndExpand
-            };
-
-            valueRetriever = new Func<object>(() =>
-                {
-                    double value;
-                    if (double.TryParse(_entry.Text, out value))
-                        return value;
-                    else
-                        return null;
-                });
-
-            return new StackLayout
-            {
-                Orientation = StackOrientation.Horizontal,
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                Children = { Label, _entry }
-            };
-        }
+        }           
     }
 }

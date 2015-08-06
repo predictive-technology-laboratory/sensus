@@ -19,6 +19,7 @@ using SensusUI.UiProperties;
 using SensusService.Probes.User;
 using SensusService;
 using Xamarin.Forms;
+using SensusService.Exceptions;
 
 namespace SensusUI.Inputs
 {
@@ -27,7 +28,6 @@ namespace SensusUI.Inputs
         private string _outputMessage;
         private string _outputMessageRerun;
         private string _response;
-        private bool _hasRun;
 
         [EntryStringUiProperty("Output Message:", true, 11)]
         public string OutputMessage
@@ -43,21 +43,24 @@ namespace SensusUI.Inputs
             set { _outputMessageRerun = value; }
         }
 
-        public string Response
+        public override View View
         {
-            get { return _response; }
-            set { _response = value; }
+            get
+            {
+                return null;
+            }
+            protected set
+            {
+                throw new SensusException("Cannot set View on VoiceInput.");
+            }
         }
 
-        public bool HasRun
+        public override object Value
         {
-            get { return _hasRun; }
-            set { _hasRun = value; }
-        }
-
-        public override bool Complete
-        {
-            get { return _hasRun && _response != null; }
+            get
+            {
+                return _response;
+            }
         }
 
         public override string DefaultName
@@ -121,19 +124,14 @@ namespace SensusUI.Inputs
 
                                     _response = response;
 
+                                    if(_response != null)
+                                        Complete = true;
+
                                     callback(_response);
                                 });
                         });
-                    
-                    _hasRun = true;
 
                 }).Start();
-        }
-
-        public override View CreateView(out Func<object> valueRetriever)
-        {
-            valueRetriever = null;
-            return null;
         }
     }
 }

@@ -52,11 +52,40 @@ namespace SensusUI.Inputs
             }
         }
 
-        public override bool Complete
+        public override View View
         {
             get
             {
-                return _picker != null && _picker.SelectedIndex >= 0;
+                if (base.View == null && _items.Count > 0)
+                {
+                    _picker = new Picker
+                    {
+                        Title = _tipText,
+                        HorizontalOptions = LayoutOptions.FillAndExpand
+                    };
+
+                    foreach (string item in _items)
+                        _picker.Items.Add(item);
+
+                    _picker.SelectedIndexChanged += (o, e) => Complete = Value != null;
+
+                    base.View = new StackLayout
+                    {
+                        Orientation = StackOrientation.Horizontal,
+                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        Children = { Label, _picker }
+                    };
+                }
+
+                return base.View;
+            }
+        }
+
+        public override object Value
+        {
+            get
+            {
+                return _picker == null || _picker.SelectedIndex < 0 ? null : _picker.Items[_picker.SelectedIndex];
             }
         }
 
@@ -89,33 +118,7 @@ namespace SensusUI.Inputs
         {
             _tipText = tipText;
             _items = items;   
-        }
-
-        public override View CreateView(out Func<object> valueRetriever)
-        {
-            valueRetriever = null;
-
-            if (_items.Count == 0)
-                return null;
-            
-            _picker = new Picker
-            {
-                Title = _tipText,
-                HorizontalOptions = LayoutOptions.FillAndExpand
-            };
-
-            foreach (string item in _items)
-                _picker.Items.Add(item);
-
-            valueRetriever = new Func<object>(() => _picker.SelectedIndex >= 0 ? _picker.Items[_picker.SelectedIndex] : null);
-
-            return new StackLayout
-            {
-                Orientation = StackOrientation.Horizontal,
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                Children = { Label, _picker }
-            };
-        }
+        }           
 
         public override string ToString()
         {

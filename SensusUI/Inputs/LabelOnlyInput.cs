@@ -19,11 +19,22 @@ namespace SensusUI.Inputs
 {
     public class LabelOnlyInput : Input
     {
-        public override bool Complete
+        public override View View
         {
             get
             {
-                return true;
+                if (base.View == null)
+                    base.View = Label;
+                
+                return base.View;
+            }
+        }
+
+        public override object Value
+        {
+            get
+            {
+                return null;
             }
         }
 
@@ -37,23 +48,24 @@ namespace SensusUI.Inputs
 
         public LabelOnlyInput()
         {
+            Construct();
         }
 
         public LabelOnlyInput(string labelText)
             : base(labelText)
         {
+            Construct();
         }
 
         public LabelOnlyInput(string name, string labelText)
             : base(name, labelText)
         {
+            Construct();
         }
 
-        public override View CreateView(out Func<object> valueRetriever)
+        private void Construct()
         {
-            valueRetriever = null;
-
-            return Label;
+            Complete = true;
         }
     }
 }

@@ -785,58 +785,55 @@ namespace SensusService
                 });
         }
 
-        public void PromptForInputAsync(string windowTitle, Input input, Action<object> callback)
+        public void PromptForInputAsync(string windowTitle, Input input, Action<Input> callback)
         {
             PromptForInputsAsync(windowTitle, new Input[] { input }, inputs =>
                 {
-                    if (inputs == null || inputs.Count == 0)
-                        callback(null);
-                    else
-                        callback(inputs[0]);
+                    callback(inputs[0]);
                 });
         }
 
-        public void PromptForInputsAsync(string windowTitle, IEnumerable<Input> inputs, Action<List<object>> callback)
+        public void PromptForInputsAsync(string windowTitle, IEnumerable<Input> inputs, Action<List<Input>> callback)
         {
             InputGroup inputGroup = new InputGroup(windowTitle);
 
             foreach (Input input in inputs)
                 inputGroup.Inputs.Add(input);
 
-            PromptForInputsAsync(null, false, DateTimeOffset.MinValue, new InputGroup[] { inputGroup }.ToList(), inputResponses =>
+            PromptForInputsAsync(null, false, DateTimeOffset.MinValue, new InputGroup[] { inputGroup }.ToList(), inputGroups =>
                 {
-                    if (inputResponses == null)
-                        callback(null);
-                    else
-                        callback(inputResponses.Select(groupResponse => groupResponse.Item2).ToList());
+                    callback(inputGroups.SelectMany(g => g.Inputs).ToList());
                 });
         }
 
-        public void PromptForInputsAsync(Datum triggeringDatum, bool isReprompt, DateTimeOffset firstPromptTimestamp, IEnumerable<InputGroup> inputGroups, Action<List<Tuple<Input, object>>> callback)
+        public void PromptForInputsAsync(Datum triggeringDatum, bool isReprompt, DateTimeOffset firstPromptTimestamp, IEnumerable<InputGroup> inputGroups, Action<IEnumerable<InputGroup>> callback)
         {
             new Thread(() =>
                 {
+                    if (inputGroups == null || inputGroups.All(g => g == null))
+                    {
+                        callback(inputGroups);
+                        return;
+                    }
+
                     // only one prompt can run at a time...enforce that here.
                     lock (PROMPT_FOR_INPUTS_LOCKER)
                     {
-                        // calling while a previous call is in progress returns null
                         if (PROMPT_FOR_INPUTS_RUNNING)
                         {
-                            callback(null);
+                            callback(inputGroups);
                             return;
                         }
                         else
                             PROMPT_FOR_INPUTS_RUNNING = true;
                     }
 
-                    List<Tuple<Input, object>> inputResponses = new List<Tuple<Input, object>>();
-
-                    int groupNum = 0;
+                    int currGroup = 0;
                     int incompleteGroups = inputGroups.Count(g => !g.Complete);
 
                     foreach (InputGroup inputGroup in inputGroups.Where(g => !g.Complete))
                     {
-                        ++groupNum;
+                        ++currGroup;
 
                         ManualResetEvent responseWait = new ManualResetEvent(false);
 
@@ -846,7 +843,6 @@ namespace SensusService
 
                             promptInput.RunAsync(triggeringDatum, isReprompt, firstPromptTimestamp, response =>
                                 {                
-                                    inputResponses.Add(new Tuple<Input, object>(promptInput, response));
                                     responseWait.Set();
                                 });
                         }
@@ -856,20 +852,16 @@ namespace SensusService
 
                             Device.BeginInvokeOnMainThread(async () =>
                                 {
-                                    await App.Current.MainPage.Navigation.PushAsync(new PromptForInputsPage(inputGroup, groupNum / (double)incompleteGroups, responses =>
-                                            {
-                                                if (responses != null)
-                                                    inputResponses.AddRange(responses);
-
-                                                responseWait.Set();
-                                            }));
+                                    PromptForInputsPage promptForInputsPage = new PromptForInputsPage(inputGroup, currGroup, incompleteGroups);
+                                    promptForInputsPage.Disappearing += (o, e) => responseWait.Set();
+                                    await App.Current.MainPage.Navigation.PushAsync(promptForInputsPage);
                                 });
                         }
 
                         responseWait.WaitOne();
                     }
 
-                    callback(inputResponses);
+                    callback(inputGroups);
 
                     PROMPT_FOR_INPUTS_RUNNING = false;
 

@@ -91,15 +91,14 @@ namespace SensusUI
 
                             inputs =>
                             {
-                                if (inputs == null)
-                                    return;
-                            
-                                string name = inputs[0] == null ? "" : inputs[0].ToString();
-                                string type = inputs[1] == null ? "" : inputs[1].ToString();
-                                string address = inputs[2] == null ? "" : inputs[2].ToString();
-                                bool viewMap = (bool)inputs[3];
+                                string name = inputs[0].Value as string;
+                                string type = inputs[1].Value as string;
+                                string address = inputs[2].Value as string;
+                                bool viewMap = (bool)inputs[3].Value;
 
-                                if (!string.IsNullOrWhiteSpace(name) || !string.IsNullOrWhiteSpace(type))
+                                if (string.IsNullOrWhiteSpace(name) && string.IsNullOrWhiteSpace(type))
+                                    UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("You must enter either a name or type (or both).");
+                                else
                                 {
                                     Action<List<Position>> addPOI = new Action<List<Position>>(poiPositions =>
                                         {        

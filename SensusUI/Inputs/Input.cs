@@ -26,6 +26,8 @@ namespace SensusUI.Inputs
         private string _id;
         private string _groupId;
         private string _labelText;
+        private View _view;
+        private bool _complete;
 
         [EntryStringUiProperty("Name:", true, 0)]
         public string Name
@@ -84,7 +86,27 @@ namespace SensusUI.Inputs
         }
 
         [JsonIgnore]
-        public abstract bool Complete { get; }
+        public virtual View View
+        {
+            get { return _view; }
+            protected set { _view = value; }
+        }
+
+        [JsonIgnore]
+        public abstract object Value { get; }
+
+        [JsonIgnore]
+        public bool Complete
+        {
+            get { return _complete; }
+            protected set { _complete = value; }
+        }
+
+        public bool Readonly
+        {
+            get { return View.IsEnabled; }
+            set { View.IsEnabled = value; }
+        }
 
         [JsonIgnore]
         public abstract string DefaultName { get; }
@@ -106,8 +128,6 @@ namespace SensusUI.Inputs
         {
             _name = name;
         }
-
-        public abstract View CreateView(out Func<object> valueRetriever);
 
         public override string ToString()
         {

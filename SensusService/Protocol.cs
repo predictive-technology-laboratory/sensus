@@ -586,18 +586,17 @@ namespace SensusService
                         (string.IsNullOrWhiteSpace(_startupAgreement) ? "" : _startupAgreement + Environment.NewLine + Environment.NewLine) +
                         "To start this protocol, please indicate your consent by entering the following code:  " + consentCode),
 
-                    new TextInput("Code:")
+                    new TextInput()
                 },
 
                 inputs =>
                 {
-                    string consentCodeStr = inputs[0] as string;
-
-                    if (consentCodeStr == null)
-                        return;
+                    string consentCodeStr = inputs[1].Value as string;
 
                     int consentCodeInt;
-                    if (int.TryParse(consentCodeStr, out consentCodeInt) && consentCodeInt == consentCode)
+                    if (consentCodeStr == null)
+                        return;
+                    else if (int.TryParse(consentCodeStr, out consentCodeInt) && consentCodeInt == consentCode)
                         Running = true;
                     else
                         SensusServiceHelper.Get().FlashNotificationAsync("Incorrect code entered.");

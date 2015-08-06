@@ -59,7 +59,7 @@ namespace SensusUI.Inputs
 
         public bool Complete
         {
-            get { return _inputs.Count == 0 || _inputs.All(i => i.Complete); }
+            get { return _inputs.Count == 0 || _inputs.All(i => i == null || i.Complete); }
         }
 
         /// <summary>

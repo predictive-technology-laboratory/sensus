@@ -443,12 +443,15 @@ namespace SensusService.Probes.User
 
                 ManualResetEvent inputWait = new ManualResetEvent(false);
 
-                SensusServiceHelper.Get().PromptForInputsAsync(script.CurrentDatum, isRerun, script.FirstRunTimestamp, script.InputGroups, inputResponses =>
+                SensusServiceHelper.Get().PromptForInputsAsync(script.CurrentDatum, isRerun, script.FirstRunTimestamp, script.InputGroups, inputGroups =>
                     {
-                        if (inputResponses != null)
-                            foreach (Tuple<Input, object> inputResponse in inputResponses)
-                                if (inputResponse.Item1.Complete)
-                                    _probe.StoreDatum(new ScriptDatum(DateTimeOffset.UtcNow, inputResponse.Item1.GroupId, inputResponse.Item1.Id, inputResponse.Item2, script.CurrentDatum == null ? null : script.CurrentDatum.Id));
+                        foreach (InputGroup inputGroup in inputGroups)
+                            foreach (Input input in inputGroup.Inputs)
+                                if (input.Complete)
+                                {
+                                    _probe.StoreDatum(new ScriptDatum(DateTimeOffset.UtcNow, input.GroupId, input.Id, input.Value, script.CurrentDatum == null ? null : script.CurrentDatum.Id));
+                                    input.Readonly = true;
+                                }
 
                         inputWait.Set();
                     });
