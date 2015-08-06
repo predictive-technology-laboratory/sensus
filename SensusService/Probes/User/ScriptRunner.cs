@@ -451,7 +451,8 @@ namespace SensusService.Probes.User
                                     if (!(input is LabelOnlyInput) && input.Complete)
                                     {
                                         _probe.StoreDatum(new ScriptDatum(DateTimeOffset.UtcNow, input.GroupId, input.Id, input.Value, script.CurrentDatum == null ? null : script.CurrentDatum.Id));
-                                        input.Enabled = false;
+
+                                        Xamarin.Forms.Device.BeginInvokeOnMainThread(() => input.Enabled = false);
                                     }
 
                         inputWait.Set();
