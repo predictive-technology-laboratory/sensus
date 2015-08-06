@@ -113,7 +113,7 @@ namespace SensusUI.Inputs
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 Minimum = _minimum,
                 Maximum = _maximum,
-                Value = (_maximum - _minimum) / 2
+                Value = (_maximum - _minimum) / 2d
             };
 
             Label sliderValueLabel = new Label
@@ -146,6 +146,11 @@ namespace SensusUI.Inputs
                     }
                 }
             };
+        }
+
+        public override string ToString()
+        {
+            return base.ToString() + " -- " + _minimum + " to " + _maximum;
         }
     }
 }

@@ -85,6 +85,8 @@ namespace SensusService
 
         #region static members
 
+        private static readonly object PROMPT_FOR_INPUTS_LOCKER = new object();
+        private static bool PROMPT_FOR_INPUTS_RUNNING = false;
         public const string SENSUS_CALLBACK_KEY = "SENSUS-CALLBACK";
         public const string SENSUS_CALLBACK_ID_KEY = "SENSUS-CALLBACK-ID";
         public const string SENSUS_CALLBACK_REPEATING_KEY = "SENSUS-CALLBACK-REPEATING";
@@ -787,7 +789,7 @@ namespace SensusService
         {
             PromptForInputsAsync(windowTitle, new Input[] { input }, inputs =>
                 {
-                    if (inputs.Count == 0)
+                    if (inputs == null || inputs.Count == 0)
                         callback(null);
                     else
                         callback(inputs[0]);
@@ -801,9 +803,12 @@ namespace SensusService
             foreach (Input input in inputs)
                 inputGroup.Inputs.Add(input);
 
-            PromptForInputsAsync(null, false, DateTimeOffset.MinValue, new InputGroup[] { inputGroup }.ToList(), groupResponses =>
+            PromptForInputsAsync(null, false, DateTimeOffset.MinValue, new InputGroup[] { inputGroup }.ToList(), inputResponses =>
                 {
-                    callback(groupResponses.Select(groupResponse => groupResponse.Item2).ToList());
+                    if (inputResponses == null)
+                        callback(null);
+                    else
+                        callback(inputResponses.Select(groupResponse => groupResponse.Item2).ToList());
                 });
         }
 
@@ -811,6 +816,19 @@ namespace SensusService
         {
             new Thread(() =>
                 {
+                    // only one prompt can run at a time...enforce that here.
+                    lock (PROMPT_FOR_INPUTS_LOCKER)
+                    {
+                        // calling while a previous call is in progress returns null
+                        if (PROMPT_FOR_INPUTS_RUNNING)
+                        {
+                            callback(null);
+                            return;
+                        }
+                        else
+                            PROMPT_FOR_INPUTS_RUNNING = true;
+                    }
+
                     List<Tuple<Input, object>> inputResponses = new List<Tuple<Input, object>>();
 
                     int groupNum = 0;
@@ -851,7 +869,9 @@ namespace SensusService
                         responseWait.WaitOne();
                     }
 
-                    callback(inputResponses);    
+                    callback(inputResponses);
+
+                    PROMPT_FOR_INPUTS_RUNNING = false;
 
                 }).Start();
         }

@@ -76,7 +76,11 @@ namespace SensusUI.UiProperties
                 }
                 else if (uiElement is EditableListUiProperty)
                 {
-                    view = new Editor();
+                    view = new Editor
+                    {
+                        HorizontalOptions = LayoutOptions.FillAndExpand
+                    };
+                    
                     bindingProperty = Editor.TextProperty;
                     converter = new EditableListUiProperty.ValueConverter();
                 }

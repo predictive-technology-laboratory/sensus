@@ -24,13 +24,6 @@ namespace SensusUI.Inputs
 {
     public class VoiceInput : Input
     {
-        #region static members
-
-        private static readonly object LOCKER = new object();
-        private static bool IS_RUNNING = false;
-
-        #endregion
-
         private string _outputMessage;
         private string _outputMessageRerun;
         private string _response;
@@ -98,27 +91,7 @@ namespace SensusUI.Inputs
         public void RunAsync(Datum triggeringDatum, bool isRerun, DateTimeOffset firstRunTimestamp, Action<string> callback)
         {
             new Thread(() =>
-                {
-                    // only one prompt can run at a time...enforce that here.
-                    lock (LOCKER)
-                    {
-                        // calling after a previous call has completed returns the same response
-                        if (_response != null)
-                        {
-                            callback(_response);
-                            return;
-                        }
-
-                        // calling while a previous call is in progress returns null
-                        if (IS_RUNNING)
-                        {
-                            callback(null);
-                            return;
-                        }
-                        else
-                            IS_RUNNING = true;
-                    }
-
+                {                    
                     string outputMessage = _outputMessage;
 
                     #region temporal analysis for rerun
@@ -149,9 +122,6 @@ namespace SensusUI.Inputs
                                     _response = response;
 
                                     callback(_response);
-
-                                    // allow other prompts to run
-                                    IS_RUNNING = false;
                                 });
                         });
                     

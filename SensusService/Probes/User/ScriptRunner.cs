@@ -445,9 +445,10 @@ namespace SensusService.Probes.User
 
                 SensusServiceHelper.Get().PromptForInputsAsync(script.CurrentDatum, isRerun, script.FirstRunTimestamp, script.InputGroups, inputResponses =>
                     {
-                        foreach (Tuple<Input, object> inputResponse in inputResponses)
-                            if (inputResponse.Item1.Complete)
-                                _probe.StoreDatum(new ScriptDatum(DateTimeOffset.UtcNow, inputResponse.Item1.GroupId, inputResponse.Item1.Id, inputResponse.Item2, script.CurrentDatum == null ? null : script.CurrentDatum.Id));
+                        if (inputResponses != null)
+                            foreach (Tuple<Input, object> inputResponse in inputResponses)
+                                if (inputResponse.Item1.Complete)
+                                    _probe.StoreDatum(new ScriptDatum(DateTimeOffset.UtcNow, inputResponse.Item1.GroupId, inputResponse.Item1.Id, inputResponse.Item2, script.CurrentDatum == null ? null : script.CurrentDatum.Id));
 
                         inputWait.Set();
                     });

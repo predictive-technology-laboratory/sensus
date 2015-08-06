@@ -116,5 +116,10 @@ namespace SensusUI.Inputs
                 Children = { Label, _picker }
             };
         }
+
+        public override string ToString()
+        {
+            return base.ToString() + " -- " + _items.Count + " Items";
+        }
     }
 }
