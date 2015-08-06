@@ -55,7 +55,11 @@ namespace SensusUI
                     
                 string selectedAction = await DisplayActionSheet(selectedInput.Name, "Cancel", null, actions.ToArray());
 
-                if (selectedAction == "Edit")
+                if (selectedAction == "Move Up")
+                    inputGroup.Inputs.Move(selectedIndex, selectedIndex - 1);
+                else if (selectedAction == "Move Down")
+                    inputGroup.Inputs.Move(selectedIndex, selectedIndex + 1);
+                else if (selectedAction == "Edit")
                 {
                     ScriptInputPage inputPage = new ScriptInputPage(selectedInput);
                     inputPage.Disappearing += (oo, ee) =>
@@ -66,10 +70,6 @@ namespace SensusUI
                     await Navigation.PushAsync(inputPage);
                     _inputsList.SelectedItem = null;
                 }
-                else if (selectedAction == "Move Up")
-                    inputGroup.Inputs.Move(selectedIndex, selectedIndex - 1);
-                else if (selectedAction == "Move Down")
-                    inputGroup.Inputs.Move(selectedIndex, selectedIndex + 1);
                 else if (selectedAction == "Delete")
                 {
                     if (await DisplayAlert("Delete " + selectedInput.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
@@ -95,15 +95,21 @@ namespace SensusUI
                         if (!string.IsNullOrWhiteSpace(selected) && selected != cancelButtonName)
                         {
                             Input input = inputs[int.Parse(selected.Substring(0, selected.IndexOf(")"))) - 1];
-                            inputGroup.Inputs.Add(input);
 
-                            ScriptInputPage inputPage = new ScriptInputPage(input);
-                            inputPage.Disappearing += (o, e) =>
+                            if (input is VoiceInput && inputGroup.Inputs.Count > 0 || !(input is VoiceInput) && inputGroup.Inputs.Any(i => i is VoiceInput))
+                                UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Voice inputs must reside in groups by themselves.");
+                            else
                             {
-                                Bind();
-                            };
+                                inputGroup.Inputs.Add(input);
+
+                                ScriptInputPage inputPage = new ScriptInputPage(input);
+                                inputPage.Disappearing += (o, e) =>
+                                {
+                                    Bind();
+                                };
                         
-                            await Navigation.PushAsync(inputPage);
+                                await Navigation.PushAsync(inputPage);
+                            }
                         }
                     }));
 

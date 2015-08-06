@@ -18,6 +18,7 @@ using System.Linq;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using SensusUI.UiProperties;
+using Newtonsoft.Json;
 
 namespace SensusUI.Inputs
 {
@@ -57,6 +58,7 @@ namespace SensusUI.Inputs
             get { return _inputs; }
         }
 
+        [JsonIgnore]
         public bool Complete
         {
             get { return _inputs.Count == 0 || _inputs.All(i => i == null || i.Complete); }

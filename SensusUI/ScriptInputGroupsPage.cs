@@ -16,6 +16,8 @@ using System;
 using Xamarin.Forms;
 using SensusService.Probes.User;
 using SensusUI.Inputs;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SensusUI
 {
@@ -39,10 +41,23 @@ namespace SensusUI
                     return;
 
                 InputGroup selectedInputGroup = _groupsList.SelectedItem as InputGroup;
+                int selectedIndex = script.InputGroups.IndexOf(selectedInputGroup);
 
-                string selectedAction = await DisplayActionSheet(selectedInputGroup.Name, "Cancel", null, "Edit", "Delete");
+                List<string> actions = new string[] { "Edit", "Delete" }.ToList();
 
-                if (selectedAction == "Edit")
+                if (selectedIndex < script.InputGroups.Count - 1)
+                    actions.Insert(0, "Move Down");
+
+                if (selectedIndex > 0)
+                    actions.Insert(0, "Move Up");
+
+                string selectedAction = await DisplayActionSheet(selectedInputGroup.Name, "Cancel", null, actions.ToArray());
+
+                if (selectedAction == "Move Up")
+                    script.InputGroups.Move(selectedIndex, selectedIndex - 1);
+                else if (selectedAction == "Move Down")
+                    script.InputGroups.Move(selectedIndex, selectedIndex + 1);
+                else if (selectedAction == "Edit")
                 {
                     ScriptInputGroupPage inputGroupPage = new ScriptInputGroupPage(selectedInputGroup);
 

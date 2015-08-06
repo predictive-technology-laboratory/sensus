@@ -863,14 +863,14 @@ namespace SensusService
                                                 inputGroups = null;
                                             else if (result == PromptForInputsPage.Result.NavigateBackward)
                                             {
-                                                await App.Current.MainPage.Navigation.PopAsync(false);
+                                                await App.Current.MainPage.Navigation.PopAsync(true);
                                                 incompleteGroupNum -= 2;
                                             }
 
                                             responseWait.Set();
                                         });
 
-                                    await App.Current.MainPage.Navigation.PushAsync(promptForInputsPage, false);
+                                    await App.Current.MainPage.Navigation.PushAsync(promptForInputsPage, true);
                                 });
                         }
 

@@ -56,7 +56,8 @@ namespace SensusUI
                 });
 
             foreach (Input input in inputGroup.Inputs)
-                contentLayout.Children.Add(input.View);
+                if (input.View != null)
+                    contentLayout.Children.Add(input.View);
 
             Button cancelButton = new Button
             {
