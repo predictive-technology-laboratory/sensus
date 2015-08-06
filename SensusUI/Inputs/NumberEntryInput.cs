@@ -43,8 +43,6 @@ namespace SensusUI.Inputs
                     };
                 }
 
-                base.View.IsEnabled = false;
-
                 return base.View;
             }
         }

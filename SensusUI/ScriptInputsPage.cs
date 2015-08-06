@@ -43,8 +43,17 @@ namespace SensusUI
                     return;
 
                 Input selectedInput = _inputsList.SelectedItem as Input;
+                int selectedIndex = inputGroup.Inputs.IndexOf(selectedInput);
 
-                string selectedAction = await DisplayActionSheet(selectedInput.Name, "Cancel", null, "Edit", "Delete");
+                List<string> actions = new string[] { "Edit", "Delete" }.ToList();
+
+                if (selectedIndex < inputGroup.Inputs.Count - 1)
+                    actions.Insert(0, "Move Down");
+
+                if (selectedIndex > 0)
+                    actions.Insert(0, "Move Up");
+                    
+                string selectedAction = await DisplayActionSheet(selectedInput.Name, "Cancel", null, actions.ToArray());
 
                 if (selectedAction == "Edit")
                 {
@@ -57,6 +66,10 @@ namespace SensusUI
                     await Navigation.PushAsync(inputPage);
                     _inputsList.SelectedItem = null;
                 }
+                else if (selectedAction == "Move Up")
+                    inputGroup.Inputs.Move(selectedIndex, selectedIndex - 1);
+                else if (selectedAction == "Move Down")
+                    inputGroup.Inputs.Move(selectedIndex, selectedIndex + 1);
                 else if (selectedAction == "Delete")
                 {
                     if (await DisplayAlert("Delete " + selectedInput.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))

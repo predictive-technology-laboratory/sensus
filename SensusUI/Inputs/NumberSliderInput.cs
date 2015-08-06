@@ -22,6 +22,7 @@ namespace SensusUI.Inputs
     {
         private double _minimum;
         private double _maximum;
+        private double _increment;
         private Slider _slider;
 
         [EntryDoubleUiProperty(null, true, 10)]
@@ -62,6 +63,19 @@ namespace SensusUI.Inputs
             }
         }
 
+        [EntryDoubleUiProperty(null, true, 12)]
+        public double Increment
+        {
+            get
+            {
+                return _increment;
+            }
+            set
+            {
+                _increment = value;
+            }
+        }
+
         public override View View
         {
             get
@@ -81,7 +95,7 @@ namespace SensusUI.Inputs
                     Label sliderValueLabel = new Label
                     {
                         Text = _slider.Value.ToString(),
-                        HorizontalOptions = LayoutOptions.CenterAndExpand,
+                        HorizontalOptions = LayoutOptions.End,
                         FontSize = 20
                     };                                
 
@@ -89,21 +103,21 @@ namespace SensusUI.Inputs
 
                     _slider.ValueChanged += (o, e) =>
                     {
+                        _slider.Value = Math.Round(_slider.Value / _increment) * _increment;
                         sliderValueLabel.Text = e.NewValue.ToString();
                         Complete = Value != null;
                     };
 
                     base.View = new StackLayout
                     {
-                        Orientation = StackOrientation.Horizontal,
-                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        Orientation = StackOrientation.Vertical,
+                        VerticalOptions = LayoutOptions.Start,
                         Children =
                         { 
                             Label,
                             new StackLayout
                             {
-                                Orientation = StackOrientation.Vertical,
-                                VerticalOptions = LayoutOptions.FillAndExpand,
+                                Orientation = StackOrientation.Horizontal,
                                 HorizontalOptions = LayoutOptions.FillAndExpand,
                                 Children = { _slider, sliderValueLabel }
                             }
@@ -164,7 +178,8 @@ namespace SensusUI.Inputs
         {
             _minimum = minimum;
             _maximum = maximum;
-        }           
+            _increment = (_maximum - _minimum + 1) / 10;
+        }
 
         public override string ToString()
         {
