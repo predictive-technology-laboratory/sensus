@@ -27,7 +27,7 @@ namespace SensusUI.Inputs
             }
         }
 
-        public override string DisplayName
+        public override string DefaultName
         {
             get
             {

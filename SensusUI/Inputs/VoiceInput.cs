@@ -67,7 +67,7 @@ namespace SensusUI.Inputs
             get { return _hasRun && _response != null; }
         }
 
-        public override string DisplayName
+        public override string DefaultName
         {
             get
             {

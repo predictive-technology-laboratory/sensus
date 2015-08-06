@@ -25,12 +25,12 @@ namespace SensusUI.Inputs
         {
             get
             {
-                int value;
-                return _entry != null && int.TryParse(_entry.Text, out value);
+                double value;
+                return _entry != null && double.TryParse(_entry.Text, out value);
             }
         }
 
-        public override string DisplayName
+        public override string DefaultName
         {
             get
             {
@@ -62,8 +62,8 @@ namespace SensusUI.Inputs
 
             valueRetriever = new Func<object>(() =>
                 {
-                    int value;
-                    if (int.TryParse(_entry.Text, out value))
+                    double value;
+                    if (double.TryParse(_entry.Text, out value))
                         return value;
                     else
                         return null;

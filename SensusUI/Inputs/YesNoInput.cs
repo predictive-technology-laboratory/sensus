@@ -29,11 +29,11 @@ namespace SensusUI.Inputs
             }
         }
 
-        public override string DisplayName
+        public override string DefaultName
         {
             get
             {
-                return "Yes/No";
+                return "Yes/No Switch";
             }
         }
 

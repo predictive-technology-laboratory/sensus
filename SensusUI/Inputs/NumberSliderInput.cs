@@ -34,7 +34,10 @@ namespace SensusUI.Inputs
             set
             {
                 if (value >= _maximum)
-                    UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Number slider input minimum must be greater than maximum.");
+                {
+                    UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Number slider input minimum must be less than maximum.");
+                    value = _maximum - 1;
+                }
                 
                 _minimum = value;
             }
@@ -50,7 +53,10 @@ namespace SensusUI.Inputs
             set
             {
                 if (value <= _minimum)
-                    UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Number slider input maximum must be less than minimum.");
+                {
+                    UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Number slider input maximum must be greater than minimum.");
+                    value = _minimum + 1;
+                }
                 
                 _maximum = value;
             }
@@ -64,7 +70,7 @@ namespace SensusUI.Inputs
             }
         }
 
-        public override string DisplayName
+        public override string DefaultName
         {
             get
             {
@@ -74,17 +80,22 @@ namespace SensusUI.Inputs
 
         public NumberSliderInput()
         {
+            Construct(1, 10);
         }
 
         public NumberSliderInput(string labelText, double minimum, double maximum)
             : base(labelText)
         {
-            _minimum = minimum;
-            _maximum = maximum;
+            Construct(minimum, maximum);
         }
 
         public NumberSliderInput(string name, string labelText, double minimum, double maximum)
             : base(name, labelText)
+        {
+            Construct(minimum, maximum);
+        }
+
+        private void Construct(double minimum, double maximum)
         {
             _minimum = minimum;
             _maximum = maximum;
@@ -101,7 +112,8 @@ namespace SensusUI.Inputs
             {
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 Minimum = _minimum,
-                Maximum = _maximum
+                Maximum = _maximum,
+                Value = (_maximum - _minimum) / 2
             };
 
             Label sliderValueLabel = new Label

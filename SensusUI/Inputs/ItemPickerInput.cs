@@ -60,7 +60,7 @@ namespace SensusUI.Inputs
             }
         }
 
-        public override string DisplayName
+        public override string DefaultName
         {
             get
             {
@@ -70,22 +70,25 @@ namespace SensusUI.Inputs
 
         public ItemPickerInput()
         {
-            _tipText = "Please Make Selection";
-            _items = new List<string>();
+            Construct("Please Make Selection", new List<string>());
         }
 
         public ItemPickerInput(string labelText, string tipText, List<string> items)
             : base(labelText)
         {
-            _tipText = tipText;
-            _items = items;
+            Construct(tipText, items);
         }
 
         public ItemPickerInput(string name, string labelText, string tipText, List<string> items)
             : base(name, labelText)
         {
+            Construct(tipText, items);      
+        }
+
+        private void Construct(string tipText, List<string> items)
+        {
             _tipText = tipText;
-            _items = items;                
+            _items = items;   
         }
 
         public override View CreateView(out Func<object> valueRetriever)

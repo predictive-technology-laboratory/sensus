@@ -87,11 +87,12 @@ namespace SensusUI.Inputs
         public abstract bool Complete { get; }
 
         [JsonIgnore]
-        public abstract string DisplayName { get; }
+        public abstract string DefaultName { get; }
 
         public Input()
         {
-            _name = DisplayName;
+            _name = DefaultName;
+            _id = Guid.NewGuid().ToString();
         }
 
         public Input(string labelText)
@@ -104,14 +105,13 @@ namespace SensusUI.Inputs
             : this(labelText)
         {
             _name = name;
-            _id = Guid.NewGuid().ToString();
         }
 
         public abstract View CreateView(out Func<object> valueRetriever);
 
         public override string ToString()
         {
-            return _name + " (" + GetType().Name + ")";
+            return _name + (_name == DefaultName ? "" : " -- " + DefaultName);
         }
     }
 }
