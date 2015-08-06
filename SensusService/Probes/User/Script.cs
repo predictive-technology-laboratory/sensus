@@ -23,15 +23,6 @@ namespace SensusService.Probes.User
 {
     public class Script
     {
-        #region static members
-        private static JsonSerializerSettings JSON_SERIALIZER_SETTINGS = new JsonSerializerSettings
-        {
-            TypeNameHandling = TypeNameHandling.All,
-            PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
-        };
-        #endregion
-
         private ObservableCollection<InputGroup> _inputGroups;
         private DateTimeOffset _firstRunTimestamp;
         private Datum _previousDatum;
@@ -79,7 +70,7 @@ namespace SensusService.Probes.User
 
         public Script Copy()
         {
-            return JsonConvert.DeserializeObject<Script>(JsonConvert.SerializeObject(this, JSON_SERIALIZER_SETTINGS), JSON_SERIALIZER_SETTINGS);
+            return JsonConvert.DeserializeObject<Script>(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
         }
     }
 }

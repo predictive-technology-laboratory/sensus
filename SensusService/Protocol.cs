@@ -40,23 +40,6 @@ namespace SensusService
     {
         #region static members
 
-        private static JsonSerializerSettings JSON_SERIALIZER_SETTINGS = new JsonSerializerSettings
-        {        
-            PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-            TypeNameHandling = TypeNameHandling.All,
-            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-
-            // need the following in order to deserialize protocols between OSs, whose objects contain different members (e.g., iOS service helper has ActivationId, which Android does not)
-            Error = (o, e) =>
-            {
-                SensusServiceHelper.Get().Logger.Log("Failed to deserialize some part of the Protocol JSON:  " + e.ErrorContext.Error.ToString(), LoggingLevel.Normal, typeof(Protocol));
-                e.ErrorContext.Handled = true;
-            },
-                
-            MissingMemberHandling = MissingMemberHandling.Ignore  
-        };
-
         public static void CreateAsync(string name, Action<Protocol> callback)
         {
             new Thread(() =>
@@ -157,7 +140,7 @@ namespace SensusService
                             {
                                 try
                                 {
-                                    protocol = JsonConvert.DeserializeObject<Protocol>(json, JSON_SERIALIZER_SETTINGS);
+                                    protocol = JsonConvert.DeserializeObject<Protocol>(json, SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
                                 }
                                 catch (Exception ex)
                                 {
@@ -454,7 +437,7 @@ namespace SensusService
         {
             using (FileStream file = new FileStream(path, FileMode.Create, FileAccess.Write))
             {
-                byte[] encryptedBytes = SensusServiceHelper.Encrypt(JsonConvert.SerializeObject(this, JSON_SERIALIZER_SETTINGS));
+                byte[] encryptedBytes = SensusServiceHelper.Encrypt(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS));
                 file.Write(encryptedBytes, 0, encryptedBytes.Length);
                 file.Close();
             }
