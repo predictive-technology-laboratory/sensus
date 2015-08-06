@@ -41,8 +41,13 @@ namespace SensusUI.Inputs
         {
         }
 
-        public YesNoInput(string name, string label)
-            : base(name, label)
+        public YesNoInput(string labelText)
+            : base(labelText)
+        {
+        }
+
+        public YesNoInput(string name, string labelText)
+            : base(name, labelText)
         {
         }
 

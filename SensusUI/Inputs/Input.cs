@@ -94,10 +94,16 @@ namespace SensusUI.Inputs
             _name = DisplayName;
         }
 
+        public Input(string labelText)
+            : this()
+        {
+            _labelText = labelText;
+        }
+
         public Input(string name, string labelText)
+            : this(labelText)
         {
             _name = name;
-            _labelText = labelText;
             _id = Guid.NewGuid().ToString();
         }
 

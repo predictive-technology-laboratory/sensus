@@ -74,8 +74,15 @@ namespace SensusUI.Inputs
             _items = new List<string>();
         }
 
-        public ItemPickerInput(string name, string label, string tipText, List<string> items)
-            : base(name, label)
+        public ItemPickerInput(string labelText, string tipText, List<string> items)
+            : base(labelText)
+        {
+            _tipText = tipText;
+            _items = items;
+        }
+
+        public ItemPickerInput(string name, string labelText, string tipText, List<string> items)
+            : base(name, labelText)
         {
             _tipText = tipText;
             _items = items;                

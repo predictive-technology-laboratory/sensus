@@ -77,14 +77,16 @@ namespace SensusUI
 
             ToolbarItems.Add(new ToolbarItem(null, "plus.png", () =>
                     {
-                        UiBoundSensusServiceHelper.Get(true).PromptForInputsAsync("Define Point Of Interest", 
+                        UiBoundSensusServiceHelper.Get(true).PromptForInputsAsync(
+
+                            "Define Point Of Interest", 
 
                             new Input[]
                             {
-                                new TextInput(null, "POI Name:"),
-                                new TextInput(null, "POI Type:"),
-                                new TextInput(null, "Address:"),
-                                new YesNoInput(null, "View Map:")
+                                new TextInput("POI Name:"),
+                                new TextInput("POI Type:"),
+                                new TextInput("Address:"),
+                                new YesNoInput("View Map:")
                             },
 
                             inputs =>

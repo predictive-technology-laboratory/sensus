@@ -22,26 +22,19 @@ using Xamarin.Forms;
 
 namespace SensusUI.Inputs
 {
-    public class PromptInput : Input
+    public class VoiceInput : Input
     {
         #region static members
+
         private static readonly object LOCKER = new object();
-        private static bool PROMPT_IS_RUNNING = false;
+        private static bool IS_RUNNING = false;
+
         #endregion
 
-        private PromptOutputType _outputType;
         private string _outputMessage;
         private string _outputMessageRerun;
-        private PromptInputType _inputType;
         private string _response;
         private bool _hasRun;
-
-        [ListUiProperty("Output Type:", true, 10, new object[] { PromptOutputType.Text, PromptOutputType.Voice })]
-        public PromptOutputType OutputType
-        {
-            get { return _outputType; }
-            set { _outputType = value; }
-        }
 
         [EntryStringUiProperty("Output Message:", true, 11)]
         public string OutputMessage
@@ -55,13 +48,6 @@ namespace SensusUI.Inputs
         {
             get { return _outputMessageRerun; }
             set { _outputMessageRerun = value; }
-        }
-
-        [ListUiProperty("Input Type", true, 13, new object [] { PromptInputType.None, PromptInputType.Text, PromptInputType.Voice })]
-        public PromptInputType InputType
-        {
-            get { return _inputType; }
-            set { _inputType = value; }
         }
 
         public string Response
@@ -78,7 +64,7 @@ namespace SensusUI.Inputs
 
         public override bool Complete
         {
-            get { return _hasRun && (_inputType == PromptInputType.None || _response != null); }
+            get { return _hasRun && _response != null; }
         }
 
         public override string DisplayName
@@ -89,21 +75,24 @@ namespace SensusUI.Inputs
             }
         }
 
-        public PromptInput()
+        public VoiceInput()
         {
-            _outputType = PromptOutputType.Text;
             _outputMessage = "";
             _outputMessageRerun = "";
-            _inputType = PromptInputType.Text;
         }
 
-        public PromptInput(string name, PromptOutputType outputType, string outputMessage, string outputMessageRerun, PromptInputType inputType)
-            : base(name, null)
+        public VoiceInput(string outputMessage, string outputMessageRerun)
+            : base()
         {
-            _outputType = outputType;
             _outputMessage = outputMessage;
             _outputMessageRerun = outputMessageRerun;
-            _inputType = inputType;
+        }
+
+        public VoiceInput(string name, string outputMessage, string outputMessageRerun)
+            : base(name, null)
+        {
+            _outputMessage = outputMessage;
+            _outputMessageRerun = outputMessageRerun;
         }
 
         public void RunAsync(Datum triggeringDatum, bool isRerun, DateTimeOffset firstRunTimestamp, Action<string> callback)
@@ -121,13 +110,13 @@ namespace SensusUI.Inputs
                         }
 
                         // calling while a previous call is in progress returns null
-                        if (PROMPT_IS_RUNNING)
+                        if (IS_RUNNING)
                         {
                             callback(null);
                             return;
                         }
                         else
-                            PROMPT_IS_RUNNING = true;
+                            IS_RUNNING = true;
                     }
 
                     string outputMessage = _outputMessage;
@@ -150,54 +139,21 @@ namespace SensusUI.Inputs
                     }
                     #endregion
 
-                    // action to execute when user has provided a response
-                    Action<string> responseCallback = new Action<string>(response =>
+                    SensusServiceHelper.Get().TextToSpeechAsync(outputMessage, () =>
                         {
-                            if (string.IsNullOrWhiteSpace(response))
-                                response = null;
+                            SensusServiceHelper.Get().RunVoicePromptAsync(outputMessage, response =>
+                                {
+                                    if (string.IsNullOrWhiteSpace(response))
+                                        response = null;
 
-                            _response = response;
+                                    _response = response;
 
-                            callback(_response);
+                                    callback(_response);
 
-                            // allow other prompts to run
-                            PROMPT_IS_RUNNING = false;
+                                    // allow other prompts to run
+                                    IS_RUNNING = false;
+                                });
                         });
-
-                    if (_outputType == PromptOutputType.Text && _inputType == PromptInputType.Text)
-                        SensusServiceHelper.Get().PromptForInputAsync(outputMessage, false, responseCallback);
-                    else if (_outputType == PromptOutputType.Text && _inputType == PromptInputType.Voice)
-                        SensusServiceHelper.Get().PromptForInputAsync(outputMessage, true, responseCallback);
-                    else if (_outputType == PromptOutputType.Text && _inputType == PromptInputType.None)
-                    {
-                        SensusServiceHelper.Get().FlashNotificationAsync(outputMessage, () =>
-                            {
-                                PROMPT_IS_RUNNING = false;
-                            });
-                    }
-                    else if (_outputType == PromptOutputType.Voice && _inputType == PromptInputType.Text)
-                    {
-                        SensusServiceHelper.Get().TextToSpeechAsync(outputMessage, () =>
-                            {
-                                SensusServiceHelper.Get().PromptForInputAsync(outputMessage, false, responseCallback);
-                            });
-                    }
-                    else if (_outputType == PromptOutputType.Voice && _inputType == PromptInputType.Voice)
-                    {
-                        SensusServiceHelper.Get().TextToSpeechAsync(outputMessage, () =>
-                            {
-                                SensusServiceHelper.Get().PromptForInputAsync(outputMessage, true, responseCallback);
-                            });
-                    }
-                    else if (_outputType == PromptOutputType.Voice && _inputType == PromptInputType.None)
-                    {
-                        SensusServiceHelper.Get().TextToSpeechAsync(outputMessage, () =>
-                            {
-                                PROMPT_IS_RUNNING = false;
-                            });
-                    }
-                    else
-                        SensusServiceHelper.Get().Logger.Log("Prompt failure:  Unrecognized output/input setup:  " + _outputType + " -> " + _inputType, LoggingLevel.Normal, GetType());
                     
                     _hasRun = true;
 

@@ -450,7 +450,7 @@ namespace SensusService
 
         public abstract void TextToSpeechAsync(string text, Action callback);
 
-        public abstract void PromptForInputAsync(string prompt, bool startVoiceRecognizer, Action<string> callback);
+        public abstract void RunVoicePromptAsync(string prompt, Action<string> callback);
 
         public abstract void IssueNotificationAsync(string message, string id);
 
@@ -783,20 +783,31 @@ namespace SensusService
                 });
         }
 
+        public void PromptForInputAsync(string windowTitle, Input input, Action<object> callback)
+        {
+            PromptForInputsAsync(windowTitle, new Input[] { input }, inputs =>
+                {
+                    if (inputs.Count == 0)
+                        callback(null);
+                    else
+                        callback(inputs[0]);
+                });
+        }
+
         public void PromptForInputsAsync(string windowTitle, IEnumerable<Input> inputs, Action<List<object>> callback)
         {
-            InputGroup inputGroup = new InputGroup("");
+            InputGroup inputGroup = new InputGroup(windowTitle);
 
             foreach (Input input in inputs)
                 inputGroup.Inputs.Add(input);
 
-            PromptForInputsAsync(null, false, DateTimeOffset.MinValue, windowTitle, new InputGroup[] { inputGroup }.ToList(), groupResponses =>
+            PromptForInputsAsync(null, false, DateTimeOffset.MinValue, new InputGroup[] { inputGroup }.ToList(), groupResponses =>
                 {
                     callback(groupResponses.Select(groupResponse => groupResponse.Item2).ToList());
                 });
         }
 
-        public void PromptForInputsAsync(Datum triggeringDatum, bool isReprompt, DateTimeOffset firstPromptTimestamp, string windowTitle, IEnumerable<InputGroup> inputGroups, Action<List<Tuple<Input, object>>> callback)
+        public void PromptForInputsAsync(Datum triggeringDatum, bool isReprompt, DateTimeOffset firstPromptTimestamp, IEnumerable<InputGroup> inputGroups, Action<List<Tuple<Input, object>>> callback)
         {
             new Thread(() =>
                 {
@@ -811,9 +822,9 @@ namespace SensusService
 
                         ManualResetEvent responseWait = new ManualResetEvent(false);
 
-                        if (inputGroup.Inputs.Count == 1 && inputGroup.Inputs[0] is PromptInput)
+                        if (inputGroup.Inputs.Count == 1 && inputGroup.Inputs[0] is VoiceInput)
                         {
-                            PromptInput promptInput = inputGroup.Inputs[0] as PromptInput;
+                            VoiceInput promptInput = inputGroup.Inputs[0] as VoiceInput;
 
                             promptInput.RunAsync(triggeringDatum, isReprompt, firstPromptTimestamp, response =>
                                 {                
@@ -827,7 +838,7 @@ namespace SensusService
 
                             Device.BeginInvokeOnMainThread(async () =>
                                 {
-                                    await App.Current.MainPage.Navigation.PushAsync(new PromptForInputsPage(windowTitle, groupNum / (double)incompleteGroups, inputGroup, responses =>
+                                    await App.Current.MainPage.Navigation.PushAsync(new PromptForInputsPage(inputGroup, groupNum / (double)incompleteGroups, responses =>
                                             {
                                                 if (responses != null)
                                                     inputResponses.AddRange(responses);

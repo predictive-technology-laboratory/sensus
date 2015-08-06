@@ -270,7 +270,7 @@ namespace Sensus.Android
             _textToSpeech.SpeakAsync(text, callback);
         }
 
-        public override void PromptForInputAsync(string prompt, bool startVoiceRecognizer, Action<string> callback)
+        public override void RunVoicePromptAsync(string prompt, Action<string> callback)
         {
             new Thread(() =>
                 {
@@ -344,40 +344,39 @@ namespace Sensus.Android
                                         #endregion
 
                                         #region voice recognizer
-                                        if (startVoiceRecognizer)
-                                        {
-                                            new Thread(() =>
-                                                {
-                                                    // wait for the dialog to be shown so it doesn't hide our speech recognizer activity
-                                                    dialogShowWait.WaitOne();
 
-                                                    // there's a slight race condition between the dialog showing and speech recognition showing. pause here to prevent the dialog from hiding the speech recognizer.
-                                                    Thread.Sleep(1000);
+                                        new Thread(() =>
+                                            {
+                                                // wait for the dialog to be shown so it doesn't hide our speech recognizer activity
+                                                dialogShowWait.WaitOne();
 
-                                                    Intent intent = new Intent(RecognizerIntent.ActionRecognizeSpeech);
-                                                    intent.PutExtra(RecognizerIntent.ExtraLanguageModel, RecognizerIntent.LanguageModelFreeForm);
-                                                    intent.PutExtra(RecognizerIntent.ExtraSpeechInputCompleteSilenceLengthMillis, 1500);
-                                                    intent.PutExtra(RecognizerIntent.ExtraSpeechInputPossiblyCompleteSilenceLengthMillis, 1500);
-                                                    intent.PutExtra(RecognizerIntent.ExtraSpeechInputMinimumLengthMillis, 15000);
-                                                    intent.PutExtra(RecognizerIntent.ExtraMaxResults, 1);
-                                                    intent.PutExtra(RecognizerIntent.ExtraLanguage, Java.Util.Locale.Default);
-                                                    intent.PutExtra(RecognizerIntent.ExtraPrompt, prompt);
+                                                // there's a slight race condition between the dialog showing and speech recognition showing. pause here to prevent the dialog from hiding the speech recognizer.
+                                                Thread.Sleep(1000);
 
-                                                    mainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.RecognizeSpeech, result =>
+                                                Intent intent = new Intent(RecognizerIntent.ActionRecognizeSpeech);
+                                                intent.PutExtra(RecognizerIntent.ExtraLanguageModel, RecognizerIntent.LanguageModelFreeForm);
+                                                intent.PutExtra(RecognizerIntent.ExtraSpeechInputCompleteSilenceLengthMillis, 1500);
+                                                intent.PutExtra(RecognizerIntent.ExtraSpeechInputPossiblyCompleteSilenceLengthMillis, 1500);
+                                                intent.PutExtra(RecognizerIntent.ExtraSpeechInputMinimumLengthMillis, 15000);
+                                                intent.PutExtra(RecognizerIntent.ExtraMaxResults, 1);
+                                                intent.PutExtra(RecognizerIntent.ExtraLanguage, Java.Util.Locale.Default);
+                                                intent.PutExtra(RecognizerIntent.ExtraPrompt, prompt);
+
+                                                mainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.RecognizeSpeech, result =>
+                                                    {
+                                                        if (result != null && result.Item1 == Result.Ok)
                                                         {
-                                                            if (result != null && result.Item1 == Result.Ok)
-                                                            {
-                                                                IList<string> matches = result.Item2.GetStringArrayListExtra(RecognizerIntent.ExtraResults);
-                                                                if (matches != null && matches.Count > 0)
-                                                                    mainActivity.RunOnUiThread(() =>
-                                                                        {
-                                                                            inputEdit.Text = matches[0];
-                                                                        });
-                                                            }
-                                                        });
+                                                            IList<string> matches = result.Item2.GetStringArrayListExtra(RecognizerIntent.ExtraResults);
+                                                            if (matches != null && matches.Count > 0)
+                                                                mainActivity.RunOnUiThread(() =>
+                                                                    {
+                                                                        inputEdit.Text = matches[0];
+                                                                    });
+                                                        }
+                                                    });
                                         
-                                                }).Start();
-                                        }
+                                            }).Start();
+                                        
                                         #endregion
                                     });
                         });

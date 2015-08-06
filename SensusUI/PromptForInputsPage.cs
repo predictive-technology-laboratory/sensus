@@ -24,9 +24,9 @@ namespace SensusUI
 {
     public class PromptForInputsPage : ContentPage
     {
-        public PromptForInputsPage(string title, double progress, InputGroup inputGroup, Action<List<Tuple<Input, object>>> callback)
+        public PromptForInputsPage(InputGroup inputGroup, double progress, Action<List<Tuple<Input, object>>> callback)
         {
-            Title = title;
+            Title = inputGroup.Name;
 
             StackLayout contentLayout = new StackLayout
             {

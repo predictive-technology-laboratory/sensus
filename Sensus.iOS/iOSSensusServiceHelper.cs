@@ -146,6 +146,7 @@ namespace Sensus.iOS
         }
 
         #region callback scheduling
+
         protected override void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, string userNotificationMessage)
         {
             ScheduleCallbackAsync(callbackId, initialDelayMS, true, repeatDelayMS, userNotificationMessage);
@@ -155,7 +156,7 @@ namespace Sensus.iOS
         {
             ScheduleCallbackAsync(callbackId, delayMS, false, -1, userNotificationMessage);
         }
-                   
+
         private void ScheduleCallbackAsync(string callbackId, int delayMS, bool repeating, int repeatDelayMS, string userNotificationMessage)
         {
             Device.BeginInvokeOnMainThread(() =>
@@ -167,7 +168,7 @@ namespace Sensus.iOS
                         UserInfo = GetNotificationUserInfoDictionary(callbackId, repeating, repeatDelayMS)
                     };
 
-                    if(userNotificationMessage != null)
+                    if (userNotificationMessage != null)
                         notification.SoundName = UILocalNotification.DefaultSoundName;
 
                     lock (_callbackIdNotification)
@@ -234,6 +235,7 @@ namespace Sensus.iOS
                 SENSUS_CALLBACK_REPEAT_DELAY, repeatDelayMS,
                 SENSUS_CALLBACK_ACTIVATION_ID, _activationId);
         }
+
         #endregion
 
         public override void ShareFileAsync(string path, string subject)
@@ -266,7 +268,7 @@ namespace Sensus.iOS
                 }).Start();
         }
 
-        public override void PromptForInputAsync(string prompt, bool startVoiceRecognizer, Action<string> callback)
+        public override void RunVoicePromptAsync(string prompt, Action<string> callback)
         {
             new Thread(() =>
                 {
@@ -279,31 +281,36 @@ namespace Sensus.iOS
                             
                             UIAlertView dialog = new UIAlertView("Sensus is requesting input...", prompt, null, "Cancel", "OK");
                             dialog.AlertViewStyle = UIAlertViewStyle.PlainTextInput;
-                            dialog.Dismissed += (o,e) => { dialogDismissWait.Set(); };
-                            dialog.Presented += (o,e) => { dialogShowWait.Set(); };
-                            dialog.Clicked += (o,e) => 
-                                { 
-                                    if(e.ButtonIndex == 1)
-                                        input = dialog.GetTextField(0).Text;
-                                };
+                            dialog.Dismissed += (o, e) =>
+                            {
+                                dialogDismissWait.Set();
+                            };
+                            dialog.Presented += (o, e) =>
+                            {
+                                dialogShowWait.Set();
+                            };
+                            dialog.Clicked += (o, e) =>
+                            { 
+                                if (e.ButtonIndex == 1)
+                                    input = dialog.GetTextField(0).Text;
+                            };
 
                             dialog.Show();
 
                             #region voice recognizer
-                            if (startVoiceRecognizer)
-                            {
-                                new Thread(() =>
-                                    {
-                                        // wait for the dialog to be shown so it doesn't hide our speech recognizer activity
-                                        dialogShowWait.WaitOne();
 
-                                        // there's a slight race condition between the dialog showing and speech recognition showing. pause here to prevent the dialog from hiding the speech recognizer.
-                                        Thread.Sleep(1000);
+                            new Thread(() =>
+                                {
+                                    // wait for the dialog to be shown so it doesn't hide our speech recognizer activity
+                                    dialogShowWait.WaitOne();
 
-                                        // TODO:  Add speech recognition
+                                    // there's a slight race condition between the dialog showing and speech recognition showing. pause here to prevent the dialog from hiding the speech recognizer.
+                                    Thread.Sleep(1000);
 
-                                    }).Start();
-                            }
+                                    // TODO:  Add speech recognition
+
+                                }).Start();
+
                             #endregion
                         });
 
@@ -348,6 +355,7 @@ namespace Sensus.iOS
         }
 
         #region methods not implemented in ios
+
         public override void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
         {
             FlashNotificationAsync("This is not supported on iOS.");
@@ -357,7 +365,7 @@ namespace Sensus.iOS
 
         public override void UpdateApplicationStatus(string status)
         {
-        }   
+        }
 
         public override void KeepDeviceAwake()
         {
@@ -365,11 +373,12 @@ namespace Sensus.iOS
 
         public override void LetDeviceSleep()
         {
-        }        
+        }
 
         public override void BringToForeground()
         {            
         }
+
         #endregion
     }
 }

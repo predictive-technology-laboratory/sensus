@@ -76,8 +76,15 @@ namespace SensusUI.Inputs
         {
         }
 
-        public NumberSliderInput(string name, string label, double minimum, double maximum)
-            : base(name, label)
+        public NumberSliderInput(string labelText, double minimum, double maximum)
+            : base(labelText)
+        {
+            _minimum = minimum;
+            _maximum = maximum;
+        }
+
+        public NumberSliderInput(string name, string labelText, double minimum, double maximum)
+            : base(name, labelText)
         {
             _minimum = minimum;
             _maximum = maximum;

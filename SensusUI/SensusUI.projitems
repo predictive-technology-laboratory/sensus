@@ -48,13 +48,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\InputGroup.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\EditableListUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\EntryDoubleUiProperty.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Inputs\PromptInputType.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Inputs\PromptOutputType.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Inputs\PromptInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ScriptInputsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ScriptInputPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ScriptInputGroupsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ScriptInputGroupPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Inputs\VoiceInput.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Inputs\" />

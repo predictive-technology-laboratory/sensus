@@ -29,6 +29,7 @@ using System.Reflection;
 using SensusUI;
 using SensusService.Probes.Location;
 using SensusService.Exceptions;
+using SensusUI.Inputs;
 
 namespace SensusService
 {
@@ -574,14 +575,24 @@ namespace SensusService
         {
             int consentCode = new Random().Next(1000, 10000);
 
-            SensusServiceHelper.Get().PromptForInputAsync(
+            SensusServiceHelper.Get().PromptForInputsAsync(
 
-                (string.IsNullOrWhiteSpace(message) ? "" : message + Environment.NewLine + Environment.NewLine) +
+                "Protocol Consent", 
 
-                (string.IsNullOrWhiteSpace(_startupAgreement) ? "" : _startupAgreement + Environment.NewLine + Environment.NewLine) +
-
-                "To start this protocol, please indicate your consent by entering the following code:  " + consentCode, false, consentCodeStr =>
+                new Input[]
                 {
+                    new LabelOnlyInput(
+                        (string.IsNullOrWhiteSpace(message) ? "" : message + Environment.NewLine + Environment.NewLine) +
+                        (string.IsNullOrWhiteSpace(_startupAgreement) ? "" : _startupAgreement + Environment.NewLine + Environment.NewLine) +
+                        "To start this protocol, please indicate your consent by entering the following code:  " + consentCode),
+
+                    new TextInput("Code:")
+                },
+
+                inputs =>
+                {
+                    string consentCodeStr = inputs[0] as string;
+
                     if (consentCodeStr == null)
                         return;
 

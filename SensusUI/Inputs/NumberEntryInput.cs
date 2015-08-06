@@ -42,8 +42,13 @@ namespace SensusUI.Inputs
         {
         }
 
-        public NumberEntryInput(string name, string label)
-            : base(name, label)
+        public NumberEntryInput(string labelText)
+            : base(labelText)
+        {
+        }
+
+        public NumberEntryInput(string name, string labelText)
+            : base(name, labelText)
         {            
         }
 
