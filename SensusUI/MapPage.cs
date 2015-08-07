@@ -80,8 +80,8 @@ namespace SensusUI
                         try
                         {
                             string errorMessage = "Failed to search for address:  " + ex.Message;
-                            UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync(errorMessage);
                             UiBoundSensusServiceHelper.Get(true).Logger.Log(errorMessage, SensusService.LoggingLevel.Normal, GetType());
+                            UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync(errorMessage);                            
                         }
                         catch (Exception)
                         {
