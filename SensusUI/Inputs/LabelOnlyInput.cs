@@ -78,6 +78,7 @@ namespace SensusUI.Inputs
         private void Construct()
         {
             Complete = true;
+            ShouldBeStored = false;
         }
     }
 }

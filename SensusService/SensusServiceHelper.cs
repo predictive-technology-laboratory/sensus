@@ -873,14 +873,14 @@ namespace SensusService
                                                 inputGroups = null;
                                             else if (result == PromptForInputsPage.Result.NavigateBackward)
                                             {
-                                                await App.Current.MainPage.Navigation.PopAsync(true);
-                                                incompleteGroupNum -= 2;
+                                                await App.Current.MainPage.Navigation.PopAsync();
+                                                incompleteGroupNum -= 2;  // we're past the first page, so decrement by two so that, after the for-loop post-increment, the previous input group will be shown
                                             }
 
                                             responseWait.Set();
                                         });
 
-                                    await App.Current.MainPage.Navigation.PushAsync(promptForInputsPage, true);
+                                    await App.Current.MainPage.Navigation.PushAsync(promptForInputsPage);
                                 });
                         }
 
