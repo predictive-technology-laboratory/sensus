@@ -245,6 +245,7 @@ namespace Sensus.iOS
                     MFMailComposeViewController mailer = new MFMailComposeViewController();
                     mailer.SetSubject(subject);
                     mailer.AddAttachmentData(NSData.FromUrl(NSUrl.FromFilename(path)), "application/json", Path.GetFileName(path));
+                    mailer.Finished += (sender, e) => mailer.DismissViewControllerAsync(true);
                     UIApplication.SharedApplication.KeyWindow.RootViewController.PresentViewController(mailer, true, null);
                 });
         }

@@ -250,7 +250,7 @@ namespace SensusService.Probes.User
                             lock (_locker)
                                 if (!_probe.Running || !_enabled || previousCurrentDatum.Item2 == null)
                                 {
-                                    trigger.ConditionSatisfiedLastTime = false;  // this covers the case when the current datum is null. for some probes, the null datum is meaningful and is emitted in order for their state to be tracked appropriately (e.g., POI probe).
+                                    trigger.FireCriteriaMetOnPreviousCall = false;  // this covers the case when the current datum is null. for some probes, the null datum is meaningful and is emitted in order for their state to be tracked appropriately (e.g., POI probe).
                                     return;
                                 }
 
