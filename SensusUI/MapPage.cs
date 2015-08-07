@@ -18,6 +18,7 @@ using Xamarin.Forms.Maps;
 using Xam.Plugin.MapExtend.Abstractions;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using Xamarin;
 
 namespace SensusUI
 {
@@ -69,8 +70,29 @@ namespace SensusUI
             searchGoButton.Clicked += (o, e) =>
             {
                 if (!string.IsNullOrWhiteSpace(_searchEntry.Text))
-                    _map.SearchAdress(_searchEntry.Text);
-            };                          
+                {
+                    try
+                    {
+                        _map.SearchAdress(_searchEntry.Text);
+                    }
+                    catch (Exception ex)
+                    {
+                        try
+                        {
+                            string errorMessage = "Failed to search for address:  " + ex.Message;
+                            UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync(errorMessage);
+                            UiBoundSensusServiceHelper.Get(true).Logger.Log(errorMessage, SensusService.LoggingLevel.Normal, GetType());
+                        }
+                        catch (Exception)
+                        {
+                        }
+                        finally
+                        {
+                            Insights.Report(ex, Insights.Severity.Warning);
+                        }
+                    }
+                }
+            };
             #endregion
 
             Button clearPinsButton = new Button
