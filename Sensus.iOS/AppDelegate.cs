@@ -76,6 +76,10 @@ namespace Sensus.iOS
                 if (notification.FireDate.ToDateTime() <= DateTime.UtcNow)
                     ServiceNotificationAsync(notification);
 
+            #if DEBUG
+            Xamarin.Calabash.Start();
+            #endif
+
             return base.FinishedLaunching(uiApplication, launchOptions);
         }
 

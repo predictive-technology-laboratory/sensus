@@ -26,8 +26,6 @@ namespace Sensus.Android
 		
 		public static void UpdateIdValues()
 		{
-			global::DataNuage.Aws.Resource.String.ApplicationName = global::Sensus.Android.Resource.String.ApplicationName;
-			global::DataNuage.Aws.Resource.String.Hello = global::Sensus.Android.Resource.String.Hello;
 			global::GooglePlayServices.Resource.Animation.abc_fade_in = global::Sensus.Android.Resource.Animation.abc_fade_in;
 			global::GooglePlayServices.Resource.Animation.abc_fade_out = global::Sensus.Android.Resource.Animation.abc_fade_out;
 			global::GooglePlayServices.Resource.Animation.abc_grow_fade_in_from_bottom = global::Sensus.Android.Resource.Animation.abc_grow_fade_in_from_bottom;
@@ -1490,6 +1488,8 @@ namespace Sensus.Android
 			global::GooglePlayServices.Resource.Styleable.WalletFragmentStyle_maskedWalletDetailsTextAppearance = global::Sensus.Android.Resource.Styleable.WalletFragmentStyle_maskedWalletDetailsTextAppearance;
 			global::Xamarin.Forms.Platform.Resource.String.ApplicationName = global::Sensus.Android.Resource.String.ApplicationName;
 			global::Xamarin.Forms.Platform.Resource.String.Hello = global::Sensus.Android.Resource.String.Hello;
+			global::DataNuage.Aws.Resource.String.ApplicationName = global::Sensus.Android.Resource.String.ApplicationName;
+			global::DataNuage.Aws.Resource.String.Hello = global::Sensus.Android.Resource.String.Hello;
 		}
 		
 		public partial class Animation
