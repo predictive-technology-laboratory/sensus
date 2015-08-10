@@ -39,6 +39,7 @@ namespace SensusUI.Inputs
                     {
                         Orientation = StackOrientation.Horizontal,
                         HorizontalOptions = LayoutOptions.FillAndExpand,
+                        Padding = new Thickness (10, 10, 10, 10),
                         Children = { Label, _entry }
                     };
                 }

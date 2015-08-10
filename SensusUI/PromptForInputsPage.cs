@@ -93,6 +93,7 @@ namespace SensusUI
                 {
                     Orientation = StackOrientation.Horizontal,
                     HorizontalOptions = LayoutOptions.FillAndExpand,
+                    VerticalOptions = LayoutOptions.EndAndExpand,
                     Children = { cancelButton, nextButton }
                 });
 

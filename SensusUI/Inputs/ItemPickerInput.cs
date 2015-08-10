@@ -71,8 +71,9 @@ namespace SensusUI.Inputs
 
                     base.View = new StackLayout
                     {
-                        Orientation = StackOrientation.Horizontal,
-                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        Orientation = StackOrientation.Vertical,
+                        VerticalOptions = LayoutOptions.Fill,
+                        Padding = new Thickness (10, 10, 10, 10),
                         Children = { Label, _picker }
                     };
                 }
