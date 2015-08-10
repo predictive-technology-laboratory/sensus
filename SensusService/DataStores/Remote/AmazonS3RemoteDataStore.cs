@@ -33,7 +33,6 @@ namespace SensusService.DataStores.Remote
         private string _bucket;
         private string _folder;
         private string _cognitoIdentityPoolId;
-        private string _amazonRegion;
 
         private object _locker = new object();
 
@@ -79,19 +78,6 @@ namespace SensusService.DataStores.Remote
             }
         }
 
-        [ListUiProperty("Amazon Region:", true, 5, new object[] { "us-east-1", "eu-west-1" })]
-        public string AmazonRegion
-        {
-            get
-            {
-                return _amazonRegion;
-            }
-            set
-            {
-                _amazonRegion = value;
-            }
-        }
-
         protected override string DisplayName
         {
             get
@@ -117,10 +103,7 @@ namespace SensusService.DataStores.Remote
         {
             lock (_locker)
             {
-                if (_amazonRegion == null)
-                    throw new Exception("Must set Amazon Region");
-
-                RegionEndpoint amazonRegion = RegionEndpoint.GetBySystemName(_amazonRegion);
+                RegionEndpoint amazonRegion = RegionEndpoint.GetBySystemName(_cognitoIdentityPoolId.Substring(0, _cognitoIdentityPoolId.IndexOf(":")));
                 CognitoAWSCredentials credentials = new CognitoAWSCredentials(_cognitoIdentityPoolId, amazonRegion);
                 _s3 = new AmazonS3Client(credentials, amazonRegion);
 
