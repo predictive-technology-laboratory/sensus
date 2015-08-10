@@ -23,7 +23,6 @@ using Amazon.S3;
 using Amazon.CognitoIdentity;
 using Amazon;
 using Amazon.S3.Model;
-using System.Text.RegularExpressions;
 using Xamarin;
 
 namespace SensusService.DataStores.Remote
