@@ -14,22 +14,26 @@
 
 using System;
 using System.Collections.Generic;
-using DataNuage.Aws;
 using SensusUI.UiProperties;
 using Newtonsoft.Json.Serialization;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using Amazon.S3;
+using Amazon.CognitoIdentity;
+using Amazon;
+using Amazon.S3.Model;
+using Xamarin;
 
 namespace SensusService.DataStores.Remote
 {
     public class AmazonS3RemoteDataStore : RemoteDataStore
     {
-        private S3 _s3;
+        private AmazonS3Client _s3;
         private string _bucket;
         private string _folder;
-        private string _accessKey;
-        private string _secretKey;
+        private string _cognitoIdentityPoolId;
+        private string _amazonRegion;
 
         private object _locker = new object();
 
@@ -60,31 +64,31 @@ namespace SensusService.DataStores.Remote
                 
                 _folder = value;
             }
-        }           
+        }
 
-        [EntryStringUiProperty("Access Key:", true, 4)]
-        public string AccessKey
+        [EntryStringUiProperty("Cognito Pool Id:", true, 4)]
+        public string CognitoIdentityPoolId
         {
             get
             {
-                return _accessKey;
+                return _cognitoIdentityPoolId;
             }
             set
             {
-                _accessKey = value;
+                _cognitoIdentityPoolId = value;
             }
         }
 
-        [EntryStringUiProperty("Secret Key:", true, 5)]
-        public string SecretKey
+        [ListUiProperty("Amazon Region:", true, 5, new object[] { "us-east-1", "eu-west-1" })]
+        public string AmazonRegion
         {
             get
             {
-                return _secretKey;
+                return _amazonRegion;
             }
             set
             {
-                _secretKey = value;
+                _amazonRegion = value;
             }
         }
 
@@ -113,7 +117,13 @@ namespace SensusService.DataStores.Remote
         {
             lock (_locker)
             {
-                _s3 = new S3(_accessKey, _secretKey);
+                if (_amazonRegion == null)
+                    throw new Exception("Must set Amazon Region");
+
+                RegionEndpoint amazonRegion = RegionEndpoint.GetBySystemName(_amazonRegion);
+                CognitoAWSCredentials credentials = new CognitoAWSCredentials(_cognitoIdentityPoolId, amazonRegion);
+                _s3 = new AmazonS3Client(credentials, amazonRegion);
+
                 base.Start();
             }
         }
@@ -141,7 +151,7 @@ namespace SensusService.DataStores.Remote
                 json.Append(datum.GetJSON(Protocol.JsonAnonymizer) + Environment.NewLine);
 
                 List<Datum> dataSubset;
-                if(!datumTypeData.TryGetValue(datumType, out dataSubset))
+                if (!datumTypeData.TryGetValue(datumType, out dataSubset))
                 {
                     dataSubset = new List<Datum>();
                     datumTypeData.Add(datumType, dataSubset);
@@ -152,16 +162,22 @@ namespace SensusService.DataStores.Remote
 
             List<Datum> committedData = new List<Datum>();
 
-            foreach(string datumType in datumTypeJSON.Keys)
+            foreach (string datumType in datumTypeJSON.Keys)
             {
                 if (cancellationToken.IsCancellationRequested)
                     break;
                 
                 try
                 {
-                    string name = (_folder + "/" + datumType + "/" + Guid.NewGuid()).Trim('/');  // trim in case folder is blank
-                    string json = datumTypeJSON[datumType].ToString();
-                    _s3.PutObjectAsync(_bucket, name, json, contentType:"application/json").Wait(cancellationToken);
+                    PutObjectRequest putRequest = new PutObjectRequest
+                    {
+                        BucketName = _bucket,
+                        Key = (_folder + "/" + datumType + "/" + Guid.NewGuid()).Trim('/'),  // trim '/' in case folder is blank
+                        ContentBody = datumTypeJSON[datumType].ToString(),
+                        ContentType = "application/json"
+                    };
+
+                    _s3.PutObjectAsync(putRequest, cancellationToken).Wait(cancellationToken);
 
                     committedData.AddRange(datumTypeData[datumType]);
                 }
@@ -174,6 +190,19 @@ namespace SensusService.DataStores.Remote
             SensusServiceHelper.Get().Logger.Log("Committed " + committedData.Count + " data items to Amazon S3 bucket \"" + _bucket + "\" in " + (DateTimeOffset.UtcNow - commitStartTime).TotalSeconds + " seconds.", LoggingLevel.Verbose, GetType());
 
             return committedData;
+        }
+
+        public override void Stop()
+        {
+            base.Stop();
+
+            try
+            {
+                _s3.Dispose();
+            }
+            catch (Exception)
+            {
+            }
         }
     }
 }
