@@ -103,7 +103,7 @@ namespace SensusUI.Inputs
                                     {
                                         for (int i = 0; i < _selected.Length; i++)
                                             _response += _selected[i].ToString();
-                                        Console.Out.WriteLine(_response);
+                                        Complete = true;
                                     })
                                 .SetNegativeButton("Cancel", (obje, even) =>
                                     {

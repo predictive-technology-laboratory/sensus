@@ -24,6 +24,8 @@ namespace SensusUI
 {
     public class PromptForInputsPage : ContentPage
     {
+        private int _steps;
+
         public enum Result
         {
             NavigateBackward,
@@ -34,6 +36,8 @@ namespace SensusUI
         public PromptForInputsPage(InputGroup inputGroup, int stepNumber, int totalSteps, Action<Result> callback)
         {
             Title = inputGroup.Name;
+
+            _steps = totalSteps;
 
             StackLayout contentLayout = new StackLayout
             {
@@ -56,33 +60,8 @@ namespace SensusUI
                 });
 
             foreach (Input input in inputGroup.Inputs)
-            {
-                Console.Out.WriteLine(input.Name);
-                Console.Out.WriteLine(input.View);
-            }
-
-            foreach (Input input in inputGroup.Inputs)
-            {
-                if (input.View == null)
-                    Console.Out.WriteLine("NULL");
                 if (input.View != null)
                     contentLayout.Children.Add(input.View);
-            }
-
-            Button cancelButton = new Button
-            {
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                FontSize = 20,
-                Text = "Cancel"
-            };
-
-            bool cancelButtonTapped = false;
-
-            cancelButton.Clicked += async (o, e) =>
-            {
-                cancelButtonTapped = true;
-                await Navigation.PopAsync();
-            };
 
             Button nextButton = new Button
             {
@@ -95,8 +74,21 @@ namespace SensusUI
 
             nextButton.Clicked += async (o, e) =>
             {
-                nextButtonTapped = true;
-                await Navigation.PopAsync();
+                    bool complete = true;
+                    foreach (Input input in inputGroup.Inputs)
+                    {
+                        if (!(input is TextInput) && !(input.Complete) && totalSteps > 1)
+                        {
+                            complete = false;
+                            await DisplayAlert("Alert", "You must complete this step before moving on.", "Ok");
+                            break;
+                        }
+                    }
+                    if (complete)
+                    {
+                        nextButtonTapped = true;
+                        await Navigation.PopAsync();
+                    }
             };
                 
             contentLayout.Children.Add(new StackLayout
@@ -104,14 +96,12 @@ namespace SensusUI
                     Orientation = StackOrientation.Horizontal,
                     HorizontalOptions = LayoutOptions.FillAndExpand,
                     VerticalOptions = LayoutOptions.EndAndExpand,
-                    Children = { cancelButton, nextButton }
+                    Children = { nextButton }
                 });
 
-            Disappearing += (o, e) =>
+            Disappearing += async (o, e) =>
             {
-                if (cancelButtonTapped)
-                    callback(Result.Cancel);
-                else if (nextButtonTapped)
+                if (nextButtonTapped)
                     callback(Result.NavigateForward);
                 else
                     callback(Result.NavigateBackward);
