@@ -1,9 +1,6 @@
 ﻿<metadata>
-	<!--
-  This sample removes the class: android.support.v4.content.AsyncTaskLoader.LoadTask:
-  <remove-node path="/api/package[@name='android.support.v4.content']/class[@name='AsyncTaskLoader.LoadTask']" />
-  
-  This sample removes the method: android.support.v4.content.CursorLoader.loadInBackground:
-  <remove-node path="/api/package[@name='android.support.v4.content']/class[@name='CursorLoader']/method[@name='loadInBackground']" />
-  -->
+
+	<!-- The original namespace name conflicts with the .NET Delegate type. -->
+	<attr path="/api/package[@name='com.empatica.empalink.delegate']" name="managedName">Com.Empatica.Empalink.Delegates</attr>
+
 </metadata>

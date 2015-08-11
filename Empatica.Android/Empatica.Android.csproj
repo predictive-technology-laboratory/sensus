@@ -53,9 +53,17 @@
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Xamarin.Android.Bindings.targets" />
   <ItemGroup>
-    <LibraryProjectZip Include="Jars\empalink-2.0.aar" />
+    <EmbeddedReferenceJar Include="Jars\android-async-http-1.4.6.jar" />
   </ItemGroup>
   <ItemGroup>
-    <ReferenceJar Include="Jars\android-async-http-1.4.6.jar" />
+    <Folder Include="lib\" />
+    <Folder Include="lib\armeabi-v7a\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedNativeLibrary Include="lib\armeabi\libempac.so" />
+    <EmbeddedNativeLibrary Include="lib\armeabi-v7a\libempac.so" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedJar Include="Jars\empalink-2.0.jar" />
   </ItemGroup>
 </Project>
