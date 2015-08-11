@@ -56,8 +56,18 @@ namespace SensusUI
                 });
 
             foreach (Input input in inputGroup.Inputs)
+            {
+                Console.Out.WriteLine(input.Name);
+                Console.Out.WriteLine(input.View);
+            }
+
+            foreach (Input input in inputGroup.Inputs)
+            {
+                if (input.View == null)
+                    Console.Out.WriteLine("NULL");
                 if (input.View != null)
                     contentLayout.Children.Add(input.View);
+            }
 
             Button cancelButton = new Button
             {
