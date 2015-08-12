@@ -85,13 +85,13 @@ namespace SensusService
 
         #region static members
 
+        private static SensusServiceHelper SINGLETON;
         private static readonly object PROMPT_FOR_INPUTS_LOCKER = new object();
         private static bool PROMPT_FOR_INPUTS_RUNNING = false;
         public const string SENSUS_CALLBACK_KEY = "SENSUS-CALLBACK";
         public const string SENSUS_CALLBACK_ID_KEY = "SENSUS-CALLBACK-ID";
         public const string SENSUS_CALLBACK_REPEATING_KEY = "SENSUS-CALLBACK-REPEATING";
         protected const string XAMARIN_INSIGHTS_APP_KEY = "";
-        private static SensusServiceHelper SINGLETON;
         private const string ENCRYPTION_KEY = "";
         private static readonly string SHARE_DIRECTORY = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "share");
         private static readonly string LOG_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
@@ -657,12 +657,12 @@ namespace SensusService
             }
         }
 
-        public void RaiseCallbackAsync(string callbackId, bool repeating, bool notifyUser)
+        protected void RaiseCallbackAsync(string callbackId, bool repeating, bool notifyUser)
         {
             RaiseCallbackAsync(callbackId, repeating, notifyUser, null);
         }
 
-        public void RaiseCallbackAsync(string callbackId, bool repeating, bool notifyUser, Action callback)
+        protected void RaiseCallbackAsync(string callbackId, bool repeating, bool notifyUser, Action callback)
         {         
             KeepDeviceAwake();  // call this before we start up the new thread, just in case the system decides to sleep before the thread is started.
 
@@ -674,7 +674,12 @@ namespace SensusService
                     {
                         // do we have callback information for the passed callbackId? we might not, in the case where the callback is canceled by the user and the system fires it subsequently.
                         if (!_idCallback.TryGetValue(callbackId, out scheduledCallback))
+                        {
+                            if (callback != null)
+                                callback();
+
                             return;
+                        }
                     }
 
                     // callback actions cannot be raised concurrently -- drop the current callback if it is already in progress
