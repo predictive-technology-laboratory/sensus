@@ -103,6 +103,14 @@ git checkout master
 git merge $releaseBranch
 git push
 
+# if we're not releasing from develop, then any changes we just made to the release branch need to be merged into develop.
+if[ $releaseBranch -ne "develop" ]; then
+    git checkout develop
+    git merge $releaseBranch
+    git push
+    git checkout master
+fi
+
 # create tag for release and push tag to repository
 tag_name="Sensus-v$1"
 git tag -a $tag_name -m "Tag for Sensus release v$1."
