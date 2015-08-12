@@ -657,12 +657,12 @@ namespace SensusService
             }
         }
 
-        protected void RaiseCallbackAsync(string callbackId, bool repeating, bool notifyUser)
+        public void RaiseCallbackAsync(string callbackId, bool repeating, bool notifyUser)
         {
             RaiseCallbackAsync(callbackId, repeating, notifyUser, null);
         }
 
-        protected void RaiseCallbackAsync(string callbackId, bool repeating, bool notifyUser, Action callback)
+        public void RaiseCallbackAsync(string callbackId, bool repeating, bool notifyUser, Action callback)
         {         
             KeepDeviceAwake();  // call this before we start up the new thread, just in case the system decides to sleep before the thread is started.
 
