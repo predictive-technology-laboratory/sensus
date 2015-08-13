@@ -85,7 +85,7 @@ namespace SensusUI
                     bool complete = true;
                     foreach (Input input in inputGroup.Inputs)
                     {
-                        if (!(input is TextInput) && !(input.Complete) && totalSteps > 1)
+                        if (!(input is TextInput || input is YesNoInput) && !(input.Complete) && totalSteps > 1)
                         {
                             complete = false;
                             await DisplayAlert("Alert", "You must complete this step before moving on.", "Ok");

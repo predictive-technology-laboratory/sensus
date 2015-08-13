@@ -85,7 +85,7 @@ namespace SensusUI.Inputs
                         Text = "Please Make Selection",
                         FontSize = 17,
                         HorizontalOptions = LayoutOptions.FillAndExpand,
-                        BackgroundColor = Color.Gray,
+                        BackgroundColor = Color.Gray
                     };
 
                     _response = "";
