@@ -19,6 +19,9 @@ using SensusService.Exceptions;
 using System.Linq;
 using SensusUI.Inputs;
 using System.Threading;
+using Android.App;
+using Android.Runtime;
+using Android.Support.V7.AppCompat;
 
 namespace SensusUI
 {
@@ -35,6 +38,11 @@ namespace SensusUI
 
         public PromptForInputsPage(InputGroup inputGroup, int stepNumber, int totalSteps, Action<Result> callback)
         {
+            if (stepNumber == 1 && totalSteps != 1)
+                NavigationPage.SetHasBackButton(this, false);
+            else
+                NavigationPage.SetHasBackButton(this, true);
+
             Title = inputGroup.Name;
 
             _steps = totalSteps;
