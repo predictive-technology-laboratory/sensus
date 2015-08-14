@@ -14,11 +14,27 @@
 
 using System;
 using SensusService.Probes;
+using SensusUI.UiProperties;
 
 namespace SensusService.Probes.User
 {
     public abstract class EmpaticaWristbandProbe : ListeningProbe
     {
+        private string _empaticaKey;
+
+        [EntryStringUiProperty("Empatica Key:", true, 10)]
+        public string EmpaticaKey
+        {
+            get
+            {
+                return _empaticaKey;
+            }
+            set
+            {
+                _empaticaKey = value;
+            }
+        }
+
         public override Type DatumType
         {
             get

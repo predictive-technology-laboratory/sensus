@@ -9,6 +9,7 @@
     <RootNamespace>Empatica.iOS</RootNamespace>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
     <AssemblyName>Empatica.iOS</AssemblyName>
+    <ReleaseVersion>2.0.0</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -39,8 +40,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="EmpaLink-ios-0.7-full.framework\Versions\A\libEmpaLink-ios-0.7-full.linkwith.cs">
-      <DependentUpon>libEmpaLink-ios-0.7-full.a</DependentUpon>
+    <Compile Include="EmpaLinkIOS07fullframework\Versions\A\libEmpaLinkIOS07full.linkwith.cs">
+      <DependentUpon>libEmpaLinkIOS07full.a</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -51,6 +52,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.ObjCBinding.CSharp.targets" />
   <ItemGroup>
-    <ObjcBindingNativeLibrary Include="EmpaLink-ios-0.7-full.framework\Versions\A\libEmpaLink-ios-0.7-full.a" />
+    <ObjcBindingNativeLibrary Include="EmpaLinkIOS07fullframework\Versions\A\libEmpaLinkIOS07full.a" />
   </ItemGroup>
 </Project>

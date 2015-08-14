@@ -1,8 +1,10 @@
 #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
     #import <CoreBluetooth/CoreBluetooth.h>
 #else
-    #import <IOBluetooth/IOBluetooth.h>
+//    #import <IOBluetooth/IOBluetooth.h>
 #endif
+
+#import <Foundation/Foundation.h>
 
 //-----------EmpaticaAPI------------------------------
 typedef enum {

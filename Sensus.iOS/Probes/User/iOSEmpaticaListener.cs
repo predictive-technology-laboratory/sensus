@@ -13,36 +13,30 @@
 // limitations under the License.
 
 using System;
-using SensusService.Probes.User;
-using Com.Empatica.Empalink;
-using Com.Empatica.Empalink.Delegates;
-using SensusUI.UiProperties;
+using Empatica.iOS;
+using Foundation;
 
-namespace Sensus.Android.Probes.User
+namespace Sensus.iOS.Probes.User
 {
-    public class AndroidEmpaticaWristbandProbe : EmpaticaWristbandProbe
+    public class iOSEmpaticaListener : EmpaticaDelegate
     {
-        private AndroidEmpaticaWristbandListener _listener;
+        public event EventHandler<BLEStatus> StatusChanged;
+        public event EventHandler<NSObject[]> DevicesDiscovered;
 
-        public AndroidEmpaticaWristbandProbe()
+        public iOSEmpaticaListener()
         {
         }
 
-        protected override void Initialize()
+        public override void DidDiscoverDevices(NSObject[] devices)
         {
-            base.Initialize();
-
-            _listener = new AndroidEmpaticaWristbandListener();
+            if (DevicesDiscovered != null)
+                DevicesDiscovered(this, devices);
         }
 
-        protected override void StartListening()
+        public override void DidUpdateBLEStatus(BLEStatus status)
         {
-            _listener.Start(EmpaticaKey);
-        }
-
-        protected override void StopListening()
-        {
-            _listener.Stop();
+            if (StatusChanged != null)
+                StatusChanged(this, status);
         }
     }
 }

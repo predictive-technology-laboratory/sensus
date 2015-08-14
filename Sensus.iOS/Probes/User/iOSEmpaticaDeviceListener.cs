@@ -13,36 +13,22 @@
 // limitations under the License.
 
 using System;
-using SensusService.Probes.User;
-using Com.Empatica.Empalink;
-using Com.Empatica.Empalink.Delegates;
-using SensusUI.UiProperties;
+using Empatica.iOS;
 
-namespace Sensus.Android.Probes.User
+namespace Sensus.iOS.Probes.User
 {
-    public class AndroidEmpaticaWristbandProbe : EmpaticaWristbandProbe
+    public class iOSEmpaticaDeviceListener : EmpaticaDeviceDelegate
     {
-        private AndroidEmpaticaWristbandListener _listener;
+        public event EventHandler<Tuple<sbyte, sbyte, sbyte, DateTimeOffset>> Acceleration;
 
-        public AndroidEmpaticaWristbandProbe()
+        public iOSEmpaticaDeviceListener()
         {
         }
 
-        protected override void Initialize()
+        public override void DidReceiveAccelerationX(sbyte x, sbyte y, sbyte z, double timestamp, EmpaticaDeviceManager device)
         {
-            base.Initialize();
-
-            _listener = new AndroidEmpaticaWristbandListener();
-        }
-
-        protected override void StartListening()
-        {
-            _listener.Start(EmpaticaKey);
-        }
-
-        protected override void StopListening()
-        {
-            _listener.Stop();
+            Acceleration(this, new Tuple<sbyte, sbyte, sbyte, DateTimeOffset>());
         }
     }
 }
+
