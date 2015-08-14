@@ -129,14 +129,23 @@ namespace SensusUI
                 };
 
             #endregion
-                
-            contentLayout.Children.Add(new StackLayout
-                {
-                    Orientation = StackOrientation.Vertical,
-                    HorizontalOptions = LayoutOptions.FillAndExpand,
-                    VerticalOptions = LayoutOptions.EndAndExpand,
-                    Children = { nextButton, skipButton }
-                });
+
+            if (totalSteps == 1)
+                contentLayout.Children.Add(new StackLayout
+                    {
+                        Orientation = StackOrientation.Vertical,
+                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        VerticalOptions = LayoutOptions.EndAndExpand,
+                        Children = { nextButton }
+                    });
+            else
+                contentLayout.Children.Add(new StackLayout
+                    {
+                        Orientation = StackOrientation.Vertical,
+                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        VerticalOptions = LayoutOptions.EndAndExpand,
+                        Children = { nextButton, skipButton }
+                    });
 
             Disappearing += async (o, e) =>
             {
@@ -148,7 +157,8 @@ namespace SensusUI
 
             Content = new ScrollView
             {
-                Content = contentLayout
+                Content = contentLayout,
+                Padding = new Thickness(10, 10, 10, 10),
             };
         }
     }
