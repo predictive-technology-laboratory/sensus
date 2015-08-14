@@ -71,24 +71,46 @@ namespace SensusUI
                 if (input.View != null)
                     contentLayout.Children.Add(input.View);
 
+            #region set up buttons
+
             Button nextButton = new Button
             {
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 FontSize = 20,
+                Scale = 0.9,
+                BorderColor = Color.White,
+                BackgroundColor = Color.Transparent,
+                BorderWidth = 1,
                 Text = stepNumber < totalSteps ? "Next" : "Submit"
             };
 
             bool nextButtonTapped = false;
 
-            nextButton.Clicked += async (o, e) =>
-            {
+            Button skipButton = new Button
+                {
+                    HorizontalOptions = LayoutOptions.FillAndExpand,
+                    FontSize = 19,
+                    Scale = 0.6,
+                    BackgroundColor = Color.Transparent,
+                    TextColor = Color.Silver,
+                    Text = "Skip question"
+                };
+
+            bool skipButtonTapped = false;
+
+            #endregion
+
+            #region set up button click events
+
+            nextButton.Clicked += async (o, e) =>       // TODO fix this block to represent all alert cases
+                {
                     bool complete = true;
                     foreach (Input input in inputGroup.Inputs)
                     {
                         if (!(input is TextInput || input is YesNoInput) && !(input.Complete) && totalSteps > 1)
                         {
                             complete = false;
-                            await DisplayAlert("Alert", "You must complete this step before moving on.", "Ok");
+                            await DisplayAlert("Incomplete", "Please complete this step before moving on.", "Ok");
                             break;
                         }
                     }
@@ -97,19 +119,28 @@ namespace SensusUI
                         nextButtonTapped = true;
                         await Navigation.PopAsync();
                     }
-            };
+                };
+
+            skipButton.Clicked += async (o, e) =>       // TODO fix this block to represent all alert cases
+                {
+                    skipButtonTapped = await DisplayAlert("Skip question", "I do not wish to answer this question", "Yes", "No");
+                    if (skipButtonTapped)
+                        await Navigation.PopAsync();
+                };
+
+            #endregion
                 
             contentLayout.Children.Add(new StackLayout
                 {
-                    Orientation = StackOrientation.Horizontal,
+                    Orientation = StackOrientation.Vertical,
                     HorizontalOptions = LayoutOptions.FillAndExpand,
                     VerticalOptions = LayoutOptions.EndAndExpand,
-                    Children = { nextButton }
+                    Children = { nextButton, skipButton }
                 });
 
             Disappearing += async (o, e) =>
             {
-                if (nextButtonTapped)
+                if (nextButtonTapped || skipButtonTapped)
                     callback(Result.NavigateForward);
                 else
                     callback(Result.NavigateBackward);
