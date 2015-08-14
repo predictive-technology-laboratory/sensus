@@ -1,80 +1,120 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 using System;
-
-using UIKit;
+using EmpaLink-ios-0.7-full;
 using Foundation;
 using ObjCRuntime;
-using CoreGraphics;
 
-namespace Empatica.iOS
+// @protocol EmpaticaDelegate <NSObject>
+[Protocol, Model]
+[BaseType (typeof(NSObject))]
+interface EmpaticaDelegate
 {
-    // The first step to creating a binding is to add your native library ("libNativeLibrary.a")
-    // to the project by right-clicking (or Control-clicking) the folder containing this source
-    // file and clicking "Add files..." and then simply select the native library (or libraries)
-    // that you want to bind.
-    //
-    // When you do that, you'll notice that MonoDevelop generates a code-behind file for each
-    // native library which will contain a [LinkWith] attribute. MonoDevelop auto-detects the
-    // architectures that the native library supports and fills in that information for you,
-    // however, it cannot auto-detect any Frameworks or other system libraries that the
-    // native library may depend on, so you'll need to fill in that information yourself.
-    //
-    // Once you've done that, you're ready to move on to binding the API...
-    //
-    //
-    // Here is where you'd define your API definition for the native Objective-C library.
-    //
-    // For example, to bind the following Objective-C class:
-    //
-    //     @interface Widget : NSObject {
-    //     }
-    //
-    // The C# binding would look like this:
-    //
-    //     [BaseType (typeof (NSObject))]
-    //     interface Widget {
-    //     }
-    //
-    // To bind Objective-C properties, such as:
-    //
-    //     @property (nonatomic, readwrite, assign) CGPoint center;
-    //
-    // You would add a property definition in the C# interface like so:
-    //
-    //     [Export ("center")]
-    //     CGPoint Center { get; set; }
-    //
-    // To bind an Objective-C method, such as:
-    //
-    //     -(void) doSomething:(NSObject *)object atIndex:(NSInteger)index;
-    //
-    // You would add a method definition to the C# interface like so:
-    //
-    //     [Export ("doSomething:atIndex:")]
-    //     void DoSomething (NSObject object, int index);
-    //
-    // Objective-C "constructors" such as:
-    //
-    //     -(id)initWithElmo:(ElmoMuppet *)elmo;
-    //
-    // Can be bound as:
-    //
-    //     [Export ("initWithElmo:")]
-    //     IntPtr Constructor (ElmoMuppet elmo);
-    //
-    // For more information, see http://developer.xamarin.com/guides/ios/advanced_topics/binding_objective-c/
-    //
+	// @required -(void)didUpdateBLEStatus:(BLEStatus)status;
+	[Abstract]
+	[Export ("didUpdateBLEStatus:")]
+	void DidUpdateBLEStatus (BLEStatus status);
+
+	// @required -(void)didDiscoverDevices:(NSArray *)devices;
+	[Abstract]
+	[Export ("didDiscoverDevices:")]
+	[Verify (StronglyTypedNSArray)]
+	void DidDiscoverDevices (NSObject[] devices);
 }
 
+// @interface EmpaticaAPI : NSObject
+[BaseType (typeof(NSObject))]
+interface EmpaticaAPI
+{
+	// +(void)authenticateWithAPIKey:(NSString *)key andCompletionHandler:(void (^)(BOOL, NSString *))handler;
+	[Static]
+	[Export ("authenticateWithAPIKey:andCompletionHandler:")]
+	void AuthenticateWithAPIKey (string key, Action<bool, NSString> handler);
+
+	// +(void)discoverDevicesWithDelegate:(id<EmpaticaDelegate>)empaticaDelegate;
+	[Static]
+	[Export ("discoverDevicesWithDelegate:")]
+	void DiscoverDevicesWithDelegate (EmpaticaDelegate empaticaDelegate);
+
+	// +(BLEStatus)status;
+	[Static]
+	[Export ("status")]
+	[Verify (MethodToProperty)]
+	BLEStatus Status { get; }
+
+	// +(void)prepareForBackground;
+	[Static]
+	[Export ("prepareForBackground")]
+	void PrepareForBackground ();
+
+	// +(void)prepareForResume;
+	[Static]
+	[Export ("prepareForResume")]
+	void PrepareForResume ();
+}
+
+// @protocol EmpaticaDeviceDelegate <NSObject>
+[Protocol, Model]
+[BaseType (typeof(NSObject))]
+interface EmpaticaDeviceDelegate
+{
+	// @optional -(void)didUpdateDeviceStatus:(DeviceStatus)status forDevice:(EmpaticaDeviceManager *)device;
+	[Export ("didUpdateDeviceStatus:forDevice:")]
+	void DidUpdateDeviceStatus (DeviceStatus status, EmpaticaDeviceManager device);
+
+	// @optional -(void)didReceiveTagAtTimestamp:(double)timestamp fromDevice:(EmpaticaDeviceManager *)device;
+	[Export ("didReceiveTagAtTimestamp:fromDevice:")]
+	void DidReceiveTagAtTimestamp (double timestamp, EmpaticaDeviceManager device);
+
+	// @optional -(void)didReceiveGSR:(float)gsr withTimestamp:(double)timestamp fromDevice:(EmpaticaDeviceManager *)device;
+	[Export ("didReceiveGSR:withTimestamp:fromDevice:")]
+	void DidReceiveGSR (float gsr, double timestamp, EmpaticaDeviceManager device);
+
+	// @optional -(void)didReceiveBVP:(float)bvp withTimestamp:(double)timestamp fromDevice:(EmpaticaDeviceManager *)device;
+	[Export ("didReceiveBVP:withTimestamp:fromDevice:")]
+	void DidReceiveBVP (float bvp, double timestamp, EmpaticaDeviceManager device);
+
+	// @optional -(void)didReceiveTemperature:(float)temp withTimestamp:(double)timestamp fromDevice:(EmpaticaDeviceManager *)device;
+	[Export ("didReceiveTemperature:withTimestamp:fromDevice:")]
+	void DidReceiveTemperature (float temp, double timestamp, EmpaticaDeviceManager device);
+
+	// @optional -(void)didReceiveAccelerationX:(char)x y:(char)y z:(char)z withTimestamp:(double)timestamp fromDevice:(EmpaticaDeviceManager *)device;
+	[Export ("didReceiveAccelerationX:y:z:withTimestamp:fromDevice:")]
+	void DidReceiveAccelerationX (sbyte x, sbyte y, sbyte z, double timestamp, EmpaticaDeviceManager device);
+
+	// @optional -(void)didReceiveIBI:(float)ibi withTimestamp:(double)timestamp fromDevice:(EmpaticaDeviceManager *)device;
+	[Export ("didReceiveIBI:withTimestamp:fromDevice:")]
+	void DidReceiveIBI (float ibi, double timestamp, EmpaticaDeviceManager device);
+
+	// @optional -(void)didReceiveBatteryLevel:(float)level withTimestamp:(double)timestamp fromDevice:(EmpaticaDeviceManager *)device;
+	[Export ("didReceiveBatteryLevel:withTimestamp:fromDevice:")]
+	void DidReceiveBatteryLevel (float level, double timestamp, EmpaticaDeviceManager device);
+}
+
+// @interface EmpaticaDeviceManager : NSObject
+[BaseType (typeof(NSObject))]
+interface EmpaticaDeviceManager
+{
+	// @property (nonatomic, strong) NSString * name;
+	[Export ("name", ArgumentSemantic.Strong)]
+	string Name { get; set; }
+
+	// @property (readonly, assign, nonatomic) BOOL allowed;
+	[Export ("allowed")]
+	bool Allowed { get; }
+
+	// @property (readonly, assign, nonatomic) DeviceStatus deviceStatus;
+	[Export ("deviceStatus", ArgumentSemantic.Assign)]
+	DeviceStatus DeviceStatus { get; }
+
+	// -(void)connectWithDeviceDelegate:(id<EmpaticaDeviceDelegate>)deviceDelegate;
+	[Export ("connectWithDeviceDelegate:")]
+	void ConnectWithDeviceDelegate (EmpaticaDeviceDelegate deviceDelegate);
+
+	// -(void)connectWithDeviceDelegate:(id<EmpaticaDeviceDelegate>)deviceDelegate andConnectionOptions:(NSArray *)connectionOptions;
+	[Export ("connectWithDeviceDelegate:andConnectionOptions:")]
+	[Verify (StronglyTypedNSArray)]
+	void ConnectWithDeviceDelegate (EmpaticaDeviceDelegate deviceDelegate, NSObject[] connectionOptions);
+
+	// -(void)disconnect;
+	[Export ("disconnect")]
+	void Disconnect ();
+}
