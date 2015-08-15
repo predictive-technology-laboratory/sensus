@@ -46,7 +46,8 @@ namespace SensusUI
             StackLayout triggerDefinitionLayout = new StackLayout
                 {
                     Orientation = StackOrientation.Vertical,
-                    VerticalOptions = LayoutOptions.FillAndExpand
+                    VerticalOptions = LayoutOptions.FillAndExpand,
+                    Padding = new Thickness(10, 10, 10, 10),
                 };
 
             contentLayout.Children.Add(triggerDefinitionLayout);
@@ -82,7 +83,6 @@ namespace SensusUI
                 {
                     Orientation = StackOrientation.Horizontal,
                     HorizontalOptions = LayoutOptions.FillAndExpand,
-                    Padding = new Thickness(10, 10, 10, 10),
                     Children = { endTimeLabel, endTimePicker }
                 });
             #endregion
