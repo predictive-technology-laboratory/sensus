@@ -32,6 +32,7 @@ namespace SensusService.Probes.User
         private bool _enabled;
         private int _delayMS;
         private ObservableCollection<Trigger> _triggers;
+        private ObservableCollection<TimeTrigger> _timeTriggers;
         private Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>> _triggerHandler;
         private Queue<Script> _incompleteScripts;
         private bool _rerun;
@@ -110,6 +111,11 @@ namespace SensusService.Probes.User
         public ObservableCollection<Trigger> Triggers
         {
             get { return _triggers; }
+        }
+
+        public ObservableCollection<TimeTrigger> TimeTriggers
+        {
+            get { return _timeTriggers; }
         }
 
         public Queue<Script> IncompleteScripts
@@ -223,6 +229,7 @@ namespace SensusService.Probes.User
             _enabled = false;
             _delayMS = 0;
             _triggers = new ObservableCollection<Trigger>();
+            _timeTriggers = new ObservableCollection<TimeTrigger>();
             _triggerHandler = new Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>>();
             _incompleteScripts = new Queue<Script>();
             _rerun = false;
@@ -321,6 +328,9 @@ namespace SensusService.Probes.User
 
             if (_triggerRandomly)
                 StartRandomTriggerCallbacksAsync();
+
+            if (_timeTriggers.Count != 0)
+                StartTimeTriggerCallbacksAsync();
         }
 
         private void StartRerunCallbacksAsync()
@@ -390,6 +400,77 @@ namespace SensusService.Probes.User
                             , "Trigger Randomly", _random.Next(_maximumRandomTriggerDelayMinutes * 60000), userNotificationMessage);
                     }
                 }).Start();
+        }
+
+        private void StartTimeTriggerCallbacksAsync()
+        {
+            foreach (TimeTrigger timeTrigger in _timeTriggers)
+            {
+                new Thread(() =>
+                    {
+                        lock (_locker)
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Starting time trigger callbacks.", LoggingLevel.Normal, GetType());
+
+                            TimeSpan day = new TimeSpan(24, 00, 00);
+                            TimeSpan now = TimeSpan.Parse(DateTime.Now.ToString("HH:mm"));
+
+                            int hour;
+                            int minute;
+
+                            hour = _random.Next(timeTrigger.StartTime.Hours, timeTrigger.EndTime.Hours + 1);
+
+                            if (timeTrigger.StartTime.Hours == timeTrigger.EndTime.Hours)                               // same hour
+                            {
+                                minute = _random.Next(timeTrigger.StartTime.Minutes, timeTrigger.EndTime.Minutes);
+                            }
+                            else
+                            {
+                                if (timeTrigger.StartTime.Hours == hour)                                                // trigger hour = start hour
+                                {
+                                    minute = _random.Next(timeTrigger.StartTime.Minutes, 60);
+                                }
+                                else if (timeTrigger.EndTime.Hours == hour)                                             // trigger hour = end hour
+                                {
+                                    minute = _random.Next(0, timeTrigger.EndTime.Minutes);
+                                }
+                                else
+                                {
+                                    minute = _random.Next(0, 60);
+                                }
+                            }
+
+                            TimeSpan fire = new TimeSpan(hour, minute, 0);
+                            TimeSpan timeUntilFire;
+                            double timeUntilFireMillis;
+                            if (fire <= now)
+                            {
+                                Console.Out.WriteLine("Haven't implemented multiple days yet; firing in 1 minute");
+                                timeUntilFire = new TimeSpan(0, 1, 0);
+                            }
+                            else
+                            {
+                                timeUntilFire = new TimeSpan();
+                                timeUntilFire = (fire - now);
+                            }
+
+                            timeUntilFireMillis = timeUntilFire.TotalMilliseconds;
+
+                            System.Timers.Timer timer = new System.Timers.Timer();
+                            timer.Interval = timeUntilFireMillis;
+                            timer.Elapsed += (o, e) =>
+                            {
+                                if (_probe.Running && _enabled)
+                                {
+                                RunAsync(_script.Copy());
+                                }
+                            };
+                            timer.Start();
+                                    
+
+                        }
+                    }).Start();
+            }
         }
 
         private void RunAsync(Script script)
