@@ -37,7 +37,8 @@ namespace Sensus.UITests
         ///   the APK.
         /// </summary>
         public string PathToIPA { get; private set;}
-        public string PathToAPK { get; private set; }
+        public string PathToAPK { get; private set;}
+
         [TestFixtureSetUp]
         public void TestFixtureSetup()
         {
@@ -137,6 +138,7 @@ namespace Sensus.UITests
             app.Repl();
             app.Screenshot("First screen.");
         }
+            
     }
 }
 
