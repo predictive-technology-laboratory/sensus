@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,27 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using SensusService.Probes.User;
-using Empatica.iOS;
-
-namespace Sensus.iOS.Probes.User
+namespace SensusService.Probes.User.Scripts.ProbeTriggerProperties
 {
-    public class iOSEmpaticaWristbandProbe : EmpaticaWristbandProbe
+    public class ListProbeTriggerProperty : ProbeTriggerProperty
     {
-        public iOSEmpaticaWristbandProbe()
+        private object[] _items;
+
+        public object[] Items
+        {
+            get { return _items; }
+            set { _items = value; }
+        }
+
+        public ListProbeTriggerProperty(object[] items)
+            : this(null, items)
         {
         }
 
-        protected override void StartListening()
+        public ListProbeTriggerProperty(string name, object[] items)
+            : base(name)
         {
-            
-            
-        }
-
-        protected override void StopListening()
-        {
-
+            _items = items;
         }
     }
 }

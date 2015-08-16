@@ -14,8 +14,8 @@
 
 using SensusService;
 using SensusService.Probes;
-using SensusService.Probes.User;
-using SensusService.Probes.User.ProbeTriggerProperties;
+using SensusService.Probes.User.Scripts;
+using SensusService.Probes.User.Scripts.ProbeTriggerProperties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -382,7 +382,7 @@ namespace SensusUI
                 {
                     try
                     {
-                        _scriptRunner.Triggers.Add(new SensusService.Probes.User.Trigger(_selectedProbe, _selectedDatumProperty, _selectedCondition, _conditionValue, changeSwitch.IsToggled, fireRepeatedlySwitch.IsToggled, regexSwitch.IsToggled, ignoreFirstDatumSwitch.IsToggled, startTimePicker.Time, endTimePicker.Time));
+                        _scriptRunner.Triggers.Add(new SensusService.Probes.User.Scripts.Trigger(_selectedProbe, _selectedDatumProperty, _selectedCondition, _conditionValue, changeSwitch.IsToggled, fireRepeatedlySwitch.IsToggled, regexSwitch.IsToggled, ignoreFirstDatumSwitch.IsToggled, startTimePicker.Time, endTimePicker.Time));
                         await Navigation.PopAsync();
                     }
                     catch (Exception ex)

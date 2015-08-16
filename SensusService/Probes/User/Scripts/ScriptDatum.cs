@@ -16,7 +16,7 @@ using System;
 using SensusService.Anonymization;
 using SensusService.Anonymization.Anonymizers;
 
-namespace SensusService.Probes.User
+namespace SensusService.Probes.User.Scripts
 {
     public class ScriptDatum : Datum
     {

@@ -12,18 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace SensusService.Probes.User.ProbeTriggerProperties
+namespace SensusService.Probes.User.Scripts
 {
-    public class BooleanProbeTriggerProperty : ProbeTriggerProperty
+    public enum TriggerValueCondition
     {
-        public BooleanProbeTriggerProperty()
-            : base()
-        {
-        }
-
-        public BooleanProbeTriggerProperty(string name)
-            : base(name)
-        {
-        }        
+        LessThan,
+        LessThanOrEqual,
+        Equal,
+        GreaterThanOrEqual,
+        GreaterThan
     }
 }

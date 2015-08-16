@@ -12,35 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-
-namespace SensusService.Probes.User.ProbeTriggerProperties
+namespace SensusService.Probes.User.Scripts.ProbeTriggerProperties
 {
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    public abstract class ProbeTriggerProperty : Attribute
+    public class BooleanProbeTriggerProperty : ProbeTriggerProperty
     {
-        private string _name;
-
-        public string Name
-        {
-            get
-            {
-                return _name;
-            }
-            set
-            {
-                _name = value;
-            }
-        }
-
-        public ProbeTriggerProperty()
+        public BooleanProbeTriggerProperty()
+            : base()
         {
         }
 
-        public ProbeTriggerProperty(string name)
-            : this()
+        public BooleanProbeTriggerProperty(string name)
+            : base(name)
         {
-            _name = name;
-        }
+        }        
     }
 }

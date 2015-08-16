@@ -27,6 +27,7 @@ using System.IO;
 using Facebook.CoreKit;
 using Xamarin;
 using Xam.Plugin.MapExtend.iOSUnified;
+using Empatica.iOS;
 
 namespace Sensus.iOS
 {
@@ -97,6 +98,8 @@ namespace Sensus.iOS
 
         public override void OnActivated(UIApplication uiApplication)
         {
+            Empatica.iOS.Empatica.PrepareForResume();
+
             // since all notifications are about to be rescheduled, clear any scheduled / delivered notifications.
             UIApplication.SharedApplication.CancelAllLocalNotifications();
             UIApplication.SharedApplication.ApplicationIconBadgeNumber = 0;
@@ -166,6 +169,8 @@ namespace Sensus.iOS
         // when the user quits.
         public override void DidEnterBackground(UIApplication application)
         {
+            Empatica.iOS.Empatica.PrepareForBackground();
+
             iOSSensusServiceHelper serviceHelper = UiBoundSensusServiceHelper.Get(false) as iOSSensusServiceHelper;
             if (serviceHelper != null)
             {

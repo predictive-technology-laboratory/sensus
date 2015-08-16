@@ -51,16 +51,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\WlanDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\PollingProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Probe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ProbeTriggerProperties\BooleanProbeTriggerProperty.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ProbeTriggerProperties\ListProbeTriggerProperty.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ProbeTriggerProperties\NumberProbeTriggerProperty.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ProbeTriggerProperties\ProbeTriggerProperty.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ProbeTriggerProperties\TextProbeTriggerProperty.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Script.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ScriptProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ScriptDatum.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Trigger.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\TriggerValueCondition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Protocol.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Logger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolReport.cs" />
@@ -95,18 +85,30 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\PointOfInterestProximityDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\ListeningPointsOfInterestProximityProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Remote\MicrosoftAzureRemoteDataStore.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ScriptRunner.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\StringHashAnonymizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExtensionMethods.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\ListeningTelephonyProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\PollingTelephonyProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\AmbientTemperatureDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\ListeningAmbientTemperatureProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\EmpaticaWristbandProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\EmpaticaWristbandDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Empatica\EmpaticaWristbandDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Empatica\EmpaticaWristbandProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\Script.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ScriptDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ScriptProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ScriptRunner.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\Trigger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\TriggerValueCondition.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ProbeTriggerProperties\BooleanProbeTriggerProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ProbeTriggerProperties\ListProbeTriggerProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ProbeTriggerProperties\NumberProbeTriggerProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ProbeTriggerProperties\ProbeTriggerProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ProbeTriggerProperties\TextProbeTriggerProperty.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Probes\User\Empatica\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\" />
   </ItemGroup>
 </Project>

@@ -14,7 +14,7 @@
 
 using System;
 using Xamarin.Geolocation;
-using SensusService.Probes.User.ProbeTriggerProperties;
+using SensusService.Probes.User.Scripts.ProbeTriggerProperties;
 using SensusService.Anonymization;
 using SensusService.Anonymization.Anonymizers;
 

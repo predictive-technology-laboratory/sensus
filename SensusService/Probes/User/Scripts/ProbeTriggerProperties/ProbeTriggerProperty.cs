@@ -12,18 +12,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace SensusService.Probes.User.ProbeTriggerProperties
+using System;
+
+namespace SensusService.Probes.User.Scripts.ProbeTriggerProperties
 {
-    public class NumberProbeTriggerProperty : ProbeTriggerProperty
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    public abstract class ProbeTriggerProperty : Attribute
     {
-        public NumberProbeTriggerProperty()
-            : base()
+        private string _name;
+
+        public string Name
+        {
+            get
+            {
+                return _name;
+            }
+            set
+            {
+                _name = value;
+            }
+        }
+
+        public ProbeTriggerProperty()
         {
         }
 
-        public NumberProbeTriggerProperty(string name)
-            : base(name)
+        public ProbeTriggerProperty(string name)
+            : this()
         {
-        }        
+            _name = name;
+        }
     }
 }

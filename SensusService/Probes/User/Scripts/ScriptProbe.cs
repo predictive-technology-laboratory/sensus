@@ -15,7 +15,7 @@
 using System;
 using System.Collections.ObjectModel;
 
-namespace SensusService.Probes.User
+namespace SensusService.Probes.User.Scripts
 {
     public class ScriptProbe : Probe
     {        

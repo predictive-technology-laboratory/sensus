@@ -19,7 +19,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using SensusUI.Inputs;
 
-namespace SensusService.Probes.User
+namespace SensusService.Probes.User.Scripts
 {
     public class Script
     {

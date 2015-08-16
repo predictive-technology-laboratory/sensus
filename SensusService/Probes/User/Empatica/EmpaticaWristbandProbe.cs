@@ -16,7 +16,7 @@ using System;
 using SensusService.Probes;
 using SensusUI.UiProperties;
 
-namespace SensusService.Probes.User
+namespace SensusService.Probes.User.Empatica
 {
     public abstract class EmpaticaWristbandProbe : ListeningProbe
     {

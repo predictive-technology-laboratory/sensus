@@ -13,7 +13,7 @@
 // limitations under the License.
 
 using SensusService.Probes;
-using SensusService.Probes.User;
+using SensusService.Probes.User.Scripts;
 using SensusUI.UiProperties;
 using Xamarin.Forms;
 using System.Collections.Generic;

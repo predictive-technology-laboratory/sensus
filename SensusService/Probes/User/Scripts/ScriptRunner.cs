@@ -22,7 +22,7 @@ using System.Threading;
 using System.Linq;
 using SensusUI.Inputs;
 
-namespace SensusService.Probes.User
+namespace SensusService.Probes.User.Scripts
 {
     public class ScriptRunner
     {

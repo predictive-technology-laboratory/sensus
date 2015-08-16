@@ -14,21 +14,25 @@
 
 using System;
 using Empatica.iOS;
+using Foundation;
 
-namespace Sensus.iOS.Probes.User
+namespace Sensus.iOS.Probes.User.Empatica
 {
-    public class iOSEmpaticaDeviceListener : EmpaticaDeviceDelegate
-    {
-        public event EventHandler<Tuple<sbyte, sbyte, sbyte, DateTimeOffset>> Acceleration;
+    public class iOSEmpaticaListener : EmpaticaListener
+    {        
+        public event EventHandler<EmpaticaDevice[]> DevicesDiscovered;
+        public event EventHandler<BLEStatus> StatusUpdated;
 
-        public iOSEmpaticaDeviceListener()
+        public override void DidDiscoverDevices(EmpaticaDevice[] devices)
         {
+            if (DevicesDiscovered != null)
+                DevicesDiscovered(this, devices);
         }
 
-        public override void DidReceiveAccelerationX(sbyte x, sbyte y, sbyte z, double timestamp, EmpaticaDeviceManager device)
+        public override void DidUpdateBLEStatus(BLEStatus status)
         {
-            Acceleration(this, new Tuple<sbyte, sbyte, sbyte, DateTimeOffset>());
+            if (StatusUpdated != null)
+                StatusUpdated(this, status);
         }
     }
 }
-

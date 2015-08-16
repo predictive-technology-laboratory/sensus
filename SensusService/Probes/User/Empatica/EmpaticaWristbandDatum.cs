@@ -13,30 +13,24 @@
 // limitations under the License.
 
 using System;
-using Empatica.iOS;
-using Foundation;
 
-namespace Sensus.iOS.Probes.User
+namespace SensusService.Probes.User.Empatica
 {
-    public class iOSEmpaticaListener : EmpaticaDelegate
+    public class EmpaticaWristbandDatum : Datum
     {
-        public event EventHandler<BLEStatus> StatusChanged;
-        public event EventHandler<NSObject[]> DevicesDiscovered;
-
-        public iOSEmpaticaListener()
+        public override string DisplayDetail
         {
+            get
+            {
+                throw new NotImplementedException();
+            }
         }
 
-        public override void DidDiscoverDevices(NSObject[] devices)
+        /// <summary>
+        /// For JSON deserialization.
+        /// </summary>
+        private EmpaticaWristbandDatum()
         {
-            if (DevicesDiscovered != null)
-                DevicesDiscovered(this, devices);
-        }
-
-        public override void DidUpdateBLEStatus(BLEStatus status)
-        {
-            if (StatusChanged != null)
-                StatusChanged(this, status);
         }
     }
 }
