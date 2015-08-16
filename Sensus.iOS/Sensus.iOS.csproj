@@ -278,8 +278,8 @@
     <Compile Include="Probes\Apps\iOSFacebookProbe.cs" />
     <Compile Include="Probes\Communication\iOSTelephonyProbe.cs" />
     <Compile Include="Probes\User\Empatica\iOSEmpaticaDeviceListener.cs" />
-    <Compile Include="Probes\User\Empatica\iOSEmpaticaListener.cs" />
     <Compile Include="Probes\User\Empatica\iOSEmpaticaWristbandProbe.cs" />
+    <Compile Include="Probes\User\Empatica\iOSEmpaticaSystemListener.cs" />
   </ItemGroup>
   <Import Project="..\SensusService\SensusService.projitems" Label="Shared" Condition="Exists('..\SensusService\SensusService.projitems')" />
   <Import Project="..\SensusUI\SensusUI.projitems" Label="Shared" Condition="Exists('..\SensusUI\SensusUI.projitems')" />

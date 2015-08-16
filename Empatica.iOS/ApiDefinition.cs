@@ -7,7 +7,7 @@ namespace Empatica.iOS
     // @protocol EmpaticaDelegate <NSObject>
     [Protocol, Model]
     [BaseType(typeof(NSObject))]
-    interface EmpaticaListener
+    interface EmpaticaSystemListener
     {
         // @required -(void)didUpdateBLEStatus:(BLEStatus)status;
         [Abstract]
@@ -22,7 +22,7 @@ namespace Empatica.iOS
 
     // @interface EmpaticaAPI : NSObject
     [BaseType(typeof(NSObject))]
-    interface Empatica
+    interface EmpaticaSystem
     {
         // +(void)authenticateWithAPIKey:(NSString *)key andCompletionHandler:(void (^)(BOOL, NSString *))handler;
         [Static]
@@ -32,7 +32,7 @@ namespace Empatica.iOS
         // +(void)discoverDevicesWithDelegate:(id<EmpaticaDelegate>)empaticaDelegate;
         [Static]
         [Export("discoverDevicesWithDelegate:")]
-        void DiscoverDevices(EmpaticaListener empaticaListener);
+        void DiscoverDevices(EmpaticaSystemListener empaticaListener);
 
         // +(BLEStatus)status;
         [Static]

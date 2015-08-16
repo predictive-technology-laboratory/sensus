@@ -18,7 +18,7 @@ using Foundation;
 
 namespace Sensus.iOS.Probes.User.Empatica
 {
-    public class iOSEmpaticaListener : EmpaticaListener
+    public class iOSEmpaticaSystemListener : EmpaticaSystemListener
     {        
         public event EventHandler<EmpaticaDevice[]> DevicesDiscovered;
         public event EventHandler<BLEStatus> StatusUpdated;

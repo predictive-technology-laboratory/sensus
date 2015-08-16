@@ -24,12 +24,12 @@ namespace Sensus.iOS.Probes.User.Empatica
 {
     public class iOSEmpaticaWristbandProbe : EmpaticaWristbandProbe
     {
-        private iOSEmpaticaListener _empaticaListener;
+        private iOSEmpaticaSystemListener _empaticaListener;
         private List<EmpaticaDevice> _discoveredDevices;
 
         public iOSEmpaticaWristbandProbe()
         {
-            _empaticaListener = new iOSEmpaticaListener();
+            _empaticaListener = new iOSEmpaticaSystemListener();
 
             _empaticaListener.DevicesDiscovered += (o, devices) =>
             {
@@ -46,12 +46,12 @@ namespace Sensus.iOS.Probes.User.Empatica
         {
             base.Initialize();
 
-            global::Empatica.iOS.Empatica.AuthenticateWithAPIKey(EmpaticaKey, (success, message) =>
+            EmpaticaSystem.AuthenticateWithAPIKey(EmpaticaKey, (success, message) =>
                 {
                     if (success)
                     {
                         SensusServiceHelper.Get().Logger.Log("Empatica authentication succeeded:  " + message.ToString(), LoggingLevel.Verbose, GetType());
-                        global::Empatica.iOS.Empatica.DiscoverDevices(_empaticaListener);
+                        EmpaticaSystem.DiscoverDevices(_empaticaListener);
                     }
                     else
                     {
