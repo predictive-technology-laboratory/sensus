@@ -50,5 +50,7 @@ namespace SensusService.Probes.User.Empatica
                 return "Empatica Wristband";
             }
         }
+
+        public abstract void ConnectDevices();
     }
 }

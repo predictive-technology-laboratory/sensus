@@ -25,27 +25,8 @@ namespace Sensus.iOS.Probes.User.Empatica
 {
     public class iOSEmpaticaWristbandProbe : EmpaticaWristbandProbe
     {
-        private iOSEmpaticaSystemListener _empaticaListener;
-        private List<EmpaticaDeviceManager> _discoveredDevices;
-        private ManualResetEvent _deviceDiscoveryWait;
-
         public iOSEmpaticaWristbandProbe()
-        {
-            _empaticaListener = new iOSEmpaticaSystemListener();
-            _discoveredDevices = new List<EmpaticaDeviceManager>();
-            _deviceDiscoveryWait = new ManualResetEvent(false);
-
-            _empaticaListener.DevicesDiscovered += (o, devices) =>
-            {
-                SensusServiceHelper.Get().Logger.Log("Discovered " + devices.Length + " Empatica devices (" + devices.Count(d => d.Allowed) + " allowable).", LoggingLevel.Normal, GetType());
-
-                lock (_discoveredDevices)
-                    foreach (EmpaticaDeviceManager device in devices)
-                        if (device.Allowed)
-                            _discoveredDevices.Add(device);
-
-                _deviceDiscoveryWait.Set();
-            };
+        {            
         }
 
         protected override void Initialize()
@@ -58,34 +39,14 @@ namespace Sensus.iOS.Probes.User.Empatica
             ManualResetEvent authenticateWait = new ManualResetEvent(false);
             Exception authenticateException = null;
 
-            lock (_discoveredDevices)
-                _discoveredDevices.Clear();
-            
-            _deviceDiscoveryWait.Reset();
-            Exception deviceDiscoveryException = null;
-
             try
             {
                 EmpaticaAPI.AuthenticateWithAPIKey(EmpaticaKey, (success, message) =>
                     {
                         if (success)
-                        {
-                            #region start device discovery
-                            try
-                            {
-                                EmpaticaAPI.DiscoverDevices(_empaticaListener);
-                            }
-                            catch (Exception ex)
-                            {
-                                deviceDiscoveryException = new Exception("Failed to start Empatica device discovery:  " + ex.Message);
-                                _deviceDiscoveryWait.Set();
-                            }
-                            #endregion
-                        }
+                            SensusServiceHelper.Get().Logger.Log("Empatica authentication succeeded:  " + message.ToString(), LoggingLevel.Normal, GetType());
                         else
-                        {
-                            authenticateException = new Exception("Empatica authenticate failure:  " + message.ToString());
-                        }
+                            authenticateException = new Exception("Empatica authenticate failed:  " + message.ToString());
 
                         authenticateWait.Set();
                     });
@@ -99,47 +60,40 @@ namespace Sensus.iOS.Probes.User.Empatica
             authenticateWait.WaitOne();
 
             if (authenticateException == null)
-            {
-                SensusServiceHelper.Get().Logger.Log("Empatica authentication succeeded. Waiting for device discovery.", LoggingLevel.Normal, GetType());
-
-                _deviceDiscoveryWait.WaitOne();
-
-                if (deviceDiscoveryException == null)
-                {
-                    lock (_discoveredDevices)
-                        if (_discoveredDevices.Count == 0)
-                        {
-                            string message = "No allowable Empatica devices found.";
-                            SensusServiceHelper.Get().FlashNotificationAsync(message);
-                            throw new Exception(message);
-                        }
-                }
-                else
-                    throw deviceDiscoveryException;
-            }
+                ConnectDevices();
             else
             {
                 SensusServiceHelper.Get().Logger.Log(authenticateException.Message, LoggingLevel.Normal, GetType());
                 throw authenticateException;
-            }                
+            } 
         }
 
         protected override void StartListening()
         {
-            lock (_discoveredDevices)
-                foreach (EmpaticaDeviceManager discoveredDevice in _discoveredDevices)
-                    if (discoveredDevice.DeviceStatus == DeviceStatus.Disconnected)
-                        Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
-                            {
-                                try
-                                {
-                                    discoveredDevice.ConnectWithDeviceListener(new iOSEmpaticaDeviceListener(this));
-                                }
-                                catch (Exception ex)
-                                {
-                                    SensusServiceHelper.Get().Logger.Log("Failed to connect Empatica device:  " + ex.Message);
-                                }
-                            });
+            ConnectDevices();
+        }
+
+        public override void ConnectDevices()
+        {
+            iOSEmpaticaSystemListener empaticaListener = new iOSEmpaticaSystemListener();
+
+            empaticaListener.DevicesDiscovered += (o, devices) =>
+            {
+                SensusServiceHelper.Get().Logger.Log("Discovered " + devices.Length + " Empatica devices (" + devices.Count(d => d.Allowed) + " allowable).", LoggingLevel.Normal, GetType());
+
+                foreach (EmpaticaDeviceManager device in devices)
+                    if (device.Allowed && device.DeviceStatus == DeviceStatus.Disconnected)
+                        device.ConnectWithDeviceListener(new iOSEmpaticaDeviceListener(this));
+            };
+
+            try
+            {
+                EmpaticaAPI.DiscoverDevices(empaticaListener);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to start Empatica device discovery:  " + ex.Message);
+            }
         }
 
         protected override void StopListening()
@@ -158,12 +112,6 @@ namespace Sensus.iOS.Probes.User.Empatica
                                     SensusServiceHelper.Get().Logger.Log("Failed to disconnect device:  " + ex.Message);
                                 }
                             });
-        }
-
-        public override bool TestHealth(ref string error, ref string warning, ref string misc)
-        {
-            lock (_discoveredDevices)
-                return base.TestHealth(ref error, ref warning, ref misc) || (_discoveredDevices.Count > 0 && _discoveredDevices.All(device => device.DeviceStatus == DeviceStatus.Disconnected));
         }
     }
 }
