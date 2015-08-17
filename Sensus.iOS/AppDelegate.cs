@@ -98,7 +98,7 @@ namespace Sensus.iOS
 
         public override void OnActivated(UIApplication uiApplication)
         {
-            EmpaticaSystem.PrepareForResume();
+            EmpaticaAPI.PrepareForResume();
 
             // since all notifications are about to be rescheduled, clear any scheduled / delivered notifications.
             UIApplication.SharedApplication.CancelAllLocalNotifications();
@@ -169,7 +169,7 @@ namespace Sensus.iOS
         // when the user quits.
         public override void DidEnterBackground(UIApplication application)
         {
-            EmpaticaSystem.PrepareForBackground();
+            EmpaticaAPI.PrepareForBackground();
 
             iOSSensusServiceHelper serviceHelper = UiBoundSensusServiceHelper.Get(false) as iOSSensusServiceHelper;
             if (serviceHelper != null)

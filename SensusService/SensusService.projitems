@@ -91,7 +91,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\PollingTelephonyProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\AmbientTemperatureDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\ListeningAmbientTemperatureProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Empatica\EmpaticaWristbandDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Empatica\EmpaticaWristbandProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\Script.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ScriptDatum.cs" />
@@ -104,6 +103,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ProbeTriggerProperties\NumberProbeTriggerProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ProbeTriggerProperties\ProbeTriggerProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ProbeTriggerProperties\TextProbeTriggerProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Empatica\EmpaticaWristbandDatum.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />

@@ -18,12 +18,12 @@ using Foundation;
 
 namespace Sensus.iOS.Probes.User.Empatica
 {
-    public class iOSEmpaticaSystemListener : EmpaticaSystemListener
+    public class iOSEmpaticaSystemListener : EmpaticaDelegate
     {        
-        public event EventHandler<EmpaticaDevice[]> DevicesDiscovered;
+        public event EventHandler<EmpaticaDeviceManager[]> DevicesDiscovered;
         public event EventHandler<BLEStatus> StatusUpdated;
 
-        public override void DidDiscoverDevices(EmpaticaDevice[] devices)
+        public override void DidDiscoverDevices(EmpaticaDeviceManager[] devices)
         {
             if (DevicesDiscovered != null)
                 DevicesDiscovered(this, devices);

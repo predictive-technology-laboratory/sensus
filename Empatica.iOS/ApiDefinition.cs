@@ -7,7 +7,7 @@ namespace Empatica.iOS
     // @protocol EmpaticaDelegate <NSObject>
     [Protocol, Model]
     [BaseType(typeof(NSObject))]
-    interface EmpaticaSystemListener
+    interface EmpaticaDelegate
     {
         // @required -(void)didUpdateBLEStatus:(BLEStatus)status;
         [Abstract]
@@ -17,12 +17,12 @@ namespace Empatica.iOS
         // @required -(void)didDiscoverDevices:(NSArray *)devices;
         [Abstract]
         [Export("didDiscoverDevices:")]
-        void DidDiscoverDevices(EmpaticaDevice[] devices);
+        void DidDiscoverDevices(EmpaticaDeviceManager[] devices);
     }
 
     // @interface EmpaticaAPI : NSObject
     [BaseType(typeof(NSObject))]
-    interface EmpaticaSystem
+    interface EmpaticaAPI
     {
         // +(void)authenticateWithAPIKey:(NSString *)key andCompletionHandler:(void (^)(BOOL, NSString *))handler;
         [Static]
@@ -32,7 +32,7 @@ namespace Empatica.iOS
         // +(void)discoverDevicesWithDelegate:(id<EmpaticaDelegate>)empaticaDelegate;
         [Static]
         [Export("discoverDevicesWithDelegate:")]
-        void DiscoverDevices(EmpaticaSystemListener empaticaListener);
+        void DiscoverDevices(EmpaticaDelegate empaticaListener);
 
         // +(BLEStatus)status;
         [Static]
@@ -53,44 +53,44 @@ namespace Empatica.iOS
     // @protocol EmpaticaDeviceDelegate <NSObject>
     [Protocol, Model]
     [BaseType(typeof(NSObject))]
-    interface EmpaticaDeviceListener
+    interface EmpaticaDeviceDelegate
     {
         // @optional -(void)didUpdateDeviceStatus:(DeviceStatus)status forDevice:(EmpaticaDeviceManager *)device;
         [Export("didUpdateDeviceStatus:forDevice:")]
-        void DidUpdateDeviceStatus(DeviceStatus status, EmpaticaDevice device);
+        void DidUpdateDeviceStatus(DeviceStatus status, EmpaticaDeviceManager device);
 
         // @optional -(void)didReceiveTagAtTimestamp:(double)timestamp fromDevice:(EmpaticaDeviceManager *)device;
         [Export("didReceiveTagAtTimestamp:fromDevice:")]
-        void DidReceiveTagAtTimestamp(double timestamp, EmpaticaDevice device);
+        void DidReceiveTagAtTimestamp(double timestamp, EmpaticaDeviceManager device);
 
         // @optional -(void)didReceiveGSR:(float)gsr withTimestamp:(double)timestamp fromDevice:(EmpaticaDeviceManager *)device;
         [Export("didReceiveGSR:withTimestamp:fromDevice:")]
-        void DidReceiveGalvanicSkinResponse(float galvanicSkinResponse, double timestamp, EmpaticaDevice device);
+        void DidReceiveGalvanicSkinResponse(float galvanicSkinResponse, double timestamp, EmpaticaDeviceManager device);
 
         // @optional -(void)didReceiveBVP:(float)bvp withTimestamp:(double)timestamp fromDevice:(EmpaticaDeviceManager *)device;
         [Export("didReceiveBVP:withTimestamp:fromDevice:")]
-        void DidReceiveBloodVolumePulse(float bloodVolumePulse, double timestamp, EmpaticaDevice device);
+        void DidReceiveBloodVolumePulse(float bloodVolumePulse, double timestamp, EmpaticaDeviceManager device);
 
         // @optional -(void)didReceiveTemperature:(float)temp withTimestamp:(double)timestamp fromDevice:(EmpaticaDeviceManager *)device;
         [Export("didReceiveTemperature:withTimestamp:fromDevice:")]
-        void DidReceiveTemperature(float temperature, double timestamp, EmpaticaDevice device);
+        void DidReceiveTemperature(float temperature, double timestamp, EmpaticaDeviceManager device);
 
         // @optional -(void)didReceiveAccelerationX:(char)x y:(char)y z:(char)z withTimestamp:(double)timestamp fromDevice:(EmpaticaDeviceManager *)device;
         [Export("didReceiveAccelerationX:y:z:withTimestamp:fromDevice:")]
-        void DidReceiveAcceleration(sbyte x, sbyte y, sbyte z, double timestamp, EmpaticaDevice device);
+        void DidReceiveAcceleration(sbyte x, sbyte y, sbyte z, double timestamp, EmpaticaDeviceManager device);
 
         // @optional -(void)didReceiveIBI:(float)ibi withTimestamp:(double)timestamp fromDevice:(EmpaticaDeviceManager *)device;
         [Export("didReceiveIBI:withTimestamp:fromDevice:")]
-        void DidReceiveInterBeatInterval(float interBeatInterval, double timestamp, EmpaticaDevice device);
+        void DidReceiveInterBeatInterval(float interBeatInterval, double timestamp, EmpaticaDeviceManager device);
 
         // @optional -(void)didReceiveBatteryLevel:(float)level withTimestamp:(double)timestamp fromDevice:(EmpaticaDeviceManager *)device;
         [Export("didReceiveBatteryLevel:withTimestamp:fromDevice:")]
-        void DidReceiveBatteryLevel(float level, double timestamp, EmpaticaDevice device);
+        void DidReceiveBatteryLevel(float level, double timestamp, EmpaticaDeviceManager device);
     }
 
     // @interface EmpaticaDeviceManager : NSObject
     [BaseType(typeof(NSObject))]
-    interface EmpaticaDevice
+    interface EmpaticaDeviceManager
     {
         // @property (nonatomic, strong) NSString * name;
         [Export("name", ArgumentSemantic.Strong)]
@@ -106,11 +106,11 @@ namespace Empatica.iOS
 
         // -(void)connectWithDeviceDelegate:(id<EmpaticaDeviceDelegate>)deviceDelegate;
         [Export("connectWithDeviceDelegate:")]
-        void ConnectWithDeviceListener(EmpaticaDeviceListener deviceListener);
+        void ConnectWithDeviceListener(EmpaticaDeviceDelegate deviceListener);
 
         // -(void)connectWithDeviceDelegate:(id<EmpaticaDeviceDelegate>)deviceDelegate andConnectionOptions:(NSArray *)connectionOptions;
         [Export("connectWithDeviceDelegate:andConnectionOptions:")]
-        void ConnectWithDeviceListener(EmpaticaDeviceListener deviceListener, NSObject[] connectionOptions);
+        void ConnectWithDeviceListener(EmpaticaDeviceDelegate deviceListener, NSObject[] connectionOptions);
 
         // -(void)disconnect;
         [Export("disconnect")]

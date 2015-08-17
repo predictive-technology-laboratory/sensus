@@ -332,13 +332,13 @@
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
   </Target>
   <ItemGroup>
+    <Folder Include="Probes\User\" />
+    <Folder Include="Probes\User\Empatica\" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Empatica.iOS\Empatica.iOS.csproj">
       <Project>{290D3AA9-A374-4138-A87B-52DF7B917056}</Project>
       <Name>Empatica.iOS</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Probes\User\" />
-    <Folder Include="Probes\User\Empatica\" />
   </ItemGroup>
 </Project>
