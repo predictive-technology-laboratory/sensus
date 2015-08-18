@@ -51,6 +51,11 @@ namespace SensusService.Probes.User.Empatica
             }
         }
 
+        public EmpaticaWristbandProbe()
+        {
+            MaxDataStoresPerSecond = 1000; // empatica has a high data rate
+        }
+
         public abstract void DiscoverAndConnectDevices();
     }
 }
