@@ -51,6 +51,6 @@ namespace SensusService.Probes.User.Empatica
             }
         }
 
-        public abstract void ConnectDevices();
+        public abstract void DiscoverAndConnectDevices();
     }
 }

@@ -25,8 +25,11 @@ namespace Sensus.iOS.Probes.User.Empatica
 {
     public class iOSEmpaticaWristbandProbe : EmpaticaWristbandProbe
     {
+        private List<EmpaticaDeviceManager> _connectedDevices;
+
         public iOSEmpaticaWristbandProbe()
         {            
+            _connectedDevices = new List<EmpaticaDeviceManager>();
         }
 
         protected override void Initialize()
@@ -36,8 +39,8 @@ namespace Sensus.iOS.Probes.User.Empatica
             if (string.IsNullOrWhiteSpace(EmpaticaKey))
                 throw new Exception("Failed to start Empatica probe:  Empatica API key must be supplied.");
 
-            ManualResetEvent authenticateWait = new ManualResetEvent(false);
-            Exception authenticateException = null;
+            ManualResetEvent authenticationWait = new ManualResetEvent(false);
+            Exception authenticationException = null;
 
             try
             {
@@ -46,44 +49,59 @@ namespace Sensus.iOS.Probes.User.Empatica
                         if (success)
                             SensusServiceHelper.Get().Logger.Log("Empatica authentication succeeded:  " + message.ToString(), LoggingLevel.Normal, GetType());
                         else
-                            authenticateException = new Exception("Empatica authenticate failed:  " + message.ToString());
+                            authenticationException = new Exception("Empatica authentication failed:  " + message.ToString());
 
-                        authenticateWait.Set();
+                        authenticationWait.Set();
                     });
             }
             catch (Exception ex)
             {
-                authenticateException = new Exception("Failed to start Empatica authentication:  " + ex.Message);
-                authenticateWait.Set();
+                authenticationException = new Exception("Failed to start Empatica authentication:  " + ex.Message);
+                authenticationWait.Set();
             }
 
-            authenticateWait.WaitOne();
+            authenticationWait.WaitOne();
 
-            if (authenticateException == null)
-                ConnectDevices();
-            else
+            if (authenticationException != null)
             {
-                SensusServiceHelper.Get().Logger.Log(authenticateException.Message, LoggingLevel.Normal, GetType());
-                throw authenticateException;
+                SensusServiceHelper.Get().Logger.Log(authenticationException.Message, LoggingLevel.Normal, GetType());
+                throw authenticationException;
             } 
         }
 
         protected override void StartListening()
         {
-            ConnectDevices();
+            DiscoverAndConnectDevices();
         }
 
-        public override void ConnectDevices()
+        public override void DiscoverAndConnectDevices()
         {
             iOSEmpaticaSystemListener empaticaListener = new iOSEmpaticaSystemListener();
 
             empaticaListener.DevicesDiscovered += (o, devices) =>
             {
-                SensusServiceHelper.Get().Logger.Log("Discovered " + devices.Length + " Empatica devices (" + devices.Count(d => d.Allowed) + " allowable).", LoggingLevel.Normal, GetType());
+                // there is a lag of a few seconds between initiation of device discovery and calling of this method. if the probe is stopped in this interval,
+                // we do not want to connect the devices and begin data storage. quit now if the probe was stopped.
+                if (!Running)
+                    return;
+                    
+                SensusServiceHelper.Get().Logger.Log("Discovered " + devices.Length + " Empatica devices (" + devices.Count(d => d.Allowed) + " allowed).", LoggingLevel.Normal, GetType());
 
                 foreach (EmpaticaDeviceManager device in devices)
                     if (device.Allowed && device.DeviceStatus == DeviceStatus.Disconnected)
-                        device.ConnectWithDeviceListener(new iOSEmpaticaDeviceListener(this));
+                        try
+                        {
+                            device.ConnectWithDeviceListener(new iOSEmpaticaDeviceListener(this));
+
+                            lock (_connectedDevices)
+                                _connectedDevices.Add(device);
+                            
+                            SensusServiceHelper.Get().Logger.Log("Connected with Empatica device \"" + device.Name + "\".", LoggingLevel.Normal, GetType());
+                        }
+                        catch (Exception ex)
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Failed to connect with Empatica device \"" + device.Name + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
+                        }
             };
 
             try
@@ -98,18 +116,18 @@ namespace Sensus.iOS.Probes.User.Empatica
 
         protected override void StopListening()
         {
-            lock (_discoveredDevices)
-                foreach (EmpaticaDeviceManager discoveredDevice in _discoveredDevices)
-                    if (discoveredDevice.DeviceStatus == DeviceStatus.Connected)
+            lock (_connectedDevices)
+                foreach (EmpaticaDeviceManager connectedDevice in _connectedDevices)
+                    if (connectedDevice.DeviceStatus == DeviceStatus.Connected || connectedDevice.DeviceStatus == DeviceStatus.Connecting)
                         Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
                             {
                                 try
                                 {
-                                    discoveredDevice.Disconnect();
+                                    connectedDevice.Disconnect();
                                 }
                                 catch (Exception ex)
                                 {
-                                    SensusServiceHelper.Get().Logger.Log("Failed to disconnect device:  " + ex.Message);
+                                    SensusServiceHelper.Get().Logger.Log("Failed to disconnect Empatica device \"" + connectedDevice.Name + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
                                 }
                             });
         }

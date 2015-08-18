@@ -18,6 +18,8 @@ using System.IO;
 using System.Linq;
 using Xamarin.Forms;
 using SensusUI.Inputs;
+using System.Collections.Generic;
+using SensusService.Probes.User.Empatica;
 
 namespace SensusUI
 {
@@ -42,10 +44,16 @@ namespace SensusUI
 
                 Protocol selectedProtocol = _protocolsList.SelectedItem as Protocol;
 
-                string selectedAction = await DisplayActionSheet(selectedProtocol.Name, "Cancel", null, selectedProtocol.Running ? "Stop" : "Start", "Edit", "Status", "Share", "Delete");
+                List<string> actions = new List<string>(new string[] { selectedProtocol.Running ? "Stop" : "Start", "Edit", "Status", "Share", "Delete" });
+                if (selectedProtocol.Running && selectedProtocol.Probes.Any(probe => probe is EmpaticaWristbandProbe && probe.Running))
+                    actions.Insert(0, "Pair Empatica Wristband");
+                    
+                string selectedAction = await DisplayActionSheet(selectedProtocol.Name, "Cancel", null, actions.ToArray());
 
                 if (selectedAction == "Start")
                     selectedProtocol.StartWithUserAgreement(null);
+                else if (selectedAction == "Pair Empatica Wristband")
+                    (selectedProtocol.Probes.Where(probe => probe is EmpaticaWristbandProbe).First() as EmpaticaWristbandProbe).DiscoverAndConnectDevices();
                 else if (selectedAction == "Stop")
                 {
                     if (await DisplayAlert("Confirm Stop", "Are you sure you want to stop " + selectedProtocol.Name + "?", "Yes", "No"))
@@ -170,7 +178,7 @@ namespace SensusUI
 
                     input =>
                     {
-                        if(input == null)
+                        if (input == null)
                             return;
                         
                         string password = input.Value as string;
