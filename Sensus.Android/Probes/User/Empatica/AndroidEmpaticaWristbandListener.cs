@@ -21,31 +21,28 @@ using Android.Bluetooth;
 using SensusService;
 using Com.Empatica.Empalink.Config;
 
-namespace Sensus.Android.Probes.User
+namespace Sensus.Android.Probes.User.Empatica
 {
     public class AndroidEmpaticaWristbandListener : Java.Lang.Object, IEmpaDataDelegate, IEmpaStatusDelegate
     {
         private EmpaDeviceManager _empaticaDeviceManager;
+        private Action<Exception> _authenticateAction;
 
         public AndroidEmpaticaWristbandListener()
         {
+            _empaticaDeviceManager = new EmpaDeviceManager((SensusServiceHelper.Get() as AndroidSensusServiceHelper).Service, this, this);
         }
 
-        public void Start(string empaticaApiKey)
+        public void AuthenticateAsync(string empaticaApiKey, Action<Exception> authenticateAction)
         {
-            if (string.IsNullOrWhiteSpace(empaticaApiKey))
-                throw new Exception("Empatica key has not been set.");
-
-            Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
-                {
-                    _empaticaDeviceManager = new EmpaDeviceManager((SensusServiceHelper.Get() as AndroidSensusServiceHelper).Service, this, this);
-                    _empaticaDeviceManager.AuthenticateWithAPIKey(empaticaApiKey);
-                });
+            _authenticateAction = authenticateAction;
+            _empaticaDeviceManager.AuthenticateWithAPIKey(empaticaApiKey); // TODO:  How is invalid API key indicated?
         }
 
-        public void DidDiscoverDevice(BluetoothDevice device, string deviceName, int rssi, bool allowed)
+        public void DidUpdateStatus(EmpaStatus status)
         {
-            _empaticaDeviceManager.ConnectDevice(device);
+            if (status == EmpaStatus.Ready)
+                _authenticateAction(null);
         }
 
         public void DidRequestEnableBluetooth()
@@ -62,14 +59,13 @@ namespace Sensus.Android.Probes.User
                 });
         }
 
-        public void DidUpdateSensorStatus(EmpaSensorStatus p0, EmpaSensorType p1)
+        public void DidDiscoverDevice(BluetoothDevice device, string deviceName, int rssi, bool allowed)
         {
+            _empaticaDeviceManager.ConnectDevice(device);
         }
 
-        public void DidUpdateStatus(EmpaStatus status)
+        public void DidUpdateSensorStatus(EmpaSensorStatus p0, EmpaSensorType p1)
         {
-            if (status == EmpaStatus.Ready)
-                _empaticaDeviceManager.StartScanning();
         }
 
         public void Stop()

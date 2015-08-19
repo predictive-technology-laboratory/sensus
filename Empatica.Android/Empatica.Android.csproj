@@ -65,6 +65,6 @@
     <EmbeddedNativeLibrary Include="lib\armeabi-v7a\libempac.so" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedJar Include="Jars\empalink-2.0.jar" />
+    <LibraryProjectZip Include="Jars\empalink-2.0.aar" />
   </ItemGroup>
 </Project>

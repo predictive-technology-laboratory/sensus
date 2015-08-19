@@ -24,7 +24,7 @@ using System.Threading;
 namespace Sensus.iOS.Probes.User.Empatica
 {
     public class iOSEmpaticaWristbandProbe : EmpaticaWristbandProbe
-    {
+    {        
         private List<EmpaticaDeviceManager> _connectedDevices;
 
         public iOSEmpaticaWristbandProbe()
@@ -32,47 +32,19 @@ namespace Sensus.iOS.Probes.User.Empatica
             _connectedDevices = new List<EmpaticaDeviceManager>();
         }
 
-        protected override void Initialize()
+        protected override void AuthenticateAsync(Action<Exception> callback)
         {
-            base.Initialize();
+            EmpaticaAPI.AuthenticateWithAPIKey(EmpaticaKey, (success, message) =>
+                {
+                    Exception ex = null;
+                    if (success)
+                        SensusServiceHelper.Get().Logger.Log("Empatica authentication succeeded:  " + message.ToString(), LoggingLevel.Normal, GetType());
+                    else
+                        ex = new Exception("Empatica authentication failed:  " + message.ToString());
 
-            if (string.IsNullOrWhiteSpace(EmpaticaKey))
-                throw new Exception("Failed to start Empatica probe:  Empatica API key must be supplied.");
-
-            ManualResetEvent authenticationWait = new ManualResetEvent(false);
-            Exception authenticationException = null;
-
-            try
-            {
-                EmpaticaAPI.AuthenticateWithAPIKey(EmpaticaKey, (success, message) =>
-                    {
-                        if (success)
-                            SensusServiceHelper.Get().Logger.Log("Empatica authentication succeeded:  " + message.ToString(), LoggingLevel.Normal, GetType());
-                        else
-                            authenticationException = new Exception("Empatica authentication failed:  " + message.ToString());
-
-                        authenticationWait.Set();
-                    });
-            }
-            catch (Exception ex)
-            {
-                authenticationException = new Exception("Failed to start Empatica authentication:  " + ex.Message);
-                authenticationWait.Set();
-            }
-
-            authenticationWait.WaitOne();
-
-            if (authenticationException != null)
-            {
-                SensusServiceHelper.Get().Logger.Log(authenticationException.Message, LoggingLevel.Normal, GetType());
-                throw authenticationException;
-            } 
-        }
-
-        protected override void StartListening()
-        {
-            DiscoverAndConnectDevices();
-        }
+                    callback(ex);
+                });
+        }            
 
         public override void DiscoverAndConnectDevices()
         {
@@ -114,7 +86,7 @@ namespace Sensus.iOS.Probes.User.Empatica
             }
         }
 
-        protected override void StopListening()
+        protected override void DisconnectDevices()
         {
             lock (_connectedDevices)
                 foreach (EmpaticaDeviceManager connectedDevice in _connectedDevices)

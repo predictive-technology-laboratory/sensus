@@ -13,12 +13,12 @@
 // limitations under the License.
 
 using System;
-using SensusService.Probes.User;
 using Com.Empatica.Empalink;
 using Com.Empatica.Empalink.Delegates;
 using SensusUI.UiProperties;
+using SensusService.Probes.User.Empatica;
 
-namespace Sensus.Android.Probes.User
+namespace Sensus.Android.Probes.User.Empatica
 {
     public class AndroidEmpaticaWristbandProbe : EmpaticaWristbandProbe
     {
@@ -35,14 +35,19 @@ namespace Sensus.Android.Probes.User
             _listener = new AndroidEmpaticaWristbandListener();
         }
 
-        protected override void StartListening()
+        protected override void AuthenticateAsync(Action<Exception> callback)
         {
-            _listener.Start(EmpaticaKey);
+            _listener.AuthenticateAsync(EmpaticaKey, callback);
         }
 
-        protected override void StopListening()
+        public override void DiscoverAndConnectDevices()
         {
-            _listener.Stop();
+            
+        }
+
+        protected override void DisconnectDevices()
+        {
+            
         }
     }
 }

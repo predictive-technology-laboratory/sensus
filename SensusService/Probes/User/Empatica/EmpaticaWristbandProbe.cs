@@ -15,6 +15,7 @@
 using System;
 using SensusService.Probes;
 using SensusUI.UiProperties;
+using System.Threading;
 
 namespace SensusService.Probes.User.Empatica
 {
@@ -56,6 +57,53 @@ namespace SensusService.Probes.User.Empatica
             MaxDataStoresPerSecond = 100000; // empatica has a high data rate
         }
 
+        protected override void Initialize()
+        {
+            base.Initialize();
+
+            if (string.IsNullOrWhiteSpace(EmpaticaKey))
+                throw new Exception("Failed to start Empatica probe:  Empatica API key must be supplied.");
+
+            ManualResetEvent authenticationWait = new ManualResetEvent(false);
+            Exception authenticationException = null;
+
+            try
+            {
+                AuthenticateAsync(ex =>
+                    {
+                        authenticationException = ex;
+                        authenticationWait.Set();
+                    });
+            }
+            catch (Exception ex)
+            {
+                authenticationException = new Exception("Failed to start Empatica authentication:  " + ex.Message);
+                authenticationWait.Set();
+            }
+
+            authenticationWait.WaitOne();
+
+            if (authenticationException != null)
+            {
+                SensusServiceHelper.Get().Logger.Log(authenticationException.Message, LoggingLevel.Normal, GetType());
+                throw authenticationException;
+            } 
+        }
+
+        protected abstract void AuthenticateAsync(Action<Exception> callback);
+
+        protected override void StartListening()
+        {
+            DiscoverAndConnectDevices();
+        }
+
         public abstract void DiscoverAndConnectDevices();
+
+        protected override void StopListening()
+        {
+            DisconnectDevices();
+        }
+
+        protected abstract void DisconnectDevices();
     }
 }
