@@ -13,6 +13,7 @@
 // limitations under the License.
 using System;
 using System.Reflection;
+using SensusUI.UiProperties;
 
 namespace SensusService.Probes.User
 {
@@ -21,6 +22,8 @@ namespace SensusService.Probes.User
         private TimeSpan _startTime;
         private TimeSpan _endTime;
         private TimeSpan _randomTriggerTime;
+        private string _Id;
+        private bool _rerunDaily;
 
         public TimeSpan StartTime
         {
@@ -40,10 +43,24 @@ namespace SensusService.Probes.User
             set { _randomTriggerTime = value; }
         }
 
-        public TimeTrigger(TimeSpan startTime, TimeSpan endTime)
+        public string ID
+        {
+            get { return _Id; }
+            set { _Id = value; }
+        }
+
+        [OnOffUiProperty("Rerun Scripts Daily:", true, 1)]
+        public bool RerunDaily
+        {
+            get { return _rerunDaily; }
+            set { _rerunDaily = value; }
+        }
+
+        public TimeTrigger(TimeSpan startTime, TimeSpan endTime, bool rerunDaily)
         {
             _startTime = startTime;
             _endTime = endTime;
+            _rerunDaily = rerunDaily;
         }
     }
 }

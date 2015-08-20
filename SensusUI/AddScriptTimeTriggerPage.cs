@@ -16,6 +16,7 @@ using SensusService;
 using SensusService.Probes;
 using SensusService.Probes.User;
 using SensusService.Probes.User.ProbeTriggerProperties;
+using SensusUI.UiProperties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,6 +44,14 @@ namespace SensusUI
                     VerticalOptions = LayoutOptions.FillAndExpand
                 };
 
+            Label infoLabel = new Label
+                {
+                    Text = "If Start Time and End Time are equal, the script will be triggered at that time. If they are not equal, the script will be triggered randomly within the interval between Start Time and End Time.",
+                    FontSize = 15
+                };
+
+            contentLayout.Children.Add(infoLabel);
+
             StackLayout triggerDefinitionLayout = new StackLayout
                 {
                     Orientation = StackOrientation.Vertical,
@@ -55,7 +64,6 @@ namespace SensusUI
             TimePicker startTimePicker = new TimePicker { HorizontalOptions = LayoutOptions.FillAndExpand };
             TimePicker endTimePicker = new TimePicker { HorizontalOptions = LayoutOptions.FillAndExpand };
 
-            #region start/end times
             Label startTimeLabel = new Label
                 {
                     Text = "Start Time:",
@@ -85,15 +93,23 @@ namespace SensusUI
                     HorizontalOptions = LayoutOptions.FillAndExpand,
                     Children = { endTimeLabel, endTimePicker }
                 });
-            #endregion
+            
+            Switch rerunSwitch = new Switch();
 
-            Label explanation = new Label
+            Label rerunLabel = new Label
                 {
-                    Text = "If Start Time and end Time are equal, the script will be triggered at that time. If they are not equal, the script will be triggered randomly within the interval between Start Time and End Time.",
-                    FontSize = 15
+                    Text = "Rerun daily:",
+                    FontSize = 20
                 };
 
-            triggerDefinitionLayout.Children.Add(explanation);
+            rerunSwitch.IsToggled = false;
+
+            triggerDefinitionLayout.Children.Add(new StackLayout
+                {
+                    Orientation = StackOrientation.Horizontal,
+                    HorizontalOptions = LayoutOptions.FillAndExpand,
+                    Children = { rerunLabel, rerunSwitch }
+                });
 
             Button okButton = new Button
                 {
@@ -105,7 +121,7 @@ namespace SensusUI
                 {
                     try
                     {
-                        _scriptRunner.TimeTriggers.Add(new SensusService.Probes.User.TimeTrigger(startTimePicker.Time, endTimePicker.Time));
+                        _scriptRunner.TimeTriggers.Add(new SensusService.Probes.User.TimeTrigger(startTimePicker.Time, endTimePicker.Time, rerunSwitch.IsToggled));
                         await Navigation.PopAsync();
                     }
                     catch (Exception ex)

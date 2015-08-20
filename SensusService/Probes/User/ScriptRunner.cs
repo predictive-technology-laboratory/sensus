@@ -40,9 +40,7 @@ namespace SensusService.Probes.User
         private int _rerunDelayMS;
         private int _maximumAgeMinutes;
         private int _numScriptsAgedOut;
-        private bool _triggerRandomly;
-        private string _randomTriggerCallbackId;
-        private int _maximumRandomTriggerDelayMinutes;
+//        private string _timeTriggerCallbackId;
         private Random _random;
 
         private readonly object _locker = new object();
@@ -179,45 +177,6 @@ namespace SensusService.Probes.User
             }
         }
 
-        [OnOffUiProperty("Trigger Randomly:", true, 7)]
-        public bool TriggerRandomly
-        {
-            get { return _triggerRandomly; }
-            set
-            {
-                if (value != _triggerRandomly)
-                {
-                    _triggerRandomly = value;
-
-                    if (_probe != null && _probe.Running && _enabled && _triggerRandomly) // probe can be null when deserializing, if set after this property.
-                        StartRandomTriggerCallbacksAsync();
-                    else if (SensusServiceHelper.Get() != null)  // service helper is null when deserializing
-                        StopRandomTriggerCallbackAsync();
-                }
-            }
-        }
-
-        [EntryIntegerUiProperty("Maximum Random Delay (Mins.):", true, 8)]
-        public int MaximumRandomTriggerDelayMinutes
-        {
-            get { return _maximumRandomTriggerDelayMinutes; }
-            set
-            {
-                if (value <= 0)
-                    value = 1;
-
-                if (value != _maximumRandomTriggerDelayMinutes)
-                {        
-                    bool reschedule = value < _maximumRandomTriggerDelayMinutes && _randomTriggerCallbackId != null;
-
-                    _maximumRandomTriggerDelayMinutes = value; 
-
-                    if (reschedule)
-                        StartRandomTriggerCallbacksAsync();
-                }
-            }
-        }
-
         #endregion
 
         /// <summary>
@@ -237,9 +196,7 @@ namespace SensusService.Probes.User
             _rerunDelayMS = 60000;
             _maximumAgeMinutes = 1;
             _numScriptsAgedOut = 0;
-            _triggerRandomly = false;
-            _randomTriggerCallbackId = null;
-            _maximumRandomTriggerDelayMinutes = 1;
+//            _timeTriggerCallbackId = null;
             _random = new Random();
 
             _triggers.CollectionChanged += (o, e) =>
@@ -326,9 +283,6 @@ namespace SensusService.Probes.User
             if (_rerun)
                 StartRerunCallbacksAsync();
 
-            if (_triggerRandomly)
-                StartRandomTriggerCallbacksAsync();
-
             if (_timeTriggers.Count != 0)
                 StartTimeTriggerCallbacksAsync();
         }
@@ -371,106 +325,80 @@ namespace SensusService.Probes.User
                 }).Start();
         }
 
-        private void StartRandomTriggerCallbacksAsync()
-        {
-            new Thread(() =>
-                {
-                    lock (_locker)
-                    {
-                        StopRandomTriggerCallbacks();
-
-                        SensusServiceHelper.Get().Logger.Log("Starting random script trigger callbacks.", LoggingLevel.Normal, GetType());
-
-                        #if __IOS__
-                        string userNotificationMessage = "Your input is requested.";
-                        #elif __ANDROID__
-                        string userNotificationMessage = null;
-                        #elif WINDOWS_PHONE
-                        string userNotificationMessage = null; // TODO:  Should we use a message?
-                        #else
-                        #error "Unrecognized platform."
-                        #endif
-
-                        _randomTriggerCallbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(cancellationToken =>
-                            {
-                                // if we're still going, run a copy of the script so that we can retain a pristine version of the original
-                                if (_probe.Running && _enabled && _triggerRandomly)
-                                    RunAsync(_script.Copy(), StartRandomTriggerCallbacksAsync);
-                            }
-                            , "Trigger Randomly", _random.Next(_maximumRandomTriggerDelayMinutes * 60000), userNotificationMessage);
-                    }
-                }).Start();
-        }
-
         private void StartTimeTriggerCallbacksAsync()
         {
+            SensusServiceHelper.Get().Logger.Log("Starting time trigger callbacks.", LoggingLevel.Normal, GetType());
+
             foreach (TimeTrigger timeTrigger in _timeTriggers)
             {
-                new Thread(() =>
-                    {
-                        lock (_locker)
+                    new Thread(() =>
                         {
-                            SensusServiceHelper.Get().Logger.Log("Starting time trigger callbacks.", LoggingLevel.Normal, GetType());
 
-                            TimeSpan day = new TimeSpan(24, 00, 00);
-                            TimeSpan now = TimeSpan.Parse(DateTime.Now.ToString("HH:mm"));
-
-                            int hour;
-                            int minute;
-
-                            hour = _random.Next(timeTrigger.StartTime.Hours, timeTrigger.EndTime.Hours + 1);
-
-                            if (timeTrigger.StartTime.Hours == timeTrigger.EndTime.Hours)                               // same hour
-                            {
-                                minute = _random.Next(timeTrigger.StartTime.Minutes, timeTrigger.EndTime.Minutes);
-                            }
-                            else
-                            {
-                                if (timeTrigger.StartTime.Hours == hour)                                                // trigger hour = start hour
+                                lock (_locker)
                                 {
-                                    minute = _random.Next(timeTrigger.StartTime.Minutes, 60);
+                                    if (timeTrigger.RerunDaily)
+                                    {
+                                        timeTrigger.ID = SensusServiceHelper.Get().ScheduleRepeatingCallback(cancellationToken =>
+                                        {
+                                            if (_probe.Running && _enabled)
+                                                RunAsync(_script.Copy());
+                                            if (timeTrigger.RerunDaily)     // if rerunDaily is still set to true, reschedule another random or specific time trigger
+                                            {
+                                                int time = (int)TimeUntilFireMilliseconds(timeTrigger);
+                                                Console.Out.WriteLine(time);
+                                                SensusServiceHelper.Get().RescheduleRepeatingCallback(timeTrigger.ID, time, 0);
+                                            }
+                                        
+                                        }, "Rerun time trigger daily", (int)TimeUntilFireMilliseconds(timeTrigger), 0, null);
+                                    }
+                                    else
+                                    {
+                                        timeTrigger.ID = SensusServiceHelper.Get().ScheduleOneTimeCallback(cancellationToken =>
+                                            {
+                                                if (_probe.Running && _enabled)
+                                                    RunAsync(_script.Copy());
+                                        }, "Rerun time trigger daily", (int)TimeUntilFireMilliseconds(timeTrigger), null);
+                                    }
                                 }
-                                else if (timeTrigger.EndTime.Hours == hour)                                             // trigger hour = end hour
-                                {
-                                    minute = _random.Next(0, timeTrigger.EndTime.Minutes);
-                                }
-                                else
-                                {
-                                    minute = _random.Next(0, 60);
-                                }
-                            }
-
-                            TimeSpan fire = new TimeSpan(hour, minute, 0);
-                            TimeSpan timeUntilFire;
-                            double timeUntilFireMillis;
-                            if (fire <= now)
-                            {
-                                Console.Out.WriteLine("Haven't implemented multiple days yet; firing in 1 minute");
-                                timeUntilFire = new TimeSpan(0, 1, 0);
-                            }
-                            else
-                            {
-                                timeUntilFire = new TimeSpan();
-                                timeUntilFire = (fire - now);
-                            }
-
-                            timeUntilFireMillis = timeUntilFire.TotalMilliseconds;
-
-                            System.Timers.Timer timer = new System.Timers.Timer();
-                            timer.Interval = timeUntilFireMillis;
-                            timer.Elapsed += (o, e) =>
-                            {
-                                if (_probe.Running && _enabled)
-                                {
-                                RunAsync(_script.Copy());
-                                }
-                            };
-                            timer.Start();
-                                    
-
-                        }
-                    }).Start();
+                            
+                        }).Start();
             }
+        }
+
+        private double TimeUntilFireMilliseconds(TimeTrigger trigger)
+        {
+            TimeSpan fullDay = new TimeSpan(24, 00, 00);
+            TimeSpan timeNow = TimeSpan.Parse(DateTime.Now.ToString("HH:mm"));
+            TimeSpan timeUntilFire = new TimeSpan();
+            TimeSpan timeFire;
+
+            int hour;
+            int minute;
+
+            hour = _random.Next(trigger.StartTime.Hours, trigger.EndTime.Hours + 1);
+            if (trigger.StartTime.Hours == trigger.EndTime.Hours)
+                minute = _random.Next(trigger.StartTime.Minutes, trigger.EndTime.Minutes);
+            else
+            {
+                if (trigger.StartTime.Hours == hour)
+                    minute = _random.Next(trigger.StartTime.Minutes, 60);
+                else if (trigger.EndTime.Hours == hour)
+                    minute = _random.Next(0, trigger.EndTime.Minutes);
+                else
+                    minute = _random.Next(0, 60);
+            }
+
+            timeFire = new TimeSpan(hour, minute, 0);
+            Console.Out.WriteLine(timeFire);                    // debug
+
+            if (timeFire <= timeNow)
+                timeUntilFire = (timeFire - timeNow) + fullDay;
+            else
+                timeUntilFire = (timeFire - timeNow);
+
+            Console.Out.WriteLine(timeUntilFire);
+
+            return timeUntilFire.TotalMilliseconds;
         }
 
         private void RunAsync(Script script)
@@ -586,7 +514,6 @@ namespace SensusService.Probes.User
             new Thread(() =>
                 {
                     StopRerunCallbacks();
-
                 }).Start();
         }
 
@@ -597,26 +524,29 @@ namespace SensusService.Probes.User
             _rerunCallbackId = null;
         }
 
-        private void StopRandomTriggerCallbackAsync()
+        private void StopTimeTriggerCallbackAsync()
         {
             new Thread(() =>
                 {
-                    StopRandomTriggerCallbacks();
-
+                    StopTimeTriggerCallbacks();
                 }).Start();
         }
 
-        private void StopRandomTriggerCallbacks()
+        private void StopTimeTriggerCallbacks()
         {
             SensusServiceHelper.Get().Logger.Log("Stopping random trigger callbacks.", LoggingLevel.Normal, GetType());
-            SensusServiceHelper.Get().UnscheduleOneTimeCallback(_randomTriggerCallbackId);
-            _randomTriggerCallbackId = null;
+            foreach (TimeTrigger trigger in _timeTriggers)
+            {
+                SensusServiceHelper.Get().UnscheduleOneTimeCallback(trigger.ID);
+                SensusServiceHelper.Get().UnscheduleRepeatingCallback(trigger.ID);
+            }
+//            _timeTriggerCallbackId = null;
         }
 
         public void Stop()
         {
             StopRerunCallbacks();
-            StopRandomTriggerCallbacks();
+            StopTimeTriggerCallbacks();
         }
     }
 }
