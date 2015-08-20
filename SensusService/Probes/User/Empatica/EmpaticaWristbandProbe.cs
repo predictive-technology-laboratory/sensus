@@ -36,6 +36,21 @@ namespace SensusService.Probes.User.Empatica
             }
         }
 
+        public override bool Enabled
+        {
+            get
+            {
+                return base.Enabled;
+            }
+            set
+            {
+                base.Enabled = value;
+
+                if (Enabled && !SensusServiceHelper.Get().BluetoothEnabled)
+                    SensusServiceHelper.Get().EnabledBluetooth();
+            }
+        }
+
         public override Type DatumType
         {
             get

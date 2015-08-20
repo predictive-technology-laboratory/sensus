@@ -3,4 +3,48 @@
 	<!-- The original namespace name conflicts with the .NET Delegate type. -->
 	<attr path="/api/package[@name='com.empatica.empalink.delegate']" name="managedName">Com.Empatica.Empalink.Delegates</attr>
 
+	<!-- EmpaStatusDelegate -->
+	<attr path="/api/package[@name='com.empatica.empalink.delegate']/interface[@name='EmpaStatusDelegate']/method[@name='didDiscoverDevice']" name="managedName">DidDiscoverDevice</attr>
+	<attr path="/api/package[@name='com.empatica.empalink.delegate']/interface[@name='EmpaStatusDelegate']/method[@name='didDiscoverDevice']/parameter[@name='p0']" name="name">device</attr>
+	<attr path="/api/package[@name='com.empatica.empalink.delegate']/interface[@name='EmpaStatusDelegate']/method[@name='didDiscoverDevice']/parameter[@name='p1']" name="name">deviceName</attr>
+	<attr path="/api/package[@name='com.empatica.empalink.delegate']/interface[@name='EmpaStatusDelegate']/method[@name='didDiscoverDevice']/parameter[@name='p2']" name="name">rssi</attr>
+	<attr path="/api/package[@name='com.empatica.empalink.delegate']/interface[@name='EmpaStatusDelegate']/method[@name='didDiscoverDevice']/parameter[@name='p3']" name="name">allowed</attr>
+
+	<attr path="/api/package[@name='com.empatica.empalink.delegate']/interface[@name='EmpaStatusDelegate']/method[@name='didRequestEnableBluetooth']" name="managedName">DidRequestEnableBluetooth</attr>
+
+	<attr path="/api/package[@name='com.empatica.empalink.delegate']/interface[@name='EmpaStatusDelegate']/method[@name='didUpdateSensorStatus']" name="managedName">DidUpdateSensorStatus</attr>
+	<attr path="/api/package[@name='com.empatica.empalink.delegate']/interface[@name='EmpaStatusDelegate']/method[@name='didUpdateSensorStatus']/parameter[@name='p0']" name="name">sensorStatus</attr>
+	<attr path="/api/package[@name='com.empatica.empalink.delegate']/interface[@name='EmpaStatusDelegate']/method[@name='didUpdateSensorStatus']/parameter[@name='p1']" name="name">sensorType</attr>
+
+	<attr path="/api/package[@name='com.empatica.empalink.delegate']/interface[@name='EmpaStatusDelegate']/method[@name='didUpdateStatus']" name="managedName">DidUpdateStatus</attr>
+	<attr path="/api/package[@name='com.empatica.empalink.delegate']/interface[@name='EmpaStatusDelegate']/method[@name='didUpdateStatus']/parameter[@name='p0']" name="name">status</attr>
+
+
+	<!-- EmpaDataDelegate -->
+	<attr path="/api/package[@name='com.empatica.empalink.delegate']/interface[@name='EmpaDataDelegate']/method[@name='didReceiveAcceleration']" name="managedName">DidReceiveAcceleration</attr>
+	<attr path="/api/package[@name='com.empatica.empalink.delegate']/interface[@name='EmpaDataDelegate']/method[@name='didReceiveAcceleration']/parameter[@name='p0']" name="name">x</attr>
+	<attr path="/api/package[@name='com.empatica.empalink.delegate']/interface[@name='EmpaDataDelegate']/method[@name='didReceiveAcceleration']/parameter[@name='p1']" name="name">y</attr>
+	<attr path="/api/package[@name='com.empatica.empalink.delegate']/interface[@name='EmpaDataDelegate']/method[@name='didReceiveAcceleration']/parameter[@name='p2']" name="name">z</attr>
+	<attr path="/api/package[@name='com.empatica.empalink.delegate']/interface[@name='EmpaDataDelegate']/method[@name='didReceiveAcceleration']/parameter[@name='p3']" name="name">timestamp</attr>
+
+	<attr path="/api/package[@name='com.empatica.empalink.delegate']/interface[@name='EmpaDataDelegate']/method[@name='didReceiveBVP']" name="managedName">DidReceiveBloodVolumePulse</attr>
+	<attr path="/api/package[@name='com.empatica.empalink.delegate']/interface[@name='EmpaDataDelegate']/method[@name='didReceiveBVP']/parameter[@name='p0']" name="name">bloodVolumePulse</attr>
+	<attr path="/api/package[@name='com.empatica.empalink.delegate']/interface[@name='EmpaDataDelegate']/method[@name='didReceiveBVP']/parameter[@name='p1']" name="name">timestamp</attr>
+
+	<attr path="/api/package[@name='com.empatica.empalink.delegate']/interface[@name='EmpaDataDelegate']/method[@name='didReceiveBatteryLevel']" name="managedName">DidReceiveBatteryLevel</attr>
+	<attr path="/api/package[@name='com.empatica.empalink.delegate']/interface[@name='EmpaDataDelegate']/method[@name='didReceiveBatteryLevel']/parameter[@name='p0']" name="name">level</attr>
+	<attr path="/api/package[@name='com.empatica.empalink.delegate']/interface[@name='EmpaDataDelegate']/method[@name='didReceiveBatteryLevel']/parameter[@name='p1']" name="name">timestamp</attr>
+
+	<attr path="/api/package[@name='com.empatica.empalink.delegate']/interface[@name='EmpaDataDelegate']/method[@name='didReceiveGSR']" name="managedName">DidReceiveGalvanicSkinResponse</attr>
+	<attr path="/api/package[@name='com.empatica.empalink.delegate']/interface[@name='EmpaDataDelegate']/method[@name='didReceiveGSR']/parameter[@name='p0']" name="name">galvanicSkinResponse</attr>
+	<attr path="/api/package[@name='com.empatica.empalink.delegate']/interface[@name='EmpaDataDelegate']/method[@name='didReceiveGSR']/parameter[@name='p1']" name="name">timestamp</attr>
+
+	<attr path="/api/package[@name='com.empatica.empalink.delegate']/interface[@name='EmpaDataDelegate']/method[@name='didReceiveIBI']" name="managedName">DidReceiveInterBeatInterval</attr>
+	<attr path="/api/package[@name='com.empatica.empalink.delegate']/interface[@name='EmpaDataDelegate']/method[@name='didReceiveIBI']/parameter[@name='p0']" name="name">interBeatInterval</attr>
+	<attr path="/api/package[@name='com.empatica.empalink.delegate']/interface[@name='EmpaDataDelegate']/method[@name='didReceiveIBI']/parameter[@name='p1']" name="name">timestamp</attr>
+
+	<attr path="/api/package[@name='com.empatica.empalink.delegate']/interface[@name='EmpaDataDelegate']/method[@name='didReceiveTemperature']" name="managedName">DidReceiveTemperature</attr>
+	<attr path="/api/package[@name='com.empatica.empalink.delegate']/interface[@name='EmpaDataDelegate']/method[@name='didReceiveTemperature']/parameter[@name='p0']" name="name">temperature</attr>
+	<attr path="/api/package[@name='com.empatica.empalink.delegate']/interface[@name='EmpaDataDelegate']/method[@name='didReceiveTemperature']/parameter[@name='p1']" name="name">timestamp</attr>
+
 </metadata>

@@ -22,17 +22,19 @@ namespace Sensus.Android.Probes.User.Empatica
 {
     public class AndroidEmpaticaWristbandProbe : EmpaticaWristbandProbe
     {
-        private AndroidEmpaticaWristbandListener _listener;
+        private AndroidEmpaticaWristbandListener _listener;           
 
         public AndroidEmpaticaWristbandProbe()
         {
+            _listener = new AndroidEmpaticaWristbandListener(this);
         }
 
         protected override void Initialize()
         {
-            base.Initialize();
+            // must come before base.Initialize, since the latter calls authenticate.
+            _listener.Initialize();
 
-            _listener = new AndroidEmpaticaWristbandListener();
+            base.Initialize();
         }
 
         protected override void AuthenticateAsync(Action<Exception> callback)
@@ -42,12 +44,12 @@ namespace Sensus.Android.Probes.User.Empatica
 
         public override void DiscoverAndConnectDevices()
         {
-            
+            _listener.DiscoverAndConnectDeviceAsync();
         }
 
         protected override void DisconnectDevices()
         {
-            
+            _listener.DisconnectDevice();
         }
     }
 }

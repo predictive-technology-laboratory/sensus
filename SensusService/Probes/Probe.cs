@@ -74,7 +74,7 @@ namespace SensusService.Probes
         }
 
         [OnOffUiProperty("Enabled:", true, 2)]
-        public bool Enabled
+        public virtual bool Enabled
         {
             get { return _enabled; }
             set

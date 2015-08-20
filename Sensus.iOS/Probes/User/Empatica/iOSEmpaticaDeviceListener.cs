@@ -31,48 +31,43 @@ namespace Sensus.iOS.Probes.User.Empatica
 
         public override void DidReceiveAcceleration(sbyte x, sbyte y, sbyte z, double timestamp, EmpaticaDeviceManager device)
         {
-            _probe.StoreDatum(new EmpaticaWristbandDatum(ToDateTimeOffset(timestamp)) { AccelerationX = x, AccelerationY = y, AccelerationZ = z });
+            _probe.StoreDatum(new EmpaticaWristbandDatum(timestamp) { AccelerationX = x, AccelerationY = y, AccelerationZ = z });
         }
 
         public override void DidReceiveBatteryLevel(float level, double timestamp, EmpaticaDeviceManager device)
         {
-            _probe.StoreDatum(new EmpaticaWristbandDatum(ToDateTimeOffset(timestamp)) { BatteryLevel = level });
+            _probe.StoreDatum(new EmpaticaWristbandDatum(timestamp) { BatteryLevel = level });
         }
 
         public override void DidReceiveBloodVolumePulse(float bloodVolumePulse, double timestamp, EmpaticaDeviceManager device)
         {
-            _probe.StoreDatum(new EmpaticaWristbandDatum(ToDateTimeOffset(timestamp)) { BloodVolumePulse = bloodVolumePulse });
+            _probe.StoreDatum(new EmpaticaWristbandDatum(timestamp) { BloodVolumePulse = bloodVolumePulse });
         }
 
         public override void DidReceiveGalvanicSkinResponse(float galvanicSkinResponse, double timestamp, EmpaticaDeviceManager device)
         {
-            _probe.StoreDatum(new EmpaticaWristbandDatum(ToDateTimeOffset(timestamp)) { GalvanicSkinResponse = galvanicSkinResponse });
+            _probe.StoreDatum(new EmpaticaWristbandDatum(timestamp) { GalvanicSkinResponse = galvanicSkinResponse });
         }
 
         public override void DidReceiveInterBeatInterval(float interBeatInterval, double timestamp, EmpaticaDeviceManager device)
         {
-            _probe.StoreDatum(new EmpaticaWristbandDatum(ToDateTimeOffset(timestamp)) { InterBeatInterval = interBeatInterval });
+            _probe.StoreDatum(new EmpaticaWristbandDatum(timestamp) { InterBeatInterval = interBeatInterval });
         }
 
         public override void DidReceiveTagAtTimestamp(double timestamp, EmpaticaDeviceManager device)
         {
-            _probe.StoreDatum(new EmpaticaWristbandDatum(ToDateTimeOffset(timestamp)) { Tag = true });
+            _probe.StoreDatum(new EmpaticaWristbandDatum(timestamp) { Tag = true });
         }
 
         public override void DidReceiveTemperature(float temperature, double timestamp, EmpaticaDeviceManager device)
         {
-            _probe.StoreDatum(new EmpaticaWristbandDatum(ToDateTimeOffset(timestamp)) { Temperature = temperature });
+            _probe.StoreDatum(new EmpaticaWristbandDatum(timestamp) { Temperature = temperature });
         }
 
         public override void DidUpdateDeviceStatus(DeviceStatus status, EmpaticaDeviceManager device)
         {
             if (StatusReceived != null)
                 StatusReceived(this, status);
-        }
-
-        private DateTimeOffset ToDateTimeOffset(double timestamp)
-        {
-            return new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddSeconds(timestamp);
-        }
+        }            
     }
 }

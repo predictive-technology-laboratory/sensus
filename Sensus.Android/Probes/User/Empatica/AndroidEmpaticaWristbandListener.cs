@@ -20,23 +20,45 @@ using Android.Content;
 using Android.Bluetooth;
 using SensusService;
 using Com.Empatica.Empalink.Config;
+using SensusService.Probes.User.Empatica;
+using System.Threading;
 
 namespace Sensus.Android.Probes.User.Empatica
 {
-    public class AndroidEmpaticaWristbandListener : Java.Lang.Object, IEmpaDataDelegate, IEmpaStatusDelegate
+    public class AndroidEmpaticaWristbandListener : Java.Lang.Object, IEmpaStatusDelegate, IEmpaDataDelegate
     {
+        private AndroidEmpaticaWristbandProbe _probe;
         private EmpaDeviceManager _empaticaDeviceManager;
         private Action<Exception> _authenticateAction;
 
-        public AndroidEmpaticaWristbandListener()
+        public AndroidEmpaticaWristbandListener(AndroidEmpaticaWristbandProbe probe)
         {
-            _empaticaDeviceManager = new EmpaDeviceManager((SensusServiceHelper.Get() as AndroidSensusServiceHelper).Service, this, this);
+            _probe = probe;
+        }
+
+        public void Initialize()
+        {
+            if (_empaticaDeviceManager != null)
+            {
+                DisconnectDevice();
+                _empaticaDeviceManager.CleanUp();
+            }
+
+            ManualResetEvent initializeWait = new ManualResetEvent(false);
+
+            Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+                {
+                    _empaticaDeviceManager = new EmpaDeviceManager((SensusServiceHelper.Get() as AndroidSensusServiceHelper).Service, this, this);
+                    initializeWait.Set();
+                });
+
+            initializeWait.WaitOne();
         }
 
         public void AuthenticateAsync(string empaticaApiKey, Action<Exception> authenticateAction)
         {
             _authenticateAction = authenticateAction;
-            _empaticaDeviceManager.AuthenticateWithAPIKey(empaticaApiKey); // TODO:  How is invalid API key indicated?
+            _empaticaDeviceManager.AuthenticateWithAPIKey(empaticaApiKey); // TODO:  Handle uncaught exception from asynctask
         }
 
         public void DidUpdateStatus(EmpaStatus status)
@@ -45,57 +67,103 @@ namespace Sensus.Android.Probes.User.Empatica
                 _authenticateAction(null);
         }
 
+        public void DiscoverAndConnectDeviceAsync()
+        {
+            try
+            {
+                _empaticaDeviceManager.StopScanning();
+            }
+            catch(Exception)
+            {
+            }
+
+            try
+            {    
+                if(SensusServiceHelper.Get().BluetoothEnabled)
+                    _empaticaDeviceManager.StartScanning();
+                else
+                    throw new Exception("Bluetooth is not enabled.");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to start Empatica device discovery:  " + ex.Message);
+            }
+        }
+
         public void DidRequestEnableBluetooth()
-        {            
-            (AndroidSensusServiceHelper.Get() as AndroidSensusServiceHelper).GetMainActivityAsync(true, mainActivity =>
-                {
-                    mainActivity.GetActivityResultAsync(new Intent(BluetoothAdapter.ActionRequestEnable), AndroidActivityResultRequestCode.StartBluetooth, resultIntent =>
-                        {
-                            if (resultIntent.Item1 == global::Android.App.Result.Canceled)
-                            {
-                                // TODO:  Do something
-                            }
-                        });
-                });
+        {                        
         }
 
         public void DidDiscoverDevice(BluetoothDevice device, string deviceName, int rssi, bool allowed)
         {
-            _empaticaDeviceManager.ConnectDevice(device);
+            SensusServiceHelper.Get().Logger.Log("Discovered device \"" + device.Name + "\" (allowed:  " + allowed + ").", LoggingLevel.Normal, GetType());
+
+            if (allowed)
+            {
+                _empaticaDeviceManager.StopScanning();
+
+                try
+                {
+                    _empaticaDeviceManager.ConnectDevice(device);
+                    SensusServiceHelper.Get().Logger.Log("Connected with Empatica device \"" + device.Name + "\".", LoggingLevel.Normal, GetType());
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Failed to connect with Empatica device \"" + device.Name + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
+            }
         }
 
-        public void DidUpdateSensorStatus(EmpaSensorStatus p0, EmpaSensorType p1)
+        public void DidUpdateSensorStatus(EmpaSensorStatus sensorStatus, EmpaSensorType sensorType)
         {
         }
 
-        public void Stop()
+        public void DidReceiveAcceleration(int x, int y, int z, double timestamp)
         {
-            if (_empaticaDeviceManager != null)
+            _probe.StoreDatum(new EmpaticaWristbandDatum(timestamp) { AccelerationX = x, AccelerationY = y, AccelerationZ = z });
+        }
+
+        public void DidReceiveBloodVolumePulse(float bloodVolumePulse, double timestamp)
+        {
+            _probe.StoreDatum(new EmpaticaWristbandDatum(timestamp) { BloodVolumePulse = bloodVolumePulse });
+        }
+
+        public void DidReceiveBatteryLevel(float level, double timestamp)
+        {
+            _probe.StoreDatum(new EmpaticaWristbandDatum(timestamp) { BatteryLevel = level });
+        }
+
+        public void DidReceiveGalvanicSkinResponse(float galvanicSkinResponse, double timestamp)
+        {
+            _probe.StoreDatum(new EmpaticaWristbandDatum(timestamp) { GalvanicSkinResponse = galvanicSkinResponse });
+        }
+
+        public void DidReceiveInterBeatInterval(float interBeatInterval, double timestamp)
+        {
+            _probe.StoreDatum(new EmpaticaWristbandDatum(timestamp) { InterBeatInterval = interBeatInterval });
+        }
+
+        public void DidReceiveTemperature(float temperature, double timestamp)
+        {
+            _probe.StoreDatum(new EmpaticaWristbandDatum(timestamp) { Temperature = temperature });
+        }
+
+        public void DisconnectDevice()
+        {
+            try
+            {
                 _empaticaDeviceManager.Disconnect();
+            }
+            catch (Exception ex)
+            {
+                try
+                {
+                    SensusServiceHelper.Get().Logger.Log("Failed to disconnect Empatica device \"" + _empaticaDeviceManager.ActiveDevice.Name + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
+                catch (Exception)
+                {
+                }
+            }
         }
-
-        public void DidReceiveBatteryLevel(float p0, double p1)
-        {
-        }
-
-        public void DidReceiveAcceleration(int p0, int p1, int p2, double p3)
-        {
-        }
-
-        public void DidReceiveBVP(float p0, double p1)
-        {
-        }            
-
-        public void DidReceiveGSR(float p0, double p1)
-        {
-        }
-
-        public void DidReceiveIBI(float p0, double p1)
-        {
-        }
-
-        public void DidReceiveTemperature(float p0, double p1)
-        {
-        }            
     }
 }

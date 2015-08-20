@@ -67,8 +67,8 @@ namespace SensusService.Probes.User.Empatica
         {
         }
 
-        public EmpaticaWristbandDatum(DateTimeOffset timestamp)
-            : base(timestamp)
+        public EmpaticaWristbandDatum(double timestamp)
+            : base(new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddSeconds(timestamp))
         {
         }
 
