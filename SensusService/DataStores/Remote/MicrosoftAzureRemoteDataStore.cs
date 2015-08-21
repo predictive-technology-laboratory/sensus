@@ -22,7 +22,7 @@ using SensusService.Probes.Device;
 using SensusService.Probes.Location;
 using SensusService.Probes.Movement;
 using SensusService.Probes.Network;
-using SensusService.Probes.User;
+using SensusService.Probes.User.Scripts;
 using SensusUI.UiProperties;
 using System;
 using System.Collections.Generic;

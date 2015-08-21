@@ -75,6 +75,8 @@ namespace Sensus.Android
         {
             base.OnCreate(savedInstanceState);
 
+            // TODO:  Add exception handler to relaunch Sensus activity?
+
             SensusServiceHelper.Initialize(() => new AndroidSensusServiceHelper());
 
             _uiReadyWait = new ManualResetEvent(false);

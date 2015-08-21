@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using SensusService.Probes.User;
+using SensusService.Probes.User.Scripts;
 using System.Linq;
 using Xamarin.Forms;
 
@@ -40,7 +40,7 @@ namespace SensusUI
                 if (triggerList.SelectedItem == null)
                     return;
 
-                SensusService.Probes.User.Trigger selectedTrigger = triggerList.SelectedItem as SensusService.Probes.User.Trigger;
+                SensusService.Probes.User.Scripts.Trigger selectedTrigger = triggerList.SelectedItem as SensusService.Probes.User.Scripts.Trigger;
 
                 string selectedAction = await DisplayActionSheet(selectedTrigger.ToString(), "Cancel", null, "Delete");
 

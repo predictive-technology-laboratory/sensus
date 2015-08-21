@@ -277,6 +277,9 @@
     <Compile Include="Probes\Network\iOSPollingWlanProbe.cs" />
     <Compile Include="Probes\Apps\iOSFacebookProbe.cs" />
     <Compile Include="Probes\Communication\iOSTelephonyProbe.cs" />
+    <Compile Include="Probes\User\Empatica\iOSEmpaticaDeviceListener.cs" />
+    <Compile Include="Probes\User\Empatica\iOSEmpaticaWristbandProbe.cs" />
+    <Compile Include="Probes\User\Empatica\iOSEmpaticaSystemListener.cs" />
   </ItemGroup>
   <Import Project="..\SensusService\SensusService.projitems" Label="Shared" Condition="Exists('..\SensusService\SensusService.projitems')" />
   <Import Project="..\SensusUI\SensusUI.projitems" Label="Shared" Condition="Exists('..\SensusUI\SensusUI.projitems')" />
@@ -328,4 +331,14 @@
     </PropertyGroup>
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
   </Target>
+  <ItemGroup>
+    <Folder Include="Probes\User\" />
+    <Folder Include="Probes\User\Empatica\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Empatica.iOS\Empatica.iOS.csproj">
+      <Project>{290D3AA9-A374-4138-A87B-52DF7B917056}</Project>
+      <Name>Empatica.iOS</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

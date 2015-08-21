@@ -17,6 +17,7 @@ namespace Sensus.Android
     public enum AndroidActivityResultRequestCode
     {
         PromptForFile,
-        RecognizeSpeech
+        RecognizeSpeech,
+        StartBluetooth
     }
 }

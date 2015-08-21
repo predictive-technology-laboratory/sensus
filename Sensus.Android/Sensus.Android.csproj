@@ -34,9 +34,9 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AndroidLinkMode>None</AndroidLinkMode>
     <AndroidSupportedAbis>armeabi;armeabi-v7a;x86</AndroidSupportedAbis>
     <NoWarn>0618</NoWarn>
+    <AndroidLinkMode>None</AndroidLinkMode>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
@@ -268,6 +268,8 @@
     <Compile Include="AndroidServiceConnectedEventArgs.cs" />
     <Compile Include="Probes\Apps\AndroidFacebookProbe.cs" />
     <Compile Include="Probes\Context\AndroidAmbientTemperatureProbe.cs" />
+    <Compile Include="Probes\User\Empatica\AndroidEmpaticaWristbandListener.cs" />
+    <Compile Include="Probes\User\Empatica\AndroidEmpaticaWristbandProbe.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -356,5 +358,15 @@
     <AndroidResource Include="..\SensusUI\Icons\share.png">
       <Link>Resources\drawable\share.png</Link>
     </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Probes\User\" />
+    <Folder Include="Probes\User\Empatica\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Empatica.Android\Empatica.Android.csproj">
+      <Project>{274900A5-1880-4301-A564-53396AC46EFC}</Project>
+      <Name>Empatica.Android</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

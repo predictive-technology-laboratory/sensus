@@ -75,6 +75,8 @@ namespace SensusService.Probes
             float storesPerSecond = 1 / (float)(DateTimeOffset.UtcNow - MostRecentStoreTimestamp).TotalSeconds;
             if (storesPerSecond <= _maxDataStoresPerSecond)
                 base.StoreDatum(datum);
+            else
+                SensusServiceHelper.Get().Logger.Log("WARNING:  Dropping datum at " + storesPerSecond + " stores / second.", LoggingLevel.Verbose, GetType());
         }
     }
 }

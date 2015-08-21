@@ -13,7 +13,7 @@
 // limitations under the License.
 
 using Newtonsoft.Json;
-using SensusService.Probes.User.ProbeTriggerProperties;
+using SensusService.Probes.User.Scripts.ProbeTriggerProperties;
 using System;
 using SensusService.Anonymization;
 using SensusService.Anonymization.Anonymizers;

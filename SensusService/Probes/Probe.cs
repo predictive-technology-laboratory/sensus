@@ -188,21 +188,27 @@ namespace SensusService.Probes
 
         public virtual void StoreDatum(Datum datum)
         {
-            // datum is allowed to be null, indicating the the probe attempted to obtain data but it didn't find any (in the case of polling probes).
-            if (datum != null)
+            lock (_collectedData)
             {
-                datum.ProtocolId = Protocol.Id;
+                // make sure that data delivered after probe is stopped are not stored
+                if (!_running)
+                    return;
+            
+                // datum is allowed to be null, indicating the the probe attempted to obtain data but it didn't find any (in the case of polling probes).
+                if (datum != null)
+                {
+                    datum.ProtocolId = Protocol.Id;
 
-                if (_storeData)
-                    lock (_collectedData)
+                    if (_storeData)
                     {
                         SensusServiceHelper.Get().Logger.Log("Storing datum in cache.", LoggingLevel.Verbose, GetType());
                         _collectedData.Add(datum);
                     }
-            }
+                }
 
-            MostRecentDatum = datum;
-            _mostRecentStoreTimestamp = DateTimeOffset.UtcNow;  // this is outside the _storeData restriction above since we just want to track when this method is called.
+                MostRecentDatum = datum;
+                _mostRecentStoreTimestamp = DateTimeOffset.UtcNow;  // this is outside the _storeData restriction above since we just want to track when this method is called.
+            }
         }
 
         public ICollection<Datum> GetCollectedData()
@@ -253,6 +259,15 @@ namespace SensusService.Probes
                 else
                     SensusServiceHelper.Get().Logger.Log("Attempted to stop probe, but it wasn't running.", LoggingLevel.Normal, GetType());
             }
+        }
+
+        public void RestartAsync()
+        {
+            new Thread(() =>
+                {
+                    Restart();
+
+                }).Start();
         }
 
         public void Restart()
