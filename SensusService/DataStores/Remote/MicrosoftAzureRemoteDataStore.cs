@@ -179,7 +179,7 @@ namespace SensusService.DataStores.Remote
                 }
             }
 
-            SensusServiceHelper.Get().Logger.Log("Committed " + committedData.Count + " data items to Azure tables in " + (DateTimeOffset.UtcNow - start).TotalSeconds + " seconds.", LoggingLevel.Verbose, GetType());
+            SensusServiceHelper.Get().Logger.Log("Committed " + committedData.Count + " data items to Azure tables in " + (DateTimeOffset.UtcNow - start).TotalSeconds + " seconds.", LoggingLevel.Normal, GetType());
 
             return committedData;
         }

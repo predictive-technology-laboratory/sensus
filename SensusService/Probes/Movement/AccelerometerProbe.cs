@@ -53,7 +53,7 @@ namespace SensusService.Probes.Movement
                 {
                     Thread.Sleep(5000);
                     _stabilizing = false;
-                    SensusServiceHelper.Get().Logger.Log("Accelerometer has finished stabilization period.", LoggingLevel.Verbose, GetType());
+                    SensusServiceHelper.Get().Logger.Log("Accelerometer has finished stabilization period.", LoggingLevel.Normal, GetType());
 
                 }).Start();
         }

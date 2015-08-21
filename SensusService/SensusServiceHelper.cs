@@ -688,10 +688,10 @@ namespace SensusService
                         try
                         {
                             if (scheduledCallback.Canceller.IsCancellationRequested)
-                                _logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") was cancelled before it was started.", LoggingLevel.Debug, GetType());
+                                _logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") was cancelled before it was started.", LoggingLevel.Normal, GetType());
                             else
                             {
-                                _logger.Log("Raising callback \"" + scheduledCallback.Name + "\" (" + callbackId + ").", LoggingLevel.Debug, GetType());
+                                _logger.Log("Raising callback \"" + scheduledCallback.Name + "\" (" + callbackId + ").", LoggingLevel.Normal, GetType());
 
                                 if (notifyUser)
                                     IssueNotificationAsync(scheduledCallback.UserNotificationMessage, callbackId);
@@ -727,7 +727,7 @@ namespace SensusService
                         }
                     }
                     else
-                        _logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") is already running. Not running again.", LoggingLevel.Debug, GetType());
+                        _logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") is already running. Not running again.", LoggingLevel.Normal, GetType());
                     
                     // if this was a one-time callback, remove it from our collection. it is no longer needed.
                     if (!repeating)
@@ -761,7 +761,7 @@ namespace SensusService
             if (callbackId != null)
                 lock (_idCallback)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Unscheduling one-time callback \"" + callbackId + "\".", LoggingLevel.Debug, GetType());
+                    SensusServiceHelper.Get().Logger.Log("Unscheduling one-time callback \"" + callbackId + "\".", LoggingLevel.Normal, GetType());
 
                     CancelRaisedCallback(callbackId);
                     _idCallback.Remove(callbackId);
@@ -775,7 +775,7 @@ namespace SensusService
             if (callbackId != null)
                 lock (_idCallback)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Unscheduling repeating callback \"" + callbackId + "\".", LoggingLevel.Debug, GetType());
+                    SensusServiceHelper.Get().Logger.Log("Unscheduling repeating callback \"" + callbackId + "\".", LoggingLevel.Normal, GetType());
 
                     CancelRaisedCallback(callbackId);
                     _idCallback.Remove(callbackId);

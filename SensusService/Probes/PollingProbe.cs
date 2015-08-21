@@ -32,7 +32,7 @@ namespace SensusService.Probes
         public virtual int PollingSleepDurationMS
         {
             get { return _pollingSleepDurationMS; }
-            set 
+            set
             {
                 if (value <= 1000)
                     value = 1000;
@@ -85,7 +85,7 @@ namespace SensusService.Probes
                             IEnumerable<Datum> data = null;
                             try
                             {
-                                SensusServiceHelper.Get().Logger.Log("Polling.", LoggingLevel.Verbose, GetType());
+                                SensusServiceHelper.Get().Logger.Log("Polling.", LoggingLevel.Normal, GetType());
                                 data = Poll(cancellationToken);
                             }
                             catch (Exception ex)
@@ -96,7 +96,7 @@ namespace SensusService.Probes
                             if (data != null)
                                 foreach (Datum datum in data)
                                 {
-                                    if(cancellationToken.IsCancellationRequested)
+                                    if (cancellationToken.IsCancellationRequested)
                                         break;
                                     
                                     try
