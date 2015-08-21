@@ -104,7 +104,7 @@ git merge $releaseBranch
 git push
 
 # if we're not releasing from develop, then any changes we just made to the release branch need to be merged into develop.
-if[ $releaseBranch -ne "develop" ]; then
+if [ "$releaseBranch" != "develop" ]; then
     git checkout develop
     git merge $releaseBranch
     git push
