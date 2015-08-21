@@ -26,6 +26,7 @@
 #
 #  sudo easy_install pip
 #  sudo pip install --upgrade google-api-python-client
+#  ln -s /path/to/client_secrets.json ./
 
 import argparse
 import sys
