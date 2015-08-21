@@ -36,21 +36,6 @@ namespace SensusService.Probes.User.Empatica
             }
         }
 
-        public override bool Enabled
-        {
-            get
-            {
-                return base.Enabled;
-            }
-            set
-            {
-                base.Enabled = value;
-
-                if (Enabled && !SensusServiceHelper.Get().BluetoothEnabled)
-                    SensusServiceHelper.Get().EnabledBluetooth();
-            }
-        }
-
         public override Type DatumType
         {
             get
@@ -69,43 +54,50 @@ namespace SensusService.Probes.User.Empatica
 
         public EmpaticaWristbandProbe()
         {
-            MaxDataStoresPerSecond = 100000; // empatica has a high data rate
+            MaxDataStoresPerSecond = 100000; // empatica has a high data rate...readings will drop below ~5000/sec
         }
 
         protected override void Initialize()
         {
             base.Initialize();
 
+            #region authentication
+
             if (string.IsNullOrWhiteSpace(EmpaticaKey))
                 throw new Exception("Failed to start Empatica probe:  Empatica API key must be supplied.");
 
-            ManualResetEvent authenticationWait = new ManualResetEvent(false);
-            Exception authenticationException = null;
-
             try
             {
-                AuthenticateAsync(ex =>
-                    {
-                        authenticationException = ex;
-                        authenticationWait.Set();
-                    });
+                Authenticate();
             }
             catch (Exception ex)
             {
-                authenticationException = new Exception("Failed to start Empatica authentication:  " + ex.Message);
-                authenticationWait.Set();
+                string message = "Failed to authenticate with Empatica API key \"" + EmpaticaKey + "\":  " + ex.Message;
+                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+                throw new Exception(message);
             }
 
-            authenticationWait.WaitOne();
+            #endregion
 
-            if (authenticationException != null)
+            #region bluetooth
+
+            try
             {
-                SensusServiceHelper.Get().Logger.Log(authenticationException.Message, LoggingLevel.Normal, GetType());
-                throw authenticationException;
-            } 
+                StartBluetooth();
+            }
+            catch (Exception ex)
+            {
+                string message = "Failed to start Bluetooth:  " + ex.Message;
+                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+                throw new Exception(message);
+            }
+
+            #endregion
         }
 
-        protected abstract void AuthenticateAsync(Action<Exception> callback);
+        protected abstract void Authenticate();
+
+        protected abstract void StartBluetooth();
 
         protected override void StartListening()
         {

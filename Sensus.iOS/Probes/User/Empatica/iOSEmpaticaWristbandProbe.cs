@@ -32,19 +32,31 @@ namespace Sensus.iOS.Probes.User.Empatica
             _connectedDevices = new List<EmpaticaDeviceManager>();
         }
 
-        protected override void AuthenticateAsync(Action<Exception> callback)
+        protected override void Authenticate()
         {
+            ManualResetEvent authenticateWait = new ManualResetEvent(false);
+            Exception authenticationException = null;
+
             EmpaticaAPI.AuthenticateWithAPIKey(EmpaticaKey, (success, message) =>
                 {
-                    Exception ex = null;
                     if (success)
                         SensusServiceHelper.Get().Logger.Log("Empatica authentication succeeded:  " + message.ToString(), LoggingLevel.Normal, GetType());
                     else
-                        ex = new Exception("Empatica authentication failed:  " + message.ToString());
+                        authenticationException = new Exception("Empatica authentication failed:  " + message.ToString());
 
-                    callback(ex);
+                    authenticateWait.Set();
                 });
-        }            
+
+            authenticateWait.WaitOne();
+
+            if (authenticationException != null)
+                throw authenticationException;
+        }
+
+        protected override void StartBluetooth()
+        {
+            throw new NotImplementedException();
+        }
 
         public override void DiscoverAndConnectDevices()
         {

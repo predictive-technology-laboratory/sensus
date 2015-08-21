@@ -74,7 +74,7 @@ namespace SensusService.Probes
         }
 
         [OnOffUiProperty("Enabled:", true, 2)]
-        public virtual bool Enabled
+        public bool Enabled
         {
             get { return _enabled; }
             set
@@ -259,6 +259,15 @@ namespace SensusService.Probes
                 else
                     SensusServiceHelper.Get().Logger.Log("Attempted to stop probe, but it wasn't running.", LoggingLevel.Normal, GetType());
             }
+        }
+
+        public void RestartAsync()
+        {
+            new Thread(() =>
+                {
+                    Restart();
+
+                }).Start();
         }
 
         public void Restart()

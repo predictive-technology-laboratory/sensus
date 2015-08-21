@@ -53,7 +53,7 @@ namespace SensusUI
                 if (selectedAction == "Start")
                     selectedProtocol.StartWithUserAgreement(null);
                 else if (selectedAction == "Pair Empatica Wristband")
-                    (selectedProtocol.Probes.Where(probe => probe is EmpaticaWristbandProbe).First() as EmpaticaWristbandProbe).DiscoverAndConnectDevices();
+                    (selectedProtocol.Probes.Where(probe => probe is EmpaticaWristbandProbe).First() as EmpaticaWristbandProbe).RestartAsync();
                 else if (selectedAction == "Stop")
                 {
                     if (await DisplayAlert("Confirm Stop", "Are you sure you want to stop " + selectedProtocol.Name + "?", "Yes", "No"))

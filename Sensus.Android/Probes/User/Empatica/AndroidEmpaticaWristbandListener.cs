@@ -29,69 +29,86 @@ namespace Sensus.Android.Probes.User.Empatica
     {
         private AndroidEmpaticaWristbandProbe _probe;
         private EmpaDeviceManager _empaticaDeviceManager;
-        private Action<Exception> _authenticateAction;
+        private ManualResetEvent _authenticateWait;
+        private ManualResetEvent _bluetoothWait;
+        private global::Android.App.Result _bluetoothResult;
+        private ManualResetEvent _connectedWait;
+        private ManualResetEvent _disconnectWait;
 
         public AndroidEmpaticaWristbandListener(AndroidEmpaticaWristbandProbe probe)
         {
             _probe = probe;
+            _authenticateWait = new ManualResetEvent(false);
+            _bluetoothWait = new ManualResetEvent(false);
+            _connectedWait = new ManualResetEvent(false);
+            _disconnectWait = new ManualResetEvent(false);
         }
 
         public void Initialize()
         {
-            if (_empaticaDeviceManager != null)
+            if (_empaticaDeviceManager == null)
             {
-                DisconnectDevice();
-                _empaticaDeviceManager.CleanUp();
+                ManualResetEvent initializeWait = new ManualResetEvent(false);
+
+                Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+                    {
+                        _empaticaDeviceManager = new EmpaDeviceManager((SensusServiceHelper.Get() as AndroidSensusServiceHelper).Service, this, this);
+                        initializeWait.Set();
+                    });
+
+                initializeWait.WaitOne();
             }
-
-            ManualResetEvent initializeWait = new ManualResetEvent(false);
-
-            Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
-                {
-                    _empaticaDeviceManager = new EmpaDeviceManager((SensusServiceHelper.Get() as AndroidSensusServiceHelper).Service, this, this);
-                    initializeWait.Set();
-                });
-
-            initializeWait.WaitOne();
+            else
+                StopScanning();
         }
 
-        public void AuthenticateAsync(string empaticaApiKey, Action<Exception> authenticateAction)
+        public void Authenticate(string empaticaApiKey)
         {
-            _authenticateAction = authenticateAction;
+            // assume bluetooth will be present. if it's not, AuthenticateWithAPIKey will call DidRequestEnableBluetooth to start it.
+            _bluetoothWait.Set();
+            _bluetoothResult = global::Android.App.Result.Ok;
+
+            _authenticateWait.Reset();
             _empaticaDeviceManager.AuthenticateWithAPIKey(empaticaApiKey); // TODO:  Handle uncaught exception from asynctask
+            _authenticateWait.WaitOne();
         }
 
         public void DidUpdateStatus(EmpaStatus status)
         {
             if (status == EmpaStatus.Ready)
-                _authenticateAction(null);
+                _authenticateWait.Set();
+            else if (status == EmpaStatus.Connected)
+                _connectedWait.Set();
+            else if (status == EmpaStatus.Disconnected)
+                _disconnectWait.Set();
+        }
+
+        public void StartBluetooth()
+        {
+            _bluetoothWait.WaitOne();
+
+            if (_bluetoothResult != global::Android.App.Result.Ok)
+                throw new Exception("Bluetooth not enabled.");
+        }
+
+        public void DidRequestEnableBluetooth()
+        {             
+            _bluetoothWait.Reset();
+
+            (AndroidSensusServiceHelper.Get() as AndroidSensusServiceHelper).GetMainActivityAsync(true, mainActivity =>
+                {
+                    mainActivity.GetActivityResultAsync(new Intent(BluetoothAdapter.ActionRequestEnable), AndroidActivityResultRequestCode.StartBluetooth, resultIntent =>
+                        {
+                            _bluetoothResult = resultIntent.Item1;
+                            _bluetoothWait.Set();
+                        });
+                });
         }
 
         public void DiscoverAndConnectDeviceAsync()
         {
-            try
-            {
-                _empaticaDeviceManager.StopScanning();
-            }
-            catch(Exception)
-            {
-            }
-
-            try
-            {    
-                if(SensusServiceHelper.Get().BluetoothEnabled)
-                    _empaticaDeviceManager.StartScanning();
-                else
-                    throw new Exception("Bluetooth is not enabled.");
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Failed to start Empatica device discovery:  " + ex.Message);
-            }
-        }
-
-        public void DidRequestEnableBluetooth()
-        {                        
+            StopScanning();
+            StartScanning();
         }
 
         public void DidDiscoverDevice(BluetoothDevice device, string deviceName, int rssi, bool allowed)
@@ -100,23 +117,17 @@ namespace Sensus.Android.Probes.User.Empatica
 
             if (allowed)
             {
-                _empaticaDeviceManager.StopScanning();
-
-                try
-                {
-                    _empaticaDeviceManager.ConnectDevice(device);
-                    SensusServiceHelper.Get().Logger.Log("Connected with Empatica device \"" + device.Name + "\".", LoggingLevel.Normal, GetType());
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Failed to connect with Empatica device \"" + device.Name + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
-                }
+                StopScanning();
+                DisconnectDevice();
+                ConnectDevice(device);
             }
         }
 
         public void DidUpdateSensorStatus(EmpaSensorStatus sensorStatus, EmpaSensorType sensorType)
         {
         }
+
+        #region data receipt
 
         public void DidReceiveAcceleration(int x, int y, int z, double timestamp)
         {
@@ -148,21 +159,72 @@ namespace Sensus.Android.Probes.User.Empatica
             _probe.StoreDatum(new EmpaticaWristbandDatum(timestamp) { Temperature = temperature });
         }
 
+        #endregion
+
+        private void StartScanning()
+        {
+            try
+            {    
+                _empaticaDeviceManager.StartScanning();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to start Empatica device discovery:  " + ex.Message);
+            }
+        }
+
+        private void StopScanning()
+        {
+            try
+            {
+                _empaticaDeviceManager.StopScanning();
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Failed to stop scanning device manager:  " + ex.Message, LoggingLevel.Normal, GetType());
+            }
+        }
+
+        private void ConnectDevice(BluetoothDevice device)
+        {
+            try
+            {
+                _connectedWait.Reset();
+                _empaticaDeviceManager.ConnectDevice(device);
+                _connectedWait.WaitOne();
+                SensusServiceHelper.Get().Logger.Log("Connected with Empatica device \"" + device.Name + "\".", LoggingLevel.Normal, GetType());
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Failed to connect with Empatica device \"" + device.Name + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
+            }
+        }
+
         public void DisconnectDevice()
         {
             try
             {
+                _disconnectWait.Reset();
                 _empaticaDeviceManager.Disconnect();
+                _disconnectWait.WaitOne();
             }
             catch (Exception ex)
             {
-                try
-                {
-                    SensusServiceHelper.Get().Logger.Log("Failed to disconnect Empatica device \"" + _empaticaDeviceManager.ActiveDevice.Name + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
-                }
-                catch (Exception)
-                {
-                }
+                SensusServiceHelper.Get().Logger.Log("Failed to disconnect device manager:  " + ex.Message, LoggingLevel.Normal, GetType());
+            }
+        }
+
+        private void CleanUp()
+        {
+            // TODO:  When should this be called?
+
+            try
+            {
+                _empaticaDeviceManager.CleanUp();
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Failed to cleanup device manager:  " + ex.Message, LoggingLevel.Normal, GetType());
             }
         }
     }

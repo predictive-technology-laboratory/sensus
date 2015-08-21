@@ -31,15 +31,20 @@ namespace Sensus.Android.Probes.User.Empatica
 
         protected override void Initialize()
         {
-            // must come before base.Initialize, since the latter calls authenticate.
+            // must come before base.Initialize, since the latter calls authenticate and authenticate needs the device manager to be initialized.
             _listener.Initialize();
 
             base.Initialize();
         }
 
-        protected override void AuthenticateAsync(Action<Exception> callback)
+        protected override void Authenticate()
         {
-            _listener.AuthenticateAsync(EmpaticaKey, callback);
+            _listener.Authenticate(EmpaticaKey);
+        }
+
+        protected override void StartBluetooth()
+        {
+            _listener.StartBluetooth();
         }
 
         public override void DiscoverAndConnectDevices()
