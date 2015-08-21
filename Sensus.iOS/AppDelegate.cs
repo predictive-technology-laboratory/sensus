@@ -67,8 +67,27 @@ namespace Sensus.iOS
                 NSObject launchOptionValue;
                 if (launchOptions.TryGetValue(UIApplication.LaunchOptionsLocalNotificationKey, out launchOptionValue))
                     ServiceNotificationAsync(launchOptionValue as UILocalNotification);
-                else if (launchOptions.TryGetValue(UIApplication.LaunchOptionsUrlKey, out launchOptionValue))
-                    Protocol.DisplayFromBytesAsync(File.ReadAllBytes((launchOptionValue as NSUrl).Path));
+                else if (launchOptions.TryGetValue(UIApplication.LaunchOptionsUrlKey, out launchOptionValue) && launchOptionValue != null)
+                {
+                    string path = (launchOptionValue as NSUrl).Path;
+                    if (!string.IsNullOrWhiteSpace(path))
+                    {
+                        byte[] bytes;
+                        try
+                        {
+                            bytes = File.ReadAllBytes(path);
+                        }
+                        catch (Exception ex)
+                        {
+                            string message = "Failed to read protocol bytes from path \"" + path + "\":  " + ex.Message;
+                            _serviceHelper.Logger.Log(message, LoggingLevel.Normal, GetType());
+                            _serviceHelper.FlashNotificationAsync(message);
+                        }
+
+                        if (bytes != null)
+                            Protocol.DisplayFromBytesAsync(bytes);
+                    }
+                }
             }
 
             // service all other notifications whose fire time has passed
