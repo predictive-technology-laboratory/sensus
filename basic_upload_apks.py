@@ -17,10 +17,15 @@
 # If you get the following error:  
 #
 #   AttributeError: 'Module_six_moves_urllib_parse' object has no attribute 'urlparse'
-
+#
 # Then the following might help:
 #
 #   export PYTHONPATH="/Library/Python/2.7/site-packages"
+#
+# This also requires the following:
+#
+#  sudo easy_install pip
+#  sudo pip install --upgrade google-api-python-client
 
 import argparse
 import sys
