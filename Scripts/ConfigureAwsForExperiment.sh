@@ -13,7 +13,10 @@ fi
 
 echo "Creating Cognito identity pool..."
 cognitoId=$(aws cognito-identity create-identity-pool --identity-pool-name "$1 Participant" --allow-unauthenticated-identities | jq ".IdentityPoolId" | tr "\"" "\0")
-
+if [ "$cognitoId" == "" ]; then
+    echo "Failed to create Cognito identity pool."
+    exit $?
+fi
 
 ###########################
 ##### Create IAM role #####

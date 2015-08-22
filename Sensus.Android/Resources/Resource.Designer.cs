@@ -4147,11 +4147,11 @@ namespace Sensus.Android
 		public partial class String
 		{
 			
-			// aapt resource value: 0x7f070049
-			public const int ApplicationName = 2131165257;
+			// aapt resource value: 0x7f07005a
+			public const int ApplicationName = 2131165274;
 			
-			// aapt resource value: 0x7f070048
-			public const int Hello = 2131165256;
+			// aapt resource value: 0x7f070059
+			public const int Hello = 2131165273;
 			
 			// aapt resource value: 0x7f07000a
 			public const int abc_action_bar_home_description = 2131165194;
@@ -4228,53 +4228,53 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f07001f
 			public const int cast_notification_disconnect = 2131165215;
 			
+			// aapt resource value: 0x7f070048
+			public const int com_facebook_image_download_unknown_error = 2131165256;
+			
+			// aapt resource value: 0x7f070049
+			public const int com_facebook_internet_permission_error_message = 2131165257;
+			
 			// aapt resource value: 0x7f07004a
-			public const int com_facebook_image_download_unknown_error = 2131165258;
+			public const int com_facebook_internet_permission_error_title = 2131165258;
 			
 			// aapt resource value: 0x7f07004b
-			public const int com_facebook_internet_permission_error_message = 2131165259;
+			public const int com_facebook_like_button_liked = 2131165259;
 			
 			// aapt resource value: 0x7f07004c
-			public const int com_facebook_internet_permission_error_title = 2131165260;
+			public const int com_facebook_like_button_not_liked = 2131165260;
 			
 			// aapt resource value: 0x7f07004d
-			public const int com_facebook_like_button_liked = 2131165261;
+			public const int com_facebook_loading = 2131165261;
 			
 			// aapt resource value: 0x7f07004e
-			public const int com_facebook_like_button_not_liked = 2131165262;
+			public const int com_facebook_loginview_cancel_action = 2131165262;
 			
 			// aapt resource value: 0x7f07004f
-			public const int com_facebook_loading = 2131165263;
+			public const int com_facebook_loginview_log_in_button = 2131165263;
 			
 			// aapt resource value: 0x7f070050
-			public const int com_facebook_loginview_cancel_action = 2131165264;
+			public const int com_facebook_loginview_log_in_button_long = 2131165264;
 			
 			// aapt resource value: 0x7f070051
-			public const int com_facebook_loginview_log_in_button = 2131165265;
+			public const int com_facebook_loginview_log_out_action = 2131165265;
 			
 			// aapt resource value: 0x7f070052
-			public const int com_facebook_loginview_log_in_button_long = 2131165266;
+			public const int com_facebook_loginview_log_out_button = 2131165266;
 			
 			// aapt resource value: 0x7f070053
-			public const int com_facebook_loginview_log_out_action = 2131165267;
+			public const int com_facebook_loginview_logged_in_as = 2131165267;
 			
 			// aapt resource value: 0x7f070054
-			public const int com_facebook_loginview_log_out_button = 2131165268;
+			public const int com_facebook_loginview_logged_in_using_facebook = 2131165268;
 			
 			// aapt resource value: 0x7f070055
-			public const int com_facebook_loginview_logged_in_as = 2131165269;
+			public const int com_facebook_send_button_text = 2131165269;
 			
 			// aapt resource value: 0x7f070056
-			public const int com_facebook_loginview_logged_in_using_facebook = 2131165270;
+			public const int com_facebook_share_button_text = 2131165270;
 			
 			// aapt resource value: 0x7f070057
-			public const int com_facebook_send_button_text = 2131165271;
-			
-			// aapt resource value: 0x7f070058
-			public const int com_facebook_share_button_text = 2131165272;
-			
-			// aapt resource value: 0x7f070059
-			public const int com_facebook_tooltip_default = 2131165273;
+			public const int com_facebook_tooltip_default = 2131165271;
 			
 			// aapt resource value: 0x7f07002a
 			public const int common_android_wear_notification_needs_update_text = 2131165226;
@@ -4384,8 +4384,8 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f07005b
 			public const int library_name = 2131165275;
 			
-			// aapt resource value: 0x7f07005a
-			public const int messenger_send_button_text = 2131165274;
+			// aapt resource value: 0x7f070058
+			public const int messenger_send_button_text = 2131165272;
 			
 			// aapt resource value: 0x7f070000
 			public const int mr_media_route_button_content_description = 2131165184;
