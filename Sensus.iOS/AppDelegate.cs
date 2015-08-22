@@ -62,39 +62,6 @@ namespace Sensus.iOS
             UiBoundSensusServiceHelper.Set(_serviceHelper);
             app.SensusMainPage.DisplayServiceHelper(UiBoundSensusServiceHelper.Get(true));
 
-            if (launchOptions != null)
-            {                
-                NSObject launchOptionValue;
-                if (launchOptions.TryGetValue(UIApplication.LaunchOptionsLocalNotificationKey, out launchOptionValue))
-                    ServiceNotificationAsync(launchOptionValue as UILocalNotification);
-                else if (launchOptions.TryGetValue(UIApplication.LaunchOptionsUrlKey, out launchOptionValue) && launchOptionValue != null)
-                {
-                    string path = (launchOptionValue as NSUrl).Path;
-                    if (!string.IsNullOrWhiteSpace(path))
-                    {
-                        byte[] bytes;
-                        try
-                        {
-                            bytes = File.ReadAllBytes(path);
-                        }
-                        catch (Exception ex)
-                        {
-                            string message = "Failed to read protocol bytes from path \"" + path + "\":  " + ex.Message;
-                            _serviceHelper.Logger.Log(message, LoggingLevel.Normal, GetType());
-                            _serviceHelper.FlashNotificationAsync(message);
-                        }
-
-                        if (bytes != null)
-                            Protocol.DisplayFromBytesAsync(bytes);
-                    }
-                }
-            }
-
-            // service all other notifications whose fire time has passed
-            foreach (UILocalNotification notification in uiApplication.ScheduledLocalNotifications)
-                if (notification.FireDate.ToDateTime() <= DateTime.UtcNow)
-                    ServiceNotificationAsync(notification);
-
             return base.FinishedLaunching(uiApplication, launchOptions);
         }
 

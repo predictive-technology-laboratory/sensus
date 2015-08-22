@@ -190,6 +190,10 @@ namespace Sensus.iOS
             int repeatDelayMS = (callbackNotification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_DELAY)) as NSNumber).Int32Value;
             string activationId = (callbackNotification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ACTIVATION_ID)) as NSString).ToString();
 
+            // only raise callback if it's from the current activation and if it is scheduled
+            if (activationId != _activationId || !CallbackIsScheduled(callbackId))
+                return; 
+            
             // remove from platform-specific notification collection. the purpose of the platform-specific notification collection is to hold the notifications
             // between successive activations of the app. when the app is reactivated, notifications from this collection are updated with the new activation
             // id and they are rescheduled. if, in raising the callback associated with the current notification, the app is reactivated (e.g., by a call to
@@ -197,11 +201,7 @@ namespace Sensus.iOS
             // the facebook login manager returns control to the app). this can lead to duplicate notifications for the same callback, or infinite cycles of app 
             // reactivation if the notification raises a callback that causes it to be reissued (e.g., in the case of facebook login).
             lock (_callbackIdNotification)
-                _callbackIdNotification.Remove(callbackId);
-
-            // only raise callback if it's from the current activation and if it is scheduled
-            if (activationId != _activationId || !CallbackIsScheduled(callbackId))
-                return;                      
+                _callbackIdNotification.Remove(callbackId);                                                
 
             nint taskId = UIApplication.SharedApplication.BeginBackgroundTask(() =>
                 {
