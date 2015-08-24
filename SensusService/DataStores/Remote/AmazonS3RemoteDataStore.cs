@@ -155,7 +155,7 @@ namespace SensusService.DataStores.Remote
                     PutObjectRequest putRequest = new PutObjectRequest
                     {
                         BucketName = _bucket,
-                        Key = (_folder + "/" + datumType + "/" + Guid.NewGuid()).Trim('/'),  // trim '/' in case folder is blank
+                        Key = (_folder + "/" + datumType + "/" + Guid.NewGuid() + ".json").Trim('/'),  // trim '/' in case folder is blank
                         ContentBody = datumTypeJSON[datumType].ToString(),
                         ContentType = "application/json"
                     };
