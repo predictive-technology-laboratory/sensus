@@ -90,8 +90,6 @@
     <Reference Include="Xam.Plugin.MapExtend.Android">
       <HintPath>..\packages\Xam.Plugin.MapExtend.1.2.0.0\lib\MonoAndroid10\Xam.Plugin.MapExtend.Android.dll</HintPath>
     </Reference>
-<<<<<<< HEAD
-=======
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\Components\azure-mobile-services-1.3.1\lib\android\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -110,7 +108,6 @@
     <Reference Include="System.Net.Http.Primitives">
       <HintPath>..\Components\azure-mobile-services-1.3.1\lib\android\System.Net.Http.Primitives.dll</HintPath>
     </Reference>
->>>>>>> predictive-technology-laboratory/develop
     <Reference Include="Xamarin.GooglePlayServices.Base">
       <HintPath>..\packages\Xamarin.GooglePlayServices.Base.25.0.0.0\lib\MonoAndroid41\Xamarin.GooglePlayServices.Base.dll</HintPath>
     </Reference>
@@ -204,28 +201,9 @@
     <Reference Include="Xamarin.Forms.Maps">
       <HintPath>..\packages\Xamarin.Forms.Maps.1.4.4.6392\lib\MonoAndroid10\Xamarin.Forms.Maps.dll</HintPath>
     </Reference>
-<<<<<<< HEAD
     <Reference Include="DataNuage.Aws.S3.Android">
       <HintPath>..\Components\DataNuage.Aws.S3-1.5.216.0\lib\android\DataNuage.Aws.S3.Android.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.WindowsAzure.Mobile.Ext">
-      <HintPath>..\Components\azure-mobile-services-1.3.1\lib\android\Microsoft.WindowsAzure.Mobile.Ext.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.WindowsAzure.Mobile">
-      <HintPath>..\Components\azure-mobile-services-1.3.1\lib\android\Microsoft.WindowsAzure.Mobile.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\Components\azure-mobile-services-1.3.1\lib\android\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http.Extensions">
-      <HintPath>..\Components\azure-mobile-services-1.3.1\lib\android\System.Net.Http.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http.Primitives">
-      <HintPath>..\Components\azure-mobile-services-1.3.1\lib\android\System.Net.Http.Primitives.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Mobile">
-      <HintPath>..\Components\xamarin.mobile-0.7.5\lib\android\Xamarin.Mobile.dll</HintPath>
-=======
     <Reference Include="PCLStorage">
       <HintPath>..\packages\PCLStorage.1.0.2\lib\monoandroid\PCLStorage.dll</HintPath>
     </Reference>
@@ -255,7 +233,6 @@
     </Reference>
     <Reference Include="AWSSDK.S3">
       <HintPath>..\packages\AWSSDK.S3.3.1.2.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid10+xamarinios10+MonoTouch10\AWSSDK.S3.dll</HintPath>
->>>>>>> predictive-technology-laboratory/develop
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -359,17 +336,15 @@
       <Version>4.4.0.0</Version>
       <Visible>False</Visible>
     </XamarinComponentReference>
-<<<<<<< HEAD
     <XamarinComponentReference Include="xamandroidsupportv7appcompat">
       <Version>22.2.0.0</Version>
-=======
+    </XamarinComponentReference>
     <XamarinComponentReference Include="aws-s3-sdk">
       <Version>3.1.0.0</Version>
       <Visible>False</Visible>
     </XamarinComponentReference>
     <XamarinComponentReference Include="aws-cognitoidentity-sdk">
       <Version>3.1.0.0</Version>
->>>>>>> predictive-technology-laboratory/develop
       <Visible>False</Visible>
     </XamarinComponentReference>
   </ItemGroup>

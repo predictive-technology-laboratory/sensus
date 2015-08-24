@@ -1488,15 +1488,12 @@ namespace Sensus.Android
 			global::GooglePlayServices.Resource.Styleable.WalletFragmentStyle_maskedWalletDetailsTextAppearance = global::Sensus.Android.Resource.Styleable.WalletFragmentStyle_maskedWalletDetailsTextAppearance;
 			global::Xamarin.Forms.Platform.Resource.String.ApplicationName = global::Sensus.Android.Resource.String.ApplicationName;
 			global::Xamarin.Forms.Platform.Resource.String.Hello = global::Sensus.Android.Resource.String.Hello;
-<<<<<<< HEAD
 			global::DataNuage.Aws.Resource.String.ApplicationName = global::Sensus.Android.Resource.String.ApplicationName;
 			global::DataNuage.Aws.Resource.String.Hello = global::Sensus.Android.Resource.String.Hello;
-=======
 			global::PCLStorage.Resource.String.ApplicationName = global::Sensus.Android.Resource.String.ApplicationName;
 			global::PCLStorage.Resource.String.Hello = global::Sensus.Android.Resource.String.Hello;
 			global::PCLCrypto.Resource.String.ApplicationName = global::Sensus.Android.Resource.String.ApplicationName;
 			global::PCLCrypto.Resource.String.Hello = global::Sensus.Android.Resource.String.Hello;
->>>>>>> predictive-technology-laboratory/develop
 		}
 		
 		public partial class Animation
