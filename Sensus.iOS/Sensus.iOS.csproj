@@ -108,10 +108,11 @@
     <ConsolePause>false</ConsolePause>
     <MtouchArch>ARMv7, ARM64</MtouchArch>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
-    <CodesignKey>iPhone Distribution: Matthew Gerber (YYA52E9MR7)</CodesignKey>
+    <CodesignKey>iPhone Distribution</CodesignKey>
     <MtouchUseRefCounting>true</MtouchUseRefCounting>
     <MtouchI18n>
     </MtouchI18n>
+    <CodesignProvision>Automatic:AppStore</CodesignProvision>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
