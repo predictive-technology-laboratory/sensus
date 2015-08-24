@@ -62,20 +62,6 @@ namespace Sensus.iOS
             UiBoundSensusServiceHelper.Set(_serviceHelper);
             app.SensusMainPage.DisplayServiceHelper(UiBoundSensusServiceHelper.Get(true));
 
-            if (launchOptions != null)
-            {                
-                NSObject launchOptionValue;
-                if (launchOptions.TryGetValue(UIApplication.LaunchOptionsLocalNotificationKey, out launchOptionValue))
-                    ServiceNotificationAsync(launchOptionValue as UILocalNotification);
-                else if (launchOptions.TryGetValue(UIApplication.LaunchOptionsUrlKey, out launchOptionValue))
-                    Protocol.DisplayFromBytesAsync(File.ReadAllBytes((launchOptionValue as NSUrl).Path));
-            }
-
-            // service all other notifications whose fire time has passed
-            foreach (UILocalNotification notification in uiApplication.ScheduledLocalNotifications)
-                if (notification.FireDate.ToDateTime() <= DateTime.UtcNow)
-                    ServiceNotificationAsync(notification);
-
             return base.FinishedLaunching(uiApplication, launchOptions);
         }
 
@@ -120,44 +106,11 @@ namespace Sensus.iOS
 
         private void ServiceNotificationAsync(UILocalNotification notification)
         {
-            bool isCallback = (notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_KEY)) as NSNumber).BoolValue;
-            if (isCallback)
-            {   
-                // cancel notification, since it has served its purpose
-                iOSSensusServiceHelper.CancelLocalNotification(notification);
-
-                string callbackId = (notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_ID_KEY)) as NSString).ToString();
-                bool repeating = (notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber).BoolValue;
-                int repeatDelayMS = (notification.UserInfo.ValueForKey(new NSString(iOSSensusServiceHelper.SENSUS_CALLBACK_REPEAT_DELAY)) as NSNumber).Int32Value;
-                string activationId = (notification.UserInfo.ValueForKey(new NSString(iOSSensusServiceHelper.SENSUS_CALLBACK_ACTIVATION_ID)) as NSString).ToString();
-
-                // only raise callback if it's from the current activation and if it is scheduled
-                if (activationId != _serviceHelper.ActivationId || !iOSSensusServiceHelper.Get().CallbackIsScheduled(callbackId))
-                    return;                      
-
-                nint taskId = UIApplication.SharedApplication.BeginBackgroundTask(() =>
-                    {
-                        // if we're out of time running in the background, cancel the callback.
-                        UiBoundSensusServiceHelper.Get(true).CancelRaisedCallback(callbackId);
-                    });
-
-                UiBoundSensusServiceHelper.Get(true).RaiseCallbackAsync(callbackId, repeating, false, () =>
-                    {
-                        Device.BeginInvokeOnMainThread(() =>
-                            {
-                                // notification has been serviced, so end background task
-                                UIApplication.SharedApplication.EndBackgroundTask(taskId);
-
-                                // update and schedule notification again if it was a repeating callback
-                                if (repeating)
-                                {
-                                    notification.FireDate = DateTime.UtcNow.AddMilliseconds((double)repeatDelayMS).ToNSDate();
-                                    UIApplication.SharedApplication.ScheduleLocalNotification(notification);
-                                }
-                                else
-                                    _serviceHelper.UnscheduleOneTimeCallback(callbackId);
-                            });
-                    });
+            if (notification.UserInfo != null)
+            {
+                NSNumber isCallbackValue = notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_KEY)) as NSNumber;
+                if (isCallbackValue != null && isCallbackValue.BoolValue)
+                    _serviceHelper.ServiceCallbackNotificationAsync(notification);
             }
         }
 		

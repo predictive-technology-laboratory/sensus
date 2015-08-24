@@ -85,13 +85,13 @@ namespace SensusService
 
         #region static members
 
+        private static SensusServiceHelper SINGLETON;
         private static readonly object PROMPT_FOR_INPUTS_LOCKER = new object();
         private static bool PROMPT_FOR_INPUTS_RUNNING = false;
         public const string SENSUS_CALLBACK_KEY = "SENSUS-CALLBACK";
         public const string SENSUS_CALLBACK_ID_KEY = "SENSUS-CALLBACK-ID";
         public const string SENSUS_CALLBACK_REPEATING_KEY = "SENSUS-CALLBACK-REPEATING";
         protected const string XAMARIN_INSIGHTS_APP_KEY = "";
-        private static SensusServiceHelper SINGLETON;
         private const string ENCRYPTION_KEY = "";
         private static readonly string SHARE_DIRECTORY = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "share");
         private static readonly string LOG_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
@@ -674,7 +674,12 @@ namespace SensusService
                     {
                         // do we have callback information for the passed callbackId? we might not, in the case where the callback is canceled by the user and the system fires it subsequently.
                         if (!_idCallback.TryGetValue(callbackId, out scheduledCallback))
+                        {
+                            if (callback != null)
+                                callback();
+
                             return;
+                        }
                     }
 
                     // callback actions cannot be raised concurrently -- drop the current callback if it is already in progress
@@ -683,10 +688,10 @@ namespace SensusService
                         try
                         {
                             if (scheduledCallback.Canceller.IsCancellationRequested)
-                                _logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") was cancelled before it was started.", LoggingLevel.Debug, GetType());
+                                _logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") was cancelled before it was started.", LoggingLevel.Normal, GetType());
                             else
                             {
-                                _logger.Log("Raising callback \"" + scheduledCallback.Name + "\" (" + callbackId + ").", LoggingLevel.Debug, GetType());
+                                _logger.Log("Raising callback \"" + scheduledCallback.Name + "\" (" + callbackId + ").", LoggingLevel.Normal, GetType());
 
                                 if (notifyUser)
                                     IssueNotificationAsync(scheduledCallback.UserNotificationMessage, callbackId);
@@ -722,7 +727,7 @@ namespace SensusService
                         }
                     }
                     else
-                        _logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") is already running. Not running again.", LoggingLevel.Debug, GetType());
+                        _logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") is already running. Not running again.", LoggingLevel.Normal, GetType());
                     
                     // if this was a one-time callback, remove it from our collection. it is no longer needed.
                     if (!repeating)
@@ -756,7 +761,7 @@ namespace SensusService
             if (callbackId != null)
                 lock (_idCallback)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Unscheduling one-time callback \"" + callbackId + "\".", LoggingLevel.Debug, GetType());
+                    SensusServiceHelper.Get().Logger.Log("Unscheduling one-time callback \"" + callbackId + "\".", LoggingLevel.Normal, GetType());
 
                     CancelRaisedCallback(callbackId);
                     _idCallback.Remove(callbackId);
@@ -770,7 +775,7 @@ namespace SensusService
             if (callbackId != null)
                 lock (_idCallback)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Unscheduling repeating callback \"" + callbackId + "\".", LoggingLevel.Debug, GetType());
+                    SensusServiceHelper.Get().Logger.Log("Unscheduling repeating callback \"" + callbackId + "\".", LoggingLevel.Normal, GetType());
 
                     CancelRaisedCallback(callbackId);
                     _idCallback.Remove(callbackId);
@@ -876,14 +881,14 @@ namespace SensusService
                                                 inputGroups = null;
                                             else if (result == PromptForInputsPage.Result.NavigateBackward)
                                             {
-                                                await App.Current.MainPage.Navigation.PopAsync(true);
-                                                incompleteGroupNum -= 2;
+                                                await App.Current.MainPage.Navigation.PopAsync();
+                                                incompleteGroupNum -= 2;  // we're past the first page, so decrement by two so that, after the for-loop post-increment, the previous input group will be shown
                                             }
 
                                             responseWait.Set();
                                         });
 
-                                    await App.Current.MainPage.Navigation.PushAsync(promptForInputsPage, true);
+                                    await App.Current.MainPage.Navigation.PushAsync(promptForInputsPage);
                                 });
                         }
 

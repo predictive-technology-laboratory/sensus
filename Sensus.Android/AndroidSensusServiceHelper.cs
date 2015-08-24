@@ -457,7 +457,7 @@ namespace Sensus.Android
         {            
             long initialTimeMS = Java.Lang.JavaSystem.CurrentTimeMillis() + initialDelayMS;
 
-            Logger.Log("Callback " + callbackId + " scheduled for " + (new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(initialTimeMS)) + " (repeating).", LoggingLevel.Debug, GetType());
+            Logger.Log("Callback " + callbackId + " scheduled for " + (new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(initialTimeMS)) + " (repeating).", LoggingLevel.Normal, GetType());
 
             AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
             alarmManager.SetRepeating(AlarmType.RtcWakeup, initialTimeMS, repeatDelayMS, GetCallbackIntent(callbackId, true));
@@ -467,7 +467,7 @@ namespace Sensus.Android
         {
             long timeMS = Java.Lang.JavaSystem.CurrentTimeMillis() + delayMS;
 
-            Logger.Log("Callback " + callbackId + " scheduled for " + (new DateTimeOffset(1970, 1, 1, 0, 0, 0, 0, new TimeSpan()).AddMilliseconds(timeMS)) + " (one-time).", LoggingLevel.Debug, GetType());
+            Logger.Log("Callback " + callbackId + " scheduled for " + (new DateTimeOffset(1970, 1, 1, 0, 0, 0, 0, new TimeSpan()).AddMilliseconds(timeMS)) + " (one-time).", LoggingLevel.Normal, GetType());
 
             AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
             alarmManager.Set(AlarmType.RtcWakeup, timeMS, GetCallbackIntent(callbackId, false));

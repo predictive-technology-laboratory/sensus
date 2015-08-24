@@ -28,6 +28,7 @@ namespace SensusUI.Inputs
         private string _labelText;
         private View _view;
         private bool _complete;
+        private bool _shouldBeStored;
 
         [EntryStringUiProperty("Name:", true, 0)]
         public string Name
@@ -102,6 +103,18 @@ namespace SensusUI.Inputs
             protected set { _complete = value; }
         }
 
+        public bool ShouldBeStored
+        {
+            get
+            {
+                return _shouldBeStored;
+            }
+            set
+            {
+                _shouldBeStored = value;
+            }
+        }
+
         [JsonIgnore]
         public abstract bool Enabled { get; set; }
 
@@ -112,6 +125,7 @@ namespace SensusUI.Inputs
         {
             _name = DefaultName;
             _id = Guid.NewGuid().ToString();
+            _shouldBeStored = true;
         }
 
         public Input(string labelText)

@@ -31,7 +31,7 @@ namespace SensusService.Probes.User
         private Type _conditionValueEnumType;
         private bool _change;
         private bool _fireRepeatedly;
-        private bool _conditionSatisfiedLastTime;
+        private bool _fireCriteriaMetOnPreviousCall;
         private Regex _regularExpression;
         private bool _ignoreFirstDatum;
         private bool _firstDatum;
@@ -112,15 +112,15 @@ namespace SensusService.Probes.User
             set { _fireRepeatedly = value; }
         }
 
-        public bool ConditionSatisfiedLastTime
+        public bool FireCriteriaMetOnPreviousCall
         {
             get
             {
-                return _conditionSatisfiedLastTime;
+                return _fireCriteriaMetOnPreviousCall;
             }
             set
             {
-                _conditionSatisfiedLastTime = value;
+                _fireCriteriaMetOnPreviousCall = value;
             }
         }
 
@@ -185,7 +185,7 @@ namespace SensusService.Probes.User
 
         public void Reset()
         {
-            _conditionSatisfiedLastTime = false;
+            _fireCriteriaMetOnPreviousCall = false;
             _firstDatum = true;
         }
 
@@ -227,14 +227,20 @@ namespace SensusService.Probes.User
                     }
                 }
 
+                bool fireCriteriaMet = false;
                 bool fire = false;
+                if (!_ignoreFirstDatum || !_firstDatum)
+                {
+                    if (conditionSatisfied && DateTime.Now.TimeOfDay >= _startTime && DateTime.Now.TimeOfDay <= _endTime)
+                    {
+                        fireCriteriaMet = true;
 
-                if (!_ignoreFirstDatum || !_firstDatum)  // the user can ignore the first generated datum, e.g., if a probe immediately returns a triggering value that shouldn't be used. if we're not ignoring the first datum, then proceed; otherwise, if we are ignore it but this isn't the first datum, then proceed. in all other cases, do not fire.
-                    if (conditionSatisfied && DateTime.Now.TimeOfDay >= _startTime && DateTime.Now.TimeOfDay <= _endTime)  // if the condition is satisfied and we're within the interaction window, proceed.
-                        if (_fireRepeatedly || !_conditionSatisfiedLastTime)  // some probes return many datum objects, but we only want the trigger to fire if it did not fire for the previous datum (i.e., on changes).
+                        if (_fireRepeatedly || !_fireCriteriaMetOnPreviousCall)
                             fire = true;
+                    }
+                }
 
-                _conditionSatisfiedLastTime = conditionSatisfied;
+                _fireCriteriaMetOnPreviousCall = fireCriteriaMet;
                 _firstDatum = false;
 
                 return fire;
@@ -251,11 +257,11 @@ namespace SensusService.Probes.User
             Trigger trigger = obj as Trigger;
 
             return trigger != null &&
-                   _probe == trigger.Probe &&
-                   _datumPropertyName == trigger.DatumPropertyName &&
-                   _condition == trigger.Condition &&
-                   _conditionValue == trigger.ConditionValue &&
-                   _change == trigger.Change;
+            _probe == trigger.Probe &&
+            _datumPropertyName == trigger.DatumPropertyName &&
+            _condition == trigger.Condition &&
+            _conditionValue == trigger.ConditionValue &&
+            _change == trigger.Change;
         }
 
         public override int GetHashCode()

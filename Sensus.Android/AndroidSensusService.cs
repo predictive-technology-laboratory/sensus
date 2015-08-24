@@ -37,7 +37,7 @@ namespace Sensus.Android
 
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
-            _serviceHelper.Logger.Log("Sensus service received start command (startId=" + startId + ").", LoggingLevel.Debug, GetType());
+            _serviceHelper.Logger.Log("Sensus service received start command (startId=" + startId + ").", LoggingLevel.Normal, GetType());
 
             _serviceHelper.MainActivityWillBeSet = intent.GetBooleanExtra(AndroidSensusServiceHelper.MAIN_ACTIVITY_WILL_BE_SET, false);
 

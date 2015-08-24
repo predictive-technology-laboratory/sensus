@@ -214,7 +214,7 @@ namespace SensusService.Probes.User
                             lock (_locker)
                                 if (!_probe.Running || !_enabled || previousCurrentDatum.Item2 == null)
                                 {
-                                    trigger.ConditionSatisfiedLastTime = false;  // this covers the case when the current datum is null. for some probes, the null datum is meaningful and is emitted in order for their state to be tracked appropriately (e.g., POI probe).
+                                    trigger.FireCriteriaMetOnPreviousCall = false;  // this covers the case when the current datum is null. for some probes, the null datum is meaningful and is emitted in order for their state to be tracked appropriately (e.g., POI probe).
                                     return;
                                 }
 
@@ -457,10 +457,12 @@ namespace SensusService.Probes.User
                         if (inputGroups != null)
                             foreach (InputGroup inputGroup in inputGroups)
                                 foreach (Input input in inputGroup.Inputs)
-                                    if (!(input is LabelOnlyInput) && input.Complete)
+                                    if (input.ShouldBeStored && input.Complete)
                                     {
                                         _probe.StoreDatum(new ScriptDatum(DateTimeOffset.UtcNow, input.GroupId, input.Id, input.Value, script.CurrentDatum == null ? null : script.CurrentDatum.Id));
 
+                                        // once inputs are stored, they should be stored again, nor should the user be able to modify them
+                                        input.ShouldBeStored = false;
                                         Xamarin.Forms.Device.BeginInvokeOnMainThread(() => input.Enabled = false);
                                     }
 

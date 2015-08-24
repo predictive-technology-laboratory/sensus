@@ -43,11 +43,11 @@ namespace Sensus.iOS
         /// Cancels a UILocalNotification. This will succeed in one of two conditions:  (1) if the notification to be
         /// cancelled is scheduled (i.e., not delivered); and (2) if the notification to be cancelled has been delivered
         /// and if the object passed in is the actual notification and not, for example, the one that was passed to
-        /// ScheduleLocalNotification -- once passed to this method, a copy is made and the objects won't test equal
+        /// ScheduleLocalNotification -- once passed to ScheduleLocalNotification, a copy is made and the objects won't test equal
         /// for cancellation.
         /// </summary>
         /// <param name="notification">Notification to cancel.</param>
-        public static void CancelLocalNotification(UILocalNotification notification)
+        private static void CancelLocalNotification(UILocalNotification notification)
         {
             Device.BeginInvokeOnMainThread(() =>
                 {
@@ -180,6 +180,62 @@ namespace Sensus.iOS
                 });
         }
 
+        public void ServiceCallbackNotificationAsync(UILocalNotification callbackNotification)
+        {
+            // cancel notification (removing it from the tray), since it has served its purpose
+            CancelLocalNotification(callbackNotification);
+
+            string callbackId = (callbackNotification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ID_KEY)) as NSString).ToString();
+            bool repeating = (callbackNotification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber).BoolValue;
+            int repeatDelayMS = (callbackNotification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_DELAY)) as NSNumber).Int32Value;
+            string activationId = (callbackNotification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ACTIVATION_ID)) as NSString).ToString();
+
+            // only raise callback if it's from the current activation and if it is scheduled
+            if (activationId != _activationId || !CallbackIsScheduled(callbackId))
+                return; 
+            
+            // remove from platform-specific notification collection. the purpose of the platform-specific notification collection is to hold the notifications
+            // between successive activations of the app. when the app is reactivated, notifications from this collection are updated with the new activation
+            // id and they are rescheduled. if, in raising the callback associated with the current notification, the app is reactivated (e.g., by a call to
+            // the facebook probe login manager), then the current notification will be reissued when updated via app reactivation (which will occur, e.g., when
+            // the facebook login manager returns control to the app). this can lead to duplicate notifications for the same callback, or infinite cycles of app 
+            // reactivation if the notification raises a callback that causes it to be reissued (e.g., in the case of facebook login).
+            lock (_callbackIdNotification)
+                _callbackIdNotification.Remove(callbackId);                                                
+
+            nint taskId = UIApplication.SharedApplication.BeginBackgroundTask(() =>
+                {
+                    // if we're out of time running in the background, cancel the callback.
+                    CancelRaisedCallback(callbackId);
+                });
+
+            RaiseCallbackAsync(callbackId, repeating, false, () =>
+                {
+                    Device.BeginInvokeOnMainThread(() =>
+                        {
+                            // notification has been serviced, so end background task
+                            UIApplication.SharedApplication.EndBackgroundTask(taskId);
+
+                            // update and schedule notification again if it was a repeating callback and is still scheduled
+                            if (repeating)
+                            {
+                                if (CallbackIsScheduled(callbackId))
+                                {
+                                    callbackNotification.FireDate = DateTime.UtcNow.AddMilliseconds((double)repeatDelayMS).ToNSDate();
+
+                                    // add back to the platform-specific notification collection, so that the notification is updated and reissued if/when the app is reactivated
+                                    lock (_callbackIdNotification)
+                                        _callbackIdNotification.Add(callbackId, callbackNotification);
+                                
+                                    UIApplication.SharedApplication.ScheduleLocalNotification(callbackNotification);
+                                }
+                            }
+                            else
+                                UnscheduleOneTimeCallback(callbackId);
+                        });
+                });   
+        }
+
         protected override void UnscheduleCallback(string callbackId, bool repeating)
         {            
             lock (_callbackIdNotification)
@@ -245,6 +301,7 @@ namespace Sensus.iOS
                     MFMailComposeViewController mailer = new MFMailComposeViewController();
                     mailer.SetSubject(subject);
                     mailer.AddAttachmentData(NSData.FromUrl(NSUrl.FromFilename(path)), "application/json", Path.GetFileName(path));
+                    mailer.Finished += (sender, e) => mailer.DismissViewControllerAsync(true);
                     UIApplication.SharedApplication.KeyWindow.RootViewController.PresentViewController(mailer, true, null);
                 });
         }

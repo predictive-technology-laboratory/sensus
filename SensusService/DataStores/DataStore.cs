@@ -119,7 +119,7 @@ namespace SensusService.DataStores
                         {
                             _isCommitting = true;
 
-                            SensusServiceHelper.Get().Logger.Log("Committing data.", LoggingLevel.Verbose, GetType());
+                            SensusServiceHelper.Get().Logger.Log("Committing data.", LoggingLevel.Normal, GetType());
 
                             List<Datum> dataToCommit = null;
                             try
