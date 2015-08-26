@@ -280,8 +280,6 @@ namespace SensusService
         private List<string> _runningProtocolIds;
         private string _healthTestCallbackId;
         private int _healthTestDelayMS;
-        private int _healthTestCount;
-        private int _healthTestsPerProtocolReport;
         private Dictionary<string, ScheduledCallback> _idCallback;
         private SHA256Managed _hasher;
         private List<PointOfInterest> _pointsOfInterest;
@@ -320,20 +318,6 @@ namespace SensusService
                     if (_healthTestCallbackId != null)
                         _healthTestCallbackId = RescheduleRepeatingCallback(_healthTestCallbackId, _healthTestDelayMS, _healthTestDelayMS);
 
-                    SaveAsync();
-                }
-            }
-        }
-
-        [EntryIntegerUiProperty("Health Tests Per Report:", true, 10)]
-        public int HealthTestsPerProtocolReport
-        {
-            get { return _healthTestsPerProtocolReport; }
-            set
-            {
-                if (value != _healthTestsPerProtocolReport)
-                {
-                    _healthTestsPerProtocolReport = value; 
                     SaveAsync();
                 }
             }
@@ -385,9 +369,7 @@ namespace SensusService
             _registeredProtocols = new ObservableCollection<Protocol>();
             _runningProtocolIds = new List<string>();
             _healthTestCallbackId = null;
-            _healthTestDelayMS = 60000;
-            _healthTestCount = 0;
-            _healthTestsPerProtocolReport = 5;
+            _healthTestDelayMS = 300000;
             _idCallback = new Dictionary<string, ScheduledCallback>();
             _hasher = new SHA256Managed();
             _pointsOfInterest = new List<PointOfInterest>();
@@ -939,7 +921,7 @@ namespace SensusService
                 if (_stopped)
                     return;
 
-                _logger.Log("Sensus health test is running (test " + ++_healthTestCount + ")", LoggingLevel.Normal, GetType());
+                _logger.Log("Sensus health test is running.", LoggingLevel.Normal, GetType());
 
                 foreach (Protocol protocol in _registeredProtocols)
                 {
@@ -947,12 +929,7 @@ namespace SensusService
                         break;
                     
                     if (_runningProtocolIds.Contains(protocol.Id))
-                    {
                         protocol.TestHealth();
-
-                        if (_healthTestCount % _healthTestsPerProtocolReport == 0)
-                            protocol.StoreMostRecentProtocolReport();
-                    }
                 }
             }
         }
