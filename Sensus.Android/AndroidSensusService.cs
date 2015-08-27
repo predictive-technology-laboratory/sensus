@@ -31,6 +31,14 @@ namespace Sensus.Android
             base.OnCreate();
 
             _serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
+
+            // it's happened that the service is created after the service helper is disposed:  https://insights.xamarin.com/app/Sensus-Production/issues/46
+            if (_serviceHelper == null)
+            {
+                StopSelf();
+                return;
+            }
+            
             _serviceHelper.SetService(this);
             _serviceHelper.UpdateApplicationStatus("0 protocols are running");
         }

@@ -96,6 +96,14 @@ namespace Sensus.Android
 
             _serviceConnection.ServiceConnected += (o, e) =>
             {
+                // it's happened that the service is created / started after the service helper is disposed:  https://insights.xamarin.com/app/Sensus-Production/issues/46
+                // binding to the service in such a situation can result in a null service helper within the binder.
+                if (e.Binder.SensusServiceHelper == null)
+                {
+                    Finish();
+                    return;
+                }
+                    
                 // get reference to service helper for use within the UI
                 UiBoundSensusServiceHelper.Set(e.Binder.SensusServiceHelper);
 
@@ -262,9 +270,14 @@ namespace Sensus.Android
 
             // unbind from service
             if (_serviceConnection.Binder != null)
-            {                   
-                _serviceConnection.Binder.SensusServiceHelper.SetMainActivity(null);
-                _serviceConnection.Binder.SensusServiceHelper.SaveAsync();
+            {         
+                // it's happened that the service is created after the service helper is disposed:  https://insights.xamarin.com/app/Sensus-Production/issues/46
+                // binding to the service in such a situation can result in a null service helper within the binder.
+                if (_serviceConnection.Binder.SensusServiceHelper != null)
+                {    
+                    _serviceConnection.Binder.SensusServiceHelper.SetMainActivity(null);
+                    _serviceConnection.Binder.SensusServiceHelper.SaveAsync();
+                }
 
                 if (_serviceConnection.Binder.IsBound)
                     UnbindService(_serviceConnection);
