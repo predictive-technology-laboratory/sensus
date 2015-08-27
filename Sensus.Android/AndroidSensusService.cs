@@ -30,6 +30,8 @@ namespace Sensus.Android
         {
             base.OnCreate();
 
+            SensusServiceHelper.Initialize(() => new AndroidSensusServiceHelper());
+
             _serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
 
             // it's happened that the service is created after the service helper is disposed:  https://insights.xamarin.com/app/Sensus-Production/issues/46
