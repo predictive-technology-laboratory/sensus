@@ -75,7 +75,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>4.0.0</string>
+	<string>4.0.2</string>
 	<key>XSAppIconAssets</key>
 	<string>Resources/Images.xcassets/AppIcons.appiconset</string>
 	<key>FacebookAppID</key>
@@ -83,6 +83,6 @@
 	<key>FacebookDisplayName</key>
 	<string>Sensus</string>
 	<key>CFBundleShortVersionString</key>
-	<string>4.0.0</string>
+	<string>4.0.2</string>
 </dict>
 </plist>

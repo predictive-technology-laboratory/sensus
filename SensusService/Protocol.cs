@@ -695,28 +695,20 @@ namespace SensusService
                 }
 
                 _mostRecentReport = new ProtocolReport(DateTimeOffset.UtcNow, error, warning, misc);
-
                 SensusServiceHelper.Get().Logger.Log("Protocol report:" + Environment.NewLine + _mostRecentReport, LoggingLevel.Normal, GetType());
+
+                SensusServiceHelper.Get().Logger.Log("Storing protocol report locally.", LoggingLevel.Normal, GetType());
+                _localDataStore.AddNonProbeDatum(_mostRecentReport);
+
+                if (!_localDataStore.UploadToRemoteDataStore && _forceProtocolReportsToRemoteDataStore)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Local data aren't pushed to remote, so we're copying the report datum directly to the remote cache.", LoggingLevel.Normal, GetType());
+                    _remoteDataStore.AddNonProbeDatum(_mostRecentReport);
+                }
 
                 int runningProtocols = SensusServiceHelper.Get().RunningProtocolIds.Count;
                 SensusServiceHelper.Get().UpdateApplicationStatus(runningProtocols + " protocol" + (runningProtocols == 1 ? " is " : "s are") + " running");
             }
-        }
-
-        public void StoreMostRecentProtocolReport()
-        {
-            lock (_locker)
-                if (_mostRecentReport != null)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Storing protocol report locally.", LoggingLevel.Normal, GetType());
-                    _localDataStore.AddNonProbeDatum(_mostRecentReport);
-
-                    if (!_localDataStore.UploadToRemoteDataStore && _forceProtocolReportsToRemoteDataStore)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Local data aren't pushed to remote, so we're copying the report datum directly to the remote cache.", LoggingLevel.Normal, GetType());
-                        _remoteDataStore.AddNonProbeDatum(_mostRecentReport);
-                    }
-                }
         }
 
         public void StopAsync()

@@ -38,7 +38,7 @@ namespace SensusService.Probes.Movement
 
         public sealed override int DefaultPollingSleepDurationMS
         {
-            get 
+            get
             {
                 return 15000; // every 15 seconds
             }
@@ -69,27 +69,42 @@ namespace SensusService.Probes.Movement
                 _previousPosition = null;  // do this before starting the base-class poller so it doesn't race to grab a stale previous location.
                 base.Start();               
             }
-        }           
+        }
 
         protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
         {
             lock (_locker)
             {
-                Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken);
+                Position currentPosition = null;
 
-                Datum[] data = null;
+                try
+                {
+                    currentPosition = GpsReceiver.Get().GetReading(cancellationToken);
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Failed to get GPS reading:  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
 
-                if (_previousPosition == null || currentPosition == null || currentPosition.Timestamp == _previousPosition.Timestamp)
-                    data = new Datum[] { };
-                else
-                    data = new SpeedDatum[] { new SpeedDatum(currentPosition.Timestamp, _previousPosition, currentPosition) };
+                SpeedDatum datum = null;
 
                 if (currentPosition != null)
-                    _previousPosition = currentPosition;
+                {
+                    if (_previousPosition == null)
+                        _previousPosition = currentPosition;
+                    else if (currentPosition.Timestamp > _previousPosition.Timestamp)  // it has happened (rarely) that positions come in out of order...drop any such positions.
+                    {
+                        datum = new SpeedDatum(currentPosition.Timestamp, _previousPosition, currentPosition);
+                        _previousPosition = currentPosition;
+                    }
+                }
 
-                return data;
+                if (datum == null)
+                    return new Datum[] { };
+                else
+                    return new Datum[] { datum };
             }
-        }            
+        }
 
         public override void Stop()
         {

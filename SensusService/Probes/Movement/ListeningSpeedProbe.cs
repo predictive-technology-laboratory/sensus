@@ -19,7 +19,7 @@ using SensusService.Probes.Location;
 namespace SensusService.Probes.Movement
 {
     public class ListeningSpeedProbe : ListeningProbe
-    {        
+    {
         private EventHandler<PositionEventArgs> _positionChangedHandler;
         private Position _previousPosition;
 
@@ -45,15 +45,20 @@ namespace SensusService.Probes.Movement
         {
             _positionChangedHandler = (o, e) =>
             {
+                if (e.Position == null)
+                    return;
+                    
                 lock (_locker)
                 {
                     SensusServiceHelper.Get().Logger.Log("Received position change notification.", LoggingLevel.Verbose, GetType());
 
-                    if (_previousPosition != null && e.Position != null && e.Position.Timestamp != _previousPosition.Timestamp)
-                        StoreDatum(new SpeedDatum(e.Position.Timestamp, _previousPosition, e.Position));
-
-                    if (e.Position != null)
+                    if (_previousPosition == null)
                         _previousPosition = e.Position;
+                    else if (e.Position.Timestamp > _previousPosition.Timestamp)  // it has happened (rarely) that positions come in out of order...drop any such positions.
+                    {
+                        StoreDatum(new SpeedDatum(e.Position.Timestamp, _previousPosition, e.Position));
+                        _previousPosition = e.Position;
+                    }
                 }
             };
         }
