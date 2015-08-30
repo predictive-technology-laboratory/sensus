@@ -331,6 +331,7 @@ namespace SensusService.Probes.User
 
             foreach (TimeTrigger timeTrigger in _timeTriggers)
             {
+                if (timeTrigger.Enabled)
                     new Thread(() =>
                         {
 

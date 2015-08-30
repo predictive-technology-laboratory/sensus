@@ -14,6 +14,7 @@
 
 using System;
 using Xamarin.Forms;
+using SensusUI.UiProperties;
 
 namespace SensusUI.Inputs
 {

@@ -107,8 +107,9 @@ namespace SensusUI
                     bool complete = true;
                     foreach (Input input in inputGroup.Inputs)
                     {
-                        if (!(input is TextInput || input is YesNoInput) && !(input.Complete) && totalSteps > 1)
+                        if (!(input.Complete) && totalSteps > 1)
                         {
+                            Console.Out.WriteLine("completion check");
                             complete = false;
                             await DisplayAlert("Incomplete", "Please complete this step before moving on.", "Ok");
                             break;
@@ -121,7 +122,7 @@ namespace SensusUI
                     }
                 };
 
-            skipButton.Clicked += async (o, e) =>       // TODO fix this block to represent all alert cases
+            skipButton.Clicked += async (o, e) =>
                 {
                     skipButtonTapped = await DisplayAlert("Skip question", "I do not wish to answer this question", "Yes", "No");
                     if (skipButtonTapped)

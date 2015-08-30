@@ -19,11 +19,19 @@ namespace SensusService.Probes.User
 {
     public class TimeTrigger
     {
+        private bool _enabled;
         private TimeSpan _startTime;
         private TimeSpan _endTime;
         private TimeSpan _randomTriggerTime;
         private string _Id;
         private bool _rerunDaily;
+
+        [OnOffUiProperty("Enabled:", true, 1)]
+        public bool Enabled
+        {
+            get { return _enabled; }
+            set { _enabled = value; }
+        }
 
         public TimeSpan StartTime
         {
