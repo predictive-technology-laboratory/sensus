@@ -19,7 +19,7 @@ namespace Sensus.UITests
         /// It could be found in the xamarin test cloud account.
         /// Each team will have a different APIkey. The one below is from the sensus team.
         /// </summary>
-        const string _APIkey = "b38984cea752e9d489573615fb5fddaf";
+        const string _APIkey = "team_API_key";
 
         public SensusTests(Platform platform)
         {
@@ -43,8 +43,8 @@ namespace Sensus.UITests
         public void TestFixtureSetup()
         {
             //these paths also need to be updated based on your environment;
-            PathToIPA = "/Users/lihuacai/Desktop/sensus/Sensus.iOS/bin/iPhoneSimulator/Debug/Sensus.iOS.app";
-            PathToAPK = "/Users/lihuacai/Desktop/sensus/edu.virginia.sie.ptl.sensus.apk";
+            PathToIPA = "../../../Sensus.iOS/bin/iPhoneSimulator/Debug/Sensus.iOS.app";
+            PathToAPK = "../../../Sensus.Android/bin/Debug/edu.virginia.sie.ptl.sensus.apk";
         }
 
         /// <summary>
@@ -93,6 +93,8 @@ namespace Sensus.UITests
 
         /// <summary>
         ///   This will initialize IApp to the iOS application.
+        ///   If you have setup an iOS device for testing instead of using iOS simulator, 
+        ///   you will need to copy your own device identifier.
         /// </summary>
         void ConfigureiOSApp()
         {
@@ -100,8 +102,8 @@ namespace Sensus.UITests
             {
                 app = ConfigureApp.iOS
                     .EnableLocalScreenshots()
-                    //                  .DeviceIdentifier("f8c67472f88efb1985c2f5e73698d6bb36988f5d")
-                    //                  .AppBundle("com.xamarin.calabash.example.creditcardvalidation")
+                    //.DeviceIdentifier("f8c67472f88efb1985c2f5e73698d6bb36988f5d")
+                    //.AppBundle("com.xamarin.calabash.example.creditcardvalidation")
                     .AppBundle(PathToIPA)
                     .StartApp();
             }
@@ -132,6 +134,9 @@ namespace Sensus.UITests
             ConfigureTest(platform);
         }
 
+        /// <summary>
+        /// simple example test. create similar test like below as needed.
+        /// </summary>
         [Test]
         public void AppLaunches()
         {
