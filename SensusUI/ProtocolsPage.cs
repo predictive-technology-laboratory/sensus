@@ -48,8 +48,13 @@ namespace SensusUI
                     selectedProtocol.StartWithUserAgreement(null);
                 else if (selectedAction == "Stop")
                 {
-                    if (await DisplayAlert("Confirm Stop", "Are you sure you want to stop " + selectedProtocol.Name + "?", "Yes", "No"))
-                        selectedProtocol.Running = false;
+                        Action stopAction = new Action(async() =>
+                            {
+                                if (await DisplayAlert("Confirm Stop", "Are you sure you want to stop " + selectedProtocol.Name + "?", "Yes", "No"))
+                                    selectedProtocol.Running = false;
+                            });
+                        
+                        ExecuteActionUponProtocolAuthentication(selectedProtocol, stopAction);
                 }
                 else if (selectedAction == "Edit")
                 {
@@ -65,72 +70,87 @@ namespace SensusUI
                 }
                 else if (selectedAction == "Status")
                 {
-                    if (UiBoundSensusServiceHelper.Get(true).ProtocolShouldBeRunning(selectedProtocol))
-                    {
-                        selectedProtocol.TestHealthAsync(() =>
+                        Action statusAction = new Action(async() =>
                             {
-                                Device.BeginInvokeOnMainThread(async () =>
-                                    {
-                                        if (selectedProtocol.MostRecentReport == null)
-                                            await DisplayAlert("No Report", "Status check failed.", "OK");
-                                        else
-                                            await Navigation.PushAsync(new ViewTextLinesPage("Protocol Report", selectedProtocol.MostRecentReport.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList(), null));
-                                    });
+                                if (UiBoundSensusServiceHelper.Get(true).ProtocolShouldBeRunning(selectedProtocol))
+                                {
+                                    selectedProtocol.TestHealthAsync(() =>
+                                        {
+                                            Device.BeginInvokeOnMainThread(async () =>
+                                                {
+                                                    if (selectedProtocol.MostRecentReport == null)
+                                                        await DisplayAlert("No Report", "Status check failed.", "OK");
+                                                    else
+                                                        await Navigation.PushAsync(new ViewTextLinesPage("Protocol Report", selectedProtocol.MostRecentReport.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList(), null));
+                                                });
+                                        });
+                                }
+                                else
+                                    await DisplayAlert("Protocol Not Running", "Cannot check status of protocol when protocol is not running.", "OK");
                             });
-                    }
-                    else
-                        await DisplayAlert("Protocol Not Running", "Cannot check status of protocol when protocol is not running.", "OK");
+
+                        ExecuteActionUponProtocolAuthentication(selectedProtocol, statusAction);
                 }
                 else if (selectedAction == "Share")
                 {
-                    Action shareAction = new Action(() =>
-                        {
-                            string path = null;
-                            try
+                        Action shareAction1 = new Action(async() =>
                             {
-                                path = UiBoundSensusServiceHelper.Get(true).GetSharePath(".sensus");
-                                selectedProtocol.Save(path);
-                            }
-                            catch (Exception ex)
-                            {
-                                UiBoundSensusServiceHelper.Get(true).Logger.Log("Failed to save protocol to file for sharing:  " + ex.Message, LoggingLevel.Normal, GetType());
-                                path = null;
-                            }
+                                Action shareAction = new Action(() =>
+                                    {
+                                        string path = null;
+                                        try
+                                        {
+                                            path = UiBoundSensusServiceHelper.Get(true).GetSharePath(".sensus");
+                                            selectedProtocol.Save(path);
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            UiBoundSensusServiceHelper.Get(true).Logger.Log("Failed to save protocol to file for sharing:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                            path = null;
+                                        }
 
-                            if (path != null)
-                                UiBoundSensusServiceHelper.Get(true).ShareFileAsync(path, "Sensus Protocol:  " + selectedProtocol.Name);
-                        });
+                                        if (path != null)
+                                            UiBoundSensusServiceHelper.Get(true).ShareFileAsync(path, "Sensus Protocol:  " + selectedProtocol.Name);
+                                    });
 
-                    // don't authenticate if the protocol was declared shareable -- participants might require the ability to share without the password.
-                    if (selectedProtocol.Shareable)
-                        shareAction();
-                    // if the protocol isn't declared shareable, require authentication, since sharing is equivalent to editing the protocol.
-                    else
-                        ExecuteActionUponProtocolAuthentication(selectedProtocol, shareAction);
+                                // don't authenticate if the protocol was declared shareable -- participants might require the ability to share without the password.
+                                if (selectedProtocol.Shareable)
+                                    shareAction();
+                                // if the protocol isn't declared shareable, require authentication, since sharing is equivalent to editing the protocol.
+                                else
+                                    ExecuteActionUponProtocolAuthentication(selectedProtocol, shareAction);
+                            });
+
+                        ExecuteActionUponProtocolAuthentication(selectedProtocol, shareAction1);
                 }
                 else if (selectedAction == "Delete")
                 {
-                    if (await DisplayAlert("Delete " + selectedProtocol.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
-                    {
-                        selectedProtocol.StopAsync(() =>
+                        Action deleteAction = new Action(async() =>
                             {
-                                UiBoundSensusServiceHelper.Get(true).UnregisterProtocol(selectedProtocol);
-
-                                try
+                                if (await DisplayAlert("Delete " + selectedProtocol.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
                                 {
-                                    Directory.Delete(selectedProtocol.StorageDirectory, true);
-                                }
-                                catch (Exception ex)
-                                {
-                                    UiBoundSensusServiceHelper.Get(true).Logger.Log("Failed to delete protocol storage directory \"" + selectedProtocol.StorageDirectory + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
-                                }
+                                    selectedProtocol.StopAsync(() =>
+                                        {
+                                            UiBoundSensusServiceHelper.Get(true).UnregisterProtocol(selectedProtocol);
 
-                                Device.BeginInvokeOnMainThread(() =>
-                                    {
-                                        _protocolsList.SelectedItem = null;  // must reset this manually, since it isn't reset automatically
-                                    });
+                                            try
+                                            {
+                                                Directory.Delete(selectedProtocol.StorageDirectory, true);
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                UiBoundSensusServiceHelper.Get(true).Logger.Log("Failed to delete protocol storage directory \"" + selectedProtocol.StorageDirectory + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
+                                            }
+
+                                            Device.BeginInvokeOnMainThread(() =>
+                                                {
+                                                    _protocolsList.SelectedItem = null;  // must reset this manually, since it isn't reset automatically
+                                                });
+                                        });
+                                }
                             });
-                    }
+
+                        ExecuteActionUponProtocolAuthentication(selectedProtocol, deleteAction);
                 }                        
             };
             
@@ -140,10 +160,15 @@ namespace SensusUI
 
             ToolbarItems.Add(new ToolbarItem(null, "plus.png", () =>
                     {
-                        Protocol.CreateAsync("New Protocol", protocol =>
-                            {
-                                UiBoundSensusServiceHelper.Get(true).RegisterProtocol(protocol);
-                            });
+                    Action addAction = new Action(async() =>
+                        {
+                            Protocol.CreateAsync("New Protocol", protocol =>
+                                {
+                                    UiBoundSensusServiceHelper.Get(true).RegisterProtocol(protocol);
+                                });
+                        });
+
+                    ExecuteActionUponProtocolAuthentication(null, addAction);
                     }));
         }
 
@@ -159,7 +184,28 @@ namespace SensusUI
 
         private void ExecuteActionUponProtocolAuthentication(Protocol protocol, Action action)
         {
-            if (protocol.LockPasswordHash == "")
+            if (protocol == null)
+                UiBoundSensusServiceHelper.Get(true).PromptForInputAsync(
+
+                    "Authenticate", 
+
+                    new TextInput("Password:"),
+
+                    input =>
+                    {
+                        if(input == null)
+                            return;
+
+                        string password = input.Value as string;
+
+                        if (password == null)
+                            return;
+                        else if (password == "salmon")
+                            Device.BeginInvokeOnMainThread(action);
+                        else
+                            UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("The password you entered was not correct."); 
+                    });
+            else if (protocol.LockPasswordHash == "")
                 action();
             else
                 UiBoundSensusServiceHelper.Get(true).PromptForInputAsync(
@@ -183,5 +229,6 @@ namespace SensusUI
                             UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("The password you entered was not correct."); 
                     });
         }
+            
     }
 }

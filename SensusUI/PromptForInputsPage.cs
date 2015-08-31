@@ -107,7 +107,7 @@ namespace SensusUI
                     bool complete = true;
                     foreach (Input input in inputGroup.Inputs)
                     {
-                        if (!(input.Complete) && totalSteps > 1)
+                        if (!(input.Complete) && !(input is TextInput) && totalSteps > 1)
                         {
                             Console.Out.WriteLine("completion check");
                             complete = false;
@@ -124,7 +124,7 @@ namespace SensusUI
 
             skipButton.Clicked += async (o, e) =>
                 {
-                    skipButtonTapped = await DisplayAlert("Skip question", "I do not wish to answer this question", "Yes", "No");
+                    skipButtonTapped = await DisplayAlert("Skip question?", "Please only skip if a) you do not feel comfortable answering this question, or b) per the question statement, this question does not apply to you.", "Yes", "No");
                     if (skipButtonTapped)
                         await Navigation.PopAsync();
                 };

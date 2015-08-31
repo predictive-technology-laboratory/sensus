@@ -331,26 +331,29 @@ namespace SensusService.Probes.User
 
             foreach (TimeTrigger timeTrigger in _timeTriggers)
             {
-                if (timeTrigger.Enabled)
+                
                     new Thread(() =>
                         {
 
-                                lock (_locker)
+                                lock (_timeTriggers)
                                 {
                                     if (timeTrigger.RerunDaily)
                                     {
+                                        int time = 0;
                                         timeTrigger.ID = SensusServiceHelper.Get().ScheduleRepeatingCallback(cancellationToken =>
                                         {
                                             if (_probe.Running && _enabled)
                                                 RunAsync(_script.Copy());
                                             if (timeTrigger.RerunDaily)     // if rerunDaily is still set to true, reschedule another random or specific time trigger
                                             {
-                                                int time = (int)TimeUntilFireMilliseconds(timeTrigger);
+                                                time = (int)TimeUntilFireMilliseconds(timeTrigger);
                                                 Console.Out.WriteLine(time);
                                                 SensusServiceHelper.Get().RescheduleRepeatingCallback(timeTrigger.ID, time, 0);
                                             }
                                         
                                         }, "Rerun time trigger daily", (int)TimeUntilFireMilliseconds(timeTrigger), 0, null);
+//                                        if ((time / 1000) < 86400)
+//                                            RunAsync(_script.Copy());
                                     }
                                     else
                                     {

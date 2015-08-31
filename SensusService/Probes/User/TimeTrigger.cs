@@ -19,19 +19,12 @@ namespace SensusService.Probes.User
 {
     public class TimeTrigger
     {
-        private bool _enabled;
         private TimeSpan _startTime;
         private TimeSpan _endTime;
         private TimeSpan _randomTriggerTime;
         private string _Id;
         private bool _rerunDaily;
-
-        [OnOffUiProperty("Enabled:", true, 1)]
-        public bool Enabled
-        {
-            get { return _enabled; }
-            set { _enabled = value; }
-        }
+        private bool _complete;
 
         public TimeSpan StartTime
         {
@@ -56,12 +49,17 @@ namespace SensusService.Probes.User
             get { return _Id; }
             set { _Id = value; }
         }
-
-        [OnOffUiProperty("Rerun Scripts Daily:", true, 1)]
+            
         public bool RerunDaily
         {
             get { return _rerunDaily; }
             set { _rerunDaily = value; }
+        }
+
+        public bool Complete
+        {
+            get { return _complete; }
+            set { _complete = value; }
         }
 
         public TimeTrigger(TimeSpan startTime, TimeSpan endTime, bool rerunDaily)

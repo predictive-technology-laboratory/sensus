@@ -49,47 +49,47 @@ namespace SensusUI
 
             contentLayout.Children.Add(protocolsButton);
 
-            Button pointsOfInterestButton = new Button
-                {
-                    Text = "Points of Interest",
-                    FontSize = 20
-                };
+//            Button pointsOfInterestButton = new Button
+//                {
+//                    Text = "Points of Interest",
+//                    FontSize = 20
+//                };
+//
+//            pointsOfInterestButton.Clicked += async (o, e) =>
+//                {
+//                    await Navigation.PushAsync(new PointsOfInterestPage(
+//                        UiBoundSensusServiceHelper.Get(true).PointsOfInterest,
+//                        () => UiBoundSensusServiceHelper.Get(true).SaveAsync()));
+//                };
+//
+//            contentLayout.Children.Add(pointsOfInterestButton);
 
-            pointsOfInterestButton.Clicked += async (o, e) =>
-                {
-                    await Navigation.PushAsync(new PointsOfInterestPage(
-                        UiBoundSensusServiceHelper.Get(true).PointsOfInterest,
-                        () => UiBoundSensusServiceHelper.Get(true).SaveAsync()));
-                };
+//            Button logButton = new Button
+//            {
+//                Text = "Log",
+//                FontSize = 20
+//            };
+//
+//            logButton.Clicked += async (o, e) =>
+//                {
+//                    await Navigation.PushAsync(new ViewTextLinesPage("Log", UiBoundSensusServiceHelper.Get(true).Logger.Read(int.MaxValue), () => UiBoundSensusServiceHelper.Get(true).Logger.Clear()));
+//                };
+//
+//            contentLayout.Children.Add(logButton);
 
-            contentLayout.Children.Add(pointsOfInterestButton);
-
-            Button logButton = new Button
-            {
-                Text = "Log",
-                FontSize = 20
-            };
-
-            logButton.Clicked += async (o, e) =>
-                {
-                    await Navigation.PushAsync(new ViewTextLinesPage("Log", UiBoundSensusServiceHelper.Get(true).Logger.Read(int.MaxValue), () => UiBoundSensusServiceHelper.Get(true).Logger.Clear()));
-                };
-
-            contentLayout.Children.Add(logButton);
-
-            Button stopSensusButton = new Button
-            {
-                Text = "Stop Sensus",
-                FontSize = 20
-            };
-
-            stopSensusButton.Clicked += async (o, e) =>
-                {
-                    if (await DisplayAlert("Stop Sensus?", "Are you sure you want to stop Sensus?", "OK", "Cancel"))
-                        UiBoundSensusServiceHelper.Get(true).StopAsync();
-                };
-
-            contentLayout.Children.Add(stopSensusButton);
+//            Button stopSensusButton = new Button
+//            {
+//                Text = "Stop Sensus",
+//                FontSize = 20
+//            };
+//
+//            stopSensusButton.Clicked += async (o, e) =>
+//                {
+//                    if (await DisplayAlert("Stop Sensus?", "Are you sure you want to stop Sensus?", "OK", "Cancel"))
+//                        UiBoundSensusServiceHelper.Get(true).StopAsync();
+//                };
+//
+//            contentLayout.Children.Add(stopSensusButton);
 
             Content = new ScrollView
             {
@@ -101,8 +101,8 @@ namespace SensusUI
         {
             _serviceHelperStacks = UiProperty.GetPropertyStacks(serviceHelper);
 
-            foreach (StackLayout serviceStack in _serviceHelperStacks)
-                ((Content as ScrollView).Content as StackLayout).Children.Add(serviceStack);
+//            foreach (StackLayout serviceStack in _serviceHelperStacks)
+//                ((Content as ScrollView).Content as StackLayout).Children.Add(serviceStack);
         }
 
         public void RemoveServiceHelper()

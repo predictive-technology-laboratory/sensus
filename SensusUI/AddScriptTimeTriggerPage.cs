@@ -38,6 +38,13 @@ namespace SensusUI
 
             Title = "Add Time Trigger";
 
+            StackLayout triggerDefinitionLayout = new StackLayout
+                {
+                    Orientation = StackOrientation.Vertical,
+                    VerticalOptions = LayoutOptions.FillAndExpand,
+                    Padding = new Thickness(10, 10, 10, 10),
+                };
+
             StackLayout contentLayout = new StackLayout
                 {
                     Orientation = StackOrientation.Vertical,
@@ -51,13 +58,6 @@ namespace SensusUI
                 };
 
             contentLayout.Children.Add(infoLabel);
-
-            StackLayout triggerDefinitionLayout = new StackLayout
-                {
-                    Orientation = StackOrientation.Vertical,
-                    VerticalOptions = LayoutOptions.FillAndExpand,
-                    Padding = new Thickness(10, 10, 10, 10),
-                };
 
             contentLayout.Children.Add(triggerDefinitionLayout);
 
