@@ -118,6 +118,10 @@ namespace Sensus.Android
             _deviceId = Settings.Secure.GetString(_service.ContentResolver, Settings.Secure.AndroidId);
             _textToSpeech = new AndroidTextToSpeech(_service);
             _wakeLock = (_service.GetSystemService(Context.PowerService) as PowerManager).NewWakeLock(WakeLockFlags.Partial, "SENSUS");  
+
+            // must initialize after _deviceId is set
+            if (Insights.IsInitialized)
+                Insights.Identify(_deviceId, "Device ID", _deviceId);
         }
 
         public void GetMainActivityAsync(bool foreground, Action<AndroidMainActivity> callback)

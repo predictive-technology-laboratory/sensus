@@ -392,6 +392,8 @@ namespace SensusService
 
             if (Insights.IsInitialized)
                 _logger.Log("Xamarin Insights is already initialized.", LoggingLevel.Normal, GetType());
+            else if (string.IsNullOrWhiteSpace(XAMARIN_INSIGHTS_APP_KEY))
+                _logger.Log("Xamarin Insights API key is empty. Not initializing.", LoggingLevel.Normal, GetType());  // xamarin allows to initialize with a null key, which fails with exception but results in IsInitialized being true. prevent that here.
             else
             {
                 try
@@ -405,9 +407,7 @@ namespace SensusService
                             Insights.PurgePendingCrashReports().Wait();
                     };
 
-                    InitializeXamarinInsights();
-
-                    Insights.Identify(DeviceId, "Device ID", DeviceId);
+                    InitializeXamarinInsights();                                
                 }
                 catch (Exception ex)
                 {

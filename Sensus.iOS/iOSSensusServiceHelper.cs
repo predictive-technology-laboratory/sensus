@@ -143,6 +143,9 @@ namespace Sensus.iOS
         protected override void InitializeXamarinInsights()
         {
             Insights.Initialize(XAMARIN_INSIGHTS_APP_KEY);
+
+            if (Insights.IsInitialized)
+                Insights.Identify(DeviceId, "Device ID", DeviceId);
         }
 
         #region callback scheduling
