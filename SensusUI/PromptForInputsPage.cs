@@ -82,7 +82,7 @@ namespace SensusUI
                 previousButton.Clicked += async (o, e) =>
                 {
                     previousButtonTapped = true;
-                    await Navigation.PopModalAsync();
+                    await Navigation.PopModalAsync(false);
                 };                      
             }
 
@@ -100,7 +100,7 @@ namespace SensusUI
             cancelButton.Clicked += async (o, e) =>
             {
                 cancelButtonTapped = true;
-                await Navigation.PopModalAsync();
+                await Navigation.PopModalAsync(true);
             };
 
             Button nextButton = new Button
@@ -117,7 +117,7 @@ namespace SensusUI
             nextButton.Clicked += async (o, e) =>
             {
                 nextButtonTapped = true;
-                await Navigation.PopModalAsync();
+                await Navigation.PopModalAsync(stepNumber == totalSteps);
             };
                 
             contentLayout.Children.Add(navigationStack);
@@ -130,6 +130,8 @@ namespace SensusUI
                     callback(Result.Cancel);
                 else if (nextButtonTapped)
                     callback(Result.NavigateForward);
+                else
+                    callback(Result.Cancel);  // the user navigated back, or another activity started
             };
 
             Content = new ScrollView

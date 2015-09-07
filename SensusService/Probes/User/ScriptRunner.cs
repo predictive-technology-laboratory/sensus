@@ -43,6 +43,7 @@ namespace SensusService.Probes.User
         private string _randomTriggerCallbackId;
         private int _maximumRandomTriggerDelayMinutes;
         private Random _random;
+        private List<string> _runScriptCallbackIds;
 
         private readonly object _locker = new object();
 
@@ -234,6 +235,7 @@ namespace SensusService.Probes.User
             _randomTriggerCallbackId = null;
             _maximumRandomTriggerDelayMinutes = 1;
             _random = new Random();
+            _runScriptCallbackIds = new List<string>();
 
             _triggers.CollectionChanged += (o, e) =>
             {
@@ -330,7 +332,7 @@ namespace SensusService.Probes.User
 
                         SensusServiceHelper.Get().Logger.Log("Starting rerun callbacks.", LoggingLevel.Normal, GetType());
 
-                        _rerunCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(cancellationToken =>
+                        _rerunCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback((callbackId, cancellationToken) =>
                             {
                                 if (_probe.Running && _enabled && _rerun)
                                 {
@@ -378,7 +380,7 @@ namespace SensusService.Probes.User
                         #error "Unrecognized platform."
                         #endif
 
-                        _randomTriggerCallbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(cancellationToken =>
+                        _randomTriggerCallbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback((callbackId, cancellationToken) =>
                             {
                                 // if we're still going, run a copy of the script so that we can retain a pristine version of the original
                                 if (_probe.Running && _enabled && _triggerRandomly)
@@ -416,59 +418,65 @@ namespace SensusService.Probes.User
             #error "Unrecognized platform."
             #endif
 
-            SensusServiceHelper.Get().ScheduleOneTimeCallback(cancellationToken =>
-                {
-                    SensusServiceHelper.Get().Logger.Log("Running \"" + _name + "\".", LoggingLevel.Normal, typeof(Script));
-
-                    bool isRerun = true;
-
-                    if (script.FirstRunTimestamp == DateTimeOffset.MinValue)
-                    {
-                        script.FirstRunTimestamp = DateTimeOffset.UtcNow;
-                        isRerun = false;
-                    }
-
-                    // this method can be called with previous / current datum values (e.g., when the script is first triggered. it 
-                    // can also be called without previous / current datum values (e.g., when triggering randomly or rerunning). if
-                    // we have such values, set them on the script.
-
-                    if (previousDatum != null)
-                        script.PreviousDatum = previousDatum;
-
-                    if (currentDatum != null)
-                        script.CurrentDatum = currentDatum;
-
-                    ManualResetEvent inputWait = new ManualResetEvent(false);
-
-                    SensusServiceHelper.Get().PromptForInputsAsync(script.CurrentDatum, isRerun, script.FirstRunTimestamp, script.InputGroups, cancellationToken, inputGroups =>
+            lock (_runScriptCallbackIds)
+            {
+                _runScriptCallbackIds.Add(SensusServiceHelper.Get().ScheduleOneTimeCallback((callbackId, cancellationToken) =>
                         {
-                            if (inputGroups != null)
-                                foreach (InputGroup inputGroup in inputGroups)
-                                    foreach (Input input in inputGroup.Inputs)
-                                        if (input.ShouldBeStored && input.Complete)
-                                        {
-                                            _probe.StoreDatum(new ScriptDatum(DateTimeOffset.UtcNow, input.GroupId, input.Id, input.Value, script.CurrentDatum == null ? null : script.CurrentDatum.Id, input.Latitude, input.Longitude));
+                            SensusServiceHelper.Get().Logger.Log("Running \"" + _name + "\".", LoggingLevel.Normal, typeof(Script));
 
-                                            // once inputs are stored, they should not be stored again, nor should the user be able to modify them
-                                            input.ShouldBeStored = false;
-                                            Xamarin.Forms.Device.BeginInvokeOnMainThread(() => input.Enabled = false);
-                                        }
+                            bool isRerun = true;
 
-                            inputWait.Set();
-                        });
+                            if (script.FirstRunTimestamp == DateTimeOffset.MinValue)
+                            {
+                                script.FirstRunTimestamp = DateTimeOffset.UtcNow;
+                                isRerun = false;
+                            }
 
-                    inputWait.WaitOne();
+                            // this method can be called with previous / current datum values (e.g., when the script is first triggered. it 
+                            // can also be called without previous / current datum values (e.g., when triggering randomly or rerunning). if
+                            // we have such values, set them on the script.
 
-                    SensusServiceHelper.Get().Logger.Log("\"" + _name + "\" has finished running.", LoggingLevel.Normal, typeof(Script));
+                            if (previousDatum != null)
+                                script.PreviousDatum = previousDatum;
 
-                    if (_rerun && !script.Complete)
-                        lock (_incompleteScripts)
-                            _incompleteScripts.Enqueue(script);
+                            if (currentDatum != null)
+                                script.CurrentDatum = currentDatum;
 
-                    if (callback != null)
-                        callback();
+                            ManualResetEvent inputWait = new ManualResetEvent(false);
 
-                }, "Run Script", _delayMS, userNotificationMessage);
+                            SensusServiceHelper.Get().PromptForInputsAsync(script.CurrentDatum, isRerun, script.FirstRunTimestamp, script.InputGroups, cancellationToken, inputGroups =>
+                                {
+                                    if (inputGroups != null)
+                                        foreach (InputGroup inputGroup in inputGroups)
+                                            foreach (Input input in inputGroup.Inputs)
+                                                if (input.ShouldBeStored && input.Complete)
+                                                {
+                                                    _probe.StoreDatum(new ScriptDatum(DateTimeOffset.UtcNow, input.GroupId, input.Id, input.Value, script.CurrentDatum == null ? null : script.CurrentDatum.Id, input.Latitude, input.Longitude));
+
+                                                    // once inputs are stored, they should not be stored again, nor should the user be able to modify them
+                                                    input.ShouldBeStored = false;
+                                                    Xamarin.Forms.Device.BeginInvokeOnMainThread(() => input.Enabled = false);
+                                                }
+
+                                    inputWait.Set();
+                                });
+
+                            inputWait.WaitOne();
+
+                            SensusServiceHelper.Get().Logger.Log("\"" + _name + "\" has finished running.", LoggingLevel.Normal, typeof(Script));
+
+                            if (_rerun && !script.Complete)
+                                lock (_incompleteScripts)
+                                    _incompleteScripts.Enqueue(script);
+
+                            if (callback != null)
+                                callback();
+
+                            lock (_runScriptCallbackIds)
+                                _runScriptCallbackIds.Remove(callbackId);
+
+                        }, "Run Script", _delayMS, userNotificationMessage));
+            }
         }
 
         public bool TestHealth(ref string error, ref string warning, ref string misc)
@@ -527,6 +535,10 @@ namespace SensusService.Probes.User
         {
             StopRerunCallbacks();
             StopRandomTriggerCallbacks();
+
+            lock (_runScriptCallbackIds)
+                foreach (string runScriptCallbackId in _runScriptCallbackIds)
+                    SensusServiceHelper.Get().UnscheduleOneTimeCallback(runScriptCallbackId);
         }
     }
 }

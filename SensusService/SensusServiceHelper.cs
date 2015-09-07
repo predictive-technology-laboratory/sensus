@@ -47,7 +47,7 @@ namespace SensusService
             /// Action to invoke.
             /// </summary>
             /// <value>The action.</value>
-            public Action<CancellationToken> Action { get; set; }
+            public Action<string, CancellationToken> Action { get; set; }
 
             /// <summary>
             /// Name of callback.
@@ -74,7 +74,7 @@ namespace SensusService
             /// <param name="name">Name.</param>
             /// <param name="canceller">Canceller.</param>
             /// <param name="userNotificationMessage">User notification message.</param>
-            public ScheduledCallback(Action<CancellationToken> action, string name, CancellationTokenSource canceller, string userNotificationMessage)
+            public ScheduledCallback(Action<string, CancellationToken> action, string name, CancellationTokenSource canceller, string userNotificationMessage)
             {
                 Action = action;
                 Name = name;
@@ -578,12 +578,12 @@ namespace SensusService
 
         #region callback scheduling
 
-        public string ScheduleRepeatingCallback(Action<CancellationToken> callback, string name, int initialDelayMS, int repeatDelayMS)
+        public string ScheduleRepeatingCallback(Action<string, CancellationToken> callback, string name, int initialDelayMS, int repeatDelayMS)
         {
             return ScheduleRepeatingCallback(callback, name, initialDelayMS, repeatDelayMS, null);
         }
 
-        public string ScheduleRepeatingCallback(Action<CancellationToken> callback, string name, int initialDelayMS, int repeatDelayMS, string userNotificationMessage)
+        public string ScheduleRepeatingCallback(Action<string, CancellationToken> callback, string name, int initialDelayMS, int repeatDelayMS, string userNotificationMessage)
         {
             lock (_idCallback)
             {
@@ -593,12 +593,12 @@ namespace SensusService
             }
         }
 
-        public string ScheduleOneTimeCallback(Action<CancellationToken> callback, string name, int delay)
+        public string ScheduleOneTimeCallback(Action<string, CancellationToken> callback, string name, int delay)
         {
             return ScheduleOneTimeCallback(callback, name, delay, null);
         }
 
-        public string ScheduleOneTimeCallback(Action<CancellationToken> callback, string name, int delay, string userNotificationMessage)
+        public string ScheduleOneTimeCallback(Action<string, CancellationToken> callback, string name, int delay, string userNotificationMessage)
         {
             lock (_idCallback)
             {
@@ -608,7 +608,7 @@ namespace SensusService
             }
         }
 
-        private string AddCallback(Action<CancellationToken> callback, string name, string userNotificationMessage)
+        private string AddCallback(Action<string, CancellationToken> callback, string name, string userNotificationMessage)
         {
             lock (_idCallback)
             {
@@ -678,7 +678,7 @@ namespace SensusService
                                 if (notifyUser)
                                     IssueNotificationAsync(scheduledCallback.UserNotificationMessage, callbackId);
 
-                                scheduledCallback.Action(scheduledCallback.Canceller.Token);
+                                scheduledCallback.Action(callbackId, scheduledCallback.Canceller.Token);
                             }
                         }
                         catch (Exception ex)
@@ -833,7 +833,9 @@ namespace SensusService
 
                     InputGroup[] incompleteGroups = inputGroups.Where(inputGroup => !inputGroup.Complete).ToArray();
 
-                    for (int incompleteGroupNum = 0; incompleteGroupNum < incompleteGroups.Length && !cancellationToken.GetValueOrDefault().IsCancellationRequested; ++incompleteGroupNum)
+                    bool firstPageDisplay = true;
+
+                    for (int incompleteGroupNum = 0; inputGroups != null && incompleteGroupNum < incompleteGroups.Length && !cancellationToken.GetValueOrDefault().IsCancellationRequested; ++incompleteGroupNum)
                     {
                         InputGroup incompleteGroup = incompleteGroups[incompleteGroupNum];
                         ManualResetEvent responseWait = new ManualResetEvent(false);
@@ -852,52 +854,50 @@ namespace SensusService
 
                             Device.BeginInvokeOnMainThread(async () =>
                                 {
-                                    PromptForInputsPage promptForInputsPage = new PromptForInputsPage(incompleteGroup, incompleteGroupNum + 1, incompleteGroups.Length, async result =>
+                                    PromptForInputsPage promptForInputsPage = new PromptForInputsPage(incompleteGroup, incompleteGroupNum + 1, incompleteGroups.Length, result =>
                                         {
                                             if (result == PromptForInputsPage.Result.Cancel || result == PromptForInputsPage.Result.NavigateBackward && incompleteGroupNum == 0)
                                                 inputGroups = null;
                                             else if (result == PromptForInputsPage.Result.NavigateBackward)
-                                            {
-                                                await App.Current.MainPage.Navigation.PopModalAsync();
                                                 incompleteGroupNum -= 2;  // we're past the first page, so decrement by two so that, after the for-loop post-increment, the previous input group will be shown
-                                            }
 
                                             responseWait.Set();
                                         });
 
-                                    await App.Current.MainPage.Navigation.PushModalAsync(promptForInputsPage);
+                                    await App.Current.MainPage.Navigation.PushModalAsync(promptForInputsPage, firstPageDisplay);  // animate first page
+                                    firstPageDisplay = false;
                                 });
                         }
 
-                        responseWait.WaitOne();
+                        responseWait.WaitOne();                                    
+                    }
 
-                        // if we are geotagging, set the latitude/longitude on any complete inputs that don't already have their locations set.
-                        // if an input was already complete from a previous round of prompting, we don't want to reset its location, since the 
-                        // original is a better representation of where the user was when he/she completed the input.
-                        if (incompleteGroup.Geotag && incompleteGroup.Inputs.Any(input => input.Complete && (input.Latitude == null || input.Longitude == null)))
+                    // geotag input groups if the user didn't cancel and we've got input groups with inputs that are complete and lacking locations
+                    if (inputGroups != null && incompleteGroups.Any(incompleteGroup => incompleteGroup.Geotag && incompleteGroup.Inputs.Any(input => input.Complete && (input.Latitude == null || input.Longitude == null))))
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Geotagging input groups.", LoggingLevel.Normal, GetType());
+
+                        try
                         {
-                            try
-                            {
-                                Position currentLocation = GpsReceiver.Get().GetReading(cancellationToken.GetValueOrDefault());
-                                            
-                                if (currentLocation != null)
-                                    foreach (Input input in incompleteGroup.Inputs)
-                                        if (input.Complete)
-                                        {
-                                            if (input.Latitude == null)
-                                                input.Latitude = currentLocation.Latitude;
+                            Position currentLocation = GpsReceiver.Get().GetReading(cancellationToken.GetValueOrDefault());
 
-                                            if (input.Longitude == null)
-                                                input.Longitude = currentLocation.Longitude;
-                                        }
-                            }
-                            catch (Exception)
-                            {
-                            }
+                            if (currentLocation != null)
+                                foreach (InputGroup incompleteGroup in incompleteGroups)
+                                    if (incompleteGroup.Geotag)
+                                        foreach (Input input in incompleteGroup.Inputs)
+                                            if (input.Complete)
+                                            {
+                                                if (input.Latitude == null)
+                                                    input.Latitude = currentLocation.Latitude;
+
+                                                if (input.Longitude == null)
+                                                    input.Longitude = currentLocation.Longitude;
+                                            }
                         }
-
-                        if (inputGroups == null)
-                            break;
+                        catch (Exception ex)
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Error geotagging input groups:  " + ex.Message, LoggingLevel.Normal, GetType());
+                        }
                     }
 
                     callback(inputGroups);
@@ -937,7 +937,7 @@ namespace SensusService
                 });
         }
 
-        public void TestHealth(CancellationToken cancellationToken)
+        public void TestHealth(string callbackId, CancellationToken cancellationToken)
         {
             lock (_locker)
             {
