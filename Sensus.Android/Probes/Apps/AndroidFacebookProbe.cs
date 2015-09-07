@@ -221,9 +221,9 @@ namespace Sensus.Android.Probes.Apps
 
                                     if (property.PropertyType == typeof(string))
                                         value = responseJSON.GetString(jsonField);
-                                    else if (property.PropertyType == typeof(bool))
+                                    else if (property.PropertyType == typeof(bool?))
                                         value = responseJSON.GetBoolean(jsonField);
-                                    else if (property.PropertyType == typeof(DateTimeOffset))
+                                    else if (property.PropertyType == typeof(DateTimeOffset?))
                                         value = DateTimeOffset.Parse(responseJSON.GetString(jsonField));
                                     else if (property.PropertyType == typeof(List<string>))
                                     {
