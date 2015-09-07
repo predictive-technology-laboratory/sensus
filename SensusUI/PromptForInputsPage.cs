@@ -39,7 +39,7 @@ namespace SensusUI
             {
                 Orientation = StackOrientation.Vertical,
                 VerticalOptions = LayoutOptions.FillAndExpand,
-                Padding = new Thickness(0, 10, 0, 0)
+                Padding = new Thickness(0, 20, 0, 0)
             };
 
             contentLayout.Children.Add(new Label

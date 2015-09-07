@@ -287,6 +287,15 @@ namespace Sensus.iOS
 
         public NSDictionary GetNotificationUserInfoDictionary(string callbackId, bool repeating, int repeatDelayMS)
         {
+            // we've seen cases where the UserInfo dictionary cannot be serialized because one of its values is null. check all nullable types
+            // and return null if found.  if this happens, the UILocalNotification will never be serviced, and things won't return to normal
+            // until Sensus is activated by the user and the UILocalNotifications are refreshed.
+            //
+            // see:  https://insights.xamarin.com/app/Sensus-Production/issues/64
+            // 
+            if (callbackId == null || _activationId == null)
+                return null;
+            
             return new NSDictionary(
                 SENSUS_CALLBACK_KEY, true, 
                 SENSUS_CALLBACK_ID_KEY, callbackId,

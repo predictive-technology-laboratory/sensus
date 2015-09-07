@@ -50,7 +50,7 @@ namespace SensusService.Anonymization
                 Datum datum = target as Datum;
 
                 if (datum == null)
-                    throw new SensusException("Attempted to anonymize a non-datum object.");
+                    throw new SensusException("Attempted to anonymize a non-datum (or null) object.");
 
                 // if we're processing the Anonymized property, return true so that the output JSON properly reflects the fact that the datum has been passed through an anonymizer (this regardless of whether anonymization of data was actually performed)
                 if (_property.DeclaringType == typeof(Datum) && _property.Name == "Anonymized")
