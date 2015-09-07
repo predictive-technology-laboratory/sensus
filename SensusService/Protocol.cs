@@ -572,6 +572,8 @@ namespace SensusService
                     new TextInput()
                 },
 
+                null,
+
                 inputs =>
                 {
                     if (inputs == null)

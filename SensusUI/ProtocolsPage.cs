@@ -168,9 +168,11 @@ namespace SensusUI
 
                     new TextInput("Protocol Password:"),
 
+                    null,
+
                     input =>
                     {
-                        if(input == null)
+                        if (input == null)
                             return;
                         
                         string password = input.Value as string;

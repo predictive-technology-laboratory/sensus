@@ -32,7 +32,7 @@ namespace SensusService.Anonymization
             private PropertyInfo _property;
             private AnonymizedJsonContractResolver _contractResolver;
             private IValueProvider _defaultMemberValueProvider;
-            
+
             public AnonymizedMemberValueProvider(PropertyInfo property, IValueProvider defaultMemberValueProvider, AnonymizedJsonContractResolver contractResolver)
             {                
                 _property = property;
@@ -59,9 +59,9 @@ namespace SensusService.Anonymization
                 {
                     object propertyValue = _defaultMemberValueProvider.GetValue(datum);
 
-                    // don't re-anonymize data, and don't anonymize values for which we have no anonymizer.
+                    // don't re-anonymize property values, don't anonymize when we don't have an anonymizer, and don't attempt anonymization if the property value is null
                     Anonymizer anonymizer;
-                    if (datum.Anonymized || (anonymizer = _contractResolver.GetAnonymizer(datum.GetType().GetProperty(_property.Name))) == null)  // we re-get the PropertyInfo from the datum's type so that it matches our dictionary of PropertyInfo objects (the reflected type needs to be the most-derived, which doesn't happen leading up to this point for some reason).
+                    if (datum.Anonymized || (anonymizer = _contractResolver.GetAnonymizer(datum.GetType().GetProperty(_property.Name))) == null || propertyValue == null)  // we re-get the PropertyInfo from the datum's type so that it matches our dictionary of PropertyInfo objects (the reflected type needs to be the most-derived, which doesn't happen leading up to this point for some reason).
                         return propertyValue;
                     // anonymize!
                     else

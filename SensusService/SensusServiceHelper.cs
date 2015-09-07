@@ -782,9 +782,9 @@ namespace SensusService
                 });
         }
 
-        public void PromptForInputAsync(string windowTitle, Input input, Action<Input> callback)
+        public void PromptForInputAsync(string windowTitle, Input input, CancellationToken? cancellationToken, Action<Input> callback)
         {
-            PromptForInputsAsync(windowTitle, new Input[] { input }, inputs =>
+            PromptForInputsAsync(windowTitle, new Input[] { input }, cancellationToken, inputs =>
                 {
                     if (inputs == null)
                         callback(null);
@@ -793,14 +793,14 @@ namespace SensusService
                 });
         }
 
-        public void PromptForInputsAsync(string windowTitle, IEnumerable<Input> inputs, Action<List<Input>> callback)
+        public void PromptForInputsAsync(string windowTitle, IEnumerable<Input> inputs, CancellationToken? cancellationToken, Action<List<Input>> callback)
         {
             InputGroup inputGroup = new InputGroup(windowTitle);
 
             foreach (Input input in inputs)
                 inputGroup.Inputs.Add(input);
 
-            PromptForInputsAsync(null, false, DateTimeOffset.MinValue, new InputGroup[] { inputGroup }.ToList(), inputGroups =>
+            PromptForInputsAsync(null, false, DateTimeOffset.MinValue, new InputGroup[] { inputGroup }.ToList(), cancellationToken, inputGroups =>
                 {
                     if (inputGroups == null)
                         callback(null);
@@ -809,11 +809,11 @@ namespace SensusService
                 });
         }
 
-        public void PromptForInputsAsync(Datum triggeringDatum, bool isReprompt, DateTimeOffset firstPromptTimestamp, IEnumerable<InputGroup> inputGroups, Action<IEnumerable<InputGroup>> callback)
+        public void PromptForInputsAsync(Datum triggeringDatum, bool isReprompt, DateTimeOffset firstPromptTimestamp, IEnumerable<InputGroup> inputGroups, CancellationToken? cancellationToken, Action<IEnumerable<InputGroup>> callback)
         {
             new Thread(() =>
                 {
-                    if (inputGroups == null || inputGroups.All(g => g == null))
+                    if (inputGroups == null || inputGroups.All(inputGroup => inputGroup == null))
                     {
                         callback(inputGroups);
                         return;
@@ -831,18 +831,16 @@ namespace SensusService
                             PROMPT_FOR_INPUTS_RUNNING = true;
                     }
 
-                    InputGroup[] incompleteGroups = inputGroups.Where(g => !g.Complete).ToArray();
+                    InputGroup[] incompleteGroups = inputGroups.Where(inputGroup => !inputGroup.Complete).ToArray();
 
-                    for (int incompleteGroupNum = 0; incompleteGroupNum < incompleteGroups.Length; ++incompleteGroupNum)
+                    for (int incompleteGroupNum = 0; incompleteGroupNum < incompleteGroups.Length && !cancellationToken.GetValueOrDefault().IsCancellationRequested; ++incompleteGroupNum)
                     {
                         InputGroup incompleteGroup = incompleteGroups[incompleteGroupNum];
-
                         ManualResetEvent responseWait = new ManualResetEvent(false);
 
                         if (incompleteGroup.Inputs.Count == 1 && incompleteGroup.Inputs[0] is VoiceInput)
                         {
                             VoiceInput promptInput = incompleteGroup.Inputs[0] as VoiceInput;
-
                             promptInput.RunAsync(triggeringDatum, isReprompt, firstPromptTimestamp, response =>
                                 {                
                                     responseWait.Set();
@@ -860,18 +858,43 @@ namespace SensusService
                                                 inputGroups = null;
                                             else if (result == PromptForInputsPage.Result.NavigateBackward)
                                             {
-                                                await App.Current.MainPage.Navigation.PopAsync();
+                                                await App.Current.MainPage.Navigation.PopModalAsync();
                                                 incompleteGroupNum -= 2;  // we're past the first page, so decrement by two so that, after the for-loop post-increment, the previous input group will be shown
                                             }
 
                                             responseWait.Set();
                                         });
 
-                                    await App.Current.MainPage.Navigation.PushAsync(promptForInputsPage);
+                                    await App.Current.MainPage.Navigation.PushModalAsync(promptForInputsPage);
                                 });
                         }
 
                         responseWait.WaitOne();
+
+                        // if we are geotagging, set the latitude/longitude on any complete inputs that don't already have their locations set.
+                        // if an input was already complete from a previous round of prompting, we don't want to reset its location, since the 
+                        // original is a better representation of where the user was when he/she completed the input.
+                        if (incompleteGroup.Geotag && incompleteGroup.Inputs.Any(input => input.Complete && (input.Latitude == null || input.Longitude == null)))
+                        {
+                            try
+                            {
+                                Position currentLocation = GpsReceiver.Get().GetReading(cancellationToken.GetValueOrDefault());
+                                            
+                                if (currentLocation != null)
+                                    foreach (Input input in incompleteGroup.Inputs)
+                                        if (input.Complete)
+                                        {
+                                            if (input.Latitude == null)
+                                                input.Latitude = currentLocation.Latitude;
+
+                                            if (input.Longitude == null)
+                                                input.Longitude = currentLocation.Longitude;
+                                        }
+                            }
+                            catch (Exception)
+                            {
+                            }
+                        }
 
                         if (inputGroups == null)
                             break;
@@ -895,7 +918,7 @@ namespace SensusService
                         callback(mapPage.Pins.Select(pin => pin.Position).ToList());
                     };
 
-                    await App.Current.MainPage.Navigation.PushAsync(mapPage);
+                    await App.Current.MainPage.Navigation.PushModalAsync(mapPage);
                 });
         }
 
@@ -910,7 +933,7 @@ namespace SensusService
                         callback(mapPage.Pins.Select(pin => pin.Position).ToList());
                     };
 
-                    await App.Current.MainPage.Navigation.PushAsync(mapPage);
+                    await App.Current.MainPage.Navigation.PushModalAsync(mapPage);
                 });
         }
 

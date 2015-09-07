@@ -89,6 +89,8 @@ namespace SensusUI
                                 new YesNoInput("View Map:")
                             },
 
+                            null,
+
                             inputs =>
                             {
                                 if (inputs == null)

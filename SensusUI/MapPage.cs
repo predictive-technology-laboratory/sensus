@@ -52,7 +52,7 @@ namespace SensusUI
             #region search
             Label searchLabel = new Label
             {
-                Text = "Address:",
+                Text = "Search:",
                 FontSize = 20
             };
 
@@ -107,6 +107,18 @@ namespace SensusUI
                 _map.Pins.Clear();
             };
 
+            Button okButton = new Button
+            {
+                Text = "OK",
+                FontSize = 20,
+                HorizontalOptions = LayoutOptions.FillAndExpand
+            };
+
+            okButton.Clicked += async (o, e) =>
+            {
+                await Navigation.PopModalAsync();
+            };
+
             Content = new StackLayout
             { 
                 Orientation = StackOrientation.Vertical,
@@ -119,7 +131,12 @@ namespace SensusUI
                         HorizontalOptions = LayoutOptions.FillAndExpand,
                         Children = { searchLabel, _searchEntry, searchGoButton }
                     },
-                    clearPinsButton,
+                    new StackLayout
+                    {
+                        Orientation = StackOrientation.Horizontal,
+                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        Children = { clearPinsButton, okButton }
+                    },
                     _map,
                 }
             };
