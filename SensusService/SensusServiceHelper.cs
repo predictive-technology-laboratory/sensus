@@ -302,20 +302,6 @@ namespace SensusService
             get{ return _runningProtocolIds; }
         }
 
-        [ListUiProperty("Logging Level:", true, 11, new object[] { LoggingLevel.Off, LoggingLevel.Normal, LoggingLevel.Verbose, LoggingLevel.Debug })]
-        public LoggingLevel LoggingLevel
-        {
-            get { return _logger.Level; }
-            set
-            {
-                if (value != _logger.Level)
-                {
-                    _logger.Level = value; 
-                    SaveAsync();
-                }
-            }
-        }
-
         public List<PointOfInterest> PointsOfInterest
         {
             get { return _pointsOfInterest; }
