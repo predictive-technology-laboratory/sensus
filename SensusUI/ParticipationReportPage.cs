@@ -51,13 +51,13 @@ namespace SensusUI
                         },
                         new Label
                         {
-                            Text = Math.Round(protocol.OverallParticipationLevel, 0) + "%",
+                            Text = Math.Round(protocol.OverallParticipationLevel * 100, 0) + "%",
                             FontSize = 75,
                             HorizontalOptions = LayoutOptions.CenterAndExpand
                         },
                         new Label
                         {                                
-                            Text = "This score reflects your overall participation level in the \"" + protocol.Name + "\" project over the past " + protocol.ParticipationHorizonDays + " days. " + howToIncreaseScore + " If you have questions, please email " + protocol.ContactEmail,
+                            Text = "This score reflects your overall participation level in the \"" + protocol.Name + "\" project over the past " + (protocol.ParticipationHorizonDays == 1 ? "day" : protocol.ParticipationHorizonDays + " days") + ". " + howToIncreaseScore + (string.IsNullOrWhiteSpace(protocol.ContactEmail) ? "" : " If you have questions, please email " + protocol.ContactEmail),
                             FontSize = 20,
                             HorizontalOptions = LayoutOptions.CenterAndExpand
                         }

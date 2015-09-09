@@ -398,6 +398,27 @@ namespace SensusService
             }
         }
 
+        // sensus cannot full execute all the time on ios. the level of app activity is, for the most part, determined by the user
+        // and how often he/she opens sensus or one of its notifications. thus, it's not reasonable to assert a partiular amount of
+        // activity as being "full activity". rather, on ios this is left to the protocol designer. contrast with android, where
+        // we know how many health tests should come in under normal operating conditions (it's determined by the health test delay).
+        #if __IOS__
+        private int _fullActivityHealthTestsPerDay = 10;
+
+        [EntryIntegerUiProperty("Full Participation Activations:", true, 17)]
+        public int FullActivityHealthTestsPerDay
+        {
+            get
+            {
+                return _fullActivityHealthTestsPerDay;
+            }
+            set
+            {
+                _fullActivityHealthTestsPerDay = value;
+            }
+        }
+        #endif
+
         public List<DateTime> HealthTestTimes
         {
             get{ return _healthTestTimes; }
@@ -421,10 +442,9 @@ namespace SensusService
         {
             get
             { 
-                int participationHorizonMinutes = _participationHorizonDays * 24 * 60;
-                float healthTestsPerMinute = 60000 / (float)SensusServiceHelper.HEALTH_TEST_DELAY_MS;
-                float maxNumHealthTests = participationHorizonMinutes * healthTestsPerMinute;
-                return _healthTestTimes.Count / maxNumHealthTests;
+                float fullActivityHealthTests = _participationHorizonDays * SensusServiceHelper.Get().GetFullActivityHealthTestsPerDay(this);
+
+                return _healthTestTimes.Count / fullActivityHealthTests;
             }
         }
 
