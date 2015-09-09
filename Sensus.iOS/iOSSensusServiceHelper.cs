@@ -171,6 +171,10 @@ namespace Sensus.iOS
                         UserInfo = GetNotificationUserInfoDictionary(callbackId, repeating, repeatDelayMS)
                     };
 
+                    // user info can be null if we don't have an activation ID...don't schedule the notification if this happens.
+                    if (notification.UserInfo == null)
+                        return;
+
                     if (userNotificationMessage != null)
                         notification.SoundName = UILocalNotification.DefaultSoundName;
 
@@ -269,17 +273,21 @@ namespace Sensus.iOS
                         {
                             UILocalNotification notification = _callbackIdNotification[callbackId];
 
-                            // get activation ID and check for condition (2) above
-                            string activationId = (notification.UserInfo.ValueForKey(new NSString(iOSSensusServiceHelper.SENSUS_CALLBACK_ACTIVATION_ID)) as NSString).ToString();
-                            if (activationId != _activationId)
+                            if (notification.UserInfo != null)
                             {
-                                // reset the UserInfo to include the current activation ID
-                                bool repeating = (notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber).BoolValue;
-                                int repeatDelayMS = (notification.UserInfo.ValueForKey(new NSString(iOSSensusServiceHelper.SENSUS_CALLBACK_REPEAT_DELAY)) as NSNumber).Int32Value;
-                                notification.UserInfo = GetNotificationUserInfoDictionary(callbackId, repeating, repeatDelayMS);
+                                // get activation ID and check for condition (2) above
+                                string activationId = (notification.UserInfo.ValueForKey(new NSString(iOSSensusServiceHelper.SENSUS_CALLBACK_ACTIVATION_ID)) as NSString).ToString();
+                                if (activationId != _activationId)
+                                {
+                                    // reset the UserInfo to include the current activation ID
+                                    bool repeating = (notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber).BoolValue;
+                                    int repeatDelayMS = (notification.UserInfo.ValueForKey(new NSString(iOSSensusServiceHelper.SENSUS_CALLBACK_REPEAT_DELAY)) as NSNumber).Int32Value;
+                                    notification.UserInfo = GetNotificationUserInfoDictionary(callbackId, repeating, repeatDelayMS);
 
-                                // since we set the UILocalNotification's FireDate when it was constructed, if it's currently in the past it will fire immediately when scheduled again with the new activation ID.
-                                UIApplication.SharedApplication.ScheduleLocalNotification(notification);
+                                    // since we set the UILocalNotification's FireDate when it was constructed, if it's currently in the past it will fire immediately when scheduled again with the new activation ID.
+                                    if (notification.UserInfo != null)
+                                        UIApplication.SharedApplication.ScheduleLocalNotification(notification);
+                                }
                             }
                         }
                 });

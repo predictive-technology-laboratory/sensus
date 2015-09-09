@@ -67,7 +67,7 @@ namespace SensusUI
                 {
                     if (UiBoundSensusServiceHelper.Get(true).ProtocolShouldBeRunning(selectedProtocol))
                     {
-                        selectedProtocol.TestHealthAsync(() =>
+                        selectedProtocol.TestHealthAsync(true, () =>
                             {
                                 Device.BeginInvokeOnMainThread(async () =>
                                     {

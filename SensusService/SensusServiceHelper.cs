@@ -91,6 +91,7 @@ namespace SensusService
         public const string SENSUS_CALLBACK_KEY = "SENSUS-CALLBACK";
         public const string SENSUS_CALLBACK_ID_KEY = "SENSUS-CALLBACK-ID";
         public const string SENSUS_CALLBACK_REPEATING_KEY = "SENSUS-CALLBACK-REPEATING";
+        public const int HEALTH_TEST_DELAY_MS = 300000;
         protected const string XAMARIN_INSIGHTS_APP_KEY = "";
         private const string ENCRYPTION_KEY = "";
         private static readonly string SHARE_DIRECTORY = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "share");
@@ -279,7 +280,6 @@ namespace SensusService
         private ObservableCollection<Protocol> _registeredProtocols;
         private List<string> _runningProtocolIds;
         private string _healthTestCallbackId;
-        private int _healthTestDelayMS;
         private Dictionary<string, ScheduledCallback> _idCallback;
         private SHA256Managed _hasher;
         private List<PointOfInterest> _pointsOfInterest;
@@ -300,27 +300,6 @@ namespace SensusService
         public List<string> RunningProtocolIds
         {
             get{ return _runningProtocolIds; }
-        }
-
-        [EntryIntegerUiProperty("Health Test Delay (MS):", true, 9)]
-        public int HealthTestDelayMS
-        {
-            get { return _healthTestDelayMS; }
-            set
-            {
-                if (value <= 1000)
-                    value = 1000;
-                
-                if (value != _healthTestDelayMS)
-                {
-                    _healthTestDelayMS = value;
-
-                    if (_healthTestCallbackId != null)
-                        _healthTestCallbackId = RescheduleRepeatingCallback(_healthTestCallbackId, _healthTestDelayMS, _healthTestDelayMS);
-
-                    SaveAsync();
-                }
-            }
         }
 
         [ListUiProperty("Logging Level:", true, 11, new object[] { LoggingLevel.Off, LoggingLevel.Normal, LoggingLevel.Verbose, LoggingLevel.Debug })]
@@ -369,7 +348,6 @@ namespace SensusService
             _registeredProtocols = new ObservableCollection<Protocol>();
             _runningProtocolIds = new List<string>();
             _healthTestCallbackId = null;
-            _healthTestDelayMS = 300000;
             _idCallback = new Dictionary<string, ScheduledCallback>();
             _hasher = new SHA256Managed();
             _pointsOfInterest = new List<PointOfInterest>();
@@ -484,7 +462,7 @@ namespace SensusService
                 SensusServiceHelper.Get().UpdateApplicationStatus(_runningProtocolIds.Count + " protocol" + (_runningProtocolIds.Count == 1 ? " is " : "s are") + " running");
 
                 if (_healthTestCallbackId == null)
-                    _healthTestCallbackId = ScheduleRepeatingCallback(TestHealth, "Test Health", _healthTestDelayMS, _healthTestDelayMS);
+                    _healthTestCallbackId = ScheduleRepeatingCallback(TestHealth, "Test Health", HEALTH_TEST_DELAY_MS, HEALTH_TEST_DELAY_MS);
             }
         }
 
@@ -593,17 +571,17 @@ namespace SensusService
             }
         }
 
-        public string ScheduleOneTimeCallback(Action<string, CancellationToken> callback, string name, int delay)
+        public string ScheduleOneTimeCallback(Action<string, CancellationToken> callback, string name, int delayMS)
         {
-            return ScheduleOneTimeCallback(callback, name, delay, null);
+            return ScheduleOneTimeCallback(callback, name, delayMS, null);
         }
 
-        public string ScheduleOneTimeCallback(Action<string, CancellationToken> callback, string name, int delay, string userNotificationMessage)
+        public string ScheduleOneTimeCallback(Action<string, CancellationToken> callback, string name, int delayMS, string userNotificationMessage)
         {
             lock (_idCallback)
             {
                 string callbackId = AddCallback(callback, name, userNotificationMessage);
-                ScheduleOneTimeCallback(callbackId, delay, userNotificationMessage);
+                ScheduleOneTimeCallback(callbackId, delayMS, userNotificationMessage);
                 return callbackId;
             }
         }
@@ -952,7 +930,7 @@ namespace SensusService
                         break;
                     
                     if (_runningProtocolIds.Contains(protocol.Id))
-                        protocol.TestHealth();
+                        protocol.TestHealth(false);
                 }
             }
         }
