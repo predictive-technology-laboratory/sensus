@@ -30,14 +30,24 @@ namespace Sensus.Android
         {
             base.OnCreate();
 
+            SensusServiceHelper.Initialize(() => new AndroidSensusServiceHelper());
+
             _serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
+
+            // it's happened that the service is created after the service helper is disposed:  https://insights.xamarin.com/app/Sensus-Production/issues/46
+            if (_serviceHelper == null)
+            {
+                StopSelf();
+                return;
+            }
+            
             _serviceHelper.SetService(this);
             _serviceHelper.UpdateApplicationStatus("0 protocols are running");
         }
 
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
-            _serviceHelper.Logger.Log("Sensus service received start command (startId=" + startId + ").", LoggingLevel.Debug, GetType());
+            _serviceHelper.Logger.Log("Sensus service received start command (startId=" + startId + ").", LoggingLevel.Normal, GetType());
 
             _serviceHelper.MainActivityWillBeSet = intent.GetBooleanExtra(AndroidSensusServiceHelper.MAIN_ACTIVITY_WILL_BE_SET, false);
 
@@ -69,6 +79,14 @@ namespace Sensus.Android
         public override IBinder OnBind(Intent intent)
         {
             return new AndroidSensusServiceBinder(_serviceHelper);
-        }                    
+        }
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+
+            if (_serviceHelper != null)
+                _serviceHelper.Dispose();
+        }
     }
 }

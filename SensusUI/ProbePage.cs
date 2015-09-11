@@ -24,6 +24,9 @@ using SensusService;
 using SensusService.Anonymization;
 using SensusService.Anonymization.Anonymizers;
 using SensusService.Probes.Location;
+using System.Text;
+using Newtonsoft.Json;
+using System.IO;
 
 namespace SensusUI
 {
@@ -52,19 +55,42 @@ namespace SensusUI
             #region script probes
             if (probe is ScriptProbe)
             {
+                ScriptProbe scriptProbe = probe as ScriptProbe;
+
                 Button editScriptsButton = new Button
                 {
                     Text = "Edit Scripts",
                     FontSize = 20
                 };
 
+                contentLayout.Children.Add(editScriptsButton);
+
                 editScriptsButton.Clicked += async (o, e) =>
                 {
-                    await Navigation.PushAsync(new ScriptRunnersPage(probe as ScriptProbe));
+                    await Navigation.PushAsync(new ScriptRunnersPage(scriptProbe));
                 };
-                   
-                contentLayout.Children.Add(editScriptsButton);
-            }                       
+
+                Button shareScriptButton = new Button
+                {
+                    Text = "Share Definition",
+                    FontSize = 20
+                };
+
+                contentLayout.Children.Add(shareScriptButton);               
+
+                shareScriptButton.Clicked += (o, e) =>
+                {
+                    string sharePath = UiBoundSensusServiceHelper.Get(true).GetSharePath(".json");
+
+                    using (StreamWriter shareFile = new StreamWriter(sharePath))
+                    {
+                        shareFile.WriteLine(JsonConvert.SerializeObject(probe, SensusServiceHelper.JSON_SERIALIZER_SETTINGS));
+                        shareFile.Close();
+                    }
+
+                    UiBoundSensusServiceHelper.Get(true).ShareFileAsync(sharePath, "Probe Definition");
+                };
+            }
             #endregion
 
             #region proximity probe

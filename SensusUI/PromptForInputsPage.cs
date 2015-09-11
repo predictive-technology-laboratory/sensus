@@ -24,47 +24,67 @@ namespace SensusUI
 {
     public class PromptForInputsPage : ContentPage
     {
-        public PromptForInputsPage(string title, IEnumerable<Input> inputs, Action<List<object>> callback)
+        public enum Result
         {
-            Title = title;
+            NavigateBackward,
+            NavigateForward,
+            Cancel
+        }
+
+        public PromptForInputsPage(InputGroup inputGroup, int stepNumber, int totalSteps, Action<Result> callback)
+        {
+            Title = inputGroup.Name;
 
             StackLayout contentLayout = new StackLayout
             {
                 Orientation = StackOrientation.Vertical,
-                VerticalOptions = LayoutOptions.FillAndExpand
+                VerticalOptions = LayoutOptions.FillAndExpand,
+                Padding = new Thickness(0, 20, 0, 0)
             };
 
-            List<Func<object>> inputRetrievers = new List<Func<object>>();
+            contentLayout.Children.Add(new Label
+                {
+                    Text = "Step " + stepNumber + " of " + totalSteps,
+                    FontSize = 15,
+                    HorizontalOptions = LayoutOptions.CenterAndExpand
+                });
 
-            foreach (Input input in inputs)
-            {
+            contentLayout.Children.Add(new ProgressBar
+                {
+                    Progress = stepNumber / (double)totalSteps,
+                    HorizontalOptions = LayoutOptions.FillAndExpand
+                });
+
+            foreach (Input input in inputGroup.Inputs)
                 if (input.View != null)
                     contentLayout.Children.Add(input.View);
 
-                if (input.ValueRetriever != null)
-                    inputRetrievers.Add(input.ValueRetriever);
-            }
+            StackLayout navigationStack = new StackLayout
+            {
+                Orientation = StackOrientation.Horizontal,
+                HorizontalOptions = LayoutOptions.FillAndExpand
+            };
 
-            bool canceled = false;
+            bool previousButtonTapped = false;
 
-            Thread returnThread = new Thread(() =>
+            // step numbers are 1-based -- if we're beyond the first, provide a previous button
+            if (stepNumber > 1)
+            {
+                Button previousButton = new Button
                 {
-                    Device.BeginInvokeOnMainThread(async () =>
-                        {
-                            await Navigation.PopAsync();
-                        });
+                    HorizontalOptions = LayoutOptions.FillAndExpand,
+                    FontSize = 20,
+                    Text = "Previous"
+                };
 
-                    List<object> inputValues = null;
+                navigationStack.Children.Add(previousButton);
 
-                    if (!canceled)
-                    {
-                        inputValues = new List<object>();
-                        foreach (Func<object> inputRetriever in inputRetrievers)
-                            inputValues.Add(inputRetriever());
-                    }
-
-                    callback(inputValues);
-                });
+                previousButton.Clicked += async (o, e) =>
+                {
+                    previousButtonTapped = true;
+                    await Navigation.PopModalAsync(false);
+                };                      
+            }
 
             Button cancelButton = new Button
             {
@@ -73,30 +93,46 @@ namespace SensusUI
                 Text = "Cancel"
             };
 
-            cancelButton.Clicked += (o, e) =>
+            navigationStack.Children.Add(cancelButton);
+
+            bool cancelButtonTapped = false;
+
+            cancelButton.Clicked += async (o, e) =>
             {
-                canceled = true;
-                returnThread.Start();
+                cancelButtonTapped = true;
+                await Navigation.PopModalAsync(true);
             };
 
-            Button okButton = new Button
+            Button nextButton = new Button
             {
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 FontSize = 20,
-                Text = "OK"
+                Text = stepNumber < totalSteps ? "Next" : "Submit"
             };
 
-            okButton.Clicked += (o, e) =>
+            navigationStack.Children.Add(nextButton);
+
+            bool nextButtonTapped = false;
+
+            nextButton.Clicked += async (o, e) =>
             {
-                returnThread.Start();
+                nextButtonTapped = true;
+                await Navigation.PopModalAsync(stepNumber == totalSteps);
             };
                 
-            contentLayout.Children.Add(new StackLayout
-                {
-                    Orientation = StackOrientation.Horizontal,
-                    HorizontalOptions = LayoutOptions.FillAndExpand,
-                    Children = { cancelButton, okButton }
-                });
+            contentLayout.Children.Add(navigationStack);
+
+            Disappearing += (o, e) =>
+            {
+                if (previousButtonTapped)
+                    callback(Result.NavigateBackward);
+                else if (cancelButtonTapped)
+                    callback(Result.Cancel);
+                else if (nextButtonTapped)
+                    callback(Result.NavigateForward);
+                else
+                    callback(Result.Cancel);  // the user navigated back, or another activity started
+            };
 
             Content = new ScrollView
             {

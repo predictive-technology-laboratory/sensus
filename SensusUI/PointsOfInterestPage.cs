@@ -77,7 +77,9 @@ namespace SensusUI
 
             ToolbarItems.Add(new ToolbarItem(null, "plus.png", () =>
                     {
-                        UiBoundSensusServiceHelper.Get(true).PromptForInputsAsync("Define Point Of Interest", 
+                        UiBoundSensusServiceHelper.Get(true).PromptForInputsAsync(
+
+                            "Define Point Of Interest", 
 
                             new Input[]
                             {
@@ -87,17 +89,21 @@ namespace SensusUI
                                 new YesNoInput("View Map:")
                             },
 
+                            null,
+
                             inputs =>
                             {
                                 if (inputs == null)
                                     return;
                             
-                                string name = inputs[0] == null ? "" : inputs[0].ToString();
-                                string type = inputs[1] == null ? "" : inputs[1].ToString();
-                                string address = inputs[2] == null ? "" : inputs[2].ToString();
-                                bool viewMap = (bool)inputs[3];
+                                string name = inputs[0].Value as string;
+                                string type = inputs[1].Value as string;
+                                string address = inputs[2].Value as string;
+                                bool viewMap = (bool)inputs[3].Value;
 
-                                if (!string.IsNullOrWhiteSpace(name) || !string.IsNullOrWhiteSpace(type))
+                                if (string.IsNullOrWhiteSpace(name) && string.IsNullOrWhiteSpace(type))
+                                    UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("You must enter either a name or type (or both).");
+                                else
                                 {
                                     Action<List<Position>> addPOI = new Action<List<Position>>(poiPositions =>
                                         {        
@@ -120,10 +126,8 @@ namespace SensusUI
 
                                     if (string.IsNullOrWhiteSpace(address))
                                     {
-                                        // set up a new cancellation token source, cancelling the existing one if present.
-                                        if (_gpsCancellationTokenSource == null)
-                                            _gpsCancellationTokenSource = new CancellationTokenSource();
-                                        else if (!_gpsCancellationTokenSource.IsCancellationRequested)
+                                        // cancel existing token source if we have one
+                                        if (_gpsCancellationTokenSource != null && !_gpsCancellationTokenSource.IsCancellationRequested)
                                             _gpsCancellationTokenSource.Cancel();
 
                                         _gpsCancellationTokenSource = new CancellationTokenSource();

@@ -17,6 +17,7 @@ using System;
 using System.IO;
 using System.Linq;
 using Xamarin.Forms;
+using SensusUI.Inputs;
 
 namespace SensusUI
 {
@@ -66,7 +67,7 @@ namespace SensusUI
                 {
                     if (UiBoundSensusServiceHelper.Get(true).ProtocolShouldBeRunning(selectedProtocol))
                     {
-                        selectedProtocol.TestHealthAsync(() =>
+                        selectedProtocol.TestHealthAsync(true, () =>
                             {
                                 Device.BeginInvokeOnMainThread(async () =>
                                     {
@@ -161,12 +162,24 @@ namespace SensusUI
             if (protocol.LockPasswordHash == "")
                 action();
             else
-                UiBoundSensusServiceHelper.Get(true).PromptForInputAsync("Enter protocol password:", false, password =>
+                UiBoundSensusServiceHelper.Get(true).PromptForInputAsync(
+
+                    "Authenticate", 
+
+                    new TextInput("Protocol Password:"),
+
+                    null,
+
+                    input =>
                     {
+                        if (input == null)
+                            return;
+                        
+                        string password = input.Value as string;
+
                         if (password == null)
                             return;
-
-                        if (UiBoundSensusServiceHelper.Get(true).GetHash(password) == protocol.LockPasswordHash)
+                        else if (UiBoundSensusServiceHelper.Get(true).GetHash(password) == protocol.LockPasswordHash)
                             Device.BeginInvokeOnMainThread(action);
                         else
                             UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("The password you entered was not correct."); 

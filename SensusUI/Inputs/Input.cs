@@ -15,54 +15,148 @@
 using System;
 using Xamarin.Forms;
 using SensusService.Exceptions;
+using SensusUI.UiProperties;
+using Newtonsoft.Json;
 
 namespace SensusUI.Inputs
 {
     public abstract class Input
     {
-        private Label _label;
+        private string _name;
+        private string _id;
+        private string _groupId;
+        private string _labelText;
         private View _view;
-        private Func<object> _valueRetriever;
+        private bool _complete;
+        private bool _shouldBeStored;
+        private double? _latitude;
+        private double? _longitude;
+
+        [EntryStringUiProperty("Name:", true, 0)]
+        public string Name
+        {
+            get{ return _name; }
+            set{ _name = value; }
+        }
+
+        public string Id
+        {
+            get
+            {
+                return _id;
+            }
+            set
+            {
+                _id = value;
+            }
+        }
+
+        public string GroupId
+        {
+            get
+            {
+                return _groupId;
+            }
+            set
+            {
+                _groupId = value;
+            }
+        }
+
+        [EntryStringUiProperty("Label Text:", true, 1)]
+        public string LabelText
+        {
+            get
+            {
+                return _labelText;
+            }
+            set
+            {
+                _labelText = value;
+            }
+        }
 
         protected Label Label
         {
-            get { return _label; }
-        }
-
-        public View View 
-        { 
             get
             {
-                if (_view == null)
-                    throw new SensusException("View not set for \"" + GetType().FullName + "\".");
-                
-                return _view; 
-            }
-            set
-            {
-                _view = value;
+                return new Label
+                {
+                    Text = _labelText,
+                    FontSize = 20
+                };
             }
         }
 
-        public Func<object> ValueRetriever
+        [JsonIgnore]
+        public virtual View View
+        {
+            get { return _view; }
+            protected set { _view = value; }
+        }
+
+        [JsonIgnore]
+        public abstract object Value { get; }
+
+        [JsonIgnore]
+        public bool Complete
+        {
+            get { return _complete; }
+            protected set { _complete = value; }
+        }
+
+        public bool ShouldBeStored
         {
             get
             {
-                return _valueRetriever;
+                return _shouldBeStored;
             }
             set
             {
-                _valueRetriever = value;
+                _shouldBeStored = value;
             }
         }
 
-        public Input(string label)
+        public double? Latitude
         {
-            _label = new Label
-            {
-                Text = label,
-                FontSize = 20
-            };
+            get { return _latitude; }
+            set { _latitude = value; }
+        }
+
+        public double? Longitude
+        {
+            get { return _longitude; }
+            set { _longitude = value; }
+        }
+
+        [JsonIgnore]
+        public abstract bool Enabled { get; set; }
+
+        [JsonIgnore]
+        public abstract string DefaultName { get; }
+
+        public Input()
+        {
+            _name = DefaultName;
+            _id = Guid.NewGuid().ToString();
+            _shouldBeStored = true;
+        }
+
+        public Input(string labelText)
+            : this()
+        {
+            _labelText = labelText;
+        }
+
+        public Input(string name, string labelText)
+            : this(labelText)
+        {
+            _name = name;
+        }
+
+        public override string ToString()
+        {
+            return _name + (_name == DefaultName ? "" : " -- " + DefaultName);
         }
     }
 }

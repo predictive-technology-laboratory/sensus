@@ -18,6 +18,7 @@ using Xamarin.Forms.Maps;
 using Xam.Plugin.MapExtend.Abstractions;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using Xamarin;
 
 namespace SensusUI
 {
@@ -51,7 +52,7 @@ namespace SensusUI
             #region search
             Label searchLabel = new Label
             {
-                Text = "Address:",
+                Text = "Search:",
                 FontSize = 20
             };
 
@@ -69,8 +70,29 @@ namespace SensusUI
             searchGoButton.Clicked += (o, e) =>
             {
                 if (!string.IsNullOrWhiteSpace(_searchEntry.Text))
-                    _map.SearchAdress(_searchEntry.Text);
-            };                          
+                {
+                    try
+                    {
+                        _map.SearchAdress(_searchEntry.Text);
+                    }
+                    catch (Exception ex)
+                    {
+                        try
+                        {
+                            string errorMessage = "Failed to search for address:  " + ex.Message;
+                            UiBoundSensusServiceHelper.Get(true).Logger.Log(errorMessage, SensusService.LoggingLevel.Normal, GetType());
+                            UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync(errorMessage);                            
+                        }
+                        catch (Exception)
+                        {
+                        }
+                        finally
+                        {
+                            Insights.Report(ex, Insights.Severity.Warning);
+                        }
+                    }
+                }
+            };
             #endregion
 
             Button clearPinsButton = new Button
@@ -85,6 +107,18 @@ namespace SensusUI
                 _map.Pins.Clear();
             };
 
+            Button okButton = new Button
+            {
+                Text = "OK",
+                FontSize = 20,
+                HorizontalOptions = LayoutOptions.FillAndExpand
+            };
+
+            okButton.Clicked += async (o, e) =>
+            {
+                await Navigation.PopModalAsync();
+            };
+
             Content = new StackLayout
             { 
                 Orientation = StackOrientation.Vertical,
@@ -97,7 +131,12 @@ namespace SensusUI
                         HorizontalOptions = LayoutOptions.FillAndExpand,
                         Children = { searchLabel, _searchEntry, searchGoButton }
                     },
-                    clearPinsButton,
+                    new StackLayout
+                    {
+                        Orientation = StackOrientation.Horizontal,
+                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        Children = { clearPinsButton, okButton }
+                    },
                     _map,
                 }
             };

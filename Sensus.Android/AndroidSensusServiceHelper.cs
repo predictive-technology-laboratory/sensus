@@ -118,6 +118,10 @@ namespace Sensus.Android
             _deviceId = Settings.Secure.GetString(_service.ContentResolver, Settings.Secure.AndroidId);
             _textToSpeech = new AndroidTextToSpeech(_service);
             _wakeLock = (_service.GetSystemService(Context.PowerService) as PowerManager).NewWakeLock(WakeLockFlags.Partial, "SENSUS");  
+
+            // must initialize after _deviceId is set
+            if (Insights.IsInitialized)
+                Insights.Identify(_deviceId, "Device ID", _deviceId);
         }
 
         public void GetMainActivityAsync(bool foreground, Action<AndroidMainActivity> callback)
@@ -141,7 +145,7 @@ namespace Sensus.Android
 
                                 // start the activity and wait for it to bind itself to the service
                                 Intent intent = new Intent(_service, typeof(AndroidMainActivity));
-                                intent.AddFlags(ActivityFlags.FromBackground | ActivityFlags.NewTask);
+                                intent.AddFlags(ActivityFlags.FromBackground | ActivityFlags.NewTask | ActivityFlags.ClearTask);
                                 _service.StartActivity(intent);
                             }
 
@@ -270,7 +274,7 @@ namespace Sensus.Android
             _textToSpeech.SpeakAsync(text, callback);
         }
 
-        public override void PromptForInputAsync(string prompt, bool startVoiceRecognizer, Action<string> callback)
+        public override void RunVoicePromptAsync(string prompt, Action<string> callback)
         {
             new Thread(() =>
                 {
@@ -344,40 +348,39 @@ namespace Sensus.Android
                                         #endregion
 
                                         #region voice recognizer
-                                        if (startVoiceRecognizer)
-                                        {
-                                            new Thread(() =>
-                                                {
-                                                    // wait for the dialog to be shown so it doesn't hide our speech recognizer activity
-                                                    dialogShowWait.WaitOne();
 
-                                                    // there's a slight race condition between the dialog showing and speech recognition showing. pause here to prevent the dialog from hiding the speech recognizer.
-                                                    Thread.Sleep(1000);
+                                        new Thread(() =>
+                                            {
+                                                // wait for the dialog to be shown so it doesn't hide our speech recognizer activity
+                                                dialogShowWait.WaitOne();
 
-                                                    Intent intent = new Intent(RecognizerIntent.ActionRecognizeSpeech);
-                                                    intent.PutExtra(RecognizerIntent.ExtraLanguageModel, RecognizerIntent.LanguageModelFreeForm);
-                                                    intent.PutExtra(RecognizerIntent.ExtraSpeechInputCompleteSilenceLengthMillis, 1500);
-                                                    intent.PutExtra(RecognizerIntent.ExtraSpeechInputPossiblyCompleteSilenceLengthMillis, 1500);
-                                                    intent.PutExtra(RecognizerIntent.ExtraSpeechInputMinimumLengthMillis, 15000);
-                                                    intent.PutExtra(RecognizerIntent.ExtraMaxResults, 1);
-                                                    intent.PutExtra(RecognizerIntent.ExtraLanguage, Java.Util.Locale.Default);
-                                                    intent.PutExtra(RecognizerIntent.ExtraPrompt, prompt);
+                                                // there's a slight race condition between the dialog showing and speech recognition showing. pause here to prevent the dialog from hiding the speech recognizer.
+                                                Thread.Sleep(1000);
 
-                                                    mainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.RecognizeSpeech, result =>
+                                                Intent intent = new Intent(RecognizerIntent.ActionRecognizeSpeech);
+                                                intent.PutExtra(RecognizerIntent.ExtraLanguageModel, RecognizerIntent.LanguageModelFreeForm);
+                                                intent.PutExtra(RecognizerIntent.ExtraSpeechInputCompleteSilenceLengthMillis, 1500);
+                                                intent.PutExtra(RecognizerIntent.ExtraSpeechInputPossiblyCompleteSilenceLengthMillis, 1500);
+                                                intent.PutExtra(RecognizerIntent.ExtraSpeechInputMinimumLengthMillis, 15000);
+                                                intent.PutExtra(RecognizerIntent.ExtraMaxResults, 1);
+                                                intent.PutExtra(RecognizerIntent.ExtraLanguage, Java.Util.Locale.Default);
+                                                intent.PutExtra(RecognizerIntent.ExtraPrompt, prompt);
+
+                                                mainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.RecognizeSpeech, result =>
+                                                    {
+                                                        if (result != null && result.Item1 == Result.Ok)
                                                         {
-                                                            if (result != null && result.Item1 == Result.Ok)
-                                                            {
-                                                                IList<string> matches = result.Item2.GetStringArrayListExtra(RecognizerIntent.ExtraResults);
-                                                                if (matches != null && matches.Count > 0)
-                                                                    mainActivity.RunOnUiThread(() =>
-                                                                        {
-                                                                            inputEdit.Text = matches[0];
-                                                                        });
-                                                            }
-                                                        });
+                                                            IList<string> matches = result.Item2.GetStringArrayListExtra(RecognizerIntent.ExtraResults);
+                                                            if (matches != null && matches.Count > 0)
+                                                                mainActivity.RunOnUiThread(() =>
+                                                                    {
+                                                                        inputEdit.Text = matches[0];
+                                                                    });
+                                                        }
+                                                    });
                                         
-                                                }).Start();
-                                        }
+                                            }).Start();
+                                        
                                         #endregion
                                     });
                         });
@@ -386,6 +389,11 @@ namespace Sensus.Android
                     callback(input);
 
                 }).Start();
+        }
+
+        public override float GetFullActivityHealthTestsPerDay(Protocol protocol)
+        {
+            return 60000 * 60 * 24 / (float)SensusServiceHelper.HEALTH_TEST_DELAY_MS;
         }
 
         #region notifications
@@ -458,7 +466,7 @@ namespace Sensus.Android
         {            
             long initialTimeMS = Java.Lang.JavaSystem.CurrentTimeMillis() + initialDelayMS;
 
-            Logger.Log("Callback " + callbackId + " scheduled for " + (new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(initialTimeMS)) + " (repeating).", LoggingLevel.Debug, GetType());
+            Logger.Log("Callback " + callbackId + " scheduled for " + (new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(initialTimeMS)) + " (repeating).", LoggingLevel.Normal, GetType());
 
             AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
             alarmManager.SetRepeating(AlarmType.RtcWakeup, initialTimeMS, repeatDelayMS, GetCallbackIntent(callbackId, true));
@@ -468,7 +476,7 @@ namespace Sensus.Android
         {
             long timeMS = Java.Lang.JavaSystem.CurrentTimeMillis() + delayMS;
 
-            Logger.Log("Callback " + callbackId + " scheduled for " + (new DateTimeOffset(1970, 1, 1, 0, 0, 0, 0, new TimeSpan()).AddMilliseconds(timeMS)) + " (one-time).", LoggingLevel.Debug, GetType());
+            Logger.Log("Callback " + callbackId + " scheduled for " + (new DateTimeOffset(1970, 1, 1, 0, 0, 0, 0, new TimeSpan()).AddMilliseconds(timeMS)) + " (one-time).", LoggingLevel.Normal, GetType());
 
             AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
             alarmManager.Set(AlarmType.RtcWakeup, timeMS, GetCallbackIntent(callbackId, false));
@@ -504,6 +512,18 @@ namespace Sensus.Android
         {
             lock (_wakeLock)
                 _wakeLock.Release();
+        }
+
+        public override void BringToForeground()
+        {
+            ManualResetEvent foregroundWait = new ManualResetEvent(false);
+
+            GetMainActivityAsync(true, mainActivity =>
+                {
+                    foregroundWait.Set();
+                });
+
+            foregroundWait.WaitOne();
         }
 
         #endregion

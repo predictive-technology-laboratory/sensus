@@ -128,13 +128,13 @@ namespace Sensus.iOS.Probes.Apps
 
                                                     if (property.PropertyType == typeof(string))
                                                         value = resultDictionary[resultKey].ToString();
-                                                    else if (property.PropertyType == typeof(bool))
+                                                    else if (property.PropertyType == typeof(bool?))
                                                     {
                                                         int parsedBool;
                                                         if (int.TryParse(resultDictionary[resultKey].ToString(), out parsedBool))
                                                             value = parsedBool == 1 ? true : false;
                                                     }
-                                                    else if (property.PropertyType == typeof(DateTimeOffset))
+                                                    else if (property.PropertyType == typeof(DateTimeOffset?))
                                                     {
                                                         DateTimeOffset parsedDateTimeOffset;
                                                         if (DateTimeOffset.TryParse(resultDictionary[resultKey].ToString(), out parsedDateTimeOffset))

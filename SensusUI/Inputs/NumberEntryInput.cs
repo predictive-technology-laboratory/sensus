@@ -19,28 +19,78 @@ namespace SensusUI.Inputs
 {
     public class NumberEntryInput : Input
     {
-        public NumberEntryInput(string label)
-            : base(label)
-        {
-            Entry entry = new Entry
-                {
-                    Keyboard = Keyboard.Numeric,
-                    HorizontalOptions = LayoutOptions.FillAndExpand
-                };
-            
-            View = new StackLayout
-            {
-                Orientation = StackOrientation.Horizontal,
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                Children = { Label, entry }
-            };
+        private Entry _entry;
 
-            ValueRetriever = new Func<object>(() =>
+        public override View View
+        {
+            get
+            {
+                if (base.View == null)
                 {
-                    int value;
-                    int.TryParse(entry.Text, out value);
-                    return value;
-                });
+                    _entry = new Entry
+                    {
+                        Keyboard = Keyboard.Numeric,
+                        HorizontalOptions = LayoutOptions.FillAndExpand
+                    };  
+
+                    _entry.TextChanged += (o, e) => Complete = Value != null;
+
+                    base.View = new StackLayout
+                    {
+                        Orientation = StackOrientation.Horizontal,
+                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        Children = { Label, _entry }
+                    };
+                }
+
+                return base.View;
+            }
         }
+
+        public override object Value
+        {
+            get
+            {
+                double value;
+                if (_entry == null || !double.TryParse(_entry.Text, out value))
+                    return null;
+                else
+                    return value;
+            }
+        }
+
+        public override bool Enabled
+        {
+            get
+            {
+                return _entry.IsEnabled;
+            }
+            set
+            {
+                _entry.IsEnabled = value;
+            }
+        }
+
+        public override string DefaultName
+        {
+            get
+            {
+                return "Number Entry";
+            }
+        }
+
+        public NumberEntryInput()
+        {
+        }
+
+        public NumberEntryInput(string labelText)
+            : base(labelText)
+        {
+        }
+
+        public NumberEntryInput(string name, string labelText)
+            : base(name, labelText)
+        {            
+        }           
     }
 }

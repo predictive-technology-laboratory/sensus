@@ -57,17 +57,17 @@ namespace SensusService.DataStores.Remote
             List<Datum> dataToCommit = new List<Datum>();
 
             if (cancellationToken.IsCancellationRequested)
-                SensusServiceHelper.Get().Logger.Log("Cancelled retrieval of data from local data store.", LoggingLevel.Verbose, GetType());
+                SensusServiceHelper.Get().Logger.Log("Cancelled retrieval of data from local data store.", LoggingLevel.Normal, GetType());
             else if (!Protocol.LocalDataStore.UploadToRemoteDataStore)
-                SensusServiceHelper.Get().Logger.Log("Remote data store upload is disabled.", LoggingLevel.Verbose, GetType());
+                SensusServiceHelper.Get().Logger.Log("Remote data store upload is disabled.", LoggingLevel.Normal, GetType());
             else if (_requireWiFi && !SensusServiceHelper.Get().WiFiConnected)
-                SensusServiceHelper.Get().Logger.Log("Required WiFi but device WiFi is not connected.", LoggingLevel.Verbose, GetType());
+                SensusServiceHelper.Get().Logger.Log("Required WiFi but device WiFi is not connected.", LoggingLevel.Normal, GetType());
             else if (_requireCharging && !SensusServiceHelper.Get().IsCharging)
-                SensusServiceHelper.Get().Logger.Log("Required charging but device is not charging.", LoggingLevel.Verbose, GetType());
+                SensusServiceHelper.Get().Logger.Log("Required charging but device is not charging.", LoggingLevel.Normal, GetType());
             else
             {
                 dataToCommit = Protocol.LocalDataStore.GetDataForRemoteDataStore(cancellationToken);
-                SensusServiceHelper.Get().Logger.Log("Retrieved " + dataToCommit.Count + " data elements from local data store.", LoggingLevel.Debug, GetType());
+                SensusServiceHelper.Get().Logger.Log("Retrieved " + dataToCommit.Count + " data elements from local data store.", LoggingLevel.Normal, GetType());
             }
 
             return dataToCommit;

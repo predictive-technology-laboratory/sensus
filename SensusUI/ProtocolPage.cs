@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Xamarin.Forms;
+using SensusUI.Inputs;
 
 namespace SensusUI
 {
@@ -175,11 +176,22 @@ namespace SensusUI
             {
                 if (lockButton.Text == "Lock")
                 {
-                    UiBoundSensusServiceHelper.Get(true).PromptForInputAsync("Create password to lock protocol:", false, password =>
+                    UiBoundSensusServiceHelper.Get(true).PromptForInputAsync(
+                            
+                        "Lock Protocol",
+
+                        new TextInput("Password:"),
+
+                        null,
+                            
+                        input =>
                         {
-                            if (password == null)
+                            if (input == null)
                                 return;
-                            else if (string.IsNullOrWhiteSpace(password))
+                                
+                            string password = input.Value as string;
+
+                            if (string.IsNullOrWhiteSpace(password))
                                 UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Please enter a non-empty password.");
                             else
                             {

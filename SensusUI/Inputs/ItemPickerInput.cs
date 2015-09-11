@@ -14,31 +14,127 @@
 
 using System;
 using Xamarin.Forms;
+using SensusUI.UiProperties;
+using System.Collections.Generic;
 
 namespace SensusUI.Inputs
 {
     public class ItemPickerInput : Input
     {
-        public ItemPickerInput(string label, string tipText, string[] items)
-            : base(label)
+        private string _tipText;
+        private List<string> _items;
+        private Picker _picker;
+
+        [EntryStringUiProperty("Tip Text:", true, 10)]
+        public string TipText
         {
-            Picker picker = new Picker
+            get
             {
-                Title = tipText,
-                HorizontalOptions = LayoutOptions.FillAndExpand
-            };
-
-            foreach (string item in items)
-                picker.Items.Add(item);
-
-            View = new StackLayout
+                return _tipText;
+            }
+            set
             {
-                Orientation = StackOrientation.Horizontal,
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                Children = { Label, picker }
-            };
+                _tipText = value;
+            }
+        }
 
-            ValueRetriever = new Func<object>(() => picker.SelectedIndex >= 0 ? picker.Items[picker.SelectedIndex] : null);
+        [EditableListUiProperty(null, true, 11)]
+        public List<string> Items
+        {
+            get
+            {
+                return _items;
+            }
+            // need set method so auto-binding can set the list via the EditableListUiProperty
+            set
+            {
+                _items = value;
+            }
+        }
+
+        public override View View
+        {
+            get
+            {
+                if (base.View == null && _items.Count > 0)
+                {
+                    _picker = new Picker
+                    {
+                        Title = _tipText,
+                        HorizontalOptions = LayoutOptions.FillAndExpand
+                    };
+
+                    foreach (string item in _items)
+                        _picker.Items.Add(item);
+
+                    _picker.SelectedIndexChanged += (o, e) => Complete = Value != null;
+
+                    base.View = new StackLayout
+                    {
+                        Orientation = StackOrientation.Horizontal,
+                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        Children = { Label, _picker }
+                    };
+                }
+
+                return base.View;
+            }
+        }
+
+        public override object Value
+        {
+            get
+            {
+                return _picker == null || _picker.SelectedIndex < 0 ? null : _picker.Items[_picker.SelectedIndex];
+            }
+        }
+
+        public override bool Enabled
+        {
+            get
+            {
+                return _picker.IsEnabled;
+            }
+            set
+            {
+                _picker.IsEnabled = value;
+            }
+        }
+
+        public override string DefaultName
+        {
+            get
+            {
+                return "Picker";
+            }
+        }
+
+        public ItemPickerInput()
+        {
+            Construct("Please Make Selection", new List<string>());
+        }
+
+        public ItemPickerInput(string labelText, string tipText, List<string> items)
+            : base(labelText)
+        {
+            Construct(tipText, items);
+        }
+
+        public ItemPickerInput(string name, string labelText, string tipText, List<string> items)
+            : base(name, labelText)
+        {
+            Construct(tipText, items);      
+        }
+
+        private void Construct(string tipText, List<string> items)
+        {
+            _tipText = tipText;
+            _items = items;   
+        }           
+
+        public override string ToString()
+        {
+            return base.ToString() + " -- " + _items.Count + " Items";
         }
     }
 }
