@@ -89,6 +89,8 @@ namespace SensusUI
                                 new YesNoInput("View Map:")
                             },
 
+                            null,
+
                             inputs =>
                             {
                                 if (inputs == null)
@@ -124,10 +126,8 @@ namespace SensusUI
 
                                     if (string.IsNullOrWhiteSpace(address))
                                     {
-                                        // set up a new cancellation token source, cancelling the existing one if present.
-                                        if (_gpsCancellationTokenSource == null)
-                                            _gpsCancellationTokenSource = new CancellationTokenSource();
-                                        else if (!_gpsCancellationTokenSource.IsCancellationRequested)
+                                        // cancel existing token source if we have one
+                                        if (_gpsCancellationTokenSource != null && !_gpsCancellationTokenSource.IsCancellationRequested)
                                             _gpsCancellationTokenSource.Cancel();
 
                                         _gpsCancellationTokenSource = new CancellationTokenSource();

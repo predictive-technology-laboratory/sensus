@@ -118,6 +118,10 @@ namespace Sensus.Android
             _deviceId = Settings.Secure.GetString(_service.ContentResolver, Settings.Secure.AndroidId);
             _textToSpeech = new AndroidTextToSpeech(_service);
             _wakeLock = (_service.GetSystemService(Context.PowerService) as PowerManager).NewWakeLock(WakeLockFlags.Partial, "SENSUS");  
+
+            // must initialize after _deviceId is set
+            if (Insights.IsInitialized)
+                Insights.Identify(_deviceId, "Device ID", _deviceId);
         }
 
         public void GetMainActivityAsync(bool foreground, Action<AndroidMainActivity> callback)
@@ -387,6 +391,11 @@ namespace Sensus.Android
                 }).Start();
         }
 
+        public override float GetFullActivityHealthTestsPerDay(Protocol protocol)
+        {
+            return 60000 * 60 * 24 / (float)SensusServiceHelper.HEALTH_TEST_DELAY_MS;
+        }
+
         #region notifications
 
         public override void UpdateApplicationStatus(string status)
@@ -457,7 +466,7 @@ namespace Sensus.Android
         {            
             long initialTimeMS = Java.Lang.JavaSystem.CurrentTimeMillis() + initialDelayMS;
 
-            Logger.Log("Callback " + callbackId + " scheduled for " + (new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(initialTimeMS)) + " (repeating).", LoggingLevel.Debug, GetType());
+            Logger.Log("Callback " + callbackId + " scheduled for " + (new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(initialTimeMS)) + " (repeating).", LoggingLevel.Normal, GetType());
 
             AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
             alarmManager.SetRepeating(AlarmType.RtcWakeup, initialTimeMS, repeatDelayMS, GetCallbackIntent(callbackId, true));
@@ -467,7 +476,7 @@ namespace Sensus.Android
         {
             long timeMS = Java.Lang.JavaSystem.CurrentTimeMillis() + delayMS;
 
-            Logger.Log("Callback " + callbackId + " scheduled for " + (new DateTimeOffset(1970, 1, 1, 0, 0, 0, 0, new TimeSpan()).AddMilliseconds(timeMS)) + " (one-time).", LoggingLevel.Debug, GetType());
+            Logger.Log("Callback " + callbackId + " scheduled for " + (new DateTimeOffset(1970, 1, 1, 0, 0, 0, 0, new TimeSpan()).AddMilliseconds(timeMS)) + " (one-time).", LoggingLevel.Normal, GetType());
 
             AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
             alarmManager.Set(AlarmType.RtcWakeup, timeMS, GetCallbackIntent(callbackId, false));

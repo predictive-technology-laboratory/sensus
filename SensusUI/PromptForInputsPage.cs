@@ -39,7 +39,7 @@ namespace SensusUI
             {
                 Orientation = StackOrientation.Vertical,
                 VerticalOptions = LayoutOptions.FillAndExpand,
-                Padding = new Thickness(0, 10, 0, 0)
+                Padding = new Thickness(0, 20, 0, 0)
             };
 
             contentLayout.Children.Add(new Label
@@ -59,6 +59,33 @@ namespace SensusUI
                 if (input.View != null)
                     contentLayout.Children.Add(input.View);
 
+            StackLayout navigationStack = new StackLayout
+            {
+                Orientation = StackOrientation.Horizontal,
+                HorizontalOptions = LayoutOptions.FillAndExpand
+            };
+
+            bool previousButtonTapped = false;
+
+            // step numbers are 1-based -- if we're beyond the first, provide a previous button
+            if (stepNumber > 1)
+            {
+                Button previousButton = new Button
+                {
+                    HorizontalOptions = LayoutOptions.FillAndExpand,
+                    FontSize = 20,
+                    Text = "Previous"
+                };
+
+                navigationStack.Children.Add(previousButton);
+
+                previousButton.Clicked += async (o, e) =>
+                {
+                    previousButtonTapped = true;
+                    await Navigation.PopModalAsync(false);
+                };                      
+            }
+
             Button cancelButton = new Button
             {
                 HorizontalOptions = LayoutOptions.FillAndExpand,
@@ -66,12 +93,14 @@ namespace SensusUI
                 Text = "Cancel"
             };
 
+            navigationStack.Children.Add(cancelButton);
+
             bool cancelButtonTapped = false;
 
             cancelButton.Clicked += async (o, e) =>
             {
                 cancelButtonTapped = true;
-                await Navigation.PopAsync();
+                await Navigation.PopModalAsync(true);
             };
 
             Button nextButton = new Button
@@ -81,29 +110,28 @@ namespace SensusUI
                 Text = stepNumber < totalSteps ? "Next" : "Submit"
             };
 
+            navigationStack.Children.Add(nextButton);
+
             bool nextButtonTapped = false;
 
             nextButton.Clicked += async (o, e) =>
             {
                 nextButtonTapped = true;
-                await Navigation.PopAsync();
+                await Navigation.PopModalAsync(stepNumber == totalSteps);
             };
                 
-            contentLayout.Children.Add(new StackLayout
-                {
-                    Orientation = StackOrientation.Horizontal,
-                    HorizontalOptions = LayoutOptions.FillAndExpand,
-                    Children = { cancelButton, nextButton }
-                });
+            contentLayout.Children.Add(navigationStack);
 
             Disappearing += (o, e) =>
             {
-                if (cancelButtonTapped)
+                if (previousButtonTapped)
+                    callback(Result.NavigateBackward);
+                else if (cancelButtonTapped)
                     callback(Result.Cancel);
                 else if (nextButtonTapped)
                     callback(Result.NavigateForward);
                 else
-                    callback(Result.NavigateBackward);
+                    callback(Result.Cancel);  // the user navigated back, or another activity started
             };
 
             Content = new ScrollView

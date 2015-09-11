@@ -67,7 +67,7 @@ namespace SensusUI
                 {
                     if (UiBoundSensusServiceHelper.Get(true).ProtocolShouldBeRunning(selectedProtocol))
                     {
-                        selectedProtocol.TestHealthAsync(() =>
+                        selectedProtocol.TestHealthAsync(true, () =>
                             {
                                 Device.BeginInvokeOnMainThread(async () =>
                                     {
@@ -168,9 +168,11 @@ namespace SensusUI
 
                     new TextInput("Protocol Password:"),
 
+                    null,
+
                     input =>
                     {
-                        if(input == null)
+                        if (input == null)
                             return;
                         
                         string password = input.Value as string;

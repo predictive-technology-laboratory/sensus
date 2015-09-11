@@ -181,6 +181,8 @@ namespace SensusUI
                         "Lock Protocol",
 
                         new TextInput("Password:"),
+
+                        null,
                             
                         input =>
                         {
@@ -189,9 +191,7 @@ namespace SensusUI
                                 
                             string password = input.Value as string;
 
-                            if (password == null)
-                                return;
-                            else if (string.IsNullOrWhiteSpace(password))
+                            if (string.IsNullOrWhiteSpace(password))
                                 UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Please enter a non-empty password.");
                             else
                             {

@@ -26,12 +26,14 @@ namespace SensusService.Probes.Location
     public class GpsReceiver
     {
         #region static members
+
         public static readonly GpsReceiver SINGLETON = new GpsReceiver();
 
         public static GpsReceiver Get()
         {
             return SINGLETON;
         }
+
         #endregion
 
         private event EventHandler<PositionEventArgs> PositionChanged;
@@ -118,7 +120,7 @@ namespace SensusService.Probes.Location
                 SensusServiceHelper.Get().Logger.Log("GPS receiver is now listening for changes.", LoggingLevel.Normal, GetType());        
             }      
         }
-               
+
         public void RemoveListener(EventHandler<PositionEventArgs> listener)
         {      
             lock (_locker)
@@ -138,11 +140,58 @@ namespace SensusService.Probes.Location
             }      
         }
 
+
+        /// <summary>
+        /// Gets a GPS reading, reusing an old one if it isn't too old. Will block the current thread while waiting for a GPS reading. Should not
+        /// be called from the main / UI thread, since GPS runs on main thread (will deadlock).
+        /// </summary>
+        /// <returns>The reading.</returns>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <param name="callback">Callback to run when reading is obtained</param>
+        public void GetReadingAsync(CancellationToken cancellationToken, Action<Position> callback)
+        {
+            new Thread(() =>
+                {
+                    callback(GetReading(cancellationToken));
+
+                }).Start();
+        }
+
+        /// <summary>
+        /// Gets a GPS reading, reusing an old one if it isn't too old. Will block the current thread while waiting for a GPS reading. Should not
+        /// be called from the main / UI thread, since GPS runs on main thread (will deadlock).
+        /// </summary>
+        /// <returns>The reading.</returns>
+        /// <param name="cancellationToken">Cancellation token.</param>
         public Position GetReading(CancellationToken cancellationToken)
         {
             return GetReading(0, cancellationToken);
         }
 
+        /// <summary>
+        /// Gets a GPS reading, reusing an old one if it isn't too old. Will block the current thread while waiting for a GPS reading. Should not
+        /// be called from the main / UI thread, since GPS runs on main thread (will deadlock).
+        /// </summary>
+        /// <returns>The reading.</returns>
+        /// <param name="maxReadingAgeForReuseMS">Maximum age of old reading to reuse (milliseconds).</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <param name="callback">Callback to run when reading is obtained</param>
+        public void GetReadingAsync(int maxReadingAgeForReuseMS, CancellationToken cancellationToken, Action<Position> callback)
+        {  
+            new Thread(() =>
+                {
+                    callback(GetReading(maxReadingAgeForReuseMS, cancellationToken));
+
+                }).Start();
+        }
+
+        /// <summary>
+        /// Gets a GPS reading, reusing an old one if it isn't too old. Will block the current thread while waiting for a GPS reading. Should not
+        /// be called from the main / UI thread, since GPS runs on main thread (will deadlock).
+        /// </summary>
+        /// <returns>The reading.</returns>
+        /// <param name="maxReadingAgeForReuseMS">Maximum age of old reading to reuse (milliseconds).</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
         public Position GetReading(int maxReadingAgeForReuseMS, CancellationToken cancellationToken)
         {  
             lock (_locker)

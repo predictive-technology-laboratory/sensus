@@ -15,6 +15,7 @@
 using System;
 using SensusService.Anonymization;
 using SensusService.Anonymization.Anonymizers;
+using SensusService.Probes.User.ProbeTriggerProperties;
 
 namespace SensusService.Probes.User
 {
@@ -24,6 +25,8 @@ namespace SensusService.Probes.User
         private string _inputId;
         private object _response;
         private string _triggerDatumId;
+        private double? _latitude;
+        private double? _longitude;
 
         public string GroupId
         {
@@ -60,6 +63,22 @@ namespace SensusService.Probes.User
         {
             get { return _triggerDatumId; }
             set { _triggerDatumId = value; }
+        }  
+
+        [NumberProbeTriggerProperty]
+        [Anonymizable(null, new Type[] { typeof(DoubleRoundingTenthsAnonymizer), typeof(DoubleRoundingHundredthsAnonymizer), typeof(DoubleRoundingThousandthsAnonymizer) }, 1)]  // rounding to hundredths is roughly 1km
+        public double? Latitude
+        {
+            get { return _latitude; }
+            set { _latitude = value; }
+        }
+
+        [NumberProbeTriggerProperty]
+        [Anonymizable(null, new Type[] { typeof(DoubleRoundingTenthsAnonymizer), typeof(DoubleRoundingHundredthsAnonymizer), typeof(DoubleRoundingThousandthsAnonymizer) }, 1)]  // rounding to hundredths is roughly 1km
+        public double? Longitude
+        {
+            get { return _longitude; }
+            set { _longitude = value; }
         }
 
         public override string DisplayDetail
@@ -72,13 +91,15 @@ namespace SensusService.Probes.User
         /// </summary>
         private ScriptDatum() { }
 
-        public ScriptDatum(DateTimeOffset timestamp, string groupId, string inputId, object response, string triggerDatumId)
+        public ScriptDatum(DateTimeOffset timestamp, string groupId, string inputId, object response, string triggerDatumId, double? latitude, double? longitude)
             : base(timestamp)
         {
             _groupId = groupId;
             _inputId = inputId;
             _response = response;
             _triggerDatumId = triggerDatumId == null ? "" : triggerDatumId;
+            _latitude = latitude;
+            _longitude = longitude;
         }
 
         public override string ToString()
@@ -86,7 +107,9 @@ namespace SensusService.Probes.User
             return base.ToString() + Environment.NewLine +
                    "Group:  " + _groupId + Environment.NewLine + 
                    "Input:  " + _inputId + Environment.NewLine +
-                   "Response:  " + _response;
+                   "Response:  " + _response + Environment.NewLine + 
+                   "Latitude:  " + _latitude + Environment.NewLine +
+                   "Longitude:  " + _longitude;
         }
     }
 }

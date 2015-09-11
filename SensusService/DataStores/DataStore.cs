@@ -113,13 +113,13 @@ namespace SensusService.DataStores
 
                 _mostRecentCommitTimestamp = DateTimeOffset.UtcNow;
 
-                _commitCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(cancellationToken =>
+                _commitCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback((callbackId, cancellationToken) =>
                     {
                         if (_running)
                         {
                             _isCommitting = true;
 
-                            SensusServiceHelper.Get().Logger.Log("Committing data.", LoggingLevel.Verbose, GetType());
+                            SensusServiceHelper.Get().Logger.Log("Committing data.", LoggingLevel.Normal, GetType());
 
                             List<Datum> dataToCommit = null;
                             try
