@@ -265,6 +265,9 @@ namespace Sensus.Android
         {
             base.OnStop();
 
+            if (SensusServiceHelper.Get() != null)
+                SensusServiceHelper.Get().Logger.Log("Stopping main activity.", LoggingLevel.Normal, GetType());            
+
             if (Stopped != null)
                 Stopped(this, null);
         }

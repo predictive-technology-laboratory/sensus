@@ -81,12 +81,27 @@ namespace Sensus.Android
             return new AndroidSensusServiceBinder(_serviceHelper);
         }
 
+        public override void OnTaskRemoved(Intent rootIntent)
+        {
+            base.OnTaskRemoved(rootIntent);
+
+            if (_serviceHelper != null)
+            {
+                _serviceHelper.Logger.Log("Associated task has been removed. Stopping service helper.", LoggingLevel.Normal, GetType());
+                _serviceHelper.Stop();
+            }
+        }
+
         public override void OnDestroy()
         {
             base.OnDestroy();
 
             if (_serviceHelper != null)
+            {
+                _serviceHelper.Logger.Log("Destroying service.", LoggingLevel.Normal, GetType());
                 _serviceHelper.Dispose();
+                _serviceHelper = null;
+            }
         }
     }
 }
