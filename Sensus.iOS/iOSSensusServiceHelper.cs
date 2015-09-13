@@ -326,6 +326,19 @@ namespace Sensus.iOS
                 });
         }
 
+        public override void SendEmailAsync(string toAddress, string subject, string message)
+        {
+            Device.BeginInvokeOnMainThread(() =>
+                {
+                    MFMailComposeViewController mailer = new MFMailComposeViewController();
+                    mailer.SetToRecipients(new string[] { toAddress });
+                    mailer.SetSubject(subject);
+                    mailer.SetMessageBody(message, false);
+                    mailer.Finished += (sender, e) => mailer.DismissViewControllerAsync(true);
+                    UIApplication.SharedApplication.KeyWindow.RootViewController.PresentViewController(mailer, true, null);
+                });            
+        }
+
         public override void TextToSpeechAsync(string text, Action callback)
         {
             new Thread(() =>

@@ -660,7 +660,7 @@ namespace SensusService
                     new LabelOnlyInput(
                         (string.IsNullOrWhiteSpace(message) ? "" : message + Environment.NewLine + Environment.NewLine) +
                         (string.IsNullOrWhiteSpace(_startupAgreement) ? "" : _startupAgreement + Environment.NewLine + Environment.NewLine) +
-                        "To start this protocol, please indicate your consent by entering the following code:  " + consentCode),
+                        "To participate in this study, please indicate your consent by entering the following code:  " + consentCode),
 
                     new TextInput()
                 },

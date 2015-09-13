@@ -411,6 +411,8 @@ namespace SensusService
 
         public abstract void ShareFileAsync(string path, string subject);
 
+        public abstract void SendEmailAsync(string toAddress, string subject, string message);
+
         public abstract void TextToSpeechAsync(string text, Action callback);
 
         public abstract void RunVoicePromptAsync(string prompt, Action<string> callback);

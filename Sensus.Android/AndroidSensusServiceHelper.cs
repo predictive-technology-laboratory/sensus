@@ -269,6 +269,17 @@ namespace Sensus.Android
                 }).Start();
         }
 
+        public override void SendEmailAsync(string toAddress, string subject, string message)
+        {
+            Intent emailIntent = new Intent(Intent.ActionSend);
+            emailIntent.PutExtra(Intent.ExtraEmail, new string[] { toAddress });
+            emailIntent.PutExtra(Intent.ExtraSubject, subject);
+            emailIntent.PutExtra(Intent.ExtraText, message);
+            emailIntent.SetType("text/plain");
+
+            _mainActivity.StartActivity(emailIntent);
+        }
+
         public override void TextToSpeechAsync(string text, Action callback)
         {
             _textToSpeech.SpeakAsync(text, callback);

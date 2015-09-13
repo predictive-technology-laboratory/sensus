@@ -34,35 +34,55 @@ namespace SensusUI
             #error "Unrecognized platform."
             #endif
 
-            Content = new ScrollView
+            Button helpButton = null;
+            if (!string.IsNullOrWhiteSpace(protocol.ContactEmail))
             {
-                Content = new StackLayout
+                helpButton = new Button
                 {
-                    Orientation = StackOrientation.Vertical,
-                    VerticalOptions = LayoutOptions.FillAndExpand,
-                    Padding = new Thickness(0, 50, 0, 0),
-                    Children =
+                    Text = "Email Study Manager",
+                    FontSize = 20
+                };
+
+                helpButton.Clicked += (o, e) =>
+                {
+                    UiBoundSensusServiceHelper.Get(true).SendEmailAsync(protocol.ContactEmail, "Help with study:  " + protocol.Name, "Hello - " + Environment.NewLine + Environment.NewLine + "I am having the following problem:" + Environment.NewLine + Environment.NewLine + "[DESCRIBE YOUR PROBLEM HERE]");
+                };
+            }
+
+            StackLayout contentLayout = new StackLayout
+            {
+                Orientation = StackOrientation.Vertical,
+                VerticalOptions = LayoutOptions.FillAndExpand,
+                Padding = new Thickness(0, 50, 0, 0),
+                Children =
+                {
+                    new Label
                     {
-                        new Label
-                        {
-                            Text = "Participation Level",
-                            FontSize = 20,
-                            HorizontalOptions = LayoutOptions.CenterAndExpand
-                        },
-                        new Label
-                        {
-                            Text = Math.Round(protocol.OverallParticipationLevel * 100, 0) + "%",
-                            FontSize = 75,
-                            HorizontalOptions = LayoutOptions.CenterAndExpand
-                        },
-                        new Label
-                        {                                
-                            Text = "This score reflects your overall participation level in the \"" + protocol.Name + "\" study over the past " + (protocol.ParticipationHorizonDays == 1 ? "day" : protocol.ParticipationHorizonDays + " days") + ". " + howToIncreaseScore + (string.IsNullOrWhiteSpace(protocol.ContactEmail) ? "" : " If you have questions, please email " + protocol.ContactEmail),
-                            FontSize = 20,
-                            HorizontalOptions = LayoutOptions.CenterAndExpand
-                        }
+                        Text = "Participation Level",
+                        FontSize = 20,
+                        HorizontalOptions = LayoutOptions.CenterAndExpand
+                    },
+                    new Label
+                    {
+                        Text = Math.Round(protocol.OverallParticipationLevel * 100, 0) + "%",
+                        FontSize = 75,
+                        HorizontalOptions = LayoutOptions.CenterAndExpand
+                    },
+                    new Label
+                    {                                
+                        Text = "This score reflects your overall participation level in the \"" + protocol.Name + "\" study over the past " + (protocol.ParticipationHorizonDays == 1 ? "day" : protocol.ParticipationHorizonDays + " days") + ". " + howToIncreaseScore + (helpButton == null ? "" : " If you have questions, please click the button below to email the study manager."),
+                        FontSize = 20,
+                        HorizontalOptions = LayoutOptions.CenterAndExpand
                     }
                 }
+            };
+
+            if (helpButton != null)
+                contentLayout.Children.Add(helpButton);
+
+            Content = new ScrollView
+            {
+                Content = contentLayout
             };
         }
     }
