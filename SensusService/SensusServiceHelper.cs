@@ -192,9 +192,6 @@ namespace SensusService
 
         public static SensusServiceHelper Get()
         {
-            if (SINGLETON == null)
-                Console.Error.WriteLine("WARNING:  Tried to call SensusServiceHelper.Get() but SINGLETON was null. Stacktrace:  " + Environment.NewLine + Environment.StackTrace);
-            
             return SINGLETON;
         }
 

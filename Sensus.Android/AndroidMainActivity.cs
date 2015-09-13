@@ -48,6 +48,7 @@ namespace Sensus.Android
         private ManualResetEvent _uiReadyWait;
         private ICallbackManager _facebookCallbackManager;
         private App _app;
+        private bool _isForegrounded;
 
         private readonly object _locker = new object();
 
@@ -60,9 +61,7 @@ namespace Sensus.Android
         {
             get
             {
-                ActivityManager activityManager = GetSystemService(Context.ActivityService) as ActivityManager;
-                IList<ActivityManager.RunningTaskInfo> runningTasksInfo = activityManager.GetRunningTasks(1);
-                return runningTasksInfo.Count > 0 && runningTasksInfo[0].TopActivity != null && runningTasksInfo[0].TopActivity.PackageName == PackageName;
+                return _isForegrounded;
             }
         }
 
@@ -80,6 +79,7 @@ namespace Sensus.Android
             _uiReadyWait = new ManualResetEvent(false);
             _activityResultWait = new ManualResetEvent(false);
             _facebookCallbackManager = CallbackManagerFactory.Create();
+            _isForegrounded = false;
 
             Window.AddFlags(global::Android.Views.WindowManagerFlags.DismissKeyguard);
             Window.AddFlags(global::Android.Views.WindowManagerFlags.ShowWhenLocked);
@@ -121,6 +121,13 @@ namespace Sensus.Android
             };
 
             OpenIntentAsync(Intent);
+        }
+
+        protected override void OnStart()
+        {
+            base.OnStart();
+
+            _isForegrounded = true;
         }
 
         protected override void OnResume()
@@ -264,6 +271,8 @@ namespace Sensus.Android
         protected override void OnStop()
         {
             base.OnStop();
+
+            _isForegrounded = false;
 
             if (SensusServiceHelper.Get() != null)
                 SensusServiceHelper.Get().Logger.Log("Stopping main activity.", LoggingLevel.Normal, GetType());            

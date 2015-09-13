@@ -37,7 +37,6 @@ namespace SensusService.DataStores.Remote
         private string _key;
 
         private IMobileServiceTable<FacebookDatum> _facebookTable;
-        private IMobileServiceTable<RunningAppsDatum> _runningAppsTable;
         private IMobileServiceTable<SmsDatum> _smsTable;
         private IMobileServiceTable<TelephonyDatum> _telephonyTable;
         private IMobileServiceTable<BluetoothDeviceProximityDatum> _bluetoothTable;
@@ -90,7 +89,6 @@ namespace SensusService.DataStores.Remote
                 _client = new MobileServiceClient(_url, _key);
 
                 _facebookTable = _client.GetTable<FacebookDatum>();
-                _runningAppsTable = _client.GetTable<RunningAppsDatum>();
                 _smsTable = _client.GetTable<SmsDatum>();
                 _telephonyTable = _client.GetTable<TelephonyDatum>();
                 _bluetoothTable = _client.GetTable<BluetoothDeviceProximityDatum>();
@@ -129,8 +127,6 @@ namespace SensusService.DataStores.Remote
                 {
                     if(datum is FacebookDatum)
                         _facebookTable.InsertAsync(datum as FacebookDatum).Wait();
-                    else if (datum is RunningAppsDatum)
-                        _runningAppsTable.InsertAsync(datum as RunningAppsDatum).Wait();
                     else if (datum is SmsDatum)
                         _smsTable.InsertAsync(datum as SmsDatum).Wait();
                     else if (datum is TelephonyDatum)

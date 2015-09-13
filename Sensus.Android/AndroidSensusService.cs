@@ -45,6 +45,7 @@ namespace Sensus.Android
             _serviceHelper.UpdateApplicationStatus("0 protocols are running");
         }
 
+        [Obsolete]
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
             _serviceHelper.Logger.Log("Sensus service received start command (startId=" + startId + ").", LoggingLevel.Normal, GetType());
