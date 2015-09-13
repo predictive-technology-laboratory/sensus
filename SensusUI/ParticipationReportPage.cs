@@ -27,7 +27,7 @@ namespace SensusUI
             #if __IOS__
             string howToIncreaseScore = "You can increase your score by opening Sensus more often and responding to questions that Sensus asks you.";
             #elif __ANDROID__
-            string howToIncreaseScore = "You can increase your score by responding to questions that Sensus asks you.";
+            string howToIncreaseScore = "You can increase your score by allowing Sensus to run continuously and responding to questions that Sensus asks you.";
             #elif WINDOWS_PHONE
             string userNotificationMessage = null; // TODO:  How to increase score?
             #else
@@ -57,7 +57,7 @@ namespace SensusUI
                         },
                         new Label
                         {                                
-                            Text = "This score reflects your overall participation level in the \"" + protocol.Name + "\" project over the past " + (protocol.ParticipationHorizonDays == 1 ? "day" : protocol.ParticipationHorizonDays + " days") + ". " + howToIncreaseScore + (string.IsNullOrWhiteSpace(protocol.ContactEmail) ? "" : " If you have questions, please email " + protocol.ContactEmail),
+                            Text = "This score reflects your overall participation level in the \"" + protocol.Name + "\" study over the past " + (protocol.ParticipationHorizonDays == 1 ? "day" : protocol.ParticipationHorizonDays + " days") + ". " + howToIncreaseScore + (string.IsNullOrWhiteSpace(protocol.ContactEmail) ? "" : " If you have questions, please email " + protocol.ContactEmail),
                             FontSize = 20,
                             HorizontalOptions = LayoutOptions.CenterAndExpand
                         }

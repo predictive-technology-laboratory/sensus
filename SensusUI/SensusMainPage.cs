@@ -50,34 +50,34 @@ namespace SensusUI
 
             contentLayout.Children.Add(protocolsButton);
 
-            Button participationReportButton = new Button
+            Button studyParticipationButton = new Button
             {
-                Text = "Participation Reports",
+                Text = "Study Participation",
                 FontSize = 20
             };
 
-            participationReportButton.Clicked += async (o, e) =>
+            studyParticipationButton.Clicked += async (o, e) =>
             {
                 if (UiBoundSensusServiceHelper.Get(true).RegisteredProtocols.Count == 0)
-                    UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("There are no participation reports to view.");
+                    UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("You have not yet added any studies to Sensus.");
                 else
                 {
                     string[] protocolNames = UiBoundSensusServiceHelper.Get(true).RegisteredProtocols.Select((protocol, index) => (index + 1) + ") " + protocol.Name).ToArray();
                     string cancelButtonName = "Cancel";
-                    string selectedProtocolName = await DisplayActionSheet("Select Participation Report", cancelButtonName, null, protocolNames);
+                    string selectedProtocolName = await DisplayActionSheet("Select Study", cancelButtonName, null, protocolNames);
                     if (!string.IsNullOrWhiteSpace(selectedProtocolName) && selectedProtocolName != cancelButtonName)
                     {
                         Protocol selectedProtocol = UiBoundSensusServiceHelper.Get(true).RegisteredProtocols[int.Parse(selectedProtocolName.Substring(0, selectedProtocolName.IndexOf(")"))) - 1];
 
                         if (selectedProtocol.Running)
                             await Navigation.PushAsync(new ParticipationReportPage(selectedProtocol));
-                        else if (await DisplayAlert("Start Protocol", "You are not participating in this project. Would you like to begin participating?", "Yes", "No"))
+                        else if (await DisplayAlert("Begin Study", "You are not currently participating in this study. Would you like to begin participating?", "Yes", "No"))
                             selectedProtocol.StartWithUserAgreement(null);
                     }
                 }
             };
             
-            contentLayout.Children.Add(participationReportButton);
+            contentLayout.Children.Add(studyParticipationButton);
 
             Button pointsOfInterestButton = new Button
             {

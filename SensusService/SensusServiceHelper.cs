@@ -91,12 +91,17 @@ namespace SensusService
         public const string SENSUS_CALLBACK_KEY = "SENSUS-CALLBACK";
         public const string SENSUS_CALLBACK_ID_KEY = "SENSUS-CALLBACK-ID";
         public const string SENSUS_CALLBACK_REPEATING_KEY = "SENSUS-CALLBACK-REPEATING";
-        public const int HEALTH_TEST_DELAY_MS = 300000;
         protected const string XAMARIN_INSIGHTS_APP_KEY = "";
         private const string ENCRYPTION_KEY = "";
         private static readonly string SHARE_DIRECTORY = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "share");
         private static readonly string LOG_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
         private static readonly string SERIALIZATION_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_service_helper.json");
+
+        #if DEBUG
+        public const int HEALTH_TEST_DELAY_MS = 30000;
+        #elif RELEASE
+        public const int HEALTH_TEST_DELAY_MS = 300000;
+        #endif
 
         public static readonly JsonSerializerSettings JSON_SERIALIZER_SETTINGS = new JsonSerializerSettings
         {
@@ -346,7 +351,7 @@ namespace SensusService
             #elif RELEASE
             LoggingLevel loggingLevel = LoggingLevel.Normal;
             #else
-            #error "Unrecognized compilation mode."
+            #error "Unrecognized configuration."
             #endif
 
             _logger = new Logger(LOG_PATH, loggingLevel, Console.Error);
