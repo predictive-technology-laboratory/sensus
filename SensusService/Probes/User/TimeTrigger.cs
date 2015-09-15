@@ -23,7 +23,8 @@ namespace SensusService.Probes.User
         private TimeSpan _endTime;
         private TimeSpan _randomTriggerTime;
         private string _Id;
-        private bool _rerunDaily;
+        private bool _repeatDaily;
+        private bool _resetRerunsAfterWindow;
         private bool _complete;
 
         public TimeSpan StartTime
@@ -50,10 +51,16 @@ namespace SensusService.Probes.User
             set { _Id = value; }
         }
             
-        public bool RerunDaily
+        public bool RepeatDaily
         {
-            get { return _rerunDaily; }
-            set { _rerunDaily = value; }
+            get { return _repeatDaily; }
+            set { _repeatDaily = value; }
+        }
+
+        public bool ResetRerunsAfterWindow
+        {
+            get { return _resetRerunsAfterWindow; }
+            set { _resetRerunsAfterWindow = value; }
         }
 
         public bool Complete
@@ -62,11 +69,12 @@ namespace SensusService.Probes.User
             set { _complete = value; }
         }
 
-        public TimeTrigger(TimeSpan startTime, TimeSpan endTime, bool rerunDaily)
+        public TimeTrigger(TimeSpan startTime, TimeSpan endTime, bool repeatDaily, bool resetRerunsAfterWindow)
         {
             _startTime = startTime;
             _endTime = endTime;
-            _rerunDaily = rerunDaily;
+            _repeatDaily = repeatDaily;
+            _resetRerunsAfterWindow = resetRerunsAfterWindow;
         }
     }
 }

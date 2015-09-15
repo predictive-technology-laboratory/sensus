@@ -16,6 +16,7 @@ using Newtonsoft.Json;
 using SensusService.DataStores.Local;
 using SensusService.DataStores.Remote;
 using SensusService.Probes;
+using SensusService.Probes.User;
 using SensusUI.UiProperties;
 using System;
 using System.Collections.Generic;
@@ -214,6 +215,7 @@ namespace SensusService
 
         public event EventHandler<bool> ProtocolRunningChanged;
 
+        private int _participantID;
         private string _id;
         private string _name;
         private List<Probe> _probes;
@@ -231,6 +233,12 @@ namespace SensusService
         private string _startupAgreement;
 
         private readonly object _locker = new object();
+
+        public int ParticipantID
+        {
+                get { return _participantID; }
+                set { _participantID = value; }
+        }
 
         public string Id
         {
@@ -560,14 +568,16 @@ namespace SensusService
 
             SensusServiceHelper.Get().PromptForInputsAsync(
 
-                "Protocol Consent", 
+//                "Protocol Consent", 
+                "Participant ID",
 
                 new Input[]
                 {
                     new LabelOnlyInput(
                         (string.IsNullOrWhiteSpace(message) ? "" : message + Environment.NewLine + Environment.NewLine) +
                         (string.IsNullOrWhiteSpace(_startupAgreement) ? "" : _startupAgreement + Environment.NewLine + Environment.NewLine) +
-                        "To start this protocol, please indicate your consent by entering the following code:  " + consentCode),
+//                        "To start this protocol, please indicate your consent by entering the following code:  " + consentCode),
+                        "To start this protocol, please enter your participant ID number:  "),
 
                     new TextInput()
                 },
@@ -577,15 +587,21 @@ namespace SensusService
                     if (inputs == null)
                         return;
 
-                    string consentCodeStr = inputs[1].Value as string;
+//                    string consentCodeStr = inputs[1].Value as string;
+                    string id = inputs[1].Value as string;
 
                     int consentCodeInt;
-                    if (consentCodeStr == null)
-                        return;
-                    else if (int.TryParse(consentCodeStr, out consentCodeInt) && consentCodeInt == consentCode)
+                    if (id != null && id.Length == 4)
+                    {
+//                    else if (int.TryParse(id, out consentCodeInt) && consentCodeInt == consentCode)
+                        _participantID = int.Parse(id);
+                        AmazonS3RemoteDataStore s3 = (AmazonS3RemoteDataStore)RemoteDataStore;
+                        s3.Folder = id;
+                        this.RemoteDataStore = s3;
                         Running = true;
+                    }
                     else
-                        SensusServiceHelper.Get().FlashNotificationAsync("Incorrect code entered.");
+                        SensusServiceHelper.Get().FlashNotificationAsync("Invalid code.");
                 });
         }
 

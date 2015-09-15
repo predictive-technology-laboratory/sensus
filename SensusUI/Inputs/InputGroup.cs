@@ -26,6 +26,7 @@ namespace SensusUI.Inputs
     {
         private string _id;
         private string _name;
+        private bool _complete;
         private ObservableCollection<Input> _inputs;
 
         public string Id
@@ -62,6 +63,7 @@ namespace SensusUI.Inputs
         public bool Complete
         {
             get { return _inputs.Count == 0 || _inputs.All(i => i == null || i.Complete); }
+            set { _complete = value; }
         }
 
         /// <summary>

@@ -100,7 +100,11 @@ namespace SensusUI.Inputs
         public bool Complete
         {
             get { return _complete; }
-            protected set { _complete = value; }
+            set
+            {
+                _complete = value;
+                Console.Out.WriteLine(_labelText + " is complete");
+            }
         }
 
         public bool ShouldBeStored

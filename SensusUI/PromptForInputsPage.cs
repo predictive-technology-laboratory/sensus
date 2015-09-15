@@ -118,6 +118,8 @@ namespace SensusUI
                     if (complete)
                     {
                         nextButtonTapped = true;
+                        foreach (Input input in inputGroup.Inputs)
+                            input.Complete = true;
                         await Navigation.PopAsync();
                     }
                 };
@@ -126,12 +128,16 @@ namespace SensusUI
                 {
                     skipButtonTapped = await DisplayAlert("Skip question?", "Please only skip if a) you do not feel comfortable answering this question, or b) per the question statement, this question does not apply to you.", "Yes", "No");
                     if (skipButtonTapped)
+                    {
+                        foreach (Input input in inputGroup.Inputs)
+                            input.Complete = true;
                         await Navigation.PopAsync();
+                    }
                 };
 
             #endregion
 
-            if (totalSteps == 1)
+            if (totalSteps == 1 || stepNumber == totalSteps)
                 contentLayout.Children.Add(new StackLayout
                     {
                         Orientation = StackOrientation.Vertical,

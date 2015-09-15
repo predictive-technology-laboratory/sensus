@@ -14,6 +14,7 @@
 
 using Android.App;
 using Android.Content;
+using Android.Content.Res;
 using Android.Content.PM;
 using Android.OS;
 using SensusService;
@@ -151,7 +152,6 @@ namespace Sensus.Android
                     if (intent.Data != null)
                     {
                         global::Android.Net.Uri dataURI = intent.Data;
-
                         try
                         {
                             if (intent.Scheme == "http" || intent.Scheme == "https")
@@ -162,6 +162,7 @@ namespace Sensus.Android
 
                                 try
                                 {
+                                    GrantUriPermission("edu.virginia.sie.ptl.sensus", dataURI, ActivityFlags.GrantReadUriPermission);
                                     MemoryStream memoryStream = new MemoryStream();
                                     Stream inputStream = ContentResolver.OpenInputStream(dataURI);
                                     inputStream.CopyTo(memoryStream);

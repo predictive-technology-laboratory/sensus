@@ -853,7 +853,6 @@ namespace SensusService
                             BringToForeground();
             Console.Out.WriteLine(incompleteGroups.Length);
             Console.Out.WriteLine(incompleteGroupNum);
-            Console.Out.WriteLine(incompleteGroups.ToString());
 
                             Device.BeginInvokeOnMainThread(async () =>
                                 {

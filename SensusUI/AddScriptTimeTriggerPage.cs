@@ -94,21 +94,38 @@ namespace SensusUI
                     Children = { endTimeLabel, endTimePicker }
                 });
             
-            Switch rerunSwitch = new Switch();
+            Switch repeatDailySwitch = new Switch();
 
-            Label rerunLabel = new Label
+            Label repeatDailyLabel = new Label
                 {
-                    Text = "Rerun daily:",
+                    Text = "Repeat daily:",
                     FontSize = 20
                 };
 
-            rerunSwitch.IsToggled = false;
+            repeatDailySwitch.IsToggled = false;
 
             triggerDefinitionLayout.Children.Add(new StackLayout
                 {
                     Orientation = StackOrientation.Horizontal,
                     HorizontalOptions = LayoutOptions.FillAndExpand,
-                    Children = { rerunLabel, rerunSwitch }
+                    Children = { repeatDailyLabel, repeatDailySwitch }
+                });
+
+            Switch resetRerunsSwitch = new Switch();
+
+            Label resetRerunsLabel = new Label
+                {
+                    Text = "Reset reruns after window elapsed:",
+                    FontSize = 20
+                };
+
+            resetRerunsSwitch.IsToggled = false;
+
+            triggerDefinitionLayout.Children.Add(new StackLayout
+                {
+                    Orientation = StackOrientation.Horizontal,
+                    HorizontalOptions = LayoutOptions.FillAndExpand,
+                    Children = { resetRerunsLabel, resetRerunsSwitch }
                 });
 
             Button okButton = new Button
@@ -121,7 +138,7 @@ namespace SensusUI
                 {
                     try
                     {
-                        _scriptRunner.TimeTriggers.Add(new SensusService.Probes.User.TimeTrigger(startTimePicker.Time, endTimePicker.Time, rerunSwitch.IsToggled));
+                        _scriptRunner.TimeTriggers.Add(new SensusService.Probes.User.TimeTrigger(startTimePicker.Time, endTimePicker.Time, repeatDailySwitch.IsToggled, resetRerunsSwitch.IsToggled));
                         await Navigation.PopAsync();
                     }
                     catch (Exception ex)

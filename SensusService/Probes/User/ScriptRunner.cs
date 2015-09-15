@@ -337,19 +337,21 @@ namespace SensusService.Probes.User
 
                                 lock (_timeTriggers)
                                 {
-                                    if (timeTrigger.RerunDaily)
+                                    if (timeTrigger.RepeatDaily)
                                     {
                                         int time = 0;
                                         timeTrigger.ID = SensusServiceHelper.Get().ScheduleRepeatingCallback(cancellationToken =>
                                         {
                                             if (_probe.Running && _enabled)
                                                 RunAsync(_script.Copy());
-                                            if (timeTrigger.RerunDaily)     // if rerunDaily is still set to true, reschedule another random or specific time trigger
+                                            if (timeTrigger.RepeatDaily)     // if rerunDaily is still set to true, reschedule another random or specific time trigger
                                             {
                                                 time = (int)TimeUntilFireMilliseconds(timeTrigger);
                                                 Console.Out.WriteLine(time);
                                                 SensusServiceHelper.Get().RescheduleRepeatingCallback(timeTrigger.ID, time, 0);
                                             }
+                                            if (timeTrigger.EndTime < TimeSpan.Parse(DateTime.Now.ToString()))
+                                                _incompleteScripts.Clear();
                                         
                                         }, "Rerun time trigger daily", (int)TimeUntilFireMilliseconds(timeTrigger), 0, null);
 //                                        if ((time / 1000) < 86400)
@@ -467,7 +469,7 @@ namespace SensusService.Probes.User
 
                                         // once inputs are stored, they should be stored again, nor should the user be able to modify them
                                         input.ShouldBeStored = false;
-                                        Xamarin.Forms.Device.BeginInvokeOnMainThread(() => input.Enabled = false);
+                                        //Xamarin.Forms.Device.BeginInvokeOnMainThread(() => input.Enabled = false);
                                     }
 
                         inputWait.Set();
