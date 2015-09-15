@@ -990,15 +990,6 @@ namespace SensusService
                 Console.Error.WriteLine("Failed to stop service helper:  " + ex.Message);
             }
 
-            try
-            {
-                _logger.Close();
-            }
-            catch (Exception ex)
-            {
-                Console.Error.WriteLine("Failed to close logger:  " + ex.Message);
-            }
-
             SINGLETON = null;
         }
     }
