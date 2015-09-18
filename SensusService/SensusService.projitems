@@ -102,9 +102,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\PollingTelephonyProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\AmbientTemperatureDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\ListeningAmbientTemperatureProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Health\HealthDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Health\HealthProbe.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Probes\Health\" />
   </ItemGroup>
 </Project>
