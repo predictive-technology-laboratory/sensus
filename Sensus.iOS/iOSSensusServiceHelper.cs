@@ -143,6 +143,9 @@ namespace Sensus.iOS
         protected override void InitializeXamarinInsights()
         {
             Insights.Initialize(XAMARIN_INSIGHTS_APP_KEY);
+
+            if (Insights.IsInitialized)
+                Insights.Identify(DeviceId, "Device ID", DeviceId);
         }
 
         #region callback scheduling
@@ -167,6 +170,10 @@ namespace Sensus.iOS
                         AlertBody = userNotificationMessage,
                         UserInfo = GetNotificationUserInfoDictionary(callbackId, repeating, repeatDelayMS)
                     };
+
+                    // user info can be null if we don't have an activation ID...don't schedule the notification if this happens.
+                    if (notification.UserInfo == null)
+                        return;
 
                     if (userNotificationMessage != null)
                         notification.SoundName = UILocalNotification.DefaultSoundName;
@@ -266,17 +273,21 @@ namespace Sensus.iOS
                         {
                             UILocalNotification notification = _callbackIdNotification[callbackId];
 
-                            // get activation ID and check for condition (2) above
-                            string activationId = (notification.UserInfo.ValueForKey(new NSString(iOSSensusServiceHelper.SENSUS_CALLBACK_ACTIVATION_ID)) as NSString).ToString();
-                            if (activationId != _activationId)
+                            if (notification.UserInfo != null)
                             {
-                                // reset the UserInfo to include the current activation ID
-                                bool repeating = (notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber).BoolValue;
-                                int repeatDelayMS = (notification.UserInfo.ValueForKey(new NSString(iOSSensusServiceHelper.SENSUS_CALLBACK_REPEAT_DELAY)) as NSNumber).Int32Value;
-                                notification.UserInfo = GetNotificationUserInfoDictionary(callbackId, repeating, repeatDelayMS);
+                                // get activation ID and check for condition (2) above
+                                string activationId = (notification.UserInfo.ValueForKey(new NSString(iOSSensusServiceHelper.SENSUS_CALLBACK_ACTIVATION_ID)) as NSString).ToString();
+                                if (activationId != _activationId)
+                                {
+                                    // reset the UserInfo to include the current activation ID
+                                    bool repeating = (notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber).BoolValue;
+                                    int repeatDelayMS = (notification.UserInfo.ValueForKey(new NSString(iOSSensusServiceHelper.SENSUS_CALLBACK_REPEAT_DELAY)) as NSNumber).Int32Value;
+                                    notification.UserInfo = GetNotificationUserInfoDictionary(callbackId, repeating, repeatDelayMS);
 
-                                // since we set the UILocalNotification's FireDate when it was constructed, if it's currently in the past it will fire immediately when scheduled again with the new activation ID.
-                                UIApplication.SharedApplication.ScheduleLocalNotification(notification);
+                                    // since we set the UILocalNotification's FireDate when it was constructed, if it's currently in the past it will fire immediately when scheduled again with the new activation ID.
+                                    if (notification.UserInfo != null)
+                                        UIApplication.SharedApplication.ScheduleLocalNotification(notification);
+                                }
                             }
                         }
                 });
@@ -284,6 +295,15 @@ namespace Sensus.iOS
 
         public NSDictionary GetNotificationUserInfoDictionary(string callbackId, bool repeating, int repeatDelayMS)
         {
+            // we've seen cases where the UserInfo dictionary cannot be serialized because one of its values is null. check all nullable types
+            // and return null if found.  if this happens, the UILocalNotification will never be serviced, and things won't return to normal
+            // until Sensus is activated by the user and the UILocalNotifications are refreshed.
+            //
+            // see:  https://insights.xamarin.com/app/Sensus-Production/issues/64
+            // 
+            if (callbackId == null || _activationId == null)
+                return null;
+            
             return new NSDictionary(
                 SENSUS_CALLBACK_KEY, true, 
                 SENSUS_CALLBACK_ID_KEY, callbackId,
@@ -304,6 +324,19 @@ namespace Sensus.iOS
                     mailer.Finished += (sender, e) => mailer.DismissViewControllerAsync(true);
                     UIApplication.SharedApplication.KeyWindow.RootViewController.PresentViewController(mailer, true, null);
                 });
+        }
+
+        public override void SendEmailAsync(string toAddress, string subject, string message)
+        {
+            Device.BeginInvokeOnMainThread(() =>
+                {
+                    MFMailComposeViewController mailer = new MFMailComposeViewController();
+                    mailer.SetToRecipients(new string[] { toAddress });
+                    mailer.SetSubject(subject);
+                    mailer.SetMessageBody(message, false);
+                    mailer.Finished += (sender, e) => mailer.DismissViewControllerAsync(true);
+                    UIApplication.SharedApplication.KeyWindow.RootViewController.PresentViewController(mailer, true, null);
+                });            
         }
 
         public override void TextToSpeechAsync(string text, Action callback)
@@ -409,6 +442,11 @@ namespace Sensus.iOS
             return !(probe is PollingLocationProbe) &&
             !(probe is PollingSpeedProbe) &&
             !(probe is PollingPointsOfInterestProximityProbe);
+        }
+
+        public override float GetFullActivityHealthTestsPerDay(Protocol protocol)
+        {
+            return protocol.FullActivityHealthTestsPerDay;
         }
 
         #region methods not implemented in ios

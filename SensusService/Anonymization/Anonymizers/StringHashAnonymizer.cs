@@ -30,9 +30,6 @@ namespace SensusService.Anonymization.Anonymizers
        
         public override object Apply(object value, Protocol Protocol)
         {
-            if (value == null)
-                return null;
-            
             if (value is string)
                 return SensusServiceHelper.Get().GetHash(value as string);
             else if (value is IEnumerable<string>)

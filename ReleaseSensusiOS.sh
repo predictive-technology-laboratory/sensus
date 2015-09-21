@@ -40,6 +40,13 @@ git difftool
 # build IPA
 xbuild /p:Configuration=Release /p:Platform=iPhone /p:BuildIpa=true /target:Build ./Sensus.iOS/Sensus.iOS.csproj
 
+# upload iOS dSYM file if build was successful
+if [ $? -eq 0 ]; then
+    echo "Zipping and uploading dSYM file to Xamarin Insights."
+    zip -r ./Sensus.iOS/bin/iPhone/Release/SensusiOS.dSYM.zip ./Sensus.iOS/bin/iPhone/Release/SensusiOS.app.dSYM
+    curl -F "dsym=@./Sensus.iOS/bin/iPhone/Release/SensusiOS.dSYM.zip;type=application/zip" "https://xaapi.xamarin.com/api/dsym?apikey=$6"
+fi
+
 # reset encryption key, since we don't want it to get committed into the repository
 sed -i '' "s/private const string ENCRYPTION_KEY = \"$2\"/private const string ENCRYPTION_KEY = \"\"/g" ./SensusService/SensusServiceHelper.cs
 

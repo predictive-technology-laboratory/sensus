@@ -136,7 +136,7 @@
     },
     {
       "role": "companionSettings",
-      "size": "29.3x29.3",
+      "size": "29x29",
       "scale": "3x",
       "idiom": "watch"
     },
@@ -150,6 +150,7 @@
     {
       "role": "longLook",
       "size": "44x44",
+      "subtype": "42mm",
       "scale": "2x",
       "idiom": "watch"
     },

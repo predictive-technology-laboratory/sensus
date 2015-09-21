@@ -17,22 +17,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using Xamarin;
 
 namespace SensusService
 {
-    /// <summary>
-    /// Logger for Sensus.
-    /// </summary>
     public class Logger
     {
-        public event EventHandler<string> MessageLogged;
-
         private string _path;
         private LoggingLevel _level;
         private TextWriter[] _otherOutputs;
-        private StreamWriter _file;
-
-        private readonly object _locker = new object();
+        private List<string> _messageBuffer;
 
         public LoggingLevel Level
         {
@@ -45,84 +39,96 @@ namespace SensusService
             _path = path;
             _level = level;
             _otherOutputs = otherOutputs;
-
-            InitializeFile(_path, true);
-        }
-
-        private void InitializeFile(string path, bool append)
-        {
-            _file = new StreamWriter(path, append);
-            _file.AutoFlush = true;
+            _messageBuffer = new List<string>();
         }
 
         public void Log(string message, LoggingLevel level, Type callingType)
         {
-            lock (_locker)
+            if (level > _level)
+                return;
+
+            // remove newlines and extra white space
+            message = new Regex(@"\s\s+").Replace(message.Replace('\r', ' ').Replace('\n', ' ').Trim(), " ");
+            if (string.IsNullOrWhiteSpace(message))
+                return;
+
+            // add timestamp and type
+            message = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + ":  " + (callingType == null ? "" : "[" + callingType.Name + "] ") + message;
+
+            lock (_messageBuffer)
             {
-                if (level > _level)
-                    return;
-
-                message = new Regex(@"\s\s+").Replace(message.Replace('\r', ' ').Replace('\n', ' ').Trim(), " ");
-                if (string.IsNullOrWhiteSpace(message))
-                    return;
-
-                message = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + ":  " + (callingType == null ? "" : "[" + callingType.Name + "] ") + message;
-
-                try { _file.WriteLine(message); }
-                catch (Exception) { }
+                _messageBuffer.Add(message);
 
                 if (_otherOutputs != null)
                     foreach (TextWriter otherOutput in _otherOutputs)
                         otherOutput.WriteLine(message);
 
-                if (MessageLogged != null)
-                    MessageLogged(this, message);
+                // append buffer to file periodically
+                if (_messageBuffer.Count % 100 == 0)
+                {
+                    try
+                    {
+                        using (StreamWriter file = new StreamWriter(_path, true))
+                        {
+                            foreach (string bufferedMessage in _messageBuffer)
+                                file.WriteLine(bufferedMessage);
+
+                            file.Close();
+                        }
+
+                        _messageBuffer.Clear();
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
             }
         }
 
-        public List<string> Read(int mostRecentLines)
+        public List<string> Read(int maxMessages, bool mostRecentFirst)
         {
-            lock (_locker)
+            lock (_messageBuffer)
             {
-                _file.Close();
+                List<string> messages = new List<string>();
 
-                List<string> lines = new List<string>();
-
-                using (StreamReader file = new StreamReader(_path))
+                try
                 {
-                    string line;
-                    while ((line = file.ReadLine()) != null)
-                        lines.Add(line);
+                    using (StreamReader file = new StreamReader(_path))
+                    {                        
+                        string line;
+                        while ((line = file.ReadLine()) != null && messages.Count + _messageBuffer.Count < maxMessages)
+                            messages.Add(line);
 
-                    file.Close();
+                        file.Close();
+                    }
+                }
+                catch (Exception)
+                {
                 }
 
-                lines.Reverse();
+                messages.AddRange(_messageBuffer);
 
-                if (mostRecentLines > lines.Count)
-                    mostRecentLines = lines.Count;
+                if (mostRecentFirst)
+                    messages.Reverse();
 
-                lines = lines.GetRange(0, mostRecentLines);
-
-                InitializeFile(_path, true);
-
-                return lines;
+                return messages;
             }
         }
 
         public virtual void Clear()
         {
-            lock (_locker)
+            lock (_messageBuffer)
             {
-                _file.Close();
-                InitializeFile(_path, false);
-            }
-        }
+                try
+                {
+                    File.Delete(_path);
+                }
+                catch (Exception)
+                {
+                }
 
-        public void Close()
-        {
-            lock (_locker)
-                _file.Close();
+                _messageBuffer.Clear();
+            }
         }
     }
 }

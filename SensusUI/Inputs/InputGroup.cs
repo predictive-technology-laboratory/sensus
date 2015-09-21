@@ -27,6 +27,7 @@ namespace SensusUI.Inputs
         private string _id;
         private string _name;
         private ObservableCollection<Input> _inputs;
+        private bool _geotag;
 
         public string Id
         {
@@ -58,6 +59,19 @@ namespace SensusUI.Inputs
             get { return _inputs; }
         }
 
+        [OnOffUiProperty(null, true, 1)]
+        public bool Geotag
+        {
+            get
+            {
+                return _geotag;
+            }
+            set
+            {
+                _geotag = value;
+            }
+        }
+
         [JsonIgnore]
         public bool Complete
         {
@@ -70,7 +84,7 @@ namespace SensusUI.Inputs
         protected InputGroup()
         {
             _id = Guid.NewGuid().ToString();
-
+            _geotag = false;
             _inputs = new ObservableCollection<Input>();
 
             _inputs.CollectionChanged += (o, e) =>

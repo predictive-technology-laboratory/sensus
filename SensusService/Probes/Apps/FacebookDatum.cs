@@ -85,11 +85,11 @@ namespace SensusService.Probes.Apps
 
         [Anonymizable("Time of Last Update:", typeof(DateTimeOffsetTimelineAnonymizer), true)]
         [FacebookPermission("public_profile", null, "updated_time")]
-        public DateTimeOffset UpdatedTime { get; set; }
+        public DateTimeOffset? UpdatedTime { get; set; }
 
         [Anonymizable("Whether User is Verified:", null, true)]
         [FacebookPermission("public_profile", null, "verified")]
-        public bool Verified { get; set; }
+        public bool? Verified { get; set; }
 
         [Anonymizable("Email Address:", typeof(StringHashAnonymizer), true)]
         [FacebookPermission("email", null, "email")]

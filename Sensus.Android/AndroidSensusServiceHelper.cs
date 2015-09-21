@@ -118,6 +118,10 @@ namespace Sensus.Android
             _deviceId = Settings.Secure.GetString(_service.ContentResolver, Settings.Secure.AndroidId);
             _textToSpeech = new AndroidTextToSpeech(_service);
             _wakeLock = (_service.GetSystemService(Context.PowerService) as PowerManager).NewWakeLock(WakeLockFlags.Partial, "SENSUS");  
+
+            // must initialize after _deviceId is set
+            if (Insights.IsInitialized)
+                Insights.Identify(_deviceId, "Device ID", _deviceId);
         }
 
         public void GetMainActivityAsync(bool foreground, Action<AndroidMainActivity> callback)
@@ -265,6 +269,17 @@ namespace Sensus.Android
                 }).Start();
         }
 
+        public override void SendEmailAsync(string toAddress, string subject, string message)
+        {
+            Intent emailIntent = new Intent(Intent.ActionSend);
+            emailIntent.PutExtra(Intent.ExtraEmail, new string[] { toAddress });
+            emailIntent.PutExtra(Intent.ExtraSubject, subject);
+            emailIntent.PutExtra(Intent.ExtraText, message);
+            emailIntent.SetType("text/plain");
+
+            _mainActivity.StartActivity(emailIntent);
+        }
+
         public override void TextToSpeechAsync(string text, Action callback)
         {
             _textToSpeech.SpeakAsync(text, callback);
@@ -385,6 +400,11 @@ namespace Sensus.Android
                     callback(input);
 
                 }).Start();
+        }
+
+        public override float GetFullActivityHealthTestsPerDay(Protocol protocol)
+        {
+            return 60000 * 60 * 24 / (float)SensusServiceHelper.HEALTH_TEST_DELAY_MS;
         }
 
         #region notifications

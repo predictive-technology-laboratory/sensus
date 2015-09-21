@@ -117,6 +117,7 @@ namespace SensusService.DataStores.Remote
 
             Dictionary<string, StringBuilder> datumTypeJSON = new Dictionary<string, StringBuilder>();
             Dictionary<string, List<Datum>> datumTypeData = new Dictionary<string, List<Datum>>();
+            int datumIndex = 0;
             foreach (Datum datum in data)
             {
                 if (cancellationToken.IsCancellationRequested)
@@ -127,11 +128,11 @@ namespace SensusService.DataStores.Remote
                 StringBuilder json;
                 if (!datumTypeJSON.TryGetValue(datumType, out json))
                 {
-                    json = new StringBuilder();
+                    json = new StringBuilder("[" + Environment.NewLine);
                     datumTypeJSON.Add(datumType, json);
                 }
 
-                json.Append(datum.GetJSON(Protocol.JsonAnonymizer) + Environment.NewLine);
+                json.Append((datumIndex++ == 0 ? "" : "," + Environment.NewLine) + datum.GetJSON(Protocol.JsonAnonymizer));
 
                 List<Datum> dataSubset;
                 if (!datumTypeData.TryGetValue(datumType, out dataSubset))
@@ -149,14 +150,17 @@ namespace SensusService.DataStores.Remote
             {
                 if (cancellationToken.IsCancellationRequested)
                     break;
-                
+
+                StringBuilder json = datumTypeJSON[datumType];
+                json.Append(Environment.NewLine + "]");
+
                 try
                 {
                     PutObjectRequest putRequest = new PutObjectRequest
                     {
                         BucketName = _bucket,
                         Key = (_folder + "/" + datumType + "/" + Guid.NewGuid() + ".json").Trim('/'),  // trim '/' in case folder is blank
-                        ContentBody = datumTypeJSON[datumType].ToString(),
+                        ContentBody = json.ToString(),
                         ContentType = "application/json"
                     };
 
@@ -189,4 +193,3 @@ namespace SensusService.DataStores.Remote
         }
     }
 }
-
