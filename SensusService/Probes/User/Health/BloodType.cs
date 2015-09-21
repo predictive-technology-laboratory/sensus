@@ -11,32 +11,20 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 using System;
 
-namespace SensusService.Probes.Health
+namespace SensusService.Probes.User.Health
 {
-    /// <summary>
-    /// Probes information about the battery.
-    /// </summary>
-    public abstract class HealthProbe : PollingProbe
+    public enum BloodType
     {
-        protected sealed override string DefaultDisplayName
-        {
-            get { return "Health"; }
-        }
-
-        public override int DefaultPollingSleepDurationMS
-        {
-            get
-            {
-                return 60000; // every 15 minutes
-            }
-        }
-
-        public sealed override Type DatumType
-        {
-            get { return typeof(HealthDatum); }
-        }
+        ABNegative,
+        ABPositive,
+        ANegative,
+        APositive,
+        BNegative,
+        BPositive,
+        ONegative,
+        OPositive
     }
 }
-

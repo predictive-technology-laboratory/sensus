@@ -31,6 +31,9 @@ using SensusService.Probes.Location;
 using SensusService.Exceptions;
 using SensusUI.Inputs;
 using SensusService.Probes.User;
+using HealthKit;
+using Sensus.iOS.Probes.User.Health;
+using Foundation;
 
 namespace SensusService
 {
@@ -578,6 +581,21 @@ namespace SensusService
                         // start probes
                         try
                         {
+                            #if __IOS__
+                            List<HKObjectType> objectTypes = new List<HKObjectType>();
+                            foreach (Probe probe in _probes)
+                                if (probe is iOSHealthKitProbe)
+                                    objectTypes.Add((probe as iOSHealthKitProbe).ObjectType);
+
+                            if (HKHealthStore.IsHealthDataAvailable)
+                            {
+                                new HKHealthStore().RequestAuthorizationToShare(null, NSSet.MakeNSObjectSet <HKObjectType>(objectTypes.ToArray()),
+                                    (success, error) =>
+                                    {
+                                    });
+                            }
+                            #endif
+
                             SensusServiceHelper.Get().Logger.Log("Starting probes for protocol " + _name + ".", LoggingLevel.Normal, GetType());
                             int probesEnabled = 0;
                             int probesStarted = 0;

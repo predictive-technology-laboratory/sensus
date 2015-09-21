@@ -279,7 +279,13 @@
     <Compile Include="Probes\Network\iOSPollingWlanProbe.cs" />
     <Compile Include="Probes\Apps\iOSFacebookProbe.cs" />
     <Compile Include="Probes\Communication\iOSTelephonyProbe.cs" />
-    <Compile Include="Probes\Health\iOSHealth.cs" />
+    <Compile Include="Probes\User\Health\iOSHealthKitProbe.cs" />
+    <Compile Include="Probes\User\Health\iOSHealthKitHeightProbe.cs" />
+    <Compile Include="Probes\User\Health\iOSHealthKitSamplingProbe.cs" />
+    <Compile Include="Probes\User\Health\iOSHealthKitCharacteristicProbe.cs" />
+    <Compile Include="Probes\User\Health\iOSHealthKitBiologicalSexProbe.cs" />
+    <Compile Include="Probes\User\Health\iOSHealthKitBloodTypeProbe.cs" />
+    <Compile Include="Probes\User\Health\iOSHealthKitBirthdateProbe.cs" />
   </ItemGroup>
   <Import Project="..\SensusService\SensusService.projitems" Label="Shared" Condition="Exists('..\SensusService\SensusService.projitems')" />
   <Import Project="..\SensusUI\SensusUI.projitems" Label="Shared" Condition="Exists('..\SensusUI\SensusUI.projitems')" />
@@ -332,6 +338,6 @@
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
   </Target>
   <ItemGroup>
-    <Folder Include="Probes\Health\" />
+    <Folder Include="Probes\User\" />
   </ItemGroup>
 </Project>
