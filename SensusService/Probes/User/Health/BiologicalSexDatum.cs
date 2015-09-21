@@ -45,5 +45,11 @@ namespace SensusService.Probes.User.Health
         {
             _sex = sex;
         }
+
+        public override string ToString()
+        {
+            return base.ToString() + Environment.NewLine +
+            "Biological sex:  " + _sex;
+        }
     }
 }

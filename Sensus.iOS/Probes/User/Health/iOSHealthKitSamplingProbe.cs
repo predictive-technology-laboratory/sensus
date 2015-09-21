@@ -69,7 +69,7 @@ namespace Sensus.iOS.Probes.User.Health
                             }
                             catch (Exception ex)
                             {
-                                SensusServiceHelper.Get().Logger.Log("Failed storing samples:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                SensusServiceHelper.Get().Logger.Log("Failed storing HealthKit samples:  " + ex.Message, LoggingLevel.Normal, GetType());
                             }
                             finally
                             {

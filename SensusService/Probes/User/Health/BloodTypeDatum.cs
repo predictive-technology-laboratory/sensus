@@ -20,6 +20,18 @@ namespace SensusService.Probes.User.Health
     {
         private BloodType _bloodType;
 
+        public BloodType BloodType
+        {
+            get
+            {
+                return _bloodType;
+            }
+            set
+            {
+                _bloodType = value;
+            }
+        }
+
         public override string DisplayDetail
         {
             get
@@ -32,6 +44,12 @@ namespace SensusService.Probes.User.Health
             : base(timestamp)
         {
             _bloodType = bloodType;
+        }
+
+        public override string ToString()
+        {
+            return base.ToString() + Environment.NewLine +
+            "Blood type:  " + _bloodType;
         }
     }
 }

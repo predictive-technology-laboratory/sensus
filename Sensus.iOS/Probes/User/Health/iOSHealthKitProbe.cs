@@ -14,11 +14,7 @@
 
 using System;
 using SensusService.Probes;
-using System.Collections.Generic;
-using SensusService;
-using System.Threading;
 using HealthKit;
-using Foundation;
 
 namespace Sensus.iOS.Probes.User.Health
 {

@@ -18,7 +18,7 @@ namespace SensusService
 {
     public class BirthdateDatum : Datum
     {
-        DateTimeOffset _birthdate;
+        private DateTimeOffset _birthdate;
 
         public DateTimeOffset Birthdate
         {
@@ -36,7 +36,7 @@ namespace SensusService
         {
             get
             {
-                return "Birthdate:  " + _birthdate.ToString();
+                return "Birthdate:  " + _birthdate;
             }
         }
 
@@ -44,6 +44,12 @@ namespace SensusService
             : base(timestamp)
         {
             _birthdate = birthdate;
+        }
+
+        public override string ToString()
+        {
+            return base.ToString() + Environment.NewLine +
+            "Birth date:  " + _birthdate;
         }
     }
 }

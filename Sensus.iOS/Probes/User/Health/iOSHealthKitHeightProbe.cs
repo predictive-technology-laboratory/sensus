@@ -50,7 +50,7 @@ namespace Sensus.iOS.Probes.User.Health
         {
             get
             {
-                return int.MaxValue;  // int.MaxValue milliseconds is approximately 25 days
+                return int.MaxValue;
             }
         }
 
@@ -60,11 +60,12 @@ namespace Sensus.iOS.Probes.User.Health
 
         protected override Datum ConvertSampleToDatum(HKSample sample)
         {
-            HKQuantitySample quantity = sample as HKQuantitySample;
-            if (quantity == null)
+            HKQuantitySample quantitySample = sample as HKQuantitySample;
+
+            if (quantitySample == null)
                 return null;
             else
-                return new HeightDatum(new DateTimeOffset(quantity.StartDate.ToDateTime()), quantity.Quantity.GetDoubleValue(HKUnit.Inch));
+                return new HeightDatum(new DateTimeOffset(quantitySample.StartDate.ToDateTime()), quantitySample.Quantity.GetDoubleValue(HKUnit.Inch));
         }
     }
 }
