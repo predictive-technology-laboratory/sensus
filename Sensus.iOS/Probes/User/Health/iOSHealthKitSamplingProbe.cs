@@ -23,9 +23,9 @@ namespace Sensus.iOS.Probes.User.Health
 {
     public abstract class iOSHealthKitSamplingProbe : iOSHealthKitProbe
     {
-        private nuint _queryAnchor;
+        private int _queryAnchor;
 
-        public nuint QueryAnchor
+        public int QueryAnchor
         {
             get
             {
@@ -48,7 +48,7 @@ namespace Sensus.iOS.Probes.User.Health
 
             ManualResetEvent queryWait = new ManualResetEvent(false);
 
-            HealthStore.ExecuteQuery(new HKAnchoredObjectQuery(ObjectType as HKSampleType, null, _queryAnchor, nuint.MaxValue, new HKAnchoredObjectResultHandler2(
+            HealthStore.ExecuteQuery(new HKAnchoredObjectQuery(ObjectType as HKSampleType, null, (nuint)_queryAnchor, nuint.MaxValue, new HKAnchoredObjectResultHandler2(
                         (query, samples, newQueryAnchor, error) =>
                         {
                             try
@@ -62,7 +62,7 @@ namespace Sensus.iOS.Probes.User.Health
                                             data.Add(datum);
                                     }
 
-                                    _queryAnchor = newQueryAnchor;
+                                    _queryAnchor = (int)newQueryAnchor;
                                 }
                                 else
                                     SensusServiceHelper.Get().Logger.Log("Error while querying HealthKit for " + ObjectType + ":  " + error.Description, LoggingLevel.Normal, GetType());

@@ -582,17 +582,30 @@ namespace SensusService
                         try
                         {
                             #if __IOS__
-                            List<HKObjectType> objectTypes = new List<HKObjectType>();
-                            foreach (Probe probe in _probes)
-                                if (probe is iOSHealthKitProbe)
-                                    objectTypes.Add((probe as iOSHealthKitProbe).ObjectType);
-
                             if (HKHealthStore.IsHealthDataAvailable)
                             {
-                                new HKHealthStore().RequestAuthorizationToShare(null, NSSet.MakeNSObjectSet <HKObjectType>(objectTypes.ToArray()),
-                                    (success, error) =>
-                                    {
-                                    });
+                                List<iOSHealthKitProbe> enabledHealthKitProbes = new List<iOSHealthKitProbe>();
+                                foreach (Probe probe in _probes)
+                                    if (probe.Enabled && probe is iOSHealthKitProbe)
+                                        enabledHealthKitProbes.Add(probe as iOSHealthKitProbe);                                                                            
+
+                                if (enabledHealthKitProbes.Count > 0)
+                                {
+                                    ManualResetEvent authorizationWait = new ManualResetEvent(false);
+
+                                    HKHealthStore healthStore = new HKHealthStore();
+
+                                    healthStore.RequestAuthorizationToShare(new NSSet(), NSSet.MakeNSObjectSet<HKObjectType>(enabledHealthKitProbes.Select(probe => probe.ObjectType).Distinct().ToArray()),
+                                        (success, error) =>
+                                        {
+                                            authorizationWait.Set();
+                                        });
+
+                                    authorizationWait.WaitOne();
+                                    
+                                    foreach (iOSHealthKitProbe enabledHealthKitProbe in enabledHealthKitProbes)
+                                        enabledHealthKitProbe.HealthStore = healthStore;
+                                }
                             }
                             #endif
 

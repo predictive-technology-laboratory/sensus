@@ -17,11 +17,13 @@ using SensusService.Probes.User.Health;
 using HealthKit;
 using Xamarin.Forms.Platform.iOS;
 using SensusService;
+using Newtonsoft.Json;
 
 namespace Sensus.iOS.Probes.User.Health
 {
     public class iOSHealthKitHeightProbe : iOSHealthKitSamplingProbe
     {
+        [JsonIgnore]
         public override HKObjectType ObjectType
         {
             get

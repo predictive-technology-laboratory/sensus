@@ -19,6 +19,7 @@ using System.Threading;
 using HealthKit;
 using Foundation;
 using Xamarin.Forms.Platform.iOS;
+using Newtonsoft.Json;
 
 namespace Sensus.iOS.Probes.User.Health
 {
@@ -48,6 +49,7 @@ namespace Sensus.iOS.Probes.User.Health
             }
         }
 
+        [JsonIgnore]
         public override HKObjectType ObjectType
         {
             get

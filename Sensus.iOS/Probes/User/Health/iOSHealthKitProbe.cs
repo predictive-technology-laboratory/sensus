@@ -15,6 +15,7 @@
 using System;
 using SensusService.Probes;
 using HealthKit;
+using Newtonsoft.Json;
 
 namespace Sensus.iOS.Probes.User.Health
 {
@@ -22,23 +23,22 @@ namespace Sensus.iOS.Probes.User.Health
     {
         private HKHealthStore _healthStore;
 
-        protected HKHealthStore HealthStore
+        public HKHealthStore HealthStore
         {
             get { return _healthStore; }
+            set { _healthStore = value; }
         }
 
+        [JsonIgnore]
         public abstract HKObjectType ObjectType { get; }
-
-        protected iOSHealthKitProbe()
-        {
-            _healthStore = new HKHealthStore();
-        }
 
         protected override void Initialize()
         {
             base.Initialize();
 
             HKAuthorizationStatus authorizationStatus = _healthStore.GetAuthorizationStatus(ObjectType);
+
+            // TODO:  What if the user enables the probe while the protocol is running? need to ask for permission here.
 
             if (authorizationStatus == HKAuthorizationStatus.NotDetermined)
                 throw new Exception("User has not authorized " + ObjectType);
