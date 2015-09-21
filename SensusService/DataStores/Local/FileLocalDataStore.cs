@@ -23,7 +23,6 @@ namespace SensusService.DataStores.Local
 {
     public class FileLocalDataStore : LocalDataStore
     {
-        private StreamWriter _file;
         private string _path;
         private int _numDataStoredInFiles;
 
@@ -39,7 +38,7 @@ namespace SensusService.DataStores.Local
             {
                 _numDataStoredInFiles = value;
             }
-        }           
+        }
 
         private string StorageDirectory
         {
@@ -66,7 +65,7 @@ namespace SensusService.DataStores.Local
                 return _numDataStoredInFiles;
             }
         }
-        
+
         [JsonIgnore]
         public override bool Clearable
         {
@@ -83,7 +82,7 @@ namespace SensusService.DataStores.Local
             // file needs to be ready to accept data immediately
             lock (_locker)
             {
-                InitializeFile();
+                FindNewPath();
 
                 base.Start();
             }
@@ -95,40 +94,53 @@ namespace SensusService.DataStores.Local
             {
                 List<Datum> committedData = new List<Datum>();
 
-                foreach (Datum datum in data)
+                using (StreamWriter file = new StreamWriter(_path, true))
                 {
-                    if (cancellationToken.IsCancellationRequested)
-                        break;
-                    
-                    string datumJSON = null;
-                    try { datumJSON = datum.GetJSON(Protocol.JsonAnonymizer); }
-                    catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to get JSON for datum:  " + ex.Message, LoggingLevel.Normal, GetType()); }
-
-                    if (datumJSON != null)
+                    foreach (Datum datum in data)
                     {
-                        bool writtenToFile = false;
+                        if (cancellationToken.IsCancellationRequested)
+                            break;
+                    
+                        string datumJSON = null;
                         try
                         {
-                            _file.WriteLine(datumJSON);
-                            writtenToFile = true;
-                            ++_numDataStoredInFiles;
+                            datumJSON = datum.GetJSON(Protocol.JsonAnonymizer);
                         }
                         catch (Exception ex)
                         {
-                            SensusServiceHelper.Get().Logger.Log("Failed to write datum JSON to local file:  " + ex.Message, LoggingLevel.Normal, GetType());
-
-                            try
-                            {
-                                InitializeFile();
-
-                                SensusServiceHelper.Get().Logger.Log("Initialized new local file.", LoggingLevel.Normal, GetType());
-                            }
-                            catch (Exception ex2) { SensusServiceHelper.Get().Logger.Log("Failed to initialize new file after failing to write the old one:  " + ex2.Message, LoggingLevel.Normal, GetType()); }
+                            SensusServiceHelper.Get().Logger.Log("Failed to get JSON for datum:  " + ex.Message, LoggingLevel.Normal, GetType());
                         }
 
-                        if (writtenToFile)
-                            committedData.Add(datum);
-                    }                        
+                        if (datumJSON != null)
+                        {
+                            bool writtenToFile = false;
+                            try
+                            {
+                                file.WriteLine(datumJSON);
+                                writtenToFile = true;
+                                ++_numDataStoredInFiles;
+                            }
+                            catch (Exception ex)
+                            {
+                                SensusServiceHelper.Get().Logger.Log("Failed to write datum JSON to local file:  " + ex.Message, LoggingLevel.Normal, GetType());
+
+                                try
+                                {
+                                    FindNewPath();
+                                    SensusServiceHelper.Get().Logger.Log("Initialized new local file.", LoggingLevel.Normal, GetType());
+                                }
+                                catch (Exception ex2)
+                                {
+                                    SensusServiceHelper.Get().Logger.Log("Failed to initialize new file after failing to write the old one:  " + ex2.Message, LoggingLevel.Normal, GetType());
+                                }
+                            }
+
+                            if (writtenToFile)
+                                committedData.Add(datum);
+                        }                        
+                    }
+
+                    file.Close();
                 }
 
                 return committedData;
@@ -139,10 +151,8 @@ namespace SensusService.DataStores.Local
         {
             lock (_locker)
             {
-                CloseFile();
-
-                // get local data from all files
                 List<Datum> localData = new List<Datum>();
+
                 foreach (string path in Directory.GetFiles(StorageDirectory))
                 {   
                     if (cancellationToken.IsCancellationRequested)
@@ -158,7 +168,7 @@ namespace SensusService.DataStores.Local
                                 {
                                     localData.Add(Datum.FromJSON(line));
 
-                                    if(progressCallback != null && _numDataStoredInFiles >= 10 && (localData.Count % (_numDataStoredInFiles / 10)) == 0)
+                                    if (progressCallback != null && _numDataStoredInFiles >= 10 && (localData.Count % (_numDataStoredInFiles / 10)) == 0)
                                         progressCallback(localData.Count / (double)_numDataStoredInFiles);
                                 }
 
@@ -174,9 +184,9 @@ namespace SensusService.DataStores.Local
                 if (cancellationToken.IsCancellationRequested)
                     SensusServiceHelper.Get().Logger.Log("Canceled retrieval of local data for remote data store.", LoggingLevel.Normal, GetType());
 
-                // reinitialize file if we're running
+                // start writing to new path if we're still running
                 if (Running)
-                    InitializeFile();
+                    FindNewPath();
 
                 return localData;
             }
@@ -186,8 +196,6 @@ namespace SensusService.DataStores.Local
         {
             lock (_locker)
             {
-                CloseFile();
-
                 SensusServiceHelper.Get().Logger.Log("Received " + dataCommittedToRemote.Count + " remote-committed data elements to clear.", LoggingLevel.Normal, GetType());
 
                 HashSet<Datum> hashDataCommittedToRemote = new HashSet<Datum>(dataCommittedToRemote);  // for quick access via hashing
@@ -237,95 +245,60 @@ namespace SensusService.DataStores.Local
 
                 // reinitialize file if we're running
                 if (Running)
-                    InitializeFile();
+                    FindNewPath();
 
                 SensusServiceHelper.Get().Logger.Log("Finished clearing remote-committed data elements.", LoggingLevel.Normal, GetType());
             }
         }
 
-        public override void Stop()
-        {
-            lock (_locker)
-            {
-                // stop the commit thread
-                base.Stop();
-
-                // close current file -- don't clear the files out. the user can clear them or they can be uploaded to remote.
-                CloseFile();
-            }
-        }
-
         /// <summary>
-        /// Initializes a new file. Should be called from a locked context.
+        /// Finds a new path to write to. Should be called from a locked context.
         /// </summary>
-        private void InitializeFile()
+        private void FindNewPath()
         {
-            CloseFile();
-
-            try
+            _path = null;
+            int pathNumber = 0;
+            while (pathNumber++ < int.MaxValue && _path == null)
             {
-                for (int i = 0; _file == null && i < int.MaxValue; ++i)
+                try
                 {
-                    try { _path = Path.Combine(StorageDirectory, i.ToString()); }  // getting the storage directory creates the directory, which could fail
-                    catch (Exception ex) { throw new DataStoreException("Failed to get path to local file:  " + ex.Message); }
-
-                    if (!File.Exists(_path))
-                    {
-                        try
-                        {
-                            _file = new StreamWriter(_path);
-                            _file.AutoFlush = true;
-                        }
-                        catch (Exception ex) { throw new DataStoreException("Failed to open local file at a path that did not previously exist:  " + ex.Message); }
-                    }
+                    _path = Path.Combine(StorageDirectory, pathNumber.ToString());
+                }
+                catch (Exception ex)
+                {
+                    throw new DataStoreException("Failed to get path to local file:  " + ex.Message);
                 }
 
-                if (_file == null)
-                    throw new DataStoreException("Failed to open file.");
-            }
-            catch (Exception ex)
-            {
-                _file = null;
-                _path = null;
-                throw new DataStoreException("Failed to initialize new file:  " + ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// Closes the current file. Should be called from a locked context.
-        /// </summary>
-        private void CloseFile()
-        {
-            if (_file != null)
-            {
-                try { _file.Close(); }
-                catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to close file:  " + ex.Message, LoggingLevel.Normal, GetType()); }
-
-                _file = null;
+                if (File.Exists(_path))
+                    _path = null;
             }
 
-            _path = null;
+            if (_path == null)
+                throw new DataStoreException("Failed to find new path.");
         }
 
         public override void Clear()
-        {
-            if (Protocol != null)
+        {    
+            lock (_locker)
             {
-                foreach (string path in Directory.GetFiles(StorageDirectory))
-                {
-                    try
+                if (Protocol != null)
+                {                
+                    foreach (string path in Directory.GetFiles(StorageDirectory))
                     {
-                        File.Delete(path);
+                        try
+                        {
+                            File.Delete(path);
+                        }
+                        catch (Exception ex)
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Failed to delete local file \"" + path + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Failed to delete local file \"" + path + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
-                    }
+
+                    _numDataStoredInFiles = 0;
+
+                    SensusServiceHelper.Get().SaveAsync();  // update num data stored within the JSON file
                 }
-
-                _numDataStoredInFiles = 0;
-
-                SensusServiceHelper.Get().SaveAsync();  // update num data stored within the JSON file
             }
         }
     }

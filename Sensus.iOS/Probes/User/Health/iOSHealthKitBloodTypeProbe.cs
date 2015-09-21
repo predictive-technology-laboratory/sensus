@@ -39,7 +39,7 @@ namespace Sensus.iOS.Probes.User.Health
             {
                 return typeof(BloodTypeDatum);
             }
-        }            
+        }
 
         public override int DefaultPollingSleepDurationMS
         {
@@ -49,16 +49,8 @@ namespace Sensus.iOS.Probes.User.Health
             }
         }
 
-        [JsonIgnore]
-        public override HKObjectType ObjectType
-        {
-            get
-            {
-                return HKObjectType.GetCharacteristicType(HKCharacteristicTypeIdentifierKey.BloodType);
-            }
-        }
-
         public iOSHealthKitBloodTypeProbe()
+            : base(HKObjectType.GetCharacteristicType(HKCharacteristicTypeIdentifierKey.BloodType))
         {
         }
 

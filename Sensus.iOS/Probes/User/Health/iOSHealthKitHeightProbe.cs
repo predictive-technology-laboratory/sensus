@@ -23,15 +23,6 @@ namespace Sensus.iOS.Probes.User.Health
 {
     public class iOSHealthKitHeightProbe : iOSHealthKitSamplingProbe
     {
-        [JsonIgnore]
-        public override HKObjectType ObjectType
-        {
-            get
-            {
-                return HKObjectType.GetQuantityType(HKQuantityTypeIdentifierKey.Height);
-            }
-        }
-
         protected override string DefaultDisplayName
         {
             get
@@ -57,6 +48,7 @@ namespace Sensus.iOS.Probes.User.Health
         }
 
         public iOSHealthKitHeightProbe()
+            : base(HKObjectType.GetQuantityType(HKQuantityTypeIdentifierKey.Height))
         {
         }
 

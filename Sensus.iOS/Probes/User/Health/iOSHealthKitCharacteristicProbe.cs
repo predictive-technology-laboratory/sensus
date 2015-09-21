@@ -13,12 +13,14 @@
 // limitations under the License.
 
 using System;
+using HealthKit;
 
 namespace Sensus.iOS.Probes.User.Health
 {
     public abstract class iOSHealthKitCharacteristicProbe : iOSHealthKitProbe
     {
-        public iOSHealthKitCharacteristicProbe()
+        public iOSHealthKitCharacteristicProbe(HKObjectType objectType)
+            : base(objectType)
         {
         }
     }

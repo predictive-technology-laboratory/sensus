@@ -591,20 +591,15 @@ namespace SensusService
 
                                 if (enabledHealthKitProbes.Count > 0)
                                 {
+                                    NSSet objectTypesToRead = NSSet.MakeNSObjectSet<HKObjectType>(enabledHealthKitProbes.Select(probe => probe.ObjectType).Distinct().ToArray());
                                     ManualResetEvent authorizationWait = new ManualResetEvent(false);
-
-                                    HKHealthStore healthStore = new HKHealthStore();
-
-                                    healthStore.RequestAuthorizationToShare(new NSSet(), NSSet.MakeNSObjectSet<HKObjectType>(enabledHealthKitProbes.Select(probe => probe.ObjectType).Distinct().ToArray()),
+                                    new HKHealthStore().RequestAuthorizationToShare(new NSSet(), objectTypesToRead,
                                         (success, error) =>
                                         {
                                             authorizationWait.Set();
                                         });
 
                                     authorizationWait.WaitOne();
-                                    
-                                    foreach (iOSHealthKitProbe enabledHealthKitProbe in enabledHealthKitProbes)
-                                        enabledHealthKitProbe.HealthStore = healthStore;
                                 }
                             }
                             #endif

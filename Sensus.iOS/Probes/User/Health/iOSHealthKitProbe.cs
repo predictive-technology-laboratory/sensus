@@ -21,29 +21,25 @@ namespace Sensus.iOS.Probes.User.Health
 {
     public abstract class iOSHealthKitProbe : PollingProbe
     {
+        private HKObjectType _objectType;       
         private HKHealthStore _healthStore;
 
-        public HKHealthStore HealthStore
+        [JsonIgnore]
+        public HKObjectType ObjectType
         {
-            get { return _healthStore; }
-            set { _healthStore = value; }
+            get { return _objectType; }
         }
 
         [JsonIgnore]
-        public abstract HKObjectType ObjectType { get; }
-
-        protected override void Initialize()
+        protected HKHealthStore HealthStore
         {
-            base.Initialize();
+            get { return _healthStore; }
+        }
 
-            HKAuthorizationStatus authorizationStatus = _healthStore.GetAuthorizationStatus(ObjectType);
-
-            // TODO:  What if the user enables the probe while the protocol is running? need to ask for permission here.
-
-            if (authorizationStatus == HKAuthorizationStatus.NotDetermined)
-                throw new Exception("User has not authorized " + ObjectType);
-            else if (authorizationStatus == HKAuthorizationStatus.SharingDenied)
-                throw new NotSupportedException("User has denied access to " + ObjectType);
+        protected iOSHealthKitProbe(HKObjectType objectType)
+        {
+            _objectType = objectType;
+            _healthStore = new HKHealthStore();
         }
     }
 }

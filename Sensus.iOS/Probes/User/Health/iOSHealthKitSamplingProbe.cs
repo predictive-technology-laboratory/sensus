@@ -37,7 +37,8 @@ namespace Sensus.iOS.Probes.User.Health
             }
         }
 
-        public iOSHealthKitSamplingProbe()
+        public iOSHealthKitSamplingProbe(HKObjectType objectType)
+            : base(objectType)
         {
             _queryAnchor = 0;
         }

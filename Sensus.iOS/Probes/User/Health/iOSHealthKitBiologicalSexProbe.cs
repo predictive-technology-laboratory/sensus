@@ -49,16 +49,8 @@ namespace Sensus.iOS.Probes.User.Health
             }
         }
 
-        [JsonIgnore]
-        public override HKObjectType ObjectType
-        {
-            get
-            {
-                return HKObjectType.GetCharacteristicType(HKCharacteristicTypeIdentifierKey.BiologicalSex);
-            }
-        }
-
         public iOSHealthKitBiologicalSexProbe()
+            : base(HKObjectType.GetCharacteristicType(HKCharacteristicTypeIdentifierKey.BiologicalSex))
         {
         }
 

@@ -49,16 +49,8 @@ namespace Sensus.iOS.Probes.User.Health
             }
         }
 
-        [JsonIgnore]
-        public override HKObjectType ObjectType
-        {
-            get
-            {
-                return HKObjectType.GetCharacteristicType(HKCharacteristicTypeIdentifierKey.DateOfBirth);
-            }
-        }
-
         public iOSHealthKitBirthdateProbe()
+            : base(HKObjectType.GetCharacteristicType(HKCharacteristicTypeIdentifierKey.DateOfBirth))
         {
         }
 
