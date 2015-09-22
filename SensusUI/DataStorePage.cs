@@ -28,7 +28,7 @@ namespace SensusUI
     /// Displays a data store.
     /// </summary>
     public class DataStorePage : ContentPage
-    {        
+    {
         /// <summary>
         /// Initializes a new instance of the <see cref="SensusUI.DataStorePage"/> class.
         /// </summary>
@@ -63,8 +63,7 @@ namespace SensusUI
 
                 clearButton.Clicked += async (o, e) =>
                 {
-                    // display the name as it's currently shown on the form (i.e., in the passed-in data store rather than the protocols)
-                    if (await DisplayAlert("Clear data from " + dataStore.Name + "?", "This action cannot be undone.", "Clear", "Cancel"))
+                    if (await DisplayAlert("Clear data from " + protocol.LocalDataStore.DisplayName + "?", "This action cannot be undone.", "Clear", "Cancel"))
                         protocol.LocalDataStore.Clear();  // clear the protocol's local data store
                 };
 
@@ -82,13 +81,13 @@ namespace SensusUI
                 };
 
                 shareLocalDataButton.Clicked += async (o, e) =>
-                    {
-                        // share the protocol's local data store if it has data in it
-                        if(protocol.LocalDataStore.DataCount > 0)
-                            await Navigation.PushAsync(new ShareLocalDataStorePage(protocol.LocalDataStore));
-                        else
-                            UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Local data store contains no data to share.");
-                    };
+                {
+                    // share the protocol's local data store if it has data in it
+                    if (protocol.LocalDataStore.DataCount > 0)
+                        await Navigation.PushAsync(new ShareLocalDataStorePage(protocol.LocalDataStore));
+                    else
+                        UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Local data store contains no data to share.");
+                };
 
                 buttonStack.Children.Add(shareLocalDataButton);
             }
@@ -101,14 +100,14 @@ namespace SensusUI
             };
 
             okayButton.Clicked += async (o, e) =>
-                {
-                    if (local)
-                        protocol.LocalDataStore = dataStore as LocalDataStore;
-                    else
-                        protocol.RemoteDataStore = dataStore as RemoteDataStore;
+            {
+                if (local)
+                    protocol.LocalDataStore = dataStore as LocalDataStore;
+                else
+                    protocol.RemoteDataStore = dataStore as RemoteDataStore;
 
-                    await Navigation.PopAsync();
-                };
+                await Navigation.PopAsync();
+            };
 
             buttonStack.Children.Add(okayButton);
 
