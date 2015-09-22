@@ -29,6 +29,8 @@ namespace SensusUI.Inputs
         private View _view;
         private bool _complete;
         private bool _shouldBeStored;
+        private double? _latitude;
+        private double? _longitude;
 
         [EntryStringUiProperty("Name:", true, 0)]
         public string Name
@@ -117,6 +119,18 @@ namespace SensusUI.Inputs
             {
                 _shouldBeStored = value;
             }
+        }
+
+        public double? Latitude
+        {
+            get { return _latitude; }
+            set { _latitude = value; }
+        }
+
+        public double? Longitude
+        {
+            get { return _longitude; }
+            set { _longitude = value; }
         }
 
         [JsonIgnore]

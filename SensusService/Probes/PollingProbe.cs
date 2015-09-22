@@ -76,7 +76,7 @@ namespace SensusService.Probes
                 #error "Unrecognized platform."
                 #endif
 
-                _pollCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(cancellationToken =>
+                _pollCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback((callbackId, cancellationToken) =>
                     {
                         if (Running)
                         {

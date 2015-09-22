@@ -227,18 +227,14 @@ namespace SensusService.Probes.User
                     }
                 }
 
-                bool fireCriteriaMet = false;
-                bool fire = false;
-                if (!_ignoreFirstDatum || !_firstDatum)
-                {
-                    if (conditionSatisfied && DateTime.Now.TimeOfDay >= _startTime && DateTime.Now.TimeOfDay <= _endTime)
-                    {
-                        fireCriteriaMet = true;
+                // the processing of repeated fires depends on first-datum status as well as satisfaction of the condition
+                bool fireCriteriaMet = (!_ignoreFirstDatum || !_firstDatum) &&
+                                       conditionSatisfied;
 
-                        if (_fireRepeatedly || !_fireCriteriaMetOnPreviousCall)
-                            fire = true;
-                    }
-                }
+                // whether or not to fire depends on the fire criteria, preferences about repeats, and time restrictions
+                bool fire = fireCriteriaMet &&
+                            (_fireRepeatedly || !_fireCriteriaMetOnPreviousCall) &&
+                            (DateTime.Now.TimeOfDay >= _startTime && DateTime.Now.TimeOfDay <= _endTime);
 
                 _fireCriteriaMetOnPreviousCall = fireCriteriaMet;
                 _firstDatum = false;

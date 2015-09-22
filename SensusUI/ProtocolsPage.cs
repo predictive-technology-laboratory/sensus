@@ -70,7 +70,9 @@ namespace SensusUI
                 }
                 else if (selectedAction == "Status")
                 {
-                        Action statusAction = new Action(async() =>
+                    if (UiBoundSensusServiceHelper.Get(true).ProtocolShouldBeRunning(selectedProtocol))
+                    {
+                        selectedProtocol.TestHealthAsync(true, () =>
                             {
                                 if (UiBoundSensusServiceHelper.Get(true).ProtocolShouldBeRunning(selectedProtocol))
                                 {
@@ -214,9 +216,11 @@ namespace SensusUI
 
                     new TextInput("Protocol Password:"),
 
+                    null,
+
                     input =>
                     {
-                        if(input == null)
+                        if (input == null)
                             return;
                         
                         string password = input.Value as string;

@@ -51,7 +51,7 @@ namespace SensusUI
             {
                 Orientation = StackOrientation.Vertical,
                 VerticalOptions = LayoutOptions.FillAndExpand,
-                Padding = new Thickness(0, 10, 0, 0)
+                Padding = new Thickness(0, 20, 0, 0)
             };
 
             contentLayout.Children.Add(new Label
@@ -83,6 +83,8 @@ namespace SensusUI
                 BorderWidth = 1,
                 Text = stepNumber < totalSteps ? "Next" : "Submit"
             };
+
+            navigationStack.Children.Add(nextButton);
 
             bool nextButtonTapped = false;
 
@@ -171,7 +173,7 @@ namespace SensusUI
                 if (nextButtonTapped || skipButtonTapped)
                     callback(Result.NavigateForward);
                 else
-                    callback(Result.NavigateBackward);
+                    callback(Result.Cancel);  // the user navigated back, or another activity started
             };
 
             Content = new ScrollView

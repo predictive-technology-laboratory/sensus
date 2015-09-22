@@ -113,7 +113,7 @@ namespace SensusService.DataStores
 
                 _mostRecentCommitTimestamp = DateTimeOffset.UtcNow;
 
-                _commitCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(cancellationToken =>
+                _commitCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback((callbackId, cancellationToken) =>
                     {
                         if (_running)
                         {

@@ -16,6 +16,7 @@ using SensusService;
 using SensusUI.UiProperties;
 using Xamarin.Forms;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SensusUI
 {
@@ -43,39 +44,80 @@ namespace SensusUI
             };
 
             protocolsButton.Clicked += async (o, e) =>
-                {
-                    await Navigation.PushAsync(new ProtocolsPage());
-                };
+            {
+                await Navigation.PushAsync(new ProtocolsPage());
+            };
 
             contentLayout.Children.Add(protocolsButton);
 
-//            Button pointsOfInterestButton = new Button
-//                {
-//                    Text = "Points of Interest",
-//                    FontSize = 20
-//                };
-//
-//            pointsOfInterestButton.Clicked += async (o, e) =>
-//                {
-//                    await Navigation.PushAsync(new PointsOfInterestPage(
-//                        UiBoundSensusServiceHelper.Get(true).PointsOfInterest,
-//                        () => UiBoundSensusServiceHelper.Get(true).SaveAsync()));
-//                };
-//
-//            contentLayout.Children.Add(pointsOfInterestButton);
+            Button studyParticipationButton = new Button
+            {
+                Text = "Study Participation",
+                FontSize = 20
+            };
 
-//            Button logButton = new Button
-//            {
-//                Text = "Log",
-//                FontSize = 20
-//            };
-//
-//            logButton.Clicked += async (o, e) =>
-//                {
-//                    await Navigation.PushAsync(new ViewTextLinesPage("Log", UiBoundSensusServiceHelper.Get(true).Logger.Read(int.MaxValue), () => UiBoundSensusServiceHelper.Get(true).Logger.Clear()));
-//                };
-//
-//            contentLayout.Children.Add(logButton);
+            studyParticipationButton.Clicked += async (o, e) =>
+            {
+                if (UiBoundSensusServiceHelper.Get(true).RegisteredProtocols.Count == 0)
+                    UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("You have not yet added any studies to Sensus.");
+                else
+                {
+                    string[] protocolNames = UiBoundSensusServiceHelper.Get(true).RegisteredProtocols.Select((protocol, index) => (index + 1) + ") " + protocol.Name).ToArray();
+                    string cancelButtonName = "Cancel";
+                    string selectedProtocolName = await DisplayActionSheet("Select Study", cancelButtonName, null, protocolNames);
+                    if (!string.IsNullOrWhiteSpace(selectedProtocolName) && selectedProtocolName != cancelButtonName)
+                    {
+                        Protocol selectedProtocol = UiBoundSensusServiceHelper.Get(true).RegisteredProtocols[int.Parse(selectedProtocolName.Substring(0, selectedProtocolName.IndexOf(")"))) - 1];
+
+                        if (selectedProtocol.Running)
+                            await Navigation.PushAsync(new ParticipationReportPage(selectedProtocol));
+                        else if (await DisplayAlert("Begin Study", "You are not currently participating in this study. Would you like to begin participating?", "Yes", "No"))
+                            selectedProtocol.StartWithUserAgreement(null);
+                    }
+                }
+            };
+            
+            contentLayout.Children.Add(studyParticipationButton);
+
+            Button pointsOfInterestButton = new Button
+            {
+                Text = "Points of Interest",
+                FontSize = 20
+            };
+
+            pointsOfInterestButton.Clicked += async (o, e) =>
+            {
+                await Navigation.PushAsync(new PointsOfInterestPage(
+                        UiBoundSensusServiceHelper.Get(true).PointsOfInterest,
+                        () => UiBoundSensusServiceHelper.Get(true).SaveAsync()));
+            };
+
+            contentLayout.Children.Add(pointsOfInterestButton);
+
+            Button logButton = new Button
+            {
+                Text = "Log",
+                FontSize = 20
+            };
+
+            logButton.Clicked += async (o, e) =>
+            {
+                await Navigation.PushAsync(new ViewTextLinesPage("Log", UiBoundSensusServiceHelper.Get(true).Logger.Read(200, true), () => UiBoundSensusServiceHelper.Get(true).Logger.Clear()));
+            };
+
+            contentLayout.Children.Add(logButton);
+
+            Button stopSensusButton = new Button
+            {
+                Text = "Stop Sensus",
+                FontSize = 20
+            };
+
+            stopSensusButton.Clicked += async (o, e) =>
+            {
+                if (await DisplayAlert("Stop Sensus?", "Are you sure you want to stop Sensus?", "OK", "Cancel"))
+                    UiBoundSensusServiceHelper.Get(true).StopAsync();
+            };
 
 //            Button stopSensusButton = new Button
 //            {

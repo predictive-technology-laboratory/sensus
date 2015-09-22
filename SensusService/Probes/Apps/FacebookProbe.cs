@@ -23,6 +23,12 @@ using SensusService.Anonymization.Anonymizers;
 
 namespace SensusService.Probes.Apps
 {
+    /// <summary>
+    /// Use the following command to generate the debug keyhash:
+    /// 
+    /// keytool -exportcert -keystore /Users/[username]/.local/share/Xamarin/Mono\ for\ Android/debug.keystore -alias androiddebugkey | openssl sha1 -binary | openssl base64
+    /// 
+    /// </summary>
     public abstract class FacebookProbe : PollingProbe
     {                     
         public sealed override Type DatumType

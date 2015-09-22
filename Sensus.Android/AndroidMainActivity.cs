@@ -49,6 +49,7 @@ namespace Sensus.Android
         private ManualResetEvent _uiReadyWait;
         private ICallbackManager _facebookCallbackManager;
         private App _app;
+        private bool _isForegrounded;
 
         private readonly object _locker = new object();
 
@@ -61,9 +62,7 @@ namespace Sensus.Android
         {
             get
             {
-                ActivityManager activityManager = GetSystemService(Context.ActivityService) as ActivityManager;
-                IList<ActivityManager.RunningTaskInfo> runningTasksInfo = activityManager.GetRunningTasks(1);
-                return runningTasksInfo.Count > 0 && runningTasksInfo[0].TopActivity != null && runningTasksInfo[0].TopActivity.PackageName == PackageName;
+                return _isForegrounded;
             }
         }
 
@@ -81,6 +80,7 @@ namespace Sensus.Android
             _uiReadyWait = new ManualResetEvent(false);
             _activityResultWait = new ManualResetEvent(false);
             _facebookCallbackManager = CallbackManagerFactory.Create();
+            _isForegrounded = false;
 
             Window.AddFlags(global::Android.Views.WindowManagerFlags.DismissKeyguard);
             Window.AddFlags(global::Android.Views.WindowManagerFlags.ShowWhenLocked);
@@ -122,6 +122,13 @@ namespace Sensus.Android
             };
 
             OpenIntentAsync(Intent);
+        }
+
+        protected override void OnStart()
+        {
+            base.OnStart();
+
+            _isForegrounded = true;
         }
 
         protected override void OnResume()
@@ -240,6 +247,15 @@ namespace Sensus.Android
                 _activityResultWait.Set();
             }
 
+            // looks like the facebook SDK can become uninitialized during the process of interacting with the Facebook login manager. this 
+            // might happen when Sensus is stopped/destroyed while the user is logging into facebook. check here to ensure that the facebook
+            // SDK is initialized.
+            //
+            // see:  https://insights.xamarin.com/app/Sensus-Production/issues/66
+            //
+            if (!FacebookSdk.IsInitialized)
+                FacebookSdk.SdkInitialize(this);
+            
             _facebookCallbackManager.OnActivityResult(requestCode, (int)resultCode, data);
         }
 
@@ -256,6 +272,11 @@ namespace Sensus.Android
         protected override void OnStop()
         {
             base.OnStop();
+
+            _isForegrounded = false;
+
+            if (SensusServiceHelper.Get() != null)
+                SensusServiceHelper.Get().Logger.Log("Stopping main activity.", LoggingLevel.Normal, GetType());            
 
             if (Stopped != null)
                 Stopped(this, null);

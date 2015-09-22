@@ -34,10 +34,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AndroidSupportedAbis>armeabi;armeabi-v7a;x86</AndroidSupportedAbis>
-    <NoWarn>0618</NoWarn>
-    <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
-    <DebugSymbols>true</DebugSymbols>
-    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
@@ -47,7 +44,8 @@
     <WarningLevel>4</WarningLevel>
     <AndroidUseSharedRuntime>False</AndroidUseSharedRuntime>
     <AndroidSupportedAbis>armeabi;armeabi-v7a;x86</AndroidSupportedAbis>
-    <DebugType>full</DebugType>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -248,7 +246,6 @@
     <Compile Include="Probes\Communication\AndroidTelephonyIdleIncomingListener.cs" />
     <Compile Include="Probes\Communication\AndroidSmsIncomingBroadcastReceiver.cs" />
     <Compile Include="Probes\Communication\AndroidSmsOutgoingObserver.cs" />
-    <Compile Include="Probes\Apps\AndroidRunningAppsProbe.cs" />
     <Compile Include="Probes\Communication\AndroidSmsProbe.cs" />
     <Compile Include="Probes\Communication\AndroidTelephonyProbe.cs" />
     <Compile Include="Probes\Context\AndroidBluetoothDeviceProximityProbe.cs" />

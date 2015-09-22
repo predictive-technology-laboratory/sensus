@@ -47,7 +47,7 @@ namespace SensusService
             /// Action to invoke.
             /// </summary>
             /// <value>The action.</value>
-            public Action<CancellationToken> Action { get; set; }
+            public Action<string, CancellationToken> Action { get; set; }
 
             /// <summary>
             /// Name of callback.
@@ -74,7 +74,7 @@ namespace SensusService
             /// <param name="name">Name.</param>
             /// <param name="canceller">Canceller.</param>
             /// <param name="userNotificationMessage">User notification message.</param>
-            public ScheduledCallback(Action<CancellationToken> action, string name, CancellationTokenSource canceller, string userNotificationMessage)
+            public ScheduledCallback(Action<string, CancellationToken> action, string name, CancellationTokenSource canceller, string userNotificationMessage)
             {
                 Action = action;
                 Name = name;
@@ -96,6 +96,12 @@ namespace SensusService
         private static readonly string SHARE_DIRECTORY = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "share");
         private static readonly string LOG_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
         private static readonly string SERIALIZATION_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_service_helper.json");
+
+        #if DEBUG
+        public const int HEALTH_TEST_DELAY_MS = 30000;
+        #elif RELEASE
+        public const int HEALTH_TEST_DELAY_MS = 300000;
+        #endif
 
         public static readonly JsonSerializerSettings JSON_SERIALIZER_SETTINGS = new JsonSerializerSettings
         {
@@ -186,9 +192,6 @@ namespace SensusService
 
         public static SensusServiceHelper Get()
         {
-            if (SINGLETON == null)
-                Console.Error.WriteLine("WARNING:  Tried to call SensusServiceHelper.Get() but SINGLETON was null. Stacktrace:  " + Environment.NewLine + Environment.StackTrace);
-            
             return SINGLETON;
         }
 
@@ -279,7 +282,6 @@ namespace SensusService
         private ObservableCollection<Protocol> _registeredProtocols;
         private List<string> _runningProtocolIds;
         private string _healthTestCallbackId;
-        private int _healthTestDelayMS;
         private Dictionary<string, ScheduledCallback> _idCallback;
         private SHA256Managed _hasher;
         private List<PointOfInterest> _pointsOfInterest;
@@ -300,41 +302,6 @@ namespace SensusService
         public List<string> RunningProtocolIds
         {
             get{ return _runningProtocolIds; }
-        }
-
-        [EntryIntegerUiProperty("Health Test Delay (MS):", true, 9)]
-        public int HealthTestDelayMS
-        {
-            get { return _healthTestDelayMS; }
-            set
-            {
-                if (value <= 1000)
-                    value = 1000;
-                
-                if (value != _healthTestDelayMS)
-                {
-                    _healthTestDelayMS = value;
-
-                    if (_healthTestCallbackId != null)
-                        _healthTestCallbackId = RescheduleRepeatingCallback(_healthTestCallbackId, _healthTestDelayMS, _healthTestDelayMS);
-
-                    SaveAsync();
-                }
-            }
-        }
-
-        [ListUiProperty("Logging Level:", true, 11, new object[] { LoggingLevel.Off, LoggingLevel.Normal, LoggingLevel.Verbose, LoggingLevel.Debug })]
-        public LoggingLevel LoggingLevel
-        {
-            get { return _logger.Level; }
-            set
-            {
-                if (value != _logger.Level)
-                {
-                    _logger.Level = value; 
-                    SaveAsync();
-                }
-            }
         }
 
         public List<PointOfInterest> PointsOfInterest
@@ -369,7 +336,6 @@ namespace SensusService
             _registeredProtocols = new ObservableCollection<Protocol>();
             _runningProtocolIds = new List<string>();
             _healthTestCallbackId = null;
-            _healthTestDelayMS = 300000;
             _idCallback = new Dictionary<string, ScheduledCallback>();
             _hasher = new SHA256Managed();
             _pointsOfInterest = new List<PointOfInterest>();
@@ -382,7 +348,7 @@ namespace SensusService
             #elif RELEASE
             LoggingLevel loggingLevel = LoggingLevel.Normal;
             #else
-            #error "Unrecognized compilation mode."
+            #error "Unrecognized configuration."
             #endif
 
             _logger = new Logger(LOG_PATH, loggingLevel, Console.Error);
@@ -392,6 +358,8 @@ namespace SensusService
 
             if (Insights.IsInitialized)
                 _logger.Log("Xamarin Insights is already initialized.", LoggingLevel.Normal, GetType());
+            else if (string.IsNullOrWhiteSpace(XAMARIN_INSIGHTS_APP_KEY))
+                _logger.Log("Xamarin Insights API key is empty. Not initializing.", LoggingLevel.Normal, GetType());  // xamarin allows to initialize with a null key, which fails with exception but results in IsInitialized being true. prevent that here.
             else
             {
                 try
@@ -405,9 +373,7 @@ namespace SensusService
                             Insights.PurgePendingCrashReports().Wait();
                     };
 
-                    InitializeXamarinInsights();
-
-                    Insights.Identify(DeviceId, "Device ID", DeviceId);
+                    InitializeXamarinInsights();                                
                 }
                 catch (Exception ex)
                 {
@@ -442,6 +408,8 @@ namespace SensusService
 
         public abstract void ShareFileAsync(string path, string subject);
 
+        public abstract void SendEmailAsync(string toAddress, string subject, string message);
+
         public abstract void TextToSpeechAsync(string text, Action callback);
 
         public abstract void RunVoicePromptAsync(string prompt, Action<string> callback);
@@ -457,6 +425,8 @@ namespace SensusService
         public abstract void BringToForeground();
 
         public abstract void UpdateApplicationStatus(string status);
+
+        public abstract float GetFullActivityHealthTestsPerDay(Protocol protocol);
 
         /// <summary>
         /// The user can enable all probes at once. When this is done, it doesn't make sense to enable, e.g., the
@@ -484,7 +454,7 @@ namespace SensusService
                 SensusServiceHelper.Get().UpdateApplicationStatus(_runningProtocolIds.Count + " protocol" + (_runningProtocolIds.Count == 1 ? " is " : "s are") + " running");
 
                 if (_healthTestCallbackId == null)
-                    _healthTestCallbackId = ScheduleRepeatingCallback(TestHealth, "Test Health", _healthTestDelayMS, _healthTestDelayMS);
+                    _healthTestCallbackId = ScheduleRepeatingCallback(TestHealth, "Test Health", HEALTH_TEST_DELAY_MS, HEALTH_TEST_DELAY_MS);
             }
         }
 
@@ -578,12 +548,12 @@ namespace SensusService
 
         #region callback scheduling
 
-        public string ScheduleRepeatingCallback(Action<CancellationToken> callback, string name, int initialDelayMS, int repeatDelayMS)
+        public string ScheduleRepeatingCallback(Action<string, CancellationToken> callback, string name, int initialDelayMS, int repeatDelayMS)
         {
             return ScheduleRepeatingCallback(callback, name, initialDelayMS, repeatDelayMS, null);
         }
 
-        public string ScheduleRepeatingCallback(Action<CancellationToken> callback, string name, int initialDelayMS, int repeatDelayMS, string userNotificationMessage)
+        public string ScheduleRepeatingCallback(Action<string, CancellationToken> callback, string name, int initialDelayMS, int repeatDelayMS, string userNotificationMessage)
         {
             lock (_idCallback)
             {
@@ -593,22 +563,22 @@ namespace SensusService
             }
         }
 
-        public string ScheduleOneTimeCallback(Action<CancellationToken> callback, string name, int delay)
+        public string ScheduleOneTimeCallback(Action<string, CancellationToken> callback, string name, int delayMS)
         {
-            return ScheduleOneTimeCallback(callback, name, delay, null);
+            return ScheduleOneTimeCallback(callback, name, delayMS, null);
         }
 
-        public string ScheduleOneTimeCallback(Action<CancellationToken> callback, string name, int delay, string userNotificationMessage)
+        public string ScheduleOneTimeCallback(Action<string, CancellationToken> callback, string name, int delayMS, string userNotificationMessage)
         {
             lock (_idCallback)
             {
                 string callbackId = AddCallback(callback, name, userNotificationMessage);
-                ScheduleOneTimeCallback(callbackId, delay, userNotificationMessage);
+                ScheduleOneTimeCallback(callbackId, delayMS, userNotificationMessage);
                 return callbackId;
             }
         }
 
-        private string AddCallback(Action<CancellationToken> callback, string name, string userNotificationMessage)
+        private string AddCallback(Action<string, CancellationToken> callback, string name, string userNotificationMessage)
         {
             lock (_idCallback)
             {
@@ -678,7 +648,7 @@ namespace SensusService
                                 if (notifyUser)
                                     IssueNotificationAsync(scheduledCallback.UserNotificationMessage, callbackId);
 
-                                scheduledCallback.Action(scheduledCallback.Canceller.Token);
+                                scheduledCallback.Action(callbackId, scheduledCallback.Canceller.Token);
                             }
                         }
                         catch (Exception ex)
@@ -782,9 +752,9 @@ namespace SensusService
                 });
         }
 
-        public void PromptForInputAsync(string windowTitle, Input input, Action<Input> callback)
+        public void PromptForInputAsync(string windowTitle, Input input, CancellationToken? cancellationToken, Action<Input> callback)
         {
-            PromptForInputsAsync(windowTitle, new Input[] { input }, inputs =>
+            PromptForInputsAsync(windowTitle, new Input[] { input }, cancellationToken, inputs =>
                 {
                     if (inputs == null)
                         callback(null);
@@ -793,14 +763,14 @@ namespace SensusService
                 });
         }
 
-        public void PromptForInputsAsync(string windowTitle, IEnumerable<Input> inputs, Action<List<Input>> callback)
+        public void PromptForInputsAsync(string windowTitle, IEnumerable<Input> inputs, CancellationToken? cancellationToken, Action<List<Input>> callback)
         {
             InputGroup inputGroup = new InputGroup(windowTitle);
 
             foreach (Input input in inputs)
                 inputGroup.Inputs.Add(input);
 
-            PromptForInputsAsync(null, false, DateTimeOffset.MinValue, new InputGroup[] { inputGroup }.ToList(), inputGroups =>
+            PromptForInputsAsync(null, false, DateTimeOffset.MinValue, new InputGroup[] { inputGroup }.ToList(), cancellationToken, inputGroups =>
                 {
                     if (inputGroups == null)
                         callback(null);
@@ -809,11 +779,11 @@ namespace SensusService
                 });
         }
 
-        public void PromptForInputsAsync(Datum triggeringDatum, bool isReprompt, DateTimeOffset firstPromptTimestamp, IEnumerable<InputGroup> inputGroups, Action<IEnumerable<InputGroup>> callback)
+        public void PromptForInputsAsync(Datum triggeringDatum, bool isReprompt, DateTimeOffset firstPromptTimestamp, IEnumerable<InputGroup> inputGroups, CancellationToken? cancellationToken, Action<IEnumerable<InputGroup>> callback)
         {
             new Thread(() =>
                 {
-                    if (inputGroups == null || inputGroups.All(g => g == null))
+                    if (inputGroups == null || inputGroups.All(inputGroup => inputGroup == null))
                     {
                         callback(inputGroups);
                         return;
@@ -831,18 +801,18 @@ namespace SensusService
                             PROMPT_FOR_INPUTS_RUNNING = true;
                     }
 
-                    InputGroup[] incompleteGroups = inputGroups.Where(g => !g.Complete).ToArray();
+                    InputGroup[] incompleteGroups = inputGroups.Where(inputGroup => !inputGroup.Complete).ToArray();
 
-                    for (int incompleteGroupNum = 0; incompleteGroupNum < incompleteGroups.Length; ++incompleteGroupNum)
+                    bool firstPageDisplay = true;
+
+                    for (int incompleteGroupNum = 0; inputGroups != null && incompleteGroupNum < incompleteGroups.Length && !cancellationToken.GetValueOrDefault().IsCancellationRequested; ++incompleteGroupNum)
                     {
                         InputGroup incompleteGroup = incompleteGroups[incompleteGroupNum];
-
                         ManualResetEvent responseWait = new ManualResetEvent(false);
 
                         if (incompleteGroup.Inputs.Count == 1 && incompleteGroup.Inputs[0] is VoiceInput)
                         {
                             VoiceInput promptInput = incompleteGroup.Inputs[0] as VoiceInput;
-
                             promptInput.RunAsync(triggeringDatum, isReprompt, firstPromptTimestamp, response =>
                                 {                
                                     responseWait.Set();
@@ -856,27 +826,50 @@ namespace SensusService
 
                             Device.BeginInvokeOnMainThread(async () =>
                                 {
-                                    PromptForInputsPage promptForInputsPage = new PromptForInputsPage(incompleteGroup, incompleteGroupNum + 1, incompleteGroups.Length, async result =>
+                                    PromptForInputsPage promptForInputsPage = new PromptForInputsPage(incompleteGroup, incompleteGroupNum + 1, incompleteGroups.Length, result =>
                                         {
                                             if (result == PromptForInputsPage.Result.Cancel || result == PromptForInputsPage.Result.NavigateBackward && incompleteGroupNum == 0)
                                                 inputGroups = null;
                                             else if (result == PromptForInputsPage.Result.NavigateBackward)
-                                            {
-                                                await App.Current.MainPage.Navigation.PopAsync();
                                                 incompleteGroupNum -= 2;  // we're past the first page, so decrement by two so that, after the for-loop post-increment, the previous input group will be shown
-                                            }
 
                                             responseWait.Set();
                                         });
 
-                                    await App.Current.MainPage.Navigation.PushAsync(promptForInputsPage);
+                                    await App.Current.MainPage.Navigation.PushModalAsync(promptForInputsPage, firstPageDisplay);  // animate first page
+                                    firstPageDisplay = false;
                                 });
                         }
 
-                        responseWait.WaitOne();
+                        responseWait.WaitOne();                                    
+                    }
 
-                        if (inputGroups == null)
-                            break;
+                    // geotag input groups if the user didn't cancel and we've got input groups with inputs that are complete and lacking locations
+                    if (inputGroups != null && incompleteGroups.Any(incompleteGroup => incompleteGroup.Geotag && incompleteGroup.Inputs.Any(input => input.Complete && (input.Latitude == null || input.Longitude == null))))
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Geotagging input groups.", LoggingLevel.Normal, GetType());
+
+                        try
+                        {
+                            Position currentLocation = GpsReceiver.Get().GetReading(cancellationToken.GetValueOrDefault());
+
+                            if (currentLocation != null)
+                                foreach (InputGroup incompleteGroup in incompleteGroups)
+                                    if (incompleteGroup.Geotag)
+                                        foreach (Input input in incompleteGroup.Inputs)
+                                            if (input.Complete)
+                                            {
+                                                if (input.Latitude == null)
+                                                    input.Latitude = currentLocation.Latitude;
+
+                                                if (input.Longitude == null)
+                                                    input.Longitude = currentLocation.Longitude;
+                                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Error geotagging input groups:  " + ex.Message, LoggingLevel.Normal, GetType());
+                        }
                     }
 
                     callback(inputGroups);
@@ -897,7 +890,7 @@ namespace SensusService
                         callback(mapPage.Pins.Select(pin => pin.Position).ToList());
                     };
 
-                    await App.Current.MainPage.Navigation.PushAsync(mapPage);
+                    await App.Current.MainPage.Navigation.PushModalAsync(mapPage);
                 });
         }
 
@@ -912,11 +905,11 @@ namespace SensusService
                         callback(mapPage.Pins.Select(pin => pin.Position).ToList());
                     };
 
-                    await App.Current.MainPage.Navigation.PushAsync(mapPage);
+                    await App.Current.MainPage.Navigation.PushModalAsync(mapPage);
                 });
         }
 
-        public void TestHealth(CancellationToken cancellationToken)
+        public void TestHealth(string callbackId, CancellationToken cancellationToken)
         {
             lock (_locker)
             {
@@ -931,7 +924,7 @@ namespace SensusService
                         break;
                     
                     if (_runningProtocolIds.Contains(protocol.Id))
-                        protocol.TestHealth();
+                        protocol.TestHealth(false);
                 }
             }
         }
@@ -997,15 +990,6 @@ namespace SensusService
             catch (Exception ex)
             {
                 Console.Error.WriteLine("Failed to stop service helper:  " + ex.Message);
-            }
-
-            try
-            {
-                _logger.Close();
-            }
-            catch (Exception ex)
-            {
-                Console.Error.WriteLine("Failed to close logger:  " + ex.Message);
             }
 
             SINGLETON = null;

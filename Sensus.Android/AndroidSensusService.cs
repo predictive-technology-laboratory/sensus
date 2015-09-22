@@ -45,6 +45,7 @@ namespace Sensus.Android
             _serviceHelper.UpdateApplicationStatus("0 protocols are running");
         }
 
+        [Obsolete]
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
             _serviceHelper.Logger.Log("Sensus service received start command (startId=" + startId + ").", LoggingLevel.Normal, GetType());
@@ -81,12 +82,27 @@ namespace Sensus.Android
             return new AndroidSensusServiceBinder(_serviceHelper);
         }
 
+        public override void OnTaskRemoved(Intent rootIntent)
+        {
+            base.OnTaskRemoved(rootIntent);
+
+            if (_serviceHelper != null)
+            {
+                _serviceHelper.Logger.Log("Associated task has been removed. Stopping service helper.", LoggingLevel.Normal, GetType());
+                _serviceHelper.Stop();
+            }
+        }
+
         public override void OnDestroy()
         {
             base.OnDestroy();
 
             if (_serviceHelper != null)
+            {
+                _serviceHelper.Logger.Log("Destroying service.", LoggingLevel.Normal, GetType());
                 _serviceHelper.Dispose();
+                _serviceHelper = null;
+            }
         }
     }
 }

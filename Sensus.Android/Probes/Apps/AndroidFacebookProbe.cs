@@ -92,7 +92,13 @@ namespace Sensus.Android.Probes.Apps
 
             (SensusServiceHelper.Get() as AndroidSensusServiceHelper).GetMainActivityAsync(true, mainActivity =>
                 {
-                    if (mainActivity != null)
+                    if (mainActivity == null)
+                    {
+                        accessTokenError = "Failed to get main activity:  activity null";
+                        _loginWait.Set();
+                    }
+                    else
+                    {
                         try
                         {                            
                             if (FacebookSdk.IsInitialized)
@@ -102,33 +108,37 @@ namespace Sensus.Android.Probes.Apps
                                 SensusServiceHelper.Get().Logger.Log("Initializing Facebook SDK.", LoggingLevel.Normal, GetType());
                                 FacebookSdk.SdkInitialize(mainActivity);
                                 Thread.Sleep(5000);  // give sdk intialization a few seconds to read the access token
-
-                                FacebookCallback<LoginResult> loginCallback = new FacebookCallback<LoginResult>
-                                {
-                                    HandleSuccess = loginResult =>
-                                    {
-                                        SensusServiceHelper.Get().Logger.Log("Facebook login succeeded.", SensusService.LoggingLevel.Normal, GetType());
-                                        AccessToken.CurrentAccessToken = loginResult.AccessToken;
-                                        _loginWait.Set();
-                                    },
-
-                                    HandleCancel = () =>
-                                    {
-                                        SensusServiceHelper.Get().Logger.Log("Facebook login cancelled.", SensusService.LoggingLevel.Normal, GetType());
-                                        AccessToken.CurrentAccessToken = null;
-                                        _loginWait.Set();
-                                    },
-
-                                    HandleError = loginResult =>
-                                    {
-                                        SensusServiceHelper.Get().Logger.Log("Facebook login failed.", SensusService.LoggingLevel.Normal, GetType());
-                                        AccessToken.CurrentAccessToken = null;
-                                        _loginWait.Set();
-                                    }
-                                };
-
-                                LoginManager.Instance.RegisterCallback(mainActivity.FacebookCallbackManager, loginCallback);
                             }
+
+                            #region register callback
+
+                            FacebookCallback<LoginResult> loginCallback = new FacebookCallback<LoginResult>
+                            {
+                                HandleSuccess = loginResult =>
+                                {
+                                    SensusServiceHelper.Get().Logger.Log("Facebook login succeeded.", SensusService.LoggingLevel.Normal, GetType());
+                                    AccessToken.CurrentAccessToken = loginResult.AccessToken;
+                                    _loginWait.Set();
+                                },
+
+                                HandleCancel = () =>
+                                {
+                                    SensusServiceHelper.Get().Logger.Log("Facebook login cancelled.", SensusService.LoggingLevel.Normal, GetType());
+                                    AccessToken.CurrentAccessToken = null;
+                                    _loginWait.Set();
+                                },
+
+                                HandleError = loginResult =>
+                                {
+                                    SensusServiceHelper.Get().Logger.Log("Facebook login failed.", SensusService.LoggingLevel.Normal, GetType());
+                                    AccessToken.CurrentAccessToken = null;
+                                    _loginWait.Set();
+                                },
+                            };
+
+                            LoginManager.Instance.RegisterCallback(mainActivity.FacebookCallbackManager, loginCallback);
+
+                            #endregion
 
                             if (HasValidAccessToken)
                             {
@@ -141,13 +151,15 @@ namespace Sensus.Android.Probes.Apps
                         catch (Exception ex)
                         {
                             accessTokenError = ex.Message;
+                            _loginWait.Set();
                         }
-                });
+                    }
+                });                   
+
+            _loginWait.WaitOne();
 
             if (accessTokenError != null)
                 SensusServiceHelper.Get().Logger.Log("Error while initializing Facebook SDK and/or logging in:  " + accessTokenError, LoggingLevel.Normal, GetType());
-
-            _loginWait.WaitOne();
 
             if (!HasValidAccessToken)
             {
@@ -171,11 +183,15 @@ namespace Sensus.Android.Probes.Apps
 
                     (AndroidSensusServiceHelper.Get() as AndroidSensusServiceHelper).GetMainActivityAsync(true, mainActivity =>
                         {
-                            if (mainActivity != null)
+                            if (mainActivity == null)
+                                _loginWait.Set();
+                            else
+                            {
                                 mainActivity.RunOnUiThread(() =>
                                     {
                                         LoginManager.Instance.LogInWithReadPermissions(mainActivity, missingPermissions);
                                     });
+                            }
                         });
 
                     _loginWait.WaitOne();
@@ -221,9 +237,9 @@ namespace Sensus.Android.Probes.Apps
 
                                     if (property.PropertyType == typeof(string))
                                         value = responseJSON.GetString(jsonField);
-                                    else if (property.PropertyType == typeof(bool))
+                                    else if (property.PropertyType == typeof(bool?))
                                         value = responseJSON.GetBoolean(jsonField);
-                                    else if (property.PropertyType == typeof(DateTimeOffset))
+                                    else if (property.PropertyType == typeof(DateTimeOffset?))
                                         value = DateTimeOffset.Parse(responseJSON.GetString(jsonField));
                                     else if (property.PropertyType == typeof(List<string>))
                                     {

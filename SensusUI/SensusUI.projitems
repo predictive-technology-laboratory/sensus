@@ -57,6 +57,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\MultipleItemPickerInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)AddScriptTimeTriggerPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ScriptTimeTriggersPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ParticipationReportPage.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Inputs\" />
