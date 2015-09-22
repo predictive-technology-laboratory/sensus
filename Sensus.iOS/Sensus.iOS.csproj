@@ -282,7 +282,6 @@
     <Compile Include="Probes\User\Health\iOSHealthKitProbe.cs" />
     <Compile Include="Probes\User\Health\iOSHealthKitHeightProbe.cs" />
     <Compile Include="Probes\User\Health\iOSHealthKitSamplingProbe.cs" />
-    <Compile Include="Probes\User\Health\iOSHealthKitCharacteristicProbe.cs" />
     <Compile Include="Probes\User\Health\iOSHealthKitBiologicalSexProbe.cs" />
     <Compile Include="Probes\User\Health\iOSHealthKitBloodTypeProbe.cs" />
     <Compile Include="Probes\User\Health\iOSHealthKitBirthdateProbe.cs" />

@@ -23,7 +23,7 @@ using Newtonsoft.Json;
 
 namespace Sensus.iOS.Probes.User.Health
 {
-    public class iOSHealthKitBirthdateProbe : iOSHealthKitCharacteristicProbe
+    public class iOSHealthKitBirthdateProbe : iOSHealthKitProbe
     {
         protected override string DefaultDisplayName
         {

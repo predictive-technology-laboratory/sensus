@@ -581,6 +581,7 @@ namespace SensusService
                         // start probes
                         try
                         {
+                            // if we're on iOS, gather up all of the health-kit probes so that we can request their permissions in one batch
                             #if __IOS__
                             if (HKHealthStore.IsHealthDataAvailable)
                             {
@@ -596,6 +597,9 @@ namespace SensusService
                                     new HKHealthStore().RequestAuthorizationToShare(new NSSet(), objectTypesToRead,
                                         (success, error) =>
                                         {
+                                            if(error != null)
+                                                SensusServiceHelper.Get().Logger.Log("Error while requesting HealthKit authorization:  " + error.Description, LoggingLevel.Normal, GetType());
+
                                             authorizationWait.Set();
                                         });
 
