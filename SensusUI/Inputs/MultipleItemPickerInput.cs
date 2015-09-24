@@ -28,7 +28,6 @@ namespace SensusUI.Inputs
         private bool[] _selected;
         Android.App.AlertDialog _dialog;
         Button _makeSelectionButton;
-//        Sensus.Android.AndroidMultipleItemPickerInput _multiPicker;
 
         [EntryStringUiProperty("Tip Text:", true, 10)]
         public string TipText
@@ -63,23 +62,22 @@ namespace SensusUI.Inputs
             {
                 if (base.View == null && _optionsList.Count > 0)
                 {
-//                    // TODO add call to method in android specific multi picker class
+
+//                    ListView _selectedView = new ListView();
+//                    ListView _optionsView = new ListView();
 //
-////                    ListView _selectedView = new ListView();
-////                    ListView _optionsView = new ListView();
-////
-////                    _optionsView.ItemsSource = _optionsList;
-////                    _selectedView.ItemsSource = _selectedList;
-////                   
-////                    _optionsView.ItemTapped += async (sender, e) =>
-////                    {
-////                        var item = e.Item as string;
-////                        if (!_selectedList.Contains(item))
-////                            _selectedList.Add(item);
-////                        else
-////                            _selectedList.Remove(item);
-////                    };
-//
+//                    _optionsView.ItemsSource = _optionsList;
+//                    _selectedView.ItemsSource = _selectedList;
+//                   
+//                    _optionsView.ItemTapped += async (sender, e) =>
+//                    {
+//                        var item = e.Item as string;
+//                        if (!_selectedList.Contains(item))
+//                            _selectedList.Add(item);
+//                        else
+//                            _selectedList.Remove(item);
+//                    };
+
                     _makeSelectionButton = new Button
                     {
                         Text = "Please Make Selection",
@@ -109,9 +107,6 @@ namespace SensusUI.Inputs
                                     {
                                     })
                                 .Create();
-////                            _multiPicker = new Sensus.Android.AndroidMultipleItemPickerInput(_tipText, _optionsList);
-////                            _response = "";
-////                            _response = _multiPicker.Display();
                             _dialog.Show();
                         };
 
