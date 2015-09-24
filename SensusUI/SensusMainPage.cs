@@ -119,19 +119,7 @@ namespace SensusUI
                     UiBoundSensusServiceHelper.Get(true).StopAsync();
             };
 
-//            Button stopSensusButton = new Button
-//            {
-//                Text = "Stop Sensus",
-//                FontSize = 20
-//            };
-//
-//            stopSensusButton.Clicked += async (o, e) =>
-//                {
-//                    if (await DisplayAlert("Stop Sensus?", "Are you sure you want to stop Sensus?", "OK", "Cancel"))
-//                        UiBoundSensusServiceHelper.Get(true).StopAsync();
-//                };
-//
-//            contentLayout.Children.Add(stopSensusButton);
+            contentLayout.Children.Add(stopSensusButton);
 
             Content = new ScrollView
             {
@@ -143,8 +131,8 @@ namespace SensusUI
         {
             _serviceHelperStacks = UiProperty.GetPropertyStacks(serviceHelper);
 
-//            foreach (StackLayout serviceStack in _serviceHelperStacks)
-//                ((Content as ScrollView).Content as StackLayout).Children.Add(serviceStack);
+            foreach (StackLayout serviceStack in _serviceHelperStacks)
+                ((Content as ScrollView).Content as StackLayout).Children.Add(serviceStack);
         }
 
         public void RemoveServiceHelper()

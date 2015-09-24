@@ -717,11 +717,8 @@ namespace SensusService
 //                    else if (int.TryParse(id, out consentCodeInt) && consentCodeInt == consentCode)
                         _participantID = int.Parse(id);
                         AmazonS3RemoteDataStore s3 = new AmazonS3RemoteDataStore();
-                        Console.Out.WriteLine(id);
                         s3 = (AmazonS3RemoteDataStore)_remoteDataStore;
                         s3.Folder = id;
-                Console.Out.WriteLine(s3.ToString());
-                Console.Out.WriteLine(s3.Folder);
                         _remoteDataStore = s3;
                         Running = true;
                     }

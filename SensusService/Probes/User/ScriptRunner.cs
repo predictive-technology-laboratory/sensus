@@ -40,7 +40,6 @@ namespace SensusService.Probes.User
         private int _rerunDelayMS;
         private int _maximumAgeMinutes;
         private int _numScriptsAgedOut;
-//        private string _timeTriggerCallbackId;
         private Random _random;
         private List<string> _runScriptCallbackIds;
         private int _runCount;
@@ -222,7 +221,6 @@ namespace SensusService.Probes.User
             _rerunDelayMS = 60000;
             _maximumAgeMinutes = 1;
             _numScriptsAgedOut = 0;
-//            _timeTriggerCallbackId = null;
             _random = new Random();
             _runScriptCallbackIds = new List<string>();
             _runCount = 0;
@@ -372,15 +370,12 @@ namespace SensusService.Probes.User
                                             if (timeTrigger.RepeatDaily)     // if rerunDaily is still set to true, reschedule another random or specific time trigger
                                             {
                                                 time = (int)TimeUntilFireMilliseconds(timeTrigger);
-                                                Console.Out.WriteLine(time);
                                                 SensusServiceHelper.Get().RescheduleRepeatingCallback(timeTrigger.ID, time, 0);
                                             }
                                             if (timeTrigger.EndTime < TimeSpan.Parse(DateTime.Now.ToString()))
                                                 _incompleteScripts.Clear();
                                         
                                         }, "Rerun time trigger daily", (int)TimeUntilFireMilliseconds(timeTrigger), 0);
-//                                        if ((time / 1000) < 86400)
-//                                            RunAsync(_script.Copy());
                                     }
                                     else
                                     {
@@ -420,14 +415,11 @@ namespace SensusService.Probes.User
             }
 
             timeFire = new TimeSpan(hour, minute, 0);
-            Console.Out.WriteLine(timeFire);                    // debug
 
             if (timeFire <= timeNow)
                 timeUntilFire = (timeFire - timeNow) + fullDay;
             else
                 timeUntilFire = (timeFire - timeNow);
-
-            Console.Out.WriteLine(timeUntilFire);
 
             return timeUntilFire.TotalMilliseconds;
         }
@@ -568,7 +560,6 @@ namespace SensusService.Probes.User
                 SensusServiceHelper.Get().UnscheduleOneTimeCallback(trigger.ID);
                 SensusServiceHelper.Get().UnscheduleRepeatingCallback(trigger.ID);
             }
-//            _timeTriggerCallbackId = null;
         }
 
         public void Stop()

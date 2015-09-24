@@ -102,7 +102,7 @@ namespace SensusUI
 
             #region set up button click events
 
-            nextButton.Clicked += async (o, e) =>       // TODO fix this block to represent all alert cases
+            nextButton.Clicked += async (o, e) =>
                 {
                     bool complete = true;
                     bool skip = false;
@@ -110,7 +110,6 @@ namespace SensusUI
                     {
                         if (!(input.Complete) && !(input is TextInput) && totalSteps > 1)
                         {
-                            Console.Out.WriteLine("completion check");
                             if (totalSteps == stepNumber)
                             {
                                 skip = await DisplayAlert("Skip question?", "Please only skip if a) you do not feel comfortable answering this question, or b) per the question statement, this question does not apply to you.", "Yes", "No");
@@ -179,6 +178,8 @@ namespace SensusUI
                 Content = contentLayout,
                 Padding = new Thickness(10, 10, 10, 10),
             };
+
+            NavigationPage.SetHasNavigationBar(this, true);
         }
     }
 }
