@@ -100,7 +100,16 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\PollingTelephonyProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\AmbientTemperatureDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\ListeningAmbientTemperatureProbe.cs" />
+<<<<<<< HEAD
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\TimeTrigger.cs" />
+=======
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\HeightDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\BiologicalSexDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\BirthdateDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\BloodTypeDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\BiologicalSex.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\BloodType.cs" />
+>>>>>>> predictive-technology-laboratory/develop
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />
