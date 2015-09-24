@@ -179,6 +179,30 @@ namespace SensusService.Probes.User
                 _numScriptsAgedOut = value;
             }
         }
+
+        public int RunCount
+        {
+            get
+            {
+                return _runCount;
+            }
+            set
+            {
+                _runCount = value;
+            }
+        }
+
+        public int CompletionCount
+        {
+            get
+            {
+                return _completionCount;
+            }
+            set
+            {
+                _completionCount = value;
+            }
+        }
         #endregion
 
         /// <summary>
@@ -341,7 +365,7 @@ namespace SensusService.Probes.User
                                     if (timeTrigger.RepeatDaily)
                                     {
                                         int time = 0;
-                                        timeTrigger.ID = SensusServiceHelper.Get().ScheduleRepeatingCallback(cancellationToken =>
+                                    timeTrigger.ID = SensusServiceHelper.Get().ScheduleRepeatingCallback((callbackId, cancellationToken) =>
                                         {
                                             if (_probe.Running && _enabled)
                                                 RunAsync(_script.Copy());
@@ -354,17 +378,17 @@ namespace SensusService.Probes.User
                                             if (timeTrigger.EndTime < TimeSpan.Parse(DateTime.Now.ToString()))
                                                 _incompleteScripts.Clear();
                                         
-                                        }, "Rerun time trigger daily", (int)TimeUntilFireMilliseconds(timeTrigger), 0, null);
+                                        }, "Rerun time trigger daily", (int)TimeUntilFireMilliseconds(timeTrigger), 0);
 //                                        if ((time / 1000) < 86400)
 //                                            RunAsync(_script.Copy());
                                     }
                                     else
                                     {
-                                        timeTrigger.ID = SensusServiceHelper.Get().ScheduleOneTimeCallback(cancellationToken =>
+                                    timeTrigger.ID = SensusServiceHelper.Get().ScheduleOneTimeCallback((callbackId, cancellationToken) =>
                                             {
                                                 if (_probe.Running && _enabled)
                                                     RunAsync(_script.Copy());
-                                        }, "Rerun time trigger daily", (int)TimeUntilFireMilliseconds(timeTrigger), null);
+                                        }, "Rerun time trigger daily", (int)TimeUntilFireMilliseconds(timeTrigger));
                                     }
                                 }
                             
@@ -482,12 +506,6 @@ namespace SensusService.Probes.User
                             inputWait.WaitOne();
 
                             SensusServiceHelper.Get().Logger.Log("\"" + _name + "\" has finished running.", LoggingLevel.Normal, typeof(Script));
-
-                            if (script.Complete)
-                                ++_completionCount;
-                            else if (_rerun)
-                                lock (_incompleteScripts)
-                                    _incompleteScripts.Enqueue(script);
 
                             if (callback != null)
                                 callback();

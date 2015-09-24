@@ -31,7 +31,6 @@ using SensusUI;
 using SensusService.Probes.Location;
 using SensusService.Exceptions;
 using SensusUI.Inputs;
-using SensusService.Probes.User;
 
 namespace SensusService
 {
@@ -657,7 +656,7 @@ namespace SensusService
 
         public void StartWithUserAgreement(string message)
         {
-            int consentCode = new Random().Next(1000, 10000);
+//            int consentCode = new Random().Next(1000, 10000);
 
             SensusServiceHelper.Get().PromptForInputsAsync(
 
@@ -685,14 +684,18 @@ namespace SensusService
 //                    string consentCodeStr = inputs[1].Value as string;
                     string id = inputs[1].Value as string;
 
-                    int consentCodeInt;
+//                    int consentCodeInt;
                     if (id != null && id.Length == 4)
                     {
 //                    else if (int.TryParse(id, out consentCodeInt) && consentCodeInt == consentCode)
                         _participantID = int.Parse(id);
-                        AmazonS3RemoteDataStore s3 = (AmazonS3RemoteDataStore)RemoteDataStore;
+                        AmazonS3RemoteDataStore s3 = new AmazonS3RemoteDataStore();
+                        Console.Out.WriteLine(id);
+                        s3 = (AmazonS3RemoteDataStore)_remoteDataStore;
                         s3.Folder = id;
-                        this.RemoteDataStore = s3;
+                Console.Out.WriteLine(s3.ToString());
+                Console.Out.WriteLine(s3.Folder);
+                        _remoteDataStore = s3;
                         Running = true;
                     }
                     else

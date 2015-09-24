@@ -25,7 +25,6 @@ namespace SensusService.Probes.User
     {
         private ObservableCollection<InputGroup> _inputGroups;
         private DateTimeOffset _firstRunTimestamp;
-        private bool _complete;
         private Datum _previousDatum;
         private Datum _currentDatum;
 
@@ -51,13 +50,6 @@ namespace SensusService.Probes.User
             get { return _currentDatum; }
             set { _currentDatum = value; }
         }                                        
-
-        [JsonIgnore]
-        public bool Complete
-        {
-            get { return _inputGroups.Count == 0 || _inputGroups.All(g => g.Complete); }
-            set { _complete = value; }
-        }
 
         [JsonIgnore]
         public TimeSpan Age

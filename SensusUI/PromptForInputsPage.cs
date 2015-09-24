@@ -84,8 +84,6 @@ namespace SensusUI
                 Text = stepNumber < totalSteps ? "Next" : "Submit"
             };
 
-            navigationStack.Children.Add(nextButton);
-
             bool nextButtonTapped = false;
 
             Button skipButton = new Button
@@ -134,7 +132,7 @@ namespace SensusUI
                         nextButtonTapped = true;
                         foreach (Input input2 in inputGroup.Inputs)
                             input2.Complete = true;
-                        await Navigation.PopAsync();
+                        await Navigation.PopModalAsync();
                     }
                 };
 
@@ -145,7 +143,7 @@ namespace SensusUI
                     {
                         foreach (Input input in inputGroup.Inputs)
                             input.Complete = true;
-                        await Navigation.PopAsync();
+                        await Navigation.PopModalAsync();
                     }
                 };
 
@@ -168,7 +166,7 @@ namespace SensusUI
                         Children = { nextButton, skipButton }
                     });
 
-            Disappearing += async (o, e) =>
+            Disappearing +=(o, e) =>
             {
                 if (nextButtonTapped || skipButtonTapped)
                     callback(Result.NavigateForward);
