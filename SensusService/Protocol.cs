@@ -31,9 +31,12 @@ using SensusService.Probes.Location;
 using SensusService.Exceptions;
 using SensusUI.Inputs;
 using SensusService.Probes.User;
+
+#if __IOS__
 using HealthKit;
 using Sensus.iOS.Probes.User.Health;
 using Foundation;
+#endif
 
 namespace SensusService
 {
