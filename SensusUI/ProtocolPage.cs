@@ -231,11 +231,11 @@ namespace SensusUI
                                                  .Where(t => !t.IsAbstract && t.IsSubclassOf(dataStoreType))
                                                  .Select(t => Activator.CreateInstance(t))
                                                  .Cast<DataStore>()
-                                                 .OrderBy(d => d.DisplayName)
+                                                 .OrderBy(d => d.Name)
                                                  .ToList();
 
             string cancelButtonName = "Cancel";
-            string selected = await DisplayActionSheet("Select " + (local ? "Local" : "Remote") + " Data Store", cancelButtonName, null, dataStores.Select((d, i) => (i + 1) + ") " + d.DisplayName).ToArray());
+            string selected = await DisplayActionSheet("Select " + (local ? "Local" : "Remote") + " Data Store", cancelButtonName, null, dataStores.Select((d, i) => (i + 1) + ") " + d.Name).ToArray());
             if (!string.IsNullOrWhiteSpace(selected) && selected != cancelButtonName)
                 await Navigation.PushAsync(new DataStorePage(_protocol, dataStores[int.Parse(selected.Substring(0, selected.IndexOf(")"))) - 1], local, true));
         }

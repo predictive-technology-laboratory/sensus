@@ -15,13 +15,12 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Threading;
-using SensusUI.UiProperties;
 
 namespace SensusService.DataStores.Remote
 {
     public class ConsoleRemoteDataStore : RemoteDataStore
     {
-        public override string DisplayName
+        protected override string DisplayName
         {
             get { return "Console"; }
         }

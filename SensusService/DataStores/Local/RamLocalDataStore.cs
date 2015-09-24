@@ -17,7 +17,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using System.Threading;
-using SensusUI.UiProperties;
 
 namespace SensusService.DataStores.Local
 {
@@ -27,7 +26,7 @@ namespace SensusService.DataStores.Local
 
         private readonly object _locker = new object();
 
-        public override string DisplayName
+        protected override string DisplayName
         {
             get { return "RAM"; }
         }

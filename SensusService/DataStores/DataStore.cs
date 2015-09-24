@@ -26,6 +26,7 @@ namespace SensusService.DataStores
     /// </summary>
     public abstract class DataStore
     {
+        private string _name;
         private int _commitDelayMS;
         private bool _running;
         private Protocol _protocol;
@@ -35,6 +36,13 @@ namespace SensusService.DataStores
         private string _commitCallbackId;
 
         private readonly object _locker = new object();
+
+        [EntryStringUiProperty("Name:", true, 1)]
+        public string Name
+        {
+            get { return _name; }
+            set { _name = value; }
+        }
 
         [EntryIntegerUiProperty("Commit Delay (MS):", true, 2)]
         public int CommitDelayMS
@@ -66,15 +74,15 @@ namespace SensusService.DataStores
         {
             get { return _running; }
         }
-            
-        [DisplayStringUiProperty("Type:", 0)]
-        public abstract string DisplayName { get; }
+
+        protected abstract string DisplayName { get; }
 
         [JsonIgnore]
         public abstract bool Clearable { get; }
 
         protected DataStore()
         {
+            _name = DisplayName;
             _commitDelayMS = 10000;
             _running = false;
             _mostRecentCommitTimestamp = DateTimeOffset.MinValue;

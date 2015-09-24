@@ -71,7 +71,7 @@ namespace SensusService.DataStores.Remote
             set { _key = value; }
         }
 
-        public override string DisplayName
+        protected override string DisplayName
         {
             get { return "Microsoft Azure"; }
         }

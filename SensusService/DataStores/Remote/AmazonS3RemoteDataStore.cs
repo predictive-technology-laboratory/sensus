@@ -78,7 +78,7 @@ namespace SensusService.DataStores.Remote
             }
         }
 
-        public override string DisplayName
+        protected override string DisplayName
         {
             get
             {

@@ -31,13 +31,6 @@ using SensusUI;
 using SensusService.Probes.Location;
 using SensusService.Exceptions;
 using SensusUI.Inputs;
-<<<<<<< HEAD
-=======
-using SensusService.Probes.User;
-using HealthKit;
-using Sensus.iOS.Probes.User.Health;
-using Foundation;
->>>>>>> predictive-technology-laboratory/develop
 
 namespace SensusService
 {
@@ -592,33 +585,6 @@ namespace SensusService
                         // start probes
                         try
                         {
-                            // if we're on iOS, gather up all of the health-kit probes so that we can request their permissions in one batch
-                            #if __IOS__
-                            if (HKHealthStore.IsHealthDataAvailable)
-                            {
-                                List<iOSHealthKitProbe> enabledHealthKitProbes = new List<iOSHealthKitProbe>();
-                                foreach (Probe probe in _probes)
-                                    if (probe.Enabled && probe is iOSHealthKitProbe)
-                                        enabledHealthKitProbes.Add(probe as iOSHealthKitProbe);                                                                            
-
-                                if (enabledHealthKitProbes.Count > 0)
-                                {
-                                    NSSet objectTypesToRead = NSSet.MakeNSObjectSet<HKObjectType>(enabledHealthKitProbes.Select(probe => probe.ObjectType).Distinct().ToArray());
-                                    ManualResetEvent authorizationWait = new ManualResetEvent(false);
-                                    new HKHealthStore().RequestAuthorizationToShare(new NSSet(), objectTypesToRead,
-                                        (success, error) =>
-                                        {
-                                            if(error != null)
-                                                SensusServiceHelper.Get().Logger.Log("Error while requesting HealthKit authorization:  " + error.Description, LoggingLevel.Normal, GetType());
-
-                                            authorizationWait.Set();
-                                        });
-
-                                    authorizationWait.WaitOne();
-                                }
-                            }
-                            #endif
-
                             SensusServiceHelper.Get().Logger.Log("Starting probes for protocol " + _name + ".", LoggingLevel.Normal, GetType());
                             int probesEnabled = 0;
                             int probesStarted = 0;
