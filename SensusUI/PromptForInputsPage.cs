@@ -27,7 +27,6 @@ namespace SensusUI
 {
     public class PromptForInputsPage : ContentPage
     {
-        private int _steps;
 
         public enum Result
         {
@@ -44,8 +43,6 @@ namespace SensusUI
                 NavigationPage.SetHasBackButton(this, true);
 
             Title = inputGroup.Name;
-
-            _steps = totalSteps;
 
             StackLayout contentLayout = new StackLayout
             {
