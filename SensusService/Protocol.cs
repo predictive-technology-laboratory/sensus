@@ -404,6 +404,12 @@ namespace SensusService
             }
         }
 
+        [JsonIgnore]
+        public DateTime ParticipationHorizon
+        {
+            get { return DateTime.Now.AddDays(-_participationHorizonDays); }
+        }
+
         // sensus cannot full execute all the time on ios. the level of app activity is, for the most part, determined by the user
         // and how often he/she opens sensus or one of its notifications. thus, it's not reasonable to assert a partiular amount of
         // activity as being "full activity". rather, on ios this is left to the protocol designer. contrast with android, where
@@ -430,7 +436,7 @@ namespace SensusService
             get{ return _healthTestTimes; }
         }
 
-        [EntryStringUiProperty("Contact Email:", true, 17)]
+        [EntryStringUiProperty("Contact Email:", true, 18)]
         public string ContactEmail
         {
             get
@@ -444,13 +450,12 @@ namespace SensusService
         }
 
         [JsonIgnore]
-        public float ActivityLevel
+        public float ActivityPercentage
         {
             get
             { 
                 float fullActivityHealthTests = _participationHorizonDays * SensusServiceHelper.Get().GetFullActivityHealthTestsPerDay(this);
-
-                return _healthTestTimes.Count / fullActivityHealthTests;
+                return _healthTestTimes.Count(healthTestTime => healthTestTime >= ParticipationHorizon) / fullActivityHealthTests;
             }
         }
 
@@ -459,9 +464,8 @@ namespace SensusService
         {
             get
             {
-                int scriptsRun = _probes.Sum(probe => probe is ScriptProbe ? (probe as ScriptProbe).ScriptRunners.Sum(scriptRunner => scriptRunner.RunCount) : 0);
-                int scriptsCompleted = _probes.Sum(probe => probe is ScriptProbe ? (probe as ScriptProbe).ScriptRunners.Sum(scriptRunner => scriptRunner.CompletionCount) : 0);
-
+                int scriptsRun = _probes.Sum(probe => probe is ScriptProbe ? (probe as ScriptProbe).ScriptRunners.Sum(scriptRunner => scriptRunner.RunTimes.Count(runTime => runTime >= ParticipationHorizon)) : 0);
+                int scriptsCompleted = _probes.Sum(probe => probe is ScriptProbe ? (probe as ScriptProbe).ScriptRunners.Sum(scriptRunner => scriptRunner.CompletionTimes.Count(completionTime => completionTime >= ParticipationHorizon)) : 0);
                 return scriptsRun == 0 ? 1f : scriptsCompleted / (float)scriptsRun;
             }
         }
@@ -469,7 +473,7 @@ namespace SensusService
         [JsonIgnore]
         public float OverallParticipationLevel
         {
-            get { return ActivityLevel * InteractionParticipationLevel; }
+            get { return ActivityPercentage * InteractionParticipationLevel; }
         }
 
         /// <summary>
@@ -740,15 +744,14 @@ namespace SensusService
         {
             lock (_locker)
             {
+                // keep track of system-initiated health test times
                 if (!userInitiated)
                     lock (_healthTestTimes)
                     {
                         _healthTestTimes.Add(DateTime.Now);
 
-                        // remove health test times prior to the participation horizon
-                        int cutoff = _healthTestTimes.FindIndex(healthTestTime => healthTestTime >= DateTime.Now.AddDays(-_participationHorizonDays));
-                        if (cutoff > 0)
-                            _healthTestTimes.RemoveRange(0, cutoff);
+                        // remove all health test times before the participation horizon
+                        _healthTestTimes.RemoveAll(healthTestTime => healthTestTime < ParticipationHorizon);
                     }
 
                 string error = null;

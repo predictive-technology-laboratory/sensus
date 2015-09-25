@@ -43,8 +43,8 @@ namespace SensusService.Probes.User
         private string _randomTriggerCallbackId;
         private Random _random;
         private List<string> _runScriptCallbackIds;
-        private int _runCount;
-        private int _completionCount;
+        private List<DateTime> _runTimes;
+        private List<DateTime> _completionTimes;
 
         private readonly object _locker = new object();
 
@@ -220,27 +220,27 @@ namespace SensusService.Probes.User
             }
         }
 
-        public int RunCount
+        public List<DateTime> RunTimes
         {
             get
             {
-                return _runCount;
+                return _runTimes;
             }
             set
             {
-                _runCount = value;
+                _runTimes = value;
             }
         }
 
-        public int CompletionCount
+        public List<DateTime> CompletionTimes
         {
             get
             {
-                return _completionCount;
+                return _completionTimes;
             }
             set
             {
-                _completionCount = value;
+                _completionTimes = value;
             }
         }
 
@@ -266,8 +266,8 @@ namespace SensusService.Probes.User
             _randomTriggerCallbackId = null;
             _random = new Random();
             _runScriptCallbackIds = new List<string>();
-            _runCount = 0;
-            _completionCount = 0;
+            _runTimes = new List<DateTime>();
+            _completionTimes = new List<DateTime>();
 
             _triggers.CollectionChanged += (o, e) =>
             {
@@ -491,7 +491,11 @@ namespace SensusService.Probes.User
                             {
                                 script.FirstRunTimestamp = DateTimeOffset.UtcNow;
                                 isRerun = false;
-                                ++_runCount;
+
+                                // add run time and remove all run times before the participation horizon
+                                _runTimes.Add(DateTime.Now);
+                                DateTime participationHorizon = DateTime.Now.AddDays(-_probe.Protocol.ParticipationHorizonDays);
+                                _runTimes.RemoveAll(runTime => runTime < participationHorizon);
                             }
 
                             // this method can be called with previous / current datum values (e.g., when the script is first triggered. it 
@@ -528,7 +532,12 @@ namespace SensusService.Probes.User
                             SensusServiceHelper.Get().Logger.Log("\"" + _name + "\" has finished running.", LoggingLevel.Normal, typeof(Script));
 
                             if (script.Complete)
-                                ++_completionCount;
+                            {
+                                // add completion time and remove all completion times before the participation horizon
+                                _completionTimes.Add(DateTime.Now);
+                                DateTime participationHorizon = DateTime.Now.AddDays(-_probe.Protocol.ParticipationHorizonDays);
+                                _completionTimes.RemoveAll(completionTime => completionTime < participationHorizon);
+                            }
                             else if (_rerun)
                                 lock (_incompleteScripts)
                                     _incompleteScripts.Enqueue(script);
