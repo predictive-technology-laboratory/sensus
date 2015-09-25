@@ -494,8 +494,7 @@ namespace SensusService.Probes.User
 
                                 // add run time and remove all run times before the participation horizon
                                 _runTimes.Add(DateTime.Now);
-                                DateTime participationHorizon = DateTime.Now.AddDays(-_probe.Protocol.ParticipationHorizonDays);
-                                _runTimes.RemoveAll(runTime => runTime < participationHorizon);
+                                _runTimes.RemoveAll(runTime => runTime < _probe.Protocol.ParticipationHorizon);
                             }
 
                             // this method can be called with previous / current datum values (e.g., when the script is first triggered. it 
@@ -535,8 +534,7 @@ namespace SensusService.Probes.User
                             {
                                 // add completion time and remove all completion times before the participation horizon
                                 _completionTimes.Add(DateTime.Now);
-                                DateTime participationHorizon = DateTime.Now.AddDays(-_probe.Protocol.ParticipationHorizonDays);
-                                _completionTimes.RemoveAll(completionTime => completionTime < participationHorizon);
+                                _completionTimes.RemoveAll(completionTime => completionTime < _probe.Protocol.ParticipationHorizon);
                             }
                             else if (_rerun)
                                 lock (_incompleteScripts)
