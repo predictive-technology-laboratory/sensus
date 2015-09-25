@@ -30,8 +30,6 @@ namespace Sensus.Android
 			global::PCLStorage.Resource.String.Hello = global::Sensus.Android.Resource.String.Hello;
 			global::PCLCrypto.Resource.String.ApplicationName = global::Sensus.Android.Resource.String.ApplicationName;
 			global::PCLCrypto.Resource.String.Hello = global::Sensus.Android.Resource.String.Hello;
-			global::Xamarin.Forms.Platform.Resource.String.ApplicationName = global::Sensus.Android.Resource.String.ApplicationName;
-			global::Xamarin.Forms.Platform.Resource.String.Hello = global::Sensus.Android.Resource.String.Hello;
 			global::GooglePlayServices.Resource.Animation.abc_fade_in = global::Sensus.Android.Resource.Animation.abc_fade_in;
 			global::GooglePlayServices.Resource.Animation.abc_fade_out = global::Sensus.Android.Resource.Animation.abc_fade_out;
 			global::GooglePlayServices.Resource.Animation.abc_grow_fade_in_from_bottom = global::Sensus.Android.Resource.Animation.abc_grow_fade_in_from_bottom;
@@ -1492,6 +1490,8 @@ namespace Sensus.Android
 			global::GooglePlayServices.Resource.Styleable.WalletFragmentStyle_maskedWalletDetailsLogoImageType = global::Sensus.Android.Resource.Styleable.WalletFragmentStyle_maskedWalletDetailsLogoImageType;
 			global::GooglePlayServices.Resource.Styleable.WalletFragmentStyle_maskedWalletDetailsLogoTextColor = global::Sensus.Android.Resource.Styleable.WalletFragmentStyle_maskedWalletDetailsLogoTextColor;
 			global::GooglePlayServices.Resource.Styleable.WalletFragmentStyle_maskedWalletDetailsTextAppearance = global::Sensus.Android.Resource.Styleable.WalletFragmentStyle_maskedWalletDetailsTextAppearance;
+			global::Xamarin.Forms.Platform.Resource.String.ApplicationName = global::Sensus.Android.Resource.String.ApplicationName;
+			global::Xamarin.Forms.Platform.Resource.String.Hello = global::Sensus.Android.Resource.String.Hello;
 		}
 		
 		public partial class Animation
@@ -4147,11 +4147,11 @@ namespace Sensus.Android
 		public partial class String
 		{
 			
-			// aapt resource value: 0x7f08004a
-			public const int ApplicationName = 2131230794;
-			
 			// aapt resource value: 0x7f080049
-			public const int Hello = 2131230793;
+			public const int ApplicationName = 2131230793;
+			
+			// aapt resource value: 0x7f080048
+			public const int Hello = 2131230792;
 			
 			// aapt resource value: 0x7f080014
 			public const int abc_action_bar_home_description = 2131230740;
@@ -4381,8 +4381,8 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f080007
 			public const int decline = 2131230727;
 			
-			// aapt resource value: 0x7f080048
-			public const int library_name = 2131230792;
+			// aapt resource value: 0x7f08004a
+			public const int library_name = 2131230794;
 			
 			// aapt resource value: 0x7f08005b
 			public const int messenger_send_button_text = 2131230811;

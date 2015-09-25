@@ -424,7 +424,7 @@ namespace SensusService.Probes.User
                             if (randomTriggerWindow.Item1 > now.Hour)
                             {
                                 triggerWindowStart = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0).AddHours(randomTriggerWindow.Item1);
-                                triggerWindowEnd = triggerWindowStart.AddHours(randomTriggerWindow.Item2 - randomTriggerWindow.Item1 + 1);
+                                triggerWindowEnd = triggerWindowStart.AddHours(randomTriggerWindow.Item2 - randomTriggerWindow.Item1);
                                 foundTriggerWindow = true;
                                 break;
                             }
@@ -434,7 +434,7 @@ namespace SensusService.Probes.User
                         {
                             Tuple<int, int> firstRandomTriggerWindow = _randomTriggerWindows.First();                                
                             triggerWindowStart = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0).AddDays(1).AddHours(firstRandomTriggerWindow.Item1);
-                            triggerWindowEnd = triggerWindowStart.AddHours(firstRandomTriggerWindow.Item2 - firstRandomTriggerWindow.Item1 + 1);
+                            triggerWindowEnd = triggerWindowStart.AddHours(firstRandomTriggerWindow.Item2 - firstRandomTriggerWindow.Item1);
                         }
 
                         // schedule callback for random offset into trigger window
