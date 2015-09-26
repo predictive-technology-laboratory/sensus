@@ -104,18 +104,21 @@ namespace SensusUI
                             
                             using (StreamWriter shareFile = new StreamWriter(sharePath))
                             {
+                                shareFile.WriteLine("[");
+
                                 int dataWritten = 0;
                                 foreach (Datum localDatum in localData)
                                 {
                                     if (_cancellationTokenSource.IsCancellationRequested)
                                         break;
                                     
-                                    shareFile.WriteLine(localDatum.GetJSON(localDataStore.Protocol.JsonAnonymizer));
+                                    shareFile.Write((dataWritten++ == 0 ? "" : "," + Environment.NewLine) + localDatum.GetJSON(localDataStore.Protocol.JsonAnonymizer));
 
-                                    if (localData.Count >= 10 && (++dataWritten % (localData.Count / 10)) == 0)
+                                    if (localData.Count >= 10 && (dataWritten % (localData.Count / 10)) == 0)
                                         Device.BeginInvokeOnMainThread(() => progressBar.ProgressTo(dataWritten / (double)localData.Count, 250, Easing.Linear));
                                 }
 
+                                shareFile.WriteLine(Environment.NewLine + "]");
                                 shareFile.Close();
                             }
                         }

@@ -39,11 +39,12 @@ namespace SensusService.Probes.User
         private int _rerunDelayMS;
         private int _maximumAgeMinutes;
         private int _numScriptsAgedOut;
-        private bool _triggerRandomly;
+        private List<Tuple<int, int>> _randomTriggerWindows;
         private string _randomTriggerCallbackId;
-        private int _maximumRandomTriggerDelayMinutes;
         private Random _random;
         private List<string> _runScriptCallbackIds;
+        private List<DateTime> _runTimes;
+        private List<DateTime> _completionTimes;
 
         private readonly object _locker = new object();
 
@@ -174,42 +175,72 @@ namespace SensusService.Probes.User
             }
         }
 
-        [OnOffUiProperty("Trigger Randomly:", true, 7)]
-        public bool TriggerRandomly
+        [EntryStringUiProperty("Random Windows:", true, 7)]
+        public string RandomTriggerWindows
         {
-            get { return _triggerRandomly; }
+            get
+            {
+                if (_randomTriggerWindows.Count == 0)
+                    return "";
+                else
+                    return string.Concat(_randomTriggerWindows.Select((window, index) => (index == 0 ? "" : ",") + window.Item1 + "-" + window.Item2));
+            }
             set
             {
-                if (value != _triggerRandomly)
-                {
-                    _triggerRandomly = value;
+                if (value == RandomTriggerWindows)
+                    return;
+                
+                _randomTriggerWindows.Clear();
 
-                    if (_probe != null && _probe.Running && _enabled && _triggerRandomly) // probe can be null when deserializing, if set after this property.
-                        StartRandomTriggerCallbacksAsync();
-                    else if (SensusServiceHelper.Get() != null)  // service helper is null when deserializing
-                        StopRandomTriggerCallbackAsync();
+                try
+                {
+                    foreach (string window in value.Split(','))
+                    {
+                        string[] startEnd = window.Split('-');
+
+                        int start = int.Parse(startEnd[0]);
+                        int end = int.Parse(startEnd[1]);
+
+                        if (start > end)
+                            throw new Exception();
+                        
+                        _randomTriggerWindows.Add(new Tuple<int, int>(start, end));
+                    }
+
+                    _randomTriggerWindows = _randomTriggerWindows.OrderBy(window => window.Item1).ToList();
                 }
+                catch (Exception)
+                {
+                }
+
+                if (_probe != null && _probe.Running && _enabled && _randomTriggerWindows.Count > 0)  // probe can be null during deserialization if this property is set first
+                    StartRandomTriggerCallbacksAsync();
+                else if (SensusServiceHelper.Get() != null)  // service helper can be null when deserializing
+                    StopRandomTriggerCallbackAsync();
             }
         }
 
-        [EntryIntegerUiProperty("Maximum Random Delay (Mins.):", true, 8)]
-        public int MaximumRandomTriggerDelayMinutes
+        public List<DateTime> RunTimes
         {
-            get { return _maximumRandomTriggerDelayMinutes; }
+            get
+            {
+                return _runTimes;
+            }
             set
             {
-                if (value <= 0)
-                    value = 1;
+                _runTimes = value;
+            }
+        }
 
-                if (value != _maximumRandomTriggerDelayMinutes)
-                {        
-                    bool reschedule = value < _maximumRandomTriggerDelayMinutes && _randomTriggerCallbackId != null;
-
-                    _maximumRandomTriggerDelayMinutes = value; 
-
-                    if (reschedule)
-                        StartRandomTriggerCallbacksAsync();
-                }
+        public List<DateTime> CompletionTimes
+        {
+            get
+            {
+                return _completionTimes;
+            }
+            set
+            {
+                _completionTimes = value;
             }
         }
 
@@ -231,11 +262,12 @@ namespace SensusService.Probes.User
             _rerunDelayMS = 60000;
             _maximumAgeMinutes = 1;
             _numScriptsAgedOut = 0;
-            _triggerRandomly = false;
+            _randomTriggerWindows = new List<Tuple<int, int>>();
             _randomTriggerCallbackId = null;
-            _maximumRandomTriggerDelayMinutes = 1;
             _random = new Random();
             _runScriptCallbackIds = new List<string>();
+            _runTimes = new List<DateTime>();
+            _completionTimes = new List<DateTime>();
 
             _triggers.CollectionChanged += (o, e) =>
             {
@@ -318,7 +350,7 @@ namespace SensusService.Probes.User
             if (_rerun)
                 StartRerunCallbacksAsync();
 
-            if (_triggerRandomly)
+            if (_randomTriggerWindows.Count > 0)
                 StartRandomTriggerCallbacksAsync();
         }
 
@@ -361,11 +393,14 @@ namespace SensusService.Probes.User
         }
 
         private void StartRandomTriggerCallbacksAsync()
-        {
+        {                        
             new Thread(() =>
                 {
                     lock (_locker)
                     {
+                        if (_randomTriggerWindows.Count == 0)
+                            return;
+                        
                         StopRandomTriggerCallbacks();
 
                         SensusServiceHelper.Get().Logger.Log("Starting random script trigger callbacks.", LoggingLevel.Normal, GetType());
@@ -380,13 +415,39 @@ namespace SensusService.Probes.User
                         #error "Unrecognized platform."
                         #endif
 
+                        // find next future trigger window
+                        DateTime triggerWindowStart = default(DateTime);
+                        DateTime triggerWindowEnd = default(DateTime);
+                        DateTime now = DateTime.Now;
+                        bool foundTriggerWindow = false;
+                        foreach (Tuple<int, int> randomTriggerWindow in _randomTriggerWindows)
+                            if (randomTriggerWindow.Item1 > now.Hour)
+                            {
+                                triggerWindowStart = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0).AddHours(randomTriggerWindow.Item1);
+                                triggerWindowEnd = triggerWindowStart.AddHours(randomTriggerWindow.Item2 - randomTriggerWindow.Item1);
+                                foundTriggerWindow = true;
+                                break;
+                            }
+
+                        // if there were no future trigger windows, skip to the next day and use the first trigger window
+                        if (!foundTriggerWindow)
+                        {
+                            Tuple<int, int> firstRandomTriggerWindow = _randomTriggerWindows.First();                                
+                            triggerWindowStart = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0).AddDays(1).AddHours(firstRandomTriggerWindow.Item1);
+                            triggerWindowEnd = triggerWindowStart.AddHours(firstRandomTriggerWindow.Item2 - firstRandomTriggerWindow.Item1);
+                        }
+
+                        // schedule callback for random offset into trigger window
+                        DateTime triggerTime = triggerWindowStart.AddSeconds(_random.NextDouble() * (triggerWindowEnd - triggerWindowStart).TotalSeconds);
+                        int triggerDelayMS = (int)(triggerTime - now).TotalMilliseconds;
+
                         _randomTriggerCallbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback((callbackId, cancellationToken) =>
                             {
-                                // if we're still going, run a copy of the script so that we can retain a pristine version of the original
-                                if (_probe.Running && _enabled && _triggerRandomly)
+                                // if the probe is still running and the runner is enabled, run a copy of the script so that we can retain a pristine version of the original
+                                if (_probe.Running && _enabled && _randomTriggerWindows.Any(window => DateTime.Now.Hour >= window.Item1 && DateTime.Now.Hour <= window.Item2))  // be sure to use DateTime.Now and not the local now variable, which will be in the past.
                                     RunAsync(_script.Copy(), StartRandomTriggerCallbacksAsync);
-                            }
-                            , "Trigger Randomly", _random.Next(_maximumRandomTriggerDelayMinutes * 60000), userNotificationMessage);
+                            }                      
+                        , "Trigger Randomly", triggerDelayMS, userNotificationMessage);
                     }
                 }).Start();
         }
@@ -422,7 +483,7 @@ namespace SensusService.Probes.User
             {
                 _runScriptCallbackIds.Add(SensusServiceHelper.Get().ScheduleOneTimeCallback((callbackId, cancellationToken) =>
                         {
-                            SensusServiceHelper.Get().Logger.Log("Running \"" + _name + "\".", LoggingLevel.Normal, typeof(Script));
+                            SensusServiceHelper.Get().Logger.Log("Running \"" + _name + "\".", LoggingLevel.Normal, typeof(Script));                                                    
 
                             bool isRerun = true;
 
@@ -430,6 +491,10 @@ namespace SensusService.Probes.User
                             {
                                 script.FirstRunTimestamp = DateTimeOffset.UtcNow;
                                 isRerun = false;
+
+                                // add run time and remove all run times before the participation horizon
+                                _runTimes.Add(DateTime.Now);
+                                _runTimes.RemoveAll(runTime => runTime < _probe.Protocol.ParticipationHorizon);
                             }
 
                             // this method can be called with previous / current datum values (e.g., when the script is first triggered. it 
@@ -465,7 +530,13 @@ namespace SensusService.Probes.User
 
                             SensusServiceHelper.Get().Logger.Log("\"" + _name + "\" has finished running.", LoggingLevel.Normal, typeof(Script));
 
-                            if (_rerun && !script.Complete)
+                            if (script.Complete)
+                            {
+                                // add completion time and remove all completion times before the participation horizon
+                                _completionTimes.Add(DateTime.Now);
+                                _completionTimes.RemoveAll(completionTime => completionTime < _probe.Protocol.ParticipationHorizon);
+                            }
+                            else if (_rerun)
                                 lock (_incompleteScripts)
                                     _incompleteScripts.Enqueue(script);
 

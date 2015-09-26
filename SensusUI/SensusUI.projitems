@@ -53,6 +53,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ScriptInputGroupsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ScriptInputGroupPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\VoiceInput.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ParticipationReportPage.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Inputs\" />

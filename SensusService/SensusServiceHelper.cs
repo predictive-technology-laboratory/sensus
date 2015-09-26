@@ -97,6 +97,12 @@ namespace SensusService
         private static readonly string LOG_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
         private static readonly string SERIALIZATION_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_service_helper.json");
 
+        #if DEBUG
+        public const int HEALTH_TEST_DELAY_MS = 30000;
+        #elif RELEASE
+        public const int HEALTH_TEST_DELAY_MS = 300000;
+        #endif
+
         public static readonly JsonSerializerSettings JSON_SERIALIZER_SETTINGS = new JsonSerializerSettings
         {
             PreserveReferencesHandling = PreserveReferencesHandling.Objects,
@@ -186,9 +192,6 @@ namespace SensusService
 
         public static SensusServiceHelper Get()
         {
-            if (SINGLETON == null)
-                Console.Error.WriteLine("WARNING:  Tried to call SensusServiceHelper.Get() but SINGLETON was null. Stacktrace:  " + Environment.NewLine + Environment.StackTrace);
-            
             return SINGLETON;
         }
 
@@ -279,7 +282,6 @@ namespace SensusService
         private ObservableCollection<Protocol> _registeredProtocols;
         private List<string> _runningProtocolIds;
         private string _healthTestCallbackId;
-        private int _healthTestDelayMS;
         private Dictionary<string, ScheduledCallback> _idCallback;
         private SHA256Managed _hasher;
         private List<PointOfInterest> _pointsOfInterest;
@@ -300,41 +302,6 @@ namespace SensusService
         public List<string> RunningProtocolIds
         {
             get{ return _runningProtocolIds; }
-        }
-
-        [EntryIntegerUiProperty("Health Test Delay (MS):", true, 9)]
-        public int HealthTestDelayMS
-        {
-            get { return _healthTestDelayMS; }
-            set
-            {
-                if (value <= 1000)
-                    value = 1000;
-                
-                if (value != _healthTestDelayMS)
-                {
-                    _healthTestDelayMS = value;
-
-                    if (_healthTestCallbackId != null)
-                        _healthTestCallbackId = RescheduleRepeatingCallback(_healthTestCallbackId, _healthTestDelayMS, _healthTestDelayMS);
-
-                    SaveAsync();
-                }
-            }
-        }
-
-        [ListUiProperty("Logging Level:", true, 11, new object[] { LoggingLevel.Off, LoggingLevel.Normal, LoggingLevel.Verbose, LoggingLevel.Debug })]
-        public LoggingLevel LoggingLevel
-        {
-            get { return _logger.Level; }
-            set
-            {
-                if (value != _logger.Level)
-                {
-                    _logger.Level = value; 
-                    SaveAsync();
-                }
-            }
         }
 
         public List<PointOfInterest> PointsOfInterest
@@ -369,7 +336,6 @@ namespace SensusService
             _registeredProtocols = new ObservableCollection<Protocol>();
             _runningProtocolIds = new List<string>();
             _healthTestCallbackId = null;
-            _healthTestDelayMS = 300000;
             _idCallback = new Dictionary<string, ScheduledCallback>();
             _hasher = new SHA256Managed();
             _pointsOfInterest = new List<PointOfInterest>();
@@ -382,7 +348,7 @@ namespace SensusService
             #elif RELEASE
             LoggingLevel loggingLevel = LoggingLevel.Normal;
             #else
-            #error "Unrecognized compilation mode."
+            #error "Unrecognized configuration."
             #endif
 
             _logger = new Logger(LOG_PATH, loggingLevel, Console.Error);
@@ -442,6 +408,8 @@ namespace SensusService
 
         public abstract void ShareFileAsync(string path, string subject);
 
+        public abstract void SendEmailAsync(string toAddress, string subject, string message);
+
         public abstract void TextToSpeechAsync(string text, Action callback);
 
         public abstract void RunVoicePromptAsync(string prompt, Action<string> callback);
@@ -457,6 +425,8 @@ namespace SensusService
         public abstract void BringToForeground();
 
         public abstract void UpdateApplicationStatus(string status);
+
+        public abstract float GetFullActivityHealthTestsPerDay(Protocol protocol);
 
         /// <summary>
         /// The user can enable all probes at once. When this is done, it doesn't make sense to enable, e.g., the
@@ -484,7 +454,7 @@ namespace SensusService
                 SensusServiceHelper.Get().UpdateApplicationStatus(_runningProtocolIds.Count + " protocol" + (_runningProtocolIds.Count == 1 ? " is " : "s are") + " running");
 
                 if (_healthTestCallbackId == null)
-                    _healthTestCallbackId = ScheduleRepeatingCallback(TestHealth, "Test Health", _healthTestDelayMS, _healthTestDelayMS);
+                    _healthTestCallbackId = ScheduleRepeatingCallback(TestHealth, "Test Health", HEALTH_TEST_DELAY_MS, HEALTH_TEST_DELAY_MS);
             }
         }
 
@@ -593,17 +563,17 @@ namespace SensusService
             }
         }
 
-        public string ScheduleOneTimeCallback(Action<string, CancellationToken> callback, string name, int delay)
+        public string ScheduleOneTimeCallback(Action<string, CancellationToken> callback, string name, int delayMS)
         {
-            return ScheduleOneTimeCallback(callback, name, delay, null);
+            return ScheduleOneTimeCallback(callback, name, delayMS, null);
         }
 
-        public string ScheduleOneTimeCallback(Action<string, CancellationToken> callback, string name, int delay, string userNotificationMessage)
+        public string ScheduleOneTimeCallback(Action<string, CancellationToken> callback, string name, int delayMS, string userNotificationMessage)
         {
             lock (_idCallback)
             {
                 string callbackId = AddCallback(callback, name, userNotificationMessage);
-                ScheduleOneTimeCallback(callbackId, delay, userNotificationMessage);
+                ScheduleOneTimeCallback(callbackId, delayMS, userNotificationMessage);
                 return callbackId;
             }
         }
@@ -952,7 +922,7 @@ namespace SensusService
                         break;
                     
                     if (_runningProtocolIds.Contains(protocol.Id))
-                        protocol.TestHealth();
+                        protocol.TestHealth(false);
                 }
             }
         }
@@ -1018,15 +988,6 @@ namespace SensusService
             catch (Exception ex)
             {
                 Console.Error.WriteLine("Failed to stop service helper:  " + ex.Message);
-            }
-
-            try
-            {
-                _logger.Close();
-            }
-            catch (Exception ex)
-            {
-                Console.Error.WriteLine("Failed to close logger:  " + ex.Message);
             }
 
             SINGLETON = null;

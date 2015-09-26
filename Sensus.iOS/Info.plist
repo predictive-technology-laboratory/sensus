@@ -5,7 +5,7 @@
 	<key>CFBundleDisplayName</key>
 	<string>Sensus</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.UVa.SensusHealthKit</string>
+	<string>edu.virginia.sie.ptl.sensus</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MinimumOSVersion</key>
@@ -75,7 +75,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>4.1.0</string>
+	<string>4.4.1</string>
 	<key>XSAppIconAssets</key>
 	<string>Resources/Images.xcassets/AppIcons.appiconset</string>
 	<key>FacebookAppID</key>
@@ -83,6 +83,6 @@
 	<key>FacebookDisplayName</key>
 	<string>Sensus</string>
 	<key>CFBundleShortVersionString</key>
-	<string>4.1.0</string>
+	<string>4.4.1</string>
 </dict>
 </plist>

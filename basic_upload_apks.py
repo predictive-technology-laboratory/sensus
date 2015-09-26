@@ -33,17 +33,20 @@ import sys
 from apiclient import sample_tools
 from oauth2client import client
 
-TRACK = 'beta'  # Can be 'alpha', beta', 'production' or 'rollout'
-
 # Declare command-line flags.
 argparser = argparse.ArgumentParser(add_help=False)
+
 argparser.add_argument('package_name',
                        help='The package name. Example: com.android.sample')
+
 argparser.add_argument('apk_file',
                        nargs='?',
                        default='test.apk',
                        help='The path to the APK file to upload.')
 
+argparser.add_argument('track',
+                       default='beta',
+                       help='Which track to upload the APK to. Can be alpha, beta, production, or rollout.')
 
 def main(argv):
   # Authenticate and construct service.
@@ -73,7 +76,7 @@ def main(argv):
 
     track_response = service.edits().tracks().update(
         editId=edit_id,
-        track=TRACK,
+        track=flags.track,
         packageName=package_name,
         body={u'versionCodes': [apk_response['versionCode']]}).execute()
 

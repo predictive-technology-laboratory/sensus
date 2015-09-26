@@ -20,7 +20,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\SensusException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ImpreciseDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LoggingLevel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\RunningAppsDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\SmsDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\TelephonyDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\TelephonyState.cs" />
@@ -31,7 +30,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Device\ScreenDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\CompassProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\ListeningProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\RunningAppsProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\SmsProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\BluetoothDeviceProximityProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\LightProbe.cs" />
@@ -102,12 +100,15 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\PollingTelephonyProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\AmbientTemperatureDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\ListeningAmbientTemperatureProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Health\HealthDatum.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Health\HealthProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\HeightDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\BiologicalSexDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\BirthdateDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\BloodTypeDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\BiologicalSex.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\BloodType.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Probes\Health\" />
   </ItemGroup>
 </Project>

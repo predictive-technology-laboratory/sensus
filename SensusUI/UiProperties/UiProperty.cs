@@ -27,6 +27,32 @@ namespace SensusUI.UiProperties
     public abstract class UiProperty : Attribute
     {
         /// <summary>
+        /// Gets the UiProperty attribute associated with a property. For some reason, PropertyInfo.GetCustomAttributes doesn't return the 
+        /// UiProperty attribute placed on abstract properties that are overridden.
+        /// </summary>
+        /// <returns>The user interface property attribute.</returns>
+        /// <param name="property">Property.</param>
+        public static UiProperty GetUiPropertyAttribute(PropertyInfo property)
+        {
+            if (property == null)
+                return null;
+            
+            UiProperty attribute = property.GetCustomAttribute<UiProperty>();
+
+            if (attribute == null)
+            {
+                Type parentType = property.ReflectedType.BaseType;
+
+                if (parentType == null)
+                    return null;
+                else
+                    return GetUiPropertyAttribute(parentType.GetProperty(property.Name));
+            }
+            else
+                return attribute;
+        }
+
+        /// <summary>
         /// Gets a list of StackLayout objects associated with properties in an object that have been 
         /// decorated with a UiProperty attribute.
         /// </summary>
@@ -36,11 +62,12 @@ namespace SensusUI.UiProperties
         {
             List<StackLayout> propertyStacks = new List<StackLayout>();
 
-            List<Tuple<PropertyInfo, UiProperty>> propertyUiElements = o.GetType()
-                                                                        .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                                                                        .Select(p => new Tuple<PropertyInfo, UiProperty>(p, Attribute.GetCustomAttribute(p, typeof(UiProperty), true) as UiProperty))
-                                                                        .Where(pp => pp.Item2 != null)
-                                                                        .OrderBy(pp => pp.Item2._order).ToList();
+            List<Tuple<PropertyInfo, UiProperty>> propertyUiElements = 
+                o.GetType()
+                .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                .Select(p => new Tuple<PropertyInfo, UiProperty>(p, GetUiPropertyAttribute(p)))
+                .Where(p => p.Item2 != null)
+                .OrderBy(p => p.Item2._order).ToList();
 
             foreach (Tuple<PropertyInfo, UiProperty> propertyUiElement in propertyUiElements)
             {
@@ -175,10 +202,10 @@ namespace SensusUI.UiProperties
                     picker.SelectedIndex = items.IndexOf(propertyUiElement.Item1.GetValue(o));
 
                     picker.SelectedIndexChanged += (oo, ee) =>
-                        {
-                            if (picker.SelectedIndex >= 0)
-                                propertyUiElement.Item1.SetValue(o, items[picker.SelectedIndex]);
-                        };
+                    {
+                        if (picker.SelectedIndex >= 0)
+                            propertyUiElement.Item1.SetValue(o, items[picker.SelectedIndex]);
+                    };
 
                     view = picker;
                 }
