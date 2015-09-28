@@ -56,6 +56,8 @@ Global
 		Release|iPhoneSimulator = Release|iPhoneSimulator
 		Release|Mixed Platforms = Release|Mixed Platforms
 		Release|x86 = Release|x86
+		Local Unit Testing|Any CPU = Local Unit Testing|Any CPU
+		Xamarin Test Cloud|Any CPU = Xamarin Test Cloud|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{07F0C017-BEA0-4C03-B762-EE3C7F140E8A}.Ad-Hoc|Any CPU.ActiveCfg = Release|Any CPU
@@ -100,6 +102,8 @@ Global
 		{07F0C017-BEA0-4C03-B762-EE3C7F140E8A}.Debug|x86.ActiveCfg = Debug|x86
 		{07F0C017-BEA0-4C03-B762-EE3C7F140E8A}.Debug|x86.Build.0 = Debug|x86
 		{07F0C017-BEA0-4C03-B762-EE3C7F140E8A}.Debug|x86.Deploy.0 = Debug|x86
+		{07F0C017-BEA0-4C03-B762-EE3C7F140E8A}.Local Unit Testing|Any CPU.ActiveCfg = Debug|Any CPU
+		{07F0C017-BEA0-4C03-B762-EE3C7F140E8A}.Local Unit Testing|Any CPU.Build.0 = Debug|Any CPU
 		{07F0C017-BEA0-4C03-B762-EE3C7F140E8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{07F0C017-BEA0-4C03-B762-EE3C7F140E8A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{07F0C017-BEA0-4C03-B762-EE3C7F140E8A}.Release|Any CPU.Deploy.0 = Release|Any CPU
@@ -114,6 +118,8 @@ Global
 		{07F0C017-BEA0-4C03-B762-EE3C7F140E8A}.Release|x86.ActiveCfg = Release|x86
 		{07F0C017-BEA0-4C03-B762-EE3C7F140E8A}.Release|x86.Build.0 = Release|x86
 		{07F0C017-BEA0-4C03-B762-EE3C7F140E8A}.Release|x86.Deploy.0 = Release|x86
+		{07F0C017-BEA0-4C03-B762-EE3C7F140E8A}.Xamarin Test Cloud|Any CPU.ActiveCfg = Debug|Any CPU
+		{07F0C017-BEA0-4C03-B762-EE3C7F140E8A}.Xamarin Test Cloud|Any CPU.Build.0 = Debug|Any CPU
 		{7C2C81C9-7DF9-4676-B6DC-738CEB5990D9}.Ad-Hoc|Any CPU.ActiveCfg = Release|Any CPU
 		{7C2C81C9-7DF9-4676-B6DC-738CEB5990D9}.Ad-Hoc|Any CPU.Build.0 = Release|Any CPU
 		{7C2C81C9-7DF9-4676-B6DC-738CEB5990D9}.Ad-Hoc|ARM.ActiveCfg = Debug|Any CPU
@@ -150,6 +156,8 @@ Global
 		{7C2C81C9-7DF9-4676-B6DC-738CEB5990D9}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
 		{7C2C81C9-7DF9-4676-B6DC-738CEB5990D9}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{7C2C81C9-7DF9-4676-B6DC-738CEB5990D9}.Debug|x86.Build.0 = Debug|Any CPU
+		{7C2C81C9-7DF9-4676-B6DC-738CEB5990D9}.Local Unit Testing|Any CPU.ActiveCfg = Local Unit Testing|Any CPU
+		{7C2C81C9-7DF9-4676-B6DC-738CEB5990D9}.Local Unit Testing|Any CPU.Build.0 = Local Unit Testing|Any CPU
 		{7C2C81C9-7DF9-4676-B6DC-738CEB5990D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C2C81C9-7DF9-4676-B6DC-738CEB5990D9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7C2C81C9-7DF9-4676-B6DC-738CEB5990D9}.Release|ARM.ActiveCfg = Release|Any CPU
@@ -162,6 +170,8 @@ Global
 		{7C2C81C9-7DF9-4676-B6DC-738CEB5990D9}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{7C2C81C9-7DF9-4676-B6DC-738CEB5990D9}.Release|x86.ActiveCfg = Release|Any CPU
 		{7C2C81C9-7DF9-4676-B6DC-738CEB5990D9}.Release|x86.Build.0 = Release|Any CPU
+		{7C2C81C9-7DF9-4676-B6DC-738CEB5990D9}.Xamarin Test Cloud|Any CPU.ActiveCfg = Xamarin Test Cloud|Any CPU
+		{7C2C81C9-7DF9-4676-B6DC-738CEB5990D9}.Xamarin Test Cloud|Any CPU.Build.0 = Xamarin Test Cloud|Any CPU
 		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Ad-Hoc|Any CPU.ActiveCfg = Ad-Hoc|iPhone
 		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Ad-Hoc|Any CPU.Build.0 = Ad-Hoc|iPhone
 		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Ad-Hoc|ARM.ActiveCfg = Ad-Hoc|iPhone
@@ -198,6 +208,8 @@ Global
 		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Debug|Mixed Platforms.Build.0 = Debug|iPhoneSimulator
 		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Debug|x86.ActiveCfg = Debug|iPhoneSimulator
 		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Debug|x86.Build.0 = Debug|iPhoneSimulator
+		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Local Unit Testing|Any CPU.ActiveCfg = Local Unit Testing|iPhone
+		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Local Unit Testing|Any CPU.Build.0 = Local Unit Testing|iPhone
 		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Release|Any CPU.ActiveCfg = Release|iPhoneSimulator
 		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Release|Any CPU.Build.0 = Release|iPhoneSimulator
 		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Release|ARM.ActiveCfg = Release|iPhoneSimulator
@@ -210,6 +222,8 @@ Global
 		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Release|Mixed Platforms.Build.0 = Release|iPhoneSimulator
 		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Release|x86.ActiveCfg = Release|iPhoneSimulator
 		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Release|x86.Build.0 = Release|iPhoneSimulator
+		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Xamarin Test Cloud|Any CPU.ActiveCfg = Xamarin Test Cloud|iPhone
+		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Xamarin Test Cloud|Any CPU.Build.0 = Xamarin Test Cloud|iPhone
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Ad-Hoc|Any CPU.ActiveCfg = Release|Any CPU
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Ad-Hoc|Any CPU.Build.0 = Release|Any CPU
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Ad-Hoc|Any CPU.Deploy.0 = Release|Any CPU
@@ -248,6 +262,8 @@ Global
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Debug|x86.ActiveCfg = Debug|x86
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Debug|x86.Build.0 = Debug|x86
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Debug|x86.Deploy.0 = Debug|x86
+		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Local Unit Testing|Any CPU.ActiveCfg = Local Unit Testing|Any CPU
+		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Local Unit Testing|Any CPU.Build.0 = Local Unit Testing|Any CPU
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Release|Any CPU.Deploy.0 = Release|Any CPU
@@ -260,6 +276,8 @@ Global
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Release|x86.ActiveCfg = Release|x86
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Release|x86.Build.0 = Release|x86
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Release|x86.Deploy.0 = Release|x86
+		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Xamarin Test Cloud|Any CPU.ActiveCfg = Xamarin Test Cloud|Any CPU
+		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Xamarin Test Cloud|Any CPU.Build.0 = Xamarin Test Cloud|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
