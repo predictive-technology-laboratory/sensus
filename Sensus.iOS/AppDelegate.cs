@@ -50,6 +50,16 @@ namespace Sensus.iOS
             FormsMaps.Init();
             MapExtendRenderer.Init();
 
+            #if UNIT_TESTING
+            Forms.ViewInitialized += (sender, e) =>
+            {
+                if (!string.IsNullOrWhiteSpace(e.View.StyleId))
+                    e.NativeView.AccessibilityIdentifier = e.View.StyleId;
+            };
+
+            Calabash.Start();
+            #endif
+
             ToastNotificatorImplementation.Init();
 
             App app = new App();

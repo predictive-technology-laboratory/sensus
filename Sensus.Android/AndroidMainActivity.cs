@@ -89,6 +89,14 @@ namespace Sensus.Android
             FormsMaps.Init(this, savedInstanceState);
             MapExtendRenderer.Init(this, savedInstanceState);
 
+            #if UNIT_TESTING
+            Forms.ViewInitialized += (sender, e) =>
+            {
+                if (!string.IsNullOrWhiteSpace(e.View.StyleId))
+                    e.NativeView.ContentDescription = e.View.StyleId;
+            };
+            #endif
+
             _app = new App();
             LoadApplication(_app);
 
