@@ -37,6 +37,11 @@
     <AndroidLinkMode>None</AndroidLinkMode>
     <AndroidSupportedAbis>armeabi;armeabi-v7a;x86</AndroidSupportedAbis>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="BeforeBuild" command="touch Assets/UnitTestingProtocol.sensus" workingdir="${ProjectDir}" externalConsole="True" />
+      </CustomCommands>
+    </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
@@ -49,6 +54,11 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="BeforeBuild" command="touch Assets/UnitTestingProtocol.sensus" workingdir="${ProjectDir}" externalConsole="True" />
+      </CustomCommands>
+    </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -90,8 +100,7 @@
     <EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
     <CustomCommands>
       <CustomCommands>
-        <Command type="BeforeBuild" command="../Sensus.UiTest/UnitTestingProtocols/PromptForUnitTestingProtocol.sh" workingdir="Assets/UnitTestingProtocols" externalConsole="True" />
-        <Command type="AfterBuild" command="cat /dev/null Assets/UnitTestingProtocols/UnitTestingProtocol.sensus" workingdir="" />
+        <Command type="BeforeBuild" command="../Sensus.UiTest/UnitTestingProtocols/PromptForUnitTestingProtocol.sh" workingdir="${ProjectDir}" externalConsole="True" />
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>

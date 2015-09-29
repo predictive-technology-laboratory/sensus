@@ -122,6 +122,7 @@ namespace Sensus.Android
                 // display service helper properties on the main page
                 _app.SensusMainPage.DisplayServiceHelper(e.Binder.SensusServiceHelper);
 
+                // if we're unit testing, try to load up the unit testing protocol
                 #if UNIT_TESTING
                 try
                 {
@@ -137,7 +138,9 @@ namespace Sensus.Android
                 }
                 catch (Exception ex)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Failed to open unit testing protocol:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    string message = "Failed to open unit testing protocol:  " + ex.Message;
+                    SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+                    throw new Exception(message);
                 }
                 #endif
             };
