@@ -90,7 +90,7 @@
     <EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
     <CustomCommands>
       <CustomCommands>
-        <Command type="BeforeBuild" command="Assets/UnitTestingProtocols/PromptForUnitTestingProtocol.sh" workingdir="Assets/UnitTestingProtocols" externalConsole="True" />
+        <Command type="BeforeBuild" command="../Sensus.UiTest/UnitTestingProtocols/PromptForUnitTestingProtocol.sh" workingdir="Assets/UnitTestingProtocols" externalConsole="True" />
         <Command type="AfterBuild" command="cat /dev/null Assets/UnitTestingProtocols/UnitTestingProtocol.sensus" workingdir="" />
       </CustomCommands>
     </CustomCommands>
@@ -391,10 +391,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Assets\" />
-    <Folder Include="Assets\UnitTestingProtocols\" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\UnitTestingProtocols\UnitTestingProtocol.sensus" />
-    <AndroidAsset Include="Assets\UnitTestingProtocols\PromptForUnitTestingProtocol.sh" />
+    <AndroidAsset Include="Assets\UnitTestingProtocol.sensus" />
   </ItemGroup>
 </Project>
