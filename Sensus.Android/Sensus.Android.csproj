@@ -88,6 +88,12 @@
     <AndroidSupportedAbis>armeabi;armeabi-v7a;x86</AndroidSupportedAbis>
     <AndroidLinkMode>None</AndroidLinkMode>
     <EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="BeforeBuild" command="Assets/UnitTestingProtocols/PromptForUnitTestingProtocol.sh" workingdir="Assets/UnitTestingProtocols" externalConsole="True" />
+        <Command type="AfterBuild" command="cat /dev/null Assets/UnitTestingProtocols/UnitTestingProtocol.sensus" workingdir="" />
+      </CustomCommands>
+    </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Xamarin Test Cloud|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -297,7 +303,6 @@
     <None Include="AndroidClassDiagram.cd" />
     <None Include="packages.config" />
     <None Include="Resources\AboutResources.txt" />
-    <None Include="Assets\AboutAssets.txt" />
     <None Include="Sensus.licenseheader" />
     <None Include="Properties\AndroidManifest.xml">
       <SubType>Designer</SubType>
@@ -383,5 +388,13 @@
     <AndroidResource Include="..\SensusUI\Icons\share.png">
       <Link>Resources\drawable\share.png</Link>
     </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Assets\" />
+    <Folder Include="Assets\UnitTestingProtocols\" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\UnitTestingProtocols\UnitTestingProtocol.sensus" />
+    <AndroidAsset Include="Assets\UnitTestingProtocols\PromptForUnitTestingProtocol.sh" />
   </ItemGroup>
 </Project>

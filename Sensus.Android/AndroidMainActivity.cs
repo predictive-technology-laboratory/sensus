@@ -120,7 +120,26 @@ namespace Sensus.Android
                 e.Binder.SensusServiceHelper.SetMainActivity(this);
 
                 // display service helper properties on the main page
-                _app.SensusMainPage.DisplayServiceHelper(e.Binder.SensusServiceHelper);                                     
+                _app.SensusMainPage.DisplayServiceHelper(e.Binder.SensusServiceHelper);
+
+                #if UNIT_TESTING
+                try
+                {
+                    using (Stream protocolFile = Assets.Open("UnitTestingProtocol.sensus"))
+                    using (MemoryStream protocolStream = new MemoryStream())
+                    {
+                        protocolFile.CopyTo(protocolStream);
+                        protocolFile.Close();
+                        byte[] protocolBytes = protocolStream.ToArray();
+                        protocolStream.Close();
+                        Protocol.DisplayFromBytesAsync(protocolBytes);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Failed to open unit testing protocol:  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
+                #endif
             };
 
             _serviceConnection.ServiceDisconnected += (o, e) =>
