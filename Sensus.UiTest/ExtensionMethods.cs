@@ -30,6 +30,7 @@ namespace Sensus.UiTest
             app.WaitForElement(element, timeout: timeout);
             app.ClearText(element);
             app.EnterText(element, text);
+            app.DismissKeyboard();
         }
 
         public static void WaitFor(this IApp app, TimeSpan duration)

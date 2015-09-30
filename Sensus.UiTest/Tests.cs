@@ -28,12 +28,14 @@ namespace Sensus.UiTest
         private const string PROTOCOL_EDIT = "Edit";
         private const string PROTOCOL_STATUS = "Status";
         private const string PROTOCOL_STOP = "Stop";
+        private const string PROTOCOL_STOP_CONFIRM = "Yes";
         private const string PROTOCOL_CONSENT_SUBMIT_BUTTON = "NextButton";
         private const string PROTOCOL_CONSENT_MESSAGE = "ConsentMessage";
         private const string PROTOCOL_CONSENT_CODE = "ConsentCode";
         private const string LOCAL_DATA_STORE_EDIT = "Local Data Store";
         private const string REMOTE_DATA_STORE_EDIT = "Remote Data Store";
         private const string DATA_STORE_COMMIT_DELAY = "Commit Delay (MS): View";
+        private const string DATA_STORE_OK = "OK";
 
         private IApp _app;
 
@@ -67,12 +69,12 @@ namespace Sensus.UiTest
             TimeSpan localDataStoreDelay = new TimeSpan(0, 0, 5);
             _app.WaitForElementThenTap(LOCAL_DATA_STORE_EDIT);
             _app.WaitForElementThenEnterText(DATA_STORE_COMMIT_DELAY, localDataStoreDelay.TotalMilliseconds.ToString());
-            _app.Back();  // to protocol page
+            _app.WaitForElementThenTap(DATA_STORE_OK);
 
             TimeSpan remoteDataStoreDelay = new TimeSpan(0, 0, 15);
             _app.WaitForElementThenTap(REMOTE_DATA_STORE_EDIT);
             _app.WaitForElementThenEnterText(DATA_STORE_COMMIT_DELAY, remoteDataStoreDelay.TotalMilliseconds.ToString());
-            _app.Back();  // to protocol page
+            _app.WaitForElementThenTap(DATA_STORE_OK);
             _app.Back();  // to protocols page
 
             // start protocol, wait for remote data store to commit data, and then check status
@@ -84,6 +86,7 @@ namespace Sensus.UiTest
         private void TapProtocol()
         {
             _app.WaitForElementThenTap(UNIT_TESTING_PROTOCOL_NAME);
+            _app.WaitForElement(PROTOCOL_EDIT);  // wait for action sheet to come up
         }
 
         private void StartProtocol()
@@ -122,9 +125,9 @@ namespace Sensus.UiTest
             _app.SetOrientationLandscape();
             _app.Screenshot(screenshotTitle);
             string[] errorWarningMisc = _app.Query(statusLinesQuery).Select(c => c.Text).ToArray();
-            Assert.Equals(errorWarningMisc.Length, 3);
+            Assert.AreEqual(errorWarningMisc.Length, 3);
             foreach (string line in errorWarningMisc)
-                Assert.IsEmpty(line);
+                Assert.IsEmpty(line.Substring(line.IndexOf(":") + 1).Trim());
 
             _app.SetOrientationPortrait();
             _app.Back();  // to protocols page
@@ -134,6 +137,7 @@ namespace Sensus.UiTest
         {
             TapProtocol();
             _app.WaitForElementThenTap(PROTOCOL_STOP);
+            _app.WaitForElementThenTap(PROTOCOL_STOP_CONFIRM);
         }
     }
 }
