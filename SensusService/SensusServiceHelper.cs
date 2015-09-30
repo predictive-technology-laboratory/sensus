@@ -343,7 +343,7 @@ namespace SensusService
             if (!Directory.Exists(SHARE_DIRECTORY))
                 Directory.CreateDirectory(SHARE_DIRECTORY); 
 
-            #if DEBUG
+            #if DEBUG || UNIT_TESTING
             LoggingLevel loggingLevel = LoggingLevel.Debug;
             #elif RELEASE
             LoggingLevel loggingLevel = LoggingLevel.Normal;
