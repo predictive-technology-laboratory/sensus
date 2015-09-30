@@ -20,13 +20,11 @@ using Xamarin.UITest;
 
 namespace Sensus.UiTest
 {
-    [TestFixture]
     public class iOSTests : Tests
     {
         private string _appPath { get; set; }
 
-        [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
             App = ConfigureApp.iOS.StartApp();
         }

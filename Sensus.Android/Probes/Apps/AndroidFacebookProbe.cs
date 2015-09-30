@@ -88,6 +88,7 @@ namespace Sensus.Android.Probes.Apps
             }
 
             _loginWait.Reset();
+            bool loginCancelled = false;
             string accessTokenError = null;
 
             (SensusServiceHelper.Get() as AndroidSensusServiceHelper).GetMainActivityAsync(true, mainActivity =>
@@ -125,6 +126,7 @@ namespace Sensus.Android.Probes.Apps
                                 {
                                     SensusServiceHelper.Get().Logger.Log("Facebook login cancelled.", SensusService.LoggingLevel.Normal, GetType());
                                     AccessToken.CurrentAccessToken = null;
+                                    loginCancelled = true;
                                     _loginWait.Set();
                                 },
 
@@ -165,7 +167,13 @@ namespace Sensus.Android.Probes.Apps
             {
                 string message = "Failed to obtain access token.";
                 SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
-                throw new Exception(message);
+
+                // if the user cancelled the login, don't prompt them again
+                if (loginCancelled)
+                    throw new NotSupportedException(message + " User cancelled login.");
+                // if the user did not cancel the login, allow the login to be presented again when the health test is run
+                else
+                    throw new Exception(message);
             }
         }
 

@@ -91,7 +91,14 @@ namespace SensusUI.Inputs
         [JsonIgnore]
         public virtual View View
         {
-            get { return _view; }
+            get
+            {
+                // set the style ID on the view so that we can retrieve it when unit testing
+                if (_view != null)
+                    _view.StyleId = _name;
+
+                return _view; 
+            }
             protected set { _view = value; }
         }
 

@@ -61,6 +61,7 @@
     <Compile Include="Tests.cs" />
     <Compile Include="iOSTests.cs" />
     <Compile Include="AndroidTests.cs" />
+    <Compile Include="ExtensionMethods.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sensus.Android\Sensus.Android.csproj">

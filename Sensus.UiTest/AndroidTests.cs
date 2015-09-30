@@ -20,11 +20,9 @@ using Xamarin.UITest;
 
 namespace Sensus.UiTest
 {
-    [TestFixture]
     public class AndroidTests : Tests
     {
-        [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
             App = ConfigureApp.Android.StartApp();
         }

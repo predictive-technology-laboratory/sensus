@@ -27,6 +27,8 @@ using Xamarin.Forms.Platform.Android;
 using Xamarin.Facebook;
 using Xamarin;
 using Xam.Plugin.MapExtend.Droid;
+using SensusService.Probes;
+using SensusService.Probes.Apps;
 
 [assembly:MetaData("com.facebook.sdk.ApplicationId", Value = "@string/app_id")]
 
@@ -122,18 +124,29 @@ namespace Sensus.Android
                 // display service helper properties on the main page
                 _app.SensusMainPage.DisplayServiceHelper(e.Binder.SensusServiceHelper);
 
-                // if we're unit testing, try to load up the unit testing protocol
+                // if we're unit testing, try to load the unit testing protocol from the embedded assets
                 #if UNIT_TESTING
                 try
                 {
-                    using (Stream protocolFile = Assets.Open("UnitTestingProtocol.sensus"))
-                    using (MemoryStream protocolStream = new MemoryStream())
+                    if (SensusServiceHelper.Get().RegisteredProtocols.Count == 0)
                     {
-                        protocolFile.CopyTo(protocolStream);
-                        protocolFile.Close();
-                        byte[] protocolBytes = protocolStream.ToArray();
-                        protocolStream.Close();
-                        Protocol.DisplayFromBytesAsync(protocolBytes);
+                        using (Stream protocolFile = Assets.Open("UnitTestingProtocol.sensus"))
+                        using (MemoryStream protocolStream = new MemoryStream())
+                        {
+                            protocolFile.CopyTo(protocolStream);
+                            protocolFile.Close();
+                            string protocolJSON = SensusServiceHelper.Decrypt(protocolStream.ToArray());
+                            Protocol.DeserializeAsync(protocolJSON, protocol =>
+                                {
+                                    // unit testing is problematic with probes that take us away from Sensus, since it's difficult to automate UI 
+                                    // interaction outside of Sensus. disable any probes that might take us away from Sensus.
+                                    foreach (Probe probe in protocol.Probes)
+                                        if (probe is FacebookProbe)
+                                            probe.Enabled = false;
+
+                                    Protocol.DisplayAndStartAsync(protocol);
+                                });
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -192,7 +205,7 @@ namespace Sensus.Android
                         try
                         {
                             if (intent.Scheme == "http" || intent.Scheme == "https")
-                                Protocol.DisplayFromWebUriAsync(new Uri(dataURI.ToString()));
+                                Protocol.DeserializeAsync(new Uri(dataURI.ToString()), Protocol.DisplayAndStartAsync);
                             else if (intent.Scheme == "content" || intent.Scheme == "file")
                             {
                                 byte[] bytes = null;
@@ -211,7 +224,7 @@ namespace Sensus.Android
                                 }
 
                                 if (bytes != null)
-                                    Protocol.DisplayFromBytesAsync(bytes);
+                                    Protocol.DeserializeAsync(bytes, Protocol.DisplayAndStartAsync);
                             }
                             else
                                 SensusServiceHelper.Get().Logger.Log("Sensus didn't know what to do with URI \"" + dataURI + "\".", LoggingLevel.Normal, GetType());

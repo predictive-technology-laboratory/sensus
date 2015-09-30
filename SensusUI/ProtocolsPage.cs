@@ -131,7 +131,7 @@ namespace SensusUI
                                     });
                             });
                     }
-                }                        
+                }
             };
             
             Bind();
@@ -140,10 +140,7 @@ namespace SensusUI
 
             ToolbarItems.Add(new ToolbarItem(null, "plus.png", () =>
                     {
-                        Protocol.CreateAsync("New Protocol", protocol =>
-                            {
-                                UiBoundSensusServiceHelper.Get(true).RegisterProtocol(protocol);
-                            });
+                        Protocol.CreateAsync("New Protocol", null);
                     }));
         }
 
