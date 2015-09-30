@@ -18,6 +18,7 @@ else
 	destination="./Assets/UnitTestingProtocol.sensus"
 
 	echo "Copying $filepath to $destination"
+	echo
 	cp $filepath $destination
 
 	if [ $? -eq 0 ]; then

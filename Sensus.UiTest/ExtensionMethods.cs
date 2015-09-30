@@ -19,15 +19,16 @@ namespace Sensus.UiTest
 {
     public static class ExtensionMethods
     {
-        public static void WaitForElementThenTap(this IApp app, string element, TimeSpan? timeout)
+        public static void WaitForElementThenTap(this IApp app, string element, TimeSpan? timeout = null)
         {
             app.WaitForElement(element, timeout: timeout);
             app.Tap(element);
         }
 
-        public static void WaitForElementThenEnterText(this IApp app, string element, string text, TimeSpan? timeout)
+        public static void WaitForElementThenEnterText(this IApp app, string element, string text, TimeSpan? timeout = null)
         {
             app.WaitForElement(element, timeout: timeout);
+            app.ClearText(element);
             app.EnterText(element, text);
         }
 
@@ -37,7 +38,7 @@ namespace Sensus.UiTest
             {
                 app.WaitForElement(Guid.NewGuid().ToString(), timeout: duration);
             }
-            catch (TimeoutException)
+            catch (Exception)
             {
             }
         }

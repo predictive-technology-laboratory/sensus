@@ -23,12 +23,17 @@ namespace Sensus.UiTest
     [TestFixture]
     public abstract class Tests
     {
-        private const string PROTOCOL_START_NEXT_BUTTON = "NextButton";
-        private const string PROTOCOL_START_CONSENT_MESSAGE = "ConsentMessage";
-        private const string PROTOCOL_CONSENT_CODE = "ConsentCode";
         private const string UNIT_TESTING_PROTOCOL_NAME = "Unit Testing Protocol";
+        private const string PROTOCOL_START = "Start";
+        private const string PROTOCOL_EDIT = "Edit";
         private const string PROTOCOL_STATUS = "Status";
         private const string PROTOCOL_STOP = "Stop";
+        private const string PROTOCOL_CONSENT_SUBMIT_BUTTON = "NextButton";
+        private const string PROTOCOL_CONSENT_MESSAGE = "ConsentMessage";
+        private const string PROTOCOL_CONSENT_CODE = "ConsentCode";
+        private const string LOCAL_DATA_STORE_EDIT = "Local Data Store";
+        private const string REMOTE_DATA_STORE_EDIT = "Remote Data Store";
+        private const string DATA_STORE_COMMIT_DELAY = "Commit Delay (MS): View";
 
         private IApp _app;
 
@@ -50,47 +55,85 @@ namespace Sensus.UiTest
         [Test]
         public void RunUnitTestingProtocol()
         {
-            // wait for consent screen to come up
-            _app.WaitForElement(PROTOCOL_START_CONSENT_MESSAGE);
-            _app.Screenshot("Waiting for user consent.");
+            ConsentToProtocolStart();
+            AssertProtocolRunning(new TimeSpan(0, 0, 5));
+            AssertProtocolStatusEmpty("Protocol status after startup.");
 
-            // enter the consent code
-            string consentMessage = _app.Query(PROTOCOL_START_CONSENT_MESSAGE).First().Text;
-            int consentCode = int.Parse(consentMessage.Substring(consentMessage.LastIndexOf(" ") + 1));
-            _app.WaitForElementThenEnterText(PROTOCOL_CONSENT_CODE, consentCode.ToString());
-            _app.Screenshot("Consent code entered.");
+            // set data store delays such that they will be testable within a reasonable time period
+            StopProtocol();
+            TapProtocol();
+            _app.WaitForElementThenTap(PROTOCOL_EDIT);
 
-            // start protocol and wait a bit
-            _app.WaitForElementThenTap(PROTOCOL_START_NEXT_BUTTON);
-            _app.WaitFor(new TimeSpan(0, 0, 10));
+            TimeSpan localDataStoreDelay = new TimeSpan(0, 0, 5);
+            _app.WaitForElementThenTap(LOCAL_DATA_STORE_EDIT);
+            _app.WaitForElementThenEnterText(DATA_STORE_COMMIT_DELAY, localDataStoreDelay.TotalMilliseconds.ToString());
+            _app.Back();  // to protocol page
 
-            // ensure that protocol has started -- indicated by the presence of the stop button
-            _app.WaitForElementThenTap(UNIT_TESTING_PROTOCOL_NAME);
-            _app.Screenshot("Protocol menu.");
-            Assert.IsTrue(_app.Query(PROTOCOL_STOP).Any());
-            _app.Back();
+            TimeSpan remoteDataStoreDelay = new TimeSpan(0, 0, 15);
+            _app.WaitForElementThenTap(REMOTE_DATA_STORE_EDIT);
+            _app.WaitForElementThenEnterText(DATA_STORE_COMMIT_DELAY, remoteDataStoreDelay.TotalMilliseconds.ToString());
+            _app.Back();  // to protocol page
+            _app.Back();  // to protocols page
 
-            CheckProtocolStatus();
-
-            // wait for local and data stores to complete one run
-            
+            // start protocol, wait for remote data store to commit data, and then check status
+            StartProtocol();
+            _app.WaitFor(remoteDataStoreDelay.Add(new TimeSpan(0, 0, 25)));
+            AssertProtocolStatusEmpty("Protocol status after remote data store.");
         }
 
-        private void CheckProtocolStatus()
+        private void TapProtocol()
         {
             _app.WaitForElementThenTap(UNIT_TESTING_PROTOCOL_NAME);
+        }
+
+        private void StartProtocol()
+        {
+            TapProtocol();
+            _app.WaitForElementThenTap(PROTOCOL_START);
+            ConsentToProtocolStart();
+        }
+
+        private void ConsentToProtocolStart()
+        {
+            // wait for consent screen to come up
+            _app.WaitForElement(PROTOCOL_CONSENT_MESSAGE);
+
+            // enter the consent code
+            string consentMessage = _app.Query(PROTOCOL_CONSENT_MESSAGE).First().Text;
+            int consentCode = int.Parse(consentMessage.Substring(consentMessage.LastIndexOf(" ") + 1));
+            _app.WaitForElementThenEnterText(PROTOCOL_CONSENT_CODE, consentCode.ToString());
+            _app.WaitForElementThenTap(PROTOCOL_CONSENT_SUBMIT_BUTTON);
+        }
+
+        private void AssertProtocolRunning(TimeSpan delay)
+        {
+            _app.WaitFor(delay);
+            TapProtocol();
+            Assert.IsTrue(_app.Query(PROTOCOL_STOP).Any());
+            _app.Back();  // to protocols page
+        }
+
+        private void AssertProtocolStatusEmpty(string screenshotTitle)
+        {
+            TapProtocol();
             _app.WaitForElementThenTap(PROTOCOL_STATUS);
             Func<AppQuery, AppQuery> statusLinesQuery = c => c.Class("TextCellRenderer_TextCellView").Class("TextView");
             _app.WaitForElement(statusLinesQuery);
             _app.SetOrientationLandscape();
-            _app.Screenshot("Protocol status.");
-            string[] errorsWarningsMisc = _app.Query(statusLinesQuery).Select(c => c.Text).ToArray();
-            Assert.Equals(errorsWarningsMisc.Length, 3);
-            foreach (string line in errorsWarningsMisc)
+            _app.Screenshot(screenshotTitle);
+            string[] errorWarningMisc = _app.Query(statusLinesQuery).Select(c => c.Text).ToArray();
+            Assert.Equals(errorWarningMisc.Length, 3);
+            foreach (string line in errorWarningMisc)
                 Assert.IsEmpty(line);
 
-            _app.Back();
             _app.SetOrientationPortrait();
+            _app.Back();  // to protocols page
+        }
+
+        private void StopProtocol()
+        {
+            TapProtocol();
+            _app.WaitForElementThenTap(PROTOCOL_STOP);
         }
     }
 }
