@@ -45,7 +45,7 @@ namespace SensusService.DataStores.Remote
             _requireWiFi = true;
             _requireCharging = true;
 
-            #if DEBUG
+            #if DEBUG || UNIT_TESTING
             CommitDelayMS = 10000;  // 10 seconds...so we can see debugging output quickly
             #else
             CommitDelayMS = 1000 * 60 * 30;  // every 30 minutes
