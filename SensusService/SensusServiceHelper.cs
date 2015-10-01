@@ -92,12 +92,12 @@ namespace SensusService
         public const string SENSUS_CALLBACK_ID_KEY = "SENSUS-CALLBACK-ID";
         public const string SENSUS_CALLBACK_REPEATING_KEY = "SENSUS-CALLBACK-REPEATING";
         protected const string XAMARIN_INSIGHTS_APP_KEY = "";
-        private const string ENCRYPTION_KEY = "";
+        private const string ENCRYPTION_KEY = "";  // can be generated via `uuidgen`
         private static readonly string SHARE_DIRECTORY = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "share");
         private static readonly string LOG_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
         private static readonly string SERIALIZATION_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_service_helper.json");
 
-        #if DEBUG
+        #if DEBUG || UNIT_TESTING
         public const int HEALTH_TEST_DELAY_MS = 30000;
         #elif RELEASE
         public const int HEALTH_TEST_DELAY_MS = 300000;

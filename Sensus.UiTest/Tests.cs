@@ -69,18 +69,22 @@ namespace Sensus.UiTest
             TimeSpan localDataStoreDelay = new TimeSpan(0, 0, 5);
             _app.WaitForElementThenTap(LOCAL_DATA_STORE_EDIT);
             _app.WaitForElementThenEnterText(DATA_STORE_COMMIT_DELAY, localDataStoreDelay.TotalMilliseconds.ToString());
+            _app.ScrollDownTo(DATA_STORE_OK);
             _app.WaitForElementThenTap(DATA_STORE_OK);
 
             TimeSpan remoteDataStoreDelay = new TimeSpan(0, 0, 15);
             _app.WaitForElementThenTap(REMOTE_DATA_STORE_EDIT);
             _app.WaitForElementThenEnterText(DATA_STORE_COMMIT_DELAY, remoteDataStoreDelay.TotalMilliseconds.ToString());
+            _app.ScrollDownTo(DATA_STORE_OK);
             _app.WaitForElementThenTap(DATA_STORE_OK);
             _app.Back();  // to protocols page
 
             // start protocol, wait for remote data store to commit data, and then check status
             StartProtocol();
-            _app.WaitFor(remoteDataStoreDelay.Add(new TimeSpan(0, 0, 25)));
+            _app.WaitFor(remoteDataStoreDelay.Add(new TimeSpan(0, 0, 10)));  // give the remote data store 10 seconds to commit its data
             AssertProtocolStatusEmpty("Protocol status after remote data store.");
+
+            StopProtocol();
         }
 
         private void TapProtocol()
