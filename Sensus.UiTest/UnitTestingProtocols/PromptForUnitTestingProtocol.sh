@@ -1,25 +1,28 @@
 #!/bin/bash
 #
 #  Purpose:  Prompt for path to protocol (.sensus) file to use when unit testing. Copies 
-#            file into current working directory.
+#            file into appropriate directory for current OS.
 #
 
+echo "Operating system:  $1"
 echo "Working directory:  $(pwd)"
-echo
-echo "Contents of Assets directory:"
-ls -lh "./Assets"
-echo
-read -e -p "If you would like to use a new unit testing protocol, enter the path:  " filepath
-echo
+
+destinationDirectory="./Assets";
+if [ "$1" == "ios" ]; then
+	destinationDirectory="./Resources"
+fi
+
+echo "Contents of $destinationDirectory:"
+ls -lh $destinationDirectory
+
+read -e -p "If you would like to use a new unit testing protocol, enter its path:  " filepath
 
 if [ "$filepath" == "" ]; then
 	echo "No file selected."
 else
-	destination="./Assets/UnitTestingProtocol.sensus"
-
-	echo "Copying $filepath to $destination"
-	echo
-	cp $filepath $destination
+	destinationPath="$destinationDirectory/UnitTestingProtocol.sensus"
+	echo "Copying $filepath to $destinationPath"
+	cp $filepath $destinationPath
 
 	if [ $? -eq 0 ]; then
 		echo "Copied file."
@@ -28,5 +31,4 @@ else
 	fi
 fi
 
-echo
 read -p "Press [ENTER] to continue."

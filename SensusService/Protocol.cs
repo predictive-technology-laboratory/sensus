@@ -31,6 +31,7 @@ using SensusService.Probes.Location;
 using SensusService.Exceptions;
 using SensusUI.Inputs;
 using SensusService.Probes.User;
+using SensusService.Probes.Apps;
 
 #if __IOS__
 using HealthKit;
@@ -233,6 +234,37 @@ namespace SensusService
                     }
 
                 }).Start();
+        }
+
+        public static void RunUnitTestingProtocol(Stream protocolFile)
+        {
+            try
+            {
+                if (SensusServiceHelper.Get().RegisteredProtocols.Count == 0)
+                {
+                    using (MemoryStream protocolStream = new MemoryStream())
+                    {
+                        protocolFile.CopyTo(protocolStream);
+                        string protocolJSON = SensusServiceHelper.Decrypt(protocolStream.ToArray());
+                        DeserializeAsync(protocolJSON, protocol =>
+                            {
+                                // unit testing is problematic with probes that take us away from Sensus, since it's difficult to automate UI 
+                                // interaction outside of Sensus. disable any probes that might take us away from Sensus.
+                                foreach (Probe probe in protocol.Probes)
+                                    if (probe is FacebookProbe)
+                                        probe.Enabled = false;
+
+                                DisplayAndStartAsync(protocol);
+                            });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                string message = "Failed to open unit testing protocol:  " + ex.Message;
+                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, typeof(Protocol));
+                throw new Exception(message);
+            }
         }
 
         #endregion

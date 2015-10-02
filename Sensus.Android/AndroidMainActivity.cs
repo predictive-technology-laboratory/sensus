@@ -124,36 +124,12 @@ namespace Sensus.Android
                 // display service helper properties on the main page
                 _app.SensusMainPage.DisplayServiceHelper(e.Binder.SensusServiceHelper);
 
-                // if we're unit testing, try to load the unit testing protocol from the embedded assets
+                // if we're unit testing, try to load and run the unit testing protocol from the embedded assets
                 #if UNIT_TESTING
-                try
+                using (Stream protocolFile = Assets.Open("UnitTestingProtocol.sensus"))
                 {
-                    if (SensusServiceHelper.Get().RegisteredProtocols.Count == 0)
-                    {
-                        using (Stream protocolFile = Assets.Open("UnitTestingProtocol.sensus"))
-                        using (MemoryStream protocolStream = new MemoryStream())
-                        {
-                            protocolFile.CopyTo(protocolStream);
-                            protocolFile.Close();
-                            string protocolJSON = SensusServiceHelper.Decrypt(protocolStream.ToArray());
-                            Protocol.DeserializeAsync(protocolJSON, protocol =>
-                                {
-                                    // unit testing is problematic with probes that take us away from Sensus, since it's difficult to automate UI 
-                                    // interaction outside of Sensus. disable any probes that might take us away from Sensus.
-                                    foreach (Probe probe in protocol.Probes)
-                                        if (probe is FacebookProbe)
-                                            probe.Enabled = false;
-
-                                    Protocol.DisplayAndStartAsync(protocol);
-                                });
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    string message = "Failed to open unit testing protocol:  " + ex.Message;
-                    SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
-                    throw new Exception(message);
+                    Protocol.RunUnitTestingProtocol(protocolFile);
+                    protocolFile.Close();
                 }
                 #endif
             };

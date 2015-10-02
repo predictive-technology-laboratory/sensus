@@ -148,6 +148,11 @@
     <MtouchProfiling>true</MtouchProfiling>
     <BuildIpa>true</BuildIpa>
     <DebugType>full</DebugType>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="BeforeBuild" command="../Sensus.UiTest/UnitTestingProtocols/PromptForUnitTestingProtocol.sh ios" workingdir="${ProjectDir}" externalConsole="True" />
+      </CustomCommands>
+    </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Xamarin Test Cloud|iPhone' ">
     <Optimize>true</Optimize>
@@ -167,6 +172,11 @@
     <IpaPackageName>
     </IpaPackageName>
     <BuildIpa>true</BuildIpa>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="BeforeBuild" command="../Sensus.UiTest/UnitTestingProtocols/PromptForUnitTestingProtocol.sh ios" workingdir="${ProjectDir}" externalConsole="True" />
+      </CustomCommands>
+    </CustomCommands>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -385,6 +395,7 @@
     <BundleResource Include="..\SensusUI\Icons\share.png">
       <Link>Resources\share.png</Link>
     </BundleResource>
+    <BundleResource Include="Resources\UnitTestingProtocol.sensus" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

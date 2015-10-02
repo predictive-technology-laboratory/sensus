@@ -116,7 +116,7 @@
     <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
     <CustomCommands>
       <CustomCommands>
-        <Command type="BeforeBuild" command="../Sensus.UiTest/UnitTestingProtocols/PromptForUnitTestingProtocol.sh" workingdir="${ProjectDir}" externalConsole="True" />
+        <Command type="BeforeBuild" command="../Sensus.UiTest/UnitTestingProtocols/PromptForUnitTestingProtocol.sh android" workingdir="${ProjectDir}" externalConsole="True" />
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>

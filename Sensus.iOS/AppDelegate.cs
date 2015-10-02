@@ -72,6 +72,15 @@ namespace Sensus.iOS
             UiBoundSensusServiceHelper.Set(_serviceHelper);
             app.SensusMainPage.DisplayServiceHelper(UiBoundSensusServiceHelper.Get(true));
 
+            #if UNIT_TESTING
+            string filePath = NSBundle.MainBundle.PathForResource("UnitTestingProtocol", "sensus");
+            using (Stream file = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+            {
+                Protocol.RunUnitTestingProtocol(file);
+                file.Close();
+            }
+            #endif
+
             return base.FinishedLaunching(uiApplication, launchOptions);
         }
 
