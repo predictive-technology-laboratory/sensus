@@ -50,16 +50,6 @@ namespace Sensus.iOS
             FormsMaps.Init();
             MapExtendRenderer.Init();
 
-            #if UNIT_TESTING
-            Forms.ViewInitialized += (sender, e) =>
-            {
-                if (!string.IsNullOrWhiteSpace(e.View.StyleId))
-                    e.NativeView.AccessibilityIdentifier = e.View.StyleId;
-            };
-
-            Calabash.Start();
-            #endif
-
             ToastNotificatorImplementation.Init();
 
             App app = new App();
@@ -73,12 +63,13 @@ namespace Sensus.iOS
             app.SensusMainPage.DisplayServiceHelper(UiBoundSensusServiceHelper.Get(true));
 
             #if UNIT_TESTING
-            string filePath = NSBundle.MainBundle.PathForResource("UnitTestingProtocol", "sensus");
-            using (Stream file = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+            Forms.ViewInitialized += (sender, e) =>
             {
-                Protocol.RunUnitTestingProtocol(file);
-                file.Close();
-            }
+                if (!string.IsNullOrWhiteSpace(e.View.StyleId))
+                    e.NativeView.AccessibilityIdentifier = e.View.StyleId;
+            };
+
+            Calabash.Start();
             #endif
 
             return base.FinishedLaunching(uiApplication, launchOptions);
@@ -115,6 +106,15 @@ namespace Sensus.iOS
             sensusServiceHelper.StartAsync(() =>
                 {
                     sensusServiceHelper.UpdateCallbackNotificationActivationIdsAsync();
+
+                    #if UNIT_TESTING
+                    string filePath = NSBundle.MainBundle.PathForResource("UnitTestingProtocol", "sensus");
+                    using (Stream file = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                    {
+                        Protocol.RunUnitTestingProtocol(file);
+                        file.Close();
+                    }
+                    #endif
                 });
             
             base.OnActivated(uiApplication);

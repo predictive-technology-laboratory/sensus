@@ -17,14 +17,20 @@ using NUnit.Framework;
 using System.Reflection;
 using System.IO;
 using Xamarin.UITest;
+using Xamarin.UITest.Queries;
 
 namespace Sensus.UiTest
 {
     public class AndroidTests : Tests
     {
-        public override void SetUp()
+        protected override IApp GetApp()
         {
-            App = ConfigureApp.Android.StartApp();
+            return ConfigureApp.Android.StartApp();
+        }
+
+        protected override Func<AppQuery, AppQuery> GetStatusLinesQuery()
+        {
+            return c => c.Class("TextCellRenderer_TextCellView").Class("TextView");
         }
     }
 }

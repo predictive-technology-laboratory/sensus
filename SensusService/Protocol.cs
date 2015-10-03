@@ -251,8 +251,15 @@ namespace SensusService
                                 // unit testing is problematic with probes that take us away from Sensus, since it's difficult to automate UI 
                                 // interaction outside of Sensus. disable any probes that might take us away from Sensus.
                                 foreach (Probe probe in protocol.Probes)
+                                {
                                     if (probe is FacebookProbe)
                                         probe.Enabled = false;
+
+                                    #if __IOS__
+                                    if (probe is iOSHealthKitProbe)
+                                        probe.Enabled = false;
+                                    #endif
+                                }
 
                                 DisplayAndStartAsync(protocol);
                             });
@@ -645,7 +652,7 @@ namespace SensusService
                                     new HKHealthStore().RequestAuthorizationToShare(new NSSet(), objectTypesToRead,
                                         (success, error) =>
                                         {
-                                            if(error != null)
+                                            if (error != null)
                                                 SensusServiceHelper.Get().Logger.Log("Error while requesting HealthKit authorization:  " + error.Description, LoggingLevel.Normal, GetType());
 
                                             authorizationWait.Set();

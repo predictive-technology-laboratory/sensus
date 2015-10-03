@@ -24,29 +24,33 @@ namespace Sensus.UiTest
     public abstract class Tests
     {
         private const string UNIT_TESTING_PROTOCOL_NAME = "Unit Testing Protocol";
-        private const string PROTOCOL_START = "Start";
-        private const string PROTOCOL_EDIT = "Edit";
-        private const string PROTOCOL_STATUS = "Status";
-        private const string PROTOCOL_STOP = "Stop";
+
+        private const string PROTOCOL_ACTION_SHEET_START = "Start";
+        private const string PROTOCOL_ACTION_SHEET_EDIT = "Edit";
+        private const string PROTOCOL_ACTION_SHEET_STATUS = "Status";
+        private const string PROTOCOL_ACTION_SHEET_STOP = "Stop";
+        private const string PROTOCOL_ACTION_SHEET_CANCEL = "Cancel";
         private const string PROTOCOL_STOP_CONFIRM = "Yes";
-        private const string PROTOCOL_CONSENT_SUBMIT_BUTTON = "NextButton";
+
         private const string PROTOCOL_CONSENT_MESSAGE = "ConsentMessage";
         private const string PROTOCOL_CONSENT_CODE = "ConsentCode";
+        private const string PROTOCOL_CONSENT_SUBMIT_BUTTON = "NextButton";
+
         private const string LOCAL_DATA_STORE_EDIT = "Local Data Store";
         private const string REMOTE_DATA_STORE_EDIT = "Remote Data Store";
         private const string DATA_STORE_COMMIT_DELAY = "Commit Delay (MS): View";
         private const string DATA_STORE_OK = "OK";
 
+
         private IApp _app;
 
-        protected IApp App
+        [SetUp]
+        public void SetUp()
         {
-            get { return _app; }
-            set { _app = value; }
+            _app = GetApp();
         }
 
-        [SetUp]
-        public abstract void SetUp();
+        protected abstract IApp GetApp();
 
         [Test]
         public void ReadEvaluatePrintLoop()
@@ -64,7 +68,6 @@ namespace Sensus.UiTest
             // set data store delays such that they will be testable within a reasonable time period
             StopProtocol();
             TapProtocol();
-            _app.WaitForElementThenTap(PROTOCOL_EDIT);
 
             TimeSpan localDataStoreDelay = new TimeSpan(0, 0, 5);
             _app.WaitForElementThenTap(LOCAL_DATA_STORE_EDIT);
@@ -90,13 +93,13 @@ namespace Sensus.UiTest
         private void TapProtocol()
         {
             _app.WaitForElementThenTap(UNIT_TESTING_PROTOCOL_NAME);
-            _app.WaitForElement(PROTOCOL_EDIT);  // wait for action sheet to come up
+            _app.WaitForElement(PROTOCOL_ACTION_SHEET_EDIT);  // wait for action sheet to come up
         }
 
         private void StartProtocol()
         {
             TapProtocol();
-            _app.WaitForElementThenTap(PROTOCOL_START);
+            _app.WaitForElementThenTap(PROTOCOL_ACTION_SHEET_START);
             ConsentToProtocolStart();
         }
 
@@ -116,19 +119,18 @@ namespace Sensus.UiTest
         {
             _app.WaitFor(delay);
             TapProtocol();
-            Assert.IsTrue(_app.Query(PROTOCOL_STOP).Any());
-            _app.Back();  // to protocols page
+            Assert.IsTrue(_app.Query(PROTOCOL_ACTION_SHEET_STOP).Any());
+            _app.WaitForElementThenTap(PROTOCOL_ACTION_SHEET_CANCEL);  // to protocols page
         }
 
-        private void AssertProtocolStatusEmpty(string screenshotTitle)
+        private void AssertProtocolStatusEmpty(string statusScreenshotTitle)
         {
             TapProtocol();
-            _app.WaitForElementThenTap(PROTOCOL_STATUS);
-            Func<AppQuery, AppQuery> statusLinesQuery = c => c.Class("TextCellRenderer_TextCellView").Class("TextView");
-            _app.WaitForElement(statusLinesQuery);
+            _app.WaitForElementThenTap(PROTOCOL_ACTION_SHEET_STATUS);
+            _app.WaitForElement(GetStatusLinesQuery());
             _app.SetOrientationLandscape();
-            _app.Screenshot(screenshotTitle);
-            string[] errorWarningMisc = _app.Query(statusLinesQuery).Select(c => c.Text).ToArray();
+            _app.Screenshot(statusScreenshotTitle);
+            string[] errorWarningMisc = _app.Query(GetStatusLinesQuery()).Select(c => c.Text).ToArray();
             Assert.AreEqual(errorWarningMisc.Length, 3);
             foreach (string line in errorWarningMisc)
                 Assert.IsEmpty(line.Substring(line.IndexOf(":") + 1).Trim());
@@ -137,10 +139,12 @@ namespace Sensus.UiTest
             _app.Back();  // to protocols page
         }
 
+        protected abstract Func<AppQuery, AppQuery> GetStatusLinesQuery();
+
         private void StopProtocol()
         {
             TapProtocol();
-            _app.WaitForElementThenTap(PROTOCOL_STOP);
+            _app.WaitForElementThenTap(PROTOCOL_ACTION_SHEET_STOP);
             _app.WaitForElementThenTap(PROTOCOL_STOP_CONFIRM);
         }
     }

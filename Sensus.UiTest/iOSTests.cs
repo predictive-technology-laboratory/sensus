@@ -17,16 +17,20 @@ using NUnit.Framework;
 using System.Reflection;
 using System.IO;
 using Xamarin.UITest;
+using Xamarin.UITest.Queries;
 
 namespace Sensus.UiTest
 {
     public class iOSTests : Tests
     {
-        private string _appPath { get; set; }
-
-        public override void SetUp()
+        protected override IApp GetApp()
         {
-            App = ConfigureApp.iOS.StartApp();
+            return ConfigureApp.iOS.StartApp();
+        }
+
+        protected override Func<AppQuery, AppQuery> GetStatusLinesQuery()
+        {
+            return c => c.Class("UITableViewLabel");
         }
     }
 }
