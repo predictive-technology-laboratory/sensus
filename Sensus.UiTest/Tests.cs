@@ -68,6 +68,7 @@ namespace Sensus.UiTest
             // set data store delays such that they will be testable within a reasonable time period
             StopProtocol();
             TapProtocol();
+            _app.WaitForElementThenTap(PROTOCOL_ACTION_SHEET_EDIT);
 
             TimeSpan localDataStoreDelay = new TimeSpan(0, 0, 5);
             _app.WaitForElementThenTap(LOCAL_DATA_STORE_EDIT);
