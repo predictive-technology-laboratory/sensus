@@ -17,6 +17,7 @@ using Xamarin.UITest;
 using NUnit.Framework;
 using System.Linq;
 using Xamarin.UITest.Queries;
+using System.Threading;
 
 namespace Sensus.UiTest
 {
@@ -61,15 +62,18 @@ namespace Sensus.UiTest
         [Test]
         public void RunUnitTestingProtocol()
         {
+            // wait a bit for app to start up -- ios sometimes displays permissions dialogs that need time to dismiss
+            Thread.Sleep(15000);
+                
+            // protocol has been started and is waiting for user consent
             ConsentToProtocolStart();
-            AssertProtocolRunning(new TimeSpan(0, 0, 5));
-            AssertProtocolStatusEmpty("Protocol status after startup.");
 
-            // set data store delays such that they will be testable within a reasonable time period
+            // stop and edit protocol
             StopProtocol();
             TapProtocol();
             _app.WaitForElementThenTap(PROTOCOL_ACTION_SHEET_EDIT);
 
+            // set data store delays such that they will be testable within a reasonable time period
             TimeSpan localDataStoreDelay = new TimeSpan(0, 0, 5);
             _app.WaitForElementThenTap(LOCAL_DATA_STORE_EDIT);
             _app.WaitForElementThenEnterText(DATA_STORE_COMMIT_DELAY, localDataStoreDelay.TotalMilliseconds.ToString());
@@ -80,10 +84,10 @@ namespace Sensus.UiTest
             _app.WaitForElementThenTap(REMOTE_DATA_STORE_EDIT);
             _app.WaitForElementThenEnterText(DATA_STORE_COMMIT_DELAY, remoteDataStoreDelay.TotalMilliseconds.ToString());
             _app.ScrollDownTo(DATA_STORE_OK);
-            _app.WaitForElementThenTap(DATA_STORE_OK);
+            _app.WaitForElementThenTap(DATA_STORE_OK);  // to protocol page
             _app.Back();  // to protocols page
 
-            // start protocol, wait for remote data store to commit data, and then check status
+            // restart protocol, wait for remote data store to commit data, and then check status
             StartProtocol();
             _app.WaitFor(remoteDataStoreDelay.Add(new TimeSpan(0, 0, 10)));  // give the remote data store 10 seconds to commit its data
             AssertProtocolStatusEmpty("Protocol status after remote data store.");
@@ -114,11 +118,11 @@ namespace Sensus.UiTest
             int consentCode = int.Parse(consentMessage.Substring(consentMessage.LastIndexOf(" ") + 1));
             _app.WaitForElementThenEnterText(PROTOCOL_CONSENT_CODE, consentCode.ToString());
             _app.WaitForElementThenTap(PROTOCOL_CONSENT_SUBMIT_BUTTON);
-        }
 
-        private void AssertProtocolRunning(TimeSpan delay)
-        {
-            _app.WaitFor(delay);
+            // wait for the protocol to start
+            Thread.Sleep(10000);
+
+            // confirm that the protocol has started
             TapProtocol();
             Assert.IsTrue(_app.Query(PROTOCOL_ACTION_SHEET_STOP).Any());
             _app.WaitForElementThenTap(PROTOCOL_ACTION_SHEET_CANCEL);  // to protocols page

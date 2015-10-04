@@ -32,16 +32,5 @@ namespace Sensus.UiTest
             app.EnterText(element, text);
             app.DismissKeyboard();
         }
-
-        public static void WaitFor(this IApp app, TimeSpan duration)
-        {
-            try
-            {
-                app.WaitForElement(Guid.NewGuid().ToString(), timeout: duration);
-            }
-            catch (Exception)
-            {
-            }
-        }
     }
 }
