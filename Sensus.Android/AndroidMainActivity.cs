@@ -27,8 +27,6 @@ using Xamarin.Forms.Platform.Android;
 using Xamarin.Facebook;
 using Xamarin;
 using Xam.Plugin.MapExtend.Droid;
-using SensusService.Probes;
-using SensusService.Probes.Apps;
 
 [assembly:MetaData("com.facebook.sdk.ApplicationId", Value = "@string/app_id")]
 
