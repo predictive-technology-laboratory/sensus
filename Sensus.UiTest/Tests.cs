@@ -62,11 +62,11 @@ namespace Sensus.UiTest
         [Test]
         public void RunUnitTestingProtocol()
         {
-            // wait a bit for app to start up -- ios sometimes displays permissions dialogs that need time to dismiss
-            Thread.Sleep(15000);
+            // wait a bit for app to start up -- ios sometimes displays permissions dialogs that need time to be dismissed (UiTest appears to take care of these on its own)
+            Thread.Sleep(5000);
                 
             // protocol has been started and is waiting for user consent
-            ConsentToProtocolStart();
+            ConsentToProtocolStart(new TimeSpan(0, 0, 5));
 
             // stop and edit protocol
             StopProtocol();
@@ -88,8 +88,8 @@ namespace Sensus.UiTest
             _app.Back();  // to protocols page
 
             // restart protocol, wait for remote data store to commit data, and then check status
-            StartProtocol();
-            _app.WaitFor(remoteDataStoreDelay.Add(new TimeSpan(0, 0, 10)));  // give the remote data store 10 seconds to commit its data
+            StartProtocol(new TimeSpan(0, 0, 5));
+            Thread.Sleep(remoteDataStoreDelay.Add(new TimeSpan(0, 0, 5)));
             AssertProtocolStatusEmpty("Protocol status after remote data store.");
 
             StopProtocol();
@@ -101,14 +101,14 @@ namespace Sensus.UiTest
             _app.WaitForElement(PROTOCOL_ACTION_SHEET_EDIT);  // wait for action sheet to come up
         }
 
-        private void StartProtocol()
+        private void StartProtocol(TimeSpan startupCheckDelay)
         {
             TapProtocol();
             _app.WaitForElementThenTap(PROTOCOL_ACTION_SHEET_START);
-            ConsentToProtocolStart();
+            ConsentToProtocolStart(startupCheckDelay);
         }
 
-        private void ConsentToProtocolStart()
+        private void ConsentToProtocolStart(TimeSpan startupCheckDelay)
         {
             // wait for consent screen to come up
             _app.WaitForElement(PROTOCOL_CONSENT_MESSAGE);
@@ -120,7 +120,7 @@ namespace Sensus.UiTest
             _app.WaitForElementThenTap(PROTOCOL_CONSENT_SUBMIT_BUTTON);
 
             // wait for the protocol to start
-            Thread.Sleep(10000);
+            Thread.Sleep(startupCheckDelay);
 
             // confirm that the protocol has started
             TapProtocol();
