@@ -67,7 +67,7 @@ namespace SensusService.DataStores
             get { return _running; }
         }
             
-        [DisplayStringUiProperty("Type:", 0)]
+        [JsonIgnore]
         public abstract string DisplayName { get; }
 
         [JsonIgnore]
