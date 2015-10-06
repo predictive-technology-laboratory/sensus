@@ -18,6 +18,7 @@ using System.IO;
 using System.Linq;
 using Xamarin.Forms;
 using SensusUI.Inputs;
+using System.Collections.Generic;
 
 namespace SensusUI
 {
@@ -83,30 +84,39 @@ namespace SensusUI
                 }
                 else if (selectedAction == "Share")
                 {
-                    Action shareAction = new Action(() =>
+                    Action ShareSelectedProtocol = new Action(() =>
                         {
-                            string path = null;
-                            try
-                            {
-                                path = UiBoundSensusServiceHelper.Get(true).GetSharePath(".sensus");
-                                selectedProtocol.Save(path);
-                            }
-                            catch (Exception ex)
-                            {
-                                UiBoundSensusServiceHelper.Get(true).Logger.Log("Failed to save protocol to file for sharing:  " + ex.Message, LoggingLevel.Normal, GetType());
-                                path = null;
-                            }
+                            // copy protocol so we don't disrupt it (e.g. if it's currently running)
+                            selectedProtocol.CopyAsync(selectedProtocolCopy =>
+                                {
+                                    string path = null;
+                                    try
+                                    {
+                                        path = UiBoundSensusServiceHelper.Get(true).GetSharePath(".sensus");
 
-                            if (path != null)
-                                UiBoundSensusServiceHelper.Get(true).ShareFileAsync(path, "Sensus Protocol:  " + selectedProtocol.Name);
+                                        // before saving to file for sharing, reset sensitive data fields within the protocol so that they are not shared with others.
+                                        selectedProtocolCopy.RandomTimeAnchor = DateTime.MinValue;
+                                        selectedProtocolCopy.StorageDirectory = null;
+                                        selectedProtocolCopy.HealthTestTimes.Clear();
+                                        selectedProtocolCopy.Save(path);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        UiBoundSensusServiceHelper.Get(true).Logger.Log("Failed to save protocol to file for sharing:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                        path = null;
+                                    }
+
+                                    if (path != null)
+                                        UiBoundSensusServiceHelper.Get(true).ShareFileAsync(path, "Sensus Protocol:  " + selectedProtocolCopy.Name);
+                                });
                         });
 
                     // don't authenticate if the protocol was declared shareable -- participants might require the ability to share without the password.
                     if (selectedProtocol.Shareable)
-                        shareAction();
-                    // if the protocol isn't declared shareable, require authentication, since sharing is equivalent to editing the protocol.
+                        ShareSelectedProtocol();
+                    // if the protocol isn't declared shareable, require authentication since sharing is equivalent to editing the protocol.
                     else
-                        ExecuteActionUponProtocolAuthentication(selectedProtocol, shareAction);
+                        ExecuteActionUponProtocolAuthentication(selectedProtocol, ShareSelectedProtocol);
                 }
                 else if (selectedAction == "Delete")
                 {

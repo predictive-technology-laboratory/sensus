@@ -113,20 +113,15 @@ namespace SensusService
                     {
                         #region allow protocols to be opened across platforms by modifying the namespaces in the JSON
                         string newJSON;
-                        switch (SensusServiceHelper.Get().GetType().Name)
-                        {
-                            case "AndroidSensusServiceHelper":
-                                newJSON = json.Replace(".iOS", ".Android").Replace(".WinPhone", ".Android");
-                                break;
-                            case "iOSSensusServiceHelper":
-                                newJSON = json.Replace(".Android", ".iOS").Replace(".WinPhone", ".iOS");
-                                break;
-                            case "WinPhone":
-                                newJSON = json.Replace(".Android", ".WinPhone").Replace(".iOS", ".WinPhone");
-                                break;
-                            default:
-                                throw new SensusException("Attempted to deserialize JSON into unknown service helper type:  " + SensusServiceHelper.Get().GetType().FullName);
-                        }
+                        string typeName = SensusServiceHelper.Get().GetType().Name;
+                        if (typeName == "AndroidSensusServiceHelper")
+                            newJSON = json.Replace("iOS", "Android").Replace("WinPhone", "Android");
+                        else if (typeName == "iOSSensusServiceHelper")
+                            newJSON = json.Replace("Android", "iOS").Replace("WinPhone", "iOS");
+                        else if (typeName == "WinPhone")
+                            newJSON = json.Replace("Android", "WinPhone").Replace("iOS", "WinPhone");
+                        else
+                            throw new SensusException("Attempted to deserialize JSON into unknown service helper type:  " + SensusServiceHelper.Get().GetType().FullName);
 
                         if (newJSON == json)
                             SensusServiceHelper.Get().Logger.Log("No cross-platform conversion required for service helper JSON.", LoggingLevel.Normal, typeof(Protocol));
@@ -220,7 +215,9 @@ namespace SensusService
         {
             new Thread(() =>
                 {
-                    if (protocol.Running)
+                    if (protocol == null)
+                        SensusServiceHelper.Get().FlashNotificationAsync("Protocol is empty. Cannot display or start it.");
+                    else if (protocol.Running)
                         SensusServiceHelper.Get().FlashNotificationAsync("You are already participating in \"" + protocol.Name + "\".");
                     else
                     {
@@ -248,6 +245,9 @@ namespace SensusService
                         string protocolJSON = SensusServiceHelper.Decrypt(protocolStream.ToArray());
                         DeserializeAsync(protocolJSON, protocol =>
                             {
+                                if (protocol == null)
+                                    throw new Exception("Failed to deserialize unit testing protocol.");
+
                                 // unit testing is problematic with probes that take us away from Sensus, since it's difficult to automate UI 
                                 // interaction outside of Sensus. disable any probes that might take us away from Sensus.
                                 foreach (Probe probe in protocol.Probes)
@@ -594,6 +594,11 @@ namespace SensusService
                 file.Write(encryptedBytes, 0, encryptedBytes.Length);
                 file.Close();
             }
+        }
+
+        public void CopyAsync(Action<Protocol> callback)
+        {
+            DeserializeAsync(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), callback);
         }
 
         public void StartAsync()
