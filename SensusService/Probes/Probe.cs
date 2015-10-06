@@ -65,6 +65,7 @@ namespace SensusService.Probes
 
         private readonly object _locker = new object();
 
+        [JsonIgnore]
         public abstract string DisplayName { get; }
 
         [OnOffUiProperty("Enabled:", true, 2)]
