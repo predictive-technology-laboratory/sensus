@@ -29,7 +29,7 @@ namespace SensusService.Probes.Movement
             get { return _stabilizing; }
         }
 
-        protected sealed override string DefaultDisplayName
+        public sealed override string DisplayName
         {
             get { return "Accelerometer"; }
         }

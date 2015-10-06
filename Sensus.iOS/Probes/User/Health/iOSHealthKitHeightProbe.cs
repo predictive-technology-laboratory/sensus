@@ -23,7 +23,7 @@ namespace Sensus.iOS.Probes.User.Health
 {
     public class iOSHealthKitHeightProbe : iOSHealthKitSamplingProbe
     {
-        protected override string DefaultDisplayName
+        public sealed override string DisplayName
         {
             get
             {

@@ -21,7 +21,7 @@ namespace SensusService.Probes.Device
     /// </summary>
     public abstract class BatteryProbe : PollingProbe
     {
-        protected sealed override string DefaultDisplayName
+        public sealed override string DisplayName
         {
             get { return "Battery"; }
         }

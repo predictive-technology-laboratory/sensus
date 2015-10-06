@@ -25,7 +25,7 @@ namespace Sensus.iOS.Probes.User.Health
 {
     public class iOSHealthKitBiologicalSexProbe : iOSHealthKitProbe
     {
-        protected override string DefaultDisplayName
+        public sealed override string DisplayName
         {
             get
             {

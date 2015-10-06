@@ -21,7 +21,7 @@ namespace SensusService.Probes.Communication
     /// </summary>
     public abstract class SmsProbe : ListeningProbe
     {
-        protected sealed override string DefaultDisplayName
+        public sealed override string DisplayName
         {
             get { return "Text Messages"; }
         }

@@ -39,7 +39,7 @@ namespace SensusService.Probes.Apps
             }
         }
 
-        protected override string DefaultDisplayName
+        public sealed override string DisplayName
         {
             get
             {

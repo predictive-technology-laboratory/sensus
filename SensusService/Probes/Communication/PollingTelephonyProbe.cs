@@ -20,7 +20,7 @@ namespace SensusService
 {
     public abstract class PollingTelephonyProbe : PollingProbe
     {
-        protected sealed override string DefaultDisplayName
+        public sealed override string DisplayName
         {
             get { return "Phone Calls"; }
         }

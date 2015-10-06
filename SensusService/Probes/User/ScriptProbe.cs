@@ -26,7 +26,7 @@ namespace SensusService.Probes.User
             get { return _scriptRunners; }
         }            
 
-        protected override string DefaultDisplayName
+        public sealed override string DisplayName
         {
             get { return "Scripted Interactions"; }
         }

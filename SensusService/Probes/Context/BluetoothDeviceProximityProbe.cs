@@ -18,7 +18,7 @@ namespace SensusService.Probes.Context
 {
     public abstract class BluetoothDeviceProximityProbe : ListeningProbe
     {
-        protected sealed override string DefaultDisplayName
+        public sealed override string DisplayName
         {
             get { return "Bluetooth Devices"; }
         }

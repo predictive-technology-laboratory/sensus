@@ -55,7 +55,6 @@ namespace SensusService.Probes
         /// </summary>
         public event EventHandler<Tuple<Datum, Datum>> MostRecentDatumChanged;
 
-        private string _displayName;
         private bool _enabled;
         private bool _running;
         private HashSet<Datum> _collectedData;
@@ -66,12 +65,8 @@ namespace SensusService.Probes
 
         private readonly object _locker = new object();
 
-        [EntryStringUiProperty("Name:", true, 1)]
-        public string DisplayName
-        {
-            get { return _displayName; }
-            set { _displayName = value; }
-        }
+        [DisplayStringUiProperty("Type:", 0)]
+        public abstract string DisplayName { get; }
 
         [OnOffUiProperty("Enabled:", true, 2)]
         public bool Enabled
@@ -136,14 +131,10 @@ namespace SensusService.Probes
         }
 
         [JsonIgnore]
-        protected abstract string DefaultDisplayName { get; }
-
-        [JsonIgnore]
         public abstract Type DatumType { get; }
 
         protected Probe()
         {
-            _displayName = DefaultDisplayName;
             _enabled = _running = false;
             _storeData = true;
         }

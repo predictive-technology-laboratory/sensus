@@ -21,7 +21,7 @@ namespace SensusService.Probes.Device
     /// </summary>
     public abstract class ScreenProbe : PollingProbe
     {
-        protected override string DefaultDisplayName
+        public sealed override string DisplayName
         {
             get { return "Screen"; }
         }
