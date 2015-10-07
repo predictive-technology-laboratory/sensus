@@ -570,6 +570,9 @@ namespace SensusService.Probes.User
             _numScriptsAgedOut = 0;
             _runTimes.Clear();
             _completionTimes.Clear();
+            _rerunCallbackId = null;
+            _randomTriggerCallbackId = null;
+            _runScriptCallbackIds.Clear();
         }
 
         public void Restart()
