@@ -302,5 +302,13 @@ namespace SensusService.DataStores.Local
                 }
             }
         }
+
+        public override void ClearForSharing()
+        {
+            base.ClearForSharing();
+
+            _path = null;
+            _numDataStoredInFiles = 0;
+        }
     }
 }

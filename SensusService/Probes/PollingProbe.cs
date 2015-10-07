@@ -144,5 +144,13 @@ namespace SensusService.Probes
 
             return restart;
         }
+
+        public override void ClearForSharing()
+        {
+            base.ClearForSharing();
+
+            _isPolling = false;
+            _pollCallbackId = null;
+        }
     }
 }

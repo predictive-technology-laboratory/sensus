@@ -224,6 +224,17 @@ namespace SensusService.DataStores
             return restart;
         }
 
+        public virtual void ClearForSharing()
+        {
+            if (_running)
+                throw new Exception("Cannot clear data store while it is running.");
+            
+            _mostRecentCommitTimestamp = DateTimeOffset.MinValue;
+            _nonProbeDataToCommit.Clear();
+            _isCommitting = false;
+            _commitCallbackId = null;
+        }
+
         public DataStore Copy()
         {
             JsonSerializerSettings settings = new JsonSerializerSettings

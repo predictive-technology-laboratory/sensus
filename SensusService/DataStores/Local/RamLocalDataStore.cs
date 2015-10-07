@@ -46,11 +46,16 @@ namespace SensusService.DataStores.Local
             }
         }
 
+        public RamLocalDataStore()
+        {
+            _data = new HashSet<Datum>();
+        }
+
         public override void Start()
         {
             lock (_locker)
             {
-                _data = new HashSet<Datum>();
+                _data.Clear();
 
                 base.Start();
             }
@@ -119,6 +124,13 @@ namespace SensusService.DataStores.Local
             if (_data != null)
                 lock (_data)
                     _data.Clear();
+        }
+
+        public override void ClearForSharing()
+        {
+            base.ClearForSharing();
+
+            _data.Clear();
         }
 
         public override void Stop()

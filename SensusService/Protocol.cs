@@ -907,6 +907,23 @@ namespace SensusService
             }
         }
 
+        public void ClearForSharing()
+        {
+            _randomTimeAnchor = DateTime.MinValue;
+            _storageDirectory = null;
+            _mostRecentReport = null;
+            _healthTestTimes.Clear();
+
+            foreach (Probe probe in _probes)
+                probe.ClearForSharing();
+
+            if (_localDataStore != null)
+                _localDataStore.ClearForSharing();
+
+            if (_remoteDataStore != null)
+                _remoteDataStore.ClearForSharing();
+        }
+
         public void StopAsync()
         {
             StopAsync(() =>

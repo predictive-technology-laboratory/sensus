@@ -28,7 +28,7 @@ namespace Sensus.iOS.Probes.Context
     /// </summary>
     public class iOSSoundProbe : SoundProbe
     {
-        NSDictionary _settings;
+        private NSDictionary _settings;
 
         protected override void Initialize()
         {

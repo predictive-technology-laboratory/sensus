@@ -89,23 +89,9 @@ namespace SensusUI
                         {
                             try
                             {
-                                // make a deep copy of the selected protocol so we can reset some of its data
+                                // make a deep copy of the selected protocol so we can clear it out for sharing
                                 Protocol selectedProtocolCopy = selectedProtocol.Copy();
-
-                                // before saving to file for sharing, reset sensitive data fields within the protocol so that they are not shared with others.
-                                selectedProtocolCopy.RandomTimeAnchor = DateTime.MinValue;
-                                selectedProtocolCopy.StorageDirectory = null;
-                                selectedProtocolCopy.HealthTestTimes.Clear();
-
-                                // reset state information held within the script probe
-                                foreach (ScriptProbe scriptProbe in selectedProtocolCopy.Probes.Where(probe => probe is ScriptProbe))
-                                    foreach (ScriptRunner scriptRunner in scriptProbe.ScriptRunners)
-                                    {
-                                        scriptRunner.IncompleteScripts.Clear();
-                                        scriptRunner.NumScriptsAgedOut = 0;
-                                        scriptRunner.RunTimes.Clear();
-                                        scriptRunner.CompletionTimes.Clear();
-                                    }
+                                selectedProtocolCopy.ClearForSharing();
 
                                 // write to file and share
                                 string sharePath = UiBoundSensusServiceHelper.Get(true).GetSharePath(".sensus");

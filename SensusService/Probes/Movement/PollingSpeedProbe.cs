@@ -106,6 +106,13 @@ namespace SensusService.Probes.Movement
             }
         }
 
+        public override void ClearForSharing()
+        {
+            base.ClearForSharing();
+
+            _previousPosition = null;
+        }
+
         public override void Stop()
         {
             lock (_locker)

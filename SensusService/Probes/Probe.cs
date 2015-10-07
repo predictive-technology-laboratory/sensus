@@ -137,6 +137,7 @@ namespace SensusService.Probes
         {
             _enabled = _running = false;
             _storeData = true;
+            _collectedData = new HashSet<Datum>();
         }
 
         /// <summary>
@@ -144,7 +145,7 @@ namespace SensusService.Probes
         /// </summary>
         protected virtual void Initialize()
         {
-            _collectedData = new HashSet<Datum>();
+            _collectedData.Clear();
             _mostRecentDatum = null;
             _mostRecentStoreTimestamp = DateTimeOffset.UtcNow;  // mark storage delay from initialization of probe
         }
@@ -266,6 +267,16 @@ namespace SensusService.Probes
             }
 
             return restart;
+        }
+
+        public virtual void ClearForSharing()
+        {
+            if (_running)
+                throw new Exception("Cannot clear probe while it is running.");
+            
+            _collectedData.Clear();
+            _mostRecentDatum = null;
+            _mostRecentStoreTimestamp = DateTimeOffset.MinValue;
         }
     }
 }

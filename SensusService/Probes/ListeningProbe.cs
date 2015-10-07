@@ -76,5 +76,12 @@ namespace SensusService.Probes
             if (storesPerSecond <= _maxDataStoresPerSecond)
                 base.StoreDatum(datum);
         }
+
+        public override void ClearForSharing()
+        {
+            base.ClearForSharing();
+
+            _wakeLockAcquired = false;
+        }
     }
 }

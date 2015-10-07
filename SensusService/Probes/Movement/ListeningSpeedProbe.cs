@@ -83,6 +83,13 @@ namespace SensusService.Probes.Movement
             GpsReceiver.Get().AddListener(_positionChangedHandler);
         }
 
+        public override void ClearForSharing()
+        {
+            base.ClearForSharing();
+
+            _previousPosition = null;
+        }
+
         protected sealed override void StopListening()
         {
             GpsReceiver.Get().RemoveListener(_positionChangedHandler);

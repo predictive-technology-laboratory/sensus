@@ -564,6 +564,14 @@ namespace SensusService.Probes.User
             return restart;
         }
 
+        public void ClearForSharing()
+        {
+            _incompleteScripts.Clear();
+            _numScriptsAgedOut = 0;
+            _runTimes.Clear();
+            _completionTimes.Clear();
+        }
+
         public void Restart()
         {
             Stop();
