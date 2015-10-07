@@ -19,6 +19,7 @@ using System.Linq;
 using Xamarin.Forms;
 using SensusUI.Inputs;
 using System.Collections.Generic;
+using SensusService.Probes.User;
 
 namespace SensusUI
 {
@@ -86,29 +87,35 @@ namespace SensusUI
                 {
                     Action ShareSelectedProtocol = new Action(() =>
                         {
-                            // copy protocol so we don't disrupt it (e.g. if it's currently running)
-                            selectedProtocol.CopyAsync(selectedProtocolCopy =>
-                                {
-                                    string path = null;
-                                    try
-                                    {
-                                        path = UiBoundSensusServiceHelper.Get(true).GetSharePath(".sensus");
+                            try
+                            {
+                                // make a deep copy of the selected protocol so we can reset some of its data
+                                Protocol selectedProtocolCopy = selectedProtocol.Copy();
 
-                                        // before saving to file for sharing, reset sensitive data fields within the protocol so that they are not shared with others.
-                                        selectedProtocolCopy.RandomTimeAnchor = DateTime.MinValue;
-                                        selectedProtocolCopy.StorageDirectory = null;
-                                        selectedProtocolCopy.HealthTestTimes.Clear();
-                                        selectedProtocolCopy.Save(path);
-                                    }
-                                    catch (Exception ex)
+                                // before saving to file for sharing, reset sensitive data fields within the protocol so that they are not shared with others.
+                                selectedProtocolCopy.RandomTimeAnchor = DateTime.MinValue;
+                                selectedProtocolCopy.StorageDirectory = null;
+                                selectedProtocolCopy.HealthTestTimes.Clear();
+
+                                // reset state information held within the script probe
+                                foreach (ScriptProbe scriptProbe in selectedProtocolCopy.Probes.Where(probe => probe is ScriptProbe))
+                                    foreach (ScriptRunner scriptRunner in scriptProbe.ScriptRunners)
                                     {
-                                        UiBoundSensusServiceHelper.Get(true).Logger.Log("Failed to save protocol to file for sharing:  " + ex.Message, LoggingLevel.Normal, GetType());
-                                        path = null;
+                                        scriptRunner.IncompleteScripts.Clear();
+                                        scriptRunner.NumScriptsAgedOut = 0;
+                                        scriptRunner.RunTimes.Clear();
+                                        scriptRunner.CompletionTimes.Clear();
                                     }
 
-                                    if (path != null)
-                                        UiBoundSensusServiceHelper.Get(true).ShareFileAsync(path, "Sensus Protocol:  " + selectedProtocolCopy.Name);
-                                });
+                                // write to file and share
+                                string sharePath = UiBoundSensusServiceHelper.Get(true).GetSharePath(".sensus");
+                                selectedProtocolCopy.Save(sharePath);
+                                UiBoundSensusServiceHelper.Get(true).ShareFileAsync(sharePath, "Sensus Protocol:  " + selectedProtocol.Name);
+                            }
+                            catch (Exception ex)
+                            {
+                                UiBoundSensusServiceHelper.Get(true).Logger.Log("Failed to share protocol:  " + ex.Message, LoggingLevel.Normal, GetType());
+                            }
                         });
 
                     // don't authenticate if the protocol was declared shareable -- participants might require the ability to share without the password.

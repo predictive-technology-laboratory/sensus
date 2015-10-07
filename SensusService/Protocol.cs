@@ -596,9 +596,9 @@ namespace SensusService
             }
         }
 
-        public void CopyAsync(Action<Protocol> callback)
+        public Protocol Copy()
         {
-            DeserializeAsync(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), callback);
+            return JsonConvert.DeserializeObject<Protocol>(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
         }
 
         public void StartAsync()
