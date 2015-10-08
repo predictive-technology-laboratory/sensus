@@ -821,8 +821,6 @@ namespace SensusService
                         else
                         {
                             BringToForeground();
-            Console.Out.WriteLine(incompleteGroups.Length);
-            Console.Out.WriteLine(incompleteGroupNum);
 
                             Device.BeginInvokeOnMainThread(async () =>
                                 {

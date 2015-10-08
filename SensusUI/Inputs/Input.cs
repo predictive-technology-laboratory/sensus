@@ -24,6 +24,7 @@ namespace SensusUI.Inputs
     {
         private string _name;
         private string _id;
+        private string _scriptId;
         private string _groupId;
         private string _labelText;
         private View _view;
@@ -48,6 +49,18 @@ namespace SensusUI.Inputs
             set
             {
                 _id = value;
+            }
+        }
+
+        public string ScriptId
+        {
+            get
+            {
+                return _scriptId;
+            }
+            set
+            {
+                _scriptId = value;
             }
         }
 

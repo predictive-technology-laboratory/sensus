@@ -259,6 +259,9 @@ Global
 		$6.NamingStyle = None
 		$6.IncludeInstanceMembers = True
 		$6.IncludeStaticEntities = True
+		$0.DotNetNamingPolicy = $7
+		$7.DirectoryNamespaceAssociation = None
+		$7.ResourceNamePolicy = FileFormatDefault
 		description = Sensus
 		version = 2.0.0
 	EndGlobalSection

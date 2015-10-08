@@ -105,7 +105,7 @@ namespace SensusUI
                     bool skip = false;
                     foreach (Input input in inputGroup.Inputs)
                     {
-                        if (!(input.Complete) && !(input is TextInput) && totalSteps > 1)
+                        if (!(input.Complete) && !(input is TextInput || input is LabelOnlyInput) && totalSteps > 1)
                         {
                             if (totalSteps == stepNumber)
                             {
