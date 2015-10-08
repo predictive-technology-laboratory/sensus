@@ -14,6 +14,7 @@
 
 using SensusUI.UiProperties;
 using System;
+using System.Linq;
 
 namespace SensusService.Probes
 {
@@ -29,6 +30,29 @@ namespace SensusService.Probes
         {
             get { return _maxDataStoresPerSecond; }
             set { _maxDataStoresPerSecond = value; }
+        }
+
+        public override float? Participation
+        {
+            get
+            {
+                if (EnabledWithinDeserializedProtocol)
+                {
+                    #if __ANDROID__
+                    float fullActivityHealthTests = Protocol.ParticipationHorizonDays * 60000 * 60 * 24 / (float)SensusServiceHelper.HEALTH_TEST_DELAY_MS;
+                    return Protocol.HealthTestTimes.Count(healthTestTime => healthTestTime >= Protocol.ParticipationHorizon) / fullActivityHealthTests;
+                    #elif __IOS__
+                    if (StartDateTime == null)
+                        return 0;
+                    else
+                        return ((float)(DateTime.Now - StartDateTime.GetValueOrDefault()).TotalSeconds) / (float)new TimeSpan(Protocol.ParticipationHorizonDays, 0, 0, 0).TotalSeconds;
+                    #else
+                    #error "Unimplemented platform"
+                    #endif
+                }
+                else
+                    return null;
+            }
         }
 
         protected ListeningProbe()

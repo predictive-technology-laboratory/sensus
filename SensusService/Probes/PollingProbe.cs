@@ -25,6 +25,7 @@ namespace SensusService.Probes
         private int _pollingSleepDurationMS;
         private bool _isPolling;
         private string _pollCallbackId;
+        private List<DateTime> _pollTimes;
 
         private readonly object _locker = new object();
 
@@ -50,11 +51,23 @@ namespace SensusService.Probes
         [JsonIgnore]
         public abstract int DefaultPollingSleepDurationMS { get; }
 
+        public override float? Participation
+        {
+            get
+            {
+                if (EnabledWithinDeserializedProtocol)
+                    return _pollTimes.Count / (float)((new TimeSpan(1, 0, 0, 0).TotalMilliseconds / _pollingSleepDurationMS) * Protocol.ParticipationHorizonDays);
+                else
+                    return null;
+            }
+        }
+
         protected PollingProbe()
         {
             _pollingSleepDurationMS = DefaultPollingSleepDurationMS;
             _isPolling = false;
             _pollCallbackId = null;
+            _pollTimes = new List<DateTime>();
         }
 
         /// <summary>
@@ -87,6 +100,8 @@ namespace SensusService.Probes
                             {
                                 SensusServiceHelper.Get().Logger.Log("Polling.", LoggingLevel.Normal, GetType());
                                 data = Poll(cancellationToken);
+                                _pollTimes.Add(DateTime.Now);
+                                _pollTimes.RemoveAll(pollTime => pollTime < Protocol.ParticipationHorizon);
                             }
                             catch (Exception ex)
                             {
@@ -151,6 +166,7 @@ namespace SensusService.Probes
 
             _isPolling = false;
             _pollCallbackId = null;
+            _pollTimes.Clear();
         }
     }
 }

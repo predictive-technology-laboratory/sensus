@@ -426,8 +426,6 @@ namespace SensusService
 
         public abstract void UpdateApplicationStatus(string status);
 
-        public abstract float GetFullActivityHealthTestsPerDay(Protocol protocol);
-
         /// <summary>
         /// The user can enable all probes at once. When this is done, it doesn't make sense to enable, e.g., the
         /// listening location probe as well as the polling location probe. This method allows the platforms to

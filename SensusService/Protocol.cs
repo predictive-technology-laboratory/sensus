@@ -188,6 +188,10 @@ namespace SensusService
                                         if (!Directory.Exists(protocol.StorageDirectory))
                                             Directory.CreateDirectory(protocol.StorageDirectory);
 
+                                        // mark the probes that were originally enabled in the protocol we just deserialized -- we use this, e.g., to check the user's probing participation, which is less if the user disables probes that were originally enabled in the distributed protocol.
+                                        foreach (Probe probe in protocol.Probes)
+                                            probe.EnabledWithinDeserializedProtocol = probe.Enabled;
+
                                         SensusServiceHelper.Get().RegisterProtocol(protocol);
 
                                         setupWait.Set();
@@ -460,27 +464,6 @@ namespace SensusService
             get { return DateTime.Now.AddDays(-_participationHorizonDays); }
         }
 
-        // sensus cannot full execute all the time on ios. the level of app activity is, for the most part, determined by the user
-        // and how often he/she opens sensus or one of its notifications. thus, it's not reasonable to assert a partiular amount of
-        // activity as being "full activity". rather, on ios this is left to the protocol designer. contrast with android, where
-        // we know how many health tests should come in under normal operating conditions (it's determined by the health test delay).
-        #if __IOS__
-        private int _fullActivityHealthTestsPerDay = 10;
-
-        [EntryIntegerUiProperty("Full Participation Activations:", true, 17)]
-        public int FullActivityHealthTestsPerDay
-        {
-            get
-            {
-                return _fullActivityHealthTestsPerDay;
-            }
-            set
-            {
-                _fullActivityHealthTestsPerDay = value;
-            }
-        }
-        #endif
-
         public List<DateTime> HealthTestTimes
         {
             get{ return _healthTestTimes; }
@@ -500,30 +483,18 @@ namespace SensusService
         }
 
         [JsonIgnore]
-        public float ActivityPercentage
+        public float Participation
         {
             get
             { 
-                float fullActivityHealthTests = _participationHorizonDays * SensusServiceHelper.Get().GetFullActivityHealthTestsPerDay(this);
-                return _healthTestTimes.Count(healthTestTime => healthTestTime >= ParticipationHorizon) / fullActivityHealthTests;
-            }
-        }
+                float[] participations = _probes.Select(probe => probe.Participation).Where(participation => participation != null).Select(participation => participation.GetValueOrDefault()).ToArray();
 
-        [JsonIgnore]
-        public float InteractionParticipationLevel
-        {
-            get
-            {
-                int scriptsRun = _probes.Sum(probe => probe is ScriptProbe ? (probe as ScriptProbe).ScriptRunners.Sum(scriptRunner => scriptRunner.RunTimes.Count(runTime => runTime >= ParticipationHorizon)) : 0);
-                int scriptsCompleted = _probes.Sum(probe => probe is ScriptProbe ? (probe as ScriptProbe).ScriptRunners.Sum(scriptRunner => scriptRunner.CompletionTimes.Count(completionTime => completionTime >= ParticipationHorizon)) : 0);
-                return scriptsRun == 0 ? 1f : scriptsCompleted / (float)scriptsRun;
+                // there will not be any participations if all probes are disabled -- perfect participation by definition
+                if (participations.Length == 0)
+                    return 1;
+                else
+                    return participations.Average();
             }
-        }
-
-        [JsonIgnore]
-        public float OverallParticipationLevel
-        {
-            get { return ActivityPercentage * InteractionParticipationLevel; }
         }
 
         /// <summary>
@@ -697,7 +668,7 @@ namespace SensusService
                                         SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
                                         SensusServiceHelper.Get().FlashNotificationAsync(message);
 
-                                        // disable probe if it is not supported on the device
+                                        // disable probe if it is not supported on the device (or if the user has elected not to enable it -- e.g., by refusing to log into facebook)
                                         if (ex is NotSupportedException)
                                             probe.Enabled = false;
                                     }
@@ -803,8 +774,6 @@ namespace SensusService
                     lock (_healthTestTimes)
                     {
                         _healthTestTimes.Add(DateTime.Now);
-
-                        // remove all health test times before the participation horizon
                         _healthTestTimes.RemoveAll(healthTestTime => healthTestTime < ParticipationHorizon);
                     }
 

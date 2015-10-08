@@ -454,11 +454,6 @@ namespace Sensus.iOS
             !(probe is PollingPointsOfInterestProximityProbe);
         }
 
-        public override float GetFullActivityHealthTestsPerDay(Protocol protocol)
-        {
-            return protocol.FullActivityHealthTestsPerDay;
-        }
-
         #region methods not implemented in ios
 
         public override void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)

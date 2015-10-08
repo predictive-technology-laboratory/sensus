@@ -71,7 +71,7 @@ namespace Sensus.iOS.Probes.User.Health
                     data.Add(new BiologicalSexDatum(DateTimeOffset.Now, BiologicalSex.Other));
             }
             else
-                SensusServiceHelper.Get().Logger.Log("Error reading biological sex:  " + error.Description, LoggingLevel.Normal, GetType());
+                throw new Exception("Error reading biological sex:  " + error.Description);
             
             return data;
         }

@@ -48,6 +48,7 @@ namespace Sensus.iOS.Probes.User.Health
             List<Datum> data = new List<Datum>();
 
             ManualResetEvent queryWait = new ManualResetEvent(false);
+            Exception exception = null;
 
             HealthStore.ExecuteQuery(new HKAnchoredObjectQuery(ObjectType as HKSampleType, null, (nuint)_queryAnchor, nuint.MaxValue, new HKAnchoredObjectResultHandler2(
                         (query, samples, newQueryAnchor, error) =>
@@ -66,11 +67,11 @@ namespace Sensus.iOS.Probes.User.Health
                                     _queryAnchor = (int)newQueryAnchor;
                                 }
                                 else
-                                    SensusServiceHelper.Get().Logger.Log("Error while querying HealthKit for " + ObjectType + ":  " + error.Description, LoggingLevel.Normal, GetType());
+                                    throw new Exception("Error while querying HealthKit for " + ObjectType + ":  " + error.Description);
                             }
                             catch (Exception ex)
                             {
-                                SensusServiceHelper.Get().Logger.Log("Failed storing HealthKit samples:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                exception = new Exception("Failed storing HealthKit samples:  " + ex.Message);
                             }
                             finally
                             {
@@ -79,6 +80,9 @@ namespace Sensus.iOS.Probes.User.Health
                         })));
 
             queryWait.WaitOne();
+
+            if (exception != null)
+                throw exception;
 
             return data;
         }

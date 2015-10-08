@@ -14,17 +14,18 @@
 
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace SensusService.Probes.User
 {
     public class ScriptProbe : Probe
-    {        
+    {
         private ObservableCollection<ScriptRunner> _scriptRunners;
 
         public ObservableCollection<ScriptRunner> ScriptRunners
         {
             get { return _scriptRunners; }
-        }            
+        }
 
         public sealed override string DisplayName
         {
@@ -34,6 +35,21 @@ namespace SensusService.Probes.User
         public sealed override Type DatumType
         {
             get { return typeof(ScriptDatum); }
+        }
+
+        public override float? Participation
+        {
+            get
+            {
+                if (EnabledWithinDeserializedProtocol)
+                {
+                    int scriptsRun = _scriptRunners.Sum(scriptRunner => scriptRunner.RunTimes.Count(runTime => runTime >= Protocol.ParticipationHorizon));
+                    int scriptsCompleted = _scriptRunners.Sum(scriptRunner => scriptRunner.CompletionTimes.Count(completionTime => completionTime >= Protocol.ParticipationHorizon));
+                    return scriptsRun == 0 ? 1 : scriptsCompleted / (float)scriptsRun;
+                }
+                else
+                    return null;                      
+            }
         }
 
         public ScriptProbe()
@@ -81,7 +97,7 @@ namespace SensusService.Probes.User
             }
 
             return restart;
-        }  
+        }
 
         public override void ClearForSharing()
         {

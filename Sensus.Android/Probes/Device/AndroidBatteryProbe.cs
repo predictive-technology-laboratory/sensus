@@ -28,7 +28,7 @@ namespace Sensus.Android.Probes.Device
         {
             Intent lastIntent = Application.Context.RegisterReceiver(null, new IntentFilter(Intent.ActionBatteryChanged));
             if (lastIntent == null)
-                return new BatteryDatum[] { };
+                throw new Exception("Failed to poll battery status.");
             else
                 return new BatteryDatum[] { new BatteryDatum(DateTimeOffset.UtcNow, lastIntent.GetIntExtra(BatteryManager.ExtraLevel, -1)) };
         }

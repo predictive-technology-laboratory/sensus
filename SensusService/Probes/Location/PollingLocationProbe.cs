@@ -61,7 +61,7 @@ namespace SensusService.Probes.Location
             Position reading = GpsReceiver.Get().GetReading(cancellationToken);
 
             if (reading == null)
-                return new Datum[] { };
+                throw new Exception("Failed to take GPS reading.");
             else
                 return new Datum[] { new LocationDatum(reading.Timestamp, reading.Accuracy, reading.Latitude, reading.Longitude) };
         }

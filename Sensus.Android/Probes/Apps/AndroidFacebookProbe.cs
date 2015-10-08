@@ -81,6 +81,9 @@ namespace Sensus.Android.Probes.Apps
         {
             base.Initialize();
 
+            if (GetRequiredPermissionNames().Length == 0)
+                throw new NotSupportedException("No Facebook permissions requested. Will not start Facebook probe.");
+            
             if (HasValidAccessToken)
             {
                 SensusServiceHelper.Get().Logger.Log("Already have valid Facebook access token. No need to initialize.", LoggingLevel.Normal, GetType());
@@ -182,7 +185,7 @@ namespace Sensus.Android.Probes.Apps
             List<Datum> data = new List<Datum>();
 
             if (HasValidAccessToken)
-            {
+            {                
                 // prompt user for any missing permissions
                 ICollection<string> missingPermissions = GetRequiredPermissionNames().Where(p => !AccessToken.CurrentAccessToken.Permissions.Contains(p)).ToArray();
                 if (missingPermissions.Count > 0)
@@ -224,7 +227,7 @@ namespace Sensus.Android.Probes.Apps
                 }
 
                 if (graphRequestBatch.Size() == 0)
-                    SensusServiceHelper.Get().Logger.Log("Facebook request batch contained zero requests.", LoggingLevel.Normal, GetType());
+                    throw new Exception("User has not granted any Facebook permissions.");
                 else
                     foreach (GraphResponse response in graphRequestBatch.ExecuteAndWait())
                         if (response.Error == null)
@@ -273,12 +276,14 @@ namespace Sensus.Android.Probes.Apps
 
                             if (valuesSet)
                                 data.Add(datum);
+                            else
+                                throw new Exception("No values were set in Facebook datum.");
                         }
                         else
-                            SensusServiceHelper.Get().Logger.Log("Error received while querying Facebook graph API:  " + response.Error.ErrorMessage, LoggingLevel.Normal, GetType());
+                            throw new Exception("Error received while querying Facebook graph API:  " + response.Error.ErrorMessage);
             }
             else
-                SensusServiceHelper.Get().Logger.Log("Attempted to poll Facebook probe without a valid access token.", LoggingLevel.Normal, GetType());
+                throw new Exception("Attempted to poll Facebook probe without a valid access token.");
 
             return data;
         }

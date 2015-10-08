@@ -62,6 +62,8 @@ namespace SensusService.Probes
         private Protocol _protocol;
         private bool _storeData;
         private DateTimeOffset _mostRecentStoreTimestamp;
+        private bool _enabledWithinDeserializedProtocol;
+        private DateTime? _startDateTime;
 
         private readonly object _locker = new object();
 
@@ -84,6 +86,18 @@ namespace SensusService.Probes
                         else
                             StopAsync();
                 }
+            }
+        }
+
+        public bool EnabledWithinDeserializedProtocol
+        {
+            get
+            {
+                return _enabledWithinDeserializedProtocol;
+            }
+            set
+            {
+                _enabledWithinDeserializedProtocol = value;
             }
         }
 
@@ -133,6 +147,14 @@ namespace SensusService.Probes
         [JsonIgnore]
         public abstract Type DatumType { get; }
 
+        [JsonIgnore]
+        public abstract float? Participation { get; }
+
+        public DateTime? StartDateTime
+        {
+            get { return _startDateTime; }
+        }
+
         protected Probe()
         {
             _enabled = _running = false;
@@ -174,6 +196,7 @@ namespace SensusService.Probes
                     SensusServiceHelper.Get().Logger.Log("Starting.", LoggingLevel.Normal, GetType());
                     Initialize();
                     _running = true;
+                    _startDateTime = DateTime.Now;
                 }
             }
         }
@@ -236,7 +259,9 @@ namespace SensusService.Probes
                 if (_running)
                 {
                     SensusServiceHelper.Get().Logger.Log("Stopping.", LoggingLevel.Normal, GetType());
+
                     _running = false;
+                    _startDateTime = null;
 
                     // clear out the probe's in-memory storage
                     lock (_collectedData)

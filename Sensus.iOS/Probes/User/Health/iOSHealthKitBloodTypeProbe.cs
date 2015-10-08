@@ -81,7 +81,7 @@ namespace Sensus.iOS.Probes.User.Health
                     data.Add(new BloodTypeDatum(DateTimeOffset.Now, BloodType.OPositive));
             }
             else
-                SensusServiceHelper.Get().Logger.Log("Error reading blood type:  " + error.Description, LoggingLevel.Normal, GetType());
+                throw new Exception("Error reading blood type:  " + error.Description);
 
             return data;
         }

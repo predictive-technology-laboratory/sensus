@@ -29,7 +29,7 @@ namespace Sensus.iOS.Network.Probes
             NSDictionary networkInfo;
 
             if (CaptiveNetwork.TryCopyCurrentNetworkInfo("en0", out networkInfo) == StatusCode.NoKey || networkInfo == null)
-                return new Datum[] { };
+                throw new Exception("Failed to get network information.");
 
             return new Datum[] { new WlanDatum(DateTimeOffset.UtcNow, networkInfo[CaptiveNetwork.NetworkInfoKeyBSSID].ToString()) };
         }

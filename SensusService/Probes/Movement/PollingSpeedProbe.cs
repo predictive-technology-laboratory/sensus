@@ -83,7 +83,7 @@ namespace SensusService.Probes.Movement
                 }
                 catch (Exception ex)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Failed to get GPS reading:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    throw new Exception("Failed to get GPS reading:  " + ex.Message);
                 }
 
                 SpeedDatum datum = null;
@@ -100,7 +100,7 @@ namespace SensusService.Probes.Movement
                 }
 
                 if (datum == null)
-                    return new Datum[] { };
+                    return new Datum[] { };  // the only way for datum to be null is if we got a GPS reading and this was our first poll. we should not consider this a missed poll, so just return an empty array rather than throwing an exception.
                 else
                     return new Datum[] { datum };
             }

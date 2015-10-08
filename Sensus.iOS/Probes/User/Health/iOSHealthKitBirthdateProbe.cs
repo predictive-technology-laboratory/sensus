@@ -64,7 +64,7 @@ namespace Sensus.iOS.Probes.User.Health
             if (error == null)
                 data.Add(new BirthdateDatum(DateTimeOffset.Now, new DateTimeOffset(dateOfBirth.ToDateTime())));
             else
-                SensusServiceHelper.Get().Logger.Log("Error reading date of birth:  " + error.Description, LoggingLevel.Normal, GetType());
+                throw new Exception("Error reading date of birth:  " + error.Description);
 
             return data;
         }

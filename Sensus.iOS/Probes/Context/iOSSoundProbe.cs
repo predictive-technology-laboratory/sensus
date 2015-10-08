@@ -83,10 +83,6 @@ namespace Sensus.iOS.Probes.Context
                 else
                     throw new Exception("Failed to start recording.");
             }
-            catch (Exception)
-            {
-                return new Datum[] { };
-            }
             finally
             {
                 try
