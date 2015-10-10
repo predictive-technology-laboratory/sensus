@@ -74,18 +74,31 @@ namespace SensusUI
                         Text = Math.Round(protocol.Participation * 100, 0) + "%",
                         FontSize = 75,
                         HorizontalOptions = LayoutOptions.CenterAndExpand
-                    },
+                    },                    
                     new Label
                     {                                
                         Text = "This score reflects your overall participation level in the \"" + protocol.Name + "\" study over the past " + (protocol.ParticipationHorizonDays == 1 ? "day" : protocol.ParticipationHorizonDays + " days") + ". " + howToIncreaseScore + (helpButton == null ? "" : Environment.NewLine + Environment.NewLine + "If you have questions, please click the button below to email the study manager."),
                         FontSize = 20,
                         HorizontalOptions = LayoutOptions.CenterAndExpand
-                    }
+                    }                    
                 }
             };
 
             if (helpButton != null)
                 contentLayout.Children.Add(helpButton);
+
+            Button viewDetailsButton = new Button
+            {
+                Text = "View Participation Details",
+                FontSize = 20
+            };
+
+            viewDetailsButton.Clicked += async (o, e) =>
+            {
+                await Navigation.PushAsync(new ParticipationReportDetailsPage(protocol));
+            };
+
+            contentLayout.Children.Add(viewDetailsButton);
 
             Content = new ScrollView
             {
