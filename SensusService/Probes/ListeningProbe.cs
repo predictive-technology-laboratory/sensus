@@ -36,11 +36,13 @@ namespace SensusService.Probes
         {
             get
             {
-                if (EnabledWithinDeserializedProtocol)
+                if (EnabledOnFirstProtocolStart.GetValueOrDefault(false))
                 {
                     #if __ANDROID__
-                    float fullActivityHealthTests = Protocol.ParticipationHorizonDays * 60000 * 60 * 24 / (float)SensusServiceHelper.HEALTH_TEST_DELAY_MS;
-                    return Protocol.HealthTestTimes.Count(healthTestTime => healthTestTime >= Protocol.ParticipationHorizon) / fullActivityHealthTests;
+                    long dayMS = 60000 * 60 * 24;
+                    long participationHorizonMS = Protocol.ParticipationHorizonDays * dayMS;
+                    float fullParticipationHealthTests = participationHorizonMS  / (float)SensusServiceHelper.HEALTH_TEST_DELAY_MS;
+                    return HealthTestTimes.Count(healthTestTime => healthTestTime >= Protocol.ParticipationHorizon) / fullParticipationHealthTests;
                     #elif __IOS__
                     if (StartDateTime == null)
                         return 0;

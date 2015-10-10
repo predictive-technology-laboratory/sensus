@@ -75,20 +75,13 @@ namespace SensusService.Probes.Movement
         {
             lock (_locker)
             {
-                Position currentPosition = null;
-
-                try
-                {
-                    currentPosition = GpsReceiver.Get().GetReading(cancellationToken);
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception("Failed to get GPS reading:  " + ex.Message);
-                }
-
                 SpeedDatum datum = null;
 
-                if (currentPosition != null)
+                Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken);
+
+                if (currentPosition == null)
+                    throw new Exception("Failed to get GPS reading.");
+                else
                 {
                     if (_previousPosition == null)
                         _previousPosition = currentPosition;
@@ -100,7 +93,7 @@ namespace SensusService.Probes.Movement
                 }
 
                 if (datum == null)
-                    return new Datum[] { };  // the only way for datum to be null is if we got a GPS reading and this was our first poll. we should not consider this a missed poll, so just return an empty array rather than throwing an exception.
+                    return new Datum[] { };  // datum will be null on the first poll and where polls return locations out of order (rare). these should count toward participation.
                 else
                     return new Datum[] { datum };
             }

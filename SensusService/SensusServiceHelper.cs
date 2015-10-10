@@ -92,7 +92,8 @@ namespace SensusService
         public const string SENSUS_CALLBACK_ID_KEY = "SENSUS-CALLBACK-ID";
         public const string SENSUS_CALLBACK_REPEATING_KEY = "SENSUS-CALLBACK-REPEATING";
         protected const string XAMARIN_INSIGHTS_APP_KEY = "";
-        private const string ENCRYPTION_KEY = "";  // can be generated via `uuidgen`
+        private const string ENCRYPTION_KEY = "";
+        // can be generated via `uuidgen`
         private static readonly string SHARE_DIRECTORY = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "share");
         private static readonly string LOG_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
         private static readonly string SERIALIZATION_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_service_helper.json");
@@ -847,19 +848,19 @@ namespace SensusService
 
                         try
                         {
-                            Position currentLocation = GpsReceiver.Get().GetReading(cancellationToken.GetValueOrDefault());
+                            Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken.GetValueOrDefault());
 
-                            if (currentLocation != null)
+                            if (currentPosition != null)
                                 foreach (InputGroup incompleteGroup in incompleteGroups)
                                     if (incompleteGroup.Geotag)
                                         foreach (Input input in incompleteGroup.Inputs)
                                             if (input.Complete)
                                             {
                                                 if (input.Latitude == null)
-                                                    input.Latitude = currentLocation.Latitude;
+                                                    input.Latitude = currentPosition.Latitude;
 
                                                 if (input.Longitude == null)
-                                                    input.Longitude = currentLocation.Longitude;
+                                                    input.Longitude = currentPosition.Longitude;
                                             }
                         }
                         catch (Exception ex)

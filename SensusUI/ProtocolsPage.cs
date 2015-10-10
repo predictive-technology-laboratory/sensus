@@ -20,6 +20,7 @@ using Xamarin.Forms;
 using SensusUI.Inputs;
 using System.Collections.Generic;
 using SensusService.Probes.User;
+using SensusService.Probes;
 
 namespace SensusUI
 {
@@ -92,6 +93,11 @@ namespace SensusUI
                                 // make a deep copy of the selected protocol so we can clear it out for sharing
                                 Protocol selectedProtocolCopy = selectedProtocol.Copy();
                                 selectedProtocolCopy.ClearForSharing();
+
+                                // reset enabled status of probes
+                                foreach (Probe probe in selectedProtocolCopy.Probes)
+                                    if (probe.EnabledOnFirstProtocolStart != null)  // if the probe's protocol has been started, this will contain the original value. if it hasn't been started, then the probe's current enabled value is the original.
+                                        probe.Enabled = probe.EnabledOnFirstProtocolStart.GetValueOrDefault();
 
                                 // write to file and share
                                 string sharePath = UiBoundSensusServiceHelper.Get(true).GetSharePath(".sensus");

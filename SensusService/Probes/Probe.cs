@@ -28,6 +28,7 @@ namespace SensusService.Probes
     public abstract class Probe
     {
         #region static members
+
         public static void GetAllAsync(Action<List<Probe>> callback)
         {
             new Thread(() =>
@@ -48,6 +49,7 @@ namespace SensusService.Probes
 
                 }).Start();
         }
+
         #endregion
 
         /// <summary>
@@ -62,8 +64,9 @@ namespace SensusService.Probes
         private Protocol _protocol;
         private bool _storeData;
         private DateTimeOffset _mostRecentStoreTimestamp;
-        private bool _enabledWithinDeserializedProtocol;
+        private bool? _enabledOnFirstProtocolStart;
         private DateTime? _startDateTime;
+        private List<DateTime> _healthTestTimes;
 
         private readonly object _locker = new object();
 
@@ -82,22 +85,22 @@ namespace SensusService.Probes
 
                     if (_protocol != null && _protocol.Running)  // _protocol can be null when deserializing the probe -- if Enabled is set before Protocol
                         if (_enabled)
-                            StartAsync();
-                        else
-                            StopAsync();
+                        StartAsync();
+                    else
+                        StopAsync();
                 }
             }
         }
 
-        public bool EnabledWithinDeserializedProtocol
+        public bool? EnabledOnFirstProtocolStart
         {
             get
             {
-                return _enabledWithinDeserializedProtocol;
+                return _enabledOnFirstProtocolStart;
             }
             set
             {
-                _enabledWithinDeserializedProtocol = value;
+                _enabledOnFirstProtocolStart = value;
             }
         }
 
@@ -155,11 +158,17 @@ namespace SensusService.Probes
             get { return _startDateTime; }
         }
 
+        public List<DateTime> HealthTestTimes
+        {
+            get{ return _healthTestTimes; }
+        }
+
         protected Probe()
         {
             _enabled = _running = false;
             _storeData = true;
             _collectedData = new HashSet<Datum>();
+            _healthTestTimes = new List<DateTime>();
         }
 
         /// <summary>
@@ -176,8 +185,14 @@ namespace SensusService.Probes
         {
             new Thread(() =>
                 {
-                    try { Start(); }
-                    catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to start:  " + ex.Message, LoggingLevel.Normal, GetType()); }
+                    try
+                    {
+                        Start();
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Failed to start:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
 
                 }).Start();
         }
@@ -243,8 +258,14 @@ namespace SensusService.Probes
         {
             new Thread(() =>
                 {
-                    try { Stop(); }
-                    catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to stop:  " + ex.Message, LoggingLevel.Normal, GetType()); }
+                    try
+                    {
+                        Stop();
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Failed to stop:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
 
                 }).Start();
         }
@@ -281,11 +302,21 @@ namespace SensusService.Probes
             }
         }
 
-        public virtual bool TestHealth(ref string error, ref string warning, ref string misc)
-        {
+        public virtual bool TestHealth(bool userInitiated, ref string error, ref string warning, ref string misc)
+        {                    
             bool restart = false;
 
-            if (!_running)
+            if (_running)
+            {
+                // keep track of system-initiated health test times within the participation
+                if (!userInitiated)
+                    lock (_healthTestTimes)
+                    {
+                        _healthTestTimes.Add(DateTime.Now);
+                        _healthTestTimes.RemoveAll(healthTestTime => healthTestTime < _protocol.ParticipationHorizon);
+                    }
+            }
+            else
             {
                 restart = true;
                 error += "Probe \"" + GetType().FullName + "\" is not running." + Environment.NewLine;
@@ -300,6 +331,7 @@ namespace SensusService.Probes
                 throw new Exception("Cannot clear probe while it is running.");
             
             _collectedData.Clear();
+            _healthTestTimes.Clear();
             _mostRecentDatum = null;
             _mostRecentStoreTimestamp = DateTimeOffset.MinValue;
         }

@@ -186,11 +186,7 @@ namespace SensusService
                                         // reset the storage directory
                                         protocol.StorageDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), protocol.Id);
                                         if (!Directory.Exists(protocol.StorageDirectory))
-                                            Directory.CreateDirectory(protocol.StorageDirectory);
-
-                                        // mark the probes that were originally enabled in the protocol we just deserialized -- we use this, e.g., to check the user's probing participation, which is less if the user disables probes that were originally enabled in the distributed protocol.
-                                        foreach (Probe probe in protocol.Probes)
-                                            probe.EnabledWithinDeserializedProtocol = probe.Enabled;
+                                            Directory.CreateDirectory(protocol.StorageDirectory);                                                       
 
                                         SensusServiceHelper.Get().RegisterProtocol(protocol);
 
@@ -298,7 +294,6 @@ namespace SensusService
         private List<PointOfInterest> _pointsOfInterest;
         private string _startupAgreement;
         private int _participationHorizonDays;
-        private List<DateTime> _healthTestTimes;
         private string _contactEmail;
 
         private readonly object _locker = new object();
@@ -464,11 +459,6 @@ namespace SensusService
             get { return DateTime.Now.AddDays(-_participationHorizonDays); }
         }
 
-        public List<DateTime> HealthTestTimes
-        {
-            get{ return _healthTestTimes; }
-        }
-
         [EntryStringUiProperty("Contact Email:", true, 18)]
         public string ContactEmail
         {
@@ -487,7 +477,7 @@ namespace SensusService
         {
             get
             { 
-                float[] participations = _probes.Select(probe => probe.Participation).Where(participation => participation != null).Select(participation => participation.GetValueOrDefault()).ToArray();
+                float[] participations = _probes.Select(probe => probe.Participation).Where(participation => participation != null).Select(participation => Math.Min(participation.GetValueOrDefault(), 1)).ToArray();
 
                 // there will not be any participations if all probes are disabled -- perfect participation by definition
                 if (participations.Length == 0)
@@ -508,8 +498,7 @@ namespace SensusService
             _jsonAnonymizer = new AnonymizedJsonContractResolver(this);
             _shareable = false;
             _pointsOfInterest = new List<PointOfInterest>();
-            _participationHorizonDays = 1;
-            _healthTestTimes = new List<DateTime>();
+            _participationHorizonDays = 1;            
         }
 
         /// <summary>
@@ -585,6 +574,11 @@ namespace SensusService
                     return;
                 else
                     _running = true;
+
+                // if this is the first time the protocol has been started, mark the probes that are enabled. we use this, e.g., to check the user's probing participation, which is less if the user disables probes that were originally enabled in the distributed protocol.
+                foreach (Probe probe in _probes)
+                    if (probe.EnabledOnFirstProtocolStart == null)
+                        probe.EnabledOnFirstProtocolStart = probe.Enabled;
 
                 if (ProtocolRunningChanged != null)
                     ProtocolRunningChanged(this, _running);
@@ -769,14 +763,6 @@ namespace SensusService
         {
             lock (_locker)
             {
-                // keep track of system-initiated health test times
-                if (!userInitiated)
-                    lock (_healthTestTimes)
-                    {
-                        _healthTestTimes.Add(DateTime.Now);
-                        _healthTestTimes.RemoveAll(healthTestTime => healthTestTime < ParticipationHorizon);
-                    }
-
                 string error = null;
                 string warning = null;
                 string misc = null;
@@ -841,7 +827,7 @@ namespace SensusService
                     }
 
                     foreach (Probe probe in _probes)
-                        if (probe.Enabled && probe.TestHealth(ref error, ref warning, ref misc))
+                        if (probe.Enabled && probe.TestHealth(userInitiated, ref error, ref warning, ref misc))
                         {
                             error += "Restarting probe \"" + probe.GetType().FullName + "\"...";
 
@@ -880,8 +866,7 @@ namespace SensusService
         {
             _randomTimeAnchor = DateTime.MinValue;
             _storageDirectory = null;
-            _mostRecentReport = null;
-            _healthTestTimes.Clear();
+            _mostRecentReport = null;            
 
             foreach (Probe probe in _probes)
                 probe.ClearForSharing();

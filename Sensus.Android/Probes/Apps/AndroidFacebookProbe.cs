@@ -276,8 +276,6 @@ namespace Sensus.Android.Probes.Apps
 
                             if (valuesSet)
                                 data.Add(datum);
-                            else
-                                throw new Exception("No values were set in Facebook datum.");
                         }
                         else
                             throw new Exception("Error received while querying Facebook graph API:  " + response.Error.ErrorMessage);
@@ -288,9 +286,9 @@ namespace Sensus.Android.Probes.Apps
             return data;
         }
 
-        public override bool TestHealth(ref string error, ref string warning, ref string misc)
+        public override bool TestHealth(bool userInitiated, ref string error, ref string warning, ref string misc)
         {
-            bool restart = base.TestHealth(ref error, ref warning, ref misc);
+            bool restart = base.TestHealth(userInitiated, ref error, ref warning, ref misc);
 
             if (!HasValidAccessToken)
                 restart = true;
