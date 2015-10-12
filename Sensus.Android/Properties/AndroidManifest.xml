@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" android:versionName="0.0.0-prerelease" android:versionCode="49" package="sensus.salmon">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" android:versionName="0.0.0-prerelease" package="sensus.salmon" android:versionCode="1">
 	<uses-sdk android:minSdkVersion="16" android:targetSdkVersion="22" />
 	<application android:label="Sensus.SALMON" android:icon="@drawable/ic_launcher">
 		<provider android:name="android.support.v4.content.FileProvider" android:authorities="edu.virginia.sie.ptl.sensus.fileprovider" android:grantUriPermissions="true" android:exported="false">
