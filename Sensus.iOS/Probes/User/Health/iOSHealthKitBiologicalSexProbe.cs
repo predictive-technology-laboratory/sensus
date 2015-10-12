@@ -69,6 +69,8 @@ namespace Sensus.iOS.Probes.User.Health
                     data.Add(new BiologicalSexDatum(DateTimeOffset.Now, BiologicalSex.Male));
                 else if (biologicalSex.BiologicalSex == HKBiologicalSex.Other)
                     data.Add(new BiologicalSexDatum(DateTimeOffset.Now, BiologicalSex.Other));
+                else
+                    throw new Exception("User has not provided -- or has not allowed access to -- their biological sex.");
             }
             else
                 throw new Exception("Error reading biological sex:  " + error.Description);

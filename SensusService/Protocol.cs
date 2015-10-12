@@ -578,11 +578,6 @@ namespace SensusService
                 else
                     _running = true;
 
-                // if this is the first time the protocol has been started, mark the probes that are enabled. we use this, e.g., to check the user's probing participation, which is less if the user disables probes that were originally enabled in the distributed protocol.
-                foreach (Probe probe in _probes)
-                    if (probe.EnabledOnFirstProtocolStart == null)
-                        probe.EnabledOnFirstProtocolStart = probe.Enabled;
-
                 if (ProtocolRunningChanged != null)
                     ProtocolRunningChanged(this, _running);
 

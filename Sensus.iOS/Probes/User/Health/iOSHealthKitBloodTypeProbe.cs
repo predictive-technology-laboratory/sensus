@@ -79,6 +79,8 @@ namespace Sensus.iOS.Probes.User.Health
                     data.Add(new BloodTypeDatum(DateTimeOffset.Now, BloodType.ONegative));
                 else if (bloodType.BloodType == HKBloodType.OPositive)
                     data.Add(new BloodTypeDatum(DateTimeOffset.Now, BloodType.OPositive));
+                else
+                    throw new Exception("User has not provided -- or has not allowed access to -- their blood type.");
             }
             else
                 throw new Exception("Error reading blood type:  " + error.Description);

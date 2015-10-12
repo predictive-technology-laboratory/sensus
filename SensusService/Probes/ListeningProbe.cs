@@ -32,7 +32,7 @@ namespace SensusService.Probes
             set { _maxDataStoresPerSecond = value; }
         }
 
-        protected override float? RawParticipation
+        protected override float RawParticipation
         {
             get
             {

@@ -64,7 +64,7 @@ namespace SensusService.Probes
         private Protocol _protocol;
         private bool _storeData;
         private DateTimeOffset _mostRecentStoreTimestamp;
-        private bool? _enabledOnFirstProtocolStart;
+        private bool _originallyEnabled;
         private DateTime? _startDateTime;
         private List<DateTime> _successfulHealthTestTimes;
 
@@ -93,21 +93,22 @@ namespace SensusService.Probes
         }
 
         /// <summary>
-        /// Gets or sets whether or not this probe was enabled the first time the protocol was started. Some probes can become disabled when 
-        /// attempting to start them. For example, the temperature probe might not be supported on all hardware and will thus become disabled 
-        /// after its failed initialization. Thus, we need a separate variable (other than Enabled) to tell us whether the probe was originally 
-        /// enabled. We use this value to calculate participation levels and also to restore the protocol before sharing it with others.
+        /// Gets or sets whether or not this probe was originally enabled within the protocol. Some probes can become disabled when 
+        /// attempting to start them. For example, the temperature probe might not be supported on all hardware and will thus become 
+        /// disabled after its failed initialization. Thus, we need a separate variable (other than Enabled) to tell us whether the 
+        /// probe was originally enabled. We use this value to calculate participation levels and also to restore the probe before 
+        /// sharing it with others (e.g., since other people might have temperature hardware in their devices).
         /// </summary>
         /// <value>Whether or not this probe was enabled the first time the protocol was started.</value>
-        public bool? EnabledOnFirstProtocolStart
+        public bool OriginallyEnabled
         {
             get
             {
-                return _enabledOnFirstProtocolStart;
+                return _originallyEnabled;
             }
             set
             {
-                _enabledOnFirstProtocolStart = value;
+                _originallyEnabled = value;
             }
         }
 
@@ -158,8 +159,9 @@ namespace SensusService.Probes
         public abstract Type DatumType { get; }
 
         [JsonIgnore]
-        protected abstract float? RawParticipation { get; }
+        protected abstract float RawParticipation { get; }
 
+        [JsonIgnore]
         public DateTime? StartDateTime
         {
             get { return _startDateTime; }
@@ -189,19 +191,16 @@ namespace SensusService.Probes
         }
 
         /// <summary>
-        /// Gets the participation level for the current probe. If this probe was enabled when the protocol was first started, then
+        /// Gets the participation level for the current probe. If this probe was originally enabled within the protocol, then
         /// this will be a value between 0 and 1, with 1 indicating perfect participation and 0 indicating no participation. If this
-        /// probe was not enabled when the protocol was first started, then the returned value will be null, indicating that this
+        /// probe was not originally enabled within the protocol, then the returned value will be null, indicating that this
         /// probe should not be included in calculations of overall protocol participation.
         /// </summary>
         /// <returns>The participation level (null, or somewhere 0-1).</returns>
         public float? GetParticipation()
         {
-            if (EnabledOnFirstProtocolStart.GetValueOrDefault(false))
-            {
-                float? rawParticipation = RawParticipation;
-                return rawParticipation == null ? default(float?) : Math.Min(rawParticipation.GetValueOrDefault(), 1);  // raw participations can be > 1, e.g. in the case of polling probes that the user can cause to poll repeatedly. cut off at 1 to maintain the interpretation of 1 as perfect participation.
-            }
+            if (_originallyEnabled)
+                return Math.Min(RawParticipation, 1);  // raw participations can be > 1, e.g. in the case of polling probes that the user can cause to poll repeatedly. cut off at 1 to maintain the interpretation of 1 as perfect participation.
             else
                 return null;
         }

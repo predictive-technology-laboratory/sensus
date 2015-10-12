@@ -52,7 +52,7 @@ namespace SensusService.Probes
         [JsonIgnore]
         public abstract int DefaultPollingSleepDurationMS { get; }
 
-        protected override float? RawParticipation
+        protected override float RawParticipation
         {
             get
             {
@@ -61,6 +61,11 @@ namespace SensusService.Probes
                 float fullParticipationPolls = pollsPerDay * Protocol.ParticipationHorizonDays;
                 return _pollTimes.Count(pollTime => pollTime >= Protocol.ParticipationHorizon) / fullParticipationPolls;
             }
+        }
+
+        public List<DateTime> PollTimes
+        {
+            get { return _pollTimes; }
         }
 
         protected PollingProbe()

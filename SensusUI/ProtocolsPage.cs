@@ -96,8 +96,7 @@ namespace SensusUI
 
                                 // reset enabled status of probes to the original values. probes can be disabled when the protocol is started (e.g., if the user cancels out of facebook login.)
                                 foreach (Probe probe in selectedProtocolCopy.Probes)
-                                    if (probe.EnabledOnFirstProtocolStart != null)  // if the probe has been started, this will contain the original enabled value for the probe. if it hasn't been started, then the probe's current enabled value is the original.
-                                        probe.Enabled = probe.EnabledOnFirstProtocolStart.GetValueOrDefault();
+                                    probe.Enabled = probe.OriginallyEnabled;
 
                                 // write to file and share
                                 string sharePath = UiBoundSensusServiceHelper.Get(true).GetSharePath(".sensus");
