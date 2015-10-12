@@ -32,8 +32,10 @@ namespace SensusUI
                 VerticalOptions = LayoutOptions.FillAndExpand
             };
 
-            foreach (Probe probe in protocol.Probes.Where(probe => probe.Participation != null).OrderBy(probe => probe.Participation))
+            foreach (Probe probe in protocol.Probes.Where(probe => probe.GetParticipation() != null).OrderBy(probe => probe.GetParticipation()))
             {
+                float participation = probe.GetParticipation().GetValueOrDefault();
+
                 contentLayout.Children.Add(new StackLayout
                     {
                         Orientation = StackOrientation.Vertical,
@@ -42,12 +44,12 @@ namespace SensusUI
                         {
                             new Label
                             {
-                                Text = probe.DisplayName + ":  " + Math.Round(probe.Participation.GetValueOrDefault() * 100, 0) + "%",
+                                Text = probe.DisplayName + ":  " + Math.Round(participation * 100, 0) + "%",
                                 FontSize = 20
                             },
                             new ProgressBar
                             {
-                                Progress = probe.Participation.GetValueOrDefault()
+                                Progress = participation
                             }
                         }
                     });

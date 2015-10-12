@@ -37,18 +37,13 @@ namespace SensusService.Probes.User
             get { return typeof(ScriptDatum); }
         }
 
-        public override float? Participation
+        protected override float? RawParticipation
         {
             get
             {
-                if (EnabledOnFirstProtocolStart.GetValueOrDefault(false))
-                {
-                    int scriptsRun = _scriptRunners.Sum(scriptRunner => scriptRunner.RunTimes.Count(runTime => runTime >= Protocol.ParticipationHorizon));
-                    int scriptsCompleted = _scriptRunners.Sum(scriptRunner => scriptRunner.CompletionTimes.Count(completionTime => completionTime >= Protocol.ParticipationHorizon));
-                    return scriptsRun == 0 ? 1 : scriptsCompleted / (float)scriptsRun;
-                }
-                else
-                    return null;                      
+                int scriptsRun = _scriptRunners.Sum(scriptRunner => scriptRunner.RunTimes.Count(runTime => runTime >= Protocol.ParticipationHorizon));
+                int scriptsCompleted = _scriptRunners.Sum(scriptRunner => scriptRunner.CompletionTimes.Count(completionTime => completionTime >= Protocol.ParticipationHorizon));
+                return scriptsRun == 0 ? 1 : scriptsCompleted / (float)scriptsRun;
             }
         }
 
@@ -73,9 +68,9 @@ namespace SensusService.Probes.User
                 scriptRunner.Start();            
         }
 
-        public override bool TestHealth(bool userInitiated, ref string error, ref string warning, ref string misc)
+        public override bool TestHealth(ref string error, ref string warning, ref string misc)
         {
-            bool restart = base.TestHealth(userInitiated, ref error, ref warning, ref misc);
+            bool restart = base.TestHealth(ref error, ref warning, ref misc);
 
             if (Running)
             {

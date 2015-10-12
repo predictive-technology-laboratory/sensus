@@ -477,7 +477,10 @@ namespace SensusService
         {
             get
             { 
-                float[] participations = _probes.Select(probe => probe.Participation).Where(participation => participation != null).Select(participation => Math.Min(participation.GetValueOrDefault(), 1)).ToArray();
+                float[] participations = _probes.Select(probe => probe.GetParticipation())
+                                                .Where(participation => participation != null)
+                                                .Select(participation => participation.GetValueOrDefault())
+                                                .ToArray();
 
                 // there will not be any participations if all probes are disabled -- perfect participation by definition
                 if (participations.Length == 0)
@@ -827,21 +830,34 @@ namespace SensusService
                     }
 
                     foreach (Probe probe in _probes)
-                        if (probe.Enabled && probe.TestHealth(userInitiated, ref error, ref warning, ref misc))
+                        if (probe.Enabled)
                         {
-                            error += "Restarting probe \"" + probe.GetType().FullName + "\"...";
-
-                            try
+                            if (probe.TestHealth(ref error, ref warning, ref misc))
                             {
-                                probe.Restart();
-                            }
-                            catch (Exception ex)
-                            {
-                                error += ex.Message + "...";
-                            }
+                                error += "Restarting probe \"" + probe.GetType().FullName + "\"...";
 
-                            if (!probe.Running)
-                                error += "failed to restart probe \"" + probe.GetType().FullName + "\"." + Environment.NewLine;
+                                try
+                                {
+                                    probe.Restart();
+                                }
+                                catch (Exception ex)
+                                {
+                                    error += ex.Message + "...";
+                                }
+
+                                if (!probe.Running)
+                                    error += "failed to restart probe \"" + probe.GetType().FullName + "\"." + Environment.NewLine;
+                            }
+                            else
+                            {
+                                // keep track of successful system-initiated health tests. this tells use how consistently the probe is running.
+                                if (!userInitiated)
+                                    lock (probe.SuccessfulHealthTestTimes)
+                                    {
+                                        probe.SuccessfulHealthTestTimes.Add(DateTime.Now);
+                                        probe.SuccessfulHealthTestTimes.RemoveAll(healthTestTime => healthTestTime < ParticipationHorizon);
+                                    }
+                            }
                         }
                 }
 

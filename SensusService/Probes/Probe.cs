@@ -66,7 +66,7 @@ namespace SensusService.Probes
         private DateTimeOffset _mostRecentStoreTimestamp;
         private bool? _enabledOnFirstProtocolStart;
         private DateTime? _startDateTime;
-        private List<DateTime> _healthTestTimes;
+        private List<DateTime> _successfulHealthTestTimes;
 
         private readonly object _locker = new object();
 
@@ -92,6 +92,13 @@ namespace SensusService.Probes
             }
         }
 
+        /// <summary>
+        /// Gets or sets whether or not this probe was enabled the first time the protocol was started. Some probes can become disabled when 
+        /// attempting to start them. For example, the temperature probe might not be supported on all hardware and will thus become disabled 
+        /// after its failed initialization. Thus, we need a separate variable (other than Enabled) to tell us whether the probe was originally 
+        /// enabled. We use this value to calculate participation levels and also to restore the protocol before sharing it with others.
+        /// </summary>
+        /// <value>Whether or not this probe was enabled the first time the protocol was started.</value>
         public bool? EnabledOnFirstProtocolStart
         {
             get
@@ -151,16 +158,16 @@ namespace SensusService.Probes
         public abstract Type DatumType { get; }
 
         [JsonIgnore]
-        public abstract float? Participation { get; }
+        protected abstract float? RawParticipation { get; }
 
         public DateTime? StartDateTime
         {
             get { return _startDateTime; }
         }
 
-        public List<DateTime> HealthTestTimes
+        public List<DateTime> SuccessfulHealthTestTimes
         {
-            get{ return _healthTestTimes; }
+            get{ return _successfulHealthTestTimes; }
         }
 
         protected Probe()
@@ -168,7 +175,7 @@ namespace SensusService.Probes
             _enabled = _running = false;
             _storeData = true;
             _collectedData = new HashSet<Datum>();
-            _healthTestTimes = new List<DateTime>();
+            _successfulHealthTestTimes = new List<DateTime>();
         }
 
         /// <summary>
@@ -179,6 +186,24 @@ namespace SensusService.Probes
             _collectedData.Clear();
             _mostRecentDatum = null;
             _mostRecentStoreTimestamp = DateTimeOffset.UtcNow;  // mark storage delay from initialization of probe
+        }
+
+        /// <summary>
+        /// Gets the participation level for the current probe. If this probe was enabled when the protocol was first started, then
+        /// this will be a value between 0 and 1, with 1 indicating perfect participation and 0 indicating no participation. If this
+        /// probe was not enabled when the protocol was first started, then the returned value will be null, indicating that this
+        /// probe should not be included in calculations of overall protocol participation.
+        /// </summary>
+        /// <returns>The participation level (null, or somewhere 0-1).</returns>
+        public float? GetParticipation()
+        {
+            if (EnabledOnFirstProtocolStart.GetValueOrDefault(false))
+            {
+                float? rawParticipation = RawParticipation;
+                return rawParticipation == null ? default(float?) : Math.Min(rawParticipation.GetValueOrDefault(), 1);  // raw participations can be > 1, e.g. in the case of polling probes that the user can cause to poll repeatedly. cut off at 1 to maintain the interpretation of 1 as perfect participation.
+            }
+            else
+                return null;
         }
 
         protected void StartAsync()
@@ -302,21 +327,11 @@ namespace SensusService.Probes
             }
         }
 
-        public virtual bool TestHealth(bool userInitiated, ref string error, ref string warning, ref string misc)
+        public virtual bool TestHealth(ref string error, ref string warning, ref string misc)
         {                    
             bool restart = false;
 
-            if (_running)
-            {
-                // keep track of system-initiated health test times within the participation
-                if (!userInitiated)
-                    lock (_healthTestTimes)
-                    {
-                        _healthTestTimes.Add(DateTime.Now);
-                        _healthTestTimes.RemoveAll(healthTestTime => healthTestTime < _protocol.ParticipationHorizon);
-                    }
-            }
-            else
+            if (!_running)
             {
                 restart = true;
                 error += "Probe \"" + GetType().FullName + "\" is not running." + Environment.NewLine;
@@ -331,7 +346,7 @@ namespace SensusService.Probes
                 throw new Exception("Cannot clear probe while it is running.");
             
             _collectedData.Clear();
-            _healthTestTimes.Clear();
+            _successfulHealthTestTimes.Clear();
             _mostRecentDatum = null;
             _mostRecentStoreTimestamp = DateTimeOffset.MinValue;
         }

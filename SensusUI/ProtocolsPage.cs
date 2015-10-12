@@ -94,9 +94,9 @@ namespace SensusUI
                                 Protocol selectedProtocolCopy = selectedProtocol.Copy();
                                 selectedProtocolCopy.ClearForSharing();
 
-                                // reset enabled status of probes
+                                // reset enabled status of probes to the original values. probes can be disabled when the protocol is started (e.g., if the user cancels out of facebook login.)
                                 foreach (Probe probe in selectedProtocolCopy.Probes)
-                                    if (probe.EnabledOnFirstProtocolStart != null)  // if the probe's protocol has been started, this will contain the original value. if it hasn't been started, then the probe's current enabled value is the original.
+                                    if (probe.EnabledOnFirstProtocolStart != null)  // if the probe has been started, this will contain the original enabled value for the probe. if it hasn't been started, then the probe's current enabled value is the original.
                                         probe.Enabled = probe.EnabledOnFirstProtocolStart.GetValueOrDefault();
 
                                 // write to file and share

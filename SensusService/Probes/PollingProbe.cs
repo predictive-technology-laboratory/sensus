@@ -52,19 +52,14 @@ namespace SensusService.Probes
         [JsonIgnore]
         public abstract int DefaultPollingSleepDurationMS { get; }
 
-        public override float? Participation
+        protected override float? RawParticipation
         {
             get
             {
-                if (EnabledOnFirstProtocolStart.GetValueOrDefault(false))
-                {
-                    int oneDayMS = (int)new TimeSpan(1, 0, 0, 0).TotalMilliseconds;
-                    float pollsPerDay = oneDayMS / (float)_pollingSleepDurationMS;
-                    float fullParticipationPolls = pollsPerDay * Protocol.ParticipationHorizonDays;
-                    return _pollTimes.Count(pollTime => pollTime >= Protocol.ParticipationHorizon) / fullParticipationPolls;
-                }
-                else
-                    return null;
+                int oneDayMS = (int)new TimeSpan(1, 0, 0, 0).TotalMilliseconds;
+                float pollsPerDay = oneDayMS / (float)_pollingSleepDurationMS;
+                float fullParticipationPolls = pollsPerDay * Protocol.ParticipationHorizonDays;
+                return _pollTimes.Count(pollTime => pollTime >= Protocol.ParticipationHorizon) / fullParticipationPolls;
             }
         }
 
@@ -149,9 +144,9 @@ namespace SensusService.Probes
             }
         }
 
-        public override bool TestHealth(bool userInitiated, ref string error, ref string warning, ref string misc)
+        public override bool TestHealth(ref string error, ref string warning, ref string misc)
         {
-            bool restart = base.TestHealth(userInitiated, ref error, ref warning, ref misc);
+            bool restart = base.TestHealth(ref error, ref warning, ref misc);
 
             if (Running)
             {

@@ -32,28 +32,34 @@ namespace SensusService.Probes
             set { _maxDataStoresPerSecond = value; }
         }
 
-        public override float? Participation
+        protected override float? RawParticipation
         {
             get
             {
-                if (EnabledOnFirstProtocolStart.GetValueOrDefault(false))
-                {
-                    #if __ANDROID__
-                    long dayMS = 60000 * 60 * 24;
-                    long participationHorizonMS = Protocol.ParticipationHorizonDays * dayMS;
-                    float fullParticipationHealthTests = participationHorizonMS  / (float)SensusServiceHelper.HEALTH_TEST_DELAY_MS;
-                    return HealthTestTimes.Count(healthTestTime => healthTestTime >= Protocol.ParticipationHorizon) / fullParticipationHealthTests;
-                    #elif __IOS__
-                    if (StartDateTime == null)
-                        return 0;
-                    else
-                        return ((float)(DateTime.Now - StartDateTime.GetValueOrDefault()).TotalSeconds) / (float)new TimeSpan(Protocol.ParticipationHorizonDays, 0, 0, 0).TotalSeconds;
-                    #else
-                    #error "Unimplemented platform"
-                    #endif
-                }
+                
+                #if __ANDROID__
+                long dayMS = 60000 * 60 * 24;
+                long participationHorizonMS = Protocol.ParticipationHorizonDays * dayMS;
+                float fullParticipationHealthTests = participationHorizonMS / (float)SensusServiceHelper.HEALTH_TEST_DELAY_MS;
+                return SuccessfulHealthTestTimes.Count(healthTestTime => healthTestTime >= Protocol.ParticipationHorizon) / fullParticipationHealthTests;
+                #elif __IOS__
+                // on ios, we cannot rely on the health test times to tell us how long and consistently the probe has been running. this is
+                // because, unlike in android, ios does not let local notifications return to the app when the app is in the background. instead, 
+                // the ios user must tap a notification or otherwise open the app in order for the health test to run. so the best we can do 
+                // is keep track of when the probe was started (StartDateTime) and compute participation based on how long the probe has been in 
+                // a running state. it is theoretically possible that the probe is in this running state but is somehow faulty and failing the 
+                // health tests. thus, the approach is not perfect, but it's the best we can do on ios.
+                if (StartDateTime == null)
+                    return 0;
                 else
-                    return null;
+                {
+                    double runningSeconds = (DateTime.Now - StartDateTime.GetValueOrDefault()).TotalSeconds;
+                    double participationHorizonSeconds = new TimeSpan(Protocol.ParticipationHorizonDays, 0, 0, 0).TotalSeconds;
+                    return (float)(runningSeconds / participationHorizonSeconds);
+                }
+                #else
+                #error "Unrecognized platform."
+                #endif
             }
         }
 

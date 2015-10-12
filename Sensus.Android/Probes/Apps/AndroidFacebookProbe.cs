@@ -286,9 +286,9 @@ namespace Sensus.Android.Probes.Apps
             return data;
         }
 
-        public override bool TestHealth(bool userInitiated, ref string error, ref string warning, ref string misc)
+        public override bool TestHealth(ref string error, ref string warning, ref string misc)
         {
-            bool restart = base.TestHealth(userInitiated, ref error, ref warning, ref misc);
+            bool restart = base.TestHealth(ref error, ref warning, ref misc);
 
             if (!HasValidAccessToken)
                 restart = true;
