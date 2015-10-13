@@ -54,7 +54,7 @@ namespace SensusService.Probes.User
         [JsonIgnore]
         public bool Complete
         {
-            get { return _inputGroups.Count == 0 || _inputGroups.All(g => g.Complete); }
+            get { return _inputGroups.Count == 0 || _inputGroups.All(inputGroup => inputGroup.Complete); }
         }
 
         [JsonIgnore]

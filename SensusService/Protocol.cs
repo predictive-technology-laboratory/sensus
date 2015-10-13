@@ -670,6 +670,8 @@ namespace SensusService
                                 throw new Exception("No probes were enabled.");
                             else if (probesStarted == 0)
                                 throw new Exception("No probes started.");
+                            else
+                                SensusServiceHelper.Get().FlashNotificationAsync("Started \"" + _name + "\".");
                         }
                         catch (Exception ex)
                         {
@@ -926,6 +928,7 @@ namespace SensusService
 
                 foreach (Probe probe in _probes)
                     if (probe.Running)
+                    {
                         try
                         {
                             probe.Stop(); 
@@ -934,6 +937,7 @@ namespace SensusService
                         {
                             SensusServiceHelper.Get().Logger.Log("Failed to stop " + probe.GetType().FullName + ":  " + ex.Message, LoggingLevel.Normal, GetType());
                         }
+                    }
 
                 if (_localDataStore != null && _localDataStore.Running)
                 {
@@ -960,6 +964,7 @@ namespace SensusService
                 }
 
                 SensusServiceHelper.Get().Logger.Log("Stopped protocol \"" + _name + "\".", LoggingLevel.Normal, GetType());
+                SensusServiceHelper.Get().FlashNotificationAsync("Stopped \"" + _name + "\".");
             }
         }
 

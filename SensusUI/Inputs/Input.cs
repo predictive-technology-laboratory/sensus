@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,6 +31,8 @@ namespace SensusUI.Inputs
         private bool _shouldBeStored;
         private double? _latitude;
         private double? _longitude;
+        private bool _required;
+        private bool _viewed;
 
         [EntryStringUiProperty("Name:", true, 0)]
         public string Name
@@ -108,8 +110,14 @@ namespace SensusUI.Inputs
         [JsonIgnore]
         public bool Complete
         {
-            get { return _complete; }
-            protected set { _complete = value; }
+            get
+            {
+                return _complete || _viewed && !_required;
+            }
+            protected set
+            {
+                _complete = value; 
+            }
         }
 
         public bool ShouldBeStored
@@ -142,11 +150,39 @@ namespace SensusUI.Inputs
         [JsonIgnore]
         public abstract string DefaultName { get; }
 
+        [OnOffUiProperty(null, true, 5)]
+        public bool Required
+        {
+            get
+            {
+                return _required;
+            }
+            set
+            {
+                _required = value;
+            }
+        }
+
+        public bool Viewed
+        {
+            get
+            {
+                return _viewed;
+            }
+            set
+            {
+                _viewed = value;
+            }
+        }
+
         public Input()
         {
             _name = DefaultName;
             _id = Guid.NewGuid().ToString();
+            _complete = false;
             _shouldBeStored = true;
+            _required = true;
+            _viewed = false;
         }
 
         public Input(string labelText)

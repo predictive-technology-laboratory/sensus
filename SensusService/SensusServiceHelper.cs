@@ -837,7 +837,10 @@ namespace SensusService
                                 });
                         }
 
-                        responseWait.WaitOne();                                    
+                        responseWait.WaitOne();    
+
+                        foreach (Input input in incompleteGroup.Inputs)
+                            input.Viewed = true;
                     }
 
                     // geotag input groups if the user didn't cancel and we've got input groups with inputs that are complete and lacking locations

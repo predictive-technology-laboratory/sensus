@@ -29,7 +29,7 @@ namespace SensusUI
             StackLayout contentLayout = new StackLayout
             {
                 Orientation = StackOrientation.Vertical,
-                VerticalOptions = LayoutOptions.FillAndExpand
+                VerticalOptions = LayoutOptions.StartAndExpand
             };
 
             foreach (Probe probe in protocol.Probes.Where(probe => probe.GetParticipation() != null).OrderBy(probe => probe.GetParticipation()))
