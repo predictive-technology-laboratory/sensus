@@ -21,6 +21,8 @@ using System.IO;
 using Newtonsoft.Json;
 using System.Threading;
 using SensusService.Exceptions;
+using SensusUI.Inputs;
+using System.Linq;
 
 namespace SensusUI
 {
@@ -77,7 +79,7 @@ namespace SensusUI
                             {
                                 try
                                 {
-                                    // copy all selected protocols
+                                    #region copy selected protocols
                                     List<Protocol> selectedProtocolCopies = new List<Protocol>();
                                     foreach (Protocol selectedProtocol in selectedProtocols)
                                     {
@@ -94,39 +96,72 @@ namespace SensusUI
                                                     });
                                             });
                             
-                                        // if the protocol is marked as shareable, share directly; otherwise, authenticate first and then share.
+                                        // if the protocol is marked as shareable, copy directly; otherwise, authenticate first and then copy.
                                         if (selectedProtocol.Shareable)
                                             CopySelectedProtocolAsync();
                                         else
                                             ProtocolsPage.ExecuteActionUponProtocolAuthentication(selectedProtocol, CopySelectedProtocolAsync, () => copyWait.Set());
 
-                                        // wait for asynchronous copying actions
+                                        // wait for asynchronous copying operations
                                         copyWait.WaitOne();
                                     }
+                                    #endregion
 
                                     if (selectedProtocolCopies.Count == 0)
                                         UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("No protocols shared.");
                                     else
                                     {
+                                        List<Protocol> protocolsToShare = selectedProtocolCopies;
+
+                                        #region group protocols if possible/desired
+                                        if (selectedProtocolCopies.Count > 1 && selectedProtocolCopies.All(selectedProtocolCopy => selectedProtocolCopy.Groupable && selectedProtocolCopy.GroupedProtocols.Count == 0))
+                                        {
+                                            ManualResetEvent combineWait = new ManualResetEvent(false);
+
+                                            UiBoundSensusServiceHelper.Get(true).PromptForInputsAsync("Combine Protocols?", new Input[]
+                                                {
+                                                    new LabelOnlyInput("Would you like to combine the " + selectedProtocolCopies.Count + " selected protocols into a randomized meta-protocol?"),
+                                                    new ItemPickerInput(null, "Tap To Respond", new string[] { "Yes", "No" }.ToList())
+                                                },
+                                                null,
+                                                inputs =>
+                                                {
+                                                    if (inputs != null && (inputs[1].Value as string) == "Yes")
+                                                    {
+                                                        for (int i = 1; i < selectedProtocolCopies.Count; ++i)
+                                                            selectedProtocolCopies[0].GroupedProtocols.Add(selectedProtocolCopies[i]);
+
+                                                        protocolsToShare = new Protocol[] { selectedProtocolCopies[0] }.ToList();
+                                                    }
+
+                                                    combineWait.Set();
+                                                });
+
+                                            combineWait.WaitOne();
+                                        }
+                                        #endregion
+
+                                        #region share protocols
                                         string sharePath = UiBoundSensusServiceHelper.Get(true).GetSharePath(".sensus");
 
                                         using (FileStream shareFile = new FileStream(sharePath, FileMode.Create, FileAccess.Write))
                                         {
-                                            byte[] encryptedBytes = SensusServiceHelper.Encrypt(JsonConvert.SerializeObject(selectedProtocolCopies, SensusServiceHelper.JSON_SERIALIZER_SETTINGS));
+                                            byte[] encryptedBytes = SensusServiceHelper.Encrypt(JsonConvert.SerializeObject(protocolsToShare, SensusServiceHelper.JSON_SERIALIZER_SETTINGS));
                                             shareFile.Write(encryptedBytes, 0, encryptedBytes.Length);
                                             shareFile.Close();
                                         }
 
-                                        // make sure to call share file strictly after the flash notification, since both are asynchronous and the latter can interrupt the former on android
-                                        UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Sharing " + selectedProtocolCopies.Count + " protocol" + (selectedProtocolCopies.Count == 1 ? "" : "s") + ".", () =>
+                                        // make sure to call ShareFileAsync strictly after FlashNotificationAsync, since both are asynchronous and the latter can interrupt the former on android.
+                                        UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Sharing " + protocolsToShare.Count + " protocol" + (protocolsToShare.Count == 1 ? "" : "s") + ".", () =>
                                             {
-                                                UiBoundSensusServiceHelper.Get(true).ShareFileAsync(sharePath, "Sensus Protocol" + (selectedProtocolCopies.Count == 1 ? ":  " + selectedProtocolCopies[0].Name : "s"));
+                                                UiBoundSensusServiceHelper.Get(true).ShareFileAsync(sharePath, "Sensus Protocol" + (protocolsToShare.Count == 1 ? ":  " + protocolsToShare[0].Name : "s"));
                                             });
+                                        #endregion
                                     }
                                 }
                                 catch (Exception ex)
                                 {
-                                    string errorMessage = "Failed to share protocol:  " + ex.Message;
+                                    string errorMessage = "Failed to share protocol(s):  " + ex.Message;
                                     UiBoundSensusServiceHelper.Get(true).Logger.Log(errorMessage, LoggingLevel.Normal, GetType());
                                     UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync(errorMessage);
                                 }

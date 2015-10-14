@@ -87,7 +87,7 @@ namespace SensusUI
                 string selectedAction = await DisplayActionSheet(selectedProtocol.Name, "Cancel", null, selectedProtocol.Running ? "Stop" : "Start", "Edit", "Status", "Delete");
 
                 if (selectedAction == "Start")
-                    selectedProtocol.StartWithUserAgreement(null);
+                    selectedProtocol.StartWithUserAgreementAsync(null);
                 else if (selectedAction == "Stop")
                 {
                     if (await DisplayAlert("Confirm Stop", "Are you sure you want to stop " + selectedProtocol.Name + "?", "Yes", "No"))
