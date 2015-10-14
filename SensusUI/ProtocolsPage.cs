@@ -84,7 +84,7 @@ namespace SensusUI
 
                 Protocol selectedProtocol = _protocolsList.SelectedItem as Protocol;
 
-                string selectedAction = await DisplayActionSheet(selectedProtocol.Name, "Cancel", null, selectedProtocol.Running ? "Stop" : "Start", "Edit", "Status", "Delete");
+                string selectedAction = await DisplayActionSheet(selectedProtocol.Name, "Cancel", null, selectedProtocol.Running ? "Stop" : "Start", "Edit", "Status", "Share", "Group", "Delete");
 
                 if (selectedAction == "Start")
                     selectedProtocol.StartWithUserAgreementAsync(null);
@@ -121,6 +121,39 @@ namespace SensusUI
                     else
                         await DisplayAlert("Protocol Not Running", "Cannot check status of protocol when protocol is not running.", "OK");
                 }
+                else if (selectedAction == "Share")
+                {
+                    Action ShareSelectedProtocol = new Action(() =>
+                        {
+                            // make a deep copy of the selected protocol so we can reset it for sharing
+                            selectedProtocol.CopyAsync(selectedProtocolCopy =>
+                                {
+                                    selectedProtocolCopy.ResetForSharing();
+
+                                    // write protocol to file and share
+                                    string sharePath = UiBoundSensusServiceHelper.Get(true).GetSharePath(".sensus");
+                                    selectedProtocolCopy.Save(sharePath);
+                                    UiBoundSensusServiceHelper.Get(true).ShareFileAsync(sharePath, "Sensus Protocol:  " + selectedProtocolCopy.Name);
+                                });
+                        });
+
+                    if (selectedProtocol.Shareable)
+                        ShareSelectedProtocol();
+                    else
+                        ExecuteActionUponProtocolAuthentication(selectedProtocol, ShareSelectedProtocol);
+                }
+                else if (selectedAction == "Group")
+                {
+                    if (selectedProtocol.Groupable)
+                    {
+                        if (UiBoundSensusServiceHelper.Get(true).RegisteredProtocols.Count(registeredProtocol => registeredProtocol != selectedProtocol && registeredProtocol.Groupable && registeredProtocol.GroupedProtocols.Count == 0) == 0)
+                            UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("No protocols available to group with selected protocol.");
+                        else
+                            await Navigation.PushAsync(new GroupProtocolPage(selectedProtocol));
+                    }
+                    else
+                        UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Selected protocol is not groupable.");
+                }
                 else if (selectedAction == "Delete")
                 {
                     if (await DisplayAlert("Delete " + selectedProtocol.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
@@ -150,11 +183,6 @@ namespace SensusUI
             Bind();
 
             Content = _protocolsList;
-
-            ToolbarItems.Add(new ToolbarItem(null, "share.png", async () =>
-                    {
-                        await Navigation.PushAsync(new ShareProtocolsPage(UiBoundSensusServiceHelper.Get(true).RegisteredProtocols.ToList()), false);
-                    }));
             
             ToolbarItems.Add(new ToolbarItem(null, "plus.png", () =>
                     {
