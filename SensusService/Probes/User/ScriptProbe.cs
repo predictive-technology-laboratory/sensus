@@ -94,9 +94,9 @@ namespace SensusService.Probes.User
             return restart;
         }
 
-        public override void ClearForSharing()
+        public override void ResetForSharing()
         {
-            base.ClearForSharing();
+            base.ResetForSharing();
 
             foreach (ScriptRunner scriptRunner in _scriptRunners)
                 scriptRunner.ClearForSharing();

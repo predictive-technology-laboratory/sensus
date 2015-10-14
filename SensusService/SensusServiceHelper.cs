@@ -745,9 +745,7 @@ namespace SensusService
 
         public void FlashNotificationAsync(string message)
         {
-            FlashNotificationAsync(message, () =>
-                {
-                });
+            FlashNotificationAsync(message, null);
         }
 
         public void PromptForInputAsync(string windowTitle, Input input, CancellationToken? cancellationToken, Action<Input> callback)

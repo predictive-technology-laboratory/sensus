@@ -443,6 +443,9 @@ namespace Sensus.iOS
             Device.BeginInvokeOnMainThread(() =>
                 {
                     DependencyService.Get<IToastNotificator>().Notify(ToastNotificationType.Info, "", message + Environment.NewLine, TimeSpan.FromSeconds(5));
+
+                    if (callback != null)
+                        callback();
                 });
         }
 

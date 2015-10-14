@@ -58,9 +58,9 @@ namespace SensusService.Probes.Movement
                 }).Start();
         }
 
-        public override void ClearForSharing()
+        public override void ResetForSharing()
         {
-            base.ClearForSharing();
+            base.ResetForSharing();
 
             _stabilizing = false;
         }

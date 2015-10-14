@@ -549,19 +549,16 @@ namespace SensusService
             _randomTimeAnchor = new DateTimeOffset((long)(new Random().NextDouble() * new DateTimeOffset(1000, 1, 1, 0, 0, 0, new TimeSpan()).Ticks), new TimeSpan());
         }
 
-        public void Save(string path)
+        public void CopyAsync(Action<Protocol> callback)
         {
-            using (FileStream file = new FileStream(path, FileMode.Create, FileAccess.Write))
-            {
-                byte[] encryptedBytes = SensusServiceHelper.Encrypt(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS));
-                file.Write(encryptedBytes, 0, encryptedBytes.Length);
-                file.Close();
-            }
-        }
+            new Thread(() =>
+                {
+                    Device.BeginInvokeOnMainThread(() =>
+                        {
+                            callback(JsonConvert.DeserializeObject<Protocol>(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS));
+                        });
 
-        public Protocol Copy()
-        {
-            return JsonConvert.DeserializeObject<Protocol>(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
+                }).Start();
         }
 
         public void StartAsync()
@@ -875,14 +872,19 @@ namespace SensusService
             }
         }
 
-        public void ClearForSharing()
+        public void ResetForSharing()
         {
             _randomTimeAnchor = DateTime.MinValue;
             _storageDirectory = null;
             _mostRecentReport = null;            
 
             foreach (Probe probe in _probes)
-                probe.ClearForSharing();
+            {
+                probe.ResetForSharing();
+
+                // reset enabled status of probes to the original values. probes can be disabled when the protocol is started (e.g., if the user cancels out of facebook login.)
+                probe.Enabled = probe.OriginallyEnabled;
+            }
 
             if (_localDataStore != null)
                 _localDataStore.ClearForSharing();

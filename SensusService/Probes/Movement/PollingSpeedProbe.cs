@@ -99,9 +99,9 @@ namespace SensusService.Probes.Movement
             }
         }
 
-        public override void ClearForSharing()
+        public override void ResetForSharing()
         {
-            base.ClearForSharing();
+            base.ResetForSharing();
 
             _previousPosition = null;
         }

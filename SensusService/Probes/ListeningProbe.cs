@@ -109,9 +109,9 @@ namespace SensusService.Probes
                 base.StoreDatum(datum);
         }
 
-        public override void ClearForSharing()
+        public override void ResetForSharing()
         {
-            base.ClearForSharing();
+            base.ResetForSharing();
 
             _wakeLockAcquired = false;
         }

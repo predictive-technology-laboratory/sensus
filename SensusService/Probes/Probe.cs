@@ -339,7 +339,7 @@ namespace SensusService.Probes
             return restart;
         }
 
-        public virtual void ClearForSharing()
+        public virtual void ResetForSharing()
         {
             if (_running)
                 throw new Exception("Cannot clear probe while it is running.");
