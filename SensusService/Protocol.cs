@@ -85,8 +85,9 @@ namespace SensusService
             }
             catch (Exception ex)
             {
-                SensusServiceHelper.Get().Logger.Log("Failed to download protocol from URI \"" + webURI + "\":  " + ex.Message + ". If this is an HTTPS URI, make sure the server's certificate is valid.", LoggingLevel.Normal, typeof(Protocol));
-                SensusServiceHelper.Get().FlashNotificationAsync("Failed to download protocol.");
+                string errorMessage = "Failed to download protocol from URI \"" + webURI + "\":  " + ex.Message + ". If this is an HTTPS URI, make sure the server's certificate is valid.";
+                SensusServiceHelper.Get().Logger.Log(errorMessage, LoggingLevel.Normal, typeof(Protocol));
+                SensusServiceHelper.Get().FlashNotificationAsync(errorMessage);
             }
         }
 
@@ -220,10 +221,10 @@ namespace SensusService
                     else if (protocol.Running)
                         SensusServiceHelper.Get().FlashNotificationAsync("You are already participating in \"" + protocol.Name + "\".");
                     else
-                    {
-                        // display the protocols page if it isn't already up
+                    {                        
                         Device.BeginInvokeOnMainThread(async () =>
                             {
+                                // display the protocols page if it isn't already up
                                 if (!(App.Current.MainPage.Navigation.NavigationStack.Last() is ProtocolsPage))
                                     await App.Current.MainPage.Navigation.PushAsync(new ProtocolsPage());
 

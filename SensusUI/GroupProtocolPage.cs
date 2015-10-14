@@ -53,6 +53,7 @@ namespace SensusUI
 
             List<Protocol> selectedProtocols = new List<Protocol>();
 
+            // get other protocols that are groupable and haven't been grouped
             List<Protocol> protocols = UiBoundSensusServiceHelper.Get(true).RegisteredProtocols.Where(registeredProtocol => registeredProtocol != protocol && registeredProtocol.Groupable && registeredProtocol.GroupedProtocols.Count == 0).ToList();
 
             ListView protocolsList = new ListView();
@@ -82,7 +83,6 @@ namespace SensusUI
                             protocol.GroupedProtocols.AddRange(selectedProtocols);
 
                         await Navigation.PopAsync();
-
                     }));
 
             Content = protocolsList;

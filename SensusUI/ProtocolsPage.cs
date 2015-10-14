@@ -84,7 +84,29 @@ namespace SensusUI
 
                 Protocol selectedProtocol = _protocolsList.SelectedItem as Protocol;
 
-                string selectedAction = await DisplayActionSheet(selectedProtocol.Name, "Cancel", null, selectedProtocol.Running ? "Stop" : "Start", "Edit", "Status", "Share", "Group", "Delete");
+                List<string> actions = new List<string>(new string[] { selectedProtocol.Running ? "Stop" : "Start", "Edit" });
+
+                if (selectedProtocol.Running)
+                    actions.Add("Status");
+
+                actions.Add("Share");
+
+                // the selected protocol can be grouped with others as long as...
+                if (selectedProtocol.Groupable && // it is groupable
+                    selectedProtocol.GroupedProtocols.Count == 0 && // it hasn't already been grouped
+                    UiBoundSensusServiceHelper.Get(true).RegisteredProtocols.Count(// and if there exists another protocol that is groupable and hasn't been grouped
+                        registeredProtocol => registeredProtocol != selectedProtocol &&
+                        registeredProtocol.Groupable &&
+                        registeredProtocol.GroupedProtocols.Count == 0) > 0)
+                {
+                    actions.Add("Group");
+                }
+                else if (selectedProtocol.GroupedProtocols.Count > 0)
+                    actions.Add("Ungroup");
+
+                actions.Add("Delete");
+
+                string selectedAction = await DisplayActionSheet(selectedProtocol.Name, "Cancel", null, actions.ToArray());
 
                 if (selectedAction == "Start")
                     selectedProtocol.StartWithUserAgreementAsync(null);
@@ -143,16 +165,11 @@ namespace SensusUI
                         ExecuteActionUponProtocolAuthentication(selectedProtocol, ShareSelectedProtocol);
                 }
                 else if (selectedAction == "Group")
+                    await Navigation.PushAsync(new GroupProtocolPage(selectedProtocol));
+                else if (selectedAction == "Ungroup")
                 {
-                    if (selectedProtocol.Groupable)
-                    {
-                        if (UiBoundSensusServiceHelper.Get(true).RegisteredProtocols.Count(registeredProtocol => registeredProtocol != selectedProtocol && registeredProtocol.Groupable && registeredProtocol.GroupedProtocols.Count == 0) == 0)
-                            UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("No protocols available to group with selected protocol.");
-                        else
-                            await Navigation.PushAsync(new GroupProtocolPage(selectedProtocol));
-                    }
-                    else
-                        UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Selected protocol is not groupable.");
+                    if (await DisplayAlert("Ungroup " + selectedProtocol.Name + "?", "This protocol is currently grouped with the following other protocols:" + Environment.NewLine + Environment.NewLine + string.Concat(selectedProtocol.GroupedProtocols.Select(protocol => protocol.Name + Environment.NewLine)), "Ungroup", "Cancel"))
+                        selectedProtocol.GroupedProtocols.Clear();
                 }
                 else if (selectedAction == "Delete")
                 {
