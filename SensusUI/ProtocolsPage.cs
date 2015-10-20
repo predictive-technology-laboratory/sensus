@@ -84,7 +84,7 @@ namespace SensusUI
 
                 Protocol selectedProtocol = _protocolsList.SelectedItem as Protocol;
 
-                List<string> actions = new List<string>(new string[] { selectedProtocol.Running ? "Stop" : "Start", "Edit" });
+                List<string> actions = new List<string>(new string[] { selectedProtocol.Running ? "Stop" : "Start", "Edit", "Copy" });
 
                 if (selectedProtocol.Running)
                     actions.Add("Status");
@@ -121,6 +121,8 @@ namespace SensusUI
                                 _protocolsList.SelectedItem = null;
                             }));
                 }
+                else if (selectedAction == "Copy")
+                    selectedProtocol.CopyAsync(selectedProtocolCopy => UiBoundSensusServiceHelper.Get(true).RegisterProtocol(selectedProtocolCopy), true);
                 else if (selectedAction == "Status")
                 {
                     if (UiBoundSensusServiceHelper.Get(true).ProtocolShouldBeRunning(selectedProtocol))
@@ -152,7 +154,7 @@ namespace SensusUI
                                     string sharePath = UiBoundSensusServiceHelper.Get(true).GetSharePath(".sensus");
                                     selectedProtocolCopy.Save(sharePath);
                                     UiBoundSensusServiceHelper.Get(true).ShareFileAsync(sharePath, "Sensus Protocol:  " + selectedProtocolCopy.Name);
-                                });
+                                }, false);
                         });
 
                     if (selectedProtocol.Shareable)
