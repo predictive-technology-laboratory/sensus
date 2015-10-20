@@ -91,18 +91,14 @@ namespace SensusUI
 
                 actions.Add("Share");
 
-                // the selected protocol can be grouped with others as long as...
-                if (selectedProtocol.Groupable && // it is groupable
-                    selectedProtocol.GroupedProtocols.Count == 0 && // it hasn't already been grouped
-                    UiBoundSensusServiceHelper.Get(true).RegisteredProtocols.Count(// and if there exists another protocol that is groupable and hasn't been grouped
-                        registeredProtocol => registeredProtocol != selectedProtocol &&
-                        registeredProtocol.Groupable &&
-                        registeredProtocol.GroupedProtocols.Count == 0) > 0)
+                List<Protocol> groupableProtocols = UiBoundSensusServiceHelper.Get(true).RegisteredProtocols.Where(registeredProtocol => registeredProtocol != selectedProtocol && registeredProtocol.Groupable && registeredProtocol.GroupedProtocols.Count == 0).ToList();
+                if (selectedProtocol.Groupable)
                 {
-                    actions.Add("Group");
+                    if (selectedProtocol.GroupedProtocols.Count == 0 && groupableProtocols.Count > 0)
+                        actions.Add("Group");
+                    else if (selectedProtocol.GroupedProtocols.Count > 0)
+                        actions.Add("Ungroup");
                 }
-                else if (selectedProtocol.GroupedProtocols.Count > 0)
-                    actions.Add("Ungroup");
 
                 actions.Add("Delete");
 
@@ -165,7 +161,7 @@ namespace SensusUI
                         ExecuteActionUponProtocolAuthentication(selectedProtocol, ShareSelectedProtocol);
                 }
                 else if (selectedAction == "Group")
-                    await Navigation.PushAsync(new GroupProtocolPage(selectedProtocol));
+                    await Navigation.PushAsync(new GroupProtocolPage(selectedProtocol, groupableProtocols));
                 else if (selectedAction == "Ungroup")
                 {
                     if (await DisplayAlert("Ungroup " + selectedProtocol.Name + "?", "This protocol is currently grouped with the following other protocols:" + Environment.NewLine + Environment.NewLine + string.Concat(selectedProtocol.GroupedProtocols.Select(protocol => protocol.Name + Environment.NewLine)), "Ungroup", "Cancel"))

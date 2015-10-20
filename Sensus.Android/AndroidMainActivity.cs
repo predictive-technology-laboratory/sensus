@@ -179,7 +179,7 @@ namespace Sensus.Android
                         try
                         {
                             if (intent.Scheme == "http" || intent.Scheme == "https")
-                                Protocol.DeserializeAsync(new Uri(dataURI.ToString()), Protocol.DisplayAndStartAsync);
+                                Protocol.DeserializeAsync(new Uri(dataURI.ToString()), true, Protocol.DisplayAndStartAsync);
                             else if (intent.Scheme == "content" || intent.Scheme == "file")
                             {
                                 byte[] bytes = null;
@@ -198,7 +198,7 @@ namespace Sensus.Android
                                 }
 
                                 if (bytes != null)
-                                    Protocol.DeserializeAsync(bytes, Protocol.DisplayAndStartAsync);
+                                    Protocol.DeserializeAsync(bytes, true, Protocol.DisplayAndStartAsync);
                             }
                             else
                                 SensusServiceHelper.Get().Logger.Log("Sensus didn't know what to do with URI \"" + dataURI + "\".", LoggingLevel.Normal, GetType());

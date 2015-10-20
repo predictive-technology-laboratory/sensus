@@ -81,7 +81,7 @@ namespace Sensus.iOS
             {
                 try
                 {
-                    Protocol.DeserializeAsync(File.ReadAllBytes(url.Path), Protocol.DisplayAndStartAsync);
+                    Protocol.DeserializeAsync(File.ReadAllBytes(url.Path), true, Protocol.DisplayAndStartAsync);
                 }
                 catch (Exception ex)
                 {

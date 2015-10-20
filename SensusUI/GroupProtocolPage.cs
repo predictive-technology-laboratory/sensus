@@ -47,20 +47,17 @@ namespace SensusUI
             }
         }
 
-        public GroupProtocolPage(Protocol protocol)
+        public GroupProtocolPage(Protocol protocol, List<Protocol> groupableProtocols)
         {   
             Title = "Select Protocols To Group";
 
             List<Protocol> selectedProtocols = new List<Protocol>();
 
-            // get other protocols that are groupable and haven't been grouped
-            List<Protocol> protocols = UiBoundSensusServiceHelper.Get(true).RegisteredProtocols.Where(registeredProtocol => registeredProtocol != protocol && registeredProtocol.Groupable && registeredProtocol.GroupedProtocols.Count == 0).ToList();
-
             ListView protocolsList = new ListView();
             protocolsList.ItemTemplate = new DataTemplate(typeof(TextCell));
             protocolsList.ItemTemplate.SetBinding(TextCell.TextProperty, "Name");
             protocolsList.ItemTemplate.SetBinding(TextCell.TextColorProperty, new Binding(".", converter: new ProtocolTextColorValueConverter(), converterParameter: selectedProtocols));
-            protocolsList.ItemsSource = protocols;
+            protocolsList.ItemsSource = groupableProtocols;
 
             protocolsList.ItemTapped += (o, e) =>
             {
@@ -72,7 +69,7 @@ namespace SensusUI
                     selectedProtocols.Add(selectedProtocol);
 
                 protocolsList.ItemsSource = null;
-                protocolsList.ItemsSource = protocols;
+                protocolsList.ItemsSource = groupableProtocols;
             };
 
             ToolbarItems.Add(new ToolbarItem("OK", null, async () =>
