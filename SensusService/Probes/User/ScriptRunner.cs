@@ -481,6 +481,9 @@ namespace SensusService.Probes.User
 
             lock (_runScriptCallbackIds)
             {
+                if (script.PresentationTimestamp == null)
+                    script.PresentationTimestamp = DateTimeOffset.UtcNow.AddMilliseconds(_delayMS);
+
                 _runScriptCallbackIds.Add(SensusServiceHelper.Get().ScheduleOneTimeCallback((callbackId, cancellationToken) =>
                         {
                             SensusServiceHelper.Get().Logger.Log("Running \"" + _name + "\".", LoggingLevel.Normal, typeof(Script));                                                    
@@ -497,7 +500,7 @@ namespace SensusService.Probes.User
                                 _runTimes.RemoveAll(runTime => runTime < _probe.Protocol.ParticipationHorizon);
                             }
 
-                            // this method can be called with previous / current datum values (e.g., when the script is first triggered. it 
+                            // this method can be called with previous / current datum values (e.g., when the script is first triggered). it 
                             // can also be called without previous / current datum values (e.g., when triggering randomly or rerunning). if
                             // we have such values, set them on the script.
 
@@ -516,7 +519,7 @@ namespace SensusService.Probes.User
                                             foreach (Input input in inputGroup.Inputs)
                                                 if (input.ShouldBeStored && input.Complete)
                                                 {
-                                                    _probe.StoreDatum(new ScriptDatum(DateTimeOffset.UtcNow, input.GroupId, input.Id, input.Value, script.CurrentDatum == null ? null : script.CurrentDatum.Id, input.Latitude, input.Longitude));
+                                                    _probe.StoreDatum(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow), input.GroupId, input.Id, input.Value, script.CurrentDatum == null ? null : script.CurrentDatum.Id, input.Latitude, input.Longitude, script.PresentationTimestamp.GetValueOrDefault()));
 
                                                     // once inputs are stored, they should not be stored again, nor should the user be able to modify them
                                                     input.ShouldBeStored = false;
