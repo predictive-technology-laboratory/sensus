@@ -53,7 +53,7 @@ namespace SensusService.DataStores.Remote
         private IMobileServiceTable<CellTowerDatum> _cellTowerTable;
         private IMobileServiceTable<WlanDatum> _wlanTable;
         private IMobileServiceTable<ScriptDatum> _scriptTable;
-        private IMobileServiceTable<ProtocolReport> _protocolReportTable;
+        private IMobileServiceTable<ProtocolReportDatum> _protocolReportTable;
 
         private readonly object _locker = new object();
 
@@ -106,7 +106,7 @@ namespace SensusService.DataStores.Remote
                 _wlanTable = _client.GetTable<WlanDatum>();
                 _scriptTable = _client.GetTable<ScriptDatum>();
 
-                _protocolReportTable = _client.GetTable<ProtocolReport>();
+                _protocolReportTable = _client.GetTable<ProtocolReportDatum>();
 
                 base.Start();
             }
@@ -159,8 +159,8 @@ namespace SensusService.DataStores.Remote
                         _wlanTable.InsertAsync(datum as WlanDatum).Wait();
                     else if (datum is ScriptDatum)
                         _scriptTable.InsertAsync(datum as ScriptDatum).Wait();
-                    else if (datum is ProtocolReport)
-                        _protocolReportTable.InsertAsync(datum as ProtocolReport).Wait();
+                    else if (datum is ProtocolReportDatum)
+                        _protocolReportTable.InsertAsync(datum as ProtocolReportDatum).Wait();
                     else
                         throw new DataStoreException("Unrecognized Azure table:  " + datum.GetType().FullName);
 

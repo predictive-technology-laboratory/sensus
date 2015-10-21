@@ -328,7 +328,7 @@ namespace SensusService
         private LocalDataStore _localDataStore;
         private RemoteDataStore _remoteDataStore;
         private string _storageDirectory;
-        private ProtocolReport _mostRecentReport;
+        private ProtocolReportDatum _mostRecentReport;
         private bool _forceProtocolReportsToRemoteDataStore;
         private string _lockPasswordHash;
         private AnonymizedJsonContractResolver _jsonAnonymizer;
@@ -411,7 +411,7 @@ namespace SensusService
         }
 
         [JsonIgnore]
-        public ProtocolReport MostRecentReport
+        public ProtocolReportDatum MostRecentReport
         {
             get { return _mostRecentReport; }
             set { _mostRecentReport = value; }
@@ -943,7 +943,7 @@ namespace SensusService
                         }
                 }
 
-                _mostRecentReport = new ProtocolReport(DateTimeOffset.UtcNow, error, warning, misc);
+                _mostRecentReport = new ProtocolReportDatum(DateTimeOffset.UtcNow, error, warning, misc, this);
                 SensusServiceHelper.Get().Logger.Log("Protocol report:" + Environment.NewLine + _mostRecentReport, LoggingLevel.Normal, GetType());
 
                 SensusServiceHelper.Get().Logger.Log("Storing protocol report locally.", LoggingLevel.Normal, GetType());

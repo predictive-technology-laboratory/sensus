@@ -192,8 +192,8 @@ namespace SensusService.Probes
 
         /// <summary>
         /// Gets the participation level for the current probe. If this probe was originally enabled within the protocol, then
-        /// this will be a value between 0 and 1, with 1 indicating perfect participation and 0 indicating no participation. If this
-        /// probe was not originally enabled within the protocol, then the returned value will be null, indicating that this
+        /// this will be a value between 0 and 1, with 1 indicating perfect participation and 0 indicating no participation. If 
+        /// this probe was not originally enabled within the protocol, then the returned value will be null, indicating that this
         /// probe should not be included in calculations of overall protocol participation.
         /// </summary>
         /// <returns>The participation level (null, or somewhere 0-1).</returns>

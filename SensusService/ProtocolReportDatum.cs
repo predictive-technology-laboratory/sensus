@@ -13,15 +13,20 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
+using SensusService.Probes;
+using System.Linq;
+using System.Collections.ObjectModel;
 
 namespace SensusService
 {
-    public class ProtocolReport : Datum
+    public class ProtocolReportDatum : Datum
     {
         private string _error;
         private string _warning;
         private string _misc;
         private string _operatingSystem;
+        private Dictionary<string, float> _probeParticipation;
 
         public string Error
         {
@@ -53,25 +58,49 @@ namespace SensusService
             }
         }
 
+        public Dictionary<string, float> ProbeParticipation
+        {
+            get
+            {
+                return _probeParticipation;
+            }
+            set
+            {
+                _probeParticipation = value;
+            }
+        }
+
         public override string DisplayDetail
         {
             get { return ""; }
         }
 
-        public ProtocolReport(DateTimeOffset timestamp, string error, string warning, string misc)
+        /// <summary>
+        /// For JSON deserialization.
+        /// </summary>
+        private ProtocolReportDatum()
+        {
+            _probeParticipation = new Dictionary<string, float>();
+        }
+
+        public ProtocolReportDatum(DateTimeOffset timestamp, string error, string warning, string misc, Protocol protocol)
             : base(timestamp)
         {
             _error = error == null ? "" : error;
             _warning = warning == null ? "" : warning;
             _misc = misc == null ? "" : misc;
             _operatingSystem = SensusServiceHelper.Get().OperatingSystem;
+            _probeParticipation = new Dictionary<string, float>();
+
+            foreach (Probe probe in protocol.Probes.Where(probe => probe.GetParticipation() != null).OrderBy(probe => probe.DisplayName))
+                _probeParticipation.Add(probe.DisplayName, probe.GetParticipation().GetValueOrDefault());
         }
 
         public override string ToString()
         {
             return "Errors:  " + Environment.NewLine + _error + Environment.NewLine +
-                   "Warnings:  " + Environment.NewLine + _warning + Environment.NewLine +
-                   "Misc:  " + Environment.NewLine + _misc;
+            "Warnings:  " + Environment.NewLine + _warning + Environment.NewLine +
+            "Misc:  " + Environment.NewLine + _misc;
         }
     }
 }
