@@ -26,34 +26,21 @@ namespace SensusUI.Inputs
         private string _response;
         private List<string> _optionsList;
         private bool[] _selected;
-        Android.App.AlertDialog _dialog;
-        Button _makeSelectionButton;
+//        Android.App.AlertDialog _dialog;
+//        Button _makeSelectionButton;
 
         [EntryStringUiProperty("Tip Text:", true, 10)]
         public string TipText
         {
-            get
-            {
-                return _tipText;
-            }
-            set
-            {
-                _tipText = value;
-            }
+            get { return _tipText; }
+            set { _tipText = value; }
         }
 
         [EditableListUiProperty(null, true, 11)]
         public List<string> OptionsList
         {
-            get
-            {
-                return _optionsList;
-            }
-            // need set method so auto-binding can set the list via the EditableListUiProperty
-            set
-            {
-                _optionsList = value;
-            }
+            get { return _optionsList; }
+            set { _optionsList = value; }
         }
 
         public override View View
@@ -62,21 +49,8 @@ namespace SensusUI.Inputs
             {
                 if (base.View == null && _optionsList.Count > 0)
                 {
-
-//                    ListView _selectedView = new ListView();
-//                    ListView _optionsView = new ListView();
-//
-//                    _optionsView.ItemsSource = _optionsList;
-//                    _selectedView.ItemsSource = _selectedList;
-//                   
-//                    _optionsView.ItemTapped += async (sender, e) =>
-//                    {
-//                        var item = e.Item as string;
-//                        if (!_selectedList.Contains(item))
-//                            _selectedList.Add(item);
-//                        else
-//                            _selectedList.Remove(item);
-//                    };
+                    Android.App.AlertDialog _dialog;
+                    Button _makeSelectionButton;
 
                     _makeSelectionButton = new Button
                     {
@@ -118,40 +92,24 @@ namespace SensusUI.Inputs
                             Children = { Label, _makeSelectionButton }
                         };
                 }
-
                 return base.View;
             }
         }
 
         public override object Value
         {
-            get
-            {
-                return _response;
-            }
+            get { return _response; }
         }
 
         public override bool Enabled
         {
-            get
-            {
-                return _dialog.IsShowing;
-            }
-            set
-            {
-                if (value)
-                    _dialog.Show();
-                else
-                    _dialog.Dismiss();
-            }
+            get { return true; }    // unsure how to imlement the enabled property here
+            set { }
         }
 
         public override string DefaultName
         {
-            get
-            {
-                return "Multi-Picker";
-            }
+            get { return "Multi-Picker"; }
         }
 
         public MultipleItemPickerInput()

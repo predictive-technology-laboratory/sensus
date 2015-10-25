@@ -5,7 +5,7 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SensusService", "SensusService\SensusService.shproj", "{B2F65FE8-F266-4C0C-B4A8-D326002B9180}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.Android", "Sensus.Android\Sensus.Android.csproj", "{D33B6CDB-795C-4826-B131-47C526ACE07F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sensus.Android", "Sensus.Android\sensus.Android.csproj", "{D33B6CDB-795C-4826-B131-47C526ACE07F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{56DC9286-7449-4F64-8C94-C6B4543F125D}"
 	ProjectSection(SolutionItems) = preProject

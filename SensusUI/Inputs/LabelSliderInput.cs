@@ -30,27 +30,15 @@ namespace SensusUI.Inputs
         [EntryStringUiProperty("Left label:", true, 13)]
         public string LeftLabel
         {
-            get
-            {
-                return _leftLabel;
-            }
-            set
-            {
-                _leftLabel = value;
-            }
+            get { return _leftLabel; }
+            set { _leftLabel = value; }
         }
 
         [EntryStringUiProperty("Right label:", true, 14)]
         public string RightLabel
         {
-            get
-            {
-                return _rightLabel;
-            }
-            set
-            {
-                _rightLabel = value;
-            }
+            get { return _rightLabel; }
+            set { _rightLabel = value; }
         }
 
         public override View View
@@ -131,22 +119,13 @@ namespace SensusUI.Inputs
 
         public override bool Enabled
         {
-            get
-            {
-                return _slider.IsEnabled;
-            }
-            set
-            {
-                _slider.IsEnabled = value;
-            }
+            get { return _slider.IsEnabled; }
+            set { _slider.IsEnabled = value; }
         }
 
         public override string DefaultName
         {
-            get
-            {
-                return "Label Slider";
-            }
+            get { return "Label Slider"; }
         }
 
         public LabelSliderInput()

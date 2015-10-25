@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" android:versionName="0.0.0-prerelease" package="sensus.salmon" android:versionCode="1">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" android:versionName="0.0.0-prerelease" android:versionCode="1" package="SALMON.Android">
 	<uses-sdk android:minSdkVersion="16" android:targetSdkVersion="22" />
-	<application android:label="Sensus.SALMON" android:icon="@drawable/ic_launcher">
+	<application android:icon="@drawable/ic_launcher" android:label="SALMON UVa">
 		<provider android:name="android.support.v4.content.FileProvider" android:authorities="edu.virginia.sie.ptl.sensus.fileprovider" android:grantUriPermissions="true" android:exported="false">
 			<meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/filepaths" />
 		</provider>
