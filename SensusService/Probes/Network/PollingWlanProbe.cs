@@ -21,7 +21,7 @@ namespace SensusService.Probes.Network
     /// </summary>
     public abstract class PollingWlanProbe : PollingProbe
     {
-        protected sealed override string DefaultDisplayName
+        public sealed override string DisplayName
         {
             get { return "Wireless LAN"; }
         }

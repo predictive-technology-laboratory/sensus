@@ -76,7 +76,7 @@ namespace SensusUI.Inputs
         [JsonIgnore]
         public bool Complete
         {
-            get { return _inputs.Count == 0 || _inputs.All(i => i == null || i.Complete); }
+            get { return _inputs.Count == 0 || _inputs.All(input => input == null || input.Complete); }
             set { _complete = value; }
         }
 

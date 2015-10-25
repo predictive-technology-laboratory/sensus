@@ -26,7 +26,7 @@ namespace SensusService.Probes.Movement
 
         private readonly object _locker = new object();
 
-        protected sealed override string DefaultDisplayName
+        public sealed override string DisplayName
         {
             get { return "Speed"; }
         }
@@ -75,20 +75,13 @@ namespace SensusService.Probes.Movement
         {
             lock (_locker)
             {
-                Position currentPosition = null;
-
-                try
-                {
-                    currentPosition = GpsReceiver.Get().GetReading(cancellationToken);
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Failed to get GPS reading:  " + ex.Message, LoggingLevel.Normal, GetType());
-                }
-
                 SpeedDatum datum = null;
 
-                if (currentPosition != null)
+                Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken);
+
+                if (currentPosition == null)
+                    throw new Exception("Failed to get GPS reading.");
+                else
                 {
                     if (_previousPosition == null)
                         _previousPosition = currentPosition;
@@ -100,10 +93,17 @@ namespace SensusService.Probes.Movement
                 }
 
                 if (datum == null)
-                    return new Datum[] { };
+                    return new Datum[] { };  // datum will be null on the first poll and where polls return locations out of order (rare). these should count toward participation.
                 else
                     return new Datum[] { datum };
             }
+        }
+
+        public override void ResetForSharing()
+        {
+            base.ResetForSharing();
+
+            _previousPosition = null;
         }
 
         public override void Stop()

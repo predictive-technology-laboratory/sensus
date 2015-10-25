@@ -402,11 +402,6 @@ namespace Sensus.Android
                 }).Start();
         }
 
-        public override float GetFullActivityHealthTestsPerDay(Protocol protocol)
-        {
-            return 60000 * 60 * 24 / (float)SensusServiceHelper.HEALTH_TEST_DELAY_MS;
-        }
-
         #region notifications
 
         public override void UpdateApplicationStatus(string status)

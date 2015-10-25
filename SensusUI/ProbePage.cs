@@ -49,6 +49,25 @@ namespace SensusUI
                 VerticalOptions = LayoutOptions.FillAndExpand
             };
 
+            string type = "";
+            if (probe is ListeningProbe)
+                type = "Listening";
+            else if (probe is PollingProbe)
+                type = "Polling";
+
+            contentLayout.Children.Add(new ContentView
+                {
+                    Content = new Label
+                    { 
+                        Text = probe.DisplayName + (type == "" ? "" : " (" + type + ")"),
+                        FontSize = 20, 
+                        FontAttributes = FontAttributes.Italic,
+                        TextColor = Color.Accent,
+                        HorizontalOptions = LayoutOptions.Center 
+                    },
+                    Padding = new Thickness(0, 10, 0, 10)
+                });
+
             foreach (StackLayout stack in UiProperty.GetPropertyStacks(probe))
                 contentLayout.Children.Add(stack);
 

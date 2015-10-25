@@ -31,7 +31,7 @@ namespace SensusService.Probes.Location
             get { return _triggers; }
         }            
 
-        protected override string DefaultDisplayName
+        public sealed override string DisplayName
         {
             get
             {

@@ -48,21 +48,28 @@ namespace SensusUI
             {
                 Orientation = StackOrientation.Vertical,
                 VerticalOptions = LayoutOptions.FillAndExpand,
-                Padding = new Thickness(0, 20, 0, 0)
+                Padding = new Thickness(0, 20, 0, 0),
+                Children =
+                {
+                    new Label
+                    {
+                        Text = inputGroup.Name,
+                        FontSize = 20,
+                        HorizontalOptions = LayoutOptions.CenterAndExpand
+                    },
+                    new Label
+                    {
+                        Text = "Step " + stepNumber + " of " + totalSteps,
+                        FontSize = 15,
+                        HorizontalOptions = LayoutOptions.CenterAndExpand
+                    },
+                    new ProgressBar
+                    {
+                        Progress = stepNumber / (double)totalSteps,
+                        HorizontalOptions = LayoutOptions.FillAndExpand
+                    }
+                }
             };
-
-            contentLayout.Children.Add(new Label
-                {
-                    Text = "Step " + stepNumber + " of " + totalSteps,
-                    FontSize = 15,
-                    HorizontalOptions = LayoutOptions.CenterAndExpand
-                });
-
-            contentLayout.Children.Add(new ProgressBar
-                {
-                    Progress = stepNumber / (double)totalSteps,
-                    HorizontalOptions = LayoutOptions.FillAndExpand
-                });
 
             foreach (Input input in inputGroup.Inputs)
                 if (input.View != null)
@@ -79,6 +86,7 @@ namespace SensusUI
                 BackgroundColor = Color.Transparent,
                 BorderWidth = 1,
                 Text = stepNumber < totalSteps ? "Next" : "Submit"
+                StyleId = "NextButton"  // set style id so that we can retrieve the button when unit testing
             };
 
             bool nextButtonTapped = false;

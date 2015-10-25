@@ -42,8 +42,8 @@ namespace SensusService.Probes.User
         private int _numScriptsAgedOut;
         private Random _random;
         private List<string> _runScriptCallbackIds;
-        private int _runCount;
-        private int _completionCount;
+        private List<DateTime> _runTimes;
+        private List<DateTime> _completionTimes;
 
         private readonly object _locker = new object();
 
@@ -179,27 +179,27 @@ namespace SensusService.Probes.User
             }
         }
 
-        public int RunCount
+        public List<DateTime> RunTimes
         {
             get
             {
-                return _runCount;
+                return _runTimes;
             }
             set
             {
-                _runCount = value;
+                _runTimes = value;
             }
         }
 
-        public int CompletionCount
+        public List<DateTime> CompletionTimes
         {
             get
             {
-                return _completionCount;
+                return _completionTimes;
             }
             set
             {
-                _completionCount = value;
+                _completionTimes = value;
             }
         }
         #endregion
@@ -223,8 +223,8 @@ namespace SensusService.Probes.User
             _numScriptsAgedOut = 0;
             _random = new Random();
             _runScriptCallbackIds = new List<string>();
-            _runCount = 0;
-            _completionCount = 0;
+            _runTimes = new List<DateTime>();
+            _completionTimes = new List<DateTime>();
 
             _triggers.CollectionChanged += (o, e) =>
             {
@@ -453,6 +453,9 @@ namespace SensusService.Probes.User
 
             lock (_runScriptCallbackIds)
             {
+                if (script.PresentationTimestamp == null)
+                    script.PresentationTimestamp = DateTimeOffset.UtcNow.AddMilliseconds(_delayMS);
+
                 _runScriptCallbackIds.Add(SensusServiceHelper.Get().ScheduleOneTimeCallback((callbackId, cancellationToken) =>
                         {
                             SensusServiceHelper.Get().Logger.Log("Running \"" + _name + "\".", LoggingLevel.Normal, typeof(Script));                                                    
@@ -463,10 +466,13 @@ namespace SensusService.Probes.User
                             {
                                 script.FirstRunTimestamp = DateTimeOffset.UtcNow;
                                 isRerun = false;
-                                ++_runCount;
+
+                                // add run time and remove all run times before the participation horizon
+                                _runTimes.Add(DateTime.Now);
+                                _runTimes.RemoveAll(runTime => runTime < _probe.Protocol.ParticipationHorizon);
                             }
 
-                            // this method can be called with previous / current datum values (e.g., when the script is first triggered. it 
+                            // this method can be called with previous / current datum values (e.g., when the script is first triggered). it 
                             // can also be called without previous / current datum values (e.g., when triggering randomly or rerunning). if
                             // we have such values, set them on the script.
 
@@ -485,8 +491,7 @@ namespace SensusService.Probes.User
                                             foreach (Input input in inputGroup.Inputs)
                                                 if (input.ShouldBeStored && input.Complete)
                                                 {
-                                                    input.ScriptName = this.Name;
-                                                    _probe.StoreDatum(new ScriptDatum(DateTimeOffset.UtcNow, input.ScriptName, input.GroupId, input.Id, input.Value, script.CurrentDatum == null ? null : script.CurrentDatum.Id, input.Latitude, input.Longitude));
+                                                    _probe.StoreDatum(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow), input.ScriptName, input.GroupId, input.Id, input.Value, script.CurrentDatum == null ? null : script.CurrentDatum.Id, input.Latitude, input.Longitude, script.PresentationTimestamp.GetValueOrDefault()));
 
                                         // once inputs are stored, they should not be stored again, nor should the user be able to modify them
                                         input.ShouldBeStored = false;
@@ -500,6 +505,16 @@ namespace SensusService.Probes.User
 
                             SensusServiceHelper.Get().Logger.Log("\"" + _name + "\" has finished running.", LoggingLevel.Normal, typeof(Script));
 
+                            if (script.Complete)
+                            {
+                                // add completion time and remove all completion times before the participation horizon
+                                _completionTimes.Add(DateTime.Now);
+                                _completionTimes.RemoveAll(completionTime => completionTime < _probe.Protocol.ParticipationHorizon);
+                            }
+                            else if (_rerun)
+                                lock (_incompleteScripts)
+                                    _incompleteScripts.Enqueue(script);
+                                    
                             if (callback != null)
                                 callback();
 
@@ -522,6 +537,17 @@ namespace SensusService.Probes.User
                 misc += _numScriptsAgedOut + " \"" + _name + "\" scripts have aged out." + Environment.NewLine;
             
             return restart;
+        }
+
+        public void ClearForSharing()
+        {
+            _incompleteScripts.Clear();
+            _numScriptsAgedOut = 0;
+            _runTimes.Clear();
+            _completionTimes.Clear();
+            _rerunCallbackId = null;
+            _randomTriggerCallbackId = null;
+            _runScriptCallbackIds.Clear();
         }
 
         public void Restart()

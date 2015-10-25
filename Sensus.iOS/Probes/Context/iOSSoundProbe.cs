@@ -28,7 +28,7 @@ namespace Sensus.iOS.Probes.Context
     /// </summary>
     public class iOSSoundProbe : SoundProbe
     {
-        NSDictionary _settings;
+        private NSDictionary _settings;
 
         protected override void Initialize()
         {
@@ -82,10 +82,6 @@ namespace Sensus.iOS.Probes.Context
                 }
                 else
                     throw new Exception("Failed to start recording.");
-            }
-            catch (Exception)
-            {
-                return new Datum[] { };
             }
             finally
             {

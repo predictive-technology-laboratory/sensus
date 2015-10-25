@@ -40,8 +40,23 @@ namespace SensusUI
         {
             Title = (local ? "Local" : "Remote") + " Data Store";
 
+            List<View> views = new List<View>();
+
+            views.Add(new ContentView
+                {
+                    Content = new Label
+                    { 
+                        Text = dataStore.DisplayName,
+                        FontSize = 20, 
+                        FontAttributes = FontAttributes.Italic,
+                        TextColor = Color.Accent,
+                        HorizontalOptions = LayoutOptions.Center
+                    },
+                    Padding = new Thickness(0, 10, 0, 10)
+                });
+
             // property stacks all come from the data store passed in (i.e., a copy of the original on the protocol, if there is one)
-            List<StackLayout> stacks = UiProperty.GetPropertyStacks(dataStore);
+            views.AddRange(UiProperty.GetPropertyStacks(dataStore));
 
             StackLayout buttonStack = new StackLayout
             {
@@ -49,7 +64,7 @@ namespace SensusUI
                 VerticalOptions = LayoutOptions.FillAndExpand
             };
 
-            stacks.Add(buttonStack);
+            views.Add(buttonStack);
 
             // clearing only applies to local data stores that already exist on protocols and are clearable. new local data stores don't have this option.
             if (local && !newDataStore && protocol.LocalDataStore.Clearable)
@@ -117,8 +132,8 @@ namespace SensusUI
                 VerticalOptions = LayoutOptions.FillAndExpand
             };
 
-            foreach (StackLayout stack in stacks)
-                contentLayout.Children.Add(stack);
+            foreach (View view in views)
+                contentLayout.Children.Add(view);
 
             Content = new ScrollView
             {

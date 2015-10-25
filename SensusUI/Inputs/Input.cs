@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,6 +32,9 @@ namespace SensusUI.Inputs
         private bool _shouldBeStored;
         private double? _latitude;
         private double? _longitude;
+        private bool _required;
+        private bool _viewed;
+        private DateTimeOffset? _completionTimestamp;
 
         [EntryStringUiProperty("Name:", true, 0)]
         public string Name
@@ -104,7 +107,16 @@ namespace SensusUI.Inputs
         [JsonIgnore]
         public virtual View View
         {
-            get { return _view; }
+            get
+            {
+                // set the style ID on the view so that we can retrieve it when unit testing
+                #if UNIT_TESTING
+                if (_view != null)
+                    _view.StyleId = _name;
+                #endif
+
+                return _view; 
+            }
             protected set { _view = value; }
         }
 
@@ -114,11 +126,18 @@ namespace SensusUI.Inputs
         [JsonIgnore]
         public bool Complete
         {
-            get { return _complete; }
-            set
+            get
             {
-                _complete = value;
-                Console.Out.WriteLine(_labelText + " is complete");
+                return _complete || _viewed && !_required;
+            }
+            protected set
+            {
+                _complete = value; 
+
+                if (_complete)
+                    _completionTimestamp = DateTimeOffset.UtcNow;
+                else
+                    _completionTimestamp = null;
             }
         }
 
@@ -152,11 +171,49 @@ namespace SensusUI.Inputs
         [JsonIgnore]
         public abstract string DefaultName { get; }
 
+        [OnOffUiProperty(null, true, 5)]
+        public bool Required
+        {
+            get
+            {
+                return _required;
+            }
+            set
+            {
+                _required = value;
+            }
+        }
+
+        public bool Viewed
+        {
+            get
+            {
+                return _viewed;
+            }
+            set
+            {
+                _viewed = value;
+            }
+        }
+
+        [JsonIgnore]
+        public DateTimeOffset? CompletionTimestamp
+        {
+            get
+            {
+                return _completionTimestamp; 
+            }
+        }
+
         public Input()
         {
             _name = DefaultName;
             _id = Guid.NewGuid().ToString();
+            _complete = false;
             _shouldBeStored = true;
+            _required = true;
+            _viewed = false;
+            _completionTimestamp = null;
         }
 
         public Input(string labelText)

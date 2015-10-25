@@ -18,7 +18,7 @@ namespace SensusService.Probes.Location
 {
     public abstract class AltitudeProbe : ListeningProbe
     {
-        protected sealed override string DefaultDisplayName
+        public sealed override string DisplayName
         {
             get { return "Altitude"; }
         }

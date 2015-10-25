@@ -25,7 +25,7 @@ namespace Sensus.iOS.Probes.User.Health
 {
     public class iOSHealthKitBloodTypeProbe : iOSHealthKitProbe
     {
-        protected override string DefaultDisplayName
+        public sealed override string DisplayName
         {
             get
             {
@@ -79,9 +79,11 @@ namespace Sensus.iOS.Probes.User.Health
                     data.Add(new BloodTypeDatum(DateTimeOffset.Now, BloodType.ONegative));
                 else if (bloodType.BloodType == HKBloodType.OPositive)
                     data.Add(new BloodTypeDatum(DateTimeOffset.Now, BloodType.OPositive));
+                else
+                    throw new Exception("User has not provided -- or has not allowed access to -- their blood type.");
             }
             else
-                SensusServiceHelper.Get().Logger.Log("Error reading blood type:  " + error.Description, LoggingLevel.Normal, GetType());
+                throw new Exception("Error reading blood type:  " + error.Description);
 
             return data;
         }

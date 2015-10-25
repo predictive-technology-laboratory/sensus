@@ -28,6 +28,7 @@ namespace SensusService.Probes
     public abstract class Probe
     {
         #region static members
+
         public static void GetAllAsync(Action<List<Probe>> callback)
         {
             new Thread(() =>
@@ -48,6 +49,7 @@ namespace SensusService.Probes
 
                 }).Start();
         }
+
         #endregion
 
         /// <summary>
@@ -55,7 +57,6 @@ namespace SensusService.Probes
         /// </summary>
         public event EventHandler<Tuple<Datum, Datum>> MostRecentDatumChanged;
 
-        private string _displayName;
         private bool _enabled;
         private bool _running;
         private HashSet<Datum> _collectedData;
@@ -63,15 +64,14 @@ namespace SensusService.Probes
         private Protocol _protocol;
         private bool _storeData;
         private DateTimeOffset _mostRecentStoreTimestamp;
+        private bool _originallyEnabled;
+        private DateTime? _startDateTime;
+        private List<DateTime> _successfulHealthTestTimes;
 
         private readonly object _locker = new object();
 
-        [EntryStringUiProperty("Name:", true, 1)]
-        public string DisplayName
-        {
-            get { return _displayName; }
-            set { _displayName = value; }
-        }
+        [JsonIgnore]
+        public abstract string DisplayName { get; }
 
         [OnOffUiProperty("Enabled:", true, 2)]
         public bool Enabled
@@ -85,10 +85,30 @@ namespace SensusService.Probes
 
                     if (_protocol != null && _protocol.Running)  // _protocol can be null when deserializing the probe -- if Enabled is set before Protocol
                         if (_enabled)
-                            StartAsync();
-                        else
-                            StopAsync();
+                        StartAsync();
+                    else
+                        StopAsync();
                 }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets whether or not this probe was originally enabled within the protocol. Some probes can become disabled when 
+        /// attempting to start them. For example, the temperature probe might not be supported on all hardware and will thus become 
+        /// disabled after its failed initialization. Thus, we need a separate variable (other than Enabled) to tell us whether the 
+        /// probe was originally enabled. We use this value to calculate participation levels and also to restore the probe before 
+        /// sharing it with others (e.g., since other people might have temperature hardware in their devices).
+        /// </summary>
+        /// <value>Whether or not this probe was enabled the first time the protocol was started.</value>
+        public bool OriginallyEnabled
+        {
+            get
+            {
+                return _originallyEnabled;
+            }
+            set
+            {
+                _originallyEnabled = value;
             }
         }
 
@@ -136,16 +156,28 @@ namespace SensusService.Probes
         }
 
         [JsonIgnore]
-        protected abstract string DefaultDisplayName { get; }
+        public abstract Type DatumType { get; }
 
         [JsonIgnore]
-        public abstract Type DatumType { get; }
+        protected abstract float RawParticipation { get; }
+
+        [JsonIgnore]
+        public DateTime? StartDateTime
+        {
+            get { return _startDateTime; }
+        }
+
+        public List<DateTime> SuccessfulHealthTestTimes
+        {
+            get{ return _successfulHealthTestTimes; }
+        }
 
         protected Probe()
         {
-            _displayName = DefaultDisplayName;
             _enabled = _running = false;
             _storeData = true;
+            _collectedData = new HashSet<Datum>();
+            _successfulHealthTestTimes = new List<DateTime>();
         }
 
         /// <summary>
@@ -153,17 +185,38 @@ namespace SensusService.Probes
         /// </summary>
         protected virtual void Initialize()
         {
-            _collectedData = new HashSet<Datum>();
+            _collectedData.Clear();
             _mostRecentDatum = null;
             _mostRecentStoreTimestamp = DateTimeOffset.UtcNow;  // mark storage delay from initialization of probe
+        }
+
+        /// <summary>
+        /// Gets the participation level for the current probe. If this probe was originally enabled within the protocol, then
+        /// this will be a value between 0 and 1, with 1 indicating perfect participation and 0 indicating no participation. If 
+        /// this probe was not originally enabled within the protocol, then the returned value will be null, indicating that this
+        /// probe should not be included in calculations of overall protocol participation.
+        /// </summary>
+        /// <returns>The participation level (null, or somewhere 0-1).</returns>
+        public float? GetParticipation()
+        {
+            if (_originallyEnabled)
+                return Math.Min(RawParticipation, 1);  // raw participations can be > 1, e.g. in the case of polling probes that the user can cause to poll repeatedly. cut off at 1 to maintain the interpretation of 1 as perfect participation.
+            else
+                return null;
         }
 
         protected void StartAsync()
         {
             new Thread(() =>
                 {
-                    try { Start(); }
-                    catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to start:  " + ex.Message, LoggingLevel.Normal, GetType()); }
+                    try
+                    {
+                        Start();
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Failed to start:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
 
                 }).Start();
         }
@@ -182,6 +235,7 @@ namespace SensusService.Probes
                     SensusServiceHelper.Get().Logger.Log("Starting.", LoggingLevel.Normal, GetType());
                     Initialize();
                     _running = true;
+                    _startDateTime = DateTime.Now;
                 }
             }
         }
@@ -228,8 +282,14 @@ namespace SensusService.Probes
         {
             new Thread(() =>
                 {
-                    try { Stop(); }
-                    catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to stop:  " + ex.Message, LoggingLevel.Normal, GetType()); }
+                    try
+                    {
+                        Stop();
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Failed to stop:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
 
                 }).Start();
         }
@@ -244,7 +304,9 @@ namespace SensusService.Probes
                 if (_running)
                 {
                     SensusServiceHelper.Get().Logger.Log("Stopping.", LoggingLevel.Normal, GetType());
+
                     _running = false;
+                    _startDateTime = null;
 
                     // clear out the probe's in-memory storage
                     lock (_collectedData)
@@ -265,7 +327,7 @@ namespace SensusService.Probes
         }
 
         public virtual bool TestHealth(ref string error, ref string warning, ref string misc)
-        {
+        {                    
             bool restart = false;
 
             if (!_running)
@@ -275,6 +337,17 @@ namespace SensusService.Probes
             }
 
             return restart;
+        }
+
+        public virtual void ResetForSharing()
+        {
+            if (_running)
+                throw new Exception("Cannot clear probe while it is running.");
+            
+            _collectedData.Clear();
+            _successfulHealthTestTimes.Clear();
+            _mostRecentDatum = null;
+            _mostRecentStoreTimestamp = DateTimeOffset.MinValue;
         }
     }
 }

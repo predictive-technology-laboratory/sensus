@@ -90,6 +90,14 @@ namespace Sensus.Android
             FormsMaps.Init(this, savedInstanceState);
             MapExtendRenderer.Init(this, savedInstanceState);
 
+            #if UNIT_TESTING
+            Forms.ViewInitialized += (sender, e) =>
+            {
+                if (!string.IsNullOrWhiteSpace(e.View.StyleId))
+                    e.NativeView.ContentDescription = e.View.StyleId;
+            };
+            #endif
+
             _app = new App();
             LoadApplication(_app);
 
@@ -113,7 +121,16 @@ namespace Sensus.Android
                 e.Binder.SensusServiceHelper.SetMainActivity(this);
 
                 // display service helper properties on the main page
-                _app.SensusMainPage.DisplayServiceHelper(e.Binder.SensusServiceHelper);                                     
+                _app.SensusMainPage.DisplayServiceHelper(e.Binder.SensusServiceHelper);
+
+                // if we're unit testing, try to load and run the unit testing protocol from the embedded assets
+                #if UNIT_TESTING
+                using (Stream protocolFile = Assets.Open("UnitTestingProtocol.sensus"))
+                {
+                    Protocol.RunUnitTestingProtocol(protocolFile);
+                    protocolFile.Close();
+                }
+                #endif
             };
 
             _serviceConnection.ServiceDisconnected += (o, e) =>
@@ -162,7 +179,7 @@ namespace Sensus.Android
                         try
                         {
                             if (intent.Scheme == "http" || intent.Scheme == "https")
-                                Protocol.DisplayFromWebUriAsync(new Uri(dataURI.ToString()));
+                                Protocol.DeserializeAsync(new Uri(dataURI.ToString()), true, Protocol.DisplayAndStartAsync);
                             else if (intent.Scheme == "content" || intent.Scheme == "file")
                             {
                                 byte[] bytes = null;
@@ -182,7 +199,7 @@ namespace Sensus.Android
                                 }
 
                                 if (bytes != null)
-                                    Protocol.DisplayFromBytesAsync(bytes);
+                                    Protocol.DeserializeAsync(bytes, true, Protocol.DisplayAndStartAsync);
                             }
                             else
                                 SensusServiceHelper.Get().Logger.Log("Sensus didn't know what to do with URI \"" + dataURI + "\".", LoggingLevel.Normal, GetType());

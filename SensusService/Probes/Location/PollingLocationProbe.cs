@@ -24,7 +24,7 @@ namespace SensusService.Probes.Location
     /// </summary>
     public class PollingLocationProbe : PollingProbe
     {
-        protected sealed override string DefaultDisplayName
+        public sealed override string DisplayName
         {
             get { return "Location"; }
         }
@@ -58,12 +58,12 @@ namespace SensusService.Probes.Location
 
         protected sealed override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
         {
-            Position reading = GpsReceiver.Get().GetReading(cancellationToken);
+            Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken);
 
-            if (reading == null)
-                return new Datum[] { };
+            if (currentPosition == null)
+                throw new Exception("Failed to get GPS reading.");
             else
-                return new Datum[] { new LocationDatum(reading.Timestamp, reading.Accuracy, reading.Latitude, reading.Longitude) };
+                return new Datum[] { new LocationDatum(currentPosition.Timestamp, currentPosition.Accuracy, currentPosition.Latitude, currentPosition.Longitude) };
         }
     }
 }

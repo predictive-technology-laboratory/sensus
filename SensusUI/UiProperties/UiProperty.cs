@@ -73,14 +73,14 @@ namespace SensusUI.UiProperties
             {
                 UiProperty uiElement = propertyUiElement.Item2;
 
-                Label parameterNameLabel = new Label
+                Label propertyNameLabel = new Label
                 {
                     Text = uiElement.LabelText ?? propertyUiElement.Item1.Name + ":",
                     HorizontalOptions = LayoutOptions.Start,
                     FontSize = 20
                 };
 
-                bool addParameterValueLabel = false;
+                bool addPropertyValueLabel = false;
 
                 View view = null;
                 BindableProperty bindingProperty = null;
@@ -176,7 +176,7 @@ namespace SensusUI.UiProperties
                     };
 
                     bindingProperty = Stepper.ValueProperty;
-                    addParameterValueLabel = true;
+                    addPropertyValueLabel = true;
                 }
                 else if (uiElement is EntryStringUiProperty)
                 {
@@ -212,15 +212,17 @@ namespace SensusUI.UiProperties
 
                 if (view != null)
                 {
+                    view.StyleId = propertyNameLabel.Text + " View";  // set style id so we can get the property value when unit testing
+
                     StackLayout stack = new StackLayout
                     {
                         Orientation = StackOrientation.Horizontal,
                         HorizontalOptions = LayoutOptions.FillAndExpand
                     };
 
-                    stack.Children.Add(parameterNameLabel);
+                    stack.Children.Add(propertyNameLabel);
 
-                    if (addParameterValueLabel)
+                    if (addPropertyValueLabel)
                     {
                         Label parameterValueLabel = new Label
                         {

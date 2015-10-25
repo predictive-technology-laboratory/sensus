@@ -27,7 +27,7 @@ namespace SensusService
             }
         }
 
-        protected override string DefaultDisplayName
+        public sealed override string DisplayName
         {
             get
             {

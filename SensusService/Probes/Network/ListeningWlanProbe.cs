@@ -21,7 +21,7 @@ namespace SensusService.Probes.Network
     /// </summary>
     public abstract class ListeningWlanProbe : ListeningProbe
     {
-        protected sealed override string DefaultDisplayName
+        public sealed override string DisplayName
         {
             get { return "Wireless LAN"; }
         }

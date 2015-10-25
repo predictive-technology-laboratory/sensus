@@ -115,9 +115,9 @@ namespace SensusService.DataStores.Remote
         {
             DateTimeOffset commitStartTime = DateTimeOffset.UtcNow;
 
-            Dictionary<string, StringBuilder> datumTypeJSON = new Dictionary<string, StringBuilder>();
             Dictionary<string, List<Datum>> datumTypeData = new Dictionary<string, List<Datum>>();
-            int datumIndex = 0;
+            Dictionary<string, StringBuilder> datumTypeJSON = new Dictionary<string, StringBuilder>();
+
             foreach (Datum datum in data)
             {
                 if (cancellationToken.IsCancellationRequested)
@@ -125,15 +125,7 @@ namespace SensusService.DataStores.Remote
                 
                 string datumType = datum.GetType().Name;
 
-                StringBuilder json;
-                if (!datumTypeJSON.TryGetValue(datumType, out json))
-                {
-                    json = new StringBuilder("[" + Environment.NewLine);
-                    datumTypeJSON.Add(datumType, json);
-                }
-
-                json.Append((datumIndex++ == 0 ? "" : "," + Environment.NewLine) + datum.GetJSON(Protocol.JsonAnonymizer));
-
+                // add datum to its subset collection
                 List<Datum> dataSubset;
                 if (!datumTypeData.TryGetValue(datumType, out dataSubset))
                 {
@@ -142,6 +134,16 @@ namespace SensusService.DataStores.Remote
                 }
 
                 dataSubset.Add(datum);
+
+                // add datum to its JSON string
+                StringBuilder json;
+                if (!datumTypeJSON.TryGetValue(datumType, out json))
+                {
+                    json = new StringBuilder("[" + Environment.NewLine);
+                    datumTypeJSON.Add(datumType, json);
+                }
+
+                json.Append((dataSubset.Count == 1 ? "" : "," + Environment.NewLine) + datum.GetJSON(Protocol.JsonAnonymizer));
             }
 
             List<Datum> committedData = new List<Datum>();

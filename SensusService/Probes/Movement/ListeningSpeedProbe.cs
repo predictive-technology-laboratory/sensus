@@ -25,7 +25,7 @@ namespace SensusService.Probes.Movement
 
         private readonly object _locker = new object();
 
-        protected sealed override string DefaultDisplayName
+        public sealed override string DisplayName
         {
             get
             {
@@ -81,6 +81,13 @@ namespace SensusService.Probes.Movement
         {
             _previousPosition = null;
             GpsReceiver.Get().AddListener(_positionChangedHandler);
+        }
+
+        public override void ResetForSharing()
+        {
+            base.ResetForSharing();
+
+            _previousPosition = null;
         }
 
         protected sealed override void StopListening()

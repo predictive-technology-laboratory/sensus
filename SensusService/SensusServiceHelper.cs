@@ -97,7 +97,7 @@ namespace SensusService
         private static readonly string LOG_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
         private static readonly string SERIALIZATION_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_service_helper.json");
 
-        #if DEBUG
+        #if DEBUG || UNIT_TESTING
         public const int HEALTH_TEST_DELAY_MS = 30000;
         #elif RELEASE
         public const int HEALTH_TEST_DELAY_MS = 300000;
@@ -343,7 +343,7 @@ namespace SensusService
             if (!Directory.Exists(SHARE_DIRECTORY))
                 Directory.CreateDirectory(SHARE_DIRECTORY); 
 
-            #if DEBUG
+            #if DEBUG || UNIT_TESTING
             LoggingLevel loggingLevel = LoggingLevel.Debug;
             #elif RELEASE
             LoggingLevel loggingLevel = LoggingLevel.Normal;
@@ -425,8 +425,6 @@ namespace SensusService
         public abstract void BringToForeground();
 
         public abstract void UpdateApplicationStatus(string status);
-
-        public abstract float GetFullActivityHealthTestsPerDay(Protocol protocol);
 
         /// <summary>
         /// The user can enable all probes at once. When this is done, it doesn't make sense to enable, e.g., the
@@ -747,9 +745,7 @@ namespace SensusService
 
         public void FlashNotificationAsync(string message)
         {
-            FlashNotificationAsync(message, () =>
-                {
-                });
+            FlashNotificationAsync(message, null);
         }
 
         public void PromptForInputAsync(string windowTitle, Input input, CancellationToken? cancellationToken, Action<Input> callback)
@@ -839,7 +835,10 @@ namespace SensusService
                                 });
                         }
 
-                        responseWait.WaitOne();                                    
+                        responseWait.WaitOne();    
+
+                        foreach (Input input in incompleteGroup.Inputs)
+                            input.Viewed = true;
                     }
 
                     // geotag input groups if the user didn't cancel and we've got input groups with inputs that are complete and lacking locations
@@ -849,19 +848,19 @@ namespace SensusService
 
                         try
                         {
-                            Position currentLocation = GpsReceiver.Get().GetReading(cancellationToken.GetValueOrDefault());
+                            Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken.GetValueOrDefault());
 
-                            if (currentLocation != null)
+                            if (currentPosition != null)
                                 foreach (InputGroup incompleteGroup in incompleteGroups)
                                     if (incompleteGroup.Geotag)
                                         foreach (Input input in incompleteGroup.Inputs)
                                             if (input.Complete)
                                             {
                                                 if (input.Latitude == null)
-                                                    input.Latitude = currentLocation.Latitude;
+                                                    input.Latitude = currentPosition.Latitude;
 
                                                 if (input.Longitude == null)
-                                                    input.Longitude = currentLocation.Longitude;
+                                                    input.Longitude = currentPosition.Longitude;
                                             }
                         }
                         catch (Exception ex)

@@ -318,11 +318,16 @@ namespace Sensus.iOS
         {
             Device.BeginInvokeOnMainThread(() =>
                 {
-                    MFMailComposeViewController mailer = new MFMailComposeViewController();
-                    mailer.SetSubject(subject);
-                    mailer.AddAttachmentData(NSData.FromUrl(NSUrl.FromFilename(path)), "application/json", Path.GetFileName(path));
-                    mailer.Finished += (sender, e) => mailer.DismissViewControllerAsync(true);
-                    UIApplication.SharedApplication.KeyWindow.RootViewController.PresentViewController(mailer, true, null);
+                    if (MFMailComposeViewController.CanSendMail)
+                    {
+                        MFMailComposeViewController mailer = new MFMailComposeViewController();
+                        mailer.SetSubject(subject);
+                        mailer.AddAttachmentData(NSData.FromUrl(NSUrl.FromFilename(path)), "application/json", Path.GetFileName(path));
+                        mailer.Finished += (sender, e) => mailer.DismissViewControllerAsync(true);
+                        UIApplication.SharedApplication.KeyWindow.RootViewController.PresentViewController(mailer, true, null);
+                    }
+                    else
+                        SensusServiceHelper.Get().FlashNotificationAsync("You do not have any mail accounts configured. Please configure one before attempting to send emails from Sensus.");
                 });
         }
 
@@ -330,12 +335,17 @@ namespace Sensus.iOS
         {
             Device.BeginInvokeOnMainThread(() =>
                 {
-                    MFMailComposeViewController mailer = new MFMailComposeViewController();
-                    mailer.SetToRecipients(new string[] { toAddress });
-                    mailer.SetSubject(subject);
-                    mailer.SetMessageBody(message, false);
-                    mailer.Finished += (sender, e) => mailer.DismissViewControllerAsync(true);
-                    UIApplication.SharedApplication.KeyWindow.RootViewController.PresentViewController(mailer, true, null);
+                    if (MFMailComposeViewController.CanSendMail)
+                    {
+                        MFMailComposeViewController mailer = new MFMailComposeViewController();
+                        mailer.SetToRecipients(new string[] { toAddress });
+                        mailer.SetSubject(subject);
+                        mailer.SetMessageBody(message, false);
+                        mailer.Finished += (sender, e) => mailer.DismissViewControllerAsync(true);
+                        UIApplication.SharedApplication.KeyWindow.RootViewController.PresentViewController(mailer, true, null);
+                    }
+                    else
+                        SensusServiceHelper.Get().FlashNotificationAsync("You do not have any mail accounts configured. Please configure one before attempting to send emails from Sensus.");
                 });            
         }
 
@@ -433,6 +443,9 @@ namespace Sensus.iOS
             Device.BeginInvokeOnMainThread(() =>
                 {
                     DependencyService.Get<IToastNotificator>().Notify(ToastNotificationType.Info, "", message + Environment.NewLine, TimeSpan.FromSeconds(5));
+
+                    if (callback != null)
+                        callback();
                 });
         }
 
@@ -442,11 +455,6 @@ namespace Sensus.iOS
             return !(probe is PollingLocationProbe) &&
             !(probe is PollingSpeedProbe) &&
             !(probe is PollingPointsOfInterestProximityProbe);
-        }
-
-        public override float GetFullActivityHealthTestsPerDay(Protocol protocol)
-        {
-            return protocol.FullActivityHealthTestsPerDay;
         }
 
         #region methods not implemented in ios

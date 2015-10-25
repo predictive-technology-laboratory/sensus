@@ -58,6 +58,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)AddScriptTimeTriggerPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ScriptTimeTriggersPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ParticipationReportPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ParticipationReportDetailsPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GroupProtocolPage.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Inputs\" />

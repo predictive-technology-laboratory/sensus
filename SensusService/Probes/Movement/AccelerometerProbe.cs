@@ -29,7 +29,7 @@ namespace SensusService.Probes.Movement
             get { return _stabilizing; }
         }
 
-        protected sealed override string DefaultDisplayName
+        public sealed override string DisplayName
         {
             get { return "Accelerometer"; }
         }
@@ -56,6 +56,13 @@ namespace SensusService.Probes.Movement
                     SensusServiceHelper.Get().Logger.Log("Accelerometer has finished stabilization period.", LoggingLevel.Normal, GetType());
 
                 }).Start();
+        }
+
+        public override void ResetForSharing()
+        {
+            base.ResetForSharing();
+
+            _stabilizing = false;
         }
     }
 }

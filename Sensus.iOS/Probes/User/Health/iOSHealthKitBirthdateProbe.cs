@@ -25,7 +25,7 @@ namespace Sensus.iOS.Probes.User.Health
 {
     public class iOSHealthKitBirthdateProbe : iOSHealthKitProbe
     {
-        protected override string DefaultDisplayName
+        public sealed override string DisplayName
         {
             get
             {
@@ -62,10 +62,15 @@ namespace Sensus.iOS.Probes.User.Health
             NSDate dateOfBirth = HealthStore.GetDateOfBirth(out error);
 
             if (error == null)
-                data.Add(new BirthdateDatum(DateTimeOffset.Now, new DateTimeOffset(dateOfBirth.ToDateTime())));
+            {
+                if (dateOfBirth == null)
+                    throw new Exception("User has not provided -- or has not allowed access to -- their date of birth.");
+                else
+                    data.Add(new BirthdateDatum(DateTimeOffset.Now, new DateTimeOffset(dateOfBirth.ToDateTime())));
+            }
             else
-                SensusServiceHelper.Get().Logger.Log("Error reading date of birth:  " + error.Description, LoggingLevel.Normal, GetType());
-
+                throw new Exception("Error reading date of birth:  " + error.Description);
+                
             return data;
         }
     }

@@ -72,7 +72,7 @@ namespace SensusUI
                         if (selectedProtocol.Running)
                             await Navigation.PushAsync(new ParticipationReportPage(selectedProtocol));
                         else if (await DisplayAlert("Begin Study", "You are not currently participating in this study. Would you like to begin participating?", "Yes", "No"))
-                            selectedProtocol.StartWithUserAgreement(null);
+                            selectedProtocol.StartWithUserAgreementAsync(null);
                     }
                 }
             };

@@ -135,8 +135,7 @@ namespace SensusUI.Inputs
 
                                     _response = response;
 
-                                    if(_response != null)
-                                        Complete = true;
+                                    Complete = _response != null;
 
                                     callback(_response);
                                 });

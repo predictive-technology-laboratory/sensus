@@ -67,7 +67,7 @@ namespace SensusService.DataStores
             get { return _running; }
         }
             
-        [DisplayStringUiProperty("Type:", 0)]
+        [JsonIgnore]
         public abstract string DisplayName { get; }
 
         [JsonIgnore]
@@ -222,6 +222,17 @@ namespace SensusService.DataStores
                 warning += "Datastore \"" + GetType().FullName + "\" has not committed data in " + msElapsedSinceLastCommit + "ms (commit delay = " + _commitDelayMS + "ms)." + Environment.NewLine;
 
             return restart;
+        }
+
+        public virtual void ClearForSharing()
+        {
+            if (_running)
+                throw new Exception("Cannot clear data store while it is running.");
+            
+            _mostRecentCommitTimestamp = DateTimeOffset.MinValue;
+            _nonProbeDataToCommit.Clear();
+            _isCommitting = false;
+            _commitCallbackId = null;
         }
 
         public DataStore Copy()

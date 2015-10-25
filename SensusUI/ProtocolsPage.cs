@@ -18,6 +18,9 @@ using System.IO;
 using System.Linq;
 using Xamarin.Forms;
 using SensusUI.Inputs;
+using System.Collections.Generic;
+using SensusService.Probes.User;
+using SensusService.Probes;
 
 namespace SensusUI
 {
@@ -26,6 +29,45 @@ namespace SensusUI
     /// </summary>
     public class ProtocolsPage : ContentPage
     {
+        public static void ExecuteActionUponProtocolAuthentication(Protocol protocol, Action successAction, Action failAction = null)
+        {
+            if (protocol.LockPasswordHash == "")
+                successAction();
+            else
+            {
+                UiBoundSensusServiceHelper.Get(true).PromptForInputAsync(
+
+                    "Authenticate \"" + protocol.Name + "\"", 
+
+                    new TextInput("Protocol Password:"),
+
+                    null,
+
+                    input =>
+                    {
+                        if (input == null)
+                        {
+                            if (failAction != null)
+                                failAction();
+                        }
+                        else
+                        {
+                            string password = input.Value as string;
+
+                            if (password != null && UiBoundSensusServiceHelper.Get(true).GetHash(password) == protocol.LockPasswordHash)
+                                successAction();
+                            else
+                            {
+                                UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("The password you entered was not correct.");
+
+                                if (failAction != null)
+                                    failAction();
+                            }
+                        }
+                    });
+            }
+        }
+
         private ListView _protocolsList;
 
         public ProtocolsPage()
@@ -42,10 +84,28 @@ namespace SensusUI
 
                 Protocol selectedProtocol = _protocolsList.SelectedItem as Protocol;
 
-                string selectedAction = await DisplayActionSheet(selectedProtocol.Name, "Cancel", null, selectedProtocol.Running ? "Stop" : "Start", "Edit", "Status", "Share", "Delete");
+                List<string> actions = new List<string>(new string[] { selectedProtocol.Running ? "Stop" : "Start", "Edit", "Copy" });
+
+                if (selectedProtocol.Running)
+                    actions.Add("Status");
+
+                actions.Add("Share");
+
+                List<Protocol> groupableProtocols = UiBoundSensusServiceHelper.Get(true).RegisteredProtocols.Where(registeredProtocol => registeredProtocol != selectedProtocol && registeredProtocol.Groupable && registeredProtocol.GroupedProtocols.Count == 0).ToList();
+                if (selectedProtocol.Groupable)
+                {
+                    if (selectedProtocol.GroupedProtocols.Count == 0 && groupableProtocols.Count > 0)
+                        actions.Add("Group");
+                    else if (selectedProtocol.GroupedProtocols.Count > 0)
+                        actions.Add("Ungroup");
+                }
+
+                actions.Add("Delete");
+
+                string selectedAction = await DisplayActionSheet(selectedProtocol.Name, "Cancel", null, actions.ToArray());
 
                 if (selectedAction == "Start")
-                    selectedProtocol.StartWithUserAgreement(null);
+                    selectedProtocol.StartWithUserAgreementAsync(null);
                 else if (selectedAction == "Stop")
                 {
                     Action stopAction = new Action(async() =>
@@ -58,16 +118,16 @@ namespace SensusUI
                 }
                 else if (selectedAction == "Edit")
                 {
-                    Action editAction = new Action(async() =>
-                        {
-                            ProtocolPage protocolPage = new ProtocolPage(selectedProtocol);
-                            protocolPage.Disappearing += (oo, ee) => Bind();  // rebind to pick up name changes
-                            await Navigation.PushAsync(protocolPage);
-                            _protocolsList.SelectedItem = null;
-                        });
-
-                    ExecuteActionUponProtocolAuthentication(selectedProtocol, editAction);
+                    ExecuteActionUponProtocolAuthentication(selectedProtocol, () => Device.BeginInvokeOnMainThread(async () =>
+                            {
+                                ProtocolPage protocolPage = new ProtocolPage(selectedProtocol);
+                                protocolPage.Disappearing += (oo, ee) => Bind();  // rebind to pick up name changes
+                                await Navigation.PushAsync(protocolPage);
+                                _protocolsList.SelectedItem = null;
+                            }));
                 }
+                else if (selectedAction == "Copy")
+                    selectedProtocol.CopyAsync(selectedProtocolCopy => UiBoundSensusServiceHelper.Get(true).RegisterProtocol(selectedProtocolCopy), true);
                 else if (selectedAction == "Status")
                 {
                     if (UiBoundSensusServiceHelper.Get(true).ProtocolShouldBeRunning(selectedProtocol))
@@ -95,35 +155,31 @@ namespace SensusUI
                 }
                 else if (selectedAction == "Share")
                 {
-                    Action shareAction1 = new Action(async() =>
+                    Action ShareSelectedProtocol = new Action(() =>
                         {
-                            Action shareAction = new Action(() =>
+                            // make a deep copy of the selected protocol so we can reset it for sharing
+                            selectedProtocol.CopyAsync(selectedProtocolCopy =>
                                 {
-                                    string path = null;
-                                    try
-                                    {
-                                        path = UiBoundSensusServiceHelper.Get(true).GetSharePath(".sensus");
-                                        selectedProtocol.Save(path);
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        UiBoundSensusServiceHelper.Get(true).Logger.Log("Failed to save protocol to file for sharing:  " + ex.Message, LoggingLevel.Normal, GetType());
-                                        path = null;
-                                    }
+                                    selectedProtocolCopy.ResetForSharing();
 
-                                    if (path != null)
-                                        UiBoundSensusServiceHelper.Get(true).ShareFileAsync(path, "Sensus Protocol:  " + selectedProtocol.Name);
-                                });
-
-                            // don't authenticate if the protocol was declared shareable -- participants might require the ability to share without the password.
-                            if (selectedProtocol.Shareable)
-                                shareAction();
-                                // if the protocol isn't declared shareable, require authentication, since sharing is equivalent to editing the protocol.
-                                else
-                                ExecuteActionUponProtocolAuthentication(selectedProtocol, shareAction);
+                                    // write protocol to file and share
+                                    string sharePath = UiBoundSensusServiceHelper.Get(true).GetSharePath(".sensus");
+                                    selectedProtocolCopy.Save(sharePath);
+                                    UiBoundSensusServiceHelper.Get(true).ShareFileAsync(sharePath, "Sensus Protocol:  " + selectedProtocolCopy.Name);
+                                }, false);
                         });
 
-                    ExecuteActionUponProtocolAuthentication(selectedProtocol, shareAction1);
+                    if (selectedProtocol.Shareable)
+                        ShareSelectedProtocol();
+                    else
+                        ExecuteActionUponProtocolAuthentication(selectedProtocol, ShareSelectedProtocol);
+                }
+                else if (selectedAction == "Group")
+                    await Navigation.PushAsync(new GroupProtocolPage(selectedProtocol, groupableProtocols));
+                else if (selectedAction == "Ungroup")
+                {
+                    if (await DisplayAlert("Ungroup " + selectedProtocol.Name + "?", "This protocol is currently grouped with the following other protocols:" + Environment.NewLine + Environment.NewLine + string.Concat(selectedProtocol.GroupedProtocols.Select(protocol => protocol.Name + Environment.NewLine)), "Ungroup", "Cancel"))
+                        selectedProtocol.GroupedProtocols.Clear();
                 }
                 else if (selectedAction == "Delete")
                 {
@@ -154,19 +210,16 @@ namespace SensusUI
 
                     ExecuteActionUponProtocolAuthentication(selectedProtocol, deleteAction);
                 }                        
-                
+
             };
             
             Bind();
 
             Content = _protocolsList;
-
+            
             ToolbarItems.Add(new ToolbarItem(null, "plus.png", () =>
                     {
-                                Protocol.CreateAsync("New Protocol", protocol =>
-                                    {
-                                        UiBoundSensusServiceHelper.Get(true).RegisterProtocol(protocol);
-                                    });
+                        Protocol.CreateAsync("New Protocol", null);
                     }));
             
         }
@@ -212,6 +265,5 @@ namespace SensusUI
                             UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("The password you entered was not correct."); 
                     });
         }
-            
     }
 }

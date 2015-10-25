@@ -42,7 +42,7 @@ namespace SensusService.DataStores.Local
         {
             _uploadToRemoteDataStore = true;
 
-            #if DEBUG
+            #if DEBUG || UNIT_TESTING
             CommitDelayMS = 5000;  // 5 seconds...so we can see debugging output quickly
             #else
             CommitDelayMS = 60000;

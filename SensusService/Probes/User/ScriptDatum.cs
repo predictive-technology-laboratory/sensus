@@ -28,6 +28,7 @@ namespace SensusService.Probes.User
         private string _triggerDatumId;
         private double? _latitude;
         private double? _longitude;
+        private DateTimeOffset _presentationTimestamp;
 
         public string ScriptName
         {
@@ -76,7 +77,7 @@ namespace SensusService.Probes.User
         {
             get { return _triggerDatumId; }
             set { _triggerDatumId = value; }
-        }  
+        }
 
         [NumberProbeTriggerProperty]
         [Anonymizable(null, new Type[] { typeof(DoubleRoundingTenthsAnonymizer), typeof(DoubleRoundingHundredthsAnonymizer), typeof(DoubleRoundingThousandthsAnonymizer) }, 1)]  // rounding to hundredths is roughly 1km
@@ -94,6 +95,18 @@ namespace SensusService.Probes.User
             set { _longitude = value; }
         }
 
+        public DateTimeOffset PresentationTimestamp
+        {
+            get
+            {
+                return _presentationTimestamp;
+            }
+            set
+            {
+                _presentationTimestamp = value;
+            }
+        }
+
         public override string DisplayDetail
         {
             get { return _response.ToString(); }
@@ -102,9 +115,11 @@ namespace SensusService.Probes.User
         /// <summary>
         /// For JSON deserialization.
         /// </summary>
-        private ScriptDatum() { }
+        private ScriptDatum()
+        {
+        }
 
-        public ScriptDatum(DateTimeOffset timestamp, string scriptName, string groupId, string inputId, object response, string triggerDatumId, double? latitude, double? longitude)
+        public ScriptDatum(DateTimeOffset timestamp, string scriptName, string groupId, string inputId, object response, string triggerDatumId, double? latitude, double? longitude, DateTimeOffset presentationTimestamp)
             : base(timestamp)
         {
             _scriptName = scriptName;
@@ -114,17 +129,19 @@ namespace SensusService.Probes.User
             _triggerDatumId = triggerDatumId == null ? "" : triggerDatumId;
             _latitude = latitude;
             _longitude = longitude;
+            _presentationTimestamp = presentationTimestamp;
         }
 
         public override string ToString()
         {
             return base.ToString() + Environment.NewLine +
-                    "Script:  " + _scriptName + Environment.NewLine +
-                   "Group:  " + _groupId + Environment.NewLine + 
-                   "Input:  " + _inputId + Environment.NewLine +
-                   "Response:  " + _response + Environment.NewLine + 
-                   "Latitude:  " + _latitude + Environment.NewLine +
-                   "Longitude:  " + _longitude;
+			"Script:  " + _scriptName + Environment.NewLine +
+            "Group:  " + _groupId + Environment.NewLine +
+            "Input:  " + _inputId + Environment.NewLine +
+            "Response:  " + _response + Environment.NewLine +
+            "Latitude:  " + _latitude + Environment.NewLine +
+            "Longitude:  " + _longitude + Environment.NewLine +
+            "Presentation:  " + _presentationTimestamp;
         }
     }
 }
