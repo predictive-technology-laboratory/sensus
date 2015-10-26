@@ -32,6 +32,7 @@ using Xamarin.Geolocation;
 using SensusService.Probes.Location;
 using SensusService.Probes;
 using SensusService.Probes.Movement;
+using System.Linq;
 
 namespace Sensus.Android
 {
@@ -64,7 +65,7 @@ namespace Sensus.Android
 
         public override bool WiFiConnected
         {
-            get { return _connectivityManager.GetNetworkInfo(ConnectivityType.Wifi).IsConnected; }
+            get { return _connectivityManager.GetAllNetworks().Select(network => _connectivityManager.GetNetworkInfo(network)).Any(networkInfo => networkInfo.Subtype == ConnectivityType.Wifi && networkInfo.IsConnected); }
         }
 
         public override bool IsCharging
