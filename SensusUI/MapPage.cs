@@ -15,7 +15,7 @@
 using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
-//using Xam.Plugin.MapExtend.Abstractions;
+using Xam.Plugin.MapExtend.Abstractions;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using Xamarin;
@@ -24,7 +24,7 @@ namespace SensusUI
 {
     public class MapPage : ContentPage
     {
-        private Map _map;
+        private MapExtend _map;
         private Entry _searchEntry;
 
         public IList<Pin> Pins
@@ -34,7 +34,7 @@ namespace SensusUI
 
         private MapPage(string newPinName)
         {
-            _map = new Map
+            _map = new MapExtend
             {
                 IsShowingUser = true,
                 VerticalOptions = LayoutOptions.FillAndExpand,
@@ -73,7 +73,7 @@ namespace SensusUI
                 {
                     try
                     {
-                        //_map.SearchAdress(_searchEntry.Text);
+                        _map.SearchAdress(_searchEntry.Text);
                     }
                     catch (Exception ex)
                     {
@@ -145,8 +145,8 @@ namespace SensusUI
         public MapPage(Position position, string newPinName)
             : this(newPinName)
         {
-            //_map.MoveToRegion(MapSpan.FromCenterAndRadius(position, Distance.FromMiles(0.3)));
-            //_map.Pins.Add(new Pin { Label = newPinName, Position = position });
+            _map.MoveToRegion(MapSpan.FromCenterAndRadius(position, Distance.FromMiles(0.3)));
+            _map.Pins.Add(new Pin { Label = newPinName, Position = position });
         }
 
         public MapPage(string address, string newPinName)
@@ -155,7 +155,7 @@ namespace SensusUI
             if (!string.IsNullOrWhiteSpace(address))
             {
                 _searchEntry.Text = address.Trim();
-                //_map.SearchAdress(_searchEntry.Text);
+                _map.SearchAdress(_searchEntry.Text);
             }
         }
     }

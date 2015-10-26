@@ -266,6 +266,12 @@
     <Reference Include="Xamarin.Forms.Maps">
       <HintPath>..\packages\Xamarin.Forms.Maps.1.5.1.6471\lib\Xamarin.iOS10\Xamarin.Forms.Maps.dll</HintPath>
     </Reference>
+    <Reference Include="Xam.Plugin.MapExtend.Abstractions">
+      <HintPath>..\packages\mapextend\Xam.Plugin.MapExtend.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Xam.Plugin.MapExtend.iOSUnified">
+      <HintPath>..\packages\mapextend\Xam.Plugin.MapExtend.iOSUnified.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Contents.json">

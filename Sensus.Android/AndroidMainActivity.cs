@@ -26,7 +26,7 @@ using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 using Xamarin.Facebook;
 using Xamarin;
-//using Xam.Plugin.MapExtend.Droid;
+using Xam.Plugin.MapExtend.Droid;
 
 [assembly:MetaData("com.facebook.sdk.ApplicationId", Value = "@string/app_id")]
 
@@ -87,7 +87,7 @@ namespace Sensus.Android
 
             Forms.Init(this, savedInstanceState);
             FormsMaps.Init(this, savedInstanceState);
-            //MapExtendRenderer.Init(this, savedInstanceState);
+            MapExtendRenderer.Init(this, savedInstanceState);
 
             #if UNIT_TESTING
             Forms.ViewInitialized += (sender, e) =>
