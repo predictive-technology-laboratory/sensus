@@ -225,10 +225,10 @@
       <HintPath>..\packages\Xamarin.Forms.Maps.1.5.1.6471\lib\MonoAndroid10\Xamarin.Forms.Maps.dll</HintPath>
     </Reference>
     <Reference Include="Xam.Plugin.MapExtend.Android">
-      <HintPath>..\packages\mapextend\Xam.Plugin.MapExtend.Android.dll</HintPath>
+      <HintPath>..\packages\mapextend\android\Xam.Plugin.MapExtend.Android.dll</HintPath>
     </Reference>
     <Reference Include="Xam.Plugin.MapExtend.Abstractions">
-      <HintPath>..\packages\mapextend\Xam.Plugin.MapExtend.Abstractions.dll</HintPath>
+      <HintPath>..\packages\mapextend\android\Xam.Plugin.MapExtend.Abstractions.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
