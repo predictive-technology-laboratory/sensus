@@ -59,6 +59,7 @@ namespace Sensus.Android
                         _utteranceWait.Reset();
                         _utteranceIdToWaitFor = Guid.NewGuid().ToString();
 
+                        // https://github.com/predictive-technology-laboratory/sensus/wiki/Backwards-Compatibility
                         #if __ANDROID_21__
                         if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
                             _textToSpeech.Speak(text, QueueMode.Add, null, _utteranceIdToWaitFor);

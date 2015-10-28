@@ -64,6 +64,7 @@ namespace Sensus.Android.Probes.Communication
 
                     int sentMessageType;
 
+                    // https://github.com/predictive-technology-laboratory/sensus/wiki/Backwards-Compatibility
                     #if __ANDROID_19__
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
                         sentMessageType = (int)SmsMessageType.Sent;  // API level 19
