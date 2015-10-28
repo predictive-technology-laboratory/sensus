@@ -285,6 +285,7 @@ namespace SensusService
         private Dictionary<string, ScheduledCallback> _idCallback;
         private SHA256Managed _hasher;
         private List<PointOfInterest> _pointsOfInterest;
+        private bool _flashNotificationsEnabled;
 
         private readonly object _locker = new object();
 
@@ -307,6 +308,18 @@ namespace SensusService
         public List<PointOfInterest> PointsOfInterest
         {
             get { return _pointsOfInterest; }
+        }
+
+        public bool FlashNotificationsEnabled
+        {
+            get
+            {
+                return _flashNotificationsEnabled;
+            }
+            set
+            {
+                _flashNotificationsEnabled = value;
+            }
         }
 
         #region platform-specific properties
@@ -339,6 +352,7 @@ namespace SensusService
             _idCallback = new Dictionary<string, ScheduledCallback>();
             _hasher = new SHA256Managed();
             _pointsOfInterest = new List<PointOfInterest>();
+            _flashNotificationsEnabled = true;
 
             if (!Directory.Exists(SHARE_DIRECTORY))
                 Directory.CreateDirectory(SHARE_DIRECTORY); 
@@ -349,6 +363,11 @@ namespace SensusService
             LoggingLevel loggingLevel = LoggingLevel.Normal;
             #else
             #error "Unrecognized configuration."
+            #endif
+
+            #if UNIT_TESTING
+            // flash notifications can mess up the UI scripting on iOS by hiding controls
+            _flashNotificationsEnabled = false;
             #endif
 
             _logger = new Logger(LOG_PATH, loggingLevel, Console.Error);
@@ -745,7 +764,8 @@ namespace SensusService
 
         public void FlashNotificationAsync(string message)
         {
-            FlashNotificationAsync(message, null);
+            if (_flashNotificationsEnabled)
+                FlashNotificationAsync(message, null);
         }
 
         public void PromptForInputAsync(string windowTitle, Input input, CancellationToken? cancellationToken, Action<Input> callback)
