@@ -3,7 +3,7 @@
 if [ $# -ne 7 ]; then
     echo "Purpose:  Creates a release of Sensus for Android and iOS, based on the current GitHub branch."
     echo ""
-    echo "Usage:  ./ReleaseSensus.sh [version] [android keystore path] [android keystore password] [github prerelease] [encryption key] [xamarin insights key]"
+    echo "Usage:  ./ReleaseSensus.sh [version] [android keystore path] [android keystore password] [github prerelease] [encryption key] [xamarin insights key] [google play track]"
     echo "\t[version]:  Version name, following semantic versioning guidelines (e.g., 0.3.1-prerelease)."
     echo "\t[android keystore path]:  Path to Android keystore file."
     echo "\t[android keystore password]:  Password used to open the Android keystore and signing key (assumed to be the same)."
