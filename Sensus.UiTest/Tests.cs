@@ -42,7 +42,6 @@ namespace Sensus.UiTest
         private const string DATA_STORE_COMMIT_DELAY = "Commit Delay (MS): View";
         private const string DATA_STORE_OK = "OK";
 
-
         private IApp _app;
 
         [SetUp]

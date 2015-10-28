@@ -32,6 +32,7 @@ using Xamarin.Geolocation;
 using SensusService.Probes.Location;
 using SensusService.Probes;
 using SensusService.Probes.Movement;
+using System.Linq;
 
 namespace Sensus.Android
 {
@@ -64,7 +65,21 @@ namespace Sensus.Android
 
         public override bool WiFiConnected
         {
-            get { return _connectivityManager.GetNetworkInfo(ConnectivityType.Wifi).IsConnected; }
+            get
+            {
+                // https://github.com/predictive-technology-laboratory/sensus/wiki/Backwards-Compatibility
+                #if __ANDROID_23__
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
+                    return _connectivityManager.GetAllNetworks().Select(network => _connectivityManager.GetNetworkInfo(network)).Any(networkInfo => networkInfo.Subtype == ConnectivityType.Wifi && networkInfo.IsConnected);  // API level 23
+                else
+                #endif
+                {
+                    // ignore deprecation warning
+                    #pragma warning disable 618
+                    return _connectivityManager.GetNetworkInfo(ConnectivityType.Wifi).IsConnected;
+                    #pragma warning restore 618
+                }
+            }
         }
 
         public override bool IsCharging

@@ -35,6 +35,7 @@ namespace Sensus.Android.Probes.Device
         {
             bool screenOn;
 
+            // https://github.com/predictive-technology-laboratory/sensus/wiki/Backwards-Compatibility
             #if __ANDROID_20__
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
                 screenOn = _powerManager.IsInteractive;  // API level 20

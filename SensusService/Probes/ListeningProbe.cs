@@ -35,8 +35,7 @@ namespace SensusService.Probes
         protected override float RawParticipation
         {
             get
-            {
-                
+            {                
                 #if __ANDROID__
                 long dayMS = 60000 * 60 * 24;
                 long participationHorizonMS = Protocol.ParticipationHorizonDays * dayMS;

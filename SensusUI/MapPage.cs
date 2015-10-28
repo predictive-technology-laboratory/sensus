@@ -123,6 +123,7 @@ namespace SensusUI
             { 
                 Orientation = StackOrientation.Vertical,
                 VerticalOptions = LayoutOptions.FillAndExpand,
+                Padding = new Thickness(0, 20, 0, 0),
                 Children =
                 {                     
                     new StackLayout
