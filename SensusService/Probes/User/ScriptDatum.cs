@@ -28,6 +28,7 @@ namespace SensusService.Probes.User
         private double? _latitude;
         private double? _longitude;
         private DateTimeOffset _presentationTimestamp;
+        private DateTimeOffset? _locationTimestamp;
 
         public string GroupId
         {
@@ -94,6 +95,18 @@ namespace SensusService.Probes.User
             }
         }
 
+        public DateTimeOffset? LocationTimestamp
+        {
+            get
+            {
+                return _locationTimestamp;
+            }
+            set
+            {
+                _locationTimestamp = value;
+            }
+        }
+
         public override string DisplayDetail
         {
             get { return _response.ToString(); }
@@ -106,7 +119,7 @@ namespace SensusService.Probes.User
         {
         }
 
-        public ScriptDatum(DateTimeOffset timestamp, string groupId, string inputId, object response, string triggerDatumId, double? latitude, double? longitude, DateTimeOffset presentationTimestamp)
+        public ScriptDatum(DateTimeOffset timestamp, string groupId, string inputId, object response, string triggerDatumId, double? latitude, double? longitude, DateTimeOffset presentationTimestamp, DateTimeOffset? locationTimestamp)
             : base(timestamp)
         {
             _groupId = groupId;
@@ -116,6 +129,7 @@ namespace SensusService.Probes.User
             _latitude = latitude;
             _longitude = longitude;
             _presentationTimestamp = presentationTimestamp;
+            _locationTimestamp = locationTimestamp;
         }
 
         public override string ToString()
@@ -126,7 +140,8 @@ namespace SensusService.Probes.User
             "Response:  " + _response + Environment.NewLine +
             "Latitude:  " + _latitude + Environment.NewLine +
             "Longitude:  " + _longitude + Environment.NewLine +
-            "Presentation:  " + _presentationTimestamp;
+            "Presentation Timestamp:  " + _presentationTimestamp + Environment.NewLine +
+            "Location Timestamp:  " + _locationTimestamp;
         }
     }
 }

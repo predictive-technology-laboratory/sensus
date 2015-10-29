@@ -519,7 +519,7 @@ namespace SensusService.Probes.User
                                             foreach (Input input in inputGroup.Inputs)
                                                 if (input.ShouldBeStored && input.Complete)
                                                 {
-                                                    _probe.StoreDatum(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow), input.GroupId, input.Id, input.Value, script.CurrentDatum == null ? null : script.CurrentDatum.Id, input.Latitude, input.Longitude, script.PresentationTimestamp.GetValueOrDefault()));
+                                                    _probe.StoreDatum(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow), input.GroupId, input.Id, input.Value, script.CurrentDatum == null ? null : script.CurrentDatum.Id, input.Latitude, input.Longitude, script.PresentationTimestamp.GetValueOrDefault(), input.LocationUpdateTimestamp));
 
                                                     // once inputs are stored, they should not be stored again, nor should the user be able to modify them
                                                     input.ShouldBeStored = false;

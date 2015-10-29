@@ -31,6 +31,7 @@ namespace SensusUI.Inputs
         private bool _shouldBeStored;
         private double? _latitude;
         private double? _longitude;
+        private DateTimeOffset? _locationUpdateTimestamp;
         private bool _required;
         private bool _viewed;
         private DateTimeOffset? _completionTimestamp;
@@ -150,6 +151,18 @@ namespace SensusUI.Inputs
         {
             get { return _longitude; }
             set { _longitude = value; }
+        }
+
+        public DateTimeOffset? LocationUpdateTimestamp
+        {
+            get
+            {
+                return _locationUpdateTimestamp;
+            }
+            set
+            {
+                _locationUpdateTimestamp = value;
+            }
         }
 
         [JsonIgnore]

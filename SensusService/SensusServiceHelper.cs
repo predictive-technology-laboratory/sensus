@@ -876,11 +876,22 @@ namespace SensusService
                                         foreach (Input input in incompleteGroup.Inputs)
                                             if (input.Complete)
                                             {
+                                                bool locationUpdated = false;
+
                                                 if (input.Latitude == null)
+                                                {
                                                     input.Latitude = currentPosition.Latitude;
+                                                    locationUpdated = true;
+                                                }
 
                                                 if (input.Longitude == null)
+                                                {
                                                     input.Longitude = currentPosition.Longitude;
+                                                    locationUpdated = true;
+                                                }
+
+                                                if (locationUpdated)
+                                                    input.LocationUpdateTimestamp = currentPosition.Timestamp;
                                             }
                         }
                         catch (Exception ex)
