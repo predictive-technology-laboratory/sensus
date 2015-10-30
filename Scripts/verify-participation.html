@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+
+<div id="qrcode"></div>
+
+<script src="qrcode.js"></script>
+<script src="aws-sdk-2.2.13.min.js"></script>
+
+<script type="text/javascript">
+
+	var queryDict = {};
+	location.search.substr(1).split("&").forEach(function(item) {queryDict[item.split("=")[0]] = item.split("=")[1];});	
+  
+	if (queryDict.action === "getQRCode")
+	{
+		AWS.config.credentials = new AWS.CognitoIdentityCredentials(
+		{
+			IdentityPoolId: queryDict.cognitoIdentityPoolId
+		});
+
+		AWS.config.region = "us-east-1";
+
+		var s3 = new AWS.S3();
+		
+		s3.getObject(
+		{
+			Bucket: queryDict.bucket,
+			Key: queryDict.s3Folder.concat("/ProtocolReportDatum/", queryDict.protocolReportFileName)
+		},
+		function (err, data)
+		{
+			if (err)
+			{
+				var msg = "Failed to get protocol report file from S3:  ".concat(err);
+				console.log(msg);
+				document.getElementById("qrcode").innerHTML = msg;
+			}
+			else
+			{
+				protocolReports = JSON.parse(data.Body);
+				var protocolReportFound = false;
+				for (var i = 0; i < protocolReports.length; ++i)
+				{
+					protocolReport = protocolReports[i];
+				
+					if (protocolReport.Id === queryDict.protocolReportDatumId)
+					{
+						protocolReportFound = true;
+						
+						var sum = 0;
+						var num = 0;
+						for (var probe in protocolReport.ProbeParticipation)
+							if (protocolReport.hasOwnProperty(probe) && !probe.startsWith("$"))
+							{
+								sum += protocolReport.ProbeParticipation[probe];
+								++num;
+							}
+
+						var graphicFileName = "check.png";
+						if (sum / num < 0.50)
+							graphicFileName = "x.png";
+					
+						s3.getObject(
+						{
+							Bucket: queryDict.bucket,
+							Key: "ParticipationVerification/".concat(graphicFileName)
+						},
+						function (err2, data2)
+						{
+							if (err2)
+							{
+								var msg = "Failed to get participation graphic from S3:  ".concat(err2);
+								console.log(msg);
+								document.getElementById("qrcode").innerHTML = msg;
+							}
+							else
+							{
+								uuid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c)
+								{
+									var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+									return v.toString(16);
+								});
+								
+								s3.putObject(
+								{
+									Bucket: queryDict.bucket,
+									Key: queryDict.s3Folder.concat("/ParticipationVerification/", uuid, ".png"),
+									Body: data2.Body
+								},
+								function (err3, data3)
+								{
+									if (err3)
+									{
+										var msg = "Failed to put participation graphic to S3:  ".concat(err3)
+										console.log(msg);
+										document.getElementById("qrcode").innerHTML = msg;
+									}
+									else
+										new QRCode(document.getElementById("qrcode"), "http://sensus.s3-website-us-east-1.amazonaws.com/ParticipationVerification/verify-participation.html?action=checkQRCode&uuid=".concat(uuid));
+								});
+							}
+						});
+					}
+				}
+			}
+		});
+	}
+	else if (queryDict.action === "checkQRCode")
+	{
+		document.getElementById("qrcode").innerHTML = "Verified";
+	}
+
+</script>
+</html>
