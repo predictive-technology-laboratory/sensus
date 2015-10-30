@@ -20,6 +20,15 @@
       "Resource": [
         "arn:aws:s3:::sensus/sensusExpId/*"
       ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::sensus/sensusExpId/ProtocolReportDatum/*"
+      ]
     }
   ]
 }
