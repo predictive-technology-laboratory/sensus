@@ -80,33 +80,48 @@ namespace SensusUI
                             {
                                 CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
-                                UiBoundSensusServiceHelper.Get(true).PromptForInputsAsync("Submitting reward",
-                                    new Input[]
+                                UiBoundSensusServiceHelper.Get(true).PromptForInputsAsync(
+                                    null,
+                                    false,
+                                    DateTime.MinValue,
+                                    new InputGroup[]
                                     {
-                                        new LabelOnlyInput("Submitting participation reward to remote server. Please wait.", false)
+                                        new InputGroup("Please Wait", new LabelOnlyInput("Submitting participation information to remote server.", false))
                                     },
                                     cancellationTokenSource.Token,
                                     false,
                                     "Cancel",
+                                    () =>
+                                    {
+                                        ParticipationRewardDatum participationRewardDatum = new ParticipationRewardDatum(DateTimeOffset.UtcNow, selectedProtocol.Participation);
+                                        selectedProtocol.RemoteDataStore.AddNonProbeDatum(participationRewardDatum);
+                                        selectedProtocol.RemoteDataStore.CommitAsync(cancellationTokenSource.Token, true, async () =>
+                                            {
+                                                // we should not have any remaining non-probe data
+                                                bool commitFailed = selectedProtocol.RemoteDataStore.HasNonProbeData;
+
+                                                if (commitFailed)
+                                                    UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Failed to submit participation reward to remote server. You will not be able to verify your participation at this time.");
+
+                                                // cancel the token to close the input above, but only if the token hasn't already been canceled.
+                                                if (!cancellationTokenSource.IsCancellationRequested)
+                                                    cancellationTokenSource.Cancel();
+
+                                                Device.BeginInvokeOnMainThread(async() =>
+                                                    {
+                                                        // only show the QR code for the reward datum if the datum was committed to the remote data store
+                                                        await Navigation.PushAsync(new ParticipationReportPage(selectedProtocol, commitFailed ? null : participationRewardDatum.Id));
+                                                    });
+                                            });
+                                    },
                                     inputs =>
                                     {
-                                        cancellationTokenSource.Cancel();
-                                    });
-                                                                    
-                                ParticipationRewardDatum participationRewardDatum = new ParticipationRewardDatum(DateTimeOffset.UtcNow, selectedProtocol.Participation);
-                                selectedProtocol.RemoteDataStore.AddNonProbeDatum(participationRewardDatum);
-                                selectedProtocol.RemoteDataStore.CommitAsync(cancellationTokenSource.Token, true, async () =>
-                                    {
-                                        bool commitFailed = selectedProtocol.RemoteDataStore.HasNonProbeData;
-
-                                        if (commitFailed)
-                                        {
-                                            UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Failed to submit participation reward to remote server. You will not be able to verify your participation at this time.");
+                                        // if the prompt was closed by the user instead of the cancellation token, cancel the token in order
+                                        // to cancel the remote data store commit. if the prompt was closed by the termination of the remote
+                                        // data store commit (i.e., by the canceled token), then don't cancel the token again.
+                                        if (!cancellationTokenSource.IsCancellationRequested)
                                             cancellationTokenSource.Cancel();
-                                        }
-                                            
-                                        await Navigation.PushAsync(new ParticipationReportPage(selectedProtocol, commitFailed ? null : participationRewardDatum.Id));
-                                    });
+                                    });                                
                             }
                         }
                         else if (await DisplayAlert("Begin Study", "You are not currently participating in this study. Would you like to begin participating?", "Yes", "No"))

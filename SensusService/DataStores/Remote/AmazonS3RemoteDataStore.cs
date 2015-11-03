@@ -141,9 +141,10 @@ namespace SensusService.DataStores.Remote
                             ContentType = "application/json"
                         };
 
-                        _s3.PutObjectAsync(putRequest, cancellationToken).Wait(cancellationToken);
-
-                        committedData.Add(datum);
+                        if (_s3.PutObjectAsync(putRequest, cancellationToken).Wait(60000, cancellationToken))
+                            committedData.Add(datum);
+                        else
+                            throw new Exception("Timed out while sending data to S3.");
                     }
                     catch (Exception ex)
                     {
@@ -193,9 +194,10 @@ namespace SensusService.DataStores.Remote
                         ContentType = "application/json"
                     };
 
-                    _s3.PutObjectAsync(putRequest, cancellationToken).Wait(cancellationToken);
-
-                    committedData.AddRange(datumTypeData[datumType]);
+                    if (_s3.PutObjectAsync(putRequest, cancellationToken).Wait(60000, cancellationToken))
+                        committedData.AddRange(datumTypeData[datumType]);
+                    else
+                        throw new Exception("Timed out while sending data to S3.");
                 }
                 catch (Exception ex)
                 {

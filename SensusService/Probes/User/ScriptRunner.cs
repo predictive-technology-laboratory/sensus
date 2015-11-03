@@ -512,7 +512,7 @@ namespace SensusService.Probes.User
 
                             ManualResetEvent inputWait = new ManualResetEvent(false);
 
-                            SensusServiceHelper.Get().PromptForInputsAsync(script.CurrentDatum, isRerun, script.FirstRunTimestamp, script.InputGroups, cancellationToken, true, null, inputGroups =>
+                            SensusServiceHelper.Get().PromptForInputsAsync(script.CurrentDatum, isRerun, script.FirstRunTimestamp, script.InputGroups, cancellationToken, true, null, null, inputGroups =>
                                 {
                                     if (inputGroups != null)
                                         foreach (InputGroup inputGroup in inputGroups)

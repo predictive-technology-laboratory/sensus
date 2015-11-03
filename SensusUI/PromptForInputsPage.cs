@@ -152,10 +152,15 @@ namespace SensusUI
 
             if (cancellationToken != null)
             {
-                cancellationToken.GetValueOrDefault().Register(async () =>
-                    {
+                cancellationToken.GetValueOrDefault().Register(() =>
+                    {                        
                         cancellationTokenCanceled = true;
-                        await Navigation.PopModalAsync(true);
+
+                        Device.BeginInvokeOnMainThread(async() =>
+                            {
+                                if (Navigation.ModalStack.Count > 0 && Navigation.ModalStack.Last() == this)
+                                    await Navigation.PopModalAsync(true);
+                            });
                     });
             }
 
@@ -171,7 +176,7 @@ namespace SensusUI
                     callback(Result.NavigateForward);
                 else
                     callback(Result.Cancel);  // the user navigated back, or another activity started
-            };
+            };                    
 
             Content = new ScrollView
             {

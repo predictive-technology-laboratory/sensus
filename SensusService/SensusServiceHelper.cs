@@ -815,7 +815,7 @@ namespace SensusService
             foreach (Input input in inputs)
                 inputGroup.Inputs.Add(input);
 
-            PromptForInputsAsync(null, false, DateTimeOffset.MinValue, new InputGroup[] { inputGroup }.ToList(), cancellationToken, showCancelButton, nextButtonText, inputGroups =>
+            PromptForInputsAsync(null, false, DateTimeOffset.MinValue, new InputGroup[] { inputGroup }.ToList(), cancellationToken, showCancelButton, nextButtonText, null, inputGroups =>
                 {
                     if (inputGroups == null)
                         callback(null);
@@ -824,7 +824,7 @@ namespace SensusService
                 });
         }
 
-        public void PromptForInputsAsync(Datum triggeringDatum, bool isReprompt, DateTimeOffset firstPromptTimestamp, IEnumerable<InputGroup> inputGroups, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, Action<IEnumerable<InputGroup>> callback)
+        public void PromptForInputsAsync(Datum triggeringDatum, bool isReprompt, DateTimeOffset firstPromptTimestamp, IEnumerable<InputGroup> inputGroups, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, Action postDisplayCallback, Action<IEnumerable<InputGroup>> callback)
         {
             new Thread(() =>
                 {
@@ -879,7 +879,18 @@ namespace SensusService
                                             responseWait.Set();
                                         });
 
-                                    await App.Current.MainPage.Navigation.PushModalAsync(promptForInputsPage, firstPageDisplay);  // animate first page
+                                    // check the cancellation token again to make sure we still want to display the page. if it has been cancelled, simply 
+                                    // set the wait handle and proceed.
+                                    if (cancellationToken.GetValueOrDefault().IsCancellationRequested)
+                                        responseWait.Set();
+                                    else
+                                    {
+                                        await App.Current.MainPage.Navigation.PushModalAsync(promptForInputsPage, firstPageDisplay);  // animate first page
+
+                                        if (postDisplayCallback != null)
+                                            postDisplayCallback();
+                                    }
+
                                     firstPageDisplay = false;
                                 });
                         }

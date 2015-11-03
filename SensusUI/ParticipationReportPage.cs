@@ -55,7 +55,8 @@ namespace SensusUI
                     },                    
                     new Label
                     {                                
-                        Text = "This score reflects your overall participation level in the \"" + protocol.Name + "\" study over the past " + (protocol.ParticipationHorizonDays == 1 ? "day" : protocol.ParticipationHorizonDays + " days") + ".",
+                        Text = "This score reflects your participation level over the past " + (protocol.ParticipationHorizonDays == 1 ? "day" : protocol.ParticipationHorizonDays + " days") + "." +
+                        (participationRewardDatumId == null ? "" : " Anyone can verify your participation by scanning the following barcode from within Sensus:"),
                         FontSize = 20,
                         HorizontalOptions = LayoutOptions.CenterAndExpand
                     }
@@ -63,20 +64,11 @@ namespace SensusUI
             };
 
             if (participationRewardDatumId != null)
-            {
-                contentLayout.Children.Add(new Label
-                    {
-                        Text = Environment.NewLine + "Someone else can verify your participation by scanning the following barcode:",
-                        FontSize = 20,
-                        HorizontalOptions = LayoutOptions.CenterAndExpand
-                    });
-
                 contentLayout.Children.Add(new Image
                     { 
                         Source = UiBoundSensusServiceHelper.Get(true).GetQrCodeImageSource(participationRewardDatumId),
                         HorizontalOptions = LayoutOptions.CenterAndExpand
                     });
-            }
 
             contentLayout.Children.Add(new Label
                 {
