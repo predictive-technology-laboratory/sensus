@@ -177,13 +177,11 @@ namespace SensusUI
                 if (lockButton.Text == "Lock")
                 {
                     UiBoundSensusServiceHelper.Get(true).PromptForInputAsync(
-                            
                         "Lock Protocol",
-
                         new TextInput("Password:"),
-
                         null,
-                            
+                        true,
+                        null,
                         input =>
                         {
                             if (input == null)

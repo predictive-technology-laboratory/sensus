@@ -17,6 +17,9 @@ using SensusUI.UiProperties;
 using Xamarin.Forms;
 using System.Collections.Generic;
 using System.Linq;
+using System;
+using System.Threading;
+using SensusUI.Inputs;
 
 namespace SensusUI
 {
@@ -70,7 +73,42 @@ namespace SensusUI
                         Protocol selectedProtocol = UiBoundSensusServiceHelper.Get(true).RegisteredProtocols[int.Parse(selectedProtocolName.Substring(0, selectedProtocolName.IndexOf(")"))) - 1];
 
                         if (selectedProtocol.Running)
-                            await Navigation.PushAsync(new ParticipationReportPage(selectedProtocol));
+                        {
+                            if (selectedProtocol.RewardThreshold == null)
+                                await Navigation.PushAsync(new ParticipationReportPage(selectedProtocol, null));
+                            else
+                            {
+                                CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+
+                                UiBoundSensusServiceHelper.Get(true).PromptForInputsAsync("Submitting reward",
+                                    new Input[]
+                                    {
+                                        new LabelOnlyInput("Submitting participation reward to remote server. Please wait.", false)
+                                    },
+                                    cancellationTokenSource.Token,
+                                    false,
+                                    "Cancel",
+                                    inputs =>
+                                    {
+                                        cancellationTokenSource.Cancel();
+                                    });
+                                                                    
+                                ParticipationRewardDatum participationRewardDatum = new ParticipationRewardDatum(DateTimeOffset.UtcNow, selectedProtocol.Participation);
+                                selectedProtocol.RemoteDataStore.AddNonProbeDatum(participationRewardDatum);
+                                selectedProtocol.RemoteDataStore.CommitAsync(cancellationTokenSource.Token, true, async () =>
+                                    {
+                                        bool commitFailed = selectedProtocol.RemoteDataStore.HasNonProbeData;
+
+                                        if (commitFailed)
+                                        {
+                                            UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Failed to submit participation reward to remote server. You will not be able to verify your participation at this time.");
+                                            cancellationTokenSource.Cancel();
+                                        }
+                                            
+                                        await Navigation.PushAsync(new ParticipationReportPage(selectedProtocol, commitFailed ? null : participationRewardDatum.Id));
+                                    });
+                            }
+                        }
                         else if (await DisplayAlert("Begin Study", "You are not currently participating in this study. Would you like to begin participating?", "Yes", "No"))
                             selectedProtocol.StartWithUserAgreementAsync(null);
                     }

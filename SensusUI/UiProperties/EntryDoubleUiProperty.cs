@@ -40,7 +40,10 @@ namespace SensusUI.UiProperties
                 }
                 catch (Exception)
                 {
-                    return 0;
+                    if (targetType == typeof(double))
+                        return 0d;
+                    else
+                        return null;
                 }
             }
         }

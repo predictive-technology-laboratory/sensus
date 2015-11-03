@@ -66,7 +66,13 @@ namespace SensusService.DataStores
         {
             get { return _running; }
         }
-            
+
+        [JsonIgnore]
+        public bool HasNonProbeData
+        {
+            get { return _nonProbeDataToCommit.Count > 0; }
+        }
+
         [JsonIgnore]
         public abstract string DisplayName { get; }
 
@@ -105,70 +111,98 @@ namespace SensusService.DataStores
 
                 _mostRecentCommitTimestamp = DateTimeOffset.UtcNow;
 
-                _commitCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback((callbackId, cancellationToken) =>
+                _commitCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(Commit, GetType().FullName + " Commit", _commitDelayMS, _commitDelayMS);
+            }
+        }
+
+        public void CommitAsync(CancellationToken cancellationToken, bool flashOnError, Action callback)
+        {
+            new Thread(() =>
+                {
+                    try
                     {
-                        if (_running)
+                        Commit(null, cancellationToken);
+                    }
+                    catch (Exception ex)
+                    {
+                        string message = "Failed to run CommitAsync:  " + ex.Message;
+                        SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+
+                        if (flashOnError)
+                            SensusServiceHelper.Get().FlashNotificationAsync(message);
+                    }
+
+                    if (callback != null)
+                        callback();
+                    
+                }).Start();
+        }
+
+        private void Commit(string callbackId, CancellationToken cancellationToken)
+        {
+            lock (_locker)
+            {
+                if (_running)
+                {
+                    _isCommitting = true;
+
+                    SensusServiceHelper.Get().Logger.Log("Committing data.", LoggingLevel.Normal, GetType());
+
+                    List<Datum> dataToCommit = null;
+                    try
+                    {
+                        dataToCommit = GetDataToCommit(cancellationToken);
+                        if (dataToCommit == null)
+                            throw new DataStoreException("Null collection returned by GetDataToCommit");
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Failed to get data to commit:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
+
+                    if (dataToCommit != null && !cancellationToken.IsCancellationRequested)
+                    {
+                        // add in non-probe data (e.g., that from protocol reports or participation reward verifications)
+                        lock (_nonProbeDataToCommit)
+                            foreach (Datum datum in _nonProbeDataToCommit)
+                                dataToCommit.Add(datum);
+
+                        List<Datum> committedData = null;
+                        try
                         {
-                            _isCommitting = true;
+                            committedData = CommitData(dataToCommit, cancellationToken);                                                                             
 
-                            SensusServiceHelper.Get().Logger.Log("Committing data.", LoggingLevel.Normal, GetType());
+                            if (committedData == null)
+                                throw new DataStoreException("Null collection returned by CommitData");
 
-                            List<Datum> dataToCommit = null;
+                            _mostRecentCommitTimestamp = DateTimeOffset.UtcNow;
+                        }
+                        catch (Exception ex)
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Failed to commit data:  " + ex.Message, LoggingLevel.Normal, GetType());
+                        }
+
+                        // don't check cancellation token here, since we've committed data and need to process the results (i.e., remove from probe caches or delete from local data store). if we don't always do this we'll end up committing duplicate data on next commit.
+                        if (committedData != null && committedData.Count > 0)
+                        {
                             try
                             {
-                                dataToCommit = GetDataToCommit(cancellationToken);
-                                if (dataToCommit == null)
-                                    throw new DataStoreException("Null collection returned by GetDataToCommit");
+                                // remove any non-probe data that were committed from the in-memory store
+                                lock (_nonProbeDataToCommit)
+                                    foreach (Datum datum in committedData)
+                                        _nonProbeDataToCommit.Remove(datum);
+
+                                ProcessCommittedData(committedData);
                             }
                             catch (Exception ex)
                             {
-                                SensusServiceHelper.Get().Logger.Log("Failed to get data to commit:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                SensusServiceHelper.Get().Logger.Log("Failed to process committed data:  " + ex.Message, LoggingLevel.Normal, GetType());
                             }
-
-                            if (dataToCommit != null && !cancellationToken.IsCancellationRequested)
-                            {
-                                // add in non-probe data (e.g., that from protocol reports)
-                                lock (_nonProbeDataToCommit)
-                                    foreach (Datum datum in _nonProbeDataToCommit)
-                                        dataToCommit.Add(datum);
-
-                                List<Datum> committedData = null;
-                                try
-                                {
-                                    committedData = CommitData(dataToCommit, cancellationToken);                                                                             
-
-                                    if (committedData == null)
-                                        throw new DataStoreException("Null collection returned by CommitData");
-
-                                    _mostRecentCommitTimestamp = DateTimeOffset.UtcNow;
-                                }
-                                catch (Exception ex)
-                                {
-                                    SensusServiceHelper.Get().Logger.Log("Failed to commit data:  " + ex.Message, LoggingLevel.Normal, GetType());
-                                }
-
-                                // don't check cancellation token here, since we've committed data and need to process the results (i.e., remove from probe caches or delete from local data store). if we don't always do this we'll end up committing duplicate data on next commit.
-                                if (committedData != null && committedData.Count > 0)
-                                {
-                                    try
-                                    {
-                                        // remove any non-probe data that were committed from the in-memory store
-                                        lock (_nonProbeDataToCommit)
-                                            foreach (Datum datum in committedData)
-                                                _nonProbeDataToCommit.Remove(datum);
-
-                                        ProcessCommittedData(committedData);
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        SensusServiceHelper.Get().Logger.Log("Failed to process committed data:  " + ex.Message, LoggingLevel.Normal, GetType());
-                                    }
-                                }
-                            }
-
-                            _isCommitting = false;
                         }
-                    }, GetType().FullName + " Commit", _commitDelayMS, _commitDelayMS);
+                    }
+
+                    _isCommitting = false;
+                }
             }
         }
 
@@ -178,7 +212,9 @@ namespace SensusService.DataStores
 
         protected abstract void ProcessCommittedData(List<Datum> committedData);
 
-        public virtual void Clear() { }
+        public virtual void Clear()
+        {
+        }
 
         /// <summary>
         /// Stops the commit thread. This should always be called first within parent-class overrides.

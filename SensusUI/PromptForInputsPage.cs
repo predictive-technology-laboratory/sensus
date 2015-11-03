@@ -31,8 +31,8 @@ namespace SensusUI
             Cancel
         }
 
-        public PromptForInputsPage(InputGroup inputGroup, int stepNumber, int totalSteps, Action<Result> callback)
-        {
+        public PromptForInputsPage(InputGroup inputGroup, int stepNumber, int totalSteps, bool showCancelButton, string nextButtonTextOverride, CancellationToken? cancellationToken, Action<Result> callback)
+        {            
             StackLayout contentLayout = new StackLayout
             {
                 Orientation = StackOrientation.Vertical,
@@ -70,6 +70,8 @@ namespace SensusUI
                 HorizontalOptions = LayoutOptions.FillAndExpand
             };
 
+            #region previous button
+
             bool previousButtonTapped = false;
 
             // step numbers are 1-based -- if we're beyond the first, provide a previous button
@@ -91,22 +93,33 @@ namespace SensusUI
                 };                      
             }
 
-            Button cancelButton = new Button
-            {
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                FontSize = 20,
-                Text = "Cancel"
-            };
+            #endregion
 
-            navigationStack.Children.Add(cancelButton);
+            #region cancel button
 
             bool cancelButtonTapped = false;
 
-            cancelButton.Clicked += async (o, e) =>
+            if (showCancelButton)
             {
-                cancelButtonTapped = true;
-                await Navigation.PopModalAsync(true);
-            };
+                Button cancelButton = new Button
+                {
+                    HorizontalOptions = LayoutOptions.FillAndExpand,
+                    FontSize = 20,
+                    Text = "Cancel"
+                };
+
+                navigationStack.Children.Add(cancelButton);
+
+                cancelButton.Clicked += async (o, e) =>
+                {
+                    cancelButtonTapped = true;
+                    await Navigation.PopModalAsync(true);
+                };
+            }
+
+            #endregion
+
+            #region next button
 
             Button nextButton = new Button
             {
@@ -115,6 +128,9 @@ namespace SensusUI
                 Text = stepNumber < totalSteps ? "Next" : "Submit",
                 StyleId = "NextButton"  // set style id so that we can retrieve the button when unit testing
             };
+
+            if (nextButtonTextOverride != null)
+                nextButton.Text = nextButtonTextOverride;
 
             navigationStack.Children.Add(nextButton);
 
@@ -125,14 +141,31 @@ namespace SensusUI
                 nextButtonTapped = true;
                 await Navigation.PopModalAsync(stepNumber == totalSteps);
             };
+
+            #endregion
                 
             contentLayout.Children.Add(navigationStack);
 
+            #region cancellation token
+
+            bool cancellationTokenCanceled = false;
+
+            if (cancellationToken != null)
+            {
+                cancellationToken.GetValueOrDefault().Register(async () =>
+                    {
+                        cancellationTokenCanceled = true;
+                        await Navigation.PopModalAsync(true);
+                    });
+            }
+
+            #endregion
+            
             Disappearing += (o, e) =>
             {
                 if (previousButtonTapped)
                     callback(Result.NavigateBackward);
-                else if (cancelButtonTapped)
+                else if (cancelButtonTapped || cancellationTokenCanceled)
                     callback(Result.Cancel);
                 else if (nextButtonTapped)
                     callback(Result.NavigateForward);
@@ -143,7 +176,7 @@ namespace SensusUI
             Content = new ScrollView
             {
                 Content = contentLayout
-            };
+            };                        
         }
     }
 }

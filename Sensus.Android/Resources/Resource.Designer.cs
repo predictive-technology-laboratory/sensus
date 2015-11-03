@@ -1488,6 +1488,1586 @@ namespace Sensus.Android
 			global::Xamarin.Forms.Platform.Resource.Styleable.ViewStubCompat_android_id = global::Sensus.Android.Resource.Styleable.ViewStubCompat_android_id;
 			global::Xamarin.Forms.Platform.Resource.Styleable.ViewStubCompat_android_inflatedId = global::Sensus.Android.Resource.Styleable.ViewStubCompat_android_inflatedId;
 			global::Xamarin.Forms.Platform.Resource.Styleable.ViewStubCompat_android_layout = global::Sensus.Android.Resource.Styleable.ViewStubCompat_android_layout;
+			global::ZXing.Mobile.Resource.Id.contentFrame = global::Sensus.Android.Resource.Id.contentFrame;
+			global::ZXing.Mobile.Resource.Layout.zxingscanneractivitylayout = global::Sensus.Android.Resource.Layout.zxingscanneractivitylayout;
+			global::ZXing.Mobile.Resource.Layout.zxingscannerfragmentlayout = global::Sensus.Android.Resource.Layout.zxingscannerfragmentlayout;
+			global::XLabs.Platform.Resource.String.ApplicationName = global::Sensus.Android.Resource.String.ApplicationName;
+			global::XLabs.Platform.Resource.String.Hello = global::Sensus.Android.Resource.String.Hello;
+			global::XLabs.Forms.Resource.Animation.abc_fade_in = global::Sensus.Android.Resource.Animation.abc_fade_in;
+			global::XLabs.Forms.Resource.Animation.abc_fade_out = global::Sensus.Android.Resource.Animation.abc_fade_out;
+			global::XLabs.Forms.Resource.Animation.abc_grow_fade_in_from_bottom = global::Sensus.Android.Resource.Animation.abc_grow_fade_in_from_bottom;
+			global::XLabs.Forms.Resource.Animation.abc_popup_enter = global::Sensus.Android.Resource.Animation.abc_popup_enter;
+			global::XLabs.Forms.Resource.Animation.abc_popup_exit = global::Sensus.Android.Resource.Animation.abc_popup_exit;
+			global::XLabs.Forms.Resource.Animation.abc_shrink_fade_out_from_bottom = global::Sensus.Android.Resource.Animation.abc_shrink_fade_out_from_bottom;
+			global::XLabs.Forms.Resource.Animation.abc_slide_in_bottom = global::Sensus.Android.Resource.Animation.abc_slide_in_bottom;
+			global::XLabs.Forms.Resource.Animation.abc_slide_in_top = global::Sensus.Android.Resource.Animation.abc_slide_in_top;
+			global::XLabs.Forms.Resource.Animation.abc_slide_out_bottom = global::Sensus.Android.Resource.Animation.abc_slide_out_bottom;
+			global::XLabs.Forms.Resource.Animation.abc_slide_out_top = global::Sensus.Android.Resource.Animation.abc_slide_out_top;
+			global::XLabs.Forms.Resource.Animation.design_fab_in = global::Sensus.Android.Resource.Animation.design_fab_in;
+			global::XLabs.Forms.Resource.Animation.design_fab_out = global::Sensus.Android.Resource.Animation.design_fab_out;
+			global::XLabs.Forms.Resource.Animation.design_snackbar_in = global::Sensus.Android.Resource.Animation.design_snackbar_in;
+			global::XLabs.Forms.Resource.Animation.design_snackbar_out = global::Sensus.Android.Resource.Animation.design_snackbar_out;
+			global::XLabs.Forms.Resource.Attribute.actionBarDivider = global::Sensus.Android.Resource.Attribute.actionBarDivider;
+			global::XLabs.Forms.Resource.Attribute.actionBarItemBackground = global::Sensus.Android.Resource.Attribute.actionBarItemBackground;
+			global::XLabs.Forms.Resource.Attribute.actionBarPopupTheme = global::Sensus.Android.Resource.Attribute.actionBarPopupTheme;
+			global::XLabs.Forms.Resource.Attribute.actionBarSize = global::Sensus.Android.Resource.Attribute.actionBarSize;
+			global::XLabs.Forms.Resource.Attribute.actionBarSplitStyle = global::Sensus.Android.Resource.Attribute.actionBarSplitStyle;
+			global::XLabs.Forms.Resource.Attribute.actionBarStyle = global::Sensus.Android.Resource.Attribute.actionBarStyle;
+			global::XLabs.Forms.Resource.Attribute.actionBarTabBarStyle = global::Sensus.Android.Resource.Attribute.actionBarTabBarStyle;
+			global::XLabs.Forms.Resource.Attribute.actionBarTabStyle = global::Sensus.Android.Resource.Attribute.actionBarTabStyle;
+			global::XLabs.Forms.Resource.Attribute.actionBarTabTextStyle = global::Sensus.Android.Resource.Attribute.actionBarTabTextStyle;
+			global::XLabs.Forms.Resource.Attribute.actionBarTheme = global::Sensus.Android.Resource.Attribute.actionBarTheme;
+			global::XLabs.Forms.Resource.Attribute.actionBarWidgetTheme = global::Sensus.Android.Resource.Attribute.actionBarWidgetTheme;
+			global::XLabs.Forms.Resource.Attribute.actionButtonStyle = global::Sensus.Android.Resource.Attribute.actionButtonStyle;
+			global::XLabs.Forms.Resource.Attribute.actionDropDownStyle = global::Sensus.Android.Resource.Attribute.actionDropDownStyle;
+			global::XLabs.Forms.Resource.Attribute.actionLayout = global::Sensus.Android.Resource.Attribute.actionLayout;
+			global::XLabs.Forms.Resource.Attribute.actionMenuTextAppearance = global::Sensus.Android.Resource.Attribute.actionMenuTextAppearance;
+			global::XLabs.Forms.Resource.Attribute.actionMenuTextColor = global::Sensus.Android.Resource.Attribute.actionMenuTextColor;
+			global::XLabs.Forms.Resource.Attribute.actionModeBackground = global::Sensus.Android.Resource.Attribute.actionModeBackground;
+			global::XLabs.Forms.Resource.Attribute.actionModeCloseButtonStyle = global::Sensus.Android.Resource.Attribute.actionModeCloseButtonStyle;
+			global::XLabs.Forms.Resource.Attribute.actionModeCloseDrawable = global::Sensus.Android.Resource.Attribute.actionModeCloseDrawable;
+			global::XLabs.Forms.Resource.Attribute.actionModeCopyDrawable = global::Sensus.Android.Resource.Attribute.actionModeCopyDrawable;
+			global::XLabs.Forms.Resource.Attribute.actionModeCutDrawable = global::Sensus.Android.Resource.Attribute.actionModeCutDrawable;
+			global::XLabs.Forms.Resource.Attribute.actionModeFindDrawable = global::Sensus.Android.Resource.Attribute.actionModeFindDrawable;
+			global::XLabs.Forms.Resource.Attribute.actionModePasteDrawable = global::Sensus.Android.Resource.Attribute.actionModePasteDrawable;
+			global::XLabs.Forms.Resource.Attribute.actionModePopupWindowStyle = global::Sensus.Android.Resource.Attribute.actionModePopupWindowStyle;
+			global::XLabs.Forms.Resource.Attribute.actionModeSelectAllDrawable = global::Sensus.Android.Resource.Attribute.actionModeSelectAllDrawable;
+			global::XLabs.Forms.Resource.Attribute.actionModeShareDrawable = global::Sensus.Android.Resource.Attribute.actionModeShareDrawable;
+			global::XLabs.Forms.Resource.Attribute.actionModeSplitBackground = global::Sensus.Android.Resource.Attribute.actionModeSplitBackground;
+			global::XLabs.Forms.Resource.Attribute.actionModeStyle = global::Sensus.Android.Resource.Attribute.actionModeStyle;
+			global::XLabs.Forms.Resource.Attribute.actionModeWebSearchDrawable = global::Sensus.Android.Resource.Attribute.actionModeWebSearchDrawable;
+			global::XLabs.Forms.Resource.Attribute.actionOverflowButtonStyle = global::Sensus.Android.Resource.Attribute.actionOverflowButtonStyle;
+			global::XLabs.Forms.Resource.Attribute.actionOverflowMenuStyle = global::Sensus.Android.Resource.Attribute.actionOverflowMenuStyle;
+			global::XLabs.Forms.Resource.Attribute.actionProviderClass = global::Sensus.Android.Resource.Attribute.actionProviderClass;
+			global::XLabs.Forms.Resource.Attribute.actionViewClass = global::Sensus.Android.Resource.Attribute.actionViewClass;
+			global::XLabs.Forms.Resource.Attribute.activityChooserViewStyle = global::Sensus.Android.Resource.Attribute.activityChooserViewStyle;
+			global::XLabs.Forms.Resource.Attribute.alertDialogButtonGroupStyle = global::Sensus.Android.Resource.Attribute.alertDialogButtonGroupStyle;
+			global::XLabs.Forms.Resource.Attribute.alertDialogCenterButtons = global::Sensus.Android.Resource.Attribute.alertDialogCenterButtons;
+			global::XLabs.Forms.Resource.Attribute.alertDialogStyle = global::Sensus.Android.Resource.Attribute.alertDialogStyle;
+			global::XLabs.Forms.Resource.Attribute.alertDialogTheme = global::Sensus.Android.Resource.Attribute.alertDialogTheme;
+			global::XLabs.Forms.Resource.Attribute.arrowHeadLength = global::Sensus.Android.Resource.Attribute.arrowHeadLength;
+			global::XLabs.Forms.Resource.Attribute.arrowShaftLength = global::Sensus.Android.Resource.Attribute.arrowShaftLength;
+			global::XLabs.Forms.Resource.Attribute.autoCompleteTextViewStyle = global::Sensus.Android.Resource.Attribute.autoCompleteTextViewStyle;
+			global::XLabs.Forms.Resource.Attribute.background = global::Sensus.Android.Resource.Attribute.background;
+			global::XLabs.Forms.Resource.Attribute.backgroundSplit = global::Sensus.Android.Resource.Attribute.backgroundSplit;
+			global::XLabs.Forms.Resource.Attribute.backgroundStacked = global::Sensus.Android.Resource.Attribute.backgroundStacked;
+			global::XLabs.Forms.Resource.Attribute.backgroundTint = global::Sensus.Android.Resource.Attribute.backgroundTint;
+			global::XLabs.Forms.Resource.Attribute.backgroundTintMode = global::Sensus.Android.Resource.Attribute.backgroundTintMode;
+			global::XLabs.Forms.Resource.Attribute.barLength = global::Sensus.Android.Resource.Attribute.barLength;
+			global::XLabs.Forms.Resource.Attribute.behavior_overlapTop = global::Sensus.Android.Resource.Attribute.behavior_overlapTop;
+			global::XLabs.Forms.Resource.Attribute.borderWidth = global::Sensus.Android.Resource.Attribute.borderWidth;
+			global::XLabs.Forms.Resource.Attribute.borderlessButtonStyle = global::Sensus.Android.Resource.Attribute.borderlessButtonStyle;
+			global::XLabs.Forms.Resource.Attribute.buttonBarButtonStyle = global::Sensus.Android.Resource.Attribute.buttonBarButtonStyle;
+			global::XLabs.Forms.Resource.Attribute.buttonBarNegativeButtonStyle = global::Sensus.Android.Resource.Attribute.buttonBarNegativeButtonStyle;
+			global::XLabs.Forms.Resource.Attribute.buttonBarNeutralButtonStyle = global::Sensus.Android.Resource.Attribute.buttonBarNeutralButtonStyle;
+			global::XLabs.Forms.Resource.Attribute.buttonBarPositiveButtonStyle = global::Sensus.Android.Resource.Attribute.buttonBarPositiveButtonStyle;
+			global::XLabs.Forms.Resource.Attribute.buttonBarStyle = global::Sensus.Android.Resource.Attribute.buttonBarStyle;
+			global::XLabs.Forms.Resource.Attribute.buttonPanelSideLayout = global::Sensus.Android.Resource.Attribute.buttonPanelSideLayout;
+			global::XLabs.Forms.Resource.Attribute.buttonStyle = global::Sensus.Android.Resource.Attribute.buttonStyle;
+			global::XLabs.Forms.Resource.Attribute.buttonStyleSmall = global::Sensus.Android.Resource.Attribute.buttonStyleSmall;
+			global::XLabs.Forms.Resource.Attribute.buttonTint = global::Sensus.Android.Resource.Attribute.buttonTint;
+			global::XLabs.Forms.Resource.Attribute.buttonTintMode = global::Sensus.Android.Resource.Attribute.buttonTintMode;
+			global::XLabs.Forms.Resource.Attribute.cardBackgroundColor = global::Sensus.Android.Resource.Attribute.cardBackgroundColor;
+			global::XLabs.Forms.Resource.Attribute.cardCornerRadius = global::Sensus.Android.Resource.Attribute.cardCornerRadius;
+			global::XLabs.Forms.Resource.Attribute.cardElevation = global::Sensus.Android.Resource.Attribute.cardElevation;
+			global::XLabs.Forms.Resource.Attribute.cardMaxElevation = global::Sensus.Android.Resource.Attribute.cardMaxElevation;
+			global::XLabs.Forms.Resource.Attribute.cardPreventCornerOverlap = global::Sensus.Android.Resource.Attribute.cardPreventCornerOverlap;
+			global::XLabs.Forms.Resource.Attribute.cardUseCompatPadding = global::Sensus.Android.Resource.Attribute.cardUseCompatPadding;
+			global::XLabs.Forms.Resource.Attribute.checkboxStyle = global::Sensus.Android.Resource.Attribute.checkboxStyle;
+			global::XLabs.Forms.Resource.Attribute.checkedTextViewStyle = global::Sensus.Android.Resource.Attribute.checkedTextViewStyle;
+			global::XLabs.Forms.Resource.Attribute.closeIcon = global::Sensus.Android.Resource.Attribute.closeIcon;
+			global::XLabs.Forms.Resource.Attribute.closeItemLayout = global::Sensus.Android.Resource.Attribute.closeItemLayout;
+			global::XLabs.Forms.Resource.Attribute.collapseContentDescription = global::Sensus.Android.Resource.Attribute.collapseContentDescription;
+			global::XLabs.Forms.Resource.Attribute.collapseIcon = global::Sensus.Android.Resource.Attribute.collapseIcon;
+			global::XLabs.Forms.Resource.Attribute.collapsedTitleGravity = global::Sensus.Android.Resource.Attribute.collapsedTitleGravity;
+			global::XLabs.Forms.Resource.Attribute.collapsedTitleTextAppearance = global::Sensus.Android.Resource.Attribute.collapsedTitleTextAppearance;
+			global::XLabs.Forms.Resource.Attribute.color = global::Sensus.Android.Resource.Attribute.color;
+			global::XLabs.Forms.Resource.Attribute.colorAccent = global::Sensus.Android.Resource.Attribute.colorAccent;
+			global::XLabs.Forms.Resource.Attribute.colorButtonNormal = global::Sensus.Android.Resource.Attribute.colorButtonNormal;
+			global::XLabs.Forms.Resource.Attribute.colorControlActivated = global::Sensus.Android.Resource.Attribute.colorControlActivated;
+			global::XLabs.Forms.Resource.Attribute.colorControlHighlight = global::Sensus.Android.Resource.Attribute.colorControlHighlight;
+			global::XLabs.Forms.Resource.Attribute.colorControlNormal = global::Sensus.Android.Resource.Attribute.colorControlNormal;
+			global::XLabs.Forms.Resource.Attribute.colorPrimary = global::Sensus.Android.Resource.Attribute.colorPrimary;
+			global::XLabs.Forms.Resource.Attribute.colorPrimaryDark = global::Sensus.Android.Resource.Attribute.colorPrimaryDark;
+			global::XLabs.Forms.Resource.Attribute.colorSwitchThumbNormal = global::Sensus.Android.Resource.Attribute.colorSwitchThumbNormal;
+			global::XLabs.Forms.Resource.Attribute.commitIcon = global::Sensus.Android.Resource.Attribute.commitIcon;
+			global::XLabs.Forms.Resource.Attribute.contentInsetEnd = global::Sensus.Android.Resource.Attribute.contentInsetEnd;
+			global::XLabs.Forms.Resource.Attribute.contentInsetLeft = global::Sensus.Android.Resource.Attribute.contentInsetLeft;
+			global::XLabs.Forms.Resource.Attribute.contentInsetRight = global::Sensus.Android.Resource.Attribute.contentInsetRight;
+			global::XLabs.Forms.Resource.Attribute.contentInsetStart = global::Sensus.Android.Resource.Attribute.contentInsetStart;
+			global::XLabs.Forms.Resource.Attribute.contentPadding = global::Sensus.Android.Resource.Attribute.contentPadding;
+			global::XLabs.Forms.Resource.Attribute.contentPaddingBottom = global::Sensus.Android.Resource.Attribute.contentPaddingBottom;
+			global::XLabs.Forms.Resource.Attribute.contentPaddingLeft = global::Sensus.Android.Resource.Attribute.contentPaddingLeft;
+			global::XLabs.Forms.Resource.Attribute.contentPaddingRight = global::Sensus.Android.Resource.Attribute.contentPaddingRight;
+			global::XLabs.Forms.Resource.Attribute.contentPaddingTop = global::Sensus.Android.Resource.Attribute.contentPaddingTop;
+			global::XLabs.Forms.Resource.Attribute.contentScrim = global::Sensus.Android.Resource.Attribute.contentScrim;
+			global::XLabs.Forms.Resource.Attribute.controlBackground = global::Sensus.Android.Resource.Attribute.controlBackground;
+			global::XLabs.Forms.Resource.Attribute.customNavigationLayout = global::Sensus.Android.Resource.Attribute.customNavigationLayout;
+			global::XLabs.Forms.Resource.Attribute.defaultQueryHint = global::Sensus.Android.Resource.Attribute.defaultQueryHint;
+			global::XLabs.Forms.Resource.Attribute.dialogPreferredPadding = global::Sensus.Android.Resource.Attribute.dialogPreferredPadding;
+			global::XLabs.Forms.Resource.Attribute.dialogTheme = global::Sensus.Android.Resource.Attribute.dialogTheme;
+			global::XLabs.Forms.Resource.Attribute.displayOptions = global::Sensus.Android.Resource.Attribute.displayOptions;
+			global::XLabs.Forms.Resource.Attribute.divider = global::Sensus.Android.Resource.Attribute.divider;
+			global::XLabs.Forms.Resource.Attribute.dividerHorizontal = global::Sensus.Android.Resource.Attribute.dividerHorizontal;
+			global::XLabs.Forms.Resource.Attribute.dividerPadding = global::Sensus.Android.Resource.Attribute.dividerPadding;
+			global::XLabs.Forms.Resource.Attribute.dividerVertical = global::Sensus.Android.Resource.Attribute.dividerVertical;
+			global::XLabs.Forms.Resource.Attribute.drawableSize = global::Sensus.Android.Resource.Attribute.drawableSize;
+			global::XLabs.Forms.Resource.Attribute.drawerArrowStyle = global::Sensus.Android.Resource.Attribute.drawerArrowStyle;
+			global::XLabs.Forms.Resource.Attribute.dropDownListViewStyle = global::Sensus.Android.Resource.Attribute.dropDownListViewStyle;
+			global::XLabs.Forms.Resource.Attribute.dropdownListPreferredItemHeight = global::Sensus.Android.Resource.Attribute.dropdownListPreferredItemHeight;
+			global::XLabs.Forms.Resource.Attribute.editTextBackground = global::Sensus.Android.Resource.Attribute.editTextBackground;
+			global::XLabs.Forms.Resource.Attribute.editTextColor = global::Sensus.Android.Resource.Attribute.editTextColor;
+			global::XLabs.Forms.Resource.Attribute.editTextStyle = global::Sensus.Android.Resource.Attribute.editTextStyle;
+			global::XLabs.Forms.Resource.Attribute.elevation = global::Sensus.Android.Resource.Attribute.elevation;
+			global::XLabs.Forms.Resource.Attribute.errorEnabled = global::Sensus.Android.Resource.Attribute.errorEnabled;
+			global::XLabs.Forms.Resource.Attribute.errorTextAppearance = global::Sensus.Android.Resource.Attribute.errorTextAppearance;
+			global::XLabs.Forms.Resource.Attribute.expandActivityOverflowButtonDrawable = global::Sensus.Android.Resource.Attribute.expandActivityOverflowButtonDrawable;
+			global::XLabs.Forms.Resource.Attribute.expanded = global::Sensus.Android.Resource.Attribute.expanded;
+			global::XLabs.Forms.Resource.Attribute.expandedTitleGravity = global::Sensus.Android.Resource.Attribute.expandedTitleGravity;
+			global::XLabs.Forms.Resource.Attribute.expandedTitleMargin = global::Sensus.Android.Resource.Attribute.expandedTitleMargin;
+			global::XLabs.Forms.Resource.Attribute.expandedTitleMarginBottom = global::Sensus.Android.Resource.Attribute.expandedTitleMarginBottom;
+			global::XLabs.Forms.Resource.Attribute.expandedTitleMarginEnd = global::Sensus.Android.Resource.Attribute.expandedTitleMarginEnd;
+			global::XLabs.Forms.Resource.Attribute.expandedTitleMarginStart = global::Sensus.Android.Resource.Attribute.expandedTitleMarginStart;
+			global::XLabs.Forms.Resource.Attribute.expandedTitleMarginTop = global::Sensus.Android.Resource.Attribute.expandedTitleMarginTop;
+			global::XLabs.Forms.Resource.Attribute.expandedTitleTextAppearance = global::Sensus.Android.Resource.Attribute.expandedTitleTextAppearance;
+			global::XLabs.Forms.Resource.Attribute.externalRouteEnabledDrawable = global::Sensus.Android.Resource.Attribute.externalRouteEnabledDrawable;
+			global::XLabs.Forms.Resource.Attribute.fabSize = global::Sensus.Android.Resource.Attribute.fabSize;
+			global::XLabs.Forms.Resource.Attribute.gapBetweenBars = global::Sensus.Android.Resource.Attribute.gapBetweenBars;
+			global::XLabs.Forms.Resource.Attribute.goIcon = global::Sensus.Android.Resource.Attribute.goIcon;
+			global::XLabs.Forms.Resource.Attribute.headerLayout = global::Sensus.Android.Resource.Attribute.headerLayout;
+			global::XLabs.Forms.Resource.Attribute.height = global::Sensus.Android.Resource.Attribute.height;
+			global::XLabs.Forms.Resource.Attribute.hideOnContentScroll = global::Sensus.Android.Resource.Attribute.hideOnContentScroll;
+			global::XLabs.Forms.Resource.Attribute.hintAnimationEnabled = global::Sensus.Android.Resource.Attribute.hintAnimationEnabled;
+			global::XLabs.Forms.Resource.Attribute.hintTextAppearance = global::Sensus.Android.Resource.Attribute.hintTextAppearance;
+			global::XLabs.Forms.Resource.Attribute.homeAsUpIndicator = global::Sensus.Android.Resource.Attribute.homeAsUpIndicator;
+			global::XLabs.Forms.Resource.Attribute.homeLayout = global::Sensus.Android.Resource.Attribute.homeLayout;
+			global::XLabs.Forms.Resource.Attribute.icon = global::Sensus.Android.Resource.Attribute.icon;
+			global::XLabs.Forms.Resource.Attribute.iconifiedByDefault = global::Sensus.Android.Resource.Attribute.iconifiedByDefault;
+			global::XLabs.Forms.Resource.Attribute.indeterminateProgressStyle = global::Sensus.Android.Resource.Attribute.indeterminateProgressStyle;
+			global::XLabs.Forms.Resource.Attribute.initialActivityCount = global::Sensus.Android.Resource.Attribute.initialActivityCount;
+			global::XLabs.Forms.Resource.Attribute.insetForeground = global::Sensus.Android.Resource.Attribute.insetForeground;
+			global::XLabs.Forms.Resource.Attribute.isLightTheme = global::Sensus.Android.Resource.Attribute.isLightTheme;
+			global::XLabs.Forms.Resource.Attribute.itemBackground = global::Sensus.Android.Resource.Attribute.itemBackground;
+			global::XLabs.Forms.Resource.Attribute.itemIconTint = global::Sensus.Android.Resource.Attribute.itemIconTint;
+			global::XLabs.Forms.Resource.Attribute.itemPadding = global::Sensus.Android.Resource.Attribute.itemPadding;
+			global::XLabs.Forms.Resource.Attribute.itemTextAppearance = global::Sensus.Android.Resource.Attribute.itemTextAppearance;
+			global::XLabs.Forms.Resource.Attribute.itemTextColor = global::Sensus.Android.Resource.Attribute.itemTextColor;
+			global::XLabs.Forms.Resource.Attribute.keylines = global::Sensus.Android.Resource.Attribute.keylines;
+			global::XLabs.Forms.Resource.Attribute.layout = global::Sensus.Android.Resource.Attribute.layout;
+			global::XLabs.Forms.Resource.Attribute.layout_anchor = global::Sensus.Android.Resource.Attribute.layout_anchor;
+			global::XLabs.Forms.Resource.Attribute.layout_anchorGravity = global::Sensus.Android.Resource.Attribute.layout_anchorGravity;
+			global::XLabs.Forms.Resource.Attribute.layout_behavior = global::Sensus.Android.Resource.Attribute.layout_behavior;
+			global::XLabs.Forms.Resource.Attribute.layout_collapseMode = global::Sensus.Android.Resource.Attribute.layout_collapseMode;
+			global::XLabs.Forms.Resource.Attribute.layout_collapseParallaxMultiplier = global::Sensus.Android.Resource.Attribute.layout_collapseParallaxMultiplier;
+			global::XLabs.Forms.Resource.Attribute.layout_keyline = global::Sensus.Android.Resource.Attribute.layout_keyline;
+			global::XLabs.Forms.Resource.Attribute.layout_scrollFlags = global::Sensus.Android.Resource.Attribute.layout_scrollFlags;
+			global::XLabs.Forms.Resource.Attribute.layout_scrollInterpolator = global::Sensus.Android.Resource.Attribute.layout_scrollInterpolator;
+			global::XLabs.Forms.Resource.Attribute.listChoiceBackgroundIndicator = global::Sensus.Android.Resource.Attribute.listChoiceBackgroundIndicator;
+			global::XLabs.Forms.Resource.Attribute.listDividerAlertDialog = global::Sensus.Android.Resource.Attribute.listDividerAlertDialog;
+			global::XLabs.Forms.Resource.Attribute.listItemLayout = global::Sensus.Android.Resource.Attribute.listItemLayout;
+			global::XLabs.Forms.Resource.Attribute.listLayout = global::Sensus.Android.Resource.Attribute.listLayout;
+			global::XLabs.Forms.Resource.Attribute.listPopupWindowStyle = global::Sensus.Android.Resource.Attribute.listPopupWindowStyle;
+			global::XLabs.Forms.Resource.Attribute.listPreferredItemHeight = global::Sensus.Android.Resource.Attribute.listPreferredItemHeight;
+			global::XLabs.Forms.Resource.Attribute.listPreferredItemHeightLarge = global::Sensus.Android.Resource.Attribute.listPreferredItemHeightLarge;
+			global::XLabs.Forms.Resource.Attribute.listPreferredItemHeightSmall = global::Sensus.Android.Resource.Attribute.listPreferredItemHeightSmall;
+			global::XLabs.Forms.Resource.Attribute.listPreferredItemPaddingLeft = global::Sensus.Android.Resource.Attribute.listPreferredItemPaddingLeft;
+			global::XLabs.Forms.Resource.Attribute.listPreferredItemPaddingRight = global::Sensus.Android.Resource.Attribute.listPreferredItemPaddingRight;
+			global::XLabs.Forms.Resource.Attribute.logo = global::Sensus.Android.Resource.Attribute.logo;
+			global::XLabs.Forms.Resource.Attribute.logoDescription = global::Sensus.Android.Resource.Attribute.logoDescription;
+			global::XLabs.Forms.Resource.Attribute.maxActionInlineWidth = global::Sensus.Android.Resource.Attribute.maxActionInlineWidth;
+			global::XLabs.Forms.Resource.Attribute.maxButtonHeight = global::Sensus.Android.Resource.Attribute.maxButtonHeight;
+			global::XLabs.Forms.Resource.Attribute.measureWithLargestChild = global::Sensus.Android.Resource.Attribute.measureWithLargestChild;
+			global::XLabs.Forms.Resource.Attribute.mediaRouteButtonStyle = global::Sensus.Android.Resource.Attribute.mediaRouteButtonStyle;
+			global::XLabs.Forms.Resource.Attribute.mediaRouteCastDrawable = global::Sensus.Android.Resource.Attribute.mediaRouteCastDrawable;
+			global::XLabs.Forms.Resource.Attribute.mediaRouteConnectingDrawable = global::Sensus.Android.Resource.Attribute.mediaRouteConnectingDrawable;
+			global::XLabs.Forms.Resource.Attribute.mediaRouteOffDrawable = global::Sensus.Android.Resource.Attribute.mediaRouteOffDrawable;
+			global::XLabs.Forms.Resource.Attribute.mediaRouteOnDrawable = global::Sensus.Android.Resource.Attribute.mediaRouteOnDrawable;
+			global::XLabs.Forms.Resource.Attribute.mediaRoutePauseDrawable = global::Sensus.Android.Resource.Attribute.mediaRoutePauseDrawable;
+			global::XLabs.Forms.Resource.Attribute.mediaRoutePlayDrawable = global::Sensus.Android.Resource.Attribute.mediaRoutePlayDrawable;
+			global::XLabs.Forms.Resource.Attribute.mediaRouteSettingsDrawable = global::Sensus.Android.Resource.Attribute.mediaRouteSettingsDrawable;
+			global::XLabs.Forms.Resource.Attribute.menu = global::Sensus.Android.Resource.Attribute.menu;
+			global::XLabs.Forms.Resource.Attribute.multiChoiceItemLayout = global::Sensus.Android.Resource.Attribute.multiChoiceItemLayout;
+			global::XLabs.Forms.Resource.Attribute.navigationContentDescription = global::Sensus.Android.Resource.Attribute.navigationContentDescription;
+			global::XLabs.Forms.Resource.Attribute.navigationIcon = global::Sensus.Android.Resource.Attribute.navigationIcon;
+			global::XLabs.Forms.Resource.Attribute.navigationMode = global::Sensus.Android.Resource.Attribute.navigationMode;
+			global::XLabs.Forms.Resource.Attribute.overlapAnchor = global::Sensus.Android.Resource.Attribute.overlapAnchor;
+			global::XLabs.Forms.Resource.Attribute.paddingEnd = global::Sensus.Android.Resource.Attribute.paddingEnd;
+			global::XLabs.Forms.Resource.Attribute.paddingStart = global::Sensus.Android.Resource.Attribute.paddingStart;
+			global::XLabs.Forms.Resource.Attribute.panelBackground = global::Sensus.Android.Resource.Attribute.panelBackground;
+			global::XLabs.Forms.Resource.Attribute.panelMenuListTheme = global::Sensus.Android.Resource.Attribute.panelMenuListTheme;
+			global::XLabs.Forms.Resource.Attribute.panelMenuListWidth = global::Sensus.Android.Resource.Attribute.panelMenuListWidth;
+			global::XLabs.Forms.Resource.Attribute.popupMenuStyle = global::Sensus.Android.Resource.Attribute.popupMenuStyle;
+			global::XLabs.Forms.Resource.Attribute.popupTheme = global::Sensus.Android.Resource.Attribute.popupTheme;
+			global::XLabs.Forms.Resource.Attribute.popupWindowStyle = global::Sensus.Android.Resource.Attribute.popupWindowStyle;
+			global::XLabs.Forms.Resource.Attribute.preserveIconSpacing = global::Sensus.Android.Resource.Attribute.preserveIconSpacing;
+			global::XLabs.Forms.Resource.Attribute.pressedTranslationZ = global::Sensus.Android.Resource.Attribute.pressedTranslationZ;
+			global::XLabs.Forms.Resource.Attribute.progressBarPadding = global::Sensus.Android.Resource.Attribute.progressBarPadding;
+			global::XLabs.Forms.Resource.Attribute.progressBarStyle = global::Sensus.Android.Resource.Attribute.progressBarStyle;
+			global::XLabs.Forms.Resource.Attribute.queryBackground = global::Sensus.Android.Resource.Attribute.queryBackground;
+			global::XLabs.Forms.Resource.Attribute.queryHint = global::Sensus.Android.Resource.Attribute.queryHint;
+			global::XLabs.Forms.Resource.Attribute.radioButtonStyle = global::Sensus.Android.Resource.Attribute.radioButtonStyle;
+			global::XLabs.Forms.Resource.Attribute.ratingBarStyle = global::Sensus.Android.Resource.Attribute.ratingBarStyle;
+			global::XLabs.Forms.Resource.Attribute.rippleColor = global::Sensus.Android.Resource.Attribute.rippleColor;
+			global::XLabs.Forms.Resource.Attribute.searchHintIcon = global::Sensus.Android.Resource.Attribute.searchHintIcon;
+			global::XLabs.Forms.Resource.Attribute.searchIcon = global::Sensus.Android.Resource.Attribute.searchIcon;
+			global::XLabs.Forms.Resource.Attribute.searchViewStyle = global::Sensus.Android.Resource.Attribute.searchViewStyle;
+			global::XLabs.Forms.Resource.Attribute.selectableItemBackground = global::Sensus.Android.Resource.Attribute.selectableItemBackground;
+			global::XLabs.Forms.Resource.Attribute.selectableItemBackgroundBorderless = global::Sensus.Android.Resource.Attribute.selectableItemBackgroundBorderless;
+			global::XLabs.Forms.Resource.Attribute.showAsAction = global::Sensus.Android.Resource.Attribute.showAsAction;
+			global::XLabs.Forms.Resource.Attribute.showDividers = global::Sensus.Android.Resource.Attribute.showDividers;
+			global::XLabs.Forms.Resource.Attribute.showText = global::Sensus.Android.Resource.Attribute.showText;
+			global::XLabs.Forms.Resource.Attribute.singleChoiceItemLayout = global::Sensus.Android.Resource.Attribute.singleChoiceItemLayout;
+			global::XLabs.Forms.Resource.Attribute.spinBars = global::Sensus.Android.Resource.Attribute.spinBars;
+			global::XLabs.Forms.Resource.Attribute.spinnerDropDownItemStyle = global::Sensus.Android.Resource.Attribute.spinnerDropDownItemStyle;
+			global::XLabs.Forms.Resource.Attribute.spinnerStyle = global::Sensus.Android.Resource.Attribute.spinnerStyle;
+			global::XLabs.Forms.Resource.Attribute.splitTrack = global::Sensus.Android.Resource.Attribute.splitTrack;
+			global::XLabs.Forms.Resource.Attribute.state_above_anchor = global::Sensus.Android.Resource.Attribute.state_above_anchor;
+			global::XLabs.Forms.Resource.Attribute.statusBarBackground = global::Sensus.Android.Resource.Attribute.statusBarBackground;
+			global::XLabs.Forms.Resource.Attribute.statusBarScrim = global::Sensus.Android.Resource.Attribute.statusBarScrim;
+			global::XLabs.Forms.Resource.Attribute.submitBackground = global::Sensus.Android.Resource.Attribute.submitBackground;
+			global::XLabs.Forms.Resource.Attribute.subtitle = global::Sensus.Android.Resource.Attribute.subtitle;
+			global::XLabs.Forms.Resource.Attribute.subtitleTextAppearance = global::Sensus.Android.Resource.Attribute.subtitleTextAppearance;
+			global::XLabs.Forms.Resource.Attribute.subtitleTextColor = global::Sensus.Android.Resource.Attribute.subtitleTextColor;
+			global::XLabs.Forms.Resource.Attribute.subtitleTextStyle = global::Sensus.Android.Resource.Attribute.subtitleTextStyle;
+			global::XLabs.Forms.Resource.Attribute.suggestionRowLayout = global::Sensus.Android.Resource.Attribute.suggestionRowLayout;
+			global::XLabs.Forms.Resource.Attribute.switchMinWidth = global::Sensus.Android.Resource.Attribute.switchMinWidth;
+			global::XLabs.Forms.Resource.Attribute.switchPadding = global::Sensus.Android.Resource.Attribute.switchPadding;
+			global::XLabs.Forms.Resource.Attribute.switchStyle = global::Sensus.Android.Resource.Attribute.switchStyle;
+			global::XLabs.Forms.Resource.Attribute.switchTextAppearance = global::Sensus.Android.Resource.Attribute.switchTextAppearance;
+			global::XLabs.Forms.Resource.Attribute.tabBackground = global::Sensus.Android.Resource.Attribute.tabBackground;
+			global::XLabs.Forms.Resource.Attribute.tabContentStart = global::Sensus.Android.Resource.Attribute.tabContentStart;
+			global::XLabs.Forms.Resource.Attribute.tabGravity = global::Sensus.Android.Resource.Attribute.tabGravity;
+			global::XLabs.Forms.Resource.Attribute.tabIndicatorColor = global::Sensus.Android.Resource.Attribute.tabIndicatorColor;
+			global::XLabs.Forms.Resource.Attribute.tabIndicatorHeight = global::Sensus.Android.Resource.Attribute.tabIndicatorHeight;
+			global::XLabs.Forms.Resource.Attribute.tabMaxWidth = global::Sensus.Android.Resource.Attribute.tabMaxWidth;
+			global::XLabs.Forms.Resource.Attribute.tabMinWidth = global::Sensus.Android.Resource.Attribute.tabMinWidth;
+			global::XLabs.Forms.Resource.Attribute.tabMode = global::Sensus.Android.Resource.Attribute.tabMode;
+			global::XLabs.Forms.Resource.Attribute.tabPadding = global::Sensus.Android.Resource.Attribute.tabPadding;
+			global::XLabs.Forms.Resource.Attribute.tabPaddingBottom = global::Sensus.Android.Resource.Attribute.tabPaddingBottom;
+			global::XLabs.Forms.Resource.Attribute.tabPaddingEnd = global::Sensus.Android.Resource.Attribute.tabPaddingEnd;
+			global::XLabs.Forms.Resource.Attribute.tabPaddingStart = global::Sensus.Android.Resource.Attribute.tabPaddingStart;
+			global::XLabs.Forms.Resource.Attribute.tabPaddingTop = global::Sensus.Android.Resource.Attribute.tabPaddingTop;
+			global::XLabs.Forms.Resource.Attribute.tabSelectedTextColor = global::Sensus.Android.Resource.Attribute.tabSelectedTextColor;
+			global::XLabs.Forms.Resource.Attribute.tabTextAppearance = global::Sensus.Android.Resource.Attribute.tabTextAppearance;
+			global::XLabs.Forms.Resource.Attribute.tabTextColor = global::Sensus.Android.Resource.Attribute.tabTextColor;
+			global::XLabs.Forms.Resource.Attribute.textAllCaps = global::Sensus.Android.Resource.Attribute.textAllCaps;
+			global::XLabs.Forms.Resource.Attribute.textAppearanceLargePopupMenu = global::Sensus.Android.Resource.Attribute.textAppearanceLargePopupMenu;
+			global::XLabs.Forms.Resource.Attribute.textAppearanceListItem = global::Sensus.Android.Resource.Attribute.textAppearanceListItem;
+			global::XLabs.Forms.Resource.Attribute.textAppearanceListItemSmall = global::Sensus.Android.Resource.Attribute.textAppearanceListItemSmall;
+			global::XLabs.Forms.Resource.Attribute.textAppearanceSearchResultSubtitle = global::Sensus.Android.Resource.Attribute.textAppearanceSearchResultSubtitle;
+			global::XLabs.Forms.Resource.Attribute.textAppearanceSearchResultTitle = global::Sensus.Android.Resource.Attribute.textAppearanceSearchResultTitle;
+			global::XLabs.Forms.Resource.Attribute.textAppearanceSmallPopupMenu = global::Sensus.Android.Resource.Attribute.textAppearanceSmallPopupMenu;
+			global::XLabs.Forms.Resource.Attribute.textColorAlertDialogListItem = global::Sensus.Android.Resource.Attribute.textColorAlertDialogListItem;
+			global::XLabs.Forms.Resource.Attribute.textColorSearchUrl = global::Sensus.Android.Resource.Attribute.textColorSearchUrl;
+			global::XLabs.Forms.Resource.Attribute.theme = global::Sensus.Android.Resource.Attribute.theme;
+			global::XLabs.Forms.Resource.Attribute.thickness = global::Sensus.Android.Resource.Attribute.thickness;
+			global::XLabs.Forms.Resource.Attribute.thumbTextPadding = global::Sensus.Android.Resource.Attribute.thumbTextPadding;
+			global::XLabs.Forms.Resource.Attribute.title = global::Sensus.Android.Resource.Attribute.title;
+			global::XLabs.Forms.Resource.Attribute.titleEnabled = global::Sensus.Android.Resource.Attribute.titleEnabled;
+			global::XLabs.Forms.Resource.Attribute.titleMarginBottom = global::Sensus.Android.Resource.Attribute.titleMarginBottom;
+			global::XLabs.Forms.Resource.Attribute.titleMarginEnd = global::Sensus.Android.Resource.Attribute.titleMarginEnd;
+			global::XLabs.Forms.Resource.Attribute.titleMarginStart = global::Sensus.Android.Resource.Attribute.titleMarginStart;
+			global::XLabs.Forms.Resource.Attribute.titleMarginTop = global::Sensus.Android.Resource.Attribute.titleMarginTop;
+			global::XLabs.Forms.Resource.Attribute.titleMargins = global::Sensus.Android.Resource.Attribute.titleMargins;
+			global::XLabs.Forms.Resource.Attribute.titleTextAppearance = global::Sensus.Android.Resource.Attribute.titleTextAppearance;
+			global::XLabs.Forms.Resource.Attribute.titleTextColor = global::Sensus.Android.Resource.Attribute.titleTextColor;
+			global::XLabs.Forms.Resource.Attribute.titleTextStyle = global::Sensus.Android.Resource.Attribute.titleTextStyle;
+			global::XLabs.Forms.Resource.Attribute.toolbarId = global::Sensus.Android.Resource.Attribute.toolbarId;
+			global::XLabs.Forms.Resource.Attribute.toolbarNavigationButtonStyle = global::Sensus.Android.Resource.Attribute.toolbarNavigationButtonStyle;
+			global::XLabs.Forms.Resource.Attribute.toolbarStyle = global::Sensus.Android.Resource.Attribute.toolbarStyle;
+			global::XLabs.Forms.Resource.Attribute.track = global::Sensus.Android.Resource.Attribute.track;
+			global::XLabs.Forms.Resource.Attribute.voiceIcon = global::Sensus.Android.Resource.Attribute.voiceIcon;
+			global::XLabs.Forms.Resource.Attribute.windowActionBar = global::Sensus.Android.Resource.Attribute.windowActionBar;
+			global::XLabs.Forms.Resource.Attribute.windowActionBarOverlay = global::Sensus.Android.Resource.Attribute.windowActionBarOverlay;
+			global::XLabs.Forms.Resource.Attribute.windowActionModeOverlay = global::Sensus.Android.Resource.Attribute.windowActionModeOverlay;
+			global::XLabs.Forms.Resource.Attribute.windowFixedHeightMajor = global::Sensus.Android.Resource.Attribute.windowFixedHeightMajor;
+			global::XLabs.Forms.Resource.Attribute.windowFixedHeightMinor = global::Sensus.Android.Resource.Attribute.windowFixedHeightMinor;
+			global::XLabs.Forms.Resource.Attribute.windowFixedWidthMajor = global::Sensus.Android.Resource.Attribute.windowFixedWidthMajor;
+			global::XLabs.Forms.Resource.Attribute.windowFixedWidthMinor = global::Sensus.Android.Resource.Attribute.windowFixedWidthMinor;
+			global::XLabs.Forms.Resource.Attribute.windowMinWidthMajor = global::Sensus.Android.Resource.Attribute.windowMinWidthMajor;
+			global::XLabs.Forms.Resource.Attribute.windowMinWidthMinor = global::Sensus.Android.Resource.Attribute.windowMinWidthMinor;
+			global::XLabs.Forms.Resource.Attribute.windowNoTitle = global::Sensus.Android.Resource.Attribute.windowNoTitle;
+			global::XLabs.Forms.Resource.Boolean.abc_action_bar_embed_tabs = global::Sensus.Android.Resource.Boolean.abc_action_bar_embed_tabs;
+			global::XLabs.Forms.Resource.Boolean.abc_action_bar_embed_tabs_pre_jb = global::Sensus.Android.Resource.Boolean.abc_action_bar_embed_tabs_pre_jb;
+			global::XLabs.Forms.Resource.Boolean.abc_action_bar_expanded_action_views_exclusive = global::Sensus.Android.Resource.Boolean.abc_action_bar_expanded_action_views_exclusive;
+			global::XLabs.Forms.Resource.Boolean.abc_config_actionMenuItemAllCaps = global::Sensus.Android.Resource.Boolean.abc_config_actionMenuItemAllCaps;
+			global::XLabs.Forms.Resource.Boolean.abc_config_allowActionMenuItemTextWithIcon = global::Sensus.Android.Resource.Boolean.abc_config_allowActionMenuItemTextWithIcon;
+			global::XLabs.Forms.Resource.Boolean.abc_config_closeDialogWhenTouchOutside = global::Sensus.Android.Resource.Boolean.abc_config_closeDialogWhenTouchOutside;
+			global::XLabs.Forms.Resource.Boolean.abc_config_showMenuShortcutsWhenKeyboardPresent = global::Sensus.Android.Resource.Boolean.abc_config_showMenuShortcutsWhenKeyboardPresent;
+			global::XLabs.Forms.Resource.Color.abc_background_cache_hint_selector_material_dark = global::Sensus.Android.Resource.Color.abc_background_cache_hint_selector_material_dark;
+			global::XLabs.Forms.Resource.Color.abc_background_cache_hint_selector_material_light = global::Sensus.Android.Resource.Color.abc_background_cache_hint_selector_material_light;
+			global::XLabs.Forms.Resource.Color.abc_color_highlight_material = global::Sensus.Android.Resource.Color.abc_color_highlight_material;
+			global::XLabs.Forms.Resource.Color.abc_input_method_navigation_guard = global::Sensus.Android.Resource.Color.abc_input_method_navigation_guard;
+			global::XLabs.Forms.Resource.Color.abc_primary_text_disable_only_material_dark = global::Sensus.Android.Resource.Color.abc_primary_text_disable_only_material_dark;
+			global::XLabs.Forms.Resource.Color.abc_primary_text_disable_only_material_light = global::Sensus.Android.Resource.Color.abc_primary_text_disable_only_material_light;
+			global::XLabs.Forms.Resource.Color.abc_primary_text_material_dark = global::Sensus.Android.Resource.Color.abc_primary_text_material_dark;
+			global::XLabs.Forms.Resource.Color.abc_primary_text_material_light = global::Sensus.Android.Resource.Color.abc_primary_text_material_light;
+			global::XLabs.Forms.Resource.Color.abc_search_url_text = global::Sensus.Android.Resource.Color.abc_search_url_text;
+			global::XLabs.Forms.Resource.Color.abc_search_url_text_normal = global::Sensus.Android.Resource.Color.abc_search_url_text_normal;
+			global::XLabs.Forms.Resource.Color.abc_search_url_text_pressed = global::Sensus.Android.Resource.Color.abc_search_url_text_pressed;
+			global::XLabs.Forms.Resource.Color.abc_search_url_text_selected = global::Sensus.Android.Resource.Color.abc_search_url_text_selected;
+			global::XLabs.Forms.Resource.Color.abc_secondary_text_material_dark = global::Sensus.Android.Resource.Color.abc_secondary_text_material_dark;
+			global::XLabs.Forms.Resource.Color.abc_secondary_text_material_light = global::Sensus.Android.Resource.Color.abc_secondary_text_material_light;
+			global::XLabs.Forms.Resource.Color.accent_material_dark = global::Sensus.Android.Resource.Color.accent_material_dark;
+			global::XLabs.Forms.Resource.Color.accent_material_light = global::Sensus.Android.Resource.Color.accent_material_light;
+			global::XLabs.Forms.Resource.Color.background_floating_material_dark = global::Sensus.Android.Resource.Color.background_floating_material_dark;
+			global::XLabs.Forms.Resource.Color.background_floating_material_light = global::Sensus.Android.Resource.Color.background_floating_material_light;
+			global::XLabs.Forms.Resource.Color.background_material_dark = global::Sensus.Android.Resource.Color.background_material_dark;
+			global::XLabs.Forms.Resource.Color.background_material_light = global::Sensus.Android.Resource.Color.background_material_light;
+			global::XLabs.Forms.Resource.Color.bright_foreground_disabled_material_dark = global::Sensus.Android.Resource.Color.bright_foreground_disabled_material_dark;
+			global::XLabs.Forms.Resource.Color.bright_foreground_disabled_material_light = global::Sensus.Android.Resource.Color.bright_foreground_disabled_material_light;
+			global::XLabs.Forms.Resource.Color.bright_foreground_inverse_material_dark = global::Sensus.Android.Resource.Color.bright_foreground_inverse_material_dark;
+			global::XLabs.Forms.Resource.Color.bright_foreground_inverse_material_light = global::Sensus.Android.Resource.Color.bright_foreground_inverse_material_light;
+			global::XLabs.Forms.Resource.Color.bright_foreground_material_dark = global::Sensus.Android.Resource.Color.bright_foreground_material_dark;
+			global::XLabs.Forms.Resource.Color.bright_foreground_material_light = global::Sensus.Android.Resource.Color.bright_foreground_material_light;
+			global::XLabs.Forms.Resource.Color.button_material_dark = global::Sensus.Android.Resource.Color.button_material_dark;
+			global::XLabs.Forms.Resource.Color.button_material_light = global::Sensus.Android.Resource.Color.button_material_light;
+			global::XLabs.Forms.Resource.Color.calendar_active_month_bg = global::Sensus.Android.Resource.Color.calendar_active_month_bg;
+			global::XLabs.Forms.Resource.Color.calendar_bg = global::Sensus.Android.Resource.Color.calendar_bg;
+			global::XLabs.Forms.Resource.Color.calendar_divider = global::Sensus.Android.Resource.Color.calendar_divider;
+			global::XLabs.Forms.Resource.Color.calendar_highlighted_day_bg = global::Sensus.Android.Resource.Color.calendar_highlighted_day_bg;
+			global::XLabs.Forms.Resource.Color.calendar_inactive_month_bg = global::Sensus.Android.Resource.Color.calendar_inactive_month_bg;
+			global::XLabs.Forms.Resource.Color.calendar_selected_day_bg = global::Sensus.Android.Resource.Color.calendar_selected_day_bg;
+			global::XLabs.Forms.Resource.Color.calendar_selected_range_bg = global::Sensus.Android.Resource.Color.calendar_selected_range_bg;
+			global::XLabs.Forms.Resource.Color.calendar_text_active = global::Sensus.Android.Resource.Color.calendar_text_active;
+			global::XLabs.Forms.Resource.Color.calendar_text_inactive = global::Sensus.Android.Resource.Color.calendar_text_inactive;
+			global::XLabs.Forms.Resource.Color.calendar_text_selected = global::Sensus.Android.Resource.Color.calendar_text_selected;
+			global::XLabs.Forms.Resource.Color.calendar_text_selector = global::Sensus.Android.Resource.Color.calendar_text_selector;
+			global::XLabs.Forms.Resource.Color.calendar_text_unselectable = global::Sensus.Android.Resource.Color.calendar_text_unselectable;
+			global::XLabs.Forms.Resource.Color.cardview_dark_background = global::Sensus.Android.Resource.Color.cardview_dark_background;
+			global::XLabs.Forms.Resource.Color.cardview_light_background = global::Sensus.Android.Resource.Color.cardview_light_background;
+			global::XLabs.Forms.Resource.Color.cardview_shadow_end_color = global::Sensus.Android.Resource.Color.cardview_shadow_end_color;
+			global::XLabs.Forms.Resource.Color.cardview_shadow_start_color = global::Sensus.Android.Resource.Color.cardview_shadow_start_color;
+			global::XLabs.Forms.Resource.Color.design_fab_shadow_end_color = global::Sensus.Android.Resource.Color.design_fab_shadow_end_color;
+			global::XLabs.Forms.Resource.Color.design_fab_shadow_mid_color = global::Sensus.Android.Resource.Color.design_fab_shadow_mid_color;
+			global::XLabs.Forms.Resource.Color.design_fab_shadow_start_color = global::Sensus.Android.Resource.Color.design_fab_shadow_start_color;
+			global::XLabs.Forms.Resource.Color.design_fab_stroke_end_inner_color = global::Sensus.Android.Resource.Color.design_fab_stroke_end_inner_color;
+			global::XLabs.Forms.Resource.Color.design_fab_stroke_end_outer_color = global::Sensus.Android.Resource.Color.design_fab_stroke_end_outer_color;
+			global::XLabs.Forms.Resource.Color.design_fab_stroke_top_inner_color = global::Sensus.Android.Resource.Color.design_fab_stroke_top_inner_color;
+			global::XLabs.Forms.Resource.Color.design_fab_stroke_top_outer_color = global::Sensus.Android.Resource.Color.design_fab_stroke_top_outer_color;
+			global::XLabs.Forms.Resource.Color.design_snackbar_background_color = global::Sensus.Android.Resource.Color.design_snackbar_background_color;
+			global::XLabs.Forms.Resource.Color.design_textinput_error_color = global::Sensus.Android.Resource.Color.design_textinput_error_color;
+			global::XLabs.Forms.Resource.Color.dim_foreground_disabled_material_dark = global::Sensus.Android.Resource.Color.dim_foreground_disabled_material_dark;
+			global::XLabs.Forms.Resource.Color.dim_foreground_disabled_material_light = global::Sensus.Android.Resource.Color.dim_foreground_disabled_material_light;
+			global::XLabs.Forms.Resource.Color.dim_foreground_material_dark = global::Sensus.Android.Resource.Color.dim_foreground_material_dark;
+			global::XLabs.Forms.Resource.Color.dim_foreground_material_light = global::Sensus.Android.Resource.Color.dim_foreground_material_light;
+			global::XLabs.Forms.Resource.Color.foreground_material_dark = global::Sensus.Android.Resource.Color.foreground_material_dark;
+			global::XLabs.Forms.Resource.Color.foreground_material_light = global::Sensus.Android.Resource.Color.foreground_material_light;
+			global::XLabs.Forms.Resource.Color.highlighted_text_material_dark = global::Sensus.Android.Resource.Color.highlighted_text_material_dark;
+			global::XLabs.Forms.Resource.Color.highlighted_text_material_light = global::Sensus.Android.Resource.Color.highlighted_text_material_light;
+			global::XLabs.Forms.Resource.Color.hint_foreground_material_dark = global::Sensus.Android.Resource.Color.hint_foreground_material_dark;
+			global::XLabs.Forms.Resource.Color.hint_foreground_material_light = global::Sensus.Android.Resource.Color.hint_foreground_material_light;
+			global::XLabs.Forms.Resource.Color.material_blue_grey_800 = global::Sensus.Android.Resource.Color.material_blue_grey_800;
+			global::XLabs.Forms.Resource.Color.material_blue_grey_900 = global::Sensus.Android.Resource.Color.material_blue_grey_900;
+			global::XLabs.Forms.Resource.Color.material_blue_grey_950 = global::Sensus.Android.Resource.Color.material_blue_grey_950;
+			global::XLabs.Forms.Resource.Color.material_deep_teal_200 = global::Sensus.Android.Resource.Color.material_deep_teal_200;
+			global::XLabs.Forms.Resource.Color.material_deep_teal_500 = global::Sensus.Android.Resource.Color.material_deep_teal_500;
+			global::XLabs.Forms.Resource.Color.material_grey_100 = global::Sensus.Android.Resource.Color.material_grey_100;
+			global::XLabs.Forms.Resource.Color.material_grey_300 = global::Sensus.Android.Resource.Color.material_grey_300;
+			global::XLabs.Forms.Resource.Color.material_grey_50 = global::Sensus.Android.Resource.Color.material_grey_50;
+			global::XLabs.Forms.Resource.Color.material_grey_600 = global::Sensus.Android.Resource.Color.material_grey_600;
+			global::XLabs.Forms.Resource.Color.material_grey_800 = global::Sensus.Android.Resource.Color.material_grey_800;
+			global::XLabs.Forms.Resource.Color.material_grey_850 = global::Sensus.Android.Resource.Color.material_grey_850;
+			global::XLabs.Forms.Resource.Color.material_grey_900 = global::Sensus.Android.Resource.Color.material_grey_900;
+			global::XLabs.Forms.Resource.Color.primary_dark_material_dark = global::Sensus.Android.Resource.Color.primary_dark_material_dark;
+			global::XLabs.Forms.Resource.Color.primary_dark_material_light = global::Sensus.Android.Resource.Color.primary_dark_material_light;
+			global::XLabs.Forms.Resource.Color.primary_material_dark = global::Sensus.Android.Resource.Color.primary_material_dark;
+			global::XLabs.Forms.Resource.Color.primary_material_light = global::Sensus.Android.Resource.Color.primary_material_light;
+			global::XLabs.Forms.Resource.Color.primary_text_default_material_dark = global::Sensus.Android.Resource.Color.primary_text_default_material_dark;
+			global::XLabs.Forms.Resource.Color.primary_text_default_material_light = global::Sensus.Android.Resource.Color.primary_text_default_material_light;
+			global::XLabs.Forms.Resource.Color.primary_text_disabled_material_dark = global::Sensus.Android.Resource.Color.primary_text_disabled_material_dark;
+			global::XLabs.Forms.Resource.Color.primary_text_disabled_material_light = global::Sensus.Android.Resource.Color.primary_text_disabled_material_light;
+			global::XLabs.Forms.Resource.Color.ripple_material_dark = global::Sensus.Android.Resource.Color.ripple_material_dark;
+			global::XLabs.Forms.Resource.Color.ripple_material_light = global::Sensus.Android.Resource.Color.ripple_material_light;
+			global::XLabs.Forms.Resource.Color.secondary_text_default_material_dark = global::Sensus.Android.Resource.Color.secondary_text_default_material_dark;
+			global::XLabs.Forms.Resource.Color.secondary_text_default_material_light = global::Sensus.Android.Resource.Color.secondary_text_default_material_light;
+			global::XLabs.Forms.Resource.Color.secondary_text_disabled_material_dark = global::Sensus.Android.Resource.Color.secondary_text_disabled_material_dark;
+			global::XLabs.Forms.Resource.Color.secondary_text_disabled_material_light = global::Sensus.Android.Resource.Color.secondary_text_disabled_material_light;
+			global::XLabs.Forms.Resource.Color.switch_thumb_disabled_material_dark = global::Sensus.Android.Resource.Color.switch_thumb_disabled_material_dark;
+			global::XLabs.Forms.Resource.Color.switch_thumb_disabled_material_light = global::Sensus.Android.Resource.Color.switch_thumb_disabled_material_light;
+			global::XLabs.Forms.Resource.Color.switch_thumb_material_dark = global::Sensus.Android.Resource.Color.switch_thumb_material_dark;
+			global::XLabs.Forms.Resource.Color.switch_thumb_material_light = global::Sensus.Android.Resource.Color.switch_thumb_material_light;
+			global::XLabs.Forms.Resource.Color.switch_thumb_normal_material_dark = global::Sensus.Android.Resource.Color.switch_thumb_normal_material_dark;
+			global::XLabs.Forms.Resource.Color.switch_thumb_normal_material_light = global::Sensus.Android.Resource.Color.switch_thumb_normal_material_light;
+			global::XLabs.Forms.Resource.Dimension.abc_action_bar_content_inset_material = global::Sensus.Android.Resource.Dimension.abc_action_bar_content_inset_material;
+			global::XLabs.Forms.Resource.Dimension.abc_action_bar_default_height_material = global::Sensus.Android.Resource.Dimension.abc_action_bar_default_height_material;
+			global::XLabs.Forms.Resource.Dimension.abc_action_bar_default_padding_end_material = global::Sensus.Android.Resource.Dimension.abc_action_bar_default_padding_end_material;
+			global::XLabs.Forms.Resource.Dimension.abc_action_bar_default_padding_start_material = global::Sensus.Android.Resource.Dimension.abc_action_bar_default_padding_start_material;
+			global::XLabs.Forms.Resource.Dimension.abc_action_bar_icon_vertical_padding_material = global::Sensus.Android.Resource.Dimension.abc_action_bar_icon_vertical_padding_material;
+			global::XLabs.Forms.Resource.Dimension.abc_action_bar_overflow_padding_end_material = global::Sensus.Android.Resource.Dimension.abc_action_bar_overflow_padding_end_material;
+			global::XLabs.Forms.Resource.Dimension.abc_action_bar_overflow_padding_start_material = global::Sensus.Android.Resource.Dimension.abc_action_bar_overflow_padding_start_material;
+			global::XLabs.Forms.Resource.Dimension.abc_action_bar_progress_bar_size = global::Sensus.Android.Resource.Dimension.abc_action_bar_progress_bar_size;
+			global::XLabs.Forms.Resource.Dimension.abc_action_bar_stacked_max_height = global::Sensus.Android.Resource.Dimension.abc_action_bar_stacked_max_height;
+			global::XLabs.Forms.Resource.Dimension.abc_action_bar_stacked_tab_max_width = global::Sensus.Android.Resource.Dimension.abc_action_bar_stacked_tab_max_width;
+			global::XLabs.Forms.Resource.Dimension.abc_action_bar_subtitle_bottom_margin_material = global::Sensus.Android.Resource.Dimension.abc_action_bar_subtitle_bottom_margin_material;
+			global::XLabs.Forms.Resource.Dimension.abc_action_bar_subtitle_top_margin_material = global::Sensus.Android.Resource.Dimension.abc_action_bar_subtitle_top_margin_material;
+			global::XLabs.Forms.Resource.Dimension.abc_action_button_min_height_material = global::Sensus.Android.Resource.Dimension.abc_action_button_min_height_material;
+			global::XLabs.Forms.Resource.Dimension.abc_action_button_min_width_material = global::Sensus.Android.Resource.Dimension.abc_action_button_min_width_material;
+			global::XLabs.Forms.Resource.Dimension.abc_action_button_min_width_overflow_material = global::Sensus.Android.Resource.Dimension.abc_action_button_min_width_overflow_material;
+			global::XLabs.Forms.Resource.Dimension.abc_alert_dialog_button_bar_height = global::Sensus.Android.Resource.Dimension.abc_alert_dialog_button_bar_height;
+			global::XLabs.Forms.Resource.Dimension.abc_button_inset_horizontal_material = global::Sensus.Android.Resource.Dimension.abc_button_inset_horizontal_material;
+			global::XLabs.Forms.Resource.Dimension.abc_button_inset_vertical_material = global::Sensus.Android.Resource.Dimension.abc_button_inset_vertical_material;
+			global::XLabs.Forms.Resource.Dimension.abc_button_padding_horizontal_material = global::Sensus.Android.Resource.Dimension.abc_button_padding_horizontal_material;
+			global::XLabs.Forms.Resource.Dimension.abc_button_padding_vertical_material = global::Sensus.Android.Resource.Dimension.abc_button_padding_vertical_material;
+			global::XLabs.Forms.Resource.Dimension.abc_config_prefDialogWidth = global::Sensus.Android.Resource.Dimension.abc_config_prefDialogWidth;
+			global::XLabs.Forms.Resource.Dimension.abc_control_corner_material = global::Sensus.Android.Resource.Dimension.abc_control_corner_material;
+			global::XLabs.Forms.Resource.Dimension.abc_control_inset_material = global::Sensus.Android.Resource.Dimension.abc_control_inset_material;
+			global::XLabs.Forms.Resource.Dimension.abc_control_padding_material = global::Sensus.Android.Resource.Dimension.abc_control_padding_material;
+			global::XLabs.Forms.Resource.Dimension.abc_dialog_list_padding_vertical_material = global::Sensus.Android.Resource.Dimension.abc_dialog_list_padding_vertical_material;
+			global::XLabs.Forms.Resource.Dimension.abc_dialog_min_width_major = global::Sensus.Android.Resource.Dimension.abc_dialog_min_width_major;
+			global::XLabs.Forms.Resource.Dimension.abc_dialog_min_width_minor = global::Sensus.Android.Resource.Dimension.abc_dialog_min_width_minor;
+			global::XLabs.Forms.Resource.Dimension.abc_dialog_padding_material = global::Sensus.Android.Resource.Dimension.abc_dialog_padding_material;
+			global::XLabs.Forms.Resource.Dimension.abc_dialog_padding_top_material = global::Sensus.Android.Resource.Dimension.abc_dialog_padding_top_material;
+			global::XLabs.Forms.Resource.Dimension.abc_disabled_alpha_material_dark = global::Sensus.Android.Resource.Dimension.abc_disabled_alpha_material_dark;
+			global::XLabs.Forms.Resource.Dimension.abc_disabled_alpha_material_light = global::Sensus.Android.Resource.Dimension.abc_disabled_alpha_material_light;
+			global::XLabs.Forms.Resource.Dimension.abc_dropdownitem_icon_width = global::Sensus.Android.Resource.Dimension.abc_dropdownitem_icon_width;
+			global::XLabs.Forms.Resource.Dimension.abc_dropdownitem_text_padding_left = global::Sensus.Android.Resource.Dimension.abc_dropdownitem_text_padding_left;
+			global::XLabs.Forms.Resource.Dimension.abc_dropdownitem_text_padding_right = global::Sensus.Android.Resource.Dimension.abc_dropdownitem_text_padding_right;
+			global::XLabs.Forms.Resource.Dimension.abc_edit_text_inset_bottom_material = global::Sensus.Android.Resource.Dimension.abc_edit_text_inset_bottom_material;
+			global::XLabs.Forms.Resource.Dimension.abc_edit_text_inset_horizontal_material = global::Sensus.Android.Resource.Dimension.abc_edit_text_inset_horizontal_material;
+			global::XLabs.Forms.Resource.Dimension.abc_edit_text_inset_top_material = global::Sensus.Android.Resource.Dimension.abc_edit_text_inset_top_material;
+			global::XLabs.Forms.Resource.Dimension.abc_floating_window_z = global::Sensus.Android.Resource.Dimension.abc_floating_window_z;
+			global::XLabs.Forms.Resource.Dimension.abc_list_item_padding_horizontal_material = global::Sensus.Android.Resource.Dimension.abc_list_item_padding_horizontal_material;
+			global::XLabs.Forms.Resource.Dimension.abc_panel_menu_list_width = global::Sensus.Android.Resource.Dimension.abc_panel_menu_list_width;
+			global::XLabs.Forms.Resource.Dimension.abc_search_view_preferred_width = global::Sensus.Android.Resource.Dimension.abc_search_view_preferred_width;
+			global::XLabs.Forms.Resource.Dimension.abc_search_view_text_min_width = global::Sensus.Android.Resource.Dimension.abc_search_view_text_min_width;
+			global::XLabs.Forms.Resource.Dimension.abc_switch_padding = global::Sensus.Android.Resource.Dimension.abc_switch_padding;
+			global::XLabs.Forms.Resource.Dimension.abc_text_size_body_1_material = global::Sensus.Android.Resource.Dimension.abc_text_size_body_1_material;
+			global::XLabs.Forms.Resource.Dimension.abc_text_size_body_2_material = global::Sensus.Android.Resource.Dimension.abc_text_size_body_2_material;
+			global::XLabs.Forms.Resource.Dimension.abc_text_size_button_material = global::Sensus.Android.Resource.Dimension.abc_text_size_button_material;
+			global::XLabs.Forms.Resource.Dimension.abc_text_size_caption_material = global::Sensus.Android.Resource.Dimension.abc_text_size_caption_material;
+			global::XLabs.Forms.Resource.Dimension.abc_text_size_display_1_material = global::Sensus.Android.Resource.Dimension.abc_text_size_display_1_material;
+			global::XLabs.Forms.Resource.Dimension.abc_text_size_display_2_material = global::Sensus.Android.Resource.Dimension.abc_text_size_display_2_material;
+			global::XLabs.Forms.Resource.Dimension.abc_text_size_display_3_material = global::Sensus.Android.Resource.Dimension.abc_text_size_display_3_material;
+			global::XLabs.Forms.Resource.Dimension.abc_text_size_display_4_material = global::Sensus.Android.Resource.Dimension.abc_text_size_display_4_material;
+			global::XLabs.Forms.Resource.Dimension.abc_text_size_headline_material = global::Sensus.Android.Resource.Dimension.abc_text_size_headline_material;
+			global::XLabs.Forms.Resource.Dimension.abc_text_size_large_material = global::Sensus.Android.Resource.Dimension.abc_text_size_large_material;
+			global::XLabs.Forms.Resource.Dimension.abc_text_size_medium_material = global::Sensus.Android.Resource.Dimension.abc_text_size_medium_material;
+			global::XLabs.Forms.Resource.Dimension.abc_text_size_menu_material = global::Sensus.Android.Resource.Dimension.abc_text_size_menu_material;
+			global::XLabs.Forms.Resource.Dimension.abc_text_size_small_material = global::Sensus.Android.Resource.Dimension.abc_text_size_small_material;
+			global::XLabs.Forms.Resource.Dimension.abc_text_size_subhead_material = global::Sensus.Android.Resource.Dimension.abc_text_size_subhead_material;
+			global::XLabs.Forms.Resource.Dimension.abc_text_size_subtitle_material_toolbar = global::Sensus.Android.Resource.Dimension.abc_text_size_subtitle_material_toolbar;
+			global::XLabs.Forms.Resource.Dimension.abc_text_size_title_material = global::Sensus.Android.Resource.Dimension.abc_text_size_title_material;
+			global::XLabs.Forms.Resource.Dimension.abc_text_size_title_material_toolbar = global::Sensus.Android.Resource.Dimension.abc_text_size_title_material_toolbar;
+			global::XLabs.Forms.Resource.Dimension.calendar_day_headers_paddingbottom = global::Sensus.Android.Resource.Dimension.calendar_day_headers_paddingbottom;
+			global::XLabs.Forms.Resource.Dimension.calendar_month_title_bottommargin = global::Sensus.Android.Resource.Dimension.calendar_month_title_bottommargin;
+			global::XLabs.Forms.Resource.Dimension.calendar_month_topmargin = global::Sensus.Android.Resource.Dimension.calendar_month_topmargin;
+			global::XLabs.Forms.Resource.Dimension.calendar_text_medium = global::Sensus.Android.Resource.Dimension.calendar_text_medium;
+			global::XLabs.Forms.Resource.Dimension.calendar_text_small = global::Sensus.Android.Resource.Dimension.calendar_text_small;
+			global::XLabs.Forms.Resource.Dimension.cardview_compat_inset_shadow = global::Sensus.Android.Resource.Dimension.cardview_compat_inset_shadow;
+			global::XLabs.Forms.Resource.Dimension.cardview_default_elevation = global::Sensus.Android.Resource.Dimension.cardview_default_elevation;
+			global::XLabs.Forms.Resource.Dimension.cardview_default_radius = global::Sensus.Android.Resource.Dimension.cardview_default_radius;
+			global::XLabs.Forms.Resource.Dimension.design_appbar_elevation = global::Sensus.Android.Resource.Dimension.design_appbar_elevation;
+			global::XLabs.Forms.Resource.Dimension.design_fab_border_width = global::Sensus.Android.Resource.Dimension.design_fab_border_width;
+			global::XLabs.Forms.Resource.Dimension.design_fab_content_size = global::Sensus.Android.Resource.Dimension.design_fab_content_size;
+			global::XLabs.Forms.Resource.Dimension.design_fab_elevation = global::Sensus.Android.Resource.Dimension.design_fab_elevation;
+			global::XLabs.Forms.Resource.Dimension.design_fab_size_mini = global::Sensus.Android.Resource.Dimension.design_fab_size_mini;
+			global::XLabs.Forms.Resource.Dimension.design_fab_size_normal = global::Sensus.Android.Resource.Dimension.design_fab_size_normal;
+			global::XLabs.Forms.Resource.Dimension.design_fab_translation_z_pressed = global::Sensus.Android.Resource.Dimension.design_fab_translation_z_pressed;
+			global::XLabs.Forms.Resource.Dimension.design_navigation_elevation = global::Sensus.Android.Resource.Dimension.design_navigation_elevation;
+			global::XLabs.Forms.Resource.Dimension.design_navigation_icon_padding = global::Sensus.Android.Resource.Dimension.design_navigation_icon_padding;
+			global::XLabs.Forms.Resource.Dimension.design_navigation_icon_size = global::Sensus.Android.Resource.Dimension.design_navigation_icon_size;
+			global::XLabs.Forms.Resource.Dimension.design_navigation_max_width = global::Sensus.Android.Resource.Dimension.design_navigation_max_width;
+			global::XLabs.Forms.Resource.Dimension.design_navigation_padding_bottom = global::Sensus.Android.Resource.Dimension.design_navigation_padding_bottom;
+			global::XLabs.Forms.Resource.Dimension.design_navigation_padding_top_default = global::Sensus.Android.Resource.Dimension.design_navigation_padding_top_default;
+			global::XLabs.Forms.Resource.Dimension.design_navigation_separator_vertical_padding = global::Sensus.Android.Resource.Dimension.design_navigation_separator_vertical_padding;
+			global::XLabs.Forms.Resource.Dimension.design_snackbar_action_inline_max_width = global::Sensus.Android.Resource.Dimension.design_snackbar_action_inline_max_width;
+			global::XLabs.Forms.Resource.Dimension.design_snackbar_background_corner_radius = global::Sensus.Android.Resource.Dimension.design_snackbar_background_corner_radius;
+			global::XLabs.Forms.Resource.Dimension.design_snackbar_elevation = global::Sensus.Android.Resource.Dimension.design_snackbar_elevation;
+			global::XLabs.Forms.Resource.Dimension.design_snackbar_extra_spacing_horizontal = global::Sensus.Android.Resource.Dimension.design_snackbar_extra_spacing_horizontal;
+			global::XLabs.Forms.Resource.Dimension.design_snackbar_max_width = global::Sensus.Android.Resource.Dimension.design_snackbar_max_width;
+			global::XLabs.Forms.Resource.Dimension.design_snackbar_min_width = global::Sensus.Android.Resource.Dimension.design_snackbar_min_width;
+			global::XLabs.Forms.Resource.Dimension.design_snackbar_padding_horizontal = global::Sensus.Android.Resource.Dimension.design_snackbar_padding_horizontal;
+			global::XLabs.Forms.Resource.Dimension.design_snackbar_padding_vertical = global::Sensus.Android.Resource.Dimension.design_snackbar_padding_vertical;
+			global::XLabs.Forms.Resource.Dimension.design_snackbar_padding_vertical_2lines = global::Sensus.Android.Resource.Dimension.design_snackbar_padding_vertical_2lines;
+			global::XLabs.Forms.Resource.Dimension.design_snackbar_text_size = global::Sensus.Android.Resource.Dimension.design_snackbar_text_size;
+			global::XLabs.Forms.Resource.Dimension.design_tab_max_width = global::Sensus.Android.Resource.Dimension.design_tab_max_width;
+			global::XLabs.Forms.Resource.Dimension.design_tab_min_width = global::Sensus.Android.Resource.Dimension.design_tab_min_width;
+			global::XLabs.Forms.Resource.Dimension.dialog_fixed_height_major = global::Sensus.Android.Resource.Dimension.dialog_fixed_height_major;
+			global::XLabs.Forms.Resource.Dimension.dialog_fixed_height_minor = global::Sensus.Android.Resource.Dimension.dialog_fixed_height_minor;
+			global::XLabs.Forms.Resource.Dimension.dialog_fixed_width_major = global::Sensus.Android.Resource.Dimension.dialog_fixed_width_major;
+			global::XLabs.Forms.Resource.Dimension.dialog_fixed_width_minor = global::Sensus.Android.Resource.Dimension.dialog_fixed_width_minor;
+			global::XLabs.Forms.Resource.Dimension.disabled_alpha_material_dark = global::Sensus.Android.Resource.Dimension.disabled_alpha_material_dark;
+			global::XLabs.Forms.Resource.Dimension.disabled_alpha_material_light = global::Sensus.Android.Resource.Dimension.disabled_alpha_material_light;
+			global::XLabs.Forms.Resource.Dimension.highlight_alpha_material_colored = global::Sensus.Android.Resource.Dimension.highlight_alpha_material_colored;
+			global::XLabs.Forms.Resource.Dimension.highlight_alpha_material_dark = global::Sensus.Android.Resource.Dimension.highlight_alpha_material_dark;
+			global::XLabs.Forms.Resource.Dimension.highlight_alpha_material_light = global::Sensus.Android.Resource.Dimension.highlight_alpha_material_light;
+			global::XLabs.Forms.Resource.Dimension.mr_media_route_controller_art_max_height = global::Sensus.Android.Resource.Dimension.mr_media_route_controller_art_max_height;
+			global::XLabs.Forms.Resource.Dimension.notification_large_icon_height = global::Sensus.Android.Resource.Dimension.notification_large_icon_height;
+			global::XLabs.Forms.Resource.Dimension.notification_large_icon_width = global::Sensus.Android.Resource.Dimension.notification_large_icon_width;
+			global::XLabs.Forms.Resource.Dimension.notification_subtext_size = global::Sensus.Android.Resource.Dimension.notification_subtext_size;
+			global::XLabs.Forms.Resource.Drawable.abc_ab_share_pack_mtrl_alpha = global::Sensus.Android.Resource.Drawable.abc_ab_share_pack_mtrl_alpha;
+			global::XLabs.Forms.Resource.Drawable.abc_action_bar_item_background_material = global::Sensus.Android.Resource.Drawable.abc_action_bar_item_background_material;
+			global::XLabs.Forms.Resource.Drawable.abc_btn_borderless_material = global::Sensus.Android.Resource.Drawable.abc_btn_borderless_material;
+			global::XLabs.Forms.Resource.Drawable.abc_btn_check_material = global::Sensus.Android.Resource.Drawable.abc_btn_check_material;
+			global::XLabs.Forms.Resource.Drawable.abc_btn_check_to_on_mtrl_000 = global::Sensus.Android.Resource.Drawable.abc_btn_check_to_on_mtrl_000;
+			global::XLabs.Forms.Resource.Drawable.abc_btn_check_to_on_mtrl_015 = global::Sensus.Android.Resource.Drawable.abc_btn_check_to_on_mtrl_015;
+			global::XLabs.Forms.Resource.Drawable.abc_btn_colored_material = global::Sensus.Android.Resource.Drawable.abc_btn_colored_material;
+			global::XLabs.Forms.Resource.Drawable.abc_btn_default_mtrl_shape = global::Sensus.Android.Resource.Drawable.abc_btn_default_mtrl_shape;
+			global::XLabs.Forms.Resource.Drawable.abc_btn_radio_material = global::Sensus.Android.Resource.Drawable.abc_btn_radio_material;
+			global::XLabs.Forms.Resource.Drawable.abc_btn_radio_to_on_mtrl_000 = global::Sensus.Android.Resource.Drawable.abc_btn_radio_to_on_mtrl_000;
+			global::XLabs.Forms.Resource.Drawable.abc_btn_radio_to_on_mtrl_015 = global::Sensus.Android.Resource.Drawable.abc_btn_radio_to_on_mtrl_015;
+			global::XLabs.Forms.Resource.Drawable.abc_btn_rating_star_off_mtrl_alpha = global::Sensus.Android.Resource.Drawable.abc_btn_rating_star_off_mtrl_alpha;
+			global::XLabs.Forms.Resource.Drawable.abc_btn_rating_star_on_mtrl_alpha = global::Sensus.Android.Resource.Drawable.abc_btn_rating_star_on_mtrl_alpha;
+			global::XLabs.Forms.Resource.Drawable.abc_btn_switch_to_on_mtrl_00001 = global::Sensus.Android.Resource.Drawable.abc_btn_switch_to_on_mtrl_00001;
+			global::XLabs.Forms.Resource.Drawable.abc_btn_switch_to_on_mtrl_00012 = global::Sensus.Android.Resource.Drawable.abc_btn_switch_to_on_mtrl_00012;
+			global::XLabs.Forms.Resource.Drawable.abc_cab_background_internal_bg = global::Sensus.Android.Resource.Drawable.abc_cab_background_internal_bg;
+			global::XLabs.Forms.Resource.Drawable.abc_cab_background_top_material = global::Sensus.Android.Resource.Drawable.abc_cab_background_top_material;
+			global::XLabs.Forms.Resource.Drawable.abc_cab_background_top_mtrl_alpha = global::Sensus.Android.Resource.Drawable.abc_cab_background_top_mtrl_alpha;
+			global::XLabs.Forms.Resource.Drawable.abc_control_background_material = global::Sensus.Android.Resource.Drawable.abc_control_background_material;
+			global::XLabs.Forms.Resource.Drawable.abc_dialog_material_background_dark = global::Sensus.Android.Resource.Drawable.abc_dialog_material_background_dark;
+			global::XLabs.Forms.Resource.Drawable.abc_dialog_material_background_light = global::Sensus.Android.Resource.Drawable.abc_dialog_material_background_light;
+			global::XLabs.Forms.Resource.Drawable.abc_edit_text_material = global::Sensus.Android.Resource.Drawable.abc_edit_text_material;
+			global::XLabs.Forms.Resource.Drawable.abc_ic_ab_back_mtrl_am_alpha = global::Sensus.Android.Resource.Drawable.abc_ic_ab_back_mtrl_am_alpha;
+			global::XLabs.Forms.Resource.Drawable.abc_ic_clear_mtrl_alpha = global::Sensus.Android.Resource.Drawable.abc_ic_clear_mtrl_alpha;
+			global::XLabs.Forms.Resource.Drawable.abc_ic_commit_search_api_mtrl_alpha = global::Sensus.Android.Resource.Drawable.abc_ic_commit_search_api_mtrl_alpha;
+			global::XLabs.Forms.Resource.Drawable.abc_ic_go_search_api_mtrl_alpha = global::Sensus.Android.Resource.Drawable.abc_ic_go_search_api_mtrl_alpha;
+			global::XLabs.Forms.Resource.Drawable.abc_ic_menu_copy_mtrl_am_alpha = global::Sensus.Android.Resource.Drawable.abc_ic_menu_copy_mtrl_am_alpha;
+			global::XLabs.Forms.Resource.Drawable.abc_ic_menu_cut_mtrl_alpha = global::Sensus.Android.Resource.Drawable.abc_ic_menu_cut_mtrl_alpha;
+			global::XLabs.Forms.Resource.Drawable.abc_ic_menu_moreoverflow_mtrl_alpha = global::Sensus.Android.Resource.Drawable.abc_ic_menu_moreoverflow_mtrl_alpha;
+			global::XLabs.Forms.Resource.Drawable.abc_ic_menu_paste_mtrl_am_alpha = global::Sensus.Android.Resource.Drawable.abc_ic_menu_paste_mtrl_am_alpha;
+			global::XLabs.Forms.Resource.Drawable.abc_ic_menu_selectall_mtrl_alpha = global::Sensus.Android.Resource.Drawable.abc_ic_menu_selectall_mtrl_alpha;
+			global::XLabs.Forms.Resource.Drawable.abc_ic_menu_share_mtrl_alpha = global::Sensus.Android.Resource.Drawable.abc_ic_menu_share_mtrl_alpha;
+			global::XLabs.Forms.Resource.Drawable.abc_ic_search_api_mtrl_alpha = global::Sensus.Android.Resource.Drawable.abc_ic_search_api_mtrl_alpha;
+			global::XLabs.Forms.Resource.Drawable.abc_ic_voice_search_api_mtrl_alpha = global::Sensus.Android.Resource.Drawable.abc_ic_voice_search_api_mtrl_alpha;
+			global::XLabs.Forms.Resource.Drawable.abc_item_background_holo_dark = global::Sensus.Android.Resource.Drawable.abc_item_background_holo_dark;
+			global::XLabs.Forms.Resource.Drawable.abc_item_background_holo_light = global::Sensus.Android.Resource.Drawable.abc_item_background_holo_light;
+			global::XLabs.Forms.Resource.Drawable.abc_list_divider_mtrl_alpha = global::Sensus.Android.Resource.Drawable.abc_list_divider_mtrl_alpha;
+			global::XLabs.Forms.Resource.Drawable.abc_list_focused_holo = global::Sensus.Android.Resource.Drawable.abc_list_focused_holo;
+			global::XLabs.Forms.Resource.Drawable.abc_list_longpressed_holo = global::Sensus.Android.Resource.Drawable.abc_list_longpressed_holo;
+			global::XLabs.Forms.Resource.Drawable.abc_list_pressed_holo_dark = global::Sensus.Android.Resource.Drawable.abc_list_pressed_holo_dark;
+			global::XLabs.Forms.Resource.Drawable.abc_list_pressed_holo_light = global::Sensus.Android.Resource.Drawable.abc_list_pressed_holo_light;
+			global::XLabs.Forms.Resource.Drawable.abc_list_selector_background_transition_holo_dark = global::Sensus.Android.Resource.Drawable.abc_list_selector_background_transition_holo_dark;
+			global::XLabs.Forms.Resource.Drawable.abc_list_selector_background_transition_holo_light = global::Sensus.Android.Resource.Drawable.abc_list_selector_background_transition_holo_light;
+			global::XLabs.Forms.Resource.Drawable.abc_list_selector_disabled_holo_dark = global::Sensus.Android.Resource.Drawable.abc_list_selector_disabled_holo_dark;
+			global::XLabs.Forms.Resource.Drawable.abc_list_selector_disabled_holo_light = global::Sensus.Android.Resource.Drawable.abc_list_selector_disabled_holo_light;
+			global::XLabs.Forms.Resource.Drawable.abc_list_selector_holo_dark = global::Sensus.Android.Resource.Drawable.abc_list_selector_holo_dark;
+			global::XLabs.Forms.Resource.Drawable.abc_list_selector_holo_light = global::Sensus.Android.Resource.Drawable.abc_list_selector_holo_light;
+			global::XLabs.Forms.Resource.Drawable.abc_menu_hardkey_panel_mtrl_mult = global::Sensus.Android.Resource.Drawable.abc_menu_hardkey_panel_mtrl_mult;
+			global::XLabs.Forms.Resource.Drawable.abc_popup_background_mtrl_mult = global::Sensus.Android.Resource.Drawable.abc_popup_background_mtrl_mult;
+			global::XLabs.Forms.Resource.Drawable.abc_ratingbar_full_material = global::Sensus.Android.Resource.Drawable.abc_ratingbar_full_material;
+			global::XLabs.Forms.Resource.Drawable.abc_spinner_mtrl_am_alpha = global::Sensus.Android.Resource.Drawable.abc_spinner_mtrl_am_alpha;
+			global::XLabs.Forms.Resource.Drawable.abc_spinner_textfield_background_material = global::Sensus.Android.Resource.Drawable.abc_spinner_textfield_background_material;
+			global::XLabs.Forms.Resource.Drawable.abc_switch_thumb_material = global::Sensus.Android.Resource.Drawable.abc_switch_thumb_material;
+			global::XLabs.Forms.Resource.Drawable.abc_switch_track_mtrl_alpha = global::Sensus.Android.Resource.Drawable.abc_switch_track_mtrl_alpha;
+			global::XLabs.Forms.Resource.Drawable.abc_tab_indicator_material = global::Sensus.Android.Resource.Drawable.abc_tab_indicator_material;
+			global::XLabs.Forms.Resource.Drawable.abc_tab_indicator_mtrl_alpha = global::Sensus.Android.Resource.Drawable.abc_tab_indicator_mtrl_alpha;
+			global::XLabs.Forms.Resource.Drawable.abc_text_cursor_material = global::Sensus.Android.Resource.Drawable.abc_text_cursor_material;
+			global::XLabs.Forms.Resource.Drawable.abc_textfield_activated_mtrl_alpha = global::Sensus.Android.Resource.Drawable.abc_textfield_activated_mtrl_alpha;
+			global::XLabs.Forms.Resource.Drawable.abc_textfield_default_mtrl_alpha = global::Sensus.Android.Resource.Drawable.abc_textfield_default_mtrl_alpha;
+			global::XLabs.Forms.Resource.Drawable.abc_textfield_search_activated_mtrl_alpha = global::Sensus.Android.Resource.Drawable.abc_textfield_search_activated_mtrl_alpha;
+			global::XLabs.Forms.Resource.Drawable.abc_textfield_search_default_mtrl_alpha = global::Sensus.Android.Resource.Drawable.abc_textfield_search_default_mtrl_alpha;
+			global::XLabs.Forms.Resource.Drawable.abc_textfield_search_material = global::Sensus.Android.Resource.Drawable.abc_textfield_search_material;
+			global::XLabs.Forms.Resource.Drawable.ad16 = global::Sensus.Android.Resource.Drawable.ad16;
+			global::XLabs.Forms.Resource.Drawable.calendar_bg_selector = global::Sensus.Android.Resource.Drawable.calendar_bg_selector;
+			global::XLabs.Forms.Resource.Drawable.design_fab_background = global::Sensus.Android.Resource.Drawable.design_fab_background;
+			global::XLabs.Forms.Resource.Drawable.design_snackbar_background = global::Sensus.Android.Resource.Drawable.design_snackbar_background;
+			global::XLabs.Forms.Resource.Drawable.ic_cast_dark = global::Sensus.Android.Resource.Drawable.ic_cast_dark;
+			global::XLabs.Forms.Resource.Drawable.ic_cast_disabled_light = global::Sensus.Android.Resource.Drawable.ic_cast_disabled_light;
+			global::XLabs.Forms.Resource.Drawable.ic_cast_light = global::Sensus.Android.Resource.Drawable.ic_cast_light;
+			global::XLabs.Forms.Resource.Drawable.ic_cast_off_light = global::Sensus.Android.Resource.Drawable.ic_cast_off_light;
+			global::XLabs.Forms.Resource.Drawable.ic_cast_on_0_light = global::Sensus.Android.Resource.Drawable.ic_cast_on_0_light;
+			global::XLabs.Forms.Resource.Drawable.ic_cast_on_1_light = global::Sensus.Android.Resource.Drawable.ic_cast_on_1_light;
+			global::XLabs.Forms.Resource.Drawable.ic_cast_on_2_light = global::Sensus.Android.Resource.Drawable.ic_cast_on_2_light;
+			global::XLabs.Forms.Resource.Drawable.ic_cast_on_light = global::Sensus.Android.Resource.Drawable.ic_cast_on_light;
+			global::XLabs.Forms.Resource.Drawable.ic_media_pause = global::Sensus.Android.Resource.Drawable.ic_media_pause;
+			global::XLabs.Forms.Resource.Drawable.ic_media_play = global::Sensus.Android.Resource.Drawable.ic_media_play;
+			global::XLabs.Forms.Resource.Drawable.ic_media_route_disabled_mono_dark = global::Sensus.Android.Resource.Drawable.ic_media_route_disabled_mono_dark;
+			global::XLabs.Forms.Resource.Drawable.ic_media_route_off_mono_dark = global::Sensus.Android.Resource.Drawable.ic_media_route_off_mono_dark;
+			global::XLabs.Forms.Resource.Drawable.ic_media_route_on_0_mono_dark = global::Sensus.Android.Resource.Drawable.ic_media_route_on_0_mono_dark;
+			global::XLabs.Forms.Resource.Drawable.ic_media_route_on_1_mono_dark = global::Sensus.Android.Resource.Drawable.ic_media_route_on_1_mono_dark;
+			global::XLabs.Forms.Resource.Drawable.ic_media_route_on_2_mono_dark = global::Sensus.Android.Resource.Drawable.ic_media_route_on_2_mono_dark;
+			global::XLabs.Forms.Resource.Drawable.ic_media_route_on_mono_dark = global::Sensus.Android.Resource.Drawable.ic_media_route_on_mono_dark;
+			global::XLabs.Forms.Resource.Drawable.ic_pause_dark = global::Sensus.Android.Resource.Drawable.ic_pause_dark;
+			global::XLabs.Forms.Resource.Drawable.ic_pause_light = global::Sensus.Android.Resource.Drawable.ic_pause_light;
+			global::XLabs.Forms.Resource.Drawable.ic_play_dark = global::Sensus.Android.Resource.Drawable.ic_play_dark;
+			global::XLabs.Forms.Resource.Drawable.ic_play_light = global::Sensus.Android.Resource.Drawable.ic_play_light;
+			global::XLabs.Forms.Resource.Drawable.ic_setting_dark = global::Sensus.Android.Resource.Drawable.ic_setting_dark;
+			global::XLabs.Forms.Resource.Drawable.ic_setting_light = global::Sensus.Android.Resource.Drawable.ic_setting_light;
+			global::XLabs.Forms.Resource.Drawable.mr_ic_cast_dark = global::Sensus.Android.Resource.Drawable.mr_ic_cast_dark;
+			global::XLabs.Forms.Resource.Drawable.mr_ic_cast_light = global::Sensus.Android.Resource.Drawable.mr_ic_cast_light;
+			global::XLabs.Forms.Resource.Drawable.mr_ic_media_route_connecting_mono_dark = global::Sensus.Android.Resource.Drawable.mr_ic_media_route_connecting_mono_dark;
+			global::XLabs.Forms.Resource.Drawable.mr_ic_media_route_connecting_mono_light = global::Sensus.Android.Resource.Drawable.mr_ic_media_route_connecting_mono_light;
+			global::XLabs.Forms.Resource.Drawable.mr_ic_media_route_mono_dark = global::Sensus.Android.Resource.Drawable.mr_ic_media_route_mono_dark;
+			global::XLabs.Forms.Resource.Drawable.mr_ic_media_route_mono_light = global::Sensus.Android.Resource.Drawable.mr_ic_media_route_mono_light;
+			global::XLabs.Forms.Resource.Drawable.mr_ic_pause_dark = global::Sensus.Android.Resource.Drawable.mr_ic_pause_dark;
+			global::XLabs.Forms.Resource.Drawable.mr_ic_pause_light = global::Sensus.Android.Resource.Drawable.mr_ic_pause_light;
+			global::XLabs.Forms.Resource.Drawable.mr_ic_play_dark = global::Sensus.Android.Resource.Drawable.mr_ic_play_dark;
+			global::XLabs.Forms.Resource.Drawable.mr_ic_play_light = global::Sensus.Android.Resource.Drawable.mr_ic_play_light;
+			global::XLabs.Forms.Resource.Drawable.mr_ic_settings_dark = global::Sensus.Android.Resource.Drawable.mr_ic_settings_dark;
+			global::XLabs.Forms.Resource.Drawable.mr_ic_settings_light = global::Sensus.Android.Resource.Drawable.mr_ic_settings_light;
+			global::XLabs.Forms.Resource.Drawable.notification_template_icon_bg = global::Sensus.Android.Resource.Drawable.notification_template_icon_bg;
+			global::XLabs.Forms.Resource.Id.action0 = global::Sensus.Android.Resource.Id.action0;
+			global::XLabs.Forms.Resource.Id.action_bar = global::Sensus.Android.Resource.Id.action_bar;
+			global::XLabs.Forms.Resource.Id.action_bar_activity_content = global::Sensus.Android.Resource.Id.action_bar_activity_content;
+			global::XLabs.Forms.Resource.Id.action_bar_container = global::Sensus.Android.Resource.Id.action_bar_container;
+			global::XLabs.Forms.Resource.Id.action_bar_root = global::Sensus.Android.Resource.Id.action_bar_root;
+			global::XLabs.Forms.Resource.Id.action_bar_spinner = global::Sensus.Android.Resource.Id.action_bar_spinner;
+			global::XLabs.Forms.Resource.Id.action_bar_subtitle = global::Sensus.Android.Resource.Id.action_bar_subtitle;
+			global::XLabs.Forms.Resource.Id.action_bar_title = global::Sensus.Android.Resource.Id.action_bar_title;
+			global::XLabs.Forms.Resource.Id.action_context_bar = global::Sensus.Android.Resource.Id.action_context_bar;
+			global::XLabs.Forms.Resource.Id.action_divider = global::Sensus.Android.Resource.Id.action_divider;
+			global::XLabs.Forms.Resource.Id.action_menu_divider = global::Sensus.Android.Resource.Id.action_menu_divider;
+			global::XLabs.Forms.Resource.Id.action_menu_presenter = global::Sensus.Android.Resource.Id.action_menu_presenter;
+			global::XLabs.Forms.Resource.Id.action_mode_bar = global::Sensus.Android.Resource.Id.action_mode_bar;
+			global::XLabs.Forms.Resource.Id.action_mode_bar_stub = global::Sensus.Android.Resource.Id.action_mode_bar_stub;
+			global::XLabs.Forms.Resource.Id.action_mode_close_button = global::Sensus.Android.Resource.Id.action_mode_close_button;
+			global::XLabs.Forms.Resource.Id.activity_chooser_view_content = global::Sensus.Android.Resource.Id.activity_chooser_view_content;
+			global::XLabs.Forms.Resource.Id.alertTitle = global::Sensus.Android.Resource.Id.alertTitle;
+			global::XLabs.Forms.Resource.Id.always = global::Sensus.Android.Resource.Id.always;
+			global::XLabs.Forms.Resource.Id.art = global::Sensus.Android.Resource.Id.art;
+			global::XLabs.Forms.Resource.Id.beginning = global::Sensus.Android.Resource.Id.beginning;
+			global::XLabs.Forms.Resource.Id.bottom = global::Sensus.Android.Resource.Id.bottom;
+			global::XLabs.Forms.Resource.Id.buttonPanel = global::Sensus.Android.Resource.Id.buttonPanel;
+			global::XLabs.Forms.Resource.Id.buttons = global::Sensus.Android.Resource.Id.buttons;
+			global::XLabs.Forms.Resource.Id.calendar_grid = global::Sensus.Android.Resource.Id.calendar_grid;
+			global::XLabs.Forms.Resource.Id.calendar_view = global::Sensus.Android.Resource.Id.calendar_view;
+			global::XLabs.Forms.Resource.Id.cancel_action = global::Sensus.Android.Resource.Id.cancel_action;
+			global::XLabs.Forms.Resource.Id.center = global::Sensus.Android.Resource.Id.center;
+			global::XLabs.Forms.Resource.Id.center_horizontal = global::Sensus.Android.Resource.Id.center_horizontal;
+			global::XLabs.Forms.Resource.Id.center_vertical = global::Sensus.Android.Resource.Id.center_vertical;
+			global::XLabs.Forms.Resource.Id.checkbox = global::Sensus.Android.Resource.Id.checkbox;
+			global::XLabs.Forms.Resource.Id.chronometer = global::Sensus.Android.Resource.Id.chronometer;
+			global::XLabs.Forms.Resource.Id.clip_horizontal = global::Sensus.Android.Resource.Id.clip_horizontal;
+			global::XLabs.Forms.Resource.Id.clip_vertical = global::Sensus.Android.Resource.Id.clip_vertical;
+			global::XLabs.Forms.Resource.Id.collapseActionView = global::Sensus.Android.Resource.Id.collapseActionView;
+			global::XLabs.Forms.Resource.Id.contentPanel = global::Sensus.Android.Resource.Id.contentPanel;
+			global::XLabs.Forms.Resource.Id.custom = global::Sensus.Android.Resource.Id.custom;
+			global::XLabs.Forms.Resource.Id.customPanel = global::Sensus.Android.Resource.Id.customPanel;
+			global::XLabs.Forms.Resource.Id.decor_content_parent = global::Sensus.Android.Resource.Id.decor_content_parent;
+			global::XLabs.Forms.Resource.Id.default_activity_button = global::Sensus.Android.Resource.Id.default_activity_button;
+			global::XLabs.Forms.Resource.Id.default_control_frame = global::Sensus.Android.Resource.Id.default_control_frame;
+			global::XLabs.Forms.Resource.Id.disableHome = global::Sensus.Android.Resource.Id.disableHome;
+			global::XLabs.Forms.Resource.Id.disconnect = global::Sensus.Android.Resource.Id.disconnect;
+			global::XLabs.Forms.Resource.Id.edit_query = global::Sensus.Android.Resource.Id.edit_query;
+			global::XLabs.Forms.Resource.Id.end = global::Sensus.Android.Resource.Id.end;
+			global::XLabs.Forms.Resource.Id.end_padder = global::Sensus.Android.Resource.Id.end_padder;
+			global::XLabs.Forms.Resource.Id.enterAlways = global::Sensus.Android.Resource.Id.enterAlways;
+			global::XLabs.Forms.Resource.Id.enterAlwaysCollapsed = global::Sensus.Android.Resource.Id.enterAlwaysCollapsed;
+			global::XLabs.Forms.Resource.Id.exitUntilCollapsed = global::Sensus.Android.Resource.Id.exitUntilCollapsed;
+			global::XLabs.Forms.Resource.Id.expand_activities_button = global::Sensus.Android.Resource.Id.expand_activities_button;
+			global::XLabs.Forms.Resource.Id.expanded_menu = global::Sensus.Android.Resource.Id.expanded_menu;
+			global::XLabs.Forms.Resource.Id.fill = global::Sensus.Android.Resource.Id.fill;
+			global::XLabs.Forms.Resource.Id.fill_horizontal = global::Sensus.Android.Resource.Id.fill_horizontal;
+			global::XLabs.Forms.Resource.Id.fill_vertical = global::Sensus.Android.Resource.Id.fill_vertical;
+			global::XLabs.Forms.Resource.Id.@fixed = global::Sensus.Android.Resource.Id.@fixed;
+			global::XLabs.Forms.Resource.Id.home = global::Sensus.Android.Resource.Id.home;
+			global::XLabs.Forms.Resource.Id.homeAsUp = global::Sensus.Android.Resource.Id.homeAsUp;
+			global::XLabs.Forms.Resource.Id.icon = global::Sensus.Android.Resource.Id.icon;
+			global::XLabs.Forms.Resource.Id.ifRoom = global::Sensus.Android.Resource.Id.ifRoom;
+			global::XLabs.Forms.Resource.Id.image = global::Sensus.Android.Resource.Id.image;
+			global::XLabs.Forms.Resource.Id.info = global::Sensus.Android.Resource.Id.info;
+			global::XLabs.Forms.Resource.Id.left = global::Sensus.Android.Resource.Id.left;
+			global::XLabs.Forms.Resource.Id.left_arrow = global::Sensus.Android.Resource.Id.left_arrow;
+			global::XLabs.Forms.Resource.Id.line1 = global::Sensus.Android.Resource.Id.line1;
+			global::XLabs.Forms.Resource.Id.line3 = global::Sensus.Android.Resource.Id.line3;
+			global::XLabs.Forms.Resource.Id.listMode = global::Sensus.Android.Resource.Id.listMode;
+			global::XLabs.Forms.Resource.Id.list_item = global::Sensus.Android.Resource.Id.list_item;
+			global::XLabs.Forms.Resource.Id.media_actions = global::Sensus.Android.Resource.Id.media_actions;
+			global::XLabs.Forms.Resource.Id.media_route_control_frame = global::Sensus.Android.Resource.Id.media_route_control_frame;
+			global::XLabs.Forms.Resource.Id.media_route_list = global::Sensus.Android.Resource.Id.media_route_list;
+			global::XLabs.Forms.Resource.Id.media_route_volume_layout = global::Sensus.Android.Resource.Id.media_route_volume_layout;
+			global::XLabs.Forms.Resource.Id.media_route_volume_slider = global::Sensus.Android.Resource.Id.media_route_volume_slider;
+			global::XLabs.Forms.Resource.Id.middle = global::Sensus.Android.Resource.Id.middle;
+			global::XLabs.Forms.Resource.Id.mini = global::Sensus.Android.Resource.Id.mini;
+			global::XLabs.Forms.Resource.Id.multiply = global::Sensus.Android.Resource.Id.multiply;
+			global::XLabs.Forms.Resource.Id.never = global::Sensus.Android.Resource.Id.never;
+			global::XLabs.Forms.Resource.Id.none = global::Sensus.Android.Resource.Id.none;
+			global::XLabs.Forms.Resource.Id.normal = global::Sensus.Android.Resource.Id.normal;
+			global::XLabs.Forms.Resource.Id.parallax = global::Sensus.Android.Resource.Id.parallax;
+			global::XLabs.Forms.Resource.Id.parentPanel = global::Sensus.Android.Resource.Id.parentPanel;
+			global::XLabs.Forms.Resource.Id.pin = global::Sensus.Android.Resource.Id.pin;
+			global::XLabs.Forms.Resource.Id.play_pause = global::Sensus.Android.Resource.Id.play_pause;
+			global::XLabs.Forms.Resource.Id.progress_circular = global::Sensus.Android.Resource.Id.progress_circular;
+			global::XLabs.Forms.Resource.Id.progress_horizontal = global::Sensus.Android.Resource.Id.progress_horizontal;
+			global::XLabs.Forms.Resource.Id.radio = global::Sensus.Android.Resource.Id.radio;
+			global::XLabs.Forms.Resource.Id.right = global::Sensus.Android.Resource.Id.right;
+			global::XLabs.Forms.Resource.Id.right_arrow = global::Sensus.Android.Resource.Id.right_arrow;
+			global::XLabs.Forms.Resource.Id.route_name = global::Sensus.Android.Resource.Id.route_name;
+			global::XLabs.Forms.Resource.Id.screen = global::Sensus.Android.Resource.Id.screen;
+			global::XLabs.Forms.Resource.Id.scroll = global::Sensus.Android.Resource.Id.scroll;
+			global::XLabs.Forms.Resource.Id.scrollView = global::Sensus.Android.Resource.Id.scrollView;
+			global::XLabs.Forms.Resource.Id.scrollable = global::Sensus.Android.Resource.Id.scrollable;
+			global::XLabs.Forms.Resource.Id.search_badge = global::Sensus.Android.Resource.Id.search_badge;
+			global::XLabs.Forms.Resource.Id.search_bar = global::Sensus.Android.Resource.Id.search_bar;
+			global::XLabs.Forms.Resource.Id.search_button = global::Sensus.Android.Resource.Id.search_button;
+			global::XLabs.Forms.Resource.Id.search_close_btn = global::Sensus.Android.Resource.Id.search_close_btn;
+			global::XLabs.Forms.Resource.Id.search_edit_frame = global::Sensus.Android.Resource.Id.search_edit_frame;
+			global::XLabs.Forms.Resource.Id.search_go_btn = global::Sensus.Android.Resource.Id.search_go_btn;
+			global::XLabs.Forms.Resource.Id.search_mag_icon = global::Sensus.Android.Resource.Id.search_mag_icon;
+			global::XLabs.Forms.Resource.Id.search_plate = global::Sensus.Android.Resource.Id.search_plate;
+			global::XLabs.Forms.Resource.Id.search_src_text = global::Sensus.Android.Resource.Id.search_src_text;
+			global::XLabs.Forms.Resource.Id.search_voice_btn = global::Sensus.Android.Resource.Id.search_voice_btn;
+			global::XLabs.Forms.Resource.Id.select_dialog_listview = global::Sensus.Android.Resource.Id.select_dialog_listview;
+			global::XLabs.Forms.Resource.Id.settings = global::Sensus.Android.Resource.Id.settings;
+			global::XLabs.Forms.Resource.Id.shortcut = global::Sensus.Android.Resource.Id.shortcut;
+			global::XLabs.Forms.Resource.Id.showCustom = global::Sensus.Android.Resource.Id.showCustom;
+			global::XLabs.Forms.Resource.Id.showHome = global::Sensus.Android.Resource.Id.showHome;
+			global::XLabs.Forms.Resource.Id.showTitle = global::Sensus.Android.Resource.Id.showTitle;
+			global::XLabs.Forms.Resource.Id.snackbar_action = global::Sensus.Android.Resource.Id.snackbar_action;
+			global::XLabs.Forms.Resource.Id.snackbar_text = global::Sensus.Android.Resource.Id.snackbar_text;
+			global::XLabs.Forms.Resource.Id.split_action_bar = global::Sensus.Android.Resource.Id.split_action_bar;
+			global::XLabs.Forms.Resource.Id.src_atop = global::Sensus.Android.Resource.Id.src_atop;
+			global::XLabs.Forms.Resource.Id.src_in = global::Sensus.Android.Resource.Id.src_in;
+			global::XLabs.Forms.Resource.Id.src_over = global::Sensus.Android.Resource.Id.src_over;
+			global::XLabs.Forms.Resource.Id.start = global::Sensus.Android.Resource.Id.start;
+			global::XLabs.Forms.Resource.Id.status_bar_latest_event_content = global::Sensus.Android.Resource.Id.status_bar_latest_event_content;
+			global::XLabs.Forms.Resource.Id.stop = global::Sensus.Android.Resource.Id.stop;
+			global::XLabs.Forms.Resource.Id.submit_area = global::Sensus.Android.Resource.Id.submit_area;
+			global::XLabs.Forms.Resource.Id.subtitle = global::Sensus.Android.Resource.Id.subtitle;
+			global::XLabs.Forms.Resource.Id.tabMode = global::Sensus.Android.Resource.Id.tabMode;
+			global::XLabs.Forms.Resource.Id.text = global::Sensus.Android.Resource.Id.text;
+			global::XLabs.Forms.Resource.Id.text2 = global::Sensus.Android.Resource.Id.text2;
+			global::XLabs.Forms.Resource.Id.textSpacerNoButtons = global::Sensus.Android.Resource.Id.textSpacerNoButtons;
+			global::XLabs.Forms.Resource.Id.time = global::Sensus.Android.Resource.Id.time;
+			global::XLabs.Forms.Resource.Id.title = global::Sensus.Android.Resource.Id.title;
+			global::XLabs.Forms.Resource.Id.title_bar = global::Sensus.Android.Resource.Id.title_bar;
+			global::XLabs.Forms.Resource.Id.title_template = global::Sensus.Android.Resource.Id.title_template;
+			global::XLabs.Forms.Resource.Id.top = global::Sensus.Android.Resource.Id.top;
+			global::XLabs.Forms.Resource.Id.topPanel = global::Sensus.Android.Resource.Id.topPanel;
+			global::XLabs.Forms.Resource.Id.up = global::Sensus.Android.Resource.Id.up;
+			global::XLabs.Forms.Resource.Id.useLogo = global::Sensus.Android.Resource.Id.useLogo;
+			global::XLabs.Forms.Resource.Id.view_offset_helper = global::Sensus.Android.Resource.Id.view_offset_helper;
+			global::XLabs.Forms.Resource.Id.withText = global::Sensus.Android.Resource.Id.withText;
+			global::XLabs.Forms.Resource.Id.wrap_content = global::Sensus.Android.Resource.Id.wrap_content;
+			global::XLabs.Forms.Resource.Integer.abc_config_activityDefaultDur = global::Sensus.Android.Resource.Integer.abc_config_activityDefaultDur;
+			global::XLabs.Forms.Resource.Integer.abc_config_activityShortDur = global::Sensus.Android.Resource.Integer.abc_config_activityShortDur;
+			global::XLabs.Forms.Resource.Integer.abc_max_action_buttons = global::Sensus.Android.Resource.Integer.abc_max_action_buttons;
+			global::XLabs.Forms.Resource.Integer.cancel_button_image_alpha = global::Sensus.Android.Resource.Integer.cancel_button_image_alpha;
+			global::XLabs.Forms.Resource.Integer.design_snackbar_text_max_lines = global::Sensus.Android.Resource.Integer.design_snackbar_text_max_lines;
+			global::XLabs.Forms.Resource.Integer.status_bar_notification_info_maxnum = global::Sensus.Android.Resource.Integer.status_bar_notification_info_maxnum;
+			global::XLabs.Forms.Resource.Layout.abc_action_bar_title_item = global::Sensus.Android.Resource.Layout.abc_action_bar_title_item;
+			global::XLabs.Forms.Resource.Layout.abc_action_bar_up_container = global::Sensus.Android.Resource.Layout.abc_action_bar_up_container;
+			global::XLabs.Forms.Resource.Layout.abc_action_bar_view_list_nav_layout = global::Sensus.Android.Resource.Layout.abc_action_bar_view_list_nav_layout;
+			global::XLabs.Forms.Resource.Layout.abc_action_menu_item_layout = global::Sensus.Android.Resource.Layout.abc_action_menu_item_layout;
+			global::XLabs.Forms.Resource.Layout.abc_action_menu_layout = global::Sensus.Android.Resource.Layout.abc_action_menu_layout;
+			global::XLabs.Forms.Resource.Layout.abc_action_mode_bar = global::Sensus.Android.Resource.Layout.abc_action_mode_bar;
+			global::XLabs.Forms.Resource.Layout.abc_action_mode_close_item_material = global::Sensus.Android.Resource.Layout.abc_action_mode_close_item_material;
+			global::XLabs.Forms.Resource.Layout.abc_activity_chooser_view = global::Sensus.Android.Resource.Layout.abc_activity_chooser_view;
+			global::XLabs.Forms.Resource.Layout.abc_activity_chooser_view_list_item = global::Sensus.Android.Resource.Layout.abc_activity_chooser_view_list_item;
+			global::XLabs.Forms.Resource.Layout.abc_alert_dialog_material = global::Sensus.Android.Resource.Layout.abc_alert_dialog_material;
+			global::XLabs.Forms.Resource.Layout.abc_dialog_title_material = global::Sensus.Android.Resource.Layout.abc_dialog_title_material;
+			global::XLabs.Forms.Resource.Layout.abc_expanded_menu_layout = global::Sensus.Android.Resource.Layout.abc_expanded_menu_layout;
+			global::XLabs.Forms.Resource.Layout.abc_list_menu_item_checkbox = global::Sensus.Android.Resource.Layout.abc_list_menu_item_checkbox;
+			global::XLabs.Forms.Resource.Layout.abc_list_menu_item_icon = global::Sensus.Android.Resource.Layout.abc_list_menu_item_icon;
+			global::XLabs.Forms.Resource.Layout.abc_list_menu_item_layout = global::Sensus.Android.Resource.Layout.abc_list_menu_item_layout;
+			global::XLabs.Forms.Resource.Layout.abc_list_menu_item_radio = global::Sensus.Android.Resource.Layout.abc_list_menu_item_radio;
+			global::XLabs.Forms.Resource.Layout.abc_popup_menu_item_layout = global::Sensus.Android.Resource.Layout.abc_popup_menu_item_layout;
+			global::XLabs.Forms.Resource.Layout.abc_screen_content_include = global::Sensus.Android.Resource.Layout.abc_screen_content_include;
+			global::XLabs.Forms.Resource.Layout.abc_screen_simple = global::Sensus.Android.Resource.Layout.abc_screen_simple;
+			global::XLabs.Forms.Resource.Layout.abc_screen_simple_overlay_action_mode = global::Sensus.Android.Resource.Layout.abc_screen_simple_overlay_action_mode;
+			global::XLabs.Forms.Resource.Layout.abc_screen_toolbar = global::Sensus.Android.Resource.Layout.abc_screen_toolbar;
+			global::XLabs.Forms.Resource.Layout.abc_search_dropdown_item_icons_2line = global::Sensus.Android.Resource.Layout.abc_search_dropdown_item_icons_2line;
+			global::XLabs.Forms.Resource.Layout.abc_search_view = global::Sensus.Android.Resource.Layout.abc_search_view;
+			global::XLabs.Forms.Resource.Layout.abc_select_dialog_material = global::Sensus.Android.Resource.Layout.abc_select_dialog_material;
+			global::XLabs.Forms.Resource.Layout.calendar_pager_layout = global::Sensus.Android.Resource.Layout.calendar_pager_layout;
+			global::XLabs.Forms.Resource.Layout.calendar_picker = global::Sensus.Android.Resource.Layout.calendar_picker;
+			global::XLabs.Forms.Resource.Layout.design_layout_snackbar = global::Sensus.Android.Resource.Layout.design_layout_snackbar;
+			global::XLabs.Forms.Resource.Layout.design_layout_snackbar_include = global::Sensus.Android.Resource.Layout.design_layout_snackbar_include;
+			global::XLabs.Forms.Resource.Layout.design_layout_tab_icon = global::Sensus.Android.Resource.Layout.design_layout_tab_icon;
+			global::XLabs.Forms.Resource.Layout.design_layout_tab_text = global::Sensus.Android.Resource.Layout.design_layout_tab_text;
+			global::XLabs.Forms.Resource.Layout.design_navigation_item = global::Sensus.Android.Resource.Layout.design_navigation_item;
+			global::XLabs.Forms.Resource.Layout.design_navigation_item_header = global::Sensus.Android.Resource.Layout.design_navigation_item_header;
+			global::XLabs.Forms.Resource.Layout.design_navigation_item_separator = global::Sensus.Android.Resource.Layout.design_navigation_item_separator;
+			global::XLabs.Forms.Resource.Layout.design_navigation_item_subheader = global::Sensus.Android.Resource.Layout.design_navigation_item_subheader;
+			global::XLabs.Forms.Resource.Layout.design_navigation_menu = global::Sensus.Android.Resource.Layout.design_navigation_menu;
+			global::XLabs.Forms.Resource.Layout.dialog = global::Sensus.Android.Resource.Layout.dialog;
+			global::XLabs.Forms.Resource.Layout.month = global::Sensus.Android.Resource.Layout.month;
+			global::XLabs.Forms.Resource.Layout.mr_media_route_chooser_dialog = global::Sensus.Android.Resource.Layout.mr_media_route_chooser_dialog;
+			global::XLabs.Forms.Resource.Layout.mr_media_route_controller_material_dialog_b = global::Sensus.Android.Resource.Layout.mr_media_route_controller_material_dialog_b;
+			global::XLabs.Forms.Resource.Layout.mr_media_route_list_item = global::Sensus.Android.Resource.Layout.mr_media_route_list_item;
+			global::XLabs.Forms.Resource.Layout.notification_media_action = global::Sensus.Android.Resource.Layout.notification_media_action;
+			global::XLabs.Forms.Resource.Layout.notification_media_cancel_action = global::Sensus.Android.Resource.Layout.notification_media_cancel_action;
+			global::XLabs.Forms.Resource.Layout.notification_template_big_media = global::Sensus.Android.Resource.Layout.notification_template_big_media;
+			global::XLabs.Forms.Resource.Layout.notification_template_big_media_narrow = global::Sensus.Android.Resource.Layout.notification_template_big_media_narrow;
+			global::XLabs.Forms.Resource.Layout.notification_template_lines = global::Sensus.Android.Resource.Layout.notification_template_lines;
+			global::XLabs.Forms.Resource.Layout.notification_template_media = global::Sensus.Android.Resource.Layout.notification_template_media;
+			global::XLabs.Forms.Resource.Layout.notification_template_part_chronometer = global::Sensus.Android.Resource.Layout.notification_template_part_chronometer;
+			global::XLabs.Forms.Resource.Layout.notification_template_part_time = global::Sensus.Android.Resource.Layout.notification_template_part_time;
+			global::XLabs.Forms.Resource.Layout.select_dialog_item_material = global::Sensus.Android.Resource.Layout.select_dialog_item_material;
+			global::XLabs.Forms.Resource.Layout.select_dialog_multichoice_material = global::Sensus.Android.Resource.Layout.select_dialog_multichoice_material;
+			global::XLabs.Forms.Resource.Layout.select_dialog_singlechoice_material = global::Sensus.Android.Resource.Layout.select_dialog_singlechoice_material;
+			global::XLabs.Forms.Resource.Layout.support_simple_spinner_dropdown_item = global::Sensus.Android.Resource.Layout.support_simple_spinner_dropdown_item;
+			global::XLabs.Forms.Resource.Layout.week = global::Sensus.Android.Resource.Layout.week;
+			global::XLabs.Forms.Resource.String.ApplicationName = global::Sensus.Android.Resource.String.ApplicationName;
+			global::XLabs.Forms.Resource.String.Hello = global::Sensus.Android.Resource.String.Hello;
+			global::XLabs.Forms.Resource.String.abc_action_bar_home_description = global::Sensus.Android.Resource.String.abc_action_bar_home_description;
+			global::XLabs.Forms.Resource.String.abc_action_bar_home_description_format = global::Sensus.Android.Resource.String.abc_action_bar_home_description_format;
+			global::XLabs.Forms.Resource.String.abc_action_bar_home_subtitle_description_format = global::Sensus.Android.Resource.String.abc_action_bar_home_subtitle_description_format;
+			global::XLabs.Forms.Resource.String.abc_action_bar_up_description = global::Sensus.Android.Resource.String.abc_action_bar_up_description;
+			global::XLabs.Forms.Resource.String.abc_action_menu_overflow_description = global::Sensus.Android.Resource.String.abc_action_menu_overflow_description;
+			global::XLabs.Forms.Resource.String.abc_action_mode_done = global::Sensus.Android.Resource.String.abc_action_mode_done;
+			global::XLabs.Forms.Resource.String.abc_activity_chooser_view_see_all = global::Sensus.Android.Resource.String.abc_activity_chooser_view_see_all;
+			global::XLabs.Forms.Resource.String.abc_activitychooserview_choose_application = global::Sensus.Android.Resource.String.abc_activitychooserview_choose_application;
+			global::XLabs.Forms.Resource.String.abc_search_hint = global::Sensus.Android.Resource.String.abc_search_hint;
+			global::XLabs.Forms.Resource.String.abc_searchview_description_clear = global::Sensus.Android.Resource.String.abc_searchview_description_clear;
+			global::XLabs.Forms.Resource.String.abc_searchview_description_query = global::Sensus.Android.Resource.String.abc_searchview_description_query;
+			global::XLabs.Forms.Resource.String.abc_searchview_description_search = global::Sensus.Android.Resource.String.abc_searchview_description_search;
+			global::XLabs.Forms.Resource.String.abc_searchview_description_submit = global::Sensus.Android.Resource.String.abc_searchview_description_submit;
+			global::XLabs.Forms.Resource.String.abc_searchview_description_voice = global::Sensus.Android.Resource.String.abc_searchview_description_voice;
+			global::XLabs.Forms.Resource.String.abc_shareactionprovider_share_with = global::Sensus.Android.Resource.String.abc_shareactionprovider_share_with;
+			global::XLabs.Forms.Resource.String.abc_shareactionprovider_share_with_application = global::Sensus.Android.Resource.String.abc_shareactionprovider_share_with_application;
+			global::XLabs.Forms.Resource.String.abc_toolbar_collapse_description = global::Sensus.Android.Resource.String.abc_toolbar_collapse_description;
+			global::XLabs.Forms.Resource.String.appbar_scrolling_view_behavior = global::Sensus.Android.Resource.String.appbar_scrolling_view_behavior;
+			global::XLabs.Forms.Resource.String.day_name_format = global::Sensus.Android.Resource.String.day_name_format;
+			global::XLabs.Forms.Resource.String.full_date_format = global::Sensus.Android.Resource.String.full_date_format;
+			global::XLabs.Forms.Resource.String.invalid_date = global::Sensus.Android.Resource.String.invalid_date;
+			global::XLabs.Forms.Resource.String.library_name = global::Sensus.Android.Resource.String.library_name;
+			global::XLabs.Forms.Resource.String.month_name_format = global::Sensus.Android.Resource.String.month_name_format;
+			global::XLabs.Forms.Resource.String.mr_media_route_button_content_description = global::Sensus.Android.Resource.String.mr_media_route_button_content_description;
+			global::XLabs.Forms.Resource.String.mr_media_route_chooser_searching = global::Sensus.Android.Resource.String.mr_media_route_chooser_searching;
+			global::XLabs.Forms.Resource.String.mr_media_route_chooser_title = global::Sensus.Android.Resource.String.mr_media_route_chooser_title;
+			global::XLabs.Forms.Resource.String.mr_media_route_controller_disconnect = global::Sensus.Android.Resource.String.mr_media_route_controller_disconnect;
+			global::XLabs.Forms.Resource.String.mr_media_route_controller_no_info_available = global::Sensus.Android.Resource.String.mr_media_route_controller_no_info_available;
+			global::XLabs.Forms.Resource.String.mr_media_route_controller_pause = global::Sensus.Android.Resource.String.mr_media_route_controller_pause;
+			global::XLabs.Forms.Resource.String.mr_media_route_controller_play = global::Sensus.Android.Resource.String.mr_media_route_controller_play;
+			global::XLabs.Forms.Resource.String.mr_media_route_controller_settings_description = global::Sensus.Android.Resource.String.mr_media_route_controller_settings_description;
+			global::XLabs.Forms.Resource.String.mr_media_route_controller_stop = global::Sensus.Android.Resource.String.mr_media_route_controller_stop;
+			global::XLabs.Forms.Resource.String.mr_system_route_name = global::Sensus.Android.Resource.String.mr_system_route_name;
+			global::XLabs.Forms.Resource.String.mr_user_route_category_name = global::Sensus.Android.Resource.String.mr_user_route_category_name;
+			global::XLabs.Forms.Resource.String.status_bar_notification_info_overflow = global::Sensus.Android.Resource.String.status_bar_notification_info_overflow;
+			global::XLabs.Forms.Resource.Style.AlertDialog_AppCompat = global::Sensus.Android.Resource.Style.AlertDialog_AppCompat;
+			global::XLabs.Forms.Resource.Style.AlertDialog_AppCompat_Light = global::Sensus.Android.Resource.Style.AlertDialog_AppCompat_Light;
+			global::XLabs.Forms.Resource.Style.Animation_AppCompat_Dialog = global::Sensus.Android.Resource.Style.Animation_AppCompat_Dialog;
+			global::XLabs.Forms.Resource.Style.Animation_AppCompat_DropDownUp = global::Sensus.Android.Resource.Style.Animation_AppCompat_DropDownUp;
+			global::XLabs.Forms.Resource.Style.Base_AlertDialog_AppCompat = global::Sensus.Android.Resource.Style.Base_AlertDialog_AppCompat;
+			global::XLabs.Forms.Resource.Style.Base_AlertDialog_AppCompat_Light = global::Sensus.Android.Resource.Style.Base_AlertDialog_AppCompat_Light;
+			global::XLabs.Forms.Resource.Style.Base_Animation_AppCompat_Dialog = global::Sensus.Android.Resource.Style.Base_Animation_AppCompat_Dialog;
+			global::XLabs.Forms.Resource.Style.Base_Animation_AppCompat_DropDownUp = global::Sensus.Android.Resource.Style.Base_Animation_AppCompat_DropDownUp;
+			global::XLabs.Forms.Resource.Style.Base_DialogWindowTitle_AppCompat = global::Sensus.Android.Resource.Style.Base_DialogWindowTitle_AppCompat;
+			global::XLabs.Forms.Resource.Style.Base_DialogWindowTitleBackground_AppCompat = global::Sensus.Android.Resource.Style.Base_DialogWindowTitleBackground_AppCompat;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_Body1 = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_Body1;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_Body2 = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_Body2;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_Button = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_Button;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_Caption = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_Caption;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_Display1 = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_Display1;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_Display2 = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_Display2;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_Display3 = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_Display3;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_Display4 = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_Display4;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_Headline = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_Headline;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_Inverse = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_Inverse;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_Large = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_Large;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_Large_Inverse = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_Large_Inverse;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_Light_Widget_PopupMenu_Large = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_Light_Widget_PopupMenu_Large;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_Light_Widget_PopupMenu_Small = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_Light_Widget_PopupMenu_Small;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_Medium = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_Medium;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_Medium_Inverse = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_Medium_Inverse;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_Menu = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_Menu;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_SearchResult = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_SearchResult;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_SearchResult_Subtitle = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_SearchResult_Subtitle;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_SearchResult_Title = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_SearchResult_Title;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_Small = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_Small;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_Small_Inverse = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_Small_Inverse;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_Subhead = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_Subhead;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_Subhead_Inverse = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_Subhead_Inverse;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_Title = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_Title;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_Title_Inverse = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_Title_Inverse;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_Widget_ActionBar_Menu = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_Widget_ActionBar_Menu;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_Widget_ActionBar_Subtitle = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_Widget_ActionBar_Subtitle;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_Widget_ActionBar_Subtitle_Inverse = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_Widget_ActionBar_Subtitle_Inverse;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_Widget_ActionBar_Title = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_Widget_ActionBar_Title;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_Widget_ActionBar_Title_Inverse = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_Widget_ActionBar_Title_Inverse;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_Widget_ActionMode_Subtitle = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_Widget_ActionMode_Subtitle;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_Widget_ActionMode_Title = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_Widget_ActionMode_Title;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_Widget_Button = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_Widget_Button;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_Widget_Button_Inverse = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_Widget_Button_Inverse;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_Widget_DropDownItem = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_Widget_DropDownItem;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_Widget_PopupMenu_Large = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_Widget_PopupMenu_Large;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_Widget_PopupMenu_Small = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_Widget_PopupMenu_Small;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_Widget_Switch = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_Widget_Switch;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_AppCompat_Widget_TextView_SpinnerItem = global::Sensus.Android.Resource.Style.Base_TextAppearance_AppCompat_Widget_TextView_SpinnerItem;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_Widget_AppCompat_ExpandedMenu_Item = global::Sensus.Android.Resource.Style.Base_TextAppearance_Widget_AppCompat_ExpandedMenu_Item;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_Widget_AppCompat_Toolbar_Subtitle = global::Sensus.Android.Resource.Style.Base_TextAppearance_Widget_AppCompat_Toolbar_Subtitle;
+			global::XLabs.Forms.Resource.Style.Base_TextAppearance_Widget_AppCompat_Toolbar_Title = global::Sensus.Android.Resource.Style.Base_TextAppearance_Widget_AppCompat_Toolbar_Title;
+			global::XLabs.Forms.Resource.Style.Base_Theme_AppCompat = global::Sensus.Android.Resource.Style.Base_Theme_AppCompat;
+			global::XLabs.Forms.Resource.Style.Base_Theme_AppCompat_CompactMenu = global::Sensus.Android.Resource.Style.Base_Theme_AppCompat_CompactMenu;
+			global::XLabs.Forms.Resource.Style.Base_Theme_AppCompat_Dialog = global::Sensus.Android.Resource.Style.Base_Theme_AppCompat_Dialog;
+			global::XLabs.Forms.Resource.Style.Base_Theme_AppCompat_Dialog_Alert = global::Sensus.Android.Resource.Style.Base_Theme_AppCompat_Dialog_Alert;
+			global::XLabs.Forms.Resource.Style.Base_Theme_AppCompat_Dialog_FixedSize = global::Sensus.Android.Resource.Style.Base_Theme_AppCompat_Dialog_FixedSize;
+			global::XLabs.Forms.Resource.Style.Base_Theme_AppCompat_Dialog_MinWidth = global::Sensus.Android.Resource.Style.Base_Theme_AppCompat_Dialog_MinWidth;
+			global::XLabs.Forms.Resource.Style.Base_Theme_AppCompat_DialogWhenLarge = global::Sensus.Android.Resource.Style.Base_Theme_AppCompat_DialogWhenLarge;
+			global::XLabs.Forms.Resource.Style.Base_Theme_AppCompat_Light = global::Sensus.Android.Resource.Style.Base_Theme_AppCompat_Light;
+			global::XLabs.Forms.Resource.Style.Base_Theme_AppCompat_Light_DarkActionBar = global::Sensus.Android.Resource.Style.Base_Theme_AppCompat_Light_DarkActionBar;
+			global::XLabs.Forms.Resource.Style.Base_Theme_AppCompat_Light_Dialog = global::Sensus.Android.Resource.Style.Base_Theme_AppCompat_Light_Dialog;
+			global::XLabs.Forms.Resource.Style.Base_Theme_AppCompat_Light_Dialog_Alert = global::Sensus.Android.Resource.Style.Base_Theme_AppCompat_Light_Dialog_Alert;
+			global::XLabs.Forms.Resource.Style.Base_Theme_AppCompat_Light_Dialog_FixedSize = global::Sensus.Android.Resource.Style.Base_Theme_AppCompat_Light_Dialog_FixedSize;
+			global::XLabs.Forms.Resource.Style.Base_Theme_AppCompat_Light_Dialog_MinWidth = global::Sensus.Android.Resource.Style.Base_Theme_AppCompat_Light_Dialog_MinWidth;
+			global::XLabs.Forms.Resource.Style.Base_Theme_AppCompat_Light_DialogWhenLarge = global::Sensus.Android.Resource.Style.Base_Theme_AppCompat_Light_DialogWhenLarge;
+			global::XLabs.Forms.Resource.Style.Base_ThemeOverlay_AppCompat = global::Sensus.Android.Resource.Style.Base_ThemeOverlay_AppCompat;
+			global::XLabs.Forms.Resource.Style.Base_ThemeOverlay_AppCompat_ActionBar = global::Sensus.Android.Resource.Style.Base_ThemeOverlay_AppCompat_ActionBar;
+			global::XLabs.Forms.Resource.Style.Base_ThemeOverlay_AppCompat_Dark = global::Sensus.Android.Resource.Style.Base_ThemeOverlay_AppCompat_Dark;
+			global::XLabs.Forms.Resource.Style.Base_ThemeOverlay_AppCompat_Dark_ActionBar = global::Sensus.Android.Resource.Style.Base_ThemeOverlay_AppCompat_Dark_ActionBar;
+			global::XLabs.Forms.Resource.Style.Base_ThemeOverlay_AppCompat_Light = global::Sensus.Android.Resource.Style.Base_ThemeOverlay_AppCompat_Light;
+			global::XLabs.Forms.Resource.Style.Base_V11_Theme_AppCompat_Dialog = global::Sensus.Android.Resource.Style.Base_V11_Theme_AppCompat_Dialog;
+			global::XLabs.Forms.Resource.Style.Base_V11_Theme_AppCompat_Light_Dialog = global::Sensus.Android.Resource.Style.Base_V11_Theme_AppCompat_Light_Dialog;
+			global::XLabs.Forms.Resource.Style.Base_V12_Widget_AppCompat_AutoCompleteTextView = global::Sensus.Android.Resource.Style.Base_V12_Widget_AppCompat_AutoCompleteTextView;
+			global::XLabs.Forms.Resource.Style.Base_V12_Widget_AppCompat_EditText = global::Sensus.Android.Resource.Style.Base_V12_Widget_AppCompat_EditText;
+			global::XLabs.Forms.Resource.Style.Base_V21_Theme_AppCompat = global::Sensus.Android.Resource.Style.Base_V21_Theme_AppCompat;
+			global::XLabs.Forms.Resource.Style.Base_V21_Theme_AppCompat_Dialog = global::Sensus.Android.Resource.Style.Base_V21_Theme_AppCompat_Dialog;
+			global::XLabs.Forms.Resource.Style.Base_V21_Theme_AppCompat_Light = global::Sensus.Android.Resource.Style.Base_V21_Theme_AppCompat_Light;
+			global::XLabs.Forms.Resource.Style.Base_V21_Theme_AppCompat_Light_Dialog = global::Sensus.Android.Resource.Style.Base_V21_Theme_AppCompat_Light_Dialog;
+			global::XLabs.Forms.Resource.Style.Base_V22_Theme_AppCompat = global::Sensus.Android.Resource.Style.Base_V22_Theme_AppCompat;
+			global::XLabs.Forms.Resource.Style.Base_V22_Theme_AppCompat_Light = global::Sensus.Android.Resource.Style.Base_V22_Theme_AppCompat_Light;
+			global::XLabs.Forms.Resource.Style.Base_V23_Theme_AppCompat = global::Sensus.Android.Resource.Style.Base_V23_Theme_AppCompat;
+			global::XLabs.Forms.Resource.Style.Base_V23_Theme_AppCompat_Light = global::Sensus.Android.Resource.Style.Base_V23_Theme_AppCompat_Light;
+			global::XLabs.Forms.Resource.Style.Base_V7_Theme_AppCompat = global::Sensus.Android.Resource.Style.Base_V7_Theme_AppCompat;
+			global::XLabs.Forms.Resource.Style.Base_V7_Theme_AppCompat_Dialog = global::Sensus.Android.Resource.Style.Base_V7_Theme_AppCompat_Dialog;
+			global::XLabs.Forms.Resource.Style.Base_V7_Theme_AppCompat_Light = global::Sensus.Android.Resource.Style.Base_V7_Theme_AppCompat_Light;
+			global::XLabs.Forms.Resource.Style.Base_V7_Theme_AppCompat_Light_Dialog = global::Sensus.Android.Resource.Style.Base_V7_Theme_AppCompat_Light_Dialog;
+			global::XLabs.Forms.Resource.Style.Base_V7_Widget_AppCompat_AutoCompleteTextView = global::Sensus.Android.Resource.Style.Base_V7_Widget_AppCompat_AutoCompleteTextView;
+			global::XLabs.Forms.Resource.Style.Base_V7_Widget_AppCompat_EditText = global::Sensus.Android.Resource.Style.Base_V7_Widget_AppCompat_EditText;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_ActionBar = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_ActionBar;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_ActionBar_Solid = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_ActionBar_Solid;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_ActionBar_TabBar = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_ActionBar_TabBar;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_ActionBar_TabText = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_ActionBar_TabText;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_ActionBar_TabView = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_ActionBar_TabView;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_ActionButton = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_ActionButton;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_ActionButton_CloseMode = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_ActionButton_CloseMode;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_ActionButton_Overflow = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_ActionButton_Overflow;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_ActionMode = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_ActionMode;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_ActivityChooserView = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_ActivityChooserView;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_AutoCompleteTextView = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_AutoCompleteTextView;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_Button = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_Button;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_Button_Borderless = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_Button_Borderless;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_Button_Borderless_Colored = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_Button_Borderless_Colored;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_Button_ButtonBar_AlertDialog = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_Button_ButtonBar_AlertDialog;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_Button_Colored = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_Button_Colored;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_Button_Small = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_Button_Small;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_ButtonBar = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_ButtonBar;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_ButtonBar_AlertDialog = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_ButtonBar_AlertDialog;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_CompoundButton_CheckBox = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_CompoundButton_CheckBox;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_CompoundButton_RadioButton = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_CompoundButton_RadioButton;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_CompoundButton_Switch = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_CompoundButton_Switch;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_DrawerArrowToggle = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_DrawerArrowToggle;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_DrawerArrowToggle_Common = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_DrawerArrowToggle_Common;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_DropDownItem_Spinner = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_DropDownItem_Spinner;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_EditText = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_EditText;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_Light_ActionBar = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_Light_ActionBar;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_Light_ActionBar_Solid = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_Light_ActionBar_Solid;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_Light_ActionBar_TabBar = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_Light_ActionBar_TabBar;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_Light_ActionBar_TabText = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_Light_ActionBar_TabText;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_Light_ActionBar_TabText_Inverse = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_Light_ActionBar_TabText_Inverse;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_Light_ActionBar_TabView = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_Light_ActionBar_TabView;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_Light_PopupMenu = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_Light_PopupMenu;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_Light_PopupMenu_Overflow = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_Light_PopupMenu_Overflow;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_ListPopupWindow = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_ListPopupWindow;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_ListView = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_ListView;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_ListView_DropDown = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_ListView_DropDown;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_ListView_Menu = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_ListView_Menu;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_PopupMenu = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_PopupMenu;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_PopupMenu_Overflow = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_PopupMenu_Overflow;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_PopupWindow = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_PopupWindow;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_ProgressBar = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_ProgressBar;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_ProgressBar_Horizontal = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_ProgressBar_Horizontal;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_RatingBar = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_RatingBar;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_SearchView = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_SearchView;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_SearchView_ActionBar = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_SearchView_ActionBar;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_Spinner = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_Spinner;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_Spinner_Underlined = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_Spinner_Underlined;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_TextView_SpinnerItem = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_TextView_SpinnerItem;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_Toolbar = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_Toolbar;
+			global::XLabs.Forms.Resource.Style.Base_Widget_AppCompat_Toolbar_Button_Navigation = global::Sensus.Android.Resource.Style.Base_Widget_AppCompat_Toolbar_Button_Navigation;
+			global::XLabs.Forms.Resource.Style.Base_Widget_Design_TabLayout = global::Sensus.Android.Resource.Style.Base_Widget_Design_TabLayout;
+			global::XLabs.Forms.Resource.Style.CalendarCell = global::Sensus.Android.Resource.Style.CalendarCell;
+			global::XLabs.Forms.Resource.Style.CalendarCell_CalendarDate = global::Sensus.Android.Resource.Style.CalendarCell_CalendarDate;
+			global::XLabs.Forms.Resource.Style.CalendarCell_DayHeader = global::Sensus.Android.Resource.Style.CalendarCell_DayHeader;
+			global::XLabs.Forms.Resource.Style.CalendarTitle = global::Sensus.Android.Resource.Style.CalendarTitle;
+			global::XLabs.Forms.Resource.Style.CardView = global::Sensus.Android.Resource.Style.CardView;
+			global::XLabs.Forms.Resource.Style.CardView_Dark = global::Sensus.Android.Resource.Style.CardView_Dark;
+			global::XLabs.Forms.Resource.Style.CardView_Light = global::Sensus.Android.Resource.Style.CardView_Light;
+			global::XLabs.Forms.Resource.Style.Platform_AppCompat = global::Sensus.Android.Resource.Style.Platform_AppCompat;
+			global::XLabs.Forms.Resource.Style.Platform_AppCompat_Light = global::Sensus.Android.Resource.Style.Platform_AppCompat_Light;
+			global::XLabs.Forms.Resource.Style.Platform_ThemeOverlay_AppCompat = global::Sensus.Android.Resource.Style.Platform_ThemeOverlay_AppCompat;
+			global::XLabs.Forms.Resource.Style.Platform_ThemeOverlay_AppCompat_Dark = global::Sensus.Android.Resource.Style.Platform_ThemeOverlay_AppCompat_Dark;
+			global::XLabs.Forms.Resource.Style.Platform_ThemeOverlay_AppCompat_Light = global::Sensus.Android.Resource.Style.Platform_ThemeOverlay_AppCompat_Light;
+			global::XLabs.Forms.Resource.Style.Platform_V11_AppCompat = global::Sensus.Android.Resource.Style.Platform_V11_AppCompat;
+			global::XLabs.Forms.Resource.Style.Platform_V11_AppCompat_Light = global::Sensus.Android.Resource.Style.Platform_V11_AppCompat_Light;
+			global::XLabs.Forms.Resource.Style.Platform_V14_AppCompat = global::Sensus.Android.Resource.Style.Platform_V14_AppCompat;
+			global::XLabs.Forms.Resource.Style.Platform_V14_AppCompat_Light = global::Sensus.Android.Resource.Style.Platform_V14_AppCompat_Light;
+			global::XLabs.Forms.Resource.Style.Platform_Widget_AppCompat_Spinner = global::Sensus.Android.Resource.Style.Platform_Widget_AppCompat_Spinner;
+			global::XLabs.Forms.Resource.Style.RtlOverlay_DialogWindowTitle_AppCompat = global::Sensus.Android.Resource.Style.RtlOverlay_DialogWindowTitle_AppCompat;
+			global::XLabs.Forms.Resource.Style.RtlOverlay_Widget_AppCompat_ActionBar_TitleItem = global::Sensus.Android.Resource.Style.RtlOverlay_Widget_AppCompat_ActionBar_TitleItem;
+			global::XLabs.Forms.Resource.Style.RtlOverlay_Widget_AppCompat_ActionButton_Overflow = global::Sensus.Android.Resource.Style.RtlOverlay_Widget_AppCompat_ActionButton_Overflow;
+			global::XLabs.Forms.Resource.Style.RtlOverlay_Widget_AppCompat_DialogTitle_Icon = global::Sensus.Android.Resource.Style.RtlOverlay_Widget_AppCompat_DialogTitle_Icon;
+			global::XLabs.Forms.Resource.Style.RtlOverlay_Widget_AppCompat_PopupMenuItem = global::Sensus.Android.Resource.Style.RtlOverlay_Widget_AppCompat_PopupMenuItem;
+			global::XLabs.Forms.Resource.Style.RtlOverlay_Widget_AppCompat_PopupMenuItem_InternalGroup = global::Sensus.Android.Resource.Style.RtlOverlay_Widget_AppCompat_PopupMenuItem_InternalGroup;
+			global::XLabs.Forms.Resource.Style.RtlOverlay_Widget_AppCompat_PopupMenuItem_Text = global::Sensus.Android.Resource.Style.RtlOverlay_Widget_AppCompat_PopupMenuItem_Text;
+			global::XLabs.Forms.Resource.Style.RtlOverlay_Widget_AppCompat_Search_DropDown = global::Sensus.Android.Resource.Style.RtlOverlay_Widget_AppCompat_Search_DropDown;
+			global::XLabs.Forms.Resource.Style.RtlOverlay_Widget_AppCompat_Search_DropDown_Icon1 = global::Sensus.Android.Resource.Style.RtlOverlay_Widget_AppCompat_Search_DropDown_Icon1;
+			global::XLabs.Forms.Resource.Style.RtlOverlay_Widget_AppCompat_Search_DropDown_Icon2 = global::Sensus.Android.Resource.Style.RtlOverlay_Widget_AppCompat_Search_DropDown_Icon2;
+			global::XLabs.Forms.Resource.Style.RtlOverlay_Widget_AppCompat_Search_DropDown_Query = global::Sensus.Android.Resource.Style.RtlOverlay_Widget_AppCompat_Search_DropDown_Query;
+			global::XLabs.Forms.Resource.Style.RtlOverlay_Widget_AppCompat_Search_DropDown_Text = global::Sensus.Android.Resource.Style.RtlOverlay_Widget_AppCompat_Search_DropDown_Text;
+			global::XLabs.Forms.Resource.Style.RtlOverlay_Widget_AppCompat_SearchView_MagIcon = global::Sensus.Android.Resource.Style.RtlOverlay_Widget_AppCompat_SearchView_MagIcon;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Body1 = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Body1;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Body2 = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Body2;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Button = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Button;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Caption = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Caption;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Display1 = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Display1;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Display2 = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Display2;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Display3 = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Display3;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Display4 = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Display4;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Headline = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Headline;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Inverse = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Inverse;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Large = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Large;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Large_Inverse = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Large_Inverse;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Light_SearchResult_Subtitle = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Light_SearchResult_Subtitle;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Light_SearchResult_Title = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Light_SearchResult_Title;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Light_Widget_PopupMenu_Large = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Light_Widget_PopupMenu_Large;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Light_Widget_PopupMenu_Small = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Light_Widget_PopupMenu_Small;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Medium = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Medium;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Medium_Inverse = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Medium_Inverse;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Menu = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Menu;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_SearchResult_Subtitle = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_SearchResult_Subtitle;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_SearchResult_Title = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_SearchResult_Title;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Small = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Small;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Small_Inverse = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Small_Inverse;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Subhead = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Subhead;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Subhead_Inverse = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Subhead_Inverse;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Title = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Title;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Title_Inverse = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Title_Inverse;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Widget_ActionBar_Menu = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Widget_ActionBar_Menu;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Widget_ActionBar_Subtitle = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Widget_ActionBar_Subtitle;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Widget_ActionBar_Subtitle_Inverse = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Widget_ActionBar_Subtitle_Inverse;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Widget_ActionBar_Title = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Widget_ActionBar_Title;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Widget_ActionBar_Title_Inverse = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Widget_ActionBar_Title_Inverse;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Widget_ActionMode_Subtitle = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Widget_ActionMode_Subtitle;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Widget_ActionMode_Subtitle_Inverse = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Widget_ActionMode_Subtitle_Inverse;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Widget_ActionMode_Title = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Widget_ActionMode_Title;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Widget_ActionMode_Title_Inverse = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Widget_ActionMode_Title_Inverse;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Widget_Button = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Widget_Button;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Widget_Button_Inverse = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Widget_Button_Inverse;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Widget_DropDownItem = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Widget_DropDownItem;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Widget_PopupMenu_Large = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Widget_PopupMenu_Large;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Widget_PopupMenu_Small = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Widget_PopupMenu_Small;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Widget_Switch = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Widget_Switch;
+			global::XLabs.Forms.Resource.Style.TextAppearance_AppCompat_Widget_TextView_SpinnerItem = global::Sensus.Android.Resource.Style.TextAppearance_AppCompat_Widget_TextView_SpinnerItem;
+			global::XLabs.Forms.Resource.Style.TextAppearance_Design_CollapsingToolbar_Expanded = global::Sensus.Android.Resource.Style.TextAppearance_Design_CollapsingToolbar_Expanded;
+			global::XLabs.Forms.Resource.Style.TextAppearance_Design_Error = global::Sensus.Android.Resource.Style.TextAppearance_Design_Error;
+			global::XLabs.Forms.Resource.Style.TextAppearance_Design_Hint = global::Sensus.Android.Resource.Style.TextAppearance_Design_Hint;
+			global::XLabs.Forms.Resource.Style.TextAppearance_Design_Snackbar_Message = global::Sensus.Android.Resource.Style.TextAppearance_Design_Snackbar_Message;
+			global::XLabs.Forms.Resource.Style.TextAppearance_Design_Tab = global::Sensus.Android.Resource.Style.TextAppearance_Design_Tab;
+			global::XLabs.Forms.Resource.Style.TextAppearance_StatusBar_EventContent = global::Sensus.Android.Resource.Style.TextAppearance_StatusBar_EventContent;
+			global::XLabs.Forms.Resource.Style.TextAppearance_StatusBar_EventContent_Info = global::Sensus.Android.Resource.Style.TextAppearance_StatusBar_EventContent_Info;
+			global::XLabs.Forms.Resource.Style.TextAppearance_StatusBar_EventContent_Line2 = global::Sensus.Android.Resource.Style.TextAppearance_StatusBar_EventContent_Line2;
+			global::XLabs.Forms.Resource.Style.TextAppearance_StatusBar_EventContent_Time = global::Sensus.Android.Resource.Style.TextAppearance_StatusBar_EventContent_Time;
+			global::XLabs.Forms.Resource.Style.TextAppearance_StatusBar_EventContent_Title = global::Sensus.Android.Resource.Style.TextAppearance_StatusBar_EventContent_Title;
+			global::XLabs.Forms.Resource.Style.TextAppearance_Widget_AppCompat_ExpandedMenu_Item = global::Sensus.Android.Resource.Style.TextAppearance_Widget_AppCompat_ExpandedMenu_Item;
+			global::XLabs.Forms.Resource.Style.TextAppearance_Widget_AppCompat_Toolbar_Subtitle = global::Sensus.Android.Resource.Style.TextAppearance_Widget_AppCompat_Toolbar_Subtitle;
+			global::XLabs.Forms.Resource.Style.TextAppearance_Widget_AppCompat_Toolbar_Title = global::Sensus.Android.Resource.Style.TextAppearance_Widget_AppCompat_Toolbar_Title;
+			global::XLabs.Forms.Resource.Style.Theme_AppCompat = global::Sensus.Android.Resource.Style.Theme_AppCompat;
+			global::XLabs.Forms.Resource.Style.Theme_AppCompat_CompactMenu = global::Sensus.Android.Resource.Style.Theme_AppCompat_CompactMenu;
+			global::XLabs.Forms.Resource.Style.Theme_AppCompat_Dialog = global::Sensus.Android.Resource.Style.Theme_AppCompat_Dialog;
+			global::XLabs.Forms.Resource.Style.Theme_AppCompat_Dialog_Alert = global::Sensus.Android.Resource.Style.Theme_AppCompat_Dialog_Alert;
+			global::XLabs.Forms.Resource.Style.Theme_AppCompat_Dialog_MinWidth = global::Sensus.Android.Resource.Style.Theme_AppCompat_Dialog_MinWidth;
+			global::XLabs.Forms.Resource.Style.Theme_AppCompat_DialogWhenLarge = global::Sensus.Android.Resource.Style.Theme_AppCompat_DialogWhenLarge;
+			global::XLabs.Forms.Resource.Style.Theme_AppCompat_Light = global::Sensus.Android.Resource.Style.Theme_AppCompat_Light;
+			global::XLabs.Forms.Resource.Style.Theme_AppCompat_Light_DarkActionBar = global::Sensus.Android.Resource.Style.Theme_AppCompat_Light_DarkActionBar;
+			global::XLabs.Forms.Resource.Style.Theme_AppCompat_Light_Dialog = global::Sensus.Android.Resource.Style.Theme_AppCompat_Light_Dialog;
+			global::XLabs.Forms.Resource.Style.Theme_AppCompat_Light_Dialog_Alert = global::Sensus.Android.Resource.Style.Theme_AppCompat_Light_Dialog_Alert;
+			global::XLabs.Forms.Resource.Style.Theme_AppCompat_Light_Dialog_MinWidth = global::Sensus.Android.Resource.Style.Theme_AppCompat_Light_Dialog_MinWidth;
+			global::XLabs.Forms.Resource.Style.Theme_AppCompat_Light_DialogWhenLarge = global::Sensus.Android.Resource.Style.Theme_AppCompat_Light_DialogWhenLarge;
+			global::XLabs.Forms.Resource.Style.Theme_AppCompat_Light_NoActionBar = global::Sensus.Android.Resource.Style.Theme_AppCompat_Light_NoActionBar;
+			global::XLabs.Forms.Resource.Style.Theme_AppCompat_NoActionBar = global::Sensus.Android.Resource.Style.Theme_AppCompat_NoActionBar;
+			global::XLabs.Forms.Resource.Style.Theme_MediaRouter = global::Sensus.Android.Resource.Style.Theme_MediaRouter;
+			global::XLabs.Forms.Resource.Style.Theme_MediaRouter_Light = global::Sensus.Android.Resource.Style.Theme_MediaRouter_Light;
+			global::XLabs.Forms.Resource.Style.ThemeOverlay_AppCompat = global::Sensus.Android.Resource.Style.ThemeOverlay_AppCompat;
+			global::XLabs.Forms.Resource.Style.ThemeOverlay_AppCompat_ActionBar = global::Sensus.Android.Resource.Style.ThemeOverlay_AppCompat_ActionBar;
+			global::XLabs.Forms.Resource.Style.ThemeOverlay_AppCompat_Dark = global::Sensus.Android.Resource.Style.ThemeOverlay_AppCompat_Dark;
+			global::XLabs.Forms.Resource.Style.ThemeOverlay_AppCompat_Dark_ActionBar = global::Sensus.Android.Resource.Style.ThemeOverlay_AppCompat_Dark_ActionBar;
+			global::XLabs.Forms.Resource.Style.ThemeOverlay_AppCompat_Light = global::Sensus.Android.Resource.Style.ThemeOverlay_AppCompat_Light;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_ActionBar = global::Sensus.Android.Resource.Style.Widget_AppCompat_ActionBar;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_ActionBar_Solid = global::Sensus.Android.Resource.Style.Widget_AppCompat_ActionBar_Solid;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_ActionBar_TabBar = global::Sensus.Android.Resource.Style.Widget_AppCompat_ActionBar_TabBar;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_ActionBar_TabText = global::Sensus.Android.Resource.Style.Widget_AppCompat_ActionBar_TabText;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_ActionBar_TabView = global::Sensus.Android.Resource.Style.Widget_AppCompat_ActionBar_TabView;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_ActionButton = global::Sensus.Android.Resource.Style.Widget_AppCompat_ActionButton;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_ActionButton_CloseMode = global::Sensus.Android.Resource.Style.Widget_AppCompat_ActionButton_CloseMode;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_ActionButton_Overflow = global::Sensus.Android.Resource.Style.Widget_AppCompat_ActionButton_Overflow;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_ActionMode = global::Sensus.Android.Resource.Style.Widget_AppCompat_ActionMode;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_ActivityChooserView = global::Sensus.Android.Resource.Style.Widget_AppCompat_ActivityChooserView;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_AutoCompleteTextView = global::Sensus.Android.Resource.Style.Widget_AppCompat_AutoCompleteTextView;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_Button = global::Sensus.Android.Resource.Style.Widget_AppCompat_Button;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_Button_Borderless = global::Sensus.Android.Resource.Style.Widget_AppCompat_Button_Borderless;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_Button_Borderless_Colored = global::Sensus.Android.Resource.Style.Widget_AppCompat_Button_Borderless_Colored;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_Button_ButtonBar_AlertDialog = global::Sensus.Android.Resource.Style.Widget_AppCompat_Button_ButtonBar_AlertDialog;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_Button_Colored = global::Sensus.Android.Resource.Style.Widget_AppCompat_Button_Colored;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_Button_Small = global::Sensus.Android.Resource.Style.Widget_AppCompat_Button_Small;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_ButtonBar = global::Sensus.Android.Resource.Style.Widget_AppCompat_ButtonBar;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_ButtonBar_AlertDialog = global::Sensus.Android.Resource.Style.Widget_AppCompat_ButtonBar_AlertDialog;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_CompoundButton_CheckBox = global::Sensus.Android.Resource.Style.Widget_AppCompat_CompoundButton_CheckBox;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_CompoundButton_RadioButton = global::Sensus.Android.Resource.Style.Widget_AppCompat_CompoundButton_RadioButton;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_CompoundButton_Switch = global::Sensus.Android.Resource.Style.Widget_AppCompat_CompoundButton_Switch;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_DrawerArrowToggle = global::Sensus.Android.Resource.Style.Widget_AppCompat_DrawerArrowToggle;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_DropDownItem_Spinner = global::Sensus.Android.Resource.Style.Widget_AppCompat_DropDownItem_Spinner;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_EditText = global::Sensus.Android.Resource.Style.Widget_AppCompat_EditText;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_Light_ActionBar = global::Sensus.Android.Resource.Style.Widget_AppCompat_Light_ActionBar;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_Light_ActionBar_Solid = global::Sensus.Android.Resource.Style.Widget_AppCompat_Light_ActionBar_Solid;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_Light_ActionBar_Solid_Inverse = global::Sensus.Android.Resource.Style.Widget_AppCompat_Light_ActionBar_Solid_Inverse;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_Light_ActionBar_TabBar = global::Sensus.Android.Resource.Style.Widget_AppCompat_Light_ActionBar_TabBar;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_Light_ActionBar_TabBar_Inverse = global::Sensus.Android.Resource.Style.Widget_AppCompat_Light_ActionBar_TabBar_Inverse;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_Light_ActionBar_TabText = global::Sensus.Android.Resource.Style.Widget_AppCompat_Light_ActionBar_TabText;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_Light_ActionBar_TabText_Inverse = global::Sensus.Android.Resource.Style.Widget_AppCompat_Light_ActionBar_TabText_Inverse;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_Light_ActionBar_TabView = global::Sensus.Android.Resource.Style.Widget_AppCompat_Light_ActionBar_TabView;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_Light_ActionBar_TabView_Inverse = global::Sensus.Android.Resource.Style.Widget_AppCompat_Light_ActionBar_TabView_Inverse;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_Light_ActionButton = global::Sensus.Android.Resource.Style.Widget_AppCompat_Light_ActionButton;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_Light_ActionButton_CloseMode = global::Sensus.Android.Resource.Style.Widget_AppCompat_Light_ActionButton_CloseMode;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_Light_ActionButton_Overflow = global::Sensus.Android.Resource.Style.Widget_AppCompat_Light_ActionButton_Overflow;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_Light_ActionMode_Inverse = global::Sensus.Android.Resource.Style.Widget_AppCompat_Light_ActionMode_Inverse;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_Light_ActivityChooserView = global::Sensus.Android.Resource.Style.Widget_AppCompat_Light_ActivityChooserView;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_Light_AutoCompleteTextView = global::Sensus.Android.Resource.Style.Widget_AppCompat_Light_AutoCompleteTextView;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_Light_DropDownItem_Spinner = global::Sensus.Android.Resource.Style.Widget_AppCompat_Light_DropDownItem_Spinner;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_Light_ListPopupWindow = global::Sensus.Android.Resource.Style.Widget_AppCompat_Light_ListPopupWindow;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_Light_ListView_DropDown = global::Sensus.Android.Resource.Style.Widget_AppCompat_Light_ListView_DropDown;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_Light_PopupMenu = global::Sensus.Android.Resource.Style.Widget_AppCompat_Light_PopupMenu;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_Light_PopupMenu_Overflow = global::Sensus.Android.Resource.Style.Widget_AppCompat_Light_PopupMenu_Overflow;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_Light_SearchView = global::Sensus.Android.Resource.Style.Widget_AppCompat_Light_SearchView;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_Light_Spinner_DropDown_ActionBar = global::Sensus.Android.Resource.Style.Widget_AppCompat_Light_Spinner_DropDown_ActionBar;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_ListPopupWindow = global::Sensus.Android.Resource.Style.Widget_AppCompat_ListPopupWindow;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_ListView = global::Sensus.Android.Resource.Style.Widget_AppCompat_ListView;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_ListView_DropDown = global::Sensus.Android.Resource.Style.Widget_AppCompat_ListView_DropDown;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_ListView_Menu = global::Sensus.Android.Resource.Style.Widget_AppCompat_ListView_Menu;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_PopupMenu = global::Sensus.Android.Resource.Style.Widget_AppCompat_PopupMenu;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_PopupMenu_Overflow = global::Sensus.Android.Resource.Style.Widget_AppCompat_PopupMenu_Overflow;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_PopupWindow = global::Sensus.Android.Resource.Style.Widget_AppCompat_PopupWindow;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_ProgressBar = global::Sensus.Android.Resource.Style.Widget_AppCompat_ProgressBar;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_ProgressBar_Horizontal = global::Sensus.Android.Resource.Style.Widget_AppCompat_ProgressBar_Horizontal;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_RatingBar = global::Sensus.Android.Resource.Style.Widget_AppCompat_RatingBar;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_SearchView = global::Sensus.Android.Resource.Style.Widget_AppCompat_SearchView;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_SearchView_ActionBar = global::Sensus.Android.Resource.Style.Widget_AppCompat_SearchView_ActionBar;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_Spinner = global::Sensus.Android.Resource.Style.Widget_AppCompat_Spinner;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_Spinner_DropDown = global::Sensus.Android.Resource.Style.Widget_AppCompat_Spinner_DropDown;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_Spinner_DropDown_ActionBar = global::Sensus.Android.Resource.Style.Widget_AppCompat_Spinner_DropDown_ActionBar;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_Spinner_Underlined = global::Sensus.Android.Resource.Style.Widget_AppCompat_Spinner_Underlined;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_TextView_SpinnerItem = global::Sensus.Android.Resource.Style.Widget_AppCompat_TextView_SpinnerItem;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_Toolbar = global::Sensus.Android.Resource.Style.Widget_AppCompat_Toolbar;
+			global::XLabs.Forms.Resource.Style.Widget_AppCompat_Toolbar_Button_Navigation = global::Sensus.Android.Resource.Style.Widget_AppCompat_Toolbar_Button_Navigation;
+			global::XLabs.Forms.Resource.Style.Widget_Design_AppBarLayout = global::Sensus.Android.Resource.Style.Widget_Design_AppBarLayout;
+			global::XLabs.Forms.Resource.Style.Widget_Design_CollapsingToolbar = global::Sensus.Android.Resource.Style.Widget_Design_CollapsingToolbar;
+			global::XLabs.Forms.Resource.Style.Widget_Design_CoordinatorLayout = global::Sensus.Android.Resource.Style.Widget_Design_CoordinatorLayout;
+			global::XLabs.Forms.Resource.Style.Widget_Design_FloatingActionButton = global::Sensus.Android.Resource.Style.Widget_Design_FloatingActionButton;
+			global::XLabs.Forms.Resource.Style.Widget_Design_NavigationView = global::Sensus.Android.Resource.Style.Widget_Design_NavigationView;
+			global::XLabs.Forms.Resource.Style.Widget_Design_ScrimInsetsFrameLayout = global::Sensus.Android.Resource.Style.Widget_Design_ScrimInsetsFrameLayout;
+			global::XLabs.Forms.Resource.Style.Widget_Design_Snackbar = global::Sensus.Android.Resource.Style.Widget_Design_Snackbar;
+			global::XLabs.Forms.Resource.Style.Widget_Design_TabLayout = global::Sensus.Android.Resource.Style.Widget_Design_TabLayout;
+			global::XLabs.Forms.Resource.Style.Widget_Design_TextInputLayout = global::Sensus.Android.Resource.Style.Widget_Design_TextInputLayout;
+			global::XLabs.Forms.Resource.Style.Widget_MediaRouter_Light_MediaRouteButton = global::Sensus.Android.Resource.Style.Widget_MediaRouter_Light_MediaRouteButton;
+			global::XLabs.Forms.Resource.Style.Widget_MediaRouter_MediaRouteButton = global::Sensus.Android.Resource.Style.Widget_MediaRouter_MediaRouteButton;
+			global::XLabs.Forms.Resource.Styleable.ActionBar = global::Sensus.Android.Resource.Styleable.ActionBar;
+			global::XLabs.Forms.Resource.Styleable.ActionBar_background = global::Sensus.Android.Resource.Styleable.ActionBar_background;
+			global::XLabs.Forms.Resource.Styleable.ActionBar_backgroundSplit = global::Sensus.Android.Resource.Styleable.ActionBar_backgroundSplit;
+			global::XLabs.Forms.Resource.Styleable.ActionBar_backgroundStacked = global::Sensus.Android.Resource.Styleable.ActionBar_backgroundStacked;
+			global::XLabs.Forms.Resource.Styleable.ActionBar_contentInsetEnd = global::Sensus.Android.Resource.Styleable.ActionBar_contentInsetEnd;
+			global::XLabs.Forms.Resource.Styleable.ActionBar_contentInsetLeft = global::Sensus.Android.Resource.Styleable.ActionBar_contentInsetLeft;
+			global::XLabs.Forms.Resource.Styleable.ActionBar_contentInsetRight = global::Sensus.Android.Resource.Styleable.ActionBar_contentInsetRight;
+			global::XLabs.Forms.Resource.Styleable.ActionBar_contentInsetStart = global::Sensus.Android.Resource.Styleable.ActionBar_contentInsetStart;
+			global::XLabs.Forms.Resource.Styleable.ActionBar_customNavigationLayout = global::Sensus.Android.Resource.Styleable.ActionBar_customNavigationLayout;
+			global::XLabs.Forms.Resource.Styleable.ActionBar_displayOptions = global::Sensus.Android.Resource.Styleable.ActionBar_displayOptions;
+			global::XLabs.Forms.Resource.Styleable.ActionBar_divider = global::Sensus.Android.Resource.Styleable.ActionBar_divider;
+			global::XLabs.Forms.Resource.Styleable.ActionBar_elevation = global::Sensus.Android.Resource.Styleable.ActionBar_elevation;
+			global::XLabs.Forms.Resource.Styleable.ActionBar_height = global::Sensus.Android.Resource.Styleable.ActionBar_height;
+			global::XLabs.Forms.Resource.Styleable.ActionBar_hideOnContentScroll = global::Sensus.Android.Resource.Styleable.ActionBar_hideOnContentScroll;
+			global::XLabs.Forms.Resource.Styleable.ActionBar_homeAsUpIndicator = global::Sensus.Android.Resource.Styleable.ActionBar_homeAsUpIndicator;
+			global::XLabs.Forms.Resource.Styleable.ActionBar_homeLayout = global::Sensus.Android.Resource.Styleable.ActionBar_homeLayout;
+			global::XLabs.Forms.Resource.Styleable.ActionBar_icon = global::Sensus.Android.Resource.Styleable.ActionBar_icon;
+			global::XLabs.Forms.Resource.Styleable.ActionBar_indeterminateProgressStyle = global::Sensus.Android.Resource.Styleable.ActionBar_indeterminateProgressStyle;
+			global::XLabs.Forms.Resource.Styleable.ActionBar_itemPadding = global::Sensus.Android.Resource.Styleable.ActionBar_itemPadding;
+			global::XLabs.Forms.Resource.Styleable.ActionBar_logo = global::Sensus.Android.Resource.Styleable.ActionBar_logo;
+			global::XLabs.Forms.Resource.Styleable.ActionBar_navigationMode = global::Sensus.Android.Resource.Styleable.ActionBar_navigationMode;
+			global::XLabs.Forms.Resource.Styleable.ActionBar_popupTheme = global::Sensus.Android.Resource.Styleable.ActionBar_popupTheme;
+			global::XLabs.Forms.Resource.Styleable.ActionBar_progressBarPadding = global::Sensus.Android.Resource.Styleable.ActionBar_progressBarPadding;
+			global::XLabs.Forms.Resource.Styleable.ActionBar_progressBarStyle = global::Sensus.Android.Resource.Styleable.ActionBar_progressBarStyle;
+			global::XLabs.Forms.Resource.Styleable.ActionBar_subtitle = global::Sensus.Android.Resource.Styleable.ActionBar_subtitle;
+			global::XLabs.Forms.Resource.Styleable.ActionBar_subtitleTextStyle = global::Sensus.Android.Resource.Styleable.ActionBar_subtitleTextStyle;
+			global::XLabs.Forms.Resource.Styleable.ActionBar_title = global::Sensus.Android.Resource.Styleable.ActionBar_title;
+			global::XLabs.Forms.Resource.Styleable.ActionBar_titleTextStyle = global::Sensus.Android.Resource.Styleable.ActionBar_titleTextStyle;
+			global::XLabs.Forms.Resource.Styleable.ActionBarLayout = global::Sensus.Android.Resource.Styleable.ActionBarLayout;
+			global::XLabs.Forms.Resource.Styleable.ActionBarLayout_android_layout_gravity = global::Sensus.Android.Resource.Styleable.ActionBarLayout_android_layout_gravity;
+			global::XLabs.Forms.Resource.Styleable.ActionMenuItemView = global::Sensus.Android.Resource.Styleable.ActionMenuItemView;
+			global::XLabs.Forms.Resource.Styleable.ActionMenuItemView_android_minWidth = global::Sensus.Android.Resource.Styleable.ActionMenuItemView_android_minWidth;
+			global::XLabs.Forms.Resource.Styleable.ActionMenuView = global::Sensus.Android.Resource.Styleable.ActionMenuView;
+			global::XLabs.Forms.Resource.Styleable.ActionMode = global::Sensus.Android.Resource.Styleable.ActionMode;
+			global::XLabs.Forms.Resource.Styleable.ActionMode_background = global::Sensus.Android.Resource.Styleable.ActionMode_background;
+			global::XLabs.Forms.Resource.Styleable.ActionMode_backgroundSplit = global::Sensus.Android.Resource.Styleable.ActionMode_backgroundSplit;
+			global::XLabs.Forms.Resource.Styleable.ActionMode_closeItemLayout = global::Sensus.Android.Resource.Styleable.ActionMode_closeItemLayout;
+			global::XLabs.Forms.Resource.Styleable.ActionMode_height = global::Sensus.Android.Resource.Styleable.ActionMode_height;
+			global::XLabs.Forms.Resource.Styleable.ActionMode_subtitleTextStyle = global::Sensus.Android.Resource.Styleable.ActionMode_subtitleTextStyle;
+			global::XLabs.Forms.Resource.Styleable.ActionMode_titleTextStyle = global::Sensus.Android.Resource.Styleable.ActionMode_titleTextStyle;
+			global::XLabs.Forms.Resource.Styleable.ActivityChooserView = global::Sensus.Android.Resource.Styleable.ActivityChooserView;
+			global::XLabs.Forms.Resource.Styleable.ActivityChooserView_expandActivityOverflowButtonDrawable = global::Sensus.Android.Resource.Styleable.ActivityChooserView_expandActivityOverflowButtonDrawable;
+			global::XLabs.Forms.Resource.Styleable.ActivityChooserView_initialActivityCount = global::Sensus.Android.Resource.Styleable.ActivityChooserView_initialActivityCount;
+			global::XLabs.Forms.Resource.Styleable.AlertDialog = global::Sensus.Android.Resource.Styleable.AlertDialog;
+			global::XLabs.Forms.Resource.Styleable.AlertDialog_android_layout = global::Sensus.Android.Resource.Styleable.AlertDialog_android_layout;
+			global::XLabs.Forms.Resource.Styleable.AlertDialog_buttonPanelSideLayout = global::Sensus.Android.Resource.Styleable.AlertDialog_buttonPanelSideLayout;
+			global::XLabs.Forms.Resource.Styleable.AlertDialog_listItemLayout = global::Sensus.Android.Resource.Styleable.AlertDialog_listItemLayout;
+			global::XLabs.Forms.Resource.Styleable.AlertDialog_listLayout = global::Sensus.Android.Resource.Styleable.AlertDialog_listLayout;
+			global::XLabs.Forms.Resource.Styleable.AlertDialog_multiChoiceItemLayout = global::Sensus.Android.Resource.Styleable.AlertDialog_multiChoiceItemLayout;
+			global::XLabs.Forms.Resource.Styleable.AlertDialog_singleChoiceItemLayout = global::Sensus.Android.Resource.Styleable.AlertDialog_singleChoiceItemLayout;
+			global::XLabs.Forms.Resource.Styleable.AppBarLayout = global::Sensus.Android.Resource.Styleable.AppBarLayout;
+			global::XLabs.Forms.Resource.Styleable.AppBarLayout_android_background = global::Sensus.Android.Resource.Styleable.AppBarLayout_android_background;
+			global::XLabs.Forms.Resource.Styleable.AppBarLayout_elevation = global::Sensus.Android.Resource.Styleable.AppBarLayout_elevation;
+			global::XLabs.Forms.Resource.Styleable.AppBarLayout_expanded = global::Sensus.Android.Resource.Styleable.AppBarLayout_expanded;
+			global::XLabs.Forms.Resource.Styleable.AppBarLayout_LayoutParams = global::Sensus.Android.Resource.Styleable.AppBarLayout_LayoutParams;
+			global::XLabs.Forms.Resource.Styleable.AppBarLayout_LayoutParams_layout_scrollFlags = global::Sensus.Android.Resource.Styleable.AppBarLayout_LayoutParams_layout_scrollFlags;
+			global::XLabs.Forms.Resource.Styleable.AppBarLayout_LayoutParams_layout_scrollInterpolator = global::Sensus.Android.Resource.Styleable.AppBarLayout_LayoutParams_layout_scrollInterpolator;
+			global::XLabs.Forms.Resource.Styleable.AppCompatTextView = global::Sensus.Android.Resource.Styleable.AppCompatTextView;
+			global::XLabs.Forms.Resource.Styleable.AppCompatTextView_android_textAppearance = global::Sensus.Android.Resource.Styleable.AppCompatTextView_android_textAppearance;
+			global::XLabs.Forms.Resource.Styleable.AppCompatTextView_textAllCaps = global::Sensus.Android.Resource.Styleable.AppCompatTextView_textAllCaps;
+			global::XLabs.Forms.Resource.Styleable.CardView = global::Sensus.Android.Resource.Styleable.CardView;
+			global::XLabs.Forms.Resource.Styleable.CardView_cardBackgroundColor = global::Sensus.Android.Resource.Styleable.CardView_cardBackgroundColor;
+			global::XLabs.Forms.Resource.Styleable.CardView_cardCornerRadius = global::Sensus.Android.Resource.Styleable.CardView_cardCornerRadius;
+			global::XLabs.Forms.Resource.Styleable.CardView_cardElevation = global::Sensus.Android.Resource.Styleable.CardView_cardElevation;
+			global::XLabs.Forms.Resource.Styleable.CardView_cardMaxElevation = global::Sensus.Android.Resource.Styleable.CardView_cardMaxElevation;
+			global::XLabs.Forms.Resource.Styleable.CardView_cardPreventCornerOverlap = global::Sensus.Android.Resource.Styleable.CardView_cardPreventCornerOverlap;
+			global::XLabs.Forms.Resource.Styleable.CardView_cardUseCompatPadding = global::Sensus.Android.Resource.Styleable.CardView_cardUseCompatPadding;
+			global::XLabs.Forms.Resource.Styleable.CardView_contentPadding = global::Sensus.Android.Resource.Styleable.CardView_contentPadding;
+			global::XLabs.Forms.Resource.Styleable.CardView_contentPaddingBottom = global::Sensus.Android.Resource.Styleable.CardView_contentPaddingBottom;
+			global::XLabs.Forms.Resource.Styleable.CardView_contentPaddingLeft = global::Sensus.Android.Resource.Styleable.CardView_contentPaddingLeft;
+			global::XLabs.Forms.Resource.Styleable.CardView_contentPaddingRight = global::Sensus.Android.Resource.Styleable.CardView_contentPaddingRight;
+			global::XLabs.Forms.Resource.Styleable.CardView_contentPaddingTop = global::Sensus.Android.Resource.Styleable.CardView_contentPaddingTop;
+			global::XLabs.Forms.Resource.Styleable.CollapsingAppBarLayout_LayoutParams = global::Sensus.Android.Resource.Styleable.CollapsingAppBarLayout_LayoutParams;
+			global::XLabs.Forms.Resource.Styleable.CollapsingAppBarLayout_LayoutParams_layout_collapseMode = global::Sensus.Android.Resource.Styleable.CollapsingAppBarLayout_LayoutParams_layout_collapseMode;
+			global::XLabs.Forms.Resource.Styleable.CollapsingAppBarLayout_LayoutParams_layout_collapseParallaxMultiplier = global::Sensus.Android.Resource.Styleable.CollapsingAppBarLayout_LayoutParams_layout_collapseParallaxMultiplier;
+			global::XLabs.Forms.Resource.Styleable.CollapsingToolbarLayout = global::Sensus.Android.Resource.Styleable.CollapsingToolbarLayout;
+			global::XLabs.Forms.Resource.Styleable.CollapsingToolbarLayout_collapsedTitleGravity = global::Sensus.Android.Resource.Styleable.CollapsingToolbarLayout_collapsedTitleGravity;
+			global::XLabs.Forms.Resource.Styleable.CollapsingToolbarLayout_collapsedTitleTextAppearance = global::Sensus.Android.Resource.Styleable.CollapsingToolbarLayout_collapsedTitleTextAppearance;
+			global::XLabs.Forms.Resource.Styleable.CollapsingToolbarLayout_contentScrim = global::Sensus.Android.Resource.Styleable.CollapsingToolbarLayout_contentScrim;
+			global::XLabs.Forms.Resource.Styleable.CollapsingToolbarLayout_expandedTitleGravity = global::Sensus.Android.Resource.Styleable.CollapsingToolbarLayout_expandedTitleGravity;
+			global::XLabs.Forms.Resource.Styleable.CollapsingToolbarLayout_expandedTitleMargin = global::Sensus.Android.Resource.Styleable.CollapsingToolbarLayout_expandedTitleMargin;
+			global::XLabs.Forms.Resource.Styleable.CollapsingToolbarLayout_expandedTitleMarginBottom = global::Sensus.Android.Resource.Styleable.CollapsingToolbarLayout_expandedTitleMarginBottom;
+			global::XLabs.Forms.Resource.Styleable.CollapsingToolbarLayout_expandedTitleMarginEnd = global::Sensus.Android.Resource.Styleable.CollapsingToolbarLayout_expandedTitleMarginEnd;
+			global::XLabs.Forms.Resource.Styleable.CollapsingToolbarLayout_expandedTitleMarginStart = global::Sensus.Android.Resource.Styleable.CollapsingToolbarLayout_expandedTitleMarginStart;
+			global::XLabs.Forms.Resource.Styleable.CollapsingToolbarLayout_expandedTitleMarginTop = global::Sensus.Android.Resource.Styleable.CollapsingToolbarLayout_expandedTitleMarginTop;
+			global::XLabs.Forms.Resource.Styleable.CollapsingToolbarLayout_expandedTitleTextAppearance = global::Sensus.Android.Resource.Styleable.CollapsingToolbarLayout_expandedTitleTextAppearance;
+			global::XLabs.Forms.Resource.Styleable.CollapsingToolbarLayout_statusBarScrim = global::Sensus.Android.Resource.Styleable.CollapsingToolbarLayout_statusBarScrim;
+			global::XLabs.Forms.Resource.Styleable.CollapsingToolbarLayout_title = global::Sensus.Android.Resource.Styleable.CollapsingToolbarLayout_title;
+			global::XLabs.Forms.Resource.Styleable.CollapsingToolbarLayout_titleEnabled = global::Sensus.Android.Resource.Styleable.CollapsingToolbarLayout_titleEnabled;
+			global::XLabs.Forms.Resource.Styleable.CollapsingToolbarLayout_toolbarId = global::Sensus.Android.Resource.Styleable.CollapsingToolbarLayout_toolbarId;
+			global::XLabs.Forms.Resource.Styleable.CompoundButton = global::Sensus.Android.Resource.Styleable.CompoundButton;
+			global::XLabs.Forms.Resource.Styleable.CompoundButton_android_button = global::Sensus.Android.Resource.Styleable.CompoundButton_android_button;
+			global::XLabs.Forms.Resource.Styleable.CompoundButton_buttonTint = global::Sensus.Android.Resource.Styleable.CompoundButton_buttonTint;
+			global::XLabs.Forms.Resource.Styleable.CompoundButton_buttonTintMode = global::Sensus.Android.Resource.Styleable.CompoundButton_buttonTintMode;
+			global::XLabs.Forms.Resource.Styleable.CoordinatorLayout = global::Sensus.Android.Resource.Styleable.CoordinatorLayout;
+			global::XLabs.Forms.Resource.Styleable.CoordinatorLayout_keylines = global::Sensus.Android.Resource.Styleable.CoordinatorLayout_keylines;
+			global::XLabs.Forms.Resource.Styleable.CoordinatorLayout_statusBarBackground = global::Sensus.Android.Resource.Styleable.CoordinatorLayout_statusBarBackground;
+			global::XLabs.Forms.Resource.Styleable.CoordinatorLayout_LayoutParams = global::Sensus.Android.Resource.Styleable.CoordinatorLayout_LayoutParams;
+			global::XLabs.Forms.Resource.Styleable.CoordinatorLayout_LayoutParams_android_layout_gravity = global::Sensus.Android.Resource.Styleable.CoordinatorLayout_LayoutParams_android_layout_gravity;
+			global::XLabs.Forms.Resource.Styleable.CoordinatorLayout_LayoutParams_layout_anchor = global::Sensus.Android.Resource.Styleable.CoordinatorLayout_LayoutParams_layout_anchor;
+			global::XLabs.Forms.Resource.Styleable.CoordinatorLayout_LayoutParams_layout_anchorGravity = global::Sensus.Android.Resource.Styleable.CoordinatorLayout_LayoutParams_layout_anchorGravity;
+			global::XLabs.Forms.Resource.Styleable.CoordinatorLayout_LayoutParams_layout_behavior = global::Sensus.Android.Resource.Styleable.CoordinatorLayout_LayoutParams_layout_behavior;
+			global::XLabs.Forms.Resource.Styleable.CoordinatorLayout_LayoutParams_layout_keyline = global::Sensus.Android.Resource.Styleable.CoordinatorLayout_LayoutParams_layout_keyline;
+			global::XLabs.Forms.Resource.Styleable.DrawerArrowToggle = global::Sensus.Android.Resource.Styleable.DrawerArrowToggle;
+			global::XLabs.Forms.Resource.Styleable.DrawerArrowToggle_arrowHeadLength = global::Sensus.Android.Resource.Styleable.DrawerArrowToggle_arrowHeadLength;
+			global::XLabs.Forms.Resource.Styleable.DrawerArrowToggle_arrowShaftLength = global::Sensus.Android.Resource.Styleable.DrawerArrowToggle_arrowShaftLength;
+			global::XLabs.Forms.Resource.Styleable.DrawerArrowToggle_barLength = global::Sensus.Android.Resource.Styleable.DrawerArrowToggle_barLength;
+			global::XLabs.Forms.Resource.Styleable.DrawerArrowToggle_color = global::Sensus.Android.Resource.Styleable.DrawerArrowToggle_color;
+			global::XLabs.Forms.Resource.Styleable.DrawerArrowToggle_drawableSize = global::Sensus.Android.Resource.Styleable.DrawerArrowToggle_drawableSize;
+			global::XLabs.Forms.Resource.Styleable.DrawerArrowToggle_gapBetweenBars = global::Sensus.Android.Resource.Styleable.DrawerArrowToggle_gapBetweenBars;
+			global::XLabs.Forms.Resource.Styleable.DrawerArrowToggle_spinBars = global::Sensus.Android.Resource.Styleable.DrawerArrowToggle_spinBars;
+			global::XLabs.Forms.Resource.Styleable.DrawerArrowToggle_thickness = global::Sensus.Android.Resource.Styleable.DrawerArrowToggle_thickness;
+			global::XLabs.Forms.Resource.Styleable.FloatingActionButton = global::Sensus.Android.Resource.Styleable.FloatingActionButton;
+			global::XLabs.Forms.Resource.Styleable.FloatingActionButton_android_background = global::Sensus.Android.Resource.Styleable.FloatingActionButton_android_background;
+			global::XLabs.Forms.Resource.Styleable.FloatingActionButton_backgroundTint = global::Sensus.Android.Resource.Styleable.FloatingActionButton_backgroundTint;
+			global::XLabs.Forms.Resource.Styleable.FloatingActionButton_backgroundTintMode = global::Sensus.Android.Resource.Styleable.FloatingActionButton_backgroundTintMode;
+			global::XLabs.Forms.Resource.Styleable.FloatingActionButton_borderWidth = global::Sensus.Android.Resource.Styleable.FloatingActionButton_borderWidth;
+			global::XLabs.Forms.Resource.Styleable.FloatingActionButton_elevation = global::Sensus.Android.Resource.Styleable.FloatingActionButton_elevation;
+			global::XLabs.Forms.Resource.Styleable.FloatingActionButton_fabSize = global::Sensus.Android.Resource.Styleable.FloatingActionButton_fabSize;
+			global::XLabs.Forms.Resource.Styleable.FloatingActionButton_pressedTranslationZ = global::Sensus.Android.Resource.Styleable.FloatingActionButton_pressedTranslationZ;
+			global::XLabs.Forms.Resource.Styleable.FloatingActionButton_rippleColor = global::Sensus.Android.Resource.Styleable.FloatingActionButton_rippleColor;
+			global::XLabs.Forms.Resource.Styleable.LinearLayoutCompat = global::Sensus.Android.Resource.Styleable.LinearLayoutCompat;
+			global::XLabs.Forms.Resource.Styleable.LinearLayoutCompat_android_baselineAligned = global::Sensus.Android.Resource.Styleable.LinearLayoutCompat_android_baselineAligned;
+			global::XLabs.Forms.Resource.Styleable.LinearLayoutCompat_android_baselineAlignedChildIndex = global::Sensus.Android.Resource.Styleable.LinearLayoutCompat_android_baselineAlignedChildIndex;
+			global::XLabs.Forms.Resource.Styleable.LinearLayoutCompat_android_gravity = global::Sensus.Android.Resource.Styleable.LinearLayoutCompat_android_gravity;
+			global::XLabs.Forms.Resource.Styleable.LinearLayoutCompat_android_orientation = global::Sensus.Android.Resource.Styleable.LinearLayoutCompat_android_orientation;
+			global::XLabs.Forms.Resource.Styleable.LinearLayoutCompat_android_weightSum = global::Sensus.Android.Resource.Styleable.LinearLayoutCompat_android_weightSum;
+			global::XLabs.Forms.Resource.Styleable.LinearLayoutCompat_divider = global::Sensus.Android.Resource.Styleable.LinearLayoutCompat_divider;
+			global::XLabs.Forms.Resource.Styleable.LinearLayoutCompat_dividerPadding = global::Sensus.Android.Resource.Styleable.LinearLayoutCompat_dividerPadding;
+			global::XLabs.Forms.Resource.Styleable.LinearLayoutCompat_measureWithLargestChild = global::Sensus.Android.Resource.Styleable.LinearLayoutCompat_measureWithLargestChild;
+			global::XLabs.Forms.Resource.Styleable.LinearLayoutCompat_showDividers = global::Sensus.Android.Resource.Styleable.LinearLayoutCompat_showDividers;
+			global::XLabs.Forms.Resource.Styleable.LinearLayoutCompat_Layout = global::Sensus.Android.Resource.Styleable.LinearLayoutCompat_Layout;
+			global::XLabs.Forms.Resource.Styleable.LinearLayoutCompat_Layout_android_layout_gravity = global::Sensus.Android.Resource.Styleable.LinearLayoutCompat_Layout_android_layout_gravity;
+			global::XLabs.Forms.Resource.Styleable.LinearLayoutCompat_Layout_android_layout_height = global::Sensus.Android.Resource.Styleable.LinearLayoutCompat_Layout_android_layout_height;
+			global::XLabs.Forms.Resource.Styleable.LinearLayoutCompat_Layout_android_layout_weight = global::Sensus.Android.Resource.Styleable.LinearLayoutCompat_Layout_android_layout_weight;
+			global::XLabs.Forms.Resource.Styleable.LinearLayoutCompat_Layout_android_layout_width = global::Sensus.Android.Resource.Styleable.LinearLayoutCompat_Layout_android_layout_width;
+			global::XLabs.Forms.Resource.Styleable.ListPopupWindow = global::Sensus.Android.Resource.Styleable.ListPopupWindow;
+			global::XLabs.Forms.Resource.Styleable.ListPopupWindow_android_dropDownHorizontalOffset = global::Sensus.Android.Resource.Styleable.ListPopupWindow_android_dropDownHorizontalOffset;
+			global::XLabs.Forms.Resource.Styleable.ListPopupWindow_android_dropDownVerticalOffset = global::Sensus.Android.Resource.Styleable.ListPopupWindow_android_dropDownVerticalOffset;
+			global::XLabs.Forms.Resource.Styleable.MediaRouteButton = global::Sensus.Android.Resource.Styleable.MediaRouteButton;
+			global::XLabs.Forms.Resource.Styleable.MediaRouteButton_android_minHeight = global::Sensus.Android.Resource.Styleable.MediaRouteButton_android_minHeight;
+			global::XLabs.Forms.Resource.Styleable.MediaRouteButton_android_minWidth = global::Sensus.Android.Resource.Styleable.MediaRouteButton_android_minWidth;
+			global::XLabs.Forms.Resource.Styleable.MediaRouteButton_externalRouteEnabledDrawable = global::Sensus.Android.Resource.Styleable.MediaRouteButton_externalRouteEnabledDrawable;
+			global::XLabs.Forms.Resource.Styleable.MenuGroup = global::Sensus.Android.Resource.Styleable.MenuGroup;
+			global::XLabs.Forms.Resource.Styleable.MenuGroup_android_checkableBehavior = global::Sensus.Android.Resource.Styleable.MenuGroup_android_checkableBehavior;
+			global::XLabs.Forms.Resource.Styleable.MenuGroup_android_enabled = global::Sensus.Android.Resource.Styleable.MenuGroup_android_enabled;
+			global::XLabs.Forms.Resource.Styleable.MenuGroup_android_id = global::Sensus.Android.Resource.Styleable.MenuGroup_android_id;
+			global::XLabs.Forms.Resource.Styleable.MenuGroup_android_menuCategory = global::Sensus.Android.Resource.Styleable.MenuGroup_android_menuCategory;
+			global::XLabs.Forms.Resource.Styleable.MenuGroup_android_orderInCategory = global::Sensus.Android.Resource.Styleable.MenuGroup_android_orderInCategory;
+			global::XLabs.Forms.Resource.Styleable.MenuGroup_android_visible = global::Sensus.Android.Resource.Styleable.MenuGroup_android_visible;
+			global::XLabs.Forms.Resource.Styleable.MenuItem = global::Sensus.Android.Resource.Styleable.MenuItem;
+			global::XLabs.Forms.Resource.Styleable.MenuItem_actionLayout = global::Sensus.Android.Resource.Styleable.MenuItem_actionLayout;
+			global::XLabs.Forms.Resource.Styleable.MenuItem_actionProviderClass = global::Sensus.Android.Resource.Styleable.MenuItem_actionProviderClass;
+			global::XLabs.Forms.Resource.Styleable.MenuItem_actionViewClass = global::Sensus.Android.Resource.Styleable.MenuItem_actionViewClass;
+			global::XLabs.Forms.Resource.Styleable.MenuItem_android_alphabeticShortcut = global::Sensus.Android.Resource.Styleable.MenuItem_android_alphabeticShortcut;
+			global::XLabs.Forms.Resource.Styleable.MenuItem_android_checkable = global::Sensus.Android.Resource.Styleable.MenuItem_android_checkable;
+			global::XLabs.Forms.Resource.Styleable.MenuItem_android_checked = global::Sensus.Android.Resource.Styleable.MenuItem_android_checked;
+			global::XLabs.Forms.Resource.Styleable.MenuItem_android_enabled = global::Sensus.Android.Resource.Styleable.MenuItem_android_enabled;
+			global::XLabs.Forms.Resource.Styleable.MenuItem_android_icon = global::Sensus.Android.Resource.Styleable.MenuItem_android_icon;
+			global::XLabs.Forms.Resource.Styleable.MenuItem_android_id = global::Sensus.Android.Resource.Styleable.MenuItem_android_id;
+			global::XLabs.Forms.Resource.Styleable.MenuItem_android_menuCategory = global::Sensus.Android.Resource.Styleable.MenuItem_android_menuCategory;
+			global::XLabs.Forms.Resource.Styleable.MenuItem_android_numericShortcut = global::Sensus.Android.Resource.Styleable.MenuItem_android_numericShortcut;
+			global::XLabs.Forms.Resource.Styleable.MenuItem_android_onClick = global::Sensus.Android.Resource.Styleable.MenuItem_android_onClick;
+			global::XLabs.Forms.Resource.Styleable.MenuItem_android_orderInCategory = global::Sensus.Android.Resource.Styleable.MenuItem_android_orderInCategory;
+			global::XLabs.Forms.Resource.Styleable.MenuItem_android_title = global::Sensus.Android.Resource.Styleable.MenuItem_android_title;
+			global::XLabs.Forms.Resource.Styleable.MenuItem_android_titleCondensed = global::Sensus.Android.Resource.Styleable.MenuItem_android_titleCondensed;
+			global::XLabs.Forms.Resource.Styleable.MenuItem_android_visible = global::Sensus.Android.Resource.Styleable.MenuItem_android_visible;
+			global::XLabs.Forms.Resource.Styleable.MenuItem_showAsAction = global::Sensus.Android.Resource.Styleable.MenuItem_showAsAction;
+			global::XLabs.Forms.Resource.Styleable.MenuView = global::Sensus.Android.Resource.Styleable.MenuView;
+			global::XLabs.Forms.Resource.Styleable.MenuView_android_headerBackground = global::Sensus.Android.Resource.Styleable.MenuView_android_headerBackground;
+			global::XLabs.Forms.Resource.Styleable.MenuView_android_horizontalDivider = global::Sensus.Android.Resource.Styleable.MenuView_android_horizontalDivider;
+			global::XLabs.Forms.Resource.Styleable.MenuView_android_itemBackground = global::Sensus.Android.Resource.Styleable.MenuView_android_itemBackground;
+			global::XLabs.Forms.Resource.Styleable.MenuView_android_itemIconDisabledAlpha = global::Sensus.Android.Resource.Styleable.MenuView_android_itemIconDisabledAlpha;
+			global::XLabs.Forms.Resource.Styleable.MenuView_android_itemTextAppearance = global::Sensus.Android.Resource.Styleable.MenuView_android_itemTextAppearance;
+			global::XLabs.Forms.Resource.Styleable.MenuView_android_verticalDivider = global::Sensus.Android.Resource.Styleable.MenuView_android_verticalDivider;
+			global::XLabs.Forms.Resource.Styleable.MenuView_android_windowAnimationStyle = global::Sensus.Android.Resource.Styleable.MenuView_android_windowAnimationStyle;
+			global::XLabs.Forms.Resource.Styleable.MenuView_preserveIconSpacing = global::Sensus.Android.Resource.Styleable.MenuView_preserveIconSpacing;
+			global::XLabs.Forms.Resource.Styleable.NavigationView = global::Sensus.Android.Resource.Styleable.NavigationView;
+			global::XLabs.Forms.Resource.Styleable.NavigationView_android_background = global::Sensus.Android.Resource.Styleable.NavigationView_android_background;
+			global::XLabs.Forms.Resource.Styleable.NavigationView_android_fitsSystemWindows = global::Sensus.Android.Resource.Styleable.NavigationView_android_fitsSystemWindows;
+			global::XLabs.Forms.Resource.Styleable.NavigationView_android_maxWidth = global::Sensus.Android.Resource.Styleable.NavigationView_android_maxWidth;
+			global::XLabs.Forms.Resource.Styleable.NavigationView_elevation = global::Sensus.Android.Resource.Styleable.NavigationView_elevation;
+			global::XLabs.Forms.Resource.Styleable.NavigationView_headerLayout = global::Sensus.Android.Resource.Styleable.NavigationView_headerLayout;
+			global::XLabs.Forms.Resource.Styleable.NavigationView_itemBackground = global::Sensus.Android.Resource.Styleable.NavigationView_itemBackground;
+			global::XLabs.Forms.Resource.Styleable.NavigationView_itemIconTint = global::Sensus.Android.Resource.Styleable.NavigationView_itemIconTint;
+			global::XLabs.Forms.Resource.Styleable.NavigationView_itemTextAppearance = global::Sensus.Android.Resource.Styleable.NavigationView_itemTextAppearance;
+			global::XLabs.Forms.Resource.Styleable.NavigationView_itemTextColor = global::Sensus.Android.Resource.Styleable.NavigationView_itemTextColor;
+			global::XLabs.Forms.Resource.Styleable.NavigationView_menu = global::Sensus.Android.Resource.Styleable.NavigationView_menu;
+			global::XLabs.Forms.Resource.Styleable.PopupWindow = global::Sensus.Android.Resource.Styleable.PopupWindow;
+			global::XLabs.Forms.Resource.Styleable.PopupWindow_android_popupBackground = global::Sensus.Android.Resource.Styleable.PopupWindow_android_popupBackground;
+			global::XLabs.Forms.Resource.Styleable.PopupWindow_overlapAnchor = global::Sensus.Android.Resource.Styleable.PopupWindow_overlapAnchor;
+			global::XLabs.Forms.Resource.Styleable.PopupWindowBackgroundState = global::Sensus.Android.Resource.Styleable.PopupWindowBackgroundState;
+			global::XLabs.Forms.Resource.Styleable.PopupWindowBackgroundState_state_above_anchor = global::Sensus.Android.Resource.Styleable.PopupWindowBackgroundState_state_above_anchor;
+			global::XLabs.Forms.Resource.Styleable.ScrimInsetsFrameLayout = global::Sensus.Android.Resource.Styleable.ScrimInsetsFrameLayout;
+			global::XLabs.Forms.Resource.Styleable.ScrimInsetsFrameLayout_insetForeground = global::Sensus.Android.Resource.Styleable.ScrimInsetsFrameLayout_insetForeground;
+			global::XLabs.Forms.Resource.Styleable.ScrollingViewBehavior_Params = global::Sensus.Android.Resource.Styleable.ScrollingViewBehavior_Params;
+			global::XLabs.Forms.Resource.Styleable.ScrollingViewBehavior_Params_behavior_overlapTop = global::Sensus.Android.Resource.Styleable.ScrollingViewBehavior_Params_behavior_overlapTop;
+			global::XLabs.Forms.Resource.Styleable.SearchView = global::Sensus.Android.Resource.Styleable.SearchView;
+			global::XLabs.Forms.Resource.Styleable.SearchView_android_focusable = global::Sensus.Android.Resource.Styleable.SearchView_android_focusable;
+			global::XLabs.Forms.Resource.Styleable.SearchView_android_imeOptions = global::Sensus.Android.Resource.Styleable.SearchView_android_imeOptions;
+			global::XLabs.Forms.Resource.Styleable.SearchView_android_inputType = global::Sensus.Android.Resource.Styleable.SearchView_android_inputType;
+			global::XLabs.Forms.Resource.Styleable.SearchView_android_maxWidth = global::Sensus.Android.Resource.Styleable.SearchView_android_maxWidth;
+			global::XLabs.Forms.Resource.Styleable.SearchView_closeIcon = global::Sensus.Android.Resource.Styleable.SearchView_closeIcon;
+			global::XLabs.Forms.Resource.Styleable.SearchView_commitIcon = global::Sensus.Android.Resource.Styleable.SearchView_commitIcon;
+			global::XLabs.Forms.Resource.Styleable.SearchView_defaultQueryHint = global::Sensus.Android.Resource.Styleable.SearchView_defaultQueryHint;
+			global::XLabs.Forms.Resource.Styleable.SearchView_goIcon = global::Sensus.Android.Resource.Styleable.SearchView_goIcon;
+			global::XLabs.Forms.Resource.Styleable.SearchView_iconifiedByDefault = global::Sensus.Android.Resource.Styleable.SearchView_iconifiedByDefault;
+			global::XLabs.Forms.Resource.Styleable.SearchView_layout = global::Sensus.Android.Resource.Styleable.SearchView_layout;
+			global::XLabs.Forms.Resource.Styleable.SearchView_queryBackground = global::Sensus.Android.Resource.Styleable.SearchView_queryBackground;
+			global::XLabs.Forms.Resource.Styleable.SearchView_queryHint = global::Sensus.Android.Resource.Styleable.SearchView_queryHint;
+			global::XLabs.Forms.Resource.Styleable.SearchView_searchHintIcon = global::Sensus.Android.Resource.Styleable.SearchView_searchHintIcon;
+			global::XLabs.Forms.Resource.Styleable.SearchView_searchIcon = global::Sensus.Android.Resource.Styleable.SearchView_searchIcon;
+			global::XLabs.Forms.Resource.Styleable.SearchView_submitBackground = global::Sensus.Android.Resource.Styleable.SearchView_submitBackground;
+			global::XLabs.Forms.Resource.Styleable.SearchView_suggestionRowLayout = global::Sensus.Android.Resource.Styleable.SearchView_suggestionRowLayout;
+			global::XLabs.Forms.Resource.Styleable.SearchView_voiceIcon = global::Sensus.Android.Resource.Styleable.SearchView_voiceIcon;
+			global::XLabs.Forms.Resource.Styleable.SnackbarLayout = global::Sensus.Android.Resource.Styleable.SnackbarLayout;
+			global::XLabs.Forms.Resource.Styleable.SnackbarLayout_android_maxWidth = global::Sensus.Android.Resource.Styleable.SnackbarLayout_android_maxWidth;
+			global::XLabs.Forms.Resource.Styleable.SnackbarLayout_elevation = global::Sensus.Android.Resource.Styleable.SnackbarLayout_elevation;
+			global::XLabs.Forms.Resource.Styleable.SnackbarLayout_maxActionInlineWidth = global::Sensus.Android.Resource.Styleable.SnackbarLayout_maxActionInlineWidth;
+			global::XLabs.Forms.Resource.Styleable.Spinner = global::Sensus.Android.Resource.Styleable.Spinner;
+			global::XLabs.Forms.Resource.Styleable.Spinner_android_dropDownWidth = global::Sensus.Android.Resource.Styleable.Spinner_android_dropDownWidth;
+			global::XLabs.Forms.Resource.Styleable.Spinner_android_popupBackground = global::Sensus.Android.Resource.Styleable.Spinner_android_popupBackground;
+			global::XLabs.Forms.Resource.Styleable.Spinner_android_prompt = global::Sensus.Android.Resource.Styleable.Spinner_android_prompt;
+			global::XLabs.Forms.Resource.Styleable.Spinner_popupTheme = global::Sensus.Android.Resource.Styleable.Spinner_popupTheme;
+			global::XLabs.Forms.Resource.Styleable.SwitchCompat = global::Sensus.Android.Resource.Styleable.SwitchCompat;
+			global::XLabs.Forms.Resource.Styleable.SwitchCompat_android_textOff = global::Sensus.Android.Resource.Styleable.SwitchCompat_android_textOff;
+			global::XLabs.Forms.Resource.Styleable.SwitchCompat_android_textOn = global::Sensus.Android.Resource.Styleable.SwitchCompat_android_textOn;
+			global::XLabs.Forms.Resource.Styleable.SwitchCompat_android_thumb = global::Sensus.Android.Resource.Styleable.SwitchCompat_android_thumb;
+			global::XLabs.Forms.Resource.Styleable.SwitchCompat_showText = global::Sensus.Android.Resource.Styleable.SwitchCompat_showText;
+			global::XLabs.Forms.Resource.Styleable.SwitchCompat_splitTrack = global::Sensus.Android.Resource.Styleable.SwitchCompat_splitTrack;
+			global::XLabs.Forms.Resource.Styleable.SwitchCompat_switchMinWidth = global::Sensus.Android.Resource.Styleable.SwitchCompat_switchMinWidth;
+			global::XLabs.Forms.Resource.Styleable.SwitchCompat_switchPadding = global::Sensus.Android.Resource.Styleable.SwitchCompat_switchPadding;
+			global::XLabs.Forms.Resource.Styleable.SwitchCompat_switchTextAppearance = global::Sensus.Android.Resource.Styleable.SwitchCompat_switchTextAppearance;
+			global::XLabs.Forms.Resource.Styleable.SwitchCompat_thumbTextPadding = global::Sensus.Android.Resource.Styleable.SwitchCompat_thumbTextPadding;
+			global::XLabs.Forms.Resource.Styleable.SwitchCompat_track = global::Sensus.Android.Resource.Styleable.SwitchCompat_track;
+			global::XLabs.Forms.Resource.Styleable.TabLayout = global::Sensus.Android.Resource.Styleable.TabLayout;
+			global::XLabs.Forms.Resource.Styleable.TabLayout_tabBackground = global::Sensus.Android.Resource.Styleable.TabLayout_tabBackground;
+			global::XLabs.Forms.Resource.Styleable.TabLayout_tabContentStart = global::Sensus.Android.Resource.Styleable.TabLayout_tabContentStart;
+			global::XLabs.Forms.Resource.Styleable.TabLayout_tabGravity = global::Sensus.Android.Resource.Styleable.TabLayout_tabGravity;
+			global::XLabs.Forms.Resource.Styleable.TabLayout_tabIndicatorColor = global::Sensus.Android.Resource.Styleable.TabLayout_tabIndicatorColor;
+			global::XLabs.Forms.Resource.Styleable.TabLayout_tabIndicatorHeight = global::Sensus.Android.Resource.Styleable.TabLayout_tabIndicatorHeight;
+			global::XLabs.Forms.Resource.Styleable.TabLayout_tabMaxWidth = global::Sensus.Android.Resource.Styleable.TabLayout_tabMaxWidth;
+			global::XLabs.Forms.Resource.Styleable.TabLayout_tabMinWidth = global::Sensus.Android.Resource.Styleable.TabLayout_tabMinWidth;
+			global::XLabs.Forms.Resource.Styleable.TabLayout_tabMode = global::Sensus.Android.Resource.Styleable.TabLayout_tabMode;
+			global::XLabs.Forms.Resource.Styleable.TabLayout_tabPadding = global::Sensus.Android.Resource.Styleable.TabLayout_tabPadding;
+			global::XLabs.Forms.Resource.Styleable.TabLayout_tabPaddingBottom = global::Sensus.Android.Resource.Styleable.TabLayout_tabPaddingBottom;
+			global::XLabs.Forms.Resource.Styleable.TabLayout_tabPaddingEnd = global::Sensus.Android.Resource.Styleable.TabLayout_tabPaddingEnd;
+			global::XLabs.Forms.Resource.Styleable.TabLayout_tabPaddingStart = global::Sensus.Android.Resource.Styleable.TabLayout_tabPaddingStart;
+			global::XLabs.Forms.Resource.Styleable.TabLayout_tabPaddingTop = global::Sensus.Android.Resource.Styleable.TabLayout_tabPaddingTop;
+			global::XLabs.Forms.Resource.Styleable.TabLayout_tabSelectedTextColor = global::Sensus.Android.Resource.Styleable.TabLayout_tabSelectedTextColor;
+			global::XLabs.Forms.Resource.Styleable.TabLayout_tabTextAppearance = global::Sensus.Android.Resource.Styleable.TabLayout_tabTextAppearance;
+			global::XLabs.Forms.Resource.Styleable.TabLayout_tabTextColor = global::Sensus.Android.Resource.Styleable.TabLayout_tabTextColor;
+			global::XLabs.Forms.Resource.Styleable.TextAppearance = global::Sensus.Android.Resource.Styleable.TextAppearance;
+			global::XLabs.Forms.Resource.Styleable.TextAppearance_android_textColor = global::Sensus.Android.Resource.Styleable.TextAppearance_android_textColor;
+			global::XLabs.Forms.Resource.Styleable.TextAppearance_android_textSize = global::Sensus.Android.Resource.Styleable.TextAppearance_android_textSize;
+			global::XLabs.Forms.Resource.Styleable.TextAppearance_android_textStyle = global::Sensus.Android.Resource.Styleable.TextAppearance_android_textStyle;
+			global::XLabs.Forms.Resource.Styleable.TextAppearance_android_typeface = global::Sensus.Android.Resource.Styleable.TextAppearance_android_typeface;
+			global::XLabs.Forms.Resource.Styleable.TextAppearance_textAllCaps = global::Sensus.Android.Resource.Styleable.TextAppearance_textAllCaps;
+			global::XLabs.Forms.Resource.Styleable.TextInputLayout = global::Sensus.Android.Resource.Styleable.TextInputLayout;
+			global::XLabs.Forms.Resource.Styleable.TextInputLayout_android_hint = global::Sensus.Android.Resource.Styleable.TextInputLayout_android_hint;
+			global::XLabs.Forms.Resource.Styleable.TextInputLayout_android_textColorHint = global::Sensus.Android.Resource.Styleable.TextInputLayout_android_textColorHint;
+			global::XLabs.Forms.Resource.Styleable.TextInputLayout_errorEnabled = global::Sensus.Android.Resource.Styleable.TextInputLayout_errorEnabled;
+			global::XLabs.Forms.Resource.Styleable.TextInputLayout_errorTextAppearance = global::Sensus.Android.Resource.Styleable.TextInputLayout_errorTextAppearance;
+			global::XLabs.Forms.Resource.Styleable.TextInputLayout_hintAnimationEnabled = global::Sensus.Android.Resource.Styleable.TextInputLayout_hintAnimationEnabled;
+			global::XLabs.Forms.Resource.Styleable.TextInputLayout_hintTextAppearance = global::Sensus.Android.Resource.Styleable.TextInputLayout_hintTextAppearance;
+			global::XLabs.Forms.Resource.Styleable.Theme = global::Sensus.Android.Resource.Styleable.Theme;
+			global::XLabs.Forms.Resource.Styleable.Theme_actionBarDivider = global::Sensus.Android.Resource.Styleable.Theme_actionBarDivider;
+			global::XLabs.Forms.Resource.Styleable.Theme_actionBarItemBackground = global::Sensus.Android.Resource.Styleable.Theme_actionBarItemBackground;
+			global::XLabs.Forms.Resource.Styleable.Theme_actionBarPopupTheme = global::Sensus.Android.Resource.Styleable.Theme_actionBarPopupTheme;
+			global::XLabs.Forms.Resource.Styleable.Theme_actionBarSize = global::Sensus.Android.Resource.Styleable.Theme_actionBarSize;
+			global::XLabs.Forms.Resource.Styleable.Theme_actionBarSplitStyle = global::Sensus.Android.Resource.Styleable.Theme_actionBarSplitStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_actionBarStyle = global::Sensus.Android.Resource.Styleable.Theme_actionBarStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_actionBarTabBarStyle = global::Sensus.Android.Resource.Styleable.Theme_actionBarTabBarStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_actionBarTabStyle = global::Sensus.Android.Resource.Styleable.Theme_actionBarTabStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_actionBarTabTextStyle = global::Sensus.Android.Resource.Styleable.Theme_actionBarTabTextStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_actionBarTheme = global::Sensus.Android.Resource.Styleable.Theme_actionBarTheme;
+			global::XLabs.Forms.Resource.Styleable.Theme_actionBarWidgetTheme = global::Sensus.Android.Resource.Styleable.Theme_actionBarWidgetTheme;
+			global::XLabs.Forms.Resource.Styleable.Theme_actionButtonStyle = global::Sensus.Android.Resource.Styleable.Theme_actionButtonStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_actionDropDownStyle = global::Sensus.Android.Resource.Styleable.Theme_actionDropDownStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_actionMenuTextAppearance = global::Sensus.Android.Resource.Styleable.Theme_actionMenuTextAppearance;
+			global::XLabs.Forms.Resource.Styleable.Theme_actionMenuTextColor = global::Sensus.Android.Resource.Styleable.Theme_actionMenuTextColor;
+			global::XLabs.Forms.Resource.Styleable.Theme_actionModeBackground = global::Sensus.Android.Resource.Styleable.Theme_actionModeBackground;
+			global::XLabs.Forms.Resource.Styleable.Theme_actionModeCloseButtonStyle = global::Sensus.Android.Resource.Styleable.Theme_actionModeCloseButtonStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_actionModeCloseDrawable = global::Sensus.Android.Resource.Styleable.Theme_actionModeCloseDrawable;
+			global::XLabs.Forms.Resource.Styleable.Theme_actionModeCopyDrawable = global::Sensus.Android.Resource.Styleable.Theme_actionModeCopyDrawable;
+			global::XLabs.Forms.Resource.Styleable.Theme_actionModeCutDrawable = global::Sensus.Android.Resource.Styleable.Theme_actionModeCutDrawable;
+			global::XLabs.Forms.Resource.Styleable.Theme_actionModeFindDrawable = global::Sensus.Android.Resource.Styleable.Theme_actionModeFindDrawable;
+			global::XLabs.Forms.Resource.Styleable.Theme_actionModePasteDrawable = global::Sensus.Android.Resource.Styleable.Theme_actionModePasteDrawable;
+			global::XLabs.Forms.Resource.Styleable.Theme_actionModePopupWindowStyle = global::Sensus.Android.Resource.Styleable.Theme_actionModePopupWindowStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_actionModeSelectAllDrawable = global::Sensus.Android.Resource.Styleable.Theme_actionModeSelectAllDrawable;
+			global::XLabs.Forms.Resource.Styleable.Theme_actionModeShareDrawable = global::Sensus.Android.Resource.Styleable.Theme_actionModeShareDrawable;
+			global::XLabs.Forms.Resource.Styleable.Theme_actionModeSplitBackground = global::Sensus.Android.Resource.Styleable.Theme_actionModeSplitBackground;
+			global::XLabs.Forms.Resource.Styleable.Theme_actionModeStyle = global::Sensus.Android.Resource.Styleable.Theme_actionModeStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_actionModeWebSearchDrawable = global::Sensus.Android.Resource.Styleable.Theme_actionModeWebSearchDrawable;
+			global::XLabs.Forms.Resource.Styleable.Theme_actionOverflowButtonStyle = global::Sensus.Android.Resource.Styleable.Theme_actionOverflowButtonStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_actionOverflowMenuStyle = global::Sensus.Android.Resource.Styleable.Theme_actionOverflowMenuStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_activityChooserViewStyle = global::Sensus.Android.Resource.Styleable.Theme_activityChooserViewStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_alertDialogButtonGroupStyle = global::Sensus.Android.Resource.Styleable.Theme_alertDialogButtonGroupStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_alertDialogCenterButtons = global::Sensus.Android.Resource.Styleable.Theme_alertDialogCenterButtons;
+			global::XLabs.Forms.Resource.Styleable.Theme_alertDialogStyle = global::Sensus.Android.Resource.Styleable.Theme_alertDialogStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_alertDialogTheme = global::Sensus.Android.Resource.Styleable.Theme_alertDialogTheme;
+			global::XLabs.Forms.Resource.Styleable.Theme_android_windowAnimationStyle = global::Sensus.Android.Resource.Styleable.Theme_android_windowAnimationStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_android_windowIsFloating = global::Sensus.Android.Resource.Styleable.Theme_android_windowIsFloating;
+			global::XLabs.Forms.Resource.Styleable.Theme_autoCompleteTextViewStyle = global::Sensus.Android.Resource.Styleable.Theme_autoCompleteTextViewStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_borderlessButtonStyle = global::Sensus.Android.Resource.Styleable.Theme_borderlessButtonStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_buttonBarButtonStyle = global::Sensus.Android.Resource.Styleable.Theme_buttonBarButtonStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_buttonBarNegativeButtonStyle = global::Sensus.Android.Resource.Styleable.Theme_buttonBarNegativeButtonStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_buttonBarNeutralButtonStyle = global::Sensus.Android.Resource.Styleable.Theme_buttonBarNeutralButtonStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_buttonBarPositiveButtonStyle = global::Sensus.Android.Resource.Styleable.Theme_buttonBarPositiveButtonStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_buttonBarStyle = global::Sensus.Android.Resource.Styleable.Theme_buttonBarStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_buttonStyle = global::Sensus.Android.Resource.Styleable.Theme_buttonStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_buttonStyleSmall = global::Sensus.Android.Resource.Styleable.Theme_buttonStyleSmall;
+			global::XLabs.Forms.Resource.Styleable.Theme_checkboxStyle = global::Sensus.Android.Resource.Styleable.Theme_checkboxStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_checkedTextViewStyle = global::Sensus.Android.Resource.Styleable.Theme_checkedTextViewStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_colorAccent = global::Sensus.Android.Resource.Styleable.Theme_colorAccent;
+			global::XLabs.Forms.Resource.Styleable.Theme_colorButtonNormal = global::Sensus.Android.Resource.Styleable.Theme_colorButtonNormal;
+			global::XLabs.Forms.Resource.Styleable.Theme_colorControlActivated = global::Sensus.Android.Resource.Styleable.Theme_colorControlActivated;
+			global::XLabs.Forms.Resource.Styleable.Theme_colorControlHighlight = global::Sensus.Android.Resource.Styleable.Theme_colorControlHighlight;
+			global::XLabs.Forms.Resource.Styleable.Theme_colorControlNormal = global::Sensus.Android.Resource.Styleable.Theme_colorControlNormal;
+			global::XLabs.Forms.Resource.Styleable.Theme_colorPrimary = global::Sensus.Android.Resource.Styleable.Theme_colorPrimary;
+			global::XLabs.Forms.Resource.Styleable.Theme_colorPrimaryDark = global::Sensus.Android.Resource.Styleable.Theme_colorPrimaryDark;
+			global::XLabs.Forms.Resource.Styleable.Theme_colorSwitchThumbNormal = global::Sensus.Android.Resource.Styleable.Theme_colorSwitchThumbNormal;
+			global::XLabs.Forms.Resource.Styleable.Theme_controlBackground = global::Sensus.Android.Resource.Styleable.Theme_controlBackground;
+			global::XLabs.Forms.Resource.Styleable.Theme_dialogPreferredPadding = global::Sensus.Android.Resource.Styleable.Theme_dialogPreferredPadding;
+			global::XLabs.Forms.Resource.Styleable.Theme_dialogTheme = global::Sensus.Android.Resource.Styleable.Theme_dialogTheme;
+			global::XLabs.Forms.Resource.Styleable.Theme_dividerHorizontal = global::Sensus.Android.Resource.Styleable.Theme_dividerHorizontal;
+			global::XLabs.Forms.Resource.Styleable.Theme_dividerVertical = global::Sensus.Android.Resource.Styleable.Theme_dividerVertical;
+			global::XLabs.Forms.Resource.Styleable.Theme_dropDownListViewStyle = global::Sensus.Android.Resource.Styleable.Theme_dropDownListViewStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_dropdownListPreferredItemHeight = global::Sensus.Android.Resource.Styleable.Theme_dropdownListPreferredItemHeight;
+			global::XLabs.Forms.Resource.Styleable.Theme_editTextBackground = global::Sensus.Android.Resource.Styleable.Theme_editTextBackground;
+			global::XLabs.Forms.Resource.Styleable.Theme_editTextColor = global::Sensus.Android.Resource.Styleable.Theme_editTextColor;
+			global::XLabs.Forms.Resource.Styleable.Theme_editTextStyle = global::Sensus.Android.Resource.Styleable.Theme_editTextStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_homeAsUpIndicator = global::Sensus.Android.Resource.Styleable.Theme_homeAsUpIndicator;
+			global::XLabs.Forms.Resource.Styleable.Theme_listChoiceBackgroundIndicator = global::Sensus.Android.Resource.Styleable.Theme_listChoiceBackgroundIndicator;
+			global::XLabs.Forms.Resource.Styleable.Theme_listDividerAlertDialog = global::Sensus.Android.Resource.Styleable.Theme_listDividerAlertDialog;
+			global::XLabs.Forms.Resource.Styleable.Theme_listPopupWindowStyle = global::Sensus.Android.Resource.Styleable.Theme_listPopupWindowStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_listPreferredItemHeight = global::Sensus.Android.Resource.Styleable.Theme_listPreferredItemHeight;
+			global::XLabs.Forms.Resource.Styleable.Theme_listPreferredItemHeightLarge = global::Sensus.Android.Resource.Styleable.Theme_listPreferredItemHeightLarge;
+			global::XLabs.Forms.Resource.Styleable.Theme_listPreferredItemHeightSmall = global::Sensus.Android.Resource.Styleable.Theme_listPreferredItemHeightSmall;
+			global::XLabs.Forms.Resource.Styleable.Theme_listPreferredItemPaddingLeft = global::Sensus.Android.Resource.Styleable.Theme_listPreferredItemPaddingLeft;
+			global::XLabs.Forms.Resource.Styleable.Theme_listPreferredItemPaddingRight = global::Sensus.Android.Resource.Styleable.Theme_listPreferredItemPaddingRight;
+			global::XLabs.Forms.Resource.Styleable.Theme_panelBackground = global::Sensus.Android.Resource.Styleable.Theme_panelBackground;
+			global::XLabs.Forms.Resource.Styleable.Theme_panelMenuListTheme = global::Sensus.Android.Resource.Styleable.Theme_panelMenuListTheme;
+			global::XLabs.Forms.Resource.Styleable.Theme_panelMenuListWidth = global::Sensus.Android.Resource.Styleable.Theme_panelMenuListWidth;
+			global::XLabs.Forms.Resource.Styleable.Theme_popupMenuStyle = global::Sensus.Android.Resource.Styleable.Theme_popupMenuStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_popupWindowStyle = global::Sensus.Android.Resource.Styleable.Theme_popupWindowStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_radioButtonStyle = global::Sensus.Android.Resource.Styleable.Theme_radioButtonStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_ratingBarStyle = global::Sensus.Android.Resource.Styleable.Theme_ratingBarStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_searchViewStyle = global::Sensus.Android.Resource.Styleable.Theme_searchViewStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_selectableItemBackground = global::Sensus.Android.Resource.Styleable.Theme_selectableItemBackground;
+			global::XLabs.Forms.Resource.Styleable.Theme_selectableItemBackgroundBorderless = global::Sensus.Android.Resource.Styleable.Theme_selectableItemBackgroundBorderless;
+			global::XLabs.Forms.Resource.Styleable.Theme_spinnerDropDownItemStyle = global::Sensus.Android.Resource.Styleable.Theme_spinnerDropDownItemStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_spinnerStyle = global::Sensus.Android.Resource.Styleable.Theme_spinnerStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_switchStyle = global::Sensus.Android.Resource.Styleable.Theme_switchStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_textAppearanceLargePopupMenu = global::Sensus.Android.Resource.Styleable.Theme_textAppearanceLargePopupMenu;
+			global::XLabs.Forms.Resource.Styleable.Theme_textAppearanceListItem = global::Sensus.Android.Resource.Styleable.Theme_textAppearanceListItem;
+			global::XLabs.Forms.Resource.Styleable.Theme_textAppearanceListItemSmall = global::Sensus.Android.Resource.Styleable.Theme_textAppearanceListItemSmall;
+			global::XLabs.Forms.Resource.Styleable.Theme_textAppearanceSearchResultSubtitle = global::Sensus.Android.Resource.Styleable.Theme_textAppearanceSearchResultSubtitle;
+			global::XLabs.Forms.Resource.Styleable.Theme_textAppearanceSearchResultTitle = global::Sensus.Android.Resource.Styleable.Theme_textAppearanceSearchResultTitle;
+			global::XLabs.Forms.Resource.Styleable.Theme_textAppearanceSmallPopupMenu = global::Sensus.Android.Resource.Styleable.Theme_textAppearanceSmallPopupMenu;
+			global::XLabs.Forms.Resource.Styleable.Theme_textColorAlertDialogListItem = global::Sensus.Android.Resource.Styleable.Theme_textColorAlertDialogListItem;
+			global::XLabs.Forms.Resource.Styleable.Theme_textColorSearchUrl = global::Sensus.Android.Resource.Styleable.Theme_textColorSearchUrl;
+			global::XLabs.Forms.Resource.Styleable.Theme_toolbarNavigationButtonStyle = global::Sensus.Android.Resource.Styleable.Theme_toolbarNavigationButtonStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_toolbarStyle = global::Sensus.Android.Resource.Styleable.Theme_toolbarStyle;
+			global::XLabs.Forms.Resource.Styleable.Theme_windowActionBar = global::Sensus.Android.Resource.Styleable.Theme_windowActionBar;
+			global::XLabs.Forms.Resource.Styleable.Theme_windowActionBarOverlay = global::Sensus.Android.Resource.Styleable.Theme_windowActionBarOverlay;
+			global::XLabs.Forms.Resource.Styleable.Theme_windowActionModeOverlay = global::Sensus.Android.Resource.Styleable.Theme_windowActionModeOverlay;
+			global::XLabs.Forms.Resource.Styleable.Theme_windowFixedHeightMajor = global::Sensus.Android.Resource.Styleable.Theme_windowFixedHeightMajor;
+			global::XLabs.Forms.Resource.Styleable.Theme_windowFixedHeightMinor = global::Sensus.Android.Resource.Styleable.Theme_windowFixedHeightMinor;
+			global::XLabs.Forms.Resource.Styleable.Theme_windowFixedWidthMajor = global::Sensus.Android.Resource.Styleable.Theme_windowFixedWidthMajor;
+			global::XLabs.Forms.Resource.Styleable.Theme_windowFixedWidthMinor = global::Sensus.Android.Resource.Styleable.Theme_windowFixedWidthMinor;
+			global::XLabs.Forms.Resource.Styleable.Theme_windowMinWidthMajor = global::Sensus.Android.Resource.Styleable.Theme_windowMinWidthMajor;
+			global::XLabs.Forms.Resource.Styleable.Theme_windowMinWidthMinor = global::Sensus.Android.Resource.Styleable.Theme_windowMinWidthMinor;
+			global::XLabs.Forms.Resource.Styleable.Theme_windowNoTitle = global::Sensus.Android.Resource.Styleable.Theme_windowNoTitle;
+			global::XLabs.Forms.Resource.Styleable.Toolbar = global::Sensus.Android.Resource.Styleable.Toolbar;
+			global::XLabs.Forms.Resource.Styleable.Toolbar_android_gravity = global::Sensus.Android.Resource.Styleable.Toolbar_android_gravity;
+			global::XLabs.Forms.Resource.Styleable.Toolbar_android_minHeight = global::Sensus.Android.Resource.Styleable.Toolbar_android_minHeight;
+			global::XLabs.Forms.Resource.Styleable.Toolbar_collapseContentDescription = global::Sensus.Android.Resource.Styleable.Toolbar_collapseContentDescription;
+			global::XLabs.Forms.Resource.Styleable.Toolbar_collapseIcon = global::Sensus.Android.Resource.Styleable.Toolbar_collapseIcon;
+			global::XLabs.Forms.Resource.Styleable.Toolbar_contentInsetEnd = global::Sensus.Android.Resource.Styleable.Toolbar_contentInsetEnd;
+			global::XLabs.Forms.Resource.Styleable.Toolbar_contentInsetLeft = global::Sensus.Android.Resource.Styleable.Toolbar_contentInsetLeft;
+			global::XLabs.Forms.Resource.Styleable.Toolbar_contentInsetRight = global::Sensus.Android.Resource.Styleable.Toolbar_contentInsetRight;
+			global::XLabs.Forms.Resource.Styleable.Toolbar_contentInsetStart = global::Sensus.Android.Resource.Styleable.Toolbar_contentInsetStart;
+			global::XLabs.Forms.Resource.Styleable.Toolbar_logo = global::Sensus.Android.Resource.Styleable.Toolbar_logo;
+			global::XLabs.Forms.Resource.Styleable.Toolbar_logoDescription = global::Sensus.Android.Resource.Styleable.Toolbar_logoDescription;
+			global::XLabs.Forms.Resource.Styleable.Toolbar_maxButtonHeight = global::Sensus.Android.Resource.Styleable.Toolbar_maxButtonHeight;
+			global::XLabs.Forms.Resource.Styleable.Toolbar_navigationContentDescription = global::Sensus.Android.Resource.Styleable.Toolbar_navigationContentDescription;
+			global::XLabs.Forms.Resource.Styleable.Toolbar_navigationIcon = global::Sensus.Android.Resource.Styleable.Toolbar_navigationIcon;
+			global::XLabs.Forms.Resource.Styleable.Toolbar_popupTheme = global::Sensus.Android.Resource.Styleable.Toolbar_popupTheme;
+			global::XLabs.Forms.Resource.Styleable.Toolbar_subtitle = global::Sensus.Android.Resource.Styleable.Toolbar_subtitle;
+			global::XLabs.Forms.Resource.Styleable.Toolbar_subtitleTextAppearance = global::Sensus.Android.Resource.Styleable.Toolbar_subtitleTextAppearance;
+			global::XLabs.Forms.Resource.Styleable.Toolbar_subtitleTextColor = global::Sensus.Android.Resource.Styleable.Toolbar_subtitleTextColor;
+			global::XLabs.Forms.Resource.Styleable.Toolbar_title = global::Sensus.Android.Resource.Styleable.Toolbar_title;
+			global::XLabs.Forms.Resource.Styleable.Toolbar_titleMarginBottom = global::Sensus.Android.Resource.Styleable.Toolbar_titleMarginBottom;
+			global::XLabs.Forms.Resource.Styleable.Toolbar_titleMarginEnd = global::Sensus.Android.Resource.Styleable.Toolbar_titleMarginEnd;
+			global::XLabs.Forms.Resource.Styleable.Toolbar_titleMarginStart = global::Sensus.Android.Resource.Styleable.Toolbar_titleMarginStart;
+			global::XLabs.Forms.Resource.Styleable.Toolbar_titleMarginTop = global::Sensus.Android.Resource.Styleable.Toolbar_titleMarginTop;
+			global::XLabs.Forms.Resource.Styleable.Toolbar_titleMargins = global::Sensus.Android.Resource.Styleable.Toolbar_titleMargins;
+			global::XLabs.Forms.Resource.Styleable.Toolbar_titleTextAppearance = global::Sensus.Android.Resource.Styleable.Toolbar_titleTextAppearance;
+			global::XLabs.Forms.Resource.Styleable.Toolbar_titleTextColor = global::Sensus.Android.Resource.Styleable.Toolbar_titleTextColor;
+			global::XLabs.Forms.Resource.Styleable.View = global::Sensus.Android.Resource.Styleable.View;
+			global::XLabs.Forms.Resource.Styleable.View_android_focusable = global::Sensus.Android.Resource.Styleable.View_android_focusable;
+			global::XLabs.Forms.Resource.Styleable.View_android_theme = global::Sensus.Android.Resource.Styleable.View_android_theme;
+			global::XLabs.Forms.Resource.Styleable.View_paddingEnd = global::Sensus.Android.Resource.Styleable.View_paddingEnd;
+			global::XLabs.Forms.Resource.Styleable.View_paddingStart = global::Sensus.Android.Resource.Styleable.View_paddingStart;
+			global::XLabs.Forms.Resource.Styleable.View_theme = global::Sensus.Android.Resource.Styleable.View_theme;
+			global::XLabs.Forms.Resource.Styleable.ViewBackgroundHelper = global::Sensus.Android.Resource.Styleable.ViewBackgroundHelper;
+			global::XLabs.Forms.Resource.Styleable.ViewBackgroundHelper_android_background = global::Sensus.Android.Resource.Styleable.ViewBackgroundHelper_android_background;
+			global::XLabs.Forms.Resource.Styleable.ViewBackgroundHelper_backgroundTint = global::Sensus.Android.Resource.Styleable.ViewBackgroundHelper_backgroundTint;
+			global::XLabs.Forms.Resource.Styleable.ViewBackgroundHelper_backgroundTintMode = global::Sensus.Android.Resource.Styleable.ViewBackgroundHelper_backgroundTintMode;
+			global::XLabs.Forms.Resource.Styleable.ViewStubCompat = global::Sensus.Android.Resource.Styleable.ViewStubCompat;
+			global::XLabs.Forms.Resource.Styleable.ViewStubCompat_android_id = global::Sensus.Android.Resource.Styleable.ViewStubCompat_android_id;
+			global::XLabs.Forms.Resource.Styleable.ViewStubCompat_android_inflatedId = global::Sensus.Android.Resource.Styleable.ViewStubCompat_android_inflatedId;
+			global::XLabs.Forms.Resource.Styleable.ViewStubCompat_android_layout = global::Sensus.Android.Resource.Styleable.ViewStubCompat_android_layout;
 		}
 		
 		public partial class Animation
@@ -2531,32 +4111,32 @@ namespace Sensus.Android
 		public partial class Color
 		{
 			
-			// aapt resource value: 0x7f07005e
-			public const int abc_background_cache_hint_selector_material_dark = 2131165278;
+			// aapt resource value: 0x7f070069
+			public const int abc_background_cache_hint_selector_material_dark = 2131165289;
 			
-			// aapt resource value: 0x7f07005f
-			public const int abc_background_cache_hint_selector_material_light = 2131165279;
+			// aapt resource value: 0x7f07006a
+			public const int abc_background_cache_hint_selector_material_light = 2131165290;
 			
-			// aapt resource value: 0x7f070060
-			public const int abc_color_highlight_material = 2131165280;
+			// aapt resource value: 0x7f07006b
+			public const int abc_color_highlight_material = 2131165291;
 			
 			// aapt resource value: 0x7f070017
 			public const int abc_input_method_navigation_guard = 2131165207;
 			
-			// aapt resource value: 0x7f070061
-			public const int abc_primary_text_disable_only_material_dark = 2131165281;
+			// aapt resource value: 0x7f07006c
+			public const int abc_primary_text_disable_only_material_dark = 2131165292;
 			
-			// aapt resource value: 0x7f070062
-			public const int abc_primary_text_disable_only_material_light = 2131165282;
+			// aapt resource value: 0x7f07006d
+			public const int abc_primary_text_disable_only_material_light = 2131165293;
 			
-			// aapt resource value: 0x7f070063
-			public const int abc_primary_text_material_dark = 2131165283;
+			// aapt resource value: 0x7f07006e
+			public const int abc_primary_text_material_dark = 2131165294;
 			
-			// aapt resource value: 0x7f070064
-			public const int abc_primary_text_material_light = 2131165284;
+			// aapt resource value: 0x7f07006f
+			public const int abc_primary_text_material_light = 2131165295;
 			
-			// aapt resource value: 0x7f070065
-			public const int abc_search_url_text = 2131165285;
+			// aapt resource value: 0x7f070070
+			public const int abc_search_url_text = 2131165296;
 			
 			// aapt resource value: 0x7f070018
 			public const int abc_search_url_text_normal = 2131165208;
@@ -2567,11 +4147,11 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f07001a
 			public const int abc_search_url_text_selected = 2131165210;
 			
-			// aapt resource value: 0x7f070066
-			public const int abc_secondary_text_material_dark = 2131165286;
+			// aapt resource value: 0x7f070071
+			public const int abc_secondary_text_material_dark = 2131165297;
 			
-			// aapt resource value: 0x7f070067
-			public const int abc_secondary_text_material_light = 2131165287;
+			// aapt resource value: 0x7f070072
+			public const int abc_secondary_text_material_light = 2131165298;
 			
 			// aapt resource value: 0x7f07001b
 			public const int accent_material_dark = 2131165211;
@@ -2615,6 +4195,42 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f070028
 			public const int button_material_light = 2131165224;
 			
+			// aapt resource value: 0x7f070051
+			public const int calendar_active_month_bg = 2131165265;
+			
+			// aapt resource value: 0x7f070052
+			public const int calendar_bg = 2131165266;
+			
+			// aapt resource value: 0x7f070053
+			public const int calendar_divider = 2131165267;
+			
+			// aapt resource value: 0x7f070056
+			public const int calendar_highlighted_day_bg = 2131165270;
+			
+			// aapt resource value: 0x7f070054
+			public const int calendar_inactive_month_bg = 2131165268;
+			
+			// aapt resource value: 0x7f070055
+			public const int calendar_selected_day_bg = 2131165269;
+			
+			// aapt resource value: 0x7f070057
+			public const int calendar_selected_range_bg = 2131165271;
+			
+			// aapt resource value: 0x7f070059
+			public const int calendar_text_active = 2131165273;
+			
+			// aapt resource value: 0x7f070058
+			public const int calendar_text_inactive = 2131165272;
+			
+			// aapt resource value: 0x7f07005a
+			public const int calendar_text_selected = 2131165274;
+			
+			// aapt resource value: 0x7f070073
+			public const int calendar_text_selector = 2131165299;
+			
+			// aapt resource value: 0x7f07005b
+			public const int calendar_text_unselectable = 2131165275;
+			
 			// aapt resource value: 0x7f070013
 			public const int cardview_dark_background = 2131165203;
 			
@@ -2627,44 +4243,44 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f070016
 			public const int cardview_shadow_start_color = 2131165206;
 			
-			// aapt resource value: 0x7f070051
-			public const int com_facebook_blue = 2131165265;
-			
-			// aapt resource value: 0x7f070052
-			public const int com_facebook_button_background_color = 2131165266;
-			
-			// aapt resource value: 0x7f070053
-			public const int com_facebook_button_background_color_disabled = 2131165267;
-			
-			// aapt resource value: 0x7f070054
-			public const int com_facebook_button_background_color_pressed = 2131165268;
-			
-			// aapt resource value: 0x7f070055
-			public const int com_facebook_button_like_background_color_selected = 2131165269;
-			
-			// aapt resource value: 0x7f070056
-			public const int com_facebook_button_login_silver_background_color = 2131165270;
-			
-			// aapt resource value: 0x7f070057
-			public const int com_facebook_button_login_silver_background_color_pressed = 2131165271;
-			
-			// aapt resource value: 0x7f070058
-			public const int com_facebook_button_send_background_color = 2131165272;
-			
-			// aapt resource value: 0x7f070059
-			public const int com_facebook_button_send_background_color_pressed = 2131165273;
-			
-			// aapt resource value: 0x7f07005a
-			public const int com_facebook_likeboxcountview_border_color = 2131165274;
-			
-			// aapt resource value: 0x7f07005b
-			public const int com_facebook_likeboxcountview_text_color = 2131165275;
-			
 			// aapt resource value: 0x7f07005c
-			public const int com_facebook_likeview_text_color = 2131165276;
+			public const int com_facebook_blue = 2131165276;
 			
 			// aapt resource value: 0x7f07005d
-			public const int com_facebook_share_button_text_color = 2131165277;
+			public const int com_facebook_button_background_color = 2131165277;
+			
+			// aapt resource value: 0x7f07005e
+			public const int com_facebook_button_background_color_disabled = 2131165278;
+			
+			// aapt resource value: 0x7f07005f
+			public const int com_facebook_button_background_color_pressed = 2131165279;
+			
+			// aapt resource value: 0x7f070060
+			public const int com_facebook_button_like_background_color_selected = 2131165280;
+			
+			// aapt resource value: 0x7f070061
+			public const int com_facebook_button_login_silver_background_color = 2131165281;
+			
+			// aapt resource value: 0x7f070062
+			public const int com_facebook_button_login_silver_background_color_pressed = 2131165282;
+			
+			// aapt resource value: 0x7f070063
+			public const int com_facebook_button_send_background_color = 2131165283;
+			
+			// aapt resource value: 0x7f070064
+			public const int com_facebook_button_send_background_color_pressed = 2131165284;
+			
+			// aapt resource value: 0x7f070065
+			public const int com_facebook_likeboxcountview_border_color = 2131165285;
+			
+			// aapt resource value: 0x7f070066
+			public const int com_facebook_likeboxcountview_text_color = 2131165286;
+			
+			// aapt resource value: 0x7f070067
+			public const int com_facebook_likeview_text_color = 2131165287;
+			
+			// aapt resource value: 0x7f070068
+			public const int com_facebook_share_button_text_color = 2131165288;
 			
 			// aapt resource value: 0x7f070009
 			public const int common_action_bar_splitter = 2131165193;
@@ -2696,11 +4312,11 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f070005
 			public const int common_signin_btn_light_text_pressed = 2131165189;
 			
-			// aapt resource value: 0x7f070068
-			public const int common_signin_btn_text_dark = 2131165288;
+			// aapt resource value: 0x7f070074
+			public const int common_signin_btn_text_dark = 2131165300;
 			
-			// aapt resource value: 0x7f070069
-			public const int common_signin_btn_text_light = 2131165289;
+			// aapt resource value: 0x7f070075
+			public const int common_signin_btn_text_light = 2131165301;
 			
 			// aapt resource value: 0x7f07000a
 			public const int design_fab_shadow_end_color = 2131165194;
@@ -2843,11 +4459,11 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f07004e
 			public const int switch_thumb_disabled_material_light = 2131165262;
 			
-			// aapt resource value: 0x7f07006a
-			public const int switch_thumb_material_dark = 2131165290;
+			// aapt resource value: 0x7f070076
+			public const int switch_thumb_material_dark = 2131165302;
 			
-			// aapt resource value: 0x7f07006b
-			public const int switch_thumb_material_light = 2131165291;
+			// aapt resource value: 0x7f070077
+			public const int switch_thumb_material_light = 2131165303;
 			
 			// aapt resource value: 0x7f07004f
 			public const int switch_thumb_normal_material_dark = 2131165263;
@@ -3048,6 +4664,21 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0a0022
 			public const int abc_text_size_title_material_toolbar = 2131361826;
 			
+			// aapt resource value: 0x7f0a0066
+			public const int calendar_day_headers_paddingbottom = 2131361894;
+			
+			// aapt resource value: 0x7f0a0068
+			public const int calendar_month_title_bottommargin = 2131361896;
+			
+			// aapt resource value: 0x7f0a0067
+			public const int calendar_month_topmargin = 2131361895;
+			
+			// aapt resource value: 0x7f0a0069
+			public const int calendar_text_medium = 2131361897;
+			
+			// aapt resource value: 0x7f0a006a
+			public const int calendar_text_small = 2131361898;
+			
 			// aapt resource value: 0x7f0a001a
 			public const int cardview_compat_inset_shadow = 2131361818;
 			
@@ -3057,62 +4688,62 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0a001c
 			public const int cardview_default_radius = 2131361820;
 			
-			// aapt resource value: 0x7f0a0066
-			public const int com_facebook_likeboxcountview_border_radius = 2131361894;
-			
-			// aapt resource value: 0x7f0a0067
-			public const int com_facebook_likeboxcountview_border_width = 2131361895;
-			
-			// aapt resource value: 0x7f0a0068
-			public const int com_facebook_likeboxcountview_caret_height = 2131361896;
-			
-			// aapt resource value: 0x7f0a0069
-			public const int com_facebook_likeboxcountview_caret_width = 2131361897;
-			
-			// aapt resource value: 0x7f0a006a
-			public const int com_facebook_likeboxcountview_text_padding = 2131361898;
-			
 			// aapt resource value: 0x7f0a006b
-			public const int com_facebook_likeboxcountview_text_size = 2131361899;
+			public const int com_facebook_likeboxcountview_border_radius = 2131361899;
 			
 			// aapt resource value: 0x7f0a006c
-			public const int com_facebook_likeview_edge_padding = 2131361900;
+			public const int com_facebook_likeboxcountview_border_width = 2131361900;
 			
 			// aapt resource value: 0x7f0a006d
-			public const int com_facebook_likeview_internal_padding = 2131361901;
+			public const int com_facebook_likeboxcountview_caret_height = 2131361901;
 			
 			// aapt resource value: 0x7f0a006e
-			public const int com_facebook_likeview_text_size = 2131361902;
+			public const int com_facebook_likeboxcountview_caret_width = 2131361902;
 			
 			// aapt resource value: 0x7f0a006f
-			public const int com_facebook_profilepictureview_preset_size_large = 2131361903;
+			public const int com_facebook_likeboxcountview_text_padding = 2131361903;
 			
 			// aapt resource value: 0x7f0a0070
-			public const int com_facebook_profilepictureview_preset_size_normal = 2131361904;
+			public const int com_facebook_likeboxcountview_text_size = 2131361904;
 			
 			// aapt resource value: 0x7f0a0071
-			public const int com_facebook_profilepictureview_preset_size_small = 2131361905;
+			public const int com_facebook_likeview_edge_padding = 2131361905;
 			
 			// aapt resource value: 0x7f0a0072
-			public const int com_facebook_share_button_compound_drawable_padding = 2131361906;
+			public const int com_facebook_likeview_internal_padding = 2131361906;
 			
 			// aapt resource value: 0x7f0a0073
-			public const int com_facebook_share_button_padding_bottom = 2131361907;
+			public const int com_facebook_likeview_text_size = 2131361907;
 			
 			// aapt resource value: 0x7f0a0074
-			public const int com_facebook_share_button_padding_left = 2131361908;
+			public const int com_facebook_profilepictureview_preset_size_large = 2131361908;
 			
 			// aapt resource value: 0x7f0a0075
-			public const int com_facebook_share_button_padding_right = 2131361909;
+			public const int com_facebook_profilepictureview_preset_size_normal = 2131361909;
 			
 			// aapt resource value: 0x7f0a0076
-			public const int com_facebook_share_button_padding_top = 2131361910;
+			public const int com_facebook_profilepictureview_preset_size_small = 2131361910;
 			
 			// aapt resource value: 0x7f0a0077
-			public const int com_facebook_share_button_text_size = 2131361911;
+			public const int com_facebook_share_button_compound_drawable_padding = 2131361911;
 			
 			// aapt resource value: 0x7f0a0078
-			public const int com_facebook_tooltip_horizontal_padding = 2131361912;
+			public const int com_facebook_share_button_padding_bottom = 2131361912;
+			
+			// aapt resource value: 0x7f0a0079
+			public const int com_facebook_share_button_padding_left = 2131361913;
+			
+			// aapt resource value: 0x7f0a007a
+			public const int com_facebook_share_button_padding_right = 2131361914;
+			
+			// aapt resource value: 0x7f0a007b
+			public const int com_facebook_share_button_padding_top = 2131361915;
+			
+			// aapt resource value: 0x7f0a007c
+			public const int com_facebook_share_button_text_size = 2131361916;
+			
+			// aapt resource value: 0x7f0a007d
+			public const int com_facebook_tooltip_horizontal_padding = 2131361917;
 			
 			// aapt resource value: 0x7f0a0008
 			public const int design_appbar_elevation = 2131361800;
@@ -3431,289 +5062,301 @@ namespace Sensus.Android
 			public const int abc_textfield_search_material = 2130837565;
 			
 			// aapt resource value: 0x7f02003e
-			public const int com_facebook_button_background = 2130837566;
+			public const int ad16 = 2130837566;
 			
 			// aapt resource value: 0x7f02003f
-			public const int com_facebook_button_icon = 2130837567;
+			public const int calendar_bg_selector = 2130837567;
 			
 			// aapt resource value: 0x7f020040
-			public const int com_facebook_button_like_background = 2130837568;
+			public const int check = 2130837568;
 			
 			// aapt resource value: 0x7f020041
-			public const int com_facebook_button_like_icon_selected = 2130837569;
+			public const int com_facebook_button_background = 2130837569;
 			
 			// aapt resource value: 0x7f020042
-			public const int com_facebook_button_login_silver_background = 2130837570;
+			public const int com_facebook_button_icon = 2130837570;
 			
 			// aapt resource value: 0x7f020043
-			public const int com_facebook_button_send_background = 2130837571;
+			public const int com_facebook_button_like_background = 2130837571;
 			
 			// aapt resource value: 0x7f020044
-			public const int com_facebook_button_send_icon = 2130837572;
+			public const int com_facebook_button_like_icon_selected = 2130837572;
 			
 			// aapt resource value: 0x7f020045
-			public const int com_facebook_close = 2130837573;
+			public const int com_facebook_button_login_silver_background = 2130837573;
 			
 			// aapt resource value: 0x7f020046
-			public const int com_facebook_profile_picture_blank_portrait = 2130837574;
+			public const int com_facebook_button_send_background = 2130837574;
 			
 			// aapt resource value: 0x7f020047
-			public const int com_facebook_profile_picture_blank_square = 2130837575;
+			public const int com_facebook_button_send_icon = 2130837575;
 			
 			// aapt resource value: 0x7f020048
-			public const int com_facebook_tooltip_black_background = 2130837576;
+			public const int com_facebook_close = 2130837576;
 			
 			// aapt resource value: 0x7f020049
-			public const int com_facebook_tooltip_black_bottomnub = 2130837577;
+			public const int com_facebook_profile_picture_blank_portrait = 2130837577;
 			
 			// aapt resource value: 0x7f02004a
-			public const int com_facebook_tooltip_black_topnub = 2130837578;
+			public const int com_facebook_profile_picture_blank_square = 2130837578;
 			
 			// aapt resource value: 0x7f02004b
-			public const int com_facebook_tooltip_black_xout = 2130837579;
+			public const int com_facebook_tooltip_black_background = 2130837579;
 			
 			// aapt resource value: 0x7f02004c
-			public const int com_facebook_tooltip_blue_background = 2130837580;
+			public const int com_facebook_tooltip_black_bottomnub = 2130837580;
 			
 			// aapt resource value: 0x7f02004d
-			public const int com_facebook_tooltip_blue_bottomnub = 2130837581;
+			public const int com_facebook_tooltip_black_topnub = 2130837581;
 			
 			// aapt resource value: 0x7f02004e
-			public const int com_facebook_tooltip_blue_topnub = 2130837582;
+			public const int com_facebook_tooltip_black_xout = 2130837582;
 			
 			// aapt resource value: 0x7f02004f
-			public const int com_facebook_tooltip_blue_xout = 2130837583;
+			public const int com_facebook_tooltip_blue_background = 2130837583;
 			
 			// aapt resource value: 0x7f020050
-			public const int common_full_open_on_phone = 2130837584;
+			public const int com_facebook_tooltip_blue_bottomnub = 2130837584;
 			
 			// aapt resource value: 0x7f020051
-			public const int common_ic_googleplayservices = 2130837585;
+			public const int com_facebook_tooltip_blue_topnub = 2130837585;
 			
 			// aapt resource value: 0x7f020052
-			public const int common_signin_btn_icon_dark = 2130837586;
+			public const int com_facebook_tooltip_blue_xout = 2130837586;
 			
 			// aapt resource value: 0x7f020053
-			public const int common_signin_btn_icon_disabled_dark = 2130837587;
+			public const int common_full_open_on_phone = 2130837587;
 			
 			// aapt resource value: 0x7f020054
-			public const int common_signin_btn_icon_disabled_focus_dark = 2130837588;
+			public const int common_ic_googleplayservices = 2130837588;
 			
 			// aapt resource value: 0x7f020055
-			public const int common_signin_btn_icon_disabled_focus_light = 2130837589;
+			public const int common_signin_btn_icon_dark = 2130837589;
 			
 			// aapt resource value: 0x7f020056
-			public const int common_signin_btn_icon_disabled_light = 2130837590;
+			public const int common_signin_btn_icon_disabled_dark = 2130837590;
 			
 			// aapt resource value: 0x7f020057
-			public const int common_signin_btn_icon_focus_dark = 2130837591;
+			public const int common_signin_btn_icon_disabled_focus_dark = 2130837591;
 			
 			// aapt resource value: 0x7f020058
-			public const int common_signin_btn_icon_focus_light = 2130837592;
+			public const int common_signin_btn_icon_disabled_focus_light = 2130837592;
 			
 			// aapt resource value: 0x7f020059
-			public const int common_signin_btn_icon_light = 2130837593;
+			public const int common_signin_btn_icon_disabled_light = 2130837593;
 			
 			// aapt resource value: 0x7f02005a
-			public const int common_signin_btn_icon_normal_dark = 2130837594;
+			public const int common_signin_btn_icon_focus_dark = 2130837594;
 			
 			// aapt resource value: 0x7f02005b
-			public const int common_signin_btn_icon_normal_light = 2130837595;
+			public const int common_signin_btn_icon_focus_light = 2130837595;
 			
 			// aapt resource value: 0x7f02005c
-			public const int common_signin_btn_icon_pressed_dark = 2130837596;
+			public const int common_signin_btn_icon_light = 2130837596;
 			
 			// aapt resource value: 0x7f02005d
-			public const int common_signin_btn_icon_pressed_light = 2130837597;
+			public const int common_signin_btn_icon_normal_dark = 2130837597;
 			
 			// aapt resource value: 0x7f02005e
-			public const int common_signin_btn_text_dark = 2130837598;
+			public const int common_signin_btn_icon_normal_light = 2130837598;
 			
 			// aapt resource value: 0x7f02005f
-			public const int common_signin_btn_text_disabled_dark = 2130837599;
+			public const int common_signin_btn_icon_pressed_dark = 2130837599;
 			
 			// aapt resource value: 0x7f020060
-			public const int common_signin_btn_text_disabled_focus_dark = 2130837600;
+			public const int common_signin_btn_icon_pressed_light = 2130837600;
 			
 			// aapt resource value: 0x7f020061
-			public const int common_signin_btn_text_disabled_focus_light = 2130837601;
+			public const int common_signin_btn_text_dark = 2130837601;
 			
 			// aapt resource value: 0x7f020062
-			public const int common_signin_btn_text_disabled_light = 2130837602;
+			public const int common_signin_btn_text_disabled_dark = 2130837602;
 			
 			// aapt resource value: 0x7f020063
-			public const int common_signin_btn_text_focus_dark = 2130837603;
+			public const int common_signin_btn_text_disabled_focus_dark = 2130837603;
 			
 			// aapt resource value: 0x7f020064
-			public const int common_signin_btn_text_focus_light = 2130837604;
+			public const int common_signin_btn_text_disabled_focus_light = 2130837604;
 			
 			// aapt resource value: 0x7f020065
-			public const int common_signin_btn_text_light = 2130837605;
+			public const int common_signin_btn_text_disabled_light = 2130837605;
 			
 			// aapt resource value: 0x7f020066
-			public const int common_signin_btn_text_normal_dark = 2130837606;
+			public const int common_signin_btn_text_focus_dark = 2130837606;
 			
 			// aapt resource value: 0x7f020067
-			public const int common_signin_btn_text_normal_light = 2130837607;
+			public const int common_signin_btn_text_focus_light = 2130837607;
 			
 			// aapt resource value: 0x7f020068
-			public const int common_signin_btn_text_pressed_dark = 2130837608;
+			public const int common_signin_btn_text_light = 2130837608;
 			
 			// aapt resource value: 0x7f020069
-			public const int common_signin_btn_text_pressed_light = 2130837609;
+			public const int common_signin_btn_text_normal_dark = 2130837609;
 			
 			// aapt resource value: 0x7f02006a
-			public const int design_fab_background = 2130837610;
+			public const int common_signin_btn_text_normal_light = 2130837610;
 			
 			// aapt resource value: 0x7f02006b
-			public const int design_snackbar_background = 2130837611;
+			public const int common_signin_btn_text_pressed_dark = 2130837611;
 			
 			// aapt resource value: 0x7f02006c
-			public const int ic_cast_dark = 2130837612;
+			public const int common_signin_btn_text_pressed_light = 2130837612;
 			
 			// aapt resource value: 0x7f02006d
-			public const int ic_cast_disabled_light = 2130837613;
+			public const int design_fab_background = 2130837613;
 			
 			// aapt resource value: 0x7f02006e
-			public const int ic_cast_light = 2130837614;
+			public const int design_snackbar_background = 2130837614;
 			
 			// aapt resource value: 0x7f02006f
-			public const int ic_cast_off_light = 2130837615;
+			public const int ic_cast_dark = 2130837615;
 			
 			// aapt resource value: 0x7f020070
-			public const int ic_cast_on_0_light = 2130837616;
+			public const int ic_cast_disabled_light = 2130837616;
 			
 			// aapt resource value: 0x7f020071
-			public const int ic_cast_on_1_light = 2130837617;
+			public const int ic_cast_light = 2130837617;
 			
 			// aapt resource value: 0x7f020072
-			public const int ic_cast_on_2_light = 2130837618;
+			public const int ic_cast_off_light = 2130837618;
 			
 			// aapt resource value: 0x7f020073
-			public const int ic_cast_on_light = 2130837619;
+			public const int ic_cast_on_0_light = 2130837619;
 			
 			// aapt resource value: 0x7f020074
-			public const int ic_launcher = 2130837620;
+			public const int ic_cast_on_1_light = 2130837620;
 			
 			// aapt resource value: 0x7f020075
-			public const int ic_media_pause = 2130837621;
+			public const int ic_cast_on_2_light = 2130837621;
 			
 			// aapt resource value: 0x7f020076
-			public const int ic_media_play = 2130837622;
+			public const int ic_cast_on_light = 2130837622;
 			
 			// aapt resource value: 0x7f020077
-			public const int ic_media_route_disabled_mono_dark = 2130837623;
+			public const int ic_launcher = 2130837623;
 			
 			// aapt resource value: 0x7f020078
-			public const int ic_media_route_off_mono_dark = 2130837624;
+			public const int ic_media_pause = 2130837624;
 			
 			// aapt resource value: 0x7f020079
-			public const int ic_media_route_on_0_mono_dark = 2130837625;
+			public const int ic_media_play = 2130837625;
 			
 			// aapt resource value: 0x7f02007a
-			public const int ic_media_route_on_1_mono_dark = 2130837626;
+			public const int ic_media_route_disabled_mono_dark = 2130837626;
 			
 			// aapt resource value: 0x7f02007b
-			public const int ic_media_route_on_2_mono_dark = 2130837627;
+			public const int ic_media_route_off_mono_dark = 2130837627;
 			
 			// aapt resource value: 0x7f02007c
-			public const int ic_media_route_on_mono_dark = 2130837628;
+			public const int ic_media_route_on_0_mono_dark = 2130837628;
 			
 			// aapt resource value: 0x7f02007d
-			public const int ic_pause_dark = 2130837629;
+			public const int ic_media_route_on_1_mono_dark = 2130837629;
 			
 			// aapt resource value: 0x7f02007e
-			public const int ic_pause_light = 2130837630;
+			public const int ic_media_route_on_2_mono_dark = 2130837630;
 			
 			// aapt resource value: 0x7f02007f
-			public const int ic_play_dark = 2130837631;
+			public const int ic_media_route_on_mono_dark = 2130837631;
 			
 			// aapt resource value: 0x7f020080
-			public const int ic_play_light = 2130837632;
+			public const int ic_pause_dark = 2130837632;
 			
 			// aapt resource value: 0x7f020081
-			public const int ic_setting_dark = 2130837633;
+			public const int ic_pause_light = 2130837633;
 			
 			// aapt resource value: 0x7f020082
-			public const int ic_setting_light = 2130837634;
+			public const int ic_play_dark = 2130837634;
 			
 			// aapt resource value: 0x7f020083
-			public const int messenger_bubble_large_blue = 2130837635;
+			public const int ic_play_light = 2130837635;
 			
 			// aapt resource value: 0x7f020084
-			public const int messenger_bubble_large_white = 2130837636;
+			public const int ic_setting_dark = 2130837636;
 			
 			// aapt resource value: 0x7f020085
-			public const int messenger_bubble_small_blue = 2130837637;
+			public const int ic_setting_light = 2130837637;
 			
 			// aapt resource value: 0x7f020086
-			public const int messenger_bubble_small_white = 2130837638;
+			public const int messenger_bubble_large_blue = 2130837638;
 			
 			// aapt resource value: 0x7f020087
-			public const int messenger_button_blue_bg_round = 2130837639;
+			public const int messenger_bubble_large_white = 2130837639;
 			
 			// aapt resource value: 0x7f020088
-			public const int messenger_button_blue_bg_selector = 2130837640;
+			public const int messenger_bubble_small_blue = 2130837640;
 			
 			// aapt resource value: 0x7f020089
-			public const int messenger_button_send_round_shadow = 2130837641;
+			public const int messenger_bubble_small_white = 2130837641;
 			
 			// aapt resource value: 0x7f02008a
-			public const int messenger_button_white_bg_round = 2130837642;
+			public const int messenger_button_blue_bg_round = 2130837642;
 			
 			// aapt resource value: 0x7f02008b
-			public const int messenger_button_white_bg_selector = 2130837643;
+			public const int messenger_button_blue_bg_selector = 2130837643;
 			
 			// aapt resource value: 0x7f02008c
-			public const int minus = 2130837644;
+			public const int messenger_button_send_round_shadow = 2130837644;
 			
 			// aapt resource value: 0x7f02008d
-			public const int mr_ic_cast_dark = 2130837645;
+			public const int messenger_button_white_bg_round = 2130837645;
 			
 			// aapt resource value: 0x7f02008e
-			public const int mr_ic_cast_light = 2130837646;
+			public const int messenger_button_white_bg_selector = 2130837646;
 			
 			// aapt resource value: 0x7f02008f
-			public const int mr_ic_media_route_connecting_mono_dark = 2130837647;
+			public const int minus = 2130837647;
 			
 			// aapt resource value: 0x7f020090
-			public const int mr_ic_media_route_connecting_mono_light = 2130837648;
+			public const int mr_ic_cast_dark = 2130837648;
 			
 			// aapt resource value: 0x7f020091
-			public const int mr_ic_media_route_mono_dark = 2130837649;
+			public const int mr_ic_cast_light = 2130837649;
 			
 			// aapt resource value: 0x7f020092
-			public const int mr_ic_media_route_mono_light = 2130837650;
+			public const int mr_ic_media_route_connecting_mono_dark = 2130837650;
 			
 			// aapt resource value: 0x7f020093
-			public const int mr_ic_pause_dark = 2130837651;
+			public const int mr_ic_media_route_connecting_mono_light = 2130837651;
 			
 			// aapt resource value: 0x7f020094
-			public const int mr_ic_pause_light = 2130837652;
+			public const int mr_ic_media_route_mono_dark = 2130837652;
 			
 			// aapt resource value: 0x7f020095
-			public const int mr_ic_play_dark = 2130837653;
+			public const int mr_ic_media_route_mono_light = 2130837653;
 			
 			// aapt resource value: 0x7f020096
-			public const int mr_ic_play_light = 2130837654;
+			public const int mr_ic_pause_dark = 2130837654;
 			
 			// aapt resource value: 0x7f020097
-			public const int mr_ic_settings_dark = 2130837655;
+			public const int mr_ic_pause_light = 2130837655;
 			
 			// aapt resource value: 0x7f020098
-			public const int mr_ic_settings_light = 2130837656;
-			
-			// aapt resource value: 0x7f02009c
-			public const int notification_template_icon_bg = 2130837660;
+			public const int mr_ic_play_dark = 2130837656;
 			
 			// aapt resource value: 0x7f020099
-			public const int pencil = 2130837657;
+			public const int mr_ic_play_light = 2130837657;
 			
 			// aapt resource value: 0x7f02009a
-			public const int plus = 2130837658;
+			public const int mr_ic_settings_dark = 2130837658;
 			
 			// aapt resource value: 0x7f02009b
-			public const int share = 2130837659;
+			public const int mr_ic_settings_light = 2130837659;
+			
+			// aapt resource value: 0x7f0200a0
+			public const int notification_template_icon_bg = 2130837664;
+			
+			// aapt resource value: 0x7f02009c
+			public const int pencil = 2130837660;
+			
+			// aapt resource value: 0x7f02009d
+			public const int plus = 2130837661;
+			
+			// aapt resource value: 0x7f02009e
+			public const int share = 2130837662;
+			
+			// aapt resource value: 0x7f02009f
+			public const int x = 2130837663;
 			
 			static Drawable()
 			{
@@ -3728,8 +5371,8 @@ namespace Sensus.Android
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f0b008d
-			public const int action0 = 2131427469;
+			// aapt resource value: 0x7f0b0091
+			public const int action0 = 2131427473;
 			
 			// aapt resource value: 0x7f0b0066
 			public const int action_bar = 2131427430;
@@ -3755,8 +5398,8 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0b0067
 			public const int action_context_bar = 2131427431;
 			
-			// aapt resource value: 0x7f0b0091
-			public const int action_divider = 2131427473;
+			// aapt resource value: 0x7f0b0095
+			public const int action_divider = 2131427477;
 			
 			// aapt resource value: 0x7f0b0003
 			public const int action_menu_divider = 2131427331;
@@ -3788,8 +5431,8 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0b0037
 			public const int always = 2131427383;
 			
-			// aapt resource value: 0x7f0b0085
-			public const int art = 2131427461;
+			// aapt resource value: 0x7f0b0089
+			public const int art = 2131427465;
 			
 			// aapt resource value: 0x7f0b0044
 			public const int automatic = 2131427396;
@@ -3809,11 +5452,17 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0b005c
 			public const int buttonPanel = 2131427420;
 			
-			// aapt resource value: 0x7f0b008a
-			public const int buttons = 2131427466;
-			
 			// aapt resource value: 0x7f0b008e
-			public const int cancel_action = 2131427470;
+			public const int buttons = 2131427470;
+			
+			// aapt resource value: 0x7f0b0082
+			public const int calendar_grid = 2131427458;
+			
+			// aapt resource value: 0x7f0b0075
+			public const int calendar_view = 2131427445;
+			
+			// aapt resource value: 0x7f0b0092
+			public const int cancel_action = 2131427474;
 			
 			// aapt resource value: 0x7f0b0018
 			public const int center = 2131427352;
@@ -3827,8 +5476,8 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0b005e
 			public const int checkbox = 2131427422;
 			
-			// aapt resource value: 0x7f0b0094
-			public const int chronometer = 2131427476;
+			// aapt resource value: 0x7f0b0098
+			public const int chronometer = 2131427480;
 			
 			// aapt resource value: 0x7f0b0021
 			public const int clip_horizontal = 2131427361;
@@ -3839,26 +5488,29 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0b0038
 			public const int collapseActionView = 2131427384;
 			
-			// aapt resource value: 0x7f0b0077
-			public const int com_facebook_body_frame = 2131427447;
-			
-			// aapt resource value: 0x7f0b0079
-			public const int com_facebook_button_xout = 2131427449;
-			
-			// aapt resource value: 0x7f0b0075
-			public const int com_facebook_fragment_container = 2131427445;
-			
-			// aapt resource value: 0x7f0b0076
-			public const int com_facebook_login_activity_progress_bar = 2131427446;
-			
-			// aapt resource value: 0x7f0b007b
-			public const int com_facebook_tooltip_bubble_view_bottom_pointer = 2131427451;
-			
 			// aapt resource value: 0x7f0b007a
-			public const int com_facebook_tooltip_bubble_view_text_body = 2131427450;
+			public const int com_facebook_body_frame = 2131427450;
+			
+			// aapt resource value: 0x7f0b007c
+			public const int com_facebook_button_xout = 2131427452;
 			
 			// aapt resource value: 0x7f0b0078
-			public const int com_facebook_tooltip_bubble_view_top_pointer = 2131427448;
+			public const int com_facebook_fragment_container = 2131427448;
+			
+			// aapt resource value: 0x7f0b0079
+			public const int com_facebook_login_activity_progress_bar = 2131427449;
+			
+			// aapt resource value: 0x7f0b007e
+			public const int com_facebook_tooltip_bubble_view_bottom_pointer = 2131427454;
+			
+			// aapt resource value: 0x7f0b007d
+			public const int com_facebook_tooltip_bubble_view_text_body = 2131427453;
+			
+			// aapt resource value: 0x7f0b007b
+			public const int com_facebook_tooltip_bubble_view_top_pointer = 2131427451;
+			
+			// aapt resource value: 0x7f0b009e
+			public const int contentFrame = 2131427486;
 			
 			// aapt resource value: 0x7f0b0057
 			public const int contentPanel = 2131427415;
@@ -3875,14 +5527,14 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0b004f
 			public const int default_activity_button = 2131427407;
 			
-			// aapt resource value: 0x7f0b0084
-			public const int default_control_frame = 2131427460;
+			// aapt resource value: 0x7f0b0088
+			public const int default_control_frame = 2131427464;
 			
 			// aapt resource value: 0x7f0b002a
 			public const int disableHome = 2131427370;
 			
-			// aapt resource value: 0x7f0b008b
-			public const int disconnect = 2131427467;
+			// aapt resource value: 0x7f0b008f
+			public const int disconnect = 2131427471;
 			
 			// aapt resource value: 0x7f0b0045
 			public const int display_always = 2131427397;
@@ -3893,8 +5545,8 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0b001b
 			public const int end = 2131427355;
 			
-			// aapt resource value: 0x7f0b0099
-			public const int end_padder = 2131427481;
+			// aapt resource value: 0x7f0b009d
+			public const int end_padder = 2131427485;
 			
 			// aapt resource value: 0x7f0b0011
 			public const int enterAlways = 2131427345;
@@ -3941,8 +5593,8 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0b004e
 			public const int image = 2131427406;
 			
-			// aapt resource value: 0x7f0b0098
-			public const int info = 2131427480;
+			// aapt resource value: 0x7f0b009c
+			public const int info = 2131427484;
 			
 			// aapt resource value: 0x7f0b0043
 			public const int inline = 2131427395;
@@ -3953,11 +5605,14 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0b001d
 			public const int left = 2131427357;
 			
-			// aapt resource value: 0x7f0b0092
-			public const int line1 = 2131427474;
+			// aapt resource value: 0x7f0b0077
+			public const int left_arrow = 2131427447;
 			
 			// aapt resource value: 0x7f0b0096
-			public const int line3 = 2131427478;
+			public const int line1 = 2131427478;
+			
+			// aapt resource value: 0x7f0b009a
+			public const int line3 = 2131427482;
 			
 			// aapt resource value: 0x7f0b0028
 			public const int listMode = 2131427368;
@@ -3965,23 +5620,23 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0b0050
 			public const int list_item = 2131427408;
 			
-			// aapt resource value: 0x7f0b0090
-			public const int media_actions = 2131427472;
+			// aapt resource value: 0x7f0b0094
+			public const int media_actions = 2131427476;
+			
+			// aapt resource value: 0x7f0b0087
+			public const int media_route_control_frame = 2131427463;
 			
 			// aapt resource value: 0x7f0b0083
-			public const int media_route_control_frame = 2131427459;
+			public const int media_route_list = 2131427459;
 			
-			// aapt resource value: 0x7f0b007f
-			public const int media_route_list = 2131427455;
+			// aapt resource value: 0x7f0b008c
+			public const int media_route_volume_layout = 2131427468;
 			
-			// aapt resource value: 0x7f0b0088
-			public const int media_route_volume_layout = 2131427464;
+			// aapt resource value: 0x7f0b008d
+			public const int media_route_volume_slider = 2131427469;
 			
-			// aapt resource value: 0x7f0b0089
-			public const int media_route_volume_slider = 2131427465;
-			
-			// aapt resource value: 0x7f0b007e
-			public const int messenger_send_button = 2131427454;
+			// aapt resource value: 0x7f0b0081
+			public const int messenger_send_button = 2131427457;
 			
 			// aapt resource value: 0x7f0b0036
 			public const int middle = 2131427382;
@@ -4019,8 +5674,8 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0b0016
 			public const int pin = 2131427350;
 			
-			// aapt resource value: 0x7f0b0086
-			public const int play_pause = 2131427462;
+			// aapt resource value: 0x7f0b008a
+			public const int play_pause = 2131427466;
 			
 			// aapt resource value: 0x7f0b0006
 			public const int progress_circular = 2131427334;
@@ -4034,8 +5689,11 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0b001e
 			public const int right = 2131427358;
 			
-			// aapt resource value: 0x7f0b0081
-			public const int route_name = 2131427457;
+			// aapt resource value: 0x7f0b0076
+			public const int right_arrow = 2131427446;
+			
+			// aapt resource value: 0x7f0b0085
+			public const int route_name = 2131427461;
 			
 			// aapt resource value: 0x7f0b000d
 			public const int satellite = 2131427341;
@@ -4085,8 +5743,8 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0b0074
 			public const int select_dialog_listview = 2131427444;
 			
-			// aapt resource value: 0x7f0b0082
-			public const int settings = 2131427458;
+			// aapt resource value: 0x7f0b0086
+			public const int settings = 2131427462;
 			
 			// aapt resource value: 0x7f0b005f
 			public const int shortcut = 2131427423;
@@ -4103,11 +5761,11 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0b0048
 			public const int small = 2131427400;
 			
-			// aapt resource value: 0x7f0b007d
-			public const int snackbar_action = 2131427453;
+			// aapt resource value: 0x7f0b0080
+			public const int snackbar_action = 2131427456;
 			
-			// aapt resource value: 0x7f0b007c
-			public const int snackbar_text = 2131427452;
+			// aapt resource value: 0x7f0b007f
+			public const int snackbar_text = 2131427455;
 			
 			// aapt resource value: 0x7f0b0008
 			public const int split_action_bar = 2131427336;
@@ -4127,17 +5785,17 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0b001f
 			public const int start = 2131427359;
 			
-			// aapt resource value: 0x7f0b008f
-			public const int status_bar_latest_event_content = 2131427471;
+			// aapt resource value: 0x7f0b0093
+			public const int status_bar_latest_event_content = 2131427475;
 			
-			// aapt resource value: 0x7f0b008c
-			public const int stop = 2131427468;
+			// aapt resource value: 0x7f0b0090
+			public const int stop = 2131427472;
 			
 			// aapt resource value: 0x7f0b0071
 			public const int submit_area = 2131427441;
 			
-			// aapt resource value: 0x7f0b0087
-			public const int subtitle = 2131427463;
+			// aapt resource value: 0x7f0b008b
+			public const int subtitle = 2131427467;
 			
 			// aapt resource value: 0x7f0b0029
 			public const int tabMode = 2131427369;
@@ -4145,23 +5803,23 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0b000e
 			public const int terrain = 2131427342;
 			
-			// aapt resource value: 0x7f0b0097
-			public const int text = 2131427479;
+			// aapt resource value: 0x7f0b009b
+			public const int text = 2131427483;
 			
-			// aapt resource value: 0x7f0b0095
-			public const int text2 = 2131427477;
+			// aapt resource value: 0x7f0b0099
+			public const int text2 = 2131427481;
 			
 			// aapt resource value: 0x7f0b0059
 			public const int textSpacerNoButtons = 2131427417;
 			
-			// aapt resource value: 0x7f0b0093
-			public const int time = 2131427475;
+			// aapt resource value: 0x7f0b0097
+			public const int time = 2131427479;
 			
 			// aapt resource value: 0x7f0b0052
 			public const int title = 2131427410;
 			
-			// aapt resource value: 0x7f0b0080
-			public const int title_bar = 2131427456;
+			// aapt resource value: 0x7f0b0084
+			public const int title_bar = 2131427460;
 			
 			// aapt resource value: 0x7f0b0055
 			public const int title_template = 2131427413;
@@ -4310,103 +5968,124 @@ namespace Sensus.Android
 			public const int abc_select_dialog_material = 2130903063;
 			
 			// aapt resource value: 0x7f030018
-			public const int com_facebook_activity_layout = 2130903064;
+			public const int calendar_pager_layout = 2130903064;
 			
 			// aapt resource value: 0x7f030019
-			public const int com_facebook_login_fragment = 2130903065;
+			public const int calendar_picker = 2130903065;
 			
 			// aapt resource value: 0x7f03001a
-			public const int com_facebook_tooltip_bubble = 2130903066;
+			public const int com_facebook_activity_layout = 2130903066;
 			
 			// aapt resource value: 0x7f03001b
-			public const int design_layout_snackbar = 2130903067;
+			public const int com_facebook_login_fragment = 2130903067;
 			
 			// aapt resource value: 0x7f03001c
-			public const int design_layout_snackbar_include = 2130903068;
+			public const int com_facebook_tooltip_bubble = 2130903068;
 			
 			// aapt resource value: 0x7f03001d
-			public const int design_layout_tab_icon = 2130903069;
+			public const int design_layout_snackbar = 2130903069;
 			
 			// aapt resource value: 0x7f03001e
-			public const int design_layout_tab_text = 2130903070;
+			public const int design_layout_snackbar_include = 2130903070;
 			
 			// aapt resource value: 0x7f03001f
-			public const int design_navigation_item = 2130903071;
+			public const int design_layout_tab_icon = 2130903071;
 			
 			// aapt resource value: 0x7f030020
-			public const int design_navigation_item_header = 2130903072;
+			public const int design_layout_tab_text = 2130903072;
 			
 			// aapt resource value: 0x7f030021
-			public const int design_navigation_item_separator = 2130903073;
+			public const int design_navigation_item = 2130903073;
 			
 			// aapt resource value: 0x7f030022
-			public const int design_navigation_item_subheader = 2130903074;
+			public const int design_navigation_item_header = 2130903074;
 			
 			// aapt resource value: 0x7f030023
-			public const int design_navigation_menu = 2130903075;
+			public const int design_navigation_item_separator = 2130903075;
 			
 			// aapt resource value: 0x7f030024
-			public const int messenger_button_send_blue_large = 2130903076;
+			public const int design_navigation_item_subheader = 2130903076;
 			
 			// aapt resource value: 0x7f030025
-			public const int messenger_button_send_blue_round = 2130903077;
+			public const int design_navigation_menu = 2130903077;
 			
 			// aapt resource value: 0x7f030026
-			public const int messenger_button_send_blue_small = 2130903078;
+			public const int dialog = 2130903078;
 			
 			// aapt resource value: 0x7f030027
-			public const int messenger_button_send_white_large = 2130903079;
+			public const int messenger_button_send_blue_large = 2130903079;
 			
 			// aapt resource value: 0x7f030028
-			public const int messenger_button_send_white_round = 2130903080;
+			public const int messenger_button_send_blue_round = 2130903080;
 			
 			// aapt resource value: 0x7f030029
-			public const int messenger_button_send_white_small = 2130903081;
+			public const int messenger_button_send_blue_small = 2130903081;
 			
 			// aapt resource value: 0x7f03002a
-			public const int mr_media_route_chooser_dialog = 2130903082;
+			public const int messenger_button_send_white_large = 2130903082;
 			
 			// aapt resource value: 0x7f03002b
-			public const int mr_media_route_controller_material_dialog_b = 2130903083;
+			public const int messenger_button_send_white_round = 2130903083;
 			
 			// aapt resource value: 0x7f03002c
-			public const int mr_media_route_list_item = 2130903084;
+			public const int messenger_button_send_white_small = 2130903084;
 			
 			// aapt resource value: 0x7f03002d
-			public const int notification_media_action = 2130903085;
+			public const int month = 2130903085;
 			
 			// aapt resource value: 0x7f03002e
-			public const int notification_media_cancel_action = 2130903086;
+			public const int mr_media_route_chooser_dialog = 2130903086;
 			
 			// aapt resource value: 0x7f03002f
-			public const int notification_template_big_media = 2130903087;
+			public const int mr_media_route_controller_material_dialog_b = 2130903087;
 			
 			// aapt resource value: 0x7f030030
-			public const int notification_template_big_media_narrow = 2130903088;
+			public const int mr_media_route_list_item = 2130903088;
 			
 			// aapt resource value: 0x7f030031
-			public const int notification_template_lines = 2130903089;
+			public const int notification_media_action = 2130903089;
 			
 			// aapt resource value: 0x7f030032
-			public const int notification_template_media = 2130903090;
+			public const int notification_media_cancel_action = 2130903090;
 			
 			// aapt resource value: 0x7f030033
-			public const int notification_template_part_chronometer = 2130903091;
+			public const int notification_template_big_media = 2130903091;
 			
 			// aapt resource value: 0x7f030034
-			public const int notification_template_part_time = 2130903092;
+			public const int notification_template_big_media_narrow = 2130903092;
 			
 			// aapt resource value: 0x7f030035
-			public const int select_dialog_item_material = 2130903093;
+			public const int notification_template_lines = 2130903093;
 			
 			// aapt resource value: 0x7f030036
-			public const int select_dialog_multichoice_material = 2130903094;
+			public const int notification_template_media = 2130903094;
 			
 			// aapt resource value: 0x7f030037
-			public const int select_dialog_singlechoice_material = 2130903095;
+			public const int notification_template_part_chronometer = 2130903095;
 			
 			// aapt resource value: 0x7f030038
-			public const int support_simple_spinner_dropdown_item = 2130903096;
+			public const int notification_template_part_time = 2130903096;
+			
+			// aapt resource value: 0x7f030039
+			public const int select_dialog_item_material = 2130903097;
+			
+			// aapt resource value: 0x7f03003a
+			public const int select_dialog_multichoice_material = 2130903098;
+			
+			// aapt resource value: 0x7f03003b
+			public const int select_dialog_singlechoice_material = 2130903099;
+			
+			// aapt resource value: 0x7f03003c
+			public const int support_simple_spinner_dropdown_item = 2130903100;
+			
+			// aapt resource value: 0x7f03003d
+			public const int week = 2130903101;
+			
+			// aapt resource value: 0x7f03003e
+			public const int zxingscanneractivitylayout = 2130903102;
+			
+			// aapt resource value: 0x7f03003f
+			public const int zxingscannerfragmentlayout = 2130903103;
 			
 			static Layout()
 			{
@@ -4421,11 +6100,11 @@ namespace Sensus.Android
 		public partial class String
 		{
 			
-			// aapt resource value: 0x7f060052
-			public const int ApplicationName = 2131099730;
+			// aapt resource value: 0x7f060046
+			public const int ApplicationName = 2131099718;
 			
-			// aapt resource value: 0x7f060051
-			public const int Hello = 2131099729;
+			// aapt resource value: 0x7f060045
+			public const int Hello = 2131099717;
 			
 			// aapt resource value: 0x7f06002e
 			public const int abc_action_bar_home_description = 2131099694;
@@ -4478,11 +6157,11 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f06003e
 			public const int abc_toolbar_collapse_description = 2131099710;
 			
-			// aapt resource value: 0x7f060053
-			public const int app_id = 2131099731;
+			// aapt resource value: 0x7f060058
+			public const int app_id = 2131099736;
 			
-			// aapt resource value: 0x7f060054
-			public const int app_name = 2131099732;
+			// aapt resource value: 0x7f060059
+			public const int app_name = 2131099737;
 			
 			// aapt resource value: 0x7f060022
 			public const int appbar_scrolling_view_behavior = 2131099682;
@@ -4493,53 +6172,53 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f060002
 			public const int auth_google_play_services_client_google_display_name = 2131099650;
 			
-			// aapt resource value: 0x7f060040
-			public const int com_facebook_image_download_unknown_error = 2131099712;
-			
-			// aapt resource value: 0x7f060041
-			public const int com_facebook_internet_permission_error_message = 2131099713;
-			
-			// aapt resource value: 0x7f060042
-			public const int com_facebook_internet_permission_error_title = 2131099714;
-			
-			// aapt resource value: 0x7f060043
-			public const int com_facebook_like_button_liked = 2131099715;
-			
-			// aapt resource value: 0x7f060044
-			public const int com_facebook_like_button_not_liked = 2131099716;
-			
-			// aapt resource value: 0x7f060045
-			public const int com_facebook_loading = 2131099717;
-			
-			// aapt resource value: 0x7f060046
-			public const int com_facebook_loginview_cancel_action = 2131099718;
-			
 			// aapt resource value: 0x7f060047
-			public const int com_facebook_loginview_log_in_button = 2131099719;
+			public const int com_facebook_image_download_unknown_error = 2131099719;
 			
 			// aapt resource value: 0x7f060048
-			public const int com_facebook_loginview_log_in_button_long = 2131099720;
+			public const int com_facebook_internet_permission_error_message = 2131099720;
 			
 			// aapt resource value: 0x7f060049
-			public const int com_facebook_loginview_log_out_action = 2131099721;
+			public const int com_facebook_internet_permission_error_title = 2131099721;
 			
 			// aapt resource value: 0x7f06004a
-			public const int com_facebook_loginview_log_out_button = 2131099722;
+			public const int com_facebook_like_button_liked = 2131099722;
 			
 			// aapt resource value: 0x7f06004b
-			public const int com_facebook_loginview_logged_in_as = 2131099723;
+			public const int com_facebook_like_button_not_liked = 2131099723;
 			
 			// aapt resource value: 0x7f06004c
-			public const int com_facebook_loginview_logged_in_using_facebook = 2131099724;
+			public const int com_facebook_loading = 2131099724;
 			
 			// aapt resource value: 0x7f06004d
-			public const int com_facebook_send_button_text = 2131099725;
+			public const int com_facebook_loginview_cancel_action = 2131099725;
 			
 			// aapt resource value: 0x7f06004e
-			public const int com_facebook_share_button_text = 2131099726;
+			public const int com_facebook_loginview_log_in_button = 2131099726;
 			
 			// aapt resource value: 0x7f06004f
-			public const int com_facebook_tooltip_default = 2131099727;
+			public const int com_facebook_loginview_log_in_button_long = 2131099727;
+			
+			// aapt resource value: 0x7f060050
+			public const int com_facebook_loginview_log_out_action = 2131099728;
+			
+			// aapt resource value: 0x7f060051
+			public const int com_facebook_loginview_log_out_button = 2131099729;
+			
+			// aapt resource value: 0x7f060052
+			public const int com_facebook_loginview_logged_in_as = 2131099730;
+			
+			// aapt resource value: 0x7f060053
+			public const int com_facebook_loginview_logged_in_using_facebook = 2131099731;
+			
+			// aapt resource value: 0x7f060054
+			public const int com_facebook_send_button_text = 2131099732;
+			
+			// aapt resource value: 0x7f060055
+			public const int com_facebook_share_button_text = 2131099733;
+			
+			// aapt resource value: 0x7f060056
+			public const int com_facebook_tooltip_default = 2131099734;
 			
 			// aapt resource value: 0x7f060006
 			public const int common_android_wear_notification_needs_update_text = 2131099654;
@@ -4637,8 +6316,23 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f060001
 			public const int common_signin_button_text_long = 2131099649;
 			
-			// aapt resource value: 0x7f060050
-			public const int messenger_send_button_text = 2131099728;
+			// aapt resource value: 0x7f060041
+			public const int day_name_format = 2131099713;
+			
+			// aapt resource value: 0x7f060044
+			public const int full_date_format = 2131099716;
+			
+			// aapt resource value: 0x7f060042
+			public const int invalid_date = 2131099714;
+			
+			// aapt resource value: 0x7f060040
+			public const int library_name = 2131099712;
+			
+			// aapt resource value: 0x7f060057
+			public const int messenger_send_button_text = 2131099735;
+			
+			// aapt resource value: 0x7f060043
+			public const int month_name_format = 2131099715;
 			
 			// aapt resource value: 0x7f060023
 			public const int mr_media_route_button_content_description = 2131099683;
@@ -5118,6 +6812,18 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f090001
 			public const int Base_Widget_Design_TabLayout = 2131296257;
 			
+			// aapt resource value: 0x7f090145
+			public const int CalendarCell = 2131296581;
+			
+			// aapt resource value: 0x7f090147
+			public const int CalendarCell_CalendarDate = 2131296583;
+			
+			// aapt resource value: 0x7f090146
+			public const int CalendarCell_DayHeader = 2131296582;
+			
+			// aapt resource value: 0x7f090144
+			public const int CalendarTitle = 2131296580;
+			
 			// aapt resource value: 0x7f09000f
 			public const int CardView = 2131296271;
 			
@@ -5127,47 +6833,47 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f090011
 			public const int CardView_Light = 2131296273;
 			
-			// aapt resource value: 0x7f090144
-			public const int MessengerButton = 2131296580;
-			
-			// aapt resource value: 0x7f090145
-			public const int MessengerButton_Blue = 2131296581;
-			
-			// aapt resource value: 0x7f090146
-			public const int MessengerButton_Blue_Large = 2131296582;
-			
-			// aapt resource value: 0x7f090147
-			public const int MessengerButton_Blue_Small = 2131296583;
-			
 			// aapt resource value: 0x7f090148
-			public const int MessengerButton_White = 2131296584;
+			public const int MessengerButton = 2131296584;
 			
 			// aapt resource value: 0x7f090149
-			public const int MessengerButton_White_Large = 2131296585;
+			public const int MessengerButton_Blue = 2131296585;
 			
 			// aapt resource value: 0x7f09014a
-			public const int MessengerButton_White_Small = 2131296586;
+			public const int MessengerButton_Blue_Large = 2131296586;
 			
 			// aapt resource value: 0x7f09014b
-			public const int MessengerButtonText = 2131296587;
+			public const int MessengerButton_Blue_Small = 2131296587;
 			
 			// aapt resource value: 0x7f09014c
-			public const int MessengerButtonText_Blue = 2131296588;
+			public const int MessengerButton_White = 2131296588;
 			
 			// aapt resource value: 0x7f09014d
-			public const int MessengerButtonText_Blue_Large = 2131296589;
+			public const int MessengerButton_White_Large = 2131296589;
 			
 			// aapt resource value: 0x7f09014e
-			public const int MessengerButtonText_Blue_Small = 2131296590;
+			public const int MessengerButton_White_Small = 2131296590;
 			
 			// aapt resource value: 0x7f09014f
-			public const int MessengerButtonText_White = 2131296591;
+			public const int MessengerButtonText = 2131296591;
 			
 			// aapt resource value: 0x7f090150
-			public const int MessengerButtonText_White_Large = 2131296592;
+			public const int MessengerButtonText_Blue = 2131296592;
 			
 			// aapt resource value: 0x7f090151
-			public const int MessengerButtonText_White_Small = 2131296593;
+			public const int MessengerButtonText_Blue_Large = 2131296593;
+			
+			// aapt resource value: 0x7f090152
+			public const int MessengerButtonText_Blue_Small = 2131296594;
+			
+			// aapt resource value: 0x7f090153
+			public const int MessengerButtonText_White = 2131296595;
+			
+			// aapt resource value: 0x7f090154
+			public const int MessengerButtonText_White_Large = 2131296596;
+			
+			// aapt resource value: 0x7f090155
+			public const int MessengerButtonText_White_Small = 2131296597;
 			
 			// aapt resource value: 0x7f090025
 			public const int Platform_AppCompat = 2131296293;
@@ -5703,26 +7409,26 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f090015
 			public const int Widget_MediaRouter_MediaRouteButton = 2131296277;
 			
-			// aapt resource value: 0x7f090152
-			public const int com_facebook_button = 2131296594;
-			
-			// aapt resource value: 0x7f090153
-			public const int com_facebook_button_like = 2131296595;
-			
-			// aapt resource value: 0x7f090154
-			public const int com_facebook_button_send = 2131296596;
-			
-			// aapt resource value: 0x7f090155
-			public const int com_facebook_button_share = 2131296597;
-			
 			// aapt resource value: 0x7f090156
-			public const int com_facebook_loginview_default_style = 2131296598;
+			public const int com_facebook_button = 2131296598;
 			
 			// aapt resource value: 0x7f090157
-			public const int com_facebook_loginview_silver_style = 2131296599;
+			public const int com_facebook_button_like = 2131296599;
 			
 			// aapt resource value: 0x7f090158
-			public const int tooltip_bubble_text = 2131296600;
+			public const int com_facebook_button_send = 2131296600;
+			
+			// aapt resource value: 0x7f090159
+			public const int com_facebook_button_share = 2131296601;
+			
+			// aapt resource value: 0x7f09015a
+			public const int com_facebook_loginview_default_style = 2131296602;
+			
+			// aapt resource value: 0x7f09015b
+			public const int com_facebook_loginview_silver_style = 2131296603;
+			
+			// aapt resource value: 0x7f09015c
+			public const int tooltip_bubble_text = 2131296604;
 			
 			static Style()
 			{

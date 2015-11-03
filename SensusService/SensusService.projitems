@@ -106,6 +106,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\BiologicalSex.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\BloodType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolReportDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ParticipationRewardDatum.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />

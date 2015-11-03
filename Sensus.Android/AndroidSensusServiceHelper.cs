@@ -33,6 +33,9 @@ using SensusService.Probes.Location;
 using SensusService.Probes;
 using SensusService.Probes.Movement;
 using System.Linq;
+using ZXing.Mobile;
+using Android.Graphics;
+using Java.Nio;
 
 namespace Sensus.Android
 {
@@ -477,6 +480,18 @@ namespace Sensus.Android
             return !(probe is ListeningLocationProbe) &&
             !(probe is ListeningSpeedProbe) &&
             !(probe is ListeningPointsOfInterestProximityProbe);
+        }
+
+        public override Xamarin.Forms.ImageSource GetQrCodeImageSource(string contents)
+        {            
+            return Xamarin.Forms.ImageSource.FromStream(() =>
+                {
+                    Bitmap bitmap = BarcodeWriter.Write(contents);
+                    MemoryStream ms = new MemoryStream();
+                    bitmap.Compress(Bitmap.CompressFormat.Png, 100, ms);
+                    ms.Seek(0, SeekOrigin.Begin);
+                    return ms;
+                });
         }
 
         #endregion

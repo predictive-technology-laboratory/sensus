@@ -60,24 +60,36 @@ namespace SensusUI.Inputs
 
         public LabelOnlyInput()
         {
-            Construct();
+            Construct(true);
         }
 
         public LabelOnlyInput(string labelText)
             : base(labelText)
         {
-            Construct();
+            Construct(true);
+        }
+
+        public LabelOnlyInput(string labelText, bool complete)
+            : base(labelText)
+        {
+            Construct(complete);
         }
 
         public LabelOnlyInput(string name, string labelText)
             : base(name, labelText)
         {
-            Construct();
+            Construct(true);
         }
 
-        private void Construct()
+        public LabelOnlyInput(string name, string labelText, bool complete)
+            : base(name, labelText)
         {
-            Complete = true;
+            Construct(complete);
+        }
+
+        private void Construct(bool complete)
+        {
+            Complete = complete;
             ShouldBeStored = false;
         }
     }

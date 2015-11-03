@@ -36,13 +36,11 @@ namespace SensusUI
             else
             {
                 UiBoundSensusServiceHelper.Get(true).PromptForInputAsync(
-
                     "Authenticate \"" + protocol.Name + "\"", 
-
                     new TextInput("Protocol Password:"),
-
                     null,
-
+                    true,
+                    null,
                     input =>
                     {
                         if (input == null)

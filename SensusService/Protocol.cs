@@ -340,6 +340,7 @@ namespace SensusService
         private string _contactEmail;
         private bool _groupable;
         private List<Protocol> _groupedProtocols;
+        private float? _rewardThreshold;
 
         private readonly object _locker = new object();
 
@@ -542,6 +543,19 @@ namespace SensusService
             }
         }
 
+        [EntryFloatUiProperty("Reward Threshold:", true, 20)]
+        public float? RewardThreshold
+        {
+            get
+            {
+                return _rewardThreshold;
+            }
+            set
+            {
+                _rewardThreshold = value;
+            }
+        }
+
         [JsonIgnore]
         public float Participation
         {
@@ -574,6 +588,7 @@ namespace SensusService
             _participationHorizonDays = 1;   
             _groupable = false;
             _groupedProtocols = new List<Protocol>();
+            _rewardThreshold = null;
         }
 
         /// <summary>
@@ -791,9 +806,7 @@ namespace SensusService
             int consentCode = new Random().Next(1000, 10000);
 
             SensusServiceHelper.Get().PromptForInputsAsync(
-
                 "Protocol Consent", 
-
                 new Input[]
                 {
                     new LabelOnlyInput(
@@ -804,9 +817,9 @@ namespace SensusService
 
                     new TextInput("ConsentCode", null)
                 },
-
                 null,
-
+                true,
+                null,
                 inputs =>
                 {
                     if (inputs != null)

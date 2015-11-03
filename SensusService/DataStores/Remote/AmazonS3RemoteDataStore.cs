@@ -115,6 +115,8 @@ namespace SensusService.DataStores.Remote
         {
             DateTimeOffset commitStartTime = DateTimeOffset.UtcNow;
 
+            List<Datum> committedData = new List<Datum>();
+
             Dictionary<string, List<Datum>> datumTypeData = new Dictionary<string, List<Datum>>();
             Dictionary<string, StringBuilder> datumTypeJSON = new Dictionary<string, StringBuilder>();
 
@@ -122,32 +124,57 @@ namespace SensusService.DataStores.Remote
             {
                 if (cancellationToken.IsCancellationRequested)
                     break;
-                
+
                 string datumType = datum.GetType().Name;
+                string datumJSON = datum.GetJSON(Protocol.JsonAnonymizer);
 
-                // add datum to its subset collection
-                List<Datum> dataSubset;
-                if (!datumTypeData.TryGetValue(datumType, out dataSubset))
+                // upload all participation reward data as single S3 objects so we can retrieve them individually at a later time for verification.
+                if (datum is ParticipationRewardDatum)
                 {
-                    dataSubset = new List<Datum>();
-                    datumTypeData.Add(datumType, dataSubset);
+                    try
+                    {
+                        PutObjectRequest putRequest = new PutObjectRequest
+                        {
+                            BucketName = _bucket,
+                            Key = (_folder + "/" + datumType + "/" + datum.Id + ".json").Trim('/'),  // trim '/' in case folder is blank
+                            ContentBody = datumJSON,
+                            ContentType = "application/json"
+                        };
+
+                        _s3.PutObjectAsync(putRequest, cancellationToken).Wait(cancellationToken);
+
+                        committedData.Add(datum);
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Failed to insert datum into Amazon S3 bucket \"" + _bucket + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
                 }
-
-                dataSubset.Add(datum);
-
-                // add datum to its JSON string
-                StringBuilder json;
-                if (!datumTypeJSON.TryGetValue(datumType, out json))
+                else
                 {
-                    json = new StringBuilder("[" + Environment.NewLine);
-                    datumTypeJSON.Add(datumType, json);
+                    // group all other data (i.e., other than participation reward data) by type for batch committal
+                    List<Datum> dataSubset;
+                    if (!datumTypeData.TryGetValue(datumType, out dataSubset))
+                    {
+                        dataSubset = new List<Datum>();
+                        datumTypeData.Add(datumType, dataSubset);
+                    }
+
+                    dataSubset.Add(datum);
+
+                    // add datum to its JSON array string
+                    StringBuilder json;
+                    if (!datumTypeJSON.TryGetValue(datumType, out json))
+                    {
+                        json = new StringBuilder("[" + Environment.NewLine);
+                        datumTypeJSON.Add(datumType, json);
+                    }
+
+                    json.Append((dataSubset.Count == 1 ? "" : "," + Environment.NewLine) + datumJSON);
                 }
+            }                
 
-                json.Append((dataSubset.Count == 1 ? "" : "," + Environment.NewLine) + datum.GetJSON(Protocol.JsonAnonymizer));
-            }
-
-            List<Datum> committedData = new List<Datum>();
-
+            // commit all data batches by type
             foreach (string datumType in datumTypeJSON.Keys)
             {
                 if (cancellationToken.IsCancellationRequested)

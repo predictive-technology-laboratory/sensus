@@ -20,7 +20,7 @@ namespace SensusUI
 {
     public class ParticipationReportPage : ContentPage
     {
-        public ParticipationReportPage(Protocol protocol)
+        public ParticipationReportPage(Protocol protocol, string participationRewardDatumId)
         {
             Title = protocol.Name;
 
@@ -34,33 +34,11 @@ namespace SensusUI
             #error "Unrecognized platform."
             #endif
 
-            Button helpButton = null;
-            if (!string.IsNullOrWhiteSpace(protocol.ContactEmail))
-            {
-                helpButton = new Button
-                {
-                    Text = "Email Study Manager",
-                    FontSize = 20
-                };
-
-                helpButton.Clicked += (o, e) =>
-                {
-                    UiBoundSensusServiceHelper.Get(true).SendEmailAsync(protocol.ContactEmail, "Help with study:  " + protocol.Name, 
-                        "Hello - " + Environment.NewLine +
-                        Environment.NewLine +
-                        "I am having trouble with a Sensus study. The name of the study is \"" + protocol.Name + "\"." + Environment.NewLine +
-                        Environment.NewLine +
-                        "[What is Sensus doing that caused you to send this email]:  " + Environment.NewLine +
-                        Environment.NewLine +
-                        "[What other concerns do you have about this study]:  ");
-                };
-            }
-
             StackLayout contentLayout = new StackLayout
             {
                 Orientation = StackOrientation.Vertical,
                 VerticalOptions = LayoutOptions.FillAndExpand,
-                Padding = new Thickness(0, 50, 0, 0),
+                Padding = new Thickness(0, 25, 0, 0),
                 Children =
                 {
                     new Label
@@ -72,33 +50,74 @@ namespace SensusUI
                     new Label
                     {
                         Text = Math.Round(protocol.Participation * 100, 0) + "%",
-                        FontSize = 75,
+                        FontSize = 50,
                         HorizontalOptions = LayoutOptions.CenterAndExpand
                     },                    
                     new Label
                     {                                
-                        Text = "This score reflects your overall participation level in the \"" + protocol.Name + "\" study over the past " + (protocol.ParticipationHorizonDays == 1 ? "day" : protocol.ParticipationHorizonDays + " days") + ". " + howToIncreaseScore + (helpButton == null ? "" : Environment.NewLine + Environment.NewLine + "If you have questions, please click the button below to email the study manager."),
+                        Text = "This score reflects your overall participation level in the \"" + protocol.Name + "\" study over the past " + (protocol.ParticipationHorizonDays == 1 ? "day" : protocol.ParticipationHorizonDays + " days") + ".",
                         FontSize = 20,
                         HorizontalOptions = LayoutOptions.CenterAndExpand
-                    }                    
+                    }
                 }
             };
 
-            if (helpButton != null)
-                contentLayout.Children.Add(helpButton);
+            if (participationRewardDatumId != null)
+            {
+                contentLayout.Children.Add(new Label
+                    {
+                        Text = Environment.NewLine + "Someone else can verify your participation by scanning the following barcode:",
+                        FontSize = 20,
+                        HorizontalOptions = LayoutOptions.CenterAndExpand
+                    });
 
-            Button viewDetailsButton = new Button
+                contentLayout.Children.Add(new Image
+                    { 
+                        Source = UiBoundSensusServiceHelper.Get(true).GetQrCodeImageSource(participationRewardDatumId),
+                        HorizontalOptions = LayoutOptions.CenterAndExpand
+                    });
+            }
+
+            contentLayout.Children.Add(new Label
+                {
+                    Text = howToIncreaseScore,
+                    FontSize = 20,
+                    HorizontalOptions = LayoutOptions.CenterAndExpand
+                });
+
+            if (!string.IsNullOrWhiteSpace(protocol.ContactEmail))
+            {
+                Button emailStudyManagerButton = new Button
+                {
+                    Text = "Email Study Manager",
+                    FontSize = 20
+                };
+
+                emailStudyManagerButton.Clicked += (o, e) =>
+                {
+                    UiBoundSensusServiceHelper.Get(true).SendEmailAsync(protocol.ContactEmail, "Help with Sensus study:  " + protocol.Name, 
+                        "Hello - " + Environment.NewLine +
+                        Environment.NewLine +
+                        "I am having trouble with a Sensus study. The name of the study is \"" + protocol.Name + "\"." + Environment.NewLine +
+                        Environment.NewLine +
+                        "Here is why I am sending this email:  ");
+                };
+
+                contentLayout.Children.Add(emailStudyManagerButton);
+            }
+
+            Button viewParticipationDetailsButton = new Button
             {
                 Text = "View Participation Details",
                 FontSize = 20
             };
 
-            viewDetailsButton.Clicked += async (o, e) =>
+            viewParticipationDetailsButton.Clicked += async (o, e) =>
             {
                 await Navigation.PushAsync(new ParticipationReportDetailsPage(protocol));
             };
 
-            contentLayout.Children.Add(viewDetailsButton);
+            contentLayout.Children.Add(viewParticipationDetailsButton);
 
             Content = new ScrollView
             {

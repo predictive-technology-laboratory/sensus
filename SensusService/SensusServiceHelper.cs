@@ -30,6 +30,8 @@ using SensusUI;
 using SensusUI.Inputs;
 using Xamarin.Forms;
 using SensusService.Exceptions;
+using ZXing.Mobile;
+using ZXing;
 
 namespace SensusService
 {
@@ -286,6 +288,8 @@ namespace SensusService
         private SHA256Managed _hasher;
         private List<PointOfInterest> _pointsOfInterest;
         private bool _flashNotificationsEnabled;
+        private ZXing.Mobile.MobileBarcodeScanner _barcodeScanner;
+        private ZXing.Mobile.BarcodeWriter _barcodeWriter;
 
         private readonly object _locker = new object();
 
@@ -322,6 +326,16 @@ namespace SensusService
             }
         }
 
+        protected ZXing.Mobile.MobileBarcodeScanner BarcodeScanner
+        {
+            get { return _barcodeScanner; }
+        }
+
+        protected ZXing.Mobile.BarcodeWriter BarcodeWriter
+        {
+            get { return _barcodeWriter; }
+        }
+
         #region platform-specific properties
 
         [JsonIgnore]
@@ -353,6 +367,19 @@ namespace SensusService
             _hasher = new SHA256Managed();
             _pointsOfInterest = new List<PointOfInterest>();
             _flashNotificationsEnabled = true;
+            _barcodeScanner = new ZXing.Mobile.MobileBarcodeScanner();
+
+            // ensure that the entire QR code is always visible by using 90% the minimum dimension as the QR code size.
+            int qrCodeSize = (int)(0.9 * Math.Min(XLabs.Platform.Device.Display.Metrics.WidthPixels, XLabs.Platform.Device.Display.Metrics.HeightPixels));
+            _barcodeWriter = new ZXing.Mobile.BarcodeWriter
+            { 
+                Format = BarcodeFormat.QR_CODE,
+                Options = new ZXing.Common.EncodingOptions
+                {
+                    Height = qrCodeSize,
+                    Width = qrCodeSize
+                }
+            };
 
             if (!Directory.Exists(SHARE_DIRECTORY))
                 Directory.CreateDirectory(SHARE_DIRECTORY); 
@@ -392,7 +419,7 @@ namespace SensusService
                             Insights.PurgePendingCrashReports().Wait();
                     };
 
-                    InitializeXamarinInsights();                                
+                    InitializeXamarinInsights();  
                 }
                 catch (Exception ex)
                 {
@@ -453,6 +480,8 @@ namespace SensusService
         /// <returns><c>true</c>, if probe should be enabled, <c>false</c> otherwise.</returns>
         /// <param name="probe">Probe.</param>
         public abstract bool EnableProbeWhenEnablingAll(Probe probe);
+
+        public abstract ImageSource GetQrCodeImageSource(string contents);
 
         #endregion
 
@@ -768,9 +797,9 @@ namespace SensusService
                 FlashNotificationAsync(message, null);
         }
 
-        public void PromptForInputAsync(string windowTitle, Input input, CancellationToken? cancellationToken, Action<Input> callback)
+        public void PromptForInputAsync(string windowTitle, Input input, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, Action<Input> callback)
         {
-            PromptForInputsAsync(windowTitle, new Input[] { input }, cancellationToken, inputs =>
+            PromptForInputsAsync(windowTitle, new Input[] { input }, cancellationToken, showCancelButton, nextButtonText, inputs =>
                 {
                     if (inputs == null)
                         callback(null);
@@ -779,14 +808,14 @@ namespace SensusService
                 });
         }
 
-        public void PromptForInputsAsync(string windowTitle, IEnumerable<Input> inputs, CancellationToken? cancellationToken, Action<List<Input>> callback)
+        public void PromptForInputsAsync(string windowTitle, IEnumerable<Input> inputs, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, Action<List<Input>> callback)
         {
             InputGroup inputGroup = new InputGroup(windowTitle);
 
             foreach (Input input in inputs)
                 inputGroup.Inputs.Add(input);
 
-            PromptForInputsAsync(null, false, DateTimeOffset.MinValue, new InputGroup[] { inputGroup }.ToList(), cancellationToken, inputGroups =>
+            PromptForInputsAsync(null, false, DateTimeOffset.MinValue, new InputGroup[] { inputGroup }.ToList(), cancellationToken, showCancelButton, nextButtonText, inputGroups =>
                 {
                     if (inputGroups == null)
                         callback(null);
@@ -795,7 +824,7 @@ namespace SensusService
                 });
         }
 
-        public void PromptForInputsAsync(Datum triggeringDatum, bool isReprompt, DateTimeOffset firstPromptTimestamp, IEnumerable<InputGroup> inputGroups, CancellationToken? cancellationToken, Action<IEnumerable<InputGroup>> callback)
+        public void PromptForInputsAsync(Datum triggeringDatum, bool isReprompt, DateTimeOffset firstPromptTimestamp, IEnumerable<InputGroup> inputGroups, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, Action<IEnumerable<InputGroup>> callback)
         {
             new Thread(() =>
                 {
@@ -840,7 +869,7 @@ namespace SensusService
 
                             Device.BeginInvokeOnMainThread(async () =>
                                 {
-                                    PromptForInputsPage promptForInputsPage = new PromptForInputsPage(incompleteGroup, incompleteGroupNum + 1, incompleteGroups.Length, result =>
+                                    PromptForInputsPage promptForInputsPage = new PromptForInputsPage(incompleteGroup, incompleteGroupNum + 1, incompleteGroups.Length, showCancelButton, nextButtonText, cancellationToken, result =>
                                         {
                                             if (result == PromptForInputsPage.Result.Cancel || result == PromptForInputsPage.Result.NavigateBackward && incompleteGroupNum == 0)
                                                 inputGroups = null;

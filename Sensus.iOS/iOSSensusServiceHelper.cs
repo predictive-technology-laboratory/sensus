@@ -457,6 +457,12 @@ namespace Sensus.iOS
             !(probe is PollingPointsOfInterestProximityProbe);
         }
 
+        public override ImageSource GetQrCodeImageSource(string contents)
+        {
+            // TODO:  Implement
+            throw new NotImplementedException();
+        }
+
         #region methods not implemented in ios
 
         public override void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)

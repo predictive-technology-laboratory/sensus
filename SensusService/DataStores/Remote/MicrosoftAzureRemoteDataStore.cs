@@ -53,6 +53,7 @@ namespace SensusService.DataStores.Remote
         private IMobileServiceTable<CellTowerDatum> _cellTowerTable;
         private IMobileServiceTable<WlanDatum> _wlanTable;
         private IMobileServiceTable<ScriptDatum> _scriptTable;
+        private IMobileServiceTable<ParticipationRewardDatum> _participationRewardTable;
         private IMobileServiceTable<ProtocolReportDatum> _protocolReportTable;
 
         private readonly object _locker = new object();
@@ -105,7 +106,7 @@ namespace SensusService.DataStores.Remote
                 _cellTowerTable = _client.GetTable<CellTowerDatum>();
                 _wlanTable = _client.GetTable<WlanDatum>();
                 _scriptTable = _client.GetTable<ScriptDatum>();
-
+                _participationRewardTable = _client.GetTable<ParticipationRewardDatum>();
                 _protocolReportTable = _client.GetTable<ProtocolReportDatum>();
 
                 base.Start();
@@ -125,7 +126,7 @@ namespace SensusService.DataStores.Remote
                 
                 try
                 {
-                    if(datum is FacebookDatum)
+                    if (datum is FacebookDatum)
                         _facebookTable.InsertAsync(datum as FacebookDatum).Wait();
                     else if (datum is SmsDatum)
                         _smsTable.InsertAsync(datum as SmsDatum).Wait();
@@ -159,6 +160,8 @@ namespace SensusService.DataStores.Remote
                         _wlanTable.InsertAsync(datum as WlanDatum).Wait();
                     else if (datum is ScriptDatum)
                         _scriptTable.InsertAsync(datum as ScriptDatum).Wait();
+                    else if (datum is ParticipationRewardDatum)
+                        _participationRewardTable.InsertAsync(datum as ParticipationRewardDatum).Wait();
                     else if (datum is ProtocolReportDatum)
                         _protocolReportTable.InsertAsync(datum as ProtocolReportDatum).Wait();
                     else
