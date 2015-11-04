@@ -16,6 +16,8 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Threading;
 using SensusUI.UiProperties;
+using System;
+using System.Threading.Tasks;
 
 namespace SensusService.DataStores.Remote
 {
@@ -47,6 +49,11 @@ namespace SensusService.DataStores.Remote
             }
 
             return committedData;
+        }
+
+        public override Task<T> GetDatum<T>(string datumId, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException("Cannot retrieve data from Console Remote Data Store.");
         }
     }
 }

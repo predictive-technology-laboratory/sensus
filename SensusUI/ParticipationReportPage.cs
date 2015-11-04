@@ -15,12 +15,13 @@
 using System;
 using Xamarin.Forms;
 using SensusService;
+using System.Timers;
 
 namespace SensusUI
 {
     public class ParticipationReportPage : ContentPage
     {
-        public ParticipationReportPage(Protocol protocol, string participationRewardDatumId)
+        public ParticipationReportPage(Protocol protocol, ParticipationRewardDatum participationRewardDatum)
         {
             Title = protocol.Name;
 
@@ -56,19 +57,58 @@ namespace SensusUI
                     new Label
                     {                                
                         Text = "This score reflects your participation level over the past " + (protocol.ParticipationHorizonDays == 1 ? "day" : protocol.ParticipationHorizonDays + " days") + "." +
-                        (participationRewardDatumId == null ? "" : " Anyone can verify your participation by scanning the following barcode from within Sensus:"),
+                        (participationRewardDatum.Id == null ? "" : " Anyone can verify your participation by tapping \"Verify Participation\" on their Sensus home screen and scanning the following barcode:"),
                         FontSize = 20,
                         HorizontalOptions = LayoutOptions.CenterAndExpand
                     }
                 }
             };
 
-            if (participationRewardDatumId != null)
+            if (participationRewardDatum != null)
+            {
+                Label expirationLabel = new Label
+                {
+                    FontSize = 15,
+                    HorizontalOptions = LayoutOptions.CenterAndExpand
+                };
+
+                contentLayout.Children.Add(expirationLabel);
+
+                Timer timer = new Timer(1000);
+
+                timer.Elapsed += (o, e) =>
+                {
+                    Device.BeginInvokeOnMainThread(() =>
+                        {
+                            int secondsLeftBeforeBarcodeExpiration = SensusServiceHelper.PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS - (DateTimeOffset.UtcNow - participationRewardDatum.Timestamp).Seconds;
+                            
+                            if (secondsLeftBeforeBarcodeExpiration <= 0)
+                            {
+                                expirationLabel.TextColor = Color.Red;
+                                expirationLabel.Text = "Barcode has expired. Please reopen this page to renew it.";
+                                timer.Stop();
+                            }
+                            else
+                            {
+                                --secondsLeftBeforeBarcodeExpiration;
+                                expirationLabel.Text = "Barcode will expire in " + secondsLeftBeforeBarcodeExpiration + " second" + (secondsLeftBeforeBarcodeExpiration == 1 ? "" : "s") + ".";
+                            }
+                        });
+                };
+
+                timer.Start();
+
+                Disappearing += (o, e) =>
+                {
+                    timer.Stop();
+                };
+
                 contentLayout.Children.Add(new Image
                     { 
-                        Source = UiBoundSensusServiceHelper.Get(true).GetQrCodeImageSource(participationRewardDatumId),
+                        Source = UiBoundSensusServiceHelper.Get(true).GetQrCodeImageSource(participationRewardDatum.Id),
                         HorizontalOptions = LayoutOptions.CenterAndExpand
                     });
+            }
 
             contentLayout.Children.Add(new Label
                 {

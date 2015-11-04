@@ -24,6 +24,8 @@ using Amazon.CognitoIdentity;
 using Amazon;
 using Amazon.S3.Model;
 using Xamarin;
+using System.Threading.Tasks;
+using System.IO;
 
 namespace SensusService.DataStores.Remote
 {
@@ -208,6 +210,24 @@ namespace SensusService.DataStores.Remote
             SensusServiceHelper.Get().Logger.Log("Committed " + committedData.Count + " data items to Amazon S3 bucket \"" + _bucket + "\" in " + (DateTimeOffset.UtcNow - commitStartTime).TotalSeconds + " seconds.", LoggingLevel.Normal, GetType());
 
             return committedData;
+        }
+
+        public override async Task<T> GetDatum<T>(string datumId, CancellationToken cancellationToken)
+        {
+            try
+            {
+                string key = (_folder + "/" + typeof(T).Name + "/" + datumId + ".json").Trim('/');
+                Stream responseStream = (await _s3.GetObjectAsync(_bucket, key, cancellationToken)).ResponseStream;
+                using (StreamReader reader = new StreamReader(responseStream))
+                {
+                    string json = reader.ReadToEnd();
+                    return Datum.FromJSON(json) as T;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to get datum from Amazon S3:  " + ex.Message);
+            }
         }
 
         public override void Stop()

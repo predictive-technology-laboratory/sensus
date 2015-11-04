@@ -93,6 +93,7 @@ namespace SensusService
         public const string SENSUS_CALLBACK_KEY = "SENSUS-CALLBACK";
         public const string SENSUS_CALLBACK_ID_KEY = "SENSUS-CALLBACK-ID";
         public const string SENSUS_CALLBACK_REPEATING_KEY = "SENSUS-CALLBACK-REPEATING";
+        public const int PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS = 15;
         protected const string XAMARIN_INSIGHTS_APP_KEY = "";
         private const string ENCRYPTION_KEY = "";
         private static readonly string SHARE_DIRECTORY = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "share");
@@ -326,12 +327,14 @@ namespace SensusService
             }
         }
 
-        protected ZXing.Mobile.MobileBarcodeScanner BarcodeScanner
+        [JsonIgnore]
+        public ZXing.Mobile.MobileBarcodeScanner BarcodeScanner
         {
             get { return _barcodeScanner; }
         }
 
-        protected ZXing.Mobile.BarcodeWriter BarcodeWriter
+        [JsonIgnore]
+        public ZXing.Mobile.BarcodeWriter BarcodeWriter
         {
             get { return _barcodeWriter; }
         }

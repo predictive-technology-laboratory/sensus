@@ -15,6 +15,7 @@
 using SensusUI.UiProperties;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace SensusService.DataStores.Remote
 {
@@ -77,5 +78,7 @@ namespace SensusService.DataStores.Remote
         {
             Protocol.LocalDataStore.ClearDataCommittedToRemoteDataStore(committedData);
         }
+
+        public abstract Task<T> GetDatum<T>(string datumId, CancellationToken cancellationToken) where T : Datum;
     }
 }

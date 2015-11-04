@@ -18,6 +18,7 @@ using SensusUI.UiProperties;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Linq;
 
 namespace SensusService.DataStores
 {
@@ -65,12 +66,6 @@ namespace SensusService.DataStores
         public bool Running
         {
             get { return _running; }
-        }
-
-        [JsonIgnore]
-        public bool HasNonProbeData
-        {
-            get { return _nonProbeDataToCommit.Count > 0; }
         }
 
         [JsonIgnore]
@@ -214,6 +209,11 @@ namespace SensusService.DataStores
 
         public virtual void Clear()
         {
+        }
+
+        public bool HasNonProbeDatumToCommit(string datumId)
+        {
+            return _nonProbeDataToCommit.Any(datum => datum.Id == datumId);
         }
 
         /// <summary>

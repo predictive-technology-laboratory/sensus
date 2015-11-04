@@ -324,6 +324,9 @@
     <AndroidResource Include="..\SensusUI\Icons\x.png">
       <Link>Resources\drawable\x.png</Link>
     </AndroidResource>
+    <AndroidResource Include="..\SensusUI\Icons\gear_wrench.png">
+      <Link>Resources\drawable\gear_wrench.png</Link>
+    </AndroidResource>
   </ItemGroup>
   <Import Project="..\SensusService\SensusService.projitems" Label="Shared" Condition="Exists('..\SensusService\SensusService.projitems')" />
   <Import Project="..\SensusUI\SensusUI.projitems" Label="Shared" Condition="Exists('..\SensusUI\SensusUI.projitems')" />

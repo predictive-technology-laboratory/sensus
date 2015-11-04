@@ -431,6 +431,9 @@
     <BundleResource Include="..\SensusUI\Icons\x.png">
       <Link>Resources\x.png</Link>
     </BundleResource>
+    <BundleResource Include="..\SensusUI\Icons\gear_wrench.png">
+      <Link>Resources\gear_wrench.png</Link>
+    </BundleResource>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
