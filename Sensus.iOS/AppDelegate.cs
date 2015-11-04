@@ -99,6 +99,7 @@ namespace Sensus.iOS
             UIApplication.SharedApplication.CancelAllLocalNotifications();
             UIApplication.SharedApplication.ApplicationIconBadgeNumber = 0;
 
+            _serviceHelper.BarcodeScanner = new ZXing.Mobile.MobileBarcodeScanner(UIApplication.SharedApplication.KeyWindow.RootViewController);
             _serviceHelper.ActivationId = Guid.NewGuid().ToString();
 
             iOSSensusServiceHelper sensusServiceHelper = UiBoundSensusServiceHelper.Get(true) as iOSSensusServiceHelper;

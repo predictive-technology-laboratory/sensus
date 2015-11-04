@@ -65,7 +65,7 @@ namespace SensusUI
 
             showParticipationButton.Clicked += async (o, e) =>
             {
-                Protocol selectedProtocol = await SelectRunningProtocol();
+                Protocol selectedProtocol = await SelectProtocol(true);
 
                 if (selectedProtocol == null)
                     return;
@@ -137,7 +137,7 @@ namespace SensusUI
 
             verifyParticipationButton.Clicked += async (o, e) =>
             {
-                Protocol selectedProtocol = await SelectRunningProtocol();
+                Protocol selectedProtocol = await SelectProtocol(false);
 
                 if (selectedProtocol == null)
                     return;
@@ -251,7 +251,7 @@ namespace SensusUI
             };
         }
 
-        private async Task<Protocol> SelectRunningProtocol()
+        private async Task<Protocol> SelectProtocol(bool requireRunning)
         {
             if (UiBoundSensusServiceHelper.Get(true).RegisteredProtocols.Count == 0)
             {
@@ -267,7 +267,7 @@ namespace SensusUI
             {
                 Protocol selectedProtocol = UiBoundSensusServiceHelper.Get(true).RegisteredProtocols[int.Parse(selectedProtocolName.Substring(0, selectedProtocolName.IndexOf(")"))) - 1];
 
-                if (selectedProtocol.Running)
+                if (!requireRunning || selectedProtocol.Running)
                     return selectedProtocol;
                 else if (await DisplayAlert("Begin Study", "You are not currently participating in the \"" + selectedProtocol.Name + "\" study. Would you like to begin participating now?", "Yes", "No"))
                     selectedProtocol.StartWithUserAgreementAsync(null);

@@ -459,8 +459,14 @@ namespace Sensus.iOS
 
         public override ImageSource GetQrCodeImageSource(string contents)
         {
-            // TODO:  Implement
-            throw new NotImplementedException();
+            return ImageSource.FromStream(() =>
+                {
+                    UIImage bitmap = BarcodeWriter.Write(contents);
+                    MemoryStream ms = new MemoryStream();
+                    bitmap.AsPNG().AsStream().CopyTo(ms);
+                    ms.Seek(0, SeekOrigin.Begin);
+                    return ms;
+                });
         }
 
         #region methods not implemented in ios

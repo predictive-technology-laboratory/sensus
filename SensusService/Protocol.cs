@@ -112,26 +112,7 @@ namespace SensusService
 
                     try
                     {
-                        #region allow protocols to be opened across platforms by modifying the namespaces in the JSON
-                        string newJSON;
-                        string typeName = SensusServiceHelper.Get().GetType().Name;
-                        if (typeName == "AndroidSensusServiceHelper")
-                            newJSON = json.Replace("iOS", "Android").Replace("WinPhone", "Android");
-                        else if (typeName == "iOSSensusServiceHelper")
-                            newJSON = json.Replace("Android", "iOS").Replace("WinPhone", "iOS");
-                        else if (typeName == "WinPhone")
-                            newJSON = json.Replace("Android", "WinPhone").Replace("iOS", "WinPhone");
-                        else
-                            throw new SensusException("Attempted to deserialize JSON into unknown service helper type:  " + SensusServiceHelper.Get().GetType().FullName);
-
-                        if (newJSON == json)
-                            SensusServiceHelper.Get().Logger.Log("No cross-platform conversion required for service helper JSON.", LoggingLevel.Normal, typeof(Protocol));
-                        else
-                        {
-                            SensusServiceHelper.Get().Logger.Log("Performed cross-platform conversion of service helper JSON.", LoggingLevel.Normal, typeof(Protocol));
-                            json = newJSON;
-                        }
-                        #endregion
+                        json = SensusServiceHelper.Get().ConvertJsonForCrossPlatform(json);                        
 
                         ManualResetEvent protocolWait = new ManualResetEvent(false);
 

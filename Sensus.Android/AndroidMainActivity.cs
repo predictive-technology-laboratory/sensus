@@ -111,6 +111,8 @@ namespace Sensus.Android
                     Finish();
                     return;
                 }
+
+                e.Binder.SensusServiceHelper.BarcodeScanner = new ZXing.Mobile.MobileBarcodeScanner();
                     
                 // get reference to service helper for use within the UI
                 UiBoundSensusServiceHelper.Set(e.Binder.SensusServiceHelper);

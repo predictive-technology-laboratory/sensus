@@ -32,6 +32,7 @@ using Xamarin.Forms;
 using SensusService.Exceptions;
 using ZXing.Mobile;
 using ZXing;
+using XLabs.Platform.Device;
 
 namespace SensusService
 {
@@ -93,7 +94,7 @@ namespace SensusService
         public const string SENSUS_CALLBACK_KEY = "SENSUS-CALLBACK";
         public const string SENSUS_CALLBACK_ID_KEY = "SENSUS-CALLBACK-ID";
         public const string SENSUS_CALLBACK_REPEATING_KEY = "SENSUS-CALLBACK-REPEATING";
-        public const int PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS = 15;
+        public const int PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS = 60;
         protected const string XAMARIN_INSIGHTS_APP_KEY = "";
         private const string ENCRYPTION_KEY = "";
         private static readonly string SHARE_DIRECTORY = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "share");
@@ -330,13 +331,23 @@ namespace SensusService
         [JsonIgnore]
         public ZXing.Mobile.MobileBarcodeScanner BarcodeScanner
         {
-            get { return _barcodeScanner; }
+            get
+            {
+                return _barcodeScanner; 
+            }
+            set
+            {
+                _barcodeScanner = value;
+            }
         }
 
         [JsonIgnore]
         public ZXing.Mobile.BarcodeWriter BarcodeWriter
         {
-            get { return _barcodeWriter; }
+            get
+            {
+                return _barcodeWriter; 
+            }
         }
 
         #region platform-specific properties
@@ -370,10 +381,16 @@ namespace SensusService
             _hasher = new SHA256Managed();
             _pointsOfInterest = new List<PointOfInterest>();
             _flashNotificationsEnabled = true;
-            _barcodeScanner = new ZXing.Mobile.MobileBarcodeScanner();
 
-            // ensure that the entire QR code is always visible by using 90% the minimum dimension as the QR code size.
+            // ensure that the entire QR code is always visible by using 90% the minimum screen dimension as the QR code size.
+            #if __ANDROID__
             int qrCodeSize = (int)(0.9 * Math.Min(XLabs.Platform.Device.Display.Metrics.WidthPixels, XLabs.Platform.Device.Display.Metrics.HeightPixels));
+            #elif __IOS__
+            int qrCodeSize = (int)(0.9 * Math.Min(AppleDevice.CurrentDevice.Display.Height, AppleDevice.CurrentDevice.Display.Width));
+            #else
+            #error "Unrecognized platform"
+            #endif
+
             _barcodeWriter = new ZXing.Mobile.BarcodeWriter
             { 
                 Format = BarcodeFormat.QR_CODE,
@@ -1050,6 +1067,30 @@ namespace SensusService
 
                 return path;
             }
+        }
+
+        public string ConvertJsonForCrossPlatform(string json)
+        {
+            string newJSON;
+            string typeName = GetType().Name;
+            if (typeName == "AndroidSensusServiceHelper")
+                newJSON = json.Replace("iOS", "Android").Replace("WinPhone", "Android");
+            else if (typeName == "iOSSensusServiceHelper")
+                newJSON = json.Replace("Android", "iOS").Replace("WinPhone", "iOS");
+            else if (typeName == "WinPhone")
+                newJSON = json.Replace("Android", "WinPhone").Replace("iOS", "WinPhone");
+            else
+                throw new SensusException("Attempted to convert JSON for unknown service helper type:  " + SensusServiceHelper.Get().GetType().FullName);
+
+            if (newJSON == json)
+                _logger.Log("No cross-platform conversion required for JSON.", LoggingLevel.Normal, GetType());
+            else
+            {
+                _logger.Log("Performed cross-platform conversion of JSON.", LoggingLevel.Normal, GetType());
+                json = newJSON;
+            }
+
+            return json;
         }
 
         public virtual void Dispose()

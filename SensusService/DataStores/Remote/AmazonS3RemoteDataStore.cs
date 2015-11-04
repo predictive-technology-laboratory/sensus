@@ -101,13 +101,18 @@ namespace SensusService.DataStores.Remote
             _bucket = _folder = "";
         }
 
+        private void InitializeS3()
+        {
+            RegionEndpoint amazonRegion = RegionEndpoint.GetBySystemName(_cognitoIdentityPoolId.Substring(0, _cognitoIdentityPoolId.IndexOf(":")));
+            CognitoAWSCredentials credentials = new CognitoAWSCredentials(_cognitoIdentityPoolId, amazonRegion);
+            _s3 = new AmazonS3Client(credentials, amazonRegion);
+        }
+
         public override void Start()
         {
             lock (_locker)
             {
-                RegionEndpoint amazonRegion = RegionEndpoint.GetBySystemName(_cognitoIdentityPoolId.Substring(0, _cognitoIdentityPoolId.IndexOf(":")));
-                CognitoAWSCredentials credentials = new CognitoAWSCredentials(_cognitoIdentityPoolId, amazonRegion);
-                _s3 = new AmazonS3Client(credentials, amazonRegion);
+                InitializeS3();
 
                 base.Start();
             }
@@ -214,19 +219,49 @@ namespace SensusService.DataStores.Remote
 
         public override async Task<T> GetDatum<T>(string datumId, CancellationToken cancellationToken)
         {
+            // it's possible to call GetDatum if the data store is not running as part of a protocol. in such cases
+            // initialize the S3 just for the purpose of this method. initialize it now and destroy it before we return.
+            bool destroyS3 = false;
+
             try
             {
+                if (_s3 == null)
+                {
+                    InitializeS3();
+                    destroyS3 = true;
+                }
+
                 string key = (_folder + "/" + typeof(T).Name + "/" + datumId + ".json").Trim('/');
                 Stream responseStream = (await _s3.GetObjectAsync(_bucket, key, cancellationToken)).ResponseStream;
+                T datum = null;
                 using (StreamReader reader = new StreamReader(responseStream))
                 {
                     string json = reader.ReadToEnd();
-                    return Datum.FromJSON(json) as T;
+                    json = SensusServiceHelper.Get().ConvertJsonForCrossPlatform(json);
+                    datum = Datum.FromJSON(json) as T;
                 }
+
+                return datum;
             }
             catch (Exception ex)
             {
-                throw new Exception("Failed to get datum from Amazon S3:  " + ex.Message);
+                string message = "Failed to get datum from Amazon S3:  " + ex.Message;
+                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+                throw new Exception(message);
+            }
+            finally
+            {
+                if (destroyS3)
+                {
+                    try
+                    {
+                        _s3.Dispose();
+                        _s3 = null;
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
             }
         }
 
@@ -237,6 +272,7 @@ namespace SensusService.DataStores.Remote
             try
             {
                 _s3.Dispose();
+                _s3 = null;
             }
             catch (Exception)
             {
