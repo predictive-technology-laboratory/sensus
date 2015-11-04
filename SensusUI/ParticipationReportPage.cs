@@ -80,7 +80,7 @@ namespace SensusUI
                 {
                     Device.BeginInvokeOnMainThread(() =>
                         {
-                            int secondsLeftBeforeBarcodeExpiration = SensusServiceHelper.PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS - (DateTimeOffset.UtcNow - participationRewardDatum.Timestamp).Seconds;
+                            int secondsLeftBeforeBarcodeExpiration = (int)(SensusServiceHelper.PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS - (DateTimeOffset.UtcNow - participationRewardDatum.Timestamp).TotalSeconds);
                             
                             if (secondsLeftBeforeBarcodeExpiration <= 0)
                             {
