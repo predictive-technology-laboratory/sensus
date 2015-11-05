@@ -533,6 +533,22 @@ namespace SensusService
             }
             set
             {
+                // if a threshold is given, force it to be in [0,1]
+                if (_rewardThreshold != null)
+                {
+                    float threshold = value.GetValueOrDefault();
+                    if (threshold < 0)
+                    {
+                        SensusServiceHelper.Get().FlashNotificationAsync("Reward threshold must be between 0 and 1.");
+                        value = 0;
+                    }
+                    else if (threshold > 1)
+                    {
+                        SensusServiceHelper.Get().FlashNotificationAsync("Reward threshold must be between 0 and 1.");
+                        value = 1;
+                    }
+                }
+
                 _rewardThreshold = value;
             }
         }

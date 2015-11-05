@@ -35,7 +35,6 @@ using SensusService.Probes.Movement;
 using System.Linq;
 using ZXing.Mobile;
 using Android.Graphics;
-using Java.Nio;
 
 namespace Sensus.Android
 {

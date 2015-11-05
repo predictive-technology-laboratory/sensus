@@ -55,7 +55,7 @@ namespace SensusUI
             }
             else
             {
-                bool reward = participationRewardDatum.Participation > protocol.RewardThreshold.GetValueOrDefault();
+                bool reward = participationRewardDatum.Participation >= protocol.RewardThreshold.GetValueOrDefault();
 
                 contentLayout.Children.Add(
                     new Image
