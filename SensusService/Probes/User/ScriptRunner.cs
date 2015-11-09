@@ -34,7 +34,7 @@ namespace SensusService.Probes.User
         private ObservableCollection<Trigger> _triggers;
         private Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>> _triggerHandler;
         private Queue<Script> _incompleteScripts;
-        private bool _rerun;
+        private bool _rerunIncompletes;
         private string _rerunCallbackId;
         private int _rerunDelayMS;
         private int _maximumAgeMinutes;
@@ -45,6 +45,7 @@ namespace SensusService.Probes.User
         private List<string> _runScriptCallbackIds;
         private List<DateTime> _runTimes;
         private List<DateTime> _completionTimes;
+        private bool _oneShot;
 
         private readonly object _locker = new object();
 
@@ -122,14 +123,14 @@ namespace SensusService.Probes.User
         [OnOffUiProperty("Rerun Incomplete Scripts:", true, 4)]
         public bool RerunIncompletes
         {
-            get { return _rerun; }
+            get { return _rerunIncompletes; }
             set
             {
-                if (value != _rerun)
+                if (value != _rerunIncompletes)
                 {
-                    _rerun = value;
+                    _rerunIncompletes = value;
 
-                    if (_probe != null && _probe.Running && _enabled && _rerun) // probe can be null when deserializing, if set after this property.
+                    if (_probe != null && _probe.Running && _enabled && _rerunIncompletes) // probe can be null when deserializing, if set after this property.
                         StartRerunCallbacksAsync();
                     else if (SensusServiceHelper.Get() != null)  // service helper is null when deserializing
                         StopRerunCallbacksAsync();
@@ -244,6 +245,19 @@ namespace SensusService.Probes.User
             }
         }
 
+        [OnOffUiProperty("One Shot:", true, 10)]
+        public bool OneShot
+        {
+            get
+            {
+                return _oneShot;
+            }
+            set
+            {
+                _oneShot = value;
+            }
+        }
+
         #endregion
 
         /// <summary>
@@ -257,7 +271,7 @@ namespace SensusService.Probes.User
             _triggers = new ObservableCollection<Trigger>();
             _triggerHandler = new Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>>();
             _incompleteScripts = new Queue<Script>();
-            _rerun = false;
+            _rerunIncompletes = false;
             _rerunCallbackId = null;
             _rerunDelayMS = 60000;
             _maximumAgeMinutes = 1;
@@ -268,6 +282,7 @@ namespace SensusService.Probes.User
             _runScriptCallbackIds = new List<string>();
             _runTimes = new List<DateTime>();
             _completionTimes = new List<DateTime>();
+            _oneShot = false;
 
             _triggers.CollectionChanged += (o, e) =>
             {
@@ -347,7 +362,7 @@ namespace SensusService.Probes.User
 
         public void Start()
         {
-            if (_rerun)
+            if (_rerunIncompletes)
                 StartRerunCallbacksAsync();
 
             if (_randomTriggerWindows.Count > 0)
@@ -366,7 +381,7 @@ namespace SensusService.Probes.User
 
                         _rerunCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback((callbackId, cancellationToken) =>
                             {
-                                if (_probe.Running && _enabled && _rerun)
+                                if (_probe.Running && _enabled && _rerunIncompletes)
                                 {
                                     Script scriptToRerun = null;
                                     lock (_incompleteScripts)
@@ -481,24 +496,44 @@ namespace SensusService.Probes.User
 
             lock (_runScriptCallbackIds)
             {
+                // the presentation time is not always the time at which the scheduled callback is actually raised. on android it might
+                // be, since we can force sensus to wake up on alerts. but on ios the callback is not raised when the notification is
+                // issued. it is raised when the user taps on the notification or otherwise opens sensus. the latency in user response
+                // should be measured from the time of notification on ios. thus, we calculate presentation here, as the time at which
+                // the user can first become aware of the callback.
                 if (script.PresentationTimestamp == null)
                     script.PresentationTimestamp = DateTimeOffset.UtcNow.AddMilliseconds(_delayMS);
 
                 _runScriptCallbackIds.Add(SensusServiceHelper.Get().ScheduleOneTimeCallback((callbackId, cancellationToken) =>
                         {
-                            SensusServiceHelper.Get().Logger.Log("Running \"" + _name + "\".", LoggingLevel.Normal, typeof(Script));                                                    
+                            bool isRerun = script.FirstRunTimestamp != DateTimeOffset.MinValue;
 
-                            bool isRerun = true;
-
-                            if (script.FirstRunTimestamp == DateTimeOffset.MinValue)
+                            lock (_runTimes)
                             {
-                                script.FirstRunTimestamp = DateTimeOffset.UtcNow;
-                                isRerun = false;
+                                if (_oneShot)
+                                {
+                                    // run one-shot only if the script runner has never been run, or if it has been run but this is a rerun -- the latter will only happen if the first-run script is being rerun.
+                                    bool runOneShot = _runTimes.Count == 0 || isRerun;
 
-                                // add run time and remove all run times before the participation horizon
-                                _runTimes.Add(DateTime.Now);
-                                _runTimes.RemoveAll(runTime => runTime < _probe.Protocol.ParticipationHorizon);
+                                    if (!runOneShot)
+                                    {
+                                        SensusServiceHelper.Get().Logger.Log("Not running one-shot script multiple times.", LoggingLevel.Normal, GetType());
+                                        return;
+                                    }
+                                }
+
+                                // if this is the first run, set the timestamp
+                                if (!isRerun)
+                                {
+                                    script.FirstRunTimestamp = DateTimeOffset.UtcNow;
+
+                                    // add run time and remove all run times before the participation horizon
+                                    _runTimes.Add(DateTime.Now);
+                                    _runTimes.RemoveAll(runTime => runTime < _probe.Protocol.ParticipationHorizon);
+                                }
                             }
+
+                            SensusServiceHelper.Get().Logger.Log("Running \"" + _name + "\".", LoggingLevel.Normal, typeof(Script));
 
                             // this method can be called with previous / current datum values (e.g., when the script is first triggered). it 
                             // can also be called without previous / current datum values (e.g., when triggering randomly or rerunning). if
@@ -536,10 +571,13 @@ namespace SensusService.Probes.User
                             if (script.Complete)
                             {
                                 // add completion time and remove all completion times before the participation horizon
-                                _completionTimes.Add(DateTime.Now);
-                                _completionTimes.RemoveAll(completionTime => completionTime < _probe.Protocol.ParticipationHorizon);
+                                lock (_completionTimes)
+                                {
+                                    _completionTimes.Add(DateTime.Now);
+                                    _completionTimes.RemoveAll(completionTime => completionTime < _probe.Protocol.ParticipationHorizon);
+                                }
                             }
-                            else if (_rerun)
+                            else if (_rerunIncompletes)
                                 lock (_incompleteScripts)
                                     _incompleteScripts.Enqueue(script);
 

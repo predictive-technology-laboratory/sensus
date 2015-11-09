@@ -35,12 +35,18 @@ namespace Sensus.UiTest
 
         private const string PROTOCOL_CONSENT_MESSAGE = "ConsentMessage";
         private const string PROTOCOL_CONSENT_CODE = "ConsentCode";
-        private const string PROTOCOL_CONSENT_SUBMIT_BUTTON = "NextButton";
 
         private const string LOCAL_DATA_STORE_EDIT = "Local Data Store";
         private const string REMOTE_DATA_STORE_EDIT = "Remote Data Store";
         private const string DATA_STORE_COMMIT_DELAY = "Commit Delay (MS): View";
         private const string DATA_STORE_OK = "OK";
+
+        private const string PROBES_EDIT = "Probes";
+        private const string ACCELEROMETER_PROBE = "Accelerometer (Listening)";
+        private const string ACCELEROMETER_ENABLED = "Enabled: View";
+        private const string ACCELEROMETER_TRIGGERED_SCRIPT_INPUT = "Accelerometer Test Input";
+
+        private const string PROMPT_FOR_INPUTS_SUBMIT = "NextButton";
 
         private IApp _app;
 
@@ -91,6 +97,19 @@ namespace Sensus.UiTest
             Thread.Sleep(remoteDataStoreDelay.Add(new TimeSpan(0, 0, 5)));
             AssertProtocolStatusEmpty("Protocol status after remote data store.");
 
+            // enable accelerometer to check script triggering
+            TapProtocol();
+            _app.WaitForElementThenTap(PROTOCOL_ACTION_SHEET_EDIT);
+            _app.WaitForElementThenTap(PROBES_EDIT);
+            _app.WaitForElementThenTap(ACCELEROMETER_PROBE);
+            _app.WaitForElementThenTap(ACCELEROMETER_ENABLED);
+            Thread.Sleep(5000);  // 5-second accelerometer stabilization
+            _app.WaitForElementThenEnterText(ACCELEROMETER_TRIGGERED_SCRIPT_INPUT, "12345");
+            _app.WaitForElementThenTap(PROMPT_FOR_INPUTS_SUBMIT);
+            _app.Back();  // to probes page
+            _app.Back();  // to protocol page
+            _app.Back();  // to protocols page
+
             StopProtocol();
         }
 
@@ -116,7 +135,7 @@ namespace Sensus.UiTest
             string consentMessage = _app.Query(PROTOCOL_CONSENT_MESSAGE).First().Text;
             int consentCode = int.Parse(consentMessage.Substring(consentMessage.LastIndexOf(" ") + 1));
             _app.WaitForElementThenEnterText(PROTOCOL_CONSENT_CODE, consentCode.ToString());
-            _app.WaitForElementThenTap(PROTOCOL_CONSENT_SUBMIT_BUTTON);
+            _app.WaitForElementThenTap(PROMPT_FOR_INPUTS_SUBMIT);
 
             // wait for the protocol to start
             Thread.Sleep(startupCheckDelay);

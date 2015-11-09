@@ -31,6 +31,11 @@ namespace SensusUI.Inputs
                     {
                         Keyboard = Keyboard.Numeric,
                         HorizontalOptions = LayoutOptions.FillAndExpand
+
+                        // set the style ID on the view so that we can retrieve it when unit testing
+                        #if UNIT_TESTING
+                        , StyleId = Name
+                        #endif
                     };  
 
                     _entry.TextChanged += (o, e) => Complete = Value != null;

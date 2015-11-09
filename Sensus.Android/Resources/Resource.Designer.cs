@@ -28,8 +28,6 @@ namespace Sensus.Android
 		{
 			global::PCLStorage.Resource.String.ApplicationName = global::Sensus.Android.Resource.String.ApplicationName;
 			global::PCLStorage.Resource.String.Hello = global::Sensus.Android.Resource.String.Hello;
-			global::PCLCrypto.Resource.String.ApplicationName = global::Sensus.Android.Resource.String.ApplicationName;
-			global::PCLCrypto.Resource.String.Hello = global::Sensus.Android.Resource.String.Hello;
 			global::Xamarin.Forms.Platform.Resource.Animation.abc_fade_in = global::Sensus.Android.Resource.Animation.abc_fade_in;
 			global::Xamarin.Forms.Platform.Resource.Animation.abc_fade_out = global::Sensus.Android.Resource.Animation.abc_fade_out;
 			global::Xamarin.Forms.Platform.Resource.Animation.abc_grow_fade_in_from_bottom = global::Sensus.Android.Resource.Animation.abc_grow_fade_in_from_bottom;
@@ -3068,6 +3066,8 @@ namespace Sensus.Android
 			global::XLabs.Forms.Resource.Styleable.ViewStubCompat_android_id = global::Sensus.Android.Resource.Styleable.ViewStubCompat_android_id;
 			global::XLabs.Forms.Resource.Styleable.ViewStubCompat_android_inflatedId = global::Sensus.Android.Resource.Styleable.ViewStubCompat_android_inflatedId;
 			global::XLabs.Forms.Resource.Styleable.ViewStubCompat_android_layout = global::Sensus.Android.Resource.Styleable.ViewStubCompat_android_layout;
+			global::PCLCrypto.Resource.String.ApplicationName = global::Sensus.Android.Resource.String.ApplicationName;
+			global::PCLCrypto.Resource.String.Hello = global::Sensus.Android.Resource.String.Hello;
 		}
 		
 		public partial class Animation
@@ -6103,11 +6103,11 @@ namespace Sensus.Android
 		public partial class String
 		{
 			
-			// aapt resource value: 0x7f060046
-			public const int ApplicationName = 2131099718;
+			// aapt resource value: 0x7f060041
+			public const int ApplicationName = 2131099713;
 			
-			// aapt resource value: 0x7f060045
-			public const int Hello = 2131099717;
+			// aapt resource value: 0x7f060040
+			public const int Hello = 2131099712;
 			
 			// aapt resource value: 0x7f06002e
 			public const int abc_action_bar_home_description = 2131099694;
@@ -6319,23 +6319,23 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f060001
 			public const int common_signin_button_text_long = 2131099649;
 			
-			// aapt resource value: 0x7f060041
-			public const int day_name_format = 2131099713;
+			// aapt resource value: 0x7f060043
+			public const int day_name_format = 2131099715;
+			
+			// aapt resource value: 0x7f060046
+			public const int full_date_format = 2131099718;
 			
 			// aapt resource value: 0x7f060044
-			public const int full_date_format = 2131099716;
+			public const int invalid_date = 2131099716;
 			
 			// aapt resource value: 0x7f060042
-			public const int invalid_date = 2131099714;
-			
-			// aapt resource value: 0x7f060040
-			public const int library_name = 2131099712;
+			public const int library_name = 2131099714;
 			
 			// aapt resource value: 0x7f060057
 			public const int messenger_send_button_text = 2131099735;
 			
-			// aapt resource value: 0x7f060043
-			public const int month_name_format = 2131099715;
+			// aapt resource value: 0x7f060045
+			public const int month_name_format = 2131099717;
 			
 			// aapt resource value: 0x7f060023
 			public const int mr_media_route_button_content_description = 2131099683;

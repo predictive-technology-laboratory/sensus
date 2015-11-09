@@ -24,7 +24,14 @@ namespace SensusUI.Inputs
             get
             {
                 if (base.View == null)
+                {
+                    // set the style ID on the view so that we can retrieve it when unit testing
+                    #if UNIT_TESTING
+                    Label.StyleId = Name;
+                    #endif
+                        
                     base.View = Label;
+                }
                 
                 return base.View;
             }

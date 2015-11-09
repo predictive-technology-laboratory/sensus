@@ -921,7 +921,7 @@ namespace SensusService
                             input.Viewed = true;
                     }
 
-                    // geotag input groups if the user didn't cancel and we've got input groups with inputs that are complete and lacking locations
+                    #region geotag input groups if the user didn't cancel and we've got input groups with inputs that are complete and lacking locations
                     if (inputGroups != null && incompleteGroups.Any(incompleteGroup => incompleteGroup.Geotag && incompleteGroup.Inputs.Any(input => input.Complete && (input.Latitude == null || input.Longitude == null))))
                     {
                         SensusServiceHelper.Get().Logger.Log("Geotagging input groups.", LoggingLevel.Normal, GetType());
@@ -959,6 +959,7 @@ namespace SensusService
                             SensusServiceHelper.Get().Logger.Log("Error geotagging input groups:  " + ex.Message, LoggingLevel.Normal, GetType());
                         }
                     }
+                    #endregion
 
                     callback(inputGroups);
 

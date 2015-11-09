@@ -27,7 +27,13 @@ namespace SensusUI.Inputs
             {
                 if (base.View == null)
                 {
-                    _toggle = new Switch();
+                    _toggle = new Switch
+                    {
+                        // set the style ID on the view so that we can retrieve it when unit testing
+                        #if UNIT_TESTING
+                        StyleId = Name
+                        #endif
+                    };
 
                     _toggle.Toggled += (o, e) => Complete = Value != null;
 
@@ -83,6 +89,6 @@ namespace SensusUI.Inputs
         public YesNoInput(string name, string labelText)
             : base(name, labelText)
         {
-        }            
+        }
     }
 }

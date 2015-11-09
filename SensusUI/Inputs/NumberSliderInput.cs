@@ -87,6 +87,11 @@ namespace SensusUI.Inputs
                         HorizontalOptions = LayoutOptions.FillAndExpand,
                         Minimum = double.MinValue,
                         Maximum = double.MaxValue
+
+                        // set the style ID on the view so that we can retrieve it when unit testing
+                        #if UNIT_TESTING
+                        , StyleId = Name
+                        #endif
                     };
 
                     _slider.Minimum = _minimum;

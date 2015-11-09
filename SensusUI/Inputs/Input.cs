@@ -26,6 +26,7 @@ namespace SensusUI.Inputs
         private string _id;
         private string _groupId;
         private string _labelText;
+        private Label _label;
         private View _view;
         private bool _complete;
         private bool _shouldBeStored;
@@ -77,6 +78,11 @@ namespace SensusUI.Inputs
             set
             {
                 _labelText = value;
+
+                Device.BeginInvokeOnMainThread(() =>
+                    {
+                        _label.Text = _labelText;
+                    });
             }
         }
 
@@ -84,11 +90,7 @@ namespace SensusUI.Inputs
         {
             get
             {
-                return new Label
-                {
-                    Text = _labelText,
-                    FontSize = 20
-                };
+                return _label;
             }
         }
 
@@ -97,15 +99,12 @@ namespace SensusUI.Inputs
         {
             get
             {
-                // set the style ID on the view so that we can retrieve it when unit testing
-                #if UNIT_TESTING
-                if (_view != null)
-                    _view.StyleId = _name;
-                #endif
-
                 return _view; 
             }
-            protected set { _view = value; }
+            protected set
+            {
+                _view = value; 
+            }
         }
 
         [JsonIgnore]
@@ -209,6 +208,7 @@ namespace SensusUI.Inputs
         {
             _name = DefaultName;
             _id = Guid.NewGuid().ToString();
+            _label = new Label { FontSize = 20 };
             _complete = false;
             _shouldBeStored = true;
             _required = true;
@@ -219,7 +219,7 @@ namespace SensusUI.Inputs
         public Input(string labelText)
             : this()
         {
-            _labelText = labelText;
+            LabelText = labelText;
         }
 
         public Input(string name, string labelText)

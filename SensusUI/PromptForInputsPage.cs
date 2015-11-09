@@ -125,8 +125,12 @@ namespace SensusUI
             {
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 FontSize = 20,
-                Text = stepNumber < totalSteps ? "Next" : "Submit",
-                StyleId = "NextButton"  // set style id so that we can retrieve the button when unit testing
+                Text = stepNumber < totalSteps ? "Next" : "Submit"
+
+                #if UNIT_TESTING
+                // set style id so that we can retrieve the button when unit testing
+                , StyleId = "NextButton"
+                #endif
             };
 
             if (nextButtonTextOverride != null)

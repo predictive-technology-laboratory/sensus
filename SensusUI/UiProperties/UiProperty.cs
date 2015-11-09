@@ -212,7 +212,10 @@ namespace SensusUI.UiProperties
 
                 if (view != null)
                 {
-                    view.StyleId = propertyNameLabel.Text + " View";  // set style id so we can get the property value when unit testing
+                    #if UNIT_TESTING
+                    // set style id so we can get the property value when unit testing
+                    view.StyleId = propertyNameLabel.Text + " View";
+                    #endif
 
                     StackLayout stack = new StackLayout
                     {
