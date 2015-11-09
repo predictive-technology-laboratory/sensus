@@ -31,7 +31,7 @@ using SensusUI.Inputs;
 using Xamarin.Forms;
 using SensusService.Exceptions;
 using ZXing.Mobile;
-using ZXing;
+using ZXing;    
 using XLabs.Platform.Device;
 
 namespace SensusService
