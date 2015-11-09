@@ -78,7 +78,7 @@ namespace SensusUI.Inputs
                     {
                         Orientation = StackOrientation.Horizontal,
                         HorizontalOptions = LayoutOptions.FillAndExpand,
-                        Children = { Label, _picker }
+                        Children = { CreateLabel(), _picker }
                     };
                 }
 

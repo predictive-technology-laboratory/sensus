@@ -454,7 +454,7 @@ namespace Sensus.Android
             }
         }
 
-        public override void FlashNotificationAsync(string message, Action callback)
+        protected override void ProtectedFlashNotificationAsync(string message, Action callback)
         {
             new Thread(() =>
                 {

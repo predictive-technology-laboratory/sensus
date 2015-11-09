@@ -258,53 +258,54 @@ namespace SensusService
                 }).Start();
         }
 
-        public static void RunUnitTestingProtocol(Stream protocolFile)
+        public static void RunUnitTestingProtocol(Stream unitTestingProtocolFile)
         {
             try
             {
-                if (SensusServiceHelper.Get().RegisteredProtocols.Count == 0)
+                // delete all current protocols -- we don't want them interfering with the one we're about to load/run.
+                foreach (Protocol protocol in SensusServiceHelper.Get().RegisteredProtocols)
+                    protocol.Delete();
+
+                using (MemoryStream protocolStream = new MemoryStream())
                 {
-                    using (MemoryStream protocolStream = new MemoryStream())
-                    {
-                        protocolFile.CopyTo(protocolStream);
-                        string protocolJSON = SensusServiceHelper.Decrypt(protocolStream.ToArray());
-                        DeserializeAsync(protocolJSON, false, protocol =>
+                    unitTestingProtocolFile.CopyTo(protocolStream);
+                    string protocolJSON = SensusServiceHelper.Decrypt(protocolStream.ToArray());
+                    DeserializeAsync(protocolJSON, false, protocol =>
+                        {
+                            if (protocol == null)
+                                throw new Exception("Failed to deserialize unit testing protocol.");
+
+                            foreach (Probe probe in protocol.Probes)
                             {
-                                if (protocol == null)
-                                    throw new Exception("Failed to deserialize unit testing protocol.");
+                                // unit testing is problematic with probes that take us away from Sensus, since it's difficult to automate UI 
+                                // interaction outside of Sensus. disable any probes that might take us away from Sensus.
 
-                                foreach (Probe probe in protocol.Probes)
-                                {
-                                    // unit testing is problematic with probes that take us away from Sensus, since it's difficult to automate UI 
-                                    // interaction outside of Sensus. disable any probes that might take us away from Sensus.
+                                if (probe is FacebookProbe)
+                                    probe.Enabled = false;
 
-                                    if (probe is FacebookProbe)
-                                        probe.Enabled = false;
+                                #if __IOS__
+                                if (probe is iOSHealthKitProbe)
+                                    probe.Enabled = false;
+                                #endif
 
-                                    #if __IOS__
-                                    if (probe is iOSHealthKitProbe)
-                                        probe.Enabled = false;
-                                    #endif
+                                // clear the run-times collection from any script runners. need a clean start, just in case we have one-shot scripts
+                                // that need to run every unit testing execution.
+                                if (probe is ScriptProbe)
+                                    foreach (ScriptRunner scriptRunner in (probe as ScriptProbe).ScriptRunners)
+                                        scriptRunner.RunTimes.Clear();
 
-                                    // clear the run-times collection from any script runners. need a clean start, just in case we have one-shot scripts
-                                    // that need to run every unit testing execution.
-                                    if (probe is ScriptProbe)
-                                        foreach (ScriptRunner scriptRunner in (probe as ScriptProbe).ScriptRunners)
-                                            scriptRunner.RunTimes.Clear();
+                                // disable the accelerometer probe, since we use it to trigger a test script that can interrupt UI scripting.
+                                if (probe is AccelerometerProbe)
+                                    probe.Enabled = false;
+                            }
 
-                                    // disable the accelerometer probe, since we use it to trigger a test script that can interrupt UI scripting.
-                                    if (probe is AccelerometerProbe)
-                                        probe.Enabled = false;
-                                }
-
-                                DisplayAndStartAsync(protocol);
-                            });
-                    }
+                            DisplayAndStartAsync(protocol);
+                        });
                 }
             }
             catch (Exception ex)
             {
-                string message = "Failed to open unit testing protocol:  " + ex.Message;
+                string message = "Failed to run unit testing protocol:  " + ex.Message;
                 SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, typeof(Protocol));
                 throw new Exception(message);
             }
@@ -1077,6 +1078,32 @@ namespace SensusService
 
                 SensusServiceHelper.Get().Logger.Log("Stopped protocol \"" + _name + "\".", LoggingLevel.Normal, GetType());
                 SensusServiceHelper.Get().FlashNotificationAsync("Stopped \"" + _name + "\".");
+            }
+        }
+
+        public void DeleteAsync(Action callback)
+        {
+            new Thread(() =>
+                {
+                    Delete();
+
+                    if (callback != null)
+                        callback();
+            
+                }).Start();
+        }
+
+        public void Delete()
+        {
+            SensusServiceHelper.Get().UnregisterProtocol(this);
+
+            try
+            {
+                Directory.Delete(StorageDirectory, true);
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Failed to delete protocol storage directory \"" + StorageDirectory + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
             }
         }
 

@@ -76,20 +76,18 @@ namespace Sensus.UiTest
             // stop and edit protocol
             StopProtocol();
             TapProtocol();
-            _app.WaitForElementThenTap(PROTOCOL_ACTION_SHEET_EDIT);
+            _app.WaitForElementThenTap(PROTOCOL_ACTION_SHEET_EDIT, false);
 
             // set data store delays such that they will be testable within a reasonable time period
             TimeSpan localDataStoreDelay = new TimeSpan(0, 0, 5);
-            _app.WaitForElementThenTap(LOCAL_DATA_STORE_EDIT);
-            _app.WaitForElementThenEnterText(DATA_STORE_COMMIT_DELAY, localDataStoreDelay.TotalMilliseconds.ToString());
-            _app.ScrollDownTo(DATA_STORE_OK);
-            _app.WaitForElementThenTap(DATA_STORE_OK);
+            _app.WaitForElementThenTap(LOCAL_DATA_STORE_EDIT, true);
+            _app.WaitForElementThenEnterText(DATA_STORE_COMMIT_DELAY, true, localDataStoreDelay.TotalMilliseconds.ToString());
+            _app.WaitForElementThenTap(DATA_STORE_OK, true);
 
             TimeSpan remoteDataStoreDelay = new TimeSpan(0, 0, 15);
-            _app.WaitForElementThenTap(REMOTE_DATA_STORE_EDIT);
-            _app.WaitForElementThenEnterText(DATA_STORE_COMMIT_DELAY, remoteDataStoreDelay.TotalMilliseconds.ToString());
-            _app.ScrollDownTo(DATA_STORE_OK);
-            _app.WaitForElementThenTap(DATA_STORE_OK);  // to protocol page
+            _app.WaitForElementThenTap(REMOTE_DATA_STORE_EDIT, false);
+            _app.WaitForElementThenEnterText(DATA_STORE_COMMIT_DELAY, true, remoteDataStoreDelay.TotalMilliseconds.ToString());
+            _app.WaitForElementThenTap(DATA_STORE_OK, true);  // to protocol page
             _app.Back();  // to protocols page
 
             // restart protocol, wait for remote data store to commit data, and then check status
@@ -99,13 +97,13 @@ namespace Sensus.UiTest
 
             // enable accelerometer to check script triggering
             TapProtocol();
-            _app.WaitForElementThenTap(PROTOCOL_ACTION_SHEET_EDIT);
-            _app.WaitForElementThenTap(PROBES_EDIT);
-            _app.WaitForElementThenTap(ACCELEROMETER_PROBE);
-            _app.WaitForElementThenTap(ACCELEROMETER_ENABLED);
-            Thread.Sleep(5000);  // 5-second accelerometer stabilization
-            _app.WaitForElementThenEnterText(ACCELEROMETER_TRIGGERED_SCRIPT_INPUT, "12345");
-            _app.WaitForElementThenTap(PROMPT_FOR_INPUTS_SUBMIT);
+            _app.WaitForElementThenTap(PROTOCOL_ACTION_SHEET_EDIT, false);
+            _app.WaitForElementThenTap(PROBES_EDIT, true);
+            _app.WaitForElementThenTap(ACCELEROMETER_PROBE, true);
+            _app.WaitForElementThenTap(ACCELEROMETER_ENABLED, true);
+            Thread.Sleep(10000);  // 5-second accelerometer stabilization + a few seconds for the prompt page to show up before trying to scroll to it.
+            _app.WaitForElementThenEnterText(ACCELEROMETER_TRIGGERED_SCRIPT_INPUT, true, "12345");
+            _app.WaitForElementThenTap(PROMPT_FOR_INPUTS_SUBMIT, true);
             _app.Back();  // to probes page
             _app.Back();  // to protocol page
             _app.Back();  // to protocols page
@@ -115,14 +113,14 @@ namespace Sensus.UiTest
 
         private void TapProtocol()
         {
-            _app.WaitForElementThenTap(UNIT_TESTING_PROTOCOL_NAME);
+            _app.WaitForElementThenTap(UNIT_TESTING_PROTOCOL_NAME, true);
             _app.WaitForElement(PROTOCOL_ACTION_SHEET_EDIT);  // wait for action sheet to come up
         }
 
         private void StartProtocol(TimeSpan startupCheckDelay)
         {
             TapProtocol();
-            _app.WaitForElementThenTap(PROTOCOL_ACTION_SHEET_START);
+            _app.WaitForElementThenTap(PROTOCOL_ACTION_SHEET_START, false);
             ConsentToProtocolStart(startupCheckDelay);
         }
 
@@ -134,8 +132,8 @@ namespace Sensus.UiTest
             // enter the consent code
             string consentMessage = _app.Query(PROTOCOL_CONSENT_MESSAGE).First().Text;
             int consentCode = int.Parse(consentMessage.Substring(consentMessage.LastIndexOf(" ") + 1));
-            _app.WaitForElementThenEnterText(PROTOCOL_CONSENT_CODE, consentCode.ToString());
-            _app.WaitForElementThenTap(PROMPT_FOR_INPUTS_SUBMIT);
+            _app.WaitForElementThenEnterText(PROTOCOL_CONSENT_CODE, true, consentCode.ToString());
+            _app.WaitForElementThenTap(PROMPT_FOR_INPUTS_SUBMIT, true);
 
             // wait for the protocol to start
             Thread.Sleep(startupCheckDelay);
@@ -143,13 +141,13 @@ namespace Sensus.UiTest
             // confirm that the protocol has started
             TapProtocol();
             Assert.IsTrue(_app.Query(PROTOCOL_ACTION_SHEET_STOP).Any());
-            _app.WaitForElementThenTap(PROTOCOL_ACTION_SHEET_CANCEL);  // to protocols page
+            _app.WaitForElementThenTap(PROTOCOL_ACTION_SHEET_CANCEL, false);  // to protocols page
         }
 
         private void AssertProtocolStatusEmpty(string statusScreenshotTitle)
         {
             TapProtocol();
-            _app.WaitForElementThenTap(PROTOCOL_ACTION_SHEET_STATUS);
+            _app.WaitForElementThenTap(PROTOCOL_ACTION_SHEET_STATUS, false);
             _app.WaitForElement(GetStatusLinesQuery());
             _app.SetOrientationLandscape();
             _app.Screenshot(statusScreenshotTitle);
@@ -167,8 +165,8 @@ namespace Sensus.UiTest
         private void StopProtocol()
         {
             TapProtocol();
-            _app.WaitForElementThenTap(PROTOCOL_ACTION_SHEET_STOP);
-            _app.WaitForElementThenTap(PROTOCOL_STOP_CONFIRM);
+            _app.WaitForElementThenTap(PROTOCOL_ACTION_SHEET_STOP, false);
+            _app.WaitForElementThenTap(PROTOCOL_STOP_CONFIRM, false);
         }
     }
 }

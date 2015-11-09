@@ -119,7 +119,7 @@ namespace SensusUI.Inputs
                         VerticalOptions = LayoutOptions.Start,
                         Children =
                         { 
-                            Label,
+                            CreateLabel(),
                             new StackLayout
                             {
                                 Orientation = StackOrientation.Horizontal,

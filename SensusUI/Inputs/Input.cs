@@ -26,7 +26,6 @@ namespace SensusUI.Inputs
         private string _id;
         private string _groupId;
         private string _labelText;
-        private Label _label;
         private View _view;
         private bool _complete;
         private bool _shouldBeStored;
@@ -78,19 +77,6 @@ namespace SensusUI.Inputs
             set
             {
                 _labelText = value;
-
-                Device.BeginInvokeOnMainThread(() =>
-                    {
-                        _label.Text = _labelText;
-                    });
-            }
-        }
-
-        protected Label Label
-        {
-            get
-            {
-                return _label;
             }
         }
 
@@ -208,7 +194,6 @@ namespace SensusUI.Inputs
         {
             _name = DefaultName;
             _id = Guid.NewGuid().ToString();
-            _label = new Label { FontSize = 20 };
             _complete = false;
             _shouldBeStored = true;
             _required = true;
@@ -219,13 +204,22 @@ namespace SensusUI.Inputs
         public Input(string labelText)
             : this()
         {
-            LabelText = labelText;
+            _labelText = labelText;
         }
 
         public Input(string name, string labelText)
             : this(labelText)
         {
             _name = name;
+        }
+
+        protected Label CreateLabel()
+        {
+            return new Label
+            {
+                Text = _labelText,
+                FontSize = 20
+            };
         }
 
         public override string ToString()

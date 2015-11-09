@@ -438,7 +438,7 @@ namespace Sensus.iOS
                 });
         }
 
-        public override void FlashNotificationAsync(string message, Action callback)
+        protected override void ProtectedFlashNotificationAsync(string message, Action callback)
         {
             Device.BeginInvokeOnMainThread(() =>
                 {

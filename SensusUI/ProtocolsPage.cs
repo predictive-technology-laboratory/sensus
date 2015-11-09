@@ -170,26 +170,13 @@ namespace SensusUI
                 else if (selectedAction == "Delete")
                 {
                     if (await DisplayAlert("Delete " + selectedProtocol.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
-                    {
-                        selectedProtocol.StopAsync(() =>
+                        selectedProtocol.DeleteAsync(() =>
                             {
-                                UiBoundSensusServiceHelper.Get(true).UnregisterProtocol(selectedProtocol);
-
-                                try
-                                {
-                                    Directory.Delete(selectedProtocol.StorageDirectory, true);
-                                }
-                                catch (Exception ex)
-                                {
-                                    UiBoundSensusServiceHelper.Get(true).Logger.Log("Failed to delete protocol storage directory \"" + selectedProtocol.StorageDirectory + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
-                                }
-
                                 Device.BeginInvokeOnMainThread(() =>
                                     {
                                         _protocolsList.SelectedItem = null;  // must reset this manually, since it isn't reset automatically
                                     });
                             });
-                    }
                 }
             };
             

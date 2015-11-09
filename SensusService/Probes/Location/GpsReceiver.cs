@@ -140,7 +140,6 @@ namespace SensusService.Probes.Location
             }      
         }
 
-
         /// <summary>
         /// Gets a GPS reading, reusing an old one if it isn't too old. Will block the current thread while waiting for a GPS reading. Should not
         /// be called from the main / UI thread, since GPS runs on main thread (will deadlock).

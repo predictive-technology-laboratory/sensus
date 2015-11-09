@@ -19,18 +19,22 @@ namespace SensusUI.Inputs
 {
     public class LabelOnlyInput : Input
     {
+        private Label _label;
+
         public override View View
         {
             get
             {
                 if (base.View == null)
                 {
+                    _label = CreateLabel();
+
                     // set the style ID on the view so that we can retrieve it when unit testing
                     #if UNIT_TESTING
-                    Label.StyleId = Name;
+                    _label.StyleId = Name;
                     #endif
                         
-                    base.View = Label;
+                    base.View = _label;
                 }
                 
                 return base.View;
@@ -49,11 +53,11 @@ namespace SensusUI.Inputs
         {
             get
             {
-                return Label.IsEnabled;
+                return _label.IsEnabled;
             }
             set
             {
-                Label.IsEnabled = value;
+                _label.IsEnabled = value;
             }
         }
 

@@ -70,57 +70,52 @@ namespace SensusUI
                 if (selectedProtocol == null)
                     return;
                 
-                if (selectedProtocol.RewardThreshold == null)
-                    await Navigation.PushAsync(new ParticipationReportPage(selectedProtocol, null));
-                else
-                {
-                    CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+                CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
-                    // pop up wait screen while we submit the participation reward datum
-                    UiBoundSensusServiceHelper.Get(true).PromptForInputsAsync(
-                        null,
-                        false,
-                        DateTime.MinValue,
-                        new InputGroup[]
-                        {
-                            new InputGroup("Please Wait", new LabelOnlyInput("Submitting participation information.", false))
-                        },
-                        cancellationTokenSource.Token,
-                        false,
-                        "Cancel",
-                        () =>
-                        {
-                            // add participation reward datum to remote data store and commit immediately
-                            ParticipationRewardDatum participationRewardDatum = new ParticipationRewardDatum(DateTimeOffset.UtcNow, selectedProtocol.Participation);
-                            selectedProtocol.RemoteDataStore.AddNonProbeDatum(participationRewardDatum);
-                            selectedProtocol.RemoteDataStore.CommitAsync(cancellationTokenSource.Token, true, async () =>
-                                {
-                                    // we should not have any remaining non-probe data
-                                    bool commitFailed = selectedProtocol.RemoteDataStore.HasNonProbeDatumToCommit(participationRewardDatum.Id);
+                // pop up wait screen while we submit the participation reward datum
+                UiBoundSensusServiceHelper.Get(true).PromptForInputsAsync(
+                    null,
+                    false,
+                    DateTime.MinValue,
+                    new InputGroup[]
+                    {
+                        new InputGroup("Please Wait", new LabelOnlyInput("Submitting participation information.", false))
+                    },
+                    cancellationTokenSource.Token,
+                    false,
+                    "Cancel",
+                    () =>
+                    {
+                        // add participation reward datum to remote data store and commit immediately
+                        ParticipationRewardDatum participationRewardDatum = new ParticipationRewardDatum(DateTimeOffset.UtcNow, selectedProtocol.Participation);
+                        selectedProtocol.RemoteDataStore.AddNonProbeDatum(participationRewardDatum);
+                        selectedProtocol.RemoteDataStore.CommitAsync(cancellationTokenSource.Token, true, async () =>
+                            {
+                                // we should not have any remaining non-probe data
+                                bool commitFailed = selectedProtocol.RemoteDataStore.HasNonProbeDatumToCommit(participationRewardDatum.Id);
 
-                                    if (commitFailed)
-                                        UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Failed to submit participation information to remote server. You will not be able to verify your participation at this time.");
+                                if (commitFailed)
+                                    UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Failed to submit participation information to remote server. You will not be able to verify your participation at this time.");
 
-                                    // cancel the token to close the input above, but only if the token hasn't already been canceled.
-                                    if (!cancellationTokenSource.IsCancellationRequested)
-                                        cancellationTokenSource.Cancel();
+                                // cancel the token to close the input above, but only if the token hasn't already been canceled.
+                                if (!cancellationTokenSource.IsCancellationRequested)
+                                    cancellationTokenSource.Cancel();
 
-                                    Device.BeginInvokeOnMainThread(async() =>
-                                        {
-                                            // only show the QR code for the reward datum if the datum was committed to the remote data store
-                                            await Navigation.PushAsync(new ParticipationReportPage(selectedProtocol, commitFailed ? null : participationRewardDatum));
-                                        });
-                                });
-                        },
-                        inputs =>
-                        {
-                            // if the prompt was closed by the user instead of the cancellation token, cancel the token in order
-                            // to cancel the remote data store commit. if the prompt was closed by the termination of the remote
-                            // data store commit (i.e., by the canceled token), then don't cancel the token again.
-                            if (!cancellationTokenSource.IsCancellationRequested)
-                                cancellationTokenSource.Cancel();
-                        });                                
-                }
+                                Device.BeginInvokeOnMainThread(async() =>
+                                    {
+                                        // only show the QR code for the reward datum if the datum was committed to the remote data store
+                                        await Navigation.PushAsync(new ParticipationReportPage(selectedProtocol, commitFailed ? null : participationRewardDatum));
+                                    });
+                            });
+                    },
+                    inputs =>
+                    {
+                        // if the prompt was closed by the user instead of the cancellation token, cancel the token in order
+                        // to cancel the remote data store commit. if the prompt was closed by the termination of the remote
+                        // data store commit (i.e., by the canceled token), then don't cancel the token again.
+                        if (!cancellationTokenSource.IsCancellationRequested)
+                            cancellationTokenSource.Cancel();
+                    });                                
             };
             
             contentLayout.Children.Add(showParticipationButton);

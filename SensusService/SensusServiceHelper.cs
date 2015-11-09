@@ -289,7 +289,6 @@ namespace SensusService
         private Dictionary<string, ScheduledCallback> _idCallback;
         private SHA256Managed _hasher;
         private List<PointOfInterest> _pointsOfInterest;
-        private bool _flashNotificationsEnabled;
         private ZXing.Mobile.MobileBarcodeScanner _barcodeScanner;
         private ZXing.Mobile.BarcodeWriter _barcodeWriter;
 
@@ -314,18 +313,6 @@ namespace SensusService
         public List<PointOfInterest> PointsOfInterest
         {
             get { return _pointsOfInterest; }
-        }
-
-        public bool FlashNotificationsEnabled
-        {
-            get
-            {
-                return _flashNotificationsEnabled;
-            }
-            set
-            {
-                _flashNotificationsEnabled = value;
-            }
         }
 
         [JsonIgnore]
@@ -380,7 +367,6 @@ namespace SensusService
             _idCallback = new Dictionary<string, ScheduledCallback>();
             _hasher = new SHA256Managed();
             _pointsOfInterest = new List<PointOfInterest>();
-            _flashNotificationsEnabled = true;
 
             // ensure that the entire QR code is always visible by using 90% the minimum screen dimension as the QR code size.
             #if __ANDROID__
@@ -410,11 +396,6 @@ namespace SensusService
             LoggingLevel loggingLevel = LoggingLevel.Normal;
             #else
             #error "Unrecognized configuration."
-            #endif
-
-            #if UNIT_TESTING
-            // flash notifications can mess up the UI scripting on iOS by hiding controls
-            _flashNotificationsEnabled = false;
             #endif
 
             _logger = new Logger(LOG_PATH, loggingLevel, Console.Error);
@@ -470,6 +451,8 @@ namespace SensusService
 
         protected abstract void UnscheduleCallback(string callbackId, bool repeating);
 
+        protected abstract void ProtectedFlashNotificationAsync(string message, Action callback);
+
         public abstract void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback);
 
         public abstract void ShareFileAsync(string path, string subject);
@@ -481,8 +464,6 @@ namespace SensusService
         public abstract void RunVoicePromptAsync(string prompt, Action<string> callback);
 
         public abstract void IssueNotificationAsync(string message, string id);
-
-        public abstract void FlashNotificationAsync(string message, Action callback);
 
         public abstract void KeepDeviceAwake();
 
@@ -813,8 +794,15 @@ namespace SensusService
 
         public void FlashNotificationAsync(string message)
         {
-            if (_flashNotificationsEnabled)
-                FlashNotificationAsync(message, null);
+            FlashNotificationAsync(message, null);
+        }
+
+        public void FlashNotificationAsync(string message, Action callback)
+        {
+            // do not show flash notifications when unit testing, as they can disrupt UI scripting on iOS.
+            #if !UNIT_TESTING
+            ProtectedFlashNotificationAsync(message, callback);
+            #endif
         }
 
         public void PromptForInputAsync(string windowTitle, Input input, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, Action<Input> callback)

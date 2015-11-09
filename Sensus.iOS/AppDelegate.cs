@@ -109,6 +109,7 @@ namespace Sensus.iOS
                     sensusServiceHelper.UpdateCallbackNotificationActivationIdsAsync();
 
                     #if UNIT_TESTING
+                    // load and run the unit testing protocol
                     string filePath = NSBundle.MainBundle.PathForResource("UnitTestingProtocol", "sensus");
                     using (Stream file = new FileStream(filePath, FileMode.Open, FileAccess.Read))
                     {
