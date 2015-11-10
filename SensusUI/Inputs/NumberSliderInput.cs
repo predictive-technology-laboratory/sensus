@@ -24,6 +24,7 @@ namespace SensusUI.Inputs
         private double _maximum;
         private double _increment;
         private Slider _slider;
+        private double _incrementalValue;
 
         [EntryDoubleUiProperty(null, true, 10)]
         public double Minimum
@@ -96,21 +97,22 @@ namespace SensusUI.Inputs
 
                     _slider.Minimum = _minimum;
                     _slider.Maximum = _maximum;
+                    _slider.Value = _incrementalValue = GetIncrementalValue((_maximum - _minimum) / 2d);
 
-                    Label sliderValueLabel = new Label
-                    {
-                        Text = _slider.Value.ToString(),
-                        HorizontalOptions = LayoutOptions.End,
-                        FontSize = 20
-                    };                                
-
-                    _slider.Value = (_maximum - _minimum) / 2d;
+                    Label sliderLabel = CreateLabel();
+                    string originalSliderLabelText = sliderLabel.Text;
+                    sliderLabel.Text += ":  " + _incrementalValue;
 
                     _slider.ValueChanged += (o, e) =>
                     {
-                        _slider.Value = Math.Round(_slider.Value / _increment) * _increment;
-                        sliderValueLabel.Text = e.NewValue.ToString();
-                        Complete = Value != null;
+                        double newIncrementalValue = GetIncrementalValue(_slider.Value);
+
+                        if (newIncrementalValue != _incrementalValue)
+                        {
+                            _incrementalValue = newIncrementalValue;
+                            sliderLabel.Text = originalSliderLabelText + ":  " + _incrementalValue;
+                            Complete = Value != null;
+                        }
                     };
 
                     base.View = new StackLayout
@@ -119,13 +121,8 @@ namespace SensusUI.Inputs
                         VerticalOptions = LayoutOptions.Start,
                         Children =
                         { 
-                            CreateLabel(),
-                            new StackLayout
-                            {
-                                Orientation = StackOrientation.Horizontal,
-                                HorizontalOptions = LayoutOptions.FillAndExpand,
-                                Children = { _slider, sliderValueLabel }
-                            }
+                            sliderLabel,
+                            _slider
                         }
                     };
                 }
@@ -138,7 +135,7 @@ namespace SensusUI.Inputs
         {
             get
             {
-                return _slider == null ? null : (object)_slider.Value;
+                return _slider == null ? null : (object)_incrementalValue;
             }
         }
 
@@ -184,6 +181,11 @@ namespace SensusUI.Inputs
             _minimum = minimum;
             _maximum = maximum;
             _increment = (_maximum - _minimum + 1) / 10;
+        }
+
+        private double GetIncrementalValue(double value)
+        {
+            return Math.Round(value / _increment) * _increment;
         }
 
         public override string ToString()

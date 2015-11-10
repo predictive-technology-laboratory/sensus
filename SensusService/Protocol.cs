@@ -837,7 +837,7 @@ namespace SensusService
             if (collectionDescription.Length > 0)
                 consent.Add(new LabelOnlyInput(collectionDescription.ToString(), 15));
 
-                // the names in the following inputs are used to grab the UI elements when unit testing
+            // the names in the following inputs are used to grab the UI elements when unit testing
             consent.Add(new LabelOnlyInput("ConsentMessage", "To participate in this study as described above, please indicate your consent by entering the following code:  " + consentCode + ""));
             consent.Add(new TextInput("ConsentCode", null, Keyboard.Numeric));
 
