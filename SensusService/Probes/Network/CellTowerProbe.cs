@@ -23,7 +23,7 @@ namespace SensusService.Probes.Network
     {
         public sealed override string DisplayName
         {
-            get { return "Cell Tower"; }
+            get { return "Cell Tower Binding"; }
         }
 
         public sealed override Type DatumType

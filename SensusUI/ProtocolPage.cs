@@ -178,7 +178,7 @@ namespace SensusUI
                 {
                     UiBoundSensusServiceHelper.Get(true).PromptForInputAsync(
                         "Lock Protocol",
-                        new TextInput("Password:"),
+                        new TextInput("Password:", Keyboard.Text),
                         null,
                         true,
                         null,

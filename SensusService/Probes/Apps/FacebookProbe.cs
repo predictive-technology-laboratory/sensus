@@ -43,7 +43,7 @@ namespace SensusService.Probes.Apps
         {
             get
             {
-                return "Facebook";
+                return "Facebook Profile";
             }
         }
 

@@ -23,7 +23,7 @@ namespace SensusService.Probes.Network
     {
         public sealed override string DisplayName
         {
-            get { return "Wireless LAN"; }
+            get { return "Wireless LAN Binding"; }
         }
 
         public sealed override Type DatumType

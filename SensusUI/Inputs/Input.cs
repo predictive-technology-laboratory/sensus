@@ -26,6 +26,7 @@ namespace SensusUI.Inputs
         private string _id;
         private string _groupId;
         private string _labelText;
+        private int _labelFontSize;
         private View _view;
         private bool _complete;
         private bool _shouldBeStored;
@@ -77,6 +78,18 @@ namespace SensusUI.Inputs
             set
             {
                 _labelText = value;
+            }
+        }
+
+        public int LabelFontSize
+        {
+            get
+            {
+                return _labelFontSize;
+            }
+            set
+            {
+                _labelFontSize = value;
             }
         }
 
@@ -199,12 +212,19 @@ namespace SensusUI.Inputs
             _required = true;
             _viewed = false;
             _completionTimestamp = null;
+            _labelFontSize = 20;
         }
 
         public Input(string labelText)
             : this()
         {
             _labelText = labelText;
+        }
+
+        public Input(string labelText, int labelFontSize)
+            : this(labelText)
+        {
+            _labelFontSize = labelFontSize;
         }
 
         public Input(string name, string labelText)
@@ -218,7 +238,7 @@ namespace SensusUI.Inputs
             return new Label
             {
                 Text = _labelText,
-                FontSize = 20
+                FontSize = _labelFontSize
             };
         }
 

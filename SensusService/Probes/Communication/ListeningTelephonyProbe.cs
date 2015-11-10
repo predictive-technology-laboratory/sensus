@@ -23,7 +23,15 @@ namespace SensusService.Probes.Communication
     {
         public sealed override string DisplayName
         {
-            get { return "Phone Calls"; }
+            get { return "Phone Call Metadata"; }
+        }
+
+        public override string CollectionDescription
+        {
+            get
+            {
+                return DisplayName + ":  When calls are made.";
+            }
         }
 
         public sealed override Type DatumType

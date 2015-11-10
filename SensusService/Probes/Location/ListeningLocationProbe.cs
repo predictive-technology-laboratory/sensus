@@ -23,7 +23,7 @@ namespace SensusService.Probes.Location
 
         public sealed override string DisplayName
         {
-            get { return "Location"; }
+            get { return "GPS Location"; }
         }
 
         public sealed override Type DatumType

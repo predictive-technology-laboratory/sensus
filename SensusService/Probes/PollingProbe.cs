@@ -68,6 +68,47 @@ namespace SensusService.Probes
             get { return _pollTimes; }
         }
 
+        public override string CollectionDescription
+        {
+            get
+            {
+                TimeSpan interval = new TimeSpan(0, 0, 0, 0, _pollingSleepDurationMS);
+
+                double value = -1;
+                string unit;
+                int decimalPlaces = 0;
+
+                if (interval.TotalSeconds <= 60)
+                {
+                    value = interval.TotalSeconds;
+                    unit = "second";
+                    decimalPlaces = 1;
+                }
+                else if (interval.TotalMinutes <= 60)
+                {
+                    value = interval.TotalMinutes;
+                    unit = "minute";
+                }
+                else if (interval.TotalHours <= 24)
+                {
+                    value = interval.TotalHours;
+                    unit = "hour";
+                }
+                else
+                {
+                    value = interval.TotalDays;
+                    unit = "day";
+                }
+
+                value = Math.Round(value, decimalPlaces);
+
+                if (value == 1)
+                    return DisplayName + ":  Once per " + unit + ".";
+                else
+                    return DisplayName + ":  Every " + value + " " + unit + "s.";
+            }
+        }
+
         protected PollingProbe()
         {
             _pollingSleepDurationMS = DefaultPollingSleepDurationMS;

@@ -33,6 +33,7 @@ using SensusUI.Inputs;
 using SensusService.Probes.User;
 using SensusService.Probes.Apps;
 using SensusService.Probes.Movement;
+using System.Text;
 
 #if __IOS__
 using HealthKit;
@@ -251,7 +252,7 @@ namespace SensusService
                                 if (!(App.Current.MainPage.Navigation.NavigationStack.Last() is ProtocolsPage))
                                     await App.Current.MainPage.Navigation.PushAsync(new ProtocolsPage());
 
-                                protocol.StartWithUserAgreementAsync("You just opened \"" + protocol.Name + "\" within Sensus." + (string.IsNullOrWhiteSpace(protocol.StartupAgreement) ? "" : " Please read the following terms and conditions."));
+                                protocol.StartWithUserAgreementAsync("You just opened \"" + protocol.Name + "\" within Sensus.");
                             });
                     }
 
@@ -329,7 +330,7 @@ namespace SensusService
         private DateTimeOffset _randomTimeAnchor;
         private bool _shareable;
         private List<PointOfInterest> _pointsOfInterest;
-        private string _startupAgreement;
+        private string _description;
         private int _participationHorizonDays;
         private string _contactEmail;
         private bool _groupable;
@@ -467,16 +468,16 @@ namespace SensusService
             get { return _pointsOfInterest; }
         }
 
-        [EditorUiProperty("Startup Agreement:", true, 15)]
-        public string StartupAgreement
+        [EditorUiProperty("Description:", true, 15)]
+        public string Description
         {
             get
             {
-                return _startupAgreement;
+                return _description;
             }
             set
             {
-                _startupAgreement = value;
+                _description = value;
             }
         }
 
@@ -811,22 +812,38 @@ namespace SensusService
             }
         }
 
-        public void StartWithUserAgreementAsync(string message, Action callback = null)
+        public void StartWithUserAgreementAsync(string startupMessage, Action callback = null)
         {
+            if (!_probes.Any(probe => probe.Enabled))
+                SensusServiceHelper.Get().FlashNotificationAsync("Probes not enabled. Cannot start.");
+
             int consentCode = new Random().Next(1000, 10000);
+
+            StringBuilder collectionDescription = new StringBuilder();
+            foreach (Probe probe in _probes.OrderBy(probe => probe.DisplayName))
+                if (probe.Enabled)
+                    collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + "\t" + probe.CollectionDescription);
+
+            List<Input> consent = new List<Input>();
+
+            if (!string.IsNullOrWhiteSpace(startupMessage))
+                consent.Add(new LabelOnlyInput(startupMessage));
+
+            if (!string.IsNullOrWhiteSpace(_description))
+                consent.Add(new LabelOnlyInput(_description));
+
+            consent.Add(new LabelOnlyInput("This study would like to collect the following data from your device:"));
+
+            if (collectionDescription.Length > 0)
+                consent.Add(new LabelOnlyInput(collectionDescription.ToString(), 15));
+
+                // the names in the following inputs are used to grab the UI elements when unit testing
+            consent.Add(new LabelOnlyInput("ConsentMessage", "To participate in this study as described above, please indicate your consent by entering the following code:  " + consentCode + ""));
+            consent.Add(new TextInput("ConsentCode", null, Keyboard.Numeric));
 
             SensusServiceHelper.Get().PromptForInputsAsync(
                 "Protocol Consent", 
-                new Input[]
-                {
-                    new LabelOnlyInput(
-                        "ConsentMessage",
-                        (string.IsNullOrWhiteSpace(message) ? "" : message + Environment.NewLine + Environment.NewLine) +
-                        (string.IsNullOrWhiteSpace(_startupAgreement) ? "" : _startupAgreement + Environment.NewLine + Environment.NewLine) +
-                        "To participate in this study, please indicate your consent by entering the following code:  " + consentCode),
-
-                    new TextInput("ConsentCode", null)
-                },
+                consent.ToArray(),
                 null,
                 true,
                 null,
@@ -834,7 +851,7 @@ namespace SensusService
                 {
                     if (inputs != null)
                     {
-                        string consentCodeStr = inputs[1].Value as string;
+                        string consentCodeStr = inputs.Last().Value as string;
 
                         int consentCodeInt;
                         if (int.TryParse(consentCodeStr, out consentCodeInt) && consentCodeInt == consentCode)

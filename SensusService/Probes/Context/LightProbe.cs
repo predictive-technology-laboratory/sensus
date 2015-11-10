@@ -20,7 +20,7 @@ namespace SensusService.Probes.Context
     {
         public sealed override string DisplayName
         {
-            get { return "Light"; }
+            get { return "Light Level"; }
         }
 
         public sealed override Type DatumType

@@ -22,12 +22,20 @@ namespace SensusService
     {
         public sealed override string DisplayName
         {
-            get { return "Phone Calls"; }
+            get { return "Phone Call Metadata"; }
+        }
+
+        public override string CollectionDescription
+        {
+            get
+            {
+                return DisplayName + ":  When calls are made.";
+            }
         }
 
         public override int DefaultPollingSleepDurationMS
         {
-            get 
+            get
             {
                 return 60000 * 60; // once per hour
             }

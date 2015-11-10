@@ -23,7 +23,7 @@ namespace SensusService.Probes.Device
     {
         public sealed override string DisplayName
         {
-            get { return "Battery"; }
+            get { return "Battery Level"; }
         }
 
         public override int DefaultPollingSleepDurationMS

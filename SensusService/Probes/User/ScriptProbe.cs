@@ -15,6 +15,8 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace SensusService.Probes.User
 {
@@ -44,6 +46,25 @@ namespace SensusService.Probes.User
                 int scriptsRun = _scriptRunners.Sum(scriptRunner => scriptRunner.RunTimes.Count(runTime => runTime >= Protocol.ParticipationHorizon));
                 int scriptsCompleted = _scriptRunners.Sum(scriptRunner => scriptRunner.CompletionTimes.Count(completionTime => completionTime >= Protocol.ParticipationHorizon));
                 return scriptsRun == 0 ? 1 : scriptsCompleted / (float)scriptsRun;
+            }
+        }
+
+        public override string CollectionDescription
+        {
+            get
+            {
+                StringBuilder collectionDescription = new StringBuilder();
+
+                Regex splitter = new Regex(@"
+                (?<=[A-Z])(?=[A-Z][a-z]) |
+                 (?<=[^A-Z])(?=[A-Z]) |
+                 (?<=[A-Za-z])(?=[^A-Za-z])", RegexOptions.IgnorePatternWhitespace);
+
+                foreach (ScriptRunner scriptRunner in _scriptRunners)
+                    foreach (Trigger trigger in scriptRunner.Triggers)
+                        collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + scriptRunner.Name + ":  When " + trigger.Probe.DisplayName + " is " + splitter.Replace(trigger.Condition.ToString(), " ").ToLower() + " " + trigger.ConditionValue + ".");
+
+                return collectionDescription.ToString();
             }
         }
 

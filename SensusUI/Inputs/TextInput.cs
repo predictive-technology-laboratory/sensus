@@ -20,6 +20,7 @@ namespace SensusUI.Inputs
     public class TextInput : Input
     {
         private Entry _entry;
+        private Keyboard _keyboard;
 
         public override View View
         {
@@ -29,7 +30,7 @@ namespace SensusUI.Inputs
                 {
                     _entry = new Entry
                     {
-                        Keyboard = Keyboard.Default,
+                        Keyboard = _keyboard,
                         HorizontalOptions = LayoutOptions.FillAndExpand
 
                         // set the style ID on the view so that we can retrieve it when unit testing
@@ -84,14 +85,16 @@ namespace SensusUI.Inputs
         {
         }
 
-        public TextInput(string labelText)
+        public TextInput(string labelText, Keyboard keyboard)
             : base(labelText)
         {
+            _keyboard = keyboard;
         }
 
-        public TextInput(string name, string labelText)
+        public TextInput(string name, string labelText, Keyboard keyboard)
             : base(name, labelText)
         {            
+            _keyboard = keyboard;
         }
     }
 }

@@ -62,6 +62,14 @@ namespace SensusService.Probes
             }
         }
 
+        public override string CollectionDescription
+        {
+            get
+            {
+                return DisplayName + ":  When it changes.";
+            }
+        }
+
         protected ListeningProbe()
         {
             _maxDataStoresPerSecond = 1;

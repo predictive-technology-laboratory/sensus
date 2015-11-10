@@ -20,7 +20,7 @@ namespace SensusService.Probes.Location
     {
         public sealed override string DisplayName
         {
-            get { return "Compass"; }
+            get { return "Compass Heading"; }
         }
 
         public sealed override Type DatumType

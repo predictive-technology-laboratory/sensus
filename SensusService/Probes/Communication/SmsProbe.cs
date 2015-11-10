@@ -26,6 +26,14 @@ namespace SensusService.Probes.Communication
             get { return "Text Messages"; }
         }
 
+        public override string CollectionDescription
+        {
+            get
+            {
+                return DisplayName + ":  Upon receipt.";
+            }
+        }
+
         public sealed override Type DatumType
         {
             get { return typeof(SmsDatum); }

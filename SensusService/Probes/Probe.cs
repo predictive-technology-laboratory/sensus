@@ -73,6 +73,9 @@ namespace SensusService.Probes
         [JsonIgnore]
         public abstract string DisplayName { get; }
 
+        [JsonIgnore]
+        public abstract string CollectionDescription { get; }
+
         [OnOffUiProperty("Enabled:", true, 2)]
         public bool Enabled
         {

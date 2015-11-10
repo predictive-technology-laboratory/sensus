@@ -80,6 +80,12 @@ namespace SensusUI.Inputs
             Construct(true);
         }
 
+        public LabelOnlyInput(string labelText, int labelFontSize)
+            : base(labelText, labelFontSize)
+        {
+            Construct(true);
+        }
+
         public LabelOnlyInput(string labelText, bool complete)
             : base(labelText)
         {

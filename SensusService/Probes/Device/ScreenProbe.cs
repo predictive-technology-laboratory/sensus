@@ -23,7 +23,7 @@ namespace SensusService.Probes.Device
     {
         public sealed override string DisplayName
         {
-            get { return "Screen"; }
+            get { return "Screen On/Off"; }
         }
 
         public override int DefaultPollingSleepDurationMS

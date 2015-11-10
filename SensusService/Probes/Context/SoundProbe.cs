@@ -30,7 +30,7 @@ namespace SensusService.Probes.Context
 
         public sealed override string DisplayName
         {
-            get { return "Sound"; }
+            get { return "Sound Level"; }
         }
 
         public override int DefaultPollingSleepDurationMS

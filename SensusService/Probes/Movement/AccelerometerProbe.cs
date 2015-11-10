@@ -31,7 +31,7 @@ namespace SensusService.Probes.Movement
 
         public sealed override string DisplayName
         {
-            get { return "Accelerometer"; }
+            get { return "Acceleration"; }
         }
 
         public sealed override Type DatumType

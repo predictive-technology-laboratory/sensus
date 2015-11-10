@@ -112,7 +112,7 @@ namespace SensusUI
 
                 cancelButton.Clicked += async (o, e) =>
                 {
-                    if (await DisplayAlert("Confirm", "Would you like to cancel your responses?", "Yes", "No"))
+                    if (await DisplayAlert("Confirm", "Would you like to cancel?", "Yes", "No"))
                     {
                         cancelButtonTapped = true;
                         await Navigation.PopModalAsync(true);
@@ -145,7 +145,7 @@ namespace SensusUI
 
             nextButton.Clicked += async (o, e) =>
             {
-                if (nextButton.Text == "Next" || await DisplayAlert("Confirm", "Are you ready to submit your responses?", "Yes", "No"))
+                if (nextButton.Text == "Next" || await DisplayAlert("Confirm", "Would you like to proceed?", "Yes", "No"))
                 {
                     nextButtonTapped = true;
                     await Navigation.PopModalAsync(stepNumber == totalSteps);
