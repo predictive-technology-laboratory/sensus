@@ -85,7 +85,7 @@ namespace SensusUI
                 BorderColor = Color.White,
                 BackgroundColor = Color.Transparent,
                 BorderWidth = 1,
-                Text = stepNumber < totalSteps ? "Next" : "Submit"
+                Text = stepNumber < totalSteps ? "Next" : "Submit",
                 StyleId = "NextButton"  // set style id so that we can retrieve the button when unit testing
             };
 

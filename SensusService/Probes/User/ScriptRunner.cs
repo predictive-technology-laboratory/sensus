@@ -546,7 +546,6 @@ namespace SensusService.Probes.User
             _runTimes.Clear();
             _completionTimes.Clear();
             _rerunCallbackId = null;
-            _randomTriggerCallbackId = null;
             _runScriptCallbackIds.Clear();
         }
 

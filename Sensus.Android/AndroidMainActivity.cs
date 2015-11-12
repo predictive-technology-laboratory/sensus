@@ -88,7 +88,7 @@ namespace Sensus.Android
 
             Forms.Init(this, savedInstanceState);
             FormsMaps.Init(this, savedInstanceState);
-            MapExtendRenderer.Init(this, savedInstanceState);
+     //       MapExtendRenderer.Init(this, savedInstanceState);
 
             #if UNIT_TESTING
             Forms.ViewInitialized += (sender, e) =>

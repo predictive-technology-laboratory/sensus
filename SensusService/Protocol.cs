@@ -31,7 +31,6 @@ using SensusUI;
 using SensusService.Probes.Location;
 using SensusService.Exceptions;
 using SensusUI.Inputs;
-using SensusService.Probes.User;
 using SensusService.Probes.Apps;
 
 #if __IOS__
@@ -819,17 +818,11 @@ namespace SensusService
 
                 inputs =>
                 {
+                    string id = null;
                     if (inputs != null)
-                    {
-                        string consentCodeStr = inputs[1].Value as string;
-
-//                    string consentCodeStr = inputs[1].Value as string;
-                    string id = inputs[1].Value as string;
-
-//                    int consentCodeInt;
+                        id = inputs[1].Value as string;
                     if (id != null && id.Length == 4)
                     {
-//                    else if (int.TryParse(id, out consentCodeInt) && consentCodeInt == consentCode)
                         _participantID = int.Parse(id);
                         AmazonS3RemoteDataStore s3 = new AmazonS3RemoteDataStore();
                         s3 = (AmazonS3RemoteDataStore)_remoteDataStore;

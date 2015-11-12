@@ -64,12 +64,6 @@
     <Compile Include="ExtensionMethods.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Sensus.Android\Sensus.Android.csproj">
-      <Project>{D33B6CDB-795C-4826-B131-47C526ACE07F}</Project>
-      <Name>Sensus.Android</Name>
-      <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
-      <Private>False</Private>
-    </ProjectReference>
     <ProjectReference Include="..\Sensus.iOS\Sensus.iOS.csproj">
       <Project>{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}</Project>
       <Name>Sensus.iOS</Name>

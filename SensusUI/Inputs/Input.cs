@@ -130,7 +130,7 @@ namespace SensusUI.Inputs
             {
                 return _complete || _viewed && !_required;
             }
-            protected set
+            set
             {
                 _complete = value; 
 
