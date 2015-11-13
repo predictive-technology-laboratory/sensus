@@ -20,8 +20,9 @@ namespace SensusUI
 {
     /// <summary>
     /// Provides a means for the UI to access the underlying service helper object. This is set when the app starts
-    /// up. Some platforms (e.g., Android) formally separate the UI from the model classes, and this class accommodates
-    /// such a constraint.
+    /// up. Some platforms (e.g., Android) formally separate the UI from the model classes. In such cases, there can
+    /// be a delay from app startup to the time at which the model service helper is bound. This class will allow
+    /// UI operations to wait until the model service helper is bound.
     /// </summary>
     public static class UiBoundSensusServiceHelper
     {
