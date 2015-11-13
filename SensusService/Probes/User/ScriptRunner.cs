@@ -46,6 +46,8 @@ namespace SensusService.Probes.User
         private List<DateTime> _runTimes;
         private List<DateTime> _completionTimes;
         private bool _oneShot;
+        private bool _runOnStart;
+        private int _runOnStartDelaySeconds;
 
         private readonly object _locker = new object();
 
@@ -258,6 +260,38 @@ namespace SensusService.Probes.User
             }
         }
 
+        [OnOffUiProperty("Run On Start:", true, 11)]
+        public bool RunOnStart
+        {
+            get
+            {
+                return _runOnStart;
+            }
+            set
+            {
+                _runOnStart = value;
+            }
+        }
+
+        [EntryIntegerUiProperty("Run On Start Delay (Seconds):", true, 12)]
+        public int RunOnStartDelaySeconds
+        {
+            get
+            {
+                return _runOnStartDelaySeconds;
+            }
+            set
+            {
+                if (value < 0)
+                {
+                    SensusServiceHelper.Get().FlashNotificationAsync("Run on start delay must be greater than or equal to 0.");
+                    value = 0;
+                }
+                
+                _runOnStartDelaySeconds = value;
+            }
+        }
+
         #endregion
 
         /// <summary>
@@ -283,6 +317,8 @@ namespace SensusService.Probes.User
             _runTimes = new List<DateTime>();
             _completionTimes = new List<DateTime>();
             _oneShot = false;
+            _runOnStart = false;
+            _runOnStartDelaySeconds = 15;
 
             _triggers.CollectionChanged += (o, e) =>
             {
@@ -293,6 +329,7 @@ namespace SensusService.Probes.User
                         if (_triggerHandler.ContainsKey(trigger))
                             return;
 
+                        // create a handler to be called each time the triggering probe stores a datum
                         EventHandler<Tuple<Datum, Datum>> handler = (oo, previousCurrentDatum) =>
                         {
                             // must be running and must have a current datum
@@ -311,7 +348,7 @@ namespace SensusService.Probes.User
                             if (currentDatumValue == null)
                                 return;
 
-                            // if we're triggering based on datum value changes instead of absolute values, calculate the change now
+                            // if we're triggering based on datum value changes/differences instead of absolute values, calculate the change now.
                             if (trigger.Change)
                             {
                                 // don't need to set ConditionSatisfiedLastTime = false here, since it cannot be the case that it's true and prevDatum == null (we must have had a currDatum last time in order to set ConditionSatisfiedLastTime = true).
@@ -329,12 +366,13 @@ namespace SensusService.Probes.User
                                 }
                             }
 
-                            // if the trigger fires, run a copy of the script so that we can retain a pristine version of the original
+                            // if the trigger fires for the current value, run a copy of the script so that we can retain a pristine version of the original.
                             if (trigger.FireFor(currentDatumValue))
-                                RunAsync(_script.Copy(), previousDatum, currentDatum);
+                                RunAsync(_script.Copy(), previousDatum, currentDatum, _delayMS);
                         };
 
                         trigger.Probe.MostRecentDatumChanged += handler;
+
                         _triggerHandler.Add(trigger, handler);
                     }
                 else if (e.Action == NotifyCollectionChangedAction.Remove)
@@ -342,6 +380,7 @@ namespace SensusService.Probes.User
                         if (_triggerHandler.ContainsKey(trigger))
                         {
                             trigger.Probe.MostRecentDatumChanged -= _triggerHandler[trigger];
+
                             _triggerHandler.Remove(trigger);
                         }
             };
@@ -367,6 +406,9 @@ namespace SensusService.Probes.User
 
             if (_randomTriggerWindows.Count > 0)
                 StartRandomTriggerCallbacksAsync();
+
+            if (_runOnStart)
+                RunAsync(_script.Copy(), _runOnStartDelaySeconds * 1000);
         }
 
         private void StartRerunCallbacksAsync()
@@ -396,9 +438,9 @@ namespace SensusService.Probes.User
                                             }
                                         }
 
-                                    // we don't need to copy the script, since we're already working with a copy of the original
+                                    // we don't need to copy the script, since we're already working with a copy of the original. also no need for the delay as this is a re-run and is already delayed.
                                     if (scriptToRerun != null)
-                                        RunAsync(scriptToRerun);
+                                        RunAsync(scriptToRerun, 0);
                                 }
 
                             }, "Rerun Script", _rerunDelayMS, _rerunDelayMS, null);  // no user notification message, since there might not be any scripts to rerun
@@ -460,29 +502,29 @@ namespace SensusService.Probes.User
                             {
                                 // if the probe is still running and the runner is enabled, run a copy of the script so that we can retain a pristine version of the original
                                 if (_probe.Running && _enabled && _randomTriggerWindows.Any(window => DateTime.Now.Hour >= window.Item1 && DateTime.Now.Hour <= window.Item2))  // be sure to use DateTime.Now and not the local now variable, which will be in the past.
-                                    RunAsync(_script.Copy(), StartRandomTriggerCallbacksAsync);
+                                    RunAsync(_script.Copy(), _delayMS, StartRandomTriggerCallbacksAsync);
                             }                      
                         , "Trigger Randomly", triggerDelayMS, userNotificationMessage);
                     }
                 }).Start();
         }
 
-        private void RunAsync(Script script)
+        private void RunAsync(Script script, int delayMS)
         {
-            RunAsync(script, null, null, null);
+            RunAsync(script, delayMS, null);
         }
 
-        private void RunAsync(Script script, Action callback)
+        private void RunAsync(Script script, int delayMS, Action callback)
         {
-            RunAsync(script, null, null, callback);
+            RunAsync(script, null, null, delayMS, callback);
         }
 
-        private void RunAsync(Script script, Datum previousDatum, Datum currentDatum)
+        private void RunAsync(Script script, Datum previousDatum, Datum currentDatum, int delayMS)
         {
-            RunAsync(script, previousDatum, currentDatum, null);
+            RunAsync(script, previousDatum, currentDatum, delayMS, null);
         }
 
-        private void RunAsync(Script script, Datum previousDatum, Datum currentDatum, Action callback)
+        private void RunAsync(Script script, Datum previousDatum, Datum currentDatum, int delayMS, Action callback)
         {
             #if __IOS__
             string userNotificationMessage = "Your input is requested.";
@@ -502,7 +544,7 @@ namespace SensusService.Probes.User
                 // should be measured from the time of notification on ios. thus, we calculate presentation here, as the time at which
                 // the user can first become aware of the callback.
                 if (script.PresentationTimestamp == null)
-                    script.PresentationTimestamp = DateTimeOffset.UtcNow.AddMilliseconds(_delayMS);
+                    script.PresentationTimestamp = DateTimeOffset.UtcNow.AddMilliseconds(delayMS);
 
                 _runScriptCallbackIds.Add(SensusServiceHelper.Get().ScheduleOneTimeCallback((callbackId, cancellationToken) =>
                         {
@@ -548,11 +590,16 @@ namespace SensusService.Probes.User
                             ManualResetEvent inputWait = new ManualResetEvent(false);
 
                             SensusServiceHelper.Get().PromptForInputsAsync(script.CurrentDatum, isRerun, script.FirstRunTimestamp, script.InputGroups, cancellationToken, true, null, null, inputGroups =>
-                                {
-                                    if (inputGroups != null)
-                                        foreach (InputGroup inputGroup in inputGroups)
-                                            foreach (Input input in inputGroup.Inputs)
-                                                if (input.ShouldBeStored && input.Complete)
+                                {            
+                                    bool canceled = inputGroups == null;
+
+                                    foreach (InputGroup inputGroup in script.InputGroups)
+                                        foreach (Input input in inputGroup.Inputs)
+                                             if (input.ShouldBeStored)
+                                            {
+                                                if (canceled)
+                                                    input.Reset();
+                                                else if (input.Complete)
                                                 {
                                                     _probe.StoreDatum(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow), input.GroupId, input.Id, input.Value, script.CurrentDatum == null ? null : script.CurrentDatum.Id, input.Latitude, input.Longitude, script.PresentationTimestamp.GetValueOrDefault(), input.LocationUpdateTimestamp));
 
@@ -560,6 +607,7 @@ namespace SensusService.Probes.User
                                                     input.ShouldBeStored = false;
                                                     Xamarin.Forms.Device.BeginInvokeOnMainThread(() => input.Enabled = false);
                                                 }
+                                            }
 
                                     inputWait.Set();
                                 });
@@ -587,7 +635,7 @@ namespace SensusService.Probes.User
                             lock (_runScriptCallbackIds)
                                 _runScriptCallbackIds.Remove(callbackId);
 
-                        }, "Run Script", _delayMS, userNotificationMessage));
+                        }, "Run Script", delayMS, userNotificationMessage));
             }
         }
 

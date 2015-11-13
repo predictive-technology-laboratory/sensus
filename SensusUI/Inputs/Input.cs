@@ -17,6 +17,7 @@ using Xamarin.Forms;
 using SensusService.Exceptions;
 using SensusUI.UiProperties;
 using Newtonsoft.Json;
+using System.Threading;
 
 namespace SensusUI.Inputs
 {
@@ -240,6 +241,18 @@ namespace SensusUI.Inputs
                 Text = _labelText,
                 FontSize = _labelFontSize
             };
+        }
+
+        public void Reset()
+        {            
+            _view = null;
+            _complete = false;
+            _shouldBeStored = true;
+            _latitude = null;
+            _longitude = null;
+            _locationUpdateTimestamp = null;
+            _viewed = false;
+            _completionTimestamp = null;
         }
 
         public override string ToString()

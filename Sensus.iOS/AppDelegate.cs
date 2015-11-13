@@ -73,7 +73,7 @@ namespace Sensus.iOS
             #endif
 
             return base.FinishedLaunching(uiApplication, launchOptions);
-        }
+        }   
 
         public override bool OpenUrl(UIApplication application, NSUrl url, string sourceApplication, NSObject annotation)
         {

@@ -38,7 +38,10 @@ namespace SensusUI.Inputs
                         #endif
                     };  
 
-                    _entry.TextChanged += (o, e) => Complete = Value != null;
+                    _entry.TextChanged += (o, e) =>
+                    {
+                        Complete = Value != null;
+                    };
 
                     base.View = new StackLayout
                     {

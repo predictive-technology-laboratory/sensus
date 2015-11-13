@@ -53,7 +53,7 @@ namespace SensusService.Probes
         #endregion
 
         /// <summary>
-        /// Fired when the most recently sensed datum is changed.
+        /// Fired when the most recently sensed datum is changed, regardless of whether the datum was stored.
         /// </summary>
         public event EventHandler<Tuple<Datum, Datum>> MostRecentDatumChanged;
 
@@ -121,6 +121,10 @@ namespace SensusService.Probes
             get { return _running; }
         }
 
+        /// <summary>
+        /// Gets or sets the datum that was most recently sensed, regardless of whether the datum was stored.
+        /// </summary>
+        /// <value>The most recent datum.</value>
         [JsonIgnore]
         public Datum MostRecentDatum
         {

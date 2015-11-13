@@ -8,7 +8,7 @@ fi
 
 
 ########################################
-##### Create Cognito identity pool #####
+##### Create Cognito Identity Pool #####
 ########################################
 
 echo "Creating Cognito identity pool..."
@@ -18,8 +18,9 @@ if [ "$cognitoId" == "" ]; then
     exit $?
 fi
 
+
 ###########################
-##### Create IAM role #####
+##### Create IAM Role #####
 ###########################
 
 # create new IAM role that allows new Cognito identity pool to assume it
@@ -54,6 +55,8 @@ rm tmp.json
 
 echo "Linking Cognito idenity pool with IAM role..."
 aws cognito-identity set-identity-pool-roles --identity-pool-id $cognitoId --roles "authenticated=$iamRoleARN,unauthenticated=$iamRoleARN"
+
+# display information and exit
 
 echo "All done:"
 echo "\tCognito identity pool ID:  $cognitoId"

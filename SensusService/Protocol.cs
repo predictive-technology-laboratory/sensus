@@ -834,8 +834,11 @@ namespace SensusService
 
             consent.Add(new LabelOnlyInput("This study would like to collect the following data from your device:"));
 
-            if (collectionDescription.Length > 0)
-                consent.Add(new LabelOnlyInput(collectionDescription.ToString(), 15));
+            int collectionDescriptionFontSize = 15;
+            if (collectionDescription.Length == 0)
+                consent.Add(new LabelOnlyInput("No information will be collected.", collectionDescriptionFontSize));
+            else
+                consent.Add(new LabelOnlyInput(collectionDescription.ToString(), collectionDescriptionFontSize));
 
             // the names in the following inputs are used to grab the UI elements when unit testing
             consent.Add(new LabelOnlyInput("ConsentMessage", "To participate in this study as described above, please indicate your consent by entering the following code:  " + consentCode + ""));

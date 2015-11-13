@@ -15,6 +15,7 @@
 using System;
 using Xamarin.Forms;
 using SensusUI.UiProperties;
+using System.Threading;
 
 namespace SensusUI.Inputs
 {
@@ -25,6 +26,7 @@ namespace SensusUI.Inputs
         private double _increment;
         private Slider _slider;
         private double _incrementalValue;
+        private bool _incrementalValueHasChanged;
 
         [EntryDoubleUiProperty(null, true, 10)]
         public double Minimum
@@ -98,10 +100,11 @@ namespace SensusUI.Inputs
                     _slider.Minimum = _minimum;
                     _slider.Maximum = _maximum;
                     _slider.Value = _incrementalValue = GetIncrementalValue((_maximum - _minimum) / 2d);
+                    _incrementalValueHasChanged = false;
 
                     Label sliderLabel = CreateLabel();
                     string originalSliderLabelText = sliderLabel.Text;
-                    sliderLabel.Text += ":  " + _incrementalValue;
+                    sliderLabel.Text = originalSliderLabelText + ":  Please select value.";
 
                     _slider.ValueChanged += (o, e) =>
                     {
@@ -112,9 +115,31 @@ namespace SensusUI.Inputs
                             _incrementalValue = newIncrementalValue;
                             sliderLabel.Text = originalSliderLabelText + ":  " + _incrementalValue;
                             Complete = Value != null;
+                            _incrementalValueHasChanged = true;
                         }
                     };
 
+                    StackLayout boundsLabels = new StackLayout
+                    {
+                        Orientation = StackOrientation.Horizontal,
+                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        Children =
+                        {
+                            new Label
+                            {
+                                Text = _minimum.ToString(),
+                                FontSize = 20,
+                                HorizontalOptions = LayoutOptions.StartAndExpand
+                            },
+                            new Label
+                            {
+                                Text = _maximum.ToString(),
+                                FontSize = 20,
+                                HorizontalOptions = LayoutOptions.EndAndExpand
+                            }
+                        }
+                    };
+                    
                     base.View = new StackLayout
                     {
                         Orientation = StackOrientation.Vertical,
@@ -122,7 +147,8 @@ namespace SensusUI.Inputs
                         Children =
                         { 
                             sliderLabel,
-                            _slider
+                            boundsLabels,
+                            _slider                            
                         }
                     };
                 }
@@ -135,7 +161,10 @@ namespace SensusUI.Inputs
         {
             get
             {
-                return _slider == null ? null : (object)_incrementalValue;
+                // the number slider is the only input type that can be untouched but still have a value associated with it. if the number slider
+                // is not required, then this value would be returned, which is clearly not what we want since the user never interacted with the
+                // input. so, additionally keep track of whether the value has actually changed, indicating that the user has touched the control.
+                return _slider == null || !_incrementalValueHasChanged ? null : (object)_incrementalValue;
             }
         }
 
@@ -181,6 +210,7 @@ namespace SensusUI.Inputs
             _minimum = minimum;
             _maximum = maximum;
             _increment = (_maximum - _minimum + 1) / 10;
+            _incrementalValueHasChanged = false;
         }
 
         private double GetIncrementalValue(double value)

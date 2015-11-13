@@ -83,8 +83,7 @@ namespace SensusUI
                             {
                                 new TextInput("POI Name:", Keyboard.Text),
                                 new TextInput("POI Type:", Keyboard.Text),
-                                new TextInput("Address:", Keyboard.Text),
-                                new YesNoInput("View Map:")
+                                new TextInput("Address:", Keyboard.Text)
                             },
                             null,
                             true, 
@@ -133,14 +132,7 @@ namespace SensusUI
                                         Xamarin.Geolocation.Position gpsPosition = GpsReceiver.Get().GetReading(_gpsCancellationTokenSource.Token);
 
                                         if (gpsPosition != null)
-                                        {                                            
-                                            Position formsPosition = gpsPosition.ToFormsPosition();
-
-                                            if (viewMap)
-                                                UiBoundSensusServiceHelper.Get(true).GetPositionsFromMapAsync(formsPosition, newPinName, addPOI);
-                                            else
-                                                addPOI(new Position[] { formsPosition }.ToList());
-                                        }
+                                            UiBoundSensusServiceHelper.Get(true).GetPositionsFromMapAsync(gpsPosition.ToFormsPosition(), newPinName, addPOI);
                                     }
                                     else
                                         UiBoundSensusServiceHelper.Get(true).GetPositionsFromMapAsync(address, newPinName, addPOI);

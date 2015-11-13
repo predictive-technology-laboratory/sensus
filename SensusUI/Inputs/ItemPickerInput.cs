@@ -23,6 +23,7 @@ namespace SensusUI.Inputs
     {
         private string _tipText;
         private List<string> _items;
+        private bool _allowClearSelection;
         private Picker _picker;
 
         [EntryStringUiProperty("Tip Text:", true, 10)]
@@ -52,6 +53,19 @@ namespace SensusUI.Inputs
             }
         }
 
+        [OnOffUiProperty("Allow Clear Selection:", true, 12)]
+        public bool AllowClearSelection
+        {
+            get
+            {
+                return _allowClearSelection;
+            }
+            set
+            {
+                _allowClearSelection = value;
+            }
+        }
+
         public override View View
         {
             get
@@ -69,10 +83,21 @@ namespace SensusUI.Inputs
                         #endif
                     };
 
+                    if (_allowClearSelection)
+                        _picker.Items.Add("[Clear Selection]");
+                    
                     foreach (string item in _items)
                         _picker.Items.Add(item);
 
-                    _picker.SelectedIndexChanged += (o, e) => Complete = Value != null;
+                    _picker.SelectedIndexChanged += (o, e) =>
+                    {
+                        if (Value == null)
+                            Complete = false;
+                        else if (Value.ToString() == "[Clear Selection]")
+                            _picker.SelectedIndex = -1;
+                        else
+                            Complete = true;
+                    };
                     
                     base.View = new StackLayout
                     {
@@ -134,7 +159,8 @@ namespace SensusUI.Inputs
         private void Construct(string tipText, List<string> items)
         {
             _tipText = tipText;
-            _items = items;   
+            _items = items;
+            _allowClearSelection = true;
         }
 
         public override string ToString()
