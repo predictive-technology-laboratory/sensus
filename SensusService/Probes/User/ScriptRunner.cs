@@ -593,21 +593,26 @@ namespace SensusService.Probes.User
                                 {            
                                     bool canceled = inputGroups == null;
 
+                                    // process all inputs in the script
                                     foreach (InputGroup inputGroup in script.InputGroups)
                                         foreach (Input input in inputGroup.Inputs)
-                                             if (input.ShouldBeStored)
+                                        {
+                                            // only consider inputs that still need to be stored. if an input has already been stored, it can be ignored.
+                                            if (input.ShouldBeStored)
                                             {
+                                                // if the user canceled the survey, reset the input.
                                                 if (canceled)
                                                     input.Reset();
                                                 else if (input.Complete)
                                                 {
                                                     _probe.StoreDatum(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow), input.GroupId, input.Id, input.Value, script.CurrentDatum == null ? null : script.CurrentDatum.Id, input.Latitude, input.Longitude, script.PresentationTimestamp.GetValueOrDefault(), input.LocationUpdateTimestamp));
 
-                                                    // once inputs are stored, they should not be stored again, nor should the user be able to modify them
+                                                    // once inputs are stored, they should not be stored again, nor should the user be able to modify them.
                                                     input.ShouldBeStored = false;
                                                     Xamarin.Forms.Device.BeginInvokeOnMainThread(() => input.Enabled = false);
                                                 }
                                             }
+                                        }
 
                                     inputWait.Set();
                                 });
