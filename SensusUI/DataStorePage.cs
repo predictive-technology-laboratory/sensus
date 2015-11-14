@@ -28,7 +28,7 @@ namespace SensusUI
     /// Displays a data store.
     /// </summary>
     public class DataStorePage : ContentPage
-    {        
+    {
         /// <summary>
         /// Initializes a new instance of the <see cref="SensusUI.DataStorePage"/> class.
         /// </summary>
@@ -40,8 +40,23 @@ namespace SensusUI
         {
             Title = (local ? "Local" : "Remote") + " Data Store";
 
+            List<View> views = new List<View>();
+
+            views.Add(new ContentView
+                {
+                    Content = new Label
+                    { 
+                        Text = dataStore.DisplayName,
+                        FontSize = 20, 
+                        FontAttributes = FontAttributes.Italic,
+                        TextColor = Color.Accent,
+                        HorizontalOptions = LayoutOptions.Center
+                    },
+                    Padding = new Thickness(0, 10, 0, 10)
+                });
+
             // property stacks all come from the data store passed in (i.e., a copy of the original on the protocol, if there is one)
-            List<StackLayout> stacks = UiProperty.GetPropertyStacks(dataStore);
+            views.AddRange(UiProperty.GetPropertyStacks(dataStore));
 
             StackLayout buttonStack = new StackLayout
             {
@@ -49,7 +64,7 @@ namespace SensusUI
                 VerticalOptions = LayoutOptions.FillAndExpand
             };
 
-            stacks.Add(buttonStack);
+            views.Add(buttonStack);
 
             // clearing only applies to local data stores that already exist on protocols and are clearable. new local data stores don't have this option.
             if (local && !newDataStore && protocol.LocalDataStore.Clearable)
@@ -63,8 +78,7 @@ namespace SensusUI
 
                 clearButton.Clicked += async (o, e) =>
                 {
-                    // display the name as it's currently shown on the form (i.e., in the passed-in data store rather than the protocols)
-                    if (await DisplayAlert("Clear data from " + dataStore.Name + "?", "This action cannot be undone.", "Clear", "Cancel"))
+                    if (await DisplayAlert("Clear data from " + protocol.LocalDataStore.DisplayName + "?", "This action cannot be undone.", "Clear", "Cancel"))
                         protocol.LocalDataStore.Clear();  // clear the protocol's local data store
                 };
 
@@ -82,13 +96,13 @@ namespace SensusUI
                 };
 
                 shareLocalDataButton.Clicked += async (o, e) =>
-                    {
-                        // share the protocol's local data store if it has data in it
-                        if(protocol.LocalDataStore.DataCount > 0)
-                            await Navigation.PushAsync(new ShareLocalDataStorePage(protocol.LocalDataStore));
-                        else
-                            UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Local data store contains no data to share.");
-                    };
+                {
+                    // share the protocol's local data store if it has data in it
+                    if (protocol.LocalDataStore.DataCount > 0)
+                        await Navigation.PushAsync(new ShareLocalDataStorePage(protocol.LocalDataStore));
+                    else
+                        UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Local data store contains no data to share.");
+                };
 
                 buttonStack.Children.Add(shareLocalDataButton);
             }
@@ -101,14 +115,14 @@ namespace SensusUI
             };
 
             okayButton.Clicked += async (o, e) =>
-                {
-                    if (local)
-                        protocol.LocalDataStore = dataStore as LocalDataStore;
-                    else
-                        protocol.RemoteDataStore = dataStore as RemoteDataStore;
+            {
+                if (local)
+                    protocol.LocalDataStore = dataStore as LocalDataStore;
+                else
+                    protocol.RemoteDataStore = dataStore as RemoteDataStore;
 
-                    await Navigation.PopAsync();
-                };
+                await Navigation.PopAsync();
+            };
 
             buttonStack.Children.Add(okayButton);
 
@@ -118,8 +132,8 @@ namespace SensusUI
                 VerticalOptions = LayoutOptions.FillAndExpand
             };
 
-            foreach (StackLayout stack in stacks)
-                contentLayout.Children.Add(stack);
+            foreach (View view in views)
+                contentLayout.Children.Add(view);
 
             Content = new ScrollView
             {

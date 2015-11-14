@@ -62,20 +62,32 @@ namespace Sensus.iOS
             UiBoundSensusServiceHelper.Set(_serviceHelper);
             app.SensusMainPage.DisplayServiceHelper(UiBoundSensusServiceHelper.Get(true));
 
+            #if UNIT_TESTING
+            Forms.ViewInitialized += (sender, e) =>
+            {
+                if (!string.IsNullOrWhiteSpace(e.View.StyleId))
+                    e.NativeView.AccessibilityIdentifier = e.View.StyleId;
+            };
+
+            Calabash.Start();
+            #endif
+
             return base.FinishedLaunching(uiApplication, launchOptions);
         }
 
         public override bool OpenUrl(UIApplication application, NSUrl url, string sourceApplication, NSObject annotation)
         {
             if (url.AbsoluteString.EndsWith(".sensus"))
+            {
                 try
                 {
-                    Protocol.DisplayFromBytesAsync(File.ReadAllBytes(url.Path));
+                    Protocol.DeserializeAsync(File.ReadAllBytes(url.Path), true, Protocol.DisplayAndStartAsync);
                 }
                 catch (Exception ex)
                 {
                     SensusServiceHelper.Get().Logger.Log("Failed to display Sensus Protocol from URL \"" + url.AbsoluteString + "\":  " + ex.Message, LoggingLevel.Verbose, GetType());
                 }
+            }
 
             // We need to handle URLs by passing them to their own OpenUrl in order to make the Facebook SSO authentication works.
             return ApplicationDelegate.SharedInstance.OpenUrl(application, url, sourceApplication, annotation);
@@ -94,6 +106,15 @@ namespace Sensus.iOS
             sensusServiceHelper.StartAsync(() =>
                 {
                     sensusServiceHelper.UpdateCallbackNotificationActivationIdsAsync();
+
+                    #if UNIT_TESTING
+                    string filePath = NSBundle.MainBundle.PathForResource("UnitTestingProtocol", "sensus");
+                    using (Stream file = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                    {
+                        Protocol.RunUnitTestingProtocol(file);
+                        file.Close();
+                    }
+                    #endif
                 });
             
             base.OnActivated(uiApplication);
@@ -138,6 +159,6 @@ namespace Sensus.iOS
         public override void WillTerminate(UIApplication application)
         {
             _serviceHelper.Dispose();
-        }                
+        }
     }
 }

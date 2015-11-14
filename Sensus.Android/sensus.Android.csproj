@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D33B6CDB-795C-4826-B131-47C526ACE07F}</ProjectGuid>
+    <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Sensus.Android</RootNamespace>
+    <FileAlignment>512</FileAlignment>
+    <AndroidApplication>true</AndroidApplication>
+    <AndroidResgenFile>Resources\Resource.Designer.cs</AndroidResgenFile>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
+    <AndroidSupportedAbis>armeabi,armeabi-v7a,x86</AndroidSupportedAbis>
+    <MandroidI18n />
+    <JavaMaximumHeapSize>
+    </JavaMaximumHeapSize>
+    <NuGetPackageImportStamp>7d62c8f2</NuGetPackageImportStamp>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+    <DevInstrumentationEnabled>True</DevInstrumentationEnabled>
+    <ReleaseVersion>0.0.0</ReleaseVersion>
+    <SynchReleaseVersion>false</SynchReleaseVersion>
+    <AndroidUseLatestPlatformSdk>False</AndroidUseLatestPlatformSdk>
+    <TargetFrameworkVersion>v5.1</TargetFrameworkVersion>
+    <AssemblyName>SensusAndroid</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AndroidSupportedAbis>armeabi;armeabi-v7a;x86</AndroidSupportedAbis>
+    <DebugSymbols>true</DebugSymbols>
+    <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
+    <AndroidLinkMode>None</AndroidLinkMode>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;RELEASE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AndroidUseSharedRuntime>False</AndroidUseSharedRuntime>
+    <AndroidSupportedAbis>armeabi;armeabi-v7a;x86</AndroidSupportedAbis>
+    <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <AndroidLinkMode>None</AndroidLinkMode>
+    <WarningLevel>4</WarningLevel>
+    <Optimize>false</Optimize>
+    <AndroidSupportedAbis>armeabi;armeabi-v7a;x86</AndroidSupportedAbis>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
+    <WarningLevel>4</WarningLevel>
+    <AndroidStoreUncompressedFileExtensions>
+    </AndroidStoreUncompressedFileExtensions>
+    <JavaOptions>
+    </JavaOptions>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'LocalUnitTesting|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;UNIT_TESTING</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
+    <EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
+    <AndroidSupportedAbis>armeabi;armeabi-v7a;x86</AndroidSupportedAbis>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="BeforeBuild" command="../Sensus.UiTest/UnitTestingProtocols/PromptForUnitTestingProtocol.sh" workingdir="${ProjectDir}" externalConsole="True" />
+      </CustomCommands>
+    </CustomCommands>
+    <AndroidLinkMode>None</AndroidLinkMode>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'XamarinTestCloud|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;RELEASE;UNIT_TESTING</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
+    <AndroidSupportedAbis>armeabi;armeabi-v7a;x86</AndroidSupportedAbis>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="BeforeBuild" command="../Sensus.UiTest/UnitTestingProtocols/PromptForUnitTestingProtocol.sh android" workingdir="${ProjectDir}" externalConsole="True" />
+      </CustomCommands>
+    </CustomCommands>
+    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Mono.Android" />
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="Xamarin.Mobile">
+      <HintPath>..\Components\xamarin.mobile-0.7.5\lib\android\Xamarin.Mobile.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Insights">
+      <HintPath>..\packages\Xamarin.Insights.1.11.1\lib\MonoAndroid10\Xamarin.Insights.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.GooglePlayServices.Basement">
+      <HintPath>..\packages\Xamarin.GooglePlayServices.Basement.27.0.0.0\lib\MonoAndroid41\Xamarin.GooglePlayServices.Basement.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Primitives">
+      <HintPath>..\Components\azure-mobile-services-1.3.1\lib\android\System.Net.Http.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Extensions">
+      <HintPath>..\Components\azure-mobile-services-1.3.1\lib\android\System.Net.Http.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="PCLStorage">
+      <HintPath>..\packages\PCLStorage.1.0.2\lib\monoandroid\PCLStorage.dll</HintPath>
+    </Reference>
+    <Reference Include="PCLStorage.Abstractions">
+      <HintPath>..\packages\PCLStorage.1.0.2\lib\monoandroid\PCLStorage.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="AWSSDK.SecurityToken">
+      <HintPath>..\packages\AWSSDK.SecurityToken.3.1.0.2\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid10+xamarinios10+MonoTouch10\AWSSDK.SecurityToken.dll</HintPath>
+    </Reference>
+    <Reference Include="AWSSDK.CognitoIdentity">
+      <HintPath>..\packages\AWSSDK.CognitoIdentity.3.1.0.3\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid10+xamarinios10+MonoTouch10\AWSSDK.CognitoIdentity.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\Components\azure-mobile-services-1.3.1\lib\android\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Android.Support.v4">
+      <HintPath>..\Components\googleplayservicesfroyo-12.0.5\lib\android\Xamarin.Android.Support.v4.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Android.Support.v13">
+      <HintPath>..\packages\Xamarin.Android.Support.v13.23.0.1.3\lib\MonoAndroid403\Xamarin.Android.Support.v13.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Android.Support.v7.RecyclerView">
+      <HintPath>..\packages\Xamarin.Android.Support.v7.RecyclerView.23.0.1.3\lib\MonoAndroid403\Xamarin.Android.Support.v7.RecyclerView.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Android.Support.v7.AppCompat">
+      <HintPath>..\packages\Xamarin.Android.Support.v7.AppCompat.23.0.1.3\lib\MonoAndroid403\Xamarin.Android.Support.v7.AppCompat.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Android.Support.v7.Preference">
+      <HintPath>..\packages\Xamarin.Android.Support.v7.Preference.23.0.1.3\lib\MonoAndroid41\Xamarin.Android.Support.v7.Preference.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Android.Support.v14.Preference">
+      <HintPath>..\packages\Xamarin.Android.Support.v14.Preference.23.0.1.3\lib\MonoAndroid41\Xamarin.Android.Support.v14.Preference.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Android.Support.v7.Palette">
+      <HintPath>..\packages\Xamarin.Android.Support.v7.Palette.23.0.1.3\lib\MonoAndroid403\Xamarin.Android.Support.v7.Palette.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Android.Support.v8.RenderScript">
+      <HintPath>..\packages\Xamarin.Android.Support.v8.RenderScript.23.0.1.3\lib\MonoAndroid403\Xamarin.Android.Support.v8.RenderScript.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAzure.Mobile">
+      <HintPath>..\Components\azure-mobile-services-1.3.1\lib\android\Microsoft.WindowsAzure.Mobile.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAzure.Mobile.Ext">
+      <HintPath>..\Components\azure-mobile-services-1.3.1\lib\android\Microsoft.WindowsAzure.Mobile.Ext.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Android.Support.Design">
+      <HintPath>..\packages\Xamarin.Android.Support.Design.23.0.1.3\lib\MonoAndroid403\Xamarin.Android.Support.Design.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Android.Support.v7.CardView">
+      <HintPath>..\packages\Xamarin.Android.Support.v7.CardView.23.0.1.3\lib\MonoAndroid403\Xamarin.Android.Support.v7.CardView.dll</HintPath>
+    </Reference>
+    <Reference Include="Validation">
+      <HintPath>..\packages\Validation.2.2.8\lib\portable-net45+dnxcore50+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10\Validation.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Android.Support.CustomTabs">
+      <HintPath>..\packages\Xamarin.Android.Support.CustomTabs.23.0.1.3\lib\MonoAndroid403\Xamarin.Android.Support.CustomTabs.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Android.Support.Percent">
+      <HintPath>..\packages\Xamarin.Android.Support.Percent.23.0.1.3\lib\MonoAndroid403\Xamarin.Android.Support.Percent.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Android.Support.v17.Leanback">
+      <HintPath>..\packages\Xamarin.Android.Support.v17.Leanback.23.0.1.3\lib\MonoAndroid42\Xamarin.Android.Support.v17.Leanback.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Android.Support.v17.Preference.Leanback">
+      <HintPath>..\packages\Xamarin.Android.Support.v17.Preference.Leanback.23.0.1.3\lib\MonoAndroid42\Xamarin.Android.Support.v17.Preference.Leanback.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Android.Support.v7.GridLayout">
+      <HintPath>..\packages\Xamarin.Android.Support.v7.GridLayout.23.0.1.3\lib\MonoAndroid403\Xamarin.Android.Support.v7.GridLayout.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Facebook">
+      <HintPath>..\packages\Xamarin.Facebook.Android.4.7.0.1\lib\MonoAndroid403\Xamarin.Facebook.dll</HintPath>
+    </Reference>
+    <Reference Include="AWSSDK.S3">
+      <HintPath>..\packages\AWSSDK.S3.3.1.3.5\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid10+xamarinios10+MonoTouch10\AWSSDK.S3.dll</HintPath>
+    </Reference>
+    <Reference Include="AWSSDK.Core">
+      <HintPath>..\packages\AWSSDK.Core.3.1.3.5\lib\monoandroid\AWSSDK.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="PCLCrypto">
+      <HintPath>..\packages\PCLCrypto.1.0.86\lib\monoandroid\PCLCrypto.dll</HintPath>
+    </Reference>
+    <Reference Include="Toasts.Forms.Plugin.Abstractions">
+      <HintPath>..\packages\Toasts.Forms.Plugin.1.0.6.18\lib\MonoAndroid10\Toasts.Forms.Plugin.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Toasts.Forms.Plugin.Droid">
+      <HintPath>..\packages\Toasts.Forms.Plugin.1.0.6.18\lib\MonoAndroid10\Toasts.Forms.Plugin.Droid.dll</HintPath>
+    </Reference>
+    <Reference Include="Xam.Plugin.MapExtend.Abstractions">
+      <HintPath>..\packages\Xam.Plugin.MapExtend.1.2.0.0\lib\MonoAndroid10\Xam.Plugin.MapExtend.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Xam.Plugin.MapExtend.Android">
+      <HintPath>..\packages\Xam.Plugin.MapExtend.1.2.0.0\lib\MonoAndroid10\Xam.Plugin.MapExtend.Android.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.GooglePlayServices.Base">
+      <HintPath>..\packages\Xamarin.GooglePlayServices.Base.25.0.0.0\lib\MonoAndroid41\Xamarin.GooglePlayServices.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.GooglePlayServices.Maps">
+      <HintPath>..\packages\Xamarin.GooglePlayServices.Maps.25.0.0.0\lib\MonoAndroid41\Xamarin.GooglePlayServices.Maps.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Android.Support.v7.MediaRouter">
+      <HintPath>..\packages\Xamarin.Android.Support.v7.MediaRouter.23.0.1.1\lib\MonoAndroid403\Xamarin.Android.Support.v7.MediaRouter.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Forms.Platform.Android">
+      <HintPath>..\packages\Xamarin.Forms.1.5.1.6471\lib\MonoAndroid10\Xamarin.Forms.Platform.Android.dll</HintPath>
+    </Reference>
+    <Reference Include="FormsViewGroup">
+      <HintPath>..\packages\Xamarin.Forms.1.5.1.6471\lib\MonoAndroid10\FormsViewGroup.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Forms.Core">
+      <HintPath>..\packages\Xamarin.Forms.1.5.1.6471\lib\MonoAndroid10\Xamarin.Forms.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Forms.Xaml">
+      <HintPath>..\packages\Xamarin.Forms.1.5.1.6471\lib\MonoAndroid10\Xamarin.Forms.Xaml.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Forms.Platform">
+      <HintPath>..\packages\Xamarin.Forms.1.5.1.6471\lib\MonoAndroid10\Xamarin.Forms.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Forms.Maps.Android">
+      <HintPath>..\packages\Xamarin.Forms.Maps.1.5.1.6471\lib\MonoAndroid10\Xamarin.Forms.Maps.Android.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Forms.Maps">
+      <HintPath>..\packages\Xamarin.Forms.Maps.1.5.1.6471\lib\MonoAndroid10\Xamarin.Forms.Maps.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AndroidActivityResultRequestCode.cs" />
+    <Compile Include="AndroidSensusServiceHelper.cs" />
+    <Compile Include="AndroidSensusServiceBootStarter.cs" />
+    <Compile Include="AndroidTextToSpeech.cs" />
+    <Compile Include="AndroidExportRendererFix.cs" />
+    <Compile Include="AndroidMainActivity.cs" />
+    <Compile Include="Probes\Context\AndroidBluetoothBroadcastReceiver.cs" />
+    <Compile Include="Probes\Communication\AndroidTelephonyOutgoingBroadcastReceiver.cs" />
+    <Compile Include="Probes\Communication\AndroidTelephonyIdleIncomingListener.cs" />
+    <Compile Include="Probes\Communication\AndroidSmsIncomingBroadcastReceiver.cs" />
+    <Compile Include="Probes\Communication\AndroidSmsOutgoingObserver.cs" />
+    <Compile Include="Probes\Communication\AndroidSmsProbe.cs" />
+    <Compile Include="Probes\Communication\AndroidTelephonyProbe.cs" />
+    <Compile Include="Probes\Context\AndroidBluetoothDeviceProximityProbe.cs" />
+    <Compile Include="Probes\Context\AndroidLightProbe.cs" />
+    <Compile Include="Probes\Context\AndroidSoundProbe.cs" />
+    <Compile Include="Probes\Device\AndroidBatteryProbe.cs" />
+    <Compile Include="Probes\Device\AndroidScreenProbe.cs" />
+    <Compile Include="Probes\Location\AndroidAltitudeProbe.cs" />
+    <Compile Include="Probes\Movement\AndroidAccelerometerProbe.cs" />
+    <Compile Include="Probes\Network\AndroidCellTowerChangeListener.cs" />
+    <Compile Include="Probes\Network\AndroidCellTowerProbe.cs" />
+    <Compile Include="Probes\Location\AndroidCompassProbe.cs" />
+    <Compile Include="Probes\AndroidSensorListener.cs" />
+    <Compile Include="Probes\Network\AndroidWlanBroadcastReceiver.cs" />
+    <Compile Include="Probes\Network\AndroidWlanProbe.cs" />
+    <Compile Include="Resources\Resource.Designer.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="AndroidSensusService.cs" />
+    <Compile Include="AndroidSensusServiceBinder.cs" />
+    <Compile Include="AndroidSensusServiceConnection.cs" />
+    <Compile Include="AndroidServiceConnectedEventArgs.cs" />
+    <Compile Include="Probes\Apps\AndroidFacebookProbe.cs" />
+    <Compile Include="Probes\Context\AndroidAmbientTemperatureProbe.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="AndroidClassDiagram.cd" />
+    <None Include="Resources\AboutResources.txt" />
+    <None Include="Sensus.licenseheader" />
+    <None Include="Properties\AndroidManifest.xml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\xml\filepaths.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\drawable-hdpi\ic_launcher.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\ic_launcher.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_launcher.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_launcher.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_launcher.png" />
+    <None Include="Resources\app-store\Sensus-feature-graphic.png" />
+    <None Include="Resources\app-store\launcher_ic_hi_res_512.png" />
+    <None Include="Resources\app-store\screenshot_main_page.png" />
+    <None Include="Resources\app-store\screenshot_probes_page.png" />
+    <AndroidResource Include="Resources\values\strings.xml" />
+  </ItemGroup>
+  <Import Project="..\SensusService\SensusService.projitems" Label="Shared" Condition="Exists('..\SensusService\SensusService.projitems')" />
+  <Import Project="..\SensusUI\SensusUI.projitems" Label="Shared" Condition="Exists('..\SensusUI\SensusUI.projitems')" />
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
+  <Target Name="EnsureBclBuildImported" BeforeTargets="BeforeBuild" Condition="'$(BclBuildImported)' == ''">
+    <Error Condition="!Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=317567." HelpKeyword="BCLBUILD2001" />
+    <Error Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://go.microsoft.com/fwlink/?LinkID=317568." HelpKeyword="BCLBUILD2002" />
+  </Target>
+  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
+  <Import Project="..\packages\Xamarin.Insights.1.11.1\build\MonoAndroid10\Xamarin.Insights.targets" Condition="Exists('..\packages\Xamarin.Insights.1.11.1\build\MonoAndroid10\Xamarin.Insights.targets')" />
+  <Import Project="..\packages\xamstore-xamandroidsupportv13-18.19.1.0\build\monoandroid\xamstore-xamandroidsupportv13-18.props" Condition="Exists('..\packages\xamstore-xamandroidsupportv13-18.19.1.0\build\monoandroid\xamstore-xamandroidsupportv13-18.props')" />
+  <Import Project="..\packages\Xamarin.Forms.1.5.1.6471\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.1.5.1.6471\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+     Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ItemGroup>
+    <XamarinComponentReference Include="xamarin.mobile">
+      <Version>0.7.5</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
+    <XamarinComponentReference Include="facebookandroid">
+      <Version>4.4.0.0</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
+    <XamarinComponentReference Include="xamandroidsupportv7appcompat">
+      <Version>22.2.0.0</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
+    <XamarinComponentReference Include="aws-s3-sdk">
+      <Version>3.1.0.0</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
+    <XamarinComponentReference Include="aws-cognitoidentity-sdk">
+      <Version>3.1.0.0</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
+    <XamarinComponentReference Include="azure-mobile-services">
+      <Version>1.3.1</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <AndroidResource Include="..\SensusUI\Icons\minus.png">
+      <Link>Resources\drawable\minus.png</Link>
+    </AndroidResource>
+    <AndroidResource Include="..\SensusUI\Icons\pencil.png">
+      <Link>Resources\drawable\pencil.png</Link>
+    </AndroidResource>
+    <AndroidResource Include="..\SensusUI\Icons\plus.png">
+      <Link>Resources\drawable\plus.png</Link>
+    </AndroidResource>
+    <AndroidResource Include="..\SensusUI\Icons\share.png">
+      <Link>Resources\drawable\share.png</Link>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Assets\" />
+  </ItemGroup>
+</Project>

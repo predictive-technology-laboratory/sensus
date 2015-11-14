@@ -21,7 +21,7 @@ namespace SensusService.Probes.Location
     {
         private EventHandler<PositionEventArgs> _positionChangedHandler;
 
-        protected override string DefaultDisplayName
+        public sealed override string DisplayName
         {
             get { return "Location"; }
         }

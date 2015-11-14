@@ -58,7 +58,7 @@ namespace SensusUI
 
             Button editTriggersButton = new Button
             {
-                Text = "Edit Triggers",
+                Text = "Edit Probe Triggers",
                 FontSize = 20,
                 HorizontalOptions = LayoutOptions.FillAndExpand
             };
@@ -69,6 +69,20 @@ namespace SensusUI
             };
 
             contentLayout.Children.Add(editTriggersButton);
+
+            Button editTimeTriggersButton = new Button
+                {
+                    Text = "Edit Time Triggers",
+                    FontSize = 20,
+                    HorizontalOptions = LayoutOptions.FillAndExpand
+                };
+
+            editTimeTriggersButton.Clicked += async (o, e) =>
+                {
+                    await Navigation.PushAsync(new ScriptTimeTriggersPage(scriptRunner));
+                };
+
+            contentLayout.Children.Add(editTimeTriggersButton);
 
             Content = new ScrollView
             { 

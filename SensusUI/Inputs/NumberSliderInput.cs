@@ -112,6 +112,7 @@ namespace SensusUI.Inputs
                     {
                         Orientation = StackOrientation.Vertical,
                         VerticalOptions = LayoutOptions.Start,
+                        Padding = new Thickness (10, 10, 10, 10),
                         Children =
                         { 
                             Label,

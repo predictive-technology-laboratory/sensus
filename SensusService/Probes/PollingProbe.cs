@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace SensusService.Probes
 {
@@ -25,6 +26,7 @@ namespace SensusService.Probes
         private int _pollingSleepDurationMS;
         private bool _isPolling;
         private string _pollCallbackId;
+        private List<DateTime> _pollTimes;
 
         private readonly object _locker = new object();
 
@@ -50,11 +52,28 @@ namespace SensusService.Probes
         [JsonIgnore]
         public abstract int DefaultPollingSleepDurationMS { get; }
 
+        protected override float RawParticipation
+        {
+            get
+            {
+                int oneDayMS = (int)new TimeSpan(1, 0, 0, 0).TotalMilliseconds;
+                float pollsPerDay = oneDayMS / (float)_pollingSleepDurationMS;
+                float fullParticipationPolls = pollsPerDay * Protocol.ParticipationHorizonDays;
+                return _pollTimes.Count(pollTime => pollTime >= Protocol.ParticipationHorizon) / fullParticipationPolls;
+            }
+        }
+
+        public List<DateTime> PollTimes
+        {
+            get { return _pollTimes; }
+        }
+
         protected PollingProbe()
         {
             _pollingSleepDurationMS = DefaultPollingSleepDurationMS;
             _isPolling = false;
             _pollCallbackId = null;
+            _pollTimes = new List<DateTime>();
         }
 
         /// <summary>
@@ -87,6 +106,8 @@ namespace SensusService.Probes
                             {
                                 SensusServiceHelper.Get().Logger.Log("Polling.", LoggingLevel.Normal, GetType());
                                 data = Poll(cancellationToken);
+                                _pollTimes.Add(DateTime.Now);
+                                _pollTimes.RemoveAll(pollTime => pollTime < Protocol.ParticipationHorizon);
                             }
                             catch (Exception ex)
                             {
@@ -135,11 +156,23 @@ namespace SensusService.Probes
             if (Running)
             {
                 double msElapsedSincePreviousStore = (DateTimeOffset.UtcNow - MostRecentStoreTimestamp).TotalMilliseconds;
-                if (!_isPolling && msElapsedSincePreviousStore > (_pollingSleepDurationMS + 5000))  // system timer callbacks aren't always fired exactly as scheduled, resulting in health tests that identify warning conditions for delayed polling. allow a small fudge factor to ignore these warnings.
+                int allowedLagMS = 5000;
+                if (!_isPolling &&
+                    _pollingSleepDurationMS <= int.MaxValue - allowedLagMS && // some probes (iOS HealthKit) have polling delays set to int.MaxValue. if we add to this (as we're about to do in the next check), we'll wrap around to 0 resulting in incorrect statuses. only do the check if we won't wrap around.
+                    msElapsedSincePreviousStore > (_pollingSleepDurationMS + allowedLagMS))  // system timer callbacks aren't always fired exactly as scheduled, resulting in health tests that identify warning conditions for delayed polling. allow a small fudge factor to ignore these warnings.
                     warning += "Probe \"" + GetType().FullName + "\" has not stored data in " + msElapsedSincePreviousStore + "ms (polling delay = " + _pollingSleepDurationMS + "ms)." + Environment.NewLine;
             }
 
             return restart;
+        }
+
+        public override void ResetForSharing()
+        {
+            base.ResetForSharing();
+
+            _isPolling = false;
+            _pollCallbackId = null;
+            _pollTimes.Clear();
         }
     }
 }

@@ -87,6 +87,7 @@ namespace Sensus.iOS.Probes.Apps
 
                 ManualResetEvent startWait = new ManualResetEvent(false);
                 List<ManualResetEvent> responseWaits = new List<ManualResetEvent>();
+                Exception exception = null;  // can't throw exception from within the UI thread -- it will crash the app. use this variable to check whether an exception did occur.
 
                 Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
                     {
@@ -179,7 +180,7 @@ namespace Sensus.iOS.Probes.Apps
                             #endregion
 
                             if (responseWaits.Count == 0)
-                                SensusServiceHelper.Get().Logger.Log("Request connection contained zero requests.", LoggingLevel.Normal, GetType());
+                                exception = new Exception("Request connection contained zero requests.");
                             else
                             {
                                 SensusServiceHelper.Get().Logger.Log("Starting request connection with " + responseWaits.Count + " requests.", LoggingLevel.Normal, GetType());                    
@@ -190,7 +191,7 @@ namespace Sensus.iOS.Probes.Apps
                         }
                         catch (Exception ex)
                         {
-                            SensusServiceHelper.Get().Logger.Log("Error starting request connection:  " + ex.Message, LoggingLevel.Normal, GetType());
+                            exception = new Exception("Error starting request connection:  " + ex.Message);
                         }
                     });
 
@@ -199,13 +200,17 @@ namespace Sensus.iOS.Probes.Apps
                 // wait for all responses to be processed
                 foreach (ManualResetEvent responseWait in responseWaits)
                     responseWait.WaitOne();
+
+                // if any exception occurred when running query, throw it now
+                if (exception != null)
+                    throw exception;
             }
             else
-                SensusServiceHelper.Get().Logger.Log("Attempted to poll Facebook probe without a valid access token.", LoggingLevel.Normal, GetType());
+                throw new Exception("Attempted to poll Facebook probe without a valid access token.");
 
             return data;
         }
-       
+
         public override bool TestHealth(ref string error, ref string warning, ref string misc)
         {
             bool restart = base.TestHealth(ref error, ref warning, ref misc);

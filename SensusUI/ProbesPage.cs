@@ -153,5 +153,13 @@ namespace SensusUI
             _probesList.ItemsSource = null;
             _probesList.ItemsSource = _protocol.Probes;
         }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+
+            foreach (Probe probe in _protocol.Probes)
+                probe.OriginallyEnabled = probe.Enabled;
+        }
     }
 }

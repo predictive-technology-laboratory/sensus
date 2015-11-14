@@ -61,7 +61,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\TriggerValueCondition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Protocol.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Logger.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ProtocolReport.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SensusServiceHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Remote\AmazonS3RemoteDataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\AnonymizedJsonContractResolver.cs" />
@@ -100,6 +99,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\PollingTelephonyProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\AmbientTemperatureDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\ListeningAmbientTemperatureProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\TimeTrigger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\HeightDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\BiologicalSexDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\BirthdateDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\BloodTypeDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\BiologicalSex.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\BloodType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ProtocolReportDatum.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />

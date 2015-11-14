@@ -1,7 +1,7 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" package="edu.virginia.sie.ptl.sensus" android:versionName="4.3.2" android:versionCode="35">
-	<uses-sdk android:minSdkVersion="16" android:targetSdkVersion="21" />
-	<application android:label="Sensus" android:icon="@drawable/ic_launcher">
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" android:versionName="0.0.0-prerelease" android:versionCode="1" package="SALMON.Android">
+	<uses-sdk android:minSdkVersion="16" android:targetSdkVersion="22" />
+	<application android:icon="@drawable/ic_launcher" android:label="SALMON UVa">
 		<provider android:name="android.support.v4.content.FileProvider" android:authorities="edu.virginia.sie.ptl.sensus.fileprovider" android:grantUriPermissions="true" android:exported="false">
 			<meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/filepaths" />
 		</provider>
@@ -34,5 +34,6 @@
 	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 	<uses-permission android:name="android.permission.WAKE_LOCK" />
 	<uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+	<uses-permission android:name="android.permission.ACCESS_ALL_DOWNLOADS" />
 	<uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
 </manifest>

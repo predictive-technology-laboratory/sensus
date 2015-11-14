@@ -26,6 +26,7 @@ namespace SensusUI.Inputs
     {
         private string _id;
         private string _name;
+        private bool _complete;
         private ObservableCollection<Input> _inputs;
         private bool _geotag;
 
@@ -75,7 +76,8 @@ namespace SensusUI.Inputs
         [JsonIgnore]
         public bool Complete
         {
-            get { return _inputs.Count == 0 || _inputs.All(i => i == null || i.Complete); }
+            get { return _inputs.Count == 0 || _inputs.All(input => input == null || input.Complete); }
+            set { _complete = value; }
         }
 
         /// <summary>

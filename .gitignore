@@ -10,3 +10,6 @@ Components
 *~
 androidpublisher.dat
 client_secrets.json
+Sensus.Android/Assets/UnitTestingProtocol.sensus
+Sensus.iOS/Resources/UnitTestingProtocol.sensus
+.DS_Store

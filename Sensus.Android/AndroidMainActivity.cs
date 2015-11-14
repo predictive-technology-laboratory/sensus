@@ -14,6 +14,7 @@
 
 using Android.App;
 using Android.Content;
+using Android.Content.Res;
 using Android.Content.PM;
 using Android.OS;
 using SensusService;
@@ -87,7 +88,15 @@ namespace Sensus.Android
 
             Forms.Init(this, savedInstanceState);
             FormsMaps.Init(this, savedInstanceState);
-            MapExtendRenderer.Init(this, savedInstanceState);
+     //       MapExtendRenderer.Init(this, savedInstanceState);
+
+            #if UNIT_TESTING
+            Forms.ViewInitialized += (sender, e) =>
+            {
+                if (!string.IsNullOrWhiteSpace(e.View.StyleId))
+                    e.NativeView.ContentDescription = e.View.StyleId;
+            };
+            #endif
 
             _app = new App();
             LoadApplication(_app);
@@ -112,7 +121,16 @@ namespace Sensus.Android
                 e.Binder.SensusServiceHelper.SetMainActivity(this);
 
                 // display service helper properties on the main page
-                _app.SensusMainPage.DisplayServiceHelper(e.Binder.SensusServiceHelper);                                     
+                _app.SensusMainPage.DisplayServiceHelper(e.Binder.SensusServiceHelper);
+
+                // if we're unit testing, try to load and run the unit testing protocol from the embedded assets
+                #if UNIT_TESTING
+                using (Stream protocolFile = Assets.Open("UnitTestingProtocol.sensus"))
+                {
+                    Protocol.RunUnitTestingProtocol(protocolFile);
+                    protocolFile.Close();
+                }
+                #endif
             };
 
             _serviceConnection.ServiceDisconnected += (o, e) =>
@@ -158,17 +176,17 @@ namespace Sensus.Android
                     if (intent.Data != null)
                     {
                         global::Android.Net.Uri dataURI = intent.Data;
-
                         try
                         {
                             if (intent.Scheme == "http" || intent.Scheme == "https")
-                                Protocol.DisplayFromWebUriAsync(new Uri(dataURI.ToString()));
+                                Protocol.DeserializeAsync(new Uri(dataURI.ToString()), true, Protocol.DisplayAndStartAsync);
                             else if (intent.Scheme == "content" || intent.Scheme == "file")
                             {
                                 byte[] bytes = null;
 
                                 try
                                 {
+                                    GrantUriPermission("edu.virginia.sie.ptl.sensus", dataURI, ActivityFlags.GrantReadUriPermission);
                                     MemoryStream memoryStream = new MemoryStream();
                                     Stream inputStream = ContentResolver.OpenInputStream(dataURI);
                                     inputStream.CopyTo(memoryStream);
@@ -181,7 +199,7 @@ namespace Sensus.Android
                                 }
 
                                 if (bytes != null)
-                                    Protocol.DisplayFromBytesAsync(bytes);
+                                    Protocol.DeserializeAsync(bytes, true, Protocol.DisplayAndStartAsync);
                             }
                             else
                                 SensusServiceHelper.Get().Logger.Log("Sensus didn't know what to do with URI \"" + dataURI + "\".", LoggingLevel.Normal, GetType());

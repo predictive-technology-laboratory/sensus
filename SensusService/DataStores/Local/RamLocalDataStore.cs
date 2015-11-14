@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using System.Threading;
+using SensusUI.UiProperties;
 
 namespace SensusService.DataStores.Local
 {
@@ -26,7 +27,7 @@ namespace SensusService.DataStores.Local
 
         private readonly object _locker = new object();
 
-        protected override string DisplayName
+        public override string DisplayName
         {
             get { return "RAM"; }
         }
@@ -45,11 +46,16 @@ namespace SensusService.DataStores.Local
             }
         }
 
+        public RamLocalDataStore()
+        {
+            _data = new HashSet<Datum>();
+        }
+
         public override void Start()
         {
             lock (_locker)
             {
-                _data = new HashSet<Datum>();
+                _data.Clear();
 
                 base.Start();
             }
@@ -118,6 +124,13 @@ namespace SensusService.DataStores.Local
             if (_data != null)
                 lock (_data)
                     _data.Clear();
+        }
+
+        public override void ClearForSharing()
+        {
+            base.ClearForSharing();
+
+            _data.Clear();
         }
 
         public override void Stop()

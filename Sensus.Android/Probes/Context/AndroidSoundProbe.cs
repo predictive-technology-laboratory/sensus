@@ -43,11 +43,6 @@ namespace Sensus.Android.Probes.Context
 
                 return new Datum[] { new SoundDatum(DateTimeOffset.UtcNow, 20 * Math.Log10(recorder.MaxAmplitude)) };  // http://www.mathworks.com/help/signal/ref/mag2db.html
             }
-            catch (Exception)
-            {
-                // exception might be thrown if we're doing voice recognition concurrently
-                return new Datum[] { };
-            }
             finally
             {
                 if (recorder != null)

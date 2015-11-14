@@ -68,11 +68,12 @@ namespace SensusUI.Inputs
                         _picker.Items.Add(item);
 
                     _picker.SelectedIndexChanged += (o, e) => Complete = Value != null;
-
+                    
                     base.View = new StackLayout
                     {
-                        Orientation = StackOrientation.Horizontal,
-                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        Orientation = StackOrientation.Vertical,
+                        VerticalOptions = LayoutOptions.Fill,
+                        Padding = new Thickness (10, 10, 10, 10),
                         Children = { Label, _picker }
                     };
                 }
@@ -130,7 +131,7 @@ namespace SensusUI.Inputs
         {
             _tipText = tipText;
             _items = items;   
-        }           
+        }
 
         public override string ToString()
         {

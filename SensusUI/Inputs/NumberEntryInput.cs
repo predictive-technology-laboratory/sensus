@@ -14,6 +14,7 @@
 
 using System;
 using Xamarin.Forms;
+using SensusUI.UiProperties;
 
 namespace SensusUI.Inputs
 {
@@ -91,6 +92,6 @@ namespace SensusUI.Inputs
         public NumberEntryInput(string name, string labelText)
             : base(name, labelText)
         {            
-        }           
+        }
     }
 }
