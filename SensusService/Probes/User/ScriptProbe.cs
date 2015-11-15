@@ -67,6 +67,9 @@ namespace SensusService.Probes.User
 
                     if (scriptRunner.RunOnStart)
                         collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + scriptRunner.Name + ":  Once when the study is started.");
+
+                    if (scriptRunner.RandomTriggerWindows != "")
+                        collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + scriptRunner.Name + ":  Randomly during hours " + scriptRunner.RandomTriggerWindows);
                 }
 
                 return collectionDescription.ToString();

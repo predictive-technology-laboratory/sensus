@@ -126,6 +126,7 @@
     <CodesignProvision>Automatic:AppStore</CodesignProvision>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>1701</NoWarn>
+    <DefineConstants>RELEASE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'LocalUnitTesting|iPhone' ">
     <DebugSymbols>true</DebugSymbols>
