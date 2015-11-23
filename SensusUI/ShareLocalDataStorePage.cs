@@ -79,7 +79,7 @@ namespace SensusUI
                                       
             new Thread(() =>
                 {                    
-                    string sharePath = UiBoundSensusServiceHelper.Get(true).GetSharePath(".json");
+                    string sharePath = SensusServiceHelper.Get().GetSharePath(".json");
                     bool errorWritingShareFile = false;
                     try
                     {     
@@ -127,8 +127,8 @@ namespace SensusUI
                     {
                         errorWritingShareFile = true;
                         string message = "Error writing share file:  " + ex.Message;
-                        UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync(message);
-                        UiBoundSensusServiceHelper.Get(true).Logger.Log(message, LoggingLevel.Normal, GetType());
+                        SensusServiceHelper.Get().FlashNotificationAsync(message);
+                        SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
                     }
 
                     if (_cancellationTokenSource.IsCancellationRequested || errorWritingShareFile)
@@ -151,7 +151,7 @@ namespace SensusUI
                         Device.BeginInvokeOnMainThread(async () => 
                             {
                                 await Navigation.PopAsync();
-                                UiBoundSensusServiceHelper.Get(true).ShareFileAsync(sharePath, "Sensus Data");
+                                SensusServiceHelper.Get().ShareFileAsync(sharePath, "Sensus Data");
                             });
                     }
 

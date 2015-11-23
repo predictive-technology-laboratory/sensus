@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using Xamarin.Forms;
+using SensusService;
 
 namespace SensusUI
 {
@@ -52,7 +53,7 @@ namespace SensusUI
                     string path = null;
                     try
                     {
-                        path = UiBoundSensusServiceHelper.Get(true).GetSharePath(".txt");
+                        path = SensusServiceHelper.Get().GetSharePath(".txt");
                         using (StreamWriter file = new StreamWriter(path))
                         {
                             foreach (string line in lines)
@@ -63,12 +64,12 @@ namespace SensusUI
                     }
                     catch (Exception ex)
                     {
-                        UiBoundSensusServiceHelper.Get(true).Logger.Log("Failed to write lines to temp file for sharing:  " + ex.Message, SensusService.LoggingLevel.Normal, GetType());
+                        SensusServiceHelper.Get().Logger.Log("Failed to write lines to temp file for sharing:  " + ex.Message, SensusService.LoggingLevel.Normal, GetType());
                         path = null;
                     }
 
                     if (path != null)
-                        UiBoundSensusServiceHelper.Get(true).ShareFileAsync(path, title + ":  " + Path.GetFileName(path));
+                        SensusServiceHelper.Get().ShareFileAsync(path, title + ":  " + Path.GetFileName(path));
                 };
 
             Button clearButton = new Button

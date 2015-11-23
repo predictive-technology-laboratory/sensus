@@ -35,7 +35,7 @@ namespace SensusUI
                 successAction();
             else
             {
-                UiBoundSensusServiceHelper.Get(true).PromptForInputAsync(
+                SensusServiceHelper.Get().PromptForInputAsync(
                     "Authenticate \"" + protocol.Name + "\"", 
                     new TextInput("Protocol Password:", Keyboard.Text),
                     null,
@@ -52,11 +52,11 @@ namespace SensusUI
                         {
                             string password = input.Value as string;
 
-                            if (password != null && UiBoundSensusServiceHelper.Get(true).GetHash(password) == protocol.LockPasswordHash)
+                            if (password != null && SensusServiceHelper.Get().GetHash(password) == protocol.LockPasswordHash)
                                 successAction();
                             else
                             {
-                                UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("The password you entered was not correct.");
+                                SensusServiceHelper.Get().FlashNotificationAsync("The password you entered was not correct.");
 
                                 if (failAction != null)
                                     failAction();
@@ -89,7 +89,7 @@ namespace SensusUI
 
                 actions.Add("Share");
 
-                List<Protocol> groupableProtocols = UiBoundSensusServiceHelper.Get(true).RegisteredProtocols.Where(registeredProtocol => registeredProtocol != selectedProtocol && registeredProtocol.Groupable && registeredProtocol.GroupedProtocols.Count == 0).ToList();
+                List<Protocol> groupableProtocols = SensusServiceHelper.Get().RegisteredProtocols.Where(registeredProtocol => registeredProtocol != selectedProtocol && registeredProtocol.Groupable && registeredProtocol.GroupedProtocols.Count == 0).ToList();
                 if (selectedProtocol.Groupable)
                 {
                     if (selectedProtocol.GroupedProtocols.Count == 0 && groupableProtocols.Count > 0)
@@ -120,10 +120,10 @@ namespace SensusUI
                             }));
                 }
                 else if (selectedAction == "Copy")
-                    selectedProtocol.CopyAsync(selectedProtocolCopy => UiBoundSensusServiceHelper.Get(true).RegisterProtocol(selectedProtocolCopy), true);
+                    selectedProtocol.CopyAsync(selectedProtocolCopy => SensusServiceHelper.Get().RegisterProtocol(selectedProtocolCopy), true);
                 else if (selectedAction == "Status")
                 {
-                    if (UiBoundSensusServiceHelper.Get(true).ProtocolShouldBeRunning(selectedProtocol))
+                    if (SensusServiceHelper.Get().ProtocolShouldBeRunning(selectedProtocol))
                     {
                         selectedProtocol.TestHealthAsync(true, () =>
                             {
@@ -149,9 +149,9 @@ namespace SensusUI
                                     selectedProtocolCopy.ResetForSharing();
 
                                     // write protocol to file and share
-                                    string sharePath = UiBoundSensusServiceHelper.Get(true).GetSharePath(".sensus");
+                                    string sharePath = SensusServiceHelper.Get().GetSharePath(".sensus");
                                     selectedProtocolCopy.Save(sharePath);
-                                    UiBoundSensusServiceHelper.Get(true).ShareFileAsync(sharePath, "Sensus Protocol:  " + selectedProtocolCopy.Name);
+                                    SensusServiceHelper.Get().ShareFileAsync(sharePath, "Sensus Protocol:  " + selectedProtocolCopy.Name);
                                 }, false);
                         });
 
@@ -195,7 +195,7 @@ namespace SensusUI
             _protocolsList.ItemsSource = null;
 
             // don't wait for service helper -- it might get disconnected before we get the OnDisappearing event that calls Bind
-            SensusServiceHelper serviceHelper = UiBoundSensusServiceHelper.Get(false);
+            SensusServiceHelper serviceHelper = SensusServiceHelper.Get();
             if (serviceHelper != null)
                 _protocolsList.ItemsSource = serviceHelper.RegisteredProtocols;
         }

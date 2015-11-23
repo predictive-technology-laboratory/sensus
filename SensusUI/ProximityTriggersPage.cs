@@ -16,6 +16,7 @@ using System;
 using Xamarin.Forms;
 using SensusService.Probes.Location;
 using System.Linq;
+using SensusService;
 
 namespace SensusUI
 {
@@ -51,7 +52,7 @@ namespace SensusUI
                     {
                         proximityProbe.Triggers.Remove(selectedTrigger);
                         triggerList.SelectedItem = null;  // reset manually since it isn't done automatically
-                        UiBoundSensusServiceHelper.Get(true).SaveAsync();
+                        SensusServiceHelper.Get().SaveAsync();
                     }
                 }                        
             };
@@ -60,10 +61,10 @@ namespace SensusUI
 
             ToolbarItems.Add(new ToolbarItem(null, "plus.png", async () =>
                     {
-                        if (UiBoundSensusServiceHelper.Get(true).PointsOfInterest.Union(proximityProbe.Protocol.PointsOfInterest).Count() > 0)
+                        if (SensusServiceHelper.Get().PointsOfInterest.Union(proximityProbe.Protocol.PointsOfInterest).Count() > 0)
                             await Navigation.PushAsync(new AddProximityTriggerPage(proximityProbe));
                         else
-                            UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("You must define points of interest before adding triggers.");
+                            SensusServiceHelper.Get().FlashNotificationAsync("You must define points of interest before adding triggers.");
                     }));
         }
     }

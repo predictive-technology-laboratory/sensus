@@ -75,7 +75,7 @@ namespace SensusUI
             ToolbarItems.Add(new ToolbarItem("OK", null, async () =>
                     {
                         if (selectedProtocols.Count == 0)
-                            UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("No protocols grouped.");
+                            SensusServiceHelper.Get().FlashNotificationAsync("No protocols grouped.");
                         else
                             protocol.GroupedProtocols.AddRange(selectedProtocols);
 

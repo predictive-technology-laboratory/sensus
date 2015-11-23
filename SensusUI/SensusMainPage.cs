@@ -30,8 +30,6 @@ namespace SensusUI
     /// </summary>
     public class SensusMainPage : ContentPage
     {
-        private List<StackLayout> _serviceHelperStacks;
-
         public SensusMainPage()
         {
             Title = "Sensus";
@@ -41,6 +39,8 @@ namespace SensusUI
                 Orientation = StackOrientation.Vertical,
                 VerticalOptions = LayoutOptions.FillAndExpand
             };
+
+            #region protocols
 
             Button viewProtocolsButton = new Button
             {
@@ -54,6 +54,8 @@ namespace SensusUI
             };
 
             contentLayout.Children.Add(viewProtocolsButton);
+
+            #endregion
 
             #region show participation
 
@@ -69,11 +71,11 @@ namespace SensusUI
 
                 if (selectedProtocol == null)
                     return;
-                
+
                 CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
                 // pop up wait screen while we submit the participation reward datum
-                UiBoundSensusServiceHelper.Get(true).PromptForInputsAsync(
+                SensusServiceHelper.Get().PromptForInputsAsync(
                     null,
                     false,
                     DateTime.MinValue,
@@ -95,7 +97,7 @@ namespace SensusUI
                                 bool commitFailed = selectedProtocol.RemoteDataStore.HasNonProbeDatumToCommit(participationRewardDatum.Id);
 
                                 if (commitFailed)
-                                    UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Failed to submit participation information to remote server. You will not be able to verify your participation at this time.");
+                                    SensusServiceHelper.Get().FlashNotificationAsync("Failed to submit participation information to remote server. You will not be able to verify your participation at this time.");
 
                                 // cancel the token to close the input above, but only if the token hasn't already been canceled.
                                 if (!cancellationTokenSource.IsCancellationRequested)
@@ -117,7 +119,7 @@ namespace SensusUI
                             cancellationTokenSource.Cancel();
                     });                                
             };
-            
+
             contentLayout.Children.Add(showParticipationButton);
 
             #endregion
@@ -141,10 +143,15 @@ namespace SensusUI
 
                 try
                 {
-                    ZXing.Mobile.MobileBarcodeScanner scanner = UiBoundSensusServiceHelper.Get(true).BarcodeScanner;
+                    ZXing.Mobile.MobileBarcodeScanner scanner = SensusServiceHelper.Get().BarcodeScanner;
+
+                    if (scanner == null)
+                        throw new Exception("Barcode scanner not present.");
+                        
                     scanner.TopText = "Position a Sensus participation barcode in the window below, with the red line across the middle of the barcode.";
+                    scanner.BottomText = "Sensus is not recording any of these images. Sensus is only trying to find a barcode.";
                     scanner.CameraUnsupportedMessage = "There is not a supported camera on this phone. Cannot scan barcode.";
-                            
+
                     barcodeResult = await scanner.Scan(new ZXing.Mobile.MobileBarcodeScanningOptions
                         {
                             PossibleFormats = new BarcodeFormat[] { BarcodeFormat.QR_CODE }.ToList()
@@ -153,8 +160,8 @@ namespace SensusUI
                 catch (Exception ex)
                 {
                     string message = "Failed to scan barcode:  " + ex.Message;
-                    UiBoundSensusServiceHelper.Get(true).Logger.Log(message, LoggingLevel.Normal, GetType());
-                    UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync(message);
+                    SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Get().FlashNotificationAsync(message);
                 }
 
                 if (barcodeResult != null)
@@ -167,7 +174,7 @@ namespace SensusUI
                             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
                             // pop up wait screen while we get the participation reward datum
-                            UiBoundSensusServiceHelper.Get(true).PromptForInputsAsync(
+                            SensusServiceHelper.Get().PromptForInputsAsync(
                                 null,
                                 false,
                                 DateTime.MinValue,
@@ -187,7 +194,7 @@ namespace SensusUI
                                         // cancel the token to close the input above, but only if the token hasn't already been canceled.
                                         if (!cancellationTokenSource.IsCancellationRequested)
                                             cancellationTokenSource.Cancel();
-                                    
+
                                         // ensure that the participation datum has not expired                                           
                                         if (participationRewardDatum.Timestamp > DateTimeOffset.UtcNow.AddSeconds(-SensusServiceHelper.PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS))
                                         {
@@ -197,11 +204,11 @@ namespace SensusUI
                                                 });
                                         }
                                         else
-                                            UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Participation barcode has expired. The participant needs to regenerate the barcode.");
+                                            SensusServiceHelper.Get().FlashNotificationAsync("Participation barcode has expired. The participant needs to regenerate the barcode.");
                                     }
                                     catch (Exception)
                                     {
-                                        UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Failed to retrieve participation information.");
+                                        SensusServiceHelper.Get().FlashNotificationAsync("Failed to retrieve participation information.");
                                     }
                                     finally
                                     {
@@ -219,7 +226,7 @@ namespace SensusUI
                                     if (!cancellationTokenSource.IsCancellationRequested)
                                         cancellationTokenSource.Cancel();
                                 });  
-                                
+
                         }).Start();
                 }
             };
@@ -233,11 +240,11 @@ namespace SensusUI
                         string action = await DisplayActionSheet("Other Actions", "Back", null, "View Log", "View Points of Interest", "Stop Sensus");
 
                         if (action == "View Log")
-                            await Navigation.PushAsync(new ViewTextLinesPage("Log", UiBoundSensusServiceHelper.Get(true).Logger.Read(200, true), () => UiBoundSensusServiceHelper.Get(true).Logger.Clear()));
+                            await Navigation.PushAsync(new ViewTextLinesPage("Log", SensusServiceHelper.Get().Logger.Read(200, true), () => SensusServiceHelper.Get().Logger.Clear()));
                         else if (action == "View Points of Interest")
-                            await Navigation.PushAsync(new PointsOfInterestPage(UiBoundSensusServiceHelper.Get(true).PointsOfInterest, () => UiBoundSensusServiceHelper.Get(true).SaveAsync()));
+                            await Navigation.PushAsync(new PointsOfInterestPage(SensusServiceHelper.Get().PointsOfInterest, () => SensusServiceHelper.Get().SaveAsync()));
                         else if (action == "Stop Sensus" && await DisplayAlert("Stop Sensus?", "Are you sure you want to stop Sensus?", "OK", "Cancel"))
-                            UiBoundSensusServiceHelper.Get(true).StopAsync();
+                            SensusServiceHelper.Get().StopAsync();
                     }));
 
             Content = new ScrollView
@@ -248,19 +255,19 @@ namespace SensusUI
 
         private async Task<Protocol> SelectProtocol(bool requireRunning)
         {
-            if (UiBoundSensusServiceHelper.Get(true).RegisteredProtocols.Count == 0)
+            if (SensusServiceHelper.Get().RegisteredProtocols.Count == 0)
             {
-                UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("You have not yet added any studies to Sensus.");
+                SensusServiceHelper.Get().FlashNotificationAsync("You have not yet added any studies to Sensus.");
                 return null;
             }
             
-            string[] protocolNames = UiBoundSensusServiceHelper.Get(true).RegisteredProtocols.Select((protocol, index) => (index + 1) + ") " + protocol.Name).ToArray();
+            string[] protocolNames = SensusServiceHelper.Get().RegisteredProtocols.Select((protocol, index) => (index + 1) + ") " + protocol.Name).ToArray();
             string cancelButtonName = "Cancel";
             string selectedProtocolName = await DisplayActionSheet("Select Study", cancelButtonName, null, protocolNames);
 
             if (!string.IsNullOrWhiteSpace(selectedProtocolName) && selectedProtocolName != cancelButtonName)
             {
-                Protocol selectedProtocol = UiBoundSensusServiceHelper.Get(true).RegisteredProtocols[int.Parse(selectedProtocolName.Substring(0, selectedProtocolName.IndexOf(")"))) - 1];
+                Protocol selectedProtocol = SensusServiceHelper.Get().RegisteredProtocols[int.Parse(selectedProtocolName.Substring(0, selectedProtocolName.IndexOf(")"))) - 1];
 
                 if (!requireRunning || selectedProtocol.Running)
                     return selectedProtocol;
@@ -269,21 +276,6 @@ namespace SensusUI
             }
 
             return null;
-        }
-
-        public void DisplayServiceHelper(SensusServiceHelper serviceHelper)
-        {
-            _serviceHelperStacks = UiProperty.GetPropertyStacks(serviceHelper);
-
-            foreach (StackLayout serviceStack in _serviceHelperStacks)
-                ((Content as ScrollView).Content as StackLayout).Children.Add(serviceStack);
-        }
-
-        public void RemoveServiceHelper()
-        {
-            if (_serviceHelperStacks != null)
-                foreach (StackLayout serviceStack in _serviceHelperStacks)
-                    ((Content as ScrollView).Content as StackLayout).Children.Remove(serviceStack);
         }
     }
 }

@@ -44,7 +44,7 @@ namespace SensusUI
 
             Title = "Add Trigger";
 
-            List<PointOfInterest> pointsOfInterest = UiBoundSensusServiceHelper.Get(true).PointsOfInterest.Union(_proximityProbe.Protocol.PointsOfInterest).ToList();
+            List<PointOfInterest> pointsOfInterest = SensusServiceHelper.Get().PointsOfInterest.Union(_proximityProbe.Protocol.PointsOfInterest).ToList();
             if (pointsOfInterest.Count == 0)
             {
                 Content = new Label
@@ -116,7 +116,7 @@ namespace SensusUI
                 if (!double.TryParse(distanceThresholdEntry.Text, out _distanceThresholdMeters))
                     _distanceThresholdMeters = -1;
                 else if (_distanceThresholdMeters < GpsReceiver.Get().MinimumDistanceThreshold)
-                    UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Distance threshold must be at least " + GpsReceiver.Get().MinimumDistanceThreshold + ".");
+                    SensusServiceHelper.Get().FlashNotificationAsync("Distance threshold must be at least " + GpsReceiver.Get().MinimumDistanceThreshold + ".");
             };
 
             contentLayout.Children.Add(new StackLayout
@@ -171,14 +171,14 @@ namespace SensusUI
                 try
                 {
                     _proximityProbe.Triggers.Add(new PointOfInterestProximityTrigger(_pointOfInterestName, _pointOfInterestType, _distanceThresholdMeters, _thresholdDirection));
-                    UiBoundSensusServiceHelper.Get(true).SaveAsync();
+                    SensusServiceHelper.Get().SaveAsync();
                     await Navigation.PopAsync();
                 }
                 catch (Exception ex)
                 {
                     string message = "Failed to add trigger:  " + ex.Message;
-                    UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync(message);
-                    UiBoundSensusServiceHelper.Get(true).Logger.Log(message, LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Get().FlashNotificationAsync(message);
+                    SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
                 }
             };
 

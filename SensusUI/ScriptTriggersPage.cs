@@ -15,6 +15,7 @@
 using SensusService.Probes.User;
 using System.Linq;
 using Xamarin.Forms;
+using SensusService;
 
 namespace SensusUI
 {
@@ -61,7 +62,7 @@ namespace SensusUI
                         if (scriptRunner.Probe.Protocol.Probes.Where(p => p != scriptRunner.Probe && p.Enabled).Count() > 0)
                             await Navigation.PushAsync(new AddScriptTriggerPage(scriptRunner));
                         else
-                            UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("You must enable other probes before adding triggers.");
+                            SensusServiceHelper.Get().FlashNotificationAsync("You must enable other probes before adding triggers.");
                     }));
         }
     }

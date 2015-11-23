@@ -20,6 +20,7 @@ using System.Collections.ObjectModel;
 using SensusUI.Inputs;
 using System.Reflection;
 using System.Linq;
+using SensusService;
 
 namespace SensusUI
 {
@@ -97,7 +98,7 @@ namespace SensusUI
                             Input input = inputs[int.Parse(selected.Substring(0, selected.IndexOf(")"))) - 1];
 
                             if (input is VoiceInput && inputGroup.Inputs.Count > 0 || !(input is VoiceInput) && inputGroup.Inputs.Any(i => i is VoiceInput))
-                                UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Voice inputs must reside in groups by themselves.");
+                                SensusServiceHelper.Get().FlashNotificationAsync("Voice inputs must reside in groups by themselves.");
                             else
                             {
                                 inputGroup.Inputs.Add(input);

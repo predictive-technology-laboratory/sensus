@@ -99,7 +99,7 @@ namespace SensusUI
 
                 shareScriptButton.Clicked += (o, e) =>
                 {
-                    string sharePath = UiBoundSensusServiceHelper.Get(true).GetSharePath(".json");
+                    string sharePath = SensusServiceHelper.Get().GetSharePath(".json");
 
                     using (StreamWriter shareFile = new StreamWriter(sharePath))
                     {
@@ -107,7 +107,7 @@ namespace SensusUI
                         shareFile.Close();
                     }
 
-                    UiBoundSensusServiceHelper.Get(true).ShareFileAsync(sharePath, "Probe Definition");
+                    SensusServiceHelper.Get().ShareFileAsync(sharePath, "Probe Definition");
                 };
             }
             #endregion

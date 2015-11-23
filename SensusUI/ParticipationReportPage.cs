@@ -105,7 +105,7 @@ namespace SensusUI
 
                 contentLayout.Children.Add(new Image
                     { 
-                        Source = UiBoundSensusServiceHelper.Get(true).GetQrCodeImageSource(participationRewardDatum.Id),
+                        Source = SensusServiceHelper.Get().GetQrCodeImageSource(participationRewardDatum.Id),
                         HorizontalOptions = LayoutOptions.CenterAndExpand
                     });
             }
@@ -127,7 +127,7 @@ namespace SensusUI
 
                 emailStudyManagerButton.Clicked += (o, e) =>
                 {
-                    UiBoundSensusServiceHelper.Get(true).SendEmailAsync(protocol.ContactEmail, "Help with Sensus study:  " + protocol.Name, 
+                    SensusServiceHelper.Get().SendEmailAsync(protocol.ContactEmail, "Help with Sensus study:  " + protocol.Name, 
                         "Hello - " + Environment.NewLine +
                         Environment.NewLine +
                         "I am having trouble with a Sensus study. The name of the study is \"" + protocol.Name + "\"." + Environment.NewLine +

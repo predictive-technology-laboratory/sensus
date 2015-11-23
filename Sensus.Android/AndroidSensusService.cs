@@ -21,46 +21,51 @@ using System;
 
 namespace Sensus.Android
 {
-    [Service]
+    /// <summary>
+    /// Android sensus service. Manages background running of Sensus. This is a hybrid service (http://developer.android.com/guide/components/services.html), in that
+    /// it is started by the Sensus activity to run indefinitely, but the activity also binds to it to manage the Sensus system (e.g., creating protocols, starting
+    /// and stopping them, etc. For now, nobody other than the Sensus activity can interact with the service (Exported = false). Perhaps we'll allow this in the future
+    /// to support integration with other apps.
+    /// </summary>
+    [Service(Exported = false)]
     public class AndroidSensusService : Service
-    {        
-        private AndroidSensusServiceHelper _serviceHelper;
-
+    {
         public override void OnCreate()
         {
             base.OnCreate();
 
             SensusServiceHelper.Initialize(() => new AndroidSensusServiceHelper());
 
-            _serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
+            AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
 
             // it's happened that the service is created after the service helper is disposed:  https://insights.xamarin.com/app/Sensus-Production/issues/46
-            if (_serviceHelper == null)
+            if (serviceHelper == null)
             {
                 StopSelf();
                 return;
             }
             
-            _serviceHelper.SetService(this);
-            _serviceHelper.UpdateApplicationStatus("0 protocols are running");
+            serviceHelper.SetService(this);
+            serviceHelper.UpdateApplicationStatus("0 protocols are running");
         }
 
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
-            _serviceHelper.Logger.Log("Sensus service received start command (startId=" + startId + ").", LoggingLevel.Normal, GetType());
+            AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
 
-            _serviceHelper.MainActivityWillBeSet = intent.GetBooleanExtra(AndroidSensusServiceHelper.MAIN_ACTIVITY_WILL_BE_SET, false);
+            serviceHelper.Logger.Log("Sensus service received start command (startId=" + startId + ").", LoggingLevel.Normal, GetType());
+
+            serviceHelper.MainActivityWillBeDisplayed = intent.GetBooleanExtra(AndroidSensusServiceHelper.MAIN_ACTIVITY_WILL_BE_DISPLAYED, false);
 
             // the service can be stopped without destroying the service object. in such cases, 
-            // subsequent calls to start the service will not call OnCreate, which is why the 
-            // following code needs to run here -- e.g., starting the helper object and displaying
-            // the notification. therefore, it's important that any code called here is
-            // okay to call multiple times, even if the service is running. calling this when
-            // the service is running can happen because sensus receives a signal on device
-            // boot and for any callback alarms that are requested. furthermore, all calls here
-            // should be nonblocking / async so we don't tie up the UI thread.
+            // subsequent calls to start the service will not call OnCreate. therefore, it's 
+            // important that any code called here is okay to call multiple times, even if the 
+            // service is running. calling this when the service is running can happen because 
+            // sensus receives a signal on device boot and for any callback alarms that are 
+            // requested. furthermore, all calls here should be nonblocking / async so we don't 
+            // tie up the UI thread.
 
-            _serviceHelper.StartAsync(() =>
+            serviceHelper.StartAsync(() =>
                 {
                     if (intent.GetBooleanExtra(AndroidSensusServiceHelper.SENSUS_CALLBACK_KEY, false))
                     {
@@ -68,7 +73,7 @@ namespace Sensus.Android
                         if (callbackId != null)
                         {
                             bool repeating = intent.GetBooleanExtra(AndroidSensusServiceHelper.SENSUS_CALLBACK_REPEATING_KEY, false);
-                            _serviceHelper.RaiseCallbackAsync(callbackId, repeating, true);
+                            serviceHelper.RaiseCallbackAsync(callbackId, repeating, true);
                         }
                     }
                 });
@@ -78,17 +83,19 @@ namespace Sensus.Android
 
         public override IBinder OnBind(Intent intent)
         {
-            return new AndroidSensusServiceBinder(_serviceHelper);
+            return new AndroidSensusServiceBinder(SensusServiceHelper.Get() as AndroidSensusServiceHelper);
         }
 
         public override void OnTaskRemoved(Intent rootIntent)
         {
             base.OnTaskRemoved(rootIntent);
 
-            if (_serviceHelper != null)
+            AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
+
+            if (serviceHelper != null)
             {
-                _serviceHelper.Logger.Log("Associated task has been removed. Stopping service helper.", LoggingLevel.Normal, GetType());
-                _serviceHelper.Stop();
+                serviceHelper.Logger.Log("Associated task has been removed. Stopping service helper.", LoggingLevel.Normal, GetType());
+                serviceHelper.Stop();
             }
         }
 
@@ -96,11 +103,12 @@ namespace Sensus.Android
         {
             base.OnDestroy();
 
-            if (_serviceHelper != null)
+            AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
+
+            if (serviceHelper != null)
             {
-                _serviceHelper.Logger.Log("Destroying service.", LoggingLevel.Normal, GetType());
-                _serviceHelper.Dispose();
-                _serviceHelper = null;
+                serviceHelper.Logger.Log("Destroying service.", LoggingLevel.Normal, GetType());
+                serviceHelper.Dispose();
             }
         }
     }

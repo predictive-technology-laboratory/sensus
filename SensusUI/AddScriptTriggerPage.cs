@@ -388,8 +388,8 @@ namespace SensusUI
                     catch (Exception ex)
                     {
                         string message = "Failed to add trigger:  " + ex.Message;
-                        UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync(message);
-                        UiBoundSensusServiceHelper.Get(true).Logger.Log(message, LoggingLevel.Normal, GetType());
+                        SensusServiceHelper.Get().FlashNotificationAsync(message);
+                        SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
                     }
                 };
 

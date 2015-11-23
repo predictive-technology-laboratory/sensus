@@ -19,6 +19,7 @@ using Xam.Plugin.MapExtend.Abstractions;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using Xamarin;
+using SensusService;
 
 namespace SensusUI
 {
@@ -80,8 +81,8 @@ namespace SensusUI
                         try
                         {
                             string errorMessage = "Failed to search for address:  " + ex.Message;
-                            UiBoundSensusServiceHelper.Get(true).Logger.Log(errorMessage, SensusService.LoggingLevel.Normal, GetType());
-                            UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync(errorMessage);                            
+                            SensusServiceHelper.Get().Logger.Log(errorMessage, SensusService.LoggingLevel.Normal, GetType());
+                            SensusServiceHelper.Get().FlashNotificationAsync(errorMessage);                            
                         }
                         catch (Exception)
                         {

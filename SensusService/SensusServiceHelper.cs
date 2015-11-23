@@ -31,7 +31,7 @@ using SensusUI.Inputs;
 using Xamarin.Forms;
 using SensusService.Exceptions;
 using ZXing.Mobile;
-using ZXing;    
+using ZXing;
 using XLabs.Platform.Device;
 
 namespace SensusService
@@ -154,11 +154,11 @@ namespace SensusService
             }
             catch (Exception deserializeException)
             {
-                Console.Error.WriteLine("Failed to deserialize Sensus service helper:  " + deserializeException.Message + System.Environment.NewLine +
-                    "Creating new Sensus service helper.");
+                Console.Error.WriteLine("Failed to deserialize Sensus service helper:  " + deserializeException.Message);
 
                 try
                 {
+                    Console.Error.WriteLine("Creating new Sensus service helper.");
                     SINGLETON = createNew();
                 }
                 catch (Exception singletonCreationException)
@@ -181,7 +181,7 @@ namespace SensusService
                     #endregion
                 }
 
-                #region save helper
+                #region save newly created helper
                 try
                 {
                     SINGLETON.SaveAsync();
@@ -847,6 +847,7 @@ namespace SensusService
                     {
                         if (PROMPT_FOR_INPUTS_RUNNING)
                         {
+                            _logger.Log("A prompt is already running. Dropping current prompt request.", LoggingLevel.Normal, GetType());
                             callback(inputGroups);
                             return;
                         }
@@ -863,10 +864,10 @@ namespace SensusService
                         InputGroup incompleteGroup = incompleteGroups[incompleteGroupNum];
                         ManualResetEvent responseWait = new ManualResetEvent(false);
 
+                        // run voice inputs by themselves, and only if the input group contains exactly one voice input.
                         if (incompleteGroup.Inputs.Count == 1 && incompleteGroup.Inputs[0] is VoiceInput)
                         {
-                            VoiceInput promptInput = incompleteGroup.Inputs[0] as VoiceInput;
-                            promptInput.RunAsync(triggeringDatum, isReprompt, firstPromptTimestamp, response =>
+                            (incompleteGroup.Inputs[0] as VoiceInput).RunAsync(triggeringDatum, isReprompt, firstPromptTimestamp, response =>
                                 {                
                                     responseWait.Set();
                                 });

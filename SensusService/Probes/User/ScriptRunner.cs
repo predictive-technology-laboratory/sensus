@@ -564,7 +564,7 @@ namespace SensusService.Probes.User
                                     }
                                 }
 
-                                // if this is the first run, set the timestamp
+                                // if this is the first run, set the timestamp.
                                 if (!isRerun)
                                 {
                                     script.FirstRunTimestamp = DateTimeOffset.UtcNow;

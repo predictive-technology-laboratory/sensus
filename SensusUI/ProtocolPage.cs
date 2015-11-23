@@ -127,7 +127,7 @@ namespace SensusUI
             {
                 await Navigation.PushAsync(new PointsOfInterestPage(
                         _protocol.PointsOfInterest,
-                        () => UiBoundSensusServiceHelper.Get(true).SaveAsync()));
+                        () => SensusServiceHelper.Get().SaveAsync()));
             };
 
             views.Add(pointsOfInterestButton);
@@ -176,7 +176,7 @@ namespace SensusUI
             {
                 if (lockButton.Text == "Lock")
                 {
-                    UiBoundSensusServiceHelper.Get(true).PromptForInputAsync(
+                    SensusServiceHelper.Get().PromptForInputAsync(
                         "Lock Protocol",
                         new TextInput("Password:", Keyboard.Text),
                         null,
@@ -190,10 +190,10 @@ namespace SensusUI
                             string password = input.Value as string;
 
                             if (string.IsNullOrWhiteSpace(password))
-                                UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Please enter a non-empty password.");
+                                SensusServiceHelper.Get().FlashNotificationAsync("Please enter a non-empty password.");
                             else
                             {
-                                _protocol.LockPasswordHash = UiBoundSensusServiceHelper.Get(true).GetHash(password);
+                                _protocol.LockPasswordHash = SensusServiceHelper.Get().GetHash(password);
                                 Device.BeginInvokeOnMainThread(() => lockButton.Text = "Unlock");
                             }
                         });

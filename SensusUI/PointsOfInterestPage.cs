@@ -77,7 +77,7 @@ namespace SensusUI
 
             ToolbarItems.Add(new ToolbarItem(null, "plus.png", () =>
                     {
-                        UiBoundSensusServiceHelper.Get(true).PromptForInputsAsync(
+                        SensusServiceHelper.Get().PromptForInputsAsync(
                             "Define Point Of Interest", 
                             new Input[]
                             {
@@ -96,10 +96,9 @@ namespace SensusUI
                                 string name = inputs[0].Value as string;
                                 string type = inputs[1].Value as string;
                                 string address = inputs[2].Value as string;
-                                bool viewMap = (bool)inputs[3].Value;
 
                                 if (string.IsNullOrWhiteSpace(name) && string.IsNullOrWhiteSpace(type))
-                                    UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("You must enter either a name or type (or both).");
+                                    SensusServiceHelper.Get().FlashNotificationAsync("You must enter either a name or type (or both).");
                                 else
                                 {
                                     Action<List<Position>> addPOI = new Action<List<Position>>(poiPositions =>
@@ -132,10 +131,10 @@ namespace SensusUI
                                         Xamarin.Geolocation.Position gpsPosition = GpsReceiver.Get().GetReading(_gpsCancellationTokenSource.Token);
 
                                         if (gpsPosition != null)
-                                            UiBoundSensusServiceHelper.Get(true).GetPositionsFromMapAsync(gpsPosition.ToFormsPosition(), newPinName, addPOI);
+                                            SensusServiceHelper.Get().GetPositionsFromMapAsync(gpsPosition.ToFormsPosition(), newPinName, addPOI);
                                     }
                                     else
-                                        UiBoundSensusServiceHelper.Get(true).GetPositionsFromMapAsync(address, newPinName, addPOI);
+                                        SensusServiceHelper.Get().GetPositionsFromMapAsync(address, newPinName, addPOI);
                                 }
                             });
                     }));

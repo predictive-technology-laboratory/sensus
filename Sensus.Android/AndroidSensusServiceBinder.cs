@@ -26,11 +26,6 @@ namespace Sensus.Android
             set { _sensusServiceHelper = value; }
         }
 
-        public bool IsBound
-        {
-            get { return _sensusServiceHelper != null; }
-        }
-
         public AndroidSensusServiceBinder(AndroidSensusServiceHelper sensusServiceHelper)
         {
             _sensusServiceHelper = sensusServiceHelper;

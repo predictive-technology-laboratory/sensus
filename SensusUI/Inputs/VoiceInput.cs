@@ -43,6 +43,11 @@ namespace SensusUI.Inputs
             set { _outputMessageRerun = value; }
         }
 
+        /// <summary>
+        /// Voice input views cannot be used within PromptForInputPages the same way that other views can. This will always
+        /// return null and will throw an exception if set.
+        /// </summary>
+        /// <value>The view.</value>
         public override View View
         {
             get

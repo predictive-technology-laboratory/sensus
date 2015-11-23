@@ -59,9 +59,6 @@ namespace Sensus.iOS
 
             _serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
 
-            UiBoundSensusServiceHelper.Set(_serviceHelper);
-            app.SensusMainPage.DisplayServiceHelper(UiBoundSensusServiceHelper.Get(true));
-
             #if UNIT_TESTING
             Forms.ViewInitialized += (sender, e) =>
             {
@@ -73,7 +70,7 @@ namespace Sensus.iOS
             #endif
 
             return base.FinishedLaunching(uiApplication, launchOptions);
-        }   
+        }
 
         public override bool OpenUrl(UIApplication application, NSUrl url, string sourceApplication, NSObject annotation)
         {
@@ -99,10 +96,18 @@ namespace Sensus.iOS
             UIApplication.SharedApplication.CancelAllLocalNotifications();
             UIApplication.SharedApplication.ApplicationIconBadgeNumber = 0;
 
-            _serviceHelper.BarcodeScanner = new ZXing.Mobile.MobileBarcodeScanner(UIApplication.SharedApplication.KeyWindow.RootViewController);
             _serviceHelper.ActivationId = Guid.NewGuid().ToString();
 
-            iOSSensusServiceHelper sensusServiceHelper = UiBoundSensusServiceHelper.Get(true) as iOSSensusServiceHelper;
+            try
+            {
+                _serviceHelper.BarcodeScanner = new ZXing.Mobile.MobileBarcodeScanner(UIApplication.SharedApplication.KeyWindow.RootViewController);
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Failed to create barcode scanner:  " + ex.Message, LoggingLevel.Normal, GetType());
+            }
+
+            iOSSensusServiceHelper sensusServiceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
 
             sensusServiceHelper.StartAsync(() =>
                 {
@@ -142,7 +147,7 @@ namespace Sensus.iOS
         // when the user quits.
         public override void DidEnterBackground(UIApplication application)
         {
-            iOSSensusServiceHelper serviceHelper = UiBoundSensusServiceHelper.Get(false) as iOSSensusServiceHelper;
+            iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
             if (serviceHelper != null)
             {
                 serviceHelper.SaveAsync();

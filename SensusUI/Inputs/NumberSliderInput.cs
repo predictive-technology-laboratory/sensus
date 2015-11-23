@@ -16,6 +16,7 @@ using System;
 using Xamarin.Forms;
 using SensusUI.UiProperties;
 using System.Threading;
+using SensusService;
 
 namespace SensusUI.Inputs
 {
@@ -39,7 +40,7 @@ namespace SensusUI.Inputs
             {
                 if (value >= _maximum)
                 {
-                    UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Number slider input minimum must be less than maximum.");
+                    SensusServiceHelper.Get().FlashNotificationAsync("Number slider input minimum must be less than maximum.");
                     value = _maximum - 1;
                 }
                 
@@ -58,7 +59,7 @@ namespace SensusUI.Inputs
             {
                 if (value <= _minimum)
                 {
-                    UiBoundSensusServiceHelper.Get(true).FlashNotificationAsync("Number slider input maximum must be greater than minimum.");
+                    SensusServiceHelper.Get().FlashNotificationAsync("Number slider input maximum must be greater than minimum.");
                     value = _minimum + 1;
                 }
                 
