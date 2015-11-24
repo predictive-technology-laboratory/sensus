@@ -815,7 +815,14 @@ namespace SensusService
         public void StartWithUserAgreementAsync(string startupMessage, Action callback = null)
         {
             if (!_probes.Any(probe => probe.Enabled))
+            {
                 SensusServiceHelper.Get().FlashNotificationAsync("Probes not enabled. Cannot start.");
+
+                if (callback != null)
+                    callback();
+        
+                return;
+            }
 
             int consentCode = new Random().Next(1000, 10000);
 

@@ -430,7 +430,8 @@ namespace Sensus.iOS
                         {
                             AlertTitle = "Sensus",
                             AlertBody = message,
-                            FireDate = DateTime.UtcNow.ToNSDate()
+                            FireDate = DateTime.UtcNow.ToNSDate(),
+                            SoundName = UILocalNotification.DefaultSoundName
                         };
                         
                         UIApplication.SharedApplication.ScheduleLocalNotification(notification);
@@ -476,10 +477,6 @@ namespace Sensus.iOS
             FlashNotificationAsync("This is not supported on iOS.");
 
             new Thread(() => callback(null)).Start();
-        }
-
-        public override void UpdateApplicationStatus(string status)
-        {
         }
 
         public override void KeepDeviceAwake()

@@ -139,7 +139,12 @@ namespace SensusUI
                 string selectedAction = await DisplayActionSheet(selectedProtocol.Name, "Cancel", null, actions.ToArray());
 
                 if (selectedAction == "Start")
-                    selectedProtocol.StartWithUserAgreementAsync(null, Bind);
+                {
+                    selectedProtocol.StartWithUserAgreementAsync(null, () =>
+                        {
+                            Device.BeginInvokeOnMainThread(Bind);  // rebind to pick up color and running status changes
+                        });
+                }
                 else if (selectedAction == "Stop")
                 {
                     if (await DisplayAlert("Confirm Stop", "Are you sure you want to stop " + selectedProtocol.Name + "?", "Yes", "No"))
@@ -150,13 +155,17 @@ namespace SensusUI
                 }
                 else if (selectedAction == "Edit")
                 {
-                    ExecuteActionUponProtocolAuthentication(selectedProtocol, () => Device.BeginInvokeOnMainThread(async () =>
-                            {
-                                ProtocolPage protocolPage = new ProtocolPage(selectedProtocol);
-                                protocolPage.Disappearing += (oo, ee) => Bind();  // rebind to pick up name changes
-                                await Navigation.PushAsync(protocolPage);
-                                _protocolsList.SelectedItem = null;
-                            }));
+                    ExecuteActionUponProtocolAuthentication(selectedProtocol, () =>
+                        {
+                            Device.BeginInvokeOnMainThread(async () =>
+                                {
+                                    ProtocolPage protocolPage = new ProtocolPage(selectedProtocol);
+                                    protocolPage.Disappearing += (oo, ee) => Bind();  // rebind to pick up name changes
+                                     await Navigation.PushAsync(protocolPage);
+                                    _protocolsList.SelectedItem = null;
+                                });
+                        }
+                    );
                 }
                 else if (selectedAction == "Copy")
                     selectedProtocol.CopyAsync(selectedProtocolCopy => SensusServiceHelper.Get().RegisterProtocol(selectedProtocolCopy), true);
@@ -233,8 +242,9 @@ namespace SensusUI
         {
             _protocolsList.ItemsSource = null;
 
-            // don't wait for service helper -- it might get disconnected before we get the OnDisappearing event that calls Bind
             SensusServiceHelper serviceHelper = SensusServiceHelper.Get();
+
+            // make sure we have a service helper -- it might get disconnected before we get the OnDisappearing event that calls Bind
             if (serviceHelper != null)
                 _protocolsList.ItemsSource = serviceHelper.RegisteredProtocols;
         }

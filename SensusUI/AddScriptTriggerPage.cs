@@ -74,11 +74,11 @@ namespace SensusUI
                 probePicker.Items.Add(enabledProbe.DisplayName);
 
             contentLayout.Children.Add(new StackLayout
-            {
-                Orientation = StackOrientation.Horizontal,
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                Children = { probeLabel, probePicker }
-            });
+                {
+                    Orientation = StackOrientation.Horizontal,
+                    HorizontalOptions = LayoutOptions.FillAndExpand,
+                    Children = { probeLabel, probePicker }
+                });
 
             StackLayout triggerDefinitionLayout = new StackLayout
             {
@@ -96,302 +96,303 @@ namespace SensusUI
             TimePicker endTimePicker = new TimePicker { HorizontalOptions = LayoutOptions.FillAndExpand };
 
             probePicker.SelectedIndexChanged += (o, e) =>
-                {
-                    _selectedProbe = null;
-                    _selectedDatumProperty = null;
-                    _conditionValue = null;
+            {
+                _selectedProbe = null;
+                _selectedDatumProperty = null;
+                _conditionValue = null;
 
-                    triggerDefinitionLayout.Children.Clear();
+                triggerDefinitionLayout.Children.Clear();
 
-                    if (probePicker.SelectedIndex < 0)
-                        return;
+                if (probePicker.SelectedIndex < 0)
+                    return;
 
-                    _selectedProbe = enabledProbes[probePicker.SelectedIndex];
+                _selectedProbe = enabledProbes[probePicker.SelectedIndex];
 
-                    PropertyInfo[] datumProperties = _selectedProbe.DatumType.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(p => p.GetCustomAttributes<ProbeTriggerProperty>().Count() > 0).ToArray();
-                    if(datumProperties.Length == 0)
-                        return;
+                PropertyInfo[] datumProperties = _selectedProbe.DatumType.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(p => p.GetCustomAttributes<ProbeTriggerProperty>().Count() > 0).ToArray();
+                if (datumProperties.Length == 0)
+                    return;
                     
-                    #region datum property picker
-                    Label datumPropertyLabel = new Label
-                    {
-                        Text = "Property:",
-                        FontSize = 20
-                    };
+                #region datum property picker
+                Label datumPropertyLabel = new Label
+                {
+                    Text = "Property:",
+                    FontSize = 20
+                };
 
-                    Picker datumPropertyPicker = new Picker { Title = "Select Datum Property", HorizontalOptions = LayoutOptions.FillAndExpand };
-                    foreach (PropertyInfo datumProperty in datumProperties)
-                    {
-                        ProbeTriggerProperty triggerProperty = datumProperty.GetCustomAttributes<ProbeTriggerProperty>().First();
-                        datumPropertyPicker.Items.Add(triggerProperty.Name ?? datumProperty.Name);
-                    }
+                Picker datumPropertyPicker = new Picker { Title = "Select Datum Property", HorizontalOptions = LayoutOptions.FillAndExpand };
+                foreach (PropertyInfo datumProperty in datumProperties)
+                {
+                    ProbeTriggerProperty triggerProperty = datumProperty.GetCustomAttributes<ProbeTriggerProperty>().First();
+                    datumPropertyPicker.Items.Add(triggerProperty.Name ?? datumProperty.Name);
+                }
 
-                    triggerDefinitionLayout.Children.Add(new StackLayout
+                triggerDefinitionLayout.Children.Add(new StackLayout
                     {
                         Orientation = StackOrientation.Horizontal,
                         HorizontalOptions = LayoutOptions.FillAndExpand,
                         Children = { datumPropertyLabel, datumPropertyPicker }
                     });
-                    #endregion
+                #endregion
 
-                    #region condition picker (same for all datum types)
-                    Label conditionLabel = new Label
-                    {
-                        Text = "Condition:",
-                        FontSize = 20
-                    };
+                #region condition picker (same for all datum types)
+                Label conditionLabel = new Label
+                {
+                    Text = "Condition:",
+                    FontSize = 20
+                };
 
-                    Picker conditionPicker = new Picker { Title = "Select Condition", HorizontalOptions = LayoutOptions.FillAndExpand };
-                    TriggerValueCondition[] conditions = Enum.GetValues(typeof(TriggerValueCondition)) as TriggerValueCondition[];
-                    foreach (TriggerValueCondition condition in conditions)
-                        conditionPicker.Items.Add(condition.ToString());
+                Picker conditionPicker = new Picker { Title = "Select Condition", HorizontalOptions = LayoutOptions.FillAndExpand };
+                TriggerValueCondition[] conditions = Enum.GetValues(typeof(TriggerValueCondition)) as TriggerValueCondition[];
+                foreach (TriggerValueCondition condition in conditions)
+                    conditionPicker.Items.Add(condition.ToString());
 
-                    conditionPicker.SelectedIndexChanged += (oo, ee) =>
-                        {
-                            if (conditionPicker.SelectedIndex < 0)
-                                return;
+                conditionPicker.SelectedIndexChanged += (oo, ee) =>
+                {
+                    if (conditionPicker.SelectedIndex < 0)
+                        return;
 
-                            _selectedCondition = conditions[conditionPicker.SelectedIndex];
-                        };
+                    _selectedCondition = conditions[conditionPicker.SelectedIndex];
+                };
 
-                    triggerDefinitionLayout.Children.Add(new StackLayout
+                triggerDefinitionLayout.Children.Add(new StackLayout
                     {
                         Orientation = StackOrientation.Horizontal,
                         HorizontalOptions = LayoutOptions.FillAndExpand,
                         Children = { conditionLabel, conditionPicker }
                     });
-                    #endregion
+                #endregion
 
-                    #region condition value for comparison, based on selected datum property -- includes change calculation (for double datum) and regex (for string datum)
-                    StackLayout conditionValueStack = new StackLayout
+                #region condition value for comparison, based on selected datum property -- includes change calculation (for double datum) and regex (for string datum)
+                StackLayout conditionValueStack = new StackLayout
+                {
+                    Orientation = StackOrientation.Vertical,
+                    HorizontalOptions = LayoutOptions.FillAndExpand
+                };
+
+                triggerDefinitionLayout.Children.Add(conditionValueStack);
+
+                datumPropertyPicker.SelectedIndexChanged += (oo, ee) =>
+                {
+                    _selectedDatumProperty = null;
+                    _conditionValue = null;
+
+                    conditionValueStack.Children.Clear();
+
+                    if (datumPropertyPicker.SelectedIndex < 0)
+                        return;
+
+                    _selectedDatumProperty = datumProperties[datumPropertyPicker.SelectedIndex];
+
+                    ProbeTriggerProperty datumTriggerAttribute = _selectedDatumProperty.GetCustomAttribute<ProbeTriggerProperty>();
+
+                    View conditionValueStackView = null;
+                    bool allowChangeCalculation = false;
+                    bool allowRegularExpression = false;
+
+                    if (datumTriggerAttribute is ListProbeTriggerProperty)
                     {
-                        Orientation = StackOrientation.Vertical,
-                        HorizontalOptions = LayoutOptions.FillAndExpand
-                    };
+                        Picker conditionValuePicker = new Picker { Title = "Select Condition Value", HorizontalOptions = LayoutOptions.FillAndExpand };
+                        object[] items = (datumTriggerAttribute as ListProbeTriggerProperty).Items;
+                        foreach (object item in items)
+                            conditionValuePicker.Items.Add(item.ToString());
 
-                    triggerDefinitionLayout.Children.Add(conditionValueStack);
-
-                    datumPropertyPicker.SelectedIndexChanged += (oo, ee) =>
+                        conditionValuePicker.SelectedIndexChanged += (ooo, eee) =>
                         {
-                            _selectedDatumProperty = null;
-                            _conditionValue = null;
-
-                            conditionValueStack.Children.Clear();
-
-                            if (datumPropertyPicker.SelectedIndex < 0)
+                            if (conditionValuePicker.SelectedIndex < 0)
                                 return;
 
-                            _selectedDatumProperty = datumProperties[datumPropertyPicker.SelectedIndex];
+                            _conditionValue = items[conditionValuePicker.SelectedIndex];
+                        };
 
-                            ProbeTriggerProperty datumTriggerAttribute = _selectedDatumProperty.GetCustomAttribute<ProbeTriggerProperty>();
+                        conditionValueStackView = conditionValuePicker;
+                    }
+                    else if (datumTriggerAttribute is NumberProbeTriggerProperty)
+                    {
+                        Entry entry = new Entry
+                        {
+                            Keyboard = Keyboard.Numeric,
+                            HorizontalOptions = LayoutOptions.FillAndExpand
+                        };
 
-                            View conditionValueStackView = null;
-                            bool allowChangeCalculation = false;
-                            bool allowRegularExpression = false;
+                        entry.TextChanged += (ooo, eee) =>
+                        {
+                            double value;
+                            if (double.TryParse(eee.NewTextValue, out  value))
+                                _conditionValue = value;
+                        };
 
-                            if (datumTriggerAttribute is ListProbeTriggerProperty)
-                            {
-                                Picker conditionValuePicker = new Picker { Title = "Select Condition Value", HorizontalOptions = LayoutOptions.FillAndExpand };
-                                object[] items = (datumTriggerAttribute as ListProbeTriggerProperty).Items;
-                                foreach (object item in items)
-                                    conditionValuePicker.Items.Add(item.ToString());
+                        conditionValueStackView = entry;
+                        allowChangeCalculation = true;
+                    }
+                    else if (datumTriggerAttribute is TextProbeTriggerProperty)
+                    {
+                        Entry entry = new Entry
+                        {
+                            Keyboard = Keyboard.Default,
+                            HorizontalOptions = LayoutOptions.FillAndExpand
+                        };
 
-                                conditionValuePicker.SelectedIndexChanged += (ooo, eee) =>
-                                    {
-                                        if (conditionValuePicker.SelectedIndex < 0)
-                                            return;
+                        entry.TextChanged += (ooo, eee) => _conditionValue = eee.NewTextValue;
 
-                                        _conditionValue = items[conditionValuePicker.SelectedIndex];
-                                    };
+                        conditionValueStackView = entry;
+                        allowRegularExpression = true;
+                    }
+                    else if (datumTriggerAttribute is BooleanProbeTriggerProperty)
+                    {
+                        Switch booleanSwitch = new Switch();
 
-                                conditionValueStackView = conditionValuePicker;
-                            }
-                            else if (datumTriggerAttribute is NumberProbeTriggerProperty)
-                            {
-                                Entry entry = new Entry
-                                {
-                                    Keyboard = Keyboard.Numeric,
-                                    HorizontalOptions = LayoutOptions.FillAndExpand
-                                };
+                        booleanSwitch.Toggled += (ooo, eee) => _conditionValue = eee.Value;
 
-                                entry.TextChanged += (ooo, eee) =>
-                                    {
-                                        double value;
-                                        if (double.TryParse(eee.NewTextValue, out  value))
-                                            _conditionValue = value;
-                                    };
+                        conditionValueStackView = booleanSwitch;
+                    }
 
-                                conditionValueStackView = entry;
-                                allowChangeCalculation = true;
-                            }
-                            else if (datumTriggerAttribute is TextProbeTriggerProperty)
-                            {
-                                Entry entry = new Entry
-                                {
-                                    Keyboard = Keyboard.Default,
-                                    HorizontalOptions = LayoutOptions.FillAndExpand
-                                };
+                    Label conditionValueStackLabel = new Label
+                    {
+                        Text = "Value:",
+                        FontSize = 20
+                    };
 
-                                entry.TextChanged += (ooo, eee) => _conditionValue = eee.NewTextValue;
+                    conditionValueStack.Children.Add(new StackLayout
+                        {
+                            Orientation = StackOrientation.Horizontal,
+                            HorizontalOptions = LayoutOptions.FillAndExpand,
+                            Children = { conditionValueStackLabel, conditionValueStackView }
+                        });
 
-                                conditionValueStackView = entry;
-                                allowRegularExpression = true;
-                            }
-                            else if (datumTriggerAttribute is BooleanProbeTriggerProperty)
-                            {
-                                Switch booleanSwitch = new Switch();
+                    #region change calculation
+                    if (allowChangeCalculation)
+                    {
+                        Label changeLabel = new Label
+                        {
+                            Text = "Change:",
+                            FontSize = 20
+                        };
 
-                                booleanSwitch.Toggled += (ooo, eee) => _conditionValue = eee.Value;
+                        changeSwitch.IsToggled = false;
 
-                                conditionValueStackView = booleanSwitch;
-                            }
-
-                            Label conditionValueStackLabel = new Label
-                            {
-                                Text = "Value:",
-                                FontSize = 20
-                            };
-
-                            conditionValueStack.Children.Add(new StackLayout
+                        conditionValueStack.Children.Add(new StackLayout
                             {
                                 Orientation = StackOrientation.Horizontal,
                                 HorizontalOptions = LayoutOptions.FillAndExpand,
-                                Children = { conditionValueStackLabel, conditionValueStackView }
+                                Children = { changeLabel, changeSwitch }
                             });
+                    }
+                    #endregion
 
-                            #region change calculation
-                            if (allowChangeCalculation)
+                    #region regular expression
+                    if (allowRegularExpression)
+                    {
+                        Label regexLabel = new Label
+                        {
+                            Text = "Regular Expression:",
+                            FontSize = 20
+                        };
+
+                        regexSwitch.IsToggled = false;
+
+                        conditionValueStack.Children.Add(new StackLayout
                             {
-                                Label changeLabel = new Label
-                                {
-                                    Text = "Change:",
-                                    FontSize = 20
-                                };
-
-                                changeSwitch.IsToggled = false;
-
-                                conditionValueStack.Children.Add(new StackLayout
-                                {
-                                    Orientation = StackOrientation.Horizontal,
-                                    HorizontalOptions = LayoutOptions.FillAndExpand,
-                                    Children = { changeLabel, changeSwitch }
-                                });
-                            }
-                            #endregion
-
-                            #region regular expression
-                            if (allowRegularExpression)
-                            {
-                                Label regexLabel = new Label
-                                {
-                                    Text = "Regular Expression:",
-                                    FontSize = 20
-                                };
-
-                                regexSwitch.IsToggled = false;
-
-                                conditionValueStack.Children.Add(new StackLayout
-                                {
-                                    Orientation = StackOrientation.Horizontal,
-                                    HorizontalOptions = LayoutOptions.FillAndExpand,
-                                    Children = { regexLabel, regexSwitch }
-                                });
-                            }
-                            #endregion
-                        };
-
-                    datumPropertyPicker.SelectedIndex = 0;
-                    #endregion
-
-                    #region fire repeatedly
-                    Label fireRepeatedlyLabel = new Label
-                        {
-                            Text = "Fire Repeatedly:",
-                            FontSize = 20
-                        };
-
-                    fireRepeatedlySwitch.IsToggled = false;
-
-                    triggerDefinitionLayout.Children.Add(new StackLayout
-                        {
-                            Orientation = StackOrientation.Horizontal,
-                            HorizontalOptions = LayoutOptions.FillAndExpand,
-                            Children = { fireRepeatedlyLabel, fireRepeatedlySwitch }
-                        });
-                    #endregion
-
-                    #region ignore first datum
-                    Label ignoreFirstDatumLabel = new Label
-                        {
-                            Text = "Ignore First Datum:",
-                            FontSize = 20
-                        };
-
-                    ignoreFirstDatumSwitch.IsToggled = false;
-
-                    triggerDefinitionLayout.Children.Add(new StackLayout
-                        {
-                            Orientation = StackOrientation.Horizontal,
-                            HorizontalOptions = LayoutOptions.FillAndExpand,
-                            Children = { ignoreFirstDatumLabel, ignoreFirstDatumSwitch }
-                        });
-                    #endregion
-
-                    #region start/end times
-                    Label startTimeLabel = new Label
-                        {
-                            Text = "Start Time:",
-                            FontSize = 20
-                        };
-
-                    startTimePicker.Time = new TimeSpan(8, 0, 0);
-
-                    triggerDefinitionLayout.Children.Add(new StackLayout
-                        {
-                            Orientation = StackOrientation.Horizontal,
-                            HorizontalOptions = LayoutOptions.FillAndExpand,
-                            Children = { startTimeLabel, startTimePicker }
-                        });
-
-                    Label endTimeLabel = new Label
-                        {
-                            Text = "End Time:",
-                            FontSize = 20
-                        };
-
-                    endTimePicker.Time = new TimeSpan(21, 0, 0);
-
-                    triggerDefinitionLayout.Children.Add(new StackLayout
-                        {
-                            Orientation = StackOrientation.Horizontal,
-                            HorizontalOptions = LayoutOptions.FillAndExpand,
-                            Children = { endTimeLabel, endTimePicker }
-                        });
+                                Orientation = StackOrientation.Horizontal,
+                                HorizontalOptions = LayoutOptions.FillAndExpand,
+                                Children = { regexLabel, regexSwitch }
+                            });
+                    }
                     #endregion
                 };
+
+                datumPropertyPicker.SelectedIndex = 0;
+                #endregion
+
+                #region fire repeatedly
+                Label fireRepeatedlyLabel = new Label
+                {
+                    Text = "Fire Repeatedly:",
+                    FontSize = 20
+                };
+
+                fireRepeatedlySwitch.IsToggled = false;
+
+                triggerDefinitionLayout.Children.Add(new StackLayout
+                    {
+                        Orientation = StackOrientation.Horizontal,
+                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        Children = { fireRepeatedlyLabel, fireRepeatedlySwitch }
+                    });
+                #endregion
+
+                #region ignore first datum
+                Label ignoreFirstDatumLabel = new Label
+                {
+                    Text = "Ignore First Datum:",
+                    FontSize = 20
+                };
+
+                ignoreFirstDatumSwitch.IsToggled = false;
+
+                triggerDefinitionLayout.Children.Add(new StackLayout
+                    {
+                        Orientation = StackOrientation.Horizontal,
+                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        Children = { ignoreFirstDatumLabel, ignoreFirstDatumSwitch }
+                    });
+                #endregion
+
+                #region start/end times
+                Label startTimeLabel = new Label
+                {
+                    Text = "Start Time:",
+                    FontSize = 20
+                };
+
+                startTimePicker.Time = new TimeSpan(8, 0, 0);
+
+                triggerDefinitionLayout.Children.Add(new StackLayout
+                    {
+                        Orientation = StackOrientation.Horizontal,
+                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        Children = { startTimeLabel, startTimePicker }
+                    });
+
+                Label endTimeLabel = new Label
+                {
+                    Text = "End Time:",
+                    FontSize = 20
+                };
+
+                endTimePicker.Time = new TimeSpan(21, 0, 0);
+
+                triggerDefinitionLayout.Children.Add(new StackLayout
+                    {
+                        Orientation = StackOrientation.Horizontal,
+                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        Children = { endTimeLabel, endTimePicker }
+                    });
+                #endregion
+            };
 
             probePicker.SelectedIndex = 0;
 
             Button okButton = new Button
             {
                 Text = "OK",
-                FontSize = 20
+                FontSize = 20,
+                VerticalOptions = LayoutOptions.FillAndExpand
             };
 
             okButton.Clicked += async (o, e) =>
+            {
+                try
                 {
-                    try
-                    {
-                        _scriptRunner.Triggers.Add(new SensusService.Probes.User.Trigger(_selectedProbe, _selectedDatumProperty, _selectedCondition, _conditionValue, changeSwitch.IsToggled, fireRepeatedlySwitch.IsToggled, regexSwitch.IsToggled, ignoreFirstDatumSwitch.IsToggled, startTimePicker.Time, endTimePicker.Time));
-                        await Navigation.PopAsync();
-                    }
-                    catch (Exception ex)
-                    {
-                        string message = "Failed to add trigger:  " + ex.Message;
-                        SensusServiceHelper.Get().FlashNotificationAsync(message);
-                        SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
-                    }
-                };
+                    _scriptRunner.Triggers.Add(new SensusService.Probes.User.Trigger(_selectedProbe, _selectedDatumProperty, _selectedCondition, _conditionValue, changeSwitch.IsToggled, fireRepeatedlySwitch.IsToggled, regexSwitch.IsToggled, ignoreFirstDatumSwitch.IsToggled, startTimePicker.Time, endTimePicker.Time));
+                    await Navigation.PopAsync();
+                }
+                catch (Exception ex)
+                {
+                    string message = "Failed to add trigger:  " + ex.Message;
+                    SensusServiceHelper.Get().FlashNotificationAsync(message);
+                    SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+                }
+            };
 
             contentLayout.Children.Add(okButton);
 
