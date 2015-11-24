@@ -421,33 +421,35 @@ namespace Sensus.Android
 
         #region notifications
 
-        public override void UpdateApplicationStatus(string status)
-        {
-            IssueNotification("Sensus", status == null ? null : (status + " (tap to open)"), true, SERVICE_NOTIFICATION_TAG);
-        }
-
         public override void IssueNotificationAsync(string message, string id)
         {
-            IssueNotification("Sensus", message, false, id);
+            IssueNotificationAsync("Sensus", message, true, false, id);
         }
 
-        private void IssueNotification(string title, string body, bool sticky, string tag)
-        {           
-            if (body == null)
-                _notificationManager.Cancel(tag, 0);
-            else
+        public void IssueNotificationAsync(string title, string message, bool autoCancel, bool ongoing, string id)
+        {          
+            if (_notificationManager != null)
             {
-                Intent activityIntent = new Intent(_service, typeof(AndroidMainActivity));
-                PendingIntent pendingIntent = PendingIntent.GetActivity(_service, 0, activityIntent, PendingIntentFlags.UpdateCurrent);
-                Notification notification = new Notification.Builder(_service)
-                    .SetContentTitle(title)
-                    .SetContentText(body)
-                    .SetSmallIcon(Resource.Drawable.ic_launcher)
-                    .SetContentIntent(pendingIntent)
-                    .SetAutoCancel(!sticky)
-                    .SetOngoing(sticky).Build();
+                new Thread(() =>
+                    {
+                        if (message == null)
+                            _notificationManager.Cancel(id, 0);
+                        else
+                        {
+                            Intent activityIntent = new Intent(_service, typeof(AndroidMainActivity));
+                            PendingIntent pendingIntent = PendingIntent.GetActivity(_service, 0, activityIntent, PendingIntentFlags.UpdateCurrent);
+                            Notification notification = new Notification.Builder(_service)
+                            .SetContentTitle(title)
+                            .SetContentText(message)
+                            .SetSmallIcon(Resource.Drawable.ic_launcher)
+                            .SetContentIntent(pendingIntent)
+                            .SetAutoCancel(autoCancel)
+                            .SetOngoing(ongoing).Build();
 
-                _notificationManager.Notify(tag, 0, notification);
+                            _notificationManager.Notify(id, 0, notification);
+                        }
+
+                    }).Start();
             }
         }
 
@@ -565,8 +567,6 @@ namespace Sensus.Android
         {
             base.Stop();
 
-            UpdateApplicationStatus(null);
-
             if (_focusedMainActivity != null)
                 _focusedMainActivity.Finish();
 
@@ -576,8 +576,6 @@ namespace Sensus.Android
 
         public override void Dispose()
         {
-            UpdateApplicationStatus(null);
-
             _textToSpeech.Dispose();
 
             base.Dispose();

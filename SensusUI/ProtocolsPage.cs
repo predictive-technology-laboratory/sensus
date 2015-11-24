@@ -21,6 +21,7 @@ using SensusUI.Inputs;
 using System.Collections.Generic;
 using SensusService.Probes.User;
 using SensusService.Probes;
+using SensusService.Exceptions;
 
 namespace SensusUI
 {
@@ -29,6 +30,40 @@ namespace SensusUI
     /// </summary>
     public class ProtocolsPage : ContentPage
     {
+        private class ProtocolNameValueConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            {
+                Protocol protocol = value as Protocol;
+                if (protocol == null)
+                    return null;
+                else
+                    return protocol.Name + " (" + (protocol.Running ? "Running" : "Stopped") + ")";
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            {
+                throw new SensusException("Invalid call to ConvertBack.");
+            }
+        }
+
+        private class ProtocolColorValueConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            {
+                Protocol protocol = value as Protocol;
+                if (protocol == null)
+                    return Color.Default;
+                else
+                    return protocol.Running ? Color.Green : Color.Red;
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            {
+                throw new SensusException("Invalid call to ConvertBack.");
+            }
+        }
+
         public static void ExecuteActionUponProtocolAuthentication(Protocol protocol, Action successAction, Action failAction = null)
         {
             if (protocol.LockPasswordHash == "")
@@ -74,7 +109,8 @@ namespace SensusUI
 
             _protocolsList = new ListView();
             _protocolsList.ItemTemplate = new DataTemplate(typeof(TextCell));
-            _protocolsList.ItemTemplate.SetBinding(TextCell.TextProperty, "Name");
+            _protocolsList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", converter: new ProtocolNameValueConverter()));
+            _protocolsList.ItemTemplate.SetBinding(TextCell.TextColorProperty, new Binding(".", converter: new ProtocolColorValueConverter()));
             _protocolsList.ItemTapped += async (o, e) =>
             {                                    
                 if (_protocolsList.SelectedItem == null)
@@ -103,11 +139,14 @@ namespace SensusUI
                 string selectedAction = await DisplayActionSheet(selectedProtocol.Name, "Cancel", null, actions.ToArray());
 
                 if (selectedAction == "Start")
-                    selectedProtocol.StartWithUserAgreementAsync(null);
+                    selectedProtocol.StartWithUserAgreementAsync(null, Bind);
                 else if (selectedAction == "Stop")
                 {
                     if (await DisplayAlert("Confirm Stop", "Are you sure you want to stop " + selectedProtocol.Name + "?", "Yes", "No"))
+                    {
                         selectedProtocol.Running = false;
+                        Bind();
+                    }
                 }
                 else if (selectedAction == "Edit")
                 {

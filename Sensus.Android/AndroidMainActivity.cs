@@ -39,6 +39,8 @@ namespace Sensus.Android
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault }, DataMimeType = "*/*", DataScheme = "file", DataHost = "*", DataPathPattern = ".*\\\\.sensus")]  // protocols opened from the local file system
     public class AndroidMainActivity : FormsApplicationActivity
     {
+        private static readonly string INPUT_REQUESTED_NOTIFICATION_ID = "INPUT-REQUESTED-NOTIFICATION-ID";
+
         private AndroidSensusServiceConnection _serviceConnection;
         private ManualResetEvent _activityResultWait;
         private AndroidActivityResultRequestCode _activityResultRequestCode;
@@ -158,6 +160,8 @@ namespace Sensus.Android
             Console.Error.WriteLine("--------------------------- Resuming activity ---------------------------");
 
             base.OnResume();
+
+            (SensusServiceHelper.Get() as AndroidSensusServiceHelper).IssueNotificationAsync("Sensus", null, true, false, INPUT_REQUESTED_NOTIFICATION_ID);
 
             // we might still be waiting for a connection to the sensus service. prevent the user from interacting with the UI
             // by displaying a progress dialog that cannot be cancelled. keep the dialog up until the service has connected.
@@ -326,6 +330,9 @@ namespace Sensus.Android
             base.OnStop();
 
             DisconnectFromService();
+
+            if (SensusServiceHelper.PromptIsRunning)
+                (SensusServiceHelper.Get() as AndroidSensusServiceHelper).IssueNotificationAsync("Sensus", "Your input is requested.", true, false, INPUT_REQUESTED_NOTIFICATION_ID);
         }
 
         private void DisconnectFromService()

@@ -997,9 +997,6 @@ namespace SensusService
                     SensusServiceHelper.Get().Logger.Log("Local data aren't pushed to remote, so we're copying the report datum directly to the remote cache.", LoggingLevel.Normal, GetType());
                     _remoteDataStore.AddNonProbeDatum(_mostRecentReport);
                 }
-
-                int runningProtocols = SensusServiceHelper.Get().RunningProtocolIds.Count;
-                SensusServiceHelper.Get().UpdateApplicationStatus(runningProtocols + " protocol" + (runningProtocols == 1 ? " is " : "s are") + " running");
             }
         }
 

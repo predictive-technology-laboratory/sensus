@@ -101,6 +101,11 @@ namespace SensusService
         private static readonly string LOG_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
         private static readonly string SERIALIZATION_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_service_helper.json");
 
+        public static bool PromptIsRunning
+        {
+            get { return PROMPT_FOR_INPUTS_RUNNING; }
+        }
+
         #if DEBUG || UNIT_TESTING
         public const int HEALTH_TEST_DELAY_MS = 30000;
         #elif RELEASE
@@ -471,8 +476,6 @@ namespace SensusService
 
         public abstract void BringToForeground();
 
-        public abstract void UpdateApplicationStatus(string status);
-
         /// <summary>
         /// The user can enable all probes at once. When this is done, it doesn't make sense to enable, e.g., the
         /// listening location probe as well as the polling location probe. This method allows the platforms to
@@ -498,8 +501,6 @@ namespace SensusService
                     SaveAsync();
                 }
 
-                SensusServiceHelper.Get().UpdateApplicationStatus(_runningProtocolIds.Count + " protocol" + (_runningProtocolIds.Count == 1 ? " is " : "s are") + " running");
-
                 if (_healthTestCallbackId == null)
                     _healthTestCallbackId = ScheduleRepeatingCallback(TestHealth, "Test Health", HEALTH_TEST_DELAY_MS, HEALTH_TEST_DELAY_MS);
             }
@@ -511,8 +512,6 @@ namespace SensusService
             {
                 if (_runningProtocolIds.Remove(id))
                     SaveAsync();
-
-                SensusServiceHelper.Get().UpdateApplicationStatus(_runningProtocolIds.Count + " protocol" + (_runningProtocolIds.Count == 1 ? " is " : "s are") + " running");
 
                 if (_runningProtocolIds.Count == 0)
                 {

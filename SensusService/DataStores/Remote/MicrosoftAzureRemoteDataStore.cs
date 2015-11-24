@@ -186,7 +186,7 @@ namespace SensusService.DataStores.Remote
 
         public override Task<T> GetDatum<T>(string datumId, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException("Cannot retrieve data from Microsoft Azure Remote Data Store.");
+            throw new Exception("Cannot retrieve data from Microsoft Azure Remote Data Store.");
         }
 
         public override void Stop()
