@@ -83,7 +83,7 @@ namespace SensusUI
             StackLayout triggerDefinitionLayout = new StackLayout
             {
                 Orientation = StackOrientation.Vertical,
-                VerticalOptions = LayoutOptions.FillAndExpand
+                VerticalOptions = LayoutOptions.Start
             };
 
             contentLayout.Children.Add(triggerDefinitionLayout);
@@ -376,7 +376,7 @@ namespace SensusUI
             {
                 Text = "OK",
                 FontSize = 20,
-                VerticalOptions = LayoutOptions.FillAndExpand
+                VerticalOptions = LayoutOptions.Start
             };
 
             okButton.Clicked += async (o, e) =>
