@@ -21,26 +21,6 @@ namespace SensusUI.Inputs
     {
         private Label _label;
 
-        public override View View
-        {
-            get
-            {
-                if (base.View == null)
-                {
-                    _label = CreateLabel();
-
-                    // set the style ID on the view so that we can retrieve it when unit testing
-                    #if UNIT_TESTING
-                    _label.StyleId = Name;
-                    #endif
-                        
-                    base.View = _label;
-                }
-                
-                return base.View;
-            }
-        }
-
         public override object Value
         {
             get
@@ -108,6 +88,23 @@ namespace SensusUI.Inputs
         {
             Complete = complete;
             ShouldBeStored = false;
+        }
+
+        public override View GetView(int index)
+        {
+            if (base.GetView(index) == null)
+            {
+                _label = CreateLabel(-1);
+
+                // set the style ID on the view so that we can retrieve it when unit testing
+                #if UNIT_TESTING
+                _label.StyleId = Name;
+                #endif
+
+                base.SetView(_label);
+            }
+
+            return base.GetView(index);
         }
     }
 }

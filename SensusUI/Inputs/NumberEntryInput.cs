@@ -21,40 +21,6 @@ namespace SensusUI.Inputs
     {
         private Entry _entry;
 
-        public override View View
-        {
-            get
-            {
-                if (base.View == null)
-                {
-                    _entry = new Entry
-                    {
-                        Keyboard = Keyboard.Numeric,
-                        HorizontalOptions = LayoutOptions.FillAndExpand
-
-                        // set the style ID on the view so that we can retrieve it when unit testing
-                        #if UNIT_TESTING
-                        , StyleId = Name
-                        #endif
-                    };  
-
-                    _entry.TextChanged += (o, e) =>
-                    {
-                        Complete = Value != null;
-                    };
-
-                    base.View = new StackLayout
-                    {
-                        Orientation = StackOrientation.Horizontal,
-                        HorizontalOptions = LayoutOptions.FillAndExpand,
-                        Children = { CreateLabel(), _entry }
-                    };
-                }
-
-                return base.View;
-            }
-        }
-
         public override object Value
         {
             get
@@ -99,6 +65,38 @@ namespace SensusUI.Inputs
         public NumberEntryInput(string name, string labelText)
             : base(name, labelText)
         {            
+        }
+
+        public override View GetView(int index)
+        {
+            if (base.GetView(index) == null)
+            {
+                _entry = new Entry
+                {
+                    FontSize = 20,
+                    Keyboard = Keyboard.Numeric,
+                    HorizontalOptions = LayoutOptions.FillAndExpand
+
+                    // set the style ID on the view so that we can retrieve it when unit testing
+                    #if UNIT_TESTING
+                    , StyleId = Name
+                    #endif
+                };  
+
+                _entry.TextChanged += (o, e) =>
+                {
+                    Complete = Value != null;
+                };
+
+                base.SetView(new StackLayout
+                    {
+                        Orientation = StackOrientation.Vertical,
+                        VerticalOptions = LayoutOptions.Start,
+                        Children = { CreateLabel(index), _entry }
+                    });
+            }
+
+            return base.GetView(index);
         }
     }
 }

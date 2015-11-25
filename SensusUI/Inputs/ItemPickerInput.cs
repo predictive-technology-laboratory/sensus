@@ -66,51 +66,6 @@ namespace SensusUI.Inputs
             }
         }
 
-        public override View View
-        {
-            get
-            {
-                if (base.View == null && _items.Count > 0)
-                {
-                    _picker = new Picker
-                    {
-                        Title = _tipText,
-                        HorizontalOptions = LayoutOptions.FillAndExpand
-
-                        // set the style ID on the view so that we can retrieve it when unit testing
-                        #if UNIT_TESTING
-                        , StyleId = Name
-                        #endif
-                    };
-
-                    if (_allowClearSelection)
-                        _picker.Items.Add("[Clear Selection]");
-                    
-                    foreach (string item in _items)
-                        _picker.Items.Add(item);
-
-                    _picker.SelectedIndexChanged += (o, e) =>
-                    {
-                        if (Value == null)
-                            Complete = false;
-                        else if (Value.ToString() == "[Clear Selection]")
-                            _picker.SelectedIndex = -1;
-                        else
-                            Complete = true;
-                    };
-                    
-                    base.View = new StackLayout
-                    {
-                        Orientation = StackOrientation.Horizontal,
-                        HorizontalOptions = LayoutOptions.FillAndExpand,
-                        Children = { CreateLabel(), _picker }
-                    };
-                }
-
-                return base.View;
-            }
-        }
-
         public override object Value
         {
             get
@@ -161,6 +116,48 @@ namespace SensusUI.Inputs
             _tipText = tipText;
             _items = items;
             _allowClearSelection = true;
+        }
+
+        public override View GetView(int index)
+        {
+            if (base.GetView(index) == null && _items.Count > 0)
+            {
+                _picker = new Picker
+                {
+                    Title = _tipText,
+                    HorizontalOptions = LayoutOptions.FillAndExpand
+
+                    // set the style ID on the view so that we can retrieve it when unit testing
+                    #if UNIT_TESTING
+                    , StyleId = Name
+                    #endif
+                };
+
+                if (_allowClearSelection)
+                    _picker.Items.Add("[Clear Selection]");
+
+                foreach (string item in _items)
+                    _picker.Items.Add(item);
+
+                _picker.SelectedIndexChanged += (o, e) =>
+                {
+                    if (Value == null)
+                        Complete = false;
+                    else if (Value.ToString() == "[Clear Selection]")
+                        _picker.SelectedIndex = -1;
+                    else
+                        Complete = true;
+                };
+
+                base.SetView(new StackLayout
+                    {
+                        Orientation = StackOrientation.Vertical,
+                        VerticalOptions = LayoutOptions.Start,
+                        Children = { CreateLabel(index), _picker }
+                    });
+            }
+
+            return base.GetView(index);
         }
 
         public override string ToString()

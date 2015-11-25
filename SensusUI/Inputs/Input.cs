@@ -95,19 +95,6 @@ namespace SensusUI.Inputs
         }
 
         [JsonIgnore]
-        public virtual View View
-        {
-            get
-            {
-                return _view; 
-            }
-            protected set
-            {
-                _view = value; 
-            }
-        }
-
-        [JsonIgnore]
         public abstract object Value { get; }
 
         [JsonIgnore]
@@ -234,13 +221,23 @@ namespace SensusUI.Inputs
             _name = name;
         }
 
-        protected Label CreateLabel()
+        protected Label CreateLabel(int index)
         {
             return new Label
             {
-                Text = _labelText,
+                Text = string.IsNullOrWhiteSpace(_labelText) ? _labelText : (index > 0 ? index + ") " : "") + _labelText,
                 FontSize = _labelFontSize
             };
+        }
+
+        public virtual View GetView(int index)
+        {
+            return _view;
+        }
+
+        protected virtual void SetView(View value)
+        {
+            _view = value; 
         }
 
         public void Reset()

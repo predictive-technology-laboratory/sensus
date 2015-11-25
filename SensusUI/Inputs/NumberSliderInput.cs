@@ -80,82 +80,6 @@ namespace SensusUI.Inputs
             }
         }
 
-        public override View View
-        {
-            get
-            {
-                if (base.View == null && _maximum > _minimum)
-                {
-                    _slider = new Slider
-                    {
-                        HorizontalOptions = LayoutOptions.FillAndExpand,
-                        Minimum = double.MinValue,
-                        Maximum = double.MaxValue
-
-                        // set the style ID on the view so that we can retrieve it when unit testing
-                        #if UNIT_TESTING
-                        , StyleId = Name
-                        #endif
-                    };
-
-                    _slider.Minimum = _minimum;
-                    _slider.Maximum = _maximum;
-                    _slider.Value = _incrementalValue = GetIncrementalValue((_maximum - _minimum) / 2d);
-                    _incrementalValueHasChanged = false;
-
-                    Label sliderLabel = CreateLabel();
-                    string originalSliderLabelText = sliderLabel.Text;
-                    sliderLabel.Text = originalSliderLabelText + ":  Please select a value.";
-
-                    _slider.ValueChanged += (o, e) =>
-                    {
-                        double newIncrementalValue = GetIncrementalValue(_slider.Value);
-
-                        if (newIncrementalValue != _incrementalValue)
-                        {
-                            _incrementalValue = newIncrementalValue;
-                            _incrementalValueHasChanged = true;
-                            sliderLabel.Text = originalSliderLabelText + ":  " + _incrementalValue;
-                            Complete = Value != null;
-                        }
-                    };
-                    
-                    base.View = new StackLayout
-                    {
-                        Orientation = StackOrientation.Vertical,
-                        VerticalOptions = LayoutOptions.Start,
-                        Children =
-                        { 
-                            sliderLabel,
-                            new StackLayout
-                            {
-                                Orientation = StackOrientation.Horizontal,
-                                HorizontalOptions = LayoutOptions.FillAndExpand,
-                                Children =
-                                {
-                                    new Label
-                                    {
-                                        Text = _minimum.ToString(),
-                                        FontSize = 20,
-                                        HorizontalOptions = LayoutOptions.Fill
-                                    },
-                                    _slider,
-                                    new Label
-                                    {
-                                        Text = _maximum.ToString(),
-                                        FontSize = 20,
-                                        HorizontalOptions = LayoutOptions.Fill
-                                    }
-                                }
-                            }
-                        }
-                    };
-                }
-
-                return base.View;
-            }
-        }
-
         public override object Value
         {
             get
@@ -209,6 +133,79 @@ namespace SensusUI.Inputs
             _minimum = minimum;
             _maximum = maximum;
             _increment = (_maximum - _minimum + 1) / 10;
+        }
+
+        public override View GetView(int index)
+        {
+            if (base.GetView(index) == null && _maximum > _minimum)
+            {
+                _slider = new Slider
+                {
+                    HorizontalOptions = LayoutOptions.FillAndExpand,
+                    Minimum = double.MinValue,
+                    Maximum = double.MaxValue
+
+                    // set the style ID on the view so that we can retrieve it when unit testing
+                    #if UNIT_TESTING
+                    , StyleId = Name
+                    #endif
+                };
+
+                _slider.Minimum = _minimum;
+                _slider.Maximum = _maximum;
+                _slider.Value = _incrementalValue = GetIncrementalValue((_maximum - _minimum) / 2d);
+                _incrementalValueHasChanged = false;
+
+                Label sliderLabel = CreateLabel(index);
+                string originalSliderLabelText = sliderLabel.Text;
+                sliderLabel.Text = originalSliderLabelText + ":  Please select a value below.";
+
+                _slider.ValueChanged += (o, e) =>
+                {
+                    double newIncrementalValue = GetIncrementalValue(_slider.Value);
+
+                    if (newIncrementalValue != _incrementalValue)
+                    {
+                        _incrementalValue = newIncrementalValue;
+                        _incrementalValueHasChanged = true;
+                        sliderLabel.Text = originalSliderLabelText + ":  " + _incrementalValue;
+                        Complete = Value != null;
+                    }
+                };
+
+                base.SetView(new StackLayout
+                    {
+                        Orientation = StackOrientation.Vertical,
+                        VerticalOptions = LayoutOptions.Start,
+                        Children =
+                        { 
+                            sliderLabel,
+                            new StackLayout
+                            {
+                                Orientation = StackOrientation.Horizontal,
+                                HorizontalOptions = LayoutOptions.FillAndExpand,
+                                Children =
+                                {
+                                    new Label
+                                    {
+                                        Text = _minimum.ToString(),
+                                        FontSize = 20,
+                                        HorizontalOptions = LayoutOptions.Fill
+                                    },
+                                    _slider,
+                                    new Label
+                                    {
+                                        Text = _maximum.ToString(),
+                                        FontSize = 20,
+                                        HorizontalOptions = LayoutOptions.Fill
+                                    }
+                                }
+                            }
+                        }
+                    });
+            }
+
+            return base.GetView(index);
         }
 
         private double GetIncrementalValue(double value)

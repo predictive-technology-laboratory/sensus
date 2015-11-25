@@ -60,9 +60,18 @@ namespace SensusUI
                 }
             };
 
+            int viewNumber = 1;
             foreach (Input input in inputGroup.Inputs)
-                if (input.View != null)
-                    contentLayout.Children.Add(input.View);
+            {
+                View inputView = input.GetView(viewNumber);
+                if (inputView != null)
+                {
+                    contentLayout.Children.Add(inputView);
+
+                    if (!(input is LabelOnlyInput))
+                        ++viewNumber;
+                }
+            }
 
             StackLayout navigationStack = new StackLayout
             {
