@@ -175,10 +175,11 @@ namespace Sensus.Android
                 {
                     _serviceBindWait.WaitOne();
 
-                    // now that the service connection has been established, dismiss the wait dialog.
+                    // now that the service connection has been established, dismiss the wait dialog and show protocols.
                     Device.BeginInvokeOnMainThread(() =>
                         {
                             serviceBindWaitDialog.Dismiss();
+                            (App.Current as App).ProtocolsPage.Bind();
                         });
                     
                 }).Start();

@@ -123,8 +123,13 @@ namespace SensusUI
                 {
                     if (await DisplayAlert("Confirm", "Would you like to cancel?", "Yes", "No"))
                     {
-                        cancelButtonTapped = true;
-                        await Navigation.PopModalAsync(true);
+                        // if the cancellation token was cancelled while the dialog was up, then we should ignore the dialog. the token
+                        // will have already popped this page off the navigation stack.
+                        if (!cancellationToken.GetValueOrDefault().IsCancellationRequested)
+                        {
+                            cancelButtonTapped = true;
+                            await Navigation.PopModalAsync(true);
+                        }
                     }
                 };
             }
@@ -156,8 +161,13 @@ namespace SensusUI
             {
                 if (nextButton.Text == "Next" || await DisplayAlert("Confirm", "Would you like to proceed?", "Yes", "No"))
                 {
-                    nextButtonTapped = true;
-                    await Navigation.PopModalAsync(stepNumber == totalSteps);
+                    // if the cancellation token was cancelled while the dialog was up, then we should ignore the dialog. the token
+                    // will have already popped this page off the navigation stack.
+                    if (!cancellationToken.GetValueOrDefault().IsCancellationRequested)
+                    {
+                        nextButtonTapped = true;
+                        await Navigation.PopModalAsync(stepNumber == totalSteps);
+                    }
                 }
             };
 
@@ -171,6 +181,7 @@ namespace SensusUI
 
             if (cancellationToken != null)
             {
+                // if the cancellation token is cancelled, pop this page off the stack.
                 cancellationToken.GetValueOrDefault().Register(() =>
                     {                        
                         cancellationTokenCanceled = true;

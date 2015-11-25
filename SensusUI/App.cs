@@ -17,23 +17,20 @@ using Xamarin.Forms;
 
 namespace SensusUI
 {
-    /// <summary>
-    /// Xamarin Forms App, which abstracts some of the life cycle events.
-    /// </summary>
     public class App : Application
     {
-        public SensusMainPage _sensusMainPage;
+        public ProtocolsPage _protocolsPage;
 
-        public SensusMainPage SensusMainPage
+        public ProtocolsPage ProtocolsPage
         {
-            get { return _sensusMainPage; }
+            get { return _protocolsPage; }
         }
 
         public App()
         {
-            _sensusMainPage = new SensusMainPage();
+            _protocolsPage = new ProtocolsPage();
 
-            MainPage = new NavigationPage(_sensusMainPage);
+            MainPage = new NavigationPage(_protocolsPage);
         }
     }
 }

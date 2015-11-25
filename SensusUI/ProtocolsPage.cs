@@ -22,6 +22,8 @@ using System.Collections.Generic;
 using SensusService.Probes.User;
 using SensusService.Probes;
 using SensusService.Exceptions;
+using System.Threading;
+using ZXing;
 
 namespace SensusUI
 {
@@ -105,7 +107,7 @@ namespace SensusUI
 
         public ProtocolsPage()
         {
-            Title = "Protocols";
+            Title = "Your Sensus Studies";
 
             _protocolsList = new ListView();
             _protocolsList.ItemTemplate = new DataTemplate(typeof(TextCell));
@@ -118,12 +120,14 @@ namespace SensusUI
 
                 Protocol selectedProtocol = _protocolsList.SelectedItem as Protocol;
 
-                List<string> actions = new List<string>(new string[] { selectedProtocol.Running ? "Stop" : "Start", "Edit", "Copy" });
+                List<string> actions = new List<string>();
+
+                actions.Add(selectedProtocol.Running ? "Stop" : "Start");
 
                 if (selectedProtocol.Running)
-                    actions.Add("Status");
+                    actions.Add("Display Participation");
 
-                actions.Add("Share");
+                actions.AddRange(new string[] { "Scan Participation Barcode", "Edit", "Copy", "Share" });
 
                 List<Protocol> groupableProtocols = SensusServiceHelper.Get().RegisteredProtocols.Where(registeredProtocol => registeredProtocol != selectedProtocol && registeredProtocol.Groupable && registeredProtocol.GroupedProtocols.Count == 0).ToList();
                 if (selectedProtocol.Groupable)
@@ -134,6 +138,9 @@ namespace SensusUI
                         actions.Add("Ungroup");
                 }
 
+                if (selectedProtocol.Running)
+                    actions.Add("Status");
+
                 actions.Add("Delete");
 
                 string selectedAction = await DisplayActionSheet(selectedProtocol.Name, "Cancel", null, actions.ToArray());
@@ -142,15 +149,154 @@ namespace SensusUI
                 {
                     selectedProtocol.StartWithUserAgreementAsync(null, () =>
                         {
-                            Device.BeginInvokeOnMainThread(Bind);  // rebind to pick up color and running status changes
+                            // rebind to pick up color and running status changes
+                            Device.BeginInvokeOnMainThread(Bind);
                         });
                 }
                 else if (selectedAction == "Stop")
                 {
                     if (await DisplayAlert("Confirm Stop", "Are you sure you want to stop " + selectedProtocol.Name + "?", "Yes", "No"))
                     {
-                        selectedProtocol.Running = false;
-                        Bind();
+                        selectedProtocol.StopAsync(() =>
+                            {
+                                // rebind to pick up color and running status changes
+                                Device.BeginInvokeOnMainThread(Bind);
+                            });
+                    }
+                }
+                else if (selectedAction == "Display Participation")
+                {
+                    CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+
+                    // pop up wait screen while we submit the participation reward datum
+                    SensusServiceHelper.Get().PromptForInputsAsync(
+                        null,
+                        false,
+                        DateTime.MinValue,
+                        new InputGroup[]
+                        {
+                            new InputGroup("Please Wait", new LabelOnlyInput("Submitting participation information.", false))
+                        },
+                        cancellationTokenSource.Token,
+                        false,
+                        "Cancel",
+                        () =>
+                        {
+                            // add participation reward datum to remote data store and commit immediately
+                            ParticipationRewardDatum participationRewardDatum = new ParticipationRewardDatum(DateTimeOffset.UtcNow, selectedProtocol.Participation);
+                            selectedProtocol.RemoteDataStore.AddNonProbeDatum(participationRewardDatum);
+                            selectedProtocol.RemoteDataStore.CommitAsync(cancellationTokenSource.Token, true, async () =>
+                                {
+                                    // we should not have any remaining non-probe data
+                                    bool commitFailed = selectedProtocol.RemoteDataStore.HasNonProbeDatumToCommit(participationRewardDatum.Id);
+
+                                    if (commitFailed)
+                                        SensusServiceHelper.Get().FlashNotificationAsync("Failed to submit participation information to remote server. You will not be able to verify your participation at this time.");
+
+                                    // cancel the token to close the input above, but only if the token hasn't already been canceled.
+                                    if (!cancellationTokenSource.IsCancellationRequested)
+                                        cancellationTokenSource.Cancel();
+
+                                    Device.BeginInvokeOnMainThread(async() =>
+                                        {
+                                            // only show the QR code for the reward datum if the datum was committed to the remote data store
+                                            await Navigation.PushAsync(new ParticipationReportPage(selectedProtocol, commitFailed ? null : participationRewardDatum));
+                                        });
+                                });
+                        },
+                        inputs =>
+                        {
+                            // if the prompt was closed by the user instead of the cancellation token, cancel the token in order
+                            // to cancel the remote data store commit. if the prompt was closed by the termination of the remote
+                            // data store commit (i.e., by the canceled token), then don't cancel the token again.
+                            if (!cancellationTokenSource.IsCancellationRequested)
+                                cancellationTokenSource.Cancel();
+                        }); 
+                }
+                else if (selectedAction == "Scan Participation Barcode")
+                {
+                    Result barcodeResult = null;
+
+                    try
+                    {
+                        ZXing.Mobile.MobileBarcodeScanner scanner = SensusServiceHelper.Get().BarcodeScanner;
+
+                        if (scanner == null)
+                            throw new Exception("Barcode scanner not present.");
+
+                        scanner.TopText = "Position a Sensus participation barcode in the window below, with the red line across the middle of the barcode.";
+                        scanner.BottomText = "Sensus is not recording any of these images. Sensus is only trying to find a barcode.";
+                        scanner.CameraUnsupportedMessage = "There is not a supported camera on this phone. Cannot scan barcode.";
+
+                        barcodeResult = await scanner.Scan(new ZXing.Mobile.MobileBarcodeScanningOptions
+                            {
+                                PossibleFormats = new BarcodeFormat[] { BarcodeFormat.QR_CODE }.ToList()
+                            });
+                    }
+                    catch (Exception ex)
+                    {
+                        string message = "Failed to scan barcode:  " + ex.Message;
+                        SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+                        SensusServiceHelper.Get().FlashNotificationAsync(message);
+                    }
+
+                    if (barcodeResult != null)
+                    {
+                        CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+
+                        // pop up wait screen while we get the participation reward datum
+                        SensusServiceHelper.Get().PromptForInputsAsync(
+                            null,
+                            false,
+                            DateTime.MinValue,
+                            new InputGroup[]
+                            {
+                                new InputGroup("Please Wait", new LabelOnlyInput("Retrieving participation information.", false))
+                            },
+                            cancellationTokenSource.Token,
+                            false,
+                            "Cancel",
+                            async () =>
+                            {
+                                try
+                                {
+                                    ParticipationRewardDatum participationRewardDatum = await selectedProtocol.RemoteDataStore.GetDatum<ParticipationRewardDatum>(barcodeResult.Text, cancellationTokenSource.Token);
+
+                                    // cancel the token to close the input above, but only if the token hasn't already been canceled.
+                                    if (!cancellationTokenSource.IsCancellationRequested)
+                                        cancellationTokenSource.Cancel();
+
+                                    // ensure that the participation datum has not expired                                           
+                                    if (participationRewardDatum.Timestamp > DateTimeOffset.UtcNow.AddSeconds(-SensusServiceHelper.PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS))
+                                    {
+                                        Device.BeginInvokeOnMainThread(async() =>
+                                            {
+                                                await Navigation.PushAsync(new VerifiedParticipationPage(selectedProtocol, participationRewardDatum));
+                                            });
+                                    }
+                                    else
+                                        SensusServiceHelper.Get().FlashNotificationAsync("Participation barcode has expired. The participant needs to regenerate the barcode.");
+                                }
+                                catch (Exception)
+                                {
+                                    SensusServiceHelper.Get().FlashNotificationAsync("Failed to retrieve participation information.");
+                                }
+                                finally
+                                {
+                                    // cancel the token to close the input above, but only if the token hasn't already been canceled. this will be
+                                    // used if an exception is thrown while getting the participation reward datum.
+                                    if (!cancellationTokenSource.IsCancellationRequested)
+                                        cancellationTokenSource.Cancel();
+                                }                                        
+                            },
+                            inputs =>
+                            {
+                                // if the prompt was closed by the user instead of the cancellation token, cancel the token in order
+                                // to cancel the datum retrieval. if the prompt was closed by the termination of the remote
+                                // data store get (i.e., by the canceled token), then don't cancel the token again.
+                                if (!cancellationTokenSource.IsCancellationRequested)
+                                    cancellationTokenSource.Cancel();
+                            });  
                     }
                 }
                 else if (selectedAction == "Edit")
@@ -161,7 +307,7 @@ namespace SensusUI
                                 {
                                     ProtocolPage protocolPage = new ProtocolPage(selectedProtocol);
                                     protocolPage.Disappearing += (oo, ee) => Bind();  // rebind to pick up name changes
-                                     await Navigation.PushAsync(protocolPage);
+                                    await Navigation.PushAsync(protocolPage);
                                     _protocolsList.SelectedItem = null;
                                 });
                         }
@@ -169,24 +315,6 @@ namespace SensusUI
                 }
                 else if (selectedAction == "Copy")
                     selectedProtocol.CopyAsync(selectedProtocolCopy => SensusServiceHelper.Get().RegisterProtocol(selectedProtocolCopy), true);
-                else if (selectedAction == "Status")
-                {
-                    if (SensusServiceHelper.Get().ProtocolShouldBeRunning(selectedProtocol))
-                    {
-                        selectedProtocol.TestHealthAsync(true, () =>
-                            {
-                                Device.BeginInvokeOnMainThread(async () =>
-                                    {
-                                        if (selectedProtocol.MostRecentReport == null)
-                                            await DisplayAlert("No Report", "Status check failed.", "OK");
-                                        else
-                                            await Navigation.PushAsync(new ViewTextLinesPage("Protocol Report", selectedProtocol.MostRecentReport.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList(), null));
-                                    });
-                            });
-                    }
-                    else
-                        await DisplayAlert("Protocol Not Running", "Cannot check status of protocol when protocol is not running.", "OK");
-                }
                 else if (selectedAction == "Share")
                 {
                     Action ShareSelectedProtocol = new Action(() =>
@@ -215,6 +343,24 @@ namespace SensusUI
                     if (await DisplayAlert("Ungroup " + selectedProtocol.Name + "?", "This protocol is currently grouped with the following other protocols:" + Environment.NewLine + Environment.NewLine + string.Concat(selectedProtocol.GroupedProtocols.Select(protocol => protocol.Name + Environment.NewLine)), "Ungroup", "Cancel"))
                         selectedProtocol.GroupedProtocols.Clear();
                 }
+                else if (selectedAction == "Status")
+                {
+                    if (SensusServiceHelper.Get().ProtocolShouldBeRunning(selectedProtocol))
+                    {
+                        selectedProtocol.TestHealthAsync(true, () =>
+                            {
+                                Device.BeginInvokeOnMainThread(async () =>
+                                    {
+                                        if (selectedProtocol.MostRecentReport == null)
+                                            await DisplayAlert("No Report", "Status check failed.", "OK");
+                                        else
+                                            await Navigation.PushAsync(new ViewTextLinesPage("Protocol Report", selectedProtocol.MostRecentReport.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList(), null));
+                                    });
+                            });
+                    }
+                    else
+                        await DisplayAlert("Protocol Not Running", "Cannot check status of protocol when protocol is not running.", "OK");
+                }
                 else if (selectedAction == "Delete")
                 {
                     if (await DisplayAlert("Delete " + selectedProtocol.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
@@ -227,14 +373,21 @@ namespace SensusUI
                             });
                 }
             };
-            
-            Bind();
 
             Content = _protocolsList;
-            
-            ToolbarItems.Add(new ToolbarItem(null, "plus.png", () =>
+
+            ToolbarItems.Add(new ToolbarItem(null, "gear_wrench.png", async () =>
                     {
-                        Protocol.CreateAsync("New Protocol", null);
+                        string action = await DisplayActionSheet("Other Actions", "Back", null, "New Protocol", "View Log", "View Points of Interest", "Stop Sensus");
+
+                        if (action == "New Protocol")
+                            Protocol.CreateAsync("New Protocol", null);
+                        else if (action == "View Log")
+                            await Navigation.PushAsync(new ViewTextLinesPage("Log", SensusServiceHelper.Get().Logger.Read(200, true), () => SensusServiceHelper.Get().Logger.Clear()));
+                        else if (action == "View Points of Interest")
+                            await Navigation.PushAsync(new PointsOfInterestPage(SensusServiceHelper.Get().PointsOfInterest, () => SensusServiceHelper.Get().SaveAsync()));
+                        else if (action == "Stop Sensus" && await DisplayAlert("Stop Sensus?", "Are you sure you want to stop Sensus?", "OK", "Cancel"))
+                            SensusServiceHelper.Get().StopAsync();
                     }));
         }
 

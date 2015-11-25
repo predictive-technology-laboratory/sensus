@@ -249,10 +249,25 @@ namespace SensusService
                         Device.BeginInvokeOnMainThread(async () =>
                             {
                                 // display the protocols page if it isn't already up
-                                if (!(App.Current.MainPage.Navigation.NavigationStack.Last() is ProtocolsPage))
-                                    await App.Current.MainPage.Navigation.PushAsync(new ProtocolsPage());
+                                ProtocolsPage protocolsPage = null;
+                                Page topPage = App.Current.MainPage.Navigation.NavigationStack.Last();
+                                if (topPage is ProtocolsPage)
+                                    protocolsPage = topPage as ProtocolsPage;
+                                else
+                                {
+                                    protocolsPage = new ProtocolsPage();
+                                    await App.Current.MainPage.Navigation.PushAsync(protocolsPage);
+                                }
 
-                                protocol.StartWithUserAgreementAsync("You just opened \"" + protocol.Name + "\" within Sensus.");
+                                // ask user to start protocol
+                                protocol.StartWithUserAgreementAsync("You just opened \"" + protocol.Name + "\" within Sensus.", () =>
+                                    {
+                                        Device.BeginInvokeOnMainThread(() =>
+                                            {
+                                                // rebind to pick up any color changes
+                                                protocolsPage.Bind();
+                                            });
+                                    });
                             });
                     }
 
@@ -362,16 +377,6 @@ namespace SensusService
         public bool Running
         {
             get { return _running; }
-            set
-            {
-                if (value != _running)
-                {
-                    if (value)
-                        StartAsync();
-                    else
-                        StopAsync();
-                }
-            }
         }
 
         public LocalDataStore LocalDataStore
@@ -674,9 +679,16 @@ namespace SensusService
                 }).Start();
         }
 
-        public void StartAsync()
+        public void StartAsync(Action callback = null)
         {
-            new Thread(Start).Start();
+            new Thread(() =>
+                {
+                    Start();
+
+                    if (callback != null)
+                        callback();
+
+                }).Start();
         }
 
         public void Start()
@@ -865,7 +877,7 @@ namespace SensusService
 
                         int consentCodeInt;
                         if (int.TryParse(consentCodeStr, out consentCodeInt) && consentCodeInt == consentCode)
-                            Running = true;
+                            Start();
                         else
                             SensusServiceHelper.Get().FlashNotificationAsync("Incorrect code entered.");
                     }
@@ -1028,14 +1040,7 @@ namespace SensusService
                 _remoteDataStore.ClearForSharing();
         }
 
-        public void StopAsync()
-        {
-            StopAsync(() =>
-                {
-                });
-        }
-
-        public void StopAsync(Action callback)
+        public void StopAsync(Action callback = null)
         {
             new Thread(() =>
                 {

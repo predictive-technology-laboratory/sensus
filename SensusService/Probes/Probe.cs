@@ -86,11 +86,14 @@ namespace SensusService.Probes
                 {
                     _enabled = value;
 
-                    if (_protocol != null && _protocol.Running)  // _protocol can be null when deserializing the probe -- if Enabled is set before Protocol
+                    // _protocol can be null when deserializing the probe -- if Enabled is set before Protocol
+                    if (_protocol != null && _protocol.Running)
+                    {
                         if (_enabled)
-                        StartAsync();
-                    else
-                        StopAsync();
+                            StartAsync();
+                        else
+                            StopAsync();
+                    }
                 }
             }
         }

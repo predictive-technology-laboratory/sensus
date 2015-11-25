@@ -57,7 +57,7 @@ namespace SensusUI
                     new Label
                     {                                
                         Text = "This score reflects your participation level over the past " + (protocol.ParticipationHorizonDays == 1 ? "day" : protocol.ParticipationHorizonDays + " days") + "." +
-                        (participationRewardDatum == null || participationRewardDatum.Id == null ? "" : " Anyone can verify your participation by tapping \"Verify Participation\" on their Sensus home screen and scanning the following barcode:"),
+                        (participationRewardDatum == null || participationRewardDatum.Id == null ? "" : " Anyone can verify your participation by tapping \"Scan Participation Barcode\" on their device and scanning the following barcode:"),
                         FontSize = 20,
                         HorizontalOptions = LayoutOptions.CenterAndExpand
                     }
