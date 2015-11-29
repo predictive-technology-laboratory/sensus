@@ -314,7 +314,7 @@ namespace Sensus.iOS
 
         #endregion
 
-        public override void ShareFileAsync(string path, string subject)
+        public override void ShareFileAsync(string path, string subject, string mimeType)
         {
             Device.BeginInvokeOnMainThread(() =>
                 {
@@ -322,7 +322,7 @@ namespace Sensus.iOS
                     {
                         MFMailComposeViewController mailer = new MFMailComposeViewController();
                         mailer.SetSubject(subject);
-                        mailer.AddAttachmentData(NSData.FromUrl(NSUrl.FromFilename(path)), "application/json", Path.GetFileName(path));
+                        mailer.AddAttachmentData(NSData.FromUrl(NSUrl.FromFilename(path)), mimeType, Path.GetFileName(path));
                         mailer.Finished += (sender, e) => mailer.DismissViewControllerAsync(true);
                         UIApplication.SharedApplication.KeyWindow.RootViewController.PresentViewController(mailer, true, null);
                     }

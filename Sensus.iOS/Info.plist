@@ -64,9 +64,9 @@
 			<key>UTTypeTagSpecification</key>
 			<dict>
 				<key>public.filename-extension</key>
-				<string>sensus</string>
+				<string>json</string>
 				<key>public.mime-type</key>
-				<string>application/octet-stream</string>
+				<string>application/json</string>
 			</dict>
 			<key>UTTypeConformsTo</key>
 			<array>

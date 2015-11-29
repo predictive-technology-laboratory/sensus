@@ -263,14 +263,14 @@ namespace Sensus.Android
                 }).Start();
         }
 
-        public override void ShareFileAsync(string path, string subject)
+        public override void ShareFileAsync(string path, string subject, string mimeType)
         {
             new Thread(() =>
                 {
                     try
                     {
                         Intent intent = new Intent(Intent.ActionSend);
-                        intent.SetType("text/plain");
+                        intent.SetType(mimeType);
                         intent.AddFlags(ActivityFlags.GrantReadUriPermission);
 
                         if (!string.IsNullOrWhiteSpace(subject))

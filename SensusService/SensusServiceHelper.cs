@@ -460,7 +460,7 @@ namespace SensusService
 
         public abstract void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback);
 
-        public abstract void ShareFileAsync(string path, string subject);
+        public abstract void ShareFileAsync(string path, string subject, string mimeType);
 
         public abstract void SendEmailAsync(string toAddress, string subject, string message);
 

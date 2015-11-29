@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#  Purpose:  Prompt for path to protocol (.sensus) file to use when unit testing. Copies 
+#  Purpose:  Prompt for path to protocol (.json) file to use when unit testing. Copies 
 #            file into appropriate directory for current OS.
 #
 
@@ -20,7 +20,7 @@ read -e -p "If you would like to use a new unit testing protocol, enter its path
 if [ "$filepath" == "" ]; then
 	echo "No file selected."
 else
-	destinationPath="$destinationDirectory/UnitTestingProtocol.sensus"
+	destinationPath="$destinationDirectory/UnitTestingProtocol.json"
 	echo "Copying $filepath to $destinationPath"
 	cp $filepath $destinationPath
 

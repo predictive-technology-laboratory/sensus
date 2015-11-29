@@ -325,9 +325,9 @@ namespace SensusUI
                                     selectedProtocolCopy.ResetForSharing();
 
                                     // write protocol to file and share
-                                    string sharePath = SensusServiceHelper.Get().GetSharePath(".sensus");
+                                    string sharePath = SensusServiceHelper.Get().GetSharePath(".json");
                                     selectedProtocolCopy.Save(sharePath);
-                                    SensusServiceHelper.Get().ShareFileAsync(sharePath, "Sensus Protocol:  " + selectedProtocolCopy.Name);
+                                    SensusServiceHelper.Get().ShareFileAsync(sharePath, "Sensus Protocol:  " + selectedProtocolCopy.Name, "application/json");
                                 }, false);
                         });
 

@@ -74,7 +74,7 @@ namespace Sensus.iOS
 
         public override bool OpenUrl(UIApplication application, NSUrl url, string sourceApplication, NSObject annotation)
         {
-            if (url.AbsoluteString.EndsWith(".sensus"))
+            if (url.AbsoluteString.EndsWith(".json"))
             {
                 try
                 {
@@ -115,7 +115,7 @@ namespace Sensus.iOS
 
                     #if UNIT_TESTING
                     // load and run the unit testing protocol
-                    string filePath = NSBundle.MainBundle.PathForResource("UnitTestingProtocol", "sensus");
+                    string filePath = NSBundle.MainBundle.PathForResource("UnitTestingProtocol", "json");
                     using (Stream file = new FileStream(filePath, FileMode.Open, FileAccess.Read))
                     {
                         Protocol.RunUnitTestingProtocol(file);

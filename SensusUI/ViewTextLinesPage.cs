@@ -69,7 +69,7 @@ namespace SensusUI
                     }
 
                     if (path != null)
-                        SensusServiceHelper.Get().ShareFileAsync(path, title + ":  " + Path.GetFileName(path));
+                        SensusServiceHelper.Get().ShareFileAsync(path, title + ":  " + Path.GetFileName(path), "text/plain");
                 };
 
             Button clearButton = new Button

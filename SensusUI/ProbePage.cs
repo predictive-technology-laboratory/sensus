@@ -107,7 +107,7 @@ namespace SensusUI
                         shareFile.Close();
                     }
 
-                    SensusServiceHelper.Get().ShareFileAsync(sharePath, "Probe Definition");
+                    SensusServiceHelper.Get().ShareFileAsync(sharePath, "Probe Definition", "application/json");
                 };
             }
             #endregion

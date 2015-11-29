@@ -71,6 +71,11 @@
     <BuildIpa>true</BuildIpa>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>1701</NoWarn>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="BeforeBuild" command="touch Resources/UnitTestingProtocol.json" workingdir="${ProjectDir}" externalConsole="True" />
+      </CustomCommands>
+    </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <Optimize>true</Optimize>
@@ -90,6 +95,11 @@
     <CodesignProvision>Automatic:AdHoc</CodesignProvision>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>1701</NoWarn>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="BeforeBuild" command="touch Resources/UnitTestingProtocol.json" workingdir="${ProjectDir}" externalConsole="True" />
+      </CustomCommands>
+    </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
     <Optimize>true</Optimize>
@@ -425,7 +435,6 @@
     <BundleResource Include="..\SensusUI\Icons\share.png">
       <Link>Resources\share.png</Link>
     </BundleResource>
-    <BundleResource Include="Resources\UnitTestingProtocol.sensus" />
     <BundleResource Include="..\SensusUI\Icons\check.png">
       <Link>Resources\check.png</Link>
     </BundleResource>
@@ -435,6 +444,7 @@
     <BundleResource Include="..\SensusUI\Icons\gear_wrench.png">
       <Link>Resources\gear_wrench.png</Link>
     </BundleResource>
+    <BundleResource Include="Resources\UnitTestingProtocol.json" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

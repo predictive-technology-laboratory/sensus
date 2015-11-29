@@ -38,7 +38,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <CustomCommands>
       <CustomCommands>
-        <Command type="BeforeBuild" command="touch Assets/UnitTestingProtocol.sensus" workingdir="${ProjectDir}" externalConsole="True" />
+        <Command type="BeforeBuild" command="touch Assets/UnitTestingProtocol.json" workingdir="${ProjectDir}" externalConsole="True" />
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>
@@ -54,7 +54,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <CustomCommands>
       <CustomCommands>
-        <Command type="BeforeBuild" command="touch Assets/UnitTestingProtocol.sensus" workingdir="${ProjectDir}" externalConsole="True" />
+        <Command type="BeforeBuild" command="touch Assets/UnitTestingProtocol.json" workingdir="${ProjectDir}" externalConsole="True" />
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>
@@ -98,7 +98,7 @@
     <AndroidSupportedAbis>armeabi;armeabi-v7a;x86</AndroidSupportedAbis>
     <CustomCommands>
       <CustomCommands>
-        <Command type="BeforeBuild" command="../Sensus.UiTest/UnitTestingProtocols/PromptForUnitTestingProtocol.sh" workingdir="${ProjectDir}" externalConsole="True" />
+        <Command type="BeforeBuild" command="../Sensus.UiTest/UnitTestingProtocols/PromptForUnitTestingProtocol.sh android" workingdir="${ProjectDir}" externalConsole="True" />
       </CustomCommands>
     </CustomCommands>
     <AndroidLinkMode>None</AndroidLinkMode>
@@ -401,6 +401,6 @@
     <Folder Include="Assets\" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\UnitTestingProtocol.sensus" />
+    <AndroidAsset Include="Assets\UnitTestingProtocol.json" />
   </ItemGroup>
 </Project>

@@ -151,7 +151,7 @@ namespace SensusUI
                         Device.BeginInvokeOnMainThread(async () => 
                             {
                                 await Navigation.PopAsync();
-                                SensusServiceHelper.Get().ShareFileAsync(sharePath, "Sensus Data");
+                                SensusServiceHelper.Get().ShareFileAsync(sharePath, "Sensus Data", "application/json");
                             });
                     }
 
