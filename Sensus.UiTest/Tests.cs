@@ -106,7 +106,7 @@ namespace Sensus.UiTest
             Thread.Sleep(10000);  // 5-second accelerometer stabilization + a few seconds for the prompt page to show up before trying to scroll to it.
             _app.WaitForElementThenEnterText(ACCELEROMETER_TRIGGERED_SCRIPT_INPUT, true, "12345");
             _app.WaitForElementThenTap(PROMPT_FOR_INPUTS_SUBMIT, true);
-            _app.WaitForElementThenTap(PROMPT_FOR_INPUTS_SUBMIT_CONFIRM, true);
+            _app.WaitForElementThenTap(PROMPT_FOR_INPUTS_SUBMIT_CONFIRM, false);
             _app.Back();  // to probes page
             _app.Back();  // to protocol page
             _app.Back();  // to protocols page
@@ -137,7 +137,7 @@ namespace Sensus.UiTest
             int consentCode = int.Parse(consentMessage.Substring(consentMessage.LastIndexOf(" ") + 1));
             _app.WaitForElementThenEnterText(PROTOCOL_CONSENT_CODE, true, consentCode.ToString());
             _app.WaitForElementThenTap(PROMPT_FOR_INPUTS_SUBMIT, true);
-            _app.WaitForElementThenTap(PROMPT_FOR_INPUTS_SUBMIT_CONFIRM, true);
+            _app.WaitForElementThenTap(PROMPT_FOR_INPUTS_SUBMIT_CONFIRM, false);
 
             // wait for the protocol to start
             Thread.Sleep(startupCheckDelay);
