@@ -87,7 +87,7 @@ namespace SensusUI.UiProperties
 
                 #if UNIT_TESTING
                 // set style id so we can get the property value when unit testing
-                view.StyleId = propertyLabel.Text + " View";
+                propertyView.StyleId = propertyLabel.Text + " View";
                 #endif
 
                 if (targetProperty != null)
