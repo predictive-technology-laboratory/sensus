@@ -159,8 +159,8 @@ namespace Sensus.iOS
                 // app is no longer active, so reset the activation ID
                 serviceHelper.ActivationId = null;
 
-                if (iOSSensusServiceHelper.PromptIsRunning)
-                    serviceHelper.IssueNotificationAsync("Your input is requested.", null);
+                if (iOSSensusServiceHelper.InputRequested)
+                    serviceHelper.IssueNotificationAsync("Please tap to provide responses.", null);
             }
         }
 		

@@ -91,6 +91,7 @@ namespace SensusService
         private static SensusServiceHelper SINGLETON;
         private static readonly object PROMPT_FOR_INPUTS_LOCKER = new object();
         private static bool PROMPT_FOR_INPUTS_RUNNING = false;
+        private static bool INPUT_REQUESTED = false;
         public const string SENSUS_CALLBACK_KEY = "SENSUS-CALLBACK";
         public const string SENSUS_CALLBACK_ID_KEY = "SENSUS-CALLBACK-ID";
         public const string SENSUS_CALLBACK_REPEATING_KEY = "SENSUS-CALLBACK-REPEATING";
@@ -101,9 +102,15 @@ namespace SensusService
         private static readonly string LOG_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
         private static readonly string SERIALIZATION_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_service_helper.json");
 
-        public static bool PromptIsRunning
+        /// <summary>
+        /// Gets a value indicating whether user input is currently being requested. Differs from PROMPT_FOR_INPUTS_RUNNING in that
+        /// a number of things happen as part of a prompt that don't involve requests for user inputs. For example inputs can be
+        /// GPS tagged, which takes time after the input requests have been satisfied.
+        /// </summary>
+        /// <value><c>true</c> if input requested; otherwise, <c>false</c>.</value>
+        public static bool InputRequested
         {
-            get { return PROMPT_FOR_INPUTS_RUNNING; }
+            get { return INPUT_REQUESTED; }
         }
 
         #if DEBUG || UNIT_TESTING
@@ -854,6 +861,8 @@ namespace SensusService
                             PROMPT_FOR_INPUTS_RUNNING = true;
                     }
 
+                    INPUT_REQUESTED = true;
+
                     InputGroup[] incompleteGroups = inputGroups.Where(inputGroup => !inputGroup.Complete).ToArray();
 
                     bool firstPageDisplay = true;
@@ -893,7 +902,7 @@ namespace SensusService
                                         responseWait.Set();
                                     else
                                     {
-                                        await App.Current.MainPage.Navigation.PushModalAsync(promptForInputsPage, firstPageDisplay);  // animate first page
+                                        await App.Current.MainPage.Navigation.PushModalAsync(promptForInputsPage, firstPageDisplay);  // only animate first page
 
                                         if (postDisplayCallback != null)
                                             postDisplayCallback();
@@ -908,6 +917,8 @@ namespace SensusService
                         foreach (Input input in incompleteGroup.Inputs)
                             input.Viewed = true;
                     }
+
+                    INPUT_REQUESTED = false;
 
                     #region geotag input groups if the user didn't cancel and we've got input groups with inputs that are complete and lacking locations
                     if (inputGroups != null && incompleteGroups.Any(incompleteGroup => incompleteGroup.Geotag && incompleteGroup.Inputs.Any(input => input.Complete && (input.Latitude == null || input.Longitude == null))))

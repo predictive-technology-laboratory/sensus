@@ -204,12 +204,16 @@ namespace SensusService.Probes
         /// Gets the participation level for the current probe. If this probe was originally enabled within the protocol, then
         /// this will be a value between 0 and 1, with 1 indicating perfect participation and 0 indicating no participation. If 
         /// this probe was not originally enabled within the protocol, then the returned value will be null, indicating that this
-        /// probe should not be included in calculations of overall protocol participation.
+        /// probe should not be included in calculations of overall protocol participation. Probes can become disabled if they
+        /// are not supported on the current device or if the user refuses to initialize them (e.g., by not signing into Facebook).
+        /// Although they become disabled, they were originally enabled within the protocol and participation should reflect this.
+        /// Lastly, this will return null if the probe is not storing its data, as might be the case if a probe is enabled in order
+        /// to trigger scripts but not told to store its data.
         /// </summary>
         /// <returns>The participation level (null, or somewhere 0-1).</returns>
         public float? GetParticipation()
         {
-            if (_originallyEnabled)
+            if (_originallyEnabled && _storeData)
                 return Math.Min(RawParticipation, 1);  // raw participations can be > 1, e.g. in the case of polling probes that the user can cause to poll repeatedly. cut off at 1 to maintain the interpretation of 1 as perfect participation.
             else
                 return null;

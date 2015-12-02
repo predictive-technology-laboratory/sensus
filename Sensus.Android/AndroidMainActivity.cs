@@ -331,8 +331,8 @@ namespace Sensus.Android
 
             DisconnectFromService();
 
-            if (SensusServiceHelper.PromptIsRunning)
-                (SensusServiceHelper.Get() as AndroidSensusServiceHelper).IssueNotificationAsync("Sensus", "Your input is requested.", true, false, INPUT_REQUESTED_NOTIFICATION_ID);
+            if (SensusServiceHelper.InputRequested)
+                (SensusServiceHelper.Get() as AndroidSensusServiceHelper).IssueNotificationAsync("Sensus", "Please tap to provide responses.", true, false, INPUT_REQUESTED_NOTIFICATION_ID);
         }
 
         private void DisconnectFromService()
