@@ -14,6 +14,7 @@
 
 using System;
 using Xamarin.Forms;
+using System.Reflection;
 
 namespace SensusUI.UiProperties
 {
@@ -51,6 +52,18 @@ namespace SensusUI.UiProperties
         public EntryIntegerUiProperty(string labelText, bool editable, int order)
             : base(labelText, editable, order)
         {
+        }
+
+        public override View GetView(PropertyInfo property, object o, out BindableProperty targetProperty, out IValueConverter converter)
+        {
+            targetProperty = Entry.TextProperty;
+            converter = new ValueConverter();
+
+            return new Entry
+            {
+                Keyboard = Keyboard.Numeric,
+                HorizontalOptions = LayoutOptions.FillAndExpand
+            };
         }
     }
 }

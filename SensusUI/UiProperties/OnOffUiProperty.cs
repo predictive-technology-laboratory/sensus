@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Xamarin.Forms;
+using System.Reflection;
+
 namespace SensusUI.UiProperties
 {
     /// <summary>
@@ -22,6 +25,17 @@ namespace SensusUI.UiProperties
         public OnOffUiProperty(string labelText, bool editable, int order)
             : base(labelText, editable, order)
         {
+        }
+
+        public override View GetView(PropertyInfo property, object o, out BindableProperty targetProperty, out IValueConverter converter)
+        {            
+            targetProperty = Switch.IsToggledProperty;
+            converter = null;
+
+            return new Switch
+            {
+                HorizontalOptions = LayoutOptions.Start
+            };
         }
     }
 }

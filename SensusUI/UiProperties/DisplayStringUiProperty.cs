@@ -15,6 +15,7 @@
 using SensusService.Exceptions;
 using System;
 using Xamarin.Forms;
+using System.Reflection;
 
 namespace SensusUI.UiProperties
 {
@@ -40,8 +41,19 @@ namespace SensusUI.UiProperties
         }
 
         public DisplayStringUiProperty(string labelText, int order)
-            : base(labelText, false, order)
+            : base(labelText, true, order)
         {
+        }
+
+        public override View GetView(PropertyInfo property, object o, out BindableProperty targetProperty, out IValueConverter converter)
+        {
+            targetProperty = Label.TextProperty;
+            converter = new ValueConverter();
+
+            return new Label
+            {
+                FontSize = 20
+            };
         }
     }
 }

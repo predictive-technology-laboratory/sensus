@@ -553,7 +553,7 @@ namespace SensusService
             set
             {
                 // if a threshold is given, force it to be in [0,1]
-                if (_rewardThreshold != null)
+                if (value != null)
                 {
                     float threshold = value.GetValueOrDefault();
                     if (threshold < 0)

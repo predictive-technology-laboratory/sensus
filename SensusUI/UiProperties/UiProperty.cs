@@ -60,196 +60,50 @@ namespace SensusUI.UiProperties
         /// <param name="o">Object to get StackLayouts for.</param>
         public static List<StackLayout> GetPropertyStacks(object o)
         {
-            List<StackLayout> propertyStacks = new List<StackLayout>();
-
             List<Tuple<PropertyInfo, UiProperty>> propertyUiElements = 
                 o.GetType()
-                .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                .Select(p => new Tuple<PropertyInfo, UiProperty>(p, GetUiPropertyAttribute(p)))
-                .Where(p => p.Item2 != null)
-                .OrderBy(p => p.Item2._order).ToList();
+                 .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                 .Select(p => new Tuple<PropertyInfo, UiProperty>(p, GetUiPropertyAttribute(p)))
+                 .Where(p => p.Item2 != null)
+                 .OrderBy(p => p.Item2._order).ToList();
+
+            List<StackLayout> propertyStacks = new List<StackLayout>();
 
             foreach (Tuple<PropertyInfo, UiProperty> propertyUiElement in propertyUiElements)
             {
+                PropertyInfo property = propertyUiElement.Item1;
                 UiProperty uiElement = propertyUiElement.Item2;
 
-                Label propertyNameLabel = new Label
-                {
-                    Text = uiElement.LabelText ?? propertyUiElement.Item1.Name + ":",
-                    HorizontalOptions = LayoutOptions.Start,
-                    FontSize = 20
-                };
-
-                bool addPropertyValueLabel = false;
-
-                View view = null;
-                BindableProperty bindingProperty = null;
+                BindableProperty targetProperty = null;
                 IValueConverter converter = null;
-                if (uiElement is OnOffUiProperty)
+                View view = uiElement.GetView(property, o, out targetProperty, out converter);
+                view.IsEnabled = uiElement.Editable;
+
+                #if UNIT_TESTING
+                // set style id so we can get the property value when unit testing
+                view.StyleId = propertyNameLabel.Text + " View";
+                #endif
+
+                if (targetProperty != null)
                 {
-                    view = new Switch();
-                    bindingProperty = Switch.IsToggledProperty;
-                }
-                else if (uiElement is DisplayYesNoUiProperty)
-                {
-                    view = new Label
-                    {
-                        FontSize = 20
-                    };
-
-                    bindingProperty = Label.TextProperty;
-                    converter = new DisplayYesNoUiProperty.ValueConverter();
-                    uiElement.Editable = true;  // just makes the label text non-dimmed. a label's text is never editable.
-                }
-                else if (uiElement is EditableListUiProperty)
-                {
-                    view = new Editor
-                    {
-                        HorizontalOptions = LayoutOptions.FillAndExpand
-                    };
-                    
-                    bindingProperty = Editor.TextProperty;
-                    converter = new EditableListUiProperty.ValueConverter();
-                }
-                else if (uiElement is DisplayStringUiProperty)
-                {
-                    view = new Label
-                    {
-                        FontSize = 20
-                    };
-
-                    bindingProperty = Label.TextProperty;
-                    converter = new DisplayStringUiProperty.ValueConverter();
-                    uiElement.Editable = true;  // just makes the label text non-dimmed. a label's text is never editable.
-                }
-                else if (uiElement is EntryIntegerUiProperty)
-                {
-                    view = new Entry
-                    {
-                        Keyboard = Keyboard.Numeric,
-                        HorizontalOptions = LayoutOptions.FillAndExpand
-                    };
-
-                    bindingProperty = Entry.TextProperty;
-                    converter = new EntryIntegerUiProperty.ValueConverter();
-                }
-                else if (uiElement is EntryDoubleUiProperty)
-                {
-                    view = new Entry
-                    {
-                        Keyboard = Keyboard.Numeric,
-                        HorizontalOptions = LayoutOptions.FillAndExpand
-                    };
-
-                    bindingProperty = Entry.TextProperty;
-                    converter = new EntryDoubleUiProperty.ValueConverter();
-                }
-                else if (uiElement is EntryFloatUiProperty)
-                {
-                    view = new Entry
-                    {
-                        Keyboard = Keyboard.Numeric,
-                        HorizontalOptions = LayoutOptions.FillAndExpand
-                    };
-
-                    bindingProperty = Entry.TextProperty;
-                    converter = new EntryFloatUiProperty.ValueConverter();
-                }
-                else if (uiElement is EditorUiProperty)
-                {
-                    view = new Editor
-                    {
-                        Keyboard = Keyboard.Default,
-                        HorizontalOptions = LayoutOptions.FillAndExpand
-                    };
-
-                    bindingProperty = Editor.TextProperty;
-                }
-                else if (uiElement is IncrementalIntegerUiProperty)
-                {
-                    IncrementalIntegerUiProperty p = uiElement as IncrementalIntegerUiProperty;
-                    view = new Stepper
-                    {
-                        Minimum = p.Minimum,
-                        Maximum = p.Maximum,
-                        Increment = p.Increment
-                    };
-
-                    bindingProperty = Stepper.ValueProperty;
-                    addPropertyValueLabel = true;
-                }
-                else if (uiElement is EntryStringUiProperty)
-                {
-                    view = new Entry
-                    {
-                        Keyboard = Keyboard.Default,
-                        HorizontalOptions = LayoutOptions.FillAndExpand
-                    };
-
-                    bindingProperty = Entry.TextProperty;
-                }
-                else if (uiElement is ListUiProperty)
-                {
-                    Picker picker = new Picker
-                    {
-                        HorizontalOptions = LayoutOptions.FillAndExpand
-                    };
-
-                    List<object> items = (uiElement as ListUiProperty).Items.ToList();
-                    foreach (object item in items)
-                        picker.Items.Add(item.ToString());
-
-                    picker.SelectedIndex = items.IndexOf(propertyUiElement.Item1.GetValue(o));
-
-                    picker.SelectedIndexChanged += (oo, ee) =>
-                    {
-                        if (picker.SelectedIndex >= 0)
-                            propertyUiElement.Item1.SetValue(o, items[picker.SelectedIndex]);
-                    };
-
-                    view = picker;
+                    view.BindingContext = o;
+                    view.SetBinding(targetProperty, new Binding(property.Name, converter: converter));
                 }
 
-                if (view != null)
-                {
-                    #if UNIT_TESTING
-                    // set style id so we can get the property value when unit testing
-                    view.StyleId = propertyNameLabel.Text + " View";
-                    #endif
-
-                    StackLayout stack = new StackLayout
+                propertyStacks.Add(new StackLayout
                     {
-                        Orientation = StackOrientation.Horizontal,
-                        HorizontalOptions = LayoutOptions.FillAndExpand
-                    };
-
-                    stack.Children.Add(propertyNameLabel);
-
-                    if (addPropertyValueLabel)
-                    {
-                        Label parameterValueLabel = new Label
+                        Orientation = StackOrientation.Vertical,
+                        VerticalOptions = LayoutOptions.Start,
+                        Children =
                         {
-                            HorizontalOptions = LayoutOptions.FillAndExpand,
-                            FontSize = 20
-                        };
-                        parameterValueLabel.BindingContext = o;
-                        parameterValueLabel.SetBinding(Label.TextProperty, propertyUiElement.Item1.Name);
-
-                        stack.Children.Add(parameterValueLabel);
-                    }
-
-                    view.IsEnabled = uiElement.Editable;
-
-                    if (bindingProperty != null)
-                    {
-                        view.BindingContext = o;
-                        view.SetBinding(bindingProperty, new Binding(propertyUiElement.Item1.Name, converter: converter));
-                    }
-
-                    stack.Children.Add(view);
-
-                    propertyStacks.Add(stack);
-                }
+                            new Label
+                            {
+                                Text = uiElement.LabelText ?? property.Name + ":",
+                                FontSize = 20
+                            }, 
+                            view
+                        }
+                    });
             }
 
             return propertyStacks;
@@ -277,5 +131,7 @@ namespace SensusUI.UiProperties
             _editable = editable;
             _order = order;
         }
+
+        public abstract View GetView(PropertyInfo property, object o, out BindableProperty bindingProperty, out IValueConverter converter);
     }
 }

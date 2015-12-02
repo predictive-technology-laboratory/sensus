@@ -18,7 +18,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\DisplayYesNoUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\EntryStringUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\ListUiProperty.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UiProperties\IncrementalIntegerUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\OnOffUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\UiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolPage.cs" />

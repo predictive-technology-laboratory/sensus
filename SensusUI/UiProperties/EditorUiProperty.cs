@@ -11,8 +11,11 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 using System;
 using SensusUI.UiProperties;
+using Xamarin.Forms;
+using System.Reflection;
 
 namespace SensusUI
 {
@@ -21,6 +24,18 @@ namespace SensusUI
         public EditorUiProperty(string labelText, bool editable, int order)
             : base(labelText, editable, order)
         {
+        }
+
+        public override View GetView(PropertyInfo property, object o, out BindableProperty targetProperty, out IValueConverter converter)
+        {
+            targetProperty = Editor.TextProperty;
+            converter = null;
+
+            return new Editor
+            {
+                Keyboard = Keyboard.Default,
+                HorizontalOptions = LayoutOptions.FillAndExpand
+            };
         }
     }
 }

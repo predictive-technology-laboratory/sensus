@@ -19,6 +19,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Globalization;
+using System.Reflection;
 
 namespace SensusUI.UiProperties
 {
@@ -54,6 +55,17 @@ namespace SensusUI.UiProperties
         public EditableListUiProperty(string labelText, bool editable, int order)
             : base(labelText, editable, order)
         {
+        }
+
+        public override View GetView(PropertyInfo property, object o, out BindableProperty targetProperty, out IValueConverter converter)
+        {
+            targetProperty = Editor.TextProperty;
+            converter = new ValueConverter();
+
+            return new Editor
+            {
+                HorizontalOptions = LayoutOptions.FillAndExpand
+            };
         }
     }
 }

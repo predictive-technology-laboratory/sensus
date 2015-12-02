@@ -12,6 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Xamarin.Forms;
+using System.Linq;
+using System.Reflection;
+using System.Collections.Generic;
+
 namespace SensusUI.UiProperties
 {
     /// <summary>
@@ -19,20 +24,39 @@ namespace SensusUI.UiProperties
     /// </summary>
     public class ListUiProperty : UiProperty
     {
-        private object[] _items;
-
-        public object[] Items
-        {
-            get { return _items; }
-        }
+        private List<object> _items;
 
         public ListUiProperty(string labelText, bool editable, int order, object[] items)
             : base(labelText, editable, order)
         {
-            _items = items;
+            if (items == null)
+                items = new object[0];
 
-            if(_items == null)
-                _items = new object[0];
-        }       
+            _items = items.ToList();
+        }
+
+        public override View GetView(PropertyInfo property, object o, out BindableProperty targetProperty, out IValueConverter converter)
+        {
+            targetProperty = null;
+            converter = null;
+
+            Picker picker = new Picker
+            {
+                HorizontalOptions = LayoutOptions.FillAndExpand
+            };
+
+            foreach (object item in _items)
+                picker.Items.Add(item.ToString());
+
+            picker.SelectedIndex = _items.IndexOf(property.GetValue(o));
+
+            picker.SelectedIndexChanged += (oo, ee) =>
+            {
+                if (picker.SelectedIndex >= 0)
+                    property.SetValue(o, _items[picker.SelectedIndex]);
+            };
+
+            return picker;
+        }
     }
 }

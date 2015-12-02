@@ -52,8 +52,7 @@ namespace Sensus.iOS
 
             ToastNotificatorImplementation.Init();
 
-            App app = new App();
-            LoadApplication(app);
+            LoadApplication(new App());
 
             uiApplication.RegisterUserNotificationSettings(UIUserNotificationSettings.GetSettingsForTypes(UIUserNotificationType.Badge | UIUserNotificationType.Sound | UIUserNotificationType.Alert, new NSSet()));
 
@@ -122,6 +121,11 @@ namespace Sensus.iOS
                         file.Close();
                     }
                     #endif
+
+                    Device.BeginInvokeOnMainThread(() =>
+                        {
+                            (App.Current as App).ProtocolsPage.Bind();
+                        });
                 });
             
             base.OnActivated(uiApplication);
