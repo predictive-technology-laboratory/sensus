@@ -79,9 +79,11 @@ namespace SensusUI.UiProperties
                 View view = uiElement.GetView(property, o, out targetProperty, out converter);
                 view.IsEnabled = uiElement.Editable;
 
+                string propertyNameLabelText = uiElement.LabelText ?? property.Name + ":";
+
                 #if UNIT_TESTING
                 // set style id so we can get the property value when unit testing
-                view.StyleId = propertyNameLabel.Text + " View";
+                view.StyleId = propertyNameLabelText + " View";
                 #endif
 
                 if (targetProperty != null)
@@ -98,7 +100,7 @@ namespace SensusUI.UiProperties
                         {
                             new Label
                             {
-                                Text = uiElement.LabelText ?? property.Name + ":",
+                                Text = propertyNameLabelText,
                                 FontSize = 20
                             }, 
                             view
