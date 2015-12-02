@@ -74,37 +74,33 @@ namespace SensusUI.UiProperties
                 PropertyInfo property = propertyUiElement.Item1;
                 UiProperty uiElement = propertyUiElement.Item2;
 
+                Label propertyLabel = new Label
+                {
+                    Text = uiElement.LabelText ?? property.Name + ":",
+                    FontSize = 20
+                };
+                
                 BindableProperty targetProperty = null;
                 IValueConverter converter = null;
-                View view = uiElement.GetView(property, o, out targetProperty, out converter);
-                view.IsEnabled = uiElement.Editable;
-
-                string propertyNameLabelText = uiElement.LabelText ?? property.Name + ":";
+                View propertyView = uiElement.GetView(property, o, out targetProperty, out converter);
+                propertyView.IsEnabled = uiElement.Editable;
 
                 #if UNIT_TESTING
                 // set style id so we can get the property value when unit testing
-                view.StyleId = propertyNameLabelText + " View";
+                view.StyleId = propertyLabel.Text + " View";
                 #endif
 
                 if (targetProperty != null)
                 {
-                    view.BindingContext = o;
-                    view.SetBinding(targetProperty, new Binding(property.Name, converter: converter));
+                    propertyView.BindingContext = o;
+                    propertyView.SetBinding(targetProperty, new Binding(property.Name, converter: converter));
                 }
 
                 propertyStacks.Add(new StackLayout
                     {
                         Orientation = StackOrientation.Vertical,
                         VerticalOptions = LayoutOptions.Start,
-                        Children =
-                        {
-                            new Label
-                            {
-                                Text = propertyNameLabelText,
-                                FontSize = 20
-                            }, 
-                            view
-                        }
+                        Children = { propertyLabel, propertyView }
                     });
             }
 
