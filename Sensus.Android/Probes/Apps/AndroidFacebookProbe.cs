@@ -179,14 +179,14 @@ namespace Sensus.Android.Probes.Apps
         {
             List<Datum> data = new List<Datum>();
 
-            if (!HasValidAccessToken)
-                ObtainAccessToken(GetRequiredPermissionNames());
-            else
+            if (HasValidAccessToken)
             {
                 string[] missingPermissions = GetRequiredPermissionNames().Where(p => !AccessToken.CurrentAccessToken.Permissions.Contains(p)).ToArray();
                 if (missingPermissions.Length > 0)
                     ObtainAccessToken(missingPermissions);
             }
+            else
+                ObtainAccessToken(GetRequiredPermissionNames());
 
             if (HasValidAccessToken)
             {                
