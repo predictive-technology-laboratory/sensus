@@ -30,7 +30,14 @@ namespace SensusService.Probes.Apps
     /// 
     /// </summary>
     public abstract class FacebookProbe : PollingProbe
-    {                     
+    {
+        private readonly object _loginLocker = new object();
+
+        protected object LoginLocker
+        {
+            get { return _loginLocker; }
+        }
+
         public sealed override Type DatumType
         {
             get
@@ -53,7 +60,15 @@ namespace SensusService.Probes.Apps
             {
                 return 60000 * 60 * 24; // once per day
             }
-        }  
+        }
+
+        protected override void Initialize()
+        {
+            base.Initialize();
+
+            if (GetRequiredPermissionNames().Length == 0)
+                throw new NotSupportedException("No Facebook permissions requested. Will not start Facebook probe.");
+        }
 
         /// <summary>
         /// Gets the required Facebook permissions, as determined by the Facebook probe's configuration and
@@ -78,7 +93,7 @@ namespace SensusService.Probes.Apps
         public string[] GetRequiredPermissionNames()
         {
             return GetRequiredFacebookPermissions().Select(permission => permission.Name).Distinct().ToArray();
-        }   
+        }
 
         public List<Tuple<string, List<string>>> GetEdgeFieldQueries()
         {
