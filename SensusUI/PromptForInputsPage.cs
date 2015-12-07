@@ -69,7 +69,7 @@ namespace SensusUI
                 {
                     contentLayout.Children.Add(inputView);
 
-                    if (!(input is LabelOnlyInput))
+                    if (input.DisplayNumber)
                         ++viewNumber;
 
                     if (input.Required)

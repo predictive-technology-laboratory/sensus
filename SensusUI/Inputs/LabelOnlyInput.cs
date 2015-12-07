@@ -82,6 +82,7 @@ namespace SensusUI.Inputs
         {
             Complete = complete;
             Required = false;
+            DisplayNumber = false;
             ShouldBeStored = false;
         }
 

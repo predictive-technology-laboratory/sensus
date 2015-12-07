@@ -239,7 +239,7 @@ namespace SensusUI.Inputs
         {
             return new Label
             {
-                Text = string.IsNullOrWhiteSpace(_labelText) ? _labelText : (index > 0 && _displayNumber ? index + ") " : "") + _labelText,
+                Text = string.IsNullOrWhiteSpace(_labelText) ? "" : (index > 0 && _displayNumber ? index + ") " : "") + _labelText,
                 FontSize = _labelFontSize
 
                 // set the style ID on the label so that we can retrieve it when unit testing
