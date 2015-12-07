@@ -100,7 +100,7 @@ namespace SensusUI.Inputs
             throw new SensusException("Cannot set View on VoiceInput.");
         }
 
-        public void RunAsync(Datum triggeringDatum, bool isRerun, DateTimeOffset firstRunTimestamp, Action<string> callback)
+        public void RunAsync(bool isRerun, DateTimeOffset firstRunTimestamp, Action<string> callback)
         {
             new Thread(() =>
                 {                    

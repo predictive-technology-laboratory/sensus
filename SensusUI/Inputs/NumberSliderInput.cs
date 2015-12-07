@@ -180,27 +180,27 @@ namespace SensusUI.Inputs
                         Children =
                         { 
                             sliderLabel,
-                            new StackLayout
-                            {
-                                Orientation = StackOrientation.Horizontal,
-                                HorizontalOptions = LayoutOptions.FillAndExpand,
-                                Children =
+                            CreateInput(new StackLayout
                                 {
-                                    new Label
+                                    Orientation = StackOrientation.Horizontal,
+                                    HorizontalOptions = LayoutOptions.FillAndExpand,
+                                    Children =
                                     {
-                                        Text = _minimum.ToString(),
-                                        FontSize = 20,
-                                        HorizontalOptions = LayoutOptions.Fill
-                                    },
-                                    _slider,
-                                    new Label
-                                    {
-                                        Text = _maximum.ToString(),
-                                        FontSize = 20,
-                                        HorizontalOptions = LayoutOptions.Fill
+                                        new Label
+                                        {
+                                            Text = _minimum.ToString(),
+                                            FontSize = 20,
+                                            HorizontalOptions = LayoutOptions.Fill
+                                        },
+                                        _slider,
+                                        new Label
+                                        {
+                                            Text = _maximum.ToString(),
+                                            FontSize = 20,
+                                            HorizontalOptions = LayoutOptions.Fill
+                                        }
                                     }
-                                }
-                            }
+                                })
                         }
                     });
             }

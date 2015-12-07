@@ -76,11 +76,11 @@ namespace SensusService.Probes
             _wakeLockAcquired = false;
         }
 
-        public sealed override void Start()
+        protected sealed override void InternalStart()
         {
             lock (_locker)
             {
-                base.Start();
+                base.InternalStart();
 
                 StartListening();
 

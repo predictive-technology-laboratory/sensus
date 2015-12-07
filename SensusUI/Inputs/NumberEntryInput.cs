@@ -92,7 +92,7 @@ namespace SensusUI.Inputs
                     {
                         Orientation = StackOrientation.Vertical,
                         VerticalOptions = LayoutOptions.Start,
-                        Children = { CreateLabel(index), _entry }
+                        Children = { CreateLabel(index), CreateInput(_entry) }
                     });
             }
 

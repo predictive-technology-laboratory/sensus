@@ -764,27 +764,10 @@ namespace SensusService
                                     try
                                     {
                                         probe.Start();
-                                        probesStarted++;
+                                        ++probesStarted;
                                     }
-                                    catch (Exception ex)
-                                    {
-                                        // stop probe to clean up any inconsistent state information
-                                        try
-                                        {
-                                            probe.Stop();
-                                        }
-                                        catch (Exception ex2)
-                                        {
-                                            SensusServiceHelper.Get().Logger.Log("Failed to stop probe after failing to start it:  " + ex2.Message, LoggingLevel.Normal, GetType());
-                                        }
-
-                                        string message = "Failed to start probe \"" + probe.GetType().FullName + "\":  " + ex.Message;
-                                        SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
-                                        SensusServiceHelper.Get().FlashNotificationAsync(message);
-
-                                        // disable probe if it is not supported on the device (or if the user has elected not to enable it -- e.g., by refusing to log into facebook)
-                                        if (ex is NotSupportedException)
-                                            probe.Enabled = false;
+                                    catch (Exception)
+                                    {                                        
                                     }
                                 }
 
@@ -859,15 +842,20 @@ namespace SensusService
             else
                 consent.Add(new LabelOnlyInput(collectionDescription.ToString(), collectionDescriptionFontSize));
 
-            // the names in the following inputs are used to grab the UI elements when unit testing
-            consent.Add(new LabelOnlyInput("ConsentMessage", "To participate in this study as described above, please indicate your consent by entering the following code:  " + consentCode + ""));
-            consent.Add(new TextInput("ConsentCode", null, Keyboard.Numeric));
+            // the name in the following text input is used to grab the UI element when unit testing
+            consent.Add(new TextInput("ConsentCode", "To participate in this study as described above, please indicate your consent by entering the following code:  " + consentCode, Keyboard.Numeric)
+                {
+                    DisplayNumber = false
+                });
 
             SensusServiceHelper.Get().PromptForInputsAsync(
                 "Protocol Consent", 
                 consent.ToArray(),
                 null,
                 true,
+                null,
+                "Are you sure you would like cancel your enrollment in this study?",
+                null,
                 null,
                 inputs =>
                 {

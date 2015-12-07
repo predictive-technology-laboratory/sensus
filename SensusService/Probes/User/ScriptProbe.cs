@@ -89,9 +89,9 @@ namespace SensusService.Probes.User
                 scriptRunner.Initialize();
         }
 
-        public override void Start()
+        protected override void InternalStart()
         {
-            base.Start();
+            base.InternalStart();
 
             foreach (ScriptRunner scriptRunner in _scriptRunners)
                 scriptRunner.Start();            

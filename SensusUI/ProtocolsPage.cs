@@ -78,6 +78,9 @@ namespace SensusUI
                     null,
                     true,
                     null,
+                    null,
+                    null,
+                    null,
                     input =>
                     {
                         if (input == null)
@@ -170,7 +173,6 @@ namespace SensusUI
 
                     // pop up wait screen while we submit the participation reward datum
                     SensusServiceHelper.Get().PromptForInputsAsync(
-                        null,
                         false,
                         DateTime.MinValue,
                         new InputGroup[]
@@ -180,6 +182,9 @@ namespace SensusUI
                         cancellationTokenSource.Token,
                         false,
                         "Cancel",
+                        null,
+                        null,
+                        null,
                         () =>
                         {
                             // add participation reward datum to remote data store and commit immediately
@@ -246,7 +251,6 @@ namespace SensusUI
 
                         // pop up wait screen while we get the participation reward datum
                         SensusServiceHelper.Get().PromptForInputsAsync(
-                            null,
                             false,
                             DateTime.MinValue,
                             new InputGroup[]
@@ -256,6 +260,9 @@ namespace SensusUI
                             cancellationTokenSource.Token,
                             false,
                             "Cancel",
+                            null,
+                            null,
+                            null,
                             async () =>
                             {
                                 try

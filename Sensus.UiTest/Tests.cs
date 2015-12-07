@@ -34,7 +34,7 @@ namespace Sensus.UiTest
         private const string PROTOCOL_ACTION_SHEET_CANCEL = "Cancel";
         private const string PROTOCOL_STOP_CONFIRM = "Yes";
 
-        private const string PROTOCOL_CONSENT_MESSAGE = "ConsentMessage";
+        private const string PROTOCOL_CONSENT_CODE_LABEL = "ConsentCode Label";
         private const string PROTOCOL_CONSENT_CODE = "ConsentCode";
 
         private const string LOCAL_DATA_STORE_EDIT = "Local Data Store";
@@ -130,10 +130,10 @@ namespace Sensus.UiTest
         private void ConsentToProtocolStart(TimeSpan startupCheckDelay)
         {
             // wait for consent screen to come up
-            _app.WaitForElement(PROTOCOL_CONSENT_MESSAGE);
+            _app.WaitForElement(PROTOCOL_CONSENT_CODE_LABEL);
 
             // enter the consent code
-            string consentMessage = _app.Query(PROTOCOL_CONSENT_MESSAGE).First().Text;
+            string consentMessage = _app.Query(PROTOCOL_CONSENT_CODE_LABEL).First().Text;
             int consentCode = int.Parse(consentMessage.Substring(consentMessage.LastIndexOf(" ") + 1));
             _app.WaitForElementThenEnterText(PROTOCOL_CONSENT_CODE, true, consentCode.ToString());
             _app.WaitForElementThenTap(PROMPT_FOR_INPUTS_SUBMIT, true);

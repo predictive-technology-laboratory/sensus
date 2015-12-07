@@ -153,7 +153,7 @@ namespace SensusUI.Inputs
                     {
                         Orientation = StackOrientation.Vertical,
                         VerticalOptions = LayoutOptions.Start,
-                        Children = { CreateLabel(index), _picker }
+                        Children = { CreateLabel(index), CreateInput(_picker) }
                     });
             }
 

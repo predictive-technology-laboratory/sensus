@@ -31,7 +31,7 @@ namespace SensusUI
             Cancel
         }
 
-        public PromptForInputsPage(InputGroup inputGroup, int stepNumber, int totalSteps, bool showCancelButton, string nextButtonTextOverride, CancellationToken? cancellationToken, Action<Result> callback)
+        public PromptForInputsPage(InputGroup inputGroup, int stepNumber, int totalSteps, bool showCancelButton, string nextButtonTextOverride, CancellationToken? cancellationToken, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, Action<Result> callback)
         {            
             StackLayout contentLayout = new StackLayout
             {
@@ -61,6 +61,7 @@ namespace SensusUI
             };
 
             int viewNumber = 1;
+            bool anyRequired = false;
             foreach (Input input in inputGroup.Inputs)
             {
                 View inputView = input.GetView(viewNumber);
@@ -70,8 +71,20 @@ namespace SensusUI
 
                     if (!(input is LabelOnlyInput))
                         ++viewNumber;
+
+                    if (input.Required)
+                        anyRequired = true;
                 }
             }
+
+            if (anyRequired)
+                contentLayout.Children.Add(new Label
+                    {
+                        Text = "* Required Field",
+                        FontSize = 15,
+                        TextColor = Color.Red,
+                        HorizontalOptions = LayoutOptions.FillAndExpand
+                    });
 
             StackLayout navigationStack = new StackLayout
             {
@@ -121,7 +134,12 @@ namespace SensusUI
 
                 cancelButton.Clicked += async (o, e) =>
                 {
-                    if (await DisplayAlert("Confirm", "Would you like to cancel?", "Yes", "No"))
+                    string confirmationMessage = "";
+
+                    if (!string.IsNullOrWhiteSpace(cancelConfirmation))
+                        confirmationMessage += cancelConfirmation;
+
+                    if (string.IsNullOrWhiteSpace(confirmationMessage) || await DisplayAlert("Confirm", confirmationMessage, "Yes", "No"))
                     {
                         // if the cancellation token was cancelled while the dialog was up, then we should ignore the dialog. the token
                         // will have already popped this page off the navigation stack.
@@ -159,7 +177,14 @@ namespace SensusUI
 
             nextButton.Clicked += async (o, e) =>
             {
-                if (nextButton.Text == "Next" || await DisplayAlert("Confirm", "Would you like to proceed?", "Yes", "No"))
+                string confirmationMessage = "";
+
+                if (!string.IsNullOrWhiteSpace(incompleteSubmissionConfirmation) && inputGroup.Inputs.Any(input => input.Required && !input.Complete))
+                    confirmationMessage += incompleteSubmissionConfirmation;
+                else if (nextButton.Text == "Submit" && !string.IsNullOrWhiteSpace(submitConfirmation))
+                    confirmationMessage += submitConfirmation;
+                    
+                if (string.IsNullOrWhiteSpace(confirmationMessage) || await DisplayAlert("Confirm", confirmationMessage, "Yes", "No"))
                 {
                     // if the cancellation token was cancelled while the dialog was up, then we should ignore the dialog. the token
                     // will have already popped this page off the navigation stack.

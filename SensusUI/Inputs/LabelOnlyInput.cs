@@ -78,15 +78,10 @@ namespace SensusUI.Inputs
             Construct(true);
         }
 
-        public LabelOnlyInput(string name, string labelText, bool complete)
-            : base(name, labelText)
-        {
-            Construct(complete);
-        }
-
         private void Construct(bool complete)
         {
             Complete = complete;
+            Required = false;
             ShouldBeStored = false;
         }
 
@@ -95,11 +90,6 @@ namespace SensusUI.Inputs
             if (base.GetView(index) == null)
             {
                 _label = CreateLabel(-1);
-
-                // set the style ID on the view so that we can retrieve it when unit testing
-                #if UNIT_TESTING
-                _label.StyleId = Name;
-                #endif
 
                 base.SetView(_label);
             }

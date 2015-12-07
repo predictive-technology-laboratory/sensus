@@ -28,6 +28,19 @@ namespace SensusService.Probes.User
         private Datum _previousDatum;
         private Datum _currentDatum;
         private DateTimeOffset? _presentationTimestamp;
+        private string _id;
+
+        public string Id
+        {
+            get
+            {
+                return _id;
+            }
+            set
+            {
+                _id = value;
+            }
+        }
 
         public ObservableCollection<InputGroup> InputGroups
         {
@@ -77,13 +90,19 @@ namespace SensusService.Probes.User
         }
 
         public Script()
-        {                        
+        {           
+            _id = Guid.NewGuid().ToString();
             _inputGroups = new ObservableCollection<InputGroup>();
         }
 
         public Script Copy()
         {
-            return JsonConvert.DeserializeObject<Script>(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
+            Script copy = JsonConvert.DeserializeObject<Script>(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
+
+            // a new GUID is set within the constructor, but it is immediately overwritten with the old id by the JSON deserializer.
+            copy.Id = Guid.NewGuid().ToString();
+
+            return copy;
         }
     }
 }

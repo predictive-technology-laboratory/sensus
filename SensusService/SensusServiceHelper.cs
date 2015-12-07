@@ -811,9 +811,9 @@ namespace SensusService
             #endif
         }
 
-        public void PromptForInputAsync(string windowTitle, Input input, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, Action<Input> callback)
+        public void PromptForInputAsync(string windowTitle, Input input, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, Action<Input> callback)
         {
-            PromptForInputsAsync(windowTitle, new Input[] { input }, cancellationToken, showCancelButton, nextButtonText, inputs =>
+            PromptForInputsAsync(windowTitle, new Input[] { input }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, inputs =>
                 {
                     if (inputs == null)
                         callback(null);
@@ -822,14 +822,14 @@ namespace SensusService
                 });
         }
 
-        public void PromptForInputsAsync(string windowTitle, IEnumerable<Input> inputs, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, Action<List<Input>> callback)
+        public void PromptForInputsAsync(string windowTitle, IEnumerable<Input> inputs, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, Action<List<Input>> callback)
         {
             InputGroup inputGroup = new InputGroup(windowTitle);
 
             foreach (Input input in inputs)
                 inputGroup.Inputs.Add(input);
 
-            PromptForInputsAsync(null, false, DateTimeOffset.MinValue, new InputGroup[] { inputGroup }.ToList(), cancellationToken, showCancelButton, nextButtonText, null, inputGroups =>
+            PromptForInputsAsync(false, DateTimeOffset.MinValue, new InputGroup[] { inputGroup }.ToList(), cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, null, inputGroups =>
                 {
                     if (inputGroups == null)
                         callback(null);
@@ -838,7 +838,7 @@ namespace SensusService
                 });
         }
 
-        public void PromptForInputsAsync(Datum triggeringDatum, bool isReprompt, DateTimeOffset firstPromptTimestamp, IEnumerable<InputGroup> inputGroups, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, Action postDisplayCallback, Action<IEnumerable<InputGroup>> callback)
+        public void PromptForInputsAsync(bool isReprompt, DateTimeOffset firstPromptTimestamp, IEnumerable<InputGroup> inputGroups, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, Action postDisplayCallback, Action<IEnumerable<InputGroup>> callback)
         {
             new Thread(() =>
                 {
@@ -875,7 +875,7 @@ namespace SensusService
                         // run voice inputs by themselves, and only if the input group contains exactly one voice input.
                         if (incompleteGroup.Inputs.Count == 1 && incompleteGroup.Inputs[0] is VoiceInput)
                         {
-                            (incompleteGroup.Inputs[0] as VoiceInput).RunAsync(triggeringDatum, isReprompt, firstPromptTimestamp, response =>
+                            (incompleteGroup.Inputs[0] as VoiceInput).RunAsync(isReprompt, firstPromptTimestamp, response =>
                                 {                
                                     responseWait.Set();
                                 });
@@ -886,7 +886,7 @@ namespace SensusService
 
                             Device.BeginInvokeOnMainThread(async () =>
                                 {
-                                    PromptForInputsPage promptForInputsPage = new PromptForInputsPage(incompleteGroup, incompleteGroupNum + 1, incompleteGroups.Length, showCancelButton, nextButtonText, cancellationToken, result =>
+                                    PromptForInputsPage promptForInputsPage = new PromptForInputsPage(incompleteGroup, incompleteGroupNum + 1, incompleteGroups.Length, showCancelButton, nextButtonText, cancellationToken, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, result =>
                                         {
                                             if (result == PromptForInputsPage.Result.Cancel || result == PromptForInputsPage.Result.NavigateBackward && incompleteGroupNum == 0)
                                                 inputGroups = null;

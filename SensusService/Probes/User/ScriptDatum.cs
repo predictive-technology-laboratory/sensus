@@ -21,6 +21,7 @@ namespace SensusService.Probes.User
 {
     public class ScriptDatum : Datum
     {
+        private string _scriptId;
         private string _groupId;
         private string _inputId;
         private object _response;
@@ -29,6 +30,18 @@ namespace SensusService.Probes.User
         private double? _longitude;
         private DateTimeOffset _presentationTimestamp;
         private DateTimeOffset? _locationTimestamp;
+
+        public string ScriptId
+        {
+            get
+            {
+                return _scriptId;
+            }
+            set
+            {
+                _scriptId = value;
+            }
+        }
 
         public string GroupId
         {
@@ -119,9 +132,10 @@ namespace SensusService.Probes.User
         {
         }
 
-        public ScriptDatum(DateTimeOffset timestamp, string groupId, string inputId, object response, string triggerDatumId, double? latitude, double? longitude, DateTimeOffset presentationTimestamp, DateTimeOffset? locationTimestamp)
+        public ScriptDatum(DateTimeOffset timestamp, string scriptId, string groupId, string inputId, object response, string triggerDatumId, double? latitude, double? longitude, DateTimeOffset presentationTimestamp, DateTimeOffset? locationTimestamp)
             : base(timestamp)
         {
+            _scriptId = scriptId;
             _groupId = groupId;
             _inputId = inputId;
             _response = response;
@@ -135,6 +149,7 @@ namespace SensusService.Probes.User
         public override string ToString()
         {
             return base.ToString() + Environment.NewLine +
+            "Script:  " + _scriptId + Environment.NewLine +
             "Group:  " + _groupId + Environment.NewLine +
             "Input:  " + _inputId + Environment.NewLine +
             "Response:  " + _response + Environment.NewLine +

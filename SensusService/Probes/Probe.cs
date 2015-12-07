@@ -227,18 +227,53 @@ namespace SensusService.Probes
                     {
                         Start();
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
-                        SensusServiceHelper.Get().Logger.Log("Failed to start:  " + ex.Message, LoggingLevel.Normal, GetType());
                     }
 
                 }).Start();
         }
 
         /// <summary>
-        /// Starts this probe. Throws an exception if start fails. Should be called first within child-class overrides.
+        /// Start this instance, throwing an exception if anything goes wrong. If an exception is thrown, the caller can assume that any relevant
+        /// information will have already been logged and displayed. Thus, the caller doesn't need to do anything with the exception information.
         /// </summary>
-        public virtual void Start()
+        public void Start()
+        {
+            try
+            {
+                InternalStart();
+            }
+            catch (Exception startException)
+            {
+                // stop probe to clean up any inconsistent state information
+                try
+                {
+                    Stop();
+                }
+                catch (Exception stopException)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Failed to stop probe after failing to start it:  " + stopException.Message, LoggingLevel.Normal, GetType());
+                }
+
+                string message = "Failed to start probe \"" + GetType().FullName + "\":  " + startException.Message;
+                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+                SensusServiceHelper.Get().FlashNotificationAsync(message);
+
+                // disable probe if it is not supported on the device (or if the user has elected not to enable it -- e.g., by refusing to log into facebook)
+                if (startException is NotSupportedException)
+                    Enabled = false;
+
+                throw startException;
+            }
+        }
+
+        /// <summary>
+        /// Throws an exception if start fails. Should be called first within child-class overrides. This should only be called within Start. This setup
+        /// allows for child-class overrides, but since InternalStart is protected, it cannot be called from the outside. Outsiders only have access to
+        /// Start (perhaps via Enabled), which takes care of any exceptions arising from the entire chain of InternalStart overrides.
+        /// </summary>
+        protected virtual void InternalStart()
         {
             lock (_locker)
             {
@@ -247,6 +282,7 @@ namespace SensusService.Probes
                 else
                 {
                     SensusServiceHelper.Get().Logger.Log("Starting.", LoggingLevel.Normal, GetType());
+
                     Initialize();
                     _running = true;
                     _startDateTime = DateTime.Now;

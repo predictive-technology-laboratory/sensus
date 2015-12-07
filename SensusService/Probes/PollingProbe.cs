@@ -117,14 +117,11 @@ namespace SensusService.Probes
             _pollTimes = new List<DateTime>();
         }
 
-        /// <summary>
-        /// Starts this probe. Throws an exception if start fails.
-        /// </summary>
-        public override void Start()
+        protected override void InternalStart()
         {
             lock (_locker)
             {
-                base.Start();
+                base.InternalStart();
 
                 #if __IOS__
                 string userNotificationMessage = DisplayName + " data requested.";

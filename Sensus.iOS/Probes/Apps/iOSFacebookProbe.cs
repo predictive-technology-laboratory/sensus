@@ -24,6 +24,7 @@ using SensusService;
 using SensusService.Exceptions;
 using SensusService.Probes.Apps;
 using Xamarin.Forms;
+using UIKit;
 
 namespace Sensus.iOS.Probes.Apps
 {
@@ -63,7 +64,7 @@ namespace Sensus.iOS.Probes.Apps
 
             try
             {
-                _loginManager.LogInWithReadPermissions(GetRequiredPermissionNames(), _loginResultHandler);
+                _loginManager.LogInWithReadPermissions(GetRequiredPermissionNames(), UIApplication.SharedApplication.KeyWindow.RootViewController, _loginResultHandler);
             }
             catch (Exception ex)
             {
@@ -81,7 +82,7 @@ namespace Sensus.iOS.Probes.Apps
                 string[] missingPermissions = GetRequiredPermissionNames().Where(p => !AccessToken.CurrentAccessToken.Permissions.Contains(p)).ToArray();
                 if (missingPermissions.Length > 0)
                 {
-                    _loginManager.LogInWithReadPermissions(missingPermissions, _loginResultHandler);
+                    _loginManager.LogInWithReadPermissions(missingPermissions, UIApplication.SharedApplication.KeyWindow.RootViewController, _loginResultHandler);
                     return data;
                 }
 

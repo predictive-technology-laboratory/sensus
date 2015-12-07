@@ -62,12 +62,12 @@ namespace SensusService.Probes.Movement
             }
         }
 
-        public override void Start()
+        protected override void InternalStart()
         {
             lock (_locker)
             {
                 _previousPosition = null;  // do this before starting the base-class poller so it doesn't race to grab a stale previous location.
-                base.Start();               
+                base.InternalStart();               
             }
         }
 
