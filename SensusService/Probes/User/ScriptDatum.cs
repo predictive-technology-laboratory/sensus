@@ -133,10 +133,10 @@ namespace SensusService.Probes.User
                     if (_response is IEnumerable)
                     {
                         int numItems = 0;
-                        foreach(object item in _response as IEnumerable)
+                        foreach (object item in _response as IEnumerable)
                             ++numItems;
                         
-                        return numItems + " responses.";
+                        return numItems + " response" + (numItems == 1 ? "" : "s") + ".";
                     }
                     else
                         return _response.ToString();

@@ -361,7 +361,7 @@ namespace SensusUI
                                 
                             ItemPickerPageInput itemPickerPageInput = input as ItemPickerPageInput;
 
-                            List<Protocol> selectedProtocols = (itemPickerPageInput.Value as List<object>).Cast<Protocol>().ToList<Protocol>();
+                            List<Protocol> selectedProtocols = (itemPickerPageInput.Value as List<object>).Cast<Protocol>().ToList();
 
                             if (selectedProtocols.Count == 0)
                                 SensusServiceHelper.Get().FlashNotificationAsync("No protocols grouped.");

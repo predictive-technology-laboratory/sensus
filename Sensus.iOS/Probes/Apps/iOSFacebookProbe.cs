@@ -69,13 +69,11 @@ namespace Sensus.iOS.Probes.Apps
                                     {
                                         SensusServiceHelper.Get().Logger.Log("Facebook login cancelled.", SensusService.LoggingLevel.Normal, GetType());
                                         loginCancelled = true;
-                                        AccessToken.CurrentAccessToken = null;
                                         loginWait.Set();
                                     }
                                     else
                                     {
                                         SensusServiceHelper.Get().Logger.Log("Facebook login failed.", SensusService.LoggingLevel.Normal, GetType());
-                                        AccessToken.CurrentAccessToken = null;
                                         loginWait.Set();
                                     }
                                 });
