@@ -19,7 +19,7 @@ using System.Collections.Generic;
 
 namespace SensusUI.Inputs
 {
-    public class ItemPickerInput : Input
+    public class ItemPickerDialogInput : Input
     {
         private string _tipText;
         private List<string> _items;
@@ -46,7 +46,7 @@ namespace SensusUI.Inputs
             {
                 return _items;
             }
-            // need set method so auto-binding can set the list via the EditableListUiProperty
+            // need set method so that binding can set the list via the EditableListUiProperty
             set
             {
                 _items = value;
@@ -90,22 +90,22 @@ namespace SensusUI.Inputs
         {
             get
             {
-                return "Picker";
+                return "Picker (Dialog)";
             }
         }
 
-        public ItemPickerInput()
+        public ItemPickerDialogInput()
         {
-            Construct("Please Make Selection", new List<string>());
+            Construct("Make selection here.", new List<string>());
         }
 
-        public ItemPickerInput(string labelText, string tipText, List<string> items)
+        public ItemPickerDialogInput(string labelText, string tipText, List<string> items)
             : base(labelText)
         {
             Construct(tipText, items);
         }
 
-        public ItemPickerInput(string name, string labelText, string tipText, List<string> items)
+        public ItemPickerDialogInput(string name, string labelText, string tipText, List<string> items)
             : base(name, labelText)
         {
             Construct(tipText, items);      
@@ -153,7 +153,7 @@ namespace SensusUI.Inputs
                     {
                         Orientation = StackOrientation.Vertical,
                         VerticalOptions = LayoutOptions.Start,
-                        Children = { CreateLabel(index), CreateInput(_picker) }
+                        Children = { CreateLabel(index), _picker }
                     });
             }
 

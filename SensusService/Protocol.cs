@@ -1133,5 +1133,10 @@ namespace SensusService
         {
             return _id.GetHashCode();
         }
+
+        public override string ToString()
+        {
+            return _name;
+        }
     }
 }

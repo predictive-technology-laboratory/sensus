@@ -16,6 +16,8 @@ using System;
 using SensusService.Anonymization;
 using SensusService.Anonymization.Anonymizers;
 using SensusService.Probes.User.ProbeTriggerProperties;
+using System.Collections;
+using System.Linq;
 
 namespace SensusService.Probes.User
 {
@@ -122,7 +124,24 @@ namespace SensusService.Probes.User
 
         public override string DisplayDetail
         {
-            get { return _response.ToString(); }
+            get
+            {
+                if (_response == null)
+                    return "No response.";
+                else
+                {
+                    if (_response is IEnumerable)
+                    {
+                        int numItems = 0;
+                        foreach(object item in _response as IEnumerable)
+                            ++numItems;
+                        
+                        return numItems + " responses.";
+                    }
+                    else
+                        return _response.ToString();
+                }
+            }
         }
 
         /// <summary>

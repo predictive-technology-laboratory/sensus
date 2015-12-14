@@ -344,7 +344,34 @@ namespace SensusUI
                         ExecuteActionUponProtocolAuthentication(selectedProtocol, ShareSelectedProtocol);
                 }
                 else if (selectedAction == "Group")
-                    await Navigation.PushAsync(new GroupProtocolPage(selectedProtocol, groupableProtocols));
+                {
+                    SensusServiceHelper.Get().PromptForInputAsync("Group", 
+                        new ItemPickerPageInput("Select Protocols", groupableProtocols.Cast<object>().ToList(), "Name")
+                        {
+                            Multiselect = true
+                        }, 
+                        null, true, "Group", null, null, null, 
+                        input =>
+                        {
+                            if (input == null)
+                            {
+                                SensusServiceHelper.Get().FlashNotificationAsync("No protocols grouped.");
+                                return;
+                            }
+                                
+                            ItemPickerPageInput itemPickerPageInput = input as ItemPickerPageInput;
+
+                            List<Protocol> selectedProtocols = (itemPickerPageInput.Value as List<object>).Cast<Protocol>().ToList<Protocol>();
+
+                            if (selectedProtocols.Count == 0)
+                                SensusServiceHelper.Get().FlashNotificationAsync("No protocols grouped.");
+                            else
+                            {
+                                selectedProtocol.GroupedProtocols.AddRange(selectedProtocols);
+                                SensusServiceHelper.Get().FlashNotificationAsync("Grouped \"" + selectedProtocol.Name + "\" with " + selectedProtocols.Count + " other protocol" + (selectedProtocols.Count == 1 ? "" : "s") + ".");
+                            }
+                        });
+                }
                 else if (selectedAction == "Ungroup")
                 {
                     if (await DisplayAlert("Ungroup " + selectedProtocol.Name + "?", "This protocol is currently grouped with the following other protocols:" + Environment.NewLine + Environment.NewLine + string.Concat(selectedProtocol.GroupedProtocols.Select(protocol => protocol.Name + Environment.NewLine)), "Ungroup", "Cancel"))
@@ -361,7 +388,7 @@ namespace SensusUI
                                         if (selectedProtocol.MostRecentReport == null)
                                             await DisplayAlert("No Report", "Status check failed.", "OK");
                                         else
-                                            await Navigation.PushAsync(new ViewTextLinesPage("Protocol Report", selectedProtocol.MostRecentReport.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList(), null));
+                                            await Navigation.PushAsync(new ViewTextLinesPage("Protocol Status", selectedProtocol.MostRecentReport.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList(), null));
                                     });
                             });
                     }

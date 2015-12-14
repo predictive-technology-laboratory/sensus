@@ -239,7 +239,7 @@ namespace SensusUI.Inputs
         {
             return new Label
             {
-                Text = string.IsNullOrWhiteSpace(_labelText) ? "" : (index > 0 && _displayNumber ? index + ") " : "") + _labelText,
+                Text = string.IsNullOrWhiteSpace(_labelText) ? "" : (_required ? "*" : "") + (index > 0 && _displayNumber ? index + ") " : "") + _labelText,
                 FontSize = _labelFontSize
 
                 // set the style ID on the label so that we can retrieve it when unit testing
@@ -247,26 +247,6 @@ namespace SensusUI.Inputs
                 , StyleId = Name + " Label"
                 #endif
             };
-        }
-
-        protected View CreateInput(View input)
-        {
-            return _required ? new StackLayout
-            {
-                Orientation = StackOrientation.Horizontal,
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                Children =
-                {
-                    new Label
-                    {
-                        Text = "*",
-                        FontSize = 20,
-                        TextColor = Color.Red,
-                        HorizontalOptions = LayoutOptions.Start                                
-                    },
-                    input
-                }
-            } : input;
         }
 
         public virtual View GetView(int index)

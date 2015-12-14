@@ -81,7 +81,7 @@ namespace SensusUI.Inputs
                     #if UNIT_TESTING
                     , StyleId = Name
                     #endif
-                };  
+                };
 
                 _entry.TextChanged += (o, e) =>
                 {
@@ -92,7 +92,7 @@ namespace SensusUI.Inputs
                     {
                         Orientation = StackOrientation.Vertical,
                         VerticalOptions = LayoutOptions.Start,
-                        Children = { CreateLabel(index), CreateInput(_entry) }
+                        Children = { CreateLabel(index), _entry }
                     });
             }
 

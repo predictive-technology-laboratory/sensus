@@ -180,27 +180,27 @@ namespace SensusUI.Inputs
                         Children =
                         { 
                             sliderLabel,
-                            CreateInput(new StackLayout
+                            new StackLayout
+                            {
+                                Orientation = StackOrientation.Horizontal,
+                                HorizontalOptions = LayoutOptions.FillAndExpand,
+                                Children =
                                 {
-                                    Orientation = StackOrientation.Horizontal,
-                                    HorizontalOptions = LayoutOptions.FillAndExpand,
-                                    Children =
+                                    new Label
                                     {
-                                        new Label
-                                        {
-                                            Text = _minimum.ToString(),
-                                            FontSize = 20,
-                                            HorizontalOptions = LayoutOptions.Fill
-                                        },
-                                        _slider,
-                                        new Label
-                                        {
-                                            Text = _maximum.ToString(),
-                                            FontSize = 20,
-                                            HorizontalOptions = LayoutOptions.Fill
-                                        }
+                                        Text = _minimum.ToString(),
+                                        FontSize = 20,
+                                        HorizontalOptions = LayoutOptions.Fill
+                                    },
+                                    _slider,
+                                    new Label
+                                    {
+                                        Text = _maximum.ToString(),
+                                        FontSize = 20,
+                                        HorizontalOptions = LayoutOptions.Fill
                                     }
-                                })
+                                }
+                            }
                         }
                     });
             }

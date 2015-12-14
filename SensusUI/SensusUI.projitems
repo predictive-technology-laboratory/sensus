@@ -34,7 +34,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)ScriptRunnersPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PromptForInputsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\Input.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Inputs\ItemPickerInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\LabelOnlyInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\NumberEntryInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\NumberSliderInput.cs" />
@@ -51,8 +50,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\VoiceInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ParticipationReportPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ParticipationReportDetailsPage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)GroupProtocolPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)VerifiedParticipationPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Inputs\ItemPickerPageInput.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Inputs\ItemPickerDialogInput.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Inputs\" />

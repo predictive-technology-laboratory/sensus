@@ -19,8 +19,6 @@ namespace SensusUI.Inputs
 {
     public class LabelOnlyInput : Input
     {
-        private Label _label;
-
         public override object Value
         {
             get
@@ -33,11 +31,10 @@ namespace SensusUI.Inputs
         {
             get
             {
-                return _label.IsEnabled;
+                return true;
             }
             set
             {
-                _label.IsEnabled = value;
             }
         }
 
@@ -89,11 +86,7 @@ namespace SensusUI.Inputs
         public override View GetView(int index)
         {
             if (base.GetView(index) == null)
-            {
-                _label = CreateLabel(-1);
-
-                base.SetView(_label);
-            }
+                base.SetView(CreateLabel(-1));
 
             return base.GetView(index);
         }

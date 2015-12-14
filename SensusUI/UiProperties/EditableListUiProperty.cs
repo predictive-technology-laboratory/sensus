@@ -33,8 +33,8 @@ namespace SensusUI.UiProperties
                     return "";
 
                 StringBuilder text = new StringBuilder();
-                foreach (string s in value as IEnumerable<string>)
-                    text.AppendLine(s);
+                foreach (object item in value as IEnumerable<object>)
+                    text.AppendLine(item.ToString());
 
                 return text.ToString();
             }
