@@ -22,7 +22,7 @@ using Xamarin.Forms;
 using SensusUI;
 using SensusService;
 using Xamarin.Geolocation;
-using Toasts.Forms.Plugin.iOS;
+using Toasts;
 using System.IO;
 using Facebook.CoreKit;
 using Xamarin;
@@ -50,6 +50,8 @@ namespace Sensus.iOS
             FormsMaps.Init();
             MapExtendRenderer.Init();
 
+            // toasts for iOS
+            DependencyService.Register<ToastNotificatorImplementation>();
             ToastNotificatorImplementation.Init();
 
             LoadApplication(new App());

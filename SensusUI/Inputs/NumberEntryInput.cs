@@ -73,6 +73,7 @@ namespace SensusUI.Inputs
             {
                 _entry = new Entry
                 {
+                    Text = "Provide response here.",
                     FontSize = 20,
                     Keyboard = Keyboard.Numeric,
                     HorizontalOptions = LayoutOptions.FillAndExpand
@@ -81,6 +82,19 @@ namespace SensusUI.Inputs
                     #if UNIT_TESTING
                     , StyleId = Name
                     #endif
+                };
+
+                Color defaultTextColor = _entry.TextColor;
+                _entry.TextColor = Color.Gray;
+                bool firstFocus = true;
+                _entry.Focused += (o, e) =>
+                {
+                    if (firstFocus)
+                    {
+                        _entry.Text = "";
+                        _entry.TextColor = defaultTextColor;
+                        firstFocus = false;
+                    }
                 };
 
                 _entry.TextChanged += (o, e) =>

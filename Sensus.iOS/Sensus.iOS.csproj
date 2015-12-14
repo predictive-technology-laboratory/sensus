@@ -293,12 +293,6 @@
     <Reference Include="AWSSDK.Core">
       <HintPath>..\packages\AWSSDK.Core.3.1.4.1\lib\Xamarin.iOS10\AWSSDK.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Toasts.Forms.Plugin.Abstractions">
-      <HintPath>..\packages\Toasts.Forms.Plugin.1.0.9.21\lib\Xamarin.iOS10\Toasts.Forms.Plugin.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Toasts.Forms.Plugin.iOS">
-      <HintPath>..\packages\Toasts.Forms.Plugin.1.0.9.21\lib\Xamarin.iOS10\Toasts.Forms.Plugin.iOS.dll</HintPath>
-    </Reference>
     <Reference Include="Xamarin.Insights">
       <HintPath>..\packages\Xamarin.Insights.1.11.3\lib\Xamarin.iOS10\Xamarin.Insights.dll</HintPath>
     </Reference>
@@ -307,6 +301,12 @@
     </Reference>
     <Reference Include="Calabash">
       <HintPath>..\packages\Xamarin.TestCloud.Agent.0.17.0\lib\Xamarin.iOS10\Calabash.dll</HintPath>
+    </Reference>
+    <Reference Include="Toasts.Forms.Plugin.Abstractions">
+      <HintPath>..\packages\Toasts.Forms.Plugin.1.0.9.21\lib\Xamarin.iOS10\Toasts.Forms.Plugin.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Toasts.Forms.Plugin.iOS">
+      <HintPath>..\packages\Toasts.Forms.Plugin.1.0.9.21\lib\Xamarin.iOS10\Toasts.Forms.Plugin.iOS.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

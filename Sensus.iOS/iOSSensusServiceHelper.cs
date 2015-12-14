@@ -25,7 +25,7 @@ using Xamarin.Forms;
 using System.Collections.Generic;
 using AVFoundation;
 using System.Threading;
-using Toasts.Forms.Plugin.Abstractions;
+using Toasts;
 using SensusService.Probes.Movement;
 using MessageUI;
 using System.IO;
