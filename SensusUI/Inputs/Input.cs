@@ -268,7 +268,7 @@ namespace SensusUI.Inputs
         {
             return new Label
             {
-                Text = string.IsNullOrWhiteSpace(_labelText) ? "" : (_required ? "*" : "") + (index > 0 && _displayNumber ? index + ") " : "") + _labelText,
+                Text = GetLabelText(index),
                 FontSize = _labelFontSize
 
                 // set the style ID on the label so that we can retrieve it when unit testing
@@ -276,6 +276,11 @@ namespace SensusUI.Inputs
                 , StyleId = Name + " Label"
                 #endif
             };
+        }
+
+        protected string GetLabelText(int index)
+        {
+            return string.IsNullOrWhiteSpace(_labelText) ? "" : (_required ? "*" : "") + (index > 0 && _displayNumber ? index + ") " : "") + _labelText;
         }
 
         public virtual View GetView(int index)

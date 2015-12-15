@@ -18,8 +18,8 @@ namespace SensusUI.Inputs
 {
     public enum InputValueCondition
     {
-        Equals,
-        NotEquals,
-        Complete
+        ValueEqualTo,
+        ValueNotEqualTo,
+        InputComplete
     }
 }

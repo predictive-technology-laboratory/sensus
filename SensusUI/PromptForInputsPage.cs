@@ -31,8 +31,20 @@ namespace SensusUI
             Cancel
         }
 
+        private int _displayedInputCount;
+
+        public int DisplayedInputCount
+        {
+            get
+            {
+                return _displayedInputCount;
+            }
+        }
+
         public PromptForInputsPage(InputGroup inputGroup, int stepNumber, int totalSteps, bool showCancelButton, string nextButtonTextOverride, CancellationToken? cancellationToken, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, Action<Result> callback)
         {            
+            _displayedInputCount = 0;
+
             StackLayout contentLayout = new StackLayout
             {
                 Orientation = StackOrientation.Vertical,
@@ -75,14 +87,10 @@ namespace SensusUI
 
                         if (input.Required)
                             anyRequired = true;
+
+                        ++_displayedInputCount;
                     }
                 }
-
-            if (viewNumber == 1)
-            {
-                callback(Result.NavigateForward);
-                return;
-            }
 
             if (anyRequired)
                 contentLayout.Children.Add(new Label

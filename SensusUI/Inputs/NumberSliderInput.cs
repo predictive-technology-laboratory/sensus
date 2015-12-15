@@ -28,6 +28,7 @@ namespace SensusUI.Inputs
         private Slider _slider;
         private double _incrementalValue;
         private bool _incrementalValueHasChanged;
+        private Label _sliderLabel;
 
         [EntryDoubleUiProperty(null, true, 10)]
         public double Minimum
@@ -156,9 +157,9 @@ namespace SensusUI.Inputs
                 _slider.Value = _incrementalValue = GetIncrementalValue((_maximum - _minimum) / 2d);
                 _incrementalValueHasChanged = false;
 
-                Label sliderLabel = CreateLabel(index);
-                string originalSliderLabelText = sliderLabel.Text;
-                sliderLabel.Text = originalSliderLabelText + ":  Please select a value below.";
+                _sliderLabel = CreateLabel(index);
+                string originalSliderLabelText = _sliderLabel.Text;
+                _sliderLabel.Text = originalSliderLabelText + ":  Please select a value below.";
 
                 _slider.ValueChanged += (o, e) =>
                 {
@@ -168,7 +169,7 @@ namespace SensusUI.Inputs
                     {
                         _incrementalValue = newIncrementalValue;
                         _incrementalValueHasChanged = true;
-                        sliderLabel.Text = originalSliderLabelText + ":  " + _incrementalValue;
+                        _sliderLabel.Text = originalSliderLabelText + ":  " + _incrementalValue;
                         Complete = Value != null;
                     }
                 };
@@ -179,7 +180,7 @@ namespace SensusUI.Inputs
                         VerticalOptions = LayoutOptions.Start,
                         Children =
                         { 
-                            sliderLabel,
+                            _sliderLabel,
                             new StackLayout
                             {
                                 Orientation = StackOrientation.Horizontal,
@@ -204,6 +205,8 @@ namespace SensusUI.Inputs
                         }
                     });
             }
+            else
+                _sliderLabel.Text = GetLabelText(index) + ":  " + _sliderLabel.Text.Substring(_sliderLabel.Text.LastIndexOf(":") + 1).Trim();
 
             return base.GetView(index);
         }

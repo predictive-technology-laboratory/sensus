@@ -49,59 +49,62 @@ namespace SensusUI
             };
 
             shareButton.Clicked += (o, e) =>
-                {
-                    string path = null;
-                    try
-                    {
-                        path = SensusServiceHelper.Get().GetSharePath(".txt");
-                        using (StreamWriter file = new StreamWriter(path))
-                        {
-                            foreach (string line in lines)
-                                file.WriteLine(line);
-
-                            file.Close();
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Failed to write lines to temp file for sharing:  " + ex.Message, SensusService.LoggingLevel.Normal, GetType());
-                        path = null;
-                    }
-
-                    if (path != null)
-                        SensusServiceHelper.Get().ShareFileAsync(path, title + ":  " + Path.GetFileName(path), "text/plain");
-                };
-
-            Button clearButton = new Button
             {
-                Text = "Clear",
-                FontSize = 20,
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                IsEnabled = clearCallback != null
+                string path = null;
+                try
+                {
+                    path = SensusServiceHelper.Get().GetSharePath(".txt");
+                    using (StreamWriter file = new StreamWriter(path))
+                    {
+                        foreach (string line in lines)
+                            file.WriteLine(line);
+
+                        file.Close();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Failed to write lines to temp file for sharing:  " + ex.Message, SensusService.LoggingLevel.Normal, GetType());
+                    path = null;
+                }
+
+                if (path != null)
+                    SensusServiceHelper.Get().ShareFileAsync(path, title + ":  " + Path.GetFileName(path), "text/plain");
             };
 
-            if (clearCallback != null)
-                clearButton.Clicked += async (o, e) =>
-                    {
-                        if (await DisplayAlert("Confirm", "Do you wish to clear the list? This cannot be undone.", "OK", "Cancel"))
-                        {
-                            clearCallback();
-                            messageList.ItemsSource = null;
-                        }
-                    };
-
-            StackLayout shareClearStack = new StackLayout
+            StackLayout buttonStack = new StackLayout
             {
                 Orientation = StackOrientation.Horizontal,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
-                Children = { shareButton, clearButton }
+                Children = { shareButton }
             };
+            
+            if (clearCallback != null)
+            {
+                Button clearButton = new Button
+                {
+                    Text = "Clear",
+                    FontSize = 20,
+                    HorizontalOptions = LayoutOptions.FillAndExpand,
+                };
+
+                clearButton.Clicked += async (o, e) =>
+                {
+                    if (await DisplayAlert("Confirm", "Do you wish to clear the list? This cannot be undone.", "Yes", "No"))
+                    {
+                        clearCallback();
+                        messageList.ItemsSource = null;
+                    }
+                };
+
+                buttonStack.Children.Add(clearButton);
+            }
 
             Content = new StackLayout
             {
                 Orientation = StackOrientation.Vertical,
                 VerticalOptions = LayoutOptions.FillAndExpand,
-                Children = { messageList, shareClearStack }
+                Children = { messageList, buttonStack }
             };
         }
     }

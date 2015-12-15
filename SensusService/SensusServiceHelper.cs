@@ -896,9 +896,19 @@ namespace SensusService
                                             responseWait.Set();
                                         });
 
-                                    // check the cancellation token again to make sure we still want to display the page. if it has been cancelled, simply 
-                                    // set the wait handle and proceed.
-                                    if (cancellationToken.GetValueOrDefault().IsCancellationRequested)
+                                    // do not display prompts page under the following conditions:  1) there are no inputs displayed on it. 2) the cancellation 
+                                    // token has requested a cancellation. if any of these conditions are true, set the wait handle and continue to the next input group.
+
+                                    if (promptForInputsPage.DisplayedInputCount == 0)
+                                    {
+                                        // if we're on the final input group and no inputs were shown, it's time to submit if the user is ready. if the user isn't
+                                        // ready, kick them back to the previous input group if there is one.
+                                        if (incompleteGroupNum > 0 && incompleteGroupNum >= incompleteGroups.Length - 1 && !(await promptForInputsPage.DisplayAlert("Confirm", submitConfirmation, "Yes", "No")))
+                                            incompleteGroupNum -= 2;
+
+                                        responseWait.Set();
+                                    }
+                                    else if (cancellationToken.GetValueOrDefault().IsCancellationRequested)
                                         responseWait.Set();
                                     else
                                     {
@@ -915,7 +925,8 @@ namespace SensusService
                         responseWait.WaitOne();    
 
                         foreach (Input input in incompleteGroup.Inputs)
-                            input.Viewed = true;
+                            if (input.ShouldBeDisplayed)
+                                input.Viewed = true;
                     }
 
                     INPUT_REQUESTED = false;

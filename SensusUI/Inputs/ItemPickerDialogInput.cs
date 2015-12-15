@@ -25,6 +25,7 @@ namespace SensusUI.Inputs
         private List<string> _items;
         private bool _allowClearSelection;
         private Picker _picker;
+        private Label _label;
 
         [EntryStringUiProperty("Tip Text:", true, 10)]
         public string TipText
@@ -149,13 +150,17 @@ namespace SensusUI.Inputs
                         Complete = true;
                 };
 
+                _label = CreateLabel(index);
+
                 base.SetView(new StackLayout
                     {
                         Orientation = StackOrientation.Vertical,
                         VerticalOptions = LayoutOptions.Start,
-                        Children = { CreateLabel(index), _picker }
+                        Children = { _label, _picker }
                     });
             }
+            else
+                _label.Text = GetLabelText(index);
 
             return base.GetView(index);
         }

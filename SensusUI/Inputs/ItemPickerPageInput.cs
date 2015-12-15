@@ -51,6 +51,7 @@ namespace SensusUI.Inputs
         private List<object> _selectedItems;
         private string _textBindingPropertyPath;
         private List<Label> _itemLabels;
+        private Label _label;
 
         public List<object> Items
         {
@@ -133,7 +134,7 @@ namespace SensusUI.Inputs
             Construct();
         }
 
-        public ItemPickerPageInput(string labelText, List<object> items, string textBindingPropertyPath)
+        public ItemPickerPageInput(string labelText, List<object> items, string textBindingPropertyPath = ".")
             : base(labelText)
         {
             Construct();
@@ -183,7 +184,7 @@ namespace SensusUI.Inputs
                         #endif
                     };
 
-                    itemLabel.SetBinding(Label.TextProperty, _textBindingPropertyPath);
+                    itemLabel.SetBinding(Label.TextProperty, _textBindingPropertyPath, stringFormat: "{0}");
 
                     TapGestureRecognizer tapRecognizer = new TapGestureRecognizer
                     {
@@ -213,13 +214,17 @@ namespace SensusUI.Inputs
                     _itemLabels.Add(itemLabel);
                 }
 
+                _label = CreateLabel(index);
+
                 base.SetView(new StackLayout
                     {
                         Orientation = StackOrientation.Vertical,
                         VerticalOptions = LayoutOptions.Start,
-                        Children = { CreateLabel(index), itemLabelStack }
+                        Children = { _label, itemLabelStack }
                     });
             }
+            else
+                _label.Text = GetLabelText(index);
 
             return base.GetView(index);
         }

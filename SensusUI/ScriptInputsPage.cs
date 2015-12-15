@@ -21,6 +21,7 @@ using SensusUI.Inputs;
 using System.Reflection;
 using System.Linq;
 using SensusService;
+using System.Collections;
 
 namespace SensusUI
 {
@@ -46,16 +47,21 @@ namespace SensusUI
                 Input selectedInput = _inputsList.SelectedItem as Input;
                 int selectedIndex = inputGroup.Inputs.IndexOf(selectedInput);
 
-                List<string> actions = new string[] { "Edit" }.ToList();
-
-                if (previousInputGroups != null && previousInputGroups.Count > 0)
-                    actions.AddRange(new string[] { "Add Display Condition", "View Display Conditions", "Clear Display Conditions" });
-
-                if (selectedIndex < inputGroup.Inputs.Count - 1)
-                    actions.Insert(0, "Move Down");
+                List<string> actions = new List<string>();
 
                 if (selectedIndex > 0)
-                    actions.Insert(0, "Move Up");
+                    actions.Add("Move Up");
+                    
+                if (selectedIndex < inputGroup.Inputs.Count - 1)
+                    actions.Add("Move Down");
+
+                actions.Add("Edit");
+                    
+                if (previousInputGroups != null && previousInputGroups.Select(previousInputGroup => previousInputGroup.Inputs.Count).Sum() > 0)
+                    actions.Add("Add Display Condition");
+
+                if (selectedInput.DisplayConditions.Count > 0)
+                    actions.AddRange(new string[]{ "View Display Conditions" });
 
                 actions.Add("Delete");
                     
@@ -80,10 +86,10 @@ namespace SensusUI
                 {
                     SensusServiceHelper.Get().PromptForInputsAsync("Display Condition", new Input[]
                         {
-                            new ItemPickerPageInput("Input to condition on:", previousInputGroups.SelectMany(previousInputGroup => previousInputGroup.Inputs.Cast<object>()).ToList(), null),
-                            new ItemPickerPageInput("Condition:", Enum.GetValues(typeof(InputValueCondition)).Cast<object>().ToList(), null),
+                            new ItemPickerPageInput("Input to condition on:", previousInputGroups.SelectMany(previousInputGroup => previousInputGroup.Inputs.Cast<object>()).ToList()),
+                            new ItemPickerPageInput("Condition:", Enum.GetValues(typeof(InputValueCondition)).Cast<object>().ToList()),
                             new TextInput("Value:", Keyboard.Default) { Required = false },
-                            new ItemPickerPageInput("Conjunctive:", new object[] { true, false }.ToList(), null)
+                            new ItemPickerPageInput("Conjunctive:", new object[] { true, false }.ToList())
                         },
                         null,
                         true,
@@ -98,22 +104,20 @@ namespace SensusUI
 
                             if (inputs.All(input => input.Complete))
                             {
-                                Input input = (inputs[0] as ItemPickerPageInput).Value as Input;
-                                InputValueCondition condition = (InputValueCondition)(inputs[1] as ItemPickerPageInput).Value;
+                                Input input = ((inputs[0] as ItemPickerPageInput).Value as IEnumerable<object>).First() as Input;
+                                InputValueCondition condition = (InputValueCondition)((inputs[1] as ItemPickerPageInput).Value as IEnumerable<object>).First();
                                 string value = (inputs[2] as TextInput).Value as string;
-                                bool conjunction = (bool)(inputs[3] as ItemPickerPageInput).Value;
+                                bool conjunction = (bool)((inputs[3] as ItemPickerPageInput).Value as IEnumerable<object>).First();
                                 selectedInput.DisplayConditions.Add(new InputDisplayCondition(input, condition, value, conjunction));
                             }
                         });
                 }
                 else if (selectedAction == "View Display Conditions")
                 {
-                    await Navigation.PushAsync(new ViewTextLinesPage("Display Conditions", selectedInput.DisplayConditions.Select(displayCondition => displayCondition.ToString()).ToList(), null));
-                }
-                else if (selectedAction == "Clear Display Conditions")
-                {
-                    if (await DisplayAlert("Confirm", "Clear all display conditions?", "Yes", "No"))
-                        selectedInput.DisplayConditions.Clear();
+                    await Navigation.PushAsync(new ViewTextLinesPage("Display Conditions", selectedInput.DisplayConditions.Select(displayCondition => displayCondition.ToString()).ToList(), async () =>
+                            {
+                                selectedInput.DisplayConditions.Clear();
+                            }));
                 }
                 else if (selectedAction == "Delete")
                 {

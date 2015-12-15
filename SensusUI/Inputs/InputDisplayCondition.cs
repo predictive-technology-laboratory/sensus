@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using Newtonsoft.Json;
 
 namespace SensusUI.Inputs
 {
@@ -20,7 +21,7 @@ namespace SensusUI.Inputs
     {
         private Input _input;
         private InputValueCondition _condition;
-        private object _value;
+        private string _value;
         private bool _conjunction;
 
         public Input Input
@@ -47,7 +48,7 @@ namespace SensusUI.Inputs
             }
         }
 
-        public object Value
+        public string Value
         {
             get
             {
@@ -71,17 +72,18 @@ namespace SensusUI.Inputs
             }
         }
 
+        [JsonIgnore]
         public bool Satisfied
         {
             get
             {
-                return _condition == InputValueCondition.Complete && _input.Complete ||
-                _condition == InputValueCondition.Equals && _input.Value.Equals(_value) ||
-                _condition == InputValueCondition.NotEquals && !_input.Value.Equals(_value);
+                return _condition == InputValueCondition.InputComplete && _input.Complete ||
+                _input.Value != null && _condition == InputValueCondition.ValueEqualTo && _input.Value.ToString() == _value ||
+                _input.Value != null && _condition == InputValueCondition.ValueNotEqualTo && _input.Value.ToString() != _value;
             }
         }
 
-        public InputDisplayCondition(Input input, InputValueCondition condition, object value, bool conjunction)
+        public InputDisplayCondition(Input input, InputValueCondition condition, string value, bool conjunction)
         {
             _input = input;
             _condition = condition;

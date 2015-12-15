@@ -20,6 +20,7 @@ namespace SensusUI.Inputs
     public class NumberEntryInput : Input
     {
         private Entry _entry;
+        private Label _label;
 
         public override object Value
         {
@@ -102,13 +103,17 @@ namespace SensusUI.Inputs
                     Complete = Value != null;
                 };
 
+                _label = CreateLabel(index);
+
                 base.SetView(new StackLayout
                     {
                         Orientation = StackOrientation.Vertical,
                         VerticalOptions = LayoutOptions.Start,
-                        Children = { CreateLabel(index), _entry }
+                        Children = { _label, _entry }
                     });
             }
+            else
+                _label.Text = GetLabelText(index);
 
             return base.GetView(index);
         }
