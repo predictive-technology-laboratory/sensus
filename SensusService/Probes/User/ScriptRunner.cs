@@ -33,8 +33,8 @@ namespace SensusService.Probes.User
         private int _delayMS;
         private ObservableCollection<Trigger> _triggers;
         private Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>> _triggerHandler;
-        private Queue<Script> _incompleteScripts;
-        private bool _rerunIncompletes;
+        private Queue<Script> _invalidScripts;
+        private bool _rerunInvalidScripts;
         private string _rerunCallbackId;
         private int _rerunDelayMS;
         private int _maximumAgeMinutes;
@@ -117,22 +117,22 @@ namespace SensusService.Probes.User
             get { return _triggers; }
         }
 
-        public Queue<Script> IncompleteScripts
+        public Queue<Script> InvalidScripts
         {
-            get { return _incompleteScripts; }
+            get { return _invalidScripts; }
         }
 
-        [OnOffUiProperty("Rerun Incomplete Scripts:", true, 4)]
-        public bool RerunIncompletes
+        [OnOffUiProperty("Rerun Invalid Scripts:", true, 4)]
+        public bool RerunInvalidScripts
         {
-            get { return _rerunIncompletes; }
+            get { return _rerunInvalidScripts; }
             set
             {
-                if (value != _rerunIncompletes)
+                if (value != _rerunInvalidScripts)
                 {
-                    _rerunIncompletes = value;
+                    _rerunInvalidScripts = value;
 
-                    if (_probe != null && _probe.Running && _enabled && _rerunIncompletes) // probe can be null when deserializing, if set after this property.
+                    if (_probe != null && _probe.Running && _enabled && _rerunInvalidScripts) // probe can be null when deserializing, if set after this property.
                         StartRerunCallbacksAsync();
                     else if (SensusServiceHelper.Get() != null)  // service helper is null when deserializing
                         StopRerunCallbacksAsync();
@@ -304,8 +304,8 @@ namespace SensusService.Probes.User
             _delayMS = 0;
             _triggers = new ObservableCollection<Trigger>();
             _triggerHandler = new Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>>();
-            _incompleteScripts = new Queue<Script>();
-            _rerunIncompletes = false;
+            _invalidScripts = new Queue<Script>();
+            _rerunInvalidScripts = false;
             _rerunCallbackId = null;
             _rerunDelayMS = 60000;
             _maximumAgeMinutes = 1;
@@ -401,7 +401,7 @@ namespace SensusService.Probes.User
 
         public void Start()
         {
-            if (_rerunIncompletes)
+            if (_rerunInvalidScripts)
                 StartRerunCallbacksAsync();
 
             if (_randomTriggerWindows.Count > 0)
@@ -415,7 +415,7 @@ namespace SensusService.Probes.User
         {
             new Thread(() =>
                 {
-                    lock (_incompleteScripts)
+                    lock (_invalidScripts)
                     {
                         StopRerunCallbacks();
 
@@ -423,13 +423,13 @@ namespace SensusService.Probes.User
 
                         _rerunCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback((callbackId, cancellationToken) =>
                             {
-                                if (_probe.Running && _enabled && _rerunIncompletes)
+                                if (_probe.Running && _enabled && _rerunInvalidScripts)
                                 {
                                     Script scriptToRerun = null;
-                                    lock (_incompleteScripts)
-                                        while (scriptToRerun == null && _incompleteScripts.Count > 0)
+                                    lock (_invalidScripts)
+                                        while (scriptToRerun == null && _invalidScripts.Count > 0)
                                         {
-                                            scriptToRerun = _incompleteScripts.Dequeue();                     
+                                            scriptToRerun = _invalidScripts.Dequeue();                     
                                             if (scriptToRerun.Age.TotalMinutes > _maximumAgeMinutes)
                                             {
                                                 SensusServiceHelper.Get().Logger.Log("Script \"" + _name + "\" has aged out.", LoggingLevel.Normal, GetType());
@@ -602,7 +602,7 @@ namespace SensusService.Probes.User
                                             {
                                                 // if the user canceled the prompts, reset the input. we reset here within the above if-check because if an
                                                 // input has already been stored we should not reset it. its value and read-only status are fixed for all 
-                                                // time, even if the prompts are later redisplayed by the incomplete script handler.
+                                                // time, even if the prompts are later redisplayed by the invalid script handler.
                                                 if (canceled)
                                                     input.Reset();
                                                 // store all inputs that are valid and displayed
@@ -633,9 +633,9 @@ namespace SensusService.Probes.User
                                     _completionTimes.RemoveAll(completionTime => completionTime < _probe.Protocol.ParticipationHorizon);
                                 }
                             }
-                            else if (_rerunIncompletes)
-                                lock (_incompleteScripts)
-                                    _incompleteScripts.Enqueue(script);
+                            else if (_rerunInvalidScripts)
+                                lock (_invalidScripts)
+                                    _invalidScripts.Enqueue(script);
 
                             if (callback != null)
                                 callback();
@@ -651,9 +651,9 @@ namespace SensusService.Probes.User
         {
             bool restart = false;
 
-            lock (_incompleteScripts)
-                if (_incompleteScripts.Count > 0)
-                    misc += "Script runner \"" + _name + "\" is holding " + _incompleteScripts.Count + " copies, the oldest being run first on " + _incompleteScripts.Select(s => s.FirstRunTimestamp).Min() + "." + Environment.NewLine;
+            lock (_invalidScripts)
+                if (_invalidScripts.Count > 0)
+                    misc += "Script runner \"" + _name + "\" is holding " + _invalidScripts.Count + " copies, the oldest being run first on " + _invalidScripts.Select(s => s.FirstRunTimestamp).Min() + "." + Environment.NewLine;
 
             if (_numScriptsAgedOut > 0)
                 misc += _numScriptsAgedOut + " \"" + _name + "\" scripts have aged out." + Environment.NewLine;
@@ -663,7 +663,7 @@ namespace SensusService.Probes.User
 
         public void ClearForSharing()
         {
-            _incompleteScripts.Clear();
+            _invalidScripts.Clear();
             _numScriptsAgedOut = 0;
             _runTimes.Clear();
             _completionTimes.Clear();

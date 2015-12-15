@@ -74,7 +74,7 @@ namespace SensusUI
 
             int viewNumber = 1;
             bool anyRequired = false;
-            List<View> displayedInputs = new List<View>();
+            List<Input> displayedInputs = new List<Input>();
             foreach (Input input in inputGroup.Inputs)
                 if (input.Display)
                 {
@@ -82,7 +82,7 @@ namespace SensusUI
                     if (inputView != null)
                     {
                         contentLayout.Children.Add(inputView);
-                        displayedInputs.Add(inputView);
+                        displayedInputs.Add(input);
 
                         if (input.DisplayNumber)
                             ++viewNumber;
