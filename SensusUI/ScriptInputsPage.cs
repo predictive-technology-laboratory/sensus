@@ -29,7 +29,7 @@ namespace SensusUI
         private InputGroup _inputGroup;
         private ListView _inputsList;
 
-        public ScriptInputsPage(InputGroup inputGroup)
+        public ScriptInputsPage(InputGroup inputGroup, List<InputGroup> previousInputGroups)
         {
             _inputGroup = inputGroup;
 
@@ -46,13 +46,18 @@ namespace SensusUI
                 Input selectedInput = _inputsList.SelectedItem as Input;
                 int selectedIndex = inputGroup.Inputs.IndexOf(selectedInput);
 
-                List<string> actions = new string[] { "Edit", "Delete" }.ToList();
+                List<string> actions = new string[] { "Edit" }.ToList();
+
+                if (previousInputGroups != null && previousInputGroups.Count > 0)
+                    actions.AddRange(new string[] { "Add Display Condition", "View Display Conditions", "Clear Display Conditions" });
 
                 if (selectedIndex < inputGroup.Inputs.Count - 1)
                     actions.Insert(0, "Move Down");
 
                 if (selectedIndex > 0)
                     actions.Insert(0, "Move Up");
+
+                actions.Add("Delete");
                     
                 string selectedAction = await DisplayActionSheet(selectedInput.Name, "Cancel", null, actions.ToArray());
 
@@ -70,6 +75,45 @@ namespace SensusUI
                         
                     await Navigation.PushAsync(inputPage);
                     _inputsList.SelectedItem = null;
+                }
+                else if (selectedAction == "Add Display Condition")
+                {
+                    SensusServiceHelper.Get().PromptForInputsAsync("Display Condition", new Input[]
+                        {
+                            new ItemPickerPageInput("Input to condition on:", previousInputGroups.SelectMany(previousInputGroup => previousInputGroup.Inputs.Cast<object>()).ToList(), null),
+                            new ItemPickerPageInput("Condition:", Enum.GetValues(typeof(InputValueCondition)).Cast<object>().ToList(), null),
+                            new TextInput("Value:", Keyboard.Default) { Required = false },
+                            new ItemPickerPageInput("Conjunctive:", new object[] { true, false }.ToList(), null)
+                        },
+                        null,
+                        true,
+                        "OK",
+                        null,
+                        "Condition not complete. Cancel?",
+                        null,
+                        inputs =>
+                        {
+                            if (inputs == null)
+                                return;
+
+                            if (inputs.All(input => input.Complete))
+                            {
+                                Input input = (inputs[0] as ItemPickerPageInput).Value as Input;
+                                InputValueCondition condition = (InputValueCondition)(inputs[1] as ItemPickerPageInput).Value;
+                                string value = (inputs[2] as TextInput).Value as string;
+                                bool conjunction = (bool)(inputs[3] as ItemPickerPageInput).Value;
+                                selectedInput.DisplayConditions.Add(new InputDisplayCondition(input, condition, value, conjunction));
+                            }
+                        });
+                }
+                else if (selectedAction == "View Display Conditions")
+                {
+                    await Navigation.PushAsync(new ViewTextLinesPage("Display Conditions", selectedInput.DisplayConditions.Select(displayCondition => displayCondition.ToString()).ToList(), null));
+                }
+                else if (selectedAction == "Clear Display Conditions")
+                {
+                    if (await DisplayAlert("Confirm", "Clear all display conditions?", "Yes", "No"))
+                        selectedInput.DisplayConditions.Clear();
                 }
                 else if (selectedAction == "Delete")
                 {

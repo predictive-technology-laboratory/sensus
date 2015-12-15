@@ -18,6 +18,8 @@ using SensusService.Exceptions;
 using SensusUI.UiProperties;
 using Newtonsoft.Json;
 using System.Threading;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SensusUI.Inputs
 {
@@ -38,6 +40,7 @@ namespace SensusUI.Inputs
         private bool _required;
         private bool _viewed;
         private DateTimeOffset? _completionTimestamp;
+        private List<InputDisplayCondition> _displayConditions;
 
         [EntryStringUiProperty("Name:", true, 0)]
         public string Name
@@ -204,6 +207,31 @@ namespace SensusUI.Inputs
             }
         }
 
+        public List<InputDisplayCondition> DisplayConditions
+        {
+            get
+            {
+                return _displayConditions;
+            }
+        }
+
+        [JsonIgnore]
+        public bool ShouldBeDisplayed
+        {
+            get
+            {
+                List<InputDisplayCondition> conjuncts = _displayConditions.Where(displayCondition => displayCondition.Conjunction).ToList();
+                if (conjuncts.Count > 0 && conjuncts.Any(displayCondition => !displayCondition.Satisfied))
+                    return false;
+
+                List<InputDisplayCondition> disjuncts = _displayConditions.Where(displayCondition => !displayCondition.Conjunction).ToList();
+                if (disjuncts.Count > 0 && disjuncts.All(displayCondition => !displayCondition.Satisfied))
+                    return false;
+
+                return true;
+            }
+        }
+
         public Input()
         {
             _name = DefaultName;
@@ -215,6 +243,7 @@ namespace SensusUI.Inputs
             _viewed = false;
             _completionTimestamp = null;
             _labelFontSize = 20;
+            _displayConditions = new List<InputDisplayCondition>();
         }
 
         public Input(string labelText)

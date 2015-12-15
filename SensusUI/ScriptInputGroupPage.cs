@@ -16,20 +16,21 @@ using System;
 using Xamarin.Forms;
 using SensusUI.Inputs;
 using SensusUI.UiProperties;
+using System.Collections.Generic;
 
 namespace SensusUI
 {
     public class ScriptInputGroupPage : ContentPage
     {
-        public ScriptInputGroupPage(InputGroup inputGroup)
+        public ScriptInputGroupPage(InputGroup inputGroup, List<InputGroup> previousInputGroups)
         {
             Title = "Input Group";
 
             StackLayout contentLayout = new StackLayout
-                {
-                    Orientation = StackOrientation.Vertical,
-                    VerticalOptions = LayoutOptions.FillAndExpand
-                };
+            {
+                Orientation = StackOrientation.Vertical,
+                VerticalOptions = LayoutOptions.FillAndExpand
+            };
 
             foreach (StackLayout stack in UiProperty.GetPropertyStacks(inputGroup))
                 contentLayout.Children.Add(stack);
@@ -43,7 +44,7 @@ namespace SensusUI
 
             editInputsButton.Clicked += async (o, e) =>
             {
-                await Navigation.PushAsync(new ScriptInputsPage(inputGroup));
+                await Navigation.PushAsync(new ScriptInputsPage(inputGroup, previousInputGroups));
             };
 
             contentLayout.Children.Add(editInputsButton);

@@ -63,18 +63,25 @@ namespace SensusUI
             int viewNumber = 1;
             bool anyRequired = false;
             foreach (Input input in inputGroup.Inputs)
-            {
-                View inputView = input.GetView(viewNumber);
-                if (inputView != null)
+                if (input.ShouldBeDisplayed)
                 {
-                    contentLayout.Children.Add(inputView);
+                    View inputView = input.GetView(viewNumber);
+                    if (inputView != null)
+                    {
+                        contentLayout.Children.Add(inputView);
 
-                    if (input.DisplayNumber)
-                        ++viewNumber;
+                        if (input.DisplayNumber)
+                            ++viewNumber;
 
-                    if (input.Required)
-                        anyRequired = true;
+                        if (input.Required)
+                            anyRequired = true;
+                    }
                 }
+
+            if (viewNumber == 1)
+            {
+                callback(Result.NavigateForward);
+                return;
             }
 
             if (anyRequired)

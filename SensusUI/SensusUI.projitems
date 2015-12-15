@@ -53,6 +53,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)VerifiedParticipationPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\ItemPickerPageInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\ItemPickerDialogInput.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Inputs\InputValueCondition.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Inputs\InputDisplayCondition.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Inputs\" />

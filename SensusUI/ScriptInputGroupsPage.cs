@@ -59,7 +59,7 @@ namespace SensusUI
                     script.InputGroups.Move(selectedIndex, selectedIndex + 1);
                 else if (selectedAction == "Edit")
                 {
-                    ScriptInputGroupPage inputGroupPage = new ScriptInputGroupPage(selectedInputGroup);
+                    ScriptInputGroupPage inputGroupPage = new ScriptInputGroupPage(selectedInputGroup, _script.InputGroups.Where((inputGroup, index) => index < selectedIndex).ToList());
 
                     inputGroupPage.Disappearing += (oo, ee) =>
                     {
