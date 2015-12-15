@@ -80,7 +80,7 @@ namespace SensusUI.Inputs
             Complete = complete;
             Required = false;
             DisplayNumber = false;
-            ShouldBeStored = false;
+            NeedsToBeStored = false;
         }
 
         public override View GetView(int index)

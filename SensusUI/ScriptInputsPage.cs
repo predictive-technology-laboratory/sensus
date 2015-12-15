@@ -102,7 +102,7 @@ namespace SensusUI
                             if (inputs == null)
                                 return;
 
-                            if (inputs.All(input => input.Complete))
+                            if (inputs.All(input => input.Valid))
                             {
                                 Input input = ((inputs[0] as ItemPickerPageInput).Value as IEnumerable<object>).First() as Input;
                                 InputValueCondition condition = (InputValueCondition)((inputs[1] as ItemPickerPageInput).Value as IEnumerable<object>).First();

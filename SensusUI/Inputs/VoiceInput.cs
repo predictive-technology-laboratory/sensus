@@ -128,6 +128,8 @@ namespace SensusUI.Inputs
                         {
                             SensusServiceHelper.Get().RunVoicePromptAsync(outputMessage, response =>
                                 {
+                                    Viewed = true;
+
                                     if (string.IsNullOrWhiteSpace(response))
                                         response = null;
 

@@ -863,7 +863,7 @@ namespace SensusService
 
                     INPUT_REQUESTED = true;
 
-                    InputGroup[] incompleteGroups = inputGroups.Where(inputGroup => !inputGroup.Complete).ToArray();
+                    InputGroup[] incompleteGroups = inputGroups.Where(inputGroup => !inputGroup.Valid).ToArray();
 
                     bool firstPageDisplay = true;
 
@@ -923,10 +923,6 @@ namespace SensusService
                         }
 
                         responseWait.WaitOne();    
-
-                        foreach (Input input in incompleteGroup.Inputs)
-                            if (input.ShouldBeDisplayed)
-                                input.Viewed = true;
                     }
 
                     INPUT_REQUESTED = false;

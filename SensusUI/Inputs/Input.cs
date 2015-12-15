@@ -33,7 +33,7 @@ namespace SensusUI.Inputs
         private View _view;
         private bool _displayNumber;
         private bool _complete;
-        private bool _shouldBeStored;
+        private bool _needsToBeStored;
         private double? _latitude;
         private double? _longitude;
         private DateTimeOffset? _locationUpdateTimestamp;
@@ -113,12 +113,19 @@ namespace SensusUI.Inputs
         [JsonIgnore]
         public abstract object Value { get; }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the user has interacted <see cref="SensusUI.Inputs.Input"/> with
+        /// this input, leaving it in a state of completion. Contrast with Valid, which merely indicates that the 
+        /// state of the input will not prevent the user from moving through an input request (e.g., in the case
+        /// of inputs that are not required).
+        /// </summary>
+        /// <value><c>true</c> if complete; otherwise, <c>false</c>.</value>
         [JsonIgnore]
         public bool Complete
         {
             get
             {
-                return _complete || _viewed && !_required;
+                return _complete;
             }
             protected set
             {
@@ -131,15 +138,30 @@ namespace SensusUI.Inputs
             }
         }
 
-        public bool ShouldBeStored
+        /// <summary>
+        /// Gets a value indicating whether this <see cref="SensusUI.Inputs.Input"/> is valid. A valid input is one that
+        /// is complete, one that has been viewed but is not required, or one that isn't displayed. In short, it is an
+        /// input state that should not prevent the user from proceeding through an input request.
+        /// </summary>
+        /// <value><c>true</c> if valid; otherwise, <c>false</c>.</value>
+        [JsonIgnore]
+        public bool Valid
         {
             get
             {
-                return _shouldBeStored;
+                return _complete || _viewed && !_required || !Display;
+            }
+        }
+
+        public bool NeedsToBeStored
+        {
+            get
+            {
+                return _needsToBeStored;
             }
             set
             {
-                _shouldBeStored = value;
+                _needsToBeStored = value;
             }
         }
 
@@ -216,7 +238,7 @@ namespace SensusUI.Inputs
         }
 
         [JsonIgnore]
-        public bool ShouldBeDisplayed
+        public bool Display
         {
             get
             {
@@ -238,7 +260,7 @@ namespace SensusUI.Inputs
             _id = Guid.NewGuid().ToString();
             _displayNumber = true;
             _complete = false;
-            _shouldBeStored = true;
+            _needsToBeStored = true;
             _required = true;
             _viewed = false;
             _completionTimestamp = null;
@@ -297,7 +319,7 @@ namespace SensusUI.Inputs
         {            
             _view = null;
             _complete = false;
-            _shouldBeStored = true;
+            _needsToBeStored = true;
             _latitude = null;
             _longitude = null;
             _locationUpdateTimestamp = null;

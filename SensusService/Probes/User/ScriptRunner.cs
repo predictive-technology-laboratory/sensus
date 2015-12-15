@@ -597,18 +597,21 @@ namespace SensusService.Probes.User
                                     foreach (InputGroup inputGroup in script.InputGroups)
                                         foreach (Input input in inputGroup.Inputs)
                                         {
-                                            // only consider inputs that still need to be stored. if an input has already been stored, it can be ignored.
-                                            if (input.ShouldBeStored)
+                                            // only consider inputs that still need to be stored. if an input has already been stored, it should be ignored.
+                                            if (input.NeedsToBeStored)
                                             {
-                                                // if the user canceled the survey, reset the input.
+                                                // if the user canceled the prompts, reset the input. we reset here within the above if-check because if an
+                                                // input has already been stored we should not reset it. its value and read-only status are fixed for all 
+                                                // time, even if the prompts are later redisplayed by the incomplete script handler.
                                                 if (canceled)
                                                     input.Reset();
-                                                else if (input.Complete)
+                                                // store all inputs that are valid and displayed
+                                                else if (input.Valid && input.Display)
                                                 {
                                                     _probe.StoreDatum(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow), script.Id, input.GroupId, input.Id, input.Value, script.CurrentDatum == null ? null : script.CurrentDatum.Id, input.Latitude, input.Longitude, script.PresentationTimestamp.GetValueOrDefault(), input.LocationUpdateTimestamp));
 
                                                     // once inputs are stored, they should not be stored again, nor should the user be able to modify them.
-                                                    input.ShouldBeStored = false;
+                                                    input.NeedsToBeStored = false;
                                                     Xamarin.Forms.Device.BeginInvokeOnMainThread(() => input.Enabled = false);
                                                 }
                                             }
@@ -621,7 +624,7 @@ namespace SensusService.Probes.User
 
                             SensusServiceHelper.Get().Logger.Log("\"" + _name + "\" has finished running.", LoggingLevel.Normal, typeof(Script));
 
-                            if (script.Complete)
+                            if (script.Valid)
                             {
                                 // add completion time and remove all completion times before the participation horizon
                                 lock (_completionTimes)

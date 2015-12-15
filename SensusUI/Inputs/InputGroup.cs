@@ -72,10 +72,16 @@ namespace SensusUI.Inputs
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether this <see cref="SensusUI.Inputs.InputGroup"/> is valid. A valid
+        /// input group is one in which each <see cref="SensusUI.Inputs.Input"/> in the group is valid. An
+        /// input group with no inputs is deemed valid by default.
+        /// </summary>
+        /// <value><c>true</c> if valid; otherwise, <c>false</c>.</value>
         [JsonIgnore]
-        public bool Complete
+        public bool Valid
         {
-            get { return _inputs.Count == 0 || _inputs.All(input => input == null || input.Complete); }
+            get { return _inputs.Count == 0 || _inputs.All(input => input == null || input.Valid); }
         }
 
         /// <summary>

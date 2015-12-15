@@ -74,13 +74,15 @@ namespace SensusUI
 
             int viewNumber = 1;
             bool anyRequired = false;
+            List<View> displayedInputs = new List<View>();
             foreach (Input input in inputGroup.Inputs)
-                if (input.ShouldBeDisplayed)
+                if (input.Display)
                 {
                     View inputView = input.GetView(viewNumber);
                     if (inputView != null)
                     {
                         contentLayout.Children.Add(inputView);
+                        displayedInputs.Add(inputView);
 
                         if (input.DisplayNumber)
                             ++viewNumber;
@@ -194,7 +196,7 @@ namespace SensusUI
             {
                 string confirmationMessage = "";
 
-                if (!string.IsNullOrWhiteSpace(incompleteSubmissionConfirmation) && inputGroup.Inputs.Any(input => input.Required && !input.Complete))
+                if (!string.IsNullOrWhiteSpace(incompleteSubmissionConfirmation) && !inputGroup.Valid)
                     confirmationMessage += incompleteSubmissionConfirmation;
                 else if (nextButton.Text == "Submit" && !string.IsNullOrWhiteSpace(submitConfirmation))
                     confirmationMessage += submitConfirmation;
@@ -235,6 +237,12 @@ namespace SensusUI
             }
 
             #endregion
+
+            Appearing += (o, e) =>
+            {
+                foreach (Input input in displayedInputs)
+                    input.Viewed = true;
+            };
             
             Disappearing += (o, e) =>
             {
