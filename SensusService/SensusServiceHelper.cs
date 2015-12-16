@@ -912,10 +912,16 @@ namespace SensusService
 
                                     if (promptForInputsPage.DisplayedInputCount == 0)
                                     {
-                                        // if we're on the final input group and no inputs were shown, then we're ready to submit the users' responses. first check 
-                                        // that the user is ready to submit. if the user isn't ready, move back to the previous input group if there is one.
-                                        if (inputGroupNum >= inputGroups.Count() - 1 && !(await promptForInputsPage.DisplayAlert("Confirm", submitConfirmation, "Yes", "No")) && inputGroupNumBackStack.Count > 0)
+                                        // if we're on the final input group and no inputs were shown, then we're at the end and we're ready to submit the 
+                                        // users' responses. first check that the user is ready to submit. if the user isn't ready, move back to the previous 
+                                        // input group if there is one.
+                                        if (inputGroupNum >= inputGroups.Count() - 1 &&
+                                            !string.IsNullOrWhiteSpace(submitConfirmation) &&
+                                            inputGroupNumBackStack.Count > 0 &&
+                                            !(await App.Current.MainPage.DisplayAlert("Confirm", submitConfirmation, "Yes", "No")))
+                                        {
                                             inputGroupNum = inputGroupNumBackStack.Pop() - 1;
+                                        }
 
                                         responseWait.Set();
                                     }
