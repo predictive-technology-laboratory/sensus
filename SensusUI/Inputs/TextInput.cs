@@ -22,12 +22,13 @@ namespace SensusUI.Inputs
         private Entry _entry;
         private Keyboard _keyboard;
         private Label _label;
+        private bool _hasFocused;
 
         public override object Value
         {
             get
             {
-                return _entry == null || string.IsNullOrWhiteSpace(_entry.Text) ? null : _entry.Text;
+                return _entry == null || !_hasFocused || string.IsNullOrWhiteSpace(_entry.Text) ? null : _entry.Text;
             }
         }
 
@@ -86,14 +87,14 @@ namespace SensusUI.Inputs
 
                 Color defaultTextColor = _entry.TextColor;
                 _entry.TextColor = Color.Gray;
-                bool firstFocus = true;
+                _hasFocused = false;
                 _entry.Focused += (o, e) =>
                 {
-                    if (firstFocus)
+                    if (!_hasFocused)
                     {
                         _entry.Text = "";
                         _entry.TextColor = defaultTextColor;
-                        firstFocus = false;
+                        _hasFocused = true;
                     }
                 };
 

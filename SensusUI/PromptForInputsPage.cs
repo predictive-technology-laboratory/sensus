@@ -45,6 +45,8 @@ namespace SensusUI
         {            
             _displayedInputCount = 0;
 
+            float progress = (stepNumber - 1) / (float)totalSteps;
+
             StackLayout contentLayout = new StackLayout
             {
                 Orientation = StackOrientation.Vertical,
@@ -60,13 +62,13 @@ namespace SensusUI
                     },
                     new Label
                     {
-                        Text = "Step " + stepNumber + " of " + totalSteps,
+                        Text = "Progress:  " + Math.Round(100 * progress) + "%",
                         FontSize = 15,
                         HorizontalOptions = LayoutOptions.CenterAndExpand
                     },
                     new ProgressBar
                     {
-                        Progress = stepNumber / (double)totalSteps,
+                        Progress = progress,
                         HorizontalOptions = LayoutOptions.FillAndExpand
                     }
                 }

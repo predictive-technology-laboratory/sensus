@@ -33,6 +33,7 @@ using SensusService.Exceptions;
 using ZXing.Mobile;
 using ZXing;
 using XLabs.Platform.Device;
+using System.Collections;
 
 namespace SensusService
 {
@@ -829,7 +830,7 @@ namespace SensusService
             foreach (Input input in inputs)
                 inputGroup.Inputs.Add(input);
 
-            PromptForInputsAsync(false, DateTimeOffset.MinValue, new InputGroup[] { inputGroup }.ToList(), cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, null, inputGroups =>
+            PromptForInputsAsync(false, DateTimeOffset.MinValue, new InputGroup[] { inputGroup }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, null, inputGroups =>
                 {
                     if (inputGroups == null)
                         callback(null);
@@ -842,7 +843,7 @@ namespace SensusService
         {
             new Thread(() =>
                 {
-                    if (inputGroups == null || inputGroups.All(inputGroup => inputGroup == null))
+                    if (inputGroups == null || inputGroups.Count() == 0 || inputGroups.All(inputGroup => inputGroup == null))
                     {
                         callback(inputGroups);
                         return;
@@ -863,19 +864,20 @@ namespace SensusService
 
                     INPUT_REQUESTED = true;
 
-                    InputGroup[] incompleteGroups = inputGroups.Where(inputGroup => !inputGroup.Valid).ToArray();
-
                     bool firstPageDisplay = true;
 
-                    for (int incompleteGroupNum = 0; inputGroups != null && incompleteGroupNum < incompleteGroups.Length && !cancellationToken.GetValueOrDefault().IsCancellationRequested; ++incompleteGroupNum)
+                    Stack<int> inputGroupNumBackStack = new Stack<int>();
+
+                    for (int inputGroupNum = 0; inputGroups != null && inputGroupNum < inputGroups.Count() && !cancellationToken.GetValueOrDefault().IsCancellationRequested; ++inputGroupNum)
                     {
-                        InputGroup incompleteGroup = incompleteGroups[incompleteGroupNum];
+                        InputGroup inputGroup = inputGroups.ElementAt(inputGroupNum);
+
                         ManualResetEvent responseWait = new ManualResetEvent(false);
 
-                        // run voice inputs by themselves, and only if the input group contains exactly one voice input.
-                        if (incompleteGroup.Inputs.Count == 1 && incompleteGroup.Inputs[0] is VoiceInput)
+                        // run voice inputs by themselves, and only if the input group contains exactly one voice input that should be displayed.
+                        if (inputGroup.Inputs.Count == 1 && inputGroup.Inputs[0] is VoiceInput && inputGroup.Inputs[0].Display)
                         {
-                            (incompleteGroup.Inputs[0] as VoiceInput).RunAsync(isReprompt, firstPromptTimestamp, response =>
+                            (inputGroup.Inputs[0] as VoiceInput).RunAsync(isReprompt, firstPromptTimestamp, response =>
                                 {                
                                     responseWait.Set();
                                 });
@@ -886,12 +888,14 @@ namespace SensusService
 
                             Device.BeginInvokeOnMainThread(async () =>
                                 {
-                                    PromptForInputsPage promptForInputsPage = new PromptForInputsPage(incompleteGroup, incompleteGroupNum + 1, incompleteGroups.Length, showCancelButton, nextButtonText, cancellationToken, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, result =>
+                                    PromptForInputsPage promptForInputsPage = new PromptForInputsPage(inputGroup, inputGroupNum + 1, inputGroups.Count(), showCancelButton, nextButtonText, cancellationToken, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, result =>
                                         {
-                                            if (result == PromptForInputsPage.Result.Cancel || result == PromptForInputsPage.Result.NavigateBackward && incompleteGroupNum == 0)
+                                            if (result == PromptForInputsPage.Result.Cancel || result == PromptForInputsPage.Result.NavigateBackward && inputGroupNumBackStack.Count == 0)
                                                 inputGroups = null;
                                             else if (result == PromptForInputsPage.Result.NavigateBackward)
-                                                incompleteGroupNum -= 2;  // we're past the first page, so decrement by two so that, after the for-loop post-increment, the previous input group will be shown
+                                                inputGroupNum = inputGroupNumBackStack.Pop() - 1;
+                                            else
+                                                inputGroupNumBackStack.Push(inputGroupNum);
 
                                             responseWait.Set();
                                         });
@@ -901,10 +905,10 @@ namespace SensusService
 
                                     if (promptForInputsPage.DisplayedInputCount == 0)
                                     {
-                                        // if we're on the final input group and no inputs were shown, it's time to submit if the user is ready. if the user isn't
-                                        // ready, kick them back to the previous input group if there is one.
-                                        if (incompleteGroupNum > 0 && incompleteGroupNum >= incompleteGroups.Length - 1 && !(await promptForInputsPage.DisplayAlert("Confirm", submitConfirmation, "Yes", "No")))
-                                            incompleteGroupNum -= 2;
+                                        // if we're on the final input group and no inputs were shown, then we're ready to submit the users' responses. first check 
+                                        // that the user is ready to submit. if the user isn't ready, move back to the previous input group if there is one.
+                                        if (inputGroupNum >= inputGroups.Count() - 1 && !(await promptForInputsPage.DisplayAlert("Confirm", submitConfirmation, "Yes", "No")) && inputGroupNumBackStack.Count > 0)
+                                            inputGroupNum = inputGroupNumBackStack.Pop() - 1;
 
                                         responseWait.Set();
                                     }
@@ -912,13 +916,13 @@ namespace SensusService
                                         responseWait.Set();
                                     else
                                     {
-                                        await App.Current.MainPage.Navigation.PushModalAsync(promptForInputsPage, firstPageDisplay);  // only animate first page
+                                        await App.Current.MainPage.Navigation.PushModalAsync(promptForInputsPage, firstPageDisplay);  // only animate the display for the first page
+
+                                        firstPageDisplay = false;
 
                                         if (postDisplayCallback != null)
                                             postDisplayCallback();
-                                    }
-
-                                    firstPageDisplay = false;
+                                    }                                    
                                 });
                         }
 
@@ -928,7 +932,7 @@ namespace SensusService
                     INPUT_REQUESTED = false;
 
                     #region geotag input groups if the user didn't cancel and we've got input groups with inputs that are complete and lacking locations
-                    if (inputGroups != null && incompleteGroups.Any(incompleteGroup => incompleteGroup.Geotag && incompleteGroup.Inputs.Any(input => input.Complete && (input.Latitude == null || input.Longitude == null))))
+                    if (inputGroups != null && inputGroups.Any(inputGroup => inputGroup.Geotag && inputGroup.Inputs.Any(input => input.Complete && (input.Latitude == null || input.Longitude == null))))
                     {
                         SensusServiceHelper.Get().Logger.Log("Geotagging input groups.", LoggingLevel.Normal, GetType());
 
@@ -937,9 +941,9 @@ namespace SensusService
                             Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken.GetValueOrDefault());
 
                             if (currentPosition != null)
-                                foreach (InputGroup incompleteGroup in incompleteGroups)
-                                    if (incompleteGroup.Geotag)
-                                        foreach (Input input in incompleteGroup.Inputs)
+                                foreach (InputGroup inputGroup in inputGroups)
+                                    if (inputGroup.Geotag)
+                                        foreach (Input input in inputGroup.Inputs)
                                             if (input.Complete)
                                             {
                                                 bool locationUpdated = false;
