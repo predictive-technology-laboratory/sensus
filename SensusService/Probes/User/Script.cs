@@ -99,7 +99,8 @@ namespace SensusService.Probes.User
         {
             Script copy = JsonConvert.DeserializeObject<Script>(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
 
-            // a new GUID is set within the constructor, but it is immediately overwritten with the old id by the JSON deserializer.
+            // a new GUID is set within the constructor, but it is immediately overwritten with the old id by the JSON deserializer. since the
+            // script id is what ties all of the script datum objects together, set a new unique script id here.
             copy.Id = Guid.NewGuid().ToString();
 
             return copy;

@@ -114,7 +114,13 @@ namespace SensusUI.Inputs
                     });
             }
             else
-                _label.Text = GetLabelText(index);
+            {
+                _label.Text = GetLabelText(index);  // if the view was already initialized, just update the label since the index might have changed.
+
+                // if the view is not enabled, there should be no tip text since the user can't do anything with the entry.
+                if (!Enabled && !_hasFocused)
+                    _entry.Text = "";
+            }                    
 
             return base.GetView(index);
         }

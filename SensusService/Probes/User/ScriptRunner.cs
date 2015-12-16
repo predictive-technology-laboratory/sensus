@@ -605,12 +605,12 @@ namespace SensusService.Probes.User
                                                 // time, even if the prompts are later redisplayed by the invalid script handler.
                                                 if (canceled)
                                                     input.Reset();
-                                                // store all inputs that are valid and displayed
+                                                // store all inputs that are valid and displayed 
                                                 else if (input.Valid && input.Display)
                                                 {
                                                     _probe.StoreDatum(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow), script.Id, input.GroupId, input.Id, input.Value, script.CurrentDatum == null ? null : script.CurrentDatum.Id, input.Latitude, input.Longitude, script.PresentationTimestamp.GetValueOrDefault(), input.LocationUpdateTimestamp));
 
-                                                    // once inputs are stored, they should not be stored again, nor should the user be able to modify them.
+                                                    // once inputs are stored, they should not be stored again, nor should the user be able to modify them if the script is rerun.
                                                     input.NeedsToBeStored = false;
                                                     Xamarin.Forms.Device.BeginInvokeOnMainThread(() => input.Enabled = false);
                                                 }

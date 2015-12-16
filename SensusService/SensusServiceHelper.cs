@@ -874,13 +874,20 @@ namespace SensusService
 
                         ManualResetEvent responseWait = new ManualResetEvent(false);
 
-                        // run voice inputs by themselves, and only if the input group contains exactly one voice input that should be displayed.
-                        if (inputGroup.Inputs.Count == 1 && inputGroup.Inputs[0] is VoiceInput && inputGroup.Inputs[0].Display)
+                        // run voice inputs by themselves, and only if the input group contains exactly one voice input.
+                        if (inputGroup.Inputs.Count == 1 && inputGroup.Inputs[0] is VoiceInput)
                         {
-                            (inputGroup.Inputs[0] as VoiceInput).RunAsync(isReprompt, firstPromptTimestamp, response =>
-                                {                
-                                    responseWait.Set();
-                                });
+                            VoiceInput voiceInput = inputGroup.Inputs[0] as VoiceInput;
+
+                            if (voiceInput.Enabled && voiceInput.Display)
+                            {
+                                voiceInput.RunAsync(isReprompt, firstPromptTimestamp, response =>
+                                    {                
+                                        responseWait.Set();
+                                    });
+                            }
+                            else
+                                responseWait.Set();
                         }
                         else
                         {

@@ -138,6 +138,8 @@ namespace SensusUI.Inputs
 
         public override View GetView(int index)
         {
+            string tipText = "  Please select a value below.";
+
             if (base.GetView(index) == null && _maximum > _minimum)
             {
                 _slider = new Slider
@@ -158,8 +160,7 @@ namespace SensusUI.Inputs
                 _incrementalValueHasChanged = false;
 
                 _sliderLabel = CreateLabel(index);
-                string originalSliderLabelText = _sliderLabel.Text;
-                _sliderLabel.Text = originalSliderLabelText + ":  Please select a value below.";
+                _sliderLabel.Text += tipText;
 
                 _slider.ValueChanged += (o, e) =>
                 {
@@ -169,7 +170,7 @@ namespace SensusUI.Inputs
                     {
                         _incrementalValue = newIncrementalValue;
                         _incrementalValueHasChanged = true;
-                        _sliderLabel.Text = originalSliderLabelText + ":  " + _incrementalValue;
+                        _sliderLabel.Text = GetLabelText(index) + "  " + _incrementalValue;
                         Complete = Value != null;
                     }
                 };
@@ -206,7 +207,22 @@ namespace SensusUI.Inputs
                     });
             }
             else
-                _sliderLabel.Text = GetLabelText(index) + ":  " + _sliderLabel.Text.Substring(_sliderLabel.Text.LastIndexOf(":") + 1).Trim();
+            {
+                if (Enabled)
+                {
+                    // if the view was already initialized and is enabled, just update the label since the index might have changed.
+                    _sliderLabel.Text = GetLabelText(index) + "  " + (_incrementalValueHasChanged ? _incrementalValue.ToString() : tipText);
+                }
+                else
+                {
+                    // if the view was already initialized but is not enabled and has never been interacted with, there should be no tip text since the user can't do anything with the slider.
+                    if (!_incrementalValueHasChanged)
+                    {
+                        _slider.Value = _minimum;
+                        _sliderLabel.Text = GetLabelText(index) + "  No value selected.";
+                    }
+                }                
+            }
 
             return base.GetView(index);
         }

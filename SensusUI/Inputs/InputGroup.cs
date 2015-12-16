@@ -38,6 +38,9 @@ namespace SensusUI.Inputs
             set
             {
                 _id = value;
+
+                foreach (Input input in _inputs)
+                    input.GroupId = _id;
             }
         }
 

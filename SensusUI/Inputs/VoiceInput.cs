@@ -28,6 +28,7 @@ namespace SensusUI.Inputs
         private string _outputMessage;
         private string _outputMessageRerun;
         private string _response;
+        private bool _enabled;
 
         [EntryStringUiProperty("Output Message:", true, 11)]
         public string OutputMessage
@@ -55,10 +56,11 @@ namespace SensusUI.Inputs
         {
             get
             {
-                return true;
+                return _enabled;
             }
             set
             {
+                _enabled = value;
             }
         }
 
@@ -72,20 +74,24 @@ namespace SensusUI.Inputs
 
         public VoiceInput()
         {
-            _outputMessage = "";
-            _outputMessageRerun = "";
+            Construct("", "");
         }
 
         public VoiceInput(string outputMessage, string outputMessageRerun)
             : base()
         {
-            _outputMessage = outputMessage;
-            _outputMessageRerun = outputMessageRerun;
+            Construct(outputMessage, outputMessageRerun);
         }
 
         public VoiceInput(string name, string outputMessage, string outputMessageRerun)
             : base(name, null)
         {
+            Construct(outputMessage, outputMessageRerun);
+        }
+
+        private void Construct(string outputMessage, string outputMessageRerun)
+        {
+            _enabled = true;
             _outputMessage = outputMessage;
             _outputMessageRerun = outputMessageRerun;
         }
