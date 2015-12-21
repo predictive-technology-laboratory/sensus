@@ -21,8 +21,8 @@ namespace SensusUI.Inputs
     {
         private Input _input;
         private InputValueCondition _condition;
-        private string _value;
-        private bool _conjunction;
+        private object _value;
+        private bool _conjunctive;
 
         public Input Input
         {
@@ -48,7 +48,7 @@ namespace SensusUI.Inputs
             }
         }
 
-        public string Value
+        public object Value
         {
             get
             {
@@ -60,15 +60,15 @@ namespace SensusUI.Inputs
             }
         }
 
-        public bool Conjunction
+        public bool Conjunctive
         {
             get
             {
-                return _conjunction;
+                return _conjunctive;
             }
             set
             {
-                _conjunction = value;
+                _conjunctive = value;
             }
         }
 
@@ -77,23 +77,23 @@ namespace SensusUI.Inputs
         {
             get
             {
-                return _condition == InputValueCondition.InputComplete && _input.Complete ||
-                _input.Value != null && _condition == InputValueCondition.ValueEqualTo && _input.Value.ToString() == _value ||
-                _input.Value != null && _condition == InputValueCondition.ValueNotEqualTo && _input.Value.ToString() != _value;
+                return _condition == InputValueCondition.IsComplete && _input.Complete ||
+                _input.Value != null && _condition == InputValueCondition.Equals && _input.ValueEquals(_value) ||
+                _input.Value != null && _condition == InputValueCondition.DoesNotEqual && !_input.ValueEquals(_value);
             }
         }
 
-        public InputDisplayCondition(Input input, InputValueCondition condition, string value, bool conjunction)
+        public InputDisplayCondition(Input input, InputValueCondition condition, object value, bool conjunctive)
         {
             _input = input;
             _condition = condition;
             _value = value;
-            _conjunction = conjunction;
+            _conjunctive = conjunctive;
         }
 
         public override string ToString()
         {
-            return _input.Name + " " + _condition + (_value == null ? "" : " " + _value.ToString()) + " " + (_conjunction ? "(conjunctive)" : "(disjunctive)");
+            return _input.Name + " " + _condition + (_value == null ? "" : " " + _value) + " " + (_conjunctive ? "(Conjunctive)" : "(Disjunctive)");
         }
     }
 }

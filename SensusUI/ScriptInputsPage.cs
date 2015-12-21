@@ -22,6 +22,7 @@ using System.Reflection;
 using System.Linq;
 using SensusService;
 using System.Collections;
+using System.Text.RegularExpressions;
 
 namespace SensusUI
 {
@@ -84,18 +85,19 @@ namespace SensusUI
                 }
                 else if (selectedAction == "Add Display Condition")
                 {
+                    string abortMessage = "Condition is not complete. Abort?";
+
                     SensusServiceHelper.Get().PromptForInputsAsync("Display Condition", new Input[]
                         {
-                            new ItemPickerPageInput("Input to condition on:", previousInputGroups.SelectMany(previousInputGroup => previousInputGroup.Inputs.Cast<object>()).ToList()),
+                            new ItemPickerPageInput("Input:", previousInputGroups.SelectMany(previousInputGroup => previousInputGroup.Inputs.Cast<object>()).ToList()),
                             new ItemPickerPageInput("Condition:", Enum.GetValues(typeof(InputValueCondition)).Cast<object>().ToList()),
-                            new TextInput("Value:", Keyboard.Default) { Required = false },
-                            new ItemPickerPageInput("Conjunctive:", new object[] { true, false }.ToList())
+                            new ItemPickerPageInput("Conjunctive:", new object[] { "Yes", "No" }.ToList())
                         },
                         null,
                         true,
-                        "OK",
                         null,
-                        "Condition not complete. Cancel?",
+                        null,
+                        abortMessage,
                         null,
                         inputs =>
                         {
@@ -103,18 +105,49 @@ namespace SensusUI
                                 return;
 
                             if (inputs.All(input => input.Valid))
-                            {
-                                Input input = ((inputs[0] as ItemPickerPageInput).Value as IEnumerable<object>).First() as Input;
+                            {                   
+                                Input conditionInput = ((inputs[0] as ItemPickerPageInput).Value as IEnumerable<object>).First() as Input;
                                 InputValueCondition condition = (InputValueCondition)((inputs[1] as ItemPickerPageInput).Value as IEnumerable<object>).First();
-                                string value = (inputs[2] as TextInput).Value as string;
-                                bool conjunction = (bool)((inputs[3] as ItemPickerPageInput).Value as IEnumerable<object>).First();
-                                selectedInput.DisplayConditions.Add(new InputDisplayCondition(input, condition, value, conjunction));
-                            }
-                        });
+                                bool conjunctive = ((inputs[2] as ItemPickerPageInput).Value as IEnumerable<object>).First().Equals("Yes");
+
+                                if (condition == InputValueCondition.IsComplete)
+                                    selectedInput.DisplayConditions.Add(new InputDisplayCondition(conditionInput, condition, null, conjunctive));
+                                else
+                                {
+                                    Regex uppercaseSplitter = new Regex(@"
+                                    (?<=[A-Z])(?=[A-Z][a-z]) |
+                                    (?<=[^A-Z])(?=[A-Z]) |
+                                    (?<=[A-Za-z])(?=[^A-Za-z])", RegexOptions.IgnorePatternWhitespace);
+
+                                    // show the user a required copy of the condition input and prompt for the condition value
+                                    Input conditionInputCopy = conditionInput.Copy();
+                                    conditionInputCopy.DisplayConditions.Clear();
+                                    conditionInputCopy.LabelText = "Value that " + conditionInputCopy.Name + " " + uppercaseSplitter.Replace(condition.ToString(), " ").ToLower() + ":";
+                                    conditionInputCopy.Required = true;
+
+                                    SensusServiceHelper.Get().PromptForInputAsync("Display Condition",
+                                        conditionInputCopy,
+                                        null,
+                                        true,
+                                        "OK",
+                                        null,
+                                        abortMessage,
+                                        null,
+                                        input =>
+                                        {
+                                            if (input == null)
+                                                return;
+
+                                            if (input.Valid)
+                                                selectedInput.DisplayConditions.Add(new InputDisplayCondition(conditionInput, condition, input.Value, conjunctive));
+                                        });
+                                }
+                            }                            
+                        });                    
                 }
                 else if (selectedAction == "View Display Conditions")
                 {
-                    await Navigation.PushAsync(new ViewTextLinesPage("Display Conditions", selectedInput.DisplayConditions.Select(displayCondition => displayCondition.ToString()).ToList(), async () =>
+                    await Navigation.PushAsync(new ViewTextLinesPage("Display Conditions", selectedInput.DisplayConditions.Select(displayCondition => displayCondition.ToString()).ToList(), false, async () =>
                             {
                                 selectedInput.DisplayConditions.Clear();
                             }));

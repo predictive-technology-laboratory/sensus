@@ -92,7 +92,6 @@ namespace SensusService
         private static SensusServiceHelper SINGLETON;
         private static readonly object PROMPT_FOR_INPUTS_LOCKER = new object();
         private static bool PROMPT_FOR_INPUTS_RUNNING = false;
-        private static bool INPUT_REQUESTED = false;
         public const string SENSUS_CALLBACK_KEY = "SENSUS-CALLBACK";
         public const string SENSUS_CALLBACK_ID_KEY = "SENSUS-CALLBACK-ID";
         public const string SENSUS_CALLBACK_REPEATING_KEY = "SENSUS-CALLBACK-REPEATING";
@@ -103,15 +102,9 @@ namespace SensusService
         private static readonly string LOG_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
         private static readonly string SERIALIZATION_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_service_helper.json");
 
-        /// <summary>
-        /// Gets a value indicating whether user input is currently being requested. Differs from PROMPT_FOR_INPUTS_RUNNING in that
-        /// a number of things happen as part of a prompt that don't involve requests for user inputs. For example inputs can be
-        /// GPS tagged, which takes time after the input requests have been satisfied.
-        /// </summary>
-        /// <value><c>true</c> if input requested; otherwise, <c>false</c>.</value>
-        public static bool InputRequested
+        public static bool PromptForInputsRunning
         {
-            get { return INPUT_REQUESTED; }
+            get { return PROMPT_FOR_INPUTS_RUNNING; }
         }
 
         #if DEBUG || UNIT_TESTING
@@ -862,8 +855,6 @@ namespace SensusService
                             PROMPT_FOR_INPUTS_RUNNING = true;
                     }
 
-                    INPUT_REQUESTED = true;
-
                     bool firstPageDisplay = true;
 
                     Stack<int> inputGroupNumBackStack = new Stack<int>();
@@ -942,7 +933,13 @@ namespace SensusService
                         responseWait.WaitOne();    
                     }
 
-                    INPUT_REQUESTED = false;
+                    // at this point we're done showing pages to the user. anything that needs to happen below with GPS tagging or subsequently
+                    // in the callback can happen concurrently with any calls that might happen to come into this method. if the callback
+                    // calls into this method immediately, there could be a race condition between the call and a call from some other part of 
+                    // the system. this is okay, as the latter call is always in a race condition anyway. if the imagined callback is beaten
+                    // to its reentrant call of this method by a call from somewhere else in the system, the callback might be prevented from 
+                    // executing; however, can't think of a place where this might happen with negative consequences.
+                    PROMPT_FOR_INPUTS_RUNNING = false;
 
                     #region geotag input groups if the user didn't cancel and we've got input groups with inputs that are complete and lacking locations
                     if (inputGroups != null && inputGroups.Any(inputGroup => inputGroup.Geotag && inputGroup.Inputs.Any(input => input.Complete && (input.Latitude == null || input.Longitude == null))))
@@ -985,8 +982,6 @@ namespace SensusService
                     #endregion
 
                     callback(inputGroups);
-
-                    PROMPT_FOR_INPUTS_RUNNING = false;
 
                 }).Start();
         }

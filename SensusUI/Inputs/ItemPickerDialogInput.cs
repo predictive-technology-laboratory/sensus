@@ -97,7 +97,7 @@ namespace SensusUI.Inputs
 
         public ItemPickerDialogInput()
         {
-            Construct("Make selection here.", new List<string>());
+            Construct(null, new List<string>());
         }
 
         public ItemPickerDialogInput(string labelText, string tipText, List<string> items)
@@ -114,7 +114,7 @@ namespace SensusUI.Inputs
 
         private void Construct(string tipText, List<string> items)
         {
-            _tipText = tipText;
+            _tipText = string.IsNullOrWhiteSpace(tipText) ? "Make selection here." : tipText;
             _items = items;
             _allowClearSelection = true;
         }

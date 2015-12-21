@@ -229,6 +229,11 @@ namespace SensusUI.Inputs
             return base.GetView(index);
         }
 
+        public override bool ValueEquals(object value)
+        {
+            return (Value as List<object>).SequenceEqual(value as List<object>);
+        }
+
         public override string ToString()
         {
             return base.ToString() + " -- " + _items.Count + " Items";

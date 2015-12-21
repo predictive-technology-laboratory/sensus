@@ -388,7 +388,7 @@ namespace SensusUI
                                         if (selectedProtocol.MostRecentReport == null)
                                             await DisplayAlert("No Report", "Status check failed.", "OK");
                                         else
-                                            await Navigation.PushAsync(new ViewTextLinesPage("Protocol Status", selectedProtocol.MostRecentReport.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList(), null));
+                                            await Navigation.PushAsync(new ViewTextLinesPage("Protocol Status", selectedProtocol.MostRecentReport.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList(), true, null));
                                     });
                             });
                     }
@@ -417,7 +417,7 @@ namespace SensusUI
                         if (action == "New Protocol")
                             Protocol.CreateAsync("New Protocol", null);
                         else if (action == "View Log")
-                            await Navigation.PushAsync(new ViewTextLinesPage("Log", SensusServiceHelper.Get().Logger.Read(200, true), () => SensusServiceHelper.Get().Logger.Clear()));
+                            await Navigation.PushAsync(new ViewTextLinesPage("Log", SensusServiceHelper.Get().Logger.Read(200, true), true, () => SensusServiceHelper.Get().Logger.Clear()));
                         else if (action == "View Points of Interest")
                             await Navigation.PushAsync(new PointsOfInterestPage(SensusServiceHelper.Get().PointsOfInterest, () => SensusServiceHelper.Get().SaveAsync()));
                         else if (action == "Stop Sensus" && await DisplayAlert("Stop Sensus?", "Are you sure you want to stop Sensus?", "OK", "Cancel"))

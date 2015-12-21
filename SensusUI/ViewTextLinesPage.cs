@@ -32,7 +32,7 @@ namespace SensusUI
         /// <param name="title">Title of page.</param>
         /// <param name="lines">Lines to display.</param>
         /// <param name="clearCallback">Called when the user clicks the Clear button.</param>
-        public ViewTextLinesPage(string title, List<string> lines, Action clearCallback)
+        public ViewTextLinesPage(string title, List<string> lines, bool displayShareButton, Action clearCallback)
         {
             Title = title;
 
@@ -41,43 +41,47 @@ namespace SensusUI
             messageList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", mode: BindingMode.OneWay));
             messageList.ItemsSource = new ObservableCollection<string>(lines);
 
-            Button shareButton = new Button
-            {
-                Text = "Share",
-                FontSize = 20,
-                HorizontalOptions = LayoutOptions.FillAndExpand
-            };
-
-            shareButton.Clicked += (o, e) =>
-            {
-                string path = null;
-                try
-                {
-                    path = SensusServiceHelper.Get().GetSharePath(".txt");
-                    using (StreamWriter file = new StreamWriter(path))
-                    {
-                        foreach (string line in lines)
-                            file.WriteLine(line);
-
-                        file.Close();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Failed to write lines to temp file for sharing:  " + ex.Message, SensusService.LoggingLevel.Normal, GetType());
-                    path = null;
-                }
-
-                if (path != null)
-                    SensusServiceHelper.Get().ShareFileAsync(path, title + ":  " + Path.GetFileName(path), "text/plain");
-            };
-
             StackLayout buttonStack = new StackLayout
             {
                 Orientation = StackOrientation.Horizontal,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
-                Children = { shareButton }
             };
+            
+            if (displayShareButton)
+            {
+                Button shareButton = new Button
+                {
+                    Text = "Share",
+                    FontSize = 20,
+                    HorizontalOptions = LayoutOptions.FillAndExpand
+                };
+
+                shareButton.Clicked += (o, e) =>
+                {
+                    string path = null;
+                    try
+                    {
+                        path = SensusServiceHelper.Get().GetSharePath(".txt");
+                        using (StreamWriter file = new StreamWriter(path))
+                        {
+                            foreach (string line in lines)
+                                file.WriteLine(line);
+
+                            file.Close();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Failed to write lines to temp file for sharing:  " + ex.Message, SensusService.LoggingLevel.Normal, GetType());
+                        path = null;
+                    }
+
+                    if (path != null)
+                        SensusServiceHelper.Get().ShareFileAsync(path, title + ":  " + Path.GetFileName(path), "text/plain");
+                };
+
+                buttonStack.Children.Add(shareButton);
+            }            
             
             if (clearCallback != null)
             {

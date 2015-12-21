@@ -20,6 +20,7 @@ using Newtonsoft.Json;
 using System.Threading;
 using System.Collections.Generic;
 using System.Linq;
+using SensusService;
 
 namespace SensusUI.Inputs
 {
@@ -242,11 +243,11 @@ namespace SensusUI.Inputs
         {
             get
             {
-                List<InputDisplayCondition> conjuncts = _displayConditions.Where(displayCondition => displayCondition.Conjunction).ToList();
+                List<InputDisplayCondition> conjuncts = _displayConditions.Where(displayCondition => displayCondition.Conjunctive).ToList();
                 if (conjuncts.Count > 0 && conjuncts.Any(displayCondition => !displayCondition.Satisfied))
                     return false;
 
-                List<InputDisplayCondition> disjuncts = _displayConditions.Where(displayCondition => !displayCondition.Conjunction).ToList();
+                List<InputDisplayCondition> disjuncts = _displayConditions.Where(displayCondition => !displayCondition.Conjunctive).ToList();
                 if (disjuncts.Count > 0 && disjuncts.All(displayCondition => !displayCondition.Satisfied))
                     return false;
 
@@ -327,9 +328,21 @@ namespace SensusUI.Inputs
             _completionTimestamp = null;
         }
 
+        public virtual bool ValueEquals(object value)
+        {
+            return Value.Equals(value);
+        }
+
         public override string ToString()
         {
             return _name + (_name == DefaultName ? "" : " -- " + DefaultName) + (_required ? "*" : "");
+        }
+
+        public Input Copy()
+        {
+            Input copy = JsonConvert.DeserializeObject<Input>(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
+            copy.Reset();
+            return copy;
         }
     }
 }
