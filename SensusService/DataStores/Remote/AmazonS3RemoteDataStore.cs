@@ -135,7 +135,7 @@ namespace SensusService.DataStores.Remote
                 string datumType = datum.GetType().Name;
                 string datumJSON = datum.GetJSON(Protocol.JsonAnonymizer);
 
-                // upload all participation reward data as single S3 objects so we can retrieve them individually at a later time for verification.
+                // upload all participation reward data as individual S3 objects so we can retrieve them individually at a later time for participation verification.
                 if (datum is ParticipationRewardDatum)
                 {
                     try
