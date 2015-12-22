@@ -24,7 +24,7 @@ namespace SensusService.Exceptions
         {
             SensusServiceHelper.Get().Logger.Log("Exception being created:  " + message + Environment.NewLine + "Stack:  " + Environment.StackTrace, LoggingLevel.Normal, GetType());
 
-            try { Insights.Report(this, "Stack Trace", Environment.StackTrace, Xamarin.Insights.Severity.Error); }
+            try { Insights.Report(this, "Stack Trace", Environment.StackTrace, Insights.Severity.Error); }
             catch (Exception ex) { SensusServiceHelper.Get().Logger.Log("Failed to report new exception to Xamarin Insights:  " + ex.Message, LoggingLevel.Normal, GetType()); }
         }
     }

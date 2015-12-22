@@ -78,8 +78,8 @@ namespace SensusUI.Inputs
             get
             {
                 return _condition == InputValueCondition.IsComplete && _input.Complete ||
-                _input.Value != null && _condition == InputValueCondition.Equals && _input.ValueEquals(_value) ||
-                _input.Value != null && _condition == InputValueCondition.DoesNotEqual && !_input.ValueEquals(_value);
+                _condition == InputValueCondition.Equals && _input.ValueEquals(_value) ||
+                _condition == InputValueCondition.DoesNotEqual && !_input.ValueEquals(_value);
             }
         }
 

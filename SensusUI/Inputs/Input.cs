@@ -21,6 +21,7 @@ using System.Threading;
 using System.Collections.Generic;
 using System.Linq;
 using SensusService;
+using Xamarin;
 
 namespace SensusUI.Inputs
 {
@@ -330,7 +331,20 @@ namespace SensusUI.Inputs
 
         public virtual bool ValueEquals(object value)
         {
-            return Value.Equals(value);
+            // if either is null, both must be null to be equal
+            if (Value == null || value == null)
+                return Value == null && value == null;
+            // if they're of the same type, compare
+            else if (Value.GetType().Equals(value.GetType()))
+                return Value.Equals(value);
+            else
+            {
+                // this should never happen
+                if (Insights.IsInitialized)
+                    Insights.Report(new Exception("Called Input.ValueEquals with value of type " + value.GetType() + ". Comparing with value of type " + Value.GetType() + "."), Insights.Severity.Critical);
+
+                return false;
+            }
         }
 
         public override string ToString()
@@ -342,6 +356,7 @@ namespace SensusUI.Inputs
         {
             Input copy = JsonConvert.DeserializeObject<Input>(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
             copy.Reset();
+
             return copy;
         }
     }

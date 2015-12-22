@@ -25,6 +25,7 @@ using SensusUI.Inputs;
 using System.Linq;
 using System.Globalization;
 using SensusUI.UiProperties;
+using Xamarin;
 
 namespace SensusUI.Inputs
 {
@@ -231,7 +232,17 @@ namespace SensusUI.Inputs
 
         public override bool ValueEquals(object value)
         {
-            return (Value as List<object>).SequenceEqual(value as List<object>);
+            // if a list is passed, compare by ordered values
+            if (value is List<object>)
+                return (Value as List<object>).OrderBy(o => o).SequenceEqual((value as List<object>).OrderBy(o => o));
+            else
+            {
+                // this should never happen
+                if (Insights.IsInitialized)
+                    Insights.Report(new Exception("Called ItemPickerPageInput.ValueEquals with value that is not a List<object>."), Insights.Severity.Critical);
+
+                return false;
+            }
         }
 
         public override string ToString()

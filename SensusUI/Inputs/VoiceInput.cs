@@ -103,7 +103,7 @@ namespace SensusUI.Inputs
 
         protected override void SetView(View value)
         {
-            throw new SensusException("Cannot set View on VoiceInput.");
+            new SensusException("Cannot set View on VoiceInput.");
         }
 
         public void RunAsync(bool isRerun, DateTimeOffset firstRunTimestamp, Action<string> callback)
