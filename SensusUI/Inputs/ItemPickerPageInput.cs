@@ -181,7 +181,7 @@ namespace SensusUI.Inputs
                                 
                         // set the style ID on the view so that we can retrieve it when unit testing
                         #if UNIT_TESTING
-                        , StyleId = Name + " " + i;
+                        , StyleId = Name + " " + i
                         #endif
                     };
 

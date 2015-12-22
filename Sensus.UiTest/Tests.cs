@@ -87,7 +87,7 @@ namespace Sensus.UiTest
             _app.WaitForElementThenTap(DATA_STORE_OK, true);
 
             TimeSpan remoteDataStoreDelay = new TimeSpan(0, 0, 15);
-            _app.WaitForElementThenTap(REMOTE_DATA_STORE_EDIT, false);
+            _app.WaitForElementThenTap(REMOTE_DATA_STORE_EDIT, true);
             _app.WaitForElementThenEnterText(DATA_STORE_COMMIT_DELAY, true, remoteDataStoreDelay.TotalMilliseconds.ToString());
             _app.WaitForElementThenTap(DATA_STORE_OK, true);  // to protocol page
             _app.Back();  // to protocols page
@@ -137,7 +137,6 @@ namespace Sensus.UiTest
             int consentCode = int.Parse(consentMessage.Substring(consentMessage.LastIndexOf(" ") + 1));
             _app.WaitForElementThenEnterText(PROTOCOL_CONSENT_CODE, true, consentCode.ToString());
             _app.WaitForElementThenTap(PROMPT_FOR_INPUTS_SUBMIT, true);
-            _app.WaitForElementThenTap(PROMPT_FOR_INPUTS_SUBMIT_CONFIRM, false);
 
             // wait for the protocol to start
             Thread.Sleep(startupCheckDelay);
