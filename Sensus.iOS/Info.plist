@@ -124,10 +124,10 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>6.1.0</string>
+	<string>7.0.0</string>
 	<key>XSAppIconAssets</key>
 	<string>Resources/Images.xcassets/AppIcons.appiconset</string>
 	<key>CFBundleShortVersionString</key>
-	<string>6.1.0</string>
+	<string>7.0.0</string>
 </dict>
 </plist>
