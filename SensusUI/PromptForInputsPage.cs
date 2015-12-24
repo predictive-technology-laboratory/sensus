@@ -95,9 +95,9 @@ namespace SensusUI
                             inputView = new Frame
                             {
                                 Content = inputView,
-                                OutlineColor = Color.Red,
-                                HasShadow = true,
+                                OutlineColor = Color.Accent,
                                 VerticalOptions = LayoutOptions.Start,
+                                HasShadow = true,
                                 Padding = new Thickness(10)
                             };
                         }

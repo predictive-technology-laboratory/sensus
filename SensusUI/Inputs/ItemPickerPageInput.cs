@@ -216,6 +216,9 @@ namespace SensusUI.Inputs
 
                     tapRecognizer.Tapped += (o, e) =>
                     {
+                        if (!itemLabel.IsEnabled)
+                            return;
+                            
                         if (_selectedItems.Contains(item))
                             _selectedItems.Remove(item);
                         else
