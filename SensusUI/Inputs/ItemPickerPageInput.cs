@@ -53,6 +53,7 @@ namespace SensusUI.Inputs
         private string _textBindingPropertyPath;
         private List<Label> _itemLabels;
         private Label _label;
+        private bool _randomizeItemOrder;
 
         public List<object> Items
         {
@@ -109,6 +110,19 @@ namespace SensusUI.Inputs
             }
         }
 
+        [OnOffUiProperty("Randomize Item Order:", true, 12)]
+        public bool RandomizeItemOrder
+        {
+            get
+            {
+                return _randomizeItemOrder;
+            }
+            set
+            {
+                _randomizeItemOrder = value;
+            }
+        }
+
         public override bool Enabled
         {
             get
@@ -153,6 +167,7 @@ namespace SensusUI.Inputs
             _selectedItems = new List<object>();
             _textBindingPropertyPath = ".";
             _itemLabels = new List<Label>();
+            _randomizeItemOrder = false;
         }
 
         public override View GetView(int index)
@@ -166,12 +181,15 @@ namespace SensusUI.Inputs
                 {
                     Orientation = StackOrientation.Vertical,
                     VerticalOptions = LayoutOptions.Start,
-                    HorizontalOptions = LayoutOptions.FillAndExpand                            
+                    HorizontalOptions = LayoutOptions.FillAndExpand,
+                    Padding = new Thickness(30, 10, 0, 10)
                 };
 
-                for (int i = 0; i < _items.Count; ++i)
+                List<object> itemList = _randomizeItemOrder ? _items.OrderBy(item => Guid.NewGuid()).ToList() : _items;
+
+                for (int i = 0; i < itemList.Count; ++i)
                 {
-                    object item = _items[i];
+                    object item = itemList[i];
 
                     Label itemLabel = new Label
                     {
@@ -184,6 +202,8 @@ namespace SensusUI.Inputs
                         , StyleId = Name + " " + i
                         #endif
                     };
+
+                    _itemLabels.Add(itemLabel);
 
                     itemLabel.SetBinding(Label.TextProperty, _textBindingPropertyPath, stringFormat: "{0}");
 
@@ -211,8 +231,12 @@ namespace SensusUI.Inputs
                     };
                     
                     itemLabel.GestureRecognizers.Add(tapRecognizer);
+
+                    // add invisible separator between items for fewer tapping errors
+                    if (itemLabelStack.Children.Count > 0)
+                        itemLabelStack.Children.Add(new BoxView { Color = Color.Transparent, HeightRequest = 5 });
+                    
                     itemLabelStack.Children.Add(itemLabel);
-                    _itemLabels.Add(itemLabel);
                 }
 
                 _label = CreateLabel(index);

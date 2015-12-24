@@ -43,6 +43,9 @@ namespace SensusUI.Inputs
         private bool _viewed;
         private DateTimeOffset? _completionTimestamp;
         private List<InputDisplayCondition> _displayConditions;
+        private Color? _backgroundColor;
+        private Thickness? _padding;
+        private bool _frame;
 
         [EntryStringUiProperty("Name:", true, 0)]
         public string Name
@@ -239,6 +242,42 @@ namespace SensusUI.Inputs
             }
         }
 
+        public Color? BackgroundColor
+        {
+            get
+            {
+                return _backgroundColor;
+            }
+            set
+            {
+                _backgroundColor = value;
+            }
+        }
+
+        public Thickness? Padding
+        {
+            get
+            {
+                return _padding;
+            }
+            set
+            {
+                _padding = value;
+            }
+        }
+
+        public bool Frame
+        {
+            get
+            {
+                return _frame;
+            }
+            set
+            {
+                _frame = value;
+            }
+        }
+
         [JsonIgnore]
         public bool Display
         {
@@ -268,6 +307,9 @@ namespace SensusUI.Inputs
             _completionTimestamp = null;
             _labelFontSize = 20;
             _displayConditions = new List<InputDisplayCondition>();
+            _backgroundColor = null;
+            _padding = null;
+            _frame = true;
         }
 
         public Input(string labelText)
@@ -314,7 +356,18 @@ namespace SensusUI.Inputs
 
         protected virtual void SetView(View value)
         {
-            _view = value; 
+            ContentView viewContainer = new ContentView
+            {
+                Content = value
+            };
+
+            if (_backgroundColor != null)
+                viewContainer.BackgroundColor = _backgroundColor.GetValueOrDefault();
+
+            if (_padding != null)
+                viewContainer.Padding = _padding.GetValueOrDefault();
+            
+            _view = viewContainer; 
         }
 
         public void Reset()
@@ -327,6 +380,8 @@ namespace SensusUI.Inputs
             _locationUpdateTimestamp = null;
             _viewed = false;
             _completionTimestamp = null;
+            _backgroundColor = null;
+            _padding = null;
         }
 
         public virtual bool ValueEquals(object value)

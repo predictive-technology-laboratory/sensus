@@ -99,6 +99,7 @@ namespace SensusUI
                         null,
                         abortMessage,
                         null,
+                        false,
                         inputs =>
                         {
                             if (inputs == null)
@@ -133,6 +134,7 @@ namespace SensusUI
                                         null,
                                         abortMessage,
                                         null,
+                                        false,
                                         input =>
                                         {
                                             if (input == null)

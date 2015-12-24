@@ -824,7 +824,11 @@ namespace SensusService
             StringBuilder collectionDescription = new StringBuilder();
             foreach (Probe probe in _probes.OrderBy(probe => probe.DisplayName))
                 if (probe.Enabled && probe.StoreData)
-                    collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + probe.CollectionDescription);
+                {
+                    string probeCollectionDescription = probe.CollectionDescription;
+                    if (!string.IsNullOrWhiteSpace(probeCollectionDescription))
+                        collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + probeCollectionDescription);
+                }
 
             List<Input> consent = new List<Input>();
 
@@ -836,11 +840,16 @@ namespace SensusService
 
             consent.Add(new LabelOnlyInput("This study would like to collect the following data from your device:"));
 
+            LabelOnlyInput collectionDescriptionLabel = null;
             int collectionDescriptionFontSize = 15;
             if (collectionDescription.Length == 0)
-                consent.Add(new LabelOnlyInput("No information will be collected.", collectionDescriptionFontSize));
+                collectionDescriptionLabel = new LabelOnlyInput("No information will be collected.", collectionDescriptionFontSize);
             else
-                consent.Add(new LabelOnlyInput(collectionDescription.ToString(), collectionDescriptionFontSize));
+                collectionDescriptionLabel = new LabelOnlyInput(collectionDescription.ToString(), collectionDescriptionFontSize);
+
+            collectionDescriptionLabel.Padding = new Thickness(20, 0, 0, 0);
+
+            consent.Add(collectionDescriptionLabel);
 
             // the name in the following text input is used to grab the UI element when unit testing
             consent.Add(new TextInput("ConsentCode", "To participate in this study as described above, please indicate your consent by entering the following code:  " + consentCode, Keyboard.Numeric)
@@ -857,6 +866,7 @@ namespace SensusService
                 "Are you sure you would like cancel your enrollment in this study?",
                 null,
                 null,
+                false,
                 inputs =>
                 {
                     if (inputs != null)

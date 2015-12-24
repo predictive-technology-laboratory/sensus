@@ -83,6 +83,7 @@ namespace SensusUI
                     null,
                     null,
                     null,
+                    false,
                     input =>
                     {
                         if (input == null)
@@ -187,6 +188,7 @@ namespace SensusUI
                         null,
                         null,
                         null,
+                        false,
                         () =>
                         {
                             // add participation reward datum to remote data store and commit immediately
@@ -265,6 +267,7 @@ namespace SensusUI
                             null,
                             null,
                             null,
+                            false,
                             async () =>
                             {
                                 try
@@ -352,7 +355,7 @@ namespace SensusUI
                         {
                             Multiselect = true
                         }, 
-                        null, true, "Group", null, null, null, 
+                        null, true, "Group", null, null, null, false, 
                         input =>
                         {
                             if (input == null)

@@ -48,6 +48,7 @@ namespace SensusService.Probes.User
         private bool _oneShot;
         private bool _runOnStart;
         private int _runOnStartDelaySeconds;
+        private bool _displayProgress;
 
         private readonly object _locker = new object();
 
@@ -292,6 +293,19 @@ namespace SensusService.Probes.User
             }
         }
 
+        [OnOffUiProperty("Display Progress:", true, 13)]
+        public bool DisplayProgress
+        {
+            get
+            {
+                return _displayProgress;
+            }
+            set
+            {
+                _displayProgress = value;
+            }
+        }
+
         #endregion
 
         /// <summary>
@@ -319,6 +333,7 @@ namespace SensusService.Probes.User
             _oneShot = false;
             _runOnStart = false;
             _runOnStartDelaySeconds = 15;
+            _displayProgress = true;
 
             _triggers.CollectionChanged += (o, e) =>
             {
@@ -589,7 +604,7 @@ namespace SensusService.Probes.User
 
                             ManualResetEvent inputWait = new ManualResetEvent(false);
 
-                            SensusServiceHelper.Get().PromptForInputsAsync(isRerun, script.FirstRunTimestamp, script.InputGroups, cancellationToken, true, null, "You will not receive credit for your responses if you cancel. Do you wish to cancel?", "You have not completed all required fields. You will not receive credit for your responses if you continue. Do you wish to continue?", "Do you wish to submit your responses?", null, inputGroups =>
+                            SensusServiceHelper.Get().PromptForInputsAsync(isRerun, script.FirstRunTimestamp, script.InputGroups, cancellationToken, true, null, "You will not receive credit for your responses if you cancel. Do you wish to cancel?", "You have not completed all required fields. You will not receive credit for your responses if you continue. Do you wish to continue?", "Do you wish to submit your responses?", _displayProgress, null, inputGroups =>
                                 {            
                                     bool canceled = inputGroups == null;
 

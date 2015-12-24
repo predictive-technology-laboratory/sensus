@@ -16,6 +16,7 @@ using System;
 using Xamarin.Forms;
 using SensusUI.UiProperties;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SensusUI.Inputs
 {
@@ -26,6 +27,7 @@ namespace SensusUI.Inputs
         private bool _allowClearSelection;
         private Picker _picker;
         private Label _label;
+        private bool _randomizeItemOrder;
 
         [EntryStringUiProperty("Tip Text:", true, 10)]
         public string TipText
@@ -64,6 +66,19 @@ namespace SensusUI.Inputs
             set
             {
                 _allowClearSelection = value;
+            }
+        }
+
+        [OnOffUiProperty("Randomize Item Order:", true, 13)]
+        public bool RandomizeItemOrder
+        {
+            get
+            {
+                return _randomizeItemOrder;
+            }
+            set
+            {
+                _randomizeItemOrder = value;
             }
         }
 
@@ -117,6 +132,7 @@ namespace SensusUI.Inputs
             _tipText = string.IsNullOrWhiteSpace(tipText) ? "Make selection here." : tipText;
             _items = items;
             _allowClearSelection = true;
+            _randomizeItemOrder = false;
         }
 
         public override View GetView(int index)
@@ -136,8 +152,8 @@ namespace SensusUI.Inputs
 
                 if (_allowClearSelection)
                     _picker.Items.Add("[Clear Selection]");
-
-                foreach (string item in _items)
+                
+                foreach (string item in _randomizeItemOrder ? _items.OrderBy(item => Guid.NewGuid()).ToList() : _items)
                     _picker.Items.Add(item);
 
                 _picker.SelectedIndexChanged += (o, e) =>

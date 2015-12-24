@@ -41,11 +41,9 @@ namespace SensusUI
             }
         }
 
-        public PromptForInputsPage(InputGroup inputGroup, int stepNumber, int totalSteps, bool showCancelButton, string nextButtonTextOverride, CancellationToken? cancellationToken, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, Action<Result> callback)
+        public PromptForInputsPage(InputGroup inputGroup, int stepNumber, int totalSteps, bool showCancelButton, string nextButtonTextOverride, CancellationToken? cancellationToken, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action<Result> callback)
         {            
             _displayedInputCount = 0;
-
-            float progress = (stepNumber - 1) / (float)totalSteps;
 
             StackLayout contentLayout = new StackLayout
             {
@@ -59,20 +57,29 @@ namespace SensusUI
                         Text = inputGroup.Name,
                         FontSize = 20,
                         HorizontalOptions = LayoutOptions.CenterAndExpand
-                    },
-                    new Label
+                    }
+                }
+            };
+
+            if (displayProgress)
+            {
+                float progress = (stepNumber - 1) / (float)totalSteps;
+
+                contentLayout.Children.Add(new Label
                     {
                         Text = "Progress:  " + Math.Round(100 * progress) + "%",
                         FontSize = 15,
                         HorizontalOptions = LayoutOptions.CenterAndExpand
-                    },
-                    new ProgressBar
+                    });
+
+                contentLayout.Children.Add(new ProgressBar
                     {
                         Progress = progress,
                         HorizontalOptions = LayoutOptions.FillAndExpand
-                    }
-                }
-            };
+                    });
+            }
+
+            int inputSeparatorHeight = 10;
 
             int viewNumber = 1;
             bool anyRequired = false;
@@ -83,6 +90,21 @@ namespace SensusUI
                     View inputView = input.GetView(viewNumber);
                     if (inputView != null)
                     {
+                        if (input.Enabled && input.Frame)
+                        {
+                            inputView = new Frame
+                            {
+                                Content = inputView,
+                                OutlineColor = Color.Red,
+                                HasShadow = true,
+                                VerticalOptions = LayoutOptions.Start,
+                                Padding = new Thickness(10)
+                            };
+                        }
+                        
+                        if (_displayedInputCount > 0)
+                            contentLayout.Children.Add(new BoxView { Color = Color.Transparent, HeightRequest = inputSeparatorHeight });
+                        
                         contentLayout.Children.Add(inputView);
                         displayedInputs.Add(input);
 
@@ -95,6 +117,9 @@ namespace SensusUI
                         ++_displayedInputCount;
                     }
                 }
+
+            if (_displayedInputCount > 0)
+                contentLayout.Children.Add(new BoxView { Color = Color.Transparent, HeightRequest = inputSeparatorHeight });
 
             if (anyRequired)
                 contentLayout.Children.Add(new Label
