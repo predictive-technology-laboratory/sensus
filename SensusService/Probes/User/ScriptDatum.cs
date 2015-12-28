@@ -18,6 +18,8 @@ using SensusService.Anonymization.Anonymizers;
 using SensusService.Probes.User.ProbeTriggerProperties;
 using System.Collections;
 using System.Linq;
+using System.Collections.Generic;
+using SensusUI.Inputs;
 
 namespace SensusService.Probes.User
 {
@@ -32,6 +34,7 @@ namespace SensusService.Probes.User
         private double? _longitude;
         private DateTimeOffset _presentationTimestamp;
         private DateTimeOffset? _locationTimestamp;
+        private List<InputCompletionHistoryRecord> _completionHistoryRecords;
 
         public string ScriptId
         {
@@ -122,6 +125,19 @@ namespace SensusService.Probes.User
             }
         }
 
+        public List<InputCompletionHistoryRecord> CompletionHistoryRecords
+        {
+            get
+            {
+                return _completionHistoryRecords;
+            }
+            // need setter in order for anonymizer to pick up the property (only includes writable properties)
+            set
+            {
+                _completionHistoryRecords = value;
+            }
+        }
+
         public override string DisplayDetail
         {
             get
@@ -149,9 +165,10 @@ namespace SensusService.Probes.User
         /// </summary>
         private ScriptDatum()
         {
+            _completionHistoryRecords = new List<InputCompletionHistoryRecord>();
         }
 
-        public ScriptDatum(DateTimeOffset timestamp, string scriptId, string groupId, string inputId, object response, string triggerDatumId, double? latitude, double? longitude, DateTimeOffset presentationTimestamp, DateTimeOffset? locationTimestamp)
+        public ScriptDatum(DateTimeOffset timestamp, string scriptId, string groupId, string inputId, object response, string triggerDatumId, double? latitude, double? longitude, DateTimeOffset presentationTimestamp, DateTimeOffset? locationTimestamp, List<InputCompletionHistoryRecord> completionHistoryRecords)
             : base(timestamp)
         {
             _scriptId = scriptId;
@@ -163,6 +180,7 @@ namespace SensusService.Probes.User
             _longitude = longitude;
             _presentationTimestamp = presentationTimestamp;
             _locationTimestamp = locationTimestamp;
+            _completionHistoryRecords = completionHistoryRecords;
         }
 
         public override string ToString()

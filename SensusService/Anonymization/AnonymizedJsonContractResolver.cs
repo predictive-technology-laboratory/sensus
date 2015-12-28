@@ -47,26 +47,31 @@ namespace SensusService.Anonymization
 
             public object GetValue(object target)
             {
-                Datum datum = target as Datum;
-
-                if (datum == null)
-                    throw new SensusException("Attempted to anonymize a non-datum (or null) object.");
-
-                // if we're processing the Anonymized property, return true so that the output JSON properly reflects the fact that the datum has been passed through an anonymizer (this regardless of whether anonymization of data was actually performed)
-                if (_property.DeclaringType == typeof(Datum) && _property.Name == "Anonymized")
-                    return true;
-                else
+                if (target == null)
+                    throw new SensusException("Attempted to process a null object.");
+                else if (target is Datum)
                 {
-                    object propertyValue = _defaultMemberValueProvider.GetValue(datum);
+                    Datum datum = target as Datum;
 
-                    // don't re-anonymize property values, don't anonymize when we don't have an anonymizer, and don't attempt anonymization if the property value is null
-                    Anonymizer anonymizer;
-                    if (datum.Anonymized || (anonymizer = _contractResolver.GetAnonymizer(datum.GetType().GetProperty(_property.Name))) == null || propertyValue == null)  // we re-get the PropertyInfo from the datum's type so that it matches our dictionary of PropertyInfo objects (the reflected type needs to be the most-derived, which doesn't happen leading up to this point for some reason).
-                        return propertyValue;
-                    // anonymize!
+                    // if we're processing the Anonymized property, return true so that the output JSON properly reflects the fact that the datum has been passed through an anonymizer (this regardless of whether anonymization of data was actually performed)
+                    if (_property.DeclaringType == typeof(Datum) && _property.Name == "Anonymized")
+                        return true;
                     else
-                        return anonymizer.Apply(propertyValue, _contractResolver.Protocol);
+                    {
+                        object propertyValue = _defaultMemberValueProvider.GetValue(datum);
+
+                        // don't re-anonymize property values, don't anonymize when we don't have an anonymizer, and don't attempt anonymization if the property value is null
+                        Anonymizer anonymizer;
+                        if (datum.Anonymized || (anonymizer = _contractResolver.GetAnonymizer(datum.GetType().GetProperty(_property.Name))) == null || propertyValue == null)  // we re-get the PropertyInfo from the datum's type so that it matches our dictionary of PropertyInfo objects (the reflected type needs to be the most-derived, which doesn't happen leading up to this point for some reason).
+                            return propertyValue;
+                        // anonymize!
+                        else
+                            return anonymizer.Apply(propertyValue, _contractResolver.Protocol);
+                    }
                 }
+                // if the target is not a datum object, simply return the member value (e.g., for input completion records).
+                else
+                    return _defaultMemberValueProvider.GetValue(target);
             }
         }
 

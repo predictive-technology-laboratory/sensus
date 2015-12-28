@@ -17,17 +17,17 @@ using Xamarin.Forms;
 using SensusUI.UiProperties;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace SensusUI.Inputs
 {
-    public class ItemPickerDialogInput : Input
+    public class ItemPickerDialogInput : ItemPickerInput
     {
         private string _tipText;
         private List<string> _items;
         private bool _allowClearSelection;
         private Picker _picker;
         private Label _label;
-        private bool _randomizeItemOrder;
 
         [EntryStringUiProperty("Tip Text:", true, 10)]
         public string TipText
@@ -69,19 +69,6 @@ namespace SensusUI.Inputs
             }
         }
 
-        [OnOffUiProperty("Randomize Item Order:", true, 13)]
-        public bool RandomizeItemOrder
-        {
-            get
-            {
-                return _randomizeItemOrder;
-            }
-            set
-            {
-                _randomizeItemOrder = value;
-            }
-        }
-
         public override object Value
         {
             get
@@ -90,6 +77,7 @@ namespace SensusUI.Inputs
             }
         }
 
+        [JsonIgnore]
         public override bool Enabled
         {
             get
@@ -132,7 +120,6 @@ namespace SensusUI.Inputs
             _tipText = string.IsNullOrWhiteSpace(tipText) ? "Make selection here." : tipText;
             _items = items;
             _allowClearSelection = true;
-            _randomizeItemOrder = false;
         }
 
         public override View GetView(int index)
@@ -153,7 +140,7 @@ namespace SensusUI.Inputs
                 if (_allowClearSelection)
                     _picker.Items.Add("[Clear Selection]");
                 
-                foreach (string item in _randomizeItemOrder ? _items.OrderBy(item => Guid.NewGuid()).ToList() : _items)
+                foreach (string item in RandomizeItemOrder ? _items.OrderBy(item => Guid.NewGuid()).ToList() : _items)
                     _picker.Items.Add(item);
 
                 _picker.SelectedIndexChanged += (o, e) =>

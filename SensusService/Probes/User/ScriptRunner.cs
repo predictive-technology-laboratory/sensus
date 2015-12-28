@@ -623,7 +623,7 @@ namespace SensusService.Probes.User
                                                 // store all inputs that are valid and displayed 
                                                 else if (input.Valid && input.Display)
                                                 {
-                                                    _probe.StoreDatum(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow), script.Id, input.GroupId, input.Id, input.Value, script.CurrentDatum == null ? null : script.CurrentDatum.Id, input.Latitude, input.Longitude, script.PresentationTimestamp.GetValueOrDefault(), input.LocationUpdateTimestamp));
+                                                    _probe.StoreDatum(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow), script.Id, input.GroupId, input.Id, input.Value, script.CurrentDatum == null ? null : script.CurrentDatum.Id, input.Latitude, input.Longitude, script.PresentationTimestamp.GetValueOrDefault(), input.LocationUpdateTimestamp, input.CompletionHistoryRecords));
 
                                                     // once inputs are stored, they should not be stored again, nor should the user be able to modify them if the script is rerun.
                                                     input.NeedsToBeStored = false;

@@ -29,31 +29,14 @@ using Xamarin;
 
 namespace SensusUI.Inputs
 {
-    public class ItemPickerPageInput : Input
+    public class ItemPickerPageInput : ItemPickerInput
     {
-        /*private class TextColorValueConverter : IValueConverter
-        {
-            public object Convert(object value, Type targetType, object selectedItems, CultureInfo culture)
-            {
-                if (value == null)
-                    return Color.Gray;
-
-                return (selectedItems as List<object>).Contains(value) ? Color.Accent : Color.Gray;
-            }
-
-            public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-            {
-                throw new SensusException("Invalid call to " + GetType().FullName + ".ConvertBack.");
-            }
-        }*/
-
         private List<object> _items;
         private bool _multiselect;
         private List<object> _selectedItems;
         private string _textBindingPropertyPath;
         private List<Label> _itemLabels;
         private Label _label;
-        private bool _randomizeItemOrder;
 
         public List<object> Items
         {
@@ -110,19 +93,7 @@ namespace SensusUI.Inputs
             }
         }
 
-        [OnOffUiProperty("Randomize Item Order:", true, 12)]
-        public bool RandomizeItemOrder
-        {
-            get
-            {
-                return _randomizeItemOrder;
-            }
-            set
-            {
-                _randomizeItemOrder = value;
-            }
-        }
-
+        [JsonIgnore]
         public override bool Enabled
         {
             get
@@ -167,7 +138,6 @@ namespace SensusUI.Inputs
             _selectedItems = new List<object>();
             _textBindingPropertyPath = ".";
             _itemLabels = new List<Label>();
-            _randomizeItemOrder = false;
         }
 
         public override View GetView(int index)
@@ -185,7 +155,7 @@ namespace SensusUI.Inputs
                     Padding = new Thickness(30, 10, 0, 10)
                 };
 
-                List<object> itemList = _randomizeItemOrder ? _items.OrderBy(item => Guid.NewGuid()).ToList() : _items;
+                List<object> itemList = RandomizeItemOrder ? _items.OrderBy(item => Guid.NewGuid()).ToList() : _items;
 
                 for (int i = 0; i < itemList.Count; ++i)
                 {
@@ -257,16 +227,26 @@ namespace SensusUI.Inputs
             return base.GetView(index);
         }
 
-        public override bool ValueEquals(object value)
+        public override bool ValueMatches(object conditionValue, bool conjunctive)
         {
-            // if a list is passed, compare by ordered values
-            if (value is List<object>)
-                return (Value as List<object>).OrderBy(o => o).SequenceEqual((value as List<object>).OrderBy(o => o));
+            // if a list is passed, compare values
+            if (conditionValue is List<object>)
+            {
+                List<object> selectedValueList = Value as List<object>;
+                List<object> conditionValueList = conditionValue as List<object>;
+
+                // if the matching condition is conjunctive, then the two lists must be identical.
+                if (conjunctive)
+                    return selectedValueList.OrderBy(o => o).SequenceEqual(conditionValueList.OrderBy(o => o));
+                // if the matching condiction is disjunctive, then any of the condition values may be selected.
+                else
+                    return conditionValueList.Any(o => selectedValueList.Contains(o));
+            }
             else
             {
                 // this should never happen
                 if (Insights.IsInitialized)
-                    Insights.Report(new Exception("Called ItemPickerPageInput.ValueEquals with value that is not a List<object>."), Insights.Severity.Critical);
+                    Insights.Report(new Exception("Called ItemPickerPageInput.ValueMatches with conditionValue that is not a List<object>."), Insights.Severity.Critical);
 
                 return false;
             }

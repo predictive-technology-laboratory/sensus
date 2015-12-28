@@ -52,6 +52,7 @@ namespace SensusUI.Inputs
             }
         }
 
+        [JsonIgnore]
         public override bool Enabled
         {
             get
