@@ -46,7 +46,7 @@ namespace SensusUI.Inputs
         private Color? _backgroundColor;
         private Thickness? _padding;
         private bool _frame;
-        private List<InputCompletionHistoryRecord> _completionHistoryRecords;
+        private List<InputCompletionRecord> _completionRecords;
 
         [EntryStringUiProperty("Name:", true, 0)]
         public string Name
@@ -137,20 +137,19 @@ namespace SensusUI.Inputs
             {
                 _complete = value; 
 
-                DateTimeOffset historyTimestamp = DateTimeOffset.UtcNow;
-                object historyValue = null;
+                DateTimeOffset timestamp = DateTimeOffset.UtcNow;
+                object inputValue = null;
+                _completionTimestamp = null;
 
                 if (_complete)
                 {
-                    _completionTimestamp = historyTimestamp;
+                    _completionTimestamp = timestamp;
 
                     // get a deep copy of the value. some inputs have list values, and simply using the list reference wouldn't track the history, since the most up-to-date list would be used for all history values.
-                    historyValue = JsonConvert.DeserializeObject<object>(JsonConvert.SerializeObject(Value, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
+                    inputValue = JsonConvert.DeserializeObject<object>(JsonConvert.SerializeObject(Value, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
                 }
-                else
-                    _completionTimestamp = null;
 
-                _completionHistoryRecords.Add(new InputCompletionHistoryRecord(historyTimestamp, historyValue));
+                _completionRecords.Add(new InputCompletionRecord(timestamp, inputValue));
             }
         }
 
@@ -289,11 +288,11 @@ namespace SensusUI.Inputs
             }
         }
 
-        public List<InputCompletionHistoryRecord> CompletionHistoryRecords
+        public List<InputCompletionRecord> CompletionRecords
         {
             get
             {
-                return _completionHistoryRecords;
+                return _completionRecords;
             }
         }
 
@@ -329,7 +328,7 @@ namespace SensusUI.Inputs
             _backgroundColor = null;
             _padding = null;
             _frame = true;
-            _completionHistoryRecords = new List<InputCompletionHistoryRecord>();
+            _completionRecords = new List<InputCompletionRecord>();
         }
 
         public Input(string labelText)

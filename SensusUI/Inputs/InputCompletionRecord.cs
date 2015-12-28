@@ -16,7 +16,7 @@ using System;
 
 namespace SensusUI.Inputs
 {
-    public class InputCompletionHistoryRecord
+    public class InputCompletionRecord
     {
         private DateTimeOffset _timestamp;
         private object _value;
@@ -45,11 +45,14 @@ namespace SensusUI.Inputs
             }
         }
 
-        public InputCompletionHistoryRecord()
+        /// <summary>
+        /// For JSON serialization.
+        /// </summary>
+        private InputCompletionRecord()
         {
         }
 
-        public InputCompletionHistoryRecord(DateTimeOffset timestamp, object value)
+        public InputCompletionRecord(DateTimeOffset timestamp, object value)
             : this()
         {
             _timestamp = timestamp;

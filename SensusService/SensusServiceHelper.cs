@@ -120,7 +120,7 @@ namespace SensusService
             TypeNameHandling = TypeNameHandling.All,
             ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
 
-            // need the following in order to deserialize protocols between OSs, whose objects contain different members (e.g., iOS service helper has ActivationId, which Android does not)
+            #region need the following in order to deserialize protocols between OSs, whose objects contain different members (e.g., iOS service helper has ActivationId, which Android does not)
             Error = (o, e) =>
             {
                 SensusServiceHelper.Get().Logger.Log("Failed to deserialize some part of the JSON:  " + e.ErrorContext.Error.ToString(), LoggingLevel.Normal, typeof(Protocol));
@@ -128,6 +128,7 @@ namespace SensusService
             },
 
             MissingMemberHandling = MissingMemberHandling.Ignore  
+            #endregion
         };
 
         private static byte[] EncryptionKeyBytes

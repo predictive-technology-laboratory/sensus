@@ -28,13 +28,14 @@ namespace SensusService.Probes.User
         private string _scriptId;
         private string _groupId;
         private string _inputId;
+        private string _runId;
         private object _response;
         private string _triggerDatumId;
         private double? _latitude;
         private double? _longitude;
         private DateTimeOffset _presentationTimestamp;
         private DateTimeOffset? _locationTimestamp;
-        private List<InputCompletionHistoryRecord> _completionHistoryRecords;
+        private List<InputCompletionRecord> _completionRecords;
 
         public string ScriptId
         {
@@ -69,6 +70,18 @@ namespace SensusService.Probes.User
             set
             {
                 _inputId = value;
+            }
+        }
+
+        public string RunId
+        {
+            get
+            {
+                return _runId;
+            }
+            set
+            {
+                _runId = value;
             }
         }
 
@@ -125,16 +138,16 @@ namespace SensusService.Probes.User
             }
         }
 
-        public List<InputCompletionHistoryRecord> CompletionHistoryRecords
+        public List<InputCompletionRecord> CompletionRecords
         {
             get
             {
-                return _completionHistoryRecords;
+                return _completionRecords;
             }
             // need setter in order for anonymizer to pick up the property (only includes writable properties)
             set
             {
-                _completionHistoryRecords = value;
+                _completionRecords = value;
             }
         }
 
@@ -165,22 +178,23 @@ namespace SensusService.Probes.User
         /// </summary>
         private ScriptDatum()
         {
-            _completionHistoryRecords = new List<InputCompletionHistoryRecord>();
+            _completionRecords = new List<InputCompletionRecord>();
         }
 
-        public ScriptDatum(DateTimeOffset timestamp, string scriptId, string groupId, string inputId, object response, string triggerDatumId, double? latitude, double? longitude, DateTimeOffset presentationTimestamp, DateTimeOffset? locationTimestamp, List<InputCompletionHistoryRecord> completionHistoryRecords)
+        public ScriptDatum(DateTimeOffset timestamp, string scriptId, string groupId, string inputId, string runId, object response, string triggerDatumId, double? latitude, double? longitude, DateTimeOffset presentationTimestamp, DateTimeOffset? locationTimestamp, List<InputCompletionRecord> completionRecords)
             : base(timestamp)
         {
             _scriptId = scriptId;
             _groupId = groupId;
             _inputId = inputId;
+            _runId = runId;
             _response = response;
             _triggerDatumId = triggerDatumId == null ? "" : triggerDatumId;
             _latitude = latitude;
             _longitude = longitude;
             _presentationTimestamp = presentationTimestamp;
             _locationTimestamp = locationTimestamp;
-            _completionHistoryRecords = completionHistoryRecords;
+            _completionRecords = completionRecords;
         }
 
         public override string ToString()
@@ -189,6 +203,7 @@ namespace SensusService.Probes.User
             "Script:  " + _scriptId + Environment.NewLine +
             "Group:  " + _groupId + Environment.NewLine +
             "Input:  " + _inputId + Environment.NewLine +
+            "Run:  " + _runId + Environment.NewLine +
             "Response:  " + _response + Environment.NewLine +
             "Latitude:  " + _latitude + Environment.NewLine +
             "Longitude:  " + _longitude + Environment.NewLine +
