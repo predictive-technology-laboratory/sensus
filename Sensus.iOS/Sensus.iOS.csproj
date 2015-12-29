@@ -133,6 +133,11 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>1701</NoWarn>
     <DefineConstants>RELEASE</DefineConstants>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="BeforeBuild" command="./Scripts/ios-appstore-build-check.sh" workingdir="${SolutionDir}" externalConsole="True" pauseExternalConsole="True" />
+      </CustomCommands>
+    </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'LocalUnitTesting|iPhone' ">
     <DebugSymbols>true</DebugSymbols>
