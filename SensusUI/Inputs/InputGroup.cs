@@ -19,6 +19,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using SensusUI.UiProperties;
 using Newtonsoft.Json;
+using SensusService;
 
 namespace SensusUI.Inputs
 {
@@ -90,7 +91,7 @@ namespace SensusUI.Inputs
         /// <summary>
         /// For JSON.NET deserialization.
         /// </summary>
-        protected InputGroup()
+        private InputGroup()
         {
             _id = Guid.NewGuid().ToString();
             _geotag = false;
@@ -117,6 +118,15 @@ namespace SensusUI.Inputs
             : this(name)
         {
             _inputs.Add(input);
+        }
+
+        public InputGroup Copy()
+        {
+            InputGroup copy = JsonConvert.DeserializeObject<InputGroup>(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
+
+            copy.Id = Guid.NewGuid().ToString();
+
+            return copy;
         }
 
         public override string ToString()
