@@ -35,6 +35,7 @@ using SensusService.Probes.Movement;
 using System.Linq;
 using ZXing.Mobile;
 using Android.Graphics;
+using Android.Media;
 
 namespace Sensus.Android
 {
@@ -330,7 +331,7 @@ namespace Sensus.Android
 
                                     TextView promptView = new TextView(mainActivity) { Text = prompt, TextSize = 20 };
                                     EditText inputEdit = new EditText(mainActivity) { TextSize = 20 };
-                                    LinearLayout scrollLayout = new LinearLayout(mainActivity){ Orientation = Orientation.Vertical };
+                                    LinearLayout scrollLayout = new LinearLayout(mainActivity){ Orientation = global::Android.Widget.Orientation.Vertical };
                                     scrollLayout.AddView(promptView);                                
                                     scrollLayout.AddView(inputEdit);
                                     ScrollView scrollView = new ScrollView(mainActivity);
@@ -439,12 +440,14 @@ namespace Sensus.Android
                             Intent activityIntent = new Intent(_service, typeof(AndroidMainActivity));
                             PendingIntent pendingIntent = PendingIntent.GetActivity(_service, 0, activityIntent, PendingIntentFlags.UpdateCurrent);
                             Notification notification = new Notification.Builder(_service)
-                            .SetContentTitle(title)
-                            .SetContentText(message)
-                            .SetSmallIcon(Resource.Drawable.ic_launcher)
-                            .SetContentIntent(pendingIntent)
-                            .SetAutoCancel(autoCancel)
-                            .SetOngoing(ongoing).Build();
+                                .SetContentTitle(title)
+                                .SetContentText(message)
+                                .SetSmallIcon(Resource.Drawable.ic_launcher)
+                                .SetContentIntent(pendingIntent)
+                                .SetAutoCancel(autoCancel)
+                                .SetSound(RingtoneManager.GetDefaultUri(RingtoneType.Notification))
+                                .SetVibrate(new long[] { 0, 250, 50, 250 })
+                                .SetOngoing(ongoing).Build();
 
                             _notificationManager.Notify(id, 0, notification);
                         }
