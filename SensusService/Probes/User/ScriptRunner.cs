@@ -30,6 +30,7 @@ namespace SensusService.Probes.User
         private ScriptProbe _probe;
         private Script _script;
         private bool _enabled;
+        private bool _allowCancel;
         private int _delayMS;
         private ObservableCollection<Trigger> _triggers;
         private Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>> _triggerHandler;
@@ -101,6 +102,22 @@ namespace SensusService.Probes.User
                         Start();
                     else if (SensusServiceHelper.Get() != null)  // service helper is null when deserializing
                         Stop();
+                }
+            }
+        }
+
+        [OnOffUiProperty("Allow Cancel:", true, 2)]
+        public bool AllowCancel
+        {
+            get
+            {
+                return _allowCancel;
+            }
+            set
+            {
+                if (value != _allowCancel)
+                {
+                    _allowCancel = value;
                 }
             }
         }
@@ -301,6 +318,7 @@ namespace SensusService.Probes.User
         {
             _script = new Script();
             _enabled = false;
+            _allowCancel = true;
             _delayMS = 0;
             _triggers = new ObservableCollection<Trigger>();
             _triggerHandler = new Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>>();
@@ -589,7 +607,7 @@ namespace SensusService.Probes.User
 
                             ManualResetEvent inputWait = new ManualResetEvent(false);
 
-                            SensusServiceHelper.Get().PromptForInputsAsync(isRerun, script.FirstRunTimestamp, script.InputGroups, cancellationToken, true, null, "You will not receive credit for your responses if you cancel. Do you wish to cancel?", "You have not completed all required fields. You will not receive credit for your responses if you continue. Do you wish to continue?", "Do you wish to submit your responses?", null, inputGroups =>
+                            SensusServiceHelper.Get().PromptForInputsAsync(isRerun, script.FirstRunTimestamp, script.InputGroups, cancellationToken, _allowCancel, null, "You will not receive credit for your responses if you cancel. Do you wish to cancel?", "You have not completed all required fields. You will not receive credit for your responses if you continue. Do you wish to continue?", "Do you wish to submit your responses?", null, inputGroups =>
                                 {            
                                     bool canceled = inputGroups == null;
 
