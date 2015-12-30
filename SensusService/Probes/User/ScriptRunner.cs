@@ -40,7 +40,7 @@ namespace SensusService.Probes.User
         private int _rerunDelayMS;
         private int _maximumAgeMinutes;
         private int _numScriptsAgedOut;
-        private List<Tuple<int, int>> _randomTriggerWindows;
+        private List<Tuple<int, int, int, int>> _randomTriggerWindows;
         private string _randomTriggerCallbackId;
         private Random _random;
         private List<string> _runScriptCallbackIds;
@@ -204,7 +204,7 @@ namespace SensusService.Probes.User
                 if (_randomTriggerWindows.Count == 0)
                     return "";
                 else
-                    return string.Concat(_randomTriggerWindows.Select((window, index) => (index == 0 ? "" : ",") + window.Item1 + "-" + window.Item2));
+                    return string.Concat(_randomTriggerWindows.Select((window, index) => (index == 0 ? "" : ",") + window.Item1 + ":" + window.Item2 + "-" + window.Item3 + ":" + window.Item4));
             }
             set
             {
@@ -219,15 +219,22 @@ namespace SensusService.Probes.User
                     {
                         string[] startEnd = window.Split('-');
 
-                        int start = int.Parse(startEnd[0]);
-                        int end = int.Parse(startEnd[1]);
+                        string[] startHourMinute = startEnd[0].Split(':');
+                        string[] endHourMinute = startEnd[1].Split(':');
 
-                        if (start > end)
+                        int startHour = int.Parse(startHourMinute[0]);
+                        int startMinute = int.Parse(startHourMinute[1]);
+
+                        int endHour = int.Parse(endHourMinute[0]);
+                        int endMinute = int.Parse(endHourMinute[1]);
+
+                        if ((startHour + startMinute) > (endHour + endMinute))
                             throw new Exception();
                         
-                        _randomTriggerWindows.Add(new Tuple<int, int>(start, end));
+                        _randomTriggerWindows.Add(new Tuple<int, int, int, int>(startHour, startMinute, endHour, endMinute));
                     }
-
+                        
+                    _randomTriggerWindows = _randomTriggerWindows.OrderBy(window => window.Item2).ToList();
                     _randomTriggerWindows = _randomTriggerWindows.OrderBy(window => window.Item1).ToList();
                 }
                 catch (Exception)
@@ -342,7 +349,7 @@ namespace SensusService.Probes.User
             _rerunDelayMS = 60000;
             _maximumAgeMinutes = 1;
             _numScriptsAgedOut = 0;
-            _randomTriggerWindows = new List<Tuple<int, int>>();
+            _randomTriggerWindows = new List<Tuple<int, int, int, int>>();
             _randomTriggerCallbackId = null;
             _random = new Random();
             _runScriptCallbackIds = new List<string>();
@@ -510,11 +517,11 @@ namespace SensusService.Probes.User
                         DateTime triggerWindowEnd = default(DateTime);
                         DateTime now = DateTime.Now;
                         bool foundTriggerWindow = false;
-                        foreach (Tuple<int, int> randomTriggerWindow in _randomTriggerWindows)
-                            if (randomTriggerWindow.Item1 > now.Hour)
+                        foreach (Tuple<int, int, int, int> randomTriggerWindow in _randomTriggerWindows)
+                            if ((randomTriggerWindow.Item1 > now.Hour) || (randomTriggerWindow.Item1 == now.Hour && randomTriggerWindow.Item2 > now.Minute))
                             {
-                                triggerWindowStart = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0).AddHours(randomTriggerWindow.Item1);
-                                triggerWindowEnd = triggerWindowStart.AddHours(randomTriggerWindow.Item2 - randomTriggerWindow.Item1);
+                                triggerWindowStart = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0).AddHours(randomTriggerWindow.Item1).AddMinutes(randomTriggerWindow.Item2);
+                                triggerWindowEnd = triggerWindowStart.AddHours(randomTriggerWindow.Item3 - randomTriggerWindow.Item1).AddMinutes(randomTriggerWindow.Item4 - randomTriggerWindow.Item2);
                                 foundTriggerWindow = true;
                                 break;
                             }
@@ -522,14 +529,18 @@ namespace SensusService.Probes.User
                         // if there were no future trigger windows, skip to the next day and use the first trigger window
                         if (!foundTriggerWindow)
                         {
-                            Tuple<int, int> firstRandomTriggerWindow = _randomTriggerWindows.First();                                
-                            triggerWindowStart = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0).AddDays(1).AddHours(firstRandomTriggerWindow.Item1);
-                            triggerWindowEnd = triggerWindowStart.AddHours(firstRandomTriggerWindow.Item2 - firstRandomTriggerWindow.Item1);
+                            Tuple<int, int, int, int> firstRandomTriggerWindow = _randomTriggerWindows.First();
+                            triggerWindowStart = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0).AddDays(1).AddHours(firstRandomTriggerWindow.Item1).AddMinutes(firstRandomTriggerWindow.Item2);
+                            triggerWindowEnd = triggerWindowStart.AddHours(firstRandomTriggerWindow.Item3 - firstRandomTriggerWindow.Item1).AddMinutes(firstRandomTriggerWindow.Item4 - firstRandomTriggerWindow.Item2);
                         }
 
                         // schedule callback for random offset into trigger window
                         DateTime triggerTime = triggerWindowStart.AddSeconds(_random.NextDouble() * (triggerWindowEnd - triggerWindowStart).TotalSeconds);
                         int triggerDelayMS = (int)(triggerTime - now).TotalMilliseconds;
+
+                        Console.Out.WriteLine(triggerWindowStart);
+                        Console.Out.WriteLine(triggerWindowEnd);
+                        Console.Out.WriteLine(triggerTime);
 
                         _randomTriggerCallbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback((callbackId, cancellationToken) =>
                             {
