@@ -620,7 +620,7 @@ namespace SensusService.Probes.User
                                                 // time, even if the prompts are later redisplayed by the invalid script handler.
                                                 if (canceled)
                                                     input.Reset();
-                                                // store all inputs that are valid and displayed 
+                                                // store all inputs that are valid and displayed. some might be valid from previous responses but not displayed because the user navigated back through the survey and changed a previous response that caused a subsesequently displayed input to be hidden via display contingencies.
                                                 else if (input.Valid && input.Display)
                                                 {
                                                     // the _script.Id allows us to link the data to the script that the user created. it never changes. on the other hand, the script
