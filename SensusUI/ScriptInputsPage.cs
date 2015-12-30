@@ -91,7 +91,7 @@ namespace SensusUI
                         {
                             new ItemPickerPageInput("Input:", previousInputGroups.SelectMany(previousInputGroup => previousInputGroup.Inputs.Cast<object>()).ToList()),
                             new ItemPickerPageInput("Condition:", Enum.GetValues(typeof(InputValueCondition)).Cast<object>().ToList()),
-                            new ItemPickerPageInput("Conjunctive:", new object[] { "Yes", "No" }.ToList())
+                            new ItemPickerPageInput("Conjunctive/Disjunctive:", new object[] { "Conjunctive", "Disjunctive" }.ToList())
                         },
                         null,
                         true,
@@ -99,6 +99,7 @@ namespace SensusUI
                         null,
                         abortMessage,
                         null,
+                        false,
                         inputs =>
                         {
                             if (inputs == null)
@@ -108,7 +109,7 @@ namespace SensusUI
                             {                   
                                 Input conditionInput = ((inputs[0] as ItemPickerPageInput).Value as IEnumerable<object>).First() as Input;
                                 InputValueCondition condition = (InputValueCondition)((inputs[1] as ItemPickerPageInput).Value as IEnumerable<object>).First();
-                                bool conjunctive = ((inputs[2] as ItemPickerPageInput).Value as IEnumerable<object>).First().Equals("Yes");
+                                bool conjunctive = ((inputs[2] as ItemPickerPageInput).Value as IEnumerable<object>).First().Equals("Conjunctive");
 
                                 if (condition == InputValueCondition.IsComplete)
                                     selectedInput.DisplayConditions.Add(new InputDisplayCondition(conditionInput, condition, null, conjunctive));
@@ -133,6 +134,7 @@ namespace SensusUI
                                         null,
                                         abortMessage,
                                         null,
+                                        false,
                                         input =>
                                         {
                                             if (input == null)

@@ -49,6 +49,7 @@ namespace SensusService.Probes.User
         private bool _oneShot;
         private bool _runOnStart;
         private int _runOnStartDelaySeconds;
+        private bool _displayProgress;
 
         private readonly object _locker = new object();
 
@@ -309,6 +310,19 @@ namespace SensusService.Probes.User
             }
         }
 
+        [OnOffUiProperty("Display Progress:", true, 13)]
+        public bool DisplayProgress
+        {
+            get
+            {
+                return _displayProgress;
+            }
+            set
+            {
+                _displayProgress = value;
+            }
+        }
+
         #endregion
 
         /// <summary>
@@ -337,6 +351,7 @@ namespace SensusService.Probes.User
             _oneShot = false;
             _runOnStart = false;
             _runOnStartDelaySeconds = 15;
+            _displayProgress = true;
 
             _triggers.CollectionChanged += (o, e) =>
             {
@@ -607,7 +622,7 @@ namespace SensusService.Probes.User
 
                             ManualResetEvent inputWait = new ManualResetEvent(false);
 
-                            SensusServiceHelper.Get().PromptForInputsAsync(isRerun, script.FirstRunTimestamp, script.InputGroups, cancellationToken, _allowCancel, null, "You will not receive credit for your responses if you cancel. Do you wish to cancel?", "You have not completed all required fields. You will not receive credit for your responses if you continue. Do you wish to continue?", "Do you wish to submit your responses?", null, inputGroups =>
+                            SensusServiceHelper.Get().PromptForInputsAsync(isRerun, script.FirstRunTimestamp, script.InputGroups, cancellationToken, _allowCancel, null, "You will not receive credit for your responses if you cancel. Do you wish to cancel?", "You have not completed all required fields. You will not receive credit for your responses if you continue. Do you wish to continue?", "Do you wish to submit your responses?", _displayProgress, null, inputGroups =>
                                 {            
                                     bool canceled = inputGroups == null;
 
@@ -626,7 +641,11 @@ namespace SensusService.Probes.User
                                                 // store all inputs that are valid and displayed 
                                                 else if (input.Valid && input.Display)
                                                 {
-                                                    _probe.StoreDatum(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow), script.Id, input.GroupId, input.Id, input.Value, script.CurrentDatum == null ? null : script.CurrentDatum.Id, input.Latitude, input.Longitude, script.PresentationTimestamp.GetValueOrDefault(), input.LocationUpdateTimestamp));
+                                                    // the _script.Id allows us to link the data to the script that the user created. it never changes. on the other hand, the script
+                                                    // that is passed into this method is always a copy of the user-created script. the script.Id allows us to link the various data
+                                                    // collected from the user into a single logical response. each run of the script has its own script.Id so that responses can be
+                                                    // grouped across runs. this is the difference between scriptId and runId in the following line.
+                                                    _probe.StoreDatum(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow), _script.Id, input.GroupId, input.Id, script.Id, input.Value, script.CurrentDatum == null ? null : script.CurrentDatum.Id, input.Latitude, input.Longitude, script.PresentationTimestamp.GetValueOrDefault(), input.LocationUpdateTimestamp, input.CompletionRecords));
 
                                                     // once inputs are stored, they should not be stored again, nor should the user be able to modify them if the script is rerun.
                                                     input.NeedsToBeStored = false;

@@ -16,10 +16,12 @@ using System;
 using Xamarin.Forms;
 using SensusUI.UiProperties;
 using System.Collections.Generic;
+using System.Linq;
+using Newtonsoft.Json;
 
 namespace SensusUI.Inputs
 {
-    public class ItemPickerDialogInput : Input
+    public class ItemPickerDialogInput : ItemPickerInput
     {
         private string _tipText;
         private List<string> _items;
@@ -75,6 +77,7 @@ namespace SensusUI.Inputs
             }
         }
 
+        [JsonIgnore]
         public override bool Enabled
         {
             get
@@ -136,8 +139,8 @@ namespace SensusUI.Inputs
 
                 if (_allowClearSelection)
                     _picker.Items.Add("[Clear Selection]");
-
-                foreach (string item in _items)
+                
+                foreach (string item in RandomizeItemOrder ? _items.OrderBy(item => Guid.NewGuid()).ToList() : _items)
                     _picker.Items.Add(item);
 
                 _picker.SelectedIndexChanged += (o, e) =>

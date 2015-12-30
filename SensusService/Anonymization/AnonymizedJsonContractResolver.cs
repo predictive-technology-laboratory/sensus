@@ -30,8 +30,8 @@ namespace SensusService.Anonymization
         private class AnonymizedMemberValueProvider : IValueProvider
         {
             private PropertyInfo _property;
-            private AnonymizedJsonContractResolver _contractResolver;
             private IValueProvider _defaultMemberValueProvider;
+            private AnonymizedJsonContractResolver _contractResolver;
 
             public AnonymizedMemberValueProvider(PropertyInfo property, IValueProvider defaultMemberValueProvider, AnonymizedJsonContractResolver contractResolver)
             {                
@@ -47,26 +47,35 @@ namespace SensusService.Anonymization
 
             public object GetValue(object target)
             {
-                Datum datum = target as Datum;
-
-                if (datum == null)
-                    throw new SensusException("Attempted to anonymize a non-datum (or null) object.");
-
-                // if we're processing the Anonymized property, return true so that the output JSON properly reflects the fact that the datum has been passed through an anonymizer (this regardless of whether anonymization of data was actually performed)
-                if (_property.DeclaringType == typeof(Datum) && _property.Name == "Anonymized")
-                    return true;
-                else
+                if (target == null)
+                    throw new SensusException("Attempted to process a null object.");
+                // if the target object is a Datum, consider anonymizing the property value
+                else if (target is Datum)
                 {
-                    object propertyValue = _defaultMemberValueProvider.GetValue(datum);
+                    Datum datum = target as Datum;
 
-                    // don't re-anonymize property values, don't anonymize when we don't have an anonymizer, and don't attempt anonymization if the property value is null
-                    Anonymizer anonymizer;
-                    if (datum.Anonymized || (anonymizer = _contractResolver.GetAnonymizer(datum.GetType().GetProperty(_property.Name))) == null || propertyValue == null)  // we re-get the PropertyInfo from the datum's type so that it matches our dictionary of PropertyInfo objects (the reflected type needs to be the most-derived, which doesn't happen leading up to this point for some reason).
-                        return propertyValue;
-                    // anonymize!
+                    // if we're processing the Anonymized property, return true so that the output JSON properly reflects the fact that the datum has been passed through an anonymizer (this regardless of whether an anonymization transformation was actually applied).
+                    if (_property.DeclaringType == typeof(Datum) && _property.Name == "Anonymized")
+                        return true;
                     else
-                        return anonymizer.Apply(propertyValue, _contractResolver.Protocol);
+                    {
+                        // first get the property's value in the default way
+                        object propertyValue = _defaultMemberValueProvider.GetValue(datum);
+
+                        Anonymizer anonymizer;
+                        if (propertyValue == null || // don't attempt anonymization if the property value is null
+                            datum.Anonymized || // don't re-anonymize property values
+                            (anonymizer = _contractResolver.GetAnonymizer(datum.GetType().GetProperty(_property.Name))) == null)  // don't anonymize when we don't have an anonymizer. we re-get the PropertyInfo from the datum's type so that it matches our dictionary of PropertyInfo objects (the reflected type needs to be the most-derived, which doesn't happen leading up to this point for some reason).
+                        {
+                            return propertyValue;
+                        }
+                        else
+                            return anonymizer.Apply(propertyValue, _contractResolver.Protocol);
+                    }
                 }
+                // if the target is not a datum object (e.g., for InputCompletionRecords stored in ScriptDatum objects), simply return the member value in the default way.
+                else
+                    return _defaultMemberValueProvider.GetValue(target);
             }
         }
 
@@ -172,14 +181,30 @@ namespace SensusService.Anonymization
             }
         }
 
+        /// <summary>
+        /// Gets a list of properties of a type that should be serialized. The purpose of this class is to
+        /// anonymize Datum objects and their child classes; however, if a Datum (or child) class contains
+        /// serializable properties involving other classes, those types will also be processed with this
+        /// method as well as CreateMemberValueProvider. So, don't assume that the properties will always
+        /// come from Datum-based classes.
+        /// </summary>
+        /// <returns>The properties.</returns>
+        /// <param name="type">Type.</param>
+        /// <param name="memberSerialization">Member serialization.</param>
         protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
         {
             // for some reason, even JsonIgnore'd properties like the DisplayDetail are serialized if the datum class
-            // inherits from ImpreciseDatum. to cover this, simply ignore get-only properties.
+            // inherits from ImpreciseDatum. to help cover this, simply ignore get-only properties.
             IList<JsonProperty> properties = base.CreateProperties(type, memberSerialization);
             return properties.Where(p => p.Writable).ToList();
         }
 
+        /// <summary>
+        /// Creates a value provider for a member. Only works for PropertyInfo members and will throw an
+        /// exception for all other members.
+        /// </summary>
+        /// <returns>The member value provider.</returns>
+        /// <param name="member">Member.</param>
         protected override IValueProvider CreateMemberValueProvider(MemberInfo member)
         {
             if (!(member is PropertyInfo))

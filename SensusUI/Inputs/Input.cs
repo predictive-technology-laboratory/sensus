@@ -43,6 +43,10 @@ namespace SensusUI.Inputs
         private bool _viewed;
         private DateTimeOffset? _completionTimestamp;
         private List<InputDisplayCondition> _displayConditions;
+        private Color? _backgroundColor;
+        private Thickness? _padding;
+        private bool _frame;
+        private List<InputCompletionRecord> _completionRecords;
 
         [EntryStringUiProperty("Name:", true, 0)]
         public string Name
@@ -133,10 +137,19 @@ namespace SensusUI.Inputs
             {
                 _complete = value; 
 
+                DateTimeOffset timestamp = DateTimeOffset.UtcNow;
+                object inputValue = null;
+                _completionTimestamp = null;
+
                 if (_complete)
-                    _completionTimestamp = DateTimeOffset.UtcNow;
-                else
-                    _completionTimestamp = null;
+                {
+                    _completionTimestamp = timestamp;
+
+                    // get a deep copy of the value. some inputs have list values, and simply using the list reference wouldn't track the history, since the most up-to-date list would be used for all history values.
+                    inputValue = JsonConvert.DeserializeObject<object>(JsonConvert.SerializeObject(Value, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
+                }
+
+                _completionRecords.Add(new InputCompletionRecord(timestamp, inputValue));
             }
         }
 
@@ -239,6 +252,50 @@ namespace SensusUI.Inputs
             }
         }
 
+        public Color? BackgroundColor
+        {
+            get
+            {
+                return _backgroundColor;
+            }
+            set
+            {
+                _backgroundColor = value;
+            }
+        }
+
+        public Thickness? Padding
+        {
+            get
+            {
+                return _padding;
+            }
+            set
+            {
+                _padding = value;
+            }
+        }
+
+        public bool Frame
+        {
+            get
+            {
+                return _frame;
+            }
+            set
+            {
+                _frame = value;
+            }
+        }
+
+        public List<InputCompletionRecord> CompletionRecords
+        {
+            get
+            {
+                return _completionRecords;
+            }
+        }
+
         [JsonIgnore]
         public bool Display
         {
@@ -268,6 +325,10 @@ namespace SensusUI.Inputs
             _completionTimestamp = null;
             _labelFontSize = 20;
             _displayConditions = new List<InputDisplayCondition>();
+            _backgroundColor = null;
+            _padding = null;
+            _frame = true;
+            _completionRecords = new List<InputCompletionRecord>();
         }
 
         public Input(string labelText)
@@ -314,7 +375,18 @@ namespace SensusUI.Inputs
 
         protected virtual void SetView(View value)
         {
-            _view = value; 
+            ContentView viewContainer = new ContentView
+            {
+                Content = value
+            };
+
+            if (_backgroundColor != null)
+                viewContainer.BackgroundColor = _backgroundColor.GetValueOrDefault();
+
+            if (_padding != null)
+                viewContainer.Padding = _padding.GetValueOrDefault();
+            
+            _view = viewContainer; 
         }
 
         public void Reset()
@@ -327,21 +399,23 @@ namespace SensusUI.Inputs
             _locationUpdateTimestamp = null;
             _viewed = false;
             _completionTimestamp = null;
+            _backgroundColor = null;
+            _padding = null;
         }
 
-        public virtual bool ValueEquals(object value)
+        public virtual bool ValueMatches(object conditionValue, bool conjunctive)
         {
             // if either is null, both must be null to be equal
-            if (Value == null || value == null)
-                return Value == null && value == null;
+            if (Value == null || conditionValue == null)
+                return Value == null && conditionValue == null;
             // if they're of the same type, compare
-            else if (Value.GetType().Equals(value.GetType()))
-                return Value.Equals(value);
+            else if (Value.GetType().Equals(conditionValue.GetType()))
+                return Value.Equals(conditionValue);
             else
             {
                 // this should never happen
                 if (Insights.IsInitialized)
-                    Insights.Report(new Exception("Called Input.ValueEquals with value of type " + value.GetType() + ". Comparing with value of type " + Value.GetType() + "."), Insights.Severity.Critical);
+                    Insights.Report(new Exception("Called Input.ValueMatches with conditionValue of type " + conditionValue.GetType() + ". Comparing with value of type " + Value.GetType() + "."), Insights.Severity.Critical);
 
                 return false;
             }

@@ -14,6 +14,7 @@
 
 using System;
 using Xamarin.Forms;
+using Newtonsoft.Json;
 
 namespace SensusUI.Inputs
 {
@@ -32,6 +33,7 @@ namespace SensusUI.Inputs
             }
         }
 
+        [JsonIgnore]
         public override bool Enabled
         {
             get

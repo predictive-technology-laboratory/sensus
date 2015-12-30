@@ -89,17 +89,17 @@ namespace SensusService.DataStores.Local
                             }
                             catch (Exception ex)
                             {
-                                SensusServiceHelper.Get().Logger.Log("Failed to add datum to collection:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                SensusServiceHelper.Get().Logger.Log("Failed to add anonymized datum to collection:  " + ex.Message, LoggingLevel.Normal, GetType());
                             }
                         }
                         catch (Exception ex)
                         {
-                            SensusServiceHelper.Get().Logger.Log("Failed to get datum from JSON:  " + ex.Message, LoggingLevel.Normal, GetType());
+                            SensusServiceHelper.Get().Logger.Log("Failed to get datum from anonymized JSON:  " + ex.Message, LoggingLevel.Normal, GetType());
                         }
                     }
                     catch (Exception ex)
                     {
-                        SensusServiceHelper.Get().Logger.Log("Failed to get JSON from datum:  " + ex.Message, LoggingLevel.Normal, GetType());
+                        SensusServiceHelper.Get().Logger.Log("Failed to get anonymized JSON from datum:  " + ex.Message, LoggingLevel.Normal, GetType());
                     }
                 }
 

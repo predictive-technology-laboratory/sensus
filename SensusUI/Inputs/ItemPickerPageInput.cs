@@ -29,24 +29,8 @@ using Xamarin;
 
 namespace SensusUI.Inputs
 {
-    public class ItemPickerPageInput : Input
+    public class ItemPickerPageInput : ItemPickerInput
     {
-        /*private class TextColorValueConverter : IValueConverter
-        {
-            public object Convert(object value, Type targetType, object selectedItems, CultureInfo culture)
-            {
-                if (value == null)
-                    return Color.Gray;
-
-                return (selectedItems as List<object>).Contains(value) ? Color.Accent : Color.Gray;
-            }
-
-            public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-            {
-                throw new SensusException("Invalid call to " + GetType().FullName + ".ConvertBack.");
-            }
-        }*/
-
         private List<object> _items;
         private bool _multiselect;
         private List<object> _selectedItems;
@@ -109,6 +93,7 @@ namespace SensusUI.Inputs
             }
         }
 
+        [JsonIgnore]
         public override bool Enabled
         {
             get
@@ -166,12 +151,15 @@ namespace SensusUI.Inputs
                 {
                     Orientation = StackOrientation.Vertical,
                     VerticalOptions = LayoutOptions.Start,
-                    HorizontalOptions = LayoutOptions.FillAndExpand                            
+                    HorizontalOptions = LayoutOptions.FillAndExpand,
+                    Padding = new Thickness(30, 10, 0, 10)
                 };
 
-                for (int i = 0; i < _items.Count; ++i)
+                List<object> itemList = RandomizeItemOrder ? _items.OrderBy(item => Guid.NewGuid()).ToList() : _items;
+
+                for (int i = 0; i < itemList.Count; ++i)
                 {
-                    object item = _items[i];
+                    object item = itemList[i];
 
                     Label itemLabel = new Label
                     {
@@ -185,6 +173,8 @@ namespace SensusUI.Inputs
                         #endif
                     };
 
+                    _itemLabels.Add(itemLabel);
+
                     itemLabel.SetBinding(Label.TextProperty, _textBindingPropertyPath, stringFormat: "{0}");
 
                     TapGestureRecognizer tapRecognizer = new TapGestureRecognizer
@@ -196,6 +186,9 @@ namespace SensusUI.Inputs
 
                     tapRecognizer.Tapped += (o, e) =>
                     {
+                        if (!itemLabel.IsEnabled)
+                            return;
+                            
                         if (_selectedItems.Contains(item))
                             _selectedItems.Remove(item);
                         else
@@ -211,8 +204,12 @@ namespace SensusUI.Inputs
                     };
                     
                     itemLabel.GestureRecognizers.Add(tapRecognizer);
+
+                    // add invisible separator between items for fewer tapping errors
+                    if (itemLabelStack.Children.Count > 0)
+                        itemLabelStack.Children.Add(new BoxView { Color = Color.Transparent, HeightRequest = 5 });
+                    
                     itemLabelStack.Children.Add(itemLabel);
-                    _itemLabels.Add(itemLabel);
                 }
 
                 _label = CreateLabel(index);
@@ -230,16 +227,26 @@ namespace SensusUI.Inputs
             return base.GetView(index);
         }
 
-        public override bool ValueEquals(object value)
+        public override bool ValueMatches(object conditionValue, bool conjunctive)
         {
-            // if a list is passed, compare by ordered values
-            if (value is List<object>)
-                return (Value as List<object>).OrderBy(o => o).SequenceEqual((value as List<object>).OrderBy(o => o));
+            // if a list is passed, compare values
+            if (conditionValue is List<object>)
+            {
+                List<object> selectedValueList = Value as List<object>;
+                List<object> conditionValueList = conditionValue as List<object>;
+
+                // if the matching condition is conjunctive, then the two lists must be identical.
+                if (conjunctive)
+                    return selectedValueList.OrderBy(o => o).SequenceEqual(conditionValueList.OrderBy(o => o));
+                // if the matching condiction is disjunctive, then any of the condition values may be selected.
+                else
+                    return conditionValueList.Any(o => selectedValueList.Contains(o));
+            }
             else
             {
                 // this should never happen
                 if (Insights.IsInitialized)
-                    Insights.Report(new Exception("Called ItemPickerPageInput.ValueEquals with value that is not a List<object>."), Insights.Severity.Critical);
+                    Insights.Report(new Exception("Called ItemPickerPageInput.ValueMatches with conditionValue that is not a List<object>."), Insights.Severity.Critical);
 
                 return false;
             }

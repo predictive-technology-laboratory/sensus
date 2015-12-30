@@ -91,6 +91,7 @@ namespace SensusUI
                             null,
                             null,
                             null,
+                            false,
                             inputs =>
                             {
                                 if (inputs == null)
