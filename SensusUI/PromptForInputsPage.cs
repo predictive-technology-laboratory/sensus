@@ -95,6 +95,9 @@ namespace SensusUI
                     }
                 }
 
+            if (_displayedInputCount > 0)
+                contentLayout.Children.Add(new BoxView { Color = Color.Transparent, HeightRequest = inputSeparatorHeight });
+
             if (anyRequired)
                 contentLayout.Children.Add(new Label
                     {
