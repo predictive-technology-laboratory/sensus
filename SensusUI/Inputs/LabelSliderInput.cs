@@ -25,6 +25,7 @@ namespace SensusUI.Inputs
         private double _maximum;
         private string _leftLabel;
         private string _rightLabel;
+        private string _tipText;
         private double _increment;
         private Slider _slider;
         private double _incrementalValue;
@@ -107,6 +108,19 @@ namespace SensusUI.Inputs
             }
         }
 
+        [EntryStringUiProperty("Tip text:", true, 3)]
+        public string TipText
+        {
+            get
+            {
+                return _tipText;
+            }
+            set
+            {
+                _tipText = value;
+            }
+        }
+
         public override bool Enabled
         {
             get
@@ -153,7 +167,6 @@ namespace SensusUI.Inputs
 
         public override View GetView(int index)
         {
-            string tipText = "  Please move the slider below.";
 
             if (base.GetView(index) == null && _maximum > _minimum)
             {
@@ -175,7 +188,7 @@ namespace SensusUI.Inputs
                 _incrementalValueHasChanged = false;
 
                 _sliderLabel = CreateLabel(index);
-                _sliderLabel.Text += tipText;
+                _sliderLabel.Text += _tipText;
 
                 _slider.ValueChanged += (o, e) =>
                     {
