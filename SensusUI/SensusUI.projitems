@@ -55,6 +55,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\ItemPickerDialogInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\InputValueCondition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\InputDisplayCondition.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Inputs\LabelSliderInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\ItemPickerInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\InputCompletionRecord.cs" />
   </ItemGroup>
