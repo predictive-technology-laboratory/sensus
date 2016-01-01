@@ -49,7 +49,7 @@ namespace SensusUI
             {
                 Orientation = StackOrientation.Vertical,
                 VerticalOptions = LayoutOptions.FillAndExpand,
-                Padding = new Thickness(0, 20, 0, 0),
+                Padding = new Thickness(10, 20, 10, 20),
                 Children =
                 {
                     new Label
@@ -104,7 +104,7 @@ namespace SensusUI
                         Text = "*Required Field",
                         FontSize = 15,
                         TextColor = Color.Red,
-                        HorizontalOptions = LayoutOptions.Center
+                        HorizontalOptions = LayoutOptions.Start,
                     });
             
             List<Input> displayedInputs = new List<Input>();
@@ -151,19 +151,20 @@ namespace SensusUI
             StackLayout previousNextStack = new StackLayout
                 {
                     Orientation = StackOrientation.Horizontal,
-                    HorizontalOptions = LayoutOptions.FillAndExpand
+                    HorizontalOptions = LayoutOptions.FillAndExpand,
+//                    Padding = new Thickness(0, 0, 0, 15)
                 };
 
             StackLayout previousStack = new StackLayout
                 {
                     Orientation = StackOrientation.Horizontal,
-                    HorizontalOptions = LayoutOptions.CenterAndExpand
+                    HorizontalOptions = LayoutOptions.FillAndExpand
                 };
 
             StackLayout nextStack = new StackLayout
                 {
                     Orientation = StackOrientation.Horizontal,
-                    HorizontalOptions = LayoutOptions.CenterAndExpand
+                    HorizontalOptions = LayoutOptions.FillAndExpand
                 };
 
             previousNextStack.Children.Add(previousStack);
@@ -178,7 +179,7 @@ namespace SensusUI
             {
                 Button previousButton = new Button
                 {
-                    HorizontalOptions = LayoutOptions.Center,
+                    HorizontalOptions = LayoutOptions.CenterAndExpand,
                     FontSize = 20,
                     Text = "Previous"
                 };
@@ -195,7 +196,7 @@ namespace SensusUI
             {
                 Button previousButton = new Button
                     {
-                        HorizontalOptions = LayoutOptions.Center,
+                        HorizontalOptions = LayoutOptions.CenterAndExpand,
                         FontSize = 20,
                         TextColor = Color.Gray,
                         Text = "Previous"
@@ -210,7 +211,7 @@ namespace SensusUI
 
             Button nextButton = new Button
             {
-                HorizontalOptions = LayoutOptions.Center,
+                HorizontalOptions = LayoutOptions.CenterAndExpand,
                 FontSize = 20,
                 Text = stepNumber < totalSteps ? "Next" : "Submit"
 
@@ -260,11 +261,12 @@ namespace SensusUI
             {
                 Button cancelButton = new Button
                     {
-                        HorizontalOptions = LayoutOptions.Center,
+                        HorizontalOptions = LayoutOptions.CenterAndExpand,
                         FontSize = 20,
                         Text = "Cancel"
                     };
-
+                            
+                navigationStack.Children.Add(new BoxView { Color = Color.Gray, HorizontalOptions = LayoutOptions.FillAndExpand, HeightRequest = 0.5 });
                 navigationStack.Children.Add(cancelButton);
 
                 cancelButton.Clicked += async (o, e) =>
