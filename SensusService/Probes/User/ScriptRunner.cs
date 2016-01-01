@@ -235,23 +235,16 @@ namespace SensusService.Probes.User
                     {
                         string[] startEnd = window.Split('-');
 
-                        string[] startHourMinute;
-                        string[] endHourMinute;
-                        int startHour;
-                        int startMinute;
-                        int endHour;
-                        int endMinute;
-
-                        startHourMinute= startEnd[0].Split(':');
-                        startHour = int.Parse(startHourMinute[0]);
-                        startMinute = int.Parse(startHourMinute[1]);
+                        string[] startHourMinute= startEnd[0].Split(':');
+                        int startHour = int.Parse(startHourMinute[0]);
+                        int startMinute = int.Parse(startHourMinute[1]);
 
                         // if we have a window...
                         if (startEnd.Length > 1)
                         {
-                            endHourMinute = startEnd[1].Split(':');
-                            endHour = int.Parse(endHourMinute[0]);
-                            endMinute = int.Parse(endHourMinute[1]);
+                            string[] endHourMinute = startEnd[1].Split(':');
+                            int endHour = int.Parse(endHourMinute[0]);
+                            int endMinute = int.Parse(endHourMinute[1]);
 
                             if (startHour < 0 || startHour > 23 || endHour < 0 || endHour > 23 || startMinute > 59 || startMinute < 0 || endMinute > 59 || endMinute < 0 || (startHour * 100) + startMinute > (endHour * 100) + endMinute)
                                 throw new Exception();
