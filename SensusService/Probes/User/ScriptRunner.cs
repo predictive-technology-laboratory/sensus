@@ -212,14 +212,14 @@ namespace SensusService.Probes.User
                         string[] formatted;
                         formatted = new string[4];
 
-                        formatted[0] = window.Item1.ToString();
+                        formatted[0] = window.Item1.ToString().Length == 1 ? "0" + window.Item1.ToString() : window.Item1.ToString();
                         formatted[1] = window.Item2.ToString().Length == 1 ? "0" + window.Item2.ToString() : window.Item2.ToString();
-                        formatted[2] = window.Item3.ToString();
+                        formatted[2] = window.Item3.ToString().Length == 1 ? "0" + window.Item3.ToString() : window.Item3.ToString();
                         formatted[3] = window.Item4.ToString().Length == 1 ? "0" + window.Item4.ToString() : window.Item4.ToString();
 
                         windowStrings.Add(new Tuple<string, string, string, string>(formatted[0], formatted[1], formatted[2], formatted[3]));
                     }
-                    return string.Concat(windowStrings.Select((window, index) => (index == 0 ? "" : ",") + window.Item1 + ":" + window.Item2 + "-" + window.Item3 + ":" + window.Item4));
+                    return string.Concat(windowStrings.Select((window, index) => (index == 0 ? "" : ",") + (window.Item1 == window.Item3 && window.Item2 == window.Item4 ? window.Item1 + ":" + window.Item2 : window.Item1 + ":" + window.Item2 + "-" + window.Item3 + ":" + window.Item4)));
                 }
             }
             set
@@ -235,19 +235,38 @@ namespace SensusService.Probes.User
                     {
                         string[] startEnd = window.Split('-');
 
-                        string[] startHourMinute = startEnd[0].Split(':');
-                        string[] endHourMinute = startEnd[1].Split(':');
+                        string[] startHourMinute;
+                        string[] endHourMinute;
+                        int startHour;
+                        int startMinute;
+                        int endHour;
+                        int endMinute;
 
-                        int startHour = int.Parse(startHourMinute[0]);
-                        int startMinute = int.Parse(startHourMinute[1]);
+                        startHourMinute= startEnd[0].Split(':');
+                        startHour = int.Parse(startHourMinute[0]);
+                        startMinute = int.Parse(startHourMinute[1]);
 
-                        int endHour = int.Parse(endHourMinute[0]);
-                        int endMinute = int.Parse(endHourMinute[1]);
+                        // if we have a window...
+                        if (startEnd.Length > 1)
+                        {
+                            endHourMinute = startEnd[1].Split(':');
+                            endHour = int.Parse(endHourMinute[0]);
+                            endMinute = int.Parse(endHourMinute[1]);
 
-                        if (startHour < 0 || startHour > 23 || endHour < 0 || endHour > 23 || startMinute > 59 || startMinute < 0 || endMinute > 59 || endMinute < 0 || (startHour * 100) + startMinute >= (endHour * 100) + endMinute)
+                            if (startHour < 0 || startHour > 23 || endHour < 0 || endHour > 23 || startMinute > 59 || startMinute < 0 || endMinute > 59 || endMinute < 0 || (startHour * 100) + startMinute > (endHour * 100) + endMinute)
+                                throw new Exception();
+
+                            // ...pass in start time and end time
+                            _randomTriggerWindows.Add(new Tuple<int, int, int, int>(startHour, startMinute, endHour, endMinute));
+                            continue;
+                        }
+
+                        // if we have a specific time...
+                        if (startHour < 0 || startHour > 23 || startMinute > 59 || startMinute < 0)
                             throw new Exception();
-                        
-                        _randomTriggerWindows.Add(new Tuple<int, int, int, int>(startHour, startMinute, endHour, endMinute));
+
+                        // ...pass in start time as end time
+                        _randomTriggerWindows.Add(new Tuple<int, int, int, int>(startHour, startMinute, startHour, startMinute));
                     }
                         
                     _randomTriggerWindows = _randomTriggerWindows.OrderBy(window => window.Item2).ToList();
@@ -557,7 +576,7 @@ namespace SensusService.Probes.User
                         _randomTriggerCallbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback((callbackId, cancellationToken) =>
                             {
                                 // if the probe is still running and the runner is enabled, run a copy of the script so that we can retain a pristine version of the original
-                                if (_probe.Running && _enabled && _randomTriggerWindows.Any(window => (DateTime.Now.Hour > window.Item1 && DateTime.Now.Hour < window.Item3) || (DateTime.Now.Hour == window.Item1 && DateTime.Now.Minute > window.Item2) || (DateTime.Now.Hour == window.Item3 && DateTime.Now.Minute < window.Item4)))  // be sure to use DateTime.Now and not the local now variable, which will be in the past.
+                        if (_probe.Running && _enabled && _randomTriggerWindows.Any(window => (DateTime.Now.Hour > window.Item1 && DateTime.Now.Hour < window.Item3) || (DateTime.Now.Hour == window.Item1 && DateTime.Now.Minute >= window.Item2) || (DateTime.Now.Hour == window.Item3 && DateTime.Now.Minute <= window.Item4)))  // be sure to use DateTime.Now and not the local now variable, which will be in the past.
                                     RunAsync(_script.Copy(), _delayMS, StartRandomTriggerCallbacksAsync);
                             }                   
                         , "Trigger Randomly", triggerDelayMS, userNotificationMessage);
