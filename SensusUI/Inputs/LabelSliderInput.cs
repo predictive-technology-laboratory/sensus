@@ -58,7 +58,7 @@ namespace SensusUI.Inputs
             }
         }
 
-        [EntryDoubleUiProperty(null, true, 12)]
+        [EntryDoubleUiProperty(null, true, 13)]
         public double Increment
         {
             get
@@ -82,7 +82,7 @@ namespace SensusUI.Inputs
             }
         }
 
-        [EntryStringUiProperty("Left label:", true, 13)]
+        [EntryStringUiProperty("Left label:", true, 14)]
         public string LeftLabel
         {
             get
@@ -95,7 +95,7 @@ namespace SensusUI.Inputs
             }
         }
 
-        [EntryStringUiProperty("Right label:", true, 14)]
+        [EntryStringUiProperty("Right label:", true, 15)]
         public string RightLabel
         {
             get
