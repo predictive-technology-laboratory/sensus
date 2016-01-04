@@ -120,8 +120,8 @@ namespace SensusUI.Inputs
         public abstract object Value { get; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the user has interacted <see cref="SensusUI.Inputs.Input"/> with
-        /// this input, leaving it in a state of completion. Contrast with Valid, which merely indicates that the 
+        /// Gets or sets a value indicating whether the user has interacted with this <see cref="SensusUI.Inputs.Input"/>,
+        /// leaving it in a state of completion. Contrast with Valid, which merely indicates that the 
         /// state of the input will not prevent the user from moving through an input request (e.g., in the case
         /// of inputs that are not required).
         /// </summary>
@@ -149,7 +149,8 @@ namespace SensusUI.Inputs
                     inputValue = JsonConvert.DeserializeObject<object>(JsonConvert.SerializeObject(Value, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
                 }
 
-                _completionRecords.Add(new InputCompletionRecord(timestamp, inputValue));
+                if (StoreCompletionRecords)
+                    _completionRecords.Add(new InputCompletionRecord(timestamp, inputValue));
             }
         }
 
@@ -296,6 +297,14 @@ namespace SensusUI.Inputs
             }
         }
 
+        public virtual bool StoreCompletionRecords
+        {
+            get
+            {
+                return true; 
+            }
+        }
+
         [JsonIgnore]
         public bool Display
         {
@@ -429,6 +438,7 @@ namespace SensusUI.Inputs
         public Input Copy()
         {
             Input copy = JsonConvert.DeserializeObject<Input>(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
+
             copy.Reset();
 
             return copy;

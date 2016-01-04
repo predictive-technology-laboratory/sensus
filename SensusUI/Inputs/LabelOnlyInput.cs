@@ -48,6 +48,20 @@ namespace SensusUI.Inputs
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether this <see cref="SensusUI.Inputs.LabelOnlyInput"/> stores completion records. Always
+        /// returns false, since label-only inputs are complete by definition and repeated deserialization will accumulate
+        /// completion records that don't have meaning:  https://github.com/predictive-technology-laboratory/sensus/issues/126
+        /// </summary>
+        /// <value><c>false</c></value>
+        public override bool StoreCompletionRecords
+        {
+            get
+            {
+                return false;
+            }
+        }
+
         public LabelOnlyInput()
         {
             Construct(true);

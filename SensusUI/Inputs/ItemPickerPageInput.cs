@@ -46,7 +46,12 @@ namespace SensusUI.Inputs
             }
         }
 
+        /// <summary>
+        /// Provides a means of setting the items via a UI property (e.g., when configuring this input for a script).
+        /// </summary>
+        /// <value>The string items.</value>
         [EditableListUiProperty("Items:", true, 10)]
+        [JsonIgnore]
         public List<string> StringItems
         {
             get
