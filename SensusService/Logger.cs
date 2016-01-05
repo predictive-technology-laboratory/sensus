@@ -78,8 +78,11 @@ namespace SensusService
 
                         _messageBuffer.Clear();
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
+                        // try switching the log path to a random file, since access violations might prevent us from writing the current _path (e.g., in the case of crashes)
+                        _path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), Guid.NewGuid().ToString() + ".txt");
+                        _messageBuffer.Add("Switched log path to \"" + _path + "\" due to exception:  " + ex.Message);
                     }
                 }
             }

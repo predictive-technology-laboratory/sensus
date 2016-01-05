@@ -146,34 +146,40 @@ namespace Sensus.Android
                 Insights.Identify(_deviceId, "Device ID", _deviceId);
         }
 
-        public void RunActionUsingMainActivityAsync(Action<AndroidMainActivity> action, bool startIfNotFocused)
+        /// <summary>
+        /// Runs an action using main activity, optionally bringing the main activity into focus if it is not already focused.
+        /// </summary>
+        /// <param name="action">Action to run.</param>
+        /// <param name="startMainActivityIfNotFocused">If set to <c>true</c> and the main activity is not focused, then start the main
+        /// activity. If <c>false</c> and the main activity is not focused, the action is dropped.</param>
+        public void RunActionUsingMainActivityAsync(Action<AndroidMainActivity> action, bool startMainActivityIfNotFocused)
         {
             // this must be done asynchronously because it blocks waiting for the activity to start. calling this method from the UI would create deadlocks.
             new Thread(() =>
                 {
                     lock (_focusedMainActivityLocker)
                     {
+                        // if we should drop the action, simply return.
+                        if (_focusedMainActivity == null && !startMainActivityIfNotFocused)
+                            return;
+
+                        // we're going to run the action...add it to our cache.
                         lock (_actionsToRunUsingMainActivity)
                             _actionsToRunUsingMainActivity.Add(action);
-
+                        
                         if (_focusedMainActivity == null)
                         {             
-                            if (startIfNotFocused)
+                            if (_mainActivityWillBeDisplayed)
+                                Logger.Log("Main activity is about to be displayed. Will wait for it before running action.", LoggingLevel.Normal, GetType());
+                            else
                             {
-                                Logger.Log("Main activity is not focused. Starting activity.", LoggingLevel.Normal, GetType());
+                                Logger.Log("Starting main activity to run action.", LoggingLevel.Normal, GetType());
 
-                                if (_mainActivityWillBeDisplayed)
-                                    Logger.Log("Main activity is about to be displayed. Will wait for it.", LoggingLevel.Normal, GetType());
-                                else
-                                {
-                                    Logger.Log("Starting main activity.", LoggingLevel.Normal, GetType());
-
-                                    // start the activity. when it starts, it will call back to SetFocusedMainActivity indicating readiness. once 
-                                    // this happens, we'll be ready to run the action that was just passed in.
-                                    Intent intent = new Intent(_service, typeof(AndroidMainActivity));
-                                    intent.AddFlags(ActivityFlags.FromBackground | ActivityFlags.NewTask);
-                                    _service.StartActivity(intent);
-                                }
+                                // start the activity. when it starts, it will call back to SetFocusedMainActivity indicating readiness. once 
+                                // this happens, we'll be ready to run the action that was just passed in as well as any others that need to be run.
+                                Intent intent = new Intent(_service, typeof(AndroidMainActivity));
+                                intent.AddFlags(ActivityFlags.FromBackground | ActivityFlags.NewTask);
+                                _service.StartActivity(intent);
                             }
                         }
                         else
