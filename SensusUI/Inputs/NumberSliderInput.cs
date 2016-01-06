@@ -259,14 +259,14 @@ namespace SensusUI.Inputs
                                 new Label
                                 {
                                     Text = _minimum.ToString(),
-                                    FontSize = 15,
+                                    FontSize = 20,
                                     HorizontalOptions = LayoutOptions.Fill
                                 },
                                 _slider,
                                 new Label
                                 {
                                     Text = _maximum.ToString(),
-                                    FontSize = 15,
+                                    FontSize = 20,
                                     HorizontalOptions = LayoutOptions.Fill
                                 }
                             }
