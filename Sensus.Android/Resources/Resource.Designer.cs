@@ -28,6 +28,9 @@ namespace Sensus.Android
 		{
 			global::PCLStorage.Resource.String.ApplicationName = global::Sensus.Android.Resource.String.ApplicationName;
 			global::PCLStorage.Resource.String.Hello = global::Sensus.Android.Resource.String.Hello;
+			global::ZXing.Mobile.Resource.Id.contentFrame = global::Sensus.Android.Resource.Id.contentFrame;
+			global::ZXing.Mobile.Resource.Layout.zxingscanneractivitylayout = global::Sensus.Android.Resource.Layout.zxingscanneractivitylayout;
+			global::ZXing.Mobile.Resource.Layout.zxingscannerfragmentlayout = global::Sensus.Android.Resource.Layout.zxingscannerfragmentlayout;
 			global::XLabs.Platform.Resource.String.ApplicationName = global::Sensus.Android.Resource.String.ApplicationName;
 			global::XLabs.Platform.Resource.String.Hello = global::Sensus.Android.Resource.String.Hello;
 			global::XLabs.Forms.Resource.Animation.abc_fade_in = global::Sensus.Android.Resource.Animation.abc_fade_in;
@@ -3065,9 +3068,6 @@ namespace Sensus.Android
 			global::Xamarin.Forms.Platform.Resource.Styleable.ViewStubCompat_android_id = global::Sensus.Android.Resource.Styleable.ViewStubCompat_android_id;
 			global::Xamarin.Forms.Platform.Resource.Styleable.ViewStubCompat_android_inflatedId = global::Sensus.Android.Resource.Styleable.ViewStubCompat_android_inflatedId;
 			global::Xamarin.Forms.Platform.Resource.Styleable.ViewStubCompat_android_layout = global::Sensus.Android.Resource.Styleable.ViewStubCompat_android_layout;
-			global::ZXing.Mobile.Resource.Id.contentFrame = global::Sensus.Android.Resource.Id.contentFrame;
-			global::ZXing.Mobile.Resource.Layout.zxingscanneractivitylayout = global::Sensus.Android.Resource.Layout.zxingscanneractivitylayout;
-			global::ZXing.Mobile.Resource.Layout.zxingscannerfragmentlayout = global::Sensus.Android.Resource.Layout.zxingscannerfragmentlayout;
 		}
 		
 		public partial class Animation
