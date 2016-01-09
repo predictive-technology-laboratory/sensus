@@ -82,15 +82,8 @@ namespace SensusUI
             int inputSeparatorHeight = 10;
 
             int viewNumber = 1;
-            bool anyRequired = false;
 
-            if (inputGroup.Inputs.Any(input => input.Display && input.GetView(viewNumber) != null && input.Required))
-            {
-                anyRequired = true;
-            }
-
-            if (_displayedInputCount > 0)
-                contentLayout.Children.Add(new BoxView { Color = Color.Transparent, HeightRequest = inputSeparatorHeight });
+            bool anyRequired = inputGroup.Inputs.Any(input => input.Display && input.Required);
 
             if (anyRequired)
                 contentLayout.Children.Add(new Label
@@ -120,9 +113,6 @@ namespace SensusUI
                             };
                         }
                         
-                        if (_displayedInputCount > 0)
-                            contentLayout.Children.Add(new BoxView { Color = Color.Transparent, HeightRequest = inputSeparatorHeight });
-                        
                         contentLayout.Children.Add(inputView);
                         displayedInputs.Add(input);
 
@@ -142,22 +132,33 @@ namespace SensusUI
                 HorizontalOptions = LayoutOptions.FillAndExpand
             };
 
+            StackLayout previousNextStack = new StackLayout
+            {
+                Orientation = StackOrientation.Horizontal,
+                HorizontalOptions = LayoutOptions.FillAndExpand
+            };
+
             #region previous button
 
             bool previousButtonTapped = false;
 
-            Button previousButton = new Button
+            if (stepNumber > 1)
             {
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                FontSize = 20,
-                Text = "Previous"
-            };
+                Button previousButton = new Button
+                {
+                    HorizontalOptions = LayoutOptions.FillAndExpand,
+                    FontSize = 20,
+                    Text = "Previous"
+                };
 
-            previousButton.Clicked += async (o, e) =>
-            {
-                previousButtonTapped = true;
-                await Navigation.PopModalAsync(false);
-            };  
+                previousButton.Clicked += async (o, e) =>
+                {
+                    previousButtonTapped = true;
+                    await Navigation.PopModalAsync(false);
+                };
+
+                previousNextStack.Children.Add(previousButton);
+            }
 
             #endregion
 
@@ -201,17 +202,9 @@ namespace SensusUI
                 }
             };
 
-            #endregion
-
-            StackLayout previousNextStack = new StackLayout
-            {
-                Orientation = StackOrientation.Horizontal,
-                HorizontalOptions = LayoutOptions.FillAndExpand
-            };
-
-            if (stepNumber > 1)
-                previousNextStack.Children.Add(previousButton);
             previousNextStack.Children.Add(nextButton);
+
+            #endregion
 
             navigationStack.Children.Add(previousNextStack);
 

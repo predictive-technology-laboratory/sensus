@@ -100,7 +100,7 @@ namespace SensusUI.Inputs
             }
         }
 
-        [EntryStringUiProperty("Left label:", true, 13)]
+        [EntryStringUiProperty("Left Label:", true, 13)]
         public string LeftLabel
         {
             get
@@ -113,7 +113,7 @@ namespace SensusUI.Inputs
             }
         }
 
-        [EntryStringUiProperty("Right label:", true, 14)]
+        [EntryStringUiProperty("Right Label:", true, 14)]
         public string RightLabel
         {
             get
@@ -230,7 +230,9 @@ namespace SensusUI.Inputs
                 _incrementalValueHasChanged = false;
 
                 _sliderLabel = CreateLabel(index);
-                _sliderLabel.Text += "  " + _tipText;
+
+                if (!string.IsNullOrWhiteSpace(_tipText))
+                    _sliderLabel.Text += "  " + _tipText;
 
                 _slider.ValueChanged += (o, e) =>
                 {
@@ -240,69 +242,71 @@ namespace SensusUI.Inputs
                     {
                         _incrementalValue = newIncrementalValue;
                         _incrementalValueHasChanged = true;
-                        _sliderLabel.Text = DisplaySliderValue ? GetLabelText(index) + "  " + _incrementalValue : GetLabelText(index) + "  " + _tipText;
+                        _sliderLabel.Text = _displaySliderValue ? GetLabelText(index) + "  " + _incrementalValue : GetLabelText(index) + "  " + _tipText;
                         Complete = Value != null;
                     }
                 };
 
-                StackLayout stack = new StackLayout();
-                stack.Orientation = StackOrientation.Vertical;
-                stack.VerticalOptions = LayoutOptions.Start;
-                stack.Children.Add(_sliderLabel);
-                if (_displayMinMax)
-                    stack.Children.Add(new StackLayout
+                base.SetView(new StackLayout
+                    {
+                        Orientation = StackOrientation.Vertical,
+                        VerticalOptions = LayoutOptions.Start,
+                        Children =
                         {
-                            Orientation = StackOrientation.Horizontal,
-                            HorizontalOptions = LayoutOptions.FillAndExpand,
-                            Children =
+                            _sliderLabel,
+                            new StackLayout
                             {
-                                new Label
+                                Orientation = StackOrientation.Horizontal,
+                                HorizontalOptions = LayoutOptions.FillAndExpand,
+                                Children =
                                 {
-                                    Text = _minimum.ToString(),
-                                    FontSize = 15,
-                                    HorizontalOptions = LayoutOptions.Fill
+                                    new Label
+                                    {
+                                        Text = _minimum.ToString(),
+                                        FontSize = 20,
+                                        HorizontalOptions = LayoutOptions.Fill,
+                                        IsVisible = _displayMinMax
+                                    },
+                                    _slider,
+                                    new Label
+                                    {
+                                        Text = _maximum.ToString(),
+                                        FontSize = 20,
+                                        HorizontalOptions = LayoutOptions.Fill,
+                                        IsVisible = _displayMinMax
+                                    }
                                 },
-                                _slider,
-                                new Label
-                                {
-                                    Text = _maximum.ToString(),
-                                    FontSize = 15,
-                                    HorizontalOptions = LayoutOptions.Fill
-                                }
-                            }
-                        });
-                else
-                    stack.Children.Add(_slider);
-                if (_leftLabel != null || _rightLabel != null)
-                    stack.Children.Add(new StackLayout
-                        {
-                            Orientation = StackOrientation.Horizontal,
-                            HorizontalOptions = LayoutOptions.FillAndExpand,
-                            Children =
+                            },
+                            new StackLayout
                             {
-                                new Label
+                                Orientation = StackOrientation.Horizontal,
+                                HorizontalOptions = LayoutOptions.FillAndExpand,
+                                Children =
                                 {
-                                    Text = _leftLabel,
-                                    HorizontalOptions = LayoutOptions.FillAndExpand,
-                                    FontSize = 15
+                                    new Label
+                                    {
+                                        Text = _leftLabel,
+                                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                                        FontSize = 15
+                                    },
+                                    new Label
+                                    {
+                                        Text = _rightLabel,
+                                        HorizontalOptions = LayoutOptions.End,
+                                        FontSize = 15
+                                    }
                                 },
-                                new Label
-                                {
-                                    Text = _rightLabel,
-                                    HorizontalOptions = LayoutOptions.End,
-                                    FontSize = 15
-                                }
+                                IsVisible = (_leftLabel != null || _rightLabel != null)
                             }
-                        });
-
-                base.SetView(stack);
+                        }
+                    });
             }
             else
             {
                 if (Enabled)
                 {
                     // if the view was already initialized and is enabled, just update the label since the index might have changed.
-                    _sliderLabel.Text = DisplaySliderValue ? GetLabelText(index) + "  " + (_incrementalValueHasChanged ? _incrementalValue.ToString() : _tipText) : GetLabelText(index) + "  " + _tipText;
+                    _sliderLabel.Text = _displaySliderValue ? GetLabelText(index) + "  " + (_incrementalValueHasChanged ? _incrementalValue.ToString() : _tipText) : GetLabelText(index) + "  " + _tipText;
                 }
                 else
                 {
