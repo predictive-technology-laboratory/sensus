@@ -30,12 +30,12 @@ namespace SensusService.DataStores
         private int _commitDelayMS;
         private bool _running;
         private Protocol _protocol;
-        private DateTimeOffset _mostRecentCommitTimestamp;
+        private DateTime? _mostRecentCommitTime;
         private List<Datum> _nonProbeDataToCommit;
-        private bool _isCommitting;
+        private DateTime? _commitStartTime;
         private string _commitCallbackId;
 
-        private readonly object _locker = new object();
+        private readonly object _commitLocker = new object();
 
         [EntryIntegerUiProperty("Commit Delay (MS):", true, 2)]
         public int CommitDelayMS
@@ -78,9 +78,9 @@ namespace SensusService.DataStores
         {
             _commitDelayMS = 10000;
             _running = false;
-            _mostRecentCommitTimestamp = DateTimeOffset.MinValue;
+            _mostRecentCommitTime = null;
             _nonProbeDataToCommit = new List<Datum>();
-            _isCommitting = false;     
+            _commitStartTime = null;
             _commitCallbackId = null;
         }
 
@@ -95,17 +95,11 @@ namespace SensusService.DataStores
         /// </summary>
         public virtual void Start()
         {
-            lock (_locker)
+            if (!_running)
             {
-                if (_running)
-                    return;
-                else
-                    _running = true;
-
+                _running = true;
                 SensusServiceHelper.Get().Logger.Log("Starting.", LoggingLevel.Normal, GetType());
-
-                _mostRecentCommitTimestamp = DateTimeOffset.UtcNow;
-
+                _mostRecentCommitTime = DateTime.Now;
                 _commitCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(Commit, GetType().FullName + " Commit", _commitDelayMS, _commitDelayMS);
             }
         }
@@ -135,11 +129,11 @@ namespace SensusService.DataStores
 
         private void Commit(string callbackId, CancellationToken cancellationToken)
         {
-            lock (_locker)
+            lock (_commitLocker)
             {
                 if (_running)
                 {
-                    _isCommitting = true;
+                    _commitStartTime = DateTime.Now;
 
                     SensusServiceHelper.Get().Logger.Log("Committing data.", LoggingLevel.Normal, GetType());
 
@@ -170,7 +164,7 @@ namespace SensusService.DataStores
                             if (committedData == null)
                                 throw new DataStoreException("Null collection returned by CommitData");
 
-                            _mostRecentCommitTimestamp = DateTimeOffset.UtcNow;
+                            _mostRecentCommitTime = DateTime.Now;
                         }
                         catch (Exception ex)
                         {
@@ -196,7 +190,9 @@ namespace SensusService.DataStores
                         }
                     }
 
-                    _isCommitting = false;
+                    SensusServiceHelper.Get().Logger.Log("Finished commit in " + (DateTime.Now - _commitStartTime.GetValueOrDefault()).TotalSeconds + " seconds.", LoggingLevel.Normal, GetType());
+
+                    _commitStartTime = null;
                 }
             }
         }
@@ -221,13 +217,9 @@ namespace SensusService.DataStores
         /// </summary>
         public virtual void Stop()
         {
-            lock (_locker)
+            if (_running)
             {
-                if (_running)
-                    _running = false;
-                else
-                    return;
-
+                _running = false;
                 SensusServiceHelper.Get().Logger.Log("Stopping.", LoggingLevel.Normal, GetType());
                 SensusServiceHelper.Get().UnscheduleRepeatingCallback(_commitCallbackId);
                 _commitCallbackId = null;
@@ -236,11 +228,8 @@ namespace SensusService.DataStores
 
         public void Restart()
         {
-            lock (_locker)
-            {
-                Stop();
-                Start();
-            }
+            Stop();
+            Start();
         }
 
         public virtual bool TestHealth(ref string error, ref string warning, ref string misc)
@@ -253,9 +242,22 @@ namespace SensusService.DataStores
                 restart = true;
             }
 
-            double msElapsedSinceLastCommit = (DateTimeOffset.UtcNow - _mostRecentCommitTimestamp).TotalMilliseconds;
-            if (!_isCommitting && msElapsedSinceLastCommit > (_commitDelayMS + 5000))  // system timer callbacks aren't always fired exactly as scheduled, resulting in health tests that identify warning conditions for delayed data storage. allow a small fudge factor to ignore these warnings.
-                warning += "Datastore \"" + GetType().FullName + "\" has not committed data in " + msElapsedSinceLastCommit + "ms (commit delay = " + _commitDelayMS + "ms)." + Environment.NewLine;
+            double msElapsedSinceLastCommit = (DateTime.Now - _mostRecentCommitTime.GetValueOrDefault()).TotalMilliseconds;
+            if (msElapsedSinceLastCommit > (_commitDelayMS + 5000))  // system timer callbacks aren't always fired exactly as scheduled, resulting in health tests that identify warning conditions for delayed data storage. allow a small fudge factor to ignore most of these warnings warnings.
+            {
+                if (_commitStartTime == null)
+                    warning += "Datastore \"" + GetType().FullName + "\" has not committed data in " + msElapsedSinceLastCommit + "ms (commit delay = " + _commitDelayMS + "ms)." + Environment.NewLine;
+                else
+                {
+                    // the datastore is in the middle of a commit. report how long it has been trying.
+                    DateTime commitStartTime = _commitStartTime.GetValueOrDefault();
+                    double commitAttemptHours = (DateTime.Now - commitStartTime).TotalHours;
+                    warning += "Datastore \"" + GetType().FullName + "\" has been trying to commit data since " + commitStartTime + " (" + commitAttemptHours + " hours)." + Environment.NewLine;
+
+                    if (commitAttemptHours > 1)
+                        restart = true;
+                }
+            }
 
             return restart;
         }
@@ -263,11 +265,11 @@ namespace SensusService.DataStores
         public virtual void ClearForSharing()
         {
             if (_running)
-                throw new Exception("Cannot clear data store while it is running.");
+                throw new Exception("Cannot clear data store for sharing while it is running.");
             
-            _mostRecentCommitTimestamp = DateTimeOffset.MinValue;
+            _mostRecentCommitTime = null;
             _nonProbeDataToCommit.Clear();
-            _isCommitting = false;
+            _commitStartTime = null;
             _commitCallbackId = null;
         }
 
