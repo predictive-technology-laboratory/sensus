@@ -68,15 +68,7 @@ namespace SensusService
                 {
                     try
                     {
-                        using (StreamWriter file = new StreamWriter(_path, true))
-                        {
-                            foreach (string bufferedMessage in _messageBuffer)
-                                file.WriteLine(bufferedMessage);
-
-                            file.Close();
-                        }
-
-                        _messageBuffer.Clear();
+                        CommitMessageBuffer();
                     }
                     catch (Exception ex)
                     {
@@ -88,33 +80,91 @@ namespace SensusService
             }
         }
 
-        public List<string> Read(int maxMessages, bool mostRecentFirst)
+        private void CommitMessageBuffer()
         {
             lock (_messageBuffer)
             {
+                if (_messageBuffer.Count > 0)
+                {
+                    try
+                    {
+                        using (StreamWriter file = new StreamWriter(_path, true))
+                        {
+                            foreach (string bufferedMessage in _messageBuffer)
+                                file.WriteLine(bufferedMessage);
+
+                            file.Close();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Error committing message buffer:  " + ex.Message, SensusService.LoggingLevel.Normal, GetType());
+                    }
+
+                    _messageBuffer.Clear();
+                }
+            }
+        }
+
+        public List<string> Read(int maxMessages, bool mostRecentFirst)
+        {            
+            lock (_messageBuffer)
+            {
+                CommitMessageBuffer();
+
                 List<string> messages = new List<string>();
 
                 try
                 {
                     using (StreamReader file = new StreamReader(_path))
-                    {                        
+                    {       
+                        if (maxMessages > 0)
+                        {
+                            int numLines = 0;
+                            while (file.ReadLine() != null)
+                                ++numLines;
+                        
+                            file.BaseStream.Position = 0;
+                            file.DiscardBufferedData();
+
+                            int linesToSkip = Math.Max(numLines - maxMessages, 0);
+                            for (int i = 1; i <= linesToSkip; ++i)
+                                file.ReadLine();
+                        }
+
                         string line;
-                        while ((line = file.ReadLine()) != null && messages.Count + _messageBuffer.Count < maxMessages)
+                        while ((line = file.ReadLine()) != null)
                             messages.Add(line);
 
                         file.Close();
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    SensusServiceHelper.Get().Logger.Log("Error reading log file:  " + ex.Message, SensusService.LoggingLevel.Normal, GetType());
                 }
-
-                messages.AddRange(_messageBuffer);
 
                 if (mostRecentFirst)
                     messages.Reverse();
 
                 return messages;
+            }
+        }
+
+        public void CopyTo(string path)
+        {
+            lock (_messageBuffer)
+            {
+                CommitMessageBuffer();
+
+                try
+                {                    
+                    File.Copy(_path, path);
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Failed to copy log file to \"" + path + "\":  " + ex.Message, SensusService.LoggingLevel.Normal, GetType());
+                }
             }
         }
 

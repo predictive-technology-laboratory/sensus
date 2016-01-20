@@ -85,19 +85,6 @@ namespace Sensus.Android
             return new AndroidSensusServiceBinder(SensusServiceHelper.Get() as AndroidSensusServiceHelper);
         }
 
-        public override void OnTaskRemoved(Intent rootIntent)
-        {
-            base.OnTaskRemoved(rootIntent);
-
-            AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
-
-            if (serviceHelper != null)
-            {
-                serviceHelper.Logger.Log("Associated task has been removed. Stopping service helper.", LoggingLevel.Normal, GetType());
-                serviceHelper.Stop();
-            }
-        }
-
         public override void OnDestroy()
         {
             base.OnDestroy();

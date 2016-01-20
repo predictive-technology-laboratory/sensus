@@ -31,8 +31,9 @@ namespace SensusUI
         /// </summary>
         /// <param name="title">Title of page.</param>
         /// <param name="lines">Lines to display.</param>
+        /// <param name="shareCallback">Called when the user clicks the Share button.</param>
         /// <param name="clearCallback">Called when the user clicks the Clear button.</param>
-        public ViewTextLinesPage(string title, List<string> lines, bool displayShareButton, Action clearCallback)
+        public ViewTextLinesPage(string title, List<string> lines, Action shareCallback, Action clearCallback)
         {
             Title = title;
 
@@ -47,7 +48,7 @@ namespace SensusUI
                 HorizontalOptions = LayoutOptions.FillAndExpand,
             };
             
-            if (displayShareButton)
+            if (shareCallback != null)
             {
                 Button shareButton = new Button
                 {
@@ -58,26 +59,7 @@ namespace SensusUI
 
                 shareButton.Clicked += (o, e) =>
                 {
-                    string path = null;
-                    try
-                    {
-                        path = SensusServiceHelper.Get().GetSharePath(".txt");
-                        using (StreamWriter file = new StreamWriter(path))
-                        {
-                            foreach (string line in lines)
-                                file.WriteLine(line);
-
-                            file.Close();
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Failed to write lines to temp file for sharing:  " + ex.Message, SensusService.LoggingLevel.Normal, GetType());
-                        path = null;
-                    }
-
-                    if (path != null)
-                        SensusServiceHelper.Get().ShareFileAsync(path, title + ":  " + Path.GetFileName(path), "text/plain");
+                    shareCallback();
                 };
 
                 buttonStack.Children.Add(shareButton);
