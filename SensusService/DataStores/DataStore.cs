@@ -30,12 +30,9 @@ namespace SensusService.DataStores
         private int _commitDelayMS;
         private bool _running;
         private Protocol _protocol;
-        private DateTime? _mostRecentCommitTime;
+        private DateTime? _mostRecentSuccessfulCommitTime;
         private List<Datum> _nonProbeDataToCommit;
-        private DateTime? _commitStartTime;
         private string _commitCallbackId;
-
-        private readonly object _commitLocker = new object();
 
         [EntryIntegerUiProperty("Commit Delay (MS):", true, 2)]
         public int CommitDelayMS
@@ -78,9 +75,8 @@ namespace SensusService.DataStores
         {
             _commitDelayMS = 10000;
             _running = false;
-            _mostRecentCommitTime = null;
+            _mostRecentSuccessfulCommitTime = null;
             _nonProbeDataToCommit = new List<Datum>();
-            _commitStartTime = null;
             _commitCallbackId = null;
         }
 
@@ -99,8 +95,12 @@ namespace SensusService.DataStores
             {
                 _running = true;
                 SensusServiceHelper.Get().Logger.Log("Starting.", LoggingLevel.Normal, GetType());
-                _mostRecentCommitTime = DateTime.Now;
-                _commitCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(Commit, GetType().FullName + " Commit", _commitDelayMS, _commitDelayMS);
+                _mostRecentSuccessfulCommitTime = DateTime.Now;
+
+                // use the async version of commit so that we don't hang for unreliable commit operations (e.g., AWS S3 commits). this means that all commit 
+                // operations for a datastore must be suitable for running concurrently. ultimately, this might mean that duplicate data are committed either
+                // locally or remotely, but we can live with that since the alternative involves the potential for infinite hangs.
+                _commitCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(CommitAsync, GetType().FullName + " Commit", _commitDelayMS, _commitDelayMS);
             }
         }
 
@@ -110,15 +110,12 @@ namespace SensusService.DataStores
                 {
                     try
                     {
-                        Commit(null, cancellationToken);
+                        Commit(cancellationToken);
                     }
                     catch (Exception ex)
                     {
-                        string message = "Failed to run CommitAsync:  " + ex.Message;
-                        SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
-
                         if (flashOnError)
-                            SensusServiceHelper.Get().FlashNotificationAsync(message);
+                            SensusServiceHelper.Get().FlashNotificationAsync("Failed to commit data:  " + ex.Message);
                     }
 
                     if (callback != null)
@@ -127,15 +124,24 @@ namespace SensusService.DataStores
                 }).Start();
         }
 
-        private void Commit(string callbackId, CancellationToken cancellationToken)
+        private void CommitAsync(string callbackId, CancellationToken cancellationToken)
         {
-            lock (_commitLocker)
-            {
-                if (_running)
+            new Thread(() =>
                 {
-                    _commitStartTime = DateTime.Now;
+                    Commit(cancellationToken);
 
+                }).Start();
+        }
+
+        private void Commit(CancellationToken cancellationToken)
+        {
+            if (_running)
+            {
+                try
+                {
                     SensusServiceHelper.Get().Logger.Log("Committing data.", LoggingLevel.Normal, GetType());
+
+                    DateTime commitStartTime = DateTime.Now;
 
                     List<Datum> dataToCommit = null;
                     try
@@ -164,7 +170,7 @@ namespace SensusService.DataStores
                             if (committedData == null)
                                 throw new DataStoreException("Null collection returned by CommitData");
 
-                            _mostRecentCommitTime = DateTime.Now;
+                            _mostRecentSuccessfulCommitTime = DateTime.Now;
                         }
                         catch (Exception ex)
                         {
@@ -190,9 +196,11 @@ namespace SensusService.DataStores
                         }
                     }
 
-                    SensusServiceHelper.Get().Logger.Log("Finished commit in " + (DateTime.Now - _commitStartTime.GetValueOrDefault()).TotalSeconds + " seconds.", LoggingLevel.Normal, GetType());
-
-                    _commitStartTime = null;
+                    SensusServiceHelper.Get().Logger.Log("Finished commit in " + (DateTime.Now - commitStartTime).TotalSeconds + " seconds.", LoggingLevel.Normal, GetType());
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Failed to run Commit:  " + ex.Message, LoggingLevel.Normal, GetType());
                 }
             }
         }
@@ -242,22 +250,9 @@ namespace SensusService.DataStores
                 restart = true;
             }
 
-            double msElapsedSinceLastCommit = (DateTime.Now - _mostRecentCommitTime.GetValueOrDefault()).TotalMilliseconds;
+            double msElapsedSinceLastCommit = (DateTime.Now - _mostRecentSuccessfulCommitTime.GetValueOrDefault()).TotalMilliseconds;
             if (msElapsedSinceLastCommit > (_commitDelayMS + 5000))  // system timer callbacks aren't always fired exactly as scheduled, resulting in health tests that identify warning conditions for delayed data storage. allow a small fudge factor to ignore most of these warnings warnings.
-            {
-                if (_commitStartTime == null)
-                    warning += "Datastore \"" + GetType().FullName + "\" has not committed data in " + msElapsedSinceLastCommit + "ms (commit delay = " + _commitDelayMS + "ms)." + Environment.NewLine;
-                else
-                {
-                    // the datastore is in the middle of a commit. report how long it has been trying.
-                    DateTime commitStartTime = _commitStartTime.GetValueOrDefault();
-                    double commitAttemptHours = (DateTime.Now - commitStartTime).TotalHours;
-                    warning += "Datastore \"" + GetType().FullName + "\" has been trying to commit data since " + commitStartTime + " (" + commitAttemptHours + " hours)." + Environment.NewLine;
-
-                    if (commitAttemptHours > 1)
-                        restart = true;
-                }
-            }
+                warning += "Datastore \"" + GetType().FullName + "\" has not committed data in " + msElapsedSinceLastCommit + "ms (commit delay = " + _commitDelayMS + "ms)." + Environment.NewLine;
 
             return restart;
         }
@@ -267,9 +262,8 @@ namespace SensusService.DataStores
             if (_running)
                 throw new Exception("Cannot clear data store for sharing while it is running.");
             
-            _mostRecentCommitTime = null;
+            _mostRecentSuccessfulCommitTime = null;
             _nonProbeDataToCommit.Clear();
-            _commitStartTime = null;
             _commitCallbackId = null;
         }
 
