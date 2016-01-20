@@ -668,76 +668,82 @@ namespace SensusService
 
             new Thread(() =>
                 {
-                    ScheduledCallback scheduledCallback;
-
-                    lock (_idCallback)
+                    try
                     {
-                        // do we have callback information for the passed callbackId? we might not, in the case where the callback is canceled by the user and the system fires it subsequently.
-                        if (!_idCallback.TryGetValue(callbackId, out scheduledCallback))
-                        {
-                            if (callback != null)
-                                callback();
+                        ScheduledCallback scheduledCallback;
 
-                            return;
-                        }
-                    }
-
-                    // callback actions cannot be raised concurrently -- drop the current callback if it is already in progress
-                    if (Monitor.TryEnter(scheduledCallback.Action))
-                    {
-                        try
+                        lock (_idCallback)
                         {
-                            if (scheduledCallback.Canceller.IsCancellationRequested)
-                                _logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") was cancelled before it was started.", LoggingLevel.Normal, GetType());
-                            else
+                            // do we have callback information for the passed callbackId? we might not, in the case where the callback is canceled by the user and the system fires it subsequently.
+                            if (!_idCallback.TryGetValue(callbackId, out scheduledCallback))
                             {
-                                _logger.Log("Raising callback \"" + scheduledCallback.Name + "\" (" + callbackId + ").", LoggingLevel.Normal, GetType());
+                                if (callback != null)
+                                    callback();
 
-                                if (notifyUser)
-                                    IssueNotificationAsync(scheduledCallback.UserNotificationMessage, callbackId);
-
-                                scheduledCallback.Action(callbackId, scheduledCallback.Canceller.Token);
+                                return;
                             }
                         }
-                        catch (Exception ex)
+
+                        // callback actions cannot be raised concurrently -- drop the current callback if it is already in progress
+                        if (Monitor.TryEnter(scheduledCallback.Action))
                         {
-                            _logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") failed:  " + ex.Message, LoggingLevel.Normal, GetType());
-                        }
-                        finally
-                        {
-                            // if this is a repeating callback, then we'll need to reset the cancellation token source with a new instance, since they cannot be reused. if
-                            // we enter the _idCallback lock before CancelRaisedCallback, then the next raise will be cancelled. if CancelRaisedCallback enters the 
-                            // _idCallback lock first, then the cancellation token source will be overwritten here and the cancel will not have any effect. however,
-                            // the latter case is a reasonable outcome, since the purpose of CancelRaisedCallback is to terminate any callbacks that are currently in 
-                            // progress, and the current callback is no longer in progress. if the desired outcome is complete discontinuation of the repeating callback
-                            // then UnscheduleRepeatingCallback should be used -- this method first cancels any raised callbacks and then removes the callback entirely.
                             try
                             {
-                                if (repeating)
-                                    lock (_idCallback)
-                                        scheduledCallback.Canceller = new CancellationTokenSource();
+                                if (scheduledCallback.Canceller.IsCancellationRequested)
+                                    _logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") was cancelled before it was started.", LoggingLevel.Normal, GetType());
+                                else
+                                {
+                                    _logger.Log("Raising callback \"" + scheduledCallback.Name + "\" (" + callbackId + ").", LoggingLevel.Normal, GetType());
+
+                                    if (notifyUser)
+                                        IssueNotificationAsync(scheduledCallback.UserNotificationMessage, callbackId);
+
+                                    scheduledCallback.Action(callbackId, scheduledCallback.Canceller.Token);
+                                }
                             }
-                            catch (Exception)
+                            catch (Exception ex)
                             {
+                                _logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") failed:  " + ex.Message, LoggingLevel.Normal, GetType());
                             }
                             finally
                             {
-                                Monitor.Exit(scheduledCallback.Action);
+                                // if this is a repeating callback, then we'll need to reset the cancellation token source with a new instance, since they cannot be reused. if
+                                // we enter the _idCallback lock before CancelRaisedCallback, then the next raise will be cancelled. if CancelRaisedCallback enters the 
+                                // _idCallback lock first, then the cancellation token source will be overwritten here and the cancel will not have any effect. however,
+                                // the latter case is a reasonable outcome, since the purpose of CancelRaisedCallback is to terminate any callbacks that are currently in 
+                                // progress, and the current callback is no longer in progress. if the desired outcome is complete discontinuation of the repeating callback
+                                // then UnscheduleRepeatingCallback should be used -- this method first cancels any raised callbacks and then removes the callback entirely.
+                                try
+                                {
+                                    if (repeating)
+                                        lock (_idCallback)
+                                            scheduledCallback.Canceller = new CancellationTokenSource();
+                                }
+                                catch (Exception)
+                                {
+                                }
+                                finally
+                                {
+                                    Monitor.Exit(scheduledCallback.Action);
+                                }
                             }
                         }
-                    }
-                    else
-                        _logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") is already running. Not running again.", LoggingLevel.Normal, GetType());
+                        else
+                            _logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") is already running. Not running again.", LoggingLevel.Normal, GetType());
                     
-                    // if this was a one-time callback, remove it from our collection. it is no longer needed.
-                    if (!repeating)
-                        lock (_idCallback)
-                            _idCallback.Remove(callbackId);                               
+                        // if this was a one-time callback, remove it from our collection. it is no longer needed.
+                        if (!repeating)
+                            lock (_idCallback)
+                                _idCallback.Remove(callbackId);                               
 
-                    if (callback != null)
-                        callback();
-
-                    LetDeviceSleep();
+                        if (callback != null)
+                            callback();
+                    }
+                    finally
+                    {
+                        // do this to ensure that the let-sleep is always called
+                        LetDeviceSleep();
+                    }
 
                 }).Start();                           
         }
