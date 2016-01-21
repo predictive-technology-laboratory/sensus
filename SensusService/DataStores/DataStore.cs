@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Linq;
+using SensusService.DataStores.Remote;
 
 namespace SensusService.DataStores
 {
@@ -97,10 +98,17 @@ namespace SensusService.DataStores
                 SensusServiceHelper.Get().Logger.Log("Starting.", LoggingLevel.Normal, GetType());
                 _mostRecentSuccessfulCommitTime = DateTime.Now;
 
+                string userNotificationMessage = null;
+
+                #if __IOS__
+                if (this is RemoteDataStore)
+                    userNotificationMessage = "Sensus needs to send data to the study organizers. Please tap here.";
+                #endif
+
                 // use the async version of commit so that we don't hang for unreliable commit operations (e.g., AWS S3 commits). this means that all commit 
                 // operations for a datastore must be suitable for running concurrently. ultimately, this might mean that duplicate data are committed either
                 // locally or remotely, but we can live with that since the alternative involves the potential for infinite hangs.
-                _commitCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(CommitAsync, GetType().FullName + " Commit", _commitDelayMS, _commitDelayMS);
+                _commitCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(CommitAsync, GetType().FullName + " Commit", _commitDelayMS, _commitDelayMS, userNotificationMessage);
             }
         }
 
