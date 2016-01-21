@@ -129,7 +129,7 @@ namespace Sensus.iOS
                             (App.Current as App).ProtocolsPage.Bind();
                         });
                 });
-            
+
             base.OnActivated(uiApplication);
         }
 

@@ -684,7 +684,7 @@ namespace SensusService
                             }
                         }
 
-                        // callback actions cannot be raised concurrently -- drop the current callback if it is already in progress
+                        // the same callback action cannot be raise multiple times concurrently. drop the current one if it's already running.
                         if (Monitor.TryEnter(scheduledCallback.Action))
                         {
                             try
@@ -741,7 +741,7 @@ namespace SensusService
                     }
                     finally
                     {
-                        // do this to ensure that the let-sleep is always called
+                        // do this within finally to ensure that the device is always allowed to sleep
                         LetDeviceSleep();
                     }
 
