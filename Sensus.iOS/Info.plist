@@ -129,7 +129,5 @@
 	<array>
 		<string>location</string>
 	</array>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Location information will not be collected at this time. Sensus will ask for your permission again when it is ready to collect location information.</string>
 </dict>
 </plist>

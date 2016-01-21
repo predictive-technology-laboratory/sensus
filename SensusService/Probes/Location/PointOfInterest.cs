@@ -14,7 +14,7 @@
 
 using System;
 using SensusService.Probes.Movement;
-using Xamarin.Geolocation;
+using Plugin.Geolocator.Abstractions;
 
 namespace SensusService.Probes.Location
 {

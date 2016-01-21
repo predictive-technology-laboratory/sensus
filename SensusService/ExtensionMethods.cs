@@ -13,7 +13,7 @@
 // limitations under the License.
 
 using System;
-using Xamarin.Geolocation;
+using Plugin.Geolocator.Abstractions;
 
 namespace SensusService
 {

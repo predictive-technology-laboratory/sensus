@@ -132,7 +132,7 @@ namespace SensusUI
 
                                         _gpsCancellationTokenSource = new CancellationTokenSource();
                                         
-                                        Xamarin.Geolocation.Position gpsPosition = GpsReceiver.Get().GetReading(_gpsCancellationTokenSource.Token);
+                                        Plugin.Geolocator.Abstractions.Position gpsPosition = GpsReceiver.Get().GetReading(_gpsCancellationTokenSource.Token);
 
                                         if (gpsPosition != null)
                                             SensusServiceHelper.Get().GetPositionsFromMapAsync(gpsPosition.ToFormsPosition(), newPinName, addPOI);

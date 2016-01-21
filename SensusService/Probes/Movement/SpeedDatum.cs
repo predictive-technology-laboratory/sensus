@@ -17,7 +17,7 @@ using Newtonsoft.Json;
 using SensusService.Anonymization;
 using SensusService.Anonymization.Anonymizers;
 using SensusService.Probes.User.ProbeTriggerProperties;
-using Xamarin.Geolocation;
+using Plugin.Geolocator.Abstractions;
 
 namespace SensusService.Probes.Movement
 {

@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System;
-using Xamarin.Geolocation;
 using SensusService.Probes.User.ProbeTriggerProperties;
 using SensusService.Anonymization;
 using SensusService.Anonymization.Anonymizers;

@@ -24,7 +24,6 @@ using SensusService.Probes;
 using SensusService.Probes.Location;
 using SensusUI.UiProperties;
 using Xamarin;
-using Xamarin.Geolocation;
 using System.Collections.ObjectModel;
 using SensusUI;
 using SensusUI.Inputs;
@@ -34,6 +33,7 @@ using ZXing.Mobile;
 using ZXing;
 using XLabs.Platform.Device;
 using System.Collections;
+using Plugin.Geolocator.Abstractions;
 
 namespace SensusService
 {
@@ -358,8 +358,6 @@ namespace SensusService
         [JsonIgnore]
         public abstract string OperatingSystem { get; }
 
-        protected abstract Geolocator Geolocator { get; }
-
         #endregion
 
         protected SensusServiceHelper()
@@ -407,8 +405,6 @@ namespace SensusService
 
             _logger = new Logger(LOG_PATH, loggingLevel, Console.Error);
             _logger.Log("Log file started at \"" + LOG_PATH + "\".", LoggingLevel.Normal, GetType());
-
-            GpsReceiver.Get().Initialize(Geolocator);  // initialize GPS receiver with platform-specific geolocator
 
             if (Insights.IsInitialized)
                 _logger.Log("Xamarin Insights is already initialized.", LoggingLevel.Normal, GetType());

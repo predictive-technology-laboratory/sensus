@@ -16,11 +16,11 @@ using System;
 using SensusService.Probes;
 using System.Collections.Generic;
 using SensusUI.UiProperties;
-using Xamarin.Geolocation;
 using SensusService.Probes.Location;
 using System.Threading;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Plugin.Geolocator.Abstractions;
 
 namespace SensusService.Probes.Location
 {

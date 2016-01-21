@@ -27,6 +27,7 @@ using Xamarin.Forms.Platform.Android;
 using Xamarin.Facebook;
 using Xamarin;
 using Xam.Plugin.MapExtend.Droid;
+using Plugin.CurrentActivity;
 
 [assembly:MetaData("com.facebook.sdk.ApplicationId", Value = "@string/app_id")]
 
@@ -74,6 +75,8 @@ namespace Sensus.Android
             Forms.Init(this, savedInstanceState);
             FormsMaps.Init(this, savedInstanceState);
             MapExtendRenderer.Init(this, savedInstanceState);
+
+            CrossCurrentActivity.Current.Activity = this;
 
             #if UNIT_TESTING
             Forms.ViewInitialized += (sender, e) =>
@@ -142,6 +145,8 @@ namespace Sensus.Android
 
             base.OnStart();
 
+            CrossCurrentActivity.Current.Activity = this;
+
             // start service. if the service is already running, this will have no tangible effect. one might consider 
             // starting the service within OnCreate, but putting it in OnStart might be better. if the service is killed 
             // by the Android system, it will need to be restarted before the activity can operate normally. Android 
@@ -159,6 +164,8 @@ namespace Sensus.Android
             Console.Error.WriteLine("--------------------------- Resuming activity ---------------------------");
 
             base.OnResume();
+
+            CrossCurrentActivity.Current.Activity = this;
 
             (SensusServiceHelper.Get() as AndroidSensusServiceHelper).IssueNotificationAsync("Sensus", null, true, false, INPUT_REQUESTED_NOTIFICATION_ID);
 

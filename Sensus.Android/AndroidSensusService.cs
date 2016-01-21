@@ -16,7 +16,6 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using SensusService;
-using Xamarin.Geolocation;
 using System;
 
 namespace Sensus.Android

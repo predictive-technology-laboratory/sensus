@@ -21,12 +21,12 @@ using Xamarin.Forms.Platform.iOS;
 using Xamarin.Forms;
 using SensusUI;
 using SensusService;
-using Xamarin.Geolocation;
 using Toasts;
 using System.IO;
 using Facebook.CoreKit;
 using Xamarin;
 using Xam.Plugin.MapExtend.iOSUnified;
+using CoreLocation;
 
 namespace Sensus.iOS
 {
@@ -129,6 +129,13 @@ namespace Sensus.iOS
                             (App.Current as App).ProtocolsPage.Bind();
                         });
                 });
+
+            // background authorization will be done implicitly when the location manager is used in probes, but the authorization is
+            // done asynchronously so it's likely that the probes will believe that GPS is not enabled/authorized even though the user
+            // is about to grant access (if they choose). now, the health test should fix this up by checking for GPS and restarting
+            // the probes, but the whole thing will seem strange to the user. instead, prompt the user for background authorization
+            // immediately. this is only done one time after the app is installed and started.
+            new CLLocationManager().RequestAlwaysAuthorization();
 
             base.OnActivated(uiApplication);
         }

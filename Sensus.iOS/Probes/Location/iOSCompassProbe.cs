@@ -14,8 +14,8 @@
 
 using System;
 using SensusService.Probes.Location;
-using Xamarin.Geolocation;
 using SensusService;
+using Plugin.Geolocator.Abstractions;
 
 namespace Sensus.iOS.Probes.Location
 {
@@ -48,7 +48,7 @@ namespace Sensus.iOS.Probes.Location
 
         protected sealed override void StartListening()
         {
-            GpsReceiver.Get().AddListener(_positionChangedHandler);
+            GpsReceiver.Get().AddListener(_positionChangedHandler, true);
         }
 
         protected sealed override void StopListening()

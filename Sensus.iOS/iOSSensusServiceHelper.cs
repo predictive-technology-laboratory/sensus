@@ -14,7 +14,6 @@
 
 using System;
 using SensusService;
-using Xamarin.Geolocation;
 using Xamarin;
 using SensusService.Probes.Location;
 using SensusService.Probes;
@@ -122,14 +121,6 @@ namespace Sensus.iOS
             get
             {
                 return UIDevice.CurrentDevice.SystemName + " " + UIDevice.CurrentDevice.SystemVersion;
-            }
-        }
-
-        protected override Geolocator Geolocator
-        {
-            get
-            {
-                return new Geolocator();
             }
         }
 

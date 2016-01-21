@@ -13,8 +13,8 @@
 // limitations under the License.
 
 using System;
-using Xamarin.Geolocation;
 using SensusService.Probes.Location;
+using Plugin.Geolocator.Abstractions;
 
 namespace SensusService.Probes.Movement
 {
@@ -80,7 +80,7 @@ namespace SensusService.Probes.Movement
         protected sealed override void StartListening()
         {
             _previousPosition = null;
-            GpsReceiver.Get().AddListener(_positionChangedHandler);
+            GpsReceiver.Get().AddListener(_positionChangedHandler, false);
         }
 
         public override void ResetForSharing()

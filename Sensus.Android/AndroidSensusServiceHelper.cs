@@ -28,7 +28,6 @@ using Android.Widget;
 using Newtonsoft.Json;
 using SensusService;
 using Xamarin;
-using Xamarin.Geolocation;
 using SensusService.Probes.Location;
 using SensusService.Probes;
 using SensusService.Probes.Movement;
@@ -104,14 +103,6 @@ namespace Sensus.Android
             get
             {
                 return "Android " + Build.VERSION.SdkInt;
-            }
-        }
-
-        protected override Geolocator Geolocator
-        {
-            get
-            {
-                return new Geolocator(Application.Context);
             }
         }
 

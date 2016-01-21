@@ -91,7 +91,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\PointOfInterestProximityTrigger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\PointOfInterestProximityDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\ListeningPointsOfInterestProximityProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DataStores\Remote\MicrosoftAzureRemoteDataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ScriptRunner.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\StringHashAnonymizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExtensionMethods.cs" />

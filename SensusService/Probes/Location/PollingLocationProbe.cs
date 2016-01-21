@@ -14,8 +14,8 @@
 
 using System;
 using System.Collections.Generic;
-using Xamarin.Geolocation;
 using System.Threading;
+using Plugin.Geolocator.Abstractions;
 
 namespace SensusService.Probes.Location
 {
