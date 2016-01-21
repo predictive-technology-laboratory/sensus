@@ -31,7 +31,7 @@ using System.Runtime.InteropServices;
 
 // Disable debugging for release builds.
 #if DEBUG
-[Application(Debuggable = true)]
+[assembly: Application(Debuggable = true)]
 #else
-[Application(Debuggable=false)]
+[assembly: Application(Debuggable = false)]
 #endif

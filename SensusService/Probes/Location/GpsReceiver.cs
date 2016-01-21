@@ -75,11 +75,11 @@ namespace SensusService.Probes.Location
             _readingWait = new ManualResetEvent(false);
             _reading = null;
             _readingTimeoutMS = 120000;
-            _minimumTimeHintMS = 60000;
+            _minimumTimeHintMS = 5000;
             _locator = CrossGeolocator.Current;
             _locator.AllowsBackgroundUpdates = true;
-            _locator.PausesLocationUpdatesAutomatically = true;
-            _locator.DesiredAccuracy = 500;  // setting this too low appears to result in very delayed GPS fixes.
+            _locator.PausesLocationUpdatesAutomatically = false;
+            _locator.DesiredAccuracy = 50;  // setting this too low appears to result in very delayed GPS fixes.
             _listenerHeadings = new List<Tuple<EventHandler<PositionEventArgs>, bool>>();
 
             _locator.PositionChanged += (o, e) =>
