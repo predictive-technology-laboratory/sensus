@@ -232,7 +232,6 @@ namespace SensusService.Probes.User
                         _randomTriggerWindows.Add(new Tuple<DateTime, DateTime>(start, start));
                     }
                         
-                    _randomTriggerWindows = _randomTriggerWindows.OrderBy(window => window.Item1).ToList();
                 }
                 catch (Exception)
                 {
@@ -514,14 +513,23 @@ namespace SensusService.Probes.User
                         DateTime triggerWindowEnd = default(DateTime);
                         DateTime now = DateTime.Now;
                         bool foundTriggerWindow = false;
+                        int count = 0;
+                        _randomTriggerWindows = _randomTriggerWindows.OrderBy(window => window.Item1.Minute).ToList();
+                        _randomTriggerWindows = _randomTriggerWindows.OrderBy(window => window.Item1.Hour).ToList();
                         foreach (Tuple<DateTime, DateTime> randomTriggerWindow in _randomTriggerWindows)
+                        {
                             if (randomTriggerWindow.Item1.Hour > now.Hour || (randomTriggerWindow.Item1.Hour == now.Hour && randomTriggerWindow.Item1.Minute > now.Minute))
                             {
                                 triggerWindowStart = new DateTime(now.Year, now.Month, now.Day, randomTriggerWindow.Item1.Hour, randomTriggerWindow.Item1.Minute, 0);
                                 triggerWindowEnd = new DateTime(now.Year, now.Month, now.Day, randomTriggerWindow.Item2.Hour, randomTriggerWindow.Item2.Minute, 0);
+                                _randomTriggerWindows.RemoveAt(count);
+                                _randomTriggerWindows.Insert(count, new Tuple<DateTime, DateTime>(new DateTime(now.Year, now.Month, now.Day, randomTriggerWindow.Item1.Hour, randomTriggerWindow.Item1.Minute, 0), new DateTime(now.Year, now.Month, now.Day, randomTriggerWindow.Item2.Hour, randomTriggerWindow.Item2.Minute, 0)));
                                 foundTriggerWindow = true;
                                 break;
                             }
+                            count++;
+                        }
+                        count = 0;
 
                         // if there were no future trigger windows, skip to the next day and use the first trigger window
                         if (!foundTriggerWindow)
@@ -529,6 +537,8 @@ namespace SensusService.Probes.User
                             Tuple<DateTime, DateTime> firstRandomTriggerWindow = _randomTriggerWindows.First();
                             triggerWindowStart = new DateTime(now.Year, now.Month, now.Day, firstRandomTriggerWindow.Item1.Hour, firstRandomTriggerWindow.Item1.Minute, 0).AddDays(1);
                             triggerWindowEnd = new DateTime(now.Year, now.Month, now.Day, firstRandomTriggerWindow.Item2.Hour, firstRandomTriggerWindow.Item2.Minute, 0).AddDays(1);
+                            _randomTriggerWindows.Insert(0, new Tuple<DateTime, DateTime>(new DateTime(now.Year, now.Month, now.Day, _randomTriggerWindows.First().Item1.Hour, _randomTriggerWindows.First().Item1.Minute, 0).AddDays(1), new DateTime(now.Year, now.Month, now.Day, _randomTriggerWindows.First().Item2.Hour, _randomTriggerWindows.First().Item2.Minute, 0).AddDays(1)));
+                            _randomTriggerWindows.RemoveAt(1);
                         }
 
                         // schedule callback for random offset into trigger window
