@@ -658,7 +658,6 @@ namespace SensusService
             {
                 byte[] encryptedBytes = SensusServiceHelper.Encrypt(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS));
                 file.Write(encryptedBytes, 0, encryptedBytes.Length);
-                file.Close();
             }
         }
 

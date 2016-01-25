@@ -171,7 +171,6 @@ namespace SensusUI
                 try
                 {
                     _proximityProbe.Triggers.Add(new PointOfInterestProximityTrigger(_pointOfInterestName, _pointOfInterestType, _distanceThresholdMeters, _thresholdDirection));
-                    SensusServiceHelper.Get().SaveAsync();
                     await Navigation.PopAsync();
                 }
                 catch (Exception ex)

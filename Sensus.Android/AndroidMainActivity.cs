@@ -126,7 +126,6 @@ namespace Sensus.Android
                 using (Stream protocolFile = Assets.Open("UnitTestingProtocol.json"))
                 {
                     Protocol.RunUnitTestingProtocol(protocolFile);
-                    protocolFile.Close();
                 }
                 #endif
             };

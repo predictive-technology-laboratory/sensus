@@ -61,7 +61,16 @@ namespace SensusService
 
                 if (_otherOutputs != null)
                     foreach (TextWriter otherOutput in _otherOutputs)
-                        otherOutput.WriteLine(message);
+                    {
+                        try
+                        {
+                            otherOutput.WriteLine(message);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.Error.WriteLine("Failed to write to output:  " + ex.Message);
+                        }
+                    }
 
                 // append buffer to file periodically
                 if (_messageBuffer.Count % 100 == 0)
@@ -80,7 +89,7 @@ namespace SensusService
             }
         }
 
-        private void CommitMessageBuffer()
+         public void CommitMessageBuffer()
         {
             lock (_messageBuffer)
             {
@@ -92,13 +101,11 @@ namespace SensusService
                         {
                             foreach (string bufferedMessage in _messageBuffer)
                                 file.WriteLine(bufferedMessage);
-
-                            file.Close();
                         }
                     }
                     catch (Exception ex)
                     {
-                        SensusServiceHelper.Get().Logger.Log("Error committing message buffer:  " + ex.Message, SensusService.LoggingLevel.Normal, GetType());
+                        Log("Error committing message buffer:  " + ex.Message, SensusService.LoggingLevel.Normal, GetType());
                     }
 
                     _messageBuffer.Clear();
@@ -135,8 +142,6 @@ namespace SensusService
                         string line;
                         while ((line = file.ReadLine()) != null)
                             messages.Add(line);
-
-                        file.Close();
                     }
                 }
                 catch (Exception ex)

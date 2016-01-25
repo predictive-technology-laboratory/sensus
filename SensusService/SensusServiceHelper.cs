@@ -148,57 +148,104 @@ namespace SensusService
         /// <param name="createNew">Function for creating a new service helper, if one is needed.</param>
         public static void Initialize(Func<SensusServiceHelper> createNew)
         {
-            if (SINGLETON != null)
-            {
-                SINGLETON.Logger.Log("Serivce helper already initialized. Nothing to do.", LoggingLevel.Normal, SINGLETON.GetType());
-                return;
+            if (SINGLETON == null)
+            {                
+                Exception deserializeException;
+                if (!TryDeserializeSingleton(out deserializeException))
+                {
+                    // we failed to deserialize. wait a bit and try again. but don't wait too long since we're holding up the 
+                    // app-load sequence, which is not allowed to take too much time.
+                    Thread.Sleep(5000);
+
+                    if (!TryDeserializeSingleton(out deserializeException))
+                    {
+                        // we really couldn't deserialize the service helper! try to create a new service helper...
+                        try
+                        {
+                            SINGLETON = createNew();
+                        }
+                        catch (Exception singletonCreationException)
+                        {
+                            #region crash app and report to insights
+                            string error = "Failed to construct service helper:  " + singletonCreationException.Message + System.Environment.NewLine + singletonCreationException.StackTrace;
+                            Console.Error.WriteLine(error);
+                            Exception exceptionToReport = new Exception(error);
+
+                            try
+                            {
+                                Insights.Report(exceptionToReport, Xamarin.Insights.Severity.Error);
+                            }
+                            catch (Exception insightsReportException)
+                            {
+                                Console.Error.WriteLine("Failed to report exception to Xamarin Insights:  " + insightsReportException.Message);
+                            }
+
+                            throw exceptionToReport;
+                            #endregion
+                        }
+
+                        SINGLETON.Logger.Log("Repeatedly failed to deserialize service helper. Most recent exception:  " + deserializeException.Message, LoggingLevel.Normal, SINGLETON.GetType());
+                        SINGLETON.Logger.Log("Created new service helper after failing to deserialize the old one.", LoggingLevel.Normal, SINGLETON.GetType());
+                    }
+                }
             }
-            
+            else
+                SINGLETON.Logger.Log("Serivce helper already initialized. Nothing to do.", LoggingLevel.Normal, SINGLETON.GetType());
+        }
+
+        private static bool TryDeserializeSingleton(out Exception ex)
+        {
+            ex = null;
+            string errorMessage = null;
+
+            // read bytes
+            byte[] encryptedJsonBytes = null;
             try
             {
-                SINGLETON = JsonConvert.DeserializeObject<SensusServiceHelper>(Decrypt(ReadAllBytes(SERIALIZATION_PATH)), JSON_SERIALIZER_SETTINGS);
-                SINGLETON.Logger.Log("Deserialized service helper with " + SINGLETON.RegisteredProtocols.Count + " protocols.", LoggingLevel.Normal, SINGLETON.GetType());
+                encryptedJsonBytes = ReadAllBytes(SERIALIZATION_PATH);
             }
-            catch (Exception deserializeException)
+            catch (Exception exception)
             {
-                Console.Error.WriteLine("Failed to deserialize Sensus service helper:  " + deserializeException.Message);
+                errorMessage = "Failed to read service helper file into byte array:  " + exception.Message;
+                Console.Error.WriteLine(errorMessage);
+            }
 
+            if (encryptedJsonBytes != null)
+            {
+                // decrypt JSON
+                string decryptedJSON = null;
                 try
                 {
-                    Console.Error.WriteLine("Creating new Sensus service helper.");
-                    SINGLETON = createNew();
+                    decryptedJSON = Decrypt(encryptedJsonBytes);
                 }
-                catch (Exception singletonCreationException)
+                catch (Exception exception)
                 {
-                    #region crash app and report to insights
-                    string error = "Failed to construct service helper:  " + singletonCreationException.Message + System.Environment.NewLine + singletonCreationException.StackTrace;
-                    Console.Error.WriteLine(error);
-                    Exception exceptionToReport = new Exception(error);
-
+                    errorMessage = "Failed to decrypt service helper byte array (length=" + encryptedJsonBytes.Length + ") into JSON:  " + exception.Message;
+                    Console.Error.WriteLine(errorMessage);
+                }
+                 
+                if (decryptedJSON != null)
+                {
+                    // deserialize service helper
                     try
                     {
-                        Insights.Report(exceptionToReport, Xamarin.Insights.Severity.Error);
+                        SINGLETON = JsonConvert.DeserializeObject<SensusServiceHelper>(decryptedJSON, JSON_SERIALIZER_SETTINGS);
                     }
-                    catch (Exception insightsReportException)
+                    catch (Exception exception)
                     {
-                        Console.Error.WriteLine("Failed to report exception to Xamarin Insights:  " + insightsReportException.Message);
+                        errorMessage = "Failed to deserialize service helper JSON (length=" + decryptedJSON + ") into service helper:  " + exception.Message;
+                        Console.Error.WriteLine(errorMessage);
                     }
+                }
+            }
 
-                    throw exceptionToReport;
-                    #endregion
-                }
+            if (errorMessage != null)
+                ex = new Exception(errorMessage);
 
-                #region save newly created helper
-                try
-                {
-                    SINGLETON.SaveAsync();
-                }
-                catch (Exception singletonSaveException)
-                {
-                    Console.Error.WriteLine("Failed to save new Sensus service helper:  " + singletonSaveException.Message);
-                }
-                #endregion
-            }  
+            if (SINGLETON != null)
+                SINGLETON.Logger.Log("Deserialized service helper with " + SINGLETON.RegisteredProtocols.Count + " protocols.", LoggingLevel.Normal, SINGLETON.GetType());
+
+            return SINGLETON != null;
         }
 
         public static SensusServiceHelper Get()
@@ -213,25 +260,25 @@ namespace SensusService
         /// <param name="path">Path.</param>
         public static byte[] ReadAllBytes(string path)
         {
-            byte[] bytes = null;
+            byte[] fileBytes = null;
 
             using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read))
             {
-                bytes = new byte[file.Length];
-                int blockSize = 1024;
-                byte[] block = new byte[blockSize];
-                int bytesRead;
+                fileBytes = new byte[file.Length];
+                byte[] blockBytes = new byte[1024];
+                int blockBytesRead;
                 int totalBytesRead = 0;
-                while ((bytesRead = file.Read(block, 0, block.Length)) > 0)
+                while ((blockBytesRead = file.Read(blockBytes, 0, blockBytes.Length)) > 0)
                 {
-                    Array.Copy(block, 0, bytes, totalBytesRead, bytesRead);
-                    totalBytesRead += bytesRead;
+                    Array.Copy(blockBytes, 0, fileBytes, totalBytesRead, blockBytesRead);
+                    totalBytesRead += blockBytesRead;
                 }
 
-                file.Close();
+                if (totalBytesRead != fileBytes.Length)
+                    throw new Exception("Mismatch between file length (" + file.Length + ") and bytes read (" + totalBytesRead + ").");
             }
 
-            return bytes;
+            return fileBytes;
         }
 
         #region encryption
@@ -299,7 +346,8 @@ namespace SensusService
         private ZXing.Mobile.MobileBarcodeScanner _barcodeScanner;
         private ZXing.Mobile.BarcodeWriter _barcodeWriter;
 
-        private readonly object _locker = new object();
+        private readonly object _shareFileLocker = new object();
+        private readonly object _saveLocker = new object();
 
         [JsonIgnore]
         public Logger Logger
@@ -491,13 +539,10 @@ namespace SensusService
 
         public void AddRunningProtocolId(string id)
         {
-            lock (_locker)
+            lock (_runningProtocolIds)
             {
                 if (!_runningProtocolIds.Contains(id))
-                {
                     _runningProtocolIds.Add(id);
-                    SaveAsync();
-                }
 
                 if (_healthTestCallbackId == null)
                     _healthTestCallbackId = ScheduleRepeatingCallback(TestHealth, "Test Health", HEALTH_TEST_DELAY_MS, HEALTH_TEST_DELAY_MS);
@@ -506,10 +551,9 @@ namespace SensusService
 
         public void RemoveRunningProtocolId(string id)
         {
-            lock (_locker)
+            lock (_runningProtocolIds)
             {
-                if (_runningProtocolIds.Remove(id))
-                    SaveAsync();
+                _runningProtocolIds.Remove(id);
 
                 if (_runningProtocolIds.Count == 0)
                 {
@@ -526,28 +570,38 @@ namespace SensusService
 
         #endregion
 
-        public void SaveAsync()
+        public void SaveAsync(Action callback = null)
         {
             new Thread(() =>
                 {
-                    lock (_locker)
-                    {
-                        try
-                        {
-                            using (FileStream file = new FileStream(SERIALIZATION_PATH, FileMode.Create, FileAccess.Write))
-                            {
-                                byte[] encryptedBytes = Encrypt(JsonConvert.SerializeObject(this, JSON_SERIALIZER_SETTINGS));
-                                file.Write(encryptedBytes, 0, encryptedBytes.Length);
-                                file.Close();
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.Log("Failed to serialize Sensus service helper:  " + ex.Message, LoggingLevel.Normal, GetType());
-                        }
-                    }
+                    Save();
+
+                    if (callback != null)
+                        callback();
 
                 }).Start();
+        }
+
+        public void Save()
+        {
+            lock (_saveLocker)
+            {
+                try
+                {
+                    string serviceHelperJSON = JsonConvert.SerializeObject(this, JSON_SERIALIZER_SETTINGS);
+                    byte[] encryptedBytes = Encrypt(serviceHelperJSON);
+                    File.WriteAllBytes(SERIALIZATION_PATH, encryptedBytes);
+
+                    _logger.Log("Serialized service helper with " + _registeredProtocols.Count + " protocols.", LoggingLevel.Normal, GetType());
+                }
+                catch (Exception ex)
+                {
+                    _logger.Log("Failed to serialize Sensus service helper:  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
+
+                // ensure that all logged messages make it into the file.
+                _logger.CommitMessageBuffer();
+            }
         }
 
         public void StartAsync(Action callback)
@@ -567,27 +621,26 @@ namespace SensusService
         /// </summary>
         public void Start()
         {
-            lock (_locker)
+            lock (_registeredProtocols)
             {
                 if (_stopped)
+                {
                     _stopped = false;
-                else
-                    return;
 
-                foreach (Protocol protocol in _registeredProtocols)
-                    if (!protocol.Running && _runningProtocolIds.Contains(protocol.Id))
-                        protocol.Start();
+                    foreach (Protocol protocol in _registeredProtocols)
+                        if (!protocol.Running && _runningProtocolIds.Contains(protocol.Id))
+                            protocol.Start();
+                }
             }
         }
 
         public void RegisterProtocol(Protocol protocol)
         {
-            lock (_locker)
+            lock (_registeredProtocols)
+            {
                 if (!_stopped && !_registeredProtocols.Contains(protocol))
-                {
                     _registeredProtocols.Add(protocol);
-                    SaveAsync();
-                }
+            }
         }
 
         #region callback scheduling
@@ -1021,7 +1074,7 @@ namespace SensusService
 
         public void TestHealth(string callbackId, CancellationToken cancellationToken)
         {
-            lock (_locker)
+            lock (_registeredProtocols)
             {
                 if (_stopped)
                     return;
@@ -1041,11 +1094,10 @@ namespace SensusService
 
         public void UnregisterProtocol(Protocol protocol)
         {
-            lock (_locker)
+            lock (_registeredProtocols)
             {
                 protocol.Stop();
                 _registeredProtocols.Remove(protocol);
-                SaveAsync();
             }
         }
 
@@ -1053,34 +1105,37 @@ namespace SensusService
         /// Stops the service helper, but leaves it in a state in which subsequent calls to Start will succeed. This happens, for example, when the service is stopped and then 
         /// restarted without being destroyed.
         /// </summary>
-        public void StopAsync()
+        public void StopAsync(Action callback = null)
         {
             new Thread(() =>
                 {
                     Stop();
+
+                    if (callback != null)
+                        callback();
 
                 }).Start();
         }
 
         public virtual void Stop()
         {
-            lock (_locker)
+            lock (_registeredProtocols)
             {
-                if (_stopped)
-                    return;
+                if (!_stopped)
+                {
+                    _logger.Log("Stopping Sensus service.", LoggingLevel.Normal, GetType());
 
-                _logger.Log("Stopping Sensus service.", LoggingLevel.Normal, GetType());
+                    foreach (Protocol protocol in _registeredProtocols)
+                        protocol.Stop();
 
-                foreach (Protocol protocol in _registeredProtocols)
-                    protocol.Stop();
-
-                _stopped = true;
+                    _stopped = true;
+                }
             }
         }
 
         public string GetSharePath(string extension)
         {
-            lock (_locker)
+            lock (_shareFileLocker)
             {
                 int fileNum = 0;
                 string path = null;
@@ -1115,16 +1170,32 @@ namespace SensusService
             return json;
         }
 
+        /// <summary>
+        /// Releases all resource used by the <see cref="SensusService.SensusServiceHelper"/> object. Should be called last
+        /// within child-class overrides.
+        /// </summary>
+        /// <remarks>Call <see cref="Dispose"/> when you are finished using the
+        /// <see cref="SensusService.SensusServiceHelper"/>. The <see cref="Dispose"/> method leaves the
+        /// <see cref="SensusService.SensusServiceHelper"/> in an unusable state. After calling
+        /// <see cref="Dispose"/>, you must release all references to the
+        /// <see cref="SensusService.SensusServiceHelper"/> so the garbage collector can reclaim the memory that the
+        /// <see cref="SensusService.SensusServiceHelper"/> was occupying.</remarks>
         public virtual void Dispose()
         {
+            // save app state before stopping so that app starts back up in its current state.
+            Save();
+
             try
             {
                 Stop();
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine("Failed to stop service helper:  " + ex.Message);
+                _logger.Log("Failed to stop service helper:  " + ex.Message, LoggingLevel.Normal, GetType());
             }
+
+            // make sure all logged messages get into the file.
+            _logger.CommitMessageBuffer();
 
             SINGLETON = null;
         }

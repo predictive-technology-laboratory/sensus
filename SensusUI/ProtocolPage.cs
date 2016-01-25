@@ -125,9 +125,7 @@ namespace SensusUI
 
             pointsOfInterestButton.Clicked += async (o, e) =>
             {
-                await Navigation.PushAsync(new PointsOfInterestPage(
-                        _protocol.PointsOfInterest,
-                        () => SensusServiceHelper.Get().SaveAsync()));
+                await Navigation.PushAsync(new PointsOfInterestPage(_protocol.PointsOfInterest));
             };
 
             views.Add(pointsOfInterestButton);

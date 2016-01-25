@@ -52,7 +52,6 @@ namespace SensusUI
                     {
                         proximityProbe.Triggers.Remove(selectedTrigger);
                         triggerList.SelectedItem = null;  // reset manually since it isn't done automatically
-                        SensusServiceHelper.Get().SaveAsync();
                     }
                 }                        
             };

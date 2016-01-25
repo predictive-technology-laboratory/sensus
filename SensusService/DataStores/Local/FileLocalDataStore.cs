@@ -141,8 +141,6 @@ namespace SensusService.DataStores.Local
                                 committedData.Add(datum);
                         }                        
                     }
-
-                    file.Close();
                 }
 
                 return committedData;
@@ -172,8 +170,6 @@ namespace SensusService.DataStores.Local
                                 if (progressCallback != null && _numDataStoredInFiles >= 10 && (localData.Count % (_numDataStoredInFiles / 10)) == 0)
                                     progressCallback(localData.Count / (double)_numDataStoredInFiles);
                             }
-
-                            file.Close();
                         }
                     }
                     catch (Exception ex)
@@ -209,23 +205,22 @@ namespace SensusService.DataStores.Local
                     string uncommittedDataPath = Path.GetTempFileName();
                     int uncommittedDataCount = 0;
                     using (StreamWriter uncommittedDataFile = new StreamWriter(uncommittedDataPath))
-                    using (StreamReader file = new StreamReader(path))
                     {
-                        string line;
-                        while ((line = file.ReadLine()) != null)
+                        using (StreamReader file = new StreamReader(path))
                         {
-                            Datum datum = Datum.FromJSON(line);
-                            if (hashDataCommittedToRemote.Contains(datum))
-                                --_numDataStoredInFiles;
-                            else
+                            string line;
+                            while ((line = file.ReadLine()) != null)
                             {
-                                uncommittedDataFile.WriteLine(datum.GetJSON(Protocol.JsonAnonymizer));  // need to pass in the anonymizer, since the user might have selected an anonymization option between the time that the datum was written to file and the time of execution of the current line of code.
-                                ++uncommittedDataCount;
+                                Datum datum = Datum.FromJSON(line);
+                                if (hashDataCommittedToRemote.Contains(datum))
+                                    --_numDataStoredInFiles;
+                                else
+                                {
+                                    uncommittedDataFile.WriteLine(datum.GetJSON(Protocol.JsonAnonymizer));  // need to pass in the anonymizer, since the user might have selected an anonymization option between the time that the datum was written to file and the time of execution of the current line of code.
+                                    ++uncommittedDataCount;
+                                }
                             }
                         }
-
-                        uncommittedDataFile.Close();
-                        file.Close();
                     }
 
                     File.Delete(path);
@@ -297,8 +292,6 @@ namespace SensusService.DataStores.Local
                     }
 
                     _numDataStoredInFiles = 0;
-
-                    SensusServiceHelper.Get().SaveAsync();  // update num data stored within the JSON file
                 }
             }
         }

@@ -417,7 +417,7 @@ namespace SensusUI
 
             ToolbarItems.Add(new ToolbarItem(null, "gear_wrench.png", async () =>
                     {
-                        string action = await DisplayActionSheet("Other Actions", "Back", null, "New Protocol", "View Log", "View Points of Interest", "Stop Sensus");
+                        string action = await DisplayActionSheet("Other Actions", "Back", null, "New Protocol", "View Log", "View Points of Interest");
 
                         if (action == "New Protocol")
                             Protocol.CreateAsync("New Protocol", null);
@@ -443,9 +443,7 @@ namespace SensusUI
                                     () => SensusServiceHelper.Get().Logger.Clear()));
                         }
                         else if (action == "View Points of Interest")
-                            await Navigation.PushAsync(new PointsOfInterestPage(SensusServiceHelper.Get().PointsOfInterest, () => SensusServiceHelper.Get().SaveAsync()));
-                        else if (action == "Stop Sensus" && await DisplayAlert("Stop Sensus?", "Are you sure you want to stop Sensus?", "OK", "Cancel"))
-                            SensusServiceHelper.Get().StopAsync();
+                            await Navigation.PushAsync(new PointsOfInterestPage(SensusServiceHelper.Get().PointsOfInterest));
                     }));
         }
 

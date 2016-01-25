@@ -236,9 +236,7 @@ namespace Sensus.Android
                                             {
                                                 using (StreamReader file = new StreamReader(_service.ContentResolver.OpenInputStream(result.Item2.Data)))
                                                 {
-                                                    string content = file.ReadToEnd();
-                                                    file.Close();
-                                                    callback(content);
+                                                    callback(file.ReadToEnd());
                                                 }
                                             }
                                             catch (Exception ex)

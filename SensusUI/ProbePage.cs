@@ -104,7 +104,6 @@ namespace SensusUI
                     using (StreamWriter shareFile = new StreamWriter(sharePath))
                     {
                         shareFile.WriteLine(JsonConvert.SerializeObject(probe, SensusServiceHelper.JSON_SERIALIZER_SETTINGS));
-                        shareFile.Close();
                     }
 
                     SensusServiceHelper.Get().ShareFileAsync(sharePath, "Probe Definition", "application/json");

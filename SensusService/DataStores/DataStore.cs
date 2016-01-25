@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Linq;
 using SensusService.DataStores.Remote;
+using SensusService.DataStores.Local;
 
 namespace SensusService.DataStores
 {
@@ -100,8 +101,13 @@ namespace SensusService.DataStores
 
                 string userNotificationMessage = null;
 
+                // we can't wake up the app on ios. this is problematic since data need to be stored locally and remotely
+                // in something of a reliable schedule; otherwise, we risk data loss (e.g., from device restarts, app kills, etc.).
+                // so, do the best possible thing and bug the user with a notification indicating that data need to be stored.
                 #if __IOS__
-                if (this is RemoteDataStore)
+                if (this is LocalDataStore)
+                    userNotificationMessage = "Sensus needs to store data on your device. Please tap here.";
+                else if (this is RemoteDataStore)
                     userNotificationMessage = "Sensus needs to send data to the study organizers. Please tap here.";
                 #endif
 

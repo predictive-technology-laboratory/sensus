@@ -27,6 +27,7 @@ using Facebook.CoreKit;
 using Xamarin;
 using Xam.Plugin.MapExtend.iOSUnified;
 using CoreLocation;
+using System.Threading;
 
 namespace Sensus.iOS
 {
@@ -120,7 +121,6 @@ namespace Sensus.iOS
                     using (Stream file = new FileStream(filePath, FileMode.Open, FileAccess.Read))
                     {
                         Protocol.RunUnitTestingProtocol(file);
-                        file.Close();
                     }
                     #endif
 
@@ -163,7 +163,15 @@ namespace Sensus.iOS
             iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
             if (serviceHelper != null)
             {
-                serviceHelper.SaveAsync();
+                // save app state in background
+                nint saveTaskId = application.BeginBackgroundTask(() =>
+                    {
+                    });
+
+                serviceHelper.SaveAsync(() =>
+                    {
+                        application.EndBackgroundTask(saveTaskId);
+                    });              
 
                 // app is no longer active, so reset the activation ID
                 serviceHelper.ActivationId = null;
@@ -181,6 +189,12 @@ namespace Sensus.iOS
         // This method is called when the application is about to terminate. Save data, if needed.
         public override void WillTerminate(UIApplication application)
         {
+            // some online resources indicate that no background time can be requested from within this 
+            // method. so, instead of beginning a background task, just wait for the dispose to finish.
+            // this method won't be called when the user kills the app using multitasking; however,
+            // it should be called if the system kills the app when it's running in the background.
+            // there doesn't appear to be a way to gracefully dispose the app when the user kills it
+            // via multitasking...we'll have to live with it.
             _serviceHelper.Dispose();
         }
     }

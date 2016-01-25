@@ -38,7 +38,7 @@ namespace SensusUI
         /// </summary>
         /// <param name="pointsOfInterest">Points of interest to display.</param>
         /// <param name="changeCallback">Called when a POI is added/deleted.</param>
-        public PointsOfInterestPage(List<PointOfInterest> pointsOfInterest, Action changeCallback)
+        public PointsOfInterestPage(List<PointOfInterest> pointsOfInterest)
         {
             _pointsOfInterest = pointsOfInterest;
 
@@ -62,9 +62,6 @@ namespace SensusUI
                     {
                         _pointsOfInterest.Remove(selectedPointOfInterest);
                         _pointsOfInterestList.SelectedItem = null;  // reset it manually, since it isn't done automatically.
-
-                        if (changeCallback != null)
-                            changeCallback();
 
                         Bind();
                     }
@@ -113,9 +110,6 @@ namespace SensusUI
                                                         foreach (Position poiPosition in poiPositions)
                                                         {
                                                             _pointsOfInterest.Add(new PointOfInterest(name, type, poiPosition.ToGeolocationPosition()));
-
-                                                            if (changeCallback != null)
-                                                                changeCallback();
 
                                                             Bind();
                                                         }

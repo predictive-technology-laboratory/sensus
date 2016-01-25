@@ -119,7 +119,6 @@ namespace SensusUI
                                 }
 
                                 shareFile.WriteLine(Environment.NewLine + "]");
-                                shareFile.Close();
                             }
                         }
                     }
