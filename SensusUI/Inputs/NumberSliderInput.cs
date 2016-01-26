@@ -23,13 +23,31 @@ namespace SensusUI.Inputs
 {
     public class NumberSliderInput : Input
     {
+        private string _tipText;
         private double _minimum;
         private double _maximum;
         private double _increment;
+        private string _leftLabel;
+        private string _rightLabel;
+        private bool _displaySliderValue;
+        private bool _displayMinMax;
         private Slider _slider;
         private double _incrementalValue;
         private bool _incrementalValueHasChanged;
         private Label _sliderLabel;
+
+        [EntryStringUiProperty("Tip text:", true, 9)]
+        public string TipText
+        {
+            get
+            {
+                return _tipText;
+            }
+            set
+            {
+                _tipText = value;
+            }
+        }
 
         [EntryDoubleUiProperty(null, true, 10)]
         public double Minimum
@@ -79,6 +97,58 @@ namespace SensusUI.Inputs
             set
             {
                 _increment = value;
+            }
+        }
+
+        [EntryStringUiProperty("Left Label:", true, 13)]
+        public string LeftLabel
+        {
+            get
+            {
+                return _leftLabel;
+            }
+            set
+            {
+                _leftLabel = value;
+            }
+        }
+
+        [EntryStringUiProperty("Right Label:", true, 14)]
+        public string RightLabel
+        {
+            get
+            {
+                return _rightLabel;
+            }
+            set
+            {
+                _rightLabel = value;
+            }
+        }
+
+        [OnOffUiProperty("Display slider value:", true, 15)]
+        public bool DisplaySliderValue
+        {
+            get
+            {
+                return _displaySliderValue;
+            }
+            set
+            {
+                _displaySliderValue = value;
+            }
+        }
+
+        [OnOffUiProperty("Display min and max:", true, 16)]
+        public bool DisplayMinMax
+        {
+            get
+            {
+                return _displayMinMax;
+            }
+            set
+            {
+                _displayMinMax = value;
             }
         }
 
@@ -140,8 +210,6 @@ namespace SensusUI.Inputs
 
         public override View GetView(int index)
         {
-            string tipText = "  Please select a value below.";
-
             if (base.GetView(index) == null && _maximum > _minimum)
             {
                 _slider = new Slider
@@ -162,7 +230,9 @@ namespace SensusUI.Inputs
                 _incrementalValueHasChanged = false;
 
                 _sliderLabel = CreateLabel(index);
-                _sliderLabel.Text += tipText;
+
+                if (!string.IsNullOrWhiteSpace(_tipText))
+                    _sliderLabel.Text += "  " + _tipText;
 
                 _slider.ValueChanged += (o, e) =>
                 {
@@ -172,7 +242,7 @@ namespace SensusUI.Inputs
                     {
                         _incrementalValue = newIncrementalValue;
                         _incrementalValueHasChanged = true;
-                        _sliderLabel.Text = GetLabelText(index) + "  " + _incrementalValue;
+                        _sliderLabel.Text = _displaySliderValue ? GetLabelText(index) + "  " + _incrementalValue : GetLabelText(index) + "  " + _tipText;
                         Complete = Value != null;
                     }
                 };
@@ -182,7 +252,7 @@ namespace SensusUI.Inputs
                         Orientation = StackOrientation.Vertical,
                         VerticalOptions = LayoutOptions.Start,
                         Children =
-                        { 
+                        {
                             _sliderLabel,
                             new StackLayout
                             {
@@ -194,16 +264,39 @@ namespace SensusUI.Inputs
                                     {
                                         Text = _minimum.ToString(),
                                         FontSize = 20,
-                                        HorizontalOptions = LayoutOptions.Fill
+                                        HorizontalOptions = LayoutOptions.Fill,
+                                        IsVisible = _displayMinMax
                                     },
                                     _slider,
                                     new Label
                                     {
                                         Text = _maximum.ToString(),
                                         FontSize = 20,
-                                        HorizontalOptions = LayoutOptions.Fill
+                                        HorizontalOptions = LayoutOptions.Fill,
+                                        IsVisible = _displayMinMax
                                     }
-                                }
+                                },
+                            },
+                            new StackLayout
+                            {
+                                Orientation = StackOrientation.Horizontal,
+                                HorizontalOptions = LayoutOptions.FillAndExpand,
+                                Children =
+                                {
+                                    new Label
+                                    {
+                                        Text = _leftLabel,
+                                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                                        FontSize = 15
+                                    },
+                                    new Label
+                                    {
+                                        Text = _rightLabel,
+                                        HorizontalOptions = LayoutOptions.End,
+                                        FontSize = 15
+                                    }
+                                },
+                                IsVisible = (_leftLabel != null || _rightLabel != null)
                             }
                         }
                     });
@@ -213,7 +306,7 @@ namespace SensusUI.Inputs
                 if (Enabled)
                 {
                     // if the view was already initialized and is enabled, just update the label since the index might have changed.
-                    _sliderLabel.Text = GetLabelText(index) + "  " + (_incrementalValueHasChanged ? _incrementalValue.ToString() : tipText);
+                    _sliderLabel.Text = _displaySliderValue ? GetLabelText(index) + "  " + (_incrementalValueHasChanged ? _incrementalValue.ToString() : _tipText) : GetLabelText(index) + "  " + _tipText;
                 }
                 else
                 {
