@@ -219,7 +219,7 @@ namespace SensusUI
             {
                 Button cancelButton = new Button
                 {
-                    HorizontalOptions = LayoutOptions.CenterAndExpand,
+                    HorizontalOptions = LayoutOptions.FillAndExpand,
                     FontSize = 20,
                     Text = "Cancel"
                 };

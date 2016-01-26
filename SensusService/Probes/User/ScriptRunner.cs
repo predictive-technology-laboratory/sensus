@@ -201,7 +201,11 @@ namespace SensusService.Probes.User
                 if (_randomTriggerWindows.Count == 0)
                     return "";
                 else
-                    return string.Concat(_randomTriggerWindows.Select((window, index) => (index == 0 ? "" : ",") + (window.Item1 == window.Item2 ? window.Item1.ToString() : window.Item1 + "-" + window.Item2)));
+                    return string.Concat(_randomTriggerWindows.Select((window, index) => (index == 0 ? "" : ",") +
+                            (
+                                window.Item1 == window.Item2 ? window.Item1.Hour + ":" + window.Item1.Minute.ToString().PadLeft(2, '0') : 
+                                window.Item1.Hour + ":" + window.Item1.Minute.ToString().PadLeft(2, '0') + "-" + window.Item2.Hour + ":" + window.Item2.Minute.ToString().PadLeft(2, '0')
+                            )));
             }
             set
             {
@@ -234,8 +238,16 @@ namespace SensusService.Probes.User
                 {
                 }
 
-                // sort windows by increasing hour and minute (day, month, and year are irrelevant)
-                _randomTriggerWindows = _randomTriggerWindows.OrderBy(window => window.Item1.Hour).OrderBy(window => window.Item1.Minute).ToList();
+                // sort windows by increasing hour and minute of the window start (day, month, and year are irrelevant)
+                _randomTriggerWindows.Sort((window1, window2) =>
+                    {
+                        int hourComparison = window1.Item1.Hour.CompareTo(window2.Item1.Hour);
+
+                        if (hourComparison != 0)
+                            return hourComparison;
+                        else
+                            return window1.Item1.Minute.CompareTo(window2.Item1.Minute);
+                    });
 
                 if (_probe != null && _probe.Running && _enabled && _randomTriggerWindows.Count > 0)  // probe can be null during deserialization if this property is set first
                     StartRandomTriggerCallbacksAsync();
