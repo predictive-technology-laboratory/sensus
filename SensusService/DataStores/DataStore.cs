@@ -106,9 +106,9 @@ namespace SensusService.DataStores
                 // so, do the best possible thing and bug the user with a notification indicating that data need to be stored.
                 #if __IOS__
                 if (this is LocalDataStore)
-                    userNotificationMessage = "Sensus needs to store data on your device. Please tap here.";
+                    userNotificationMessage = "Sensus has collected data. Please tap here to store the data safely on your device.";
                 else if (this is RemoteDataStore)
-                    userNotificationMessage = "Sensus needs to send data to the study organizers. Please tap here.";
+                    userNotificationMessage = "Sensus needs to transfer collected data to the study organizers. Please tap here.";
                 #endif
 
                 // use the async version of commit so that we don't hang for unreliable commit operations (e.g., AWS S3 commits). this means that all commit 

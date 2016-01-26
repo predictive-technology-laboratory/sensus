@@ -40,7 +40,7 @@ namespace SensusService
     /// <summary>
     /// Provides platform-independent service functionality.
     /// </summary>
-    public abstract class SensusServiceHelper : IDisposable
+    public abstract class SensusServiceHelper
     {
         /// <summary>
         /// Encapsulates information needed to run a scheduled callback.
@@ -335,7 +335,6 @@ namespace SensusService
 
         #endregion
 
-        private bool _stopped;
         private Logger _logger;
         private ObservableCollection<Protocol> _registeredProtocols;
         private List<string> _runningProtocolIds;
@@ -413,7 +412,6 @@ namespace SensusService
             if (SINGLETON != null)
                 throw new SensusException("Attempted to construct new service helper when singleton already existed.");
 
-            _stopped = true;
             _registeredProtocols = new ObservableCollection<Protocol>();
             _runningProtocolIds = new List<string>();
             _healthTestCallbackId = null;
@@ -586,6 +584,8 @@ namespace SensusService
         {
             lock (_saveLocker)
             {
+                _logger.Log("Serializing service helper.", LoggingLevel.Normal, GetType());
+
                 try
                 {
                     string serviceHelperJSON = JsonConvert.SerializeObject(this, JSON_SERIALIZER_SETTINGS);
@@ -623,14 +623,9 @@ namespace SensusService
         {
             lock (_registeredProtocols)
             {
-                if (_stopped)
-                {
-                    _stopped = false;
-
-                    foreach (Protocol protocol in _registeredProtocols)
-                        if (!protocol.Running && _runningProtocolIds.Contains(protocol.Id))
-                            protocol.Start();
-                }
+                foreach (Protocol protocol in _registeredProtocols)
+                    if (!protocol.Running && _runningProtocolIds.Contains(protocol.Id))
+                        protocol.Start();
             }
         }
 
@@ -638,7 +633,7 @@ namespace SensusService
         {
             lock (_registeredProtocols)
             {
-                if (!_stopped && !_registeredProtocols.Contains(protocol))
+                if (!_registeredProtocols.Contains(protocol))
                     _registeredProtocols.Add(protocol);
             }
         }
@@ -1076,9 +1071,6 @@ namespace SensusService
         {
             lock (_registeredProtocols)
             {
-                if (_stopped)
-                    return;
-
                 _logger.Log("Sensus health test is running.", LoggingLevel.Normal, GetType());
 
                 foreach (Protocol protocol in _registeredProtocols)
@@ -1098,38 +1090,6 @@ namespace SensusService
             {
                 protocol.Stop();
                 _registeredProtocols.Remove(protocol);
-            }
-        }
-
-        /// <summary>
-        /// Stops the service helper, but leaves it in a state in which subsequent calls to Start will succeed. This happens, for example, when the service is stopped and then 
-        /// restarted without being destroyed.
-        /// </summary>
-        public void StopAsync(Action callback = null)
-        {
-            new Thread(() =>
-                {
-                    Stop();
-
-                    if (callback != null)
-                        callback();
-
-                }).Start();
-        }
-
-        public virtual void Stop()
-        {
-            lock (_registeredProtocols)
-            {
-                if (!_stopped)
-                {
-                    _logger.Log("Stopping Sensus service.", LoggingLevel.Normal, GetType());
-
-                    foreach (Protocol protocol in _registeredProtocols)
-                        protocol.Stop();
-
-                    _stopped = true;
-                }
             }
         }
 
@@ -1170,28 +1130,24 @@ namespace SensusService
             return json;
         }
 
-        /// <summary>
-        /// Releases all resource used by the <see cref="SensusService.SensusServiceHelper"/> object. Should be called last
-        /// within child-class overrides.
-        /// </summary>
-        /// <remarks>Call <see cref="Dispose"/> when you are finished using the
-        /// <see cref="SensusService.SensusServiceHelper"/>. The <see cref="Dispose"/> method leaves the
-        /// <see cref="SensusService.SensusServiceHelper"/> in an unusable state. After calling
-        /// <see cref="Dispose"/>, you must release all references to the
-        /// <see cref="SensusService.SensusServiceHelper"/> so the garbage collector can reclaim the memory that the
-        /// <see cref="SensusService.SensusServiceHelper"/> was occupying.</remarks>
-        public virtual void Dispose()
+        public virtual void Stop(bool initiatedByUser)
         {
-            // save app state before stopping so that app starts back up in its current state.
-            Save();
+            // stop all protocols
+            lock (_registeredProtocols)
+            {
+                _logger.Log("Stopping protocols.", LoggingLevel.Normal, GetType());
 
-            try
-            {
-                Stop();
-            }
-            catch (Exception ex)
-            {
-                _logger.Log("Failed to stop service helper:  " + ex.Message, LoggingLevel.Normal, GetType());
+                foreach (Protocol protocol in _registeredProtocols)
+                {
+                    try
+                    {
+                        protocol.Stop();
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Log("Failed to stop protocol \"" + protocol.Name + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
+                }
             }
 
             // make sure all logged messages get into the file.

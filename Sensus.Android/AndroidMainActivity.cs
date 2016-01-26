@@ -28,6 +28,7 @@ using Xamarin.Facebook;
 using Xamarin;
 using Xam.Plugin.MapExtend.Droid;
 using Plugin.CurrentActivity;
+using Android.Widget;
 
 [assembly:MetaData("com.facebook.sdk.ApplicationId", Value = "@string/app_id")]
 
@@ -62,8 +63,6 @@ namespace Sensus.Android
 
             base.OnCreate(savedInstanceState);
 
-            SensusServiceHelper.Initialize(() => new AndroidSensusServiceHelper());
-
             _activityResultWait = new ManualResetEvent(false);
             _facebookCallbackManager = CallbackManagerFactory.Create();
             _serviceBindWait = new ManualResetEvent(false);
@@ -75,7 +74,6 @@ namespace Sensus.Android
             Forms.Init(this, savedInstanceState);
             FormsMaps.Init(this, savedInstanceState);
             MapExtendRenderer.Init(this, savedInstanceState);
-
             CrossCurrentActivity.Current.Activity = this;
 
             #if UNIT_TESTING
@@ -110,13 +108,13 @@ namespace Sensus.Android
                     }
                     catch (Exception ex)
                     {
-                        SensusServiceHelper.Get().Logger.Log("Failed to create barcode scanner:  " + ex.Message, LoggingLevel.Normal, GetType());
+                        e.Binder.SensusServiceHelper.Logger.Log("Failed to create barcode scanner:  " + ex.Message, LoggingLevel.Normal, GetType());
                     }
                 }
 
                 // give service helper a reference to this activity
                 e.Binder.SensusServiceHelper.MainActivityWillBeDisplayed = false;
-                e.Binder.SensusServiceHelper.SetFocusedMainActivity(this);
+                e.Binder.SensusServiceHelper.SetRunningMainActivity(this);
 
                 // signal the activity that the service has been bound
                 _serviceBindWait.Set();
@@ -145,17 +143,6 @@ namespace Sensus.Android
             base.OnStart();
 
             CrossCurrentActivity.Current.Activity = this;
-
-            // start service. if the service is already running, this will have no tangible effect. one might consider 
-            // starting the service within OnCreate, but putting it in OnStart might be better. if the service is killed 
-            // by the Android system, it will need to be restarted before the activity can operate normally. Android 
-            // will probably try to restart the service automatically, but we're not exactly sure if/when this will happen.
-            Intent serviceIntent = new Intent(this, typeof(AndroidSensusService));
-            serviceIntent.PutExtra(AndroidSensusServiceHelper.MAIN_ACTIVITY_WILL_BE_DISPLAYED, true);
-            StartService(serviceIntent);
-
-            // bind the activity to the service
-            BindService(serviceIntent, _serviceConnection, Bind.AutoCreate);
         }
 
         protected override void OnResume()
@@ -166,19 +153,24 @@ namespace Sensus.Android
 
             CrossCurrentActivity.Current.Activity = this;
 
-            (SensusServiceHelper.Get() as AndroidSensusServiceHelper).IssueNotificationAsync("Sensus", null, true, false, INPUT_REQUESTED_NOTIFICATION_ID);
+            // make sure that the service is running and bound any time the activity is resumed.
+            Intent serviceIntent = new Intent(this, typeof(AndroidSensusService));
+            serviceIntent.PutExtra(AndroidSensusServiceHelper.MAIN_ACTIVITY_WILL_BE_DISPLAYED, true);
+            StartService(serviceIntent);
+            BindService(serviceIntent, _serviceConnection, Bind.AutoCreate);
 
-            // we might still be waiting for a connection to the sensus service. prevent the user from interacting with the UI
-            // by displaying a progress dialog that cannot be cancelled. keep the dialog up until the service has connected.
-            // if the service has already connected, the wait handle below will already be set and the dialog will immediately
-            // be dismissed.
-
+            // prevent the user from interacting with the UI by displaying a progress dialog until 
+            // the service has been bound. if the service has already bound, the wait handle below 
+            // will already be set and the dialog will immediately be dismissed.
             ProgressDialog serviceBindWaitDialog = ProgressDialog.Show(this, "Please Wait", "Binding to Sensus", true, false);
 
             // start new thread to wait for connection, since we're currently on the UI thread, which the service connection needs in order to complete.
             new Thread(() =>
                 {
                     _serviceBindWait.WaitOne();
+
+                    // clear input requested notification
+                    (SensusServiceHelper.Get() as AndroidSensusServiceHelper).IssueNotificationAsync("Sensus", null, true, false, INPUT_REQUESTED_NOTIFICATION_ID);
 
                     // now that the service connection has been established, dismiss the wait dialog and show protocols.
                     Device.BeginInvokeOnMainThread(() =>
@@ -188,6 +180,67 @@ namespace Sensus.Android
                         });
                     
                 }).Start();
+        }
+
+        protected override void OnPause()
+        {
+            Console.Error.WriteLine("--------------------------- Pausing activity ---------------------------");
+
+            base.OnPause();
+
+            // we disconnect from the service within onpause because onresume always blocks the user while rebinding
+            // to the service. conditions (the bind wait handle and service connection) need to be ready for onresume
+            // and this is the only place to establish those conditions.
+            DisconnectFromService();
+        }
+
+        protected override void OnStop()
+        {
+            Console.Error.WriteLine("--------------------------- Stopping activity ---------------------------");
+
+            base.OnStop();
+
+            AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
+
+            if (serviceHelper != null)
+            {   
+                serviceHelper.SetRunningMainActivity(null);
+                serviceHelper.Save();
+
+                if (SensusServiceHelper.PromptForInputsRunning)
+                    serviceHelper.IssueNotificationAsync("Sensus", "Please tap to provide responses.", true, false, INPUT_REQUESTED_NOTIFICATION_ID);
+            }
+        }
+
+        private void DisconnectFromService()
+        {
+            _serviceBindWait.Reset();
+
+            // unbind from service
+            if (_serviceConnection.Binder != null)
+                UnbindService(_serviceConnection);
+        }
+
+        public override void OnWindowFocusChanged(bool hasFocus)
+        {
+            base.OnWindowFocusChanged(hasFocus);
+
+            // the service helper is responsible for running actions that depend on the main activity. if the main activity
+            // is not showing, the service helper starts the main activity and then runs requested actions. there is a race
+            // condition between actions that wish to show a dialog (e.g., starting speech recognition) and the display of
+            // the activity. in order to ensure that the activity is showing before any actions are run, we override this
+            // focus changed event and let the service helper know when the activity is focused and when it is not. this
+            // way, any actions that the service helper runs will certainly be run after the main activity is running
+            // and focused.
+            AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
+
+            if (serviceHelper != null)
+            {
+                if (hasFocus)
+                    serviceHelper.SetFocusedMainActivity(this);
+                else
+                    serviceHelper.SetFocusedMainActivity(null);
+            }
         }
 
         #region intent handling
@@ -203,6 +256,27 @@ namespace Sensus.Android
         {
             new Thread(() =>
                 {
+                    // wait for service helper to be initialized, since this method might be called before the service starts up
+                    // and initializes the service helper.
+                    int timeToWaitMS = 60000;
+                    int waitIntervalMS = 1000;
+                    while (SensusServiceHelper.Get() == null && timeToWaitMS > 0)
+                    {
+                        Thread.Sleep(waitIntervalMS);
+                        timeToWaitMS -= waitIntervalMS;
+                    }
+
+                    if (SensusServiceHelper.Get() == null)
+                    {
+                        // don't use SensusServiceHelper.Get().FlashNotificationAsync because service helper is null
+                        RunOnUiThread(() =>
+                            {
+                                Toast.MakeText(this, "Failed to get service helper. Cannot open Intent.", ToastLength.Long);
+                            });
+                        
+                        return;
+                    }
+                    
                     // open page to view protocol if a protocol was passed to us
                     if (intent.Data != null)
                     {
@@ -248,21 +322,6 @@ namespace Sensus.Android
         }
 
         #endregion
-
-        public override void OnWindowFocusChanged(bool hasFocus)
-        {
-            base.OnWindowFocusChanged(hasFocus);
-
-            AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
-
-            if (serviceHelper != null)
-            {
-                if (hasFocus)
-                    serviceHelper.SetFocusedMainActivity(this);
-                else
-                    serviceHelper.SetFocusedMainActivity(null);
-            }
-        }
 
         #region activity results
 
@@ -318,46 +377,5 @@ namespace Sensus.Android
         }
 
         #endregion
-
-        protected override void OnPause()
-        {
-            Console.Error.WriteLine("--------------------------- Pausing activity ---------------------------");
-
-            base.OnPause();
-                
-            // force disconnection between service and main activity
-            OnWindowFocusChanged(false);
-        }
-
-        protected override void OnStop()
-        {
-            Console.Error.WriteLine("--------------------------- Stopping activity ---------------------------");
-
-            base.OnStop();
-
-            DisconnectFromService();
-
-            if (SensusServiceHelper.PromptForInputsRunning)
-                (SensusServiceHelper.Get() as AndroidSensusServiceHelper).IssueNotificationAsync("Sensus", "Please tap to provide responses.", true, false, INPUT_REQUESTED_NOTIFICATION_ID);
-        }
-
-        private void DisconnectFromService()
-        {
-            _serviceBindWait.Reset();
-
-            // unbind from service
-            if (_serviceConnection.Binder != null)
-            {         
-                // it's happened that the service is created after the service helper is disposed:  https://insights.xamarin.com/app/Sensus-Production/issues/46
-                // binding to the service in such a situation can result in a null service helper within the binder.
-                if (_serviceConnection.Binder.SensusServiceHelper != null)
-                {    
-                    // save the state of the service helper before unbinding
-                    _serviceConnection.Binder.SensusServiceHelper.SaveAsync();
-
-                    UnbindService(_serviceConnection);
-                }
-            }
-        }
     }
 }

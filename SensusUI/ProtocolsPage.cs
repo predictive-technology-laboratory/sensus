@@ -417,7 +417,15 @@ namespace SensusUI
 
             ToolbarItems.Add(new ToolbarItem(null, "gear_wrench.png", async () =>
                     {
-                        string action = await DisplayActionSheet("Other Actions", "Back", null, "New Protocol", "View Log", "View Points of Interest");
+                        List<string> buttons = new string[] { "New Protocol", "View Log", "View Points of Interest" }.ToList();
+
+                        // stopping only makes sense on android, where we use a background service. on ios, there is no concept
+                        // of stopping the app other than the user or system terminating the app.
+                        #if __ANDROID__
+                        buttons.Add("Stop Sensus");
+                        #endif
+
+                        string action = await DisplayActionSheet("Other Actions", "Back", null, buttons.ToArray());
 
                         if (action == "New Protocol")
                             Protocol.CreateAsync("New Protocol", null);
@@ -444,6 +452,10 @@ namespace SensusUI
                         }
                         else if (action == "View Points of Interest")
                             await Navigation.PushAsync(new PointsOfInterestPage(SensusServiceHelper.Get().PointsOfInterest));
+                        #if __ANDROID__
+                        else if (action == "Stop Sensus" && await DisplayAlert("Confirm", "Are you sure you want to stop Sensus? This will end your participation in all studies.", "Stop Sensus", "Go Back"))
+                            (SensusServiceHelper.Get() as Sensus.Android.AndroidSensusServiceHelper).Stop(true);
+                        #endif
                     }));
         }
 

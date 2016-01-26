@@ -52,6 +52,7 @@ namespace Sensus.Android
         private NotificationManager _notificationManager;
         private string _deviceId;
         private AndroidMainActivity _focusedMainActivity;
+        private AndroidMainActivity _runningMainActivity;
         private readonly object _focusedMainActivityLocker = new object();
         private AndroidTextToSpeech _textToSpeech;
         private PowerManager.WakeLock _wakeLock;
@@ -124,18 +125,38 @@ namespace Sensus.Android
         }
 
         public void SetService(AndroidSensusService service)
-        {
+        {            
             _service = service;
-            _connectivityManager = _service.GetSystemService(Context.ConnectivityService) as ConnectivityManager;
-            _notificationManager = _service.GetSystemService(Context.NotificationService) as NotificationManager;
-            _deviceId = Settings.Secure.GetString(_service.ContentResolver, Settings.Secure.AndroidId);
-            _textToSpeech = new AndroidTextToSpeech(_service);
-            _wakeLock = (_service.GetSystemService(Context.PowerService) as PowerManager).NewWakeLock(WakeLockFlags.Partial, "SENSUS");  
 
-            // must initialize after _deviceId is set
-            if (Insights.IsInitialized)
-                Insights.Identify(_deviceId, "Device ID", _deviceId);
+            if (_service == null)
+            {
+                if (_connectivityManager != null)
+                    _connectivityManager.Dispose();
+
+                if (_notificationManager != null)
+                    _notificationManager.Dispose();
+
+                if (_textToSpeech != null)
+                    _textToSpeech.Dispose();
+
+                if (_wakeLock != null)
+                    _wakeLock.Dispose();
+            }
+            else
+            {
+                _connectivityManager = _service.GetSystemService(Context.ConnectivityService) as ConnectivityManager;
+                _notificationManager = _service.GetSystemService(Context.NotificationService) as NotificationManager;
+                _textToSpeech = new AndroidTextToSpeech(_service);
+                _wakeLock = (_service.GetSystemService(Context.PowerService) as PowerManager).NewWakeLock(WakeLockFlags.Partial, "SENSUS");  
+                _deviceId = Settings.Secure.GetString(_service.ContentResolver, Settings.Secure.AndroidId);
+
+                // must initialize after _deviceId is set
+                if (Insights.IsInitialized)
+                    Insights.Identify(_deviceId, "Device ID", _deviceId);
+            }
         }
+
+        #region main activity
 
         /// <summary>
         /// Runs an action using main activity, optionally bringing the main activity into focus if it is not already focused.
@@ -157,7 +178,11 @@ namespace Sensus.Android
                         // we're going to run the action...add it to our cache.
                         lock (_actionsToRunUsingMainActivity)
                             _actionsToRunUsingMainActivity.Add(action);
-                        
+
+                        // run actions now only if the main activity is focused. this is a stronger requirement than merely started/resumed since it
+                        // implies that the user interface is up. this is important because if certain actions (e.g., speech recognition) are run
+                        // after the activity is resumed but before the window is up, the appearance of the activity's window can hide/cancel the
+                        // action's window.
                         if (_focusedMainActivity == null)
                         {             
                             if (_mainActivityWillBeDisplayed)
@@ -211,6 +236,15 @@ namespace Sensus.Android
                 }
             }
         }
+
+        public void SetRunningMainActivity(AndroidMainActivity runningMainActivity)
+        {
+            _runningMainActivity = runningMainActivity;
+        }
+
+        #endregion
+
+        #region miscellaneous platform-specific functions
 
         protected override void InitializeXamarinInsights()
         {
@@ -415,6 +449,8 @@ namespace Sensus.Android
                 }).Start();
         }
 
+        #endregion
+
         #region notifications
 
         public override void IssueNotificationAsync(string message, string id)
@@ -561,22 +597,34 @@ namespace Sensus.Android
 
         #endregion
 
-        public override void Stop()
+        public override void Stop(bool initiatedByUser)
         {
-            base.Stop();
+            // finish the activity before stopping the base object so that the user has no chance to interact with the service.
+            // if the main activity is running, it will be finished and the state will be saved as a side effect. if it is not 
+            // running, nothing will happen to the activity and we need to save the state explicitly. also, if the activity is 
+            // not running then the user might start and resume the activity at a later point in time. if this occurs, the 
+            // activity will restart the service and bind to it (see AndroidMainActivity.OnResume).
+            if (_runningMainActivity == null)
+            {
+                try
+                {
+                    Save();
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log("Failed to save service helper:  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
+            }
+            else
+                _runningMainActivity.Finish();
 
-            if (_focusedMainActivity != null)
-                _focusedMainActivity.Finish();
+            // stop protocols and clean up
+            base.Stop(initiatedByUser);
 
-            if (_service != null)
-                _service.StopSelf();
-        }
-
-        public override void Dispose()
-        {
-            _textToSpeech.Dispose();
-
-            base.Dispose();
+            // if the user is stopping us, stop the service. if the system (not the user) is stopping us, we don't need
+            // to stop the service because it is already being stopped by the system.
+            if (initiatedByUser && _service != null)
+                _service.Stop();
         }
     }
 }

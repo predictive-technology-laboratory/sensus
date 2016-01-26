@@ -21,7 +21,7 @@ using Xamarin.Forms.Platform.iOS;
 using Xamarin.Forms;
 using SensusUI;
 using SensusService;
-using Toasts;
+using Plugin.Toasts;
 using System.IO;
 using Facebook.CoreKit;
 using Xamarin;
@@ -189,13 +189,17 @@ namespace Sensus.iOS
         // This method is called when the application is about to terminate. Save data, if needed.
         public override void WillTerminate(UIApplication application)
         {
-            // some online resources indicate that no background time can be requested from within this 
-            // method. so, instead of beginning a background task, just wait for the dispose to finish.
             // this method won't be called when the user kills the app using multitasking; however,
             // it should be called if the system kills the app when it's running in the background.
-            // there doesn't appear to be a way to gracefully dispose the app when the user kills it
-            // via multitasking...we'll have to live with it.
-            _serviceHelper.Dispose();
+            // there doesn't appear to be a way to gracefully stop the app when the user kills it
+            // via multitasking...we'll have to live with that. also some online resources indicate 
+            // that no background time can be requested from within this method. so, instead of 
+            // beginning a background task, just wait for the calls to finish.
+            if (_serviceHelper != null)
+            {
+                _serviceHelper.Save();
+                _serviceHelper.Stop(false);
+            }
         }
     }
 }

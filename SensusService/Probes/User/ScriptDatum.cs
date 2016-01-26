@@ -159,13 +159,10 @@ namespace SensusService.Probes.User
                     return "No response.";
                 else
                 {
-                    if (_response is IEnumerable)
+                    if (_response is IList)
                     {
-                        int numItems = 0;
-                        foreach (object item in _response as IEnumerable)
-                            ++numItems;
-                        
-                        return numItems + " response" + (numItems == 1 ? "" : "s") + ".";
+                        IList responseList = _response as IList;
+                        return responseList.Count + " response" + (responseList.Count == 1 ? "" : "s") + ".";
                     }
                     else
                         return _response.ToString();
