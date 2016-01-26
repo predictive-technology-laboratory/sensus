@@ -21,15 +21,33 @@ using Newtonsoft.Json;
 
 namespace SensusUI.Inputs
 {
-    public class NumberSliderInput : Input
+    public class SliderInput : Input
     {
+        private string _tipText;
         private double _minimum;
         private double _maximum;
         private double _increment;
+        private string _leftLabel;
+        private string _rightLabel;
+        private bool _displaySliderValue;
+        private bool _displayMinMax;
         private Slider _slider;
         private double _incrementalValue;
         private bool _incrementalValueHasChanged;
         private Label _sliderLabel;
+
+        [EntryStringUiProperty("Tip Text:", true, 9)]
+        public string TipText
+        {
+            get
+            {
+                return _tipText;
+            }
+            set
+            {
+                _tipText = value;
+            }
+        }
 
         [EntryDoubleUiProperty(null, true, 10)]
         public double Minimum
@@ -42,7 +60,7 @@ namespace SensusUI.Inputs
             {
                 if (value >= _maximum)
                 {
-                    SensusServiceHelper.Get().FlashNotificationAsync("Number slider input minimum must be less than maximum.");
+                    SensusServiceHelper.Get().FlashNotificationAsync("Slider input minimum must be less than maximum.");
                     value = _maximum - 1;
                 }
                 
@@ -61,7 +79,7 @@ namespace SensusUI.Inputs
             {
                 if (value <= _minimum)
                 {
-                    SensusServiceHelper.Get().FlashNotificationAsync("Number slider input maximum must be greater than minimum.");
+                    SensusServiceHelper.Get().FlashNotificationAsync("Slider input maximum must be greater than minimum.");
                     value = _minimum + 1;
                 }
                 
@@ -82,11 +100,63 @@ namespace SensusUI.Inputs
             }
         }
 
+        [EntryStringUiProperty("Left Label:", true, 13)]
+        public string LeftLabel
+        {
+            get
+            {
+                return _leftLabel;
+            }
+            set
+            {
+                _leftLabel = value;
+            }
+        }
+
+        [EntryStringUiProperty("Right Label:", true, 14)]
+        public string RightLabel
+        {
+            get
+            {
+                return _rightLabel;
+            }
+            set
+            {
+                _rightLabel = value;
+            }
+        }
+
+        [OnOffUiProperty("Display Slider Value:", true, 15)]
+        public bool DisplaySliderValue
+        {
+            get
+            {
+                return _displaySliderValue;
+            }
+            set
+            {
+                _displaySliderValue = value;
+            }
+        }
+
+        [OnOffUiProperty("Display Min and Max:", true, 16)]
+        public bool DisplayMinMax
+        {
+            get
+            {
+                return _displayMinMax;
+            }
+            set
+            {
+                _displayMinMax = value;
+            }
+        }
+
         public override object Value
         {
             get
             {
-                // the number slider can be untouched but still have a value associated with it (i.e., the position of the slider). if the slider
+                // the slider can be untouched but still have a value associated with it (i.e., the position of the slider). if the slider
                 // is not a required input, then this value would be returned, which is not what we want since the user never interacted with the
                 // input. so, additionally keep track of whether the value has actually changed, indicating that the user has touched the control.
                 return _slider == null || !_incrementalValueHasChanged ? null : (object)_incrementalValue;
@@ -110,22 +180,22 @@ namespace SensusUI.Inputs
         {
             get
             {
-                return "Number Slider";
+                return "Slider";
             }
         }
 
-        public NumberSliderInput()
+        public SliderInput()
         {
             Construct(1, 10);
         }
 
-        public NumberSliderInput(string labelText, double minimum, double maximum)
+        public SliderInput(string labelText, double minimum, double maximum)
             : base(labelText)
         {
             Construct(minimum, maximum);
         }
 
-        public NumberSliderInput(string name, string labelText, double minimum, double maximum)
+        public SliderInput(string name, string labelText, double minimum, double maximum)
             : base(name, labelText)
         {
             Construct(minimum, maximum);
@@ -133,15 +203,17 @@ namespace SensusUI.Inputs
 
         private void Construct(double minimum, double maximum)
         {
+            _tipText = "Please select a value below.";
             _minimum = minimum;
             _maximum = maximum;
             _increment = (_maximum - _minimum + 1) / 10;
+            _leftLabel = _rightLabel = null;
+            _displaySliderValue = true;
+            _displayMinMax = true;
         }
 
         public override View GetView(int index)
         {
-            string tipText = "  Please select a value below.";
-
             if (base.GetView(index) == null && _maximum > _minimum)
             {
                 _slider = new Slider
@@ -162,7 +234,9 @@ namespace SensusUI.Inputs
                 _incrementalValueHasChanged = false;
 
                 _sliderLabel = CreateLabel(index);
-                _sliderLabel.Text += tipText;
+
+                if (!string.IsNullOrWhiteSpace(_tipText))
+                    _sliderLabel.Text += _tipText;
 
                 _slider.ValueChanged += (o, e) =>
                 {
@@ -172,7 +246,7 @@ namespace SensusUI.Inputs
                     {
                         _incrementalValue = newIncrementalValue;
                         _incrementalValueHasChanged = true;
-                        _sliderLabel.Text = GetLabelText(index) + "  " + _incrementalValue;
+                        _sliderLabel.Text = _displaySliderValue ? GetLabelText(index) + "  " + _incrementalValue : GetLabelText(index);
                         Complete = Value != null;
                     }
                 };
@@ -182,7 +256,7 @@ namespace SensusUI.Inputs
                         Orientation = StackOrientation.Vertical,
                         VerticalOptions = LayoutOptions.Start,
                         Children =
-                        { 
+                        {
                             _sliderLabel,
                             new StackLayout
                             {
@@ -194,16 +268,40 @@ namespace SensusUI.Inputs
                                     {
                                         Text = _minimum.ToString(),
                                         FontSize = 20,
-                                        HorizontalOptions = LayoutOptions.Fill
+                                        HorizontalOptions = LayoutOptions.Fill,
+                                        IsVisible = _displayMinMax
                                     },
                                     _slider,
                                     new Label
                                     {
                                         Text = _maximum.ToString(),
                                         FontSize = 20,
-                                        HorizontalOptions = LayoutOptions.Fill
+                                        HorizontalOptions = LayoutOptions.Fill,
+                                        IsVisible = _displayMinMax
                                     }
-                                }
+                                },
+                            },
+                            new StackLayout
+                            {
+                                Orientation = StackOrientation.Horizontal,
+                                HorizontalOptions = LayoutOptions.FillAndExpand,
+                                Children =
+                                {
+                                    new Label
+                                    {
+                                        Text = _leftLabel,
+                                        FontSize = 15,
+                                        HorizontalOptions = LayoutOptions.FillAndExpand
+                                        
+                                    },
+                                    new Label
+                                    {
+                                        Text = _rightLabel,
+                                        FontSize = 15,
+                                        HorizontalOptions = LayoutOptions.End
+                                    }
+                                },
+                                IsVisible = (!string.IsNullOrWhiteSpace(_leftLabel) || !string.IsNullOrWhiteSpace(_rightLabel))
                             }
                         }
                     });
@@ -213,7 +311,8 @@ namespace SensusUI.Inputs
                 if (Enabled)
                 {
                     // if the view was already initialized and is enabled, just update the label since the index might have changed.
-                    _sliderLabel.Text = GetLabelText(index) + "  " + (_incrementalValueHasChanged ? _incrementalValue.ToString() : tipText);
+                    string tipText = _incrementalValueHasChanged ? "" : "  " + _tipText;
+                    _sliderLabel.Text = GetLabelText(index) + (_displaySliderValue && _incrementalValueHasChanged ? "  " + _incrementalValue.ToString() : "") + tipText;
                 }
                 else
                 {
