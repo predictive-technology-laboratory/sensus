@@ -203,7 +203,7 @@ namespace SensusUI.Inputs
 
         private void Construct(double minimum, double maximum)
         {
-            _tipText = "Please select a value below.";
+            _tipText = "  Please select a value below.";
             _minimum = minimum;
             _maximum = maximum;
             _increment = (_maximum - _minimum + 1) / 10;
