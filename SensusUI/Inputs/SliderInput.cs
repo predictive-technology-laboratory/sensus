@@ -21,7 +21,7 @@ using Newtonsoft.Json;
 
 namespace SensusUI.Inputs
 {
-    public class NumberSliderInput : Input
+    public class SliderInput : Input
     {
         private string _tipText;
         private double _minimum;
@@ -36,7 +36,7 @@ namespace SensusUI.Inputs
         private bool _incrementalValueHasChanged;
         private Label _sliderLabel;
 
-        [EntryStringUiProperty("Tip text:", true, 9)]
+        [EntryStringUiProperty("Tip Text:", true, 9)]
         public string TipText
         {
             get
@@ -60,7 +60,7 @@ namespace SensusUI.Inputs
             {
                 if (value >= _maximum)
                 {
-                    SensusServiceHelper.Get().FlashNotificationAsync("Number slider input minimum must be less than maximum.");
+                    SensusServiceHelper.Get().FlashNotificationAsync("Slider input minimum must be less than maximum.");
                     value = _maximum - 1;
                 }
                 
@@ -79,7 +79,7 @@ namespace SensusUI.Inputs
             {
                 if (value <= _minimum)
                 {
-                    SensusServiceHelper.Get().FlashNotificationAsync("Number slider input maximum must be greater than minimum.");
+                    SensusServiceHelper.Get().FlashNotificationAsync("Slider input maximum must be greater than minimum.");
                     value = _minimum + 1;
                 }
                 
@@ -126,7 +126,7 @@ namespace SensusUI.Inputs
             }
         }
 
-        [OnOffUiProperty("Display slider value:", true, 15)]
+        [OnOffUiProperty("Display Slider Value:", true, 15)]
         public bool DisplaySliderValue
         {
             get
@@ -139,7 +139,7 @@ namespace SensusUI.Inputs
             }
         }
 
-        [OnOffUiProperty("Display min and max:", true, 16)]
+        [OnOffUiProperty("Display Min and Max:", true, 16)]
         public bool DisplayMinMax
         {
             get
@@ -156,7 +156,7 @@ namespace SensusUI.Inputs
         {
             get
             {
-                // the number slider can be untouched but still have a value associated with it (i.e., the position of the slider). if the slider
+                // the slider can be untouched but still have a value associated with it (i.e., the position of the slider). if the slider
                 // is not a required input, then this value would be returned, which is not what we want since the user never interacted with the
                 // input. so, additionally keep track of whether the value has actually changed, indicating that the user has touched the control.
                 return _slider == null || !_incrementalValueHasChanged ? null : (object)_incrementalValue;
@@ -180,22 +180,22 @@ namespace SensusUI.Inputs
         {
             get
             {
-                return "Number Slider";
+                return "Slider";
             }
         }
 
-        public NumberSliderInput()
+        public SliderInput()
         {
             Construct(1, 10);
         }
 
-        public NumberSliderInput(string labelText, double minimum, double maximum)
+        public SliderInput(string labelText, double minimum, double maximum)
             : base(labelText)
         {
             Construct(minimum, maximum);
         }
 
-        public NumberSliderInput(string name, string labelText, double minimum, double maximum)
+        public SliderInput(string name, string labelText, double minimum, double maximum)
             : base(name, labelText)
         {
             Construct(minimum, maximum);
@@ -232,7 +232,7 @@ namespace SensusUI.Inputs
                 _sliderLabel = CreateLabel(index);
 
                 if (!string.IsNullOrWhiteSpace(_tipText))
-                    _sliderLabel.Text += "  " + _tipText;
+                    _sliderLabel.Text += _tipText;
 
                 _slider.ValueChanged += (o, e) =>
                 {
@@ -242,7 +242,7 @@ namespace SensusUI.Inputs
                     {
                         _incrementalValue = newIncrementalValue;
                         _incrementalValueHasChanged = true;
-                        _sliderLabel.Text = _displaySliderValue ? GetLabelText(index) + "  " + _incrementalValue : GetLabelText(index) + "  " + _tipText;
+                        _sliderLabel.Text = _displaySliderValue ? GetLabelText(index) + "  " + _incrementalValue : GetLabelText(index);
                         Complete = Value != null;
                     }
                 };
@@ -286,17 +286,18 @@ namespace SensusUI.Inputs
                                     new Label
                                     {
                                         Text = _leftLabel,
-                                        HorizontalOptions = LayoutOptions.FillAndExpand,
-                                        FontSize = 15
+                                        FontSize = 15,
+                                        HorizontalOptions = LayoutOptions.FillAndExpand
+                                        
                                     },
                                     new Label
                                     {
                                         Text = _rightLabel,
-                                        HorizontalOptions = LayoutOptions.End,
-                                        FontSize = 15
+                                        FontSize = 15,
+                                        HorizontalOptions = LayoutOptions.End
                                     }
                                 },
-                                IsVisible = (_leftLabel != null || _rightLabel != null)
+                                IsVisible = (!string.IsNullOrWhiteSpace(_leftLabel) || !string.IsNullOrWhiteSpace(_rightLabel))
                             }
                         }
                     });
@@ -306,7 +307,8 @@ namespace SensusUI.Inputs
                 if (Enabled)
                 {
                     // if the view was already initialized and is enabled, just update the label since the index might have changed.
-                    _sliderLabel.Text = _displaySliderValue ? GetLabelText(index) + "  " + (_incrementalValueHasChanged ? _incrementalValue.ToString() : _tipText) : GetLabelText(index) + "  " + _tipText;
+                    string tipText = _incrementalValueHasChanged ? "" : "  " + _tipText;
+                    _sliderLabel.Text = GetLabelText(index) + (_displaySliderValue && _incrementalValueHasChanged ? "  " + _incrementalValue.ToString() : "") + tipText;
                 }
                 else
                 {

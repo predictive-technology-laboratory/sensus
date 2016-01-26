@@ -217,25 +217,25 @@ namespace SensusService.Probes.User
                         string[] startEnd = window.Split('-');
 
                         DateTime start = DateTime.Parse(startEnd[0]);
+                        DateTime end = start;
 
                         if (startEnd.Length > 1)
                         {
-                            DateTime end = DateTime.Parse(startEnd[1]);
+                            end = DateTime.Parse(startEnd[1]);
 
                             if (start > end)
                                 throw new Exception();
-
-                            _randomTriggerWindows.Add(new Tuple<DateTime, DateTime>(start, end));
-                            continue;
                         }
-                            
-                        _randomTriggerWindows.Add(new Tuple<DateTime, DateTime>(start, start));
+
+                        _randomTriggerWindows.Add(new Tuple<DateTime, DateTime>(start, end));
                     }
-                        
                 }
                 catch (Exception)
                 {
                 }
+
+                // sort windows by increasing hour and minute (day, month, and year are irrelevant)
+                _randomTriggerWindows = _randomTriggerWindows.OrderBy(window => window.Item1.Hour).OrderBy(window => window.Item1.Minute).ToList();
 
                 if (_probe != null && _probe.Running && _enabled && _randomTriggerWindows.Count > 0)  // probe can be null during deserialization if this property is set first
                     StartRandomTriggerCallbacksAsync();
@@ -499,7 +499,7 @@ namespace SensusService.Probes.User
                         SensusServiceHelper.Get().Logger.Log("Starting random script trigger callbacks.", LoggingLevel.Normal, GetType());
 
                         #if __IOS__
-                        string userNotificationMessage = "Your input is requested.";
+                        string userNotificationMessage = "Please tap to provide input.";
                         #elif __ANDROID__
                         string userNotificationMessage = null;
                         #elif WINDOWS_PHONE
@@ -508,28 +508,21 @@ namespace SensusService.Probes.User
                         #error "Unrecognized platform."
                         #endif
 
-                        // find next future trigger window
+                        // find next future trigger window, ignoring month, day, and year of windows. the windows are already sorted.
                         DateTime triggerWindowStart = default(DateTime);
                         DateTime triggerWindowEnd = default(DateTime);
                         DateTime now = DateTime.Now;
                         bool foundTriggerWindow = false;
-                        int count = 0;
-                        _randomTriggerWindows = _randomTriggerWindows.OrderBy(window => window.Item1.Minute).ToList();
-                        _randomTriggerWindows = _randomTriggerWindows.OrderBy(window => window.Item1.Hour).ToList();
                         foreach (Tuple<DateTime, DateTime> randomTriggerWindow in _randomTriggerWindows)
                         {
                             if (randomTriggerWindow.Item1.Hour > now.Hour || (randomTriggerWindow.Item1.Hour == now.Hour && randomTriggerWindow.Item1.Minute > now.Minute))
                             {
                                 triggerWindowStart = new DateTime(now.Year, now.Month, now.Day, randomTriggerWindow.Item1.Hour, randomTriggerWindow.Item1.Minute, 0);
                                 triggerWindowEnd = new DateTime(now.Year, now.Month, now.Day, randomTriggerWindow.Item2.Hour, randomTriggerWindow.Item2.Minute, 0);
-                                _randomTriggerWindows.RemoveAt(count);
-                                _randomTriggerWindows.Insert(count, new Tuple<DateTime, DateTime>(new DateTime(now.Year, now.Month, now.Day, randomTriggerWindow.Item1.Hour, randomTriggerWindow.Item1.Minute, 0), new DateTime(now.Year, now.Month, now.Day, randomTriggerWindow.Item2.Hour, randomTriggerWindow.Item2.Minute, 0)));
                                 foundTriggerWindow = true;
                                 break;
                             }
-                            count++;
                         }
-                        count = 0;
 
                         // if there were no future trigger windows, skip to the next day and use the first trigger window
                         if (!foundTriggerWindow)
@@ -537,8 +530,6 @@ namespace SensusService.Probes.User
                             Tuple<DateTime, DateTime> firstRandomTriggerWindow = _randomTriggerWindows.First();
                             triggerWindowStart = new DateTime(now.Year, now.Month, now.Day, firstRandomTriggerWindow.Item1.Hour, firstRandomTriggerWindow.Item1.Minute, 0).AddDays(1);
                             triggerWindowEnd = new DateTime(now.Year, now.Month, now.Day, firstRandomTriggerWindow.Item2.Hour, firstRandomTriggerWindow.Item2.Minute, 0).AddDays(1);
-                            _randomTriggerWindows.Insert(0, new Tuple<DateTime, DateTime>(new DateTime(now.Year, now.Month, now.Day, _randomTriggerWindows.First().Item1.Hour, _randomTriggerWindows.First().Item1.Minute, 0).AddDays(1), new DateTime(now.Year, now.Month, now.Day, _randomTriggerWindows.First().Item2.Hour, _randomTriggerWindows.First().Item2.Minute, 0).AddDays(1)));
-                            _randomTriggerWindows.RemoveAt(1);
                         }
 
                         // schedule callback for random offset into trigger window
@@ -547,12 +538,13 @@ namespace SensusService.Probes.User
 
                         _randomTriggerCallbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback((callbackId, cancellationToken) =>
                             {
-                                // if the probe is still running and the runner is enabled, run a copy of the script so that we can retain a pristine version of the original
-                                if (_probe.Running && _enabled && _randomTriggerWindows.Any(window => ((DateTime.Now >= window.Item1 && DateTime.Now <= window.Item2) || (window.Item1 == window.Item2 && DateTime.Now.Hour == window.Item1.Hour && DateTime.Now.Minute == window.Item1.Minute))))  // be sure to use DateTime.Now and not the local now variable, which will be in the past.
+                                // if the probe is still running and the runner is enabled, run a copy of the script so that we can retain a pristine version of the original.
+                                if (_probe.Running && _enabled)
                                     RunAsync(_script.Copy(), _delayMS, StartRandomTriggerCallbacksAsync);
                             }                   
                         , "Trigger Randomly", triggerDelayMS, userNotificationMessage);
                     }
+
                 }).Start();
         }
 

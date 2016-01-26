@@ -79,13 +79,7 @@ namespace SensusUI
                     });
             }
 
-            int inputSeparatorHeight = 10;
-
-            int viewNumber = 1;
-
-            bool anyRequired = inputGroup.Inputs.Any(input => input.Display && input.Required);
-
-            if (anyRequired)
+            if (inputGroup.Inputs.Any(input => input.Display && input.Required))
                 contentLayout.Children.Add(new Label
                     {
                         Text = "*Required Field",
@@ -95,6 +89,8 @@ namespace SensusUI
                     });
             
             List<Input> displayedInputs = new List<Input>();
+            int viewNumber = 1;
+            int inputSeparatorHeight = 10;
             foreach (Input input in inputGroup.Inputs)
                 if (input.Display)
                 {
@@ -112,6 +108,10 @@ namespace SensusUI
                                 Padding = new Thickness(10)
                             };
                         }
+
+                        // add some vertical separation between inputs
+                        if (_displayedInputCount > 0)
+                            contentLayout.Children.Add(new BoxView { Color = Color.Transparent, HeightRequest = inputSeparatorHeight });
                         
                         contentLayout.Children.Add(inputView);
                         displayedInputs.Add(input);
@@ -126,11 +126,7 @@ namespace SensusUI
             if (_displayedInputCount > 0)
                 contentLayout.Children.Add(new BoxView { Color = Color.Transparent, HeightRequest = inputSeparatorHeight });
 
-            StackLayout navigationStack = new StackLayout
-            {
-                Orientation = StackOrientation.Vertical,
-                HorizontalOptions = LayoutOptions.FillAndExpand
-            };
+            #region previous/next buttons
 
             StackLayout previousNextStack = new StackLayout
             {
@@ -206,7 +202,14 @@ namespace SensusUI
 
             #endregion
 
-            navigationStack.Children.Add(previousNextStack);
+            #endregion
+
+            StackLayout navigationStack = new StackLayout
+            {
+                Orientation = StackOrientation.Vertical,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                Children = { previousNextStack }
+            };
 
             #region cancel button
 
