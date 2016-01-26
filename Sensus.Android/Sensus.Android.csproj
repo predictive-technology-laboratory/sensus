@@ -36,10 +36,10 @@
     <AndroidLinkMode>None</AndroidLinkMode>
     <AndroidSupportedAbis>armeabi;armeabi-v7a;x86</AndroidSupportedAbis>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <CustomCommands>		
-      <CustomCommands>		
-        <Command type="BeforeBuild" command="touch Assets/UnitTestingProtocol.json" workingdir="${ProjectDir}" externalConsole="True" />		
-      </CustomCommands>		
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="BeforeBuild" command="touch Assets/UnitTestingProtocol.json" workingdir="${ProjectDir}" externalConsole="True" />
+      </CustomCommands>
     </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
