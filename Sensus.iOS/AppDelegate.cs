@@ -76,15 +76,44 @@ namespace Sensus.iOS
 
         public override bool OpenUrl(UIApplication application, NSUrl url, string sourceApplication, NSObject annotation)
         {
-            if (url.AbsoluteString.EndsWith(".json"))
+            if (url != null)
             {
-                try
+                string urlAbsoluteString = url.AbsoluteString;
+                if (urlAbsoluteString.EndsWith(".json"))
                 {
-                    Protocol.DeserializeAsync(File.ReadAllBytes(url.Path), true, Protocol.DisplayAndStartAsync);
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Failed to display Sensus Protocol from URL \"" + url.AbsoluteString + "\":  " + ex.Message, LoggingLevel.Verbose, GetType());
+                    if (urlAbsoluteString.StartsWith("sensus://"))
+                    {
+                        try
+                        {
+                            Protocol.DeserializeAsync(new Uri("http://" + urlAbsoluteString.Substring(urlAbsoluteString.IndexOf('/') + 2).Trim()), true, Protocol.DisplayAndStartAsync);
+                        }
+                        catch (Exception ex)
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Failed to display Sensus Protocol from HTTP URL \"" + url.AbsoluteString + "\":  " + ex.Message, LoggingLevel.Verbose, GetType());
+                        }
+                    }
+                    else if (urlAbsoluteString.StartsWith("sensuss://"))
+                    {
+                        try
+                        {
+                            Protocol.DeserializeAsync(new Uri("https://" + urlAbsoluteString.Substring(urlAbsoluteString.IndexOf('/') + 2).Trim()), true, Protocol.DisplayAndStartAsync);
+                        }
+                        catch (Exception ex)
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Failed to display Sensus Protocol from HTTPS URL \"" + url.AbsoluteString + "\":  " + ex.Message, LoggingLevel.Verbose, GetType());
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            Protocol.DeserializeAsync(File.ReadAllBytes(url.Path), true, Protocol.DisplayAndStartAsync);
+                        }
+                        catch (Exception ex)
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Failed to display Sensus Protocol from file URL \"" + url.AbsoluteString + "\":  " + ex.Message, LoggingLevel.Verbose, GetType());
+                        }
+                    }
                 }
             }
 

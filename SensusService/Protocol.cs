@@ -75,7 +75,17 @@ namespace SensusService
                 #if __ANDROID__ || __IOS__
                 downloadClient.DownloadDataCompleted += (o, e) =>
                 {
-                    DeserializeAsync(e.Result, useRandomGroupedProtocolIfAvailable, callback);
+                    if (e.Error == null)
+                        DeserializeAsync(e.Result, useRandomGroupedProtocolIfAvailable, callback);
+                    else
+                    {
+                        string errorMessage = "Failed to download protocol from URI \"" + webURI + "\". If this is an HTTPS URI, make sure the server's certificate is valid. Message:  " + e.Error.Message;
+                        SensusServiceHelper.Get().Logger.Log(errorMessage, LoggingLevel.Normal, typeof(Protocol));
+                        SensusServiceHelper.Get().FlashNotificationAsync(errorMessage);
+
+                        if (callback != null)
+                            callback(null);
+                    }
                 };
                 #elif WINDOWS_PHONE
                 // TODO:  Read bytes and display.
@@ -87,9 +97,12 @@ namespace SensusService
             }
             catch (Exception ex)
             {
-                string errorMessage = "Failed to download protocol from URI \"" + webURI + "\":  " + ex.Message + ". If this is an HTTPS URI, make sure the server's certificate is valid.";
+                string errorMessage = "Failed to download protocol from URI \"" + webURI + "\". If this is an HTTPS URI, make sure the server's certificate is valid. Message:  " + ex.Message;
                 SensusServiceHelper.Get().Logger.Log(errorMessage, LoggingLevel.Normal, typeof(Protocol));
                 SensusServiceHelper.Get().FlashNotificationAsync(errorMessage);
+
+                if (callback != null)
+                    callback(null);
             }
         }
 
@@ -103,6 +116,9 @@ namespace SensusService
             {
                 SensusServiceHelper.Get().Logger.Log("Failed to decrypt protocol from bytes:  " + ex.Message, LoggingLevel.Normal, typeof(Protocol));
                 SensusServiceHelper.Get().FlashNotificationAsync("Failed to decrypt protocol.");
+
+                if (callback != null)
+                    callback(null);
             }                        
         }
 

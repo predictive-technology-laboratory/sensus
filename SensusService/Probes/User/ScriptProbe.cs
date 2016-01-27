@@ -69,7 +69,22 @@ namespace SensusService.Probes.User
                         collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + scriptRunner.Name + ":  Once when the study is started.");
 
                     if (scriptRunner.RandomTriggerWindows != "")
-                        collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + scriptRunner.Name + ":  Randomly during hours " + scriptRunner.RandomTriggerWindows);
+                    {
+                        string windows = scriptRunner.RandomTriggerWindows;
+                        string collectionDescriptionPrefix = "Randomly during hours ";
+                        int commaCount = windows.Count(c => c == ',');
+                        if (commaCount == 0)
+                        {
+                            if (!windows.Contains('-'))
+                                collectionDescriptionPrefix = "At ";
+                        }
+                        else if (commaCount == 1)
+                            windows = windows.Replace(",", " and");
+                        else if (commaCount > 1)
+                            windows = windows.Insert(windows.LastIndexOf(',') + 1, " and");
+
+                        collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + scriptRunner.Name + ":  " + collectionDescriptionPrefix + windows + ".");
+                    }
                 }
 
                 return collectionDescription.ToString();

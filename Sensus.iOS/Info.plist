@@ -38,6 +38,22 @@
 				<string>fb873948892650954</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>edu.virginia.sie.ptl.sensus</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>sensus</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>edu.virginia.sie.ptl.sensus.s</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>sensuss</string>
+			</array>
+		</dict>
 	</array>
 	<key>FacebookAppID</key>
 	<string>873948892650954</string>

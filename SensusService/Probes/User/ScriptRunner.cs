@@ -201,7 +201,7 @@ namespace SensusService.Probes.User
                 if (_randomTriggerWindows.Count == 0)
                     return "";
                 else
-                    return string.Concat(_randomTriggerWindows.Select((window, index) => (index == 0 ? "" : ",") +
+                    return string.Concat(_randomTriggerWindows.Select((window, index) => (index == 0 ? "" : ", ") +
                             (
                                 window.Item1 == window.Item2 ? window.Item1.Hour + ":" + window.Item1.Minute.ToString().PadLeft(2, '0') : 
                                 window.Item1.Hour + ":" + window.Item1.Minute.ToString().PadLeft(2, '0') + "-" + window.Item2.Hour + ":" + window.Item2.Minute.ToString().PadLeft(2, '0')
@@ -216,16 +216,16 @@ namespace SensusService.Probes.User
 
                 try
                 {
-                    foreach (string window in value.Split(','))
+                    foreach (string window in value.Split(new char[]{','}, StringSplitOptions.RemoveEmptyEntries))
                     {
-                        string[] startEnd = window.Split('-');
+                        string[] startEnd = window.Trim().Split('-');
 
-                        DateTime start = DateTime.Parse(startEnd[0]);
+                        DateTime start = DateTime.Parse(startEnd[0].Trim());
                         DateTime end = start;
 
                         if (startEnd.Length > 1)
                         {
-                            end = DateTime.Parse(startEnd[1]);
+                            end = DateTime.Parse(startEnd[1].Trim());
 
                             if (start > end)
                                 throw new Exception();
