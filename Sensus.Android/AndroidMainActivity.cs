@@ -112,7 +112,7 @@ namespace Sensus.Android
                     }
                 }
 
-                    // tell the service to finish this activity when it is stopped
+                // tell the service to finish this activity when it is stopped
                 e.Binder.ServiceStopAction = Finish;
 
                 // signal the activity that the service has been bound
