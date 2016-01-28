@@ -721,6 +721,8 @@ namespace SensusService
                             // do we have callback information for the passed callbackId? we might not, in the case where the callback is canceled by the user and the system fires it subsequently.
                             if (!_idCallback.TryGetValue(callbackId, out scheduledCallback))
                             {
+                                _logger.Log("Callback " + callbackId + " is not valid.", LoggingLevel.Normal, GetType());
+
                                 if (callback != null)
                                     callback();
 
@@ -1130,7 +1132,7 @@ namespace SensusService
             return json;
         }
 
-        public virtual void Stop(bool initiatedByUser)
+        public virtual void Stop()
         {
             // stop all protocols
             lock (_registeredProtocols)

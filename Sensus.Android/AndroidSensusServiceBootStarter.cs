@@ -27,11 +27,7 @@ namespace Sensus.Android
         public override void OnReceive(Context context, Intent intent)
         {
             if (intent.Action == Intent.ActionBootCompleted)
-            {
-                Intent serviceIntent = new Intent(context, typeof(AndroidSensusService));
-                serviceIntent.PutExtra(AndroidSensusServiceHelper.MAIN_ACTIVITY_WILL_BE_DISPLAYED, false);
-                context.StartService(serviceIntent);
-            }
+                context.StartService(new Intent(context, typeof(AndroidSensusService)));
         }
     }
 }

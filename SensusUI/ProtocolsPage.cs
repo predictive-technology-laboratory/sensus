@@ -454,7 +454,7 @@ namespace SensusUI
                             await Navigation.PushAsync(new PointsOfInterestPage(SensusServiceHelper.Get().PointsOfInterest));
                         #if __ANDROID__
                         else if (action == "Stop Sensus" && await DisplayAlert("Confirm", "Are you sure you want to stop Sensus? This will end your participation in all studies.", "Stop Sensus", "Go Back"))
-                            (SensusServiceHelper.Get() as Sensus.Android.AndroidSensusServiceHelper).Stop(true);
+                            (SensusServiceHelper.Get() as Sensus.Android.AndroidSensusServiceHelper).Stop();
                         #endif
                     }));
         }

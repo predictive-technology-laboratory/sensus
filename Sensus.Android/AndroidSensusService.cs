@@ -17,6 +17,7 @@ using Android.Content;
 using Android.OS;
 using SensusService;
 using System;
+using System.Collections.Generic;
 
 namespace Sensus.Android
 {
@@ -29,13 +30,13 @@ namespace Sensus.Android
     [Service(Exported = false)]
     public class AndroidSensusService : Service
     {
-        private const int FOREGROUND_SERVICE_NOTIFICATION_ID = 1;
-
-        private Notification _foregroundServiceNotification;
+        private List<AndroidSensusServiceBinder> _bindings;
 
         public override void OnCreate()
         {
             base.OnCreate();
+
+            _bindings = new List<AndroidSensusServiceBinder>();
 
             SensusServiceHelper.Initialize(() => new AndroidSensusServiceHelper());
 
@@ -57,12 +58,7 @@ namespace Sensus.Android
             // helper will be null.
             if (serviceHelper != null)
             {
-                serviceHelper.Logger.Log("Sensus service received start command (startId=" + startId + ").", LoggingLevel.Normal, GetType());
-
-                if (intent == null)
-                    serviceHelper.MainActivityWillBeDisplayed = false;
-                else
-                    serviceHelper.MainActivityWillBeDisplayed = intent.GetBooleanExtra(AndroidSensusServiceHelper.MAIN_ACTIVITY_WILL_BE_DISPLAYED, false);
+                serviceHelper.Logger.Log("Sensus service received start command (startId=" + startId + ", flags=" + flags + ").", LoggingLevel.Normal, GetType());
 
                 // the service can be stopped without destroying the service object. in such cases, 
                 // subsequent calls to start the service will not call OnCreate. therefore, it's 
@@ -71,36 +67,28 @@ namespace Sensus.Android
                 // sensus receives a signal on device boot and for any callback alarms that are 
                 // requested. furthermore, all calls here should be nonblocking / async so we don't 
                 // tie up the UI thread.
-
                 serviceHelper.StartAsync(() =>
-                    {
+                    {         
                         if (intent != null && intent.GetBooleanExtra(AndroidSensusServiceHelper.SENSUS_CALLBACK_KEY, false))
                         {
                             string callbackId = intent.GetStringExtra(AndroidSensusServiceHelper.SENSUS_CALLBACK_ID_KEY);
-                            if (callbackId != null)
-                            {
-                                bool repeating = intent.GetBooleanExtra(AndroidSensusServiceHelper.SENSUS_CALLBACK_REPEATING_KEY, false);
+                            bool repeating = intent.GetBooleanExtra(AndroidSensusServiceHelper.SENSUS_CALLBACK_REPEATING_KEY, false);
+
+                            // if the user removes the main activity from the switcher, the service's process will be killed and restarted without notice, and 
+                            // we'll have no opportunity to unschedule repeating callbacks. so, when the service is restarted we'll reinitialize the service
+                            // helper, restart the repeating callbacks, and we'll then have duplicate repeating callbacks. handle the invalid callbacks below.
+                            // if the callback is scheduled, it's fine. if it's not, then unschedule it.
+                            if (serviceHelper.CallbackIsScheduled(callbackId))
                                 serviceHelper.RaiseCallbackAsync(callbackId, repeating, true);
+                            else
+                            {                                
+                                if (repeating)
+                                    serviceHelper.UnscheduleRepeatingCallback(callbackId);
+                                else
+                                    serviceHelper.UnscheduleOneTimeCallback(callbackId);
                             }
                         }
                     });
-            }
-
-            if (_foregroundServiceNotification == null)
-            {
-                // run service as a foreground service since we want it to remain open always and not be restarted when main activity
-                // is finished.
-                Intent activityIntent = new Intent(this, typeof(AndroidMainActivity));
-                PendingIntent pendingIntent = PendingIntent.GetActivity(this, 0, activityIntent, PendingIntentFlags.UpdateCurrent);
-                _foregroundServiceNotification = new Notification.Builder(this)
-                    .SetContentTitle("Sensus")
-                    .SetContentText("Sensus is running. Tap to open.")
-                    .SetSmallIcon(Resource.Drawable.ic_launcher)
-                    .SetContentIntent(pendingIntent)
-                    .SetAutoCancel(false)
-                    .SetOngoing(true).Build();
-
-                StartForeground(FOREGROUND_SERVICE_NOTIFICATION_ID, _foregroundServiceNotification);
             }
 
             return StartCommandResult.Sticky;
@@ -108,36 +96,61 @@ namespace Sensus.Android
 
         public override IBinder OnBind(Intent intent)
         {
-            return new AndroidSensusServiceBinder(SensusServiceHelper.Get() as AndroidSensusServiceHelper);
+            AndroidSensusServiceBinder binder = new AndroidSensusServiceBinder(SensusServiceHelper.Get() as AndroidSensusServiceHelper);
+
+            lock (_bindings)
+                _bindings.Add(binder);
+            
+            return binder;
         }
 
         public void Stop()
         {
-            StopForeground(true);
-            StopSelf();
+            try
+            {
+                StopSelf();
+            }
+            catch (Exception)
+            {
+            }
 
-            _foregroundServiceNotification = null;
+            lock (_bindings)
+            {
+                foreach (AndroidSensusServiceBinder binder in _bindings)
+                    if (binder.ServiceStopAction != null)
+                    {
+                        try
+                        {
+                            binder.ServiceStopAction();
+                        }
+                        catch (Exception)
+                        {
+                        }
+                    }
+            }
         }
 
         public override void OnDestroy()
         {
+            Console.Error.WriteLine("--------------------------- Destroying Service ---------------------------");
+
             base.OnDestroy();
 
             // ondestroy can be called in two different ways. first, the user might stop sensus from within the activity. if this
-            // happens, the activity will be finished, the service helper will be stopped/disposed, and the service will be stopped.
-            // at some indeterminate point in the future, the service will be destroyed and cleaned up, calling this method. in this 
-            // case we don't need to do anything since all of the stopping/cleaning has already happened. this case is indicated
-            // by a null service helper. the other way we might find ourselves in ondestroy is if system resources are running out
-            // and android decides to reclaim the service. in this case we need to finish the activity if one is running and stop/dispose 
-            // the service helper. this case is initiated by the system and not the user and is indicated by a non-null service helper.
+            // happens, the service helper will be stopped/disposed, and the service will be stopped. at some indeterminate point 
+            // in the future, the service will be destroyed and cleaned up, calling this method. in this case we don't need to do 
+            // anything since all of the stopping/cleaning has already happened. this case is indicated by a null service helper. 
+            // the other way we might find ourselves in ondestroy is if system resources are running out and android decides to 
+            // reclaim the service. in this case we need to stop/dispose the service helper. this case is indicated by a non-null 
+            // service helper.
            
             AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
 
             if (serviceHelper != null)
             {
-                // case 2 applies (see above)...do some things.
+                // case 2 applies (see above)
                 serviceHelper.Logger.Log("Destroying service.", LoggingLevel.Normal, GetType());
-                serviceHelper.Stop(false);
+                serviceHelper.Stop();
                 serviceHelper.SetService(null);
             }
         }

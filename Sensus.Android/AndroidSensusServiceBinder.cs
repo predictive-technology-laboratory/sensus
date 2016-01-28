@@ -13,12 +13,14 @@
 // limitations under the License.
 
 using Android.OS;
+using System;
 
 namespace Sensus.Android
 {
     public class AndroidSensusServiceBinder : Binder
     {
         private AndroidSensusServiceHelper _sensusServiceHelper;
+        public Action ServiceStopAction;
 
         public AndroidSensusServiceHelper SensusServiceHelper
         {

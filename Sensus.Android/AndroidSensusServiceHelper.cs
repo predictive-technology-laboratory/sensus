@@ -40,11 +40,6 @@ namespace Sensus.Android
 {
     public class AndroidSensusServiceHelper : SensusServiceHelper
     {
-        /// <summary>
-        /// An intent extra indicating whether, after the service is started, the main activity will be displayed.
-        /// </summary>
-        public const string MAIN_ACTIVITY_WILL_BE_DISPLAYED = "MAIN-ACTIVITY-WILL-BE-DISPLAYED";
-
         private const string SERVICE_NOTIFICATION_TAG = "SENSUS-SERVICE-NOTIFICATION";
 
         private AndroidSensusService _service;
@@ -52,11 +47,9 @@ namespace Sensus.Android
         private NotificationManager _notificationManager;
         private string _deviceId;
         private AndroidMainActivity _focusedMainActivity;
-        private AndroidMainActivity _runningMainActivity;
         private readonly object _focusedMainActivityLocker = new object();
         private AndroidTextToSpeech _textToSpeech;
         private PowerManager.WakeLock _wakeLock;
-        private bool _mainActivityWillBeDisplayed;
         private List<Action<AndroidMainActivity>> _actionsToRunUsingMainActivity;
 
         [JsonIgnore]
@@ -104,18 +97,6 @@ namespace Sensus.Android
             get
             {
                 return "Android " + Build.VERSION.SdkInt;
-            }
-        }
-
-        public bool MainActivityWillBeDisplayed
-        {
-            get
-            {
-                return _mainActivityWillBeDisplayed;
-            }
-            set
-            {
-                _mainActivityWillBeDisplayed = value;
             }
         }
 
@@ -185,18 +166,13 @@ namespace Sensus.Android
                         // action's window.
                         if (_focusedMainActivity == null)
                         {             
-                            if (_mainActivityWillBeDisplayed)
-                                Logger.Log("Main activity is about to be displayed. Will wait for it before running action.", LoggingLevel.Normal, GetType());
-                            else
-                            {
-                                Logger.Log("Starting main activity to run action.", LoggingLevel.Normal, GetType());
+                            Logger.Log("Starting main activity to run action.", LoggingLevel.Normal, GetType());
 
-                                // start the activity. when it starts, it will call back to SetFocusedMainActivity indicating readiness. once 
-                                // this happens, we'll be ready to run the action that was just passed in as well as any others that need to be run.
-                                Intent intent = new Intent(_service, typeof(AndroidMainActivity));
-                                intent.AddFlags(ActivityFlags.FromBackground | ActivityFlags.NewTask);
-                                _service.StartActivity(intent);
-                            }
+                            // start the activity. when it starts, it will call back to SetFocusedMainActivity indicating readiness. once 
+                            // this happens, we'll be ready to run the action that was just passed in as well as any others that need to be run.
+                            Intent intent = new Intent(_service, typeof(AndroidMainActivity));
+                            intent.AddFlags(ActivityFlags.FromBackground | ActivityFlags.NewTask);
+                            _service.StartActivity(intent);
                         }
                         else
                             RunActionsUsingMainActivity();
@@ -235,11 +211,6 @@ namespace Sensus.Android
                     _actionsToRunUsingMainActivity.Clear();
                 }
             }
-        }
-
-        public void SetRunningMainActivity(AndroidMainActivity runningMainActivity)
-        {
-            _runningMainActivity = runningMainActivity;
         }
 
         #endregion
@@ -563,7 +534,7 @@ namespace Sensus.Android
             serviceIntent.PutExtra(SENSUS_CALLBACK_ID_KEY, callbackId);
             serviceIntent.PutExtra(SENSUS_CALLBACK_REPEATING_KEY, repeating);
 
-            return PendingIntent.GetService(_service, callbackId.GetHashCode(), serviceIntent, PendingIntentFlags.CancelCurrent);  // upon hash collisions, the previous intent will simply be canceled.
+            return PendingIntent.GetService(_service, callbackId.GetHashCode(), serviceIntent, PendingIntentFlags.CancelCurrent);  // upon hash collisions on the request code, the previous intent will simply be canceled.
         }
 
         #endregion
@@ -597,33 +568,12 @@ namespace Sensus.Android
 
         #endregion
 
-        public override void Stop(bool initiatedByUser)
+        public override void Stop()
         {
-            // finish the activity before stopping the base object so that the user has no chance to interact with the service.
-            // if the main activity is running, it will be finished and the state will be saved as a side effect. if it is not 
-            // running, nothing will happen to the activity and we need to save the state explicitly. also, if the activity is 
-            // not running then the user might start and resume the activity at a later point in time. if this occurs, the 
-            // activity will restart the service and bind to it (see AndroidMainActivity.OnResume).
-            if (_runningMainActivity == null)
-            {
-                try
-                {
-                    Save();
-                }
-                catch (Exception ex)
-                {
-                    Logger.Log("Failed to save service helper:  " + ex.Message, LoggingLevel.Normal, GetType());
-                }
-            }
-            else
-                _runningMainActivity.Finish();
-
             // stop protocols and clean up
-            base.Stop(initiatedByUser);
+            base.Stop();
 
-            // if the user is stopping us, stop the service. if the system (not the user) is stopping us, we don't need
-            // to stop the service because it is already being stopped by the system.
-            if (initiatedByUser && _service != null)
+            if (_service != null)
                 _service.Stop();
         }
     }

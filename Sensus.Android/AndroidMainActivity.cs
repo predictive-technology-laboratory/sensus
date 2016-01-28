@@ -112,9 +112,8 @@ namespace Sensus.Android
                     }
                 }
 
-                // give service helper a reference to this activity
-                e.Binder.SensusServiceHelper.MainActivityWillBeDisplayed = false;
-                e.Binder.SensusServiceHelper.SetRunningMainActivity(this);
+                    // tell the service to finish this activity when it is stopped
+                e.Binder.ServiceStopAction = Finish;
 
                 // signal the activity that the service has been bound
                 _serviceBindWait.Set();
@@ -128,9 +127,12 @@ namespace Sensus.Android
                 #endif
             };
 
+            // the following is fired if the process hosting the service crashes or is killed.
             _serviceConnection.ServiceDisconnected += (o, e) =>
             {
-                DisconnectFromService();                
+                Toast.MakeText(this, "The Sensus service has crashed.", ToastLength.Long);
+                DisconnectFromService(); 
+                Finish();
             };
 
             OpenIntentAsync(Intent);
@@ -155,9 +157,8 @@ namespace Sensus.Android
 
             // make sure that the service is running and bound any time the activity is resumed.
             Intent serviceIntent = new Intent(this, typeof(AndroidSensusService));
-            serviceIntent.PutExtra(AndroidSensusServiceHelper.MAIN_ACTIVITY_WILL_BE_DISPLAYED, true);
             StartService(serviceIntent);
-            BindService(serviceIntent, _serviceConnection, Bind.AutoCreate);
+            BindService(serviceIntent, _serviceConnection, Bind.AutoCreate | Bind.AboveClient);
 
             // prevent the user from interacting with the UI by displaying a progress dialog until 
             // the service has been bound. if the service has already bound, the wait handle below 
@@ -204,7 +205,6 @@ namespace Sensus.Android
 
             if (serviceHelper != null)
             {   
-                serviceHelper.SetRunningMainActivity(null);
                 serviceHelper.Save();
 
                 if (SensusServiceHelper.PromptForInputsRunning)
@@ -212,11 +212,22 @@ namespace Sensus.Android
             }
         }
 
+        protected override void OnDestroy()
+        {
+            Console.Error.WriteLine("--------------------------- Destroying activity ---------------------------");
+
+            base.OnDestroy();
+
+            // if the activity is destroyed, reset the service connection stop action to be null so that the service doesn't try to
+            // finish a destroyed activity if/when the service stops.
+            if (_serviceConnection.Binder != null)
+                _serviceConnection.Binder.ServiceStopAction = null;
+        }
+
         private void DisconnectFromService()
         {
             _serviceBindWait.Reset();
 
-            // unbind from service
             if (_serviceConnection.Binder != null)
                 UnbindService(_serviceConnection);
         }
@@ -371,7 +382,7 @@ namespace Sensus.Android
             // see:  https://insights.xamarin.com/app/Sensus-Production/issues/66
             //
             if (!FacebookSdk.IsInitialized)
-                FacebookSdk.SdkInitialize(this);
+                FacebookSdk.SdkInitialize(global::Android.App.Application.Context);
             
             _facebookCallbackManager.OnActivityResult(requestCode, (int)resultCode, data);
         }
