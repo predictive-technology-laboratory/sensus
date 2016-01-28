@@ -21,13 +21,13 @@ using Xamarin.Forms.Platform.iOS;
 using Xamarin.Forms;
 using SensusUI;
 using SensusService;
-using Plugin.Toasts;
 using System.IO;
 using Facebook.CoreKit;
 using Xamarin;
 using Xam.Plugin.MapExtend.iOSUnified;
 using CoreLocation;
 using System.Threading;
+using Plugin.Toasts;
 
 namespace Sensus.iOS
 {
@@ -53,7 +53,7 @@ namespace Sensus.iOS
 
             // toasts for iOS
             DependencyService.Register<ToastNotificatorImplementation>();
-            ToastNotificatorImplementation.Init();
+            ToastNotificatorImplementation.Init(); 
 
             LoadApplication(new App());
 
@@ -227,7 +227,7 @@ namespace Sensus.iOS
             if (_serviceHelper != null)
             {
                 _serviceHelper.Save();
-                _serviceHelper.Stop(false);
+                _serviceHelper.Stop();
             }
         }
     }
