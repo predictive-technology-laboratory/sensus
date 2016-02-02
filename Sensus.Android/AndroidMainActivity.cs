@@ -29,6 +29,7 @@ using Xamarin;
 using Xam.Plugin.MapExtend.Droid;
 using Plugin.CurrentActivity;
 using Android.Widget;
+using Plugin.Permissions;
 
 [assembly:MetaData("com.facebook.sdk.ApplicationId", Value = "@string/app_id")]
 
@@ -385,6 +386,11 @@ namespace Sensus.Android
                 FacebookSdk.SdkInitialize(global::Android.App.Application.Context);
             
             _facebookCallbackManager.OnActivityResult(requestCode, (int)resultCode, data);
+        }
+
+        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
+        {
+            PermissionsImplementation.Current.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
 
         #endregion
