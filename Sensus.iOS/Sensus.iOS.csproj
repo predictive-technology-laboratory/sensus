@@ -305,10 +305,10 @@
       <HintPath>..\packages\Xamarin.Facebook.iOS.4.9.1.0\lib\Xamarin.iOS10\Facebook.dll</HintPath>
     </Reference>
     <Reference Include="Toasts.Forms.Plugin.Abstractions">
-      <HintPath>..\packages\Toasts.Forms.Plugin.2.0.0\lib\Xamarin.iOS10\Toasts.Forms.Plugin.Abstractions.dll</HintPath>
+      <HintPath>..\packages\Toasts.Forms.Plugin.2.0.3\lib\Xamarin.iOS10\Toasts.Forms.Plugin.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Toasts.Forms.Plugin.iOS">
-      <HintPath>..\packages\Toasts.Forms.Plugin.2.0.0\lib\Xamarin.iOS10\Toasts.Forms.Plugin.iOS.dll</HintPath>
+      <HintPath>..\packages\Toasts.Forms.Plugin.2.0.3\lib\Xamarin.iOS10\Toasts.Forms.Plugin.iOS.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
