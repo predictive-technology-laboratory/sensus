@@ -102,6 +102,7 @@ namespace SensusService.DataStores.Remote
 
         private AmazonS3Client InitializeS3()
         {
+            AWSConfigs.LoggingConfig.LogMetrics = false;  // getting many uncaught exceptions from AWS S3:  https://insights.xamarin.com/app/Sensus-Production/issues/351
             RegionEndpoint amazonRegion = RegionEndpoint.GetBySystemName(_cognitoIdentityPoolId.Substring(0, _cognitoIdentityPoolId.IndexOf(":")));
             CognitoAWSCredentials credentials = new CognitoAWSCredentials(_cognitoIdentityPoolId, amazonRegion);
             return new AmazonS3Client(credentials, amazonRegion);
