@@ -41,7 +41,7 @@ namespace Sensus.Android
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault }, DataMimeType = "application/json")]  // protocols obtained from "file" and "content" schemes:  http://developer.android.com/guide/components/intents-filters.html#DataTest
     public class AndroidMainActivity : FormsApplicationActivity
     {
-        private static readonly string INPUT_REQUESTED_NOTIFICATION_ID = "INPUT-REQUESTED-NOTIFICATION-ID";
+        public static readonly string INPUT_REQUESTED_NOTIFICATION_ID = "INPUT-REQUESTED-NOTIFICATION-ID";
 
         private AndroidSensusServiceConnection _serviceConnection;
         private ManualResetEvent _activityResultWait;

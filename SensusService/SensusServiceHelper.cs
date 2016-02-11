@@ -916,6 +916,14 @@ namespace SensusService
                     {
                         InputGroup inputGroup = inputGroups.ElementAt(inputGroupNum);
 
+                        int inputTimeoutMS = -1;
+                        if (inputGroup.TimeoutMinutes != null)
+                        {
+                            inputTimeoutMS = (int)(inputGroup.TimeoutMinutes.GetValueOrDefault() * 60000);
+                            if (inputTimeoutMS < 0)
+                                inputTimeoutMS = -1;
+                        }
+
                         ManualResetEvent responseWait = new ManualResetEvent(false);
 
                         // run voice inputs by themselves, and only if the input group contains exactly one input and that input is a voice input.
@@ -939,7 +947,11 @@ namespace SensusService
 
                             Device.BeginInvokeOnMainThread(async () =>
                                 {
-                                    PromptForInputsPage promptForInputsPage = new PromptForInputsPage(inputGroup, inputGroupNum + 1, inputGroups.Count(), showCancelButton, nextButtonText, cancellationToken, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, result =>
+                                    DateTime? timeoutTime = null;
+                                    if (inputTimeoutMS != -1)
+                                        timeoutTime = DateTime.Now.AddMilliseconds(inputTimeoutMS);
+
+                                    PromptForInputsPage promptForInputsPage = new PromptForInputsPage(inputGroup, inputGroupNum + 1, inputGroups.Count(), showCancelButton, nextButtonText, cancellationToken, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, timeoutTime, result =>
                                         {
                                             if (result == PromptForInputsPage.Result.Cancel || result == PromptForInputsPage.Result.NavigateBackward && inputGroupNumBackStack.Count == 0)
                                                 inputGroups = null;
@@ -983,7 +995,32 @@ namespace SensusService
                                 });
                         }
 
-                        responseWait.WaitOne();    
+                        if (!responseWait.WaitOne(inputTimeoutMS))
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Input group \"" + inputGroup.Name + "\" timed out after " + inputTimeoutMS + "ms.", LoggingLevel.Normal, GetType());
+
+                            ManualResetEvent closePromptPagesWait = new ManualResetEvent(false);
+
+                            Device.BeginInvokeOnMainThread(async() =>
+                                {
+                                    try
+                                    {
+                                        while (App.Current.MainPage.Navigation.ModalStack.Last() is PromptForInputsPage)
+                                            await App.Current.MainPage.Navigation.PopModalAsync(true);
+                                    }
+                                    catch (Exception)
+                                    {
+                                    }
+                                    finally
+                                    {
+                                        closePromptPagesWait.Set();
+                                    }
+                                });
+
+                            closePromptPagesWait.WaitOne();
+
+                            inputGroups = null;
+                        }
                     }
 
                     // at this point we're done showing pages to the user. anything that needs to happen below with GPS tagging or subsequently
@@ -993,6 +1030,12 @@ namespace SensusService
                     // to its reentrant call of this method by a call from somewhere else in the system, the callback might be prevented from 
                     // executing; however, can't think of a place where this might happen with negative consequences.
                     PROMPT_FOR_INPUTS_RUNNING = false;
+
+                    #if __ANDROID__
+                    // clear input requested notification. the notification will be cleared if the user taps it or if the activity is resumed. however, if
+                    // the prompt times out while the activity is stopped, neither of these will occur. so we have to manually clear the notification.
+                    (SensusServiceHelper.Get() as Sensus.Android.AndroidSensusServiceHelper).IssueNotificationAsync("Sensus", null, true, false, Sensus.Android.AndroidMainActivity.INPUT_REQUESTED_NOTIFICATION_ID);
+                    #endif
 
                     #region geotag input groups if the user didn't cancel and we've got input groups with inputs that are complete and lacking locations
                     if (inputGroups != null && inputGroups.Any(inputGroup => inputGroup.Geotag && inputGroup.Inputs.Any(input => input.Complete && (input.Latitude == null || input.Longitude == null))))

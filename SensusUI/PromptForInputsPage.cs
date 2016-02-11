@@ -41,7 +41,7 @@ namespace SensusUI
             }
         }
 
-        public PromptForInputsPage(InputGroup inputGroup, int stepNumber, int totalSteps, bool showCancelButton, string nextButtonTextOverride, CancellationToken? cancellationToken, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action<Result> callback)
+        public PromptForInputsPage(InputGroup inputGroup, int stepNumber, int totalSteps, bool showCancelButton, string nextButtonTextOverride, CancellationToken? cancellationToken, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, DateTime? timeoutTime, Action<Result> callback)
         {            
             _displayedInputCount = 0;
 
@@ -82,10 +82,19 @@ namespace SensusUI
             if (inputGroup.Inputs.Any(input => input.Display && input.Required))
                 contentLayout.Children.Add(new Label
                     {
-                        Text = "*Required Field",
+                        Text = "Required fields are indicated with *",
                         FontSize = 15,
                         TextColor = Color.Red,
-                        HorizontalOptions = LayoutOptions.Start,
+                        HorizontalOptions = LayoutOptions.Start
+                    });
+
+            if (timeoutTime != null)
+                contentLayout.Children.Add(new Label
+                    {
+                        Text = "You have until " + timeoutTime.GetValueOrDefault() + " to provide input.",
+                        FontSize = 15,
+                        TextColor = Color.Red,
+                        HorizontalOptions = LayoutOptions.Start
                     });
             
             List<Input> displayedInputs = new List<Input>();

@@ -151,6 +151,12 @@ namespace SensusUI
 
                 string selectedAction = await DisplayActionSheet(selectedProtocol.Name, "Cancel", null, actions.ToArray());
 
+                // must reset the protocol select manually
+                Device.BeginInvokeOnMainThread(() =>
+                    {
+                        _protocolsList.SelectedItem = null;
+                    });
+
                 if (selectedAction == "Start")
                 {
                     selectedProtocol.StartWithUserAgreementAsync(null, () =>
@@ -320,7 +326,6 @@ namespace SensusUI
                                     ProtocolPage protocolPage = new ProtocolPage(selectedProtocol);
                                     protocolPage.Disappearing += (oo, ee) => Bind();  // rebind to pick up name changes
                                     await Navigation.PushAsync(protocolPage);
-                                    _protocolsList.SelectedItem = null;
                                 });
                         }
                     );
@@ -403,13 +408,7 @@ namespace SensusUI
                 else if (selectedAction == "Delete")
                 {
                     if (await DisplayAlert("Delete " + selectedProtocol.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
-                        selectedProtocol.DeleteAsync(() =>
-                            {
-                                Device.BeginInvokeOnMainThread(() =>
-                                    {
-                                        _protocolsList.SelectedItem = null;  // must reset this manually, since it isn't reset automatically
-                                    });
-                            });
+                        selectedProtocol.DeleteAsync();
                 }
             };
 

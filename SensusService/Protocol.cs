@@ -1123,7 +1123,7 @@ namespace SensusService
             }
         }
 
-        public void DeleteAsync(Action callback)
+        public void DeleteAsync(Action callback = null)
         {
             new Thread(() =>
                 {

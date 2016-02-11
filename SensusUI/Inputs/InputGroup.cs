@@ -29,6 +29,7 @@ namespace SensusUI.Inputs
         private string _name;
         private ObservableCollection<Input> _inputs;
         private bool _geotag;
+        private float? _timeoutMinutes;
 
         public string Id
         {
@@ -76,6 +77,19 @@ namespace SensusUI.Inputs
             }
         }
 
+        [EntryFloatUiProperty("Timeout (Mins.):", true, 2)]
+        public float? TimeoutMinutes
+        {
+            get
+            {
+                return _timeoutMinutes;
+            }
+            set
+            {
+                _timeoutMinutes = value;
+            }
+        }
+
         /// <summary>
         /// Gets a value indicating whether this <see cref="SensusUI.Inputs.InputGroup"/> is valid. A valid
         /// input group is one in which each <see cref="SensusUI.Inputs.Input"/> in the group is valid. An
@@ -94,8 +108,9 @@ namespace SensusUI.Inputs
         private InputGroup()
         {
             _id = Guid.NewGuid().ToString();
-            _geotag = false;
             _inputs = new ObservableCollection<Input>();
+            _geotag = false;
+            _timeoutMinutes = null;  // no timeout
 
             _inputs.CollectionChanged += (o, e) =>
             {
