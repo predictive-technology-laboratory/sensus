@@ -918,7 +918,7 @@ namespace SensusService
 
                         ManualResetEvent responseWait = new ManualResetEvent(false);
 
-                        // run voice inputs by themselves, and only if the input group contains exactly one voice input.
+                        // run voice inputs by themselves, and only if the input group contains exactly one input and that input is a voice input.
                         if (inputGroup.Inputs.Count == 1 && inputGroup.Inputs[0] is VoiceInput)
                         {
                             VoiceInput voiceInput = inputGroup.Inputs[0] as VoiceInput;
@@ -957,12 +957,12 @@ namespace SensusService
                                     if (promptForInputsPage.DisplayedInputCount == 0)
                                     {
                                         // if we're on the final input group and no inputs were shown, then we're at the end and we're ready to submit the 
-                                        // users' responses. first check that the user is ready to submit. if the user isn't ready, move back to the previous 
-                                        // input group if there is one.
-                                        if (inputGroupNum >= inputGroups.Count() - 1 &&
-                                            !string.IsNullOrWhiteSpace(submitConfirmation) &&
-                                            inputGroupNumBackStack.Count > 0 &&
-                                            !(await App.Current.MainPage.DisplayAlert("Confirm", submitConfirmation, "Yes", "No")))
+                                        // users' responses. first check that the user is ready to submit. if the user isn't ready then move back to the previous 
+                                        // input group in the backstack, if there is one.
+                                        if (inputGroupNum >= inputGroups.Count() - 1 && // this is the final input group
+                                            inputGroupNumBackStack.Count > 0 && // there is an input group to go back to (the current one was not displayed)
+                                            !string.IsNullOrWhiteSpace(submitConfirmation) && // we have a submit confirmation
+                                            !(await App.Current.MainPage.DisplayAlert("Confirm", submitConfirmation, "Yes", "No"))) // user is not ready to submit
                                         {
                                             inputGroupNum = inputGroupNumBackStack.Pop() - 1;
                                         }

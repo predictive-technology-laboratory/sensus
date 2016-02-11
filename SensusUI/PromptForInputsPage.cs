@@ -237,7 +237,7 @@ namespace SensusUI
                     if (string.IsNullOrWhiteSpace(confirmationMessage) || await DisplayAlert("Confirm", confirmationMessage, "Yes", "No"))
                     {
                         // if the cancellation token was cancelled while the dialog was up, then we should ignore the dialog. the token
-                        // will have already popped this page off the navigation stack.
+                        // will have already popped this page off the navigation stack (see below).
                         if (!cancellationToken.GetValueOrDefault().IsCancellationRequested)
                         {
                             cancelButtonTapped = true;
@@ -287,7 +287,7 @@ namespace SensusUI
                 else if (nextButtonTapped)
                     callback(Result.NavigateForward);
                 else
-                    callback(Result.Cancel);  // the user navigated back, or another activity started
+                    callback(Result.Cancel);  // the user navigated back, or another activity started and covered the window
             };                    
 
             Content = new ScrollView

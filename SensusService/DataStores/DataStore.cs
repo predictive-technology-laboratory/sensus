@@ -98,17 +98,13 @@ namespace SensusService.DataStores
                 _running = true;
                 SensusServiceHelper.Get().Logger.Log("Starting.", LoggingLevel.Normal, GetType());
                 _mostRecentSuccessfulCommitTime = DateTime.Now;
-
                 string userNotificationMessage = null;
 
                 // we can't wake up the app on ios. this is problematic since data need to be stored locally and remotely
                 // in something of a reliable schedule; otherwise, we risk data loss (e.g., from device restarts, app kills, etc.).
                 // so, do the best possible thing and bug the user with a notification indicating that data need to be stored.
                 #if __IOS__
-                if (this is LocalDataStore)
-                    userNotificationMessage = "Sensus has collected data. Please tap here to store the data safely on your device.";
-                else if (this is RemoteDataStore)
-                    userNotificationMessage = "Sensus needs to transfer collected data to the study organizers. Please tap here.";
+                userNotificationMessage = "Sensus needs to store your data. Please tap here.";
                 #endif
 
                 // use the async version of commit so that we don't hang for unreliable commit operations (e.g., AWS S3 commits). this means that all commit 
@@ -151,6 +147,8 @@ namespace SensusService.DataStores
         {
             if (_running)
             {
+                int? numDataCommitted = null;
+
                 try
                 {
                     SensusServiceHelper.Get().Logger.Log("Committing data.", LoggingLevel.Normal, GetType());
@@ -175,7 +173,6 @@ namespace SensusService.DataStores
                         lock (_nonProbeDataToCommit)
                             foreach (Datum datum in _nonProbeDataToCommit)
                                 dataToCommit.Add(datum);
-
                         List<Datum> committedData = null;
                         try
                         {
@@ -185,6 +182,7 @@ namespace SensusService.DataStores
                                 throw new DataStoreException("Null collection returned by CommitData");
 
                             _mostRecentSuccessfulCommitTime = DateTime.Now;
+                            numDataCommitted = committedData.Count;
                         }
                         catch (Exception ex)
                         {
@@ -211,6 +209,12 @@ namespace SensusService.DataStores
                     }
 
                     SensusServiceHelper.Get().Logger.Log("Finished commit in " + (DateTime.Now - commitStartTime).TotalSeconds + " seconds.", LoggingLevel.Normal, GetType());
+
+                    // on ios the user must activate the app in order to save data. give the user some feedback to let them know that the data were stored on the device or remotely.
+                    #if __IOS__
+                    if (numDataCommitted != null)
+                        SensusServiceHelper.Get().FlashNotificationAsync("Saved " + numDataCommitted.GetValueOrDefault() + " data " + (this is LocalDataStore ? "on device" : "remotely") + "." + (numDataCommitted.GetValueOrDefault() > 0 ? " Thank you!" : ""));
+                    #endif
                 }
                 catch (Exception ex)
                 {

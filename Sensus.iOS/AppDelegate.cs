@@ -171,11 +171,6 @@ namespace Sensus.iOS
 
         public override void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)
         {
-            ServiceNotificationAsync(notification);
-        }
-
-        private void ServiceNotificationAsync(UILocalNotification notification)
-        {
             if (notification.UserInfo != null)
             {
                 NSNumber isCallbackValue = notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_KEY)) as NSNumber;

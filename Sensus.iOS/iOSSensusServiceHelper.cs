@@ -28,6 +28,7 @@ using Plugin.Toasts;
 using SensusService.Probes.Movement;
 using MessageUI;
 using System.IO;
+using Newtonsoft.Json;
 
 namespace Sensus.iOS
 {
@@ -50,7 +51,7 @@ namespace Sensus.iOS
         {
             Device.BeginInvokeOnMainThread(() =>
                 {
-                    string notificationId = notification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ID_KEY)).ToString();
+                    string callbackId = notification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ID_KEY)).ToString();
 
                     // a local notification can be one of two types:  (1) scheduled, in which case it hasn't yet been delivered and should reside
                     // within the shared application's list of scheduled notifications. the tricky part here is that these notification objects
@@ -59,8 +60,8 @@ namespace Sensus.iOS
                     bool notificationCanceled = false;
                     foreach (UILocalNotification scheduledNotification in UIApplication.SharedApplication.ScheduledLocalNotifications)
                     {
-                        string scheduledNotificationId = scheduledNotification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ID_KEY)).ToString();
-                        if (scheduledNotificationId == notificationId)
+                        string scheduledCallbackId = scheduledNotification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ID_KEY)).ToString();
+                        if (scheduledCallbackId == callbackId)
                         {
                             UIApplication.SharedApplication.CancelLocalNotification(scheduledNotification);
                             notificationCanceled = true;
@@ -80,6 +81,7 @@ namespace Sensus.iOS
         private Dictionary<string, UILocalNotification> _callbackIdNotification;
         private string _activationId;
 
+        [JsonIgnore]
         public string ActivationId
         {
             get
@@ -211,9 +213,6 @@ namespace Sensus.iOS
                 {
                     Device.BeginInvokeOnMainThread(() =>
                         {
-                            // notification has been serviced, so end background task
-                            UIApplication.SharedApplication.EndBackgroundTask(taskId);
-
                             // update and schedule notification again if it was a repeating callback and is still scheduled
                             if (repeating)
                             {
@@ -230,6 +229,9 @@ namespace Sensus.iOS
                             }
                             else
                                 UnscheduleOneTimeCallback(callbackId);
+
+                            // notification has been serviced, so end background task
+                            UIApplication.SharedApplication.EndBackgroundTask(taskId);
                         });
                 });   
         }
