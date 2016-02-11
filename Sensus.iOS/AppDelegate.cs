@@ -78,25 +78,24 @@ namespace Sensus.iOS
         {
             if (url != null)
             {
-                string urlAbsoluteString = url.AbsoluteString;
-                if (urlAbsoluteString.EndsWith(".json"))
+                if (url.PathExtension == "json")
                 {
-                    if (urlAbsoluteString.StartsWith("sensus://"))
+                    if (url.Scheme == "sensus")
                     {
                         try
                         {
-                            Protocol.DeserializeAsync(new Uri("http://" + urlAbsoluteString.Substring(urlAbsoluteString.IndexOf('/') + 2).Trim()), true, Protocol.DisplayAndStartAsync);
+                            Protocol.DeserializeAsync(new Uri("http://" + url.AbsoluteString.Substring(url.AbsoluteString.IndexOf('/') + 2).Trim()), true, Protocol.DisplayAndStartAsync);
                         }
                         catch (Exception ex)
                         {
                             SensusServiceHelper.Get().Logger.Log("Failed to display Sensus Protocol from HTTP URL \"" + url.AbsoluteString + "\":  " + ex.Message, LoggingLevel.Verbose, GetType());
                         }
                     }
-                    else if (urlAbsoluteString.StartsWith("sensuss://"))
+                    else if (url.Scheme == "sensuss")
                     {
                         try
                         {
-                            Protocol.DeserializeAsync(new Uri("https://" + urlAbsoluteString.Substring(urlAbsoluteString.IndexOf('/') + 2).Trim()), true, Protocol.DisplayAndStartAsync);
+                            Protocol.DeserializeAsync(new Uri("https://" + url.AbsoluteString.Substring(url.AbsoluteString.IndexOf('/') + 2).Trim()), true, Protocol.DisplayAndStartAsync);
                         }
                         catch (Exception ex)
                         {
