@@ -1,0 +1,1 @@
+Assets provide a way to include arbitrary files like text, xml, fonts, music, and video in your application. If you try to include these files as "resources", Android will process them into its resource system and you will not be able to get the raw data. If you want to access data untouched, Assets are one way to do it.
