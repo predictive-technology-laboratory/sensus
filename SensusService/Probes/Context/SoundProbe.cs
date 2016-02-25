@@ -55,7 +55,7 @@ namespace SensusService.Probes.Context
 
         protected void ObtainPermission()
         {
-            if (SensusServiceHelper.Get().ObtainPermission(Permission.Microphone, "Sensus uses the microphone to collect sound information for studies you have enrolled in. It will not store any audio.") != PermissionStatus.Granted)
+            if (SensusServiceHelper.Get().ObtainPermission(Permission.Microphone) != PermissionStatus.Granted)
                 throw new Exception("Cannot access microphone.");
         }
     }

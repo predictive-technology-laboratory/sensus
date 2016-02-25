@@ -235,7 +235,7 @@ namespace SensusUI
 
                     try
                     {
-                        if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Camera, "Sensus uses the camera to scan participation barcodes. It will not store any images or video.") != PermissionStatus.Granted)
+                        if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Camera) != PermissionStatus.Granted)
                             throw new Exception("Could not access camera.");
 
                         ZXing.Mobile.MobileBarcodeScanner scanner = SensusServiceHelper.Get().BarcodeScanner;

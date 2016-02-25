@@ -47,7 +47,7 @@ namespace SensusService.Probes.Location
         {
             base.Initialize();
             
-            if (GpsReceiver.Get().RequestGpsPermission() != PermissionStatus.Granted)
+            if (SensusServiceHelper.Get().ObtainPermission(Permission.Location) != PermissionStatus.Granted)
             {
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable GPS in the future
                 // and we'd like the probe to be restarted at that time.

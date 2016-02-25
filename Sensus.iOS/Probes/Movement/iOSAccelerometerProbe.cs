@@ -27,7 +27,22 @@ namespace Sensus.iOS.Probes.Movement
 
         public iOSAccelerometerProbe()
         {
-            _motionManager = new CMMotionManager();
+        }
+
+        protected override void Initialize()
+        {
+            base.Initialize();
+
+            if (SensusServiceHelper.Get().ObtainPermission(Permission.Sensors) == PermissionStatus.Granted)
+                _motionManager = new CMMotionManager();
+            else
+            {
+                // throw standard exception instead of NotSupportedException, since the user might decide to enable sensors in the future
+                // and we'd like the probe to be restarted at that time.
+                string error = "Motion sensors are not permitted on this device. Cannot start accelerometer probe.";
+                SensusServiceHelper.Get().FlashNotificationAsync(error);
+                throw new Exception(error);
+            }
         }
 
         protected override void StartListening()

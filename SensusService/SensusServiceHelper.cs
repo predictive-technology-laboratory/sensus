@@ -1164,10 +1164,22 @@ namespace SensusService
             return json;
         }
 
-        public Task<PermissionStatus> ObtainPermissionAsync(Permission permission, string rationale)
+        public Task<PermissionStatus> ObtainPermissionAsync(Permission permission)
         {
             return Task.Run(async () =>
                 {
+                    string rationale = null;
+                    if (permission == Permission.Camera)
+                        rationale = "Sensus uses the camera to scan participation barcodes. Sensus will not store images or video.";
+                    else if (permission == Permission.Location)
+                        rationale = "Sensus uses GPS to collect location information for studies you have enrolled in.";
+                    else if (permission == Permission.Microphone)
+                        rationale = "Sensus uses the microphone to collect sound information for studies you have enrolled in. Sensus will not store audio.";
+                    else if (permission == Permission.Sensors)
+                        rationale = "Sensus uses sensors to collect various types of information for studies you have enrolled in.";
+                    else if (permission == Permission.Storage)
+                        rationale = "Sensus must be able to write to storage for proper operation. Please grant this permission.";
+            
                     if (await CrossPermissions.Current.CheckPermissionStatusAsync(permission) == PermissionStatus.Granted)
                         return PermissionStatus.Granted;
                     else
@@ -1175,17 +1187,17 @@ namespace SensusService
                         // the Permissions plugin requires a main activity to be present on android. ensure this below.
                         BringToForeground();
 
-                        if (await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(permission))
+                        if (rationale != null && await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(permission))
                         {
-                            ManualResetEvent dialogWait = new ManualResetEvent(false);
+                            ManualResetEvent rationaleDialogWait = new ManualResetEvent(false);
 
                             Device.BeginInvokeOnMainThread(async () =>
                                 {
                                     await (App.Current as App).ProtocolsPage.DisplayAlert("Permission Request", "On the next screen, Sensus will request access to your device's " + permission.ToString().ToUpper() + ". " + rationale, "OK");
-                                    dialogWait.Set();
+                                    rationaleDialogWait.Set();
                                 });
 
-                            dialogWait.WaitOne();
+                            rationaleDialogWait.WaitOne();
                         }
 
                         return (await CrossPermissions.Current.RequestPermissionsAsync(new Permission[] { permission }))[permission];
@@ -1199,15 +1211,14 @@ namespace SensusService
         /// </summary>
         /// <returns>The permission status.</returns>
         /// <param name="permission">Permission.</param>
-        /// <param name="rationale">Rationale.</param>
-        public PermissionStatus ObtainPermission(Permission permission, string rationale)
+        public PermissionStatus ObtainPermission(Permission permission)
         {
             PermissionStatus status = PermissionStatus.Unknown;
             ManualResetEvent wait = new ManualResetEvent(false);
 
             new Thread(async () =>
                 {
-                    status = await SensusServiceHelper.Get().ObtainPermissionAsync(permission, rationale);
+                    status = await SensusServiceHelper.Get().ObtainPermissionAsync(permission);
                     wait.Set();
 
                 }).Start();

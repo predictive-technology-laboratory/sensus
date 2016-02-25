@@ -94,7 +94,7 @@ namespace SensusService.Probes.Location
 
         public async void AddListener(EventHandler<PositionEventArgs> listener, bool includeHeading)
         {      
-            if (RequestGpsPermission() != PermissionStatus.Granted)
+            if (SensusServiceHelper.Get().ObtainPermission(Permission.Location) != PermissionStatus.Granted)
                 throw new Exception("Could not access GPS.");
             
             if (ListeningForChanges)
@@ -146,7 +146,7 @@ namespace SensusService.Probes.Location
         {  
             lock (_locker)
             {
-                if (RequestGpsPermission() != PermissionStatus.Granted)
+                if (SensusServiceHelper.Get().ObtainPermission(Permission.Location) != PermissionStatus.Granted)
                     return null;
 
                 // reuse existing reading if it isn't too old
@@ -204,17 +204,6 @@ namespace SensusService.Probes.Location
                 SensusServiceHelper.Get().Logger.Log("GPS reading is null.", LoggingLevel.Normal, GetType());
 
             return _reading;
-        }
-
-        /// <summary>
-        /// Requests GPS permissions from the user. Should not be called from the main / UI thread.
-        /// </summary>
-        /// <returns>The reading.</returns>
-        /// <param name="maxReadingAgeForReuseMS">Maximum age of old reading to reuse (milliseconds).</param>
-        /// <param name="cancellationToken">Cancellation token.</param>
-        public PermissionStatus RequestGpsPermission()
-        {
-            return SensusServiceHelper.Get().ObtainPermission(Permission.Location, "Sensus uses GPS to collect location information for studies you have enrolled in.");
         }
     }
 }
