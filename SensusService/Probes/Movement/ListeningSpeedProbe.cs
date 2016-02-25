@@ -15,6 +15,7 @@
 using System;
 using SensusService.Probes.Location;
 using Plugin.Geolocator.Abstractions;
+using Plugin.Permissions.Abstractions;
 
 namespace SensusService.Probes.Movement
 {
@@ -67,11 +68,11 @@ namespace SensusService.Probes.Movement
         {
             base.Initialize();
 
-            if (!GpsReceiver.Get().Locator.IsGeolocationEnabled)
+            if (GpsReceiver.Get().RequestGpsPermission() != PermissionStatus.Granted)
             {
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable GPS in the future
                 // and we'd like the probe to be restarted at that time.
-                string error = "Geolocation is not enabled on this device. Cannot start speed probe.";
+                string error = "Geolocation is not permitted on this device. Cannot start speed probe.";
                 SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }

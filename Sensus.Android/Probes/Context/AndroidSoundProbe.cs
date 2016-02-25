@@ -28,6 +28,8 @@ namespace Sensus.Android.Probes.Context
             MediaRecorder recorder = null;
             try
             {
+                ObtainPermission();
+
                 recorder = new MediaRecorder();
                 recorder.SetAudioSource(AudioSource.Mic);
                 recorder.SetOutputFormat(OutputFormat.ThreeGpp);

@@ -228,7 +228,10 @@ namespace Sensus.iOS
                                 }
                             }
                             else
-                                UnscheduleOneTimeCallback(callbackId);
+                            {
+                                // make sure everything is cleaned out, including _callbackIdNotification.
+                                UnscheduleCallback(callbackId);
+                            }
 
                             // notification has been serviced, so end background task
                             UIApplication.SharedApplication.EndBackgroundTask(taskId);
@@ -236,7 +239,7 @@ namespace Sensus.iOS
                 });   
         }
 
-        protected override void UnscheduleCallback(string callbackId, bool repeating)
+        protected override void UnscheduleCallbackPlatformSpecific(string callbackId)
         {            
             lock (_callbackIdNotification)
             {

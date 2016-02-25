@@ -14,6 +14,8 @@
 
 using System;
 using SensusUI.UiProperties;
+using System.Collections.Generic;
+using Plugin.Permissions.Abstractions;
 
 namespace SensusService.Probes.Context
 {
@@ -49,6 +51,12 @@ namespace SensusService.Probes.Context
         protected SoundProbe()
         {
             _sampleLengthMS = 5000;
+        }
+
+        protected void ObtainPermission()
+        {
+            if (SensusServiceHelper.Get().ObtainPermission(Permission.Microphone, "Sensus uses the microphone to collect sound information for studies you have enrolled in. It will not store any audio.") != PermissionStatus.Granted)
+                throw new Exception("Cannot access microphone.");
         }
     }
 }

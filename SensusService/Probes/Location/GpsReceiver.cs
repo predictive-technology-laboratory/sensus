@@ -20,6 +20,7 @@ using Plugin.Geolocator.Abstractions;
 using Plugin.Geolocator;
 using System.Collections.Generic;
 using System.Linq;
+using Plugin.Permissions.Abstractions;
 
 namespace SensusService.Probes.Location
 {
@@ -93,6 +94,9 @@ namespace SensusService.Probes.Location
 
         public async void AddListener(EventHandler<PositionEventArgs> listener, bool includeHeading)
         {      
+            if (RequestGpsPermission() != PermissionStatus.Granted)
+                throw new Exception("Could not access GPS.");
+            
             if (ListeningForChanges)
                 await _locator.StopListeningAsync();      
                       
@@ -121,23 +125,7 @@ namespace SensusService.Probes.Location
         }
 
         /// <summary>
-        /// Gets a GPS reading, reusing an old one if it isn't too old. Will block the current thread while waiting for a GPS reading. Should not
-        /// be called from the main / UI thread, since GPS runs on main thread (will deadlock).
-        /// </summary>
-        /// <returns>The reading.</returns>
-        /// <param name="cancellationToken">Cancellation token.</param>
-        /// <param name="callback">Callback to run when reading is obtained</param>
-        public void GetReadingAsync(CancellationToken cancellationToken, Action<Position> callback)
-        {
-            new Thread(() =>
-                {
-                    callback(GetReading(cancellationToken));
-
-                }).Start();
-        }
-
-        /// <summary>
-        /// Gets a GPS reading, reusing an old one if it isn't too old. Will block the current thread while waiting for a GPS reading. Should not
+        /// Gets a GPS reading. Will block the current thread while waiting for a GPS reading. Should not
         /// be called from the main / UI thread, since GPS runs on main thread (will deadlock).
         /// </summary>
         /// <returns>The reading.</returns>
@@ -154,27 +142,13 @@ namespace SensusService.Probes.Location
         /// <returns>The reading.</returns>
         /// <param name="maxReadingAgeForReuseMS">Maximum age of old reading to reuse (milliseconds).</param>
         /// <param name="cancellationToken">Cancellation token.</param>
-        /// <param name="callback">Callback to run when reading is obtained</param>
-        public void GetReadingAsync(int maxReadingAgeForReuseMS, CancellationToken cancellationToken, Action<Position> callback)
-        {  
-            new Thread(() =>
-                {
-                    callback(GetReading(maxReadingAgeForReuseMS, cancellationToken));
-
-                }).Start();
-        }
-
-        /// <summary>
-        /// Gets a GPS reading, reusing an old one if it isn't too old. Will block the current thread while waiting for a GPS reading. Should not
-        /// be called from the main / UI thread, since GPS runs on main thread (will deadlock).
-        /// </summary>
-        /// <returns>The reading.</returns>
-        /// <param name="maxReadingAgeForReuseMS">Maximum age of old reading to reuse (milliseconds).</param>
-        /// <param name="cancellationToken">Cancellation token.</param>
         public Position GetReading(int maxReadingAgeForReuseMS, CancellationToken cancellationToken)
         {  
             lock (_locker)
             {
+                if (RequestGpsPermission() != PermissionStatus.Granted)
+                    return null;
+
                 // reuse existing reading if it isn't too old
                 if (_reading != null && maxReadingAgeForReuseMS > 0)
                 {
@@ -230,6 +204,17 @@ namespace SensusService.Probes.Location
                 SensusServiceHelper.Get().Logger.Log("GPS reading is null.", LoggingLevel.Normal, GetType());
 
             return _reading;
+        }
+
+        /// <summary>
+        /// Requests GPS permissions from the user. Should not be called from the main / UI thread.
+        /// </summary>
+        /// <returns>The reading.</returns>
+        /// <param name="maxReadingAgeForReuseMS">Maximum age of old reading to reuse (milliseconds).</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        public PermissionStatus RequestGpsPermission()
+        {
+            return SensusServiceHelper.Get().ObtainPermission(Permission.Location, "Sensus uses GPS to collect location information for studies you have enrolled in.");
         }
     }
 }

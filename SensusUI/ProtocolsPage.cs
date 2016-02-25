@@ -24,6 +24,7 @@ using SensusService.Probes;
 using SensusService.Exceptions;
 using System.Threading;
 using ZXing;
+using Plugin.Permissions.Abstractions;
 
 namespace SensusUI
 {
@@ -234,6 +235,9 @@ namespace SensusUI
 
                     try
                     {
+                        if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Camera, "Sensus uses the camera to scan participation barcodes. It will not store any images or video.") != PermissionStatus.Granted)
+                            throw new Exception("Could not access camera.");
+
                         ZXing.Mobile.MobileBarcodeScanner scanner = SensusServiceHelper.Get().BarcodeScanner;
 
                         if (scanner == null)

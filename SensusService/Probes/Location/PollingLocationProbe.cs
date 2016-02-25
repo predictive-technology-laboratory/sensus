@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Plugin.Geolocator.Abstractions;
+using Plugin.Permissions.Abstractions;
 
 namespace SensusService.Probes.Location
 {
@@ -45,12 +46,12 @@ namespace SensusService.Probes.Location
         protected override void Initialize()
         {
             base.Initialize();
-
-            if (!GpsReceiver.Get().Locator.IsGeolocationEnabled)
+            
+            if (GpsReceiver.Get().RequestGpsPermission() != PermissionStatus.Granted)
             {
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable GPS in the future
                 // and we'd like the probe to be restarted at that time.
-                string error = "Geolocation is not enabled on this device. Cannot start location probe.";
+                string error = "Geolocation is not permitted on this device. Cannot start location probe.";
                 SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }

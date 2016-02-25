@@ -50,14 +50,14 @@ namespace Sensus.iOS.Probes.Context
         }
 
         protected override IEnumerable<Datum> Poll(System.Threading.CancellationToken cancellationToken)
-        {            
+        {               
             AVAudioRecorder recorder = null;
             string recordPath = Path.GetTempFileName();
             try
             {
+                ObtainPermission();
+                
                 AVAudioSession audioSession = AVAudioSession.SharedInstance();
-
-                audioSession.RequestRecordPermission(granted => SensusServiceHelper.Get().Logger.Log("Audio record permission granted:  " + granted, LoggingLevel.Verbose, GetType()));
 
                 NSError error = audioSession.SetCategory(AVAudioSessionCategory.Record);
                 if (error != null)

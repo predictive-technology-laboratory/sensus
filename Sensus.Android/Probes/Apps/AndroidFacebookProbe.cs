@@ -140,7 +140,7 @@ namespace Sensus.Android.Probes.Apps
                                     loginWait.Set();
                                 }
 
-                            }, true);
+                            }, true, false);
                         #endregion
 
                         loginWait.WaitOne();

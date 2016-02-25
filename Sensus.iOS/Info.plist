@@ -37,6 +37,8 @@
 			<array>
 				<string>fb873948892650954</string>
 			</array>
+			<key>CFBundleURLTypes</key>
+			<string>Viewer</string>
 		</dict>
 		<dict>
 			<key>CFBundleURLName</key>
@@ -45,14 +47,18 @@
 			<array>
 				<string>sensus</string>
 			</array>
+			<key>CFBundleURLTypes</key>
+			<string>Viewer</string>
 		</dict>
 		<dict>
 			<key>CFBundleURLName</key>
-			<string>edu.virginia.sie.ptl.sensus.s</string>
+			<string>edu.virginia.sie.ptl.sensuss</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>sensuss</string>
 			</array>
+			<key>CFBundleURLTypes</key>
+			<string>Viewer</string>
 		</dict>
 	</array>
 	<key>FacebookAppID</key>

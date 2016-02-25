@@ -35,6 +35,8 @@ using System.Linq;
 using ZXing.Mobile;
 using Android.Graphics;
 using Android.Media;
+using System.Threading.Tasks;
+using Plugin.Permissions.Abstractions;
 
 namespace Sensus.Android
 {
@@ -51,6 +53,7 @@ namespace Sensus.Android
         private AndroidTextToSpeech _textToSpeech;
         private PowerManager.WakeLock _wakeLock;
         private List<Action<AndroidMainActivity>> _actionsToRunUsingMainActivity;
+        private Dictionary<string, PendingIntent> _callbackIdIntent;
 
         [JsonIgnore]
         public AndroidSensusService Service
@@ -103,6 +106,7 @@ namespace Sensus.Android
         public AndroidSensusServiceHelper()
         {
             _actionsToRunUsingMainActivity = new List<Action<AndroidMainActivity>>();
+            _callbackIdIntent = new Dictionary<string, PendingIntent>();
         }
 
         public void SetService(AndroidSensusService service)
@@ -145,37 +149,48 @@ namespace Sensus.Android
         /// <param name="action">Action to run.</param>
         /// <param name="startMainActivityIfNotFocused">If set to <c>true</c> and the main activity is not focused, then start the main
         /// activity. If <c>false</c> and the main activity is not focused, the action is dropped.</param>
-        public void RunActionUsingMainActivityAsync(Action<AndroidMainActivity> action, bool startMainActivityIfNotFocused)
+        public void RunActionUsingMainActivityAsync(Action<AndroidMainActivity> action, bool startMainActivityIfNotFocused, bool holdActionIfNoActivity)
         {
             // this must be done asynchronously because it blocks waiting for the activity to start. calling this method from the UI would create deadlocks.
             new Thread(() =>
                 {
                     lock (_focusedMainActivityLocker)
                     {
-                        // if we should drop the action, simply return.
-                        if (_focusedMainActivity == null && !startMainActivityIfNotFocused)
-                            return;
-
-                        // we're going to run the action...add it to our cache.
-                        lock (_actionsToRunUsingMainActivity)
-                            _actionsToRunUsingMainActivity.Add(action);
-
                         // run actions now only if the main activity is focused. this is a stronger requirement than merely started/resumed since it
                         // implies that the user interface is up. this is important because if certain actions (e.g., speech recognition) are run
                         // after the activity is resumed but before the window is up, the appearance of the activity's window can hide/cancel the
                         // action's window.
                         if (_focusedMainActivity == null)
-                        {             
-                            Logger.Log("Starting main activity to run action.", LoggingLevel.Normal, GetType());
+                        {           
+                            if (startMainActivityIfNotFocused)
+                            {
+                                // we'll run the action when the activity is focused
+                                lock (_actionsToRunUsingMainActivity)
+                                    _actionsToRunUsingMainActivity.Add(action);
+                                
+                                Logger.Log("Starting main activity to run action.", LoggingLevel.Normal, GetType());
 
-                            // start the activity. when it starts, it will call back to SetFocusedMainActivity indicating readiness. once 
-                            // this happens, we'll be ready to run the action that was just passed in as well as any others that need to be run.
-                            Intent intent = new Intent(_service, typeof(AndroidMainActivity));
-                            intent.AddFlags(ActivityFlags.FromBackground | ActivityFlags.NewTask);
-                            _service.StartActivity(intent);
+                                // start the activity. when it starts, it will call back to SetFocusedMainActivity indicating readiness. once 
+                                // this happens, we'll be ready to run the action that was just passed in as well as any others that need to be run.
+                                Intent intent = new Intent(_service, typeof(AndroidMainActivity));
+                                intent.AddFlags(ActivityFlags.FromBackground | ActivityFlags.NewTask);
+                                _service.StartActivity(intent);
+                            }
+                            else if (holdActionIfNoActivity)
+                            {
+                                // we'll run the action the next time the activity is focused
+                                lock (_actionsToRunUsingMainActivity)
+                                    _actionsToRunUsingMainActivity.Add(action);
+                            }
                         }
                         else
+                        {
+                            // we'll run the action now
+                            lock (_actionsToRunUsingMainActivity)
+                                _actionsToRunUsingMainActivity.Add(action);
+                            
                             RunActionsUsingMainActivity();
+                        }
                     }
 
                 }).Start();
@@ -250,7 +265,7 @@ namespace Sensus.Android
                                             }
                                     });
                                 
-                            }, true);
+                            }, true, false);
                     }
                     catch (ActivityNotFoundException)
                     {
@@ -286,7 +301,7 @@ namespace Sensus.Android
                             {
                                 mainActivity.StartActivity(intent);
                                 
-                            }, true);
+                            }, true, false);
                     }
                     catch (Exception ex)
                     {
@@ -308,7 +323,7 @@ namespace Sensus.Android
 
                     mainActivity.StartActivity(emailIntent);
 
-                }, true);
+                }, true, false);
         }
 
         public override void TextToSpeechAsync(string text, Action callback)
@@ -412,7 +427,7 @@ namespace Sensus.Android
                                     #endregion
                                 });
                             
-                        }, true);
+                        }, true, false);
 
                     dialogDismissWait.WaitOne();
                     callback(input);
@@ -472,7 +487,7 @@ namespace Sensus.Android
                                         callback();
                                 });
                             
-                        }, false);
+                        }, false, true);
                     
                 }).Start();
         }
@@ -503,38 +518,55 @@ namespace Sensus.Android
 
         protected override void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, string userNotificationMessage)
         {            
-            long initialTimeMS = Java.Lang.JavaSystem.CurrentTimeMillis() + initialDelayMS;
+            long initialCallbackTimeMS = Java.Lang.JavaSystem.CurrentTimeMillis() + initialDelayMS;
 
-            Logger.Log("Callback " + callbackId + " scheduled for " + (new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(initialTimeMS)) + " (repeating).", LoggingLevel.Normal, GetType());
+            Logger.Log("Callback " + callbackId + " scheduled for " + (new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(initialCallbackTimeMS)) + " (repeating).", LoggingLevel.Normal, GetType());
 
             AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
-            alarmManager.SetRepeating(AlarmType.RtcWakeup, initialTimeMS, repeatDelayMS, GetCallbackIntent(callbackId, true));
+            alarmManager.SetExactAndAllowWhileIdle(AlarmType.RtcWakeup, initialCallbackTimeMS, CreateCallbackIntent(callbackId, true, repeatDelayMS));
         }
 
         protected override void ScheduleOneTimeCallback(string callbackId, int delayMS, string userNotificationMessage)
         {
-            long timeMS = Java.Lang.JavaSystem.CurrentTimeMillis() + delayMS;
+            long callbackTimeMS = Java.Lang.JavaSystem.CurrentTimeMillis() + delayMS;
 
-            Logger.Log("Callback " + callbackId + " scheduled for " + (new DateTimeOffset(1970, 1, 1, 0, 0, 0, 0, new TimeSpan()).AddMilliseconds(timeMS)) + " (one-time).", LoggingLevel.Normal, GetType());
+            Logger.Log("Callback " + callbackId + " scheduled for " + (new DateTimeOffset(1970, 1, 1, 0, 0, 0, 0, new TimeSpan()).AddMilliseconds(callbackTimeMS)) + " (one-time).", LoggingLevel.Normal, GetType());
 
             AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
-            alarmManager.Set(AlarmType.RtcWakeup, timeMS, GetCallbackIntent(callbackId, false));
+            alarmManager.SetExactAndAllowWhileIdle(AlarmType.RtcWakeup, callbackTimeMS, CreateCallbackIntent(callbackId, false, 0));
         }
 
-        protected override void UnscheduleCallback(string callbackId, bool repeating)
+        protected override void UnscheduleCallbackPlatformSpecific(string callbackId)
         {
-            AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
-            alarmManager.Cancel(GetCallbackIntent(callbackId, repeating));
+            lock (_callbackIdIntent)
+            {
+                PendingIntent callbackIntent;
+                if (_callbackIdIntent.TryGetValue(callbackId, out callbackIntent))
+                {
+                    AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
+                    alarmManager.Cancel(callbackIntent);
+                    _callbackIdIntent.Remove(callbackId);
+                }
+            }
         }
 
-        private PendingIntent GetCallbackIntent(string callbackId, bool repeating)
+        private PendingIntent CreateCallbackIntent(string callbackId, bool repeating, int repeatDelayMS)
         {
-            Intent serviceIntent = new Intent(_service, typeof(AndroidSensusService));
-            serviceIntent.PutExtra(SENSUS_CALLBACK_KEY, true);
-            serviceIntent.PutExtra(SENSUS_CALLBACK_ID_KEY, callbackId);
-            serviceIntent.PutExtra(SENSUS_CALLBACK_REPEATING_KEY, repeating);
+            if (!repeating)
+                repeatDelayMS = 0;
+            
+            Intent callbackIntent = new Intent(_service, typeof(AndroidSensusService));
+            callbackIntent.PutExtra(SENSUS_CALLBACK_KEY, true);
+            callbackIntent.PutExtra(SENSUS_CALLBACK_ID_KEY, callbackId);
+            callbackIntent.PutExtra(SENSUS_CALLBACK_REPEATING_KEY, repeating);
+            callbackIntent.PutExtra(SENSUS_CALLBACK_REPEAT_DELAY_KEY, repeatDelayMS);
 
-            return PendingIntent.GetService(_service, callbackId.GetHashCode(), serviceIntent, PendingIntentFlags.CancelCurrent);  // upon hash collisions on the request code, the previous intent will simply be canceled.
+            PendingIntent callbackPendingIntent = PendingIntent.GetService(_service, callbackId.GetHashCode(), callbackIntent, PendingIntentFlags.CancelCurrent);  // upon hash collisions on the request code, the previous intent will simply be canceled.
+
+            lock (_callbackIdIntent)
+                _callbackIdIntent.Add(callbackId, callbackPendingIntent);
+
+            return callbackPendingIntent;
         }
 
         #endregion
@@ -561,7 +593,7 @@ namespace Sensus.Android
                 {
                     foregroundWait.Set();
 
-                }, true);
+                }, true, false);
 
             foregroundWait.WaitOne();
         }

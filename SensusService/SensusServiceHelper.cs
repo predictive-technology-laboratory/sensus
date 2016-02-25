@@ -34,6 +34,9 @@ using ZXing;
 using XLabs.Platform.Device;
 using System.Collections;
 using Plugin.Geolocator.Abstractions;
+using Plugin.Permissions;
+using Plugin.Permissions.Abstractions;
+using System.Threading.Tasks;
 
 namespace SensusService
 {
@@ -95,6 +98,7 @@ namespace SensusService
         public const string SENSUS_CALLBACK_KEY = "SENSUS-CALLBACK";
         public const string SENSUS_CALLBACK_ID_KEY = "SENSUS-CALLBACK-ID";
         public const string SENSUS_CALLBACK_REPEATING_KEY = "SENSUS-CALLBACK-REPEATING";
+        public const string SENSUS_CALLBACK_REPEAT_DELAY_KEY = "SENSUS-CALLBACK-REPEAT-DELAY";
         public const int PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS = 60;
         protected const string XAMARIN_INSIGHTS_APP_KEY = "";
         private const string ENCRYPTION_KEY = "";
@@ -498,7 +502,7 @@ namespace SensusService
 
         protected abstract void ScheduleOneTimeCallback(string callbackId, int delayMS, string userNotificationMessage);
 
-        protected abstract void UnscheduleCallback(string callbackId, bool repeating);
+        protected abstract void UnscheduleCallbackPlatformSpecific(string callbackId);
 
         protected abstract void ProtectedFlashNotificationAsync(string message, Action callback);
 
@@ -555,7 +559,7 @@ namespace SensusService
 
                 if (_runningProtocolIds.Count == 0)
                 {
-                    UnscheduleRepeatingCallback(_healthTestCallbackId);
+                    UnscheduleCallback(_healthTestCallbackId);
                     _healthTestCallbackId = null;
                 }
             }
@@ -693,7 +697,7 @@ namespace SensusService
                 ScheduledCallback scheduledCallback;
                 if (_idCallback.TryGetValue(callbackId, out scheduledCallback))
                 {
-                    UnscheduleRepeatingCallback(callbackId);
+                    UnscheduleCallback(callbackId);
                     return ScheduleRepeatingCallback(scheduledCallback.Action, scheduledCallback.Name, initialDelayMS, repeatDelayMS, scheduledCallback.UserNotificationMessage);
                 }
                 else
@@ -808,31 +812,16 @@ namespace SensusService
             }
         }
 
-        public void UnscheduleOneTimeCallback(string callbackId)
+        public void UnscheduleCallback(string callbackId)
         {
             if (callbackId != null)
                 lock (_idCallback)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Unscheduling one-time callback \"" + callbackId + "\".", LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Get().Logger.Log("Unscheduling callback \"" + callbackId + "\".", LoggingLevel.Normal, GetType());
 
                     CancelRaisedCallback(callbackId);
                     _idCallback.Remove(callbackId);
-
-                    UnscheduleCallback(callbackId, false);
-                }
-        }
-
-        public void UnscheduleRepeatingCallback(string callbackId)
-        {                                      
-            if (callbackId != null)
-                lock (_idCallback)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Unscheduling repeating callback \"" + callbackId + "\".", LoggingLevel.Normal, GetType());
-
-                    CancelRaisedCallback(callbackId);
-                    _idCallback.Remove(callbackId);
-
-                    UnscheduleCallback(callbackId, true);
+                    UnscheduleCallbackPlatformSpecific(callbackId);
                 }
         }
 
@@ -1173,6 +1162,59 @@ namespace SensusService
             }
 
             return json;
+        }
+
+        public Task<PermissionStatus> ObtainPermissionAsync(Permission permission, string rationale)
+        {
+            return Task.Run(async () =>
+                {
+                    if (await CrossPermissions.Current.CheckPermissionStatusAsync(permission) == PermissionStatus.Granted)
+                        return PermissionStatus.Granted;
+                    else
+                    {
+                        // the Permissions plugin requires a main activity to be present on android. ensure this below.
+                        BringToForeground();
+
+                        if (await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(permission))
+                        {
+                            ManualResetEvent dialogWait = new ManualResetEvent(false);
+
+                            Device.BeginInvokeOnMainThread(async () =>
+                                {
+                                    await (App.Current as App).ProtocolsPage.DisplayAlert("Permission Request", "On the next screen, Sensus will request access to your device's " + permission.ToString().ToUpper() + ". " + rationale, "OK");
+                                    dialogWait.Set();
+                                });
+
+                            dialogWait.WaitOne();
+                        }
+
+                        return (await CrossPermissions.Current.RequestPermissionsAsync(new Permission[] { permission }))[permission];
+                    }
+                });
+        }
+
+        /// <summary>
+        /// Obtains a permission. Must not call this method from the UI thread, since it blocks waiting for prompts that run on the UI thread (deadlock). If it
+        /// is necessary to call from the UI thread, call ObtainPermissionAsync instead.
+        /// </summary>
+        /// <returns>The permission status.</returns>
+        /// <param name="permission">Permission.</param>
+        /// <param name="rationale">Rationale.</param>
+        public PermissionStatus ObtainPermission(Permission permission, string rationale)
+        {
+            PermissionStatus status = PermissionStatus.Unknown;
+            ManualResetEvent wait = new ManualResetEvent(false);
+
+            new Thread(async () =>
+                {
+                    status = await SensusServiceHelper.Get().ObtainPermissionAsync(permission, rationale);
+                    wait.Set();
+
+                }).Start();
+
+            wait.WaitOne();
+
+            return status;
         }
 
         public virtual void Stop()
