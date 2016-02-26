@@ -20,6 +20,7 @@ using Foundation;
 using System.IO;
 using SensusService;
 using System.Threading;
+using Plugin.Permissions.Abstractions;
 
 namespace Sensus.iOS.Probes.Context
 {
@@ -55,7 +56,8 @@ namespace Sensus.iOS.Probes.Context
             string recordPath = Path.GetTempFileName();
             try
             {
-                ObtainPermission();
+                if (SensusServiceHelper.Get().ObtainPermission(Permission.Microphone) != PermissionStatus.Granted)
+                    throw new Exception("Cannot access microphone.");
                 
                 AVAudioSession audioSession = AVAudioSession.SharedInstance();
 

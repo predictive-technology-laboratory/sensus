@@ -18,6 +18,7 @@ using CoreMotion;
 using Foundation;
 using System.Threading;
 using SensusService;
+using Plugin.Permissions.Abstractions;
 
 namespace Sensus.iOS.Probes.Movement
 {

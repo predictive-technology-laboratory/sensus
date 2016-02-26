@@ -73,10 +73,10 @@ namespace Sensus.Android
                         {
                             string callbackId = intent.GetStringExtra(AndroidSensusServiceHelper.SENSUS_CALLBACK_ID_KEY);
                             bool repeating = intent.GetBooleanExtra(AndroidSensusServiceHelper.SENSUS_CALLBACK_REPEATING_KEY, false);
-                            int repeatDelayMS = intent.GetIntExtra(AndroidSensusServiceHelper.SENSUS_CALLBACK_REPEAT_DELAY_KEY, 0);
+                            int repeatDelayMS = intent.GetIntExtra(AndroidSensusServiceHelper.SENSUS_CALLBACK_REPEAT_DELAY_KEY, -1);
 
                             // if the user removes the main activity from the switcher, the service's process will be killed and restarted without notice, and 
-                            // we'll have no opportunity to unschedule repeating callbacks. so, when the service is restarted we'll reinitialize the service
+                            // we'll have no opportunity to unschedule repeating callbacks. when the service is restarted we'll reinitialize the service
                             // helper, restart the repeating callbacks, and we'll then have duplicate repeating callbacks. handle the invalid callbacks below.
                             // if the callback is scheduled, it's fine. if it's not, then unschedule it.
                             if (serviceHelper.CallbackIsScheduled(callbackId))
@@ -86,11 +86,11 @@ namespace Sensus.Android
                                         // schedule callback again if it was a repeating callback and is still scheduled with a valid repeat delay
                                         if (repeating)
                                         {
-                                            if (serviceHelper.CallbackIsScheduled(callbackId) && repeatDelayMS > 0)
+                                            if (serviceHelper.CallbackIsScheduled(callbackId) && repeatDelayMS >= 0)
                                             {
-                                                AlarmManager alarmManager = GetSystemService(Context.AlarmService) as AlarmManager;
+                                                long callbackTimeMS = Java.Lang.JavaSystem.CurrentTimeMillis() + repeatDelayMS;
                                                 PendingIntent callbackPendingIntent = PendingIntent.GetService(this, callbackId.GetHashCode(), intent, PendingIntentFlags.CancelCurrent);
-                                                alarmManager.SetExactAndAllowWhileIdle(AlarmType.RtcWakeup, Java.Lang.JavaSystem.CurrentTimeMillis() + repeatDelayMS, callbackPendingIntent);
+                                                serviceHelper.ScheduleCallbackAlarm(callbackTimeMS, callbackPendingIntent);
                                             }
                                         }
                                         else

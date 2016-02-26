@@ -18,6 +18,7 @@ using SensusService.Probes.Context;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Plugin.Permissions.Abstractions;
 
 namespace Sensus.Android.Probes.Context
 {
@@ -28,7 +29,8 @@ namespace Sensus.Android.Probes.Context
             MediaRecorder recorder = null;
             try
             {
-                ObtainPermission();
+                if (SensusServiceHelper.Get().ObtainPermission(Permission.Microphone) != PermissionStatus.Granted)
+                    throw new Exception("Cannot access microphone.");
 
                 recorder = new MediaRecorder();
                 recorder.SetAudioSource(AudioSource.Mic);

@@ -101,7 +101,7 @@ namespace SensusService
         public const string SENSUS_CALLBACK_REPEAT_DELAY_KEY = "SENSUS-CALLBACK-REPEAT-DELAY";
         public const int PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS = 60;
         protected const string XAMARIN_INSIGHTS_APP_KEY = "";
-        private const string ENCRYPTION_KEY = "";
+        private const string ENCRYPTION_KEY = "4F2100CB-F495-4B1C-956A-D6682FBD8C53";
         private static readonly string SHARE_DIRECTORY = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "share");
         private static readonly string LOG_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
         private static readonly string SERIALIZATION_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_service_helper.json");

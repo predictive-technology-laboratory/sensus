@@ -53,7 +53,7 @@ namespace Sensus.Android
         private AndroidTextToSpeech _textToSpeech;
         private PowerManager.WakeLock _wakeLock;
         private List<Action<AndroidMainActivity>> _actionsToRunUsingMainActivity;
-        private Dictionary<string, PendingIntent> _callbackIdIntent;
+        private Dictionary<string, PendingIntent> _callbackIdPendingIntent;
 
         [JsonIgnore]
         public AndroidSensusService Service
@@ -106,7 +106,7 @@ namespace Sensus.Android
         public AndroidSensusServiceHelper()
         {
             _actionsToRunUsingMainActivity = new List<Action<AndroidMainActivity>>();
-            _callbackIdIntent = new Dictionary<string, PendingIntent>();
+            _callbackIdPendingIntent = new Dictionary<string, PendingIntent>();
         }
 
         public void SetService(AndroidSensusService service)
@@ -522,8 +522,7 @@ namespace Sensus.Android
 
             Logger.Log("Callback " + callbackId + " scheduled for " + (new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(initialCallbackTimeMS)) + " (repeating).", LoggingLevel.Normal, GetType());
 
-            AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
-            alarmManager.SetExactAndAllowWhileIdle(AlarmType.RtcWakeup, initialCallbackTimeMS, CreateCallbackIntent(callbackId, true, repeatDelayMS));
+            ScheduleCallbackAlarm(initialCallbackTimeMS, CreateCallbackIntent(callbackId, true, repeatDelayMS));
         }
 
         protected override void ScheduleOneTimeCallback(string callbackId, int delayMS, string userNotificationMessage)
@@ -532,29 +531,11 @@ namespace Sensus.Android
 
             Logger.Log("Callback " + callbackId + " scheduled for " + (new DateTimeOffset(1970, 1, 1, 0, 0, 0, 0, new TimeSpan()).AddMilliseconds(callbackTimeMS)) + " (one-time).", LoggingLevel.Normal, GetType());
 
-            AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
-            alarmManager.SetExactAndAllowWhileIdle(AlarmType.RtcWakeup, callbackTimeMS, CreateCallbackIntent(callbackId, false, 0));
-        }
-
-        protected override void UnscheduleCallbackPlatformSpecific(string callbackId)
-        {
-            lock (_callbackIdIntent)
-            {
-                PendingIntent callbackIntent;
-                if (_callbackIdIntent.TryGetValue(callbackId, out callbackIntent))
-                {
-                    AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
-                    alarmManager.Cancel(callbackIntent);
-                    _callbackIdIntent.Remove(callbackId);
-                }
-            }
+            ScheduleCallbackAlarm(callbackTimeMS, CreateCallbackIntent(callbackId, false, 0));
         }
 
         private PendingIntent CreateCallbackIntent(string callbackId, bool repeating, int repeatDelayMS)
         {
-            if (!repeating)
-                repeatDelayMS = 0;
-            
             Intent callbackIntent = new Intent(_service, typeof(AndroidSensusService));
             callbackIntent.PutExtra(SENSUS_CALLBACK_KEY, true);
             callbackIntent.PutExtra(SENSUS_CALLBACK_ID_KEY, callbackId);
@@ -563,10 +544,41 @@ namespace Sensus.Android
 
             PendingIntent callbackPendingIntent = PendingIntent.GetService(_service, callbackId.GetHashCode(), callbackIntent, PendingIntentFlags.CancelCurrent);  // upon hash collisions on the request code, the previous intent will simply be canceled.
 
-            lock (_callbackIdIntent)
-                _callbackIdIntent.Add(callbackId, callbackPendingIntent);
+            lock (_callbackIdPendingIntent)
+                _callbackIdPendingIntent.Add(callbackId, callbackPendingIntent);
 
             return callbackPendingIntent;
+        }
+
+        public void ScheduleCallbackAlarm(long timeMS, PendingIntent callbackPendingIntent)
+        {
+            AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
+
+            // https://github.com/predictive-technology-laboratory/sensus/wiki/Backwards-Compatibility
+            #if __ANDROID_23__
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
+                alarmManager.SetExactAndAllowWhileIdle(AlarmType.RtcWakeup, timeMS, callbackPendingIntent);  // API level 23 added "while idle" option, making things even tighter.
+            else if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
+                alarmManager.SetExact(AlarmType.RtcWakeup, timeMS, callbackPendingIntent);  // API level 19 differentiated Set (loose) from SetExact (tight)
+            else
+            #endif
+            {
+                alarmManager.Set(AlarmType.RtcWakeup, timeMS, callbackPendingIntent);  // API 1-18 treats Set as a tight alarm
+            }            
+        }
+
+        protected override void UnscheduleCallbackPlatformSpecific(string callbackId)
+        {
+            lock (_callbackIdPendingIntent)
+            {
+                PendingIntent callbackPendingIntent;
+                if (_callbackIdPendingIntent.TryGetValue(callbackId, out callbackPendingIntent))
+                {
+                    AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
+                    alarmManager.Cancel(callbackPendingIntent);
+                    _callbackIdPendingIntent.Remove(callbackId);
+                }
+            }
         }
 
         #endregion
