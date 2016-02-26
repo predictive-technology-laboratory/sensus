@@ -14,7 +14,6 @@
 
 using System;
 using SensusUI.UiProperties;
-using System.Collections.Generic;
 
 namespace SensusService.Probes.Context
 {

@@ -126,6 +126,11 @@ namespace Sensus.iOS
             }
         }
 
+        protected override bool IsOnMainThread
+        {
+            get { return NSThread.Current.IsMainThread; }
+        }
+
         public iOSSensusServiceHelper()
         {
             _callbackIdNotification = new Dictionary<string, UILocalNotification>();

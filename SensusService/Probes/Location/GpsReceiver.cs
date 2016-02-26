@@ -146,6 +146,16 @@ namespace SensusService.Probes.Location
         {  
             lock (_locker)
             {
+
+                try
+                {
+                    SensusServiceHelper.Get().AssertNotOnMainThread(GetType() + " GetReading");
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+
                 if (SensusServiceHelper.Get().ObtainPermission(Permission.Location) != PermissionStatus.Granted)
                     return null;
 

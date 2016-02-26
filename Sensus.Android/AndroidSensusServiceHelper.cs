@@ -37,6 +37,7 @@ using Android.Graphics;
 using Android.Media;
 using System.Threading.Tasks;
 using Plugin.Permissions.Abstractions;
+using SensusService.Exceptions;
 
 namespace Sensus.Android
 {
@@ -100,6 +101,20 @@ namespace Sensus.Android
             get
             {
                 return "Android " + Build.VERSION.SdkInt;
+            }
+        }
+
+        protected override bool IsOnMainThread
+        {
+            get
+            {
+                // we should always have a service. if we do not, assume the worst -- that we're on the main thread. this will hopefully
+                // produce an error report back at xamarin insights.
+                if (_service == null)
+                    return true;
+                // if we have a service, compare the current thread's looper to the main thread's looper
+                else
+                    return Looper.MyLooper() == _service.MainLooper;
             }
         }
 
