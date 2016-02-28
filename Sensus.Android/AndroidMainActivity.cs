@@ -388,10 +388,12 @@ namespace Sensus.Android
             _facebookCallbackManager.OnActivityResult(requestCode, (int)resultCode, data);
         }
 
+        #if __ANDROID_23__
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
         {
             PermissionsImplementation.Current.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
+        #endif
 
         #endregion
     }
