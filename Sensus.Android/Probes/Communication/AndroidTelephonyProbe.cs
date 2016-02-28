@@ -16,6 +16,8 @@ using Android.App;
 using Android.Telephony;
 using SensusService.Probes.Communication;
 using System;
+using SensusService;
+using Plugin.Permissions.Abstractions;
 
 namespace Sensus.Android.Probes.Communication
 {
@@ -28,30 +30,41 @@ namespace Sensus.Android.Probes.Communication
         public AndroidTelephonyProbe()
         {
             _outgoingCallCallback = (sender, outgoingNumber) =>
-                {
-                    StoreDatum(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.OutgoingCall, outgoingNumber));
-                };
+            {
+                StoreDatum(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.OutgoingCall, outgoingNumber));
+            };
 
             _idleIncomingCallListener = new AndroidTelephonyIdleIncomingListener();
 
             _idleIncomingCallListener.IncomingCall += (o, incomingNumber) =>
-                {
-                    StoreDatum(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.IncomingCall, incomingNumber));
-                };
+            {
+                StoreDatum(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.IncomingCall, incomingNumber));
+            };
 
             _idleIncomingCallListener.Idle += (o, e) =>
-                {
-                    StoreDatum(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.Idle, null));
-                };
+            {
+                StoreDatum(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.Idle, null));
+            };
         }
 
         protected override void Initialize()
         {
             base.Initialize();
 
-            _telephonyManager = Application.Context.GetSystemService(global::Android.Content.Context.TelephonyService) as TelephonyManager;
-            if (_telephonyManager == null)
-                throw new NotSupportedException("No telephony present.");
+            if (SensusServiceHelper.Get().ObtainPermission(Permission.Phone) == PermissionStatus.Granted)
+            {
+                _telephonyManager = Application.Context.GetSystemService(global::Android.Content.Context.TelephonyService) as TelephonyManager;
+                if (_telephonyManager == null)
+                    throw new NotSupportedException("No telephony present.");
+            }
+            else
+            {
+                // throw standard exception instead of NotSupportedException, since the user might decide to enable phone in the future
+                // and we'd like the probe to be restarted at that time.
+                string error = "Phone metadata not permitted on this device. Cannot start telephony probe.";
+                SensusServiceHelper.Get().FlashNotificationAsync(error);
+                throw new Exception(error);
+            }
         }
 
         protected override void StartListening()

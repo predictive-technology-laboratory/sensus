@@ -16,6 +16,8 @@ using Android.App;
 using Android.Telephony;
 using SensusService.Probes.Network;
 using System;
+using SensusService;
+using Plugin.Permissions.Abstractions;
 
 namespace Sensus.Android.Probes.Network
 {
@@ -37,9 +39,20 @@ namespace Sensus.Android.Probes.Network
         {
             base.Initialize();
 
-            _telephonyManager = Application.Context.GetSystemService(global::Android.Content.Context.TelephonyService) as TelephonyManager;
-            if (_telephonyManager == null)
-                throw new NotSupportedException("No telephony present.");
+            if (SensusServiceHelper.Get().ObtainPermission(Permission.Location) == PermissionStatus.Granted)
+            {
+                _telephonyManager = Application.Context.GetSystemService(global::Android.Content.Context.TelephonyService) as TelephonyManager;
+                if (_telephonyManager == null)
+                    throw new NotSupportedException("No telephony present.");
+            }
+            else
+            {
+                // throw standard exception instead of NotSupportedException, since the user might decide to enable location in the future
+                // and we'd like the probe to be restarted at that time.
+                string error = "Cell tower location is not permitted on this device. Cannot start cell tower probe.";
+                SensusServiceHelper.Get().FlashNotificationAsync(error);
+                throw new Exception(error);
+            }
         }
 
         protected override void StartListening()

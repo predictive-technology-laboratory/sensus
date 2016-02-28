@@ -16,85 +16,76 @@ NULL
 
 #' Read JSON-formatted Sensus data.
 #' 
-#' @param path Path to JSON file.
+#' @param path Path to Sensus JSON data.
+#' @param is.directory Whether or not the path is a directory.
+#' @param recursive Whether or not to read files recursively from directory indicated by path.
 #' @param convert.to.local.timezone Whether or not to convert timestamps to the local timezone.
+#' @param local.timesonze If converting timestamps to local timesonze, the local timezone to use.
 #' @return All data, listed by type.
 #' @examples
-#' data = read.sensus.json(system.file("extdata", "example.data.txt", package="SensusR"))
-read.sensus.json = function(path, convert.to.local.timezone = TRUE)
+#' data = read.sensus.json(system.file("extdata", "example.data.txt", package="SensusR"), is.directory = FALSE)
+read.sensus.json = function(path, is.directory = TRUE, recursive = TRUE, convert.to.local.timezone = TRUE, local.timezone = Sys.timezone())
 {
-  local.timezone = Sys.timezone()
+  paths = c(path)
+  if(is.directory)
+    paths = list.files(directory, recursive = recursive, full.names = TRUE, include.dirs = FALSE)
   
-  # read all lines, only retaining non-empty lines
-  con = file(path, open="r")
-  lines = as.matrix(readLines(con))
-  lines = apply(lines, 1, trim)
-  lines = as.matrix(lines[sapply(lines, nchar) > 0])
-  close(con)
-
-  # parse each line to json
-  lines = apply(lines, 1, function(line)
+  data = list()
+  
+  for(path in paths)
   {
-    json = jsonlite::fromJSON(line)
+    # read and parse JSON
+    file.text = readChar(path, file.info(path)$size)
+    file.json = jsonlite::fromJSON(file.text)
     
-    # split the type, which contains the full class name and assembly name
-    type.split = strsplit(json$"$type", ",")[[1]]
+    # skip empty files
+    if(nrow(file.json) == 0)
+      next
     
-    # set short version of type
-    datum.type = tail(strsplit(type.split[1], ".", fixed=TRUE)[[1]], n=1)
-    json$Type = datum.type
+    # remove list-type columns
+    file.json = file.json[sapply(file.json, typeof) != "list"]
     
-    # set OS
-    json$OS = strsplit(type.split[2], ".", fixed=TRUE)[[1]][2]
-    
-    # we no longer need the $type column
-    json = json[-which(names(json) %in% c("$type"))]
-    
-    # ignore sub-list data...no simple and obvious way to handle them
-    json = json[sapply(json, typeof) != "list"]
-    
-    return(as.data.frame(json, stringsAsFactors = FALSE))
-  })
-  
-  # split up data by type
-  types = as.factor(sapply(lines, function(line) { return(line$Type) }))
-  data = split(lines, types)
-  
-  # unlist everything
-  for(datum.type in levels(types))
-  {
-    first.row = data[[datum.type]][[1]]
-    column.names = names(first.row)
-    
-    # build new dataframe for the current data type
-    new.data = data.frame(matrix(nrow=length(data[[datum.type]]), ncol=0))
-    for(col in column.names)
+    # set datum type and OS
+    type.os = lapply(file.json$"$type", function(type)
     {
-      col.data = unlist(sapply(data[[datum.type]], function(row,col) { return(row[[col]])}, col))
-      new.data[[col]] = col.data
-    }
+      type.split = strsplit(type, ",")[[1]]
+      datum.type = trim(tail(strsplit(type.split[1], ".", fixed=TRUE)[[1]], n=1))
+      os = trim(type.split[2])
+      
+      return(c(datum.type, os))
+    })
     
-    # parse/convert all time stamps
-    new.data$Timestamp = strptime(new.data$Timestamp, format = "%Y-%m-%dT%H:%M:%OS", tz="UTC")    
+    type.os = matrix(unlist(type.os), nrow = length(type.os), byrow=TRUE)
+    
+    file.json$Type = type.os[,1]
+    file.json$OS = type.os[,2]
+    file.json$"$type" = NULL
+    
+    # parse timestamps
+    file.json$Timestamp = strptime(file.json$Timestamp, format = "%Y-%m-%dT%H:%M:%OS", tz="UTC")    
     if(convert.to.local.timezone)
     {
-      new.data$Timestamp = lubridate::with_tz(new.data$Timestamp, local.timezone)
+      file.json$Timestamp = lubridate::with_tz(file.json$Timestamp, local.timezone)
     }
     
-    # don't need type anymore, since we've group by type
-    new.data$Type = NULL
+    # filter redundant data by Id
+    file.json = file.json[!duplicated(file.json$Id),]
     
-    # order by timestamp
-    new.data = new.data[order(new.data$Timestamp),]
-    
-    # filter redundant data by Id and remove Id column
-    new.data = new.data[!duplicated(new.data$Id),]
-    new.data$Id = NULL
-    
-    # set class to the datum type, in order for generic plot functions to work
-    class(new.data) = c(datum.type, class(new.data))
-    
-    data[[datum.type]] = new.data
+    # add to data by type
+    type = file.json$Type[1]
+    if(is.null(data[[type]])) {
+      data[[type]] = file.json
+    } else {
+      data[[type]] = rbind(data[[type]], file.json)
+    }
+  }
+  
+  # order by timestamp and add class information for plotting
+  for(datum.type in names(data))
+  { 
+    data.by.type = data[[datum.type]]
+    data[[datum.type]] = data.by.type[order(data.by.type$Timestamp),]
+    class(data[[datum.type]]) = c(datum.type, class(data[[datum.type]]))
   }
   
   return(data)

@@ -1173,15 +1173,17 @@ namespace SensusService
                 {
                     string rationale = null;
                     if (permission == Permission.Camera)
-                        rationale = "Sensus uses the camera to scan participation barcodes. Sensus will not store images or video.";
+                        rationale = "Sensus uses the camera to scan participation barcodes. Sensus will not record images or video.";
                     else if (permission == Permission.Location)
                         rationale = "Sensus uses GPS to collect location information for studies you have enrolled in.";
                     else if (permission == Permission.Microphone)
-                        rationale = "Sensus uses the microphone to collect sound information for studies you have enrolled in. Sensus will not store audio.";
+                        rationale = "Sensus uses the microphone to collect sound level information for studies you have enrolled in. Sensus will not record audio.";
+                    else if (permission == Permission.Phone)
+                        rationale = "Sensus monitors telephone call metadata for studies you have enrolled in. Sensus will not record audio from calls.";
                     else if (permission == Permission.Sensors)
-                        rationale = "Sensus uses sensors to collect various types of information for studies you have enrolled in.";
+                        rationale = "Sensus uses movement sensors to collect various types of information for studies you have enrolled in.";
                     else if (permission == Permission.Storage)
-                        rationale = "Sensus must be able to write to storage for proper operation. Please grant this permission.";
+                        rationale = "Sensus must be able to write to your device's storage for proper operation. Please grant this permission.";
             
                     if (await CrossPermissions.Current.CheckPermissionStatusAsync(permission) == PermissionStatus.Granted)
                         return PermissionStatus.Granted;
