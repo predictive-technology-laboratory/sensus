@@ -140,8 +140,8 @@ namespace SensusService.DataStores.Remote
                             PutObjectRequest putRequest = new PutObjectRequest
                             {
                                 BucketName = _bucket,
-                                Key = (_folder + "/" + datumType + "/" + datum.Id + ".json").Trim('/'),  // trim '/' in case folder is blank
-                                ContentBody = datumJSON,
+                                Key = (_folder + "/" + datumType + "/" + datum.Id + ".json").Trim('/'),  // trim '/' in case folder is blank, and use datum ID for retrieval later.
+                                ContentBody = "[" + datumJSON + "]",
                                 ContentType = "application/json"
                             };
 
@@ -234,7 +234,7 @@ namespace SensusService.DataStores.Remote
                 T datum = null;
                 using (StreamReader reader = new StreamReader(responseStream))
                 {
-                    string json = reader.ReadToEnd();
+                    string json = reader.ReadToEnd().Trim('[', ']');  // there must only be one datum in the array, so trim the braces.
                     json = SensusServiceHelper.Get().ConvertJsonForCrossPlatform(json);
                     datum = Datum.FromJSON(json) as T;
                 }

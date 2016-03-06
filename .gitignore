@@ -7,6 +7,8 @@ packages
 Components
 .Rproj.user
 .Rhistory
+SensusR/SensusR.Rcheck
+SensusR/SensusR_*.tar.gz
 *~
 androidpublisher.dat
 client_secrets.json

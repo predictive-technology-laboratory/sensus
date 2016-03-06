@@ -14,9 +14,25 @@
 #' @name SensusR
 NULL
 
+#' Download data from Amazon S3 path.
+#' 
+#' @param s3.path Full path within S3.
+#' @param local.path Path to location on local drive.
+#' @param aws.path Path to AWS client.
+#' @return Local path to location of downloaded data.
+#' @examples 
+#' # data.path = download.from.aws.s3("s3://bucket/path/to/data", "~/Desktop/data")
+download.from.aws.s3 = function(s3.path, local.path = tempfile(), aws.path = "/usr/local/bin")
+{
+  aws = paste(aws.path, "aws", sep = "/")
+  args = paste("s3 cp --recursive", s3.path, local.path, sep = " ")
+  exit.code = system2(aws, args)
+  return(local.path)
+}
+
 #' Read JSON-formatted Sensus data.
 #' 
-#' @param path Path to Sensus JSON data.
+#' @param data.path Path to Sensus JSON data (either a file or a directory).
 #' @param is.directory Whether or not the path is a directory.
 #' @param recursive Whether or not to read files recursively from directory indicated by path.
 #' @param convert.to.local.timezone Whether or not to convert timestamps to the local timezone.
@@ -24,23 +40,26 @@ NULL
 #' @return All data, listed by type.
 #' @examples
 #' data = read.sensus.json(system.file("extdata", "example.data.txt", package="SensusR"), is.directory = FALSE)
-read.sensus.json = function(path, is.directory = TRUE, recursive = TRUE, convert.to.local.timezone = TRUE, local.timezone = Sys.timezone())
+read.sensus.json = function(data.path, is.directory = TRUE, recursive = TRUE, convert.to.local.timezone = TRUE, local.timezone = Sys.timezone())
 {
-  paths = c(path)
+  paths = c(data.path)
   if(is.directory)
-    paths = list.files(directory, recursive = recursive, full.names = TRUE, include.dirs = FALSE)
+    paths = list.files(data.path, recursive = recursive, full.names = TRUE, include.dirs = FALSE)
   
   data = list()
   
   for(path in paths)
   {
     # read and parse JSON
-    file.text = readChar(path, file.info(path)$size)
+    file.size = file.info(path)$size
+    file.text = readChar(path, file.size)
     file.json = jsonlite::fromJSON(file.text)
-    
+
     # skip empty files
     if(nrow(file.json) == 0)
+    {
       next
+    }
     
     # remove list-type columns
     file.json = file.json[sapply(file.json, typeof) != "list"]
@@ -191,17 +210,14 @@ plot.LightDatum = function(x, pch = ".", type = "l", ...)
 #' 
 #' @method plot LocationDatum
 #' @param x Location data.
-#' @param ... Other plotting parameters.
+#' @param ... Other plotting parameters to pass to \code{\link{qmap}}.
 #' @examples
 #' data = read.sensus.json(system.file("extdata", "example.data.txt", package="SensusR"))
 #' plot(data$LocationDatum)
 plot.LocationDatum = function(x, ...)
 {
-  lon = x$Longitude
-  lat = x$Latitude
-  newmap = rworldmap::getMap(resolution = "high")
-  plot(newmap, xlim = range(lon), ylim = range(lat), asp = 1, ...)
-  lines(lon, lat, ...)
+  map = ggmap::qmap(...)
+  map + ggplot2::geom_point(data = x, ggplot2::aes(x = Longitude, y = Latitude))
 }
 
 #' Plot running apps data.

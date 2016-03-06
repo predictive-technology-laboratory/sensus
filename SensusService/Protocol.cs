@@ -367,6 +367,9 @@ namespace SensusService
         private bool _groupable;
         private List<Protocol> _groupedProtocols;
         private float? _rewardThreshold;
+        private float _gpsDesiredAccuracy;
+        private int _gpsMinTimeDelayMS;
+        private int _gpsMinDistanceDelayMeters;
 
         private readonly object _locker = new object();
 
@@ -606,6 +609,99 @@ namespace SensusService
             }
         }
 
+        [EntryFloatUiProperty("GPS - Desired Accuracy:", true, 21)]
+        public float GpsDesiredAccuracy
+        {
+            get { return _gpsDesiredAccuracy; }
+            set
+            {
+                if (value <= 0)
+                    value = 50;
+
+                _gpsDesiredAccuracy = value;
+            }
+        }
+
+        [EntryFloatUiProperty("GPS - Minimum Time Delay (MS):", true, 22)]
+        public float GpsMinTimeDelayMS
+        {
+            get { return _gpsMinTimeDelayMS; }
+            set
+            {
+                if (value < 0)
+                    value = 5000;
+
+                _gpsMinTimeDelayMS = value;
+            }
+        }
+
+        [EntryFloatUiProperty("GPS - Minimum Distance Delay (Meters):", true, 23)]
+        public float GpsMinDistanceDelayMeters
+        {
+            get
+            {
+                return _gpsMinDistanceDelayMeters;
+            }
+            set
+            {
+                if (value < 0)
+                    value = 50;
+
+                _gpsMinDistanceDelayMeters = value;
+            }
+        }
+
+        #region iOS-specific protocol properties
+
+        #if __IOS__
+        [OnOffUiProperty("GPS - Pause Location Updates:", true, 25)]
+        public bool GpsPauseLocationUpdatesAutomatically { get; set; } = false;
+
+        [ListUiProperty("GPS - Pause Activity Type:", true, 26, new object[] { GpsPauseActivityType.Other, GpsPauseActivityType.AutomotiveNavigation, GpsPauseActivityType.Fitness, GpsPauseActivityType.OtherNavigation })]
+        public ActivityType GpsPauseActivityType { get; set; } = ActivityType.Other;
+
+        [OnOffUiProperty("GPS - Significant Changes:", true, 27)]
+        public bool GpsListenForSignificantChanges { get; set; } = false;
+
+        [OnOffUiProperty("GPS - Defer Location Updates:", true, 28)]
+        public bool GpsDeferLocationUpdates { get; set; } = false;
+
+        private float _gpsDeferralDistanceMeters = 500;
+
+        [EntryFloatUiProperty("GPS - Deferral Distance (Meters):", true, 29)]
+        public float GpsDeferralDistanceMeters
+        { 
+            get
+            { 
+                return _gpsDeferralDistanceMeters;
+            }
+            set
+            {
+                if (value < 0)
+                    value = -1;
+
+                _gpsDeferralDistanceMeters = value;
+            }
+        }
+
+        private float _gpsDeferralTimeMinutes = 5;
+
+        [EntryFloatUiProperty("GPS - Deferral Time (Minutes):", true, 30)]
+        public float GpsDeferralTimeMinutes
+        {
+            get { return _gpsDeferralTimeMinutes; }
+            set
+            {
+                if (value < 0)
+                    value = -1;
+
+                _gpsDeferralTimeMinutes = value;
+            }
+        }
+        #endif
+
+        #endregion
+
         /// <summary>
         /// For JSON deserialization
         /// </summary>
@@ -621,6 +717,9 @@ namespace SensusService
             _groupable = false;
             _groupedProtocols = new List<Protocol>();
             _rewardThreshold = null;
+            _gpsDesiredAccuracy = 25;
+            _gpsMinTimeDelayMS = 5000;
+            _gpsMinDistanceDelayMeters = 50;
         }
 
         /// <summary>

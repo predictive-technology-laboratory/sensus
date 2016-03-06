@@ -47,7 +47,6 @@ namespace SensusService.Probes.Location
         private ManualResetEvent _readingWait;
         private Position _reading;
         private int _readingTimeoutMS;
-        private int _minimumTimeHintMS;
         private List<Tuple<EventHandler<PositionEventArgs>, bool>> _listenerHeadings;
 
         private readonly object _locker = new object();
@@ -76,13 +75,8 @@ namespace SensusService.Probes.Location
             _readingWait = new ManualResetEvent(false);
             _reading = null;
             _readingTimeoutMS = 120000;
-            _minimumTimeHintMS = 5000;
             _locator = CrossGeolocator.Current;
-            _locator.AllowsBackgroundUpdates = true;
-            _locator.PausesLocationUpdatesAutomatically = false;
-            _locator.DesiredAccuracy = 50;  // setting this too low appears to result in very delayed GPS fixes.
             _listenerHeadings = new List<Tuple<EventHandler<PositionEventArgs>, bool>>();
-
             _locator.PositionChanged += (o, e) =>
             {
                 SensusServiceHelper.Get().Logger.Log("GPS position has changed.", LoggingLevel.Verbose, GetType());
@@ -96,15 +90,33 @@ namespace SensusService.Probes.Location
         {      
             if (SensusServiceHelper.Get().ObtainPermission(Permission.Location) != PermissionStatus.Granted)
                 throw new Exception("Could not access GPS.");
-            
+
+            // if we're already listening, stop listening first so that the locator can be configured with
+            // the most recent listening settings below.
             if (ListeningForChanges)
                 await _locator.StopListeningAsync();      
                       
-            PositionChanged += listener;       
-
+            // add new listener
+            PositionChanged += listener;
             _listenerHeadings.Add(new Tuple<EventHandler<PositionEventArgs>, bool>(listener, includeHeading));
 
-            await _locator.StartListeningAsync(_minimumTimeHintMS, _locator.DesiredAccuracy, _listenerHeadings.Any(t => t.Item2));
+            _locator.DesiredAccuracy = SensusServiceHelper.Get().GpsDesiredAccuracy;
+
+            float gpsDeferralDistanceMeters = SensusServiceHelper.Get().GpsDeferralDistanceMeters;
+            float gpsDeferralTimeMinutes = SensusServiceHelper.Get().GpsDeferralTimeMinutes;
+
+            ListenerSettings settings = new ListenerSettings
+            {
+                AllowBackgroundUpdates = true,
+                PauseLocationUpdatesAutomatically = SensusServiceHelper.Get().GpsPauseLocationUpdatesAutomatically,
+                ActivityType = SensusServiceHelper.Get().GpsActivityType,
+                ListenForSignificantChanges = SensusServiceHelper.Get().GpsListenForSignificantChanges,
+                DeferLocationUpdates = SensusServiceHelper.Get().GpsDeferLocationUpdates,
+                DeferralDistanceMeters = gpsDeferralDistanceMeters < 0 ? null : gpsDeferralDistanceMeters,
+                DeferralTimeMinutes = gpsDeferralTimeMinutes < 0 ? null : gpsDeferralTimeMinutes
+            };
+            
+            await _locator.StartListeningAsync(SensusServiceHelper.Get().GpsMinTimeDelayMS, SensusServiceHelper.Get().GpsMinDistanceDelayMeters, _listenerHeadings.Any(t => t.Item2), settings);
 
             SensusServiceHelper.Get().Logger.Log("GPS receiver is now listening for changes.", LoggingLevel.Normal, GetType());        
         }

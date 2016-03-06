@@ -395,6 +395,33 @@ namespace SensusService
             }
         }
 
+        [JsonIgnore]
+        public float GpsDesiredAccuracy
+        {
+            get
+            {
+                return _registeredProtocols.Count == 0 ? 50 : _registeredProtocols.Min(p => p.GpsDesiredAccuracy);
+            }
+        }
+
+        [JsonIgnore]
+        public float GpsMinTimeDelayMS
+        {
+            get
+            {
+                return _registeredProtocols.Count == 0 ? 5000 : _registeredProtocols.Min(p => p.GpsMinTimeDelayMS);
+            }
+        }
+
+        [JsonIgnore]
+        public float GpsMinDistanceDelayMeters
+        {
+            get
+            {
+                return _registeredProtocols.Count == 0 ? 50 : _registeredProtocols.Min(p => p.GpsMinDistanceDelayMeters);
+            }
+        }
+
         #region platform-specific properties
 
         [JsonIgnore]
@@ -411,6 +438,67 @@ namespace SensusService
 
         [JsonIgnore]
         protected abstract bool IsOnMainThread { get; }
+
+        #region iOS-specific GPS listener settings
+
+        #if __IOS__
+
+        [JsonIgnore]
+        public bool GpsPauseLocationUpdatesAutomatically
+        {
+            get
+            {
+                return _registeredProtocols.Count == 0 ? false : _registeredProtocols.All(p => p.GpsPauseLocationUpdatesAutomatically);
+            }
+        }
+
+        [JsonIgnore]
+        public ActivityType GpsActivityType
+        {
+            get
+            {
+                return _registeredProtocols.Count == 0 || _registeredProtocols.Count > 1 ? ActivityType.Other : _registeredProtocols.First().GpsPauseActivityType;
+            }
+        }
+
+        [JsonIgnore]
+        public bool GpsListenForSignificantChanges
+        {
+            get
+            {
+                return _registeredProtocols.Count == 0 ? false : _registeredProtocols.All(p => p.GpsListenForSignificantChanges);
+            }
+        }
+
+        [JsonIgnore]
+        public bool GpsDeferLocationUpdates
+        {
+            get
+            {
+                return _registeredProtocols.Count == 0 ? false : _registeredProtocols.All(p => p.GpsDeferLocationUpdates);
+            }
+        }
+
+        [JsonIgnore]
+        public float GpsDeferralDistanceMeters
+        {
+            get
+            {
+                return _registeredProtocols.Count == 0 ? -1 : _registeredProtocols.Min(p => p.GpsDeferralDistanceMeters);
+            }
+        }
+
+        [JsonIgnore]
+        public float GpsDeferralTimeMinutes
+        {
+            get
+            {
+                return _registeredProtocols.Count == 0 ? -1 : _registeredProtocols.Min(p => p.GpsDeferralTimeMinutes);
+            }
+        }
+        #endif
+
+        #endregion
 
         #endregion
 
