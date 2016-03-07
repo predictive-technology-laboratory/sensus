@@ -234,7 +234,7 @@ namespace SensusService.DataStores.Remote
                 T datum = null;
                 using (StreamReader reader = new StreamReader(responseStream))
                 {
-                    string json = reader.ReadToEnd().Trim('[', ']');  // there must only be one datum in the array, so trim the braces.
+                    string json = reader.ReadToEnd().Trim().Trim('[', ']');  // there will only be one datum in the array, so trim the braces and deserialize the datum.
                     json = SensusServiceHelper.Get().ConvertJsonForCrossPlatform(json);
                     datum = Datum.FromJSON(json) as T;
                 }
