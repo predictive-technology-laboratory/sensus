@@ -102,21 +102,7 @@ namespace SensusService.Probes.Location
 
             _locator.DesiredAccuracy = SensusServiceHelper.Get().GpsDesiredAccuracy;
 
-            float gpsDeferralDistanceMeters = SensusServiceHelper.Get().GpsDeferralDistanceMeters;
-            float gpsDeferralTimeMinutes = SensusServiceHelper.Get().GpsDeferralTimeMinutes;
-
-            ListenerSettings settings = new ListenerSettings
-            {
-                AllowBackgroundUpdates = true,
-                PauseLocationUpdatesAutomatically = SensusServiceHelper.Get().GpsPauseLocationUpdatesAutomatically,
-                ActivityType = SensusServiceHelper.Get().GpsActivityType,
-                ListenForSignificantChanges = SensusServiceHelper.Get().GpsListenForSignificantChanges,
-                DeferLocationUpdates = SensusServiceHelper.Get().GpsDeferLocationUpdates,
-                DeferralDistanceMeters = gpsDeferralDistanceMeters < 0 ? null : gpsDeferralDistanceMeters,
-                DeferralTimeMinutes = gpsDeferralTimeMinutes < 0 ? null : gpsDeferralTimeMinutes
-            };
-            
-            await _locator.StartListeningAsync(SensusServiceHelper.Get().GpsMinTimeDelayMS, SensusServiceHelper.Get().GpsMinDistanceDelayMeters, _listenerHeadings.Any(t => t.Item2), settings);
+            await _locator.StartListeningAsync(SensusServiceHelper.Get().GpsMinTimeDelayMS, SensusServiceHelper.Get().GpsMinDistanceDelayMeters, _listenerHeadings.Any(t => t.Item2), GetListenerSettings());
 
             SensusServiceHelper.Get().Logger.Log("GPS receiver is now listening for changes.", LoggingLevel.Normal, GetType());        
         }
@@ -131,9 +117,28 @@ namespace SensusService.Probes.Location
             _listenerHeadings.RemoveAll(t => t.Item1 == listener);
                        
             if (ListeningForChanges)
-                await _locator.StartListeningAsync(_minimumTimeHintMS, _locator.DesiredAccuracy, _listenerHeadings.Any(t => t.Item2));
+                await _locator.StartListeningAsync(SensusServiceHelper.Get().GpsMinTimeDelayMS, SensusServiceHelper.Get().GpsMinDistanceDelayMeters, _listenerHeadings.Any(t => t.Item2), GetListenerSettings());
             else
                 SensusServiceHelper.Get().Logger.Log("All listeners removed from GPS receiver. Stopped listening.", LoggingLevel.Normal, GetType());       
+        }
+
+        private ListenerSettings GetListenerSettings()
+        {
+            float gpsDeferralDistanceMeters = SensusServiceHelper.Get().GpsDeferralDistanceMeters;
+            float gpsDeferralTimeMinutes = SensusServiceHelper.Get().GpsDeferralTimeMinutes;
+
+            ListenerSettings settings = new ListenerSettings
+            {
+                AllowBackgroundUpdates = true,
+                PauseLocationUpdatesAutomatically = SensusServiceHelper.Get().GpsPauseLocationUpdatesAutomatically,
+                ActivityType = SensusServiceHelper.Get().GpsActivityType,
+                ListenForSignificantChanges = SensusServiceHelper.Get().GpsListenForSignificantChanges,
+                DeferLocationUpdates = SensusServiceHelper.Get().GpsDeferLocationUpdates,
+                DeferralDistanceMeters = gpsDeferralDistanceMeters < 0 ? null : gpsDeferralDistanceMeters,
+                DeferralTimeMinutes = gpsDeferralTimeMinutes < 0 ? null : gpsDeferralTimeMinutes
+            };
+
+            return settings;
         }
 
         /// <summary>

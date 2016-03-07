@@ -369,7 +369,7 @@ namespace SensusService
         private float? _rewardThreshold;
         private float _gpsDesiredAccuracy;
         private int _gpsMinTimeDelayMS;
-        private int _gpsMinDistanceDelayMeters;
+        private float _gpsMinDistanceDelayMeters;
 
         private readonly object _locker = new object();
 
@@ -622,8 +622,8 @@ namespace SensusService
             }
         }
 
-        [EntryFloatUiProperty("GPS - Minimum Time Delay (MS):", true, 22)]
-        public float GpsMinTimeDelayMS
+        [EntryIntegerUiProperty("GPS - Minimum Time Delay (MS):", true, 22)]
+        public int GpsMinTimeDelayMS
         {
             get { return _gpsMinTimeDelayMS; }
             set

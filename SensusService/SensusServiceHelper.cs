@@ -405,7 +405,7 @@ namespace SensusService
         }
 
         [JsonIgnore]
-        public float GpsMinTimeDelayMS
+        public int GpsMinTimeDelayMS
         {
             get
             {
