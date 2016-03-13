@@ -34,6 +34,7 @@ using SensusService.Probes.User;
 using SensusService.Probes.Apps;
 using SensusService.Probes.Movement;
 using System.Text;
+using Plugin.Geolocator.Abstractions;
 
 #if __IOS__
 using HealthKit;
@@ -49,6 +50,10 @@ namespace SensusService
     public class Protocol
     {
         #region static members
+
+        public const int GPS_DEFAULT_ACCURACY_METERS = 25;
+        public const int GPS_DEFAULT_MIN_TIME_DELAY_MS = 5000;
+        public const int GPS_DEFAULT_MIN_DISTANCE_DELAY_METERS = 50;
 
         public static void CreateAsync(string name, Action<Protocol> callback)
         {
@@ -367,7 +372,7 @@ namespace SensusService
         private bool _groupable;
         private List<Protocol> _groupedProtocols;
         private float? _rewardThreshold;
-        private float _gpsDesiredAccuracy;
+        private float _gpsDesiredAccuracyMeters;
         private int _gpsMinTimeDelayMS;
         private float _gpsMinDistanceDelayMeters;
 
@@ -609,16 +614,16 @@ namespace SensusService
             }
         }
 
-        [EntryFloatUiProperty("GPS - Desired Accuracy:", true, 21)]
-        public float GpsDesiredAccuracy
+        [EntryFloatUiProperty("GPS - Desired Accuracy (Meters):", true, 21)]
+        public float GpsDesiredAccuracyMeters
         {
-            get { return _gpsDesiredAccuracy; }
+            get { return _gpsDesiredAccuracyMeters; }
             set
             {
                 if (value <= 0)
-                    value = 50;
+                    value = GPS_DEFAULT_ACCURACY_METERS;
 
-                _gpsDesiredAccuracy = value;
+                _gpsDesiredAccuracyMeters = value;
             }
         }
 
@@ -629,7 +634,7 @@ namespace SensusService
             set
             {
                 if (value < 0)
-                    value = 5000;
+                    value = GPS_DEFAULT_MIN_TIME_DELAY_MS;
 
                 _gpsMinTimeDelayMS = value;
             }
@@ -645,7 +650,7 @@ namespace SensusService
             set
             {
                 if (value < 0)
-                    value = 50;
+                    value = GPS_DEFAULT_MIN_DISTANCE_DELAY_METERS;
 
                 _gpsMinDistanceDelayMeters = value;
             }
@@ -657,7 +662,7 @@ namespace SensusService
         [OnOffUiProperty("GPS - Pause Location Updates:", true, 25)]
         public bool GpsPauseLocationUpdatesAutomatically { get; set; } = false;
 
-        [ListUiProperty("GPS - Pause Activity Type:", true, 26, new object[] { GpsPauseActivityType.Other, GpsPauseActivityType.AutomotiveNavigation, GpsPauseActivityType.Fitness, GpsPauseActivityType.OtherNavigation })]
+        [ListUiProperty("GPS - Pause Activity Type:", true, 26, new object[] { ActivityType.Other, ActivityType.AutomotiveNavigation, ActivityType.Fitness, ActivityType.OtherNavigation })]
         public ActivityType GpsPauseActivityType { get; set; } = ActivityType.Other;
 
         [OnOffUiProperty("GPS - Significant Changes:", true, 27)]
@@ -686,7 +691,7 @@ namespace SensusService
 
         private float _gpsDeferralTimeMinutes = 5;
 
-        [EntryFloatUiProperty("GPS - Deferral Time (Minutes):", true, 30)]
+        [EntryFloatUiProperty("GPS - Deferral Time (Mins.):", true, 30)]
         public float GpsDeferralTimeMinutes
         {
             get { return _gpsDeferralTimeMinutes; }
@@ -717,9 +722,9 @@ namespace SensusService
             _groupable = false;
             _groupedProtocols = new List<Protocol>();
             _rewardThreshold = null;
-            _gpsDesiredAccuracy = 25;
-            _gpsMinTimeDelayMS = 5000;
-            _gpsMinDistanceDelayMeters = 50;
+            _gpsDesiredAccuracyMeters = GPS_DEFAULT_ACCURACY_METERS;
+            _gpsMinTimeDelayMS = GPS_DEFAULT_MIN_TIME_DELAY_MS;
+            _gpsMinDistanceDelayMeters = GPS_DEFAULT_MIN_DISTANCE_DELAY_METERS;
         }
 
         /// <summary>
@@ -759,6 +764,7 @@ namespace SensusService
             }
 
             _probes.Add(probe);
+            _probes.Sort(new Comparison<Probe>((p1, p2) => p1.DisplayName.CompareTo(p2.DisplayName)));
         }
 
         private void ResetRandomTimeAnchor()

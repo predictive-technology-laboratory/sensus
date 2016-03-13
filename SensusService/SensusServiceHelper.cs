@@ -131,7 +131,8 @@ namespace SensusService
                 e.ErrorContext.Handled = true;
             },
 
-            MissingMemberHandling = MissingMemberHandling.Ignore  
+            MissingMemberHandling = MissingMemberHandling.Ignore,
+            Formatting = Formatting.Indented  // must use indented formatting in order for cross-platform type conversion to work (depends on each "$type" name-value pair being on own line).
             #endregion
         };
 
@@ -237,7 +238,7 @@ namespace SensusService
                     }
                     catch (Exception exception)
                     {
-                        errorMessage = "Failed to deserialize service helper JSON (length=" + decryptedJSON + ") into service helper:  " + exception.Message;
+                        errorMessage = "Failed to deserialize service helper JSON (length=" + decryptedJSON.Length + ") into service helper:  " + exception.Message;
                         Console.Error.WriteLine(errorMessage);
                     }
                 }
@@ -396,11 +397,12 @@ namespace SensusService
         }
 
         [JsonIgnore]
-        public float GpsDesiredAccuracy
+        public float GpsDesiredAccuracyMeters
         {
             get
             {
-                return _registeredProtocols.Count == 0 ? 50 : _registeredProtocols.Min(p => p.GpsDesiredAccuracy);
+                List<Protocol> runningProtocols = GetRunningProtocols();
+                return runningProtocols.Count == 0 ? Protocol.GPS_DEFAULT_ACCURACY_METERS : runningProtocols.Min(p => p.GpsDesiredAccuracyMeters);
             }
         }
 
@@ -409,7 +411,8 @@ namespace SensusService
         {
             get
             {
-                return _registeredProtocols.Count == 0 ? 5000 : _registeredProtocols.Min(p => p.GpsMinTimeDelayMS);
+                List<Protocol> runningProtocols = GetRunningProtocols();
+                return runningProtocols.Count == 0 ? Protocol.GPS_DEFAULT_MIN_TIME_DELAY_MS : runningProtocols.Min(p => p.GpsMinTimeDelayMS);
             }
         }
 
@@ -418,7 +421,8 @@ namespace SensusService
         {
             get
             {
-                return _registeredProtocols.Count == 0 ? 50 : _registeredProtocols.Min(p => p.GpsMinDistanceDelayMeters);
+                List<Protocol> runningProtocols = GetRunningProtocols();
+                return runningProtocols.Count == 0 ? Protocol.GPS_DEFAULT_MIN_DISTANCE_DELAY_METERS : runningProtocols.Min(p => p.GpsMinDistanceDelayMeters);
             }
         }
 
@@ -439,16 +443,17 @@ namespace SensusService
         [JsonIgnore]
         protected abstract bool IsOnMainThread { get; }
 
-        #region iOS-specific GPS listener settings
+        #region iOS GPS listener settings
 
         #if __IOS__
-
+        
         [JsonIgnore]
         public bool GpsPauseLocationUpdatesAutomatically
         {
             get
             {
-                return _registeredProtocols.Count == 0 ? false : _registeredProtocols.All(p => p.GpsPauseLocationUpdatesAutomatically);
+                List<Protocol> runningProtocols = GetRunningProtocols();
+                return runningProtocols.Count == 0 ? false : runningProtocols.All(p => p.GpsPauseLocationUpdatesAutomatically);
             }
         }
 
@@ -457,7 +462,8 @@ namespace SensusService
         {
             get
             {
-                return _registeredProtocols.Count == 0 || _registeredProtocols.Count > 1 ? ActivityType.Other : _registeredProtocols.First().GpsPauseActivityType;
+                List<Protocol> runningProtocols = GetRunningProtocols();
+                return runningProtocols.Count == 0 || runningProtocols.Select(p => p.GpsPauseActivityType).Distinct().Count() > 1 ? ActivityType.Other : runningProtocols.First().GpsPauseActivityType;
             }
         }
 
@@ -466,7 +472,8 @@ namespace SensusService
         {
             get
             {
-                return _registeredProtocols.Count == 0 ? false : _registeredProtocols.All(p => p.GpsListenForSignificantChanges);
+                List<Protocol> runningProtocols = GetRunningProtocols();
+                return runningProtocols.Count == 0 ? false : runningProtocols.All(p => p.GpsListenForSignificantChanges);
             }
         }
 
@@ -475,7 +482,8 @@ namespace SensusService
         {
             get
             {
-                return _registeredProtocols.Count == 0 ? false : _registeredProtocols.All(p => p.GpsDeferLocationUpdates);
+                List<Protocol> runningProtocols = GetRunningProtocols();
+                return runningProtocols.Count == 0 ? false : runningProtocols.All(p => p.GpsDeferLocationUpdates);
             }
         }
 
@@ -484,7 +492,8 @@ namespace SensusService
         {
             get
             {
-                return _registeredProtocols.Count == 0 ? -1 : _registeredProtocols.Min(p => p.GpsDeferralDistanceMeters);
+                List<Protocol> runningProtocols = GetRunningProtocols();
+                return runningProtocols.Count == 0 ? -1 : runningProtocols.Min(p => p.GpsDeferralDistanceMeters);
             }
         }
 
@@ -493,9 +502,11 @@ namespace SensusService
         {
             get
             {
-                return _registeredProtocols.Count == 0 ? -1 : _registeredProtocols.Min(p => p.GpsDeferralTimeMinutes);
+                List<Protocol> runningProtocols = GetRunningProtocols();
+                return runningProtocols.Count == 0 ? -1 : runningProtocols.Min(p => p.GpsDeferralTimeMinutes);
             }
         }
+
         #endif
 
         #endregion
@@ -659,6 +670,11 @@ namespace SensusService
         public bool ProtocolShouldBeRunning(Protocol protocol)
         {
             return _runningProtocolIds.Contains(protocol.Id);
+        }
+
+        public List<Protocol> GetRunningProtocols()
+        {
+            return _registeredProtocols.Where(p => p.Running).ToList();
         }
 
         #endregion
@@ -1233,26 +1249,42 @@ namespace SensusService
 
         public string ConvertJsonForCrossPlatform(string json)
         {
-            string newJSON;
-            string typeName = GetType().Name;
-            if (typeName == "AndroidSensusServiceHelper")
-                newJSON = json.Replace("iOS", "Android").Replace("WinPhone", "Android");
-            else if (typeName == "iOSSensusServiceHelper")
-                newJSON = json.Replace("Android", "iOS").Replace("WinPhone", "iOS");
-            else if (typeName == "WinPhone")
-                newJSON = json.Replace("Android", "WinPhone").Replace("iOS", "WinPhone");
-            else
-                throw new SensusException("Attempted to convert JSON for unknown service helper type:  " + SensusServiceHelper.Get().GetType().FullName);
+            string currentTypeName = GetType().Name;
 
-            if (newJSON == json)
-                _logger.Log("No cross-platform conversion required for JSON.", LoggingLevel.Normal, GetType());
-            else
+            StringBuilder convertedJSON = new StringBuilder(json.Length * 2);
+            bool conversionPerformed = false;
+
+            // run through each line in the JSON and modify .NET types appropriately
+            foreach (string jsonLine in json.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
             {
-                _logger.Log("Performed cross-platform conversion of JSON.", LoggingLevel.Normal, GetType());
-                json = newJSON;
+                if (jsonLine.Trim().StartsWith("\"$type\":"))
+                {
+                    // modify platform names
+                    string convertedJsonLine;
+                    if (currentTypeName == "AndroidSensusServiceHelper")
+                        convertedJsonLine = jsonLine.Replace("iOS", "Android").Replace("WinPhone", "Android");
+                    else if (currentTypeName == "iOSSensusServiceHelper")
+                        convertedJsonLine = jsonLine.Replace("Android", "iOS").Replace("WinPhone", "iOS");
+                    else if (currentTypeName == "WinPhoneSensusServiceHelper")
+                        convertedJsonLine = jsonLine.Replace("Android", "WinPhone").Replace("iOS", "WinPhone");
+                    else
+                        throw new SensusException("Attempted to convert JSON for unknown service helper type:  " + SensusServiceHelper.Get().GetType().FullName);
+
+                    if (convertedJsonLine != jsonLine)
+                        conversionPerformed = true;
+
+                    convertedJSON.AppendLine(convertedJsonLine);
+                }
+                else
+                    convertedJSON.AppendLine(jsonLine);
             }
 
-            return json;
+            if (conversionPerformed)
+                _logger.Log("Performed cross-platform conversion of JSON.", LoggingLevel.Normal, GetType());
+            else
+                _logger.Log("No cross-platform conversion required for JSON.", LoggingLevel.Normal, GetType());
+
+            return convertedJSON.ToString();
         }
 
         public Task<PermissionStatus> ObtainPermissionAsync(Permission permission)

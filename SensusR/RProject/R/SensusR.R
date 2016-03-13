@@ -216,7 +216,16 @@ plot.LightDatum = function(x, pch = ".", type = "l", ...)
 #' plot(data$LocationDatum)
 plot.LocationDatum = function(x, ...)
 {
-  map = ggmap::qmap(...)
+  args = list(...)
+  
+  if(is.null(args[["location"]]))
+  {
+    avg.x = mean(x$Longitude)
+    avg.y = mean(x$Latitude)
+    args[["location"]] = paste(avg.y, avg.x, sep=",")
+  }
+  
+  map = do.call(ggmap::qmap, args)
   map + ggplot2::geom_point(data = x, ggplot2::aes(x = Longitude, y = Latitude))
 }
 

@@ -141,7 +141,7 @@ namespace SensusService.DataStores.Remote
                             {
                                 BucketName = _bucket,
                                 Key = (_folder + "/" + datumType + "/" + datum.Id + ".json").Trim('/'),  // trim '/' in case folder is blank, and use datum ID for retrieval later.
-                                ContentBody = "[" + datumJSON + "]",
+                                ContentBody = "[" + Environment.NewLine + datumJSON + Environment.NewLine + "]",
                                 ContentType = "application/json"
                             };
 

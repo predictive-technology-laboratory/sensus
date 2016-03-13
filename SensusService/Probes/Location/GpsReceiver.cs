@@ -100,7 +100,7 @@ namespace SensusService.Probes.Location
             PositionChanged += listener;
             _listenerHeadings.Add(new Tuple<EventHandler<PositionEventArgs>, bool>(listener, includeHeading));
 
-            _locator.DesiredAccuracy = SensusServiceHelper.Get().GpsDesiredAccuracy;
+            _locator.DesiredAccuracy = SensusServiceHelper.Get().GpsDesiredAccuracyMeters;
 
             await _locator.StartListeningAsync(SensusServiceHelper.Get().GpsMinTimeDelayMS, SensusServiceHelper.Get().GpsMinDistanceDelayMeters, _listenerHeadings.Any(t => t.Item2), GetListenerSettings());
 
@@ -124,19 +124,23 @@ namespace SensusService.Probes.Location
 
         private ListenerSettings GetListenerSettings()
         {
+            ListenerSettings settings = null;
+
+            #if __IOS__
             float gpsDeferralDistanceMeters = SensusServiceHelper.Get().GpsDeferralDistanceMeters;
             float gpsDeferralTimeMinutes = SensusServiceHelper.Get().GpsDeferralTimeMinutes;
 
-            ListenerSettings settings = new ListenerSettings
+            settings = new ListenerSettings
             {
                 AllowBackgroundUpdates = true,
                 PauseLocationUpdatesAutomatically = SensusServiceHelper.Get().GpsPauseLocationUpdatesAutomatically,
                 ActivityType = SensusServiceHelper.Get().GpsActivityType,
                 ListenForSignificantChanges = SensusServiceHelper.Get().GpsListenForSignificantChanges,
                 DeferLocationUpdates = SensusServiceHelper.Get().GpsDeferLocationUpdates,
-                DeferralDistanceMeters = gpsDeferralDistanceMeters < 0 ? null : gpsDeferralDistanceMeters,
-                DeferralTimeMinutes = gpsDeferralTimeMinutes < 0 ? null : gpsDeferralTimeMinutes
+                DeferralDistanceMeters = gpsDeferralDistanceMeters < 0 ? default(double?) : gpsDeferralDistanceMeters,
+                DeferralTime = gpsDeferralTimeMinutes < 0 ? default(TimeSpan?) : TimeSpan.FromMinutes(gpsDeferralTimeMinutes)
             };
+            #endif
 
             return settings;
         }
@@ -201,6 +205,7 @@ namespace SensusService.Probes.Location
                                 SensusServiceHelper.Get().Logger.Log("Taking GPS reading.", LoggingLevel.Debug, GetType());
 
                                 DateTimeOffset readingStart = DateTimeOffset.UtcNow;
+                                _locator.DesiredAccuracy = SensusServiceHelper.Get().GpsDesiredAccuracyMeters;
                                 Position newReading = await _locator.GetPositionAsync(timeoutMilliseconds: _readingTimeoutMS, token: cancellationToken);
                                 DateTimeOffset readingEnd = DateTimeOffset.UtcNow;
 
