@@ -76,7 +76,7 @@ namespace SensusService.DataStores.Local
 
                     try
                     {
-                        string json = datum.GetJSON(Protocol.JsonAnonymizer);
+                        string json = datum.GetJSON(Protocol.JsonAnonymizer, false);
 
                         try
                         {

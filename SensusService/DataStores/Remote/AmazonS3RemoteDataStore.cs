@@ -130,11 +130,13 @@ namespace SensusService.DataStores.Remote
                         break;
 
                     string datumType = datum.GetType().Name;
-                    string datumJSON = datum.GetJSON(Protocol.JsonAnonymizer);
 
                     // upload all participation reward data as individual S3 objects so we can retrieve them individually at a later time for participation verification.
                     if (datum is ParticipationRewardDatum)
                     {
+                        // participation reward datum JSON must be indented so that cross-platform conversion will work if the datum is retrieved.
+                        string datumJSON = datum.GetJSON(Protocol.JsonAnonymizer, true);
+
                         try
                         {
                             PutObjectRequest putRequest = new PutObjectRequest
@@ -157,6 +159,8 @@ namespace SensusService.DataStores.Remote
                     }
                     else
                     {
+                        string datumJSON = datum.GetJSON(Protocol.JsonAnonymizer, false);
+
                         // group all other data (i.e., other than participation reward data) by type for batch committal
                         List<Datum> dataSubset;
                         if (!datumTypeData.TryGetValue(datumType, out dataSubset))

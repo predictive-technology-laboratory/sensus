@@ -105,7 +105,7 @@ namespace SensusService.DataStores.Local
                         string datumJSON = null;
                         try
                         {
-                            datumJSON = datum.GetJSON(Protocol.JsonAnonymizer);
+                            datumJSON = datum.GetJSON(Protocol.JsonAnonymizer, false);
                         }
                         catch (Exception ex)
                         {
@@ -216,7 +216,7 @@ namespace SensusService.DataStores.Local
                                     --_numDataStoredInFiles;
                                 else
                                 {
-                                    uncommittedDataFile.WriteLine(datum.GetJSON(Protocol.JsonAnonymizer));  // need to pass in the anonymizer, since the user might have selected an anonymization option between the time that the datum was written to file and the time of execution of the current line of code.
+                                    uncommittedDataFile.WriteLine(datum.GetJSON(Protocol.JsonAnonymizer, false));  // need to pass in the anonymizer, since the user might have selected an anonymization option between the time that the datum was written to file and the time of execution of the current line of code.
                                     ++uncommittedDataCount;
                                 }
                             }

@@ -112,7 +112,7 @@ namespace SensusUI
                                     if (_cancellationTokenSource.IsCancellationRequested)
                                         break;
                                     
-                                    shareFile.Write((dataWritten++ == 0 ? "" : "," + Environment.NewLine) + localDatum.GetJSON(localDataStore.Protocol.JsonAnonymizer));
+                                    shareFile.Write((dataWritten++ == 0 ? "" : "," + Environment.NewLine) + localDatum.GetJSON(localDataStore.Protocol.JsonAnonymizer, false));
 
                                     if (localData.Count >= 10 && (dataWritten % (localData.Count / 10)) == 0)
                                         Device.BeginInvokeOnMainThread(() => progressBar.ProgressTo(dataWritten / (double)localData.Count, 250, Easing.Linear));
