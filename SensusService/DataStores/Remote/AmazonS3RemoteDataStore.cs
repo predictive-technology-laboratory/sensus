@@ -134,7 +134,7 @@ namespace SensusService.DataStores.Remote
                     // upload all participation reward data as individual S3 objects so we can retrieve them individually at a later time for participation verification.
                     if (datum is ParticipationRewardDatum)
                     {
-                        // participation reward datum JSON must be indented so that cross-platform conversion will work if the datum is retrieved.
+                        // the JSON for each participation reward datum must be indented so that cross-platform type conversion will work if/when the datum is retrieved.
                         string datumJSON = datum.GetJSON(Protocol.JsonAnonymizer, true);
 
                         try
