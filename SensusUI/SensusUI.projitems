@@ -36,7 +36,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\Input.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\LabelOnlyInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\NumberEntryInput.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Inputs\TextInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MapPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UiProperties\EditorUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\InputGroup.cs" />
@@ -57,6 +56,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\ItemPickerInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\InputCompletionRecord.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\SliderInput.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Inputs\SingleLineTextInput.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Inputs\MultiLineTextInput.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Inputs\" />

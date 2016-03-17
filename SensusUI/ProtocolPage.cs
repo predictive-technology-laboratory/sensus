@@ -176,7 +176,7 @@ namespace SensusUI
                 {
                     SensusServiceHelper.Get().PromptForInputAsync(
                         "Lock Protocol",
-                        new TextInput("Password:", Keyboard.Text),
+                        new SingleLineTextInput("Password:", Keyboard.Text),
                         null,
                         true,
                         null,

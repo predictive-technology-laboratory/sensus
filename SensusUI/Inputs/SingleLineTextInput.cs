@@ -18,7 +18,7 @@ using Newtonsoft.Json;
 
 namespace SensusUI.Inputs
 {
-    public class TextInput : Input
+    public class SingleLineTextInput : Input
     {
         private Entry _entry;
         private Keyboard _keyboard;
@@ -50,21 +50,21 @@ namespace SensusUI.Inputs
         {
             get
             {
-                return "Text Entry";
+                return "Single-Line Text Entry";
             }
         }
 
-        public TextInput()
+        public SingleLineTextInput()
         {
         }
 
-        public TextInput(string labelText, Keyboard keyboard)
+        public SingleLineTextInput(string labelText, Keyboard keyboard)
             : base(labelText)
         {
             _keyboard = keyboard;
         }
 
-        public TextInput(string name, string labelText, Keyboard keyboard)
+        public SingleLineTextInput(string name, string labelText, Keyboard keyboard)
             : base(name, labelText)
         {            
             _keyboard = keyboard;

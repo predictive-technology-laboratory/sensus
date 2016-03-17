@@ -77,7 +77,7 @@ namespace SensusUI
             {
                 SensusServiceHelper.Get().PromptForInputAsync(
                     "Authenticate \"" + protocol.Name + "\"", 
-                    new TextInput("Protocol Password:", Keyboard.Text),
+                    new SingleLineTextInput("Protocol Password:", Keyboard.Text),
                     null,
                     true,
                     null,

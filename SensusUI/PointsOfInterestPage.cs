@@ -78,9 +78,9 @@ namespace SensusUI
                             "Define Point Of Interest", 
                             new Input[]
                             {
-                                new TextInput("POI Name:", Keyboard.Text) { Required = false },
-                                new TextInput("POI Type:", Keyboard.Text) { Required = false },
-                                new TextInput("Address:", Keyboard.Text) { Required = false }
+                                new SingleLineTextInput("POI Name:", Keyboard.Text) { Required = false },
+                                new SingleLineTextInput("POI Type:", Keyboard.Text) { Required = false },
+                                new SingleLineTextInput("Address:", Keyboard.Text) { Required = false }
                             },
                             null,
                             true, 

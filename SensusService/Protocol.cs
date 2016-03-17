@@ -972,7 +972,7 @@ namespace SensusService
             consent.Add(collectionDescriptionLabel);
 
             // the name in the following text input is used to grab the UI element when unit testing
-            consent.Add(new TextInput("ConsentCode", "To participate in this study as described above, please indicate your consent by entering the following code:  " + consentCode, Keyboard.Numeric)
+            consent.Add(new SingleLineTextInput("ConsentCode", "To participate in this study as described above, please indicate your consent by entering the following code:  " + consentCode, Keyboard.Numeric)
                 {
                     DisplayNumber = false
                 });
