@@ -82,6 +82,29 @@ git difftool
 
 # build IPA
 xbuild /p:Configuration=Release /p:Platform=iPhone /p:BuildIpa=true /target:Build ./Sensus.iOS/Sensus.iOS.csproj
+if [ $? -ne 0 ]; then
+    echo "Error building iOS release."
+    exit $?;
+fi
+
+ipaPath="./Sensus.iOS/bin/iPhone/Release/SensusiOS-$1.ipa"
+
+# validate IPA
+echo "Validating iOS IPA $ipaPath ..."
+read -p "Enter iTunes Connect username:  " -r itunesUsername
+/Applications/Xcode.app/Contents/Applications/Application\ Loader.app/Contents/Frameworks/ITunesSoftwareService.framework/Support/altool --validate-app -f "$ipaPath" -t ios -u "$itunesUsername"
+if [ $? -ne 0 ]; then
+    echo "Error validating iOS IPA $ipaPath"
+    exit $?;
+fi
+
+# upload IPA
+echo "Uploading iOS IPA $ipaPath ..."
+/Applications/Xcode.app/Contents/Applications/Application\ Loader.app/Contents/Frameworks/ITunesSoftwareService.framework/Support/altool --upload-app -f "$ipaPath" -t ios -u "$itunesUsername"
+if [ $? -ne 0 ]; then
+    echo "Error uploading iOS IPA $ipaPath"
+    exit $?;
+fi
 
 # upload iOS dSYM file if build was successful
 if [ $? -eq 0 ]; then
