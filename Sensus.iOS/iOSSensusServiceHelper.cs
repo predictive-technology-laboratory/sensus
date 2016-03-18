@@ -164,12 +164,13 @@ namespace Sensus.iOS
                 {
                     UILocalNotification notification = new UILocalNotification
                     {
-                        FireDate = DateTime.UtcNow.AddMilliseconds((double)delayMS).ToNSDate(),                        
+                        FireDate = DateTime.UtcNow.AddMilliseconds((double)delayMS).ToNSDate(),  
+                        TimeZone = null,  // null for UTC interpretation of FireDate
                         AlertBody = userNotificationMessage,
                         UserInfo = GetNotificationUserInfoDictionary(callbackId, repeating, repeatDelayMS, repeatLag)
                     };
 
-                    // user info can be null if we don't have an activation ID...don't schedule the notification if this happens.
+                    // user info can be null if we don't have an activation ID. don't schedule the notification if this happens.
                     if (notification.UserInfo == null)
                         return;
 
@@ -221,8 +222,7 @@ namespace Sensus.iOS
                 {
                     Device.BeginInvokeOnMainThread(() =>
                         {
-                            callbackNotification.FireDate = repeatCallbackTime.ToNSDate();
-                            callbackNotification.TimeZone = NSTimeZone.SystemTimeZone;
+                            callbackNotification.FireDate = repeatCallbackTime.ToUniversalTime().ToNSDate();
 
                             // add back to the platform-specific notification collection, so that the notification is updated and reissued if/when the app is reactivated
                             lock (_callbackIdNotification)
