@@ -26,6 +26,12 @@ namespace SensusService.Probes.User
 {
     public class ScriptRunner
     {
+        /// <summary>
+        /// It shouldn't matter if the rerun events lag behind. Participation does not depend on them and
+        /// time needs to elapse before incomplete scripts accumulate.
+        /// </summary>
+        private const bool RERUN_CALLBACK_LAG = true;
+
         private string _name;
         private ScriptProbe _probe;
         private Script _script;
@@ -169,7 +175,7 @@ namespace SensusService.Probes.User
                     _rerunDelayMS = value; 
 
                     if (_rerunCallbackId != null)
-                        _rerunCallbackId = SensusServiceHelper.Get().RescheduleRepeatingCallback(_rerunCallbackId, _rerunDelayMS, _rerunDelayMS);
+                        _rerunCallbackId = SensusServiceHelper.Get().RescheduleRepeatingCallback(_rerunCallbackId, _rerunDelayMS, _rerunDelayMS, RERUN_CALLBACK_LAG);
                 }
             }
         }
@@ -491,7 +497,7 @@ namespace SensusService.Probes.User
                                         RunAsync(scriptToRerun, 0);
                                 }
 
-                            }, "Rerun Script", _rerunDelayMS, _rerunDelayMS, null);  // no user notification message, since there might not be any scripts to rerun
+                            }, "Rerun Script", _rerunDelayMS, _rerunDelayMS, RERUN_CALLBACK_LAG);  // no user notification message, since there might not be any scripts to rerun
                     }
 
                 }).Start();

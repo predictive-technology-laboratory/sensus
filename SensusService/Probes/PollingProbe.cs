@@ -23,6 +23,11 @@ namespace SensusService.Probes
 {
     public abstract class PollingProbe : Probe
     {
+        /// <summary>
+        /// It's important to mitigate lag in polling operations since participation assessments are done on the basis of poll rates.
+        /// </summary>
+        private const bool POLL_CALLBACK_LAG = false;
+
         private int _pollingSleepDurationMS;
         private bool _isPolling;
         private string _pollCallbackId;
@@ -44,7 +49,7 @@ namespace SensusService.Probes
                     _pollingSleepDurationMS = value; 
 
                     if (_pollCallbackId != null)
-                        _pollCallbackId = SensusServiceHelper.Get().RescheduleRepeatingCallback(_pollCallbackId, _pollingSleepDurationMS, _pollingSleepDurationMS);
+                        _pollCallbackId = SensusServiceHelper.Get().RescheduleRepeatingCallback(_pollCallbackId, _pollingSleepDurationMS, _pollingSleepDurationMS, POLL_CALLBACK_LAG);
                 }
             }
         }
@@ -170,7 +175,7 @@ namespace SensusService.Probes
 
                             _isPolling = false;
                         }
-                    }, GetType().FullName + " Poll", 0, _pollingSleepDurationMS, userNotificationMessage);
+                    }, GetType().FullName + " Poll", 0, _pollingSleepDurationMS, POLL_CALLBACK_LAG, userNotificationMessage);
             }
         }
 

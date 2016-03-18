@@ -29,6 +29,13 @@ namespace SensusService.DataStores
     /// </summary>
     public abstract class DataStore
     {
+        /// <summary>
+        /// We don't mind commit callbacks lag, since it don't affect any performance metrics and
+        /// the latencies aren't inspected when testing data store health or participation. It also
+        /// doesn't make sense to force rapid commits since data will not have accumulated.
+        /// </summary>
+        private const bool COMMIT_CALLBACK_LAG = true;
+
         private int _commitDelayMS;
         private bool _running;
         private Protocol _protocol;
@@ -50,7 +57,7 @@ namespace SensusService.DataStores
                     _commitDelayMS = value; 
 
                     if (_commitCallbackId != null)
-                        _commitCallbackId = SensusServiceHelper.Get().RescheduleRepeatingCallback(_commitCallbackId, _commitDelayMS, _commitDelayMS);
+                        _commitCallbackId = SensusServiceHelper.Get().RescheduleRepeatingCallback(_commitCallbackId, _commitDelayMS, _commitDelayMS, COMMIT_CALLBACK_LAG);
                 }
             }
         }
@@ -110,7 +117,7 @@ namespace SensusService.DataStores
                 // use the async version of commit so that we don't hang for unreliable commit operations (e.g., AWS S3 commits). this means that all commit 
                 // operations for a datastore must be suitable for running concurrently. ultimately, this might mean that duplicate data are committed either
                 // locally or remotely, but we can live with that since the alternative involves the potential for infinite hangs.
-                _commitCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(CommitAsync, GetType().FullName + " Commit", _commitDelayMS, _commitDelayMS, userNotificationMessage);
+                _commitCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(CommitAsync, GetType().FullName + " Commit", _commitDelayMS, _commitDelayMS, COMMIT_CALLBACK_LAG, userNotificationMessage);
             }
         }
 

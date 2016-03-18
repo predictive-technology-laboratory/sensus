@@ -69,11 +69,10 @@ namespace Sensus.Android
                 // tie up the UI thread.
                 serviceHelper.StartAsync(() =>
                     {         
+                        // is this a callback intent?
                         if (intent != null && intent.GetBooleanExtra(AndroidSensusServiceHelper.SENSUS_CALLBACK_KEY, false))
                         {
                             string callbackId = intent.GetStringExtra(AndroidSensusServiceHelper.SENSUS_CALLBACK_ID_KEY);
-                            bool repeating = intent.GetBooleanExtra(AndroidSensusServiceHelper.SENSUS_CALLBACK_REPEATING_KEY, false);
-                            int repeatDelayMS = intent.GetIntExtra(AndroidSensusServiceHelper.SENSUS_CALLBACK_REPEAT_DELAY_KEY, -1);
 
                             // if the user removes the main activity from the switcher, the service's process will be killed and restarted without notice, and 
                             // we'll have no opportunity to unschedule repeating callbacks. when the service is restarted we'll reinitialize the service
@@ -81,23 +80,15 @@ namespace Sensus.Android
                             // if the callback is scheduled, it's fine. if it's not, then unschedule it.
                             if (serviceHelper.CallbackIsScheduled(callbackId))
                             {
-                                serviceHelper.RaiseCallbackAsync(callbackId, repeating, true, () =>
+                                bool repeating = intent.GetBooleanExtra(AndroidSensusServiceHelper.SENSUS_CALLBACK_REPEATING_KEY, false);
+                                int repeatDelayMS = intent.GetIntExtra(AndroidSensusServiceHelper.SENSUS_CALLBACK_REPEAT_DELAY_KEY, -1);
+                                bool repeatLag = intent.GetBooleanExtra(AndroidSensusServiceHelper.SENSUS_CALLBACK_REPEAT_LAG_KEY, false);
+
+                                // raise callback and notify the user if there is a message. we wouldn't have presented the user with the message yet.
+                                serviceHelper.RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, true, repeatCallbackTime =>
                                     {
-                                        // schedule callback again if it was a repeating callback and is still scheduled with a valid repeat delay
-                                        if (repeating)
-                                        {
-                                            if (serviceHelper.CallbackIsScheduled(callbackId) && repeatDelayMS >= 0)
-                                            {
-                                                long callbackTimeMS = Java.Lang.JavaSystem.CurrentTimeMillis() + repeatDelayMS;
-                                                PendingIntent callbackPendingIntent = PendingIntent.GetService(this, callbackId.GetHashCode(), intent, PendingIntentFlags.CancelCurrent);
-                                                serviceHelper.ScheduleCallbackAlarm(callbackTimeMS, callbackPendingIntent);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            // ensure everything is cleaned out, including _callbackIdIntent.
-                                            serviceHelper.UnscheduleCallback(callbackId);
-                                        }
+                                        PendingIntent callbackPendingIntent = PendingIntent.GetService(this, callbackId.GetHashCode(), intent, PendingIntentFlags.CancelCurrent);
+                                        serviceHelper.ScheduleCallbackAlarm(callbackPendingIntent, repeatCallbackTime);
                                     });
                             }
                             else

@@ -148,17 +148,17 @@ namespace Sensus.iOS
 
         #region callback scheduling
 
-        protected override void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, string userNotificationMessage)
+        protected override void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag, string userNotificationMessage)
         {
-            ScheduleCallbackAsync(callbackId, initialDelayMS, true, repeatDelayMS, userNotificationMessage);
+            ScheduleCallbackAsync(callbackId, initialDelayMS, true, repeatDelayMS, repeatLag, userNotificationMessage);
         }
 
         protected override void ScheduleOneTimeCallback(string callbackId, int delayMS, string userNotificationMessage)
         {
-            ScheduleCallbackAsync(callbackId, delayMS, false, -1, userNotificationMessage);
+            ScheduleCallbackAsync(callbackId, delayMS, false, -1, false, userNotificationMessage);
         }
 
-        private void ScheduleCallbackAsync(string callbackId, int delayMS, bool repeating, int repeatDelayMS, string userNotificationMessage)
+        private void ScheduleCallbackAsync(string callbackId, int delayMS, bool repeating, int repeatDelayMS, bool repeatLag, string userNotificationMessage)
         {
             Device.BeginInvokeOnMainThread(() =>
                 {
@@ -166,7 +166,7 @@ namespace Sensus.iOS
                     {
                         FireDate = DateTime.UtcNow.AddMilliseconds((double)delayMS).ToNSDate(),                        
                         AlertBody = userNotificationMessage,
-                        UserInfo = GetNotificationUserInfoDictionary(callbackId, repeating, repeatDelayMS)
+                        UserInfo = GetNotificationUserInfoDictionary(callbackId, repeating, repeatDelayMS, repeatLag)
                     };
 
                     // user info can be null if we don't have an activation ID...don't schedule the notification if this happens.
@@ -190,10 +190,8 @@ namespace Sensus.iOS
             // cancel notification (removing it from the tray), since it has served its purpose
             CancelLocalNotification(callbackNotification);
 
-            string callbackId = (callbackNotification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ID_KEY)) as NSString).ToString();
-            bool repeating = (callbackNotification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber).BoolValue;
-            int repeatDelayMS = (callbackNotification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_DELAY)) as NSNumber).Int32Value;
             string activationId = (callbackNotification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ACTIVATION_ID)) as NSString).ToString();
+            string callbackId = (callbackNotification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ID_KEY)) as NSString).ToString();
 
             // only raise callback if it's from the current activation and if it is scheduled
             if (activationId != _activationId || !CallbackIsScheduled(callbackId))
@@ -214,30 +212,28 @@ namespace Sensus.iOS
                     CancelRaisedCallback(callbackId);
                 });
 
-            RaiseCallbackAsync(callbackId, repeating, false, () =>
+            bool repeating = (callbackNotification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber).BoolValue;
+            int repeatDelayMS = (callbackNotification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_DELAY)) as NSNumber).Int32Value;
+            bool repeatLag = (callbackNotification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_LAG_KEY)) as NSNumber).BoolValue;
+
+            // raise callback but don't notify user since we would have already done so when the UILocalNotification was delivered.
+            RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, false, repeatCallbackTime =>
                 {
                     Device.BeginInvokeOnMainThread(() =>
                         {
-                            // update and schedule notification again if it was a repeating callback and is still scheduled
-                            if (repeating)
-                            {
-                                if (CallbackIsScheduled(callbackId))
-                                {
-                                    callbackNotification.FireDate = DateTime.UtcNow.AddMilliseconds((double)repeatDelayMS).ToNSDate();
+                            callbackNotification.FireDate = repeatCallbackTime.ToNSDate();
+                            callbackNotification.TimeZone = NSTimeZone.SystemTimeZone;
 
-                                    // add back to the platform-specific notification collection, so that the notification is updated and reissued if/when the app is reactivated
-                                    lock (_callbackIdNotification)
-                                        _callbackIdNotification.Add(callbackId, callbackNotification);
+                            // add back to the platform-specific notification collection, so that the notification is updated and reissued if/when the app is reactivated
+                            lock (_callbackIdNotification)
+                                _callbackIdNotification.Add(callbackId, callbackNotification);
                                 
-                                    UIApplication.SharedApplication.ScheduleLocalNotification(callbackNotification);
-                                }
-                            }
-                            else
-                            {
-                                // make sure everything is cleaned out, including _callbackIdNotification.
-                                UnscheduleCallback(callbackId);
-                            }
-
+                            UIApplication.SharedApplication.ScheduleLocalNotification(callbackNotification);
+                        });
+                }, () =>
+                {
+                    Device.BeginInvokeOnMainThread(() =>
+                        {
                             // notification has been serviced, so end background task
                             UIApplication.SharedApplication.EndBackgroundTask(taskId);
                         });
@@ -283,7 +279,8 @@ namespace Sensus.iOS
                                     // reset the UserInfo to include the current activation ID
                                     bool repeating = (notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber).BoolValue;
                                     int repeatDelayMS = (notification.UserInfo.ValueForKey(new NSString(iOSSensusServiceHelper.SENSUS_CALLBACK_REPEAT_DELAY)) as NSNumber).Int32Value;
-                                    notification.UserInfo = GetNotificationUserInfoDictionary(callbackId, repeating, repeatDelayMS);
+                                    bool repeatLag = (notification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_LAG_KEY)) as NSNumber).BoolValue;
+                                    notification.UserInfo = GetNotificationUserInfoDictionary(callbackId, repeating, repeatDelayMS, repeatLag);
 
                                     // since we set the UILocalNotification's FireDate when it was constructed, if it's currently in the past it will fire immediately when scheduled again with the new activation ID.
                                     if (notification.UserInfo != null)
@@ -294,7 +291,7 @@ namespace Sensus.iOS
                 });
         }
 
-        public NSDictionary GetNotificationUserInfoDictionary(string callbackId, bool repeating, int repeatDelayMS)
+        public NSDictionary GetNotificationUserInfoDictionary(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag)
         {
             // we've seen cases where the UserInfo dictionary cannot be serialized because one of its values is null. check all nullable types
             // and return null if found.  if this happens, the UILocalNotification will never be serviced, and things won't return to normal
@@ -310,6 +307,7 @@ namespace Sensus.iOS
                 SENSUS_CALLBACK_ID_KEY, callbackId,
                 SENSUS_CALLBACK_REPEATING_KEY, repeating,
                 SENSUS_CALLBACK_REPEAT_DELAY, repeatDelayMS,
+                SENSUS_CALLBACK_REPEAT_LAG_KEY, repeatLag,
                 SENSUS_CALLBACK_ACTIVATION_ID, _activationId);
         }
 

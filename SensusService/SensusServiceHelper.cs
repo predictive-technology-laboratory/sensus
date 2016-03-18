@@ -98,6 +98,7 @@ namespace SensusService
         public const string SENSUS_CALLBACK_KEY = "SENSUS-CALLBACK";
         public const string SENSUS_CALLBACK_ID_KEY = "SENSUS-CALLBACK-ID";
         public const string SENSUS_CALLBACK_REPEATING_KEY = "SENSUS-CALLBACK-REPEATING";
+        public const string SENSUS_CALLBACK_REPEAT_LAG_KEY = "SENSUS-CALLBACK-REPEAT-LAG";
         public const string SENSUS_CALLBACK_REPEAT_DELAY_KEY = "SENSUS-CALLBACK-REPEAT-DELAY";
         public const int PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS = 60;
         protected const string XAMARIN_INSIGHTS_APP_KEY = "";
@@ -116,6 +117,12 @@ namespace SensusService
         #elif RELEASE
         public const int HEALTH_TEST_DELAY_MS = 300000;
         #endif
+
+        /// <summary>
+        /// Health tests times are used to compute participation for the listening probes. They must
+        /// be as tight as possible.
+        /// </summary>
+        private const bool HEALTH_TEST_REPEAT_LAG = false;
 
         public static readonly JsonSerializerSettings JSON_SERIALIZER_SETTINGS = new JsonSerializerSettings
         {
@@ -600,7 +607,7 @@ namespace SensusService
 
         protected abstract void InitializeXamarinInsights();
 
-        protected abstract void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, string userNotificationMessage);
+        protected abstract void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag, string userNotificationMessage);
 
         protected abstract void ScheduleOneTimeCallback(string callbackId, int delayMS, string userNotificationMessage);
 
@@ -649,7 +656,7 @@ namespace SensusService
                     _runningProtocolIds.Add(id);
 
                 if (_healthTestCallbackId == null)
-                    _healthTestCallbackId = ScheduleRepeatingCallback(TestHealth, "Test Health", HEALTH_TEST_DELAY_MS, HEALTH_TEST_DELAY_MS);
+                    _healthTestCallbackId = ScheduleRepeatingCallback(TestHealth, "Test Health", HEALTH_TEST_DELAY_MS, HEALTH_TEST_DELAY_MS, HEALTH_TEST_REPEAT_LAG);
             }
         }
 
@@ -751,17 +758,12 @@ namespace SensusService
 
         #region callback scheduling
 
-        public string ScheduleRepeatingCallback(Action<string, CancellationToken> callback, string name, int initialDelayMS, int repeatDelayMS)
-        {
-            return ScheduleRepeatingCallback(callback, name, initialDelayMS, repeatDelayMS, null);
-        }
-
-        public string ScheduleRepeatingCallback(Action<string, CancellationToken> callback, string name, int initialDelayMS, int repeatDelayMS, string userNotificationMessage)
+        public string ScheduleRepeatingCallback(Action<string, CancellationToken> callback, string name, int initialDelayMS, int repeatDelayMS, bool repeatLag, string userNotificationMessage = null)
         {
             lock (_idCallback)
             {
                 string callbackId = AddCallback(callback, name, userNotificationMessage);
-                ScheduleRepeatingCallback(callbackId, initialDelayMS, repeatDelayMS, userNotificationMessage);
+                ScheduleRepeatingCallback(callbackId, initialDelayMS, repeatDelayMS, repeatLag, userNotificationMessage);
                 return callbackId;
             }
         }
@@ -797,7 +799,7 @@ namespace SensusService
                 return _idCallback.ContainsKey(callbackId);
         }
 
-        public string RescheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS)
+        public string RescheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag)
         {
             lock (_idCallback)
             {
@@ -805,20 +807,17 @@ namespace SensusService
                 if (_idCallback.TryGetValue(callbackId, out scheduledCallback))
                 {
                     UnscheduleCallback(callbackId);
-                    return ScheduleRepeatingCallback(scheduledCallback.Action, scheduledCallback.Name, initialDelayMS, repeatDelayMS, scheduledCallback.UserNotificationMessage);
+                    return ScheduleRepeatingCallback(scheduledCallback.Action, scheduledCallback.Name, initialDelayMS, repeatDelayMS, repeatLag, scheduledCallback.UserNotificationMessage);
                 }
                 else
                     return null;
             }
         }
 
-        public void RaiseCallbackAsync(string callbackId, bool repeating, bool notifyUser)
-        {
-            RaiseCallbackAsync(callbackId, repeating, notifyUser, null);
-        }
+        public void RaiseCallbackAsync(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, bool notifyUser, Action<DateTime> scheduleRepeatCallback, Action raiseFinished = null)
+        {        
+            DateTime callbackStartTime = DateTime.Now;
 
-        public void RaiseCallbackAsync(string callbackId, bool repeating, bool notifyUser, Action callback)
-        {         
             KeepDeviceAwake();  // call this before we start up the new thread, just in case the system decides to sleep before the thread is started.
 
             new Thread(() =>
@@ -832,11 +831,8 @@ namespace SensusService
                             // do we have callback information for the passed callbackId? we might not, in the case where the callback is canceled by the user and the system fires it subsequently.
                             if (!_idCallback.TryGetValue(callbackId, out scheduledCallback))
                             {
-                                _logger.Log("Callback " + callbackId + " is not valid.", LoggingLevel.Normal, GetType());
-
-                                if (callback != null)
-                                    callback();
-
+                                _logger.Log("Callback " + callbackId + " is not valid. Unscheduling.", LoggingLevel.Normal, GetType());
+                                UnscheduleCallback(callbackId);
                                 return;
                             }
                         }
@@ -888,16 +884,28 @@ namespace SensusService
                         else
                             _logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") is already running. Not running again.", LoggingLevel.Normal, GetType());
                     
-                        // if this was a one-time callback, remove it from our collection. it is no longer needed.
-                        if (!repeating)
-                            lock (_idCallback)
-                                _idCallback.Remove(callbackId);                               
+                        // schedule callback again if it was a repeating callback and is still scheduled with a valid repeat delay
+                        if (repeating && CallbackIsScheduled(callbackId) && repeatDelayMS >= 0 && scheduleRepeatCallback != null)
+                        {
+                            DateTime nextCallbackTime;
 
-                        if (callback != null)
-                            callback();
+                            // if this repeating callback is allowed to lag, schedule the repeat from the current time.
+                            if (repeatLag)
+                                nextCallbackTime = DateTime.Now.AddMilliseconds(repeatDelayMS);
+                            // otherwise, schedule the repeat from the time at which the current callback was raised.
+                            else
+                                nextCallbackTime = callbackStartTime.AddMilliseconds(repeatDelayMS);
+
+                            scheduleRepeatCallback(nextCallbackTime);
+                        }
+                        else
+                            UnscheduleCallback(callbackId);
                     }
                     finally
                     {
+                        if (raiseFinished != null)
+                            raiseFinished();
+
                         // do this within finally to ensure that the device is always allowed to sleep
                         LetDeviceSleep();
                     }
