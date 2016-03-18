@@ -98,8 +98,8 @@ namespace SensusService
         public const string SENSUS_CALLBACK_KEY = "SENSUS-CALLBACK";
         public const string SENSUS_CALLBACK_ID_KEY = "SENSUS-CALLBACK-ID";
         public const string SENSUS_CALLBACK_REPEATING_KEY = "SENSUS-CALLBACK-REPEATING";
-        public const string SENSUS_CALLBACK_REPEAT_LAG_KEY = "SENSUS-CALLBACK-REPEAT-LAG";
         public const string SENSUS_CALLBACK_REPEAT_DELAY_KEY = "SENSUS-CALLBACK-REPEAT-DELAY";
+        public const string SENSUS_CALLBACK_REPEAT_LAG_KEY = "SENSUS-CALLBACK-REPEAT-LAG";
         public const int PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS = 60;
         protected const string XAMARIN_INSIGHTS_APP_KEY = "";
         private const string ENCRYPTION_KEY = "";
@@ -814,7 +814,7 @@ namespace SensusService
             }
         }
 
-        public void RaiseCallbackAsync(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, bool notifyUser, Action<DateTime> scheduleRepeatCallback, Action raiseFinished = null)
+        public void RaiseCallbackAsync(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, bool notifyUser, Action<DateTime> scheduleRepeatCallback, Action finishedCallback = null)
         {        
             DateTime callbackStartTime = DateTime.Now;
 
@@ -903,8 +903,8 @@ namespace SensusService
                     }
                     finally
                     {
-                        if (raiseFinished != null)
-                            raiseFinished();
+                        if (finishedCallback != null)
+                            finishedCallback();
 
                         // do this within finally to ensure that the device is always allowed to sleep
                         LetDeviceSleep();
