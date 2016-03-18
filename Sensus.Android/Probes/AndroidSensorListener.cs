@@ -78,7 +78,6 @@ namespace Sensus.Android.Probes
             }
 
             _sensorManager.UnregisterListener(this);
-            _sensorManager.Dispose();
         }
 
         public void OnAccuracyChanged(Sensor sensor, SensorStatus accuracy)
