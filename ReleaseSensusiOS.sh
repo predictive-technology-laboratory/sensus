@@ -1,36 +1,6 @@
 #!/bin/sh
 
-if [ $# -ne 7 ]; then
-    echo "Purpose:  Creates a release of Sensus for Android and iOS, based on the current GitHub branch."
-    echo ""
-    echo "Usage:  ./ReleaseSensus.sh [version] [android keystore path] [android keystore password] [github prerelease] [encryption key] [xamarin insights key] [google play track]"
-    echo "\t[version]:  Version name, following semantic versioning guidelines (e.g., 0.3.1-prerelease)."
-    echo "\t[android keystore path]:  Path to Android keystore file."
-    echo "\t[android keystore password]:  Password used to open the Android keystore and signing key (assumed to be the same)."
-    echo "\t[github prerelease]:  Whether or not the GitHub release should be marked as a prerelease (true/false)."
-    echo "\t[encryption key]:  Encryption key for Sensus data. If this is changed, the new release of Sensus will be unable to work with any data encrypted with previous versions of Sensus."
-    echo "\t[xamarin insights key]:  API key for Xamarin Insights."
-    echo "\t[google play track]:  Google Play track (alpha, beta, production, or rollout)."
-    echo ""
-    echo "For example (for a prerelease to beta):  ./ReleaseSensus.sh 0.8.0-prerelease /path/to/sensus.keystore keystore_password true 234-23-4-23f-sdf-4 23423423-42342-34-24 beta"
-    exit 1
-fi
-
-#######################
-##### PREPARATION #####
-#######################
-
-# get name of release branch -- this is the current branch
-releaseBranch=$(git rev-parse --abbrev-ref HEAD)
-
-# grab latest commit on the release branch
-git pull
-
-# set encryption key -- can be generated with `uuidgen`
-sed -i '' "s/private const string ENCRYPTION_KEY = \"\"/private const string ENCRYPTION_KEY = \"$5\"/g" ./SensusService/SensusServiceHelper.cs
-
-# set xamarin insights key to production value
-sed -i '' "s/protected const string XAMARIN_INSIGHTS_APP_KEY = \"\"/protected const string XAMARIN_INSIGHTS_APP_KEY = \"$6\"/g" ./SensusService/SensusServiceHelper.cs
+. ./ReleaseSensusPreparation.sh
 
 #######################
 ##### iOS RELEASE #####
@@ -70,9 +40,14 @@ if [ $? -ne 0 ]; then
     exit $?;
 fi
 
-# upload iOS dSYM file if build was successful
-if [ $? -eq 0 ]; then
-    echo "Zipping and uploading dSYM file to Xamarin Insights."
-    zip -r ./Sensus.iOS/bin/iPhone/Release/SensusiOS.dSYM.zip ./Sensus.iOS/bin/iPhone/Release/SensusiOS.app.dSYM
-    curl -F "dsym=@./Sensus.iOS/bin/iPhone/Release/SensusiOS.dSYM.zip;type=application/zip" "https://xaapi.xamarin.com/api/dsym?apikey=$6"
+# build with debug symbols for dSYM upload to xamarin insights
+xbuild /p:Configuration=Debug /p:Platform=iPhone /target:Build ./Sensus.iOS/Sensus.iOS.csproj
+if [ $? -ne 0 ]; then
+    echo "Error building iOS debug for dSYM upload to Xamarin Insights."
+    exit $?;
 fi
+
+# create/upload iOS dSYM file if build was successful
+echo "Zipping and uploading dSYM file to Xamarin Insights."
+zip -r ./Sensus.iOS/bin/iPhone/Debug/SensusiOS.dSYM.zip ./Sensus.iOS/bin/iPhone/Debug/SensusiOS.app.dSYM
+curl -F "dsym=@./Sensus.iOS/bin/iPhone/Debug/SensusiOS.dSYM.zip;type=application/zip" "https://xaapi.xamarin.com/api/dsym?apikey=$6"
