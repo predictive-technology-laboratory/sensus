@@ -566,10 +566,8 @@ namespace Sensus.Android
         {
             AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
 
-            // the callback time is specified as milliseconds elapsed since 1970-1-1 00:00:00 UTC that the alarm should be 
-            // triggered. we'll just use local timezones for the calculation since the result is no different than it would
-            // be for UTC (compare two times in UTC or the same times in any other timezone).
-            long callbackTimeMS = (long)(callbackTime - new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds;
+            long delayMS = (long)(callbackTime - DateTime.Now).TotalMilliseconds;
+            long callbackTimeMS = Java.Lang.JavaSystem.CurrentTimeMillis() + delayMS;
 
             // https://github.com/predictive-technology-laboratory/sensus/wiki/Backwards-Compatibility
             #if __ANDROID_23__
