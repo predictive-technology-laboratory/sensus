@@ -2,10 +2,6 @@
 
 . ./ReleaseSensusPreparation.sh
 
-#######################
-##### iOS RELEASE #####
-#######################
-
 # update Sensus version in plist file
 awk "/<key>CFBundleVersion<\/key>/ {f=1; print; next} f {\$1=\"\t<string>$1</string>\"; f=0} 1" ./Sensus.iOS/Info.plist > tmp && mv tmp ./Sensus.iOS/Info.plist
 awk "/<key>CFBundleShortVersionString<\/key>/ {f=1; print; next} f {\$1=\"\t<string>$1</string>\"; f=0} 1" ./Sensus.iOS/Info.plist > tmp && mv tmp ./Sensus.iOS/Info.plist
@@ -23,9 +19,11 @@ fi
 
 ipaPath="./Sensus.iOS/bin/iPhone/Release/SensusiOS-$1.ipa"
 
+# get itunes connect username
+read -p "Enter iTunes Connect username:  " -r itunesUsername
+
 # validate IPA
 echo "Validating iOS IPA $ipaPath ..."
-read -p "Enter iTunes Connect username:  " -r itunesUsername
 /Applications/Xcode.app/Contents/Applications/Application\ Loader.app/Contents/Frameworks/ITunesSoftwareService.framework/Support/altool --validate-app -f "$ipaPath" -t ios -u "$itunesUsername"
 if [ $? -ne 0 ]; then
     echo "Error validating iOS IPA $ipaPath"
@@ -40,7 +38,7 @@ if [ $? -ne 0 ]; then
     exit $?;
 fi
 
-# create/upload iOS dSYM file if build was successful
+# create/upload iOS dSYM file if upload was successful
 echo "Zipping and uploading dSYM file to Xamarin Insights."
 zip -r ./Sensus.iOS/bin/iPhone/Release/SensusiOS.dSYM.zip ./Sensus.iOS/bin/iPhone/Release/SensusiOS.app.dSYM
 curl -F "dsym=@./Sensus.iOS/bin/iPhone/Release/SensusiOS.dSYM.zip;type=application/zip" "https://xaapi.xamarin.com/api/dsym?apikey=$6"

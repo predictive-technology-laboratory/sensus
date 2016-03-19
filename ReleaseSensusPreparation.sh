@@ -2,10 +2,6 @@
 
 . ./ReleaseSensusCheckArgs.sh
 
-#######################
-##### PREPARATION #####
-#######################
-
 # get name of release branch -- this is the current branch
 releaseBranch=$(git rev-parse --abbrev-ref HEAD)
 

@@ -2,10 +2,6 @@
 
 . ./ReleaseSensusPreparation.sh
 
-###########################
-##### ANDROID RELEASE #####
-###########################
-
 # set new version name in android manifest
 sed -E -i '' "s/android:versionName=\"[^\"]+\"/android:versionName=\"$1\"/g" ./Sensus.Android/Properties/AndroidManifest.xml
 
@@ -31,7 +27,7 @@ if [ $? -ne 0 ]; then
     exit $?;
 fi
 
-# upload APK to developer console (beta)
+# upload APK to developer console
 python ./basic_upload_apks.py edu.virginia.sie.ptl.sensus ./Sensus.Android/bin/Release/edu.virginia.sie.ptl.sensus-Signed.apk $7
 if [ $? -ne 0 ]; then
     echo "Error uploading APK to developer console."

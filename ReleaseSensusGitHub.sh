@@ -2,14 +2,10 @@
 
 . ./ReleaseSensusPreparation.sh
 
-##########################
-##### GITHUB RELEASE #####
-##########################
-
 . ./ReleaseSensusResetKeys.sh
 
 # show updates that will be committed to the repository
-echo "The following differences will be committed to the repository for release."
+echo "The following differences will be committed to the GitHub repository for release."
 git difftool
 
 # commit, push to github, merge the release branch into master, and push master to github
