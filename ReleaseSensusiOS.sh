@@ -40,14 +40,12 @@ if [ $? -ne 0 ]; then
     exit $?;
 fi
 
-# build with debug symbols for dSYM upload to xamarin insights
-xbuild /p:Configuration=Debug /p:Platform=iPhone /target:Build ./Sensus.iOS/Sensus.iOS.csproj
+# create/upload iOS dSYM file if build was successful
+echo "Zipping and uploading dSYM file to Xamarin Insights."
+zip -r ./Sensus.iOS/bin/iPhone/Release/SensusiOS.dSYM.zip ./Sensus.iOS/bin/iPhone/Release/SensusiOS.app.dSYM
+curl -F "dsym=@./Sensus.iOS/bin/iPhone/Release/SensusiOS.dSYM.zip;type=application/zip" "https://xaapi.xamarin.com/api/dsym?apikey=$6"
 if [ $? -ne 0 ]; then
-    echo "Error building iOS debug for dSYM upload to Xamarin Insights."
+    echo "Error uploading dSYM file to Xamarin Insights."
     exit $?;
 fi
 
-# create/upload iOS dSYM file if build was successful
-echo "Zipping and uploading dSYM file to Xamarin Insights."
-zip -r ./Sensus.iOS/bin/iPhone/Debug/SensusiOS.dSYM.zip ./Sensus.iOS/bin/iPhone/Debug/SensusiOS.app.dSYM
-curl -F "dsym=@./Sensus.iOS/bin/iPhone/Debug/SensusiOS.dSYM.zip;type=application/zip" "https://xaapi.xamarin.com/api/dsym?apikey=$6"
