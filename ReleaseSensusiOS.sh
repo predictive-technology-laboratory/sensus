@@ -15,7 +15,7 @@ echo "The following differences will be used to build the iOS release."
 git difftool
 
 # build IPA
-xbuild /p:Configuration=Release /p:Platform=iPhone /p:BuildIpa=true /target:Build ./Sensus.iOS/Sensus.iOS.csproj
+xbuild /p:Configuration=Release /p:Platform=iPhone /p:BuildIpa=true /target:Rebuild ./Sensus.iOS/Sensus.iOS.csproj
 if [ $? -ne 0 ]; then
     echo "Error building iOS release."
     exit $?;
