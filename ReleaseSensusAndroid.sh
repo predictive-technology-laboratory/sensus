@@ -37,3 +37,5 @@ if [ $? -ne 0 ]; then
     echo "Error uploading APK to developer console."
     exit $?;
 fi
+
+. ./ReleaseSensusResetKeys.sh

@@ -49,3 +49,4 @@ if [ $? -ne 0 ]; then
     exit $?;
 fi
 
+. ./ReleaseSensusResetKeys.sh
