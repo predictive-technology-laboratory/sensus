@@ -60,7 +60,7 @@ namespace SensusService.Probes.User
                 (?<=[^A-Z])(?=[A-Z]) |
                 (?<=[A-Za-z])(?=[^A-Za-z])", RegexOptions.IgnorePatternWhitespace);
 
-                foreach (ScriptRunner scriptRunner in _scriptRunners)
+                foreach (ScriptRunner scriptRunner in _scriptRunners.Where(runner => runner.Enabled))
                 {
                     foreach (Trigger trigger in scriptRunner.Triggers)
                         collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + scriptRunner.Name + ":  When " + trigger.Probe.DisplayName + " is " + uppercaseSplitter.Replace(trigger.Condition.ToString(), " ").ToLower() + " " + trigger.ConditionValue + ".");

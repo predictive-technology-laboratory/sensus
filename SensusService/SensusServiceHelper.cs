@@ -1262,12 +1262,12 @@ namespace SensusService
             StringBuilder convertedJSON = new StringBuilder(json.Length * 2);
             bool conversionPerformed = false;
 
-            // run through each line in the JSON and modify .NET types appropriately
+            // run through each line in the JSON and modify .NET types appropriately. json.net escapes \r and \n when serializing, so we can safely split on these characters.
             foreach (string jsonLine in json.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
             {
                 if (jsonLine.Trim().StartsWith("\"$type\":"))
                 {
-                    // modify platform names
+                    // convert platform namespace
                     string convertedJsonLine;
                     if (currentTypeName == "AndroidSensusServiceHelper")
                         convertedJsonLine = jsonLine.Replace("iOS", "Android").Replace("WinPhone", "Android");
