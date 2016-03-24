@@ -632,7 +632,7 @@ namespace SensusService.Probes.User
                                 }
                             }
 
-                            SensusServiceHelper.Get().Logger.Log("Running \"" + _name + "\".", LoggingLevel.Normal, typeof(Script));
+                            SensusServiceHelper.Get().Logger.Log("Running \"" + _name + "\".", LoggingLevel.Normal, GetType());
 
                             // this method can be called with previous / current datum values (e.g., when the script is first triggered). it 
                             // can also be called without previous / current datum values (e.g., when triggering randomly or rerunning). if

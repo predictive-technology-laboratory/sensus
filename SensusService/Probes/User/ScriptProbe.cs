@@ -100,7 +100,7 @@ namespace SensusService.Probes.User
         {
             base.Initialize();
 
-            foreach (ScriptRunner scriptRunner in _scriptRunners)
+            foreach (ScriptRunner scriptRunner in _scriptRunners.Where(scriptRunner => scriptRunner.Enabled))
                 scriptRunner.Initialize();
         }
 
@@ -108,7 +108,7 @@ namespace SensusService.Probes.User
         {
             base.InternalStart();
 
-            foreach (ScriptRunner scriptRunner in _scriptRunners)
+            foreach (ScriptRunner scriptRunner in _scriptRunners.Where(scriptRunner => scriptRunner.Enabled))
                 scriptRunner.Start();            
         }
 
@@ -118,7 +118,7 @@ namespace SensusService.Probes.User
 
             if (Running)
             {
-                foreach (ScriptRunner scriptRunner in _scriptRunners)
+                foreach (ScriptRunner scriptRunner in _scriptRunners.Where(scriptRunner => scriptRunner.Enabled))
                     if (scriptRunner.TestHealth(ref error, ref warning, ref misc))
                     {
                         warning += "Restarting script runner \"" + scriptRunner.Name + "\"." + Environment.NewLine;
