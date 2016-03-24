@@ -559,7 +559,8 @@ namespace SensusService.Probes.User
                                 // if the probe is still running and the runner is enabled, run a copy of the script so that we can retain a pristine version of the original.
                                 if (_probe.Running && _enabled)
                                     RunAsync(_script.Copy(), _delayMS, StartRandomTriggerCallbacksAsync);
-                            }                   
+                            }     
+
                         , "Trigger Randomly", triggerDelayMS, userNotificationMessage);
                     }
 

@@ -60,32 +60,33 @@ namespace SensusService.Probes.User
                 (?<=[^A-Z])(?=[A-Z]) |
                 (?<=[A-Za-z])(?=[^A-Za-z])", RegexOptions.IgnorePatternWhitespace);
 
-                foreach (ScriptRunner scriptRunner in _scriptRunners.Where(runner => runner.Enabled))
-                {
-                    foreach (Trigger trigger in scriptRunner.Triggers)
-                        collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + scriptRunner.Name + ":  When " + trigger.Probe.DisplayName + " is " + uppercaseSplitter.Replace(trigger.Condition.ToString(), " ").ToLower() + " " + trigger.ConditionValue + ".");
-
-                    if (scriptRunner.RunOnStart)
-                        collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + scriptRunner.Name + ":  Once when the study is started.");
-
-                    if (scriptRunner.RandomTriggerWindows != "")
+                foreach (ScriptRunner scriptRunner in _scriptRunners)
+                    if (scriptRunner.Enabled)
                     {
-                        string windows = scriptRunner.RandomTriggerWindows;
-                        string collectionDescriptionPrefix = "Randomly during hours ";
-                        int commaCount = windows.Count(c => c == ',');
-                        if (commaCount == 0)
-                        {
-                            if (!windows.Contains('-'))
-                                collectionDescriptionPrefix = "At ";
-                        }
-                        else if (commaCount == 1)
-                            windows = windows.Replace(",", " and");
-                        else if (commaCount > 1)
-                            windows = windows.Insert(windows.LastIndexOf(',') + 1, " and");
+                        foreach (Trigger trigger in scriptRunner.Triggers)
+                            collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + scriptRunner.Name + ":  When " + trigger.Probe.DisplayName + " is " + uppercaseSplitter.Replace(trigger.Condition.ToString(), " ").ToLower() + " " + trigger.ConditionValue + ".");
 
-                        collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + scriptRunner.Name + ":  " + collectionDescriptionPrefix + windows + ".");
+                        if (scriptRunner.RunOnStart)
+                            collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + scriptRunner.Name + ":  Once when the study is started.");
+
+                        if (scriptRunner.RandomTriggerWindows != "")
+                        {
+                            string windows = scriptRunner.RandomTriggerWindows;
+                            string collectionDescriptionPrefix = "Randomly during hours ";
+                            int commaCount = windows.Count(c => c == ',');
+                            if (commaCount == 0)
+                            {
+                                if (!windows.Contains('-'))
+                                    collectionDescriptionPrefix = "At ";
+                            }
+                            else if (commaCount == 1)
+                                windows = windows.Replace(",", " and");
+                            else if (commaCount > 1)
+                                windows = windows.Insert(windows.LastIndexOf(',') + 1, " and");
+
+                            collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + scriptRunner.Name + ":  " + collectionDescriptionPrefix + windows + ".");
+                        }
                     }
-                }
 
                 return collectionDescription.ToString();
             }
@@ -100,16 +101,18 @@ namespace SensusService.Probes.User
         {
             base.Initialize();
 
-            foreach (ScriptRunner scriptRunner in _scriptRunners.Where(scriptRunner => scriptRunner.Enabled))
-                scriptRunner.Initialize();
+            foreach (ScriptRunner scriptRunner in _scriptRunners)
+                if (scriptRunner.Enabled)
+                    scriptRunner.Initialize();
         }
 
         protected override void InternalStart()
         {
             base.InternalStart();
 
-            foreach (ScriptRunner scriptRunner in _scriptRunners.Where(scriptRunner => scriptRunner.Enabled))
-                scriptRunner.Start();            
+            foreach (ScriptRunner scriptRunner in _scriptRunners)
+                if (scriptRunner.Enabled)
+                    scriptRunner.Start();            
         }
 
         public override bool TestHealth(ref string error, ref string warning, ref string misc)
@@ -118,8 +121,8 @@ namespace SensusService.Probes.User
 
             if (Running)
             {
-                foreach (ScriptRunner scriptRunner in _scriptRunners.Where(scriptRunner => scriptRunner.Enabled))
-                    if (scriptRunner.TestHealth(ref error, ref warning, ref misc))
+                foreach (ScriptRunner scriptRunner in _scriptRunners)
+                    if (scriptRunner.Enabled && scriptRunner.TestHealth(ref error, ref warning, ref misc))
                     {
                         warning += "Restarting script runner \"" + scriptRunner.Name + "\"." + Environment.NewLine;
 
