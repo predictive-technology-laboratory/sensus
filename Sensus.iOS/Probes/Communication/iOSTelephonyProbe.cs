@@ -91,7 +91,7 @@ namespace Sensus.iOS.Probes.Communication
                     else
                         continue;
                 
-                    data.Add(new TelephonyDatum(DateTimeOffset.Now, state, ""));
+                    data.Add(new TelephonyDatum(DateTimeOffset.Now, state, "", 0));
                 }
 
                 _calls.Clear();
