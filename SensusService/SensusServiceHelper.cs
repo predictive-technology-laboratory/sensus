@@ -768,12 +768,7 @@ namespace SensusService
             }
         }
 
-        public string ScheduleOneTimeCallback(Action<string, CancellationToken> callback, string name, int delayMS)
-        {
-            return ScheduleOneTimeCallback(callback, name, delayMS, null);
-        }
-
-        public string ScheduleOneTimeCallback(Action<string, CancellationToken> callback, string name, int delayMS, string userNotificationMessage)
+        public string ScheduleOneTimeCallback(Action<string, CancellationToken> callback, string name, int delayMS, string userNotificationMessage = null)
         {
             lock (_idCallback)
             {
@@ -923,7 +918,12 @@ namespace SensusService
             {
                 ScheduledCallback scheduledCallback;
                 if (_idCallback.TryGetValue(callbackId, out scheduledCallback))
+                {
                     scheduledCallback.Canceller.Cancel();
+                    SensusServiceHelper.Get().Logger.Log("Cancelled callback \"" + scheduledCallback.Name + "\" (" + callbackId + ").", LoggingLevel.Normal, GetType());
+                }
+                else
+                    SensusServiceHelper.Get().Logger.Log("Callback \"" + callbackId + "\" not present. Cannot cancel.", LoggingLevel.Normal, GetType());
             }
         }
 
@@ -1020,14 +1020,6 @@ namespace SensusService
                     {
                         InputGroup inputGroup = inputGroups.ElementAt(inputGroupNum);
 
-                        int inputTimeoutMS = -1;
-                        if (inputGroup.TimeoutMinutes != null)
-                        {
-                            inputTimeoutMS = (int)(inputGroup.TimeoutMinutes.GetValueOrDefault() * 60000);
-                            if (inputTimeoutMS < 0)
-                                inputTimeoutMS = -1;
-                        }
-
                         ManualResetEvent responseWait = new ManualResetEvent(false);
 
                         // run voice inputs by themselves, and only if the input group contains exactly one input and that input is a voice input.
@@ -1051,12 +1043,10 @@ namespace SensusService
 
                             Device.BeginInvokeOnMainThread(async () =>
                                 {
-                                    DateTime? timeoutTime = null;
-                                    if (inputTimeoutMS != -1)
-                                        timeoutTime = DateTime.Now.AddMilliseconds(inputTimeoutMS);
-
-                                    PromptForInputsPage promptForInputsPage = new PromptForInputsPage(inputGroup, inputGroupNum + 1, inputGroups.Count(), showCancelButton, nextButtonText, cancellationToken, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, timeoutTime, result =>
+                                    PromptForInputsPage promptForInputsPage = new PromptForInputsPage(inputGroup, inputGroupNum + 1, inputGroups.Count(), showCancelButton, nextButtonText, cancellationToken, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, result =>
                                         {
+                                            SensusServiceHelper.Get().Logger.Log("Prompt page disappeared with result:  " + result, LoggingLevel.Normal, GetType());
+
                                             if (result == PromptForInputsPage.Result.Cancel || result == PromptForInputsPage.Result.NavigateBackward && inputGroupNumBackStack.Count == 0)
                                                 inputGroups = null;
                                             else if (result == PromptForInputsPage.Result.NavigateBackward)
@@ -1099,32 +1089,7 @@ namespace SensusService
                                 });
                         }
 
-                        if (!responseWait.WaitOne(inputTimeoutMS))
-                        {
-                            SensusServiceHelper.Get().Logger.Log("Input group \"" + inputGroup.Name + "\" timed out after " + inputTimeoutMS + "ms.", LoggingLevel.Normal, GetType());
-
-                            ManualResetEvent closePromptPagesWait = new ManualResetEvent(false);
-
-                            Device.BeginInvokeOnMainThread(async() =>
-                                {
-                                    try
-                                    {
-                                        while (App.Current.MainPage.Navigation.ModalStack.Last() is PromptForInputsPage)
-                                            await App.Current.MainPage.Navigation.PopModalAsync(true);
-                                    }
-                                    catch (Exception)
-                                    {
-                                    }
-                                    finally
-                                    {
-                                        closePromptPagesWait.Set();
-                                    }
-                                });
-
-                            closePromptPagesWait.WaitOne();
-
-                            inputGroups = null;
-                        }
+                        responseWait.WaitOne();
                     }
 
                     // at this point we're done showing pages to the user. anything that needs to happen below with GPS tagging or subsequently

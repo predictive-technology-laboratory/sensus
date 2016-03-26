@@ -19,6 +19,7 @@ using SensusService.Exceptions;
 using System.Linq;
 using SensusUI.Inputs;
 using System.Threading;
+using SensusService;
 
 namespace SensusUI
 {
@@ -41,7 +42,7 @@ namespace SensusUI
             }
         }
 
-        public PromptForInputsPage(InputGroup inputGroup, int stepNumber, int totalSteps, bool showCancelButton, string nextButtonTextOverride, CancellationToken? cancellationToken, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, DateTime? timeoutTime, Action<Result> callback)
+        public PromptForInputsPage(InputGroup inputGroup, int stepNumber, int totalSteps, bool showCancelButton, string nextButtonTextOverride, CancellationToken? cancellationToken, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action<Result> disappearanceCallback)
         {            
             _displayedInputCount = 0;
 
@@ -83,15 +84,6 @@ namespace SensusUI
                 contentLayout.Children.Add(new Label
                     {
                         Text = "Required fields are indicated with *",
-                        FontSize = 15,
-                        TextColor = Color.Red,
-                        HorizontalOptions = LayoutOptions.Start
-                    });
-
-            if (timeoutTime != null)
-                contentLayout.Children.Add(new Label
-                    {
-                        Text = "You have until " + timeoutTime.GetValueOrDefault() + " to provide input.",
                         FontSize = 15,
                         TextColor = Color.Red,
                         HorizontalOptions = LayoutOptions.Start
@@ -268,13 +260,22 @@ namespace SensusUI
             {
                 // if the cancellation token is cancelled, pop this page off the stack.
                 cancellationToken.GetValueOrDefault().Register(() =>
-                    {                        
+                    {             
+                        SensusServiceHelper.Get().Logger.Log("Cancellation token was cancelled. Will pop pages.", LoggingLevel.Normal, GetType());
+
                         cancellationTokenCanceled = true;
 
                         Device.BeginInvokeOnMainThread(async() =>
                             {
+                                SensusServiceHelper.Get().Logger.Log("On UI thread. Ready to pop page.", LoggingLevel.Normal, GetType());
+
                                 if (Navigation.ModalStack.Count > 0 && Navigation.ModalStack.Last() == this)
+                                {
                                     await Navigation.PopModalAsync(true);
+                                    SensusServiceHelper.Get().Logger.Log("Popped page.", LoggingLevel.Normal, GetType());
+                                }
+                                else
+                                    SensusServiceHelper.Get().Logger.Log("No page to pop.", LoggingLevel.Normal, GetType());
                             });
                     });
             }
@@ -290,13 +291,13 @@ namespace SensusUI
             Disappearing += (o, e) =>
             {
                 if (previousButtonTapped)
-                    callback(Result.NavigateBackward);
+                    disappearanceCallback(Result.NavigateBackward);
                 else if (cancelButtonTapped || cancellationTokenCanceled)
-                    callback(Result.Cancel);
+                    disappearanceCallback(Result.Cancel);
                 else if (nextButtonTapped)
-                    callback(Result.NavigateForward);
+                    disappearanceCallback(Result.NavigateForward);
                 else
-                    callback(Result.Cancel);  // the user navigated back, or another activity started and covered the window
+                    disappearanceCallback(Result.Cancel);  // the user navigated back, or another activity started and covered the window
             };                    
 
             Content = new ScrollView

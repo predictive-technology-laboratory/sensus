@@ -53,6 +53,8 @@ namespace Sensus.iOS
                 {
                     string callbackId = notification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ID_KEY)).ToString();
 
+                    SensusServiceHelper.Get().Logger.Log("Cancelling local notification for callback \"" + callbackId + "\".", LoggingLevel.Normal, typeof(iOSSensusServiceHelper));
+
                     // a local notification can be one of two types:  (1) scheduled, in which case it hasn't yet been delivered and should reside
                     // within the shared application's list of scheduled notifications. the tricky part here is that these notification objects
                     // aren't reference-equal, so we can't just pass `notification` to CancelLocalNotification. instead, we must search for the 

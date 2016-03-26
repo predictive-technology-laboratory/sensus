@@ -84,7 +84,7 @@ namespace SensusUI
 
             ToolbarItems.Add(new ToolbarItem(null, "plus.png", () =>
                     {
-                        _script.InputGroups.Add(new InputGroup("New Input Group") { TimeoutMinutes = 60 });
+                        _script.InputGroups.Add(new InputGroup("New Input Group"));
                     }));
 
             Bind();
