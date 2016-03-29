@@ -209,7 +209,7 @@ namespace Sensus.Android
                 serviceHelper.Save();
 
                 if (SensusServiceHelper.PromptForInputsRunning)
-                    serviceHelper.IssueNotificationAsync("Sensus", "Please tap to provide responses.", true, false, INPUT_REQUESTED_NOTIFICATION_ID);
+                    serviceHelper.IssueNotificationAsync("Sensus", "Please open to provide responses.", true, false, INPUT_REQUESTED_NOTIFICATION_ID);
             }
         }
 

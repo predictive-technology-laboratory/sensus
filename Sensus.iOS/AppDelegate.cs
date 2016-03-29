@@ -200,7 +200,7 @@ namespace Sensus.iOS
                 serviceHelper.ActivationId = null;
 
                 if (iOSSensusServiceHelper.PromptForInputsRunning)
-                    serviceHelper.IssueNotificationAsync("Please tap to provide responses.", null);
+                    serviceHelper.IssueNotificationAsync("Please open to provide responses.", null);
             }
         }
 		

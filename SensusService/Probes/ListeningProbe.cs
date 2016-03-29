@@ -44,7 +44,7 @@ namespace SensusService.Probes
                 #elif __IOS__
                 // on ios, we cannot rely on the health test times to tell us how long and consistently the probe has been running. this is
                 // because, unlike in android, ios does not let local notifications return to the app when the app is in the background. instead, 
-                // the ios user must tap a notification or otherwise open the app in order for the health test to run. so the best we can do 
+                // the ios user must open a notification or otherwise open the app in order for the health test to run. so the best we can do 
                 // is keep track of when the probe was started (StartDateTime) and compute participation based on how long the probe has been in 
                 // a running state. it is theoretically possible that the probe is in this running state but is somehow faulty and failing the 
                 // health tests. thus, the approach is not perfect, but it's the best we can do on ios.
