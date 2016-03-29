@@ -44,19 +44,32 @@ read.sensus.json = function(data.path, is.directory = TRUE, recursive = TRUE, co
 {
   paths = c(data.path)
   if(is.directory)
+  {
     paths = list.files(data.path, recursive = recursive, full.names = TRUE, include.dirs = FALSE)
+  }
+  
+  num.files = length(paths)
   
   data = list()
-  
+  file.num = 0
   for(path in paths)
   {
+    file.num = file.num + 1
+    
+    print(paste("Parsing JSON file ", file.num, " of ", num.files, ":  ", path, sep = ""))
+
     # read and parse JSON
     file.size = file.info(path)$size
+    if(file.size == 0)
+    {
+      next
+    }
+    
     file.text = readChar(path, file.size)
     file.json = jsonlite::fromJSON(file.text)
 
-    # skip empty files
-    if(nrow(file.json) == 0)
+    # skip empty JSON
+    if(is.null(file.json) || is.na(file.json) || nrow(file.json) == 0)
     {
       next
     }
@@ -87,23 +100,78 @@ read.sensus.json = function(data.path, is.directory = TRUE, recursive = TRUE, co
       file.json$Timestamp = lubridate::with_tz(file.json$Timestamp, local.timezone)
     }
     
-    # filter redundant data by Id
-    file.json = file.json[!duplicated(file.json$Id),]
-    
-    # add to data by type
+    # add to data by type, putting each file in its own list entry (we'll merge files later)
     type = file.json$Type[1]
     if(is.null(data[[type]])) {
-      data[[type]] = file.json
-    } else {
-      data[[type]] = rbind(data[[type]], file.json)
+      data[[type]] = list()
     }
+    
+    data.type.file.num = length(data[[type]]) + 1
+    data[[type]][[data.type.file.num]] = file.json
   }
-  
-  # order by timestamp and add class information for plotting
+ 
+  # merge files for each data type
   for(datum.type in names(data))
   { 
-    data.by.type = data[[datum.type]]
-    data[[datum.type]] = data.by.type[order(data.by.type$Timestamp),]
+    datum.type.data = data[[datum.type]]
+    
+    # pre-allocate vectors for each column in data frame
+    datum.type.num.rows = sum(sapply(datum.type.data, nrow))
+    datum.type.col.classes = sapply(datum.type.data[[1]], class)
+    datum.type.col.classes[["Timestamp"]] = NULL  # cannot directly create vector with mode POSIXlt
+    datum.type.col.vectors = lapply(datum.type.col.classes, vector, length = datum.type.num.rows)
+    datum.type.col.vectors[["Timestamp"]] = as.POSIXlt(rep(NA, datum.type.num.rows))
+    
+    # merge files for current datum.type
+    insert.start.row = 1
+    num.files = length(datum.type.data)
+    datum.type.col.vectors.names = names(datum.type.col.vectors)
+    percent.done = 0
+    for(file.num in 1:num.files)
+    {
+      curr.percent.done = as.integer(100 * file.num / num.files)
+      if(curr.percent.done > percent.done)
+      {
+        percent.done = curr.percent.done
+        print(paste(curr.percent.done, "% done merging data for ", datum.type, ".", sep = ""))
+      }
+        
+      # merge columns of current file into pre-allocated vectors
+      file.data = datum.type.data[[file.num]]
+      file.data.rows = nrow(file.data)
+      insert.end.row = insert.start.row + file.data.rows - 1
+      for(col.name in datum.type.col.vectors.names)
+      {
+        datum.type.col.vectors[[col.name]][insert.start.row:insert.end.row] = file.data[ , col.name]
+      }
+      
+      insert.start.row = insert.start.row + file.data.rows
+    }
+    
+    print(paste("Creating data frame for ", datum.type, ".", sep = ""))
+    
+    # create data frame from pre-allocated vectors 
+    data.type.data.frame = data.frame(datum.type.col.vectors, stringsAsFactors = FALSE)
+    
+    # filter redundant data by id and sort by timestamp
+    data.type.data.frame = data.type.data.frame[!duplicated(data.type.data.frame$Id), ]
+    data.type.data.frame = data.type.data.frame[order(data.type.data.frame$Timestamp), ]
+    
+    # add year, month, day, hour, minute, second, day of week, day of month, and day of year
+    data.type.data.frame$Year = lubridate::year(data.type.data.frame$Timestamp)
+    data.type.data.frame$Month = lubridate::month(data.type.data.frame$Timestamp)
+    data.type.data.frame$Day = lubridate::day(data.type.data.frame$Timestamp)
+    data.type.data.frame$Hour = lubridate::hour(data.type.data.frame$Timestamp)
+    data.type.data.frame$Minute = lubridate::minute(data.type.data.frame$Timestamp)
+    data.type.data.frame$Second = lubridate::second(data.type.data.frame$Timestamp)
+    data.type.data.frame$DayOfWeek = lubridate::wday(data.type.data.frame$Timestamp)
+    data.type.data.frame$DayOfMonth = lubridate::mday(data.type.data.frame$Timestamp)
+    data.type.data.frame$DayOfYear = lubridate::yday(data.type.data.frame$Timestamp)
+    
+    # set data frame within final list
+    data[[datum.type]] = data.type.data.frame
+    
+    # set class information for plotting
     class(data[[datum.type]]) = c(datum.type, class(data[[datum.type]]))
   }
   
@@ -210,7 +278,8 @@ plot.LightDatum = function(x, pch = ".", type = "l", ...)
 #' 
 #' @method plot LocationDatum
 #' @param x Location data.
-#' @param ... Other plotting parameters to pass to \code{\link{qmap}}.
+#' @param qmap.args Plotting parameters to pass to \code{\link{qmap}}.
+#' @param geom.point.args Plotting parameters to pass to \code{\link{geom_point}}.
 #' @examples
 #' data = read.sensus.json(system.file("extdata", "example.data.txt", package="SensusR"))
 #' plot(data$LocationDatum)
@@ -218,15 +287,27 @@ plot.LocationDatum = function(x, ...)
 {
   args = list(...)
   
-  if(is.null(args[["location"]]))
+  qmap.args = args[["qmap.args"]]
+  if(!is.null(qmap.args))
   {
-    avg.x = mean(x$Longitude)
-    avg.y = mean(x$Latitude)
-    args[["location"]] = paste(avg.y, avg.x, sep=",")
+    if(is.null(qmap.args[["location"]]))
+    {
+      avg.x = mean(x$Longitude)
+      avg.y = mean(x$Latitude)
+      qmap.args[["location"]] = paste(avg.y, avg.x, sep=",")
+    }
   }
   
-  map = do.call(ggmap::qmap, args)
-  map + ggplot2::geom_point(data = x, ggplot2::aes(x = Longitude, y = Latitude))
+  map = do.call(ggmap::qmap, qmap.args)
+  
+  geom.point.args = list(data = x, ggplot2::aes(x = Longitude, y = Latitude))
+  passed.geom.point.args = args[["geom.point.args"]]
+  if(!is.null(passed.geom.point.args))
+  {
+    geom.point.args = c(geom.point.args, passed.geom.point.args)
+  }
+  
+  map + do.call(ggplot2::geom_point, geom.point.args)
 }
 
 #' Plot running apps data.
