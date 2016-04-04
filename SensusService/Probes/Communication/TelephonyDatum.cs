@@ -24,10 +24,10 @@ namespace SensusService.Probes.Communication
     {
         private TelephonyState _state;
         private string _phoneNumber;
-        private int _callLength;
+        private double _callLength;
 
         [NumberProbeTriggerProperty("Minimum Call Length")]
-        public int callLength
+        public double callLength
         {
             get { return _callLength; }
             set { _callLength = value; }
@@ -60,7 +60,7 @@ namespace SensusService.Probes.Communication
         {
         }
 
-        public TelephonyDatum(DateTimeOffset timestamp, TelephonyState state, string phoneNumber, int callLength)
+        public TelephonyDatum(DateTimeOffset timestamp, TelephonyState state, string phoneNumber, double callLength)
             : base(timestamp)
         {
             _state = state;

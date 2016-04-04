@@ -27,7 +27,7 @@ namespace Sensus.Android.Probes.Communication
         private EventHandler<string> _outgoingCallCallback;
         private AndroidTelephonyIdleIncomingListener _idleIncomingCallListener;
         private DateTime _lastCallEvent;
-        private int _callLength;
+        private double _callLength;
 
         public AndroidTelephonyProbe()
         {
@@ -47,7 +47,8 @@ namespace Sensus.Android.Probes.Communication
 
             _idleIncomingCallListener.Idle += (o, e) =>
             {
-                _callLength = (int)DateTime.Now.Subtract(_lastCallEvent).TotalSeconds;
+                _callLength = (double)DateTime.Now.Subtract(_lastCallEvent).TotalSeconds;
+                    Console.Out.WriteLine(_callLength);
                 StoreDatum(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.Idle, null, _callLength));
             };
         }
