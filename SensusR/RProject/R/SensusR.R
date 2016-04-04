@@ -17,15 +17,16 @@ NULL
 #' Download data from Amazon S3 path.
 #' 
 #' @param s3.path Full path within S3.
+#' @param profile AWS credentials profile to use for authentication.
 #' @param local.path Path to location on local drive.
 #' @param aws.path Path to AWS client.
 #' @return Local path to location of downloaded data.
 #' @examples 
 #' # data.path = download.from.aws.s3("s3://bucket/path/to/data", "~/Desktop/data")
-download.from.aws.s3 = function(s3.path, local.path = tempfile(), aws.path = "/usr/local/bin")
+download.from.aws.s3 = function(s3.path, profile = "default", local.path = tempfile(), aws.path = "/usr/local/bin")
 {
   aws = paste(aws.path, "aws", sep = "/")
-  args = paste("s3 cp --recursive", s3.path, local.path, sep = " ")
+  args = paste("s3 --profile", profile, "cp --recursive", s3.path, local.path, sep = " ")
   exit.code = system2(aws, args)
   return(local.path)
 }
@@ -287,15 +288,23 @@ plot.LocationDatum = function(x, ...)
 {
   args = list(...)
   
-  qmap.args = args[["qmap.args"]]
-  if(!is.null(qmap.args))
+  if(is.null(args[["qmap.args"]]))
   {
-    if(is.null(qmap.args[["location"]]))
-    {
-      avg.x = mean(x$Longitude)
-      avg.y = mean(x$Latitude)
-      qmap.args[["location"]] = paste(avg.y, avg.x, sep=",")
-    }
+    args[["qmap.args"]] = list()
+  }
+  
+  if(is.null(args[["geom.point.args"]]))
+  {
+    args[["geom.point.args"]] = list()
+  }
+  
+  qmap.args = args[["qmap.args"]]
+
+  if(is.null(qmap.args[["location"]]))
+  {
+    avg.x = mean(x$Longitude)
+    avg.y = mean(x$Latitude)
+    qmap.args[["location"]] = paste(avg.y, avg.x, sep=",")
   }
   
   map = do.call(ggmap::qmap, qmap.args)
@@ -454,6 +463,24 @@ get.timestamp.lags = function(datum)
   } 
   
   return(lags)
+}
+
+#' Plot data frequency by day.
+#' 
+#' @param datum Data frame for a single datum.
+plot.data.frequency.by.day = function(datum, xlab = "Study Day", ylab = "Data Frequency", main = "Data Frequency")
+{
+  datum.split.by.day = split(datum, as.factor(datum$DayOfYear))
+  plot(sapply(datum.split.by.day, nrow), xlab = xlab, ylab = ylab, main = main, type = "l", cex.lab = 1.5, cex.axis = 1.5, cex.main = 2)
+}
+
+#' Removes all data associated with a device ID from a data collection.
+#' 
+#' @param datum Data collection to process.
+#' @param device.id Device ID to remove.
+remove.device.id = function(datum, device.id)
+{
+  return(datum[datum$DeviceId != device.id, ])
 }
 
 #' Trim leading white space from a string.
