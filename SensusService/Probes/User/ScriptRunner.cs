@@ -625,6 +625,7 @@ namespace SensusService.Probes.User
                                 if (!isRerun)
                                 {
                                     script.FirstRunTimestamp = DateTimeOffset.UtcNow;
+                                    _probe.StoreDatum(new ScriptDatum(DateTime.Now, script.Id + "_" + _name, "Script has fired.", "Script has fired.", script.Id, new Object(), script.CurrentDatum == null ? null : script.CurrentDatum.Id, null, null, script.PresentationTimestamp.GetValueOrDefault(), null, new List<InputCompletionRecord>()));
 
                                     // add run time and remove all run times before the participation horizon
                                     _runTimes.Add(DateTime.Now);
@@ -669,7 +670,7 @@ namespace SensusService.Probes.User
                                                     // that is passed into this method is always a copy of the user-created script. the script.Id allows us to link the various data
                                                     // collected from the user into a single logical response. each run of the script has its own script.Id so that responses can be
                                                     // grouped across runs. this is the difference between scriptId and runId in the following line.
-                                                    _probe.StoreDatum(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow), _script.Id, input.GroupId, input.Id, script.Id, input.Value, script.CurrentDatum == null ? null : script.CurrentDatum.Id, input.Latitude, input.Longitude, script.PresentationTimestamp.GetValueOrDefault(), input.LocationUpdateTimestamp, input.CompletionRecords));
+                                                    _probe.StoreDatum(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow), _script.Id + "_" + _name, input.GroupId, input.Id, script.Id, input.Value, script.CurrentDatum == null ? null : script.CurrentDatum.Id, input.Latitude, input.Longitude, script.PresentationTimestamp.GetValueOrDefault(), input.LocationUpdateTimestamp, input.CompletionRecords));
 
                                                     // once inputs are stored, they should not be stored again, nor should the user be able to modify them if the script is rerun.
                                                     input.NeedsToBeStored = false;
