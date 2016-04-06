@@ -48,7 +48,6 @@ namespace Sensus.Android.Probes.Communication
             _idleIncomingCallListener.Idle += (o, e) =>
             {
                 _callLength = (double)DateTime.Now.Subtract(_lastCallEvent).TotalSeconds;
-                    Console.Out.WriteLine(_callLength);
                 StoreDatum(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.Idle, null, _callLength));
             };
         }
