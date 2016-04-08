@@ -97,11 +97,7 @@ namespace SensusUI
 
                 shareLocalDataButton.Clicked += async (o, e) =>
                 {
-                    // share the protocol's local data store if it has data in it
-                    if (protocol.LocalDataStore.DataCount > 0)
-                        await Navigation.PushAsync(new ShareLocalDataStorePage(protocol.LocalDataStore));
-                    else
-                        SensusServiceHelper.Get().FlashNotificationAsync("Local data store contains no data to share.");
+                    await Navigation.PushAsync(new ShareLocalDataStorePage(protocol.LocalDataStore));
                 };
 
                 buttonStack.Children.Add(shareLocalDataButton);

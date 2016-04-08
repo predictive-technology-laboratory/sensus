@@ -25,21 +25,8 @@ namespace SensusService.DataStores.Local
     public class FileLocalDataStore : LocalDataStore
     {
         private string _path;
-        private int _numDataStoredInFiles;
 
         private readonly object _locker = new object();
-
-        public int NumDataStoredInFiles
-        {
-            get
-            {
-                return _numDataStoredInFiles;
-            }
-            set
-            {
-                _numDataStoredInFiles = value;
-            }
-        }
 
         private string StorageDirectory
         {
@@ -59,14 +46,6 @@ namespace SensusService.DataStores.Local
             get { return "File"; }
         }
 
-        public override int DataCount
-        {
-            get
-            {
-                return _numDataStoredInFiles;
-            }
-        }
-
         [JsonIgnore]
         public override bool Clearable
         {
@@ -75,7 +54,6 @@ namespace SensusService.DataStores.Local
 
         public FileLocalDataStore()
         {
-            _numDataStoredInFiles = 0;
         }
 
         public override void Start()
@@ -119,7 +97,6 @@ namespace SensusService.DataStores.Local
                             {
                                 file.WriteLine(datumJSON);
                                 writtenToFile = true;
-                                ++_numDataStoredInFiles;
                             }
                             catch (Exception ex)
                             {
@@ -153,10 +130,16 @@ namespace SensusService.DataStores.Local
             {
                 List<Datum> localData = new List<Datum>();
 
-                foreach (string path in Directory.GetFiles(StorageDirectory))
+                string[] paths = Directory.GetFiles(StorageDirectory);
+                for (int pathNum = 0; pathNum < paths.Length; ++pathNum)
                 {   
+                    string path = paths[pathNum];
+
                     if (cancellationToken.IsCancellationRequested)
                         break;
+
+                    if (progressCallback != null)
+                        progressCallback(pathNum / (double)paths.Length);
                     
                     try
                     {
@@ -164,12 +147,7 @@ namespace SensusService.DataStores.Local
                         {
                             string line;
                             while (!cancellationToken.IsCancellationRequested && !string.IsNullOrWhiteSpace(line = file.ReadLine()))
-                            {
                                 localData.Add(Datum.FromJSON(line));
-
-                                if (progressCallback != null && _numDataStoredInFiles >= 10 && (localData.Count % (_numDataStoredInFiles / 10)) == 0)
-                                    progressCallback(localData.Count / (double)_numDataStoredInFiles);
-                            }
                         }
                     }
                     catch (Exception ex)
@@ -212,9 +190,7 @@ namespace SensusService.DataStores.Local
                             while ((line = file.ReadLine()) != null)
                             {
                                 Datum datum = Datum.FromJSON(line);
-                                if (hashDataCommittedToRemote.Contains(datum))
-                                    --_numDataStoredInFiles;
-                                else
+                                if (!hashDataCommittedToRemote.Contains(datum))
                                 {
                                     uncommittedDataFile.WriteLine(datum.GetJSON(Protocol.JsonAnonymizer, false));  // need to pass in the anonymizer, since the user might have selected an anonymization option between the time that the datum was written to file and the time of execution of the current line of code.
                                     ++uncommittedDataCount;
@@ -290,8 +266,6 @@ namespace SensusService.DataStores.Local
                             SensusServiceHelper.Get().Logger.Log("Failed to delete local file \"" + path + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
                         }
                     }
-
-                    _numDataStoredInFiles = 0;
                 }
             }
         }
@@ -301,7 +275,6 @@ namespace SensusService.DataStores.Local
             base.ClearForSharing();
 
             _path = null;
-            _numDataStoredInFiles = 0;
         }
     }
 }

@@ -91,7 +91,10 @@ namespace SensusUI
                                     {
                                         progressBar.ProgressTo(progress, 250, Easing.Linear);
                                     });
-                            });                                
+                            });     
+
+                        if (localData.Count == 0)
+                            throw new Exception("No data to share.");
 
                         // step 2:  write gathered data to file.
                         if (!_cancellationTokenSource.IsCancellationRequested)
@@ -125,7 +128,7 @@ namespace SensusUI
                     catch (Exception ex)
                     {
                         errorWritingShareFile = true;
-                        string message = "Error writing share file:  " + ex.Message;
+                        string message = "Error sharing data:  " + ex.Message;
                         SensusServiceHelper.Get().FlashNotificationAsync(message);
                         SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
                     }
@@ -142,12 +145,12 @@ namespace SensusUI
                         }
 
                         // the only way to get a cancellation event is to back out of the window, so only pop if there was an error
-                        if(errorWritingShareFile)
+                        if (errorWritingShareFile)
                             Device.BeginInvokeOnMainThread(async () => await Navigation.PopAsync());
                     }
                     else
                     {
-                        Device.BeginInvokeOnMainThread(async () => 
+                        Device.BeginInvokeOnMainThread(async () =>
                             {
                                 await Navigation.PopAsync();
                                 SensusServiceHelper.Get().ShareFileAsync(sharePath, "Sensus Data", "application/json");

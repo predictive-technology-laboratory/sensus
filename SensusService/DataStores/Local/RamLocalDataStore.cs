@@ -38,14 +38,6 @@ namespace SensusService.DataStores.Local
             get { return true; }
         }
 
-        public override int DataCount
-        {
-            get
-            {
-                return _data == null ? 0 : _data.Count;
-            }
-        }
-
         public RamLocalDataStore()
         {
             _data = new HashSet<Datum>();
