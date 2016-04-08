@@ -800,78 +800,116 @@ namespace SensusService
                             {
                                 _logger.Log("Callback " + callbackId + " is not valid. Unscheduling.", LoggingLevel.Normal, GetType());
                                 UnscheduleCallback(callbackId);
-                                return;
                             }
                         }
 
-                        // the same callback action cannot be raised multiple times concurrently. drop the current one if it's already running.
-                        if (Monitor.TryEnter(scheduledCallback.Action))
+                        if (scheduledCallback != null)
                         {
-                            try
+                            // the same callback action cannot be run multiple times concurrently. drop the current callback if it's already running. multiple
+                            // callers might compete for the same callback, but only one will win the lock below and it will exclude all others until it has executed.
+                            bool actionAlreadyRunning = true;
+                            lock (scheduledCallback)
                             {
-                                if (scheduledCallback.Canceller.IsCancellationRequested)
-                                    _logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") was cancelled before it was started.", LoggingLevel.Normal, GetType());
-                                else
+                                if (!scheduledCallback.Running)
                                 {
-                                    _logger.Log("Raising callback \"" + scheduledCallback.Name + "\" (" + callbackId + ").", LoggingLevel.Normal, GetType());
-
-                                    if (notifyUser)
-                                        IssueNotificationAsync(scheduledCallback.UserNotificationMessage, callbackId);
-
-                                    // if the callback specified a timeout, request cancellation at the specified time.
-                                    if (scheduledCallback.CallbackTimeout != null)
-                                        scheduledCallback.Canceller.CancelAfter(scheduledCallback.CallbackTimeout.GetValueOrDefault());
-
-                                    await scheduledCallback.Action(callbackId, scheduledCallback.Canceller.Token);
+                                    actionAlreadyRunning = false;
+                                    scheduledCallback.Running = true;
                                 }
                             }
-                            catch (Exception ex)
+
+                            if (actionAlreadyRunning)
+                                _logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") is already running. Not running again.", LoggingLevel.Normal, GetType());
+                            else
                             {
-                                _logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") failed:  " + ex.Message, LoggingLevel.Normal, GetType());
-                            }
-                            finally
-                            {
-                                // the cancellation token source for the current callback might have been canceled. if this is a repeating callback then we'll need a new
-                                // cancellation token source because they cannot be reset and we're going to use the same callback again. furthermore, if we enter the 
-                                // _idCallback lock before CancelRaisedCallback does, then the next raise will be cancelled. if CancelRaisedCallback enters the 
-                                // _idCallback lock first, then the cancellation token source will be overwritten here and the cancel will not have any effect. however,
-                                // the latter case is a reasonable outcome, since the purpose of CancelRaisedCallback is to terminate any callbacks that are currently in 
-                                // progress, and the current callback is no longer in progress. if the desired outcome is complete discontinuation of the repeating callback
-                                // then UnscheduleRepeatingCallback should be used -- this method first cancels any raised callbacks and then removes the callback entirely.
                                 try
                                 {
-                                    if (repeating)
-                                        lock (_idCallback)
-                                            scheduledCallback.Canceller = new CancellationTokenSource();
+                                    if (scheduledCallback.Canceller.IsCancellationRequested)
+                                        _logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") was cancelled before it was raised.", LoggingLevel.Normal, GetType());
+                                    else
+                                    {
+                                        _logger.Log("Raising callback \"" + scheduledCallback.Name + "\" (" + callbackId + ").", LoggingLevel.Normal, GetType());
+
+                                        if (notifyUser)
+                                            IssueNotificationAsync(scheduledCallback.UserNotificationMessage, callbackId);
+
+                                        // if the callback specified a timeout, request cancellation at the specified time.
+                                        if (scheduledCallback.CallbackTimeout != null)
+                                            scheduledCallback.Canceller.CancelAfter(scheduledCallback.CallbackTimeout.GetValueOrDefault());
+
+                                        await scheduledCallback.Action(callbackId, scheduledCallback.Canceller.Token);
+                                    }
                                 }
-                                catch (Exception)
+                                catch (Exception ex)
                                 {
+                                    _logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") failed:  " + ex.Message, LoggingLevel.Normal, GetType());
                                 }
                                 finally
                                 {
-                                    Monitor.Exit(scheduledCallback.Action);
+                                    // the cancellation token source for the current callback might have been canceled. if this is a repeating callback then we'll need a new
+                                    // cancellation token source because they cannot be reset and we're going to use the same callback again. furthermore, if we enter the 
+                                    // _idCallback lock before CancelRaisedCallback does, then the next raise will be cancelled. if CancelRaisedCallback enters the 
+                                    // _idCallback lock first, then the cancellation token source will be overwritten here and the cancel will not have any effect. however,
+                                    // the latter case is a reasonable outcome, since the purpose of CancelRaisedCallback is to terminate any callbacks that are currently in 
+                                    // progress, and the current callback is no longer in progress. if the desired outcome is complete discontinuation of the repeating callback
+                                    // then UnscheduleRepeatingCallback should be used -- this method first cancels any raised callbacks and then removes the callback entirely.
+                                    try
+                                    {
+                                        if (repeating)
+                                        {
+                                            lock (_idCallback)
+                                            {
+                                                scheduledCallback.Canceller = new CancellationTokenSource();
+                                            }
+                                        }
+                                    }
+                                    catch (Exception)
+                                    {
+                                    }
+                                    finally
+                                    {
+                                        // if we marked the callback as running, always ensure that we unmark it (note we're nested within two finally blocks so
+                                        // this will always execute). this will allow others to run the callback.
+                                        lock (scheduledCallback)
+                                        {
+                                            scheduledCallback.Running = false;
+                                        }
+
+                                        // schedule callback again if it was a repeating callback and is still scheduled with a valid repeat delay
+                                        if (repeating && CallbackIsScheduled(callbackId) && repeatDelayMS >= 0 && scheduleRepeatCallback != null)
+                                        {
+                                            DateTime nextCallbackTime;
+
+                                            // if this repeating callback is allowed to lag, schedule the repeat from the current time.
+                                            if (repeatLag)
+                                                nextCallbackTime = DateTime.Now.AddMilliseconds(repeatDelayMS);
+                                            else
+                                            {
+                                                // otherwise, schedule the repeat from the time at which the current callback was raised.
+                                                nextCallbackTime = callbackStartTime.AddMilliseconds(repeatDelayMS);
+                                            }
+
+                                            scheduleRepeatCallback(nextCallbackTime);
+                                        }
+                                        else
+                                            UnscheduleCallback(callbackId);
+                                    }
                                 }
                             }
                         }
-                        else
-                            _logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") is already running. Not running again.", LoggingLevel.Normal, GetType());
-                    
-                        // schedule callback again if it was a repeating callback and is still scheduled with a valid repeat delay
-                        if (repeating && CallbackIsScheduled(callbackId) && repeatDelayMS >= 0 && scheduleRepeatCallback != null)
+                    }
+                    catch (Exception ex)
+                    {
+                        string errorMessage = "Failed to raise callback:  " + ex.Message;
+
+                        _logger.Log(errorMessage, LoggingLevel.Normal, GetType());
+
+                        try
                         {
-                            DateTime nextCallbackTime;
-
-                            // if this repeating callback is allowed to lag, schedule the repeat from the current time.
-                            if (repeatLag)
-                                nextCallbackTime = DateTime.Now.AddMilliseconds(repeatDelayMS);
-                            // otherwise, schedule the repeat from the time at which the current callback was raised.
-                            else
-                                nextCallbackTime = callbackStartTime.AddMilliseconds(repeatDelayMS);
-
-                            scheduleRepeatCallback(nextCallbackTime);
+                            Insights.Report(new Exception(errorMessage), Insights.Severity.Critical);
                         }
-                        else
-                            UnscheduleCallback(callbackId);
+                        catch (Exception)
+                        {
+                        }
                     }
                     finally
                     {

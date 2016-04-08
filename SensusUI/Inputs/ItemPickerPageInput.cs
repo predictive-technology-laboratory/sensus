@@ -249,9 +249,13 @@ namespace SensusUI.Inputs
             }
             else
             {
-                // this should never happen
-                if (Insights.IsInitialized)
+                try
+                {
                     Insights.Report(new Exception("Called ItemPickerPageInput.ValueMatches with conditionValue that is not a List<object>."), Insights.Severity.Critical);
+                }
+                catch (Exception)
+                {
+                }
 
                 return false;
             }

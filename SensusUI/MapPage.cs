@@ -89,7 +89,13 @@ namespace SensusUI
                         }
                         finally
                         {
-                            Insights.Report(ex, Insights.Severity.Warning);
+                            try
+                            {
+                                Insights.Report(ex, Insights.Severity.Warning);
+                            }
+                            catch (Exception)
+                            {
+                            }
                         }
                     }
                 }

@@ -68,6 +68,12 @@ namespace SensusService
         public string Id { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether this <see cref="SensusService.ScheduledCallback"/> is running.
+        /// </summary>
+        /// <value><c>true</c> if running; otherwise, <c>false</c>.</value>
+        public bool Running { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="SensusService.SensusServiceHelper+ScheduledCallback"/> class.
         /// </summary>
         /// <param name="action">Action.</param>
@@ -80,6 +86,7 @@ namespace SensusService
             Name = name;
             CallbackTimeout = callbackTimeout;
             UserNotificationMessage = userNotificationMessage;
+            Running = false;
         }
     }
 }
