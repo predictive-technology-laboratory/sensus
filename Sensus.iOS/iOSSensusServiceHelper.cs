@@ -150,20 +150,22 @@ namespace Sensus.iOS
 
         #region callback scheduling
 
-        protected override void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag, string userNotificationMessage)
+        protected override void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag)
         {
-            ScheduleCallbackAsync(callbackId, initialDelayMS, true, repeatDelayMS, repeatLag, userNotificationMessage);
+            ScheduleCallbackAsync(callbackId, initialDelayMS, true, repeatDelayMS, repeatLag);
         }
 
-        protected override void ScheduleOneTimeCallback(string callbackId, int delayMS, string userNotificationMessage)
+        protected override void ScheduleOneTimeCallback(string callbackId, int delayMS)
         {
-            ScheduleCallbackAsync(callbackId, delayMS, false, -1, false, userNotificationMessage);
+            ScheduleCallbackAsync(callbackId, delayMS, false, -1, false);
         }
 
-        private void ScheduleCallbackAsync(string callbackId, int delayMS, bool repeating, int repeatDelayMS, bool repeatLag, string userNotificationMessage)
+        private void ScheduleCallbackAsync(string callbackId, int delayMS, bool repeating, int repeatDelayMS, bool repeatLag)
         {
             Device.BeginInvokeOnMainThread(() =>
                 {
+                    string userNotificationMessage = GetCallbackUserNotificationMessage(callbackId);
+
                     UILocalNotification notification = new UILocalNotification
                     {
                         FireDate = DateTime.UtcNow.AddMilliseconds((double)delayMS).ToNSDate(),  

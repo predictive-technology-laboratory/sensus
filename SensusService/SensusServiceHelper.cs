@@ -45,51 +45,6 @@ namespace SensusService
     /// </summary>
     public abstract class SensusServiceHelper
     {
-        /// <summary>
-        /// Encapsulates information needed to run a scheduled callback.
-        /// </summary>
-        private class ScheduledCallback
-        {
-            /// <summary>
-            /// Action to invoke.
-            /// </summary>
-            /// <value>The action.</value>
-            public Action<string, CancellationToken> Action { get; set; }
-
-            /// <summary>
-            /// Name of callback.
-            /// </summary>
-            /// <value>The name.</value>
-            public string Name { get; set; }
-
-            /// <summary>
-            /// Source of cancellation tokens when Action is invoked.
-            /// </summary>
-            /// <value>The canceller.</value>
-            public CancellationTokenSource Canceller { get; set; }
-
-            /// <summary>
-            /// Notification message that should be displayed to the user when the callback is invoked.
-            /// </summary>
-            /// <value>The user notification message.</value>
-            public string UserNotificationMessage { get; set; }
-
-            /// <summary>
-            /// Initializes a new instance of the <see cref="SensusService.SensusServiceHelper+ScheduledCallback"/> class.
-            /// </summary>
-            /// <param name="action">Action.</param>
-            /// <param name="name">Name.</param>
-            /// <param name="canceller">Canceller.</param>
-            /// <param name="userNotificationMessage">User notification message.</param>
-            public ScheduledCallback(Action<string, CancellationToken> action, string name, CancellationTokenSource canceller, string userNotificationMessage)
-            {
-                Action = action;
-                Name = name;
-                Canceller = canceller;
-                UserNotificationMessage = userNotificationMessage;
-            }
-        }
-
         #region static members
 
         private static SensusServiceHelper SINGLETON;
@@ -607,9 +562,9 @@ namespace SensusService
 
         protected abstract void InitializeXamarinInsights();
 
-        protected abstract void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag, string userNotificationMessage);
+        protected abstract void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag);
 
-        protected abstract void ScheduleOneTimeCallback(string callbackId, int delayMS, string userNotificationMessage);
+        protected abstract void ScheduleOneTimeCallback(string callbackId, int delayMS);
 
         protected abstract void UnscheduleCallbackPlatformSpecific(string callbackId);
 
@@ -656,7 +611,10 @@ namespace SensusService
                     _runningProtocolIds.Add(id);
 
                 if (_healthTestCallbackId == null)
-                    _healthTestCallbackId = ScheduleRepeatingCallback(TestHealth, "Test Health", HEALTH_TEST_DELAY_MS, HEALTH_TEST_DELAY_MS, HEALTH_TEST_REPEAT_LAG);
+                {
+                    ScheduledCallback callback = new ScheduledCallback(TestHealthAsync, "Test Health", TimeSpan.FromMinutes(1)); 
+                    _healthTestCallbackId = ScheduleRepeatingCallback(callback, HEALTH_TEST_DELAY_MS, HEALTH_TEST_DELAY_MS, HEALTH_TEST_REPEAT_LAG);
+                }
             }
         }
 
@@ -758,33 +716,36 @@ namespace SensusService
 
         #region callback scheduling
 
-        public string ScheduleRepeatingCallback(Action<string, CancellationToken> callback, string name, int initialDelayMS, int repeatDelayMS, bool repeatLag, string userNotificationMessage = null)
+        public string ScheduleRepeatingCallback(ScheduledCallback callback, int initialDelayMS, int repeatDelayMS, bool repeatLag)
         {
             lock (_idCallback)
             {
-                string callbackId = AddCallback(callback, name, userNotificationMessage);
-                ScheduleRepeatingCallback(callbackId, initialDelayMS, repeatDelayMS, repeatLag, userNotificationMessage);
+                string callbackId = AddCallback(callback);
+                ScheduleRepeatingCallback(callbackId, initialDelayMS, repeatDelayMS, repeatLag);
                 return callbackId;
             }
         }
 
-        public string ScheduleOneTimeCallback(Action<string, CancellationToken> callback, string name, int delayMS, string userNotificationMessage = null)
+        public string ScheduleOneTimeCallback(ScheduledCallback callback, int delayMS)
         {
             lock (_idCallback)
             {
-                string callbackId = AddCallback(callback, name, userNotificationMessage);
-                ScheduleOneTimeCallback(callbackId, delayMS, userNotificationMessage);
+                string callbackId = AddCallback(callback);
+                ScheduleOneTimeCallback(callbackId, delayMS);
                 return callbackId;
             }
         }
 
-        private string AddCallback(Action<string, CancellationToken> callback, string name, string userNotificationMessage)
+        private string AddCallback(ScheduledCallback callback)
         {
             lock (_idCallback)
             {
-                string callbackId = Guid.NewGuid().ToString();
-                _idCallback.Add(callbackId, new ScheduledCallback(callback, name, new CancellationTokenSource(), userNotificationMessage));
-                return callbackId;
+                // treat the callback as if it were brand new, even if it might have been previously used (e.g., if it's being reschedueld). set a
+                // new ID and cancellation token.
+                callback.Id = Guid.NewGuid().ToString();
+                callback.Canceller = new CancellationTokenSource();
+                _idCallback.Add(callback.Id, callback);
+                return callback.Id;
             }
         }
 
@@ -792,6 +753,17 @@ namespace SensusService
         {
             lock (_idCallback)
                 return _idCallback.ContainsKey(callbackId);
+        }
+
+        public string GetCallbackUserNotificationMessage(string callbackId)
+        {
+            lock (_idCallback)
+            {
+                if (_idCallback.ContainsKey(callbackId))
+                    return _idCallback[callbackId].UserNotificationMessage;
+                else
+                    return null;
+            }
         }
 
         public string RescheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag)
@@ -802,7 +774,7 @@ namespace SensusService
                 if (_idCallback.TryGetValue(callbackId, out scheduledCallback))
                 {
                     UnscheduleCallback(callbackId);
-                    return ScheduleRepeatingCallback(scheduledCallback.Action, scheduledCallback.Name, initialDelayMS, repeatDelayMS, repeatLag, scheduledCallback.UserNotificationMessage);
+                    return ScheduleRepeatingCallback(scheduledCallback, initialDelayMS, repeatDelayMS, repeatLag);
                 }
                 else
                     return null;
@@ -815,7 +787,7 @@ namespace SensusService
 
             KeepDeviceAwake();  // call this before we start up the new thread, just in case the system decides to sleep before the thread is started.
 
-            new Thread(() =>
+            new Thread(async () =>
                 {
                     try
                     {
@@ -832,7 +804,7 @@ namespace SensusService
                             }
                         }
 
-                        // the same callback action cannot be raise multiple times concurrently. drop the current one if it's already running.
+                        // the same callback action cannot be raised multiple times concurrently. drop the current one if it's already running.
                         if (Monitor.TryEnter(scheduledCallback.Action))
                         {
                             try
@@ -846,7 +818,11 @@ namespace SensusService
                                     if (notifyUser)
                                         IssueNotificationAsync(scheduledCallback.UserNotificationMessage, callbackId);
 
-                                    scheduledCallback.Action(callbackId, scheduledCallback.Canceller.Token);
+                                    // if the callback specified a timeout, request cancellation at the specified time.
+                                    if (scheduledCallback.CallbackTimeout != null)
+                                        scheduledCallback.Canceller.CancelAfter(scheduledCallback.CallbackTimeout.GetValueOrDefault());
+
+                                    await scheduledCallback.Action(callbackId, scheduledCallback.Canceller.Token);
                                 }
                             }
                             catch (Exception ex)
@@ -855,8 +831,9 @@ namespace SensusService
                             }
                             finally
                             {
-                                // if this is a repeating callback, then we'll need to reset the cancellation token source with a new instance, since they cannot be reused. if
-                                // we enter the _idCallback lock before CancelRaisedCallback, then the next raise will be cancelled. if CancelRaisedCallback enters the 
+                                // the cancellation token source for the current callback might have been canceled. if this is a repeating callback then we'll need a new
+                                // cancellation token source because they cannot be reset and we're going to use the same callback again. furthermore, if we enter the 
+                                // _idCallback lock before CancelRaisedCallback does, then the next raise will be cancelled. if CancelRaisedCallback enters the 
                                 // _idCallback lock first, then the cancellation token source will be overwritten here and the cancel will not have any effect. however,
                                 // the latter case is a reasonable outcome, since the purpose of CancelRaisedCallback is to terminate any callbacks that are currently in 
                                 // progress, and the current callback is no longer in progress. if the desired outcome is complete discontinuation of the repeating callback
@@ -1181,21 +1158,24 @@ namespace SensusService
                 });
         }
 
-        public void TestHealth(string callbackId, CancellationToken cancellationToken)
+        public Task TestHealthAsync(string callbackId, CancellationToken cancellationToken)
         {
-            lock (_registeredProtocols)
-            {
-                _logger.Log("Sensus health test is running.", LoggingLevel.Normal, GetType());
-
-                foreach (Protocol protocol in _registeredProtocols)
+            return Task.Run(() =>
                 {
-                    if (cancellationToken.IsCancellationRequested)
-                        break;
+                    lock (_registeredProtocols)
+                    {
+                        _logger.Log("Sensus health test is running on callback " + callbackId + ".", LoggingLevel.Normal, GetType());
+
+                        foreach (Protocol protocol in _registeredProtocols)
+                        {
+                            if (cancellationToken.IsCancellationRequested)
+                                break;
                     
-                    if (_runningProtocolIds.Contains(protocol.Id))
-                        protocol.TestHealth(false);
-                }
-            }
+                            if (_runningProtocolIds.Contains(protocol.Id))
+                                protocol.TestHealth(false);
+                        }
+                    }
+                });
         }
 
         public void UnregisterProtocol(Protocol protocol)

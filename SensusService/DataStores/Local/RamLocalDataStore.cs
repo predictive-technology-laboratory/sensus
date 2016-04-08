@@ -18,6 +18,7 @@ using System.Linq;
 using System;
 using System.Threading;
 using SensusUI.UiProperties;
+using System.Threading.Tasks;
 
 namespace SensusService.DataStores.Local
 {
@@ -27,6 +28,7 @@ namespace SensusService.DataStores.Local
 
         private readonly object _locker = new object();
 
+        [JsonIgnore]
         public override string DisplayName
         {
             get { return "RAM"; }
@@ -53,49 +55,52 @@ namespace SensusService.DataStores.Local
             }
         }
 
-        protected override List<Datum> CommitData(List<Datum> data, CancellationToken cancellationToken)
+        protected override Task<List<Datum>> CommitDataAsync(List<Datum> data, CancellationToken cancellationToken)
         {
-            List<Datum> committed = new List<Datum>();
-
-            lock (_data)
-                foreach (Datum datum in data)
+            return Task.Run(() =>
                 {
-                    if (cancellationToken.IsCancellationRequested)
-                        break;
+                    List<Datum> committed = new List<Datum>();
 
-                    // all locally stored data, whether on disk or in RAM, should be anonymized as required
-                    // by the protocol. convert datum to/from JSON in order to apply anonymization.
-
-                    try
-                    {
-                        string json = datum.GetJSON(Protocol.JsonAnonymizer, false);
-
-                        try
+                    lock (_data)
+                        foreach (Datum datum in data)
                         {
-                            Datum anonymizedDatum = Datum.FromJSON(json);
+                            if (cancellationToken.IsCancellationRequested)
+                                break;
+
+                            // all locally stored data, whether on disk or in RAM, should be anonymized as required
+                            // by the protocol. convert datum to/from JSON in order to apply anonymization.
 
                             try
                             {
-                                _data.Add(anonymizedDatum);
-                                committed.Add(datum);
+                                string json = datum.GetJSON(Protocol.JsonAnonymizer, false);
+
+                                try
+                                {
+                                    Datum anonymizedDatum = Datum.FromJSON(json);
+
+                                    try
+                                    {
+                                        _data.Add(anonymizedDatum);
+                                        committed.Add(datum);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        SensusServiceHelper.Get().Logger.Log("Failed to add anonymized datum to collection:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    SensusServiceHelper.Get().Logger.Log("Failed to get datum from anonymized JSON:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                }
                             }
                             catch (Exception ex)
                             {
-                                SensusServiceHelper.Get().Logger.Log("Failed to add anonymized datum to collection:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                SensusServiceHelper.Get().Logger.Log("Failed to get anonymized JSON from datum:  " + ex.Message, LoggingLevel.Normal, GetType());
                             }
                         }
-                        catch (Exception ex)
-                        {
-                            SensusServiceHelper.Get().Logger.Log("Failed to get datum from anonymized JSON:  " + ex.Message, LoggingLevel.Normal, GetType());
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Failed to get anonymized JSON from datum:  " + ex.Message, LoggingLevel.Normal, GetType());
-                    }
-                }
 
-            return committed;
+                    return committed;
+                });
         }
 
         public override List<Datum> GetDataForRemoteDataStore(CancellationToken cancellationToken, Action<double> progressCallback)

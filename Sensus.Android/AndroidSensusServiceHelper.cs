@@ -531,14 +531,14 @@ namespace Sensus.Android
 
         #region callback scheduling
 
-        protected override void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag, string userNotificationMessage)
+        protected override void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag)
         {            
             DateTime callbackTime = DateTime.Now.AddMilliseconds(initialDelayMS);
             Logger.Log("Callback " + callbackId + " scheduled for " + callbackTime + " (repeating).", LoggingLevel.Normal, GetType());
             ScheduleCallbackAlarm(CreateCallbackIntent(callbackId, true, repeatDelayMS, repeatLag), callbackTime);
         }
 
-        protected override void ScheduleOneTimeCallback(string callbackId, int delayMS, string userNotificationMessage)
+        protected override void ScheduleOneTimeCallback(string callbackId, int delayMS)
         {
             DateTime callbackTime = DateTime.Now.AddMilliseconds(delayMS);
             Logger.Log("Callback " + callbackId + " scheduled for " + callbackTime + " (one-time).", LoggingLevel.Normal, GetType());

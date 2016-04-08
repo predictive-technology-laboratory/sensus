@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using SensusUI.UiProperties;
+using System.Threading.Tasks;
 
 namespace SensusService.DataStores.Local
 {
@@ -67,61 +68,65 @@ namespace SensusService.DataStores.Local
             }
         }
 
-        protected override List<Datum> CommitData(List<Datum> data, CancellationToken cancellationToken)
+        protected override Task<List<Datum>> CommitDataAsync(List<Datum> data, CancellationToken cancellationToken)
         {
-            lock (_locker)
-            {
-                List<Datum> committedData = new List<Datum>();
-
-                using (StreamWriter file = new StreamWriter(_path, true))
+            return Task.Run(() =>
                 {
-                    foreach (Datum datum in data)
+                    lock (_locker)
                     {
-                        if (cancellationToken.IsCancellationRequested)
-                            break;
+                        List<Datum> committedData = new List<Datum>();
+
+                        using (StreamWriter file = new StreamWriter(_path, true))
+                        {
+                            foreach (Datum datum in data)
+                            {
+                                if (cancellationToken.IsCancellationRequested)
+                                    break;
                     
-                        string datumJSON = null;
-                        try
-                        {
-                            datumJSON = datum.GetJSON(Protocol.JsonAnonymizer, false);
-                        }
-                        catch (Exception ex)
-                        {
-                            SensusServiceHelper.Get().Logger.Log("Failed to get JSON for datum:  " + ex.Message, LoggingLevel.Normal, GetType());
-                        }
-
-                        if (datumJSON != null)
-                        {
-                            bool writtenToFile = false;
-                            try
-                            {
-                                file.WriteLine(datumJSON);
-                                writtenToFile = true;
-                            }
-                            catch (Exception ex)
-                            {
-                                SensusServiceHelper.Get().Logger.Log("Failed to write datum JSON to local file:  " + ex.Message, LoggingLevel.Normal, GetType());
-
-                                // something went wrong with file write...switch to a new file in the hope that it will work better
+                                string datumJSON = null;
                                 try
                                 {
-                                    WriteToNewPath();
-                                    SensusServiceHelper.Get().Logger.Log("Initialized new local file.", LoggingLevel.Normal, GetType());
+                                    datumJSON = datum.GetJSON(Protocol.JsonAnonymizer, false);
                                 }
-                                catch (Exception ex2)
+                                catch (Exception ex)
                                 {
-                                    SensusServiceHelper.Get().Logger.Log("Failed to initialize new file after failing to write the old one:  " + ex2.Message, LoggingLevel.Normal, GetType());
+                                    SensusServiceHelper.Get().Logger.Log("Failed to get JSON for datum:  " + ex.Message, LoggingLevel.Normal, GetType());
                                 }
+
+                                if (datumJSON != null)
+                                {
+                                    bool writtenToFile = false;
+                                    try
+                                    {
+                                        file.WriteLine(datumJSON);
+                                        writtenToFile = true;
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        SensusServiceHelper.Get().Logger.Log("Failed to write datum JSON to local file:  " + ex.Message, LoggingLevel.Normal, GetType());
+
+                                        // something went wrong with file write...switch to a new file in the hope that it will work better
+                                        try
+                                        {
+                                            WriteToNewPath();
+                                            SensusServiceHelper.Get().Logger.Log("Initialized new local file.", LoggingLevel.Normal, GetType());
+                                        }
+                                        catch (Exception ex2)
+                                        {
+                                            SensusServiceHelper.Get().Logger.Log("Failed to initialize new file after failing to write the old one:  " + ex2.Message, LoggingLevel.Normal, GetType());
+                                        }
+                                    }
+
+                                    if (writtenToFile)
+                                        committedData.Add(datum);
+                                }                        
                             }
+                        }
 
-                            if (writtenToFile)
-                                committedData.Add(datum);
-                        }                        
+                        return committedData;
+                    
                     }
-                }
-
-                return committedData;
-            }
+                });
         }
 
         public override List<Datum> GetDataForRemoteDataStore(CancellationToken cancellationToken, Action<double> progressCallback)

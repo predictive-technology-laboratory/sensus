@@ -23,6 +23,7 @@ namespace SensusService.DataStores.Remote
 {
     public class ConsoleRemoteDataStore : RemoteDataStore
     {
+        [JsonIgnore]
         public override string DisplayName
         {
             get { return "Console"; }
@@ -34,21 +35,24 @@ namespace SensusService.DataStores.Remote
             get { return false; }
         }
 
-        protected override List<Datum> CommitData(List<Datum> data, CancellationToken cancellationToken)
+        protected override Task<List<Datum>> CommitDataAsync(List<Datum> data, CancellationToken cancellationToken)
         {
-            List<Datum> committedData = new List<Datum>();
+            return Task.Run(() =>
+                {
+                    List<Datum> committedData = new List<Datum>();
 
-            foreach (Datum datum in data)
-            {
-                if (cancellationToken.IsCancellationRequested)
-                    break;
+                    foreach (Datum datum in data)
+                    {
+                        if (cancellationToken.IsCancellationRequested)
+                            break;
                 
-                committedData.Add(datum);
+                        committedData.Add(datum);
 
-                SensusServiceHelper.Get().Logger.Log("Committed datum to remote console:  " + datum, LoggingLevel.Debug, GetType());
-            }
+                        SensusServiceHelper.Get().Logger.Log("Committed datum to remote console:  " + datum, LoggingLevel.Debug, GetType());
+                    }
 
-            return committedData;
+                    return committedData;
+                });
         }
 
         public override Task<T> GetDatum<T>(string datumId, CancellationToken cancellationToken)
