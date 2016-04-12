@@ -332,7 +332,7 @@ namespace SensusService.Probes.User
             _rerunInvalidScripts = false;
             _rerunCallbackId = null;
             _rerunDelayMS = 60000;
-            _maximumAgeMinutes = 1;
+            _maximumAgeMinutes = 10;
             _numScriptsAgedOut = 0;
             _randomTriggerWindows = new List<Tuple<DateTime, DateTime>>();
             _randomTriggerCallbackId = null;
