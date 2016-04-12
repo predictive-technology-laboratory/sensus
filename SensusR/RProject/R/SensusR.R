@@ -179,6 +179,31 @@ read.sensus.json = function(data.path, is.directory = TRUE, recursive = TRUE, co
   return(data)
 }
 
+#' Write data to CSV files.
+#' 
+#' @param data Data to write, as read using \code{\link{read.sensus.json}}.
+#' @param base.path Base for output paths. Will be appended to when forming the full CSV file paths.
+write.csv.files = function(data, base.path = "")
+{
+  for(name in names(data))
+  {
+    write.csv(data[[name]], file = paste(base.path, name, ".csv", sep = ""))
+  }
+}
+
+#' Write data to rdata files.
+#' 
+#' @param data Data to write, as read using \code{\link{read.sensus.json}}.
+#' @param base.path Base for output paths. Will be appended to when forming the full rdata file paths.
+write.rdata.files = function(data, base.path = "")
+{
+  for(name in names(data))
+  {
+    datum = data[[name]]
+    save(datum, file = paste(base.path, name, ".rdata", sep = ""))
+  }
+}
+
 #' Plot accelerometer data.
 #' 
 #' @method plot AccelerometerDatum
