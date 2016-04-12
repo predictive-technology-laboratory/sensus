@@ -132,7 +132,7 @@ namespace SensusService.DataStores
                 // only do this for the remote data store to that we don't get duplicate notifications.
                 #if __IOS__
                 if (this is RemoteDataStore)
-                    userNotificationMessage = "Sensus needs to submit your data for the \"" + Protocol.Name + "\" study. Please open this notification.";
+                    userNotificationMessage = "Sensus needs to submit your data for the \"" + _protocol.Name + "\" study. Please open this notification.";
                 #endif
 
                 ScheduledCallback callback = new ScheduledCallback(CommitAsync, GetType().FullName + " Commit", TimeSpan.FromMinutes(_commitTimeoutMinutes), userNotificationMessage);
@@ -140,32 +140,12 @@ namespace SensusService.DataStores
             }
         }
 
-        public void CommitAsync(CancellationToken cancellationToken, bool flashOnError, Action callback)
-        {
-            new Thread(async () =>
-                {
-                    try
-                    {
-                        await CommitAsync(cancellationToken);
-                    }
-                    catch (Exception ex)
-                    {
-                        if (flashOnError)
-                            SensusServiceHelper.Get().FlashNotificationAsync("Failed to commit data:  " + ex.Message);
-                    }
-
-                    if (callback != null)
-                        callback();
-                    
-                }).Start();
-        }
-
         private Task CommitAsync(string callbackId, CancellationToken cancellationToken)
         {
             return CommitAsync(cancellationToken);
         }
 
-        private Task CommitAsync(CancellationToken cancellationToken)
+        public Task CommitAsync(CancellationToken cancellationToken)
         {
             return Task.Run(async () =>
                 {
@@ -188,7 +168,7 @@ namespace SensusService.DataStores
                             }
                             catch (Exception ex)
                             {
-                                SensusServiceHelper.Get().Logger.Log("Failed to get data to commit:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                SensusServiceHelper.Get().Logger.Log("Failed to get data to commit:  " + ex.Message, LoggingLevel.Normal, GetType(), true);
                             }
 
                             if (dataToCommit != null && !cancellationToken.IsCancellationRequested)
@@ -211,7 +191,7 @@ namespace SensusService.DataStores
                                 }
                                 catch (Exception ex)
                                 {
-                                    SensusServiceHelper.Get().Logger.Log("Failed to commit data:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                    SensusServiceHelper.Get().Logger.Log("Failed to commit data:  " + ex.Message, LoggingLevel.Normal, GetType(), true);
                                 }
 
                                 // don't check cancellation token here, since we've committed data and need to process the results (i.e., remove from probe caches or delete from local data store). if we don't always do this we'll end up committing duplicate data on next commit.
@@ -219,7 +199,7 @@ namespace SensusService.DataStores
                                 {
                                     try
                                     {
-                                        // remove any non-probe data that were committed from the in-memory store
+                                        // remove any non-probe data that were committed from the in-memory store.
                                         lock (_nonProbeDataToCommit)
                                             foreach (Datum datum in committedData)
                                                 _nonProbeDataToCommit.Remove(datum);
@@ -228,22 +208,25 @@ namespace SensusService.DataStores
                                     }
                                     catch (Exception ex)
                                     {
-                                        SensusServiceHelper.Get().Logger.Log("Failed to process committed data:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                        SensusServiceHelper.Get().Logger.Log("Failed to process committed data:  " + ex.Message, LoggingLevel.Normal, GetType(), true);
                                     }
                                 }
                             }
 
                             SensusServiceHelper.Get().Logger.Log("Finished commit in " + (DateTime.Now - commitStartTime).TotalSeconds + " seconds.", LoggingLevel.Normal, GetType());
 
-                            // on ios the user must activate the app in order to save data. give the user some feedback to let them know that the data were stored on the device or remotely.
+                            // on ios the user must activate the app in order to save data. give the user some feedback to let them know that the data were stored remotely.
                             #if __IOS__
-                            if (numDataCommitted != null)
-                                SensusServiceHelper.Get().FlashNotificationAsync("Saved " + numDataCommitted.GetValueOrDefault() + " data " + (this is LocalDataStore ? "on device" : "remotely") + "." + (numDataCommitted.GetValueOrDefault() > 0 ? " Thank you!" : ""));
+                            if (numDataCommitted != null && this is RemoteDataStore)
+                            {
+                                int numDataCommittedValue = numDataCommitted.GetValueOrDefault();
+                                SensusServiceHelper.Get().FlashNotificationAsync("Submitted " + numDataCommittedValue + " data item" + (numDataCommittedValue == 1 ? "" : "s") + " to the \"" + _protocol.Name + "\" study." + (numDataCommittedValue > 0 ? " Thank you!" : ""));
+                            }
                             #endif
                         }
                         catch (Exception ex)
                         {
-                            SensusServiceHelper.Get().Logger.Log("Failed to run Commit:  " + ex.Message, LoggingLevel.Normal, GetType());
+                            SensusServiceHelper.Get().Logger.Log("Commit failed:  " + ex.Message, LoggingLevel.Normal, GetType(), true);
                         }
                     }
                 });

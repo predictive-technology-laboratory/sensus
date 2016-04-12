@@ -27,6 +27,7 @@ namespace SensusService
         private LoggingLevel _level;
         private TextWriter[] _otherOutputs;
         private List<string> _messageBuffer;
+        private Regex _extraWhiteSpace;
 
         public LoggingLevel Level
         {
@@ -40,56 +41,65 @@ namespace SensusService
             _level = level;
             _otherOutputs = otherOutputs;
             _messageBuffer = new List<string>();
+            _extraWhiteSpace = new Regex(@"\s\s+");
         }
 
-        public void Log(string message, LoggingLevel level, Type callingType)
+        public void Log(string message, LoggingLevel level, Type callingType, bool throwException = false)
         {
-            if (level > _level)
-                return;
-
-            // remove newlines and extra white space
-            message = new Regex(@"\s\s+").Replace(message.Replace('\r', ' ').Replace('\n', ' ').Trim(), " ");
-            if (string.IsNullOrWhiteSpace(message))
-                return;
-
-            // add timestamp and type
-            message = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + ":  " + (callingType == null ? "" : "[" + callingType.Name + "] ") + message;
-
-            lock (_messageBuffer)
+            // if we're throwing an exception, use the caller's version of the message instead of our modified version below.
+            Exception ex = null;
+            if (throwException)
+                ex = new Exception(message);
+            
+            if (level <= _level)
             {
-                _messageBuffer.Add(message);
-
-                if (_otherOutputs != null)
-                    foreach (TextWriter otherOutput in _otherOutputs)
-                    {
-                        try
-                        {
-                            otherOutput.WriteLine(message);
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.Error.WriteLine("Failed to write to output:  " + ex.Message);
-                        }
-                    }
-
-                // append buffer to file periodically
-                if (_messageBuffer.Count % 100 == 0)
+                // remove newlines and extra white space, and only log if the result is non-empty
+                message = _extraWhiteSpace.Replace(message.Replace('\r', ' ').Replace('\n', ' ').Trim(), " ");
+                if (!string.IsNullOrWhiteSpace(message))
                 {
-                    try
+                    // add timestamp and calling type type
+                    message = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + ":  " + (callingType == null ? "" : "[" + callingType.Name + "] ") + message;
+
+                    lock (_messageBuffer)
                     {
-                        CommitMessageBuffer();
-                    }
-                    catch (Exception ex)
-                    {
-                        // try switching the log path to a random file, since access violations might prevent us from writing the current _path (e.g., in the case of crashes)
-                        _path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), Guid.NewGuid().ToString() + ".txt");
-                        _messageBuffer.Add("Switched log path to \"" + _path + "\" due to exception:  " + ex.Message);
+                        _messageBuffer.Add(message);
+
+                        if (_otherOutputs != null)
+                            foreach (TextWriter otherOutput in _otherOutputs)
+                            {
+                                try
+                                {
+                                    otherOutput.WriteLine(message);
+                                }
+                                catch (Exception writeException)
+                                {
+                                    Console.Error.WriteLine("Failed to write to output:  " + writeException.Message);
+                                }
+                            }
+
+                        // append buffer to file periodically
+                        if (_messageBuffer.Count % 100 == 0)
+                        {
+                            try
+                            {
+                                CommitMessageBuffer();
+                            }
+                            catch (Exception commitException)
+                            {
+                                // try switching the log path to a random file, since access violations might prevent us from writing the current _path (e.g., in the case of crashes)
+                                _path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), Guid.NewGuid().ToString() + ".txt");
+                                _messageBuffer.Add("Switched log path to \"" + _path + "\" due to exception:  " + commitException.Message);
+                            }
+                        }
                     }
                 }
             }
+
+            if (ex != null)
+                throw ex;
         }
 
-         public void CommitMessageBuffer()
+        public void CommitMessageBuffer()
         {
             lock (_messageBuffer)
             {

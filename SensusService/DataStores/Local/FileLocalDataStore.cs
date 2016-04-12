@@ -124,7 +124,6 @@ namespace SensusService.DataStores.Local
                         }
 
                         return committedData;
-                    
                     }
                 });
         }

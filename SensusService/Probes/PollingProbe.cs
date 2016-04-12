@@ -135,6 +135,7 @@ namespace SensusService.Probes
         protected PollingProbe()
         {
             _pollingSleepDurationMS = DefaultPollingSleepDurationMS;
+            _pollingTimeoutMinutes = 5;
             _isPolling = false;
             _pollCallbackId = null;
             _pollTimes = new List<DateTime>();

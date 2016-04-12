@@ -846,10 +846,10 @@ namespace SensusService
                                 finally
                                 {
                                     // the cancellation token source for the current callback might have been canceled. if this is a repeating callback then we'll need a new
-                                    // cancellation token source because they cannot be reset and we're going to use the same callback again. furthermore, if we enter the 
-                                    // _idCallback lock before CancelRaisedCallback does, then the next raise will be cancelled. if CancelRaisedCallback enters the 
-                                    // _idCallback lock first, then the cancellation token source will be overwritten here and the cancel will not have any effect. however,
-                                    // the latter case is a reasonable outcome, since the purpose of CancelRaisedCallback is to terminate any callbacks that are currently in 
+                                    // cancellation token source because they cannot be reset and we're going to use the same scheduled callback again for the next repeat. 
+                                    // if we enter the _idCallback lock before CancelRaisedCallback does, then the next raise will be cancelled. if CancelRaisedCallback enters the 
+                                    // _idCallback lock first, then the cancellation token source will be overwritten here and the cancel will not have any effect on the next 
+                                    // raise. the latter case is a reasonable outcome, since the purpose of CancelRaisedCallback is to terminate a callback that is currently in 
                                     // progress, and the current callback is no longer in progress. if the desired outcome is complete discontinuation of the repeating callback
                                     // then UnscheduleRepeatingCallback should be used -- this method first cancels any raised callbacks and then removes the callback entirely.
                                     try
@@ -867,7 +867,7 @@ namespace SensusService
                                     }
                                     finally
                                     {
-                                        // if we marked the callback as running, always ensure that we unmark it (note we're nested within two finally blocks so
+                                        // if we marked the callback as running, ensure that we unmark it (note we're nested within two finally blocks so
                                         // this will always execute). this will allow others to run the callback.
                                         lock (scheduledCallback)
                                         {
