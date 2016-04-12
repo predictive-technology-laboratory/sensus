@@ -42,6 +42,12 @@ namespace SensusService.Anonymization
             get { return _defaultAnonymizer; }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SensusService.Anonymization.Anonymizable"/> class.
+        /// </summary>
+        /// <param name="propertyDisplayName">Property display name.</param>
+        /// <param name="availableAnonymizerTypes">Available anonymizer types.</param>
+        /// <param name="defaultAnonymizerIndex">Default anonymizer index. Pass -1 for no anonymization.</param>
         public Anonymizable(string propertyDisplayName, Type[] availableAnonymizerTypes, int defaultAnonymizerIndex)
         {                       
             _propertyDisplayName = propertyDisplayName;

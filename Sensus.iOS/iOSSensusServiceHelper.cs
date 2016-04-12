@@ -150,20 +150,22 @@ namespace Sensus.iOS
 
         #region callback scheduling
 
-        protected override void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag, string userNotificationMessage)
+        protected override void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag)
         {
-            ScheduleCallbackAsync(callbackId, initialDelayMS, true, repeatDelayMS, repeatLag, userNotificationMessage);
+            ScheduleCallbackAsync(callbackId, initialDelayMS, true, repeatDelayMS, repeatLag);
         }
 
-        protected override void ScheduleOneTimeCallback(string callbackId, int delayMS, string userNotificationMessage)
+        protected override void ScheduleOneTimeCallback(string callbackId, int delayMS)
         {
-            ScheduleCallbackAsync(callbackId, delayMS, false, -1, false, userNotificationMessage);
+            ScheduleCallbackAsync(callbackId, delayMS, false, -1, false);
         }
 
-        private void ScheduleCallbackAsync(string callbackId, int delayMS, bool repeating, int repeatDelayMS, bool repeatLag, string userNotificationMessage)
+        private void ScheduleCallbackAsync(string callbackId, int delayMS, bool repeating, int repeatDelayMS, bool repeatLag)
         {
             Device.BeginInvokeOnMainThread(() =>
                 {
+                    string userNotificationMessage = GetCallbackUserNotificationMessage(callbackId);
+
                     UILocalNotification notification = new UILocalNotification
                     {
                         FireDate = DateTime.UtcNow.AddMilliseconds((double)delayMS).ToNSDate(),  
@@ -209,7 +211,7 @@ namespace Sensus.iOS
             lock (_callbackIdNotification)
                 _callbackIdNotification.Remove(callbackId);                                                
 
-            nint taskId = UIApplication.SharedApplication.BeginBackgroundTask(() =>
+            nint callbackTaskId = UIApplication.SharedApplication.BeginBackgroundTask(() =>
                 {
                     // if we're out of time running in the background, cancel the callback.
                     CancelRaisedCallback(callbackId);
@@ -219,7 +221,7 @@ namespace Sensus.iOS
             int repeatDelayMS = (callbackNotification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_DELAY)) as NSNumber).Int32Value;
             bool repeatLag = (callbackNotification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_LAG_KEY)) as NSNumber).BoolValue;
 
-            // raise callback but don't notify user since we would have already done so when the UILocalNotification was delivered.
+            // raise callback but don't notify user since we would have already done so when the UILocalNotification was delivered to the notification tray.
             RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, false, repeatCallbackTime =>
                 {
                     Device.BeginInvokeOnMainThread(() =>
@@ -237,7 +239,7 @@ namespace Sensus.iOS
                     Device.BeginInvokeOnMainThread(() =>
                         {
                             // notification has been serviced, so end background task
-                            UIApplication.SharedApplication.EndBackgroundTask(taskId);
+                            UIApplication.SharedApplication.EndBackgroundTask(callbackTaskId);
                         });
                 });   
         }

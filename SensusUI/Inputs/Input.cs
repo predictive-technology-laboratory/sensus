@@ -423,8 +423,13 @@ namespace SensusUI.Inputs
             else
             {
                 // this should never happen
-                if (Insights.IsInitialized)
+                try
+                {
                     Insights.Report(new Exception("Called Input.ValueMatches with conditionValue of type " + conditionValue.GetType() + ". Comparing with value of type " + Value.GetType() + "."), Insights.Severity.Critical);
+                }
+                catch (Exception)
+                {
+                }
 
                 return false;
             }

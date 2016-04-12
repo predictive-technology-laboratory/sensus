@@ -354,7 +354,14 @@ namespace Sensus.Android
                         }
                         catch (Exception ex)
                         {
-                            Insights.Report(ex, Insights.Severity.Error);
+                            try
+                            {
+                                Insights.Report(ex, Insights.Severity.Error);
+                            }
+                            catch (Exception)
+                            {
+                            }
+
                             _activityResultWait.Set();
                         }
 

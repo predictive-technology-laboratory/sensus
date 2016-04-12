@@ -196,28 +196,37 @@ namespace SensusUI
                         null,
                         null,
                         false,
-                        () =>
+                        async () =>
                         {
                             // add participation reward datum to remote data store and commit immediately
                             ParticipationRewardDatum participationRewardDatum = new ParticipationRewardDatum(DateTimeOffset.UtcNow, selectedProtocol.Participation);
                             selectedProtocol.RemoteDataStore.AddNonProbeDatum(participationRewardDatum);
-                            selectedProtocol.RemoteDataStore.CommitAsync(cancellationTokenSource.Token, true, async () =>
+
+                            bool commitFailed;
+
+                            try
+                            {
+                                await selectedProtocol.RemoteDataStore.CommitAsync(cancellationTokenSource.Token);
+
+                                // we should not have any remaining non-probe data
+                                commitFailed = selectedProtocol.RemoteDataStore.HasNonProbeDatumToCommit(participationRewardDatum.Id);
+                            }
+                            catch (Exception)
+                            {
+                                commitFailed = true;
+                            }
+
+                            if (commitFailed)
+                                SensusServiceHelper.Get().FlashNotificationAsync("Failed to submit participation information to remote server. You will not be able to verify your participation at this time.");
+
+                            // cancel the token to close the input above, but only if the token hasn't already been canceled.
+                            if (!cancellationTokenSource.IsCancellationRequested)
+                                cancellationTokenSource.Cancel();
+
+                            Device.BeginInvokeOnMainThread(async() =>
                                 {
-                                    // we should not have any remaining non-probe data
-                                    bool commitFailed = selectedProtocol.RemoteDataStore.HasNonProbeDatumToCommit(participationRewardDatum.Id);
-
-                                    if (commitFailed)
-                                        SensusServiceHelper.Get().FlashNotificationAsync("Failed to submit participation information to remote server. You will not be able to verify your participation at this time.");
-
-                                    // cancel the token to close the input above, but only if the token hasn't already been canceled.
-                                    if (!cancellationTokenSource.IsCancellationRequested)
-                                        cancellationTokenSource.Cancel();
-
-                                    Device.BeginInvokeOnMainThread(async() =>
-                                        {
-                                            // only show the QR code for the reward datum if the datum was committed to the remote data store
-                                            await Navigation.PushAsync(new ParticipationReportPage(selectedProtocol, commitFailed ? null : participationRewardDatum));
-                                        });
+                                    // only show the QR code for the reward datum if the datum was committed to the remote data store
+                                    await Navigation.PushAsync(new ParticipationReportPage(selectedProtocol, commitFailed ? null : participationRewardDatum));
                                 });
                         },
                         inputs =>

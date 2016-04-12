@@ -1005,14 +1005,7 @@ namespace SensusService
                 });
         }
 
-        public void TestHealthAsync(bool userInitiated)
-        {
-            TestHealthAsync(userInitiated, () =>
-                {
-                });
-        }
-
-        public void TestHealthAsync(bool userInitiated, Action callback)
+        public void TestHealthAsync(bool userInitiated, Action callback = null)
         {
             new Thread(() =>
                 {

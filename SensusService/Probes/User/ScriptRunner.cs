@@ -21,6 +21,7 @@ using System.Collections.Specialized;
 using System.Threading;
 using System.Linq;
 using SensusUI.Inputs;
+using System.Threading.Tasks;
 
 namespace SensusService.Probes.User
 {
@@ -331,7 +332,7 @@ namespace SensusService.Probes.User
             _rerunInvalidScripts = false;
             _rerunCallbackId = null;
             _rerunDelayMS = 60000;
-            _maximumAgeMinutes = 1;
+            _maximumAgeMinutes = 10;
             _numScriptsAgedOut = 0;
             _randomTriggerWindows = new List<Tuple<DateTime, DateTime>>();
             _randomTriggerCallbackId = null;
@@ -388,7 +389,8 @@ namespace SensusService.Probes.User
                                 }
                             }
 
-                            // if the trigger fires for the current value, run a copy of the script so that we can retain a pristine version of the original.
+                            // if the trigger fires for the current value, run a copy of the script so that we can retain a pristine version of the original. use
+                            // the async version of run to ensure that we are not on the UI thread.
                             if (trigger.FireFor(currentDatumValue))
                                 RunAsync(_script.Copy(), previousDatum, currentDatum);
                         };
@@ -429,6 +431,9 @@ namespace SensusService.Probes.User
             if (_randomTriggerWindows.Count > 0)
                 StartRandomTriggerCallbacksAsync();
 
+            // use the async version below for a couple reasons. first, we're in a non-async method and we want to ensure
+            // that the script won't be running on the UI thread. second, from the caller's perspective the prompt should 
+            // not need to finish running in order for the runner to be considered started.
             if (_runOnStart)
                 RunAsync(_script.Copy());
         }
@@ -443,29 +448,34 @@ namespace SensusService.Probes.User
 
                         SensusServiceHelper.Get().Logger.Log("Starting rerun callbacks.", LoggingLevel.Normal, GetType());
 
-                        _rerunCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback((callbackId, cancellationToken) =>
+                        ScheduledCallback callback = new ScheduledCallback((callbackId, cancellationToken) =>
                             {
-                                if (_probe.Running && _enabled && _rerunInvalidScripts)
-                                {
-                                    Script scriptToRerun = null;
-                                    lock (_invalidScripts)
-                                        while (scriptToRerun == null && _invalidScripts.Count > 0)
+                                return Task.Run(() =>
+                                    {
+                                        if (_probe.Running && _enabled && _rerunInvalidScripts)
                                         {
-                                            scriptToRerun = _invalidScripts.Dequeue();                     
-                                            if (scriptToRerun.Age.TotalMinutes > _maximumAgeMinutes)
-                                            {
-                                                SensusServiceHelper.Get().Logger.Log("Script \"" + _name + "\" has aged out.", LoggingLevel.Normal, GetType());
-                                                scriptToRerun = null;
-                                                ++_numScriptsAgedOut;
-                                            }
+                                            Script scriptToRerun = null;
+                                            lock (_invalidScripts)
+                                                while (scriptToRerun == null && _invalidScripts.Count > 0)
+                                                {
+                                                    scriptToRerun = _invalidScripts.Dequeue();                     
+                                                    if (scriptToRerun.Age.TotalMinutes > _maximumAgeMinutes)
+                                                    {
+                                                        SensusServiceHelper.Get().Logger.Log("Script \"" + _name + "\" has aged out.", LoggingLevel.Normal, GetType());
+                                                        scriptToRerun = null;
+                                                        ++_numScriptsAgedOut;
+                                                    }
+                                                }
+
+                                            // we don't need to copy the script, since we're already working with a copy of the original.
+                                            if (scriptToRerun != null)
+                                                Run(scriptToRerun);
                                         }
+                                    });
 
-                                    // we don't need to copy the script, since we're already working with a copy of the original.
-                                    if (scriptToRerun != null)
-                                        RunAsync(scriptToRerun);
-                                }
-
-                            }, "Rerun Script", _rerunDelayMS, _rerunDelayMS, RERUN_CALLBACK_LAG);  // no user notification message, since there might not be any scripts to rerun
+                            }, "Rerun Script", null); // no user notification message, since there might not be any scripts to rerun
+                        
+                        _rerunCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(callback, _rerunDelayMS, _rerunDelayMS, RERUN_CALLBACK_LAG);
                     }
 
                 }).Start();
@@ -475,172 +485,197 @@ namespace SensusService.Probes.User
         {                        
             new Thread(() =>
                 {
-                    lock (_locker)
+                    StartRandomTriggerCallbacks();
+
+                }).Start();
+        }
+
+        private void StartRandomTriggerCallbacks()
+        {
+            lock (_locker)
+            {
+                if (_randomTriggerWindows.Count == 0)
+                    return;
+
+                StopRandomTriggerCallbacks();
+
+                SensusServiceHelper.Get().Logger.Log("Starting random script trigger callbacks.", LoggingLevel.Normal, GetType());
+
+                #if __IOS__
+                string userNotificationMessage = "Please open to provide input.";
+                #elif __ANDROID__
+                string userNotificationMessage = null;
+                #elif WINDOWS_PHONE
+                string userNotificationMessage = null; // TODO:  Should we use a message?
+                #else
+                #error "Unrecognized platform."
+                #endif
+
+                // find next future trigger window, ignoring month, day, and year of windows. the windows are already sorted.
+                DateTime triggerWindowStart = default(DateTime);
+                DateTime triggerWindowEnd = default(DateTime);
+                DateTime now = DateTime.Now;
+                bool foundTriggerWindow = false;
+                foreach (Tuple<DateTime, DateTime> randomTriggerWindow in _randomTriggerWindows)
+                {
+                    if (randomTriggerWindow.Item1.Hour > now.Hour || (randomTriggerWindow.Item1.Hour == now.Hour && randomTriggerWindow.Item1.Minute > now.Minute))
                     {
-                        if (_randomTriggerWindows.Count == 0)
-                            return;
-                        
-                        StopRandomTriggerCallbacks();
+                        triggerWindowStart = new DateTime(now.Year, now.Month, now.Day, randomTriggerWindow.Item1.Hour, randomTriggerWindow.Item1.Minute, 0);
+                        triggerWindowEnd = new DateTime(now.Year, now.Month, now.Day, randomTriggerWindow.Item2.Hour, randomTriggerWindow.Item2.Minute, 0);
+                        foundTriggerWindow = true;
+                        break;
+                    }
+                }
 
-                        SensusServiceHelper.Get().Logger.Log("Starting random script trigger callbacks.", LoggingLevel.Normal, GetType());
+                // if there were no future trigger windows, skip to the next day and use the first trigger window
+                if (!foundTriggerWindow)
+                {
+                    Tuple<DateTime, DateTime> firstRandomTriggerWindow = _randomTriggerWindows.First();
+                    triggerWindowStart = new DateTime(now.Year, now.Month, now.Day, firstRandomTriggerWindow.Item1.Hour, firstRandomTriggerWindow.Item1.Minute, 0).AddDays(1);
+                    triggerWindowEnd = new DateTime(now.Year, now.Month, now.Day, firstRandomTriggerWindow.Item2.Hour, firstRandomTriggerWindow.Item2.Minute, 0).AddDays(1);
+                }
 
-                        #if __IOS__
-                        string userNotificationMessage = "Please open to provide input.";
-                        #elif __ANDROID__
-                        string userNotificationMessage = null;
-                        #elif WINDOWS_PHONE
-                        string userNotificationMessage = null; // TODO:  Should we use a message?
-                        #else
-                        #error "Unrecognized platform."
-                        #endif
+                // schedule callback for random offset into trigger window
+                DateTime triggerTime = triggerWindowStart.AddSeconds(_random.NextDouble() * (triggerWindowEnd - triggerWindowStart).TotalSeconds);
+                int triggerDelayMS = (int)(triggerTime - now).TotalMilliseconds;
 
-                        // find next future trigger window, ignoring month, day, and year of windows. the windows are already sorted.
-                        DateTime triggerWindowStart = default(DateTime);
-                        DateTime triggerWindowEnd = default(DateTime);
-                        DateTime now = DateTime.Now;
-                        bool foundTriggerWindow = false;
-                        foreach (Tuple<DateTime, DateTime> randomTriggerWindow in _randomTriggerWindows)
-                        {
-                            if (randomTriggerWindow.Item1.Hour > now.Hour || (randomTriggerWindow.Item1.Hour == now.Hour && randomTriggerWindow.Item1.Minute > now.Minute))
-                            {
-                                triggerWindowStart = new DateTime(now.Year, now.Month, now.Day, randomTriggerWindow.Item1.Hour, randomTriggerWindow.Item1.Minute, 0);
-                                triggerWindowEnd = new DateTime(now.Year, now.Month, now.Day, randomTriggerWindow.Item2.Hour, randomTriggerWindow.Item2.Minute, 0);
-                                foundTriggerWindow = true;
-                                break;
-                            }
-                        }
-
-                        // if there were no future trigger windows, skip to the next day and use the first trigger window
-                        if (!foundTriggerWindow)
-                        {
-                            Tuple<DateTime, DateTime> firstRandomTriggerWindow = _randomTriggerWindows.First();
-                            triggerWindowStart = new DateTime(now.Year, now.Month, now.Day, firstRandomTriggerWindow.Item1.Hour, firstRandomTriggerWindow.Item1.Minute, 0).AddDays(1);
-                            triggerWindowEnd = new DateTime(now.Year, now.Month, now.Day, firstRandomTriggerWindow.Item2.Hour, firstRandomTriggerWindow.Item2.Minute, 0).AddDays(1);
-                        }
-
-                        // schedule callback for random offset into trigger window
-                        DateTime triggerTime = triggerWindowStart.AddSeconds(_random.NextDouble() * (triggerWindowEnd - triggerWindowStart).TotalSeconds);
-                        int triggerDelayMS = (int)(triggerTime - now).TotalMilliseconds;
-
-                        _randomTriggerCallbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback((callbackId, cancellationToken) =>
+                ScheduledCallback callback = new ScheduledCallback((callbackId, cancellationToken) =>
+                    {
+                        return Task.Run(() =>
                             {
                                 // if the probe is still running and the runner is enabled, run a copy of the script so that we can retain a pristine version of the original.
                                 if (_probe.Running && _enabled)
-                                    RunAsync(_script.Copy(), callback: StartRandomTriggerCallbacksAsync);
-                            }     
+                                {
+                                    Run(_script.Copy());
 
-                        , "Trigger Randomly", triggerDelayMS, userNotificationMessage);
-                    }
+                                    // establish the next random trigger callback
+                                    StartRandomTriggerCallbacks();
+                                }
+                            });
 
-                }).Start();
+                    }, "Trigger Randomly", null, userNotificationMessage);
+
+                _randomTriggerCallbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(callback, triggerDelayMS);
+            }
         }
 
         private void RunAsync(Script script, Datum previousDatum = null, Datum currentDatum = null, Action callback = null)
         {
             new Thread(() =>
                 {
-                    if (script.PresentationTimestamp == null)
-                        script.PresentationTimestamp = DateTimeOffset.UtcNow;
-
-                    bool isRerun = script.FirstRunTimestamp != DateTimeOffset.MinValue;
-
-                    lock (_runTimes)
-                    {
-                        if (_oneShot)
-                        {
-                            // run one-shot only if the script runner has never been run, or if it has been run but this is a rerun -- the latter will only happen if the first-run script is being rerun.
-                            bool runOneShot = _runTimes.Count == 0 || isRerun;
-
-                            if (!runOneShot)
-                            {
-                                SensusServiceHelper.Get().Logger.Log("Not running one-shot script multiple times.", LoggingLevel.Normal, GetType());
-                                return;
-                            }
-                        }
-
-                        // if this is the first run, set the timestamp.
-                        if (!isRerun)
-                        {
-                            script.FirstRunTimestamp = DateTimeOffset.UtcNow;
-
-                            // add run time and remove all run times before the participation horizon
-                            _runTimes.Add(DateTime.Now);
-                            _runTimes.RemoveAll(runTime => runTime < _probe.Protocol.ParticipationHorizon);
-                        }
-                    }
-
-                    SensusServiceHelper.Get().Logger.Log("Running \"" + _name + "\".", LoggingLevel.Normal, GetType());
-
-                    // this method can be called with previous / current datum values (e.g., when the script is first triggered). it 
-                    // can also be called without previous / current datum values (e.g., when triggering randomly or rerunning). if
-                    // we have such values, set them on the script.
-
-                    if (previousDatum != null)
-                        script.PreviousDatum = previousDatum;
-
-                    if (currentDatum != null)
-                        script.CurrentDatum = currentDatum;
-
-                    ManualResetEvent inputWait = new ManualResetEvent(false);
-
-                    // do not pass cancellation token to prompt. on ios this leads to the prompt being canceled after the app enters background for more than its allotted
-                    // time. once this happens any actions reached by the callback that is passed to the current method are dangerous because the app will then be backgrounded
-                    // and deactivated. it's okay for the prompt to have no cancellation token. the prompt page will simply stay up indefinitely waiting for user input.
-                    SensusServiceHelper.Get().PromptForInputsAsync(isRerun, script.FirstRunTimestamp, script.InputGroups, null, _allowCancel, null, "You will not receive credit for your responses if you cancel. Do you want to cancel?", "You have not completed all required fields. You will not receive credit for your responses if you continue. Do you want to continue?", "Are you ready to submit your responses?", _displayProgress, null, inputGroups =>
-                        {            
-                            bool canceled = inputGroups == null;
-
-                            // process all inputs in the script
-                            foreach (InputGroup inputGroup in script.InputGroups)
-                                foreach (Input input in inputGroup.Inputs)
-                                {
-                                    // only consider inputs that still need to be stored. if an input has already been stored, it should be ignored.
-                                    if (input.NeedsToBeStored)
-                                    {
-                                        // if the user canceled the prompts, reset the input. we reset here within the above if-check because if an
-                                        // input has already been stored we should not reset it. its value and read-only status are fixed for all 
-                                        // time, even if the prompts are later redisplayed by the invalid script handler.
-                                        if (canceled)
-                                            input.Reset();
-                                        else if (input.Valid && input.Display)  // store all inputs that are valid and displayed. some might be valid from previous responses but not displayed because the user navigated back through the survey and changed a previous response that caused a subsesequently displayed input to be hidden via display contingencies.
-                                        {
-                                            // the _script.Id allows us to link the data to the script that the user created. it never changes. on the other hand, the script
-                                            // that is passed into this method is always a copy of the user-created script. the script.Id allows us to link the various data
-                                            // collected from the user into a single logical response. each run of the script has its own script.Id so that responses can be
-                                            // grouped across runs. this is the difference between scriptId and runId in the following line.
-                                            _probe.StoreDatum(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow), _script.Id, input.GroupId, input.Id, script.Id, input.Value, script.CurrentDatum == null ? null : script.CurrentDatum.Id, input.Latitude, input.Longitude, script.PresentationTimestamp.GetValueOrDefault(), input.LocationUpdateTimestamp, input.CompletionRecords));
-
-                                            // once inputs are stored, they should not be stored again, nor should the user be able to modify them if the script is rerun.
-                                            input.NeedsToBeStored = false;
-                                            Xamarin.Forms.Device.BeginInvokeOnMainThread(() => input.Enabled = false);
-                                        }
-                                    }
-                                }
-
-                            inputWait.Set();
-                        });
-
-                    inputWait.WaitOne();
-
-                    SensusServiceHelper.Get().Logger.Log("\"" + _name + "\" has finished running.", LoggingLevel.Normal, typeof(Script));
-
-                    if (script.Valid)
-                    {
-                        // add completion time and remove all completion times before the participation horizon
-                        lock (_completionTimes)
-                        {
-                            _completionTimes.Add(DateTime.Now);
-                            _completionTimes.RemoveAll(completionTime => completionTime < _probe.Protocol.ParticipationHorizon);
-                        }
-                    }
-                    else if (_rerunInvalidScripts)
-                        lock (_invalidScripts)
-                            _invalidScripts.Enqueue(script);
+                    Run(script, previousDatum, currentDatum);
 
                     if (callback != null)
                         callback();
 
                 }).Start();
+        }
+
+        /// <summary>
+        /// Run the specified script. Will block the caller's thread while waiting for input, so be sure not to call this from the UI thread.
+        /// </summary>
+        /// <param name="script">Script.</param>
+        /// <param name="previousDatum">Previous datum.</param>
+        /// <param name="currentDatum">Current datum.</param>
+        private void Run(Script script, Datum previousDatum = null, Datum currentDatum = null)
+        {
+            if (script.PresentationTimestamp == null)
+                script.PresentationTimestamp = DateTimeOffset.UtcNow;
+
+            bool isRerun = script.FirstRunTimestamp != DateTimeOffset.MinValue;
+
+            lock (_runTimes)
+            {
+                if (_oneShot)
+                {
+                    // run one-shot only if the script runner has never been run, or if it has been run but this is a rerun -- the latter will only happen if the first-run script is being rerun.
+                    bool runOneShot = _runTimes.Count == 0 || isRerun;
+
+                    if (!runOneShot)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Not running one-shot script multiple times.", LoggingLevel.Normal, GetType());
+                        return;
+                    }
+                }
+
+                // if this is the first run, set the timestamp.
+                if (!isRerun)
+                {
+                    script.FirstRunTimestamp = DateTimeOffset.UtcNow;
+
+                    // add run time and remove all run times before the participation horizon
+                    _runTimes.Add(DateTime.Now);
+                    _runTimes.RemoveAll(runTime => runTime < _probe.Protocol.ParticipationHorizon);
+                }
+            }
+
+            SensusServiceHelper.Get().Logger.Log("Running \"" + _name + "\".", LoggingLevel.Normal, GetType());
+
+            // this method can be called with previous / current datum values (e.g., when the script is first triggered). it 
+            // can also be called without previous / current datum values (e.g., when triggering randomly or rerunning). if
+            // we have such values, set them on the script.
+
+            if (previousDatum != null)
+                script.PreviousDatum = previousDatum;
+
+            if (currentDatum != null)
+                script.CurrentDatum = currentDatum;
+
+            ManualResetEvent inputWait = new ManualResetEvent(false);
+
+            // do not pass cancellation token to prompt. on ios this leads to the prompt being canceled after the app enters background for more than its allotted
+            // time. once this happens any actions reached by the callback that is passed to the current method are dangerous because the app will then be backgrounded
+            // and deactivated. it's okay for the prompt to have no cancellation token. the prompt page will simply stay up indefinitely waiting for user input.
+            SensusServiceHelper.Get().PromptForInputsAsync(isRerun, script.FirstRunTimestamp, script.InputGroups, null, _allowCancel, null, "You will not receive credit for your responses if you cancel. Do you want to cancel?", "You have not completed all required fields. You will not receive credit for your responses if you continue. Do you want to continue?", "Are you ready to submit your responses?", _displayProgress, null, inputGroups =>
+                {            
+                    bool canceled = inputGroups == null;
+
+                    // process all inputs in the script
+                    foreach (InputGroup inputGroup in script.InputGroups)
+                        foreach (Input input in inputGroup.Inputs)
+                        {
+                            // only consider inputs that still need to be stored. if an input has already been stored, it should be ignored.
+                            if (input.NeedsToBeStored)
+                            {
+                                // if the user canceled the prompts, reset the input. we reset here within the above if-check because if an
+                                // input has already been stored we should not reset it. its value and read-only status are fixed for all 
+                                // time, even if the prompts are later redisplayed by the invalid script handler.
+                                if (canceled)
+                                    input.Reset();
+                                else if (input.Valid && input.Display)  // store all inputs that are valid and displayed. some might be valid from previous responses but not displayed because the user navigated back through the survey and changed a previous response that caused a subsesequently displayed input to be hidden via display contingencies.
+                                {
+                                    // the _script.Id allows us to link the data to the script that the user created. it never changes. on the other hand, the script
+                                    // that is passed into this method is always a copy of the user-created script. the script.Id allows us to link the various data
+                                    // collected from the user into a single logical response. each run of the script has its own script.Id so that responses can be
+                                    // grouped across runs. this is the difference between scriptId and runId in the following line.
+                                    _probe.StoreDatum(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow), _script.Id, input.GroupId, input.Id, script.Id, input.Value, script.CurrentDatum == null ? null : script.CurrentDatum.Id, input.Latitude, input.Longitude, script.PresentationTimestamp.GetValueOrDefault(), input.LocationUpdateTimestamp, input.CompletionRecords));
+
+                                    // once inputs are stored, they should not be stored again, nor should the user be able to modify them if the script is rerun.
+                                    input.NeedsToBeStored = false;
+                                    Xamarin.Forms.Device.BeginInvokeOnMainThread(() => input.Enabled = false);
+                                }
+                            }
+                        }
+
+                    inputWait.Set();
+                });
+
+            inputWait.WaitOne();
+
+            SensusServiceHelper.Get().Logger.Log("\"" + _name + "\" has finished running.", LoggingLevel.Normal, typeof(Script));
+
+            if (script.Valid)
+            {
+                // add completion time and remove all completion times before the participation horizon
+                lock (_completionTimes)
+                {
+                    _completionTimes.Add(DateTime.Now);
+                    _completionTimes.RemoveAll(completionTime => completionTime < _probe.Protocol.ParticipationHorizon);
+                }
+            }
+            else if (_rerunInvalidScripts)
+                lock (_invalidScripts)
+                    _invalidScripts.Enqueue(script);
         }
 
         public bool TestHealth(ref string error, ref string warning, ref string misc)

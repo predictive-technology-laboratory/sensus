@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Newtonsoft.Json;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace SensusService.Probes
 {
@@ -29,6 +30,7 @@ namespace SensusService.Probes
         private const bool POLL_CALLBACK_LAG = false;
 
         private int _pollingSleepDurationMS;
+        private int _pollingTimeoutMinutes;
         private bool _isPolling;
         private string _pollCallbackId;
         private List<DateTime> _pollTimes;
@@ -51,6 +53,22 @@ namespace SensusService.Probes
                     if (_pollCallbackId != null)
                         _pollCallbackId = SensusServiceHelper.Get().RescheduleRepeatingCallback(_pollCallbackId, _pollingSleepDurationMS, _pollingSleepDurationMS, POLL_CALLBACK_LAG);
                 }
+            }
+        }
+
+        [EntryIntegerUiProperty("Timeout (Mins.):", true, 6)]
+        public int PollingTimeoutMinutes
+        {
+            get
+            {
+                return _pollingTimeoutMinutes;
+            }
+            set
+            {
+                if (value < 1)
+                    value = 1;
+                
+                _pollingTimeoutMinutes = value;
             }
         }
 
@@ -117,6 +135,7 @@ namespace SensusService.Probes
         protected PollingProbe()
         {
             _pollingSleepDurationMS = DefaultPollingSleepDurationMS;
+            _pollingTimeoutMinutes = 5;
             _isPolling = false;
             _pollCallbackId = null;
             _pollTimes = new List<DateTime>();
@@ -138,44 +157,50 @@ namespace SensusService.Probes
                 #error "Unrecognized platform."
                 #endif
 
-                _pollCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback((callbackId, cancellationToken) =>
+                ScheduledCallback callback = new ScheduledCallback((callbackId, cancellationToken) =>
                     {
-                        if (Running)
-                        {
-                            _isPolling = true;
-
-                            IEnumerable<Datum> data = null;
-                            try
+                        return Task.Run(() =>
                             {
-                                SensusServiceHelper.Get().Logger.Log("Polling.", LoggingLevel.Normal, GetType());
-                                data = Poll(cancellationToken);
-                                _pollTimes.Add(DateTime.Now);
-                                _pollTimes.RemoveAll(pollTime => pollTime < Protocol.ParticipationHorizon);
-                            }
-                            catch (Exception ex)
-                            {
-                                SensusServiceHelper.Get().Logger.Log("Failed to poll:  " + ex.Message, LoggingLevel.Normal, GetType());
-                            }
-
-                            if (data != null)
-                                foreach (Datum datum in data)
+                                if (Running)
                                 {
-                                    if (cancellationToken.IsCancellationRequested)
-                                        break;
-                                    
+                                    _isPolling = true;
+
+                                    IEnumerable<Datum> data = null;
                                     try
                                     {
-                                        StoreDatum(datum);
+                                        SensusServiceHelper.Get().Logger.Log("Polling.", LoggingLevel.Normal, GetType());
+                                        data = Poll(cancellationToken);
+                                        _pollTimes.Add(DateTime.Now);
+                                        _pollTimes.RemoveAll(pollTime => pollTime < Protocol.ParticipationHorizon);
                                     }
                                     catch (Exception ex)
                                     {
-                                        SensusServiceHelper.Get().Logger.Log("Failed to store datum:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                        SensusServiceHelper.Get().Logger.Log("Failed to poll:  " + ex.Message, LoggingLevel.Normal, GetType());
                                     }
-                                }
 
-                            _isPolling = false;
-                        }
-                    }, GetType().FullName + " Poll", 0, _pollingSleepDurationMS, POLL_CALLBACK_LAG, userNotificationMessage);
+                                    if (data != null)
+                                        foreach (Datum datum in data)
+                                        {
+                                            if (cancellationToken.IsCancellationRequested)
+                                                break;
+
+                                            try
+                                            {
+                                                StoreDatum(datum);
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                SensusServiceHelper.Get().Logger.Log("Failed to store datum:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                            }
+                                        }
+
+                                    _isPolling = false;
+                                }
+                            });
+
+                    }, GetType().FullName + " Poll", TimeSpan.FromMinutes(_pollingTimeoutMinutes), userNotificationMessage);
+
+                _pollCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(callback, 0, _pollingSleepDurationMS, POLL_CALLBACK_LAG);
             }
         }
 
