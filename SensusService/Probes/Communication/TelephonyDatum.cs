@@ -24,6 +24,14 @@ namespace SensusService.Probes.Communication
     {
         private TelephonyState _state;
         private string _phoneNumber;
+        private double _callLength;
+
+        [NumberProbeTriggerProperty("Minimum Call Length")]
+        public double callLength
+        {
+            get { return _callLength; }
+            set { _callLength = value; }
+        }
 
         [ListProbeTriggerProperty(new object[] { TelephonyState.Idle, TelephonyState.IncomingCall, TelephonyState.OutgoingCall })]
         public TelephonyState State
@@ -42,26 +50,30 @@ namespace SensusService.Probes.Communication
 
         public override string DisplayDetail
         {
-            get { return _phoneNumber + " (" + _state + ")"; }
+            get { return _phoneNumber + " (" + _state + "), " + _callLength; }
         }
 
         /// <summary>
         /// For JSON deserialization.
         /// </summary>
-        private TelephonyDatum() { }
+        private TelephonyDatum()
+        {
+        }
 
-        public TelephonyDatum(DateTimeOffset timestamp, TelephonyState state, string phoneNumber)
+        public TelephonyDatum(DateTimeOffset timestamp, TelephonyState state, string phoneNumber, double callLength)
             : base(timestamp)
         {
             _state = state;
             _phoneNumber = phoneNumber == null ? "" : phoneNumber;
+            _callLength = callLength;
         }
 
         public override string ToString()
         {
             return base.ToString() + Environment.NewLine +
-                   "State:  " + _state + Environment.NewLine +
-                   "Number:  " + _phoneNumber;
+            "State:  " + _state + Environment.NewLine +
+            "Number:  " + _phoneNumber +
+            "Length (seconds): " + _callLength;
         }
     }
 }
