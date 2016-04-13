@@ -26,29 +26,34 @@ namespace Sensus.Android.Probes.Communication
         private TelephonyManager _telephonyManager;
         private EventHandler<string> _outgoingCallCallback;
         private AndroidTelephonyIdleIncomingListener _idleIncomingCallListener;
-        private DateTime _lastCallEvent;
-        private double _callLength;
+        private DateTime? _outgoingIncomingTime;
 
         public AndroidTelephonyProbe()
         {
             _outgoingCallCallback = (sender, outgoingNumber) =>
             {
-                _lastCallEvent = DateTime.Now;
-                StoreDatum(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.OutgoingCall, outgoingNumber, 0));
+                _outgoingIncomingTime = DateTime.Now;
+
+                StoreDatum(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.OutgoingCall, outgoingNumber, null));
             };
 
             _idleIncomingCallListener = new AndroidTelephonyIdleIncomingListener();
 
             _idleIncomingCallListener.IncomingCall += (o, incomingNumber) =>
             {
-                _lastCallEvent = DateTime.Now;
-                StoreDatum(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.IncomingCall, incomingNumber, 0));
+                _outgoingIncomingTime = DateTime.Now;
+
+                StoreDatum(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.IncomingCall, incomingNumber, null));
             };
 
             _idleIncomingCallListener.Idle += (o, e) =>
             {
-                _callLength = (double)DateTime.Now.Subtract(_lastCallEvent).TotalSeconds;
-                StoreDatum(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.Idle, null, _callLength));
+                // only calculate call duration if we have previously received an incoming or outgoing call event (android might report idle upon startup)
+                float? callDurationSeconds = null;
+                if (_outgoingIncomingTime != null)
+                    callDurationSeconds = (float)(DateTime.Now - _outgoingIncomingTime.GetValueOrDefault()).TotalSeconds;
+                    
+                StoreDatum(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.Idle, null, callDurationSeconds));
             };
         }
 

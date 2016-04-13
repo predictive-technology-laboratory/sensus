@@ -217,7 +217,7 @@ namespace SensusUI
                         entry.TextChanged += (ooo, eee) =>
                         {
                             double value;
-                            if (double.TryParse(eee.NewTextValue, out  value))
+                            if (double.TryParse(eee.NewTextValue, out value))
                                 _conditionValue = value;
                         };
 

@@ -24,13 +24,13 @@ namespace SensusService.Probes.Communication
     {
         private TelephonyState _state;
         private string _phoneNumber;
-        private double _callLength;
+        private float? _callDurationSeconds;
 
-        [NumberProbeTriggerProperty("Minimum Call Length")]
-        public double callLength
+        [NumberProbeTriggerProperty("Call Duration (Secs.)")]
+        public float? CallDurationSeconds
         {
-            get { return _callLength; }
-            set { _callLength = value; }
+            get { return _callDurationSeconds; }
+            set { _callDurationSeconds = value; }
         }
 
         [ListProbeTriggerProperty(new object[] { TelephonyState.Idle, TelephonyState.IncomingCall, TelephonyState.OutgoingCall })]
@@ -50,7 +50,7 @@ namespace SensusService.Probes.Communication
 
         public override string DisplayDetail
         {
-            get { return _phoneNumber + " (" + _state + "), " + _callLength; }
+            get { return _phoneNumber + " (" + _state + (_callDurationSeconds == null ? "" : ", Prior Call:  " + Math.Round(_callDurationSeconds.GetValueOrDefault(), 1) + "s") + ")"; }
         }
 
         /// <summary>
@@ -60,12 +60,12 @@ namespace SensusService.Probes.Communication
         {
         }
 
-        public TelephonyDatum(DateTimeOffset timestamp, TelephonyState state, string phoneNumber, double callLength)
+        public TelephonyDatum(DateTimeOffset timestamp, TelephonyState state, string phoneNumber, float? callDurationSeconds)
             : base(timestamp)
         {
             _state = state;
             _phoneNumber = phoneNumber == null ? "" : phoneNumber;
-            _callLength = callLength;
+            _callDurationSeconds = callDurationSeconds;
         }
 
         public override string ToString()
@@ -73,7 +73,7 @@ namespace SensusService.Probes.Communication
             return base.ToString() + Environment.NewLine +
             "State:  " + _state + Environment.NewLine +
             "Number:  " + _phoneNumber +
-            "Length (seconds): " + _callLength;
+            "Duration (Secs.):  " + _callDurationSeconds.GetValueOrDefault();
         }
     }
 }
