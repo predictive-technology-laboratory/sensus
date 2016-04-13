@@ -107,6 +107,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolReportDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ParticipationRewardDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ScheduledCallback.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ScriptRunDatum.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />

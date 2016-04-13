@@ -22,6 +22,8 @@ using System.Threading;
 using System.Linq;
 using SensusUI.Inputs;
 using System.Threading.Tasks;
+using Plugin.Geolocator.Abstractions;
+using SensusService.Probes.Location;
 
 namespace SensusService.Probes.User
 {
@@ -602,7 +604,37 @@ namespace SensusService.Probes.User
                 if (!isRerun)
                 {
                     script.FirstRunTimestamp = DateTimeOffset.UtcNow;
-                    _probe.StoreDatum(new ScriptDatum(DateTime.Now, script.Id + "_" + _name, "Script has fired.", "Script has fired.", script.Id, new Object(), script.CurrentDatum == null ? null : script.CurrentDatum.Id, null, null, script.PresentationTimestamp.GetValueOrDefault(), null, new List<InputCompletionRecord>()));
+
+                    // submit a separate datum indicating the running of the script. this differs from the script's presentation time because the user
+                    // might choose to never submit script responses. in this case, there will be no script data or presentation times. the separate
+                    // datum submitted here will always be submitted upon first run of the script.
+                    new Thread(() =>
+                        {
+                            DateTimeOffset runTime = DateTimeOffset.UtcNow;
+
+                            // geotag the script-run datum if any of the input groups are also geotagged. if none of the groups are geotagged, then
+                            // it wouldn't make sense to gather location data from a user privacy perspective.
+                            double? latitude = null;
+                            double? longitude = null;
+                            DateTimeOffset? locationTimestamp = null;
+                            if (script.InputGroups.Any(inputGroup => inputGroup.Geotag))
+                            {
+                                try
+                                {
+                                    Position currentPosition = GpsReceiver.Get().GetReading(default(CancellationToken));
+                                    latitude = currentPosition.Latitude;
+                                    longitude = currentPosition.Longitude;
+                                    locationTimestamp = currentPosition.Timestamp;
+                                }
+                                catch (Exception ex)
+                                {
+                                    SensusServiceHelper.Get().Logger.Log("Failed to get position for script-run datum:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                }                                
+                            }
+
+                            _probe.StoreDatum(new ScriptRunDatum(runTime, _script.Id, script.Id, script.CurrentDatum == null ? null : script.CurrentDatum.Id, latitude, longitude, locationTimestamp));
+
+                        }).Start();
 
                     // add run time and remove all run times before the participation horizon
                     _runTimes.Add(DateTime.Now);
