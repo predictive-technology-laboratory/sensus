@@ -23,7 +23,7 @@ NULL
 #' @return Local path to location of downloaded data.
 #' @examples 
 #' # data.path = download.from.aws.s3("s3://bucket/path/to/data", "~/Desktop/data")
-download.from.aws.s3 = function(s3.path, profile = "default", local.path = tempfile(), aws.path = "/usr/local/bin")
+sensus.download.from.aws.s3 = function(s3.path, profile = "default", local.path = tempfile(), aws.path = "/usr/local/bin")
 {
   aws = paste(aws.path, "aws", sep = "/")
   args = paste("s3 --profile", profile, "cp --recursive", s3.path, local.path, sep = " ")
@@ -41,7 +41,7 @@ download.from.aws.s3 = function(s3.path, profile = "default", local.path = tempf
 #' @return All data, listed by type.
 #' @examples
 #' data = read.sensus.json(system.file("extdata", "example.data.txt", package="SensusR"), is.directory = FALSE)
-read.sensus.json = function(data.path, is.directory = TRUE, recursive = TRUE, convert.to.local.timezone = TRUE, local.timezone = Sys.timezone())
+sensus.read.json = function(data.path, is.directory = TRUE, recursive = TRUE, convert.to.local.timezone = TRUE, local.timezone = Sys.timezone())
 {
   paths = c(data.path)
   if(is.directory)
@@ -183,7 +183,7 @@ read.sensus.json = function(data.path, is.directory = TRUE, recursive = TRUE, co
 #' 
 #' @param data Data to write, as read using \code{\link{read.sensus.json}}.
 #' @param base.path Base for output paths. Will be appended to when forming the full CSV file paths.
-write.csv.files = function(data, base.path = "")
+sensus.write.csv.files = function(data, base.path = "")
 {
   for(name in names(data))
   {
@@ -195,7 +195,7 @@ write.csv.files = function(data, base.path = "")
 #' 
 #' @param data Data to write, as read using \code{\link{read.sensus.json}}.
 #' @param base.path Base for output paths. Will be appended to when forming the full rdata file paths.
-write.rdata.files = function(data, base.path = "")
+sensus.write.rdata.files = function(data, base.path = "")
 {
   for(name in names(data))
   {
@@ -456,7 +456,7 @@ plot.WlanDatum = function(x, ...)
 #' data = read.sensus.json(system.file("extdata", "example.data.txt", package="SensusR"))
 #' lags = get.all.timestamp.lags(data)
 #' plot(lags[["AccelerometerDatum"]])
-get.all.timestamp.lags = function(data)
+sensus.get.all.timestamp.lags = function(data)
 {
   lags = list()
   for(datum.type in names(data))
@@ -478,7 +478,7 @@ get.all.timestamp.lags = function(data)
 #' @examples
 #' data = read.sensus.json(system.file("extdata", "example.data.txt", package="SensusR"))
 #' plot(get.timestamp.lags(data$AccelerometerDatum))
-get.timestamp.lags = function(datum)
+sensus.get.timestamp.lags = function(datum)
 {
   lags = NULL
   if(nrow(datum) > 1)
@@ -493,7 +493,7 @@ get.timestamp.lags = function(datum)
 #' Plot data frequency by day.
 #' 
 #' @param datum Data frame for a single datum.
-plot.data.frequency.by.day = function(datum, xlab = "Study Day", ylab = "Data Frequency", main = "Data Frequency")
+sensus.plot.data.frequency.by.day = function(datum, xlab = "Study Day", ylab = "Data Frequency", main = "Data Frequency")
 {
   datum.split.by.day = split(datum, as.factor(datum$DayOfYear))
   plot(sapply(datum.split.by.day, nrow), xlab = xlab, ylab = ylab, main = main, type = "l", cex.lab = 1.5, cex.axis = 1.5, cex.main = 2)
@@ -503,7 +503,7 @@ plot.data.frequency.by.day = function(datum, xlab = "Study Day", ylab = "Data Fr
 #' 
 #' @param datum Data collection to process.
 #' @param device.id Device ID to remove.
-remove.device.id = function(datum, device.id)
+sensus.remove.device.id = function(datum, device.id)
 {
   return(datum[datum$DeviceId != device.id, ])
 }
