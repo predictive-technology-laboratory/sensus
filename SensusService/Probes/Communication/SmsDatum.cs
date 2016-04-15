@@ -27,7 +27,7 @@ namespace SensusService.Probes.Communication
         private string _toNumber;
         private string _message;
 
-        [StringProbeTriggerProperty]
+        [StringProbeTriggerProperty("From #")]
         [Anonymizable("From #", typeof(StringHashAnonymizer), false)]
         public string FromNumber
         {
@@ -35,7 +35,7 @@ namespace SensusService.Probes.Communication
             set { _fromNumber = value == null ? "" : new Regex(@"[^0-9]").Replace(value, ""); }
         }
 
-        [StringProbeTriggerProperty]
+        [StringProbeTriggerProperty("To #")]
         [Anonymizable("To #", typeof(StringHashAnonymizer), false)]
         public string ToNumber
         {
@@ -59,7 +59,9 @@ namespace SensusService.Probes.Communication
         /// <summary>
         /// For JSON deserialization.
         /// </summary>
-        private SmsDatum() { }
+        private SmsDatum()
+        {
+        }
 
         public SmsDatum(DateTimeOffset timestamp, string fromNumber, string toNumber, string message)
             : base(timestamp)
@@ -72,9 +74,9 @@ namespace SensusService.Probes.Communication
         public override string ToString()
         {
             return base.ToString() + Environment.NewLine +
-                   "From:  " + _fromNumber + Environment.NewLine +
-                   "To:  " + _toNumber + Environment.NewLine +
-                   "Message:  " + _message;
+            "From:  " + _fromNumber + Environment.NewLine +
+            "To:  " + _toNumber + Environment.NewLine +
+            "Message:  " + _message;
         }
     }
 }

@@ -26,7 +26,7 @@ namespace SensusService.Probes.Communication
         private string _phoneNumber;
         private double? _callDurationSeconds;
 
-        [DoubleProbeTriggerProperty]
+        [DoubleProbeTriggerProperty("Call Duration (Secs.)")]
         public double? CallDurationSeconds
         {
             get { return _callDurationSeconds; }
