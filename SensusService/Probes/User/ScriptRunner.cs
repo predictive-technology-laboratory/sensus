@@ -22,6 +22,8 @@ using System.Threading;
 using System.Linq;
 using SensusUI.Inputs;
 using System.Threading.Tasks;
+using Plugin.Geolocator.Abstractions;
+using SensusService.Probes.Location;
 
 namespace SensusService.Probes.User
 {
@@ -603,6 +605,37 @@ namespace SensusService.Probes.User
                 {
                     script.FirstRunTimestamp = DateTimeOffset.UtcNow;
 
+                    // submit a separate datum indicating the running of the script. this differs from the script's presentation time because the user
+                    // might choose to never submit script responses. in this case, there will be no script data or presentation times. the separate
+                    // datum submitted here will always be submitted upon first run of the script.
+                    new Thread(() =>
+                        {
+                            DateTimeOffset runTime = DateTimeOffset.UtcNow;
+
+                            // geotag the script-run datum if any of the input groups are also geotagged. if none of the groups are geotagged, then
+                            // it wouldn't make sense to gather location data from a user privacy perspective.
+                            double? latitude = null;
+                            double? longitude = null;
+                            DateTimeOffset? locationTimestamp = null;
+                            if (script.InputGroups.Any(inputGroup => inputGroup.Geotag))
+                            {
+                                try
+                                {
+                                    Position currentPosition = GpsReceiver.Get().GetReading(default(CancellationToken));
+                                    latitude = currentPosition.Latitude;
+                                    longitude = currentPosition.Longitude;
+                                    locationTimestamp = currentPosition.Timestamp;
+                                }
+                                catch (Exception ex)
+                                {
+                                    SensusServiceHelper.Get().Logger.Log("Failed to get position for script-run datum:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                }                                
+                            }
+
+                            _probe.StoreDatum(new ScriptRunDatum(runTime, _script.Id, _name, script.Id, script.CurrentDatum == null ? null : script.CurrentDatum.Id, latitude, longitude, locationTimestamp));
+
+                        }).Start();
+
                     // add run time and remove all run times before the participation horizon
                     _runTimes.Add(DateTime.Now);
                     _runTimes.RemoveAll(runTime => runTime < _probe.Protocol.ParticipationHorizon);
@@ -648,7 +681,7 @@ namespace SensusService.Probes.User
                                     // that is passed into this method is always a copy of the user-created script. the script.Id allows us to link the various data
                                     // collected from the user into a single logical response. each run of the script has its own script.Id so that responses can be
                                     // grouped across runs. this is the difference between scriptId and runId in the following line.
-                                    _probe.StoreDatum(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow), _script.Id, input.GroupId, input.Id, script.Id, input.Value, script.CurrentDatum == null ? null : script.CurrentDatum.Id, input.Latitude, input.Longitude, script.PresentationTimestamp.GetValueOrDefault(), input.LocationUpdateTimestamp, input.CompletionRecords));
+                                    _probe.StoreDatum(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow), _script.Id, _name, input.GroupId, input.Id, script.Id, input.Value, script.CurrentDatum == null ? null : script.CurrentDatum.Id, input.Latitude, input.Longitude, script.PresentationTimestamp.GetValueOrDefault(), input.LocationUpdateTimestamp, input.CompletionRecords));
 
                                     // once inputs are stored, they should not be stored again, nor should the user be able to modify them if the script is rerun.
                                     input.NeedsToBeStored = false;

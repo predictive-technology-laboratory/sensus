@@ -30,7 +30,7 @@ namespace SensusService.Probes.Location
         private ProximityThresholdDirection _triggerDistanceDirection;
 
         [Anonymizable("POI Name:", typeof(StringHashAnonymizer), false)]
-        [TextProbeTriggerProperty("POI Name")]
+        [StringProbeTriggerProperty("POI Name")]
         public string PoiName
         {
             get
@@ -44,7 +44,7 @@ namespace SensusService.Probes.Location
         }
 
         [Anonymizable("POI Type:", typeof(StringHashAnonymizer), false)]
-        [TextProbeTriggerProperty("POI Type")]
+        [StringProbeTriggerProperty("POI Type")]
         public string PoiType
         {
             get
@@ -58,7 +58,7 @@ namespace SensusService.Probes.Location
         }
 
         [Anonymizable("POI Latitude:", new Type[] { typeof(DoubleRoundingTenthsAnonymizer), typeof(DoubleRoundingHundredthsAnonymizer), typeof(DoubleRoundingThousandthsAnonymizer) }, -1)]
-        [NumberProbeTriggerProperty("POI Latitude")]
+        [DoubleProbeTriggerProperty("POI Latitude")]
         public double PoiLatitude
         {
             get
@@ -72,7 +72,7 @@ namespace SensusService.Probes.Location
         }
 
         [Anonymizable("POI Longitude:", new Type[] { typeof(DoubleRoundingTenthsAnonymizer), typeof(DoubleRoundingHundredthsAnonymizer), typeof(DoubleRoundingThousandthsAnonymizer) }, -1)]
-        [NumberProbeTriggerProperty("POI Longitude")]
+        [DoubleProbeTriggerProperty("POI Longitude")]
         public double PoiLongitude
         {
             get
@@ -85,8 +85,8 @@ namespace SensusService.Probes.Location
             }
         }
 
-        [Anonymizable("Distance (Meters):", new Type[] { typeof(DoubleRoundingTensAnonymizer), typeof(DoubleRoundingHundredsAnonymizer)}, -1)]
-        [NumberProbeTriggerProperty("Distance (Meters)")]
+        [Anonymizable("Distance (Meters):", new Type[] { typeof(DoubleRoundingTensAnonymizer), typeof(DoubleRoundingHundredsAnonymizer) }, -1)]
+        [DoubleProbeTriggerProperty("Distance (Meters)")]
         public double DistanceToPoiMeters
         {
             get
@@ -129,12 +129,12 @@ namespace SensusService.Probes.Location
             {
                 return Math.Round(_distanceToPoiMeters) + "m from " + _poiName + (string.IsNullOrWhiteSpace(_poiType) ? "" : " (" + _poiType + ")");
             }
-        }        
+        }
 
         /// <summary>
         /// For JSON deserialization.
         /// </summary>
-        private PointOfInterestProximityDatum() 
+        private PointOfInterestProximityDatum()
         {
         }
 

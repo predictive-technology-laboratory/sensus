@@ -26,6 +26,7 @@ namespace SensusService.Probes.User
     public class ScriptDatum : Datum
     {
         private string _scriptId;
+        private string _scriptName;
         private string _groupId;
         private string _inputId;
         private string _runId;
@@ -46,6 +47,18 @@ namespace SensusService.Probes.User
             set
             {
                 _scriptId = value;
+            }
+        }
+
+        public string ScriptName
+        {
+            get
+            {
+                return _scriptName;
+            }
+            set
+            {
+                _scriptName = value;
             }
         }
 
@@ -98,7 +111,7 @@ namespace SensusService.Probes.User
             set { _triggerDatumId = value; }
         }
 
-        [NumberProbeTriggerProperty]
+        [DoubleProbeTriggerProperty]
         [Anonymizable(null, new Type[] { typeof(DoubleRoundingTenthsAnonymizer), typeof(DoubleRoundingHundredthsAnonymizer), typeof(DoubleRoundingThousandthsAnonymizer) }, -1)]
         public double? Latitude
         {
@@ -106,7 +119,7 @@ namespace SensusService.Probes.User
             set { _latitude = value; }
         }
 
-        [NumberProbeTriggerProperty]
+        [DoubleProbeTriggerProperty]
         [Anonymizable(null, new Type[] { typeof(DoubleRoundingTenthsAnonymizer), typeof(DoubleRoundingHundredthsAnonymizer), typeof(DoubleRoundingThousandthsAnonymizer) }, -1)]
         public double? Longitude
         {
@@ -178,10 +191,11 @@ namespace SensusService.Probes.User
             _completionRecords = new List<InputCompletionRecord>();
         }
 
-        public ScriptDatum(DateTimeOffset timestamp, string scriptId, string groupId, string inputId, string runId, object response, string triggerDatumId, double? latitude, double? longitude, DateTimeOffset presentationTimestamp, DateTimeOffset? locationTimestamp, List<InputCompletionRecord> completionRecords)
+        public ScriptDatum(DateTimeOffset timestamp, string scriptId, string scriptName, string groupId, string inputId, string runId, object response, string triggerDatumId, double? latitude, double? longitude, DateTimeOffset presentationTimestamp, DateTimeOffset? locationTimestamp, List<InputCompletionRecord> completionRecords)
             : base(timestamp)
         {
             _scriptId = scriptId;
+            _scriptName = scriptName;
             _groupId = groupId;
             _inputId = inputId;
             _runId = runId;

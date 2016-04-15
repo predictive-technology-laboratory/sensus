@@ -25,7 +25,7 @@ namespace SensusService.Probes.Context
         private string _name;
         private string _address;
 
-        [TextProbeTriggerProperty]
+        [StringProbeTriggerProperty]
         [Anonymizable(null, typeof(StringHashAnonymizer), false)]
         public string Name
         {
@@ -33,7 +33,7 @@ namespace SensusService.Probes.Context
             set { _name = value; }
         }
 
-        [TextProbeTriggerProperty]
+        [StringProbeTriggerProperty]
         [Anonymizable(null, typeof(StringHashAnonymizer), false)]
         public string Address
         {

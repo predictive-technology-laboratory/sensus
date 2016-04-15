@@ -23,7 +23,7 @@ namespace SensusService.Probes.Communication
     {
         public sealed override string DisplayName
         {
-            get { return "Phone Call Metadata"; }
+            get { return "Phone Call"; }
         }
 
         public override string CollectionDescription

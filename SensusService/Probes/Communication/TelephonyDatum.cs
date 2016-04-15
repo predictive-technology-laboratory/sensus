@@ -24,6 +24,14 @@ namespace SensusService.Probes.Communication
     {
         private TelephonyState _state;
         private string _phoneNumber;
+        private double? _callDurationSeconds;
+
+        [DoubleProbeTriggerProperty("Call Duration (Secs.)")]
+        public double? CallDurationSeconds
+        {
+            get { return _callDurationSeconds; }
+            set { _callDurationSeconds = value; }
+        }
 
         [ListProbeTriggerProperty(new object[] { TelephonyState.Idle, TelephonyState.IncomingCall, TelephonyState.OutgoingCall })]
         public TelephonyState State
@@ -32,7 +40,7 @@ namespace SensusService.Probes.Communication
             set { _state = value; }
         }
 
-        [TextProbeTriggerProperty("Phone #")]
+        [StringProbeTriggerProperty("Phone #")]
         [Anonymizable("Phone #:", typeof(StringHashAnonymizer), false)]
         public string PhoneNumber
         {
@@ -42,26 +50,31 @@ namespace SensusService.Probes.Communication
 
         public override string DisplayDetail
         {
-            get { return _phoneNumber + " (" + _state + ")"; }
+            get { return _phoneNumber + " (" + _state + (_callDurationSeconds == null ? "" : ", Prior Call:  " + Math.Round(_callDurationSeconds.GetValueOrDefault(), 1) + "s") + ")"; }
         }
 
         /// <summary>
         /// For JSON deserialization.
         /// </summary>
-        private TelephonyDatum() { }
+        private TelephonyDatum()
+        {
+        }
 
-        public TelephonyDatum(DateTimeOffset timestamp, TelephonyState state, string phoneNumber)
+        public TelephonyDatum(DateTimeOffset timestamp, TelephonyState state, string phoneNumber, double? callDurationSeconds)
             : base(timestamp)
         {
             _state = state;
             _phoneNumber = phoneNumber == null ? "" : phoneNumber;
+            _callDurationSeconds = callDurationSeconds;
         }
 
         public override string ToString()
         {
             return base.ToString() + Environment.NewLine +
-                   "State:  " + _state + Environment.NewLine +
-                   "Number:  " + _phoneNumber;
+            "State:  " + _state + Environment.NewLine +
+            "Number:  " + _phoneNumber +
+            (_callDurationSeconds == null ? "" : Environment.NewLine +
+            "Duration (Secs.):  " + _callDurationSeconds.GetValueOrDefault());
         }
     }
 }

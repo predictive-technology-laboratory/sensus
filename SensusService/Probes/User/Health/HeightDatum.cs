@@ -23,7 +23,7 @@ namespace SensusService.Probes.User.Health
     {
         private double _heightInches;
 
-        [NumberProbeTriggerProperty]
+        [DoubleProbeTriggerProperty("Height (Inches)")]
         [Anonymizable(null, new Type[] { typeof(DoubleRoundingTensAnonymizer) }, -1)]
         public double HeightInches
         {
@@ -54,7 +54,7 @@ namespace SensusService.Probes.User.Health
         public override string ToString()
         {
             return base.ToString() + Environment.NewLine +
-                "Height (Inches):  " + _heightInches;
+            "Height (Inches):  " + _heightInches;
         }
     }
 }

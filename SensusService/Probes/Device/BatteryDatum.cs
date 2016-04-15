@@ -24,7 +24,7 @@ namespace SensusService.Probes.Device
     {
         private double _level;
 
-        [NumberProbeTriggerProperty]
+        [DoubleProbeTriggerProperty]
         [Anonymizable(null, typeof(DoubleRoundingTensAnonymizer), false)]
         public double Level
         {

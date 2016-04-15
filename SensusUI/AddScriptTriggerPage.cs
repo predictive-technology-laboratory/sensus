@@ -206,7 +206,7 @@ namespace SensusUI
 
                         conditionValueStackView = conditionValuePicker;
                     }
-                    else if (datumTriggerAttribute is NumberProbeTriggerProperty)
+                    else if (datumTriggerAttribute is DoubleProbeTriggerProperty)
                     {
                         Entry entry = new Entry
                         {
@@ -217,14 +217,14 @@ namespace SensusUI
                         entry.TextChanged += (ooo, eee) =>
                         {
                             double value;
-                            if (double.TryParse(eee.NewTextValue, out  value))
+                            if (double.TryParse(eee.NewTextValue, out value))
                                 _conditionValue = value;
                         };
 
                         conditionValueStackView = entry;
                         allowChangeCalculation = true;
                     }
-                    else if (datumTriggerAttribute is TextProbeTriggerProperty)
+                    else if (datumTriggerAttribute is StringProbeTriggerProperty)
                     {
                         Entry entry = new Entry
                         {

@@ -26,24 +26,34 @@ namespace Sensus.Android.Probes.Communication
         private TelephonyManager _telephonyManager;
         private EventHandler<string> _outgoingCallCallback;
         private AndroidTelephonyIdleIncomingListener _idleIncomingCallListener;
+        private DateTime? _outgoingIncomingTime;
 
         public AndroidTelephonyProbe()
         {
             _outgoingCallCallback = (sender, outgoingNumber) =>
             {
-                StoreDatum(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.OutgoingCall, outgoingNumber));
+                _outgoingIncomingTime = DateTime.Now;
+
+                StoreDatum(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.OutgoingCall, outgoingNumber, null));
             };
 
             _idleIncomingCallListener = new AndroidTelephonyIdleIncomingListener();
 
             _idleIncomingCallListener.IncomingCall += (o, incomingNumber) =>
             {
-                StoreDatum(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.IncomingCall, incomingNumber));
+                _outgoingIncomingTime = DateTime.Now;
+
+                StoreDatum(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.IncomingCall, incomingNumber, null));
             };
 
             _idleIncomingCallListener.Idle += (o, e) =>
             {
-                StoreDatum(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.Idle, null));
+                // only calculate call duration if we have previously received an incoming or outgoing call event (android might report idle upon startup)
+                double? callDurationSeconds = null;
+                if (_outgoingIncomingTime != null)
+                    callDurationSeconds = (DateTime.Now - _outgoingIncomingTime.GetValueOrDefault()).TotalSeconds;
+                    
+                StoreDatum(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.Idle, null, callDurationSeconds));
             };
         }
 
@@ -61,7 +71,7 @@ namespace Sensus.Android.Probes.Communication
             {
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable phone in the future
                 // and we'd like the probe to be restarted at that time.
-                string error = "Phone metadata not permitted on this device. Cannot start telephony probe.";
+                string error = "Telephony not permitted on this device. Cannot start telephony probe.";
                 SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
