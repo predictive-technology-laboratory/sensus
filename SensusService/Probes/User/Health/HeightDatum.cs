@@ -54,7 +54,7 @@ namespace SensusService.Probes.User.Health
         public override string ToString()
         {
             return base.ToString() + Environment.NewLine +
-                "Height (Inches):  " + _heightInches;
+            "Height (Inches):  " + _heightInches;
         }
     }
 }
