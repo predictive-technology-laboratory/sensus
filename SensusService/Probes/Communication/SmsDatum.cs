@@ -27,7 +27,7 @@ namespace SensusService.Probes.Communication
         private string _toNumber;
         private string _message;
 
-        [TextProbeTriggerProperty("From #")]
+        [StringProbeTriggerProperty]
         [Anonymizable("From #", typeof(StringHashAnonymizer), false)]
         public string FromNumber
         {
@@ -35,7 +35,7 @@ namespace SensusService.Probes.Communication
             set { _fromNumber = value == null ? "" : new Regex(@"[^0-9]").Replace(value, ""); }
         }
 
-        [TextProbeTriggerProperty("To #")]
+        [StringProbeTriggerProperty]
         [Anonymizable("To #", typeof(StringHashAnonymizer), false)]
         public string ToNumber
         {
@@ -43,7 +43,7 @@ namespace SensusService.Probes.Communication
             set { _toNumber = value == null ? "" : new Regex(@"[^0-9]").Replace(value, ""); }
         }
 
-        [TextProbeTriggerProperty]
+        [StringProbeTriggerProperty]
         [Anonymizable(null, typeof(StringHashAnonymizer), false)]
         public string Message
         {

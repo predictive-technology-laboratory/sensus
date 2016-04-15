@@ -24,7 +24,7 @@ namespace SensusService.Probes.Location
     {
         private double _heading;
 
-        [NumberProbeTriggerProperty]
+        [DoubleProbeTriggerProperty]
         [Anonymizable(null, new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer), typeof(DoubleRoundingHundredsAnonymizer) }, -1)]
         public double Heading
         {

@@ -24,10 +24,10 @@ namespace SensusService.Probes.Communication
     {
         private TelephonyState _state;
         private string _phoneNumber;
-        private float? _callDurationSeconds;
+        private double? _callDurationSeconds;
 
-        [NumberProbeTriggerProperty("Call Duration (Secs.)")]
-        public float? CallDurationSeconds
+        [DoubleProbeTriggerProperty]
+        public double? CallDurationSeconds
         {
             get { return _callDurationSeconds; }
             set { _callDurationSeconds = value; }
@@ -40,7 +40,7 @@ namespace SensusService.Probes.Communication
             set { _state = value; }
         }
 
-        [TextProbeTriggerProperty("Phone #")]
+        [StringProbeTriggerProperty]
         [Anonymizable("Phone #:", typeof(StringHashAnonymizer), false)]
         public string PhoneNumber
         {
@@ -60,7 +60,7 @@ namespace SensusService.Probes.Communication
         {
         }
 
-        public TelephonyDatum(DateTimeOffset timestamp, TelephonyState state, string phoneNumber, float? callDurationSeconds)
+        public TelephonyDatum(DateTimeOffset timestamp, TelephonyState state, string phoneNumber, double? callDurationSeconds)
             : base(timestamp)
         {
             _state = state;
@@ -73,7 +73,8 @@ namespace SensusService.Probes.Communication
             return base.ToString() + Environment.NewLine +
             "State:  " + _state + Environment.NewLine +
             "Number:  " + _phoneNumber +
-            "Duration (Secs.):  " + _callDurationSeconds.GetValueOrDefault();
+            (_callDurationSeconds == null ? "" : Environment.NewLine +
+            "Duration (Secs.):  " + _callDurationSeconds.GetValueOrDefault());
         }
     }
 }

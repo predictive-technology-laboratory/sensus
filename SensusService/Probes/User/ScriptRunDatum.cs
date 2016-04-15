@@ -96,7 +96,7 @@ namespace SensusService.Probes.User
         {
             get
             {
-                return "Script ran at " + Timestamp;
+                return "Script ran.";
             }
         }
 

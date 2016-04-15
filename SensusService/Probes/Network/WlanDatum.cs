@@ -24,7 +24,7 @@ namespace SensusService.Probes.Network
     {
         private string _accessPointBSSID;
 
-        [TextProbeTriggerProperty("Wireless Access Point")]
+        [StringProbeTriggerProperty]
         [Anonymizable("Wireless Access Point:", typeof(StringHashAnonymizer), false)]
         public string AccessPointBSSID
         {

@@ -68,7 +68,7 @@ namespace SensusService.Probes.Movement
 
         private double _kph;
 
-        [NumberProbeTriggerProperty]
+        [DoubleProbeTriggerProperty]
         [Anonymizable(null, new Type[] { typeof(DoubleRoundingTensAnonymizer), typeof(DoubleRoundingHundredsAnonymizer) }, -1)]
         public double KPH
         {
