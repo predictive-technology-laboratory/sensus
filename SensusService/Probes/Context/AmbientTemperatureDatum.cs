@@ -25,7 +25,7 @@ namespace SensusService
         private double _degreesCelsius;
 
         [Anonymizable("Degrees (C)", new Type[] { typeof(DoubleRoundingTensAnonymizer) }, -1)]
-        [DoubleProbeTriggerProperty]
+        [DoubleProbeTriggerProperty("Degrees (C)")]
         public double DegreesCelsius
         {
             get

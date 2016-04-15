@@ -40,7 +40,7 @@ namespace SensusService.Probes.Communication
             set { _state = value; }
         }
 
-        [StringProbeTriggerProperty]
+        [StringProbeTriggerProperty("Phone #")]
         [Anonymizable("Phone #:", typeof(StringHashAnonymizer), false)]
         public string PhoneNumber
         {

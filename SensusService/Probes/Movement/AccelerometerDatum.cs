@@ -26,7 +26,7 @@ namespace SensusService.Probes.Movement
         private double _y;
         private double _z;
 
-        [DoubleProbeTriggerProperty]
+        [DoubleProbeTriggerProperty("X Acceleration")]
         [Anonymizable(null, new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
         public double X
         {
@@ -34,7 +34,7 @@ namespace SensusService.Probes.Movement
             set { _x = value; }
         }
 
-        [DoubleProbeTriggerProperty]
+        [DoubleProbeTriggerProperty("Y Acceleration")]
         [Anonymizable(null, new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
         public double Y
         {
@@ -42,7 +42,7 @@ namespace SensusService.Probes.Movement
             set { _y = value; }
         }
 
-        [DoubleProbeTriggerProperty]
+        [DoubleProbeTriggerProperty("Z Acceleration")]
         [Anonymizable(null, new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
         public double Z
         {
