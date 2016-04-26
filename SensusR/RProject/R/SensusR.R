@@ -22,12 +22,11 @@ NULL
 #' @param aws.path Path to AWS client.
 #' @return Local path to location of downloaded data.
 #' @examples 
-#' # data.path = download.from.aws.s3("s3://bucket/path/to/data", "~/Desktop/data")
-sensus.download.from.aws.s3 = function(s3.path, profile = "default", local.path = tempfile(), aws.path = "/usr/local/bin")
+#' # data.path = sensus.download.from.aws.s3("s3://bucket/path/to/data", "~/Desktop/data")
+sensus.download.from.aws.s3 = function(s3.path, profile = "default", local.path = tempfile(), aws.path = "/usr/local/bin/aws")
 {
-  aws = paste(aws.path, "aws", sep = "/")
-  args = paste("s3 --profile", profile, "cp --recursive", s3.path, local.path, sep = " ")
-  exit.code = system2(aws, args)
+  aws.args = paste("s3 --profile", profile, "cp --recursive", s3.path, local.path, sep = " ")
+  exit.code = system2(aws.path, aws.args)
   return(local.path)
 }
 
@@ -103,7 +102,8 @@ sensus.read.json = function(data.path, is.directory = TRUE, recursive = TRUE, co
     
     # add to data by type, putting each file in its own list entry (we'll merge files later)
     type = file.json$Type[1]
-    if(is.null(data[[type]])) {
+    if(is.null(data[[type]]))
+    {
       data[[type]] = list()
     }
     
@@ -130,13 +130,6 @@ sensus.read.json = function(data.path, is.directory = TRUE, recursive = TRUE, co
     percent.done = 0
     for(file.num in 1:num.files)
     {
-      curr.percent.done = as.integer(100 * file.num / num.files)
-      if(curr.percent.done > percent.done)
-      {
-        percent.done = curr.percent.done
-        print(paste(curr.percent.done, "% done merging data for ", datum.type, ".", sep = ""))
-      }
-        
       # merge columns of current file into pre-allocated vectors
       file.data = datum.type.data[[file.num]]
       file.data.rows = nrow(file.data)
@@ -147,6 +140,13 @@ sensus.read.json = function(data.path, is.directory = TRUE, recursive = TRUE, co
       }
       
       insert.start.row = insert.start.row + file.data.rows
+      
+      curr.percent.done = as.integer(100 * file.num / num.files)
+      if(curr.percent.done > percent.done)
+      {
+        percent.done = curr.percent.done
+        print(paste(curr.percent.done, "% done merging data for ", datum.type, " (", file.num, " of ", num.files, ").", sep = ""))
+      }
     }
     
     print(paste("Creating data frame for ", datum.type, ".", sep = ""))
@@ -154,7 +154,7 @@ sensus.read.json = function(data.path, is.directory = TRUE, recursive = TRUE, co
     # create data frame from pre-allocated vectors 
     data.type.data.frame = data.frame(datum.type.col.vectors, stringsAsFactors = FALSE)
     
-    # filter redundant data by id and sort by timestamp
+    # filter redundant data by datum id and sort by timestamp
     data.type.data.frame = data.type.data.frame[!duplicated(data.type.data.frame$Id), ]
     data.type.data.frame = data.type.data.frame[order(data.type.data.frame$Timestamp), ]
     
