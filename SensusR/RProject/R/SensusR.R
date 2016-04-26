@@ -14,18 +14,25 @@
 #' @name SensusR
 NULL
 
-#' Download data from Amazon S3 path.
+#' Synchronizes data from Amazon S3 to a local path.
 #' 
-#' @param s3.path Full path within S3.
+#' @param s3.path Path within S3. This can be a prefix (partial path).
 #' @param profile AWS credentials profile to use for authentication.
-#' @param local.path Path to location on local drive.
+#' @param local.path Path to location on local machine.
 #' @param aws.path Path to AWS client.
+#' @param delete Whether or not to delete local files that are not present in the S3 path.
 #' @return Local path to location of downloaded data.
 #' @examples 
 #' # data.path = sensus.download.from.aws.s3("s3://bucket/path/to/data", "~/Desktop/data")
-sensus.download.from.aws.s3 = function(s3.path, profile = "default", local.path = tempfile(), aws.path = "/usr/local/bin/aws")
+sensus.sync.from.aws.s3 = function(s3.path, profile = "default", local.path = tempfile(), aws.path = "/usr/local/bin/aws", delete = TRUE)
 {
-  aws.args = paste("s3 --profile", profile, "cp --recursive", s3.path, local.path, sep = " ")
+  aws.args = paste("s3 --profile", profile, "sync ", s3.path, local.path, sep = " ")
+  
+  if(delete)
+  {
+    aws.args = paste(aws.args, "--delete")
+  }
+  
   exit.code = system2(aws.path, aws.args)
   return(local.path)
 }
@@ -187,7 +194,7 @@ sensus.write.csv.files = function(data, base.path = "")
 {
   for(name in names(data))
   {
-    write.csv(data[[name]], file = paste(base.path, name, ".csv", sep = ""))
+    write.csv(data[[name]], file = paste(base.path, name, ".csv", sep = ""), row.names = FALSE)
   }
 }
 
