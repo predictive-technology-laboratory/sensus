@@ -21,7 +21,7 @@ namespace SensusUI
 {
     public class ParticipationReportPage : ContentPage
     {
-        public ParticipationReportPage(Protocol protocol, ParticipationRewardDatum participationRewardDatum)
+        public ParticipationReportPage(Protocol protocol, ParticipationRewardDatum participationRewardDatum, bool displayDatumQrCode)
         {
             Title = protocol.Name;
 
@@ -50,21 +50,21 @@ namespace SensusUI
                     },
                     new Label
                     {
-                        Text = Math.Round(protocol.Participation * 100, 0) + "%",
+                        Text = Math.Round(participationRewardDatum.Participation * 100, 0) + "%",
                         FontSize = 50,
                         HorizontalOptions = LayoutOptions.CenterAndExpand
                     },                    
                     new Label
                     {                                
                         Text = "This score reflects your participation level over the past " + (protocol.ParticipationHorizonDays == 1 ? "day" : protocol.ParticipationHorizonDays + " days") + "." +
-                        (participationRewardDatum == null || participationRewardDatum.Id == null ? "" : " Anyone can verify your participation by tapping \"Scan Participation Barcode\" on their device and scanning the following barcode:"),
+                        (displayDatumQrCode ? " Anyone can verify your participation by tapping \"Scan Participation Barcode\" on their device and scanning the following barcode:" : ""),
                         FontSize = 20,
                         HorizontalOptions = LayoutOptions.CenterAndExpand
                     }
                 }
             };
 
-            if (participationRewardDatum != null)
+            if (displayDatumQrCode)
             {
                 Label expirationLabel = new Label
                 {

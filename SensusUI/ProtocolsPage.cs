@@ -226,7 +226,7 @@ namespace SensusUI
                             Device.BeginInvokeOnMainThread(async() =>
                                 {
                                     // only show the QR code for the reward datum if the datum was committed to the remote data store
-                                    await Navigation.PushAsync(new ParticipationReportPage(selectedProtocol, commitFailed ? null : participationRewardDatum));
+                                    await Navigation.PushAsync(new ParticipationReportPage(selectedProtocol, participationRewardDatum, !commitFailed));
                                 });
                         },
                         inputs =>

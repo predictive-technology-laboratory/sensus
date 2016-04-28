@@ -1105,7 +1105,8 @@ namespace SensusService
                             }
                             else
                             {
-                                // keep track of successful system-initiated health tests. this tells use how consistently the probe is running.
+                                // keep track of successful system-initiated health tests within the participation horizon. this 
+                                // tells use how consistently the probe is running.
                                 if (!userInitiated)
                                     lock (probe.SuccessfulHealthTestTimes)
                                     {

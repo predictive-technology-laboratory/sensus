@@ -65,7 +65,7 @@ namespace SensusService.Probes
         private bool _storeData;
         private DateTimeOffset _mostRecentStoreTimestamp;
         private bool _originallyEnabled;
-        private DateTime? _startDateTime;
+        private List<Tuple<bool, DateTime>> _startStopTimes;
         private List<DateTime> _successfulHealthTestTimes;
 
         private readonly object _locker = new object();
@@ -171,12 +171,21 @@ namespace SensusService.Probes
         [JsonIgnore]
         protected abstract float RawParticipation { get; }
 
-        [JsonIgnore]
-        public DateTime? StartDateTime
+        /// <summary>
+        /// Gets a list of times at which the probe was started (tuple bool = True) and stopped (tuple bool = False). Only includes 
+        /// those that have occurred within the protocol's participation horizon.
+        /// </summary>
+        /// <value>The start stop times.</value>
+        public List<Tuple<bool, DateTime>> StartStopTimes
         {
-            get { return _startDateTime; }
+            get { return _startStopTimes; }
         }
 
+        /// <summary>
+        /// Gets the successful health test times. Only includes those that have occurred within the
+        /// protocol's participation horizon.
+        /// </summary>
+        /// <value>The successful health test times.</value>
         public List<DateTime> SuccessfulHealthTestTimes
         {
             get{ return _successfulHealthTestTimes; }
@@ -187,6 +196,7 @@ namespace SensusService.Probes
             _enabled = _running = false;
             _storeData = true;
             _collectedData = new HashSet<Datum>();
+            _startStopTimes = new List<Tuple<bool, DateTime>>();
             _successfulHealthTestTimes = new List<DateTime>();
         }
 
@@ -285,7 +295,8 @@ namespace SensusService.Probes
 
                     Initialize();
                     _running = true;
-                    _startDateTime = DateTime.Now;
+                    _startStopTimes.Add(new Tuple<bool, DateTime>(true, DateTime.Now));
+                    _startStopTimes.RemoveAll(t => t.Item2 < Protocol.ParticipationHorizon);
                 }
             }
         }
@@ -356,7 +367,8 @@ namespace SensusService.Probes
                     SensusServiceHelper.Get().Logger.Log("Stopping.", LoggingLevel.Normal, GetType());
 
                     _running = false;
-                    _startDateTime = null;
+                    _startStopTimes.Add(new Tuple<bool, DateTime>(false, DateTime.Now));
+                    _startStopTimes.RemoveAll(t => t.Item2 < Protocol.ParticipationHorizon);
 
                     // clear out the probe's in-memory storage
                     lock (_collectedData)

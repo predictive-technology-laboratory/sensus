@@ -45,17 +45,56 @@ namespace SensusService.Probes
                 // on ios, we cannot rely on the health test times to tell us how long and consistently the probe has been running. this is
                 // because, unlike in android, ios does not let local notifications return to the app when the app is in the background. instead, 
                 // the ios user must open a notification or otherwise open the app in order for the health test to run. so the best we can do 
-                // is keep track of when the probe was started (StartDateTime) and compute participation based on how long the probe has been in 
-                // a running state. it is theoretically possible that the probe is in this running state but is somehow faulty and failing the 
+                // is keep track of when the probe was started and stopped and compute participation based on how much of the participation horizon
+                // has been covered by the probe. it is possible that the probe is in this running state but is somehow faulty and failing the 
                 // health tests. thus, the approach is not perfect, but it's the best we can do on ios.
-                if (StartDateTime == null)
+
+                if (StartStopTimes.Count == 0)
                     return 0;
-                else
-                {
-                    double runningSeconds = (DateTime.Now - StartDateTime.GetValueOrDefault()).TotalSeconds;
-                    double participationHorizonSeconds = new TimeSpan(Protocol.ParticipationHorizonDays, 0, 0, 0).TotalSeconds;
-                    return (float)(runningSeconds / participationHorizonSeconds);
-                }
+                    
+                double runningSeconds = StartStopTimes.Select((startStopTime, index) =>
+                    {
+                        DateTime? startTime = null;
+                        DateTime? stopTime = null;
+
+                        // if this is the final element and it's a start time, then the probe is currently running and we should calculate 
+                        // how much time has elapsed since the probe was started.
+                        if (index == StartStopTimes.Count - 1 && startStopTime.Item1)
+                        {
+                            // if the current start time came before the participation horizon, use the horizon as the start time.
+                            if (startStopTime.Item2 < Protocol.ParticipationHorizon)
+                                startTime = Protocol.ParticipationHorizon;
+                            else
+                                startTime = startStopTime.Item2;
+
+                            // the probe is currently running, so use the current time as the stop time.
+                            stopTime = DateTime.Now;
+                        }
+                        // otherwise, we only need to consider stop times after the participation horizon.
+                        else if (!startStopTime.Item1 && startStopTime.Item2 > Protocol.ParticipationHorizon)
+                        {
+                            stopTime = startStopTime.Item2;
+
+                            // if the previous element is a start time, use it.
+                            if (index > 0 && StartStopTimes[index - 1].Item1)
+                                startTime = StartStopTimes[index - 1].Item2;
+
+                            // if we don't have a previous element that's a start time, or we do but the start time was before the participation horizon, then 
+                            // use the participation horizon as the start time.
+                            if (startTime == null || startTime.Value < Protocol.ParticipationHorizon)
+                                startTime = Protocol.ParticipationHorizon;
+                        }
+
+                        // if we've got a start and stop time, return the total number of seconds covered.
+                        if (startTime != null && stopTime != null)
+                            return (stopTime.Value - startTime.Value).TotalSeconds;
+                        else
+                            return 0;
+                        
+                    }).Sum();
+
+                double participationHorizonSeconds = TimeSpan.FromDays(Protocol.ParticipationHorizonDays).TotalSeconds;
+                return (float)(runningSeconds / participationHorizonSeconds);
                 #else
                 #error "Unrecognized platform."
                 #endif
