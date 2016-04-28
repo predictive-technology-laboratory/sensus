@@ -295,8 +295,12 @@ namespace SensusService.Probes
 
                     Initialize();
                     _running = true;
-                    _startStopTimes.Add(new Tuple<bool, DateTime>(true, DateTime.Now));
-                    _startStopTimes.RemoveAll(t => t.Item2 < Protocol.ParticipationHorizon);
+
+                    lock (_startStopTimes)
+                    {
+                        _startStopTimes.Add(new Tuple<bool, DateTime>(true, DateTime.Now));
+                        _startStopTimes.RemoveAll(t => t.Item2 < Protocol.ParticipationHorizon);
+                    }
                 }
             }
         }
@@ -367,8 +371,12 @@ namespace SensusService.Probes
                     SensusServiceHelper.Get().Logger.Log("Stopping.", LoggingLevel.Normal, GetType());
 
                     _running = false;
-                    _startStopTimes.Add(new Tuple<bool, DateTime>(false, DateTime.Now));
-                    _startStopTimes.RemoveAll(t => t.Item2 < Protocol.ParticipationHorizon);
+
+                    lock (_startStopTimes)
+                    {
+                        _startStopTimes.Add(new Tuple<bool, DateTime>(false, DateTime.Now));
+                        _startStopTimes.RemoveAll(t => t.Item2 < Protocol.ParticipationHorizon);
+                    }
 
                     // clear out the probe's in-memory storage
                     lock (_collectedData)
@@ -407,7 +415,13 @@ namespace SensusService.Probes
                 throw new Exception("Cannot clear probe while it is running.");
             
             _collectedData.Clear();
-            _successfulHealthTestTimes.Clear();
+
+            lock (_startStopTimes)
+                _startStopTimes.Clear();
+
+            lock (_successfulHealthTestTimes)
+                _successfulHealthTestTimes.Clear();
+            
             _mostRecentDatum = null;
             _mostRecentStoreTimestamp = DateTimeOffset.MinValue;
         }
