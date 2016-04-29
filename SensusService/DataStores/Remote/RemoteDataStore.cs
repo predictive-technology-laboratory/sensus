@@ -79,6 +79,8 @@ namespace SensusService.DataStores.Remote
             Protocol.LocalDataStore.ClearDataCommittedToRemoteDataStore(committedData);
         }
 
-        public abstract Task<T> GetDatum<T>(string datumId, CancellationToken cancellationToken) where T : Datum;
+        public abstract string GetDatumKey(Datum datum);
+
+        public abstract Task<T> GetDatum<T>(string datumKey, CancellationToken cancellationToken) where T : Datum;
     }
 }

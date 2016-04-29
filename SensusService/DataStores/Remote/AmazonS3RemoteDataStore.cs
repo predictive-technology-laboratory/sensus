@@ -138,15 +138,12 @@ namespace SensusService.DataStores.Remote
                             // upload all participation reward data as individual S3 objects so we can retrieve them individually at a later time for participation verification.
                             if (datum is ParticipationRewardDatum)
                             {
-                                // use datum ID in key for retrieval later.
-                                string key = datumType + "/" + datum.Id + ".json";
-
                                 // the JSON for each participation reward datum must be indented so that cross-platform type conversion will work if/when the datum is retrieved.
                                 string datumJSON = datum.GetJSON(Protocol.JsonAnonymizer, true);
 
                                 try
                                 {
-                                    if ((await PutJsonAsync(s3, key, "[" + Environment.NewLine + datumJSON + Environment.NewLine + "]", cancellationToken)).HttpStatusCode == HttpStatusCode.OK)
+                                    if ((await PutJsonAsync(s3, GetDatumKey(datum), "[" + Environment.NewLine + datumJSON + Environment.NewLine + "]", cancellationToken)).HttpStatusCode == HttpStatusCode.OK)
                                         committedData.Add(datum);
                                 }
                                 catch (Exception ex)
@@ -187,7 +184,7 @@ namespace SensusService.DataStores.Remote
                             if (cancellationToken.IsCancellationRequested)
                                 break;
 
-                            string key = datumType + "/" + Guid.NewGuid() + ".json";
+                            string key = (_folder + "/" + datumType + "/" + Guid.NewGuid() + ".json").Trim('/');  // trim '/' in case folder is blank
 
                             StringBuilder json = datumTypeJSON[datumType];
                             json.Append(Environment.NewLine + "]");
@@ -220,7 +217,7 @@ namespace SensusService.DataStores.Remote
             PutObjectRequest putRequest = new PutObjectRequest
             {
                 BucketName = _bucket,
-                Key = _folder + "/" + key.Trim('/'),  // trim '/' in case folder is blank
+                Key = key,
                 ContentBody = json,
                 ContentType = "application/json"
             };
@@ -228,7 +225,12 @@ namespace SensusService.DataStores.Remote
             return s3.PutObjectAsync(putRequest, cancellationToken);
         }
 
-        public override async Task<T> GetDatum<T>(string datumId, CancellationToken cancellationToken)
+        public override string GetDatumKey(Datum datum)
+        {
+            return (_folder + "/" + datum.GetType().Name + "/" + datum.Id + ".json").Trim('/');
+        }
+
+        public override async Task<T> GetDatum<T>(string datumKey, CancellationToken cancellationToken)
         {
             AmazonS3Client s3 = null;
 
@@ -236,8 +238,7 @@ namespace SensusService.DataStores.Remote
             {
                 s3 = InitializeS3();
 
-                string key = (_folder + "/" + typeof(T).Name + "/" + datumId + ".json").Trim('/');
-                Stream responseStream = (await s3.GetObjectAsync(_bucket, key, cancellationToken)).ResponseStream;
+                Stream responseStream = (await s3.GetObjectAsync(_bucket, datumKey, cancellationToken)).ResponseStream;
                 T datum = null;
                 using (StreamReader reader = new StreamReader(responseStream))
                 {

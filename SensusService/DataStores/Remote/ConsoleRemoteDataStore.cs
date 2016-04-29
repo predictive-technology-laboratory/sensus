@@ -55,9 +55,14 @@ namespace SensusService.DataStores.Remote
                 });
         }
 
-        public override Task<T> GetDatum<T>(string datumId, CancellationToken cancellationToken)
+        public override string GetDatumKey(Datum datum)
         {
-            throw new Exception("Cannot retrieve data from Console Remote Data Store.");
+            throw new Exception("Cannot retrieve datum key from Console Remote Data Store.");
+        }
+
+        public override Task<T> GetDatum<T>(string datumKey, CancellationToken cancellationToken)
+        {
+            throw new Exception("Cannot retrieve datum from Console Remote Data Store.");
         }
     }
 }
