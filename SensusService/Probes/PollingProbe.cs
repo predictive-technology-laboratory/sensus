@@ -82,7 +82,11 @@ namespace SensusService.Probes
                 int oneDayMS = (int)new TimeSpan(1, 0, 0, 0).TotalMilliseconds;
                 float pollsPerDay = oneDayMS / (float)_pollingSleepDurationMS;
                 float fullParticipationPolls = pollsPerDay * Protocol.ParticipationHorizonDays;
-                return _pollTimes.Count(pollTime => pollTime >= Protocol.ParticipationHorizon) / fullParticipationPolls;
+
+                lock (_pollTimes)
+                {
+                    return _pollTimes.Count(pollTime => pollTime >= Protocol.ParticipationHorizon) / fullParticipationPolls;
+                }
             }
         }
 
@@ -170,8 +174,12 @@ namespace SensusService.Probes
                                     {
                                         SensusServiceHelper.Get().Logger.Log("Polling.", LoggingLevel.Normal, GetType());
                                         data = Poll(cancellationToken);
-                                        _pollTimes.Add(DateTime.Now);
-                                        _pollTimes.RemoveAll(pollTime => pollTime < Protocol.ParticipationHorizon);
+
+                                        lock (_pollTimes)
+                                        {
+                                            _pollTimes.Add(DateTime.Now);
+                                            _pollTimes.RemoveAll(pollTime => pollTime < Protocol.ParticipationHorizon);
+                                        }
                                     }
                                     catch (Exception ex)
                                     {
@@ -240,7 +248,11 @@ namespace SensusService.Probes
 
             _isPolling = false;
             _pollCallbackId = null;
-            _pollTimes.Clear();
+
+            lock (_pollTimes)
+            {
+                _pollTimes.Clear();
+            }
         }
     }
 }
