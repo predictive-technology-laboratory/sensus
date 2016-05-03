@@ -93,7 +93,7 @@ namespace SensusService
                 e.ErrorContext.Handled = true;
             },
 
-            MissingMemberHandling = MissingMemberHandling.Ignore,
+            MissingMemberHandling = MissingMemberHandling.Ignore,  // need to ignore missing members for cross-platform deserialization
             Formatting = Formatting.Indented  // must use indented formatting in order for cross-platform type conversion to work (depends on each "$type" name-value pair being on own line).
             #endregion
         };

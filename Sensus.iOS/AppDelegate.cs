@@ -28,6 +28,7 @@ using Xam.Plugin.MapExtend.iOSUnified;
 using CoreLocation;
 using System.Threading;
 using Plugin.Toasts;
+using SensusService.Probes;
 
 namespace Sensus.iOS
 {
@@ -37,8 +38,6 @@ namespace Sensus.iOS
     [Register("AppDelegate")]
     public partial class AppDelegate : FormsApplicationDelegate
     {
-        private iOSSensusServiceHelper _serviceHelper;
-
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
             SensusServiceHelper.Initialize(() => new iOSSensusServiceHelper());
@@ -58,8 +57,6 @@ namespace Sensus.iOS
             LoadApplication(new App());
 
             uiApplication.RegisterUserNotificationSettings(UIUserNotificationSettings.GetSettingsForTypes(UIUserNotificationType.Badge | UIUserNotificationType.Sound | UIUserNotificationType.Alert, new NSSet()));
-
-            _serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
 
             #if UNIT_TESTING
             Forms.ViewInitialized += (sender, e) =>
@@ -126,22 +123,22 @@ namespace Sensus.iOS
             UIApplication.SharedApplication.CancelAllLocalNotifications();
             UIApplication.SharedApplication.ApplicationIconBadgeNumber = 0;
 
-            _serviceHelper.ActivationId = Guid.NewGuid().ToString();
+            iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
+
+            serviceHelper.ActivationId = Guid.NewGuid().ToString();
 
             try
             {
-                _serviceHelper.BarcodeScanner = new ZXing.Mobile.MobileBarcodeScanner(UIApplication.SharedApplication.KeyWindow.RootViewController);
+                serviceHelper.BarcodeScanner = new ZXing.Mobile.MobileBarcodeScanner(UIApplication.SharedApplication.KeyWindow.RootViewController);
             }
             catch (Exception ex)
             {
-                SensusServiceHelper.Get().Logger.Log("Failed to create barcode scanner:  " + ex.Message, LoggingLevel.Normal, GetType());
+                serviceHelper.Logger.Log("Failed to create barcode scanner:  " + ex.Message, LoggingLevel.Normal, GetType());
             }
 
-            iOSSensusServiceHelper sensusServiceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
-
-            sensusServiceHelper.StartAsync(() =>
+            serviceHelper.StartAsync(() =>
                 {
-                    sensusServiceHelper.UpdateCallbackNotificationActivationIdsAsync();
+                    serviceHelper.UpdateCallbackNotificationActivationIdsAsync();
 
                     #if UNIT_TESTING
                     // load and run the unit testing protocol
@@ -174,7 +171,10 @@ namespace Sensus.iOS
             {
                 NSNumber isCallbackValue = notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_KEY)) as NSNumber;
                 if (isCallbackValue != null && isCallbackValue.BoolValue)
-                    _serviceHelper.ServiceCallbackNotificationAsync(notification);
+                {
+                    iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
+                    serviceHelper.ServiceCallbackNotificationAsync(notification);
+                }
             }
         }
 		
@@ -184,24 +184,23 @@ namespace Sensus.iOS
         public override void DidEnterBackground(UIApplication application)
         {
             iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
-            if (serviceHelper != null)
-            {
-                // save app state in background
-                nint saveTaskId = application.BeginBackgroundTask(() =>
-                    {
-                    });
 
-                serviceHelper.SaveAsync(() =>
-                    {
-                        application.EndBackgroundTask(saveTaskId);
-                    });              
+            // app is no longer active, so reset the activation ID
+            serviceHelper.ActivationId = null;
 
-                // app is no longer active, so reset the activation ID
-                serviceHelper.ActivationId = null;
+            // leave the user a notification if a prompt is currently running
+            if (iOSSensusServiceHelper.PromptForInputsRunning)
+                serviceHelper.IssueNotificationAsync("Please open to provide responses.", null);
+                
+            // save app state in background
+            nint saveTaskId = application.BeginBackgroundTask(() =>
+                {
+                });
 
-                if (iOSSensusServiceHelper.PromptForInputsRunning)
-                    serviceHelper.IssueNotificationAsync("Please open to provide responses.", null);
-            }
+            serviceHelper.SaveAsync(() =>
+                {
+                    application.EndBackgroundTask(saveTaskId);
+                }); 
         }
 		
         // This method is called as part of the transiton from background to active state.
@@ -214,15 +213,31 @@ namespace Sensus.iOS
         {
             // this method won't be called when the user kills the app using multitasking; however,
             // it should be called if the system kills the app when it's running in the background.
+            // it should also be called if the system shuts down due to loss of battery power.
             // there doesn't appear to be a way to gracefully stop the app when the user kills it
             // via multitasking...we'll have to live with that. also some online resources indicate 
             // that no background time can be requested from within this method. so, instead of 
             // beginning a background task, just wait for the calls to finish.
-            if (_serviceHelper != null)
-            {
-                _serviceHelper.Save();
-                _serviceHelper.Stop();
-            }
+
+            SensusServiceHelper serviceHelper = SensusServiceHelper.Get();
+
+            // we're going to save the service helper and its protocols/probes in the running state
+            // so that they will be restarted if/when the user restarts the app. in order to properly 
+            // track running time for listening probes, we need to add a stop time manually since
+            // we won't call stop until after the service helper has been saved.
+            foreach (Protocol protocol in serviceHelper.RegisteredProtocols)
+                if (protocol.Running)
+                    foreach (Probe probe in protocol.Probes)
+                        if (probe.Running)
+                        {
+                            lock (probe.StartStopTimes)
+                            {
+                                probe.StartStopTimes.Add(new Tuple<bool, DateTime>(false, DateTime.Now));
+                            }
+                        }
+
+            serviceHelper.Save();
+            serviceHelper.Stop();
         }
     }
 }
