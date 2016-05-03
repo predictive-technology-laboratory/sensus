@@ -23,6 +23,8 @@ namespace SensusService
 {
     public class Logger
     {
+        private const int MAX_LOG_SIZE_MEGABYTES = 20;
+
         private string _path;
         private LoggingLevel _level;
         private TextWriter[] _otherOutputs;
@@ -111,6 +113,23 @@ namespace SensusService
                         {
                             foreach (string bufferedMessage in _messageBuffer)
                                 file.WriteLine(bufferedMessage);
+                        }
+
+                        // keep log file under a certain size by reading the most recent MAX_LOG_SIZE_MEGABYTES.
+                        long currSizeBytes = new FileInfo(_path).Length;
+                        if (currSizeBytes > MAX_LOG_SIZE_MEGABYTES * 1024 * 1024)
+                        {
+                            int newSizeBytes = (MAX_LOG_SIZE_MEGABYTES - 5) * 1024 * 1024;
+                            byte[] newBytes = new byte[newSizeBytes];
+
+                            using (FileStream file = new FileStream(_path, FileMode.Open, FileAccess.Read))
+                            {
+                                file.Position = currSizeBytes - newSizeBytes;
+                                file.Read(newBytes, 0, newSizeBytes);
+                            }
+
+                            File.Delete(_path);
+                            File.WriteAllBytes(_path, newBytes);
                         }
                     }
                     catch (Exception ex)
