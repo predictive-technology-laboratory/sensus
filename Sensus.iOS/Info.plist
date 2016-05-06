@@ -142,11 +142,11 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>9.0.1</string>
+	<string>9.3.0</string>
 	<key>XSAppIconAssets</key>
 	<string>Resources/Images.xcassets/AppIcons.appiconset</string>
 	<key>CFBundleShortVersionString</key>
-	<string>9.0.1</string>
+	<string>9.3.0</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>
