@@ -46,6 +46,9 @@ namespace SensusService.DataStores.Remote
             }
             set
             {
+                if (value != null)
+                    value = value.Trim();
+                
                 _bucket = value;
             }
         }
@@ -75,6 +78,10 @@ namespace SensusService.DataStores.Remote
             }
             set
             {
+                // newlines and spaces will cause problems when extracting the region and using it in the URL
+                if (value != null)
+                    value = value.Trim();
+                
                 _cognitoIdentityPoolId = value;
             }
         }
