@@ -128,7 +128,7 @@ namespace SensusService.DataStores.Local
                 });
         }
 
-        public override List<Datum> GetDataForRemoteDataStore(CancellationToken cancellationToken, Action<double> progressCallback)
+        public override List<Datum> GetDataForRemoteDataStore(CancellationToken cancellationToken)
         {
             lock (_locker)
             {
@@ -141,9 +141,6 @@ namespace SensusService.DataStores.Local
 
                     if (cancellationToken.IsCancellationRequested)
                         break;
-
-                    if (progressCallback != null)
-                        progressCallback(pathNum / (double)paths.Length);
                     
                     try
                     {
@@ -224,6 +221,41 @@ namespace SensusService.DataStores.Local
                     WriteToNewPath();
 
                 SensusServiceHelper.Get().Logger.Log("Finished clearing remote-committed data elements.", LoggingLevel.Normal, GetType());
+            }
+        }
+
+        public override int WriteData(string path, CancellationToken cancellationToken, Action<double> progressCallback)
+        {
+            lock (_locker)
+            {
+                int dataWritten = 0;
+
+                using (StreamWriter file = new StreamWriter(path))
+                {
+                    string[] localPaths = Directory.GetFiles(StorageDirectory);
+                    for (int localPathNum = 0; localPathNum < localPaths.Length && !cancellationToken.IsCancellationRequested; ++localPathNum)
+                    {   
+                        string localPath = localPaths[localPathNum];
+
+                        using (StreamReader localFile = new StreamReader(localPath))
+                        {
+                            string line;
+                            while ((line = localFile.ReadLine()) != null)
+                            {
+                                file.WriteLine(line);
+                                ++dataWritten;
+                            }
+                        }
+
+                        if (progressCallback != null)
+                            progressCallback(localPathNum / (double)localPaths.Length);
+                    }
+                }
+
+                if (cancellationToken.IsCancellationRequested)
+                    File.Delete(path);
+
+                return dataWritten;
             }
         }
 

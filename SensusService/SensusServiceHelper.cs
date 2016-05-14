@@ -58,7 +58,7 @@ namespace SensusService
         public const int PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS = 60;
         protected const string XAMARIN_INSIGHTS_APP_KEY = "";
         private const string ENCRYPTION_KEY = "";
-        private static readonly string SHARE_DIRECTORY = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "share");
+        public static readonly string SHARE_DIRECTORY = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "share");
         private static readonly string LOG_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
         private static readonly string SERIALIZATION_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_service_helper.json");
 

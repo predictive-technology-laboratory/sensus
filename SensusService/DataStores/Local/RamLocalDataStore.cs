@@ -19,6 +19,7 @@ using System;
 using System.Threading;
 using SensusUI.UiProperties;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace SensusService.DataStores.Local
 {
@@ -103,7 +104,7 @@ namespace SensusService.DataStores.Local
                 });
         }
 
-        public override List<Datum> GetDataForRemoteDataStore(CancellationToken cancellationToken, Action<double> progressCallback)
+        public override List<Datum> GetDataForRemoteDataStore(CancellationToken cancellationToken)
         {
             lock (_data)
                 return _data.ToList();
@@ -114,6 +115,29 @@ namespace SensusService.DataStores.Local
             lock (_data)
                 foreach (Datum d in data)
                     _data.Remove(d);
+        }
+
+        public override int WriteData(string path, CancellationToken cancellationToken, Action<double> progressCallback)
+        {
+            lock (_data)
+            {
+                int dataWritten = 0;
+
+                using (StreamWriter file = new StreamWriter(path))
+                {                    
+                    foreach (Datum datum in _data)
+                    {
+                        if (progressCallback != null && _data.Count >= 10 && (dataWritten % (_data.Count / 10)) == 0)
+                            progressCallback(dataWritten / (double)_data.Count);
+
+                        file.WriteLine(datum.GetJSON(Protocol.JsonAnonymizer, false));
+
+                        ++dataWritten;
+                    }
+                }
+
+                return dataWritten;
+            }
         }
 
         public override void Clear()

@@ -78,13 +78,10 @@ namespace SensusService.DataStores.Local
             SensusServiceHelper.Get().Logger.Log("Done clearing committed data elements from probes.", LoggingLevel.Normal, GetType());
         }
 
-        public List<Datum> GetDataForRemoteDataStore(CancellationToken cancellationToken) 
-        {
-            return GetDataForRemoteDataStore(cancellationToken, null);
-        }
-
-        public abstract List<Datum> GetDataForRemoteDataStore(CancellationToken cancellationToken, Action<double> progressCallback);
+        public abstract List<Datum> GetDataForRemoteDataStore(CancellationToken cancellationToken);
 
         public abstract void ClearDataCommittedToRemoteDataStore(List<Datum> dataCommittedToRemote);
+
+        public abstract int WriteData(string path, CancellationToken cancellationToken, Action<double> progressCallback);
     }
 }

@@ -429,7 +429,13 @@ namespace SensusUI
 
             ToolbarItems.Add(new ToolbarItem(null, "gear_wrench.png", async () =>
                     {
-                        List<string> buttons = new string[] { "New Protocol", "View Log", "View Points of Interest" }.ToList();
+                        double shareDirectoryMB = 0;
+                        foreach (string sharePath in Directory.GetFiles(SensusServiceHelper.SHARE_DIRECTORY))
+                            shareDirectoryMB += new FileInfo(sharePath).Length / (1024d * 1024d);
+                    
+                        string clearShareDirectoryAction = "Clear Share Directory (" + Math.Round(shareDirectoryMB, 1) + " MB)";
+
+                        List<string> buttons = new string[] { "New Protocol", "View Log", "View Points of Interest", clearShareDirectoryAction }.ToList();
 
                         // stopping only makes sense on android, where we use a background service. on ios, there is no concept
                         // of stopping the app other than the user or system terminating the app.
@@ -464,9 +470,25 @@ namespace SensusUI
                         }
                         else if (action == "View Points of Interest")
                             await Navigation.PushAsync(new PointsOfInterestPage(SensusServiceHelper.Get().PointsOfInterest));
+                        else if (action == clearShareDirectoryAction)
+                        {
+                            foreach (string sharePath in Directory.GetFiles(SensusServiceHelper.SHARE_DIRECTORY))
+                            {
+                                try
+                                {
+                                    File.Delete(sharePath);
+                                }
+                                catch (Exception ex)
+                                {
+                                    string errorMessage = "Failed to delete shared file \"" + sharePath + "\":  " + ex.Message;
+                                    SensusServiceHelper.Get().FlashNotificationAsync(errorMessage);
+                                    SensusServiceHelper.Get().Logger.Log(errorMessage, LoggingLevel.Normal, GetType());
+                                }
+                            }
+                        }
                         #if __ANDROID__
                         else if (action == "Stop Sensus" && await DisplayAlert("Confirm", "Are you sure you want to stop Sensus? This will end your participation in all studies.", "Stop Sensus", "Go Back"))
-                            (SensusServiceHelper.Get() as Sensus.Android.AndroidSensusServiceHelper).Stop();
+                            SensusServiceHelper.Get().Stop();
                         #endif
                     }));
         }
