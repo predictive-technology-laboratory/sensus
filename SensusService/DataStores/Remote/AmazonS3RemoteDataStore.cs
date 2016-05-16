@@ -129,7 +129,7 @@ namespace SensusService.DataStores.Remote
 
                         DateTimeOffset commitStartTime = DateTimeOffset.UtcNow;
 
-                        List<Datum> committedData = new List<Datum>();
+                        List<Datum> committedData = new List<Datum>(data.Count);
 
                         #region group data by type and get JSON for each datum
                         Dictionary<string, List<Datum>> datumTypeData = new Dictionary<string, List<Datum>>();

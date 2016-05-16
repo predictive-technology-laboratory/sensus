@@ -116,8 +116,8 @@ namespace SensusUI
                         {
                         }
 
-                        // the only way to get a cancellation event is to back out of the window, so only pop if there was an error
-                        if (errorWritingShareFile)
+                        // if the window has already been popped then the token will have been cancelled. pop the window if needed.
+                        if (!_cancellationTokenSource.IsCancellationRequested)
                             Device.BeginInvokeOnMainThread(async () => await Navigation.PopAsync());
                     }
                     else
@@ -125,7 +125,7 @@ namespace SensusUI
                         Device.BeginInvokeOnMainThread(async () =>
                             {
                                 await Navigation.PopAsync();
-                                SensusServiceHelper.Get().ShareFileAsync(sharePath, "Sensus Data", "application/json");
+                                SensusServiceHelper.Get().ShareFileAsync(sharePath, "Sensus Data:  " + localDataStore.Protocol.Name, "application/json");
                             });
                     }
 

@@ -480,7 +480,7 @@ namespace SensusUI
                                 }
                                 catch (Exception ex)
                                 {
-                                    string errorMessage = "Failed to delete shared file \"" + sharePath + "\":  " + ex.Message;
+                                    string errorMessage = "Failed to delete shared file \"" + Path.GetFileName(sharePath) + "\":  " + ex.Message;
                                     SensusServiceHelper.Get().FlashNotificationAsync(errorMessage);
                                     SensusServiceHelper.Get().Logger.Log(errorMessage, LoggingLevel.Normal, GetType());
                                 }

@@ -153,15 +153,5 @@ namespace SensusService.DataStores.Local
 
             _data.Clear();
         }
-
-        public override void Stop()
-        {
-            lock (_locker)
-            {
-                base.Stop();
-
-                Clear();
-            }
-        }
     }
 }

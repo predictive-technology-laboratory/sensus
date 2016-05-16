@@ -135,12 +135,9 @@ namespace SensusService.DataStores.Local
                 List<Datum> localData = new List<Datum>();
 
                 string[] paths = Directory.GetFiles(StorageDirectory);
-                for (int pathNum = 0; pathNum < paths.Length; ++pathNum)
+                for (int pathNum = 0; pathNum < paths.Length && !cancellationToken.IsCancellationRequested; ++pathNum)
                 {   
                     string path = paths[pathNum];
-
-                    if (cancellationToken.IsCancellationRequested)
-                        break;
                     
                     try
                     {
