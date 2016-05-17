@@ -68,9 +68,11 @@ namespace SensusService
         }
 
         #if DEBUG || UNIT_TESTING
-        public const int HEALTH_TEST_DELAY_MS = 30000;  // test every 30 seconds in debug
+        // test every 30 seconds in debug
+        public const int HEALTH_TEST_DELAY_MS = 30000;
         #elif RELEASE
-        public const int HEALTH_TEST_DELAY_MS = 300000;  // test every 5 minutes in release
+        // test every 5 minutes in release
+        public const int HEALTH_TEST_DELAY_MS = 300000;
         #endif
 
         /// <summary>
@@ -246,6 +248,16 @@ namespace SensusService
             }
 
             return fileBytes;
+        }
+
+        public static double GetDirectorySizeMB(string directory)
+        {
+            double directorySizeMB = 0;
+
+            foreach (string path in Directory.GetFiles(directory))
+                directorySizeMB += new FileInfo(path).Length / (1024d * 1024d);
+
+            return directorySizeMB;
         }
 
         #region encryption

@@ -29,7 +29,8 @@ namespace SensusService.DataStores.Local
 
         private readonly object _locker = new object();
 
-        private string StorageDirectory
+        [JsonIgnore]
+        public string StorageDirectory
         {
             get
             {
@@ -227,6 +228,9 @@ namespace SensusService.DataStores.Local
             {
                 int dataWritten = 0;
 
+                double storageDirectoryMbToRead = SensusServiceHelper.GetDirectorySizeMB(StorageDirectory);
+                double storageDirectoryMbRead = 0;
+
                 using (StreamWriter file = new StreamWriter(path))
                 {
                     string[] localPaths = Directory.GetFiles(StorageDirectory);
@@ -236,18 +240,31 @@ namespace SensusService.DataStores.Local
 
                         using (StreamReader localFile = new StreamReader(localPath))
                         {
+                            long localFilePosition = 0;
+
                             string line;
                             while ((line = localFile.ReadLine()) != null)
                             {
                                 file.WriteLine(line);
                                 ++dataWritten;
-                            }
-                        }
 
-                        if (progressCallback != null)
-                            progressCallback(localPathNum / (double)localPaths.Length);
+                                if (localFile.BaseStream.Position > localFilePosition)
+                                {
+                                    storageDirectoryMbRead += (localFile.BaseStream.Position - localFilePosition) / (1024d * 1024d);
+                                    localFilePosition = localFile.BaseStream.Position;
+
+                                    if (progressCallback != null && storageDirectoryMbToRead > 0)
+                                        progressCallback(storageDirectoryMbRead / storageDirectoryMbToRead);
+                                }
+                            }
+
+                            storageDirectoryMbRead += (new FileInfo(localPath).Length - localFilePosition) / (1024d * 1024d);
+                        }
                     }
                 }
+
+                if (progressCallback != null)
+                    progressCallback(1);
 
                 if (cancellationToken.IsCancellationRequested)
                     File.Delete(path);

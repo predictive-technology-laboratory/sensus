@@ -81,7 +81,7 @@ namespace Sensus.iOS
                     {
                         try
                         {
-                            Protocol.DeserializeAsync(new Uri("http://" + url.AbsoluteString.Substring(url.AbsoluteString.IndexOf('/') + 2).Trim()), true, Protocol.DisplayAndStartAsync);
+                            Protocol.DeserializeAsync(new Uri("http://" + url.AbsoluteString.Substring(url.AbsoluteString.IndexOf('/') + 2).Trim()), Protocol.DisplayAndStartAsync);
                         }
                         catch (Exception ex)
                         {
@@ -92,7 +92,7 @@ namespace Sensus.iOS
                     {
                         try
                         {
-                            Protocol.DeserializeAsync(new Uri("https://" + url.AbsoluteString.Substring(url.AbsoluteString.IndexOf('/') + 2).Trim()), true, Protocol.DisplayAndStartAsync);
+                            Protocol.DeserializeAsync(new Uri("https://" + url.AbsoluteString.Substring(url.AbsoluteString.IndexOf('/') + 2).Trim()), Protocol.DisplayAndStartAsync);
                         }
                         catch (Exception ex)
                         {
@@ -103,7 +103,7 @@ namespace Sensus.iOS
                     {
                         try
                         {
-                            Protocol.DeserializeAsync(File.ReadAllBytes(url.Path), true, Protocol.DisplayAndStartAsync);
+                            Protocol.DeserializeAsync(File.ReadAllBytes(url.Path), Protocol.DisplayAndStartAsync);
                         }
                         catch (Exception ex)
                         {

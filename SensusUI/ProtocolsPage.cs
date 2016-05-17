@@ -344,13 +344,13 @@ namespace SensusUI
                     );
                 }
                 else if (selectedAction == "Copy")
-                    selectedProtocol.CopyAsync(selectedProtocolCopy => SensusServiceHelper.Get().RegisterProtocol(selectedProtocolCopy), true);
+                    selectedProtocol.CopyAsync(true, true);
                 else if (selectedAction == "Share")
                 {
                     Action ShareSelectedProtocol = new Action(() =>
                         {
                             // make a deep copy of the selected protocol so we can reset it for sharing
-                            selectedProtocol.CopyAsync(selectedProtocolCopy =>
+                            selectedProtocol.CopyAsync(false, false, selectedProtocolCopy =>
                                 {
                                     selectedProtocolCopy.ResetForSharing();
 
@@ -358,7 +358,8 @@ namespace SensusUI
                                     string sharePath = SensusServiceHelper.Get().GetSharePath(".json");
                                     selectedProtocolCopy.Save(sharePath);
                                     SensusServiceHelper.Get().ShareFileAsync(sharePath, "Sensus Protocol:  " + selectedProtocolCopy.Name, "application/json");
-                                }, false);
+
+                                });
                         });
 
                     if (selectedProtocol.Shareable)
@@ -429,10 +430,7 @@ namespace SensusUI
 
             ToolbarItems.Add(new ToolbarItem(null, "gear_wrench.png", async () =>
                     {
-                        double shareDirectoryMB = 0;
-                        foreach (string sharePath in Directory.GetFiles(SensusServiceHelper.SHARE_DIRECTORY))
-                            shareDirectoryMB += new FileInfo(sharePath).Length / (1024d * 1024d);
-                    
+                        double shareDirectoryMB = SensusServiceHelper.GetDirectorySizeMB(SensusServiceHelper.SHARE_DIRECTORY);
                         string clearShareDirectoryAction = "Clear Share Directory (" + Math.Round(shareDirectoryMB, 1) + " MB)";
 
                         List<string> buttons = new string[] { "New Protocol", "View Log", "View Points of Interest", clearShareDirectoryAction }.ToList();
