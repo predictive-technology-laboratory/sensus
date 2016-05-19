@@ -14,7 +14,7 @@ echo "The following differences will be used to build the Android release."
 git difftool
 
 # build APK
-xbuild /p:Configuration=Release ../../Sensus.Android/Sensus.Android.csproj
+xbuild /t:Rebuild /p:Configuration=Release ../../Sensus.Android/Sensus.Android.csproj
 if [ $? -ne 0 ]; then 
     echo "Error building release."
     exit $?;
