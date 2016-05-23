@@ -32,7 +32,12 @@ namespace SensusService
         {
             TypeNameHandling = TypeNameHandling.All,
             ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-            NullValueHandling = NullValueHandling.Ignore  // datum objects can be anonymized by omitting values. this is accomplished by setting them to null, which means they aren't even rendered into JSON given this option.
+
+            // datum objects can be anonymized by omitting values. this is accomplished by setting them to null. also, some fields in datum 
+            // objects might have unreliably obtained values (e.g., GPS location might fail and be null). if we ignore fields with null
+            // values when serializing, the resulting JSON and other derived structures (e.g., data frames in R) will have differing columns. 
+            // so we should include null values to ensure that all JSON values are always included.
+            NullValueHandling = NullValueHandling.Include  
         };
 
         public static Datum FromJSON(string json)

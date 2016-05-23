@@ -622,6 +622,10 @@ namespace SensusService.Probes.User
                                 try
                                 {
                                     Position currentPosition = GpsReceiver.Get().GetReading(default(CancellationToken));
+
+                                    if (currentPosition == null)
+                                        throw new Exception("GPS receiver returned null position.");
+
                                     latitude = currentPosition.Latitude;
                                     longitude = currentPosition.Longitude;
                                     locationTimestamp = currentPosition.Timestamp;
