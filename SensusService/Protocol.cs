@@ -119,90 +119,105 @@ namespace SensusService
 
                 DeserializeAsync(json, protocol =>
                     {
-                        // don't reset the protocol id -- received protocols should remain in the same study.
-                        protocol.Reset(false);
-
-                        // see if we have already registered the newly deserialized protocol. when considering whether a registered
-                        // protocol is the match for the newly deserialized one, also check the protocols grouped with the registered
-                        // protocol. from the user's perspective these grouped protocols are not visible, but they should trigger
-                        // a match from an randomized experimental design perspective.
-                        Protocol registeredProtocol = null;
-                        foreach (Protocol p in SensusServiceHelper.Get().RegisteredProtocols)
-                            if (p.Equals(protocol) || p.GroupedProtocols.Contains(protocol) || protocol.GroupedProtocols.Contains(p))
-                            {
-                                registeredProtocol = p;
-                                break;
-                            }
-
-                        // if we haven't yet registered the protocol, then set it up and register it
-                        if (registeredProtocol == null)
+                        try
                         {
-                            #region if grouped protocols are available, replace the protocol with one randomly selected from those available
-                            if (protocol.GroupedProtocols.Count > 0)
-                            {
-                                Random r = new Random();
-                                int numProtocols = 1 + protocol.GroupedProtocols.Count;
-                                int protocolIndex = r.Next(0, numProtocols);
+                            // don't reset the protocol id -- received protocols should remain in the same study.
+                            protocol.Reset(false);
 
-                                // if protocol index == 0, then we should use the deserialized protocol -- no action is needed. if, on the other hand
-                                // the protocol index > 0, then we need to swap in a new protocol.
-                                if (protocolIndex > 0)
+                            // see if we have already registered the newly deserialized protocol. when considering whether a registered
+                            // protocol is the match for the newly deserialized one, also check the protocols grouped with the registered
+                            // protocol. from the user's perspective these grouped protocols are not visible, but they should trigger
+                            // a match from an randomized experimental design perspective.
+                            Protocol registeredProtocol = null;
+                            foreach (Protocol p in SensusServiceHelper.Get().RegisteredProtocols)
+                                if (p.Equals(protocol) || p.GroupedProtocols.Contains(protocol) || protocol.GroupedProtocols.Contains(p))
                                 {
-                                    int replacementIndex = protocolIndex - 1;
-                                    Protocol replacementProtocol = protocol.GroupedProtocols[replacementIndex];
-
-                                    // rotate the configuration such that the replacement protocol has the other protocols as grouped protocols
-                                    replacementProtocol.GroupedProtocols.Clear();
-                                    replacementProtocol.GroupedProtocols.Add(protocol);
-                                    replacementProtocol.GroupedProtocols.AddRange(protocol.GroupedProtocols.Where(groupedProtocol => !groupedProtocol.Equals(replacementProtocol)));
-
-                                    // clear the original protocol's grouped protocols and swap in the replacement
-                                    protocol.GroupedProtocols.Clear();
-                                    protocol = replacementProtocol;
+                                    registeredProtocol = p;
+                                    break;
                                 }
+
+                            // if we haven't yet registered the protocol, then set it up and register it
+                            if (registeredProtocol == null)
+                            {
+                                #region if grouped protocols are available, replace the protocol with one randomly selected from those available
+                                if (protocol.GroupedProtocols.Count > 0)
+                                {
+                                    Random r = new Random();
+                                    int numProtocols = 1 + protocol.GroupedProtocols.Count;
+                                    int protocolIndex = r.Next(0, numProtocols);
+
+                                    // if protocol index == 0, then we should use the deserialized protocol -- no action is needed. if, on the other hand
+                                    // the protocol index > 0, then we need to swap in a new protocol.
+                                    if (protocolIndex > 0)
+                                    {
+                                        int replacementIndex = protocolIndex - 1;
+                                        Protocol replacementProtocol = protocol.GroupedProtocols[replacementIndex];
+
+                                        // rotate the configuration such that the replacement protocol has the other protocols as grouped protocols
+                                        replacementProtocol.GroupedProtocols.Clear();
+                                        replacementProtocol.GroupedProtocols.Add(protocol);
+                                        replacementProtocol.GroupedProtocols.AddRange(protocol.GroupedProtocols.Where(groupedProtocol => !groupedProtocol.Equals(replacementProtocol)));
+
+                                        // clear the original protocol's grouped protocols and swap in the replacement
+                                        protocol.GroupedProtocols.Clear();
+                                        protocol = replacementProtocol;
+                                    }
+                                }
+                                #endregion
+
+                                #region add any probes for the current platform that didn't come through when deserializing. for example, android has a listening WLAN probe, but iOS has a polling WLAN probe. neither will come through on the other platform when deserializing, since the types are not defined.
+                                ManualResetEvent probeSetupWait = new ManualResetEvent(false);
+                                Probe.GetAllAsync(probes =>
+                                    {                                        
+                                        List<Type> deserializedProbeTypes = protocol.Probes.Select(p => p.GetType()).ToList();
+
+                                        foreach (Probe probe in probes)
+                                            if (!deserializedProbeTypes.Contains(probe.GetType()))
+                                            {
+                                                SensusServiceHelper.Get().Logger.Log("Adding missing probe to protocol:  " + probe.GetType().FullName, LoggingLevel.Normal, typeof(Protocol));
+                                                protocol.AddProbe(probe);
+                                            }     
+
+                                        probeSetupWait.Set();
+                                    });
+
+                                probeSetupWait.WaitOne();
+                                #endregion
+
+                                SensusServiceHelper.Get().RegisterProtocol(protocol);
                             }
-                            #endregion
+                            else
+                                protocol = registeredProtocol;
 
-                            #region add any probes for the current platform that didn't come through when deserializing. for example, android has a listening WLAN probe, but iOS has a polling WLAN probe. neither will come through on the other platform when deserializing, since the types are not defined.
-                            ManualResetEvent probeSetupWait = new ManualResetEvent(false);
-                            Probe.GetAllAsync(probes =>
-                                {                                        
-                                    List<Type> deserializedProbeTypes = protocol.Probes.Select(p => p.GetType()).ToList();
-
-                                    foreach (Probe probe in probes)
-                                        if (!deserializedProbeTypes.Contains(probe.GetType()))
-                                        {
-                                            SensusServiceHelper.Get().Logger.Log("Adding missing probe to protocol:  " + probe.GetType().FullName, LoggingLevel.Normal, typeof(Protocol));
-                                            protocol.AddProbe(probe);
-                                        }     
-
-                                    probeSetupWait.Set();
-                                });
-
-                            probeSetupWait.WaitOne();
-                            #endregion
-
-                            SensusServiceHelper.Get().RegisterProtocol(protocol);
+                            // protocols deserialized upon receipt (i.e., those here) are never groupable for experimental integrity reasons. we
+                            // do not want the user to be able to group the newly deserialized protocol with other protocols and then share the 
+                            // resulting grouped protocol with other participants. the user's only option is to share the protocol as-is. of course,
+                            // if the protocol is unlocked then the user will be able to go edit the protocol and make it groupable. this is why
+                            // all protocols should be locked before deployment in an experiment.
+                            protocol.Groupable = false;
                         }
-                        else
-                            protocol = registeredProtocol;
-
-                        // protocols deserialized upon receipt (i.e., those here) are never groupable for experimental integrity reasons. we
-                        // do not want the user to be able to group the newly deserialized protocol with other protocols and then share the 
-                        // resulting grouped protocol with other participants. the user's only option is to share the protocol as-is. of course,
-                        // if the protocol is unlocked then the user will be able to go edit the protocol and make it groupable. this is why
-                        // all protocols should be locked before deployment in an experiment.
-                        protocol.Groupable = false;
-
-                        if (callback != null)
-                            callback(protocol);
+                        catch (Exception ex)
+                        {
+                            // if the protocol is null we'll have already flashed an error message with specific information. only need to flash a 
+                            // message here if something went wrong after successfully deserializing the protocol.
+                            if (protocol != null)
+                            {
+                                SensusServiceHelper.Get().Logger.Log("Failed to set up deserialized protocol:  " + ex.Message, LoggingLevel.Normal, typeof(Protocol));
+                                SensusServiceHelper.Get().FlashNotificationAsync("Failed to set up unpacked protocol.");
+                                protocol = null;
+                            }
+                        }
+                        finally
+                        {
+                            if (callback != null)
+                                callback(protocol);
+                        }
                     });
-
             }
             catch (Exception ex)
             {
                 SensusServiceHelper.Get().Logger.Log("Failed to decrypt/convert/deserialize protocol from bytes:  " + ex.Message, LoggingLevel.Normal, typeof(Protocol));
-                SensusServiceHelper.Get().FlashNotificationAsync("Failed to deserialize protocol.");
+                SensusServiceHelper.Get().FlashNotificationAsync("Failed to unpack protocol.");
 
                 if (callback != null)
                     callback(null);
@@ -241,13 +256,13 @@ namespace SensusService
                         if (protocol == null)
                         {
                             SensusServiceHelper.Get().Logger.Log("Failed to deserialize protocol from JSON.", LoggingLevel.Normal, typeof(Protocol));
-                            SensusServiceHelper.Get().FlashNotificationAsync("Failed to deserialize protocol from JSON.");
+                            SensusServiceHelper.Get().FlashNotificationAsync("Failed to unpack protocol from JSON.");
                         }
                     }
                     catch (Exception ex)
                     {
                         SensusServiceHelper.Get().Logger.Log("Failed to deserialize protocol from JSON:  " + ex.Message, LoggingLevel.Normal, typeof(Protocol));
-                        SensusServiceHelper.Get().FlashNotificationAsync("Failed to deserialize protocol from JSON:  " + ex.Message);
+                        SensusServiceHelper.Get().FlashNotificationAsync("Failed to unpack protocol from JSON:  " + ex.Message);
                     }
 
                     if (callback != null)
