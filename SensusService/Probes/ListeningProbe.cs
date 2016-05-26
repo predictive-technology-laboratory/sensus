@@ -21,6 +21,7 @@ namespace SensusService.Probes
     public abstract class ListeningProbe : Probe
     {
         private float _maxDataStoresPerSecond;
+        private bool _acquireWakeLock;
         private bool _wakeLockAcquired;
 
         private readonly object _locker = new object();
@@ -30,6 +31,19 @@ namespace SensusService.Probes
         {
             get { return _maxDataStoresPerSecond; }
             set { _maxDataStoresPerSecond = value; }
+        }
+
+        [OnOffUiProperty("Acquire wake lock:", true,  int.MaxValue - 1)]
+        public bool AcquireWakeLock
+        {
+            get
+            {
+                return _acquireWakeLock;
+            }
+            set
+            {
+                _acquireWakeLock = value;
+            }
         }
 
         protected override float RawParticipation
@@ -121,6 +135,7 @@ namespace SensusService.Probes
         protected ListeningProbe()
         {
             _maxDataStoresPerSecond = 1;
+            _acquireWakeLock = true;
             _wakeLockAcquired = false;
         }
 
@@ -128,12 +143,15 @@ namespace SensusService.Probes
         {
             lock (_locker)
             {
+                if (_acquireWakeLock)
+                {
+                    SensusServiceHelper.Get().KeepDeviceAwake();
+                    _wakeLockAcquired = true;
+                }
+
                 base.InternalStart();
 
                 StartListening();
-
-                SensusServiceHelper.Get().KeepDeviceAwake();  // listening probes are inherently energy inefficient, since the device must stay awake to listen for them.
-                _wakeLockAcquired = true;
             }
         }
 

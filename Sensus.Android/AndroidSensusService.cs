@@ -62,7 +62,6 @@ namespace Sensus.Android
 
                 // acquire wake lock before the start command method returns to ensure that the device does not sleep prematurely.
                 serviceHelper.KeepDeviceAwake();
-                bool wakeLockAcquired = true;
 
                 // the service can be stopped without destroying the service object. in such cases, 
                 // subsequent calls to start the service will not call OnCreate. therefore, it's 
@@ -74,9 +73,9 @@ namespace Sensus.Android
                 serviceHelper.StartAsync(() =>
                     {        
                         // is this a callback intent?
-                        if (intent != null && intent.GetBooleanExtra(AndroidSensusServiceHelper.SENSUS_CALLBACK_KEY, false))
+                        if (intent != null && intent.GetBooleanExtra(SensusServiceHelper.SENSUS_CALLBACK_KEY, false))
                         {
-                            string callbackId = intent.GetStringExtra(AndroidSensusServiceHelper.SENSUS_CALLBACK_ID_KEY);
+                            string callbackId = intent.GetStringExtra(SensusServiceHelper.SENSUS_CALLBACK_ID_KEY);
 
                             // if the user removes the main activity from the switcher, the service's process will be killed and restarted without notice, and 
                             // we'll have no opportunity to unschedule repeating callbacks. when the service is restarted we'll reinitialize the service
@@ -84,9 +83,10 @@ namespace Sensus.Android
                             // if the callback is scheduled, it's fine. if it's not, then unschedule it.
                             if (serviceHelper.CallbackIsScheduled(callbackId))
                             {
-                                bool repeating = intent.GetBooleanExtra(AndroidSensusServiceHelper.SENSUS_CALLBACK_REPEATING_KEY, false);
-                                int repeatDelayMS = intent.GetIntExtra(AndroidSensusServiceHelper.SENSUS_CALLBACK_REPEAT_DELAY_KEY, -1);
-                                bool repeatLag = intent.GetBooleanExtra(AndroidSensusServiceHelper.SENSUS_CALLBACK_REPEAT_LAG_KEY, false);
+                                bool repeating = intent.GetBooleanExtra(SensusServiceHelper.SENSUS_CALLBACK_REPEATING_KEY, false);
+                                int repeatDelayMS = intent.GetIntExtra(SensusServiceHelper.SENSUS_CALLBACK_REPEAT_DELAY_KEY, -1);
+                                bool repeatLag = intent.GetBooleanExtra(SensusServiceHelper.SENSUS_CALLBACK_REPEAT_LAG_KEY, false);
+                                bool wakeLockReleased = false;
 
                                 // raise callback and notify the user if there is a message. we wouldn't have presented the user with the message yet.
                                 serviceHelper.RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, true, 
@@ -97,17 +97,17 @@ namespace Sensus.Android
                                         serviceHelper.ScheduleCallbackAlarm(callbackPendingIntent, repeatCallbackTime);
                                     },
 
-                                    // what to do if the device should be allowed to sleep?
+                                    // if the callback indicates that it's okay for the device to sleep, release the wake lock now.
                                     () =>
                                     {
-                                        wakeLockAcquired = false;
+                                        wakeLockReleased = true;
                                         serviceHelper.LetDeviceSleep();
                                     },
 
-                                    // called no matter what. release wake lock if it's still acquired.
+                                    // release wake lock now if we didn't while the callback action was executing.
                                     () =>
                                     {
-                                        if (wakeLockAcquired)
+                                        if (!wakeLockReleased)
                                             serviceHelper.LetDeviceSleep();
                                     });
                             }
