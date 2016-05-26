@@ -21,8 +21,8 @@ namespace SensusService.Probes
     public abstract class ListeningProbe : Probe
     {
         private float _maxDataStoresPerSecond;
-        private bool _acquireWakeLock;
-        private bool _wakeLockAcquired;
+        private bool _keepDeviceAwake;
+        private bool _deviceAwake;
 
         private readonly object _locker = new object();
 
@@ -33,16 +33,16 @@ namespace SensusService.Probes
             set { _maxDataStoresPerSecond = value; }
         }
 
-        [OnOffUiProperty("Acquire wake lock:", true,  int.MaxValue - 1)]
-        public bool AcquireWakeLock
+        [OnOffUiProperty("Keep device awake:", true,  int.MaxValue - 1)]
+        public bool KeepDeviceAwake
         {
             get
             {
-                return _acquireWakeLock;
+                return _keepDeviceAwake;
             }
             set
             {
-                _acquireWakeLock = value;
+                _keepDeviceAwake = value;
             }
         }
 
@@ -135,18 +135,19 @@ namespace SensusService.Probes
         protected ListeningProbe()
         {
             _maxDataStoresPerSecond = 1;
-            _acquireWakeLock = true;
-            _wakeLockAcquired = false;
+            _keepDeviceAwake = true;
+            _deviceAwake = false;
         }
 
         protected sealed override void InternalStart()
         {
             lock (_locker)
             {
-                if (_acquireWakeLock)
+                // only keep device awake if we're not already running. calls to LetDeviceSleep must match these exactly.
+                if (!Running && _keepDeviceAwake)
                 {
                     SensusServiceHelper.Get().KeepDeviceAwake();
-                    _wakeLockAcquired = true;
+                    _deviceAwake = true;
                 }
 
                 base.InternalStart();
@@ -161,15 +162,15 @@ namespace SensusService.Probes
         {
             lock (_locker)
             {
-                if (_wakeLockAcquired)
-                {
-                    SensusServiceHelper.Get().LetDeviceSleep();  // we can sleep now...whew!
-                    _wakeLockAcquired = false;
-                }
-                
                 base.Stop();
 
                 StopListening();
+
+                if (_deviceAwake)
+                {
+                    SensusServiceHelper.Get().LetDeviceSleep();
+                    _deviceAwake = false;
+                }
             }
         }
 
@@ -186,7 +187,7 @@ namespace SensusService.Probes
         {
             base.ResetForSharing();
 
-            _wakeLockAcquired = false;
+            _deviceAwake = false;
         }
     }
 }

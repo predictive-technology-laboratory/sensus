@@ -469,7 +469,8 @@ namespace SensusService.Probes.User
                                                     }
                                                 }
 
-                                            // we don't need to copy the script, since we're already working with a copy of the original.
+                                            // we don't need to copy the script, since we're already working with a copy of the original. also, when the script prompts 
+                                            // are displayed let the caller know that it's okay to let the device sleep.
                                             if (scriptToRerun != null)
                                                 Run(scriptToRerun, postDisplayCallback: letDeviceSleepCallback);
                                         }
@@ -546,6 +547,7 @@ namespace SensusService.Probes.User
                         return Task.Run(() =>
                             {
                                 // if the probe is still running and the runner is enabled, run a copy of the script so that we can retain a pristine version of the original.
+                                // also, when the script prompts display let the caller know that it's okay for the device to sleep.
                                 if (_probe.Running && _enabled)
                                 {
                                     Run(_script.Copy(), postDisplayCallback: letDeviceSleepCallback);

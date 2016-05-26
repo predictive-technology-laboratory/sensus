@@ -60,7 +60,7 @@ namespace Sensus.Android
             {
                 serviceHelper.Logger.Log("Sensus service received start command (startId=" + startId + ", flags=" + flags + ").", LoggingLevel.Normal, GetType());
 
-                // acquire wake lock before the start command method returns to ensure that the device does not sleep prematurely.
+                // acquire wake lock before this method returns to ensure that the device does not sleep prematurely, interrupting the execution of a callback.
                 serviceHelper.KeepDeviceAwake();
 
                 // the service can be stopped without destroying the service object. in such cases, 
@@ -90,7 +90,8 @@ namespace Sensus.Android
 
                                 // raise callback and notify the user if there is a message. we wouldn't have presented the user with the message yet.
                                 serviceHelper.RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, true, 
-                                    
+
+                                    // schedule a new callback at the given time.
                                     repeatCallbackTime =>
                                     {
                                         PendingIntent callbackPendingIntent = PendingIntent.GetService(this, callbackId.GetHashCode(), intent, PendingIntentFlags.CancelCurrent);

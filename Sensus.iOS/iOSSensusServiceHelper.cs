@@ -223,7 +223,8 @@ namespace Sensus.iOS
 
             // raise callback but don't notify user since we would have already done so when the UILocalNotification was delivered to the notification tray.
             RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, false,
-                
+
+                // schedule new callback at the specified time.
                 repeatCallbackTime =>
                 {
                     Device.BeginInvokeOnMainThread(() =>
@@ -238,13 +239,14 @@ namespace Sensus.iOS
                         });
                 },
 
+                // nothing to do if the callback thinks we can sleep.
                 null,
 
+                // notification has been serviced, so end background task
                 () =>
                 {
                     Device.BeginInvokeOnMainThread(() =>
                         {
-                            // notification has been serviced, so end background task
                             UIApplication.SharedApplication.EndBackgroundTask(callbackTaskId);
                         });
                 });   
