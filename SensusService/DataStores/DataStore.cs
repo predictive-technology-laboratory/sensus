@@ -140,7 +140,7 @@ namespace SensusService.DataStores
             }
         }
 
-        private Task CommitAsync(string callbackId, CancellationToken cancellationToken)
+        private Task CommitAsync(string callbackId, CancellationToken cancellationToken, Action letDeviceSleepCallback)
         {
             return CommitAsync(cancellationToken);
         }

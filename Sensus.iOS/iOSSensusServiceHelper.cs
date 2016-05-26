@@ -222,7 +222,9 @@ namespace Sensus.iOS
             bool repeatLag = (callbackNotification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_LAG_KEY)) as NSNumber).BoolValue;
 
             // raise callback but don't notify user since we would have already done so when the UILocalNotification was delivered to the notification tray.
-            RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, false, repeatCallbackTime =>
+            RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, false,
+                
+                repeatCallbackTime =>
                 {
                     Device.BeginInvokeOnMainThread(() =>
                         {
@@ -234,7 +236,11 @@ namespace Sensus.iOS
                                 
                             UIApplication.SharedApplication.ScheduleLocalNotification(callbackNotification);
                         });
-                }, () =>
+                },
+
+                null,
+
+                () =>
                 {
                     Device.BeginInvokeOnMainThread(() =>
                         {
@@ -371,7 +377,7 @@ namespace Sensus.iOS
                 }).Start();
         }
 
-        public override void RunVoicePromptAsync(string prompt, Action<string> callback)
+        public override void RunVoicePromptAsync(string prompt, Action postDisplayCallback, Action<string> callback)
         {
             new Thread(() =>
                 {
@@ -391,6 +397,9 @@ namespace Sensus.iOS
                             dialog.Presented += (o, e) =>
                             {
                                 dialogShowWait.Set();
+
+                                if (postDisplayCallback != null)
+                                    postDisplayCallback();
                             };
                             dialog.Clicked += (o, e) =>
                             { 

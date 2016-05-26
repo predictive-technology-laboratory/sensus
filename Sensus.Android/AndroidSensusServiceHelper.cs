@@ -344,7 +344,7 @@ namespace Sensus.Android
             _textToSpeech.SpeakAsync(text, callback);
         }
 
-        public override void RunVoicePromptAsync(string prompt, Action<string> callback)
+        public override void RunVoicePromptAsync(string prompt, Action postDisplayCallback, Action<string> callback)
         {
             new Thread(() =>
                 {
@@ -356,7 +356,6 @@ namespace Sensus.Android
                             mainActivity.RunOnUiThread(() =>
                                 {   
                                     #region set up dialog
-
                                     TextView promptView = new TextView(mainActivity) { Text = prompt, TextSize = 20 };
                                     EditText inputEdit = new EditText(mainActivity) { TextSize = 20 };
                                     LinearLayout scrollLayout = new LinearLayout(mainActivity){ Orientation = global::Android.Widget.Orientation.Vertical };
@@ -366,16 +365,16 @@ namespace Sensus.Android
                                     scrollView.AddView(scrollLayout);
 
                                     AlertDialog dialog = new AlertDialog.Builder(mainActivity)
-                                            .SetTitle("Sensus is requesting input...")
-                                            .SetView(scrollView)
-                                            .SetPositiveButton("OK", (o, e) =>
+                                        .SetTitle("Sensus is requesting input...")
+                                        .SetView(scrollView)
+                                        .SetPositiveButton("OK", (o, e) =>
                                         {
                                             input = inputEdit.Text;
                                         })
-                                            .SetNegativeButton("Cancel", (o, e) =>
+                                        .SetNegativeButton("Cancel", (o, e) =>
                                         {
                                         })
-                                            .Create();                                                               
+                                        .Create();                                                               
 
                                     dialog.DismissEvent += (o, e) =>
                                     {
@@ -387,6 +386,9 @@ namespace Sensus.Android
                                     dialog.ShowEvent += (o, e) =>
                                     {                                    
                                         dialogShowWait.Set();
+
+                                        if (postDisplayCallback != null)
+                                            postDisplayCallback();
                                     };
 
                                     // dismiss the keyguard when dialog appears
@@ -400,11 +402,9 @@ namespace Sensus.Android
                                     dialog.Window.Attributes.DimAmount = 0.75f;
 
                                     dialog.Show();  
-
                                     #endregion
 
                                     #region voice recognizer
-
                                     new Thread(() =>
                                         {
                                             // wait for the dialog to be shown so it doesn't hide our speech recognizer activity
@@ -436,7 +436,6 @@ namespace Sensus.Android
                                                 });
                                         
                                         }).Start();
-                                        
                                     #endregion
                                 });
                             

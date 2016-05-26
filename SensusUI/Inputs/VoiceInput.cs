@@ -107,7 +107,7 @@ namespace SensusUI.Inputs
             new SensusException("Cannot set View on VoiceInput.");
         }
 
-        public void RunAsync(bool isRerun, DateTimeOffset firstRunTimestamp, Action<string> callback)
+        public void RunAsync(bool isRerun, DateTimeOffset firstRunTimestamp, Action postDisplayCallback, Action<string> callback)
         {
             new Thread(() =>
                 {                    
@@ -133,7 +133,7 @@ namespace SensusUI.Inputs
 
                     SensusServiceHelper.Get().TextToSpeechAsync(outputMessage, () =>
                         {
-                            SensusServiceHelper.Get().RunVoicePromptAsync(outputMessage, response =>
+                            SensusServiceHelper.Get().RunVoicePromptAsync(outputMessage, postDisplayCallback, response =>
                                 {
                                     Viewed = true;
 

@@ -161,7 +161,7 @@ namespace SensusService.Probes
                 #error "Unrecognized platform."
                 #endif
 
-                ScheduledCallback callback = new ScheduledCallback((callbackId, cancellationToken) =>
+                ScheduledCallback callback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
                     {
                         return Task.Run(() =>
                             {

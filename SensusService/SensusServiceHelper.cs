@@ -590,7 +590,7 @@ namespace SensusService
 
         public abstract void TextToSpeechAsync(string text, Action callback);
 
-        public abstract void RunVoicePromptAsync(string prompt, Action<string> callback);
+        public abstract void RunVoicePromptAsync(string prompt, Action postDisplayCallback, Action<string> callback);
 
         public abstract void IssueNotificationAsync(string message, string id);
 
@@ -793,17 +793,15 @@ namespace SensusService
             }
         }
 
-        public void RaiseCallbackAsync(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, bool notifyUser, Action<DateTime> scheduleRepeatCallback, Action finishedCallback = null)
+        public void RaiseCallbackAsync(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, bool notifyUser, Action<DateTime> scheduleRepeatCallback, Action letDeviceSleepCallback, Action finishedCallback)
         {        
             DateTime callbackStartTime = DateTime.Now;
-
-            KeepDeviceAwake();  // call this before we start up the new thread, just in case the system decides to sleep before the thread is started.
 
             new Thread(async () =>
                 {
                     try
                     {
-                        ScheduledCallback scheduledCallback;
+                        ScheduledCallback scheduledCallback = null;
 
                         lock (_idCallback)
                         {
@@ -848,7 +846,7 @@ namespace SensusService
                                         if (scheduledCallback.CallbackTimeout != null)
                                             scheduledCallback.Canceller.CancelAfter(scheduledCallback.CallbackTimeout.GetValueOrDefault());
 
-                                        await scheduledCallback.Action(callbackId, scheduledCallback.Canceller.Token);
+                                        await scheduledCallback.Action(callbackId, scheduledCallback.Canceller.Token, letDeviceSleepCallback);
                                     }
                                 }
                                 catch (Exception ex)
@@ -927,9 +925,6 @@ namespace SensusService
                     {
                         if (finishedCallback != null)
                             finishedCallback();
-
-                        // do this within finally to ensure that the device is always allowed to sleep
-                        LetDeviceSleep();
                     }
 
                 }).Start();                           
@@ -1056,8 +1051,11 @@ namespace SensusService
 
                             if (voiceInput.Enabled && voiceInput.Display)
                             {
-                                voiceInput.RunAsync(isReprompt, firstPromptTimestamp, response =>
-                                    {                
+                                // only run the post-display callback the first time a page is displayed. the caller expects the callback
+                                // to fire only once upon first display.
+                                voiceInput.RunAsync(isReprompt, firstPromptTimestamp, firstPageDisplay ? postDisplayCallback : null, response =>
+                                    {        
+                                        firstPageDisplay = false;
                                         responseWait.Set();
                                     });
                             }
@@ -1108,10 +1106,12 @@ namespace SensusService
                                     {
                                         await App.Current.MainPage.Navigation.PushModalAsync(promptForInputsPage, firstPageDisplay);  // only animate the display for the first page
 
-                                        firstPageDisplay = false;
-
-                                        if (postDisplayCallback != null)
+                                        // only run the post-display callback the first time a page is displayed. the caller expects the callback
+                                        // to fire only once upon first display.
+                                        if (firstPageDisplay && postDisplayCallback != null)
                                             postDisplayCallback();
+
+                                        firstPageDisplay = false;
                                     }                                    
                                 });
                         }
@@ -1208,7 +1208,7 @@ namespace SensusService
                 });
         }
 
-        public Task TestHealthAsync(string callbackId, CancellationToken cancellationToken)
+        public Task TestHealthAsync(string callbackId, CancellationToken cancellationToken, Action letDeviceSleepCallback)
         {
             return Task.Run(() =>
                 {

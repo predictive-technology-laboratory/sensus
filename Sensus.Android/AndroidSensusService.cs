@@ -60,6 +60,10 @@ namespace Sensus.Android
             {
                 serviceHelper.Logger.Log("Sensus service received start command (startId=" + startId + ", flags=" + flags + ").", LoggingLevel.Normal, GetType());
 
+                // acquire wake lock before the start command method returns to ensure that the device does not sleep prematurely.
+                serviceHelper.KeepDeviceAwake();
+                bool wakeLockAcquired = true;
+
                 // the service can be stopped without destroying the service object. in such cases, 
                 // subsequent calls to start the service will not call OnCreate. therefore, it's 
                 // important that any code called here is okay to call multiple times, even if the 
@@ -68,7 +72,7 @@ namespace Sensus.Android
                 // requested. furthermore, all calls here should be nonblocking / async so we don't 
                 // tie up the UI thread.
                 serviceHelper.StartAsync(() =>
-                    {         
+                    {        
                         // is this a callback intent?
                         if (intent != null && intent.GetBooleanExtra(AndroidSensusServiceHelper.SENSUS_CALLBACK_KEY, false))
                         {
@@ -85,15 +89,36 @@ namespace Sensus.Android
                                 bool repeatLag = intent.GetBooleanExtra(AndroidSensusServiceHelper.SENSUS_CALLBACK_REPEAT_LAG_KEY, false);
 
                                 // raise callback and notify the user if there is a message. we wouldn't have presented the user with the message yet.
-                                serviceHelper.RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, true, repeatCallbackTime =>
+                                serviceHelper.RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, true, 
+                                    
+                                    repeatCallbackTime =>
                                     {
                                         PendingIntent callbackPendingIntent = PendingIntent.GetService(this, callbackId.GetHashCode(), intent, PendingIntentFlags.CancelCurrent);
                                         serviceHelper.ScheduleCallbackAlarm(callbackPendingIntent, repeatCallbackTime);
+                                    },
+
+                                    // what to do if the device should be allowed to sleep?
+                                    () =>
+                                    {
+                                        wakeLockAcquired = false;
+                                        serviceHelper.LetDeviceSleep();
+                                    },
+
+                                    // called no matter what. release wake lock if it's still acquired.
+                                    () =>
+                                    {
+                                        if (wakeLockAcquired)
+                                            serviceHelper.LetDeviceSleep();
                                     });
                             }
                             else
+                            {
                                 serviceHelper.UnscheduleCallback(callbackId);
+                                serviceHelper.LetDeviceSleep();
+                            }
                         }
+                        else
+                            serviceHelper.LetDeviceSleep();
                     });
             }
 

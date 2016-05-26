@@ -450,7 +450,7 @@ namespace SensusService.Probes.User
 
                         SensusServiceHelper.Get().Logger.Log("Starting rerun callbacks.", LoggingLevel.Normal, GetType());
 
-                        ScheduledCallback callback = new ScheduledCallback((callbackId, cancellationToken) =>
+                        ScheduledCallback callback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
                             {
                                 return Task.Run(() =>
                                     {
@@ -471,7 +471,7 @@ namespace SensusService.Probes.User
 
                                             // we don't need to copy the script, since we're already working with a copy of the original.
                                             if (scriptToRerun != null)
-                                                Run(scriptToRerun);
+                                                Run(scriptToRerun, postDisplayCallback: letDeviceSleepCallback);
                                         }
                                     });
 
@@ -541,14 +541,14 @@ namespace SensusService.Probes.User
                 DateTime triggerTime = triggerWindowStart.AddSeconds(_random.NextDouble() * (triggerWindowEnd - triggerWindowStart).TotalSeconds);
                 int triggerDelayMS = (int)(triggerTime - now).TotalMilliseconds;
 
-                ScheduledCallback callback = new ScheduledCallback((callbackId, cancellationToken) =>
+                ScheduledCallback callback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
                     {
                         return Task.Run(() =>
                             {
                                 // if the probe is still running and the runner is enabled, run a copy of the script so that we can retain a pristine version of the original.
                                 if (_probe.Running && _enabled)
                                 {
-                                    Run(_script.Copy());
+                                    Run(_script.Copy(), postDisplayCallback: letDeviceSleepCallback);
 
                                     // establish the next random trigger callback
                                     StartRandomTriggerCallbacks();
@@ -579,7 +579,8 @@ namespace SensusService.Probes.User
         /// <param name="script">Script.</param>
         /// <param name="previousDatum">Previous datum.</param>
         /// <param name="currentDatum">Current datum.</param>
-        private void Run(Script script, Datum previousDatum = null, Datum currentDatum = null)
+        /// <param name="postDisplayCallback">Called when it is okay for the device to sleep.</param>
+        private void Run(Script script, Datum previousDatum = null, Datum currentDatum = null, Action postDisplayCallback = null)
         {
             if (script.PresentationTimestamp == null)
                 script.PresentationTimestamp = DateTimeOffset.UtcNow;
@@ -663,7 +664,7 @@ namespace SensusService.Probes.User
             // do not pass cancellation token to prompt. on ios this leads to the prompt being canceled after the app enters background for more than its allotted
             // time. once this happens any actions reached by the callback that is passed to the current method are dangerous because the app will then be backgrounded
             // and deactivated. it's okay for the prompt to have no cancellation token. the prompt page will simply stay up indefinitely waiting for user input.
-            SensusServiceHelper.Get().PromptForInputsAsync(isRerun, script.FirstRunTimestamp, script.InputGroups, null, _allowCancel, null, "You will not receive credit for your responses if you cancel. Do you want to cancel?", "You have not completed all required fields. You will not receive credit for your responses if you continue. Do you want to continue?", "Are you ready to submit your responses?", _displayProgress, null, inputGroups =>
+            SensusServiceHelper.Get().PromptForInputsAsync(isRerun, script.FirstRunTimestamp, script.InputGroups, null, _allowCancel, null, "You will not receive credit for your responses if you cancel. Do you want to cancel?", "You have not completed all required fields. You will not receive credit for your responses if you continue. Do you want to continue?", "Are you ready to submit your responses?", _displayProgress, postDisplayCallback, inputGroups =>
                 {            
                     bool canceled = inputGroups == null;
 

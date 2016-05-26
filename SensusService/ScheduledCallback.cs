@@ -28,8 +28,9 @@ namespace SensusService
         /// </summary>
         /// <param name="name">Name of action.</param>
         /// <param name="cancellationToken">Cancellation token for action.</param>
+        /// <param name="letDeviceSleepCallback">Called if the system should be allowed to sleep prior to completion of the action.</param>
         /// <returns>A task that can be awaited while the action completes.</returns>
-        public delegate Task ActionDelegate(string name, CancellationToken cancellationToken);
+        public delegate Task ActionDelegate(string name, CancellationToken cancellationToken, Action letDeviceSleepCallback);
 
         /// <summary>
         /// Action to invoke.
