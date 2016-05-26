@@ -580,7 +580,7 @@ namespace SensusService
 
         protected abstract void UnscheduleCallbackPlatformSpecific(string callbackId);
 
-        protected abstract void ProtectedFlashNotificationAsync(string message, Action callback);
+        protected abstract void ProtectedFlashNotificationAsync(string message, bool flashLaterIfNotVisible, Action callback);
 
         public abstract void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback);
 
@@ -971,16 +971,11 @@ namespace SensusService
                 });                        
         }
 
-        public void FlashNotificationAsync(string message)
-        {
-            FlashNotificationAsync(message, null);
-        }
-
-        public void FlashNotificationAsync(string message, Action callback)
+        public void FlashNotificationAsync(string message, bool flashLaterIfNotVisible = true, Action callback = null)
         {
             // do not show flash notifications when unit testing, as they can disrupt UI scripting on iOS.
             #if !UNIT_TESTING
-            ProtectedFlashNotificationAsync(message, callback);
+            ProtectedFlashNotificationAsync(message, flashLaterIfNotVisible, callback);
             #endif
         }
 

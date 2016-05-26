@@ -916,7 +916,12 @@ namespace SensusService
                             else if (probesStarted == 0)
                                 throw new Exception("No probes started.");
                             else
-                                SensusServiceHelper.Get().FlashNotificationAsync("Started \"" + _name + "\".");
+                            {
+                                // on android when the activity is stopped the service is restarted, which restarts the protocols. if the user then 
+                                // restarts the activity it can be confusing to see the flash message below since the user believes the protocol
+                                // was always running. so, don't retain the message for flashing later if it's not currently visibile.
+                                SensusServiceHelper.Get().FlashNotificationAsync("Started \"" + _name + "\".", false);
+                            }
                         }
                         catch (Exception ex)
                         {

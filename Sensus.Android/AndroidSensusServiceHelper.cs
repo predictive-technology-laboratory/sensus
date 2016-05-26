@@ -51,6 +51,7 @@ namespace Sensus.Android
         private readonly object _focusedMainActivityLocker = new object();
         private AndroidTextToSpeech _textToSpeech;
         private PowerManager.WakeLock _wakeLock;
+        private int _wakeLockAcquisitionCount;
         private List<Action<AndroidMainActivity>> _actionsToRunUsingMainActivity;
         private Dictionary<string, PendingIntent> _callbackIdPendingIntent;
 
@@ -146,6 +147,7 @@ namespace Sensus.Android
                 _notificationManager = _service.GetSystemService(Context.NotificationService) as NotificationManager;
                 _textToSpeech = new AndroidTextToSpeech(_service);
                 _wakeLock = (_service.GetSystemService(Context.PowerService) as PowerManager).NewWakeLock(WakeLockFlags.Partial, "SENSUS");  
+                _wakeLockAcquisitionCount = 0;
                 _deviceId = Settings.Secure.GetString(_service.ContentResolver, Settings.Secure.AndroidId);
 
                 // must initialize after _deviceId is set
@@ -160,8 +162,9 @@ namespace Sensus.Android
         /// Runs an action using main activity, optionally bringing the main activity into focus if it is not already focused.
         /// </summary>
         /// <param name="action">Action to run.</param>
-        /// <param name="startMainActivityIfNotFocused">If set to <c>true</c> and the main activity is not focused, then start the main
-        /// activity. If <c>false</c> and the main activity is not focused, the action is dropped.</param>
+        /// <param name="startMainActivityIfNotFocused">Whether or not to start the main activity if it is not currently focused.</param>
+        /// <param name="holdActionIfNoActivity">If the main activity is not focused and we're not starting a new one to refocus it, whether 
+        /// or not to hold the action for later when the activity is refocused.</param>
         public void RunActionUsingMainActivityAsync(Action<AndroidMainActivity> action, bool startMainActivityIfNotFocused, bool holdActionIfNoActivity)
         {
             // this must be done asynchronously because it blocks waiting for the activity to start. calling this method from the UI would create deadlocks.
@@ -485,7 +488,7 @@ namespace Sensus.Android
             }
         }
 
-        protected override void ProtectedFlashNotificationAsync(string message, Action callback)
+        protected override void ProtectedFlashNotificationAsync(string message, bool flashLaterIfNotVisible, Action callback)
         {
             new Thread(() =>
                 {
@@ -499,7 +502,7 @@ namespace Sensus.Android
                                         callback();
                                 });
                             
-                        }, false, false);
+                        }, false, flashLaterIfNotVisible);
                     
                 }).Start();
         }
@@ -600,13 +603,19 @@ namespace Sensus.Android
         public override void KeepDeviceAwake()
         {
             lock (_wakeLock)
+            {
                 _wakeLock.Acquire();
+                Logger.Log("Wake lock acquisition count:  " + ++_wakeLockAcquisitionCount, LoggingLevel.Normal, GetType());
+            }
         }
 
         public override void LetDeviceSleep()
         {
             lock (_wakeLock)
+            {
                 _wakeLock.Release();
+                Logger.Log("Wake lock acquisition count:  " + --_wakeLockAcquisitionCount, LoggingLevel.Normal, GetType());
+            }
         }
 
         public override void BringToForeground()

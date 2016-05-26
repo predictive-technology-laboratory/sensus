@@ -33,7 +33,7 @@ namespace SensusService.Probes
             set { _maxDataStoresPerSecond = value; }
         }
 
-        [OnOffUiProperty("Keep device awake:", true,  int.MaxValue - 1)]
+        [OnOffUiProperty("Keep device awake:", true, int.MaxValue - 1)]
         public bool KeepDeviceAwake
         {
             get

@@ -103,13 +103,17 @@ namespace Sensus.Android
                                     {
                                         wakeLockReleased = true;
                                         serviceHelper.LetDeviceSleep();
+                                        serviceHelper.Logger.Log("Wake lock released preemptively for scheduled callback action.", LoggingLevel.Normal, GetType());
                                     },
 
                                     // release wake lock now if we didn't while the callback action was executing.
                                     () =>
                                     {
                                         if (!wakeLockReleased)
+                                        {
                                             serviceHelper.LetDeviceSleep();
+                                            serviceHelper.Logger.Log("Wake lock released after scheduled callback action completed.", LoggingLevel.Normal, GetType());
+                                        }
                                     });
                             }
                             else
