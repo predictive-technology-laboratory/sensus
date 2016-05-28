@@ -324,6 +324,9 @@
     <Reference Include="Calabash">
       <HintPath>..\packages\Xamarin.TestCloud.Agent.0.19.0\lib\Xamarin.iOS10\Calabash.dll</HintPath>
     </Reference>
+    <Reference Include="ZipArchive">
+      <HintPath>..\Components\ZipArchive-1.4.0.1\lib\ios-unified\ZipArchive.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Contents.json">
@@ -418,6 +421,10 @@
     </XamarinComponentReference>
     <XamarinComponentReference Include="facebookios">
       <Version>4.10.0.0</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
+    <XamarinComponentReference Include="ZipArchive">
+      <Version>1.4.0.1</Version>
       <Visible>False</Visible>
     </XamarinComponentReference>
   </ItemGroup>

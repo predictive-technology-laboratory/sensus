@@ -127,26 +127,24 @@ namespace SensusService.DataStores.Local
                     _data.Remove(d);
         }
 
-        public override int WriteData(string path, CancellationToken cancellationToken, Action<double> progressCallback)
+        protected override IEnumerable<Tuple<string, string>> GetDataLinesToWrite(CancellationToken cancellationToken, Action<string, double> progressCallback)
         {
             lock (_data)
             {
-                int dataWritten = 0;
+                int count = 0;
 
-                using (StreamWriter file = new StreamWriter(path))
-                {                    
-                    foreach (Datum datum in _data)
-                    {
-                        if (progressCallback != null && _data.Count >= 10 && (dataWritten % (_data.Count / 10)) == 0)
-                            progressCallback(dataWritten / (double)_data.Count);
+                foreach (Datum datum in _data)
+                {
+                    if (progressCallback != null && _data.Count >= 10 && (count % (_data.Count / 10)) == 0)
+                        progressCallback(null, count / (double)_data.Count);
 
-                        file.WriteLine(datum.GetJSON(Protocol.JsonAnonymizer, false));
+                    yield return new Tuple<string, string>(datum.GetType().Name, datum.GetJSON(Protocol.JsonAnonymizer, false));
 
-                        ++dataWritten;
-                    }
+                    ++count;
                 }
 
-                return dataWritten;
+                if (progressCallback != null)
+                    progressCallback(null, 1);
             }
         }
 

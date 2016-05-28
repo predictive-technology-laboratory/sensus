@@ -1232,6 +1232,11 @@ namespace SensusService
             }
         }
 
+        /// <summary>
+        /// Gets the share path with an extension.
+        /// </summary>
+        /// <returns>The share path.</returns>
+        /// <param name="extension">Extension (with or without preceding ".")</param>
         public string GetSharePath(string extension)
         {
             lock (_shareFileLocker)

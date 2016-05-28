@@ -20,6 +20,7 @@ using System.IO;
 using System.Threading;
 using SensusUI.UiProperties;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace SensusService.DataStores.Local
 {
@@ -222,54 +223,52 @@ namespace SensusService.DataStores.Local
             }
         }
 
-        public override int WriteData(string path, CancellationToken cancellationToken, Action<double> progressCallback)
+        protected override IEnumerable<Tuple<string, string>> GetDataLinesToWrite(CancellationToken cancellationToken, Action<string, double> progressCallback)
         {
             lock (_locker)
             {
-                int dataWritten = 0;
+                // "$type":"SensusService.Probes.Movement.AccelerometerDatum
+                Regex datumTypeRegex = new Regex(@"""\$type""\s*:\s*""([^""]+)""");
 
                 double storageDirectoryMbToRead = SensusServiceHelper.GetDirectorySizeMB(StorageDirectory);
                 double storageDirectoryMbRead = 0;
 
-                using (StreamWriter file = new StreamWriter(path))
-                {
-                    string[] localPaths = Directory.GetFiles(StorageDirectory);
-                    for (int localPathNum = 0; localPathNum < localPaths.Length && !cancellationToken.IsCancellationRequested; ++localPathNum)
-                    {   
-                        string localPath = localPaths[localPathNum];
+                string[] localPaths = Directory.GetFiles(StorageDirectory);
+                for (int localPathNum = 0; localPathNum < localPaths.Length && !cancellationToken.IsCancellationRequested; ++localPathNum)
+                {   
+                    string localPath = localPaths[localPathNum];
 
-                        using (StreamReader localFile = new StreamReader(localPath))
+                    using (StreamReader localFile = new StreamReader(localPath))
+                    {
+                        long localFilePosition = 0;
+
+                        string line;
+                        while ((line = localFile.ReadLine()) != null)
                         {
-                            long localFilePosition = 0;
+                            if (cancellationToken.IsCancellationRequested)
+                                break;
+                               
+                            string type = datumTypeRegex.Match(line).Groups[0].Value;
+                            type = type.Substring(type.LastIndexOf('.') + 1);
 
-                            string line;
-                            while ((line = localFile.ReadLine()) != null)
+                            yield return new Tuple<string, string>(type, line);
+
+                            if (localFile.BaseStream.Position > localFilePosition)
                             {
-                                file.WriteLine(line);
-                                ++dataWritten;
+                                storageDirectoryMbRead += (localFile.BaseStream.Position - localFilePosition) / (1024d * 1024d);
+                                localFilePosition = localFile.BaseStream.Position;
 
-                                if (localFile.BaseStream.Position > localFilePosition)
-                                {
-                                    storageDirectoryMbRead += (localFile.BaseStream.Position - localFilePosition) / (1024d * 1024d);
-                                    localFilePosition = localFile.BaseStream.Position;
-
-                                    if (progressCallback != null && storageDirectoryMbToRead > 0)
-                                        progressCallback(storageDirectoryMbRead / storageDirectoryMbToRead);
-                                }
+                                if (progressCallback != null && storageDirectoryMbToRead > 0)
+                                    progressCallback(null, storageDirectoryMbRead / storageDirectoryMbToRead);
                             }
-
-                            storageDirectoryMbRead += (new FileInfo(localPath).Length - localFilePosition) / (1024d * 1024d);
                         }
+
+                        storageDirectoryMbRead += (new FileInfo(localPath).Length - localFilePosition) / (1024d * 1024d);
                     }
                 }
 
                 if (progressCallback != null)
-                    progressCallback(1);
-
-                if (cancellationToken.IsCancellationRequested)
-                    File.Delete(path);
-
-                return dataWritten;
+                    progressCallback(null, 1);
             }
         }
 

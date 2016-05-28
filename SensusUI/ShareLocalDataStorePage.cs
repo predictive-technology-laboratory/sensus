@@ -83,12 +83,15 @@ namespace SensusUI
                     bool errorWritingShareFile = false;
                     try
                     {     
-                        sharePath = SensusServiceHelper.Get().GetSharePath(".json");
-                        Device.BeginInvokeOnMainThread(() => statusLabel.Text = "Writing data...");
-                        int numDataWritten = localDataStore.WriteData(sharePath, _cancellationTokenSource.Token, progress =>
+                        sharePath = SensusServiceHelper.Get().GetSharePath(".zip");
+
+                        int numDataWritten = localDataStore.WriteData(sharePath, _cancellationTokenSource.Token, (message, progress) =>
                             {
                                 Device.BeginInvokeOnMainThread(() =>
                                     {
+                                        if (message != null)
+                                            statusLabel.Text = message;
+                                        
                                         progressBar.ProgressTo(progress, 250, Easing.Linear);
                                     });
                             });    
@@ -125,7 +128,7 @@ namespace SensusUI
                         Device.BeginInvokeOnMainThread(async () =>
                             {
                                 await Navigation.PopAsync();
-                                SensusServiceHelper.Get().ShareFileAsync(sharePath, "Sensus Data:  " + localDataStore.Protocol.Name, "application/json");
+                                SensusServiceHelper.Get().ShareFileAsync(sharePath, "Sensus Data:  " + localDataStore.Protocol.Name, "application/zip");
                             });
                     }
 
