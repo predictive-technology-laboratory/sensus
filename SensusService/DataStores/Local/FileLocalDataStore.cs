@@ -227,14 +227,14 @@ namespace SensusService.DataStores.Local
         {
             lock (_locker)
             {
-                // "$type":"SensusService.Probes.Movement.AccelerometerDatum
-                Regex datumTypeRegex = new Regex(@"""\$type""\s*:\s*""([^""]+)""");
+                // "$type":"SensusService.Probes.Movement.AccelerometerDatum, SensusiOS"
+                Regex datumTypeRegex = new Regex(@"""\$type""\s*:\s*""(?<type>[^,]+),");
 
                 double storageDirectoryMbToRead = SensusServiceHelper.GetDirectorySizeMB(StorageDirectory);
                 double storageDirectoryMbRead = 0;
 
                 string[] localPaths = Directory.GetFiles(StorageDirectory);
-                for (int localPathNum = 0; localPathNum < localPaths.Length && !cancellationToken.IsCancellationRequested; ++localPathNum)
+                for (int localPathNum = 0; localPathNum < localPaths.Length; ++localPathNum)
                 {   
                     string localPath = localPaths[localPathNum];
 
@@ -245,10 +245,9 @@ namespace SensusService.DataStores.Local
                         string line;
                         while ((line = localFile.ReadLine()) != null)
                         {
-                            if (cancellationToken.IsCancellationRequested)
-                                break;
+                            cancellationToken.ThrowIfCancellationRequested();
                                
-                            string type = datumTypeRegex.Match(line).Groups[0].Value;
+                            string type = datumTypeRegex.Match(line).Groups["type"].Value;
                             type = type.Substring(type.LastIndexOf('.') + 1);
 
                             yield return new Tuple<string, string>(type, line);

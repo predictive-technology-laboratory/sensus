@@ -28,7 +28,7 @@ using Java.Util.Zip;
 #elif __IOS__
 using MiniZip.ZipArchive;
 #else
-#error "Unrecognized platform"
+#error "Unrecognized platform."
 #endif
 
 namespace SensusService.DataStores.Local
@@ -94,7 +94,7 @@ namespace SensusService.DataStores.Local
 
         public abstract void ClearDataCommittedToRemoteDataStore(List<Datum> dataCommittedToRemote);
 
-        public int WriteData(string zipPath, CancellationToken cancellationToken, Action<string, double> progressCallback)
+        public int WriteDataToZipFile(string zipPath, CancellationToken cancellationToken, Action<string, double> progressCallback)
         {
             // create a zip file to hold all data
             #if __ANDROID__
@@ -103,7 +103,7 @@ namespace SensusService.DataStores.Local
             ZipArchive zipFile = null;
             #endif
 
-            // create directory for all files and write all data to separate JSON files so they can be ingested separately.
+            // write all data to separate JSON files. zip files for convenience.
             string directory = null;
             Dictionary<string, StreamWriter> datumTypeFile = new Dictionary<string, StreamWriter>();
 
@@ -129,19 +129,25 @@ namespace SensusService.DataStores.Local
                     string line = datumTypeLine.Item2;
 
                     StreamWriter file;
-                    if (!datumTypeFile.TryGetValue(datumType, out file))
+                    if (datumTypeFile.TryGetValue(datumType, out file))
+                        file.WriteLine(",");
+                    else
                     {
                         file = new StreamWriter(Path.Combine(directory, datumType + ".json"));
+                        file.WriteLine("[");
                         datumTypeFile.Add(datumType, file);
                     }
 
-                    file.WriteLine(line);
+                    file.Write(line);
                     ++totalDataCount;
                 }
 
                 // close all files
                 foreach (StreamWriter file in datumTypeFile.Values)
+                {
+                    file.Write(Environment.NewLine + "]");
                     file.Close();
+                }
 
                 cancellationToken.ThrowIfCancellationRequested();
 
@@ -149,6 +155,7 @@ namespace SensusService.DataStores.Local
                     progressCallback("Compressing data...", 0);
 
                 #if __ANDROID__
+
                 directoryName += '/';
                 zipFile = new ZipOutputStream(new FileStream(zipPath, FileMode.Create, FileAccess.Write));
                 zipFile.PutNextEntry(new ZipEntry(directoryName));
@@ -159,12 +166,10 @@ namespace SensusService.DataStores.Local
                 {
                     // start json file for data of current type
                     zipFile.PutNextEntry(new ZipEntry(directoryName + Path.GetFileName(path)));
-                    zipFile.Write(Encoding.Unicode.GetBytes("[" + Environment.NewLine));
 
                     using (StreamReader file = new StreamReader(path))
                     {
                         string line;
-                        bool firstLine = true;
                         while ((line = file.ReadLine()) != null)
                         {
                             if (progressCallback != null && totalDataCount >= 10 && (dataWritten % (totalDataCount / 10)) == 0)
@@ -172,20 +177,19 @@ namespace SensusService.DataStores.Local
 
                             cancellationToken.ThrowIfCancellationRequested();
 
-                            zipFile.Write(Encoding.Unicode.GetBytes((firstLine ? "" : "," + Environment.NewLine) + Encoding.Unicode.GetBytes(line + Environment.NewLine)));
-                            firstLine = false;
-                            ++dataWritten;
+                            zipFile.Write(file.CurrentEncoding.GetBytes(line + Environment.NewLine));
+
+                            if (line != "[" && line != "]")
+                                ++dataWritten;
                         }
                     }
 
-                    cancellationToken.ThrowIfCancellationRequested();
-
+                    zipFile.CloseEntry();
                     System.IO.File.Delete(path);
-                    zipFile.Write(Encoding.Unicode.GetBytes("]"));
-                    zipFile.CloseEntry();  // close file
                 }
 
-                zipFile.CloseEntry(); // close directory
+                // close entry for directory
+                zipFile.CloseEntry();
 
                 #elif __IOS__
                 zipFile = new ZipArchive();

@@ -135,6 +135,8 @@ namespace SensusService.DataStores.Local
 
                 foreach (Datum datum in _data)
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
+
                     if (progressCallback != null && _data.Count >= 10 && (count % (_data.Count / 10)) == 0)
                         progressCallback(null, count / (double)_data.Count);
 

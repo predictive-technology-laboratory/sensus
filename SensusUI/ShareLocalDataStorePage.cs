@@ -85,7 +85,7 @@ namespace SensusUI
                     {     
                         sharePath = SensusServiceHelper.Get().GetSharePath(".zip");
 
-                        int numDataWritten = localDataStore.WriteData(sharePath, _cancellationTokenSource.Token, (message, progress) =>
+                        int numDataWritten = localDataStore.WriteDataToZipFile(sharePath, _cancellationTokenSource.Token, (message, progress) =>
                             {
                                 Device.BeginInvokeOnMainThread(() =>
                                     {
