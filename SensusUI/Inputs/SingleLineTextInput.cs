@@ -15,6 +15,7 @@
 using System;
 using Xamarin.Forms;
 using Newtonsoft.Json;
+using SensusUI.UiProperties;
 
 namespace SensusUI.Inputs
 {
@@ -24,6 +25,20 @@ namespace SensusUI.Inputs
         private Keyboard _keyboard;
         private Label _label;
         private bool _hasFocused;
+        private bool _masked;
+
+        [OnOffUiProperty(null, true, 1)]
+        public bool Masked
+        {
+            get
+            {
+                return _masked;
+            }
+            set
+            {
+                _masked = value;
+            }
+        }
 
         public override object Value
         {
@@ -58,16 +73,18 @@ namespace SensusUI.Inputs
         {
         }
 
-        public SingleLineTextInput(string labelText, Keyboard keyboard)
+        public SingleLineTextInput(string labelText, Keyboard keyboard, bool masked = false)
             : base(labelText)
         {
             _keyboard = keyboard;
+            _masked = masked;
         }
 
-        public SingleLineTextInput(string name, string labelText, Keyboard keyboard)
+        public SingleLineTextInput(string name, string labelText, Keyboard keyboard, bool masked = false)
             : base(name, labelText)
         {            
             _keyboard = keyboard;
+            _masked = masked;
         }
 
         public override View GetView(int index)
@@ -79,7 +96,8 @@ namespace SensusUI.Inputs
                     Text = "Provide response here.",
                     FontSize = 20,
                     Keyboard = _keyboard,
-                    HorizontalOptions = LayoutOptions.FillAndExpand
+                    HorizontalOptions = LayoutOptions.FillAndExpand,
+                    IsPassword = _masked
 
                     // set the style ID on the view so that we can retrieve it when unit testing
                     #if UNIT_TESTING
