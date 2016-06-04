@@ -87,12 +87,17 @@ namespace SensusUI
 
                         int numDataWritten = localDataStore.WriteDataToZipFile(sharePath, _cancellationTokenSource.Token, (message, progress) =>
                             {
-                                Device.BeginInvokeOnMainThread(() =>
+                                Device.BeginInvokeOnMainThread(async () =>
                                     {
+                                        uint duration = 250;
+
                                         if (message != null)
+                                        {
                                             statusLabel.Text = message;
+                                            duration = 0;
+                                        }
                                         
-                                        progressBar.ProgressTo(progress, 250, Easing.Linear);
+                                        await progressBar.ProgressTo(progress, duration, Easing.Linear);
                                     });
                             });    
 

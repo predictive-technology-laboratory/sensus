@@ -249,20 +249,21 @@ namespace SensusService.DataStores.Local
                                
                             string type = datumTypeRegex.Match(line).Groups["type"].Value;
                             type = type.Substring(type.LastIndexOf('.') + 1);
-
+                             
                             yield return new Tuple<string, string>(type, line);
 
                             if (localFile.BaseStream.Position > localFilePosition)
                             {
+                                int oldMbRead = (int)storageDirectoryMbRead;
                                 storageDirectoryMbRead += (localFile.BaseStream.Position - localFilePosition) / (1024d * 1024d);
-                                localFilePosition = localFile.BaseStream.Position;
+                                int newMbRead = (int)storageDirectoryMbRead;
 
-                                if (progressCallback != null && storageDirectoryMbToRead > 0)
+                                if (newMbRead > oldMbRead && progressCallback != null && storageDirectoryMbToRead > 0)
                                     progressCallback(null, storageDirectoryMbRead / storageDirectoryMbToRead);
+
+                                localFilePosition = localFile.BaseStream.Position;
                             }
                         }
-
-                        storageDirectoryMbRead += (new FileInfo(localPath).Length - localFilePosition) / (1024d * 1024d);
                     }
                 }
 
