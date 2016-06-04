@@ -117,6 +117,12 @@ namespace Sensus.Android
             }
         }
 
+        [JsonIgnore]
+        public int WakeLockAcquisitionCount
+        {
+            get { return _wakeLockAcquisitionCount; }
+        }
+
         public AndroidSensusServiceHelper()
         {
             _actionsToRunUsingMainActivity = new List<Action<AndroidMainActivity>>();
