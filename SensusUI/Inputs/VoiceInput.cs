@@ -107,16 +107,16 @@ namespace SensusUI.Inputs
             new SensusException("Cannot set View on VoiceInput.");
         }
 
-        public void RunAsync(bool isRerun, DateTimeOffset firstRunTimestamp, Action postDisplayCallback, Action<string> callback)
+        public void RunAsync(DateTimeOffset? firstRunTimestamp, Action postDisplayCallback, Action<string> callback)
         {
             new Thread(() =>
                 {                    
                     string outputMessage = _outputMessage;
 
                     #region temporal analysis for rerun
-                    if (isRerun && !string.IsNullOrWhiteSpace(_outputMessageRerun))
+                    if (firstRunTimestamp.HasValue && !string.IsNullOrWhiteSpace(_outputMessageRerun))
                     {
-                        TimeSpan promptAge = DateTimeOffset.UtcNow - firstRunTimestamp;
+                        TimeSpan promptAge = DateTimeOffset.UtcNow - firstRunTimestamp.Value;
 
                         int daysAgo = (int)promptAge.TotalDays;
                         string daysAgoStr;
@@ -127,7 +127,7 @@ namespace SensusUI.Inputs
                         else
                             daysAgoStr = promptAge.TotalDays + " days ago";
 
-                        outputMessage = string.Format(_outputMessageRerun, daysAgoStr + " at " + firstRunTimestamp.ToLocalTime().DateTime.ToString("h:mm tt"));
+                        outputMessage = string.Format(_outputMessageRerun, daysAgoStr + " at " + firstRunTimestamp.Value.ToLocalTime().DateTime.ToString("h:mm tt"));
                     }
                     #endregion
 

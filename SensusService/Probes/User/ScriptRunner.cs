@@ -587,7 +587,7 @@ namespace SensusService.Probes.User
             if (script.PresentationTimestamp == null)
                 script.PresentationTimestamp = DateTimeOffset.UtcNow;
 
-            bool isRerun = script.FirstRunTimestamp != DateTimeOffset.MinValue;
+            bool isRerun = script.FirstRunTimestamp.HasValue;
 
             lock (_runTimes)
             {
@@ -603,14 +603,11 @@ namespace SensusService.Probes.User
                     }
                 }
 
-                // if this is the first run, set the timestamp.
+                // submit a separate datum indicating the running of the script. this differs from the script's presentation time because the user
+                // might choose to never submit script responses. in this case, there will be no script data or presentation times. the separate
+                // datum submitted here will always be submitted upon first run of the script.
                 if (!isRerun)
                 {
-                    script.FirstRunTimestamp = DateTimeOffset.UtcNow;
-
-                    // submit a separate datum indicating the running of the script. this differs from the script's presentation time because the user
-                    // might choose to never submit script responses. in this case, there will be no script data or presentation times. the separate
-                    // datum submitted here will always be submitted upon first run of the script.
                     new Thread(() =>
                         {
                             DateTimeOffset runTime = DateTimeOffset.UtcNow;
@@ -666,7 +663,7 @@ namespace SensusService.Probes.User
             // do not pass cancellation token to prompt. on ios this leads to the prompt being canceled after the app enters background for more than its allotted
             // time. once this happens any actions reached by the callback that is passed to the current method are dangerous because the app will then be backgrounded
             // and deactivated. it's okay for the prompt to have no cancellation token. the prompt page will simply stay up indefinitely waiting for user input.
-            SensusServiceHelper.Get().PromptForInputsAsync(isRerun, script.FirstRunTimestamp, script.InputGroups, null, _allowCancel, null, "You will not receive credit for your responses if you cancel. Do you want to cancel?", "You have not completed all required fields. You will not receive credit for your responses if you continue. Do you want to continue?", "Are you ready to submit your responses?", _displayProgress, postDisplayCallback, inputGroups =>
+            SensusServiceHelper.Get().PromptForInputsAsync(script.FirstRunTimestamp, script.InputGroups, null, _allowCancel, null, "You will not receive credit for your responses if you cancel. Do you want to cancel?", "You have not completed all required fields. You will not receive credit for your responses if you continue. Do you want to continue?", "Are you ready to submit your responses?", _displayProgress, postDisplayCallback, inputGroups =>
                 {            
                     bool canceled = inputGroups == null;
 
@@ -701,6 +698,10 @@ namespace SensusService.Probes.User
                 });
 
             inputWait.WaitOne();
+
+            // if this is the first run, set the timestamp.
+            if (!isRerun)
+                script.FirstRunTimestamp = DateTimeOffset.UtcNow;
 
             SensusServiceHelper.Get().Logger.Log("\"" + _name + "\" has finished running.", LoggingLevel.Normal, typeof(Script));
 

@@ -42,7 +42,7 @@ namespace SensusUI
             }
         }
 
-        public PromptForInputsPage(InputGroup inputGroup, int stepNumber, int totalSteps, bool showCancelButton, string nextButtonTextOverride, CancellationToken? cancellationToken, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action<Result> disappearanceCallback)
+        public PromptForInputsPage(InputGroup inputGroup, int stepNumber, int totalSteps, bool showCancelButton, string nextButtonTextOverride, CancellationToken? cancellationToken, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, DateTimeOffset? firstPromptTimestamp, Action<Result> disappearanceCallback)
         {            
             _displayedInputCount = 0;
 
@@ -77,6 +77,26 @@ namespace SensusUI
                     {
                         Progress = progress,
                         HorizontalOptions = LayoutOptions.FillAndExpand
+                    });
+            }
+
+            if (firstPromptTimestamp.HasValue)
+            {
+                DateTime firstDisplayDateTime = firstPromptTimestamp.Value.ToLocalTime().DateTime;
+
+                string displayLapseDayDesc;
+                if (firstDisplayDateTime.Date == DateTime.Now.Date)
+                    displayLapseDayDesc = "earlier today";
+                else if (firstDisplayDateTime.Date == DateTime.Now.AddDays(-1).Date)
+                    displayLapseDayDesc = "yesterday";
+                else
+                    displayLapseDayDesc = ((int)(DateTime.Now - firstDisplayDateTime).TotalDays) + " days ago (" + firstDisplayDateTime.ToShortDateString() + ")";
+
+                contentLayout.Children.Add(new Label
+                    {
+                        Text = "These fields were first displayed " + displayLapseDayDesc + " at " + firstDisplayDateTime.ToShortTimeString() + ".",
+                        FontSize = 20,
+                        HorizontalOptions = LayoutOptions.Start
                     });
             }
 

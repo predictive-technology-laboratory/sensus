@@ -997,7 +997,7 @@ namespace SensusService
             foreach (Input input in inputs)
                 inputGroup.Inputs.Add(input);
 
-            PromptForInputsAsync(false, DateTimeOffset.MinValue, new InputGroup[] { inputGroup }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, null, inputGroups =>
+            PromptForInputsAsync(null, new InputGroup[] { inputGroup }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, null, inputGroups =>
                 {
                     if (inputGroups == null)
                         callback(null);
@@ -1006,7 +1006,7 @@ namespace SensusService
                 });
         }
 
-        public void PromptForInputsAsync(bool isReprompt, DateTimeOffset firstPromptTimestamp, IEnumerable<InputGroup> inputGroups, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action postDisplayCallback, Action<IEnumerable<InputGroup>> callback)
+        public void PromptForInputsAsync(DateTimeOffset? firstPromptTimestamp, IEnumerable<InputGroup> inputGroups, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action postDisplayCallback, Action<IEnumerable<InputGroup>> callback)
         {
             new Thread(() =>
                 {
@@ -1048,7 +1048,7 @@ namespace SensusService
                             {
                                 // only run the post-display callback the first time a page is displayed. the caller expects the callback
                                 // to fire only once upon first display.
-                                voiceInput.RunAsync(isReprompt, firstPromptTimestamp, firstPageDisplay ? postDisplayCallback : null, response =>
+                                voiceInput.RunAsync(firstPromptTimestamp, firstPageDisplay ? postDisplayCallback : null, response =>
                                     {        
                                         firstPageDisplay = false;
                                         responseWait.Set();
@@ -1063,7 +1063,7 @@ namespace SensusService
 
                             Device.BeginInvokeOnMainThread(async () =>
                                 {
-                                    PromptForInputsPage promptForInputsPage = new PromptForInputsPage(inputGroup, inputGroupNum + 1, inputGroups.Count(), showCancelButton, nextButtonText, cancellationToken, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, result =>
+                                    PromptForInputsPage promptForInputsPage = new PromptForInputsPage(inputGroup, inputGroupNum + 1, inputGroups.Count(), showCancelButton, nextButtonText, cancellationToken, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, firstPromptTimestamp, result =>
                                         {
                                             SensusServiceHelper.Get().Logger.Log("Prompt page disappeared with result:  " + result, LoggingLevel.Normal, GetType());
 

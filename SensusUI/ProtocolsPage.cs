@@ -183,8 +183,7 @@ namespace SensusUI
 
                     // pop up wait screen while we submit the participation reward datum
                     SensusServiceHelper.Get().PromptForInputsAsync(
-                        false,
-                        DateTime.MinValue,
+                        null,
                         new InputGroup[]
                         {
                             new InputGroup("Please Wait", new LabelOnlyInput("Submitting participation information.", false))
@@ -274,8 +273,7 @@ namespace SensusUI
 
                         // pop up wait screen while we get the participation reward datum
                         SensusServiceHelper.Get().PromptForInputsAsync(
-                            false,
-                            DateTime.MinValue,
+                            null,
                             new InputGroup[]
                             {
                                 new InputGroup("Please Wait", new LabelOnlyInput("Retrieving participation information.", false))
