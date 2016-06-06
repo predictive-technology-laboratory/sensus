@@ -33,7 +33,6 @@ namespace Sensus.Android
 			global::ZXing.Mobile.Resource.Layout.zxingscannerfragmentlayout = global::Sensus.Android.Resource.Layout.zxingscannerfragmentlayout;
 			global::PCLCrypto.Resource.String.ApplicationName = global::Sensus.Android.Resource.String.ApplicationName;
 			global::PCLCrypto.Resource.String.Hello = global::Sensus.Android.Resource.String.Hello;
-			global::Xamarin.Forms.Platform.Android.Resource.Attribute.actionBarSize = global::Sensus.Android.Resource.Attribute.actionBarSize;
 			global::XLabs.Platform.Resource.String.ApplicationName = global::Sensus.Android.Resource.String.ApplicationName;
 			global::XLabs.Platform.Resource.String.Hello = global::Sensus.Android.Resource.String.Hello;
 			global::XLabs.Forms.Droid.Resource.Animation.abc_fade_in = global::Sensus.Android.Resource.Animation.abc_fade_in;
@@ -1861,6 +1860,7 @@ namespace Sensus.Android
 			global::XLabs.Forms.Droid.Resource.Styleable.ViewStubCompat_android_id = global::Sensus.Android.Resource.Styleable.ViewStubCompat_android_id;
 			global::XLabs.Forms.Droid.Resource.Styleable.ViewStubCompat_android_inflatedId = global::Sensus.Android.Resource.Styleable.ViewStubCompat_android_inflatedId;
 			global::XLabs.Forms.Droid.Resource.Styleable.ViewStubCompat_android_layout = global::Sensus.Android.Resource.Styleable.ViewStubCompat_android_layout;
+			global::Xamarin.Forms.Platform.Android.Resource.Attribute.actionBarSize = global::Sensus.Android.Resource.Attribute.actionBarSize;
 		}
 		
 		public partial class Animation
