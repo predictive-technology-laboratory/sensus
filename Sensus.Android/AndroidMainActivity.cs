@@ -178,7 +178,7 @@ namespace Sensus.Android
                     Device.BeginInvokeOnMainThread(() =>
                         {
                             serviceBindWaitDialog.Dismiss();
-                            (App.Current as App).ProtocolsPage.Bind();
+                            (Xamarin.Forms.Application.Current as App).ProtocolsPage.Bind();
                         });
                     
                 }).Start();

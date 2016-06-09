@@ -285,13 +285,13 @@ namespace SensusService
                             {
                                 // display the protocols page if it isn't already up
                                 ProtocolsPage protocolsPage = null;
-                                Page topPage = App.Current.MainPage.Navigation.NavigationStack.Last();
+                                Page topPage = Application.Current.MainPage.Navigation.NavigationStack.Last();
                                 if (topPage is ProtocolsPage)
                                     protocolsPage = topPage as ProtocolsPage;
                                 else
                                 {
                                     protocolsPage = new ProtocolsPage();
-                                    await App.Current.MainPage.Navigation.PushAsync(protocolsPage);
+                                    await Application.Current.MainPage.Navigation.PushAsync(protocolsPage);
                                 }
 
                                 // ask user to start protocol

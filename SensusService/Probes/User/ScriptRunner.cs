@@ -660,9 +660,11 @@ namespace SensusService.Probes.User
 
             ManualResetEvent inputWait = new ManualResetEvent(false);
 
-            // do not pass cancellation token to prompt. on ios this leads to the prompt being canceled after the app enters background for more than its allotted
-            // time. once this happens any actions reached by the callback that is passed to the current method are dangerous because the app will then be backgrounded
-            // and deactivated. it's okay for the prompt to have no cancellation token. the prompt page will simply stay up indefinitely waiting for user input.
+            // we would like to support input timeouts in the following prompt. however, this causes problems on ios for any prompts that are run in response to
+            // a scheduled callback (e.g., random window or rerun). this is because all scheduled callbacks are run as background tasks within ios to ensure
+            // completion (or cancellation) within a reasonable amount of time. if the app is deactivated and the prompt callback is canceled because it runs out
+            // of background time, the callback may be rescheduled which will require use of the UI thread submitting the new UILocalNotification. ios will not
+            // permit this.
             SensusServiceHelper.Get().PromptForInputsAsync(script.FirstRunTimestamp, script.InputGroups, null, _allowCancel, null, "You will not receive credit for your responses if you cancel. Do you want to cancel?", "You have not completed all required fields. You will not receive credit for your responses if you continue. Do you want to continue?", "Are you ready to submit your responses?", _displayProgress, postDisplayCallback, inputGroups =>
                 {            
                     bool canceled = inputGroups == null;
