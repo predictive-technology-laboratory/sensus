@@ -165,7 +165,7 @@ namespace SensusService.Probes.User
 
                 if (value != _rerunDelayMS)
                 {
-                    _rerunDelayMS = value; 
+                    _rerunDelayMS = value;
 
                     if (_rerunCallbackId != null)
                         _rerunCallbackId = SensusServiceHelper.Get().RescheduleRepeatingCallback(_rerunCallbackId, _rerunDelayMS, _rerunDelayMS, RERUN_CALLBACK_LAG);
@@ -202,7 +202,7 @@ namespace SensusService.Probes.User
                 else
                     return string.Concat(_randomTriggerWindows.Select((window, index) => (index == 0 ? "" : ", ") +
                             (
-                                window.Item1 == window.Item2 ? window.Item1.Hour + ":" + window.Item1.Minute.ToString().PadLeft(2, '0') : 
+                                window.Item1 == window.Item2 ? window.Item1.Hour + ":" + window.Item1.Minute.ToString().PadLeft(2, '0') :
                                 window.Item1.Hour + ":" + window.Item1.Minute.ToString().PadLeft(2, '0') + "-" + window.Item2.Hour + ":" + window.Item2.Minute.ToString().PadLeft(2, '0')
                             )));
             }
@@ -210,12 +210,12 @@ namespace SensusService.Probes.User
             {
                 if (value == RandomTriggerWindows)
                     return;
-                
+
                 _randomTriggerWindows.Clear();
 
                 try
                 {
-                    foreach (string window in value.Split(new char[]{','}, StringSplitOptions.RemoveEmptyEntries))
+                    foreach (string window in value.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
                     {
                         string[] startEnd = window.Trim().Split('-');
 
@@ -348,6 +348,7 @@ namespace SensusService.Probes.User
             _triggers.CollectionChanged += (o, e) =>
             {
                 if (e.Action == NotifyCollectionChangedAction.Add)
+                {
                     foreach (Trigger trigger in e.NewItems)
                     {
                         // ignore duplicate triggers -- the user should delete and re-add them instead.
@@ -401,10 +402,11 @@ namespace SensusService.Probes.User
 
                         _triggerHandler.Add(trigger, handler);
                     }
+                }
                 else if (e.Action == NotifyCollectionChangedAction.Remove)
                     foreach (Trigger trigger in e.OldItems)
                         if (_triggerHandler.ContainsKey(trigger))
-                        {
+                         {
                             trigger.Probe.MostRecentDatumChanged -= _triggerHandler[trigger];
 
                             _triggerHandler.Remove(trigger);
@@ -460,7 +462,7 @@ namespace SensusService.Probes.User
                                             lock (_invalidScripts)
                                                 while (scriptToRerun == null && _invalidScripts.Count > 0)
                                                 {
-                                                    scriptToRerun = _invalidScripts.Dequeue();                     
+                                                    scriptToRerun = _invalidScripts.Dequeue();
                                                     if (scriptToRerun.Age.TotalMinutes > _maximumAgeMinutes)
                                                     {
                                                         SensusServiceHelper.Get().Logger.Log("Script \"" + _name + "\" has aged out.", LoggingLevel.Normal, GetType());
@@ -477,7 +479,7 @@ namespace SensusService.Probes.User
                                     });
 
                             }, "Rerun Script", null); // no user notification message, since there might not be any scripts to rerun
-                        
+
                         _rerunCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(callback, _rerunDelayMS, _rerunDelayMS, RERUN_CALLBACK_LAG);
                     }
 
@@ -485,7 +487,7 @@ namespace SensusService.Probes.User
         }
 
         private void StartRandomTriggerCallbacksAsync()
-        {                        
+        {
             new Thread(() =>
                 {
                     StartRandomTriggerCallbacks();
@@ -504,15 +506,15 @@ namespace SensusService.Probes.User
 
                 SensusServiceHelper.Get().Logger.Log("Starting random script trigger callbacks.", LoggingLevel.Normal, GetType());
 
-                #if __IOS__
+#if __IOS__
                 string userNotificationMessage = "Please open to provide input.";
-                #elif __ANDROID__
+#elif __ANDROID__
                 string userNotificationMessage = null;
-                #elif WINDOWS_PHONE
+#elif WINDOWS_PHONE
                 string userNotificationMessage = null; // TODO:  Should we use a message?
-                #else
-                #error "Unrecognized platform."
-                #endif
+#else
+#error "Unrecognized platform."
+#endif
 
                 // find next future trigger window, ignoring month, day, and year of windows. the windows are already sorted.
                 DateTime triggerWindowStart = default(DateTime);
@@ -633,7 +635,7 @@ namespace SensusService.Probes.User
                                 catch (Exception ex)
                                 {
                                     SensusServiceHelper.Get().Logger.Log("Failed to get position for script-run datum:  " + ex.Message, LoggingLevel.Normal, GetType());
-                                }                                
+                                }
                             }
 
                             _probe.StoreDatum(new ScriptRunDatum(runTime, _script.Id, _name, script.Id, script.CurrentDatum == null ? null : script.CurrentDatum.Id, latitude, longitude, locationTimestamp));
@@ -666,7 +668,7 @@ namespace SensusService.Probes.User
             // of background time, the callback may be rescheduled which will require use of the UI thread submitting the new UILocalNotification. ios will not
             // permit this.
             SensusServiceHelper.Get().PromptForInputsAsync(script.FirstRunTimestamp, script.InputGroups, null, _allowCancel, null, "You will not receive credit for your responses if you cancel. Do you want to cancel?", "You have not completed all required fields. You will not receive credit for your responses if you continue. Do you want to continue?", "Are you ready to submit your responses?", _displayProgress, postDisplayCallback, inputGroups =>
-                {            
+                {
                     bool canceled = inputGroups == null;
 
                     // process all inputs in the script
@@ -731,7 +733,7 @@ namespace SensusService.Probes.User
 
             if (_numScriptsAgedOut > 0)
                 misc += _numScriptsAgedOut + " \"" + _name + "\" scripts have aged out." + Environment.NewLine;
-            
+
             return restart;
         }
 
