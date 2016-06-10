@@ -69,7 +69,7 @@
     <NoWarn>1701</NoWarn>
     <CustomCommands>
       <CustomCommands>
-        <Command type="BeforeBuild" command="touch Resources/UnitTestingProtocol.json" workingdir="${ProjectDir}" externalConsole="True" />
+        <Command type="BeforeBuild" command="touch Resources/UnitTestingProtocol.json" workingdir="${ProjectDir}" />
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>
