@@ -151,7 +151,7 @@ namespace Sensus.iOS
 
                     Device.BeginInvokeOnMainThread(() =>
                         {
-                            (Application.Current as App).ProtocolsPage.Bind();
+                            (Xamarin.Forms.Application.Current as App).ProtocolsPage.Bind();
                         });
                 });
 
