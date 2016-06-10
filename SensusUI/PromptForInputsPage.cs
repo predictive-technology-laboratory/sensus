@@ -32,8 +32,7 @@ namespace SensusUI
             Cancel
         }
 
-        private int _stepNumber;
-        private string _cancelConfirmation;
+        private bool _canNavigateBack;
         private Action<Result> _finishedCallback;
         private int _displayedInputCount;
 
@@ -48,6 +47,7 @@ namespace SensusUI
         public PromptForInputsPage(InputGroup inputGroup,
                                    int stepNumber,
                                    int totalSteps,
+                                   bool canNavigateBack,
                                    bool showCancelButton,
                                    string nextButtonTextOverride,
                                    CancellationToken? cancellationToken,
@@ -58,8 +58,7 @@ namespace SensusUI
                                    DateTimeOffset? firstPromptTimestamp,
                                    Action<Result> finishedCallback)
         {
-            _stepNumber = stepNumber;
-            _cancelConfirmation = cancelConfirmation;
+            _canNavigateBack = canNavigateBack;
             _finishedCallback = finishedCallback;
             _displayedInputCount = 0;
 
@@ -118,14 +117,15 @@ namespace SensusUI
                 });
             }
 
-            // show required fields label
-            contentLayout.Children.Add(new Label
-            {
-                Text = inputGroup.Inputs.Any(input => input.Display && input.Required) ? "Required fields are indicated with *" : "All fields are optional.",
-                FontSize = 15,
-                TextColor = Color.Red,
-                HorizontalOptions = LayoutOptions.Start
-            });
+            // indicate required fields
+            if (inputGroup.Inputs.Any(input => input.Display && input.Required))
+                contentLayout.Children.Add(new Label
+                {
+                    Text = "Required fields are indicated with *",
+                    FontSize = 15,
+                    TextColor = Color.Red,
+                    HorizontalOptions = LayoutOptions.Start
+                });
 
             // add inputs to the page
             List<Input> displayedInputs = new List<Input>();
@@ -137,6 +137,7 @@ namespace SensusUI
                     View inputView = input.GetView(viewNumber);
                     if (inputView != null)
                     {
+                        // frame all enabled inputs that request a frame
                         if (input.Enabled && input.Frame)
                         {
                             inputView = new Frame
@@ -163,6 +164,7 @@ namespace SensusUI
                     }
                 }
 
+            // add final separator if we displayed any inputs
             if (_displayedInputCount > 0)
                 contentLayout.Children.Add(new BoxView { Color = Color.Transparent, HeightRequest = inputSeparatorHeight });
 
@@ -179,7 +181,8 @@ namespace SensusUI
                 HorizontalOptions = LayoutOptions.FillAndExpand
             };
 
-            if (stepNumber > 1)
+            // add a prevous button if we're allowed to navigate back
+            if (_canNavigateBack)
             {
                 Button previousButton = new Button
                 {
@@ -238,13 +241,14 @@ namespace SensusUI
                     Text = "Cancel"
                 };
 
-                // separate cancel button from previous/next with a thin separator
+                // separate cancel button from previous/next with a thin visible separator
                 navigationStack.Children.Add(new BoxView { Color = Color.Gray, HorizontalOptions = LayoutOptions.FillAndExpand, HeightRequest = 0.5 });
                 navigationStack.Children.Add(cancelButton);
 
-                cancelButton.Clicked += (o, e) =>
+                cancelButton.Clicked += async (o, e) =>
                 {
-                    CancelWithConfirmation();
+                    if (string.IsNullOrWhiteSpace(cancelConfirmation) || await DisplayAlert("Confirm", cancelConfirmation, "Yes", "No"))
+                        _finishedCallback(Result.Cancel);
                 };
             }
 
@@ -284,18 +288,10 @@ namespace SensusUI
         /// <returns>True</returns>
         protected override bool OnBackButtonPressed()
         {
-            if (_stepNumber == 0)
-                CancelWithConfirmation();
-            else
+            if (_canNavigateBack)
                 _finishedCallback(Result.NavigateBackward);
 
             return true;
-        }
-
-        private async void CancelWithConfirmation()
-        {
-            if (string.IsNullOrWhiteSpace(_cancelConfirmation) || await DisplayAlert("Confirm", _cancelConfirmation, "Yes", "No"))
-                _finishedCallback(Result.Cancel);
         }
     }
 }
