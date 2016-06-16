@@ -1132,9 +1132,9 @@ namespace SensusService
                                                 // users' responses. first check that the user is ready to submit. if the user isn't ready then move back to the previous 
                                                 // input group in the backstack, if there is one.
                                                 if (inputGroupNum >= inputGroups.Count() - 1 && // this is the final input group
-                                                        inputGroupNumBackStack.Count > 0 && // there is an input group to go back to (the current one was not displayed)
-                                                        !string.IsNullOrWhiteSpace(submitConfirmation) && // we have a submit confirmation
-                                                        !(await Application.Current.MainPage.DisplayAlert("Confirm", submitConfirmation, "Yes", "No"))) // user is not ready to submit
+                                                    inputGroupNumBackStack.Count > 0 && // there is an input group to go back to (the current one was not displayed)
+                                                    !string.IsNullOrWhiteSpace(submitConfirmation) && // we have a submit confirmation
+                                                    !(await Application.Current.MainPage.DisplayAlert("Confirm", submitConfirmation, "Yes", "No"))) // user is not ready to submit
                                                 {
                                                     inputGroupNum = inputGroupNumBackStack.Pop() - 1;
                                                 }
