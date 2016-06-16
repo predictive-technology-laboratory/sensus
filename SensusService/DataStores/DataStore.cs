@@ -20,7 +20,6 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Linq;
 using SensusService.DataStores.Remote;
-using SensusService.DataStores.Local;
 using System.Threading.Tasks;
 
 namespace SensusService.DataStores
@@ -53,10 +52,10 @@ namespace SensusService.DataStores
             {
                 if (value <= 1000)
                     value = 1000;
-                
+
                 if (value != _commitDelayMS)
                 {
-                    _commitDelayMS = value; 
+                    _commitDelayMS = value;
 
                     if (_commitCallbackId != null)
                         _commitCallbackId = SensusServiceHelper.Get().RescheduleRepeatingCallback(_commitCallbackId, _commitDelayMS, _commitDelayMS, COMMIT_CALLBACK_LAG);
@@ -75,7 +74,7 @@ namespace SensusService.DataStores
             {
                 if (value <= 0)
                     value = 1;
-                
+
                 _commitTimeoutMinutes = value;
             }
         }
@@ -130,10 +129,10 @@ namespace SensusService.DataStores
                 // in something of a reliable schedule; otherwise, we risk data loss (e.g., from device restarts, app kills, etc.).
                 // so, do the best possible thing and bug the user with a notification indicating that data need to be stored.
                 // only do this for the remote data store to that we don't get duplicate notifications.
-                #if __IOS__
+#if __IOS__
                 if (this is RemoteDataStore)
                     userNotificationMessage = "Sensus needs to submit your data for the \"" + _protocol.Name + "\" study. Please open this notification.";
-                #endif
+#endif
 
                 ScheduledCallback callback = new ScheduledCallback(CommitAsync, GetType().FullName + " Commit", TimeSpan.FromMinutes(_commitTimeoutMinutes), userNotificationMessage);
                 _commitCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(callback, _commitDelayMS, _commitDelayMS, COMMIT_CALLBACK_LAG);
@@ -155,6 +154,14 @@ namespace SensusService.DataStores
 
                         try
                         {
+                            // on ios the user must activate the app in order to save data. give the user some feedback to let them know that this is 
+                            // going to happen and might take some time. if they background the app the commit will be canceled if it runs out of background
+                            // time.
+#if __IOS__
+                            if (this is RemoteDataStore)
+                                SensusServiceHelper.Get().FlashNotificationAsync("Submitting data. Please wait for success confirmation...");
+#endif
+
                             SensusServiceHelper.Get().Logger.Log("Committing data.", LoggingLevel.Normal, GetType());
 
                             DateTime commitStartTime = DateTime.Now;
@@ -177,11 +184,11 @@ namespace SensusService.DataStores
                                 lock (_nonProbeDataToCommit)
                                     foreach (Datum datum in _nonProbeDataToCommit)
                                         dataToCommit.Add(datum);
-                                
+
                                 List<Datum> committedData = null;
                                 try
                                 {
-                                    committedData = await CommitDataAsync(dataToCommit, cancellationToken);                                                                             
+                                    committedData = await CommitDataAsync(dataToCommit, cancellationToken);
 
                                     if (committedData == null)
                                         throw new DataStoreException("Null collection returned by CommitData");
@@ -216,13 +223,13 @@ namespace SensusService.DataStores
                             SensusServiceHelper.Get().Logger.Log("Finished commit in " + (DateTime.Now - commitStartTime).TotalSeconds + " seconds.", LoggingLevel.Normal, GetType());
 
                             // on ios the user must activate the app in order to save data. give the user some feedback to let them know that the data were stored remotely.
-                            #if __IOS__
+#if __IOS__
                             if (numDataCommitted != null && this is RemoteDataStore)
                             {
                                 int numDataCommittedValue = numDataCommitted.GetValueOrDefault();
                                 SensusServiceHelper.Get().FlashNotificationAsync("Submitted " + numDataCommittedValue + " data item" + (numDataCommittedValue == 1 ? "" : "s") + " to the \"" + _protocol.Name + "\" study." + (numDataCommittedValue > 0 ? " Thank you!" : ""));
                             }
-                            #endif
+#endif
                         }
                         catch (Exception ex)
                         {
@@ -288,7 +295,7 @@ namespace SensusService.DataStores
         {
             if (_running)
                 throw new Exception("Cannot clear data store for sharing while it is running.");
-            
+
             _mostRecentSuccessfulCommitTime = null;
             _nonProbeDataToCommit.Clear();
             _commitCallbackId = null;

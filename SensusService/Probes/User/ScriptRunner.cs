@@ -360,11 +360,13 @@ namespace SensusService.Probes.User
                         {
                             // must be running and must have a current datum
                             lock (_locker)
+                            {
                                 if (!_probe.Running || !_enabled || previousCurrentDatum.Item2 == null)
                                 {
                                     trigger.FireCriteriaMetOnPreviousCall = false;  // this covers the case when the current datum is null. for some probes, the null datum is meaningful and is emitted in order for their state to be tracked appropriately (e.g., POI probe).
                                     return;
                                 }
+                            }
 
                             Datum previousDatum = previousCurrentDatum.Item1;
                             Datum currentDatum = previousCurrentDatum.Item2;
@@ -406,7 +408,7 @@ namespace SensusService.Probes.User
                 else if (e.Action == NotifyCollectionChangedAction.Remove)
                     foreach (Trigger trigger in e.OldItems)
                         if (_triggerHandler.ContainsKey(trigger))
-                         {
+                        {
                             trigger.Probe.MostRecentDatumChanged -= _triggerHandler[trigger];
 
                             _triggerHandler.Remove(trigger);
