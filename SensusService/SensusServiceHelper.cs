@@ -420,7 +420,7 @@ namespace SensusService
         #region iOS GPS listener settings
 
 #if __IOS__
-        
+
         [JsonIgnore]
         public bool GpsPauseLocationUpdatesAutomatically
         {
@@ -1091,7 +1091,7 @@ namespace SensusService
                                                                 if (!pageWasAlreadyPopped)
                                                                 {
                                                                     // we aren't doing anything else, so the top of the modal stack should be the prompt page; however, check to be sure.
-                                                                    if (navigation.ModalStack.Last() is PromptForInputsPage)
+                                                                    if (navigation.ModalStack.Count > 0 && navigation.ModalStack.Last() is PromptForInputsPage)
                                                                     {
                                                                         SensusServiceHelper.Get().Logger.Log("Popping prompt page with result:  " + result, LoggingLevel.Normal, GetType());
 

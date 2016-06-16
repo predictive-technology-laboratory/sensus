@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System;
-using SensusService.Probes.User;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using SensusUI.UiProperties;
