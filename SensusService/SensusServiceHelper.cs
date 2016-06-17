@@ -1381,6 +1381,7 @@ namespace SensusService
                         // the Permissions plugin requires a main activity to be present on android. ensure this below.
                         BringToForeground();
 
+                        // display rationale for request to the user if needed
                         if (rationale != null && await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(permission))
                         {
                             ManualResetEvent rationaleDialogWait = new ManualResetEvent(false);
@@ -1394,7 +1395,13 @@ namespace SensusService
                             rationaleDialogWait.WaitOne();
                         }
 
-                        return (await CrossPermissions.Current.RequestPermissionsAsync(new Permission[] { permission }))[permission];
+                        // request permission from the user. it's happened that the returned dictionary doesn't contain an entry for the requested permission, so check for that (https://insights.xamarin.com/app/Sensus-Production/issues/903).
+                        PermissionStatus status;
+                        Dictionary<Permission, PermissionStatus> permissionStatus = await CrossPermissions.Current.RequestPermissionsAsync(new Permission[] { permission });
+                        if (permissionStatus.TryGetValue(permission, out status))
+                            return status;
+                        else
+                            return PermissionStatus.Unknown;
                     }
                 });
         }
