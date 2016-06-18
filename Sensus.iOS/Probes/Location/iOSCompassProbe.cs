@@ -17,12 +17,26 @@ using SensusService.Probes.Location;
 using SensusService;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions.Abstractions;
+using Newtonsoft.Json;
 
 namespace Sensus.iOS.Probes.Location
 {
     public class iOSCompassProbe : CompassProbe
     {
         private EventHandler<PositionEventArgs> _positionChangedHandler;
+
+        /// <summary>
+        /// Has no effect on iOS.
+        /// </summary>
+        /// <value>False.</value>
+        [JsonIgnore]
+        protected override bool DefaultKeepDeviceAwake
+        {
+            get
+            {
+                return false;
+            }
+        }
 
         public iOSCompassProbe()
         {

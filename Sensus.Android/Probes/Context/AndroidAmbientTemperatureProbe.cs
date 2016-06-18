@@ -15,12 +15,26 @@
 using System;
 using SensusService;
 using Android.Hardware;
+using Newtonsoft.Json;
 
 namespace Sensus.Android.Probes.Context
 {
     public class AndroidAmbientTemperatureProbe : ListeningAmbientTemperatureProbe
     {
         private AndroidSensorListener _temperatureListener;
+
+        /// <summary>
+        /// If true, all updates will be received. If false, updates will only be dependably received when the device is awake.
+        /// </summary>
+        /// <value>True.</value>
+        [JsonIgnore]
+        protected override bool DefaultKeepDeviceAwake
+        {
+            get
+            {
+                return true;
+            }
+        }
 
         public AndroidAmbientTemperatureProbe()
         {

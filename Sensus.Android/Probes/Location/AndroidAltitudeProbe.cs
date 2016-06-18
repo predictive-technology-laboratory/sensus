@@ -15,12 +15,26 @@
 using Android.Hardware;
 using SensusService.Probes.Location;
 using System;
+using Newtonsoft.Json;
 
 namespace Sensus.Android.Probes.Location
 {
     public class AndroidAltitudeProbe : AltitudeProbe
     {
         private AndroidSensorListener _altitudeListener;
+
+        /// <summary>
+        /// If true, all updates will be received. If false, updates will only be dependably received when the device is awake.
+        /// </summary>
+        /// <value>True.</value>
+        [JsonIgnore]
+        protected override bool DefaultKeepDeviceAwake
+        {
+            get
+            {
+                return true;
+            }
+        }
 
         public AndroidAltitudeProbe()
         {

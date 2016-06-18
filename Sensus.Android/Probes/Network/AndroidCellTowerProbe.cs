@@ -18,6 +18,7 @@ using SensusService.Probes.Network;
 using System;
 using SensusService;
 using Plugin.Permissions.Abstractions;
+using Newtonsoft.Json;
 
 namespace Sensus.Android.Probes.Network
 {
@@ -25,6 +26,19 @@ namespace Sensus.Android.Probes.Network
     {
         private TelephonyManager _telephonyManager;
         private AndroidCellTowerChangeListener _cellTowerChangeListener;
+
+        /// <summary>
+        /// TODO:  Need to verify the effect of this setting.
+        /// </summary>
+        /// <value>False.</value>
+        [JsonIgnore]
+        protected override bool DefaultKeepDeviceAwake
+        {
+            get
+            {
+                return false;
+            }
+        }
 
         public AndroidCellTowerProbe()
         {

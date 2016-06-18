@@ -28,11 +28,11 @@ namespace Sensus.Android
 		{
 			global::PCLStorage.Resource.String.ApplicationName = global::Sensus.Android.Resource.String.ApplicationName;
 			global::PCLStorage.Resource.String.Hello = global::Sensus.Android.Resource.String.Hello;
+			global::PCLCrypto.Resource.String.ApplicationName = global::Sensus.Android.Resource.String.ApplicationName;
+			global::PCLCrypto.Resource.String.Hello = global::Sensus.Android.Resource.String.Hello;
 			global::ZXing.Mobile.Resource.Id.contentFrame = global::Sensus.Android.Resource.Id.contentFrame;
 			global::ZXing.Mobile.Resource.Layout.zxingscanneractivitylayout = global::Sensus.Android.Resource.Layout.zxingscanneractivitylayout;
 			global::ZXing.Mobile.Resource.Layout.zxingscannerfragmentlayout = global::Sensus.Android.Resource.Layout.zxingscannerfragmentlayout;
-			global::PCLCrypto.Resource.String.ApplicationName = global::Sensus.Android.Resource.String.ApplicationName;
-			global::PCLCrypto.Resource.String.Hello = global::Sensus.Android.Resource.String.Hello;
 			global::XLabs.Platform.Resource.String.ApplicationName = global::Sensus.Android.Resource.String.ApplicationName;
 			global::XLabs.Platform.Resource.String.Hello = global::Sensus.Android.Resource.String.Hello;
 			global::XLabs.Forms.Droid.Resource.Animation.abc_fade_in = global::Sensus.Android.Resource.Animation.abc_fade_in;
@@ -3114,41 +3114,41 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f070030
 			public const int button_material_light = 2131165232;
 			
-			// aapt resource value: 0x7f07006b
-			public const int calendar_active_month_bg = 2131165291;
+			// aapt resource value: 0x7f070059
+			public const int calendar_active_month_bg = 2131165273;
 			
-			// aapt resource value: 0x7f07006c
-			public const int calendar_bg = 2131165292;
+			// aapt resource value: 0x7f07005a
+			public const int calendar_bg = 2131165274;
 			
-			// aapt resource value: 0x7f07006d
-			public const int calendar_divider = 2131165293;
+			// aapt resource value: 0x7f07005b
+			public const int calendar_divider = 2131165275;
 			
-			// aapt resource value: 0x7f070070
-			public const int calendar_highlighted_day_bg = 2131165296;
+			// aapt resource value: 0x7f07005e
+			public const int calendar_highlighted_day_bg = 2131165278;
 			
-			// aapt resource value: 0x7f07006e
-			public const int calendar_inactive_month_bg = 2131165294;
+			// aapt resource value: 0x7f07005c
+			public const int calendar_inactive_month_bg = 2131165276;
 			
-			// aapt resource value: 0x7f07006f
-			public const int calendar_selected_day_bg = 2131165295;
+			// aapt resource value: 0x7f07005d
+			public const int calendar_selected_day_bg = 2131165277;
 			
-			// aapt resource value: 0x7f070071
-			public const int calendar_selected_range_bg = 2131165297;
+			// aapt resource value: 0x7f07005f
+			public const int calendar_selected_range_bg = 2131165279;
 			
-			// aapt resource value: 0x7f070073
-			public const int calendar_text_active = 2131165299;
+			// aapt resource value: 0x7f070061
+			public const int calendar_text_active = 2131165281;
 			
-			// aapt resource value: 0x7f070072
-			public const int calendar_text_inactive = 2131165298;
+			// aapt resource value: 0x7f070060
+			public const int calendar_text_inactive = 2131165280;
 			
-			// aapt resource value: 0x7f070074
-			public const int calendar_text_selected = 2131165300;
+			// aapt resource value: 0x7f070062
+			public const int calendar_text_selected = 2131165282;
 			
 			// aapt resource value: 0x7f070080
 			public const int calendar_text_selector = 2131165312;
 			
-			// aapt resource value: 0x7f070075
-			public const int calendar_text_unselectable = 2131165301;
+			// aapt resource value: 0x7f070063
+			public const int calendar_text_unselectable = 2131165283;
 			
 			// aapt resource value: 0x7f070011
 			public const int cardview_dark_background = 2131165201;
@@ -3162,65 +3162,65 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f070014
 			public const int cardview_shadow_start_color = 2131165204;
 			
-			// aapt resource value: 0x7f070059
-			public const int com_facebook_blue = 2131165273;
-			
-			// aapt resource value: 0x7f07005a
-			public const int com_facebook_button_background_color = 2131165274;
-			
-			// aapt resource value: 0x7f07005b
-			public const int com_facebook_button_background_color_disabled = 2131165275;
-			
-			// aapt resource value: 0x7f07005c
-			public const int com_facebook_button_background_color_focused = 2131165276;
-			
-			// aapt resource value: 0x7f07005d
-			public const int com_facebook_button_background_color_focused_disabled = 2131165277;
-			
-			// aapt resource value: 0x7f07005e
-			public const int com_facebook_button_background_color_pressed = 2131165278;
-			
-			// aapt resource value: 0x7f07005f
-			public const int com_facebook_button_background_color_selected = 2131165279;
-			
-			// aapt resource value: 0x7f070060
-			public const int com_facebook_button_border_color_focused = 2131165280;
-			
-			// aapt resource value: 0x7f070061
-			public const int com_facebook_button_login_silver_background_color = 2131165281;
-			
-			// aapt resource value: 0x7f070062
-			public const int com_facebook_button_login_silver_background_color_pressed = 2131165282;
-			
-			// aapt resource value: 0x7f070063
-			public const int com_facebook_button_send_background_color = 2131165283;
-			
 			// aapt resource value: 0x7f070064
-			public const int com_facebook_button_send_background_color_pressed = 2131165284;
+			public const int com_facebook_blue = 2131165284;
+			
+			// aapt resource value: 0x7f070065
+			public const int com_facebook_button_background_color = 2131165285;
+			
+			// aapt resource value: 0x7f070066
+			public const int com_facebook_button_background_color_disabled = 2131165286;
+			
+			// aapt resource value: 0x7f070067
+			public const int com_facebook_button_background_color_focused = 2131165287;
+			
+			// aapt resource value: 0x7f070068
+			public const int com_facebook_button_background_color_focused_disabled = 2131165288;
+			
+			// aapt resource value: 0x7f070069
+			public const int com_facebook_button_background_color_pressed = 2131165289;
+			
+			// aapt resource value: 0x7f07006a
+			public const int com_facebook_button_background_color_selected = 2131165290;
+			
+			// aapt resource value: 0x7f07006b
+			public const int com_facebook_button_border_color_focused = 2131165291;
+			
+			// aapt resource value: 0x7f07006c
+			public const int com_facebook_button_login_silver_background_color = 2131165292;
+			
+			// aapt resource value: 0x7f07006d
+			public const int com_facebook_button_login_silver_background_color_pressed = 2131165293;
+			
+			// aapt resource value: 0x7f07006e
+			public const int com_facebook_button_send_background_color = 2131165294;
+			
+			// aapt resource value: 0x7f07006f
+			public const int com_facebook_button_send_background_color_pressed = 2131165295;
 			
 			// aapt resource value: 0x7f070081
 			public const int com_facebook_button_text_color = 2131165313;
 			
-			// aapt resource value: 0x7f070065
-			public const int com_facebook_device_auth_text = 2131165285;
+			// aapt resource value: 0x7f070070
+			public const int com_facebook_device_auth_text = 2131165296;
 			
-			// aapt resource value: 0x7f070066
-			public const int com_facebook_likeboxcountview_border_color = 2131165286;
+			// aapt resource value: 0x7f070071
+			public const int com_facebook_likeboxcountview_border_color = 2131165297;
 			
-			// aapt resource value: 0x7f070067
-			public const int com_facebook_likeboxcountview_text_color = 2131165287;
+			// aapt resource value: 0x7f070072
+			public const int com_facebook_likeboxcountview_text_color = 2131165298;
 			
-			// aapt resource value: 0x7f070068
-			public const int com_facebook_likeview_text_color = 2131165288;
+			// aapt resource value: 0x7f070073
+			public const int com_facebook_likeview_text_color = 2131165299;
 			
-			// aapt resource value: 0x7f070069
-			public const int com_facebook_messenger_blue = 2131165289;
+			// aapt resource value: 0x7f070074
+			public const int com_facebook_messenger_blue = 2131165300;
 			
 			// aapt resource value: 0x7f070082
 			public const int com_facebook_send_button_text_color = 2131165314;
 			
-			// aapt resource value: 0x7f07006a
-			public const int com_facebook_share_button_text_color = 2131165290;
+			// aapt resource value: 0x7f070075
+			public const int com_facebook_share_button_text_color = 2131165301;
 			
 			// aapt resource value: 0x7f070008
 			public const int common_action_bar_splitter = 2131165192;
@@ -3655,20 +3655,20 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0a002d
 			public const int abc_text_size_title_material_toolbar = 2131361837;
 			
-			// aapt resource value: 0x7f0a008a
-			public const int calendar_day_headers_paddingbottom = 2131361930;
+			// aapt resource value: 0x7f0a0074
+			public const int calendar_day_headers_paddingbottom = 2131361908;
 			
-			// aapt resource value: 0x7f0a008c
-			public const int calendar_month_title_bottommargin = 2131361932;
+			// aapt resource value: 0x7f0a0076
+			public const int calendar_month_title_bottommargin = 2131361910;
 			
-			// aapt resource value: 0x7f0a008b
-			public const int calendar_month_topmargin = 2131361931;
+			// aapt resource value: 0x7f0a0075
+			public const int calendar_month_topmargin = 2131361909;
 			
-			// aapt resource value: 0x7f0a008d
-			public const int calendar_text_medium = 2131361933;
+			// aapt resource value: 0x7f0a0077
+			public const int calendar_text_medium = 2131361911;
 			
-			// aapt resource value: 0x7f0a008e
-			public const int calendar_text_small = 2131361934;
+			// aapt resource value: 0x7f0a0078
+			public const int calendar_text_small = 2131361912;
 			
 			// aapt resource value: 0x7f0a0006
 			public const int cardview_compat_inset_shadow = 2131361798;
@@ -3679,71 +3679,71 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0a0008
 			public const int cardview_default_radius = 2131361800;
 			
-			// aapt resource value: 0x7f0a0074
-			public const int com_facebook_auth_dialog_corner_radius = 2131361908;
-			
-			// aapt resource value: 0x7f0a0075
-			public const int com_facebook_auth_dialog_corner_radius_oversized = 2131361909;
-			
-			// aapt resource value: 0x7f0a0076
-			public const int com_facebook_button_corner_radius = 2131361910;
-			
-			// aapt resource value: 0x7f0a0077
-			public const int com_facebook_likeboxcountview_border_radius = 2131361911;
-			
-			// aapt resource value: 0x7f0a0078
-			public const int com_facebook_likeboxcountview_border_width = 2131361912;
-			
 			// aapt resource value: 0x7f0a0079
-			public const int com_facebook_likeboxcountview_caret_height = 2131361913;
+			public const int com_facebook_auth_dialog_corner_radius = 2131361913;
 			
 			// aapt resource value: 0x7f0a007a
-			public const int com_facebook_likeboxcountview_caret_width = 2131361914;
+			public const int com_facebook_auth_dialog_corner_radius_oversized = 2131361914;
 			
 			// aapt resource value: 0x7f0a007b
-			public const int com_facebook_likeboxcountview_text_padding = 2131361915;
+			public const int com_facebook_button_corner_radius = 2131361915;
 			
 			// aapt resource value: 0x7f0a007c
-			public const int com_facebook_likeboxcountview_text_size = 2131361916;
+			public const int com_facebook_likeboxcountview_border_radius = 2131361916;
 			
 			// aapt resource value: 0x7f0a007d
-			public const int com_facebook_likeview_edge_padding = 2131361917;
+			public const int com_facebook_likeboxcountview_border_width = 2131361917;
 			
 			// aapt resource value: 0x7f0a007e
-			public const int com_facebook_likeview_internal_padding = 2131361918;
+			public const int com_facebook_likeboxcountview_caret_height = 2131361918;
 			
 			// aapt resource value: 0x7f0a007f
-			public const int com_facebook_likeview_text_size = 2131361919;
+			public const int com_facebook_likeboxcountview_caret_width = 2131361919;
 			
 			// aapt resource value: 0x7f0a0080
-			public const int com_facebook_profilepictureview_preset_size_large = 2131361920;
+			public const int com_facebook_likeboxcountview_text_padding = 2131361920;
 			
 			// aapt resource value: 0x7f0a0081
-			public const int com_facebook_profilepictureview_preset_size_normal = 2131361921;
+			public const int com_facebook_likeboxcountview_text_size = 2131361921;
 			
 			// aapt resource value: 0x7f0a0082
-			public const int com_facebook_profilepictureview_preset_size_small = 2131361922;
+			public const int com_facebook_likeview_edge_padding = 2131361922;
 			
 			// aapt resource value: 0x7f0a0083
-			public const int com_facebook_share_button_compound_drawable_padding = 2131361923;
+			public const int com_facebook_likeview_internal_padding = 2131361923;
 			
 			// aapt resource value: 0x7f0a0084
-			public const int com_facebook_share_button_padding_bottom = 2131361924;
+			public const int com_facebook_likeview_text_size = 2131361924;
 			
 			// aapt resource value: 0x7f0a0085
-			public const int com_facebook_share_button_padding_left = 2131361925;
+			public const int com_facebook_profilepictureview_preset_size_large = 2131361925;
 			
 			// aapt resource value: 0x7f0a0086
-			public const int com_facebook_share_button_padding_right = 2131361926;
+			public const int com_facebook_profilepictureview_preset_size_normal = 2131361926;
 			
 			// aapt resource value: 0x7f0a0087
-			public const int com_facebook_share_button_padding_top = 2131361927;
+			public const int com_facebook_profilepictureview_preset_size_small = 2131361927;
 			
 			// aapt resource value: 0x7f0a0088
-			public const int com_facebook_share_button_text_size = 2131361928;
+			public const int com_facebook_share_button_compound_drawable_padding = 2131361928;
 			
 			// aapt resource value: 0x7f0a0089
-			public const int com_facebook_tooltip_horizontal_padding = 2131361929;
+			public const int com_facebook_share_button_padding_bottom = 2131361929;
+			
+			// aapt resource value: 0x7f0a008a
+			public const int com_facebook_share_button_padding_left = 2131361930;
+			
+			// aapt resource value: 0x7f0a008b
+			public const int com_facebook_share_button_padding_right = 2131361931;
+			
+			// aapt resource value: 0x7f0a008c
+			public const int com_facebook_share_button_padding_top = 2131361932;
+			
+			// aapt resource value: 0x7f0a008d
+			public const int com_facebook_share_button_text_size = 2131361933;
+			
+			// aapt resource value: 0x7f0a008e
+			public const int com_facebook_tooltip_horizontal_padding = 2131361934;
 			
 			// aapt resource value: 0x7f0a0011
 			public const int design_appbar_elevation = 2131361809;
@@ -5542,11 +5542,11 @@ namespace Sensus.Android
 		public partial class String
 		{
 			
-			// aapt resource value: 0x7f08005d
-			public const int ApplicationName = 2131230813;
+			// aapt resource value: 0x7f08004b
+			public const int ApplicationName = 2131230795;
 			
-			// aapt resource value: 0x7f08005c
-			public const int Hello = 2131230812;
+			// aapt resource value: 0x7f08004a
+			public const int Hello = 2131230794;
 			
 			// aapt resource value: 0x7f080031
 			public const int abc_action_bar_home_description = 2131230769;
@@ -5626,56 +5626,56 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f080030
 			public const int character_counter_pattern = 2131230768;
 			
-			// aapt resource value: 0x7f080045
-			public const int com_facebook_device_auth_instructions = 2131230789;
-			
-			// aapt resource value: 0x7f080046
-			public const int com_facebook_image_download_unknown_error = 2131230790;
-			
-			// aapt resource value: 0x7f080047
-			public const int com_facebook_internet_permission_error_message = 2131230791;
-			
-			// aapt resource value: 0x7f080048
-			public const int com_facebook_internet_permission_error_title = 2131230792;
-			
-			// aapt resource value: 0x7f080049
-			public const int com_facebook_like_button_liked = 2131230793;
-			
-			// aapt resource value: 0x7f08004a
-			public const int com_facebook_like_button_not_liked = 2131230794;
-			
-			// aapt resource value: 0x7f08004b
-			public const int com_facebook_loading = 2131230795;
-			
 			// aapt resource value: 0x7f08004c
-			public const int com_facebook_loginview_cancel_action = 2131230796;
+			public const int com_facebook_device_auth_instructions = 2131230796;
 			
 			// aapt resource value: 0x7f08004d
-			public const int com_facebook_loginview_log_in_button = 2131230797;
+			public const int com_facebook_image_download_unknown_error = 2131230797;
 			
 			// aapt resource value: 0x7f08004e
-			public const int com_facebook_loginview_log_in_button_long = 2131230798;
+			public const int com_facebook_internet_permission_error_message = 2131230798;
 			
 			// aapt resource value: 0x7f08004f
-			public const int com_facebook_loginview_log_out_action = 2131230799;
+			public const int com_facebook_internet_permission_error_title = 2131230799;
 			
 			// aapt resource value: 0x7f080050
-			public const int com_facebook_loginview_log_out_button = 2131230800;
+			public const int com_facebook_like_button_liked = 2131230800;
 			
 			// aapt resource value: 0x7f080051
-			public const int com_facebook_loginview_logged_in_as = 2131230801;
+			public const int com_facebook_like_button_not_liked = 2131230801;
 			
 			// aapt resource value: 0x7f080052
-			public const int com_facebook_loginview_logged_in_using_facebook = 2131230802;
+			public const int com_facebook_loading = 2131230802;
 			
 			// aapt resource value: 0x7f080053
-			public const int com_facebook_send_button_text = 2131230803;
+			public const int com_facebook_loginview_cancel_action = 2131230803;
 			
 			// aapt resource value: 0x7f080054
-			public const int com_facebook_share_button_text = 2131230804;
+			public const int com_facebook_loginview_log_in_button = 2131230804;
 			
 			// aapt resource value: 0x7f080055
-			public const int com_facebook_tooltip_default = 2131230805;
+			public const int com_facebook_loginview_log_in_button_long = 2131230805;
+			
+			// aapt resource value: 0x7f080056
+			public const int com_facebook_loginview_log_out_action = 2131230806;
+			
+			// aapt resource value: 0x7f080057
+			public const int com_facebook_loginview_log_out_button = 2131230807;
+			
+			// aapt resource value: 0x7f080058
+			public const int com_facebook_loginview_logged_in_as = 2131230808;
+			
+			// aapt resource value: 0x7f080059
+			public const int com_facebook_loginview_logged_in_using_facebook = 2131230809;
+			
+			// aapt resource value: 0x7f08005a
+			public const int com_facebook_send_button_text = 2131230810;
+			
+			// aapt resource value: 0x7f08005b
+			public const int com_facebook_share_button_text = 2131230811;
+			
+			// aapt resource value: 0x7f08005c
+			public const int com_facebook_tooltip_default = 2131230812;
 			
 			// aapt resource value: 0x7f080015
 			public const int common_google_play_services_api_unavailable_text = 2131230741;
@@ -5764,23 +5764,23 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f08001b
 			public const int common_signin_button_text_long = 2131230747;
 			
-			// aapt resource value: 0x7f080058
-			public const int day_name_format = 2131230808;
+			// aapt resource value: 0x7f080046
+			public const int day_name_format = 2131230790;
 			
-			// aapt resource value: 0x7f08005b
-			public const int full_date_format = 2131230811;
+			// aapt resource value: 0x7f080049
+			public const int full_date_format = 2131230793;
 			
-			// aapt resource value: 0x7f080059
-			public const int invalid_date = 2131230809;
+			// aapt resource value: 0x7f080047
+			public const int invalid_date = 2131230791;
 			
-			// aapt resource value: 0x7f080057
-			public const int library_name = 2131230807;
+			// aapt resource value: 0x7f080045
+			public const int library_name = 2131230789;
 			
-			// aapt resource value: 0x7f080056
-			public const int messenger_send_button_text = 2131230806;
+			// aapt resource value: 0x7f08005d
+			public const int messenger_send_button_text = 2131230813;
 			
-			// aapt resource value: 0x7f08005a
-			public const int month_name_format = 2131230810;
+			// aapt resource value: 0x7f080048
+			public const int month_name_format = 2131230792;
 			
 			// aapt resource value: 0x7f08001f
 			public const int mr_button_content_description = 2131230751;
@@ -6290,17 +6290,17 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0b001d
 			public const int Base_Widget_Design_TabLayout = 2131427357;
 			
-			// aapt resource value: 0x7f0b0189
-			public const int CalendarCell = 2131427721;
+			// aapt resource value: 0x7f0b0173
+			public const int CalendarCell = 2131427699;
 			
-			// aapt resource value: 0x7f0b018b
-			public const int CalendarCell_CalendarDate = 2131427723;
+			// aapt resource value: 0x7f0b0175
+			public const int CalendarCell_CalendarDate = 2131427701;
 			
-			// aapt resource value: 0x7f0b018a
-			public const int CalendarCell_DayHeader = 2131427722;
+			// aapt resource value: 0x7f0b0174
+			public const int CalendarCell_DayHeader = 2131427700;
 			
-			// aapt resource value: 0x7f0b0188
-			public const int CalendarTitle = 2131427720;
+			// aapt resource value: 0x7f0b0172
+			public const int CalendarTitle = 2131427698;
 			
 			// aapt resource value: 0x7f0b0017
 			public const int CardView = 2131427351;
@@ -6311,47 +6311,47 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0b001a
 			public const int CardView_Light = 2131427354;
 			
-			// aapt resource value: 0x7f0b0172
-			public const int MessengerButton = 2131427698;
-			
-			// aapt resource value: 0x7f0b0173
-			public const int MessengerButton_Blue = 2131427699;
-			
-			// aapt resource value: 0x7f0b0174
-			public const int MessengerButton_Blue_Large = 2131427700;
-			
-			// aapt resource value: 0x7f0b0175
-			public const int MessengerButton_Blue_Small = 2131427701;
-			
 			// aapt resource value: 0x7f0b0176
-			public const int MessengerButton_White = 2131427702;
+			public const int MessengerButton = 2131427702;
 			
 			// aapt resource value: 0x7f0b0177
-			public const int MessengerButton_White_Large = 2131427703;
+			public const int MessengerButton_Blue = 2131427703;
 			
 			// aapt resource value: 0x7f0b0178
-			public const int MessengerButton_White_Small = 2131427704;
+			public const int MessengerButton_Blue_Large = 2131427704;
 			
 			// aapt resource value: 0x7f0b0179
-			public const int MessengerButtonText = 2131427705;
+			public const int MessengerButton_Blue_Small = 2131427705;
 			
 			// aapt resource value: 0x7f0b017a
-			public const int MessengerButtonText_Blue = 2131427706;
+			public const int MessengerButton_White = 2131427706;
 			
 			// aapt resource value: 0x7f0b017b
-			public const int MessengerButtonText_Blue_Large = 2131427707;
+			public const int MessengerButton_White_Large = 2131427707;
 			
 			// aapt resource value: 0x7f0b017c
-			public const int MessengerButtonText_Blue_Small = 2131427708;
+			public const int MessengerButton_White_Small = 2131427708;
 			
 			// aapt resource value: 0x7f0b017d
-			public const int MessengerButtonText_White = 2131427709;
+			public const int MessengerButtonText = 2131427709;
 			
 			// aapt resource value: 0x7f0b017e
-			public const int MessengerButtonText_White_Large = 2131427710;
+			public const int MessengerButtonText_Blue = 2131427710;
 			
 			// aapt resource value: 0x7f0b017f
-			public const int MessengerButtonText_White_Small = 2131427711;
+			public const int MessengerButtonText_Blue_Large = 2131427711;
+			
+			// aapt resource value: 0x7f0b0180
+			public const int MessengerButtonText_Blue_Small = 2131427712;
+			
+			// aapt resource value: 0x7f0b0181
+			public const int MessengerButtonText_White = 2131427713;
+			
+			// aapt resource value: 0x7f0b0182
+			public const int MessengerButtonText_White_Large = 2131427714;
+			
+			// aapt resource value: 0x7f0b0183
+			public const int MessengerButtonText_White_Small = 2131427715;
 			
 			// aapt resource value: 0x7f0b004b
 			public const int Platform_AppCompat = 2131427403;
@@ -7007,29 +7007,29 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0b0016
 			public const int Widget_MediaRouter_MediaRouteButton = 2131427350;
 			
-			// aapt resource value: 0x7f0b0180
-			public const int com_facebook_auth_dialog = 2131427712;
-			
-			// aapt resource value: 0x7f0b0181
-			public const int com_facebook_button = 2131427713;
-			
-			// aapt resource value: 0x7f0b0182
-			public const int com_facebook_button_like = 2131427714;
-			
-			// aapt resource value: 0x7f0b0183
-			public const int com_facebook_button_send = 2131427715;
-			
 			// aapt resource value: 0x7f0b0184
-			public const int com_facebook_button_share = 2131427716;
+			public const int com_facebook_auth_dialog = 2131427716;
 			
 			// aapt resource value: 0x7f0b0185
-			public const int com_facebook_loginview_default_style = 2131427717;
+			public const int com_facebook_button = 2131427717;
 			
 			// aapt resource value: 0x7f0b0186
-			public const int com_facebook_loginview_silver_style = 2131427718;
+			public const int com_facebook_button_like = 2131427718;
 			
 			// aapt resource value: 0x7f0b0187
-			public const int tooltip_bubble_text = 2131427719;
+			public const int com_facebook_button_send = 2131427719;
+			
+			// aapt resource value: 0x7f0b0188
+			public const int com_facebook_button_share = 2131427720;
+			
+			// aapt resource value: 0x7f0b0189
+			public const int com_facebook_loginview_default_style = 2131427721;
+			
+			// aapt resource value: 0x7f0b018a
+			public const int com_facebook_loginview_silver_style = 2131427722;
+			
+			// aapt resource value: 0x7f0b018b
+			public const int tooltip_bubble_text = 2131427723;
 			
 			static Style()
 			{

@@ -17,6 +17,7 @@ using System.Linq;
 using System.Collections.ObjectModel;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions.Abstractions;
+using Newtonsoft.Json;
 
 namespace SensusService.Probes.Location
 {
@@ -30,6 +31,15 @@ namespace SensusService.Probes.Location
         public ObservableCollection<PointOfInterestProximityTrigger> Triggers
         {
             get { return _triggers; }
+        }
+
+        [JsonIgnore]
+        protected override bool DefaultKeepDeviceAwake
+        {
+            get
+            {
+                return true;
+            }
         }
 
         public sealed override string DisplayName

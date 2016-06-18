@@ -14,12 +14,26 @@
 
 using SensusService.Probes.Network;
 using System;
+using Newtonsoft.Json;
 
 namespace Sensus.Android.Probes.Network
 {
     public class AndroidListeningWlanProbe : ListeningWlanProbe
     {
         private EventHandler<WlanDatum> _wlanConnectionChangedCallback;
+
+        /// <summary>
+        /// TODO:  Need to verify the effect of this setting. Is a WLAN binding received when the device is asleep and the router is diconnected?
+        /// </summary>
+        /// <value>False.</value>
+        [JsonIgnore]
+        protected override bool DefaultKeepDeviceAwake
+        {
+            get
+            {
+                return false;
+            }
+        }
 
         public AndroidListeningWlanProbe()
         {

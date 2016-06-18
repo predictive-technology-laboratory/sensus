@@ -18,6 +18,7 @@ using SensusService.Probes.Communication;
 using System;
 using SensusService;
 using Plugin.Permissions.Abstractions;
+using Newtonsoft.Json;
 
 namespace Sensus.Android.Probes.Communication
 {
@@ -26,6 +27,19 @@ namespace Sensus.Android.Probes.Communication
         private TelephonyManager _telephonyManager;
         private AndroidSmsOutgoingObserver _smsOutgoingObserver;
         private EventHandler<SmsDatum> _incomingSmsCallback;
+
+        /// <summary>
+        /// It should never be necessary to set this to true. SMS messages will always be received by the probe, regardless of sleep status.
+        /// </summary>
+        /// <value>False.</value>
+        [JsonIgnore]
+        protected override bool DefaultKeepDeviceAwake
+        {
+            get
+            {
+                return false;
+            }
+        }
 
         public AndroidSmsProbe()
         {

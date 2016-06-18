@@ -15,6 +15,7 @@
 using Android.Hardware;
 using SensusService.Probes.Location;
 using System;
+using Newtonsoft.Json;
 
 namespace Sensus.Android.Probes.Location
 {
@@ -31,6 +32,19 @@ namespace Sensus.Android.Probes.Location
         private float[] _azimuthPitchRoll;
 
         private readonly object _locker = new object();
+
+        /// <summary>
+        /// If true, all updates will be received. If false, updates will only be dependably received when the device is awake.
+        /// </summary>
+        /// <value>True.</value>
+        [JsonIgnore]
+        protected override bool DefaultKeepDeviceAwake
+        {
+            get
+            {
+                return true;
+            }
+        }
 
         public AndroidCompassProbe()
         {

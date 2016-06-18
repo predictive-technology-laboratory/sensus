@@ -915,7 +915,7 @@ namespace SensusService
 
                         try
                         {
-                            Insights.Report(new Exception(errorMessage), Insights.Severity.Critical);
+                            Insights.Report(new Exception(errorMessage, ex), Insights.Severity.Critical);
                         }
                         catch (Exception)
                         {

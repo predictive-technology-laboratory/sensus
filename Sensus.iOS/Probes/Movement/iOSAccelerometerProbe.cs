@@ -16,9 +16,9 @@ using System;
 using SensusService.Probes.Movement;
 using CoreMotion;
 using Foundation;
-using System.Threading;
 using SensusService;
 using Plugin.Permissions.Abstractions;
+using Newtonsoft.Json;
 
 namespace Sensus.iOS.Probes.Movement
 {
@@ -26,8 +26,17 @@ namespace Sensus.iOS.Probes.Movement
     {
         private CMMotionManager _motionManager;
 
-        public iOSAccelerometerProbe()
+        /// <summary>
+        /// Has no effect on iOS.
+        /// </summary>
+        /// <value>False.</value>
+        [JsonIgnore]
+        protected override bool DefaultKeepDeviceAwake
         {
+            get
+            {
+                return false;
+            }
         }
 
         protected override void Initialize()

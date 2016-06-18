@@ -51,9 +51,12 @@ namespace SensusService.Probes.Movement
             // allow the accelerometer to stabilize...the first few readings can be extremely erratic
             new Thread(() =>
                 {
-                    Thread.Sleep(5000);
+                    Thread.Sleep(2000);
                     _stabilizing = false;
-                    SensusServiceHelper.Get().Logger.Log("Accelerometer has finished stabilization period.", LoggingLevel.Normal, GetType());
+
+                    // not sure if null is the problem:  https://insights.xamarin.com/app/Sensus-Production/issues/907
+                    if (SensusServiceHelper.Get() != null)
+                        SensusServiceHelper.Get().Logger.Log("Accelerometer has finished stabilization period.", LoggingLevel.Normal, GetType());
 
                 }).Start();
         }

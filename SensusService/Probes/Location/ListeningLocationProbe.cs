@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using Newtonsoft.Json;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions.Abstractions;
 
@@ -21,6 +22,19 @@ namespace SensusService.Probes.Location
     public class ListeningLocationProbe : ListeningProbe
     {
         private EventHandler<PositionEventArgs> _positionChangedHandler;
+
+        /// <summary>
+        /// TODO:  Check what happens when no wake locks are acquired.
+        /// </summary>
+        /// <value>The default keep device awake.</value>
+        [JsonIgnore]
+        protected override bool DefaultKeepDeviceAwake
+        {
+            get
+            {
+                return true;
+            }
+        }
 
         public sealed override string DisplayName
         {
