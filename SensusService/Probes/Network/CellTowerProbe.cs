@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using Newtonsoft.Json;
 
 namespace SensusService.Probes.Network
 {
@@ -21,6 +22,37 @@ namespace SensusService.Probes.Network
     /// </summary>
     public abstract class CellTowerProbe : ListeningProbe
     {
+        /// <summary>
+        /// TODO:  Need to verify the effect of this setting. Are updates received while device is asleep? Also update messages below.
+        /// </summary>
+        /// <value>False.</value>
+        [JsonIgnore]
+        protected override bool DefaultKeepDeviceAwake
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        [JsonIgnore]
+        protected override string DeviceAwakeWarning
+        {
+            get
+            {
+                return "This setting does not affect iOS. On Android, all cell tower updates will be received, and this will consume more power.";
+            }
+        }
+
+        [JsonIgnore]
+        protected override string DeviceAsleepWarning
+        {
+            get
+            {
+                return "This setting does not affect iOS. On Android, cell tower updates will be paused while the device is sleeping, and this will conserve power.";
+            }
+        }
+
         public sealed override string DisplayName
         {
             get { return "Cell Tower Binding"; }

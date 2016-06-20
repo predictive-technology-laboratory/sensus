@@ -44,11 +44,24 @@ namespace SensusService.Probes
             set
             {
                 _keepDeviceAwake = value;
+
+                // warn the user about this setting
+                if (SensusServiceHelper.Get() != null)
+                    if (_keepDeviceAwake && !string.IsNullOrWhiteSpace(DeviceAwakeWarning))
+                        SensusServiceHelper.Get().FlashNotificationAsync(DeviceAwakeWarning, false);
+                    else if (!_keepDeviceAwake && !string.IsNullOrWhiteSpace(DeviceAsleepWarning))
+                        SensusServiceHelper.Get().FlashNotificationAsync(DeviceAsleepWarning, false);
             }
         }
 
         [JsonIgnore]
         protected abstract bool DefaultKeepDeviceAwake { get; }
+
+        [JsonIgnore]
+        protected abstract string DeviceAwakeWarning { get; }
+
+        [JsonIgnore]
+        protected abstract string DeviceAsleepWarning { get; }
 
         protected override float RawParticipation
         {

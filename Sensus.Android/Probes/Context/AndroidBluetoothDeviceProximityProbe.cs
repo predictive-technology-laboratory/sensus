@@ -14,7 +14,6 @@
 
 using SensusService.Probes.Context;
 using System;
-using Newtonsoft.Json;
 using SensusService;
 using Plugin.Permissions.Abstractions;
 
@@ -23,20 +22,6 @@ namespace Sensus.Android.Probes.Context
     public class AndroidBluetoothDeviceProximityProbe : BluetoothDeviceProximityProbe
     {
         private EventHandler<BluetoothDeviceProximityDatum> _deviceFoundCallback;
-
-        /// <summary>
-        /// If true, the device will be kept awake and will be able to scan for Bluetooth devices. If false, such updates will only occur when the user
-        /// requests them or when the system requests them while awake.
-        /// </summary>
-        /// <value>False.</value>
-        [JsonIgnore]
-        protected override bool DefaultKeepDeviceAwake
-        {
-            get
-            {
-                return false;
-            }
-        }
 
         public AndroidBluetoothDeviceProximityProbe()
         {

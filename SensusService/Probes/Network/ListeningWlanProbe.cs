@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using Newtonsoft.Json;
 
 namespace SensusService.Probes.Network
 {
@@ -21,6 +22,37 @@ namespace SensusService.Probes.Network
     /// </summary>
     public abstract class ListeningWlanProbe : ListeningProbe
     {
+        /// <summary>
+        /// TODO:  Need to verify the effect of this setting. Is a WLAN binding received when the device is asleep and the router is diconnected? Also update messages below.
+        /// </summary>
+        /// <value>False.</value>
+        [JsonIgnore]
+        protected override bool DefaultKeepDeviceAwake
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        [JsonIgnore]
+        protected override string DeviceAwakeWarning
+        {
+            get
+            {
+                return "This setting does not affect iOS. On Android, all WLAN updates will be received, and this will consume more power.";
+            }
+        }
+
+        [JsonIgnore]
+        protected override string DeviceAsleepWarning
+        {
+            get
+            {
+                return "This setting does not affect iOS. On Android, WLAN updates will be paused while the device is sleeping, and this will conserve power.";
+            }
+        }
+
         public sealed override string DisplayName
         {
             get { return "Wireless LAN Binding"; }

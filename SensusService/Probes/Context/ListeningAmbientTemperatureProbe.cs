@@ -13,12 +13,40 @@
 // limitations under the License.
 
 using System;
+using Newtonsoft.Json;
 using SensusService.Probes;
 
 namespace SensusService
 {
     public abstract class ListeningAmbientTemperatureProbe : ListeningProbe
     {
+        [JsonIgnore]
+        protected override bool DefaultKeepDeviceAwake
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        [JsonIgnore]
+        protected override string DeviceAwakeWarning
+        {
+            get
+            {
+                return "This setting does not affect iOS. On Android, all temperature updates will be received, and this will consume more power.";
+            }
+        }
+
+        [JsonIgnore]
+        protected override string DeviceAsleepWarning
+        {
+            get
+            {
+                return "This setting does not affect iOS. On Android, temperature updates will be paused while the device is sleeping, and this will conserve power.";
+            }
+        }
+
         public sealed override Type DatumType
         {
             get

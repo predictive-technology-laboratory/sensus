@@ -15,26 +15,12 @@
 using Android.Hardware;
 using SensusService.Probes.Context;
 using System;
-using Newtonsoft.Json;
 
 namespace Sensus.Android.Probes.Context
 {
     public class AndroidLightProbe : LightProbe
     {
         private AndroidSensorListener _lightListener;
-
-        /// <summary>
-        /// If true, all updates will be received. If false, updates will only be dependably received when the device is awake.
-        /// </summary>
-        /// <value>True.</value>
-        [JsonIgnore]
-        protected override bool DefaultKeepDeviceAwake
-        {
-            get
-            {
-                return true;
-            }
-        }
 
         public AndroidLightProbe()
         {

@@ -15,7 +15,6 @@
 using Android.Hardware;
 using SensusService.Probes.Movement;
 using System;
-using Newtonsoft.Json;
 
 namespace Sensus.Android.Probes.Movement
 {
@@ -23,19 +22,6 @@ namespace Sensus.Android.Probes.Movement
     {
         private AndroidSensorListener _accelerometerListener;
         private float[] _gravity;
-
-        /// <summary>
-        /// If true, all updates will be received. If false, updates will only be dependably received when the device is awake.
-        /// </summary>
-        /// <value>True.</value>
-        [JsonIgnore]
-        protected override bool DefaultKeepDeviceAwake
-        {
-            get
-            {
-                return true;
-            }
-        }
 
         public AndroidAccelerometerProbe()
         {

@@ -14,6 +14,7 @@
 
 using System;
 using System.Threading;
+using Newtonsoft.Json;
 
 namespace SensusService.Probes.Movement
 {
@@ -27,6 +28,33 @@ namespace SensusService.Probes.Movement
         protected bool Stabilizing
         {
             get { return _stabilizing; }
+        }
+
+        [JsonIgnore]
+        protected override bool DefaultKeepDeviceAwake
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        [JsonIgnore]
+        protected override string DeviceAwakeWarning
+        {
+            get
+            {
+                return "This setting does not affect iOS. On Android, all accelerometer updates will be received, and this will consume more power.";
+            }
+        }
+
+        [JsonIgnore]
+        protected override string DeviceAsleepWarning
+        {
+            get
+            {
+                return "This setting does not affect iOS. On Android, accelerometer updates will be paused while the device is sleeping, and this will conserve power.";
+            }
         }
 
         public sealed override string DisplayName

@@ -42,6 +42,24 @@ namespace SensusService.Probes.Location
             }
         }
 
+        [JsonIgnore]
+        protected override string DeviceAwakeWarning
+        {
+            get
+            {
+                return "This setting does not affect iOS. On Android, all POI updates will be received, and this will consume more power.";
+            }
+        }
+
+        [JsonIgnore]
+        protected override string DeviceAsleepWarning
+        {
+            get
+            {
+                return "This setting does not affect iOS. On Android, POI updates will be paused while the device is sleeping, and this will conserve power.";
+            }
+        }
+
         public sealed override string DisplayName
         {
             get

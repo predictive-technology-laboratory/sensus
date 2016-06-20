@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using Newtonsoft.Json;
 
 namespace SensusService.Probes.Communication
 {
@@ -21,6 +22,33 @@ namespace SensusService.Probes.Communication
     /// </summary>
     public abstract class SmsProbe : ListeningProbe
     {
+        [JsonIgnore]
+        protected override bool DefaultKeepDeviceAwake
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        [JsonIgnore]
+        protected override string DeviceAwakeWarning
+        {
+            get
+            {
+                return "This setting should not be enabled. It will keep Android devices awake unnecessarily.";
+            }
+        }
+
+        [JsonIgnore]
+        protected override string DeviceAsleepWarning
+        {
+            get
+            {
+                return null;
+            }
+        }
+
         public sealed override string DisplayName
         {
             get { return "Text Messages"; }
