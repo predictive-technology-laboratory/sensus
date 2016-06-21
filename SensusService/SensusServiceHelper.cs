@@ -69,7 +69,7 @@ namespace SensusService
 
 #if DEBUG || UNIT_TESTING
         // test every 30 seconds in debug
-        public const int HEALTH_TEST_DELAY_MS = 30000000;
+        public const int HEALTH_TEST_DELAY_MS = 30000;
 #elif RELEASE
         // test every 15 minutes in release
         public const int HEALTH_TEST_DELAY_MS = 900000;
