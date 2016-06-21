@@ -36,7 +36,7 @@ namespace SensusService.Probes.Communication
         {
             get
             {
-                return "This setting should not be enabled. It will keep Android devices awake unnecessarily.";
+                return "This setting should not be enabled. It does not affect iOS and will unnecessarily reduce battery life on Android.";
             }
         }
 

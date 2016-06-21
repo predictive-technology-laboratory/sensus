@@ -168,7 +168,7 @@ namespace Sensus.iOS
 
                     UILocalNotification notification = new UILocalNotification
                     {
-                        FireDate = DateTime.UtcNow.AddMilliseconds((double)delayMS).ToNSDate(),  
+                        FireDate = DateTime.UtcNow.AddMilliseconds((double)delayMS).ToNSDate(),
                         TimeZone = null,  // null for UTC interpretation of FireDate
                         AlertBody = userNotificationMessage,
                         UserInfo = GetNotificationUserInfoDictionary(callbackId, repeating, repeatDelayMS, repeatLag)
@@ -200,8 +200,8 @@ namespace Sensus.iOS
 
             // only raise callback if it's from the current activation and if it is scheduled
             if (activationId != _activationId || !CallbackIsScheduled(callbackId))
-                return; 
-            
+                return;
+
             // remove from platform-specific notification collection. the purpose of the platform-specific notification collection is to hold the notifications
             // between successive activations of the app. when the app is reactivated, notifications from this collection are updated with the new activation
             // id and they are rescheduled. if, in raising the callback associated with the current notification, the app is reactivated (e.g., by a call to
@@ -209,7 +209,7 @@ namespace Sensus.iOS
             // the facebook login manager returns control to the app). this can lead to duplicate notifications for the same callback, or infinite cycles of app 
             // reactivation if the notification raises a callback that causes it to be reissued (e.g., in the case of facebook login).
             lock (_callbackIdNotification)
-                _callbackIdNotification.Remove(callbackId);                                                
+                _callbackIdNotification.Remove(callbackId);
 
             nint callbackTaskId = UIApplication.SharedApplication.BeginBackgroundTask(() =>
                 {
@@ -234,7 +234,7 @@ namespace Sensus.iOS
                             // add back to the platform-specific notification collection, so that the notification is updated and reissued if/when the app is reactivated
                             lock (_callbackIdNotification)
                                 _callbackIdNotification.Add(callbackId, callbackNotification);
-                                
+
                             UIApplication.SharedApplication.ScheduleLocalNotification(callbackNotification);
                         });
                 },
@@ -249,11 +249,11 @@ namespace Sensus.iOS
                         {
                             UIApplication.SharedApplication.EndBackgroundTask(callbackTaskId);
                         });
-                });   
+                });
         }
 
         protected override void UnscheduleCallbackPlatformSpecific(string callbackId)
-        {            
+        {
             lock (_callbackIdNotification)
             {
                 // there are race conditions on this collection, and the key might be removed elsewhere
@@ -313,9 +313,9 @@ namespace Sensus.iOS
             // 
             if (callbackId == null || _activationId == null)
                 return null;
-            
+
             return new NSDictionary(
-                SENSUS_CALLBACK_KEY, true, 
+                SENSUS_CALLBACK_KEY, true,
                 SENSUS_CALLBACK_ID_KEY, callbackId,
                 SENSUS_CALLBACK_REPEATING_KEY, repeating,
                 SENSUS_CALLBACK_REPEAT_DELAY, repeatDelayMS,
@@ -357,7 +357,7 @@ namespace Sensus.iOS
                     }
                     else
                         SensusServiceHelper.Get().FlashNotificationAsync("You do not have any mail accounts configured. Please configure one before attempting to send emails from Sensus.");
-                });            
+                });
         }
 
         public override void TextToSpeechAsync(string text, Action callback)
@@ -389,7 +389,7 @@ namespace Sensus.iOS
                     Device.BeginInvokeOnMainThread(() =>
                         {
                             ManualResetEvent dialogShowWait = new ManualResetEvent(false);
-                            
+
                             UIAlertView dialog = new UIAlertView("Sensus is requesting input...", prompt, null, "Cancel", "OK");
                             dialog.AlertViewStyle = UIAlertViewStyle.PlainTextInput;
                             dialog.Dismissed += (o, e) =>
@@ -404,7 +404,7 @@ namespace Sensus.iOS
                                     postDisplayCallback();
                             };
                             dialog.Clicked += (o, e) =>
-                            { 
+                            {
                                 if (e.ButtonIndex == 1)
                                     input = dialog.GetTextField(0).Text;
                             };
@@ -447,17 +447,17 @@ namespace Sensus.iOS
                             FireDate = DateTime.UtcNow.ToNSDate(),
                             SoundName = UILocalNotification.DefaultSoundName
                         };
-                        
+
                         UIApplication.SharedApplication.ScheduleLocalNotification(notification);
                     }
                 });
         }
 
-        protected override void ProtectedFlashNotificationAsync(string message, bool flashLaterIfNotVisible, Action callback)
+        protected override void ProtectedFlashNotificationAsync(string message, bool flashLaterIfNotVisible, TimeSpan duration, Action callback)
         {
             Device.BeginInvokeOnMainThread(() =>
                 {
-                    DependencyService.Get<IToastNotificator>().Notify(ToastNotificationType.Info, "", message + Environment.NewLine, TimeSpan.FromSeconds(5));
+                    DependencyService.Get<IToastNotificator>().Notify(ToastNotificationType.Info, "", message + Environment.NewLine, duration);
 
                     if (callback != null)
                         callback();
@@ -502,7 +502,7 @@ namespace Sensus.iOS
         }
 
         public override void BringToForeground()
-        {            
+        {
         }
 
         #endregion

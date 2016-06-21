@@ -491,7 +491,7 @@ namespace Sensus.Android
             }
         }
 
-        protected override void ProtectedFlashNotificationAsync(string message, bool flashLaterIfNotVisible, Action callback)
+        protected override void ProtectedFlashNotificationAsync(string message, bool flashLaterIfNotVisible, TimeSpan duration, Action callback)
         {
             new Thread(() =>
                 {
@@ -499,7 +499,10 @@ namespace Sensus.Android
                         {
                             mainActivity.RunOnUiThread(() =>
                                 {
-                                    Toast.MakeText(mainActivity, message, ToastLength.Long).Show();
+                                    int shortToasts = (int)Math.Ceiling(duration.TotalSeconds / 2);  // each short toast is 2 seconds.
+
+                                    for (int i = 0; i < shortToasts; ++i)
+                                        Toast.MakeText(mainActivity, message, ToastLength.Short).Show();
 
                                     if (callback != null)
                                         callback();

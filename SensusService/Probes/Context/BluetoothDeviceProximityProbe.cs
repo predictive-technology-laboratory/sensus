@@ -33,7 +33,7 @@ namespace SensusService.Probes.Context
         {
             get
             {
-                return "This setting does not affect iOS. On Android, the device will be able to scan for Bluetooth devices, and this will consume more power.";
+                return "This setting does not affect iOS. Android devices will use additional power to report all updates.";
             }
         }
 
@@ -42,7 +42,7 @@ namespace SensusService.Probes.Context
         {
             get
             {
-                return "This setting does not affect iOS. On Android, the device will not be able to scan for Bluetooth devices, and this will conserve power.";
+                return "This setting does not affect iOS. Android devices will sleep and pause updates.";
             }
         }
 

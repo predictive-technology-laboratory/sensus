@@ -69,10 +69,10 @@ namespace SensusService
 
 #if DEBUG || UNIT_TESTING
         // test every 30 seconds in debug
-        public const int HEALTH_TEST_DELAY_MS = 30000;
+        public const int HEALTH_TEST_DELAY_MS = 30000000;
 #elif RELEASE
-        // test every 5 minutes in release
-        public const int HEALTH_TEST_DELAY_MS = 300000;
+        // test every 15 minutes in release
+        public const int HEALTH_TEST_DELAY_MS = 900000;
 #endif
 
         /// <summary>
@@ -580,7 +580,7 @@ namespace SensusService
 
         protected abstract void UnscheduleCallbackPlatformSpecific(string callbackId);
 
-        protected abstract void ProtectedFlashNotificationAsync(string message, bool flashLaterIfNotVisible, Action callback);
+        protected abstract void ProtectedFlashNotificationAsync(string message, bool flashLaterIfNotVisible, TimeSpan duration, Action callback);
 
         public abstract void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback);
 
@@ -971,11 +971,23 @@ namespace SensusService
                 });
         }
 
-        public void FlashNotificationAsync(string message, bool flashLaterIfNotVisible = true, Action callback = null)
+        /// <summary>
+        /// Flashs the a notification.
+        /// </summary>
+        /// <returns>The notification async.</returns>
+        /// <param name="message">Message.</param>
+        /// <param name="flashLaterIfNotVisible">Flash later if not visible.</param>
+        /// <param name="duration">Duration. Increments of 2 seconds are best displayed.</param>
+        /// <param name="callback">Callback.</param>
+        public void FlashNotificationAsync(string message, bool flashLaterIfNotVisible = true, TimeSpan? duration = null, Action callback = null)
         {
             // do not show flash notifications when unit testing, as they can disrupt UI scripting on iOS.
 #if !UNIT_TESTING
-            ProtectedFlashNotificationAsync(message, flashLaterIfNotVisible, callback);
+
+            if (!duration.HasValue)
+                duration = TimeSpan.FromSeconds(4);
+
+            ProtectedFlashNotificationAsync(message, flashLaterIfNotVisible, duration.Value, callback);
 #endif
         }
 

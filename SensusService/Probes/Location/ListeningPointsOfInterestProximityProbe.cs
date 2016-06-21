@@ -38,7 +38,7 @@ namespace SensusService.Probes.Location
         {
             get
             {
-                return true;
+                return false;
             }
         }
 
@@ -47,7 +47,7 @@ namespace SensusService.Probes.Location
         {
             get
             {
-                return "This setting does not affect iOS. On Android, all POI updates will be received, and this will consume more power.";
+                return "This setting does not affect iOS or Android.";
             }
         }
 
@@ -56,7 +56,7 @@ namespace SensusService.Probes.Location
         {
             get
             {
-                return "This setting does not affect iOS. On Android, POI updates will be paused while the device is sleeping, and this will conserve power.";
+                return "This setting does not affect iOS or Android.";
             }
         }
 

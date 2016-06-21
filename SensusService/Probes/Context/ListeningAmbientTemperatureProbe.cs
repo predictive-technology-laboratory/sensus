@@ -34,7 +34,7 @@ namespace SensusService
         {
             get
             {
-                return "This setting does not affect iOS. On Android, all temperature updates will be received, and this will consume more power.";
+                return "This setting does not affect iOS. Android devices will use additional power to report all updates.";
             }
         }
 
@@ -43,7 +43,7 @@ namespace SensusService
         {
             get
             {
-                return "This setting does not affect iOS. On Android, temperature updates will be paused while the device is sleeping, and this will conserve power.";
+                return "This setting does not affect iOS. Android devices will sleep and pause updates.";
             }
         }
 

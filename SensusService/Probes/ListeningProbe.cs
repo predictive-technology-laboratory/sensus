@@ -43,14 +43,18 @@ namespace SensusService.Probes
             }
             set
             {
-                _keepDeviceAwake = value;
-
                 // warn the user about this setting
-                if (SensusServiceHelper.Get() != null)
-                    if (_keepDeviceAwake && !string.IsNullOrWhiteSpace(DeviceAwakeWarning))
-                        SensusServiceHelper.Get().FlashNotificationAsync(DeviceAwakeWarning, false);
-                    else if (!_keepDeviceAwake && !string.IsNullOrWhiteSpace(DeviceAsleepWarning))
-                        SensusServiceHelper.Get().FlashNotificationAsync(DeviceAsleepWarning, false);
+                if (value != _keepDeviceAwake && SensusServiceHelper.Get() != null)
+                {
+                    TimeSpan duration = TimeSpan.FromSeconds(6);
+
+                    if (value && !string.IsNullOrWhiteSpace(DeviceAwakeWarning))
+                        SensusServiceHelper.Get().FlashNotificationAsync(DeviceAwakeWarning, false, duration);
+                    else if (!value && !string.IsNullOrWhiteSpace(DeviceAsleepWarning))
+                        SensusServiceHelper.Get().FlashNotificationAsync(DeviceAsleepWarning, false, duration);
+
+                    _keepDeviceAwake = value;
+                }
             }
         }
 

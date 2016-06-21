@@ -44,7 +44,7 @@ namespace SensusService.Probes.Movement
         {
             get
             {
-                return "This setting does not affect iOS. On Android, all accelerometer updates will be received, and this will consume more power.";
+                return "This setting does not affect iOS. Android devices will use additional power to report all updates.";
             }
         }
 
@@ -53,7 +53,7 @@ namespace SensusService.Probes.Movement
         {
             get
             {
-                return "This setting does not affect iOS. On Android, accelerometer updates will be paused while the device is sleeping, and this will conserve power.";
+                return "This setting does not affect iOS. Android devices will sleep and pause updates.";
             }
         }
 

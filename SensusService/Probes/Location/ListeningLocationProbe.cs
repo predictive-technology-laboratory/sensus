@@ -23,16 +23,12 @@ namespace SensusService.Probes.Location
     {
         private EventHandler<PositionEventArgs> _positionChangedHandler;
 
-        /// <summary>
-        /// TODO:  Check what happens when no wake locks are acquired. Update messages below.
-        /// </summary>
-        /// <value>The default keep device awake.</value>
         [JsonIgnore]
         protected override bool DefaultKeepDeviceAwake
         {
             get
             {
-                return true;
+                return false;
             }
         }
 
@@ -41,7 +37,7 @@ namespace SensusService.Probes.Location
         {
             get
             {
-                return "This setting does not affect iOS. On Android, all location updates will be received, and this will consume more power.";
+                return "This setting does not affect iOS or Android.";
             }
         }
 
@@ -50,7 +46,7 @@ namespace SensusService.Probes.Location
         {
             get
             {
-                return "This setting does not affect iOS. On Android, location updates will be paused while the device is sleeping, and this will conserve power.";
+                return "This setting does not affect iOS or Android.";
             }
         }
 
