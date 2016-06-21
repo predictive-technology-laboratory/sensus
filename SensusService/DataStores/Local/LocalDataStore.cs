@@ -51,11 +51,11 @@ namespace SensusService.DataStores.Local
         {
             _uploadToRemoteDataStore = true;
 
-            #if DEBUG || UNIT_TESTING
+#if DEBUG || UNIT_TESTING
             CommitDelayMS = 5000;  // 5 seconds...so we can see debugging output quickly
-            #else
-            CommitDelayMS = 60000;
-            #endif
+#else
+            CommitDelayMS = 1000 * 60 * 15;  // 15 minutes
+#endif
         }
 
         protected sealed override List<Datum> GetDataToCommit(CancellationToken cancellationToken)
@@ -66,7 +66,7 @@ namespace SensusService.DataStores.Local
             {
                 if (cancellationToken.IsCancellationRequested)
                     break;
-                
+
                 // the collected data object comes directly from the probe, so lock it down before working with it.
                 ICollection<Datum> collectedData = probe.GetCollectedData();
                 if (collectedData != null)
@@ -97,11 +97,11 @@ namespace SensusService.DataStores.Local
         public int WriteDataToZipFile(string zipPath, CancellationToken cancellationToken, Action<string, double> progressCallback)
         {
             // create a zip file to hold all data
-            #if __ANDROID__
+#if __ANDROID__
             ZipOutputStream zipFile = null;
-            #elif __IOS__
+#elif __IOS__
             ZipArchive zipFile = null;
-            #endif
+#endif
 
             // write all data to separate JSON files. zip files for convenience.
             string directory = null;
@@ -154,7 +154,7 @@ namespace SensusService.DataStores.Local
                 if (progressCallback != null)
                     progressCallback("Compressing data...", 0);
 
-                #if __ANDROID__
+#if __ANDROID__
 
                 directoryName += '/';
                 zipFile = new ZipOutputStream(new FileStream(zipPath, FileMode.Create, FileAccess.Write));
@@ -191,11 +191,11 @@ namespace SensusService.DataStores.Local
                 // close entry for directory
                 zipFile.CloseEntry();
 
-                #elif __IOS__
+#elif __IOS__
                 zipFile = new ZipArchive();
                 zipFile.CreateZipFile(zipPath);
                 zipFile.AddFolder(directory, null);
-                #endif
+#endif
 
                 if (progressCallback != null)
                     progressCallback(null, 1);
@@ -209,11 +209,11 @@ namespace SensusService.DataStores.Local
                 {
                     if (zipFile != null)
                     {
-                        #if __ANDROID__
+#if __ANDROID__
                         zipFile.Close();
-                        #elif __IOS__
+#elif __IOS__
                         zipFile.CloseZipFile();
-                        #endif
+#endif
                     }
                 }
                 catch (Exception)

@@ -53,7 +53,7 @@ namespace SensusService.DataStores.Remote
 #if DEBUG || UNIT_TESTING
             CommitDelayMS = 10000;  // 10 seconds...so we can see debugging output quickly
 #else
-            CommitDelayMS = 1000 * 60 * 30;  // every 30 minutes
+            CommitDelayMS = 1000 * 60 * 60;  // every 60 minutes
 #endif
         }
 
