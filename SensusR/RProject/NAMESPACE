@@ -1,5 +1,8 @@
 exportPattern("^[[:alpha:]]+")
-import(sp)
+
+importFrom("graphics", "hist", "par", "pie", "plot.default", "plot")
+importFrom("utils", "tail", "write.csv")
+
 S3method(plot, AccelerometerDatum)
 S3method(plot, AltitudeDatum)
 S3method(plot, BatteryDatum)
