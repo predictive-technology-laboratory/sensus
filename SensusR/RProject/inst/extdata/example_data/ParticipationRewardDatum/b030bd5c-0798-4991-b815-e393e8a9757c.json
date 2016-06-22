@@ -1,0 +1,11 @@
+[
+{
+  "$type": "SensusService.ParticipationRewardDatum, SensusAndroid",
+  "Participation": 0.11212384,
+  "Id": "b030bd5c-0798-4991-b815-e393e8a9757c",
+  "DeviceId": "287cf65bb08d6f21",
+  "Timestamp": "2016-06-22T03:23:16.730027+00:00",
+  "ProtocolId": null,
+  "Anonymized": true
+}
+]

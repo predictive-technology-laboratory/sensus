@@ -15,7 +15,8 @@
 Plot cell tower data.
 }
 \examples{
-data = read.sensus.json(system.file("extdata", "example.data.txt", package="SensusR"))
+data.path = system.file("extdata", "example_data", package="SensusR")
+data = sensus.read.json(data.path)
 plot(data$CellTowerDatum)
 }
 

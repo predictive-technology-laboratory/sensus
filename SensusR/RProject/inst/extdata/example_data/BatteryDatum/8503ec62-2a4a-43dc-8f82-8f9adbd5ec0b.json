@@ -1,0 +1,5 @@
+[
+{"$type":"SensusService.Probes.Device.BatteryDatum, SensusAndroid","Level":93.0,"Id":"5b11d429-81eb-4acf-b0cb-f2bda6fb232d","DeviceId":"287cf65bb08d6f21","Timestamp":"2016-06-22T04:52:41.405656+00:00","ProtocolId":"cc3db0e5-3476-4a2e-9576-bc082880fc73","Anonymized":true},
+{"$type":"SensusService.Probes.Device.BatteryDatum, SensusAndroid","Level":91.0,"Id":"41e2b5aa-4d43-4cf4-bc77-b88fcd126598","DeviceId":"287cf65bb08d6f21","Timestamp":"2016-06-22T05:07:43.413454+00:00","ProtocolId":"cc3db0e5-3476-4a2e-9576-bc082880fc73","Anonymized":true},
+{"$type":"SensusService.Probes.Device.BatteryDatum, SensusAndroid","Level":91.0,"Id":"209f956d-dfc7-4f9e-8af0-c3525f597620","DeviceId":"287cf65bb08d6f21","Timestamp":"2016-06-22T05:22:44.651556+00:00","ProtocolId":"cc3db0e5-3476-4a2e-9576-bc082880fc73","Anonymized":true}
+]
