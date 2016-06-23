@@ -15,8 +15,6 @@
 using Android.Hardware;
 using SensusService.Probes.Movement;
 using System;
-using System.Threading;
-using SensusService;
 
 namespace Sensus.Android.Probes.Movement
 {
@@ -46,7 +44,7 @@ namespace Sensus.Android.Probes.Movement
                     // ignore values if the sensor is stabilizing -- do this here because _gravity is the variable that is stabilizing
                     if (Stabilizing)
                         return;
-                    
+
                     float xAccel = e.Values[0] - _gravity[0];
                     float yAccel = e.Values[1] - _gravity[1];
                     float zAccel = e.Values[2] - _gravity[2];
@@ -63,7 +61,7 @@ namespace Sensus.Android.Probes.Movement
         }
 
         protected override void StartListening()
-        {           
+        {
             base.StartListening();
 
             _accelerometerListener.Start();

@@ -76,7 +76,7 @@ namespace SensusUI
             else
             {
                 SensusServiceHelper.Get().PromptForInputAsync(
-                    "Authenticate \"" + protocol.Name + "\"", 
+                    "Authenticate \"" + protocol.Name + "\"",
                     new SingleLineTextInput("Protocol Password:", Keyboard.Text, true),
                     null,
                     true,
@@ -121,7 +121,7 @@ namespace SensusUI
             _protocolsList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", converter: new ProtocolNameValueConverter()));
             _protocolsList.ItemTemplate.SetBinding(TextCell.TextColorProperty, new Binding(".", converter: new ProtocolColorValueConverter()));
             _protocolsList.ItemTapped += async (o, e) =>
-            {                                    
+            {
                 if (_protocolsList.SelectedItem == null)
                     return;
 
@@ -134,7 +134,10 @@ namespace SensusUI
                 if (selectedProtocol.Running)
                     actions.Add("Display Participation");
 
-                actions.AddRange(new string[] { "Scan Participation Barcode", "Edit", "Copy", "Share" });
+                if (selectedProtocol.RemoteDataStore?.CanRetrieveCommittedData ?? false)
+                    actions.Add("Scan Participation Barcode");
+
+                actions.AddRange(new string[] { "Edit", "Copy", "Share" });
 
                 List<Protocol> groupableProtocols = SensusServiceHelper.Get().RegisteredProtocols.Where(registeredProtocol => registeredProtocol != selectedProtocol && registeredProtocol.Groupable && registeredProtocol.GroupedProtocols.Count == 0).ToList();
                 if (selectedProtocol.Groupable)
@@ -222,10 +225,10 @@ namespace SensusUI
                             if (!cancellationTokenSource.IsCancellationRequested)
                                 cancellationTokenSource.Cancel();
 
-                            Device.BeginInvokeOnMainThread(async() =>
+                            Device.BeginInvokeOnMainThread(async () =>
                                 {
-                                    // only show the QR code for the reward datum if the datum was committed to the remote data store
-                                    await Navigation.PushAsync(new ParticipationReportPage(selectedProtocol, participationRewardDatum, !commitFailed));
+                                    // only show the QR code for the reward datum if the datum was committed to the remote data store and if the data store can retrieve it.
+                                    await Navigation.PushAsync(new ParticipationReportPage(selectedProtocol, participationRewardDatum, !commitFailed && (selectedProtocol.RemoteDataStore?.CanRetrieveCommittedData ?? false)));
                                 });
                         },
                         inputs =>
@@ -235,7 +238,7 @@ namespace SensusUI
                             // data store commit (i.e., by the canceled token), then don't cancel the token again.
                             if (!cancellationTokenSource.IsCancellationRequested)
                                 cancellationTokenSource.Cancel();
-                        }); 
+                        });
                 }
                 else if (selectedAction == "Scan Participation Barcode")
                 {
@@ -256,9 +259,9 @@ namespace SensusUI
                         scanner.CameraUnsupportedMessage = "There is not a supported camera on this phone. Cannot scan barcode.";
 
                         barcodeResult = await scanner.Scan(new ZXing.Mobile.MobileBarcodeScanningOptions
-                            {
-                                PossibleFormats = new BarcodeFormat[] { BarcodeFormat.QR_CODE }.ToList()
-                            });
+                        {
+                            PossibleFormats = new BarcodeFormat[] { BarcodeFormat.QR_CODE }.ToList()
+                        });
                     }
                     catch (Exception ex)
                     {
@@ -298,7 +301,7 @@ namespace SensusUI
                                     // ensure that the participation datum has not expired                                           
                                     if (participationRewardDatum.Timestamp > DateTimeOffset.UtcNow.AddSeconds(-SensusServiceHelper.PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS))
                                     {
-                                        Device.BeginInvokeOnMainThread(async() =>
+                                        Device.BeginInvokeOnMainThread(async () =>
                                             {
                                                 await Navigation.PushAsync(new VerifiedParticipationPage(selectedProtocol, participationRewardDatum));
                                             });
@@ -316,7 +319,7 @@ namespace SensusUI
                                     // used if an exception is thrown while getting the participation reward datum.
                                     if (!cancellationTokenSource.IsCancellationRequested)
                                         cancellationTokenSource.Cancel();
-                                }                                        
+                                }
                             },
                             inputs =>
                             {
@@ -325,7 +328,7 @@ namespace SensusUI
                                 // data store get (i.e., by the canceled token), then don't cancel the token again.
                                 if (!cancellationTokenSource.IsCancellationRequested)
                                     cancellationTokenSource.Cancel();
-                            });  
+                            });
                     }
                 }
                 else if (selectedAction == "Edit")
@@ -367,12 +370,12 @@ namespace SensusUI
                 }
                 else if (selectedAction == "Group")
                 {
-                    SensusServiceHelper.Get().PromptForInputAsync("Group", 
+                    SensusServiceHelper.Get().PromptForInputAsync("Group",
                         new ItemPickerPageInput("Select Protocols", groupableProtocols.Cast<object>().ToList(), "Name")
                         {
                             Multiselect = true
-                        }, 
-                        null, true, "Group", null, null, null, false, 
+                        },
+                        null, true, "Group", null, null, null, false,
                         input =>
                         {
                             if (input == null)
@@ -380,7 +383,7 @@ namespace SensusUI
                                 SensusServiceHelper.Get().FlashNotificationAsync("No protocols grouped.");
                                 return;
                             }
-                                
+
                             ItemPickerPageInput itemPickerPageInput = input as ItemPickerPageInput;
 
                             List<Protocol> selectedProtocols = (itemPickerPageInput.Value as List<object>).Cast<Protocol>().ToList();
@@ -435,9 +438,9 @@ namespace SensusUI
 
                         // stopping only makes sense on android, where we use a background service. on ios, there is no concept
                         // of stopping the app other than the user or system terminating the app.
-                        #if __ANDROID__
+#if __ANDROID__
                         buttons.Add("Stop Sensus");
-                        #endif
+#endif
 
                         string action = await DisplayActionSheet("Other Actions", "Back", null, buttons.ToArray());
 
@@ -445,7 +448,7 @@ namespace SensusUI
                             Protocol.CreateAsync("New Protocol", null);
                         else if (action == "View Log")
                         {
-                            await Navigation.PushAsync(new ViewTextLinesPage("Log", SensusServiceHelper.Get().Logger.Read(200, true), 
+                            await Navigation.PushAsync(new ViewTextLinesPage("Log", SensusServiceHelper.Get().Logger.Read(200, true),
                                     () =>
                                     {
                                         string sharePath = null;
@@ -461,7 +464,7 @@ namespace SensusUI
 
                                         if (sharePath != null)
                                             SensusServiceHelper.Get().ShareFileAsync(sharePath, "Log:  " + Path.GetFileName(sharePath), "text/plain");
-                                    }, 
+                                    },
                                     () => SensusServiceHelper.Get().Logger.Clear()));
                         }
                         else if (action == "View Points of Interest")
@@ -482,10 +485,10 @@ namespace SensusUI
                                 }
                             }
                         }
-                        #if __ANDROID__
+#if __ANDROID__
                         else if (action == "Stop Sensus" && await DisplayAlert("Confirm", "Are you sure you want to stop Sensus? This will end your participation in all studies.", "Stop Sensus", "Go Back"))
                             SensusServiceHelper.Get().Stop();
-                        #endif
+#endif
                     }));
         }
 

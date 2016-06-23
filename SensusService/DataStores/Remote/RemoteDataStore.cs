@@ -16,6 +16,7 @@ using SensusUI.UiProperties;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace SensusService.DataStores.Remote
 {
@@ -41,16 +42,19 @@ namespace SensusService.DataStores.Remote
             set { _requireCharging = value; }
         }
 
+        [JsonIgnore]
+        public abstract bool CanRetrieveCommittedData { get; }
+
         protected RemoteDataStore()
         {
             _requireWiFi = true;
             _requireCharging = true;
 
-            #if DEBUG || UNIT_TESTING
+#if DEBUG || UNIT_TESTING
             CommitDelayMS = 10000;  // 10 seconds...so we can see debugging output quickly
-            #else
+#else
             CommitDelayMS = 1000 * 60 * 30;  // every 30 minutes
-            #endif
+#endif
         }
 
         protected sealed override List<Datum> GetDataToCommit(CancellationToken cancellationToken)

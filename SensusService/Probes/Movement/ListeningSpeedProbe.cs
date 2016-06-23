@@ -16,6 +16,7 @@ using System;
 using SensusService.Probes.Location;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions.Abstractions;
+using Newtonsoft.Json;
 
 namespace SensusService.Probes.Movement
 {
@@ -25,6 +26,33 @@ namespace SensusService.Probes.Movement
         private Position _previousPosition;
 
         private readonly object _locker = new object();
+
+        [JsonIgnore]
+        protected override bool DefaultKeepDeviceAwake
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        [JsonIgnore]
+        protected override string DeviceAwakeWarning
+        {
+            get
+            {
+                return "This setting does not affect iOS or Android.";
+            }
+        }
+
+        [JsonIgnore]
+        protected override string DeviceAsleepWarning
+        {
+            get
+            {
+                return "This setting does not affect iOS or Android.";
+            }
+        }
 
         public sealed override string DisplayName
         {
@@ -48,7 +76,7 @@ namespace SensusService.Probes.Movement
             {
                 if (e.Position == null)
                     return;
-                    
+
                 lock (_locker)
                 {
                     SensusServiceHelper.Get().Logger.Log("Received position change notification.", LoggingLevel.Verbose, GetType());

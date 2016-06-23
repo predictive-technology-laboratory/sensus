@@ -48,7 +48,7 @@ namespace SensusService.DataStores.Remote
             {
                 if (value != null)
                     value = value.Trim();
-                
+
                 _bucket = value;
             }
         }
@@ -64,7 +64,7 @@ namespace SensusService.DataStores.Remote
             {
                 if (value != null)
                     value = value.Trim().Trim('/');
-                
+
                 _folder = value;
             }
         }
@@ -81,8 +81,17 @@ namespace SensusService.DataStores.Remote
                 // newlines and spaces will cause problems when extracting the region and using it in the URL
                 if (value != null)
                     value = value.Trim();
-                
+
                 _cognitoIdentityPoolId = value;
+            }
+        }
+
+        [JsonIgnore]
+        public override bool CanRetrieveCommittedData
+        {
+            get
+            {
+                return true;
             }
         }
 
@@ -156,7 +165,7 @@ namespace SensusService.DataStores.Remote
                                 catch (Exception ex)
                                 {
                                     SensusServiceHelper.Get().Logger.Log("Failed to insert datum into Amazon S3 bucket \"" + _bucket + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
-                                }                               
+                                }
                             }
                             else
                             {
@@ -182,7 +191,7 @@ namespace SensusService.DataStores.Remote
 
                                 json.Append((dataSubset.Count == 1 ? "" : "," + Environment.NewLine) + datumJSON);
                             }
-                        } 
+                        }
                         #endregion
 
                         #region commit all data, batched by type
@@ -204,7 +213,7 @@ namespace SensusService.DataStores.Remote
                             catch (Exception ex)
                             {
                                 SensusServiceHelper.Get().Logger.Log("Failed to insert datum into Amazon S3 bucket \"" + _bucket + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
-                            }                             
+                            }
                         }
                         #endregion
 

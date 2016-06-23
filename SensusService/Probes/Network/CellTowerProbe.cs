@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using Newtonsoft.Json;
 
 namespace SensusService.Probes.Network
 {
@@ -21,6 +22,33 @@ namespace SensusService.Probes.Network
     /// </summary>
     public abstract class CellTowerProbe : ListeningProbe
     {
+        [JsonIgnore]
+        protected override bool DefaultKeepDeviceAwake
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        [JsonIgnore]
+        protected override string DeviceAwakeWarning
+        {
+            get
+            {
+                return "This setting should not be enabled. It does not affect iOS and will unnecessarily reduce battery life on Android.";
+            }
+        }
+
+        [JsonIgnore]
+        protected override string DeviceAsleepWarning
+        {
+            get
+            {
+                return null;
+            }
+        }
+
         public sealed override string DisplayName
         {
             get { return "Cell Tower Binding"; }

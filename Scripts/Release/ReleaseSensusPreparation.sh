@@ -13,4 +13,3 @@ sed -i '' "s/private const string ENCRYPTION_KEY = \"\"/private const string ENC
 
 # set xamarin insights key to production value
 sed -i '' "s/protected const string XAMARIN_INSIGHTS_APP_KEY = \"\"/protected const string XAMARIN_INSIGHTS_APP_KEY = \"$6\"/g" ../../SensusService/SensusServiceHelper.cs
-

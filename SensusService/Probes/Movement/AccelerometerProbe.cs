@@ -14,6 +14,7 @@
 
 using System;
 using System.Threading;
+using Newtonsoft.Json;
 
 namespace SensusService.Probes.Movement
 {
@@ -27,6 +28,33 @@ namespace SensusService.Probes.Movement
         protected bool Stabilizing
         {
             get { return _stabilizing; }
+        }
+
+        [JsonIgnore]
+        protected override bool DefaultKeepDeviceAwake
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        [JsonIgnore]
+        protected override string DeviceAwakeWarning
+        {
+            get
+            {
+                return "This setting does not affect iOS. Android devices will use additional power to report all updates.";
+            }
+        }
+
+        [JsonIgnore]
+        protected override string DeviceAsleepWarning
+        {
+            get
+            {
+                return "This setting does not affect iOS. Android devices will sleep and pause updates.";
+            }
         }
 
         public sealed override string DisplayName
@@ -51,9 +79,12 @@ namespace SensusService.Probes.Movement
             // allow the accelerometer to stabilize...the first few readings can be extremely erratic
             new Thread(() =>
                 {
-                    Thread.Sleep(5000);
+                    Thread.Sleep(2000);
                     _stabilizing = false;
-                    SensusServiceHelper.Get().Logger.Log("Accelerometer has finished stabilization period.", LoggingLevel.Normal, GetType());
+
+                    // not sure if null is the problem:  https://insights.xamarin.com/app/Sensus-Production/issues/907
+                    if (SensusServiceHelper.Get() != null)
+                        SensusServiceHelper.Get().Logger.Log("Accelerometer has finished stabilization period.", LoggingLevel.Normal, GetType());
 
                 }).Start();
         }

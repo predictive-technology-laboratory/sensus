@@ -64,6 +64,9 @@ namespace SensusUI
                     if (await DisplayAlert("Delete " + selectedScriptRunner.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
                     {
                         selectedScriptRunner.Stop();
+                        selectedScriptRunner.Enabled = false;
+                        selectedScriptRunner.Triggers.Clear();
+
                         _probe.ScriptRunners.Remove(selectedScriptRunner);
                         _scriptRunnersList.SelectedItem = null;  // reset manually since it's not done automatically
                     }

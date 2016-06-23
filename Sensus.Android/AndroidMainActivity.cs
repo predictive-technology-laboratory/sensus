@@ -31,7 +31,7 @@ using Plugin.CurrentActivity;
 using Android.Widget;
 using Plugin.Permissions;
 
-[assembly:MetaData("com.facebook.sdk.ApplicationId", Value = "@string/app_id")]
+[assembly: MetaData("com.facebook.sdk.ApplicationId", Value = "@string/app_id")]
 
 namespace Sensus.Android
 {
@@ -77,13 +77,13 @@ namespace Sensus.Android
             MapExtendRenderer.Init(this, savedInstanceState);
             CrossCurrentActivity.Current.Activity = this;
 
-            #if UNIT_TESTING
+#if UNIT_TESTING
             Forms.ViewInitialized += (sender, e) =>
             {
                 if (!string.IsNullOrWhiteSpace(e.View.StyleId))
                     e.NativeView.ContentDescription = e.View.StyleId;
             };
-            #endif
+#endif
 
             _app = new App();
             LoadApplication(_app);
@@ -120,19 +120,19 @@ namespace Sensus.Android
                 _serviceBindWait.Set();
 
                 // if we're unit testing, try to load and run the unit testing protocol from the embedded assets
-                #if UNIT_TESTING
+#if UNIT_TESTING
                 using (Stream protocolFile = Assets.Open("UnitTestingProtocol.json"))
                 {
                     Protocol.RunUnitTestingProtocol(protocolFile);
                 }
-                #endif
+#endif
             };
 
             // the following is fired if the process hosting the service crashes or is killed.
             _serviceConnection.ServiceDisconnected += (o, e) =>
             {
                 Toast.MakeText(this, "The Sensus service has crashed.", ToastLength.Long);
-                DisconnectFromService(); 
+                DisconnectFromService();
                 Finish();
             };
 
@@ -178,9 +178,9 @@ namespace Sensus.Android
                     Device.BeginInvokeOnMainThread(() =>
                         {
                             serviceBindWaitDialog.Dismiss();
-                            (App.Current as App).ProtocolsPage.Bind();
+                            (Xamarin.Forms.Application.Current as App).ProtocolsPage.Bind();
                         });
-                    
+
                 }).Start();
         }
 
@@ -205,7 +205,7 @@ namespace Sensus.Android
             AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
 
             if (serviceHelper != null)
-            {   
+            {
                 serviceHelper.Save();
 
                 if (SensusServiceHelper.PromptForInputsRunning)
@@ -285,10 +285,10 @@ namespace Sensus.Android
                             {
                                 Toast.MakeText(this, "Failed to get service helper. Cannot open Intent.", ToastLength.Long);
                             });
-                        
+
                         return;
                     }
-                    
+
                     // open page to view protocol if a protocol was passed to us
                     if (intent.Data != null)
                     {
@@ -391,16 +391,16 @@ namespace Sensus.Android
             //
             if (!FacebookSdk.IsInitialized)
                 FacebookSdk.SdkInitialize(global::Android.App.Application.Context);
-            
+
             _facebookCallbackManager.OnActivityResult(requestCode, (int)resultCode, data);
         }
 
-        #if __ANDROID_23__
+#if __ANDROID_23__
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
         {
             PermissionsImplementation.Current.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
-        #endif
+#endif
 
         #endregion
     }

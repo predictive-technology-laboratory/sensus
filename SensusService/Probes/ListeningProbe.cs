@@ -15,6 +15,7 @@
 using SensusUI.UiProperties;
 using System;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace SensusService.Probes
 {
@@ -42,15 +43,35 @@ namespace SensusService.Probes
             }
             set
             {
-                _keepDeviceAwake = value;
+                // warn the user about this setting
+                if (value != _keepDeviceAwake && SensusServiceHelper.Get() != null)
+                {
+                    TimeSpan duration = TimeSpan.FromSeconds(6);
+
+                    if (value && !string.IsNullOrWhiteSpace(DeviceAwakeWarning))
+                        SensusServiceHelper.Get().FlashNotificationAsync(DeviceAwakeWarning, false, duration);
+                    else if (!value && !string.IsNullOrWhiteSpace(DeviceAsleepWarning))
+                        SensusServiceHelper.Get().FlashNotificationAsync(DeviceAsleepWarning, false, duration);
+
+                    _keepDeviceAwake = value;
+                }
             }
         }
+
+        [JsonIgnore]
+        protected abstract bool DefaultKeepDeviceAwake { get; }
+
+        [JsonIgnore]
+        protected abstract string DeviceAwakeWarning { get; }
+
+        [JsonIgnore]
+        protected abstract string DeviceAsleepWarning { get; }
 
         protected override float RawParticipation
         {
             get
-            {                
-                #if __ANDROID__
+            {
+#if __ANDROID__
                 // compute participation using successful health test times of the probe
                 long dayMS = 60000 * 60 * 24;
                 long participationHorizonMS = Protocol.ParticipationHorizonDays * dayMS;
@@ -59,7 +80,7 @@ namespace SensusService.Probes
                 // lock collection because it might be concurrently modified by the test health method running in another thread.
                 lock (SuccessfulHealthTestTimes)
                     return SuccessfulHealthTestTimes.Count(healthTestTime => healthTestTime >= Protocol.ParticipationHorizon) / fullParticipationHealthTests;
-                #elif __IOS__
+#elif __IOS__
                 // on ios, we cannot rely on the health test times to tell us how long the probe has been running. this is
                 // because, unlike in android, ios does not let local notifications return to the app when the app is in the 
                 // background. instead, the ios user must open a notification or directly open the app in order for the health 
@@ -118,9 +139,9 @@ namespace SensusService.Probes
 
                 double participationHorizonSeconds = TimeSpan.FromDays(Protocol.ParticipationHorizonDays).TotalSeconds;
                 return (float)(runningSeconds / participationHorizonSeconds);
-                #else
-                #error "Unrecognized platform."
-                #endif
+#else
+#error "Unrecognized platform."
+#endif
             }
         }
 
@@ -135,7 +156,7 @@ namespace SensusService.Probes
         protected ListeningProbe()
         {
             _maxDataStoresPerSecond = 1;
-            _keepDeviceAwake = true;
+            _keepDeviceAwake = DefaultKeepDeviceAwake;
             _deviceAwake = false;
         }
 

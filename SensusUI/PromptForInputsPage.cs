@@ -32,6 +32,8 @@ namespace SensusUI
             Cancel
         }
 
+        private bool _canNavigateBack;
+        private Action<Result> _finishedCallback;
         private int _displayedInputCount;
 
         public int DisplayedInputCount
@@ -42,8 +44,22 @@ namespace SensusUI
             }
         }
 
-        public PromptForInputsPage(InputGroup inputGroup, int stepNumber, int totalSteps, bool showCancelButton, string nextButtonTextOverride, CancellationToken? cancellationToken, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, DateTimeOffset? firstPromptTimestamp, Action<Result> disappearanceCallback)
-        {            
+        public PromptForInputsPage(InputGroup inputGroup,
+                                   int stepNumber,
+                                   int totalSteps,
+                                   bool canNavigateBack,
+                                   bool showCancelButton,
+                                   string nextButtonTextOverride,
+                                   CancellationToken? cancellationToken,
+                                   string cancelConfirmation,
+                                   string incompleteSubmissionConfirmation,
+                                   string submitConfirmation,
+                                   bool displayProgress,
+                                   DateTimeOffset? firstPromptTimestamp,
+                                   Action<Result> finishedCallback)
+        {
+            _canNavigateBack = canNavigateBack;
+            _finishedCallback = finishedCallback;
             _displayedInputCount = 0;
 
             StackLayout contentLayout = new StackLayout
@@ -67,19 +83,20 @@ namespace SensusUI
                 float progress = (stepNumber - 1) / (float)totalSteps;
 
                 contentLayout.Children.Add(new Label
-                    {
-                        Text = "Progress:  " + Math.Round(100 * progress) + "%",
-                        FontSize = 15,
-                        HorizontalOptions = LayoutOptions.CenterAndExpand
-                    });
+                {
+                    Text = "Progress:  " + Math.Round(100 * progress) + "%",
+                    FontSize = 15,
+                    HorizontalOptions = LayoutOptions.CenterAndExpand
+                });
 
                 contentLayout.Children.Add(new ProgressBar
-                    {
-                        Progress = progress,
-                        HorizontalOptions = LayoutOptions.FillAndExpand
-                    });
+                {
+                    Progress = progress,
+                    HorizontalOptions = LayoutOptions.FillAndExpand
+                });
             }
 
+            // for prompts that have been shown before, display the original timestamp.
             if (firstPromptTimestamp.HasValue)
             {
                 DateTime firstDisplayDateTime = firstPromptTimestamp.Value.ToLocalTime().DateTime;
@@ -93,22 +110,24 @@ namespace SensusUI
                     displayLapseDayDesc = ((int)(DateTime.Now - firstDisplayDateTime).TotalDays) + " days ago (" + firstDisplayDateTime.ToShortDateString() + ")";
 
                 contentLayout.Children.Add(new Label
-                    {
-                        Text = "These fields were first displayed " + displayLapseDayDesc + " at " + firstDisplayDateTime.ToShortTimeString() + ".",
-                        FontSize = 20,
-                        HorizontalOptions = LayoutOptions.Start
-                    });
+                {
+                    Text = "These fields were first displayed " + displayLapseDayDesc + " at " + firstDisplayDateTime.ToShortTimeString() + ".",
+                    FontSize = 20,
+                    HorizontalOptions = LayoutOptions.Start
+                });
             }
 
+            // indicate required fields
             if (inputGroup.Inputs.Any(input => input.Display && input.Required))
                 contentLayout.Children.Add(new Label
-                    {
-                        Text = "Required fields are indicated with *",
-                        FontSize = 15,
-                        TextColor = Color.Red,
-                        HorizontalOptions = LayoutOptions.Start
-                    });
-            
+                {
+                    Text = "Required fields are indicated with *",
+                    FontSize = 15,
+                    TextColor = Color.Red,
+                    HorizontalOptions = LayoutOptions.Start
+                });
+
+            // add inputs to the page
             List<Input> displayedInputs = new List<Input>();
             int viewNumber = 1;
             int inputSeparatorHeight = 10;
@@ -118,6 +137,7 @@ namespace SensusUI
                     View inputView = input.GetView(viewNumber);
                     if (inputView != null)
                     {
+                        // frame all enabled inputs that request a frame
                         if (input.Enabled && input.Frame)
                         {
                             inputView = new Frame
@@ -133,7 +153,7 @@ namespace SensusUI
                         // add some vertical separation between inputs
                         if (_displayedInputCount > 0)
                             contentLayout.Children.Add(new BoxView { Color = Color.Transparent, HeightRequest = inputSeparatorHeight });
-                        
+
                         contentLayout.Children.Add(inputView);
                         displayedInputs.Add(input);
 
@@ -144,22 +164,25 @@ namespace SensusUI
                     }
                 }
 
+            // add final separator if we displayed any inputs
             if (_displayedInputCount > 0)
                 contentLayout.Children.Add(new BoxView { Color = Color.Transparent, HeightRequest = inputSeparatorHeight });
 
-            #region previous/next buttons
+            StackLayout navigationStack = new StackLayout
+            {
+                Orientation = StackOrientation.Vertical,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+            };
 
+            #region previous/next buttons
             StackLayout previousNextStack = new StackLayout
             {
                 Orientation = StackOrientation.Horizontal,
                 HorizontalOptions = LayoutOptions.FillAndExpand
             };
 
-            #region previous button
-
-            bool previousButtonTapped = false;
-
-            if (stepNumber > 1)
+            // add a prevous button if we're allowed to navigate back
+            if (_canNavigateBack)
             {
                 Button previousButton = new Button
                 {
@@ -168,18 +191,13 @@ namespace SensusUI
                     Text = "Previous"
                 };
 
-                previousButton.Clicked += async (o, e) =>
+                previousButton.Clicked += (o, e) =>
                 {
-                    previousButtonTapped = true;
-                    await Navigation.PopModalAsync(false);
+                    _finishedCallback(Result.NavigateBackward);
                 };
 
                 previousNextStack.Children.Add(previousButton);
             }
-
-            #endregion
-
-            #region next button
 
             Button nextButton = new Button
             {
@@ -187,16 +205,14 @@ namespace SensusUI
                 FontSize = 20,
                 Text = stepNumber < totalSteps ? "Next" : "Submit"
 
-                #if UNIT_TESTING
+#if UNIT_TESTING
                 // set style id so that we can retrieve the button when unit testing
                 , StyleId = "NextButton"
-                #endif
+#endif
             };
 
             if (nextButtonTextOverride != null)
                 nextButton.Text = nextButtonTextOverride;
-
-            bool nextButtonTapped = false;
 
             nextButton.Clicked += async (o, e) =>
             {
@@ -206,36 +222,16 @@ namespace SensusUI
                     confirmationMessage += incompleteSubmissionConfirmation;
                 else if (nextButton.Text == "Submit" && !string.IsNullOrWhiteSpace(submitConfirmation))
                     confirmationMessage += submitConfirmation;
-                    
+
                 if (string.IsNullOrWhiteSpace(confirmationMessage) || await DisplayAlert("Confirm", confirmationMessage, "Yes", "No"))
-                {
-                    // if the cancellation token was cancelled while the dialog was up, then we should ignore the dialog. the token
-                    // will have already popped this page off the navigation stack.
-                    if (!cancellationToken.GetValueOrDefault().IsCancellationRequested)
-                    {
-                        nextButtonTapped = true;
-                        await Navigation.PopModalAsync(stepNumber == totalSteps);
-                    }
-                }
+                    _finishedCallback(Result.NavigateForward);
             };
 
             previousNextStack.Children.Add(nextButton);
-
+            navigationStack.Children.Add(previousNextStack);
             #endregion
 
-            #endregion
-
-            StackLayout navigationStack = new StackLayout
-            {
-                Orientation = StackOrientation.Vertical,
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                Children = { previousNextStack }
-            };
-
-            #region cancel button
-
-            bool cancelButtonTapped = false;
-
+            #region cancel button and token
             if (showCancelButton)
             {
                 Button cancelButton = new Button
@@ -244,86 +240,58 @@ namespace SensusUI
                     FontSize = 20,
                     Text = "Cancel"
                 };
-                            
+
+                // separate cancel button from previous/next with a thin visible separator
                 navigationStack.Children.Add(new BoxView { Color = Color.Gray, HorizontalOptions = LayoutOptions.FillAndExpand, HeightRequest = 0.5 });
                 navigationStack.Children.Add(cancelButton);
 
                 cancelButton.Clicked += async (o, e) =>
                 {
-                    string confirmationMessage = "";
-
-                    if (!string.IsNullOrWhiteSpace(cancelConfirmation))
-                        confirmationMessage += cancelConfirmation;
-
-                    if (string.IsNullOrWhiteSpace(confirmationMessage) || await DisplayAlert("Confirm", confirmationMessage, "Yes", "No"))
-                    {
-                        // if the cancellation token was cancelled while the dialog was up, then we should ignore the dialog. the token
-                        // will have already popped this page off the navigation stack (see below).
-                        if (!cancellationToken.GetValueOrDefault().IsCancellationRequested)
-                        {
-                            cancelButtonTapped = true;
-                            await Navigation.PopModalAsync(true);
-                        }
-                    }
+                    if (string.IsNullOrWhiteSpace(cancelConfirmation) || await DisplayAlert("Confirm", cancelConfirmation, "Yes", "No"))
+                        _finishedCallback(Result.Cancel);
                 };
             }
 
-            #endregion
-
             contentLayout.Children.Add(navigationStack);
 
-            #region cancellation token
-
-            bool cancellationTokenCanceled = false;
-
-            if (cancellationToken != null)
+            if (cancellationToken.HasValue)
             {
-                // if the cancellation token is cancelled, pop this page off the stack.
-                cancellationToken.GetValueOrDefault().Register(() =>
-                    {             
-                        SensusServiceHelper.Get().Logger.Log("Cancellation token was cancelled. Will pop pages.", LoggingLevel.Normal, GetType());
-
-                        cancellationTokenCanceled = true;
-
-                        Device.BeginInvokeOnMainThread(async() =>
-                            {
-                                SensusServiceHelper.Get().Logger.Log("On UI thread. Ready to pop page.", LoggingLevel.Normal, GetType());
-
-                                if (Navigation.ModalStack.Count > 0 && Navigation.ModalStack.Last() == this)
-                                {
-                                    await Navigation.PopModalAsync(true);
-                                    SensusServiceHelper.Get().Logger.Log("Popped page.", LoggingLevel.Normal, GetType());
-                                }
-                                else
-                                    SensusServiceHelper.Get().Logger.Log("No page to pop.", LoggingLevel.Normal, GetType());
-                            });
+                cancellationToken.Value.Register(() =>
+                {
+                    // it is possible for the token to be canceled from a thread other than the UI thread. the finished callback will do 
+                    // things with the UI, so ensure that the finished callback is run on the UI thread.
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Cancellation token has been cancelled.", LoggingLevel.Normal, GetType());
+                        _finishedCallback(Result.Cancel);
                     });
+                });
             }
-
             #endregion
 
             Appearing += (o, e) =>
             {
+                // the page has appeared so mark all inputs as viewed
                 foreach (Input input in displayedInputs)
                     input.Viewed = true;
             };
-            
-            Disappearing += (o, e) =>
-            {
-                if (previousButtonTapped)
-                    disappearanceCallback(Result.NavigateBackward);
-                else if (cancelButtonTapped || cancellationTokenCanceled)
-                    disappearanceCallback(Result.Cancel);
-                else if (nextButtonTapped)
-                    disappearanceCallback(Result.NavigateForward);
-                else
-                    disappearanceCallback(Result.Cancel);  // the user navigated back, or another activity started and covered the window
-            };                    
 
             Content = new ScrollView
             {
                 Content = contentLayout
-            };                        
+            };
+        }
+
+        /// <summary>
+        /// Disable the device's back button. The user must complete the form.
+        /// </summary>
+        /// <returns>True</returns>
+        protected override bool OnBackButtonPressed()
+        {
+            if (_canNavigateBack)
+                _finishedCallback(Result.NavigateBackward);
+
+            return true;
         }
     }
 }

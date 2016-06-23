@@ -124,7 +124,12 @@ namespace SensusUI.Inputs
         {
             InputGroup copy = JsonConvert.DeserializeObject<InputGroup>(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
 
+            // give the copy a new group id (this also resets the group id for inputs in the group)
             copy.Id = Guid.NewGuid().ToString();
+
+            // give each input in the copy a new id
+            foreach (Input input in copy.Inputs)
+                input.Id = Guid.NewGuid().ToString();
 
             return copy;
         }

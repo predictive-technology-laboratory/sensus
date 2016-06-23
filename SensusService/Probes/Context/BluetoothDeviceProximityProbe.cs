@@ -13,11 +13,39 @@
 // limitations under the License.
 
 using System;
+using Newtonsoft.Json;
 
 namespace SensusService.Probes.Context
 {
     public abstract class BluetoothDeviceProximityProbe : ListeningProbe
     {
+        [JsonIgnore]
+        protected override bool DefaultKeepDeviceAwake
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        [JsonIgnore]
+        protected override string DeviceAwakeWarning
+        {
+            get
+            {
+                return "This setting does not affect iOS. Android devices will use additional power to report all updates.";
+            }
+        }
+
+        [JsonIgnore]
+        protected override string DeviceAsleepWarning
+        {
+            get
+            {
+                return "This setting does not affect iOS. Android devices will sleep and pause updates.";
+            }
+        }
+
         public sealed override string DisplayName
         {
             get { return "Bluetooth Encounters"; }
