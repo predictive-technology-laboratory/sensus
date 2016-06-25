@@ -31,17 +31,23 @@ namespace SensusService
         private static readonly JsonSerializerSettings JSON_SERIALIZER_SETTINGS = new JsonSerializerSettings
         {
             TypeNameHandling = TypeNameHandling.All,
-            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-
-            // datum objects can be anonymized by omitting values. this is accomplished by setting them to null. also, some fields in datum 
-            // objects might have unreliably obtained values (e.g., GPS location might fail and be null). if we ignore fields with null
-            // values when serializing, the resulting JSON and other derived structures (e.g., data frames in R) will have differing columns. 
-            // so we should include null values to ensure that all JSON values are always included.
-            NullValueHandling = NullValueHandling.Include  
+            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
         };
 
         public static Datum FromJSON(string json)
         {
+            // null datum properties in the json come from a few places:  a reference-type property that is 
+            // null (e.g., a string), a nullable property that has no value, and a property to which a 
+            // value-omitting anonymizer is applied. the first two cases will not cause issues when 
+            // deserializing. the final case will be problematic if the property is a value-type since we 
+            // cannot assign null to a value type. so we're going to ignore null values when deserializing
+            // data. in the first two cases above, the property will have the appropriate null value. in the 
+            // third case the property will have its default value. be aware that value-type datum type properties
+            // with value-omitting anonymizers can thus have their values changed when serialized and then 
+            // deserialized (from the original value to their default value). this will usually be okay because
+            // any subsequent serialization will omit the value again.
+            JSON_SERIALIZER_SETTINGS.NullValueHandling = NullValueHandling.Ignore;
+
             Datum datum = null;
 
             try
@@ -118,7 +124,7 @@ namespace SensusService
         /// Parameterless constructor For JSON.NET deserialization.
         /// </summary>
         protected Datum()
-        {            
+        {
         }
 
         protected Datum(DateTimeOffset timestamp)
@@ -132,7 +138,13 @@ namespace SensusService
         public string GetJSON(AnonymizedJsonContractResolver anonymizationContractResolver, bool indented)
         {
             JSON_SERIALIZER_SETTINGS.ContractResolver = anonymizationContractResolver;
-                       
+
+            // datum objects can be anonymized by omitting values. this is accomplished by setting them to null. also, some fields in datum 
+            // objects might have unreliably obtained values (e.g., GPS location might fail and be null). if we ignore fields with null
+            // values when serializing, the resulting JSON and other derived structures (e.g., data frames in R) will have differing columns. 
+            // so we should include null values to ensure that all JSON values are always included.
+            JSON_SERIALIZER_SETTINGS.NullValueHandling = NullValueHandling.Include;
+
             string json = JsonConvert.SerializeObject(this, indented ? Formatting.Indented : Formatting.None, JSON_SERIALIZER_SETTINGS);
 
             // if the json should not be indented, replace all newlines with white space
