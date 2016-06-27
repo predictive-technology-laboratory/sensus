@@ -33,15 +33,13 @@ namespace SensusUI
             SfChart chart = probe.GetChart();
 
             if (chart == null)
-                SensusServiceHelper.Get().FlashNotificationAsync("Charts are not available for " + probe.DisplayName + " data.");
+                SensusServiceHelper.Get().FlashNotificationAsync("Charts are not available for " + probe.DisplayName + " data.", duration: TimeSpan.FromSeconds(2));
             else
             {
-                ContentPage chartPage = new ContentPage
+                await Navigation.PushAsync(new ContentPage
                 {
                     Content = chart
-                };
-
-                await Navigation.PushAsync(chartPage);
+                });
             }
         }
     }

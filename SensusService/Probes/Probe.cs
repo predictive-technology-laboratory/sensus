@@ -494,7 +494,6 @@ namespace SensusService.Probes
                 _chart.Series.Add(series);
 
                 _chart.PrimaryAxis = GetChartPrimaryAxis();
-
                 _chart.SecondaryAxis = GetChartSecondaryAxis();
 
                 _chart.ChartBehaviors.Add(new ChartZoomPanBehavior

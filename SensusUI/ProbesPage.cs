@@ -114,16 +114,16 @@ namespace SensusUI
                 IsPullToRefreshEnabled = true
             };
 
-            ProbesList.ItemTemplate = new DataTemplate(typeof(TextCell));
-            ProbesList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", converter: new ProbeTextValueConverter()));
-            ProbesList.ItemTemplate.SetBinding(TextCell.TextColorProperty, new Binding(".", converter: new ProbeTextColorValueConverter()));
-            ProbesList.ItemTemplate.SetBinding(TextCell.DetailProperty, new Binding(".", converter: new ProbeDetailValueConverter()));
-            ProbesList.ItemTapped += ProbeTapped;
+            _probesList.ItemTemplate = new DataTemplate(typeof(TextCell));
+            _probesList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", converter: new ProbeTextValueConverter()));
+            _probesList.ItemTemplate.SetBinding(TextCell.TextColorProperty, new Binding(".", converter: new ProbeTextColorValueConverter()));
+            _probesList.ItemTemplate.SetBinding(TextCell.DetailProperty, new Binding(".", converter: new ProbeDetailValueConverter()));
+            _probesList.ItemTapped += ProbeTapped;
 
-            ProbesList.Refreshing += (o, e) =>
+            _probesList.Refreshing += (o, e) =>
             {
                 Bind();
-                ProbesList.IsRefreshing = false;
+                _probesList.IsRefreshing = false;
             };
 
             Bind();
@@ -135,8 +135,8 @@ namespace SensusUI
 
         public void Bind()
         {
-            ProbesList.ItemsSource = null;
-            ProbesList.ItemsSource = _protocol.Probes;
+            _probesList.ItemsSource = null;
+            _probesList.ItemsSource = _protocol.Probes;
         }
     }
 }

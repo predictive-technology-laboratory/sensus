@@ -91,7 +91,7 @@ namespace SensusService
             {
                 Title = new ChartAxisTitle
                 {
-                    Text = "Degrees Celsius"
+                    Text = "Degrees (Celsius)"
                 }
             };
         }
