@@ -130,6 +130,7 @@ namespace SensusUI
                 List<string> actions = new List<string>();
 
                 actions.Add(selectedProtocol.Running ? "Stop" : "Start");
+                actions.Add("View Data");
 
                 if (selectedProtocol.Running)
                     actions.Add("Display Participation");
@@ -179,6 +180,10 @@ namespace SensusUI
                                 Device.BeginInvokeOnMainThread(Bind);
                             });
                     }
+                }
+                else if (selectedAction == "View Data")
+                {
+                    await Navigation.PushAsync(new ProbesViewPage(selectedProtocol));
                 }
                 else if (selectedAction == "Display Participation")
                 {

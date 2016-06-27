@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using Syncfusion.SfChart.XForms;
 
 namespace SensusService.Probes.Network
 {
@@ -37,6 +38,26 @@ namespace SensusService.Probes.Network
             {
                 return 60000 * 15; // every 15 minutes
             }
+        }
+
+        protected override ChartSeries GetChartSeries()
+        {
+            return null;
+        }
+
+        protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
+        {
+            return null;
+        }
+
+        protected override ChartAxis GetChartPrimaryAxis()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override RangeAxisBase GetChartSecondaryAxis()
+        {
+            throw new NotImplementedException();
         }
     }
 }

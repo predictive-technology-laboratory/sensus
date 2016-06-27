@@ -17,6 +17,7 @@ using SensusService.Probes.Location;
 using SensusService;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions.Abstractions;
+using Syncfusion.SfChart.XForms;
 
 namespace Sensus.iOS.Probes.Location
 {
@@ -55,6 +56,26 @@ namespace Sensus.iOS.Probes.Location
         protected sealed override void StopListening()
         {
             GpsReceiver.Get().RemoveListener(_positionChangedHandler);
+        }
+
+        protected override ChartSeries GetChartSeries()
+        {
+            return null;
+        }
+
+        protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
+        {
+            return null;
+        }
+
+        protected override ChartAxis GetChartPrimaryAxis()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override RangeAxisBase GetChartSecondaryAxis()
+        {
+            throw new NotImplementedException();
         }
     }
 }

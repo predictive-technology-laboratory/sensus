@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions.Abstractions;
+using Syncfusion.SfChart.XForms;
 
 namespace SensusService.Probes.Movement
 {
@@ -68,7 +69,7 @@ namespace SensusService.Probes.Movement
             lock (_locker)
             {
                 _previousPosition = null;  // do this before starting the base-class poller so it doesn't race to grab a stale previous location.
-                base.InternalStart();               
+                base.InternalStart();
             }
         }
 
@@ -114,6 +115,38 @@ namespace SensusService.Probes.Movement
                 base.Stop();
                 _previousPosition = null;  // reset previous location so it doesn't get used when this probe is restarted.
             }
+        }
+
+        protected override ChartSeries GetChartSeries()
+        {
+            return new LineSeries();
+        }
+
+        protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
+        {
+            return new ChartDataPoint(datum.Timestamp.LocalDateTime, (datum as SpeedDatum).KPH);
+        }
+
+        protected override ChartAxis GetChartPrimaryAxis()
+        {
+            return new DateTimeAxis
+            {
+                Title = new ChartAxisTitle
+                {
+                    Text = "Time"
+                }
+            };
+        }
+
+        protected override RangeAxisBase GetChartSecondaryAxis()
+        {
+            return new NumericalAxis
+            {
+                Title = new ChartAxisTitle
+                {
+                    Text = "Speed (KPH)"
+                }
+            };
         }
     }
 }

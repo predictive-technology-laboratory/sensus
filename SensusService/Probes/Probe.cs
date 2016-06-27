@@ -19,6 +19,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using Syncfusion.SfChart.XForms;
+using System.Collections.ObjectModel;
 
 namespace SensusService.Probes
 {
@@ -67,6 +69,9 @@ namespace SensusService.Probes
         private bool _originallyEnabled;
         private List<Tuple<bool, DateTime>> _startStopTimes;
         private List<DateTime> _successfulHealthTestTimes;
+        private ObservableCollection<ChartDataPoint> _chartData;
+        private int _maxChartDataCount;
+        private SfChart _chart;
 
         private readonly object _locker = new object();
 
@@ -149,7 +154,7 @@ namespace SensusService.Probes
         [JsonIgnore]
         public DateTimeOffset MostRecentStoreTimestamp
         {
-            get{ return _mostRecentStoreTimestamp; }
+            get { return _mostRecentStoreTimestamp; }
         }
 
         public Protocol Protocol
@@ -188,7 +193,23 @@ namespace SensusService.Probes
         /// <value>The successful health test times.</value>
         public List<DateTime> SuccessfulHealthTestTimes
         {
-            get{ return _successfulHealthTestTimes; }
+            get { return _successfulHealthTestTimes; }
+        }
+
+        [EntryIntegerUiProperty("Max Chart Data Count:", true, 50)]
+        public int MaxChartDataCount
+        {
+            get
+            {
+                return _maxChartDataCount;
+            }
+            set
+            {
+                if (value < 0)
+                    value = 100;
+
+                _maxChartDataCount = value;
+            }
         }
 
         protected Probe()
@@ -198,6 +219,8 @@ namespace SensusService.Probes
             _collectedData = new HashSet<Datum>();
             _startStopTimes = new List<Tuple<bool, DateTime>>();
             _successfulHealthTestTimes = new List<DateTime>();
+            _chartData = new ObservableCollection<ChartDataPoint>();
+            _maxChartDataCount = 100;
         }
 
         /// <summary>
@@ -206,6 +229,7 @@ namespace SensusService.Probes
         protected virtual void Initialize()
         {
             _collectedData.Clear();
+            _chartData.Clear();
             _mostRecentDatum = null;
             _mostRecentStoreTimestamp = DateTimeOffset.UtcNow;  // mark storage delay from initialization of probe
         }
@@ -313,11 +337,26 @@ namespace SensusService.Probes
                 datum.ProtocolId = Protocol.Id;
 
                 if (_storeData)
+                {
                     lock (_collectedData)
                     {
                         SensusServiceHelper.Get().Logger.Log("Storing datum in cache.", LoggingLevel.Verbose, GetType());
                         _collectedData.Add(datum);
                     }
+
+                    lock (_chartData)
+                    {
+                        ChartDataPoint chartDataPoint = GetChartDataPointFromDatum(datum);
+
+                        if (chartDataPoint != null)
+                        {
+                            _chartData.Add(chartDataPoint);
+
+                            while (_chartData.Count > _maxChartDataCount && _chartData.Count > 0)
+                                _chartData.RemoveAt(0);
+                        }
+                    }
+                }
             }
 
             MostRecentDatum = datum;
@@ -397,7 +436,7 @@ namespace SensusService.Probes
         }
 
         public virtual bool TestHealth(ref string error, ref string warning, ref string misc)
-        {                    
+        {
             bool restart = false;
 
             if (!_running)
@@ -413,17 +452,68 @@ namespace SensusService.Probes
         {
             if (_running)
                 throw new Exception("Cannot clear probe while it is running.");
-            
-            _collectedData.Clear();
+
+            lock (_collectedData)
+            {
+                _collectedData.Clear();
+            }
+
+            lock (_chartData)
+            {
+                _chartData.Clear();
+            }
 
             lock (_startStopTimes)
                 _startStopTimes.Clear();
 
             lock (_successfulHealthTestTimes)
                 _successfulHealthTestTimes.Clear();
-            
+
             _mostRecentDatum = null;
             _mostRecentStoreTimestamp = DateTimeOffset.MinValue;
         }
+
+        public SfChart GetChart()
+        {
+            ChartSeries series = GetChartSeries();
+
+            if (series == null)
+                return null;
+            else if (_chart == null)
+            {
+                _chart = new SfChart
+                {
+                    Title = new ChartTitle
+                    {
+                        Text = DisplayName
+                    }
+                };
+
+                series.ItemsSource = _chartData;
+                series.EnableAnimation = true;
+                _chart.Series.Add(series);
+
+                _chart.PrimaryAxis = GetChartPrimaryAxis();
+
+                _chart.SecondaryAxis = GetChartSecondaryAxis();
+
+                _chart.ChartBehaviors.Add(new ChartZoomPanBehavior
+                {
+                    EnablePanning = true,
+                    EnableZooming = true,
+                    EnableDoubleTap = true
+                });
+            }
+
+            return _chart;
+        }
+
+        protected abstract ChartSeries GetChartSeries();
+
+        protected abstract ChartAxis GetChartPrimaryAxis();
+
+        protected abstract RangeAxisBase GetChartSecondaryAxis();
+
+        protected abstract ChartDataPoint GetChartDataPointFromDatum(Datum datum);
     }
 }

@@ -155,7 +155,7 @@ namespace SensusUI
 
             viewProbesButton.Clicked += async (o, e) =>
             {
-                await Navigation.PushAsync(new ProbesPage(_protocol));
+                await Navigation.PushAsync(new ProbesEditPage(_protocol));
             };
 
             views.Add(viewProbesButton);
@@ -203,7 +203,7 @@ namespace SensusUI
                         {
                             if (input == null)
                                 return;
-                                
+
                             string password = input.Value as string;
 
                             if (string.IsNullOrWhiteSpace(password))
@@ -227,7 +227,7 @@ namespace SensusUI
             Content = new ScrollView
             {
                 Content = stack
-            };                        
+            };
         }
 
         protected override void OnAppearing()

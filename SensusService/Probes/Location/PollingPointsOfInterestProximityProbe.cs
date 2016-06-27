@@ -13,14 +13,12 @@
 // limitations under the License.
 
 using System;
-using SensusService.Probes;
 using System.Collections.Generic;
-using SensusUI.UiProperties;
-using SensusService.Probes.Location;
 using System.Threading;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Plugin.Geolocator.Abstractions;
+using Syncfusion.SfChart.XForms;
 
 namespace SensusService.Probes.Location
 {
@@ -84,6 +82,26 @@ namespace SensusService.Probes.Location
                 data.Add(null);
 
             return data;
+        }
+
+        protected override ChartSeries GetChartSeries()
+        {
+            return null;
+        }
+
+        protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
+        {
+            return null;
+        }
+
+        protected override ChartAxis GetChartPrimaryAxis()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override RangeAxisBase GetChartSecondaryAxis()
+        {
+            throw new NotImplementedException();
         }
     }
 }
