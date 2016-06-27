@@ -171,7 +171,7 @@ namespace SensusService.DataStores
                             {
                                 dataToCommit = GetDataToCommit(cancellationToken);
                                 if (dataToCommit == null)
-                                    throw new DataStoreException("Null collection returned by GetDataToCommit");
+                                    throw new SensusException("Null collection returned by GetDataToCommit");
                             }
                             catch (Exception ex)
                             {
@@ -191,7 +191,7 @@ namespace SensusService.DataStores
                                     committedData = await CommitDataAsync(dataToCommit, cancellationToken);
 
                                     if (committedData == null)
-                                        throw new DataStoreException("Null collection returned by CommitData");
+                                        throw new SensusException("Null collection returned by CommitData");
 
                                     _mostRecentSuccessfulCommitTime = DateTime.Now;
                                     numDataCommitted = committedData.Count;

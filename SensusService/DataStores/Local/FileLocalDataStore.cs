@@ -286,7 +286,7 @@ namespace SensusService.DataStores.Local
                     }
                     catch (Exception ex)
                     {
-                        throw new DataStoreException("Failed to get path to local file:  " + ex.Message);
+                        throw new SensusException("Failed to get path to local file:  " + ex.Message, ex);
                     }
 
                     if (File.Exists(_path))
@@ -294,7 +294,7 @@ namespace SensusService.DataStores.Local
                 }
 
                 if (_path == null)
-                    throw new DataStoreException("Failed to find new path.");
+                    throw new SensusException("Failed to find new path.");
             }
         }
 

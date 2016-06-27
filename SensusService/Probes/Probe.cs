@@ -483,18 +483,13 @@ namespace SensusService.Probes
             {
                 _chart = new SfChart
                 {
-                    Title = new ChartTitle
-                    {
-                        Text = DisplayName
-                    }
+                    PrimaryAxis = GetChartPrimaryAxis(),
+                    SecondaryAxis = GetChartSecondaryAxis()
                 };
 
                 series.ItemsSource = _chartData;
                 series.EnableAnimation = true;
                 _chart.Series.Add(series);
-
-                _chart.PrimaryAxis = GetChartPrimaryAxis();
-                _chart.SecondaryAxis = GetChartSecondaryAxis();
 
                 _chart.ChartBehaviors.Add(new ChartZoomPanBehavior
                 {

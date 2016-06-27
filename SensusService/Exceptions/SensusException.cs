@@ -19,8 +19,8 @@ namespace SensusService.Exceptions
 {
     public class SensusException : Exception
     {
-        public SensusException(string message)
-            : base(message)
+        public SensusException(string message, Exception innerException = null)
+            : base(message, innerException)
         {
             SensusServiceHelper.Get().Logger.Log("Exception being created:  " + message + Environment.NewLine + "Stack:  " + Environment.StackTrace, LoggingLevel.Normal, GetType());
 

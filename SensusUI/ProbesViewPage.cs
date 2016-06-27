@@ -16,6 +16,7 @@ using SensusService;
 using SensusService.Probes;
 using Syncfusion.SfChart.XForms;
 using Xamarin.Forms;
+using System;
 
 namespace SensusUI
 {
@@ -37,9 +38,10 @@ namespace SensusUI
             else
             {
                 await Navigation.PushAsync(new ContentPage
-                {
-                    Content = chart
-                });
+                    {
+                        Title = probe.DisplayName,
+                        Content = chart
+                    });
             }
         }
     }
