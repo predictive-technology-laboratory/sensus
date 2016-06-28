@@ -205,10 +205,8 @@ namespace SensusService.Probes
             }
             set
             {
-                if (value < 0)
-                    value = 100;
-
-                _maxChartDataCount = value;
+                if (value > 0)
+                    _maxChartDataCount = value;
             }
         }
 
@@ -220,7 +218,7 @@ namespace SensusService.Probes
             _startStopTimes = new List<Tuple<bool, DateTime>>();
             _successfulHealthTestTimes = new List<DateTime>();
             _chartData = new ObservableCollection<ChartDataPoint>();
-            _maxChartDataCount = 100;
+            _maxChartDataCount = 500;
         }
 
         /// <summary>
