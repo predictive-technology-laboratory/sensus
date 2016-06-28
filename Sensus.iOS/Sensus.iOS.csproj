@@ -24,14 +24,12 @@
     <ConsolePause>false</ConsolePause>
     <MtouchArch>i386</MtouchArch>
     <MtouchDebug>true</MtouchDebug>
-    <MtouchProfiling>true</MtouchProfiling>
     <CodesignKey>iPhone Developer</CodesignKey>
     <MtouchUseRefCounting>true</MtouchUseRefCounting>
-    <MtouchI18n>
-    </MtouchI18n>
     <MtouchLink>None</MtouchLink>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>1701</NoWarn>
+    <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <Optimize>true</Optimize>
@@ -58,7 +56,6 @@
     <ConsolePause>false</ConsolePause>
     <MtouchArch>ARMv7, ARM64</MtouchArch>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
-    <MtouchProfiling>true</MtouchProfiling>
     <CodesignKey>iPhone Developer</CodesignKey>
     <MtouchDebug>true</MtouchDebug>
     <IpaPackageName>
@@ -72,6 +69,7 @@
         <Command type="BeforeBuild" command="touch Resources/UnitTestingProtocol.json" workingdir="${ProjectDir}" />
       </CustomCommands>
     </CustomCommands>
+    <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <Optimize>true</Optimize>
@@ -240,9 +238,6 @@
     <Reference Include="Plugin.Permissions.Abstractions">
       <HintPath>..\packages\Plugin.Permissions.1.1.7\lib\Xamarin.iOS10\Plugin.Permissions.Abstractions.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="Plugin.Geolocator">
       <HintPath>..\packages\Xam.Plugin.Geolocator.4.0.0-beta4\lib\Xamarin.iOS10\Plugin.Geolocator.dll</HintPath>
     </Reference>
@@ -275,21 +270,6 @@
     </Reference>
     <Reference Include="PLCrashReporterUnifiedBinding">
       <HintPath>..\packages\Xamarin.Insights.1.12.3\lib\Xamarin.iOS10\PLCrashReporterUnifiedBinding.dll</HintPath>
-    </Reference>
-    <Reference Include="AWSSDK.Core">
-      <HintPath>..\packages\AWSSDK.Core.3.1.7.0\lib\Xamarin.iOS10\AWSSDK.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="AWSSDK.SecurityToken">
-      <HintPath>..\packages\AWSSDK.SecurityToken.3.1.4.1\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid10+xamarinios10+MonoTouch10\AWSSDK.SecurityToken.dll</HintPath>
-    </Reference>
-    <Reference Include="AWSSDK.CognitoIdentity">
-      <HintPath>..\packages\AWSSDK.CognitoIdentity.3.1.0.9\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid10+xamarinios10+MonoTouch10\AWSSDK.CognitoIdentity.dll</HintPath>
-    </Reference>
-    <Reference Include="Toasts.Forms.Plugin.Abstractions">
-      <HintPath>..\packages\Toasts.Forms.Plugin.2.0.4\lib\Xamarin.iOS10\Toasts.Forms.Plugin.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Toasts.Forms.Plugin.iOS">
-      <HintPath>..\packages\Toasts.Forms.Plugin.2.0.4\lib\Xamarin.iOS10\Toasts.Forms.Plugin.iOS.dll</HintPath>
     </Reference>
     <Reference Include="Calabash">
       <HintPath>..\packages\Xamarin.TestCloud.Agent.0.19.1\lib\Xamarin.iOS10\Calabash.dll</HintPath>
@@ -327,9 +307,6 @@
     <Reference Include="Xamarin.Forms.Maps">
       <HintPath>..\packages\Xamarin.Forms.Maps.2.3.0.49\lib\Xamarin.iOS10\Xamarin.Forms.Maps.dll</HintPath>
     </Reference>
-    <Reference Include="AWSSDK.S3">
-      <HintPath>..\packages\AWSSDK.S3.3.1.7.2\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid10+xamarinios10+MonoTouch10\AWSSDK.S3.dll</HintPath>
-    </Reference>
     <Reference Include="Syncfusion.SfChart.XForms.iOS">
       <HintPath>..\Lib\Syncfusion\14.2.0.26\Xamarin\lib\ios-unified\Syncfusion.SfChart.XForms.iOS.dll</HintPath>
     </Reference>
@@ -338,6 +315,27 @@
     </Reference>
     <Reference Include="Syncfusion.SfChart.iOS">
       <HintPath>..\Lib\Syncfusion\14.2.0.26\Xamarin\lib\ios-unified\Syncfusion.SfChart.iOS.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="AWSSDK.Core">
+      <HintPath>..\packages\AWSSDK.Core.3.1.8.0\lib\Xamarin.iOS10\AWSSDK.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="AWSSDK.S3">
+      <HintPath>..\packages\AWSSDK.S3.3.1.8.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid10+xamarinios10+MonoTouch10\AWSSDK.S3.dll</HintPath>
+    </Reference>
+    <Reference Include="AWSSDK.SecurityToken">
+      <HintPath>..\packages\AWSSDK.SecurityToken.3.1.4.2\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid10+xamarinios10+MonoTouch10\AWSSDK.SecurityToken.dll</HintPath>
+    </Reference>
+    <Reference Include="AWSSDK.CognitoIdentity">
+      <HintPath>..\packages\AWSSDK.CognitoIdentity.3.1.1.1\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid10+xamarinios10+MonoTouch10\AWSSDK.CognitoIdentity.dll</HintPath>
+    </Reference>
+    <Reference Include="Toasts.Forms.Plugin.Abstractions">
+      <HintPath>..\packages\Toasts.Forms.Plugin.2.0.4\lib\Xamarin.iOS10\Toasts.Forms.Plugin.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Toasts.Forms.Plugin.iOS">
+      <HintPath>..\packages\Toasts.Forms.Plugin.2.0.4\lib\Xamarin.iOS10\Toasts.Forms.Plugin.iOS.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
