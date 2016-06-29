@@ -843,8 +843,8 @@ namespace SensusService
                                             IssueNotificationAsync(scheduledCallback.UserNotificationMessage, callbackId);
 
                                         // if the callback specified a timeout, request cancellation at the specified time.
-                                        if (scheduledCallback.CallbackTimeout != null)
-                                            scheduledCallback.Canceller.CancelAfter(scheduledCallback.CallbackTimeout.GetValueOrDefault());
+                                        if (scheduledCallback.CallbackTimeout.HasValue)
+                                            scheduledCallback.Canceller.CancelAfter(scheduledCallback.CallbackTimeout.Value);
 
                                         await scheduledCallback.Action(callbackId, scheduledCallback.Canceller.Token, letDeviceSleepCallback);
                                     }
