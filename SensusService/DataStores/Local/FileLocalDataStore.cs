@@ -70,7 +70,7 @@ namespace SensusService.DataStores.Local
             }
         }
 
-        protected override Task<List<Datum>> CommitDataAsync(List<Datum> data, CancellationToken cancellationToken)
+        public override Task<List<Datum>> CommitDataAsync(List<Datum> data, CancellationToken cancellationToken)
         {
             return Task.Run(() =>
                 {

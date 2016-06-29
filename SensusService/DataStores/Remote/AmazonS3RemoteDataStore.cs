@@ -126,7 +126,7 @@ namespace SensusService.DataStores.Remote
             return new AmazonS3Client(credentials, amazonRegion);
         }
 
-        protected override Task<List<Datum>> CommitDataAsync(List<Datum> data, CancellationToken cancellationToken)
+        public override Task<List<Datum>> CommitDataAsync(List<Datum> data, CancellationToken cancellationToken)
         {
             return Task.Run(async () =>
                 {

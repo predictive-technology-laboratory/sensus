@@ -207,16 +207,12 @@ namespace SensusUI
                         {
                             // add participation reward datum to remote data store and commit immediately
                             ParticipationRewardDatum participationRewardDatum = new ParticipationRewardDatum(DateTimeOffset.UtcNow, selectedProtocol.Participation);
-                            selectedProtocol.RemoteDataStore.AddNonProbeDatum(participationRewardDatum);
 
                             bool commitFailed;
 
                             try
                             {
-                                await selectedProtocol.RemoteDataStore.CommitAsync(cancellationTokenSource.Token);
-
-                                // we should not have any remaining non-probe data
-                                commitFailed = selectedProtocol.RemoteDataStore.HasNonProbeDatumToCommit(participationRewardDatum.Id);
+                                commitFailed = !await selectedProtocol.RemoteDataStore.CommitDatumAsync(participationRewardDatum, cancellationTokenSource.Token);
                             }
                             catch (Exception)
                             {

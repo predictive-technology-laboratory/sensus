@@ -47,7 +47,7 @@ namespace SensusService.DataStores.Local
             get
             {
                 lock (_data)
-                    return _data.Count; 
+                    return _data.Count;
             }
         }
 
@@ -66,13 +66,14 @@ namespace SensusService.DataStores.Local
             }
         }
 
-        protected override Task<List<Datum>> CommitDataAsync(List<Datum> data, CancellationToken cancellationToken)
+        public override Task<List<Datum>> CommitDataAsync(List<Datum> data, CancellationToken cancellationToken)
         {
             return Task.Run(() =>
                 {
                     List<Datum> committed = new List<Datum>();
 
                     lock (_data)
+                    {
                         foreach (Datum datum in data)
                         {
                             if (cancellationToken.IsCancellationRequested)
@@ -109,6 +110,7 @@ namespace SensusService.DataStores.Local
                                 SensusServiceHelper.Get().Logger.Log("Failed to get anonymized JSON from datum:  " + ex.Message, LoggingLevel.Normal, GetType());
                             }
                         }
+                    }
 
                     return committed;
                 });
