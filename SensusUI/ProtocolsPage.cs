@@ -212,7 +212,7 @@ namespace SensusUI
 
                             try
                             {
-                                commitFailed = !await selectedProtocol.RemoteDataStore.CommitDatumAsync(participationRewardDatum, cancellationTokenSource.Token);
+                                commitFailed = !await selectedProtocol.RemoteDataStore.CommitAsync(participationRewardDatum, cancellationTokenSource.Token);
                             }
                             catch (Exception)
                             {

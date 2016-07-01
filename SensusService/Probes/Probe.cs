@@ -61,7 +61,6 @@ namespace SensusService.Probes
 
         private bool _enabled;
         private bool _running;
-        private HashSet<Datum> _collectedData;
         private Datum _mostRecentDatum;
         private Protocol _protocol;
         private bool _storeData;
@@ -214,7 +213,6 @@ namespace SensusService.Probes
         {
             _enabled = _running = false;
             _storeData = true;
-            _collectedData = new HashSet<Datum>();
             _startStopTimes = new List<Tuple<bool, DateTime>>();
             _successfulHealthTestTimes = new List<DateTime>();
             _chartData = new ObservableCollection<ChartDataPoint>();
@@ -226,7 +224,6 @@ namespace SensusService.Probes
         /// </summary>
         protected virtual void Initialize()
         {
-            _collectedData.Clear();
             _chartData.Clear();
             _mostRecentDatum = null;
             _mostRecentStoreTimestamp = DateTimeOffset.UtcNow;  // mark storage delay from initialization of probe
@@ -336,11 +333,7 @@ namespace SensusService.Probes
 
                 if (_storeData)
                 {
-                    lock (_collectedData)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Storing datum in cache.", LoggingLevel.Verbose, GetType());
-                        _collectedData.Add(datum);
-                    }
+                    _protocol.LocalDataStore.Add(datum);
 
                     lock (_chartData)
                     {
@@ -359,25 +352,6 @@ namespace SensusService.Probes
 
             MostRecentDatum = datum;
             _mostRecentStoreTimestamp = DateTimeOffset.UtcNow;  // this is outside the _storeData restriction above since we just want to track when this method is called.
-        }
-
-        public ICollection<Datum> GetCollectedData()
-        {
-            return _collectedData;
-        }
-
-        public void ClearDataCommittedToLocalDataStore(ICollection<Datum> data)
-        {
-            if (_collectedData != null)
-                lock (_collectedData)
-                {
-                    int cleared = 0;
-                    foreach (Datum datum in data)
-                        if (_collectedData.Remove(datum))
-                            ++cleared;
-
-                    SensusServiceHelper.Get().Logger.Log("Cleared " + cleared + " committed data elements from cache.", LoggingLevel.Debug, GetType());
-                }
         }
 
         protected void StopAsync()
@@ -414,10 +388,6 @@ namespace SensusService.Probes
                         _startStopTimes.Add(new Tuple<bool, DateTime>(false, DateTime.Now));
                         _startStopTimes.RemoveAll(t => t.Item2 < Protocol.ParticipationHorizon);
                     }
-
-                    // clear out the probe's in-memory storage
-                    lock (_collectedData)
-                        _collectedData.Clear();
                 }
                 else
                     SensusServiceHelper.Get().Logger.Log("Attempted to stop probe, but it wasn't running.", LoggingLevel.Normal, GetType());
@@ -450,11 +420,6 @@ namespace SensusService.Probes
         {
             if (_running)
                 throw new Exception("Cannot clear probe while it is running.");
-
-            lock (_collectedData)
-            {
-                _collectedData.Clear();
-            }
 
             lock (_chartData)
             {

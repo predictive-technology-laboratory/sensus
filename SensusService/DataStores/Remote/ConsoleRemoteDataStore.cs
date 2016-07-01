@@ -44,7 +44,7 @@ namespace SensusService.DataStores.Remote
             get { return false; }
         }
 
-        public override Task<List<Datum>> CommitDataAsync(List<Datum> data, CancellationToken cancellationToken)
+        public override Task<List<Datum>> CommitAsync(IEnumerable<Datum> data, CancellationToken cancellationToken)
         {
             return Task.Run(() =>
                 {

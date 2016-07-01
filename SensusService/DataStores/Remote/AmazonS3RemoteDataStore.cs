@@ -126,7 +126,7 @@ namespace SensusService.DataStores.Remote
             return new AmazonS3Client(credentials, amazonRegion);
         }
 
-        public override Task<List<Datum>> CommitDataAsync(List<Datum> data, CancellationToken cancellationToken)
+        public override Task<List<Datum>> CommitAsync(IEnumerable<Datum> data, CancellationToken cancellationToken)
         {
             return Task.Run(async () =>
                 {
@@ -138,7 +138,7 @@ namespace SensusService.DataStores.Remote
 
                         DateTimeOffset commitStartTime = DateTimeOffset.UtcNow;
 
-                        List<Datum> committedData = new List<Datum>(data.Count);
+                        List<Datum> committedData = new List<Datum>();
 
                         #region group data by type and get JSON for each datum
                         Dictionary<string, List<Datum>> datumTypeData = new Dictionary<string, List<Datum>>();

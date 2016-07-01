@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using System;
 
 namespace SensusService.DataStores.Remote
 {
@@ -57,30 +58,42 @@ namespace SensusService.DataStores.Remote
 #endif
         }
 
-        protected sealed override List<Datum> GetDataToCommit(CancellationToken cancellationToken)
+        protected override Task CommitAsync(string callbackId, CancellationToken cancellationToken, Action letDeviceSleepCallback)
         {
-            List<Datum> dataToCommit = new List<Datum>();
-
-            if (cancellationToken.IsCancellationRequested)
-                SensusServiceHelper.Get().Logger.Log("Cancelled retrieval of data from local data store.", LoggingLevel.Normal, GetType());
-            else if (!Protocol.LocalDataStore.UploadToRemoteDataStore)
-                SensusServiceHelper.Get().Logger.Log("Remote data store upload is disabled.", LoggingLevel.Normal, GetType());
-            else if (_requireWiFi && !SensusServiceHelper.Get().WiFiConnected)
-                SensusServiceHelper.Get().Logger.Log("Required WiFi but device WiFi is not connected.", LoggingLevel.Normal, GetType());
-            else if (_requireCharging && !SensusServiceHelper.Get().IsCharging)
-                SensusServiceHelper.Get().Logger.Log("Required charging but device is not charging.", LoggingLevel.Normal, GetType());
-            else
+            return Task.Run(async () =>
             {
-                dataToCommit = Protocol.LocalDataStore.GetDataForRemoteDataStore(cancellationToken);
-                SensusServiceHelper.Get().Logger.Log("Retrieved " + dataToCommit.Count + " data elements from local data store.", LoggingLevel.Normal, GetType());
-            }
+                if (cancellationToken.IsCancellationRequested)
+                    SensusServiceHelper.Get().Logger.Log("Cancelled retrieval of data from local data store.", LoggingLevel.Normal, GetType());
+                else if (!Protocol.LocalDataStore.UploadToRemoteDataStore)
+                    SensusServiceHelper.Get().Logger.Log("Remote data store upload is disabled.", LoggingLevel.Normal, GetType());
+                else if (_requireWiFi && !SensusServiceHelper.Get().WiFiConnected)
+                    SensusServiceHelper.Get().Logger.Log("Required WiFi but device WiFi is not connected.", LoggingLevel.Normal, GetType());
+                else if (_requireCharging && !SensusServiceHelper.Get().IsCharging)
+                    SensusServiceHelper.Get().Logger.Log("Required charging but device is not charging.", LoggingLevel.Normal, GetType());
+                else
+                {
+#if __IOS__
+                            // on ios the user must activate the app in order to save data. give the user some feedback to let them know that this is 
+                            // going to happen and might take some time. if they background the app the commit will be canceled if it runs out of background
+                            // time.
+                                SensusServiceHelper.Get().FlashNotificationAsync("Submitting data. Please wait for success confirmation...");
+#endif
+                    // first commmit any data that have accumulated in the internal memory of the remote data store
+                    await base.CommitAsync(callbackId, cancellationToken, letDeviceSleepCallback);
 
-            return dataToCommit;
-        }
+                    // instruct the local data store to commit its data to the remote data store.
+                    await Protocol.LocalDataStore.CommitDataToRemoteDataStore(cancellationToken);
 
-        protected sealed override void ProcessCommittedData(List<Datum> committedData)
-        {
-            Protocol.LocalDataStore.ClearDataCommittedToRemoteDataStore(committedData);
+#if __IOS__
+                            // on ios the user must activate the app in order to save data. give the user some feedback to let them know that the data were stored remotely.
+                            if (numDataCommitted != null && this is RemoteDataStore)
+                            {
+                                int numDataCommittedValue = numDataCommitted.GetValueOrDefault();
+                                SensusServiceHelper.Get().FlashNotificationAsync("Submitted " + numDataCommittedValue + " data item" + (numDataCommittedValue == 1 ? "" : "s") + " to the \"" + _protocol.Name + "\" study." + (numDataCommittedValue > 0 ? " Thank you!" : ""));
+                            }
+#endif
+                }
+            });
         }
 
         public abstract string GetDatumKey(Datum datum);

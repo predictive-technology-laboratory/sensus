@@ -21,9 +21,9 @@ using System.Threading;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 #if __ANDROID__
-using Java.IO;
 using Java.Util.Zip;
 #elif __IOS__
 using MiniZip.ZipArchive;
@@ -58,41 +58,7 @@ namespace SensusService.DataStores.Local
 #endif
         }
 
-        protected sealed override List<Datum> GetDataToCommit(CancellationToken cancellationToken)
-        {
-            List<Datum> dataToCommit = new List<Datum>();
-
-            foreach (Probe probe in Protocol.Probes)
-            {
-                if (cancellationToken.IsCancellationRequested)
-                    break;
-
-                // the collected data object comes directly from the probe, so lock it down before working with it.
-                ICollection<Datum> collectedData = probe.GetCollectedData();
-                if (collectedData != null)
-                    lock (collectedData)
-                        if (collectedData.Count > 0)
-                            dataToCommit.AddRange(collectedData);
-            }
-
-            SensusServiceHelper.Get().Logger.Log("Retrieved " + dataToCommit.Count + " data elements from probes.", LoggingLevel.Normal, GetType());
-
-            return dataToCommit;
-        }
-
-        protected sealed override void ProcessCommittedData(List<Datum> committedData)
-        {
-            SensusServiceHelper.Get().Logger.Log("Clearing " + committedData.Count + " committed data elements from probes.", LoggingLevel.Normal, GetType());
-
-            foreach (Probe probe in Protocol.Probes)
-                probe.ClearDataCommittedToLocalDataStore(committedData);
-
-            SensusServiceHelper.Get().Logger.Log("Done clearing committed data elements from probes.", LoggingLevel.Normal, GetType());
-        }
-
-        public abstract List<Datum> GetDataForRemoteDataStore(CancellationToken cancellationToken);
-
-        public abstract void ClearDataCommittedToRemoteDataStore(List<Datum> dataCommittedToRemote);
+        public abstract Task CommitDataToRemoteDataStore(CancellationToken cancellationToken);
 
         public int WriteDataToZipFile(string zipPath, CancellationToken cancellationToken, Action<string, double> progressCallback)
         {

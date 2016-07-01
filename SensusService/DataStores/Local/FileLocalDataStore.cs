@@ -18,7 +18,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
-using SensusUI.UiProperties;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 
@@ -28,7 +27,8 @@ namespace SensusService.DataStores.Local
     {
         private string _path;
 
-        private readonly object _locker = new object();
+        private readonly object _storageDirectoryLocker = new object();
+        private readonly object _commitToRemoteLocker = new object();
 
         [JsonIgnore]
         public string StorageDirectory
@@ -44,6 +44,7 @@ namespace SensusService.DataStores.Local
             }
         }
 
+        [JsonIgnore]
         public override string DisplayName
         {
             get { return "File"; }
@@ -55,26 +56,19 @@ namespace SensusService.DataStores.Local
             get { return true; }
         }
 
-        public FileLocalDataStore()
-        {
-        }
-
         public override void Start()
-        {            
-            lock (_locker)
-            {
-                // file needs to be ready to accept data immediately, so set file path before calling base.Start
-                WriteToNewPath();
+        {
+            // file needs to be ready to accept data immediately, so set file path before calling base.Start
+            WriteToNewPath();
 
-                base.Start();
-            }
+            base.Start();
         }
 
-        public override Task<List<Datum>> CommitDataAsync(List<Datum> data, CancellationToken cancellationToken)
+        public override Task<List<Datum>> CommitAsync(IEnumerable<Datum> data, CancellationToken cancellationToken)
         {
             return Task.Run(() =>
                 {
-                    lock (_locker)
+                    lock (_storageDirectoryLocker)
                     {
                         List<Datum> committedData = new List<Datum>();
 
@@ -84,7 +78,8 @@ namespace SensusService.DataStores.Local
                             {
                                 if (cancellationToken.IsCancellationRequested)
                                     break;
-                    
+
+                                // get JSON for datum
                                 string datumJSON = null;
                                 try
                                 {
@@ -95,13 +90,14 @@ namespace SensusService.DataStores.Local
                                     SensusServiceHelper.Get().Logger.Log("Failed to get JSON for datum:  " + ex.Message, LoggingLevel.Normal, GetType());
                                 }
 
+                                // write JSON to file
                                 if (datumJSON != null)
                                 {
-                                    bool writtenToFile = false;
                                     try
                                     {
                                         file.WriteLine(datumJSON);
-                                        writtenToFile = true;
+                                        MostRecentSuccessfulCommitTime = DateTime.Now;
+                                        committedData.Add(datum);
                                     }
                                     catch (Exception ex)
                                     {
@@ -118,10 +114,7 @@ namespace SensusService.DataStores.Local
                                             SensusServiceHelper.Get().Logger.Log("Failed to initialize new file after failing to write the old one:  " + ex2.Message, LoggingLevel.Normal, GetType());
                                         }
                                     }
-
-                                    if (writtenToFile)
-                                        committedData.Add(datum);
-                                }                        
+                                }
                             }
                         }
 
@@ -130,102 +123,79 @@ namespace SensusService.DataStores.Local
                 });
         }
 
-        public override List<Datum> GetDataForRemoteDataStore(CancellationToken cancellationToken)
+        public override Task CommitDataToRemoteDataStore(CancellationToken cancellationToken)
         {
-            lock (_locker)
+            return Task.Run(() =>
             {
-                List<Datum> localData = new List<Datum>();
+                // get file paths to commit, as well as a special path to use for uncommitted data.
+                string[] paths;
+                string uncommittedDataPath;
+                lock (_storageDirectoryLocker)
+                {
+                    paths = Directory.GetFiles(StorageDirectory);
 
-                string[] paths = Directory.GetFiles(StorageDirectory);
-                for (int pathNum = 0; pathNum < paths.Length && !cancellationToken.IsCancellationRequested; ++pathNum)
-                {   
-                    string path = paths[pathNum];
-                    
-                    try
-                    {
-                        using (StreamReader file = new StreamReader(path))
-                        {
-                            string line;
-                            while (!cancellationToken.IsCancellationRequested && !string.IsNullOrWhiteSpace(line = file.ReadLine()))
-                                localData.Add(Datum.FromJSON(line));
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Exception while reading local data store for transfer to remote:  " + ex.Message, LoggingLevel.Normal, GetType());
-                    }                         
+                    WriteToNewPath();
+                    uncommittedDataPath = _path;
+
+                    WriteToNewPath();
                 }
 
-                if (cancellationToken.IsCancellationRequested)
-                    SensusServiceHelper.Get().Logger.Log("Canceled retrieval of local data for remote data store.", LoggingLevel.Normal, GetType());
-
-                // start writing to new path if we're still running
-                if (Running)
-                    WriteToNewPath();
-
-                return localData;
-            }
-        }
-
-        public override void ClearDataCommittedToRemoteDataStore(List<Datum> dataCommittedToRemote)
-        {
-            lock (_locker)
-            {
-                SensusServiceHelper.Get().Logger.Log("Received " + dataCommittedToRemote.Count + " remote-committed data elements to clear.", LoggingLevel.Normal, GetType());
-
-                HashSet<Datum> hashDataCommittedToRemote = new HashSet<Datum>(dataCommittedToRemote);  // for quick access via hashing
-
-                // clear remote-committed data from all files
-                foreach (string path in Directory.GetFiles(StorageDirectory))
+                // lock any other threads out of the commit, since the paths we're going to use could potentially be used by them.
+                lock (_commitToRemoteLocker)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Clearing remote-committed data from \"" + path + "\".", LoggingLevel.Debug, GetType());
-
-                    string uncommittedDataPath = Path.GetTempFileName();
-                    int uncommittedDataCount = 0;
                     using (StreamWriter uncommittedDataFile = new StreamWriter(uncommittedDataPath))
                     {
-                        using (StreamReader file = new StreamReader(path))
+                        // commit data in small batches
+                        HashSet<Datum> dataToCommit = new HashSet<Datum>();
+
+                        foreach (string path in paths)
                         {
-                            string line;
-                            while ((line = file.ReadLine()) != null)
+                            if (cancellationToken.IsCancellationRequested)
+                                break;
+
+                            // if this method is called concurrently, a previous call might have already processed the current path
+                            // and deleted it while we were waiting to acquire the commit lock. ensure that the file still exists.
+                            if (File.Exists(path))
                             {
-                                Datum datum = Datum.FromJSON(line);
-                                if (!hashDataCommittedToRemote.Contains(datum))
+                                using (StreamReader file = new StreamReader(path))
                                 {
-                                    uncommittedDataFile.WriteLine(datum.GetJSON(Protocol.JsonAnonymizer, false));  // need to pass in the anonymizer, since the user might have selected an anonymization option between the time that the datum was written to file and the time of execution of the current line of code.
-                                    ++uncommittedDataCount;
+                                    string datumJSON;
+                                    while ((datumJSON = file.ReadLine()) != null)
+                                    {
+                                        if (cancellationToken.IsCancellationRequested)
+                                            break;
+
+                                        dataToCommit.Add(Datum.FromJSON(datumJSON));
+
+                                        if (dataToCommit.Count >= 10000)
+                                            CommitChunksAsync(dataToCommit, 1000, Protocol.RemoteDataStore, cancellationToken).Wait();
+
+                                        // any leftover data should be dumped to the uncommitted file, which will be picked up on next commit.
+                                        foreach (Datum datum in dataToCommit)
+                                            uncommittedDataFile.WriteLine(datum.GetJSON(Protocol.JsonAnonymizer, false));
+                                    }
+
+                                    // if we were canceled, the current file was probably in a state of partial commit. dump the rest of the
+                                    // file into the uncommitted data file.
+                                    if (cancellationToken.IsCancellationRequested)
+                                    {
+                                        string line;
+                                        while ((line = file.ReadLine()) != null)
+                                            uncommittedDataFile.WriteLine(line);
+                                    }
                                 }
+
+                                File.Delete(path);
                             }
                         }
                     }
-
-                    File.Delete(path);
-
-                    // if there were no uncommitted data in the file, the uncommitted data file will be empty -- delete it
-                    if (uncommittedDataCount == 0)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Cleared all data from local file. Deleting file.", LoggingLevel.Debug, GetType());
-                        File.Delete(uncommittedDataPath);
-                    }
-                    // if there were uncommitted data in the file, replace it with the file holding the uncommitted data -- it will be committed next time
-                    else
-                    {
-                        SensusServiceHelper.Get().Logger.Log(uncommittedDataCount + " data elements in local file were not committed to remote data store.", LoggingLevel.Debug, GetType());
-                        File.Move(uncommittedDataPath, path);
-                    }
                 }
-
-                // reinitialize file if we're running
-                if (Running)
-                    WriteToNewPath();
-
-                SensusServiceHelper.Get().Logger.Log("Finished clearing remote-committed data elements.", LoggingLevel.Normal, GetType());
-            }
+            });
         }
 
         protected override IEnumerable<Tuple<string, string>> GetDataLinesToWrite(CancellationToken cancellationToken, Action<string, double> progressCallback)
         {
-            lock (_locker)
+            lock (_storageDirectoryLocker)
             {
                 // "$type":"SensusService.Probes.Movement.AccelerometerDatum, SensusiOS"
                 Regex datumTypeRegex = new Regex(@"""\$type""\s*:\s*""(?<type>[^,]+),");
@@ -235,7 +205,7 @@ namespace SensusService.DataStores.Local
 
                 string[] localPaths = Directory.GetFiles(StorageDirectory);
                 for (int localPathNum = 0; localPathNum < localPaths.Length; ++localPathNum)
-                {   
+                {
                     string localPath = localPaths[localPathNum];
 
                     using (StreamReader localFile = new StreamReader(localPath))
@@ -246,10 +216,10 @@ namespace SensusService.DataStores.Local
                         while ((line = localFile.ReadLine()) != null)
                         {
                             cancellationToken.ThrowIfCancellationRequested();
-                               
+
                             string type = datumTypeRegex.Match(line).Groups["type"].Value;
                             type = type.Substring(type.LastIndexOf('.') + 1);
-                             
+
                             yield return new Tuple<string, string>(type, line);
 
                             if (localFile.BaseStream.Position > localFilePosition)
@@ -274,7 +244,7 @@ namespace SensusService.DataStores.Local
 
         private void WriteToNewPath()
         {
-            lock (_locker)
+            lock (_storageDirectoryLocker)
             {
                 _path = null;
                 int pathNumber = 0;
@@ -299,11 +269,13 @@ namespace SensusService.DataStores.Local
         }
 
         public override void Clear()
-        {    
-            lock (_locker)
+        {
+            base.Clear();
+
+            lock (_storageDirectoryLocker)
             {
                 if (Protocol != null)
-                {                
+                {
                     foreach (string path in Directory.GetFiles(StorageDirectory))
                     {
                         try
