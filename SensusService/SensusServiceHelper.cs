@@ -851,7 +851,9 @@ namespace SensusService
                                 }
                                 catch (Exception ex)
                                 {
-                                    _logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") failed:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                    string errorMessage = "Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") failed:  " + ex.Message;
+                                    _logger.Log(errorMessage, LoggingLevel.Normal, GetType());
+                                    SensusException.Report(errorMessage, ex);
                                 }
                                 finally
                                 {

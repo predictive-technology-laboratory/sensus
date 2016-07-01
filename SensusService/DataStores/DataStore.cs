@@ -209,7 +209,7 @@ namespace SensusService.DataStores
 
         public async Task<bool> CommitAsync(Datum datum, CancellationToken cancellationToken)
         {
-            return (await CommitAsync(new Datum[] { datum }, cancellationToken)).Contains(datum); ;
+            return (await CommitAsync(new Datum[] { datum }, cancellationToken)).Contains(datum);
         }
 
         public abstract Task<List<Datum>> CommitAsync(IEnumerable<Datum> data, CancellationToken cancellationToken);

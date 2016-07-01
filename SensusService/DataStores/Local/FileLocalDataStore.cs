@@ -126,6 +126,8 @@ namespace SensusService.DataStores.Local
         {
             lock (_storageDirectoryLocker)
             {
+                string[] pathsToCommit = Directory.GetFiles(StorageDirectory);
+
                 // get path for uncommitted data
                 WriteToNewPath();
                 string uncommittedDataPath = _path;
@@ -137,48 +139,64 @@ namespace SensusService.DataStores.Local
 
                 using (StreamWriter uncommittedDataFile = new StreamWriter(uncommittedDataPath))
                 {
-                    foreach (string path in Directory.GetFiles(StorageDirectory))
+                    foreach (string path in pathsToCommit)
                     {
                         if (cancellationToken.IsCancellationRequested)
                             break;
 
-                        using (StreamReader file = new StreamReader(path))
+                        // wrap in try-catch to ensure that we process all files
+                        try
                         {
-                            // commit data in small batches. all data will end up in the uncommitted file, in the batch object, or
-                            // in the remote data store.
-                            HashSet<Datum> batch = new HashSet<Datum>();
-                            string datumJSON;
-                            while ((datumJSON = file.ReadLine()) != null)
+                            using (StreamReader file = new StreamReader(path))
                             {
-                                // if we have been canceled, dump the rest of the file into the uncommitted data file.
-                                if (cancellationToken.IsCancellationRequested)
-                                    uncommittedDataFile.WriteLine(datumJSON);
-                                else
+                                // commit data in small batches. all data will end up in the uncommitted file, in the batch object, or
+                                // in the remote data store.
+                                HashSet<Datum> batch = new HashSet<Datum>();
+                                string datumJSON;
+                                while ((datumJSON = file.ReadLine()) != null)
                                 {
-                                    batch.Add(Datum.FromJSON(datumJSON));
+                                    // if we have been canceled, dump the rest of the file into the uncommitted data file.
+                                    if (cancellationToken.IsCancellationRequested)
+                                        uncommittedDataFile.WriteLine(datumJSON);
+                                    else
+                                    {
+                                        // wrap in try-catch to ensure that we process all lines
+                                        try
+                                        {
+                                            batch.Add(Datum.FromJSON(datumJSON));
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            SensusServiceHelper.Get().Logger.Log("Failed to add datum to batch from JSON:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                        }
 
-                                    if (batch.Count >= 10000)
+                                        if (batch.Count >= 10000)
+                                            dataCommitted += CommitBatchToRemote(batch, cancellationToken, uncommittedDataFile);
+                                    }
+                                }
+
+                                // deal with any data that remain in an the batch object. they'll end up in the uncommitted file or
+                                // in the remote data store. if the former, they'll be picked up next commit.
+                                if (batch.Count > 0)
+                                {
+                                    if (cancellationToken.IsCancellationRequested)
+                                    {
+                                        foreach (Datum datum in batch)
+                                            uncommittedDataFile.WriteLine(datum.GetJSON(Protocol.JsonAnonymizer, false));
+                                    }
+                                    else
                                         dataCommitted += CommitBatchToRemote(batch, cancellationToken, uncommittedDataFile);
                                 }
                             }
 
-                            // deal with any data that remain in an the batch object. they'll end up in the uncommitted file or
-                            // in the remote data store. if the former, they'll be picked up next commit.
-                            if (batch.Count > 0)
-                            {
-                                if (cancellationToken.IsCancellationRequested)
-                                {
-                                    foreach (Datum datum in batch)
-                                        uncommittedDataFile.WriteLine(datum.GetJSON(Protocol.JsonAnonymizer, false));
-                                }
-                                else
-                                    dataCommitted += CommitBatchToRemote(batch, cancellationToken, uncommittedDataFile);
-                            }
+                            // we've read all lines in the file and either committed them to the remote data store or written them
+                            // to the uncommitted data file. 
+                            File.Delete(path);
                         }
-
-                        // we've read all lines in the file and either committed them to the remote data store or written them
-                        // to the uncommitted data file. 
-                        File.Delete(path);
+                        catch (Exception ex)
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Failed to commit:  " + ex.Message, LoggingLevel.Normal, GetType());
+                        }
                     }
                 }
 
@@ -268,8 +286,11 @@ namespace SensusService.DataStores.Local
                         throw new SensusException("Failed to get path to local file:  " + ex.Message, ex);
                     }
 
+                    // create an empty file at the path if one does not exist
                     if (File.Exists(_path))
                         _path = null;
+                    else
+                        File.Create(_path).Dispose();
                 }
 
                 if (_path == null)
