@@ -58,7 +58,7 @@ namespace SensusService.DataStores.Local
 #endif
         }
 
-        public abstract Task CommitDataToRemoteDataStore(CancellationToken cancellationToken);
+        public abstract int CommitDataToRemoteDataStore(CancellationToken cancellationToken);
 
         public int WriteDataToZipFile(string zipPath, CancellationToken cancellationToken, Action<string, double> progressCallback)
         {

@@ -23,9 +23,6 @@ namespace SensusService.DataStores.Local
     public class RamLocalDataStore : LocalDataStore
     {
         private HashSet<Datum> _data;
-        private List<HashSet<Datum>> _uncommittedDataSets;
-
-        private readonly object _dataLocker = new object();
 
         [JsonIgnore]
         public override string DisplayName
@@ -44,7 +41,7 @@ namespace SensusService.DataStores.Local
         {
             get
             {
-                lock (_dataLocker)
+                lock (_data)
                 {
                     return _data.Count;
                 }
@@ -54,22 +51,23 @@ namespace SensusService.DataStores.Local
         public RamLocalDataStore()
         {
             _data = new HashSet<Datum>();
-            _uncommittedDataSets = new List<HashSet<Datum>>();
         }
 
         public override Task<List<Datum>> CommitAsync(IEnumerable<Datum> data, CancellationToken cancellationToken)
         {
             return Task.Run(() =>
                 {
-                    lock (_dataLocker)
+                    lock (_data)
                     {
                         List<Datum> committedData = new List<Datum>();
 
                         foreach (Datum datum in data)
                         {
+                            if (cancellationToken.IsCancellationRequested)
+                                break;
+
                             // all locally stored data, whether on disk or in RAM, should be anonymized as required
                             // by the protocol. convert datum to/from JSON in order to apply anonymization.
-
                             try
                             {
                                 string anonymizedDatumJSON = datum.GetJSON(Protocol.JsonAnonymizer, false);
@@ -88,41 +86,21 @@ namespace SensusService.DataStores.Local
                 });
         }
 
-        public override Task CommitDataToRemoteDataStore(CancellationToken cancellationToken)
+        public override int CommitDataToRemoteDataStore(CancellationToken cancellationToken)
         {
-            return Task.Run(() =>
+            lock (_data)
             {
-                List<HashSet<Datum>> dataSetsToCommit = new List<HashSet<Datum>>();
+                int dataCountPreCommit = _data.Count;
 
-                lock (_dataLocker)
-                {
-                    dataSetsToCommit.Add(_data);
-                    dataSetsToCommit.AddRange(_uncommittedDataSets);
+                CommitChunksAsync(_data, 1000, Protocol.RemoteDataStore, cancellationToken).Wait();
 
-                    _data = new HashSet<Datum>();
-                    _uncommittedDataSets = new List<HashSet<Datum>>();
-                }
-
-                foreach (HashSet<Datum> dataSetToCommit in dataSetsToCommit)
-                {
-                    // if canceled, the following will return immediately and we'll put all data sets into the uncommitted collection
-                    // before returning.
-                    CommitChunksAsync(dataSetToCommit, 1000, Protocol.RemoteDataStore, cancellationToken).Wait();
-
-                    if (dataSetToCommit.Count > 0)
-                    {
-                        lock (_dataLocker)
-                        {
-                            _uncommittedDataSets.Add(dataSetToCommit);
-                        }
-                    }
-                }
-            });
+                return dataCountPreCommit - _data.Count;
+            }
         }
 
         protected override IEnumerable<Tuple<string, string>> GetDataLinesToWrite(CancellationToken cancellationToken, Action<string, double> progressCallback)
         {
-            lock (_dataLocker)
+            lock (_data)
             {
                 int count = 0;
 
@@ -147,7 +125,7 @@ namespace SensusService.DataStores.Local
         {
             base.Clear();
 
-            lock (_dataLocker)
+            lock (_data)
             {
                 _data.Clear();
             }
@@ -157,7 +135,7 @@ namespace SensusService.DataStores.Local
         {
             base.ClearForSharing();
 
-            lock (_dataLocker)
+            lock (_data)
             {
                 _data.Clear();
             }

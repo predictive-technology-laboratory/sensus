@@ -28,7 +28,6 @@ namespace SensusService.DataStores.Local
         private string _path;
 
         private readonly object _storageDirectoryLocker = new object();
-        private readonly object _commitToRemoteLocker = new object();
 
         [JsonIgnore]
         public string StorageDirectory
@@ -123,74 +122,84 @@ namespace SensusService.DataStores.Local
                 });
         }
 
-        public override Task CommitDataToRemoteDataStore(CancellationToken cancellationToken)
+        public override int CommitDataToRemoteDataStore(CancellationToken cancellationToken)
         {
-            return Task.Run(() =>
+            lock (_storageDirectoryLocker)
             {
-                // get file paths to commit, as well as a special path to use for uncommitted data.
-                string[] paths;
-                string uncommittedDataPath;
-                lock (_storageDirectoryLocker)
+                // get path for uncommitted data
+                WriteToNewPath();
+                string uncommittedDataPath = _path;
+
+                // reset _path for standard commits
+                WriteToNewPath();
+
+                int dataCommitted = 0;
+
+                using (StreamWriter uncommittedDataFile = new StreamWriter(uncommittedDataPath))
                 {
-                    paths = Directory.GetFiles(StorageDirectory);
-
-                    WriteToNewPath();
-                    uncommittedDataPath = _path;
-
-                    WriteToNewPath();
-                }
-
-                // lock any other threads out of the commit, since the paths we're going to use could potentially be used by them.
-                lock (_commitToRemoteLocker)
-                {
-                    using (StreamWriter uncommittedDataFile = new StreamWriter(uncommittedDataPath))
+                    foreach (string path in Directory.GetFiles(StorageDirectory))
                     {
-                        // commit data in small batches
-                        HashSet<Datum> dataToCommit = new HashSet<Datum>();
+                        if (cancellationToken.IsCancellationRequested)
+                            break;
 
-                        foreach (string path in paths)
+                        using (StreamReader file = new StreamReader(path))
                         {
-                            if (cancellationToken.IsCancellationRequested)
-                                break;
-
-                            // if this method is called concurrently, a previous call might have already processed the current path
-                            // and deleted it while we were waiting to acquire the commit lock. ensure that the file still exists.
-                            if (File.Exists(path))
+                            // commit data in small batches. all data will end up in the uncommitted file, in the batch object, or
+                            // in the remote data store.
+                            HashSet<Datum> batch = new HashSet<Datum>();
+                            string datumJSON;
+                            while ((datumJSON = file.ReadLine()) != null)
                             {
-                                using (StreamReader file = new StreamReader(path))
+                                // if we have been canceled, dump the rest of the file into the uncommitted data file.
+                                if (cancellationToken.IsCancellationRequested)
+                                    uncommittedDataFile.WriteLine(datumJSON);
+                                else
                                 {
-                                    string datumJSON;
-                                    while ((datumJSON = file.ReadLine()) != null)
-                                    {
-                                        if (cancellationToken.IsCancellationRequested)
-                                            break;
+                                    batch.Add(Datum.FromJSON(datumJSON));
 
-                                        dataToCommit.Add(Datum.FromJSON(datumJSON));
-
-                                        if (dataToCommit.Count >= 10000)
-                                            CommitChunksAsync(dataToCommit, 1000, Protocol.RemoteDataStore, cancellationToken).Wait();
-
-                                        // any leftover data should be dumped to the uncommitted file, which will be picked up on next commit.
-                                        foreach (Datum datum in dataToCommit)
-                                            uncommittedDataFile.WriteLine(datum.GetJSON(Protocol.JsonAnonymizer, false));
-                                    }
-
-                                    // if we were canceled, the current file was probably in a state of partial commit. dump the rest of the
-                                    // file into the uncommitted data file.
-                                    if (cancellationToken.IsCancellationRequested)
-                                    {
-                                        string line;
-                                        while ((line = file.ReadLine()) != null)
-                                            uncommittedDataFile.WriteLine(line);
-                                    }
+                                    if (batch.Count >= 10000)
+                                        dataCommitted += CommitBatchToRemote(batch, cancellationToken, uncommittedDataFile);
                                 }
+                            }
 
-                                File.Delete(path);
+                            // deal with any data that remain in an the batch object. they'll end up in the uncommitted file or
+                            // in the remote data store. if the former, they'll be picked up next commit.
+                            if (batch.Count > 0)
+                            {
+                                if (cancellationToken.IsCancellationRequested)
+                                {
+                                    foreach (Datum datum in batch)
+                                        uncommittedDataFile.WriteLine(datum.GetJSON(Protocol.JsonAnonymizer, false));
+                                }
+                                else
+                                    dataCommitted += CommitBatchToRemote(batch, cancellationToken, uncommittedDataFile);
                             }
                         }
+
+                        // we've read all lines in the file and either committed them to the remote data store or written them
+                        // to the uncommitted data file. 
+                        File.Delete(path);
                     }
                 }
-            });
+
+                return dataCommitted;
+            }
+        }
+
+        private int CommitBatchToRemote(HashSet<Datum> batch, CancellationToken cancellationToken, StreamWriter uncommittedDataFile)
+        {
+            int dataCountPreCommit = batch.Count;
+            CommitChunksAsync(batch, 1000, Protocol.RemoteDataStore, cancellationToken).Wait();
+            int dataCountPostCommit = batch.Count;
+
+            // any leftover data should be dumped to the uncommitted file to maintain memory limits. the data will be committed next time.
+            foreach (Datum datum in batch)
+                uncommittedDataFile.WriteLine(datum.GetJSON(Protocol.JsonAnonymizer, false));
+
+            // all data were either commmitted or dumped to the uncommitted file. clear the batch.
+            batch.Clear();
+
+            return dataCountPreCommit - dataCountPostCommit;
         }
 
         protected override IEnumerable<Tuple<string, string>> GetDataLinesToWrite(CancellationToken cancellationToken, Action<string, double> progressCallback)

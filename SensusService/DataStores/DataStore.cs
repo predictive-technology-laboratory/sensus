@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Linq;
 using System.Threading.Tasks;
+using SensusService.DataStores.Remote;
 
 namespace SensusService.DataStores
 {
@@ -80,10 +81,7 @@ namespace SensusService.DataStores
         private Protocol _protocol;
         private DateTime? _mostRecentSuccessfulCommitTime;
         private HashSet<Datum> _data;
-        private List<HashSet<Datum>> _uncommittedDataSets;
         private string _commitCallbackId;
-
-        private readonly object _dataLocker = new object();
 
         [EntryIntegerUiProperty("Commit Delay (MS):", true, 2)]
         public int CommitDelayMS
@@ -158,7 +156,6 @@ namespace SensusService.DataStores
             _running = false;
             _mostRecentSuccessfulCommitTime = null;
             _data = new HashSet<Datum>();
-            _uncommittedDataSets = new List<HashSet<Datum>>();
             _commitCallbackId = null;
         }
 
@@ -190,7 +187,7 @@ namespace SensusService.DataStores
 
         public void Add(Datum datum)
         {
-            lock (_dataLocker)
+            lock (_data)
             {
                 _data.Add(datum);
             }
@@ -202,30 +199,9 @@ namespace SensusService.DataStores
             {
                 if (_running)
                 {
-                    List<HashSet<Datum>> dataSetsToCommit = new List<HashSet<Datum>>();
-
-                    lock (_dataLocker)
+                    lock (_data)
                     {
-                        dataSetsToCommit.Add(_data);
-                        dataSetsToCommit.AddRange(_uncommittedDataSets);
-
-                        _data = new HashSet<Datum>();
-                        _uncommittedDataSets = new List<HashSet<Datum>>();
-                    }
-
-                    foreach (HashSet<Datum> dataSetToCommit in dataSetsToCommit)
-                    {
-                        // if canceled, the following will return immediately and we'll put all data sets into the uncommitted collection
-                        // before returning.
-                        CommitChunksAsync(dataSetToCommit, 1000, this, cancellationToken).Wait();
-
-                        if (dataSetToCommit.Count > 0)
-                        {
-                            lock (_dataLocker)
-                            {
-                                _uncommittedDataSets.Add(dataSetToCommit);
-                            }
-                        }
+                        CommitChunksAsync(_data, 1000, this, cancellationToken).Wait();
                     }
                 }
             });
@@ -240,10 +216,9 @@ namespace SensusService.DataStores
 
         public virtual void Clear()
         {
-            lock (_dataLocker)
+            lock (_data)
             {
                 _data.Clear();
-                _uncommittedDataSets.Clear();
             }
         }
 
@@ -292,10 +267,9 @@ namespace SensusService.DataStores
             _mostRecentSuccessfulCommitTime = null;
             _commitCallbackId = null;
 
-            lock (_dataLocker)
+            lock (_data)
             {
                 _data.Clear();
-                _uncommittedDataSets.Clear();
             }
         }
 

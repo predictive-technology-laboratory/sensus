@@ -73,24 +73,24 @@ namespace SensusService.DataStores.Remote
                 else
                 {
 #if __IOS__
-                            // on ios the user must activate the app in order to save data. give the user some feedback to let them know that this is 
-                            // going to happen and might take some time. if they background the app the commit will be canceled if it runs out of background
-                            // time.
-                                SensusServiceHelper.Get().FlashNotificationAsync("Submitting data. Please wait for success confirmation...");
+                    // on ios the user must activate the app in order to save data. give the user some feedback to let them know that this is 
+                    // going to happen and might take some time. if they background the app the commit will be canceled if it runs out of background
+                    // time.
+                    SensusServiceHelper.Get().FlashNotificationAsync("Submitting data. Please wait for success confirmation...");
 #endif
+
                     // first commmit any data that have accumulated in the internal memory of the remote data store
                     await base.CommitAsync(callbackId, cancellationToken, letDeviceSleepCallback);
 
                     // instruct the local data store to commit its data to the remote data store.
-                    await Protocol.LocalDataStore.CommitDataToRemoteDataStore(cancellationToken);
+#if __ANDROID__
+                    Protocol.LocalDataStore.CommitDataToRemoteDataStore(cancellationToken);
+#elif __IOS__
+                    int numDataCommitted = Protocol.LocalDataStore.CommitDataToRemoteDataStore(cancellationToken);
 
-#if __IOS__
-                            // on ios the user must activate the app in order to save data. give the user some feedback to let them know that the data were stored remotely.
-                            if (numDataCommitted != null && this is RemoteDataStore)
-                            {
-                                int numDataCommittedValue = numDataCommitted.GetValueOrDefault();
-                                SensusServiceHelper.Get().FlashNotificationAsync("Submitted " + numDataCommittedValue + " data item" + (numDataCommittedValue == 1 ? "" : "s") + " to the \"" + _protocol.Name + "\" study." + (numDataCommittedValue > 0 ? " Thank you!" : ""));
-                            }
+                    // on ios the user must activate the app in order to save data. give the user some feedback to let them know that the data were stored remotely.
+                    if (this is RemoteDataStore)
+                        SensusServiceHelper.Get().FlashNotificationAsync("Submitted " + numDataCommitted + " data item" + (numDataCommitted == 1 ? "" : "s") + " to the \"" + Protocol.Name + "\" study." + (numDataCommitted > 0 ? " Thank you!" : ""));
 #endif
                 }
             });
