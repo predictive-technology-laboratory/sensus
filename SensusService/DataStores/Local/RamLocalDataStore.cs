@@ -73,6 +73,7 @@ namespace SensusService.DataStores.Local
                                 string anonymizedDatumJSON = datum.GetJSON(Protocol.JsonAnonymizer, false);
                                 Datum anonymizedDatum = Datum.FromJSON(anonymizedDatumJSON);
                                 _data.Add(anonymizedDatum);
+                                MostRecentSuccessfulCommitTime = DateTime.Now;
                                 committedData.Add(anonymizedDatum);
                             }
                             catch (Exception ex)

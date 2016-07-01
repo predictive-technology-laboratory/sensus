@@ -55,9 +55,9 @@ namespace SensusService.DataStores.Remote
                         if (cancellationToken.IsCancellationRequested)
                             break;
 
-                        committedData.Add(datum);
-
                         SensusServiceHelper.Get().Logger.Log("Committed datum to remote console:  " + datum, LoggingLevel.Debug, GetType());
+                        MostRecentSuccessfulCommitTime = DateTime.Now;
+                        committedData.Add(datum);
                     }
 
                     return committedData;

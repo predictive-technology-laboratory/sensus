@@ -19,8 +19,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Linq;
-using System.Threading.Tasks;
 using SensusService.DataStores.Remote;
+using System.Threading.Tasks;
 
 namespace SensusService.DataStores
 {
