@@ -767,7 +767,9 @@ namespace SensusService
         public bool CallbackIsScheduled(string callbackId)
         {
             lock (_idCallback)
+            {
                 return _idCallback.ContainsKey(callbackId);
+            }
         }
 
         public string GetCallbackUserNotificationMessage(string callbackId)
@@ -947,10 +949,10 @@ namespace SensusService
                 if (_idCallback.TryGetValue(callbackId, out scheduledCallback))
                 {
                     scheduledCallback.Canceller.Cancel();
-                    SensusServiceHelper.Get().Logger.Log("Cancelled callback \"" + scheduledCallback.Name + "\" (" + callbackId + ").", LoggingLevel.Normal, GetType());
+                    _logger.Log("Cancelled callback \"" + scheduledCallback.Name + "\" (" + callbackId + ").", LoggingLevel.Normal, GetType());
                 }
                 else
-                    SensusServiceHelper.Get().Logger.Log("Callback \"" + callbackId + "\" not present. Cannot cancel.", LoggingLevel.Normal, GetType());
+                    _logger.Log("Callback \"" + callbackId + "\" not present. Cannot cancel.", LoggingLevel.Normal, GetType());
             }
         }
 
@@ -959,7 +961,7 @@ namespace SensusService
             if (callbackId != null)
                 lock (_idCallback)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Unscheduling callback \"" + callbackId + "\".", LoggingLevel.Normal, GetType());
+                    _logger.Log("Unscheduling callback \"" + callbackId + "\".", LoggingLevel.Normal, GetType());
 
                     CancelRaisedCallback(callbackId);
                     _idCallback.Remove(callbackId);
@@ -1110,7 +1112,7 @@ namespace SensusService
                                                                     // we aren't doing anything else, so the top of the modal stack should be the prompt page; however, check to be sure.
                                                                     if (navigation.ModalStack.Count > 0 && navigation.ModalStack.Last() is PromptForInputsPage)
                                                                     {
-                                                                        SensusServiceHelper.Get().Logger.Log("Popping prompt page with result:  " + result, LoggingLevel.Normal, GetType());
+                                                                        _logger.Log("Popping prompt page with result:  " + result, LoggingLevel.Normal, GetType());
 
                                                                         // animate pop if the user submitted or canceled
                                                                         await navigation.PopModalAsync(stepNumber == inputGroups.Count() && result == PromptForInputsPage.Result.NavigateForward ||
@@ -1214,7 +1216,7 @@ namespace SensusService
                     #region geotag input groups if the user didn't cancel and we've got input groups with inputs that are complete and lacking locations
                     if (inputGroups != null && inputGroups.Any(inputGroup => inputGroup.Geotag && inputGroup.Inputs.Any(input => input.Complete && (input.Latitude == null || input.Longitude == null))))
                     {
-                        SensusServiceHelper.Get().Logger.Log("Geotagging input groups.", LoggingLevel.Normal, GetType());
+                        _logger.Log("Geotagging input groups.", LoggingLevel.Normal, GetType());
 
                         try
                         {
@@ -1246,7 +1248,7 @@ namespace SensusService
                         }
                         catch (Exception ex)
                         {
-                            SensusServiceHelper.Get().Logger.Log("Error geotagging input groups:  " + ex.Message, LoggingLevel.Normal, GetType());
+                            _logger.Log("Error geotagging input groups:  " + ex.Message, LoggingLevel.Normal, GetType());
                         }
                     }
                     #endregion
@@ -1354,7 +1356,7 @@ namespace SensusService
                     else if (currentTypeName == "WinPhoneSensusServiceHelper")
                         convertedJsonLine = jsonLine.Replace("Android", "WinPhone").Replace("iOS", "WinPhone");
                     else
-                        throw new SensusException("Attempted to convert JSON for unknown service helper type:  " + SensusServiceHelper.Get().GetType().FullName);
+                        throw new SensusException("Attempted to convert JSON for unknown service helper type:  " + GetType().FullName);
 
                     if (convertedJsonLine != jsonLine)
                         conversionPerformed = true;
@@ -1445,7 +1447,7 @@ namespace SensusService
 
             new Thread(async () =>
                 {
-                    status = await SensusServiceHelper.Get().ObtainPermissionAsync(permission);
+                    status = await ObtainPermissionAsync(permission);
                     wait.Set();
 
                 }).Start();
@@ -1483,8 +1485,6 @@ namespace SensusService
 
             // make sure all logged messages get into the file.
             _logger.CommitMessageBuffer();
-
-            SINGLETON = null;
         }
     }
 }

@@ -71,7 +71,7 @@ namespace Sensus.Android
                 // requested. furthermore, all calls here should be nonblocking / async so we don't 
                 // tie up the UI thread.
                 serviceHelper.StartAsync(() =>
-                    {        
+                    {
                         // is this a callback intent?
                         if (intent != null && intent.GetBooleanExtra(SensusServiceHelper.SENSUS_CALLBACK_KEY, false))
                         {
@@ -89,13 +89,13 @@ namespace Sensus.Android
                                 bool wakeLockReleased = false;
 
                                 // raise callback and notify the user if there is a message. we wouldn't have presented the user with the message yet.
-                                serviceHelper.RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, true, 
+                                serviceHelper.RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, true,
 
                                     // schedule a new callback at the given time.
                                     repeatCallbackTime =>
                                     {
                                         PendingIntent callbackPendingIntent = PendingIntent.GetService(this, callbackId.GetHashCode(), intent, PendingIntentFlags.CancelCurrent);
-                                        serviceHelper.ScheduleCallbackAlarm(callbackPendingIntent, repeatCallbackTime);
+                                        serviceHelper.ScheduleCallbackAlarm(callbackPendingIntent, callbackId, repeatCallbackTime);
                                     },
 
                                     // if the callback indicates that it's okay for the device to sleep, release the wake lock now.
@@ -136,20 +136,12 @@ namespace Sensus.Android
 
             lock (_bindings)
                 _bindings.Add(binder);
-            
+
             return binder;
         }
 
         public void Stop()
         {
-            try
-            {
-                StopSelf();
-            }
-            catch (Exception)
-            {
-            }
-
             lock (_bindings)
             {
                 foreach (AndroidSensusServiceBinder binder in _bindings)
@@ -163,6 +155,14 @@ namespace Sensus.Android
                         {
                         }
                     }
+            }
+
+            try
+            {
+                StopSelf();
+            }
+            catch (Exception)
+            {
             }
         }
 
@@ -179,7 +179,7 @@ namespace Sensus.Android
             // the other way we might find ourselves in ondestroy is if system resources are running out and android decides to 
             // reclaim the service. in this case we need to stop/dispose the service helper. this case is indicated by a non-null 
             // service helper.
-           
+
             AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
 
             if (serviceHelper != null)
