@@ -443,6 +443,8 @@ namespace SensusUI
                         buttons.Add("Stop Sensus");
 #endif
 
+                        buttons.Add("About Sensus");
+
                         string action = await DisplayActionSheet("Other Actions", "Back", null, buttons.ToArray());
 
                         if (action == "New Protocol")
@@ -490,6 +492,10 @@ namespace SensusUI
                         else if (action == "Stop Sensus" && await DisplayAlert("Confirm", "Are you sure you want to stop Sensus? This will end your participation in all studies.", "Stop Sensus", "Go Back"))
                             SensusServiceHelper.Get().Stop();
 #endif
+                        else if (action == "About Sensus")
+                        {
+                            await DisplayAlert("About Sensus", "Version:  " + SensusServiceHelper.Get().Version, "OK");
+                        }
                     }));
         }
 

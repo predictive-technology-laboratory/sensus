@@ -321,7 +321,7 @@ namespace SensusService
         private Dictionary<string, ScheduledCallback> _idCallback;
         private SHA256Managed _hasher;
         private List<PointOfInterest> _pointsOfInterest;
-        private ZXing.Mobile.MobileBarcodeScanner _barcodeScanner;
+        private MobileBarcodeScanner _barcodeScanner;
         private ZXing.Mobile.BarcodeWriter _barcodeWriter;
 
         private readonly object _shareFileLocker = new object();
@@ -416,6 +416,9 @@ namespace SensusService
 
         [JsonIgnore]
         protected abstract bool IsOnMainThread { get; }
+
+        [JsonIgnore]
+        public abstract string Version { get; }
 
         #region iOS GPS listener settings
 

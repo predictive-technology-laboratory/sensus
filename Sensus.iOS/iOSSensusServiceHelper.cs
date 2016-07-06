@@ -133,6 +133,14 @@ namespace Sensus.iOS
             get { return NSThread.Current.IsMainThread; }
         }
 
+        public override string Version
+        {
+            get
+            {
+                return NSBundle.MainBundle.InfoDictionary["CFBundleShortVersionString"].ToString();
+            }
+        }
+
         public iOSSensusServiceHelper()
         {
             _callbackIdNotification = new Dictionary<string, UILocalNotification>();

@@ -114,6 +114,14 @@ namespace Sensus.Android
             }
         }
 
+        public override string Version
+        {
+            get
+            {
+                return _service?.PackageManager.GetPackageInfo(_service.PackageName, PackageInfoFlags.Activities).VersionName ?? null;
+            }
+        }
+
         [JsonIgnore]
         public int WakeLockAcquisitionCount
         {
