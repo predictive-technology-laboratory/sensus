@@ -1075,40 +1075,54 @@ namespace SensusService
                 {
                     if (_localDataStore == null)
                         error += "No local data store present on protocol." + Environment.NewLine;
-                    else if (_localDataStore.TestHealth(ref error, ref warning, ref misc))
+                    else
                     {
-                        error += "Restarting local data store...";
+                        misc += "Local data added:  " + _localDataStore.AddedDataCount + Environment.NewLine +
+                                "Local data in memory:  " + _localDataStore.DataCount + Environment.NewLine +
+                                "Local data committed:  " + _localDataStore.CommittedDataCount + Environment.NewLine;
 
-                        try
+                        if (_localDataStore.TestHealth(ref error, ref warning, ref misc))
                         {
-                            _localDataStore.Restart();
-                        }
-                        catch (Exception ex)
-                        {
-                            error += ex.Message + "...";
-                        }
+                            error += "Restarting local data store...";
 
-                        if (!_localDataStore.Running)
-                            error += "failed to restart local data store." + Environment.NewLine;
+                            try
+                            {
+                                _localDataStore.Restart();
+                            }
+                            catch (Exception ex)
+                            {
+                                error += ex.Message + "...";
+                            }
+
+                            if (!_localDataStore.Running)
+                                error += "failed to restart local data store." + Environment.NewLine;
+                        }
                     }
 
                     if (_remoteDataStore == null)
                         error += "No remote data store present on protocol." + Environment.NewLine;
-                    else if (_remoteDataStore.TestHealth(ref error, ref warning, ref misc))
+                    else
                     {
-                        error += "Restarting remote data store...";
+                        misc += "Remote data added:  " + _remoteDataStore.AddedDataCount + Environment.NewLine +
+                                "Remote data in memory:  " + _remoteDataStore.DataCount + Environment.NewLine +
+                                "Remote data committed:  " + _remoteDataStore.CommittedDataCount + Environment.NewLine;
 
-                        try
+                        if (_remoteDataStore.TestHealth(ref error, ref warning, ref misc))
                         {
-                            _remoteDataStore.Restart();
-                        }
-                        catch (Exception ex)
-                        {
-                            error += ex.Message + "...";
-                        }
+                            error += "Restarting remote data store...";
 
-                        if (!_remoteDataStore.Running)
-                            error += "failed to restart remote data store." + Environment.NewLine;
+                            try
+                            {
+                                _remoteDataStore.Restart();
+                            }
+                            catch (Exception ex)
+                            {
+                                error += ex.Message + "...";
+                            }
+
+                            if (!_remoteDataStore.Running)
+                                error += "failed to restart remote data store." + Environment.NewLine;
+                        }
                     }
 
                     foreach (Probe probe in _probes)

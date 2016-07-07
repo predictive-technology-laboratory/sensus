@@ -36,18 +36,6 @@ namespace SensusService.DataStores.Local
             get { return true; }
         }
 
-        [JsonIgnore]
-        public int DataCount
-        {
-            get
-            {
-                lock (_data)
-                {
-                    return _data.Count;
-                }
-            }
-        }
-
         public RamLocalDataStore()
         {
             _data = new HashSet<Datum>();

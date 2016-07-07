@@ -58,6 +58,7 @@ namespace SensusService.DataStores
                             // remove them from the data collection to indicate to the caller that they were committed.
                             data.Remove(committedDatum);
                             ++dataCommitted;
+                            ++dataStore.CommittedDataCount;
                         }
 
                     // if we failed to commit anything, then we've been canceled, there's nothing to commit, or the commit failed.
@@ -82,6 +83,8 @@ namespace SensusService.DataStores
         private DateTime? _mostRecentSuccessfulCommitTime;
         private HashSet<Datum> _data;
         private string _commitCallbackId;
+        private long _addedDataCount;
+        private long _committedDataCount;
 
         [EntryIntegerUiProperty("Commit Delay (MS):", true, 2)]
         public int CommitDelayMS
@@ -149,6 +152,54 @@ namespace SensusService.DataStores
         [JsonIgnore]
         public abstract bool Clearable { get; }
 
+        [JsonIgnore]
+        public long CommittedDataCount
+        {
+            get
+            {
+                return _committedDataCount;
+            }
+
+            set
+            {
+                _committedDataCount = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the count for data currently held in memory in this data store.
+        /// </summary>
+        /// <value>The data count.</value>
+        [JsonIgnore]
+        public int DataCount
+        {
+            get
+            {
+                lock (_data)
+                {
+                    return _data.Count;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the number of data ever added to this data store.
+        /// </summary>
+        /// <value>The added data count.</value>
+        [JsonIgnore]
+        public long AddedDataCount
+        {
+            get
+            {
+                return _addedDataCount;
+            }
+
+            set
+            {
+                _addedDataCount = value;
+            }
+        }
+
         protected DataStore()
         {
             _commitDelayMS = 10000;
@@ -157,6 +208,8 @@ namespace SensusService.DataStores
             _mostRecentSuccessfulCommitTime = null;
             _data = new HashSet<Datum>();
             _commitCallbackId = null;
+            _committedDataCount = 0;
+            _addedDataCount = 0;
         }
 
         /// <summary>
@@ -190,6 +243,7 @@ namespace SensusService.DataStores
             lock (_data)
             {
                 _data.Add(datum);
+                ++_addedDataCount;
             }
         }
 
