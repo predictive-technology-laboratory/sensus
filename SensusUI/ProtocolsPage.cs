@@ -19,12 +19,14 @@ using System.Linq;
 using Xamarin.Forms;
 using SensusUI.Inputs;
 using System.Collections.Generic;
-using SensusService.Probes.User;
-using SensusService.Probes;
 using SensusService.Exceptions;
 using System.Threading;
 using ZXing;
 using Plugin.Permissions.Abstractions;
+
+#if __ANDROID__
+using Sensus.Android;
+#endif
 
 namespace SensusUI
 {
@@ -490,7 +492,11 @@ namespace SensusUI
                         }
 #if __ANDROID__
                         else if (action == "Stop Sensus" && await DisplayAlert("Confirm", "Are you sure you want to stop Sensus? This will end your participation in all studies.", "Stop Sensus", "Go Back"))
-                            SensusServiceHelper.Get().Stop();
+                        {
+                            AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
+                            serviceHelper.StopProtocols();
+                            serviceHelper.Service.Stop();
+                        }
 #endif
                         else if (action == "About Sensus")
                         {

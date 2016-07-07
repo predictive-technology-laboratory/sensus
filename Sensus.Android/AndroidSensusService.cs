@@ -42,9 +42,10 @@ namespace Sensus.Android
 
             AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
 
-            // it's happened that the service is created after the service helper is disposed:  https://insights.xamarin.com/app/Sensus-Production/issues/46
+            // we might have failed to create the service helper. it's also happened that the service is created after the 
+            // service helper is disposed:  https://insights.xamarin.com/app/Sensus-Production/issues/46
             if (serviceHelper == null)
-                StopSelf();
+                Stop();
             else
                 serviceHelper.SetService(this);
         }
@@ -94,8 +95,7 @@ namespace Sensus.Android
                                     // schedule a new callback at the given time.
                                     repeatCallbackTime =>
                                     {
-                                        PendingIntent callbackPendingIntent = PendingIntent.GetService(this, callbackId.GetHashCode(), intent, PendingIntentFlags.CancelCurrent);
-                                        serviceHelper.ScheduleCallbackAlarm(callbackPendingIntent, callbackId, repeatCallbackTime);
+                                        serviceHelper.ScheduleCallbackAlarm(serviceHelper.CreateCallbackPendingIntent(intent), callbackId, repeatCallbackTime);
                                     },
 
                                     // if the callback indicates that it's okay for the device to sleep, release the wake lock now.
@@ -142,10 +142,17 @@ namespace Sensus.Android
 
         public void Stop()
         {
+            NotifyBindingsOfStop();
+            StopSelf();
+        }
+
+        private void NotifyBindingsOfStop()
+        {
+            // let everyone who is bound to the service know that we're going to stop.
             lock (_bindings)
             {
                 foreach (AndroidSensusServiceBinder binder in _bindings)
-                    if (binder.ServiceStopAction != null)
+                    if (binder.SensusServiceHelper != null && binder.ServiceStopAction != null)
                     {
                         try
                         {
@@ -155,14 +162,8 @@ namespace Sensus.Android
                         {
                         }
                     }
-            }
 
-            try
-            {
-                StopSelf();
-            }
-            catch (Exception)
-            {
+                _bindings.Clear();
             }
         }
 
@@ -172,21 +173,19 @@ namespace Sensus.Android
 
             base.OnDestroy();
 
-            // ondestroy can be called in two different ways. first, the user might stop sensus from within the activity. if this
-            // happens, the service helper will be stopped/disposed, and the service will be stopped. at some indeterminate point 
-            // in the future, the service will be destroyed and cleaned up, calling this method. in this case we don't need to do 
-            // anything since all of the stopping/cleaning has already happened. this case is indicated by a null service helper. 
-            // the other way we might find ourselves in ondestroy is if system resources are running out and android decides to 
-            // reclaim the service. in this case we need to stop/dispose the service helper. this case is indicated by a non-null 
-            // service helper.
-
             AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
 
+            // the service helper will be null if we failed to create it within OnCreate, so first check that. also, 
+            // OnDestroy can be called either when the user stops Sensus (in Android) and when the system reclaims
+            // the service under memory pressure. in the former case, we'll already have done the notification and 
+            // stopping of protocols; however, we have no way to know how we reached OnDestroy, so to cover the latter
+            // case we're going to do the notification and stopping again. this will be duplicative in the case where
+            // the user has stopped sensus. in sum, anything we do below must be safe to run repeatedly.
             if (serviceHelper != null)
             {
-                // case 2 applies (see above)
                 serviceHelper.Logger.Log("Destroying service.", LoggingLevel.Normal, GetType());
-                serviceHelper.Stop();
+                NotifyBindingsOfStop();
+                serviceHelper.StopProtocols();
                 serviceHelper.SetService(null);
             }
         }

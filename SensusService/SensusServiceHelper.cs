@@ -992,7 +992,7 @@ namespace SensusService
 #if !UNIT_TESTING
 
             if (!duration.HasValue)
-                duration = TimeSpan.FromSeconds(4);
+                duration = TimeSpan.FromSeconds(2);
 
             ProtectedFlashNotificationAsync(message, flashLaterIfNotVisible, duration.Value, callback);
 #endif
@@ -1463,28 +1463,25 @@ namespace SensusService
                 throw new SensusException("Attempted to execute on main thread:  " + actionDescription);
         }
 
-        public virtual void Stop()
+        public void StopProtocols()
         {
-            // stop all protocols
             lock (_registeredProtocols)
             {
                 _logger.Log("Stopping protocols.", LoggingLevel.Normal, GetType());
 
                 foreach (Protocol protocol in _registeredProtocols)
-                {
-                    try
+                    if (protocol.Running)
                     {
-                        protocol.Stop();
+                        try
+                        {
+                            protocol.Stop();
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.Log("Failed to stop protocol \"" + protocol.Name + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        _logger.Log("Failed to stop protocol \"" + protocol.Name + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
-                    }
-                }
             }
-
-            // make sure all logged messages get into the file.
-            _logger.CommitMessageBuffer();
         }
     }
 }

@@ -1250,7 +1250,7 @@ namespace SensusService
                 }
 
                 SensusServiceHelper.Get().Logger.Log("Stopped protocol \"" + _name + "\".", LoggingLevel.Normal, GetType());
-                SensusServiceHelper.Get().FlashNotificationAsync("Stopped \"" + _name + "\".");
+                SensusServiceHelper.Get().FlashNotificationAsync("Stopped \"" + _name + "\".", false);
             }
         }
 

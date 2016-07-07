@@ -549,17 +549,17 @@ namespace Sensus.Android
         {
             DateTime callbackTime = DateTime.Now.AddMilliseconds(initialDelayMS);
             Logger.Log("Callback " + callbackId + " scheduled for " + callbackTime + " (repeating).", LoggingLevel.Normal, GetType());
-            ScheduleCallbackAlarm(CreateCallbackIntent(callbackId, true, repeatDelayMS, repeatLag), callbackId, callbackTime);
+            ScheduleCallbackAlarm(CreateCallbackPendingIntent(callbackId, true, repeatDelayMS, repeatLag), callbackId, callbackTime);
         }
 
         protected override void ScheduleOneTimeCallback(string callbackId, int delayMS)
         {
             DateTime callbackTime = DateTime.Now.AddMilliseconds(delayMS);
             Logger.Log("Callback " + callbackId + " scheduled for " + callbackTime + " (one-time).", LoggingLevel.Normal, GetType());
-            ScheduleCallbackAlarm(CreateCallbackIntent(callbackId, false, 0, false), callbackId, callbackTime);
+            ScheduleCallbackAlarm(CreateCallbackPendingIntent(callbackId, false, 0, false), callbackId, callbackTime);
         }
 
-        private PendingIntent CreateCallbackIntent(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag)
+        private PendingIntent CreateCallbackPendingIntent(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag)
         {
             Intent callbackIntent = new Intent(_service, typeof(AndroidSensusService));
             callbackIntent.PutExtra(SENSUS_CALLBACK_KEY, true);
@@ -568,16 +568,21 @@ namespace Sensus.Android
             callbackIntent.PutExtra(SENSUS_CALLBACK_REPEAT_DELAY_KEY, repeatDelayMS);
             callbackIntent.PutExtra(SENSUS_CALLBACK_REPEAT_LAG_KEY, repeatLag);
 
-            PendingIntent callbackPendingIntent = PendingIntent.GetService(_service, callbackId.GetHashCode(), callbackIntent, PendingIntentFlags.CancelCurrent);  // upon hash collisions on the request code, the previous intent will simply be canceled.
+            return CreateCallbackPendingIntent(callbackIntent);
+        }
 
-            return callbackPendingIntent;
+        public PendingIntent CreateCallbackPendingIntent(Intent callbackIntent)
+        {
+            // upon hash collisions for the request code, the previous intent will simply be canceled.
+            return PendingIntent.GetService(_service, callbackIntent.GetStringExtra(SENSUS_CALLBACK_ID_KEY).GetHashCode(), callbackIntent, PendingIntentFlags.CancelCurrent);
         }
 
         public void ScheduleCallbackAlarm(PendingIntent callbackPendingIntent, string callbackId, DateTime callbackTime)
         {
             lock (_callbackIdPendingIntent)
             {
-                // update pending intent associated with the callback id. 
+                // update pending intent associated with the callback id. we'll need the updated pending intent if/when
+                // we which to unschedule the alarm.
                 _callbackIdPendingIntent[callbackId] = callbackPendingIntent;
 
                 AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
@@ -649,15 +654,5 @@ namespace Sensus.Android
         }
 
         #endregion
-
-        public override void Stop()
-        {
-            // stop protocols and clean up
-            base.Stop();
-
-            // stop the service and the main activity
-            if (_service != null)
-                _service.Stop();
-        }
     }
 }

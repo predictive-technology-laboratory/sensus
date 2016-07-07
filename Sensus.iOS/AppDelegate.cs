@@ -239,7 +239,7 @@ namespace Sensus.iOS
                         }
 
             serviceHelper.Save();
-            serviceHelper.Stop();
+            serviceHelper.StopProtocols();
         }
     }
 }
