@@ -22,7 +22,6 @@ using System.Threading;
 using Newtonsoft.Json;
 using SensusService.Probes;
 using SensusService.Probes.Location;
-using SensusUI.UiProperties;
 using Xamarin;
 using System.Collections.ObjectModel;
 using SensusUI;
@@ -31,12 +30,14 @@ using Xamarin.Forms;
 using SensusService.Exceptions;
 using ZXing.Mobile;
 using ZXing;
-using XLabs.Platform.Device;
-using System.Collections;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
 using System.Threading.Tasks;
+
+#if __IOS__
+using XLabs.Platform.Device;
+#endif
 
 namespace SensusService
 {
@@ -349,7 +350,7 @@ namespace SensusService
         }
 
         [JsonIgnore]
-        public ZXing.Mobile.MobileBarcodeScanner BarcodeScanner
+        public MobileBarcodeScanner BarcodeScanner
         {
             get
             {
