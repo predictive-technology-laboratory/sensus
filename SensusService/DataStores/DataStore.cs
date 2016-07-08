@@ -29,42 +29,67 @@ namespace SensusService.DataStores
     /// </summary>
     public abstract class DataStore
     {
-        protected static Task CommitChunksAsync(HashSet<Datum> data, int chunkSize, DataStore dataStore, CancellationToken cancellationToken)
+        protected static Task CommitChunksAsync(HashSet<Datum> data, DataStore dataStore, CancellationToken cancellationToken)
         {
             return Task.Run(async () =>
             {
+                int chunkSize = 10000;
+
+                // the data set passed in is open to modification, and callers might continue adding data after this method returns.
+                // so, we can't simply run until data is empty since it may never be empty. instead, run a predetermined number of 
+                // chunks.
+                int maxNumChunks;
+                lock (data)
+                {
+                    maxNumChunks = (int)Math.Ceiling(data.Count / (double)chunkSize);
+                }
+
                 HashSet<Datum> chunk = new HashSet<Datum>();
 
                 // process all chunks, stopping for cancellation.
-                while (!cancellationToken.IsCancellationRequested)
+                int chunksCommitted = 0;
+                while (!cancellationToken.IsCancellationRequested && chunksCommitted < maxNumChunks)
                 {
                     // build a new chunk, stopping for cancellation, exhaustion of data, or full chunk.
                     chunk.Clear();
-                    foreach (Datum datum in data)
-                    {
-                        chunk.Add(datum);
 
-                        if (cancellationToken.IsCancellationRequested || chunk.Count >= chunkSize)
-                            break;
+                    lock (data)
+                    {
+                        foreach (Datum datum in data)
+                        {
+                            chunk.Add(datum);
+
+                            if (cancellationToken.IsCancellationRequested || chunk.Count >= chunkSize)
+                                break;
+                        }
                     }
 
                     // commit chunk as long as we're not canceled and the chunk has something in it
                     int dataCommitted = 0;
                     if (!cancellationToken.IsCancellationRequested && chunk.Count > 0)
-                        foreach (Datum committedDatum in await dataStore.CommitAsync(chunk, cancellationToken))
+                    {
+                        List<Datum> committedData = await dataStore.CommitAsync(chunk, cancellationToken);
+
+                        lock (data)
                         {
-                            // remove committed data from the data that were passed in. if we check for and break
-                            // on cancellation here, the committed data will not be treated as such. we need to 
-                            // remove them from the data collection to indicate to the caller that they were committed.
-                            data.Remove(committedDatum);
-                            ++dataCommitted;
-                            ++dataStore.CommittedDataCount;
+                            foreach (Datum committedDatum in committedData)
+                            {
+                                // remove committed data from the data that were passed in. if we check for and break
+                                // on cancellation here, the committed data will not be treated as such. we need to 
+                                // remove them from the data collection to indicate to the caller that they were committed.
+                                data.Remove(committedDatum);
+                                ++dataCommitted;
+                                ++dataStore.CommittedDataCount;
+                            }
                         }
+                    }
 
                     // if we failed to commit anything, then we've been canceled, there's nothing to commit, or the commit failed.
                     // in any of these cases, we should not proceed with the next chunk. the caller will need to retry the commit.
                     if (dataCommitted == 0)
                         break;
+
+                    ++chunksCommitted;
                 }
             });
         }
@@ -152,7 +177,10 @@ namespace SensusService.DataStores
         [JsonIgnore]
         public abstract bool Clearable { get; }
 
-        [JsonIgnore]
+        /// <summary>
+        /// Gets or sets the number of data ever commited to this data store.
+        /// </summary>
+        /// <value>The committed data count.</value>
         public long CommittedDataCount
         {
             get
@@ -186,7 +214,6 @@ namespace SensusService.DataStores
         /// Gets or sets the number of data ever added to this data store.
         /// </summary>
         /// <value>The added data count.</value>
-        [JsonIgnore]
         public long AddedDataCount
         {
             get
@@ -233,7 +260,7 @@ namespace SensusService.DataStores
                     userNotificationMessage = "Sensus needs to submit your data for the \"" + _protocol.Name + "\" study. Please open this notification.";
 #endif
 
-                ScheduledCallback callback = new ScheduledCallback(CommitAsync, GetType().FullName + " Commit", TimeSpan.FromMinutes(_commitTimeoutMinutes), userNotificationMessage);
+                ScheduledCallback callback = new ScheduledCallback(CycleAsync, GetType().FullName + " Commit", TimeSpan.FromMinutes(_commitTimeoutMinutes), userNotificationMessage);
                 _commitCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(callback, _commitDelayMS, _commitDelayMS, COMMIT_CALLBACK_LAG);
             }
         }
@@ -247,17 +274,12 @@ namespace SensusService.DataStores
             }
         }
 
-        protected virtual Task CommitAsync(string callbackId, CancellationToken cancellationToken, Action letDeviceSleepCallback)
+        protected virtual Task CycleAsync(string callbackId, CancellationToken cancellationToken, Action letDeviceSleepCallback)
         {
-            return Task.Run(() =>
+            return Task.Run(async () =>
             {
                 if (_running)
-                {
-                    lock (_data)
-                    {
-                        CommitChunksAsync(_data, 1000, this, cancellationToken).Wait();
-                    }
-                }
+                    await CommitChunksAsync(_data, this, cancellationToken);
             });
         }
 

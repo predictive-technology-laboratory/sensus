@@ -75,16 +75,9 @@ namespace SensusService.DataStores.Local
                 });
         }
 
-        public override int CommitDataToRemoteDataStore(CancellationToken cancellationToken)
+        public override void CommitDataToRemoteDataStore(CancellationToken cancellationToken)
         {
-            lock (_data)
-            {
-                int dataCountPreCommit = _data.Count;
-
-                CommitChunksAsync(_data, 1000, Protocol.RemoteDataStore, cancellationToken).Wait();
-
-                return dataCountPreCommit - _data.Count;
-            }
+            CommitChunksAsync(_data, Protocol.RemoteDataStore, cancellationToken).Wait();
         }
 
         protected override IEnumerable<Tuple<string, string>> GetDataLinesToWrite(CancellationToken cancellationToken, Action<string, double> progressCallback)

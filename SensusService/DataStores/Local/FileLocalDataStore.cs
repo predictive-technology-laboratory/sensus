@@ -122,7 +122,7 @@ namespace SensusService.DataStores.Local
                 });
         }
 
-        public override int CommitDataToRemoteDataStore(CancellationToken cancellationToken)
+        public override void CommitDataToRemoteDataStore(CancellationToken cancellationToken)
         {
             lock (_storageDirectoryLocker)
             {
@@ -134,8 +134,6 @@ namespace SensusService.DataStores.Local
 
                 // reset _path for standard commits
                 WriteToNewPath();
-
-                int dataCommitted = 0;
 
                 using (StreamWriter uncommittedDataFile = new StreamWriter(uncommittedDataPath))
                 {
@@ -170,8 +168,8 @@ namespace SensusService.DataStores.Local
                                             SensusServiceHelper.Get().Logger.Log("Failed to add datum to batch from JSON:  " + ex.Message, LoggingLevel.Normal, GetType());
                                         }
 
-                                        if (batch.Count >= 10000)
-                                            dataCommitted += CommitBatchToRemote(batch, cancellationToken, uncommittedDataFile);
+                                        if (batch.Count >= 50000)
+                                            CommitBatchToRemote(batch, cancellationToken, uncommittedDataFile);
                                     }
                                 }
 
@@ -185,7 +183,7 @@ namespace SensusService.DataStores.Local
                                             uncommittedDataFile.WriteLine(datum.GetJSON(Protocol.JsonAnonymizer, false));
                                     }
                                     else
-                                        dataCommitted += CommitBatchToRemote(batch, cancellationToken, uncommittedDataFile);
+                                        CommitBatchToRemote(batch, cancellationToken, uncommittedDataFile);
                                 }
                             }
 
@@ -199,16 +197,12 @@ namespace SensusService.DataStores.Local
                         }
                     }
                 }
-
-                return dataCommitted;
             }
         }
 
-        private int CommitBatchToRemote(HashSet<Datum> batch, CancellationToken cancellationToken, StreamWriter uncommittedDataFile)
+        private void CommitBatchToRemote(HashSet<Datum> batch, CancellationToken cancellationToken, StreamWriter uncommittedDataFile)
         {
-            int dataCountPreCommit = batch.Count;
-            CommitChunksAsync(batch, 1000, Protocol.RemoteDataStore, cancellationToken).Wait();
-            int dataCountPostCommit = batch.Count;
+            CommitChunksAsync(batch, Protocol.RemoteDataStore, cancellationToken).Wait();
 
             // any leftover data should be dumped to the uncommitted file to maintain memory limits. the data will be committed next time.
             foreach (Datum datum in batch)
@@ -216,8 +210,6 @@ namespace SensusService.DataStores.Local
 
             // all data were either commmitted or dumped to the uncommitted file. clear the batch.
             batch.Clear();
-
-            return dataCountPreCommit - dataCountPostCommit;
         }
 
         protected override IEnumerable<Tuple<string, string>> GetDataLinesToWrite(CancellationToken cancellationToken, Action<string, double> progressCallback)

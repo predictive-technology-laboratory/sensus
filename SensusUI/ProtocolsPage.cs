@@ -358,6 +358,19 @@ namespace SensusUI
                                 {
                                     selectedProtocolCopy.ResetForSharing();
 
+                                    // reset data counts
+                                    if (selectedProtocolCopy.LocalDataStore != null)
+                                    {
+                                        selectedProtocolCopy.LocalDataStore.AddedDataCount = 0;
+                                        selectedProtocolCopy.LocalDataStore.CommittedDataCount = 0;
+                                    }
+
+                                    if (selectedProtocolCopy.RemoteDataStore != null)
+                                    {
+                                        selectedProtocolCopy.RemoteDataStore.AddedDataCount = 0;
+                                        selectedProtocolCopy.RemoteDataStore.CommittedDataCount = 0;
+                                    }
+
                                     // write protocol to file and share
                                     string sharePath = SensusServiceHelper.Get().GetSharePath(".json");
                                     selectedProtocolCopy.Save(sharePath);

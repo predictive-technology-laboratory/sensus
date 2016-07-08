@@ -58,7 +58,7 @@ namespace SensusService.DataStores.Remote
 #endif
         }
 
-        protected override Task CommitAsync(string callbackId, CancellationToken cancellationToken, Action letDeviceSleepCallback)
+        protected sealed override Task CycleAsync(string callbackId, CancellationToken cancellationToken, Action letDeviceSleepCallback)
         {
             return Task.Run(async () =>
             {
@@ -80,17 +80,15 @@ namespace SensusService.DataStores.Remote
 #endif
 
                     // first commmit any data that have accumulated in the internal memory of the remote data store
-                    await base.CommitAsync(callbackId, cancellationToken, letDeviceSleepCallback);
+                    await base.CycleAsync(callbackId, cancellationToken, letDeviceSleepCallback);
 
                     // instruct the local data store to commit its data to the remote data store.
-#if __ANDROID__
                     Protocol.LocalDataStore.CommitDataToRemoteDataStore(cancellationToken);
-#elif __IOS__
-                    int numDataCommitted = Protocol.LocalDataStore.CommitDataToRemoteDataStore(cancellationToken);
 
+#if __IOS__
                     // on ios the user must activate the app in order to save data. give the user some feedback to let them know that the data were stored remotely.
                     if (this is RemoteDataStore)
-                        SensusServiceHelper.Get().FlashNotificationAsync("Submitted " + numDataCommitted + " data item" + (numDataCommitted == 1 ? "" : "s") + " to the \"" + Protocol.Name + "\" study." + (numDataCommitted > 0 ? " Thank you!" : ""));
+                        SensusServiceHelper.Get().FlashNotificationAsync("Submitted data to the \"" + Protocol.Name + "\" study. Thank you!");
 #endif
                 }
             });
