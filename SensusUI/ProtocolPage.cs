@@ -49,7 +49,7 @@ namespace SensusUI
             views.AddRange(UiProperty.GetPropertyStacks(_protocol));
 
             #region data stores
-            string localDataStoreSize = _protocol.LocalDataStore.SizeDescription;
+            string localDataStoreSize = _protocol.LocalDataStore?.SizeDescription;
 
             Button editLocalDataStoreButton = new Button
             {
