@@ -335,18 +335,22 @@ namespace SensusService.Probes
                 {
                     _protocol.LocalDataStore.Add(datum);
 
-                    lock (_chartData)
+                    // update chart data on UI thread because the collection is being observed by the UI graphs.
+                    Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
                     {
-                        ChartDataPoint chartDataPoint = GetChartDataPointFromDatum(datum);
-
-                        if (chartDataPoint != null)
+                        lock (_chartData)
                         {
-                            _chartData.Add(chartDataPoint);
+                            ChartDataPoint chartDataPoint = GetChartDataPointFromDatum(datum);
 
-                            while (_chartData.Count > _maxChartDataCount && _chartData.Count > 0)
-                                _chartData.RemoveAt(0);
+                            if (chartDataPoint != null)
+                            {
+                                _chartData.Add(chartDataPoint);
+
+                                while (_chartData.Count > _maxChartDataCount && _chartData.Count > 0)
+                                    _chartData.RemoveAt(0);
+                            }
                         }
-                    }
+                    });
                 }
             }
 
