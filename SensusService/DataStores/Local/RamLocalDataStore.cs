@@ -36,6 +36,15 @@ namespace SensusService.DataStores.Local
             get { return true; }
         }
 
+        [JsonIgnore]
+        public override string SizeDescription
+        {
+            get
+            {
+                return CommittedDataCount + " items";
+            }
+        }
+
         public RamLocalDataStore()
         {
             _data = new HashSet<Datum>();

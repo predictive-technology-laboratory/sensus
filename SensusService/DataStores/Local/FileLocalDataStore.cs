@@ -55,6 +55,25 @@ namespace SensusService.DataStores.Local
             get { return true; }
         }
 
+        [JsonIgnore]
+        public override string SizeDescription
+        {
+            get
+            {
+                string desc = null;
+
+                try
+                {
+                    desc = Math.Round(SensusServiceHelper.GetDirectorySizeMB(StorageDirectory), 1) + " MB";
+                }
+                catch (Exception)
+                {
+                }
+
+                return desc;
+            }
+        }
+
         public override void Start()
         {
             // file needs to be ready to accept data immediately, so set file path before calling base.Start

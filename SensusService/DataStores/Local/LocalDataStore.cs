@@ -47,6 +47,9 @@ namespace SensusService.DataStores.Local
             set { _uploadToRemoteDataStore = value; }
         }
 
+        [JsonIgnore]
+        public abstract string SizeDescription { get; }
+
         protected LocalDataStore()
         {
             _uploadToRemoteDataStore = true;
@@ -209,5 +212,14 @@ namespace SensusService.DataStores.Local
         }
 
         protected abstract IEnumerable<Tuple<string, string>> GetDataLinesToWrite(CancellationToken cancellationToken, Action<string, double> progressCallback);
+
+        public override bool TestHealth(ref string error, ref string warning, ref string misc)
+        {
+            bool restart = base.TestHealth(ref error, ref warning, ref misc);
+
+            misc += "Local size (" + GetType() + "):  " + SizeDescription + Environment.NewLine;
+
+            return restart;
+        }
     }
 }

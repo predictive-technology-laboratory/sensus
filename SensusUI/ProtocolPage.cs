@@ -49,20 +49,7 @@ namespace SensusUI
             views.AddRange(UiProperty.GetPropertyStacks(_protocol));
 
             #region data stores
-            string localDataStoreSize = null;
-            try
-            {
-                if (protocol.LocalDataStore != null)
-                {
-                    if (protocol.LocalDataStore is RamLocalDataStore)
-                        localDataStoreSize = (protocol.LocalDataStore as RamLocalDataStore).CommittedDataCount + " items";
-                    else if (protocol.LocalDataStore is FileLocalDataStore)
-                        localDataStoreSize = Math.Round(SensusServiceHelper.GetDirectorySizeMB((protocol.LocalDataStore as FileLocalDataStore).StorageDirectory), 1) + " MB";
-                }
-            }
-            catch (Exception)
-            {
-            }
+            string localDataStoreSize = _protocol.LocalDataStore.SizeDescription;
 
             Button editLocalDataStoreButton = new Button
             {

@@ -79,7 +79,8 @@ namespace SensusService.DataStores.Remote
                     SensusServiceHelper.Get().FlashNotificationAsync("Submitting data. Please wait for success confirmation...");
 #endif
 
-                    // first commmit any data that have accumulated in the internal memory of the remote data store
+                    // first commmit any data that have accumulated in the internal memory of the remote data store, e.g., protocol report
+                    // data when we are not committing local data to remote but we are also forcing report data.
                     await base.CycleAsync(callbackId, cancellationToken, letDeviceSleepCallback);
 
                     // instruct the local data store to commit its data to the remote data store.

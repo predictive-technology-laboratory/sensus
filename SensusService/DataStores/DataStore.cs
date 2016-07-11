@@ -195,22 +195,6 @@ namespace SensusService.DataStores
         }
 
         /// <summary>
-        /// Gets the count for data currently held in memory in this data store.
-        /// </summary>
-        /// <value>The data count.</value>
-        [JsonIgnore]
-        public int DataCount
-        {
-            get
-            {
-                lock (_data)
-                {
-                    return _data.Count;
-                }
-            }
-        }
-
-        /// <summary>
         /// Gets or sets the number of data ever added to this data store.
         /// </summary>
         /// <value>The added data count.</value>
@@ -331,6 +315,13 @@ namespace SensusService.DataStores
             double msElapsedSinceLastCommit = (DateTime.Now - _mostRecentSuccessfulCommitTime.GetValueOrDefault()).TotalMilliseconds;
             if (msElapsedSinceLastCommit > (_commitDelayMS + 5000))  // system timer callbacks aren't always fired exactly as scheduled, resulting in health tests that identify warning conditions for delayed data storage. allow a small fudge factor to ignore most of these warnings warnings.
                 warning += "Datastore \"" + GetType().FullName + "\" has not committed data in " + msElapsedSinceLastCommit + "ms (commit delay = " + _commitDelayMS + "ms)." + Environment.NewLine;
+
+            lock (_data)
+            {
+                misc += "Data added (" + GetType() + "):  " + _addedDataCount + Environment.NewLine +
+                        "Data in memory (" + GetType() + "):  " + _data.Count + Environment.NewLine +
+                        "Data committed (" + GetType() + "):  " + _committedDataCount + Environment.NewLine;
+            }
 
             return restart;
         }
