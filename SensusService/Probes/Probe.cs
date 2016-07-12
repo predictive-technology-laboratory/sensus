@@ -68,9 +68,8 @@ namespace SensusService.Probes
         private bool _originallyEnabled;
         private List<Tuple<bool, DateTime>> _startStopTimes;
         private List<DateTime> _successfulHealthTestTimes;
-        private ObservableCollection<ChartDataPoint> _chartData;
+        private List<ChartDataPoint> _chartData;
         private int _maxChartDataCount;
-        private SfChart _chart;
 
         private readonly object _locker = new object();
 
@@ -206,6 +205,13 @@ namespace SensusService.Probes
             {
                 if (value > 0)
                     _maxChartDataCount = value;
+
+                // trim chart data collection
+                lock (_chartData)
+                {
+                    while (_chartData.Count > 0 && _chartData.Count > _maxChartDataCount)
+                        _chartData.RemoveAt(0);
+                }
             }
         }
 
@@ -215,8 +221,8 @@ namespace SensusService.Probes
             _storeData = true;
             _startStopTimes = new List<Tuple<bool, DateTime>>();
             _successfulHealthTestTimes = new List<DateTime>();
-            _chartData = new ObservableCollection<ChartDataPoint>();
-            _maxChartDataCount = 500;
+            _maxChartDataCount = 250;
+            _chartData = new List<ChartDataPoint>(_maxChartDataCount + 1);
         }
 
         /// <summary>
@@ -224,7 +230,11 @@ namespace SensusService.Probes
         /// </summary>
         protected virtual void Initialize()
         {
-            _chartData.Clear();
+            lock (_chartData)
+            {
+                _chartData.Clear();
+            }
+
             _mostRecentDatum = null;
             _mostRecentStoreTimestamp = DateTimeOffset.UtcNow;  // mark storage delay from initialization of probe
         }
@@ -335,22 +345,18 @@ namespace SensusService.Probes
                 {
                     _protocol.LocalDataStore.Add(datum);
 
-                    // update chart data on UI thread because the collection is being observed by the UI graphs.
-                    Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+                    ChartDataPoint chartDataPoint = GetChartDataPointFromDatum(datum);
+
+                    if (chartDataPoint != null)
                     {
                         lock (_chartData)
                         {
-                            ChartDataPoint chartDataPoint = GetChartDataPointFromDatum(datum);
+                            _chartData.Add(chartDataPoint);
 
-                            if (chartDataPoint != null)
-                            {
-                                _chartData.Add(chartDataPoint);
-
-                                while (_chartData.Count > _maxChartDataCount && _chartData.Count > 0)
-                                    _chartData.RemoveAt(0);
-                            }
+                            while (_chartData.Count > 0 && _chartData.Count > _maxChartDataCount)
+                                _chartData.RemoveAt(0);
                         }
-                    });
+                    }
                 }
             }
 
@@ -446,27 +452,33 @@ namespace SensusService.Probes
 
             if (series == null)
                 return null;
-            else if (_chart == null)
+
+            // provide the series with a copy of the chart data. if we provide the actual list, then the
+            // chart wants to auto-update the display on subsequent additions to the list. if this happens,
+            // then we'll need to update the list on the UI thread so that the chart is redrawn correctly.
+            // and if this is the case then we're in trouble because xamarin forms is not always initialized 
+            // when the list is updated with probed data (if the activity is killed).
+            lock (_chartData)
             {
-                _chart = new SfChart
-                {
-                    PrimaryAxis = GetChartPrimaryAxis(),
-                    SecondaryAxis = GetChartSecondaryAxis()
-                };
-
-                series.ItemsSource = _chartData;
-                series.EnableAnimation = true;
-                _chart.Series.Add(series);
-
-                _chart.ChartBehaviors.Add(new ChartZoomPanBehavior
-                {
-                    EnablePanning = true,
-                    EnableZooming = true,
-                    EnableDoubleTap = true
-                });
+                series.ItemsSource = _chartData.ToList();
             }
 
-            return _chart;
+            SfChart chart = new SfChart
+            {
+                PrimaryAxis = GetChartPrimaryAxis(),
+                SecondaryAxis = GetChartSecondaryAxis(),
+            };
+
+            chart.Series.Add(series);
+
+            chart.ChartBehaviors.Add(new ChartZoomPanBehavior
+            {
+                EnablePanning = true,
+                EnableZooming = true,
+                EnableDoubleTap = true
+            });
+
+            return chart;
         }
 
         protected abstract ChartSeries GetChartSeries();

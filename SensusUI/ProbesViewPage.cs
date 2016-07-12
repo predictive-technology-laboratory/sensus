@@ -23,7 +23,7 @@ namespace SensusUI
     public class ProbesViewPage : ProbesPage
     {
         public ProbesViewPage(Protocol protocol)
-            : base(protocol, "View Probes")
+            : base(protocol, "View Data")
         {
         }
 
@@ -37,11 +37,18 @@ namespace SensusUI
                 SensusServiceHelper.Get().FlashNotificationAsync("Charts are not available for " + probe.DisplayName + " data.", duration: TimeSpan.FromSeconds(2));
             else
             {
-                await Navigation.PushAsync(new ContentPage
-                    {
-                        Title = probe.DisplayName,
-                        Content = chart
-                    });
+                ContentPage chartPage = new ContentPage
+                {
+                    Title = probe.DisplayName,
+                    Content = chart,
+                };
+
+                chartPage.ToolbarItems.Add(new ToolbarItem("Refresh", null, () =>
+                {
+                    chartPage.Content = probe.GetChart();
+                }));
+
+                await Navigation.PushAsync(chartPage);
             }
         }
     }

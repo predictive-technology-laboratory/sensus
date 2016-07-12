@@ -318,9 +318,10 @@ namespace SensusService.DataStores
 
             lock (_data)
             {
-                misc += "Data added (" + GetType() + "):  " + _addedDataCount + Environment.NewLine +
-                        "Data in memory (" + GetType() + "):  " + _data.Count + Environment.NewLine +
-                        "Data committed (" + GetType() + "):  " + _committedDataCount + Environment.NewLine;
+                string dataStoreName = GetType().Name;
+                misc += "Data added (" + dataStoreName + "):  " + _addedDataCount + Environment.NewLine +
+                        "Data in memory (" + dataStoreName + "):  " + _data.Count + Environment.NewLine +
+                        "Data committed (" + dataStoreName + "):  " + _committedDataCount + Environment.NewLine;
             }
 
             return restart;

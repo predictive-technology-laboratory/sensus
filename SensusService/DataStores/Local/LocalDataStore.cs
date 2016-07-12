@@ -217,7 +217,7 @@ namespace SensusService.DataStores.Local
         {
             bool restart = base.TestHealth(ref error, ref warning, ref misc);
 
-            misc += "Local size (" + GetType() + "):  " + SizeDescription + Environment.NewLine;
+            misc += "Local size (" + GetType().Name + "):  " + SizeDescription + Environment.NewLine;
 
             return restart;
         }
