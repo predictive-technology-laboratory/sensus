@@ -1263,14 +1263,19 @@ namespace SensusService
         {
             Device.BeginInvokeOnMainThread(async () =>
                 {
-                    MapPage mapPage = new MapPage(address, newPinName);
-
-                    mapPage.Disappearing += (o, e) =>
+                    if (await ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
+                        FlashNotificationAsync("Geolocation is not permitted on this device. Cannot display map.");
+                    else
                     {
-                        callback(mapPage.Pins.Select(pin => pin.Position).ToList());
-                    };
+                        MapPage mapPage = new MapPage(address, newPinName);
 
-                    await Application.Current.MainPage.Navigation.PushModalAsync(mapPage);
+                        mapPage.Disappearing += (o, e) =>
+                        {
+                            callback(mapPage.Pins.Select(pin => pin.Position).ToList());
+                        };
+
+                        await Application.Current.MainPage.Navigation.PushModalAsync(mapPage);
+                    }
                 });
         }
 
@@ -1278,14 +1283,19 @@ namespace SensusService
         {
             Device.BeginInvokeOnMainThread(async () =>
                 {
-                    MapPage mapPage = new MapPage(address, newPinName);
-
-                    mapPage.Disappearing += (o, e) =>
+                    if (await ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
+                        FlashNotificationAsync("Geolocation is not permitted on this device. Cannot display map.");
+                    else
                     {
-                        callback(mapPage.Pins.Select(pin => pin.Position).ToList());
-                    };
+                        MapPage mapPage = new MapPage(address, newPinName);
 
-                    await Application.Current.MainPage.Navigation.PushModalAsync(mapPage);
+                        mapPage.Disappearing += (o, e) =>
+                        {
+                            callback(mapPage.Pins.Select(pin => pin.Position).ToList());
+                        };
+
+                        await Application.Current.MainPage.Navigation.PushModalAsync(mapPage);
+                    }
                 });
         }
 

@@ -82,7 +82,7 @@ namespace SensusUI
                         {
                             string errorMessage = "Failed to search for address:  " + ex.Message;
                             SensusServiceHelper.Get().Logger.Log(errorMessage, SensusService.LoggingLevel.Normal, GetType());
-                            SensusServiceHelper.Get().FlashNotificationAsync(errorMessage);                            
+                            SensusServiceHelper.Get().FlashNotificationAsync(errorMessage);
                         }
                         catch (Exception)
                         {
@@ -127,12 +127,12 @@ namespace SensusUI
             };
 
             Content = new StackLayout
-            { 
+            {
                 Orientation = StackOrientation.Vertical,
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 Padding = new Thickness(0, 20, 0, 0),
                 Children =
-                {                     
+                {
                     new StackLayout
                     {
                         Orientation = StackOrientation.Horizontal,
