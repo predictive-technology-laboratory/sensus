@@ -107,9 +107,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ScriptRunDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ProbeTriggerProperties\DoubleProbeTriggerProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ProbeTriggerProperties\StringProbeTriggerProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandGsrProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandGsrDatum.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\" />
   </ItemGroup>
 </Project>

@@ -302,6 +302,12 @@
     <Reference Include="Xam.Plugin.MapExtend.Android">
       <HintPath>..\packages\mapextend\android\Xam.Plugin.MapExtend.Android.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Band.Android">
+      <HintPath>..\packages\Xamarin.Microsoft.Band.Native.1.3.10.1\lib\MonoAndroid\Microsoft.Band.Android.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Band.Portable">
+      <HintPath>..\packages\Xamarin.Microsoft.Band.1.3.10.1\lib\MonoAndroid\Microsoft.Band.Portable.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AndroidActivityResultRequestCode.cs" />
@@ -412,5 +418,11 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\UnitTestingProtocol.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <XamarinComponentReference Include="microsoft-band-sdk">
+      <Version>1.3.10.1</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
   </ItemGroup>
 </Project>
