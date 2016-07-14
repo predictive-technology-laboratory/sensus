@@ -1,0 +1,4 @@
+[
+{"$type":"SensusService.Probes.Network.WlanDatum, SensusAndroid","AccessPointBSSID":"","Id":"03e6c0aa-a8b8-4b7b-b66d-582e67d6b624","DeviceId":"287cf65bb08d6f21","Timestamp":"2016-06-22T06:37:07.31404+00:00","ProtocolId":"cc3db0e5-3476-4a2e-9576-bc082880fc73","Anonymized":true},
+{"$type":"SensusService.Probes.Network.WlanDatum, SensusAndroid","AccessPointBSSID":"88:f7:c7:5f:51:57","Id":"6833ced7-9416-44aa-8263-673279807290","DeviceId":"287cf65bb08d6f21","Timestamp":"2016-06-22T06:37:14.598786+00:00","ProtocolId":"cc3db0e5-3476-4a2e-9576-bc082880fc73","Anonymized":true}
+]

@@ -22,7 +22,6 @@ using System.Threading;
 using Newtonsoft.Json;
 using SensusService.Probes;
 using SensusService.Probes.Location;
-using SensusUI.UiProperties;
 using Xamarin;
 using System.Collections.ObjectModel;
 using SensusUI;
@@ -31,12 +30,14 @@ using Xamarin.Forms;
 using SensusService.Exceptions;
 using ZXing.Mobile;
 using ZXing;
-using XLabs.Platform.Device;
-using System.Collections;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
 using System.Threading.Tasks;
+
+#if __IOS__
+using XLabs.Platform.Device;
+#endif
 
 namespace SensusService
 {
@@ -67,13 +68,13 @@ namespace SensusService
             get { return PROMPT_FOR_INPUTS_RUNNING; }
         }
 
-        #if DEBUG || UNIT_TESTING
+#if DEBUG || UNIT_TESTING
         // test every 30 seconds in debug
         public const int HEALTH_TEST_DELAY_MS = 30000;
-        #elif RELEASE
-        // test every 5 minutes in release
-        public const int HEALTH_TEST_DELAY_MS = 300000;
-        #endif
+#elif RELEASE
+        // test every 15 minutes in release
+        public const int HEALTH_TEST_DELAY_MS = 900000;
+#endif
 
         /// <summary>
         /// Health tests times are used to compute participation for the listening probes. They must
@@ -118,7 +119,7 @@ namespace SensusService
         public static void Initialize(Func<SensusServiceHelper> createNew)
         {
             if (SINGLETON == null)
-            {                
+            {
                 Exception deserializeException;
                 if (!TryDeserializeSingleton(out deserializeException))
                 {
@@ -192,7 +193,7 @@ namespace SensusService
                     errorMessage = "Failed to decrypt service helper byte array (length=" + encryptedJsonBytes.Length + ") into JSON:  " + exception.Message;
                     Console.Error.WriteLine(errorMessage);
                 }
-                 
+
                 if (decryptedJSON != null)
                 {
                     // deserialize service helper
@@ -264,7 +265,7 @@ namespace SensusService
 
         public static byte[] Encrypt(string unencryptedString)
         {
-            #if (__ANDROID__ || __IOS__)
+#if (__ANDROID__ || __IOS__)
             using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
             {
                 byte[] encryptionKeyBytes = EncryptionKeyBytes;
@@ -279,16 +280,16 @@ namespace SensusService
                     return transform.TransformFinalBlock(unencrypted, 0, unencrypted.Length);
                 }
             }
-            #elif WINDOWS_PHONE
+#elif WINDOWS_PHONE
             return ProtectedData.Protect(Encoding.Unicode.GetBytes(unencryptedString), EncryptionKeyBytes);
-            #else
-            #error "Unrecognized platform."
-            #endif
+#else
+#error "Unrecognized platform."
+#endif
         }
 
         public static string Decrypt(byte[] encryptedBytes)
         {
-            #if __ANDROID__ || __IOS__
+#if __ANDROID__ || __IOS__
             using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
             {
                 byte[] encryptionKeyBytes = EncryptionKeyBytes;
@@ -302,12 +303,12 @@ namespace SensusService
                     return Encoding.Unicode.GetString(transform.TransformFinalBlock(encryptedBytes, 0, encryptedBytes.Length));
                 }
             }
-            #elif WINDOWS_PHONE
+#elif WINDOWS_PHONE
             byte[] unencryptedBytes = ProtectedData.Unprotect(encryptedBytes, EncryptionKeyBytes);
             return Encoding.Unicode.GetString(unencryptedBytes, 0, unencryptedBytes.Length);
-            #else
-            #error "Unrecognized platform."
-            #endif
+#else
+#error "Unrecognized platform."
+#endif
         }
 
         #endregion
@@ -321,7 +322,7 @@ namespace SensusService
         private Dictionary<string, ScheduledCallback> _idCallback;
         private SHA256Managed _hasher;
         private List<PointOfInterest> _pointsOfInterest;
-        private ZXing.Mobile.MobileBarcodeScanner _barcodeScanner;
+        private MobileBarcodeScanner _barcodeScanner;
         private ZXing.Mobile.BarcodeWriter _barcodeWriter;
 
         private readonly object _shareFileLocker = new object();
@@ -340,7 +341,7 @@ namespace SensusService
 
         public List<string> RunningProtocolIds
         {
-            get{ return _runningProtocolIds; }
+            get { return _runningProtocolIds; }
         }
 
         public List<PointOfInterest> PointsOfInterest
@@ -349,11 +350,11 @@ namespace SensusService
         }
 
         [JsonIgnore]
-        public ZXing.Mobile.MobileBarcodeScanner BarcodeScanner
+        public MobileBarcodeScanner BarcodeScanner
         {
             get
             {
-                return _barcodeScanner; 
+                return _barcodeScanner;
             }
             set
             {
@@ -366,7 +367,7 @@ namespace SensusService
         {
             get
             {
-                return _barcodeWriter; 
+                return _barcodeWriter;
             }
         }
 
@@ -417,10 +418,13 @@ namespace SensusService
         [JsonIgnore]
         protected abstract bool IsOnMainThread { get; }
 
+        [JsonIgnore]
+        public abstract string Version { get; }
+
         #region iOS GPS listener settings
 
-        #if __IOS__
-        
+#if __IOS__
+
         [JsonIgnore]
         public bool GpsPauseLocationUpdatesAutomatically
         {
@@ -481,7 +485,7 @@ namespace SensusService
             }
         }
 
-        #endif
+#endif
 
         #endregion
 
@@ -500,16 +504,16 @@ namespace SensusService
             _pointsOfInterest = new List<PointOfInterest>();
 
             // ensure that the entire QR code is always visible by using 90% the minimum screen dimension as the QR code size.
-            #if __ANDROID__
+#if __ANDROID__
             int qrCodeSize = (int)(0.9 * Math.Min(XLabs.Platform.Device.Display.Metrics.WidthPixels, XLabs.Platform.Device.Display.Metrics.HeightPixels));
-            #elif __IOS__
+#elif __IOS__
             int qrCodeSize = (int)(0.9 * Math.Min(AppleDevice.CurrentDevice.Display.Height, AppleDevice.CurrentDevice.Display.Width));
-            #else
-            #error "Unrecognized platform"
-            #endif
+#else
+#error "Unrecognized platform"
+#endif
 
             _barcodeWriter = new ZXing.Mobile.BarcodeWriter
-            { 
+            {
                 Format = BarcodeFormat.QR_CODE,
                 Options = new ZXing.Common.EncodingOptions
                 {
@@ -519,15 +523,15 @@ namespace SensusService
             };
 
             if (!Directory.Exists(SHARE_DIRECTORY))
-                Directory.CreateDirectory(SHARE_DIRECTORY); 
+                Directory.CreateDirectory(SHARE_DIRECTORY);
 
-            #if DEBUG || UNIT_TESTING
+#if DEBUG || UNIT_TESTING
             LoggingLevel loggingLevel = LoggingLevel.Debug;
-            #elif RELEASE
+#elif RELEASE
             LoggingLevel loggingLevel = LoggingLevel.Normal;
-            #else
-            #error "Unrecognized configuration."
-            #endif
+#else
+#error "Unrecognized configuration."
+#endif
 
             _logger = new Logger(LOG_PATH, loggingLevel, Console.Error);
             _logger.Log("Log file started at \"" + LOG_PATH + "\".", LoggingLevel.Normal, GetType());
@@ -549,7 +553,7 @@ namespace SensusService
                             Insights.PurgePendingCrashReports().Wait();
                     };
 
-                    InitializeXamarinInsights();  
+                    InitializeXamarinInsights();
                 }
                 catch (Exception ex)
                 {
@@ -562,7 +566,7 @@ namespace SensusService
         {
             if (s == null)
                 return null;
-            
+
             StringBuilder hashBuilder = new StringBuilder();
             foreach (byte b in _hasher.ComputeHash(Encoding.UTF8.GetBytes(s)))
                 hashBuilder.Append(b.ToString("x"));
@@ -580,7 +584,7 @@ namespace SensusService
 
         protected abstract void UnscheduleCallbackPlatformSpecific(string callbackId);
 
-        protected abstract void ProtectedFlashNotificationAsync(string message, bool flashLaterIfNotVisible, Action callback);
+        protected abstract void ProtectedFlashNotificationAsync(string message, bool flashLaterIfNotVisible, TimeSpan duration, Action callback);
 
         public abstract void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback);
 
@@ -624,7 +628,7 @@ namespace SensusService
 
                 if (_healthTestCallbackId == null)
                 {
-                    ScheduledCallback callback = new ScheduledCallback(TestHealthAsync, "Test Health", TimeSpan.FromMinutes(1)); 
+                    ScheduledCallback callback = new ScheduledCallback(TestHealthAsync, "Test Health", TimeSpan.FromMinutes(1));
                     _healthTestCallbackId = ScheduleRepeatingCallback(callback, HEALTH_TEST_DELAY_MS, HEALTH_TEST_DELAY_MS, HEALTH_TEST_REPEAT_LAG);
                 }
             }
@@ -764,7 +768,9 @@ namespace SensusService
         public bool CallbackIsScheduled(string callbackId)
         {
             lock (_idCallback)
+            {
                 return _idCallback.ContainsKey(callbackId);
+            }
         }
 
         public string GetCallbackUserNotificationMessage(string callbackId)
@@ -794,7 +800,7 @@ namespace SensusService
         }
 
         public void RaiseCallbackAsync(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, bool notifyUser, Action<DateTime> scheduleRepeatCallback, Action letDeviceSleepCallback, Action finishedCallback)
-        {        
+        {
             DateTime callbackStartTime = DateTime.Now;
 
             new Thread(async () =>
@@ -843,15 +849,17 @@ namespace SensusService
                                             IssueNotificationAsync(scheduledCallback.UserNotificationMessage, callbackId);
 
                                         // if the callback specified a timeout, request cancellation at the specified time.
-                                        if (scheduledCallback.CallbackTimeout != null)
-                                            scheduledCallback.Canceller.CancelAfter(scheduledCallback.CallbackTimeout.GetValueOrDefault());
+                                        if (scheduledCallback.CallbackTimeout.HasValue)
+                                            scheduledCallback.Canceller.CancelAfter(scheduledCallback.CallbackTimeout.Value);
 
                                         await scheduledCallback.Action(callbackId, scheduledCallback.Canceller.Token, letDeviceSleepCallback);
                                     }
                                 }
                                 catch (Exception ex)
                                 {
-                                    _logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") failed:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                    string errorMessage = "Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") failed:  " + ex.Message;
+                                    _logger.Log(errorMessage, LoggingLevel.Normal, GetType());
+                                    SensusException.Report(errorMessage, ex);
                                 }
                                 finally
                                 {
@@ -915,7 +923,7 @@ namespace SensusService
 
                         try
                         {
-                            Insights.Report(new Exception(errorMessage), Insights.Severity.Critical);
+                            Insights.Report(new Exception(errorMessage, ex), Insights.Severity.Critical);
                         }
                         catch (Exception)
                         {
@@ -927,7 +935,7 @@ namespace SensusService
                             finishedCallback();
                     }
 
-                }).Start();                           
+                }).Start();
         }
 
         /// <summary>
@@ -942,10 +950,10 @@ namespace SensusService
                 if (_idCallback.TryGetValue(callbackId, out scheduledCallback))
                 {
                     scheduledCallback.Canceller.Cancel();
-                    SensusServiceHelper.Get().Logger.Log("Cancelled callback \"" + scheduledCallback.Name + "\" (" + callbackId + ").", LoggingLevel.Normal, GetType());
+                    _logger.Log("Cancelled callback \"" + scheduledCallback.Name + "\" (" + callbackId + ").", LoggingLevel.Normal, GetType());
                 }
                 else
-                    SensusServiceHelper.Get().Logger.Log("Callback \"" + callbackId + "\" not present. Cannot cancel.", LoggingLevel.Normal, GetType());
+                    _logger.Log("Callback \"" + callbackId + "\" not present. Cannot cancel.", LoggingLevel.Normal, GetType());
             }
         }
 
@@ -954,7 +962,7 @@ namespace SensusService
             if (callbackId != null)
                 lock (_idCallback)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Unscheduling callback \"" + callbackId + "\".", LoggingLevel.Normal, GetType());
+                    _logger.Log("Unscheduling callback \"" + callbackId + "\".", LoggingLevel.Normal, GetType());
 
                     CancelRaisedCallback(callbackId);
                     _idCallback.Remove(callbackId);
@@ -968,15 +976,27 @@ namespace SensusService
         {
             TextToSpeechAsync(text, () =>
                 {
-                });                        
+                });
         }
 
-        public void FlashNotificationAsync(string message, bool flashLaterIfNotVisible = true, Action callback = null)
+        /// <summary>
+        /// Flashs the a notification.
+        /// </summary>
+        /// <returns>The notification async.</returns>
+        /// <param name="message">Message.</param>
+        /// <param name="flashLaterIfNotVisible">Flash later if not visible.</param>
+        /// <param name="duration">Duration. Increments of 2 seconds are best displayed.</param>
+        /// <param name="callback">Callback.</param>
+        public void FlashNotificationAsync(string message, bool flashLaterIfNotVisible = true, TimeSpan? duration = null, Action callback = null)
         {
             // do not show flash notifications when unit testing, as they can disrupt UI scripting on iOS.
-            #if !UNIT_TESTING
-            ProtectedFlashNotificationAsync(message, flashLaterIfNotVisible, callback);
-            #endif
+#if !UNIT_TESTING
+
+            if (!duration.HasValue)
+                duration = TimeSpan.FromSeconds(2);
+
+            ProtectedFlashNotificationAsync(message, flashLaterIfNotVisible, duration.Value, callback);
+#endif
         }
 
         public void PromptForInputAsync(string windowTitle, Input input, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action<Input> callback)
@@ -1031,6 +1051,8 @@ namespace SensusService
 
                     bool firstPageDisplay = true;
 
+                    // keep a stack of input groups that were displayed so that the user can navigate backward. not all groups are displayed due to display
+                    // conditions, so we can't simply adjust the index into the input groups.
                     Stack<int> inputGroupNumBackStack = new Stack<int>();
 
                     for (int inputGroupNum = 0; inputGroups != null && inputGroupNum < inputGroups.Count() && !cancellationToken.GetValueOrDefault().IsCancellationRequested; ++inputGroupNum)
@@ -1039,76 +1061,146 @@ namespace SensusService
 
                         ManualResetEvent responseWait = new ManualResetEvent(false);
 
-                        // run voice inputs by themselves, and only if the input group contains exactly one input and that input is a voice input.
-                        if (inputGroup.Inputs.Count == 1 && inputGroup.Inputs[0] is VoiceInput)
+                        try
                         {
-                            VoiceInput voiceInput = inputGroup.Inputs[0] as VoiceInput;
-
-                            if (voiceInput.Enabled && voiceInput.Display)
+                            // run voice inputs by themselves, and only if the input group contains exactly one input and that input is a voice input.
+                            if (inputGroup.Inputs.Count == 1 && inputGroup.Inputs[0] is VoiceInput)
                             {
-                                // only run the post-display callback the first time a page is displayed. the caller expects the callback
-                                // to fire only once upon first display.
-                                voiceInput.RunAsync(firstPromptTimestamp, firstPageDisplay ? postDisplayCallback : null, response =>
-                                    {        
-                                        firstPageDisplay = false;
-                                        responseWait.Set();
-                                    });
-                            }
-                            else
-                                responseWait.Set();
-                        }
-                        else
-                        {
-                            BringToForeground();
+                                VoiceInput voiceInput = inputGroup.Inputs[0] as VoiceInput;
 
-                            Device.BeginInvokeOnMainThread(async () =>
+                                if (voiceInput.Enabled && voiceInput.Display)
                                 {
-                                    PromptForInputsPage promptForInputsPage = new PromptForInputsPage(inputGroup, inputGroupNum + 1, inputGroups.Count(), showCancelButton, nextButtonText, cancellationToken, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, firstPromptTimestamp, result =>
+                                    // only run the post-display callback the first time a page is displayed. the caller expects the callback
+                                    // to fire only once upon first display.
+                                    voiceInput.RunAsync(firstPromptTimestamp, firstPageDisplay ? postDisplayCallback : null, response =>
                                         {
-                                            SensusServiceHelper.Get().Logger.Log("Prompt page disappeared with result:  " + result, LoggingLevel.Normal, GetType());
-
-                                            if (result == PromptForInputsPage.Result.Cancel || result == PromptForInputsPage.Result.NavigateBackward && inputGroupNumBackStack.Count == 0)
-                                                inputGroups = null;
-                                            else if (result == PromptForInputsPage.Result.NavigateBackward)
-                                                inputGroupNum = inputGroupNumBackStack.Pop() - 1;
-                                            else
-                                                inputGroupNumBackStack.Push(inputGroupNum);
-
+                                            firstPageDisplay = false;
                                             responseWait.Set();
                                         });
+                                }
+                                else
+                                    responseWait.Set();
+                            }
+                            else
+                            {
+                                BringToForeground();
 
-                                    // do not display prompts page under the following conditions:  1) there are no inputs displayed on it. 2) the cancellation 
-                                    // token has requested a cancellation. if any of these conditions are true, set the wait handle and continue to the next input group.
-
-                                    if (promptForInputsPage.DisplayedInputCount == 0)
+                                Device.BeginInvokeOnMainThread(async () =>
                                     {
-                                        // if we're on the final input group and no inputs were shown, then we're at the end and we're ready to submit the 
-                                        // users' responses. first check that the user is ready to submit. if the user isn't ready then move back to the previous 
-                                        // input group in the backstack, if there is one.
-                                        if (inputGroupNum >= inputGroups.Count() - 1 && // this is the final input group
-                                            inputGroupNumBackStack.Count > 0 && // there is an input group to go back to (the current one was not displayed)
-                                            !string.IsNullOrWhiteSpace(submitConfirmation) && // we have a submit confirmation
-                                            !(await App.Current.MainPage.DisplayAlert("Confirm", submitConfirmation, "Yes", "No"))) // user is not ready to submit
+                                        // catch any exceptions from preparing and displaying the prompts page
+                                        try
                                         {
-                                            inputGroupNum = inputGroupNumBackStack.Pop() - 1;
+                                            int stepNumber = inputGroupNum + 1;
+                                            bool promptPagePopped = false;
+
+                                            PromptForInputsPage promptForInputsPage = new PromptForInputsPage(inputGroup, stepNumber, inputGroups.Count(), inputGroupNumBackStack.Count > 0, showCancelButton, nextButtonText, cancellationToken, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, firstPromptTimestamp, async result =>
+                                                        {
+                                                            // catch any exceptions from navigating to the next page
+                                                            try
+                                                            {
+                                                                // the prompt page has finished and needs to be popped. either the user finished the page or the cancellation token did so, and there 
+                                                                // might be a race condition. lock down the navigation object and check whether the page was already popped. don't do it again.
+                                                                INavigation navigation = Application.Current.MainPage.Navigation;
+                                                                bool pageWasAlreadyPopped;
+                                                                lock (navigation)
+                                                                {
+                                                                    pageWasAlreadyPopped = promptPagePopped;
+                                                                    promptPagePopped = true;
+                                                                }
+
+                                                                if (!pageWasAlreadyPopped)
+                                                                {
+                                                                    // we aren't doing anything else, so the top of the modal stack should be the prompt page; however, check to be sure.
+                                                                    if (navigation.ModalStack.Count > 0 && navigation.ModalStack.Last() is PromptForInputsPage)
+                                                                    {
+                                                                        _logger.Log("Popping prompt page with result:  " + result, LoggingLevel.Normal, GetType());
+
+                                                                        // animate pop if the user submitted or canceled
+                                                                        await navigation.PopModalAsync(stepNumber == inputGroups.Count() && result == PromptForInputsPage.Result.NavigateForward ||
+                                                                                                                       result == PromptForInputsPage.Result.Cancel);
+                                                                    }
+
+                                                                    if (result == PromptForInputsPage.Result.Cancel)
+                                                                        inputGroups = null;
+                                                                    else if (result == PromptForInputsPage.Result.NavigateBackward)
+                                                                        inputGroupNum = inputGroupNumBackStack.Pop() - 1;
+                                                                    else
+                                                                        inputGroupNumBackStack.Push(inputGroupNum);  // keep the group in the back stack and move to the next group
+                                                                }
+                                                            }
+                                                            catch (Exception ex)
+                                                            {
+                                                                // report exception and set wait handle if anything goes wrong while processing the current input group.
+                                                                try
+                                                                {
+                                                                    Insights.Report(ex, Insights.Severity.Critical);
+                                                                }
+                                                                catch { }
+                                                            }
+                                                            finally
+                                                            {
+                                                                // ensure that the response wait is always set
+                                                                responseWait.Set();
+                                                            }
+                                                        });
+
+                                            // do not display prompts page under the following conditions:  1) there are no inputs displayed on it. 2) the cancellation 
+                                            // token has requested a cancellation. if any of these conditions are true, set the wait handle and continue to the next input group.
+                                            if (promptForInputsPage.DisplayedInputCount == 0)
+                                            {
+                                                // if we're on the final input group and no inputs were shown, then we're at the end and we're ready to submit the 
+                                                // users' responses. first check that the user is ready to submit. if the user isn't ready then move back to the previous 
+                                                // input group in the backstack, if there is one.
+                                                if (inputGroupNum >= inputGroups.Count() - 1 && // this is the final input group
+                                                    inputGroupNumBackStack.Count > 0 && // there is an input group to go back to (the current one was not displayed)
+                                                    !string.IsNullOrWhiteSpace(submitConfirmation) && // we have a submit confirmation
+                                                    !(await Application.Current.MainPage.DisplayAlert("Confirm", submitConfirmation, "Yes", "No"))) // user is not ready to submit
+                                                {
+                                                    inputGroupNum = inputGroupNumBackStack.Pop() - 1;
+                                                }
+
+                                                responseWait.Set();
+                                            }
+                                            // don't display page if we've been canceled
+                                            else if (cancellationToken.GetValueOrDefault().IsCancellationRequested)
+                                                responseWait.Set();
+                                            else
+                                            {
+                                                // display page. only animate the display for the first page.
+                                                await Application.Current.MainPage.Navigation.PushModalAsync(promptForInputsPage, firstPageDisplay);
+
+                                                // only run the post-display callback the first time a page is displayed. the caller expects the callback
+                                                // to fire only once upon first display.
+                                                if (firstPageDisplay && postDisplayCallback != null)
+                                                    postDisplayCallback();
+
+                                                firstPageDisplay = false;
+                                            }
                                         }
+                                        catch (Exception ex)
+                                        {
+                                            try
+                                            {
+                                                Insights.Report(ex, Insights.Severity.Critical);
+                                            }
+                                            catch { }
 
-                                        responseWait.Set();
-                                    }
-                                    else if (cancellationToken.GetValueOrDefault().IsCancellationRequested)
-                                        responseWait.Set();
-                                    else
-                                    {
-                                        await App.Current.MainPage.Navigation.PushModalAsync(promptForInputsPage, firstPageDisplay);  // only animate the display for the first page
+                                            // if anything bad happens, set the wait handle to ensure we get out of the prompt.
+                                            responseWait.Set();
+                                        }
+                                    });
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            // report exception and set wait handle if anything goes wrong while processing the current input group.
+                            try
+                            {
+                                Insights.Report(ex, Insights.Severity.Critical);
+                            }
+                            catch { }
 
-                                        // only run the post-display callback the first time a page is displayed. the caller expects the callback
-                                        // to fire only once upon first display.
-                                        if (firstPageDisplay && postDisplayCallback != null)
-                                            postDisplayCallback();
-
-                                        firstPageDisplay = false;
-                                    }                                    
-                                });
+                            responseWait.Set();
                         }
 
                         responseWait.WaitOne();
@@ -1122,16 +1214,10 @@ namespace SensusService
                     // executing; however, can't think of a place where this might happen with negative consequences.
                     PROMPT_FOR_INPUTS_RUNNING = false;
 
-                    #if __ANDROID__
-                    // clear input requested notification. the notification will be cleared if the user taps it or if the activity is resumed. however, if
-                    // the prompt times out while the activity is stopped, neither of these will occur. so we have to manually clear the notification.
-                    (SensusServiceHelper.Get() as Sensus.Android.AndroidSensusServiceHelper).IssueNotificationAsync("Sensus", null, true, false, Sensus.Android.AndroidMainActivity.INPUT_REQUESTED_NOTIFICATION_ID);
-                    #endif
-
                     #region geotag input groups if the user didn't cancel and we've got input groups with inputs that are complete and lacking locations
                     if (inputGroups != null && inputGroups.Any(inputGroup => inputGroup.Geotag && inputGroup.Inputs.Any(input => input.Complete && (input.Latitude == null || input.Longitude == null))))
                     {
-                        SensusServiceHelper.Get().Logger.Log("Geotagging input groups.", LoggingLevel.Normal, GetType());
+                        _logger.Log("Geotagging input groups.", LoggingLevel.Normal, GetType());
 
                         try
                         {
@@ -1163,7 +1249,7 @@ namespace SensusService
                         }
                         catch (Exception ex)
                         {
-                            SensusServiceHelper.Get().Logger.Log("Error geotagging input groups:  " + ex.Message, LoggingLevel.Normal, GetType());
+                            _logger.Log("Error geotagging input groups:  " + ex.Message, LoggingLevel.Normal, GetType());
                         }
                     }
                     #endregion
@@ -1184,7 +1270,7 @@ namespace SensusService
                         callback(mapPage.Pins.Select(pin => pin.Position).ToList());
                     };
 
-                    await App.Current.MainPage.Navigation.PushModalAsync(mapPage);
+                    await Application.Current.MainPage.Navigation.PushModalAsync(mapPage);
                 });
         }
 
@@ -1199,7 +1285,7 @@ namespace SensusService
                         callback(mapPage.Pins.Select(pin => pin.Position).ToList());
                     };
 
-                    await App.Current.MainPage.Navigation.PushModalAsync(mapPage);
+                    await Application.Current.MainPage.Navigation.PushModalAsync(mapPage);
                 });
         }
 
@@ -1215,7 +1301,7 @@ namespace SensusService
                         {
                             if (cancellationToken.IsCancellationRequested)
                                 break;
-                    
+
                             if (_runningProtocolIds.Contains(protocol.Id))
                                 protocol.TestHealth(false);
                         }
@@ -1271,7 +1357,7 @@ namespace SensusService
                     else if (currentTypeName == "WinPhoneSensusServiceHelper")
                         convertedJsonLine = jsonLine.Replace("Android", "WinPhone").Replace("iOS", "WinPhone");
                     else
-                        throw new SensusException("Attempted to convert JSON for unknown service helper type:  " + SensusServiceHelper.Get().GetType().FullName);
+                        throw new SensusException("Attempted to convert JSON for unknown service helper type:  " + GetType().FullName);
 
                     if (convertedJsonLine != jsonLine)
                         conversionPerformed = true;
@@ -1307,7 +1393,7 @@ namespace SensusService
                         rationale = "Sensus uses movement sensors to collect various types of information for studies you have enrolled in.";
                     else if (permission == Permission.Storage)
                         rationale = "Sensus must be able to write to your device's storage for proper operation. Please grant this permission.";
-            
+
                     if (await CrossPermissions.Current.CheckPermissionStatusAsync(permission) == PermissionStatus.Granted)
                         return PermissionStatus.Granted;
                     else
@@ -1315,20 +1401,27 @@ namespace SensusService
                         // the Permissions plugin requires a main activity to be present on android. ensure this below.
                         BringToForeground();
 
+                        // display rationale for request to the user if needed
                         if (rationale != null && await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(permission))
                         {
                             ManualResetEvent rationaleDialogWait = new ManualResetEvent(false);
 
                             Device.BeginInvokeOnMainThread(async () =>
                                 {
-                                    await (App.Current as App).ProtocolsPage.DisplayAlert("Permission Request", "On the next screen, Sensus will request access to your device's " + permission.ToString().ToUpper() + ". " + rationale, "OK");
+                                    await (Application.Current as App).ProtocolsPage.DisplayAlert("Permission Request", "On the next screen, Sensus will request access to your device's " + permission.ToString().ToUpper() + ". " + rationale, "OK");
                                     rationaleDialogWait.Set();
                                 });
 
                             rationaleDialogWait.WaitOne();
                         }
 
-                        return (await CrossPermissions.Current.RequestPermissionsAsync(new Permission[] { permission }))[permission];
+                        // request permission from the user. it's happened that the returned dictionary doesn't contain an entry for the requested permission, so check for that (https://insights.xamarin.com/app/Sensus-Production/issues/903).
+                        PermissionStatus status;
+                        Dictionary<Permission, PermissionStatus> permissionStatus = await CrossPermissions.Current.RequestPermissionsAsync(new Permission[] { permission });
+                        if (permissionStatus.TryGetValue(permission, out status))
+                            return status;
+                        else
+                            return PermissionStatus.Unknown;
                     }
                 });
         }
@@ -1355,7 +1448,7 @@ namespace SensusService
 
             new Thread(async () =>
                 {
-                    status = await SensusServiceHelper.Get().ObtainPermissionAsync(permission);
+                    status = await ObtainPermissionAsync(permission);
                     wait.Set();
 
                 }).Start();
@@ -1371,30 +1464,25 @@ namespace SensusService
                 throw new SensusException("Attempted to execute on main thread:  " + actionDescription);
         }
 
-        public virtual void Stop()
+        public void StopProtocols()
         {
-            // stop all protocols
             lock (_registeredProtocols)
             {
                 _logger.Log("Stopping protocols.", LoggingLevel.Normal, GetType());
 
                 foreach (Protocol protocol in _registeredProtocols)
-                {
-                    try
+                    if (protocol.Running)
                     {
-                        protocol.Stop();
+                        try
+                        {
+                            protocol.Stop();
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.Log("Failed to stop protocol \"" + protocol.Name + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        _logger.Log("Failed to stop protocol \"" + protocol.Name + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
-                    }
-                }
             }
-
-            // make sure all logged messages get into the file.
-            _logger.CommitMessageBuffer();
-
-            SINGLETON = null;
         }
     }
 }

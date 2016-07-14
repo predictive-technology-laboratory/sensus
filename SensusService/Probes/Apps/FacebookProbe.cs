@@ -20,6 +20,7 @@ using SensusUI.UiProperties;
 using System.Threading;
 using SensusService.Anonymization;
 using SensusService.Anonymization.Anonymizers;
+using Syncfusion.SfChart.XForms;
 
 namespace SensusService.Probes.Apps
 {
@@ -126,7 +127,7 @@ namespace SensusService.Probes.Apps
             userFields.RemoveAll(s => string.IsNullOrWhiteSpace(s));
             if (userFields.Count > 0)
                 edgeFieldQueries.Add(new Tuple<string, List<string>>(null, userFields.Distinct().ToList()));
-            
+
             foreach (string edge in edgeFields.Keys)
             {
                 List<string> fields = edgeFields[edge];
@@ -138,5 +139,25 @@ namespace SensusService.Probes.Apps
         }
 
         protected abstract ICollection<string> GetGrantedPermissions();
+
+        protected override ChartSeries GetChartSeries()
+        {
+            return null;
+        }
+
+        protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
+        {
+            return null;
+        }
+
+        protected override ChartAxis GetChartPrimaryAxis()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override RangeAxisBase GetChartSecondaryAxis()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

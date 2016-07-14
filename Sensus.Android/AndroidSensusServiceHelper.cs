@@ -35,9 +35,6 @@ using System.Linq;
 using ZXing.Mobile;
 using Android.Graphics;
 using Android.Media;
-using System.Threading.Tasks;
-using Plugin.Permissions.Abstractions;
-using SensusService.Exceptions;
 
 namespace Sensus.Android
 {
@@ -71,16 +68,16 @@ namespace Sensus.Android
             get
             {
                 // https://github.com/predictive-technology-laboratory/sensus/wiki/Backwards-Compatibility
-                #if __ANDROID_23__
+#if __ANDROID_23__
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
                     return _connectivityManager.GetAllNetworks().Select(network => _connectivityManager.GetNetworkInfo(network)).Any(networkInfo => networkInfo.Type == ConnectivityType.Wifi && networkInfo.IsConnected);  // API level 23
                 else
-                #endif
+#endif
                 {
                     // ignore deprecation warning
-                    #pragma warning disable 618
+#pragma warning disable 618
                     return _connectivityManager.GetNetworkInfo(ConnectivityType.Wifi).IsConnected;
-                    #pragma warning restore 618
+#pragma warning restore 618
                 }
             }
         }
@@ -117,6 +114,14 @@ namespace Sensus.Android
             }
         }
 
+        public override string Version
+        {
+            get
+            {
+                return _service?.PackageManager.GetPackageInfo(_service.PackageName, PackageInfoFlags.Activities).VersionName ?? null;
+            }
+        }
+
         [JsonIgnore]
         public int WakeLockAcquisitionCount
         {
@@ -130,7 +135,7 @@ namespace Sensus.Android
         }
 
         public void SetService(AndroidSensusService service)
-        {            
+        {
             _service = service;
 
             if (_service == null)
@@ -152,7 +157,7 @@ namespace Sensus.Android
                 _connectivityManager = _service.GetSystemService(Context.ConnectivityService) as ConnectivityManager;
                 _notificationManager = _service.GetSystemService(Context.NotificationService) as NotificationManager;
                 _textToSpeech = new AndroidTextToSpeech(_service);
-                _wakeLock = (_service.GetSystemService(Context.PowerService) as PowerManager).NewWakeLock(WakeLockFlags.Partial, "SENSUS");  
+                _wakeLock = (_service.GetSystemService(Context.PowerService) as PowerManager).NewWakeLock(WakeLockFlags.Partial, "SENSUS");
                 _wakeLockAcquisitionCount = 0;
                 _deviceId = Settings.Secure.GetString(_service.ContentResolver, Settings.Secure.AndroidId);
 
@@ -183,13 +188,13 @@ namespace Sensus.Android
                         // after the activity is resumed but before the window is up, the appearance of the activity's window can hide/cancel the
                         // action's window.
                         if (_focusedMainActivity == null)
-                        {           
+                        {
                             if (startMainActivityIfNotFocused)
                             {
                                 // we'll run the action when the activity is focused
                                 lock (_actionsToRunUsingMainActivity)
                                     _actionsToRunUsingMainActivity.Add(action);
-                                
+
                                 Logger.Log("Starting main activity to run action.", LoggingLevel.Normal, GetType());
 
                                 // start the activity. when it starts, it will call back to SetFocusedMainActivity indicating readiness. once 
@@ -210,7 +215,7 @@ namespace Sensus.Android
                             // we'll run the action now
                             lock (_actionsToRunUsingMainActivity)
                                 _actionsToRunUsingMainActivity.Add(action);
-                            
+
                             RunActionsUsingMainActivity();
                         }
                     }
@@ -286,7 +291,7 @@ namespace Sensus.Android
                                                 FlashNotificationAsync("Error reading text file:  " + ex.Message);
                                             }
                                     });
-                                
+
                             }, true, false);
                     }
                     catch (ActivityNotFoundException)
@@ -322,7 +327,7 @@ namespace Sensus.Android
                         RunActionUsingMainActivityAsync(mainActivity =>
                             {
                                 mainActivity.StartActivity(intent);
-                                
+
                             }, true, false);
                     }
                     catch (Exception ex)
@@ -363,12 +368,12 @@ namespace Sensus.Android
                     RunActionUsingMainActivityAsync(mainActivity =>
                         {
                             mainActivity.RunOnUiThread(() =>
-                                {   
+                                {
                                     #region set up dialog
                                     TextView promptView = new TextView(mainActivity) { Text = prompt, TextSize = 20 };
                                     EditText inputEdit = new EditText(mainActivity) { TextSize = 20 };
-                                    LinearLayout scrollLayout = new LinearLayout(mainActivity){ Orientation = global::Android.Widget.Orientation.Vertical };
-                                    scrollLayout.AddView(promptView);                                
+                                    LinearLayout scrollLayout = new LinearLayout(mainActivity) { Orientation = global::Android.Widget.Orientation.Vertical };
+                                    scrollLayout.AddView(promptView);
                                     scrollLayout.AddView(inputEdit);
                                     ScrollView scrollView = new ScrollView(mainActivity);
                                     scrollView.AddView(scrollLayout);
@@ -383,17 +388,17 @@ namespace Sensus.Android
                                         .SetNegativeButton("Cancel", (o, e) =>
                                         {
                                         })
-                                        .Create();                                                               
+                                        .Create();
 
                                     dialog.DismissEvent += (o, e) =>
                                     {
                                         dialogDismissWait.Set();
-                                    };   
+                                    };
 
                                     ManualResetEvent dialogShowWait = new ManualResetEvent(false);
 
                                     dialog.ShowEvent += (o, e) =>
-                                    {                                    
+                                    {
                                         dialogShowWait.Set();
 
                                         if (postDisplayCallback != null)
@@ -410,7 +415,7 @@ namespace Sensus.Android
                                     dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.DimBehind);
                                     dialog.Window.Attributes.DimAmount = 0.75f;
 
-                                    dialog.Show();  
+                                    dialog.Show();
                                     #endregion
 
                                     #region voice recognizer
@@ -443,11 +448,11 @@ namespace Sensus.Android
                                                                 });
                                                     }
                                                 });
-                                        
+
                                         }).Start();
                                     #endregion
                                 });
-                            
+
                         }, true, false);
 
                     dialogDismissWait.WaitOne();
@@ -466,7 +471,7 @@ namespace Sensus.Android
         }
 
         public void IssueNotificationAsync(string title, string message, bool autoCancel, bool ongoing, string id)
-        {          
+        {
             if (_notificationManager != null)
             {
                 new Thread(() =>
@@ -494,7 +499,7 @@ namespace Sensus.Android
             }
         }
 
-        protected override void ProtectedFlashNotificationAsync(string message, bool flashLaterIfNotVisible, Action callback)
+        protected override void ProtectedFlashNotificationAsync(string message, bool flashLaterIfNotVisible, TimeSpan duration, Action callback)
         {
             new Thread(() =>
                 {
@@ -502,14 +507,17 @@ namespace Sensus.Android
                         {
                             mainActivity.RunOnUiThread(() =>
                                 {
-                                    Toast.MakeText(mainActivity, message, ToastLength.Long).Show();
+                                    int shortToasts = (int)Math.Ceiling(duration.TotalSeconds / 2);  // each short toast is 2 seconds.
+
+                                    for (int i = 0; i < shortToasts; ++i)
+                                        Toast.MakeText(mainActivity, message, ToastLength.Short).Show();
 
                                     if (callback != null)
                                         callback();
                                 });
-                            
+
                         }, false, flashLaterIfNotVisible);
-                    
+
                 }).Start();
         }
 
@@ -522,7 +530,7 @@ namespace Sensus.Android
         }
 
         public override Xamarin.Forms.ImageSource GetQrCodeImageSource(string contents)
-        {            
+        {
             return Xamarin.Forms.ImageSource.FromStream(() =>
                 {
                     Bitmap bitmap = BarcodeWriter.Write(contents);
@@ -538,20 +546,20 @@ namespace Sensus.Android
         #region callback scheduling
 
         protected override void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag)
-        {            
+        {
             DateTime callbackTime = DateTime.Now.AddMilliseconds(initialDelayMS);
             Logger.Log("Callback " + callbackId + " scheduled for " + callbackTime + " (repeating).", LoggingLevel.Normal, GetType());
-            ScheduleCallbackAlarm(CreateCallbackIntent(callbackId, true, repeatDelayMS, repeatLag), callbackTime);
+            ScheduleCallbackAlarm(CreateCallbackPendingIntent(callbackId, true, repeatDelayMS, repeatLag), callbackId, callbackTime);
         }
 
         protected override void ScheduleOneTimeCallback(string callbackId, int delayMS)
         {
             DateTime callbackTime = DateTime.Now.AddMilliseconds(delayMS);
             Logger.Log("Callback " + callbackId + " scheduled for " + callbackTime + " (one-time).", LoggingLevel.Normal, GetType());
-            ScheduleCallbackAlarm(CreateCallbackIntent(callbackId, false, 0, false), callbackTime);
+            ScheduleCallbackAlarm(CreateCallbackPendingIntent(callbackId, false, 0, false), callbackId, callbackTime);
         }
 
-        private PendingIntent CreateCallbackIntent(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag)
+        private PendingIntent CreateCallbackPendingIntent(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag)
         {
             Intent callbackIntent = new Intent(_service, typeof(AndroidSensusService));
             callbackIntent.PutExtra(SENSUS_CALLBACK_KEY, true);
@@ -560,32 +568,40 @@ namespace Sensus.Android
             callbackIntent.PutExtra(SENSUS_CALLBACK_REPEAT_DELAY_KEY, repeatDelayMS);
             callbackIntent.PutExtra(SENSUS_CALLBACK_REPEAT_LAG_KEY, repeatLag);
 
-            PendingIntent callbackPendingIntent = PendingIntent.GetService(_service, callbackId.GetHashCode(), callbackIntent, PendingIntentFlags.CancelCurrent);  // upon hash collisions on the request code, the previous intent will simply be canceled.
-
-            lock (_callbackIdPendingIntent)
-                _callbackIdPendingIntent.Add(callbackId, callbackPendingIntent);
-
-            return callbackPendingIntent;
+            return CreateCallbackPendingIntent(callbackIntent);
         }
 
-        public void ScheduleCallbackAlarm(PendingIntent callbackPendingIntent, DateTime callbackTime)
+        public PendingIntent CreateCallbackPendingIntent(Intent callbackIntent)
         {
-            AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
+            // upon hash collisions for the request code, the previous intent will simply be canceled.
+            return PendingIntent.GetService(_service, callbackIntent.GetStringExtra(SENSUS_CALLBACK_ID_KEY).GetHashCode(), callbackIntent, PendingIntentFlags.CancelCurrent);
+        }
 
-            long delayMS = (long)(callbackTime - DateTime.Now).TotalMilliseconds;
-            long callbackTimeMS = Java.Lang.JavaSystem.CurrentTimeMillis() + delayMS;
-
-            // https://github.com/predictive-technology-laboratory/sensus/wiki/Backwards-Compatibility
-            #if __ANDROID_23__
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
-                alarmManager.SetExactAndAllowWhileIdle(AlarmType.RtcWakeup, callbackTimeMS, callbackPendingIntent);  // API level 23 added "while idle" option, making things even tighter.
-            else if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
-                alarmManager.SetExact(AlarmType.RtcWakeup, callbackTimeMS, callbackPendingIntent);  // API level 19 differentiated Set (loose) from SetExact (tight)
-            else
-            #endif
+        public void ScheduleCallbackAlarm(PendingIntent callbackPendingIntent, string callbackId, DateTime callbackTime)
+        {
+            lock (_callbackIdPendingIntent)
             {
-                alarmManager.Set(AlarmType.RtcWakeup, callbackTimeMS, callbackPendingIntent);  // API 1-18 treats Set as a tight alarm
-            }            
+                // update pending intent associated with the callback id. we'll need the updated pending intent if/when
+                // we which to unschedule the alarm.
+                _callbackIdPendingIntent[callbackId] = callbackPendingIntent;
+
+                AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
+
+                long delayMS = (long)(callbackTime - DateTime.Now).TotalMilliseconds;
+                long callbackTimeMS = Java.Lang.JavaSystem.CurrentTimeMillis() + delayMS;
+
+                // https://github.com/predictive-technology-laboratory/sensus/wiki/Backwards-Compatibility
+#if __ANDROID_23__
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
+                    alarmManager.SetExactAndAllowWhileIdle(AlarmType.RtcWakeup, callbackTimeMS, callbackPendingIntent);  // API level 23 added "while idle" option, making things even tighter.
+                else if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
+                    alarmManager.SetExact(AlarmType.RtcWakeup, callbackTimeMS, callbackPendingIntent);  // API level 19 differentiated Set (loose) from SetExact (tight)
+                else
+#endif
+                {
+                    alarmManager.Set(AlarmType.RtcWakeup, callbackTimeMS, callbackPendingIntent);  // API 1-18 treats Set as a tight alarm
+                }
+            }
         }
 
         protected override void UnscheduleCallbackPlatformSpecific(string callbackId)
@@ -638,14 +654,5 @@ namespace Sensus.Android
         }
 
         #endregion
-
-        public override void Stop()
-        {
-            // stop protocols and clean up
-            base.Stop();
-
-            if (_service != null)
-                _service.Stop();
-        }
     }
 }

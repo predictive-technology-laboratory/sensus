@@ -16,6 +16,8 @@ using System;
 using SensusService.Probes.Location;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions.Abstractions;
+using Newtonsoft.Json;
+using Syncfusion.SfChart.XForms;
 
 namespace SensusService.Probes.Movement
 {
@@ -25,6 +27,33 @@ namespace SensusService.Probes.Movement
         private Position _previousPosition;
 
         private readonly object _locker = new object();
+
+        [JsonIgnore]
+        protected override bool DefaultKeepDeviceAwake
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        [JsonIgnore]
+        protected override string DeviceAwakeWarning
+        {
+            get
+            {
+                return "This setting does not affect iOS or Android.";
+            }
+        }
+
+        [JsonIgnore]
+        protected override string DeviceAsleepWarning
+        {
+            get
+            {
+                return "This setting does not affect iOS or Android.";
+            }
+        }
 
         public sealed override string DisplayName
         {
@@ -48,7 +77,7 @@ namespace SensusService.Probes.Movement
             {
                 if (e.Position == null)
                     return;
-                    
+
                 lock (_locker)
                 {
                     SensusServiceHelper.Get().Logger.Log("Received position change notification.", LoggingLevel.Verbose, GetType());
@@ -95,6 +124,38 @@ namespace SensusService.Probes.Movement
         {
             GpsReceiver.Get().RemoveListener(_positionChangedHandler);
             _previousPosition = null;
+        }
+
+        protected override ChartSeries GetChartSeries()
+        {
+            return new LineSeries();
+        }
+
+        protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
+        {
+            return new ChartDataPoint(datum.Timestamp.LocalDateTime, (datum as SpeedDatum).KPH);
+        }
+
+        protected override ChartAxis GetChartPrimaryAxis()
+        {
+            return new DateTimeAxis
+            {
+                Title = new ChartAxisTitle
+                {
+                    Text = "Time"
+                }
+            };
+        }
+
+        protected override RangeAxisBase GetChartSecondaryAxis()
+        {
+            return new NumericalAxis
+            {
+                Title = new ChartAxisTitle
+                {
+                    Text = "Speed (KPH)"
+                }
+            };
         }
     }
 }

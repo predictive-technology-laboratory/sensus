@@ -1,0 +1,168 @@
+allData$timestamp <- strptime(allData$timestamp, "%a %b %d %H:%M:%S")
+currentData <- allData[which(allData$id == 1000 & allData$type == 'RT' & allData$day > 1 & allData$day < 13),]
+series <- zoo(currentData$fired, currentData$timestamp)
+head(series)
+range <- c(as.POSIXlt(min(currentData$timestamp)), as.POSIXlt(max(currentData$timestamp)))
+plot(series, xlim=range)
+range
+complete <- merge(series, zoo(, seq(start(series), end(series), by = "15 min")), all = TRUE)
+runApp("/Users/wesbonelli/Documents/research/rshiny")
+allData <- read.table("/Users/wesbonelli/Documents/research/data_formatting/new_files3/allparticipants.csv", header = TRUE, sep = ",")
+allData$timestamp <- strptime(allData$timestamp, "%a %b %d %H:%M:%S")
+allData$timestamp <- as.Date(allData$timestamp)
+allData$timestamp
+runApp("/Users/wesbonelli/Documents/research/rshiny")
+library(shiny)
+runApp("/Users/wesbonelli/Documents/research/rshiny")
+library(shiny)
+runApp("/Users/wesbonelli/Documents/research/rshiny")
+runApp("/Users/wesbonelli/Documents/research/rshiny/survey_single_participant")
+runApp("/Users/wesbonelli/Documents/research/rshiny/survey_all_participants")
+library(shiny)
+runApp("/Users/wesbonelli/Documents/research/rshiny/survey_single_participant")
+runApp("/Users/wesbonelli/Documents/research/rshiny/survey_all_participants")
+runApp("/Users/wesbonelli/Documents/research/rshiny/survey_single_participant")
+install(shiny)
+install.packages("shiny")
+remove.packages("SensusR")
+package.skeleton("SensusR")
+getwd()
+install.packages("/Users/wesbonelli/Documents/research/SensusR_temp.tar.gz", repos = NULL, type = "source")
+allData = sensus.read.json("/Users/wesbonelli/Documents/research/sensus_json_data/300b1b33-61b5-4fa6-a8ef-8e786ac34b44.json")
+allData = read.sensus.josn("/Users/wesbonelli/Documents/research/sensus_json_data/300b1b33-61b5-4fa6-a8ef-8e786ac34b44.json")
+library("SensusR")
+library(SensusR)
+allData = sensus.read.json("/Users/wesbonelli/Documents/research/sensus_json_data/300b1b33-61b5-4fa6-a8ef-8e786ac34b44.json")
+allData = read.sensus.json("/Users/wesbonelli/Documents/research/sensus_json_data/300b1b33-61b5-4fa6-a8ef-8e786ac34b44.json")
+library(SensusR)
+allData = read.sensus.json("/Users/wesbonelli/Documents/research/sensus_json_data/300b1b33-61b5-4fa6-a8ef-8e786ac34b44.json")
+allData = sensus.read.json("/Users/wesbonelli/Documents/research/sensus_json_data/300b1b33-61b5-4fa6-a8ef-8e786ac34b44.json")
+plot(allData$SoundDatum)
+allData = sensus.read.json("/Users/wesbonelli/Documents/research/sensus_json_data/02ba6905-fd5a-4883-9f32-d639df9ce053.json")
+plot(allData&AccelerometerDatum)
+plot(allData$AccelerometerDatum)
+allData
+allData = sensus.read.json("/Users/wesbonelli/Documents/research/sensus_json_data/02ba6905-fd5a-4883-9f32-d639df9ce053.json")
+allData
+allData = sensus.read.json("/Users/wesbonelli/Documents/research/sensus_json_data/02ba6905-fd5a-4883-9f32-d639df9ce053.json", TRUE)
+allData
+allData = sensus.read.json("/Users/wesbonelli/Documents/research/sensus_json_data/02ba6905-fd5a-4883-9f32-d639df9ce053.json", FALSE)
+allData
+plot(allData$AccelerometerDatum)
+runApp("/Users/wesbonelli/Documents/research/rshiny/survey_single_participant")
+library(Shiny)
+library(shiny)
+runApp("/Users/wesbonelli/Documents/research/rshiny/survey_single_participant")
+download.from.aws.s3()
+library(SensusR)
+download.from.aws.s3("s3://demonstest/9999/ScriptDatum", "/Users/wesbonelli/Documents/research/sensus_json_data/demonstest/9999/ScriptDatum")
+allData = sensus.sync.from.aws.s3("s3://demonstest/9999/ScriptDatum", "us-east-1:455adc21-3e02-4235-907a-f5582723a053", "/Users/wesbonelli/Documents/research/sensus_json_data/demonstest/9999/ScriptDatum", "https://s3.amazonaws.com", FALSE, )
+allData = sensus.sync.from.aws.s3("s3://demonstest/9999/ScriptDatum", "us-east-1:455adc21-3e02-4235-907a-f5582723a053", "/Users/wesbonelli/Documents/research/sensus_json_data/demonstest/9999/ScriptDatum", "https://s3.amazonaws.com", FALSE)
+allData = sensus.sync.from.aws.s3("s3://demonstest/9999/ScriptDatum", "us-east-1:455adc21-3e02-4235-907a-f5582723a053", "/Users/wesbonelli/Documents/research/sensus_json_data/demonstest/9999/ScriptDatum", "http://s3.amazonaws.com", FALSE)
+allData
+allData = sensus.sync.from.aws.s3("s3://demonstest/9999/ScriptDatum", "us-east-1:455adc21-3e02-4235-907a-f5582723a053", "/Users/wesbonelli/Documents/research/sensus_json_data/demonstest/9999/ScriptDatum", "http://s3.amazonaws.com", FALSE)
+allData = sensus.sync.from.aws.s3("s3://demonstest/9999/ScriptDatum", "us-east-1:455adc21-3e02-4235-907a-f5582723a053", "/Users/wesbonelli/Documents/research/sensus_json_data/demonstest/9999/ScriptDatum", "https://s3.amazonaws.com", FALSE)
+allData = sensus.sync.from.aws.s3("s3://demonstest/9999/ScriptDatum")
+allData
+library(SensusR)
+allData = sensus.sync.from.aws.s3("s3://demonstest/9999/ScriptDatum", "us-east-1:455adc21-3e02-4235-907a-f5582723a053", "/Users/wesbonelli/Documents/research/sensus_json_data/demonstest/9999/ScriptDatum", "https://s3.amazonaws.com", FALSE)
+allData = sensus.sync.from.aws.s3("s3://demonstest/9999/ScriptDatum")
+allData
+allData = sensus.sync.from.aws.s3("s3://demonstest/9999/ScriptDatum")
+allData = sensus.sync.from.aws.s3("s3://demonstest/9999/ScriptDatum", "/Users/wesbonelli/Documents/research/sensus_json_data/demonstest/9999")
+allData = sensus.sync.from.aws.s3("s3://demonstest/9999/ScriptDatum", profile = "default", "/Users/wesbonelli/Documents/research/sensus_json_data/demonstest/9999")
+allData = sensus.sync.from.aws.s3("s3://demonstest/9999", profile = "default", "/Users/wesbonelli/Documents/research/sensus_json_data/demonstest/9999")
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_single_participant")
+library(rShiny)
+library(shiny)
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_single_participant")
+sensus.read.json("/Users/wesbonelli/Documents/research/sensus_json_data/demonstest/9999/ScriptDatum")
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_single_participant")
+allData = sensus.read.json("/Users/wesbonelli/Documents/research/sensus_json_data/demonstest/9999/LocationDatum")
+allData
+participantIDs = sensus.read.json("/Users/wesbonelli/Documents/research/rshiny/data/participant_info.csv")
+participantIDS
+participantIDs
+participantIDs = read.table("/Users/wesbonelli/Documents/research/rshiny/data/participant_info.csv", header = TRUE, sep = ",")
+participantIDs
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_single_participant")
+rm(list=lw())
+rm(list=ls())
+data = sensus.read.json(paste0("/Users/wesbonelli/Documents/research/rshiny/data/demonstest/9999/ScriptDatum"))
+data
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_single_participant")
+data = sensus.read.json(paste0("/Users/wesbonelli/Documents/research/rshiny/data/demonstest/9999/ScriptDatum"))
+currentData <- data[which(data$ScriptName == "AC")]
+currentData
+data
+rm(list=ls())
+data = sensus.read.json(paste0("/Users/wesbonelli/Documents/research/rshiny/data/demonstest/9999/ScriptDatum"))
+data
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_single_participant")
+data = sensus.read.json(paste0("/Users/wesbonelli/Documents/research/rshiny/data/demonstest/9999/ScriptDatum"))
+currentData <- data[which(data$ScriptName == "AC")]
+currentData
+data
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_single_participant")
+data = sensus.read.json(paste0("/Users/wesbonelli/Documents/research/rshiny/data/demonstest/9999/ScriptDatum"))
+currentData <- data[which(data$ScriptName == "AC")]
+currentDat
+currentData
+data
+currentData <- data[which(data$ScriptName == "AC"),]
+currentData <- data[which(data$ScriptName == "AC")]
+currentDat
+currentData
+currentData = data[which(data$ScriptName == "AC")]
+currentData
+which[(data$ScriptName == "AC")]
+currentData = which(data$ScriptName == "AC")
+currentData
+which(data$ScriptName == "AC")
+which(ScriptName == "AC")
+which(data$ScriptName == AC)
+which(data$ScriptName == 'AC')
+current = data[which(data$ScriptName == "RT")]
+current
+data$ScriptName
+current = data[which(data$$ScriptDatumScriptName == "RT")]
+current = data[which(data$ScriptDatum$ScriptName == "RT")]
+current
+current = data$ScriptDatum[which(data$ScriptDatum$ScriptName == "RT")]
+current
+rm(list=ls())
+data = sensus.read.json(paste0("/Users/wesbonelli/Documents/research/rshiny/data/demonstest/9999/ScriptDatum"))
+data$ScriptDatum
+current = data$ScriptDatum[which(data$ScriptDatum$ScriptName == "EOD")]
+current
+current = NULL
+current
+current = data$ScriptDatum[which(ScriptName == "EOD")]
+current = data$ScriptDatum[which($ScriptName == "EOD")]
+current = data$ScriptDatum[which(ScriptDatum$ScriptName == "EOD")]
+current = data$ScriptDatum[which($ScriptDatum$ScriptName == "EOD")]
+current = data$ScriptDatum[which(data$ScriptDatum$ScriptName == "EOD")]
+current
+data
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_single_participant")
+rm(list=ls())
+data = sensus.read.json(paste0("/Users/wesbonelli/Documents/research/rshiny/data/demonstest/9999/ScriptDatum"))
+current = data$ScriptDatum[which(data$ScriptDatum$ScriptName == "EOD")]
+current
+desired = data.frame(timestamp = strptime(current$ScriptDatum$PresentationTimestamp, "%a %b %d %H:%M:%S"))
+desired
+current$ScriptDatum
+current
+data
+current = data$ScriptDatum[which(data$ScriptDatum$ScriptName == "EOD"),]
+current
+desired = data.frame(timestamp = strptime(current$ScriptDatum$PresentationTimestamp, "%a %b %d %H:%M:%S"))
+desired
+desired = data.frame(timestamp = strptime(current$PresentationTimestamp, "%a %b %d %H:%M:%S"))
+desired
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_single_participant")
+length(c(sensus.sync.from.aws.s3(paste0("s3://demonstest/9999/ScriptDatum"), profile = "default", paste0("/Users/wesbonelli/Documents/research/rshiny/data/demonstest/9999/ScriptDatum"), delete = FALSE)))
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_single_participant")
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_single_participant")
+library(shiny)
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_single_participant")

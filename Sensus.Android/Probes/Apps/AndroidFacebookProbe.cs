@@ -24,8 +24,6 @@ using SensusService;
 using SensusService.Probes.Apps;
 using Xamarin.Facebook;
 using Xamarin.Facebook.Login;
-using Android.Provider;
-using Android.Content;
 using System.Reflection;
 using SensusService.Exceptions;
 

@@ -16,7 +16,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Remote\ConsoleRemoteDataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Remote\RemoteDataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Datum.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\DataStoreException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\SensusException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ImpreciseDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LoggingLevel.cs" />

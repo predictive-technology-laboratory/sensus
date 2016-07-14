@@ -17,6 +17,12 @@ if [ $? -ne 0 ]; then
     exit $?;
 fi
 
+# as of Xamarin Community 6.0, the IPA is put in a directory whose name includes the current date/time. this makes it difficult to get the path 
+# to the IPA. so, redo the final step of the build manually to create the IPA at the path we want.
+echo "Rebuilding IPA at preferred location..."
+cd ../../Sensus.iOS/obj/iPhone/Release/ipa
+zip -r -y "../../../../bin/iPhone/Release/SensusiOS-$1.ipa" Payload
+cd ../../../../../Scripts/Release
 ipaPath="../../Sensus.iOS/bin/iPhone/Release/SensusiOS-$1.ipa"
 
 # get itunes connect username

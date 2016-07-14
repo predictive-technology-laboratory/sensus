@@ -15,6 +15,7 @@
 using System;
 using SensusService.Probes;
 using SensusService.Probes.Communication;
+using Syncfusion.SfChart.XForms;
 
 namespace SensusService
 {
@@ -44,6 +45,26 @@ namespace SensusService
         public sealed override Type DatumType
         {
             get { return typeof(TelephonyDatum); }
+        }
+
+        protected override ChartSeries GetChartSeries()
+        {
+            return null;
+        }
+
+        protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
+        {
+            return null;
+        }
+
+        protected override ChartAxis GetChartPrimaryAxis()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override RangeAxisBase GetChartSecondaryAxis()
+        {
+            throw new NotImplementedException();
         }
     }
 }

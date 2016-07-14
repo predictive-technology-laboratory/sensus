@@ -77,7 +77,7 @@ namespace SensusService
             {
                 WebClient downloadClient = new WebClient();
 
-                #if __ANDROID__ || __IOS__
+#if __ANDROID__ || __IOS__
                 downloadClient.DownloadDataCompleted += (o, e) =>
                 {
                     if (e.Error == null)
@@ -92,11 +92,11 @@ namespace SensusService
                             callback(null);
                     }
                 };
-                #elif WINDOWS_PHONE
+#elif WINDOWS_PHONE
                 // TODO:  Read bytes and display.
-                #else
-                #error "Unrecognized platform."
-                #endif
+#else
+#error "Unrecognized platform."
+#endif
 
                 downloadClient.DownloadDataAsync(webURI);
             }
@@ -168,7 +168,7 @@ namespace SensusService
                                 #region add any probes for the current platform that didn't come through when deserializing. for example, android has a listening WLAN probe, but iOS has a polling WLAN probe. neither will come through on the other platform when deserializing, since the types are not defined.
                                 ManualResetEvent probeSetupWait = new ManualResetEvent(false);
                                 Probe.GetAllAsync(probes =>
-                                    {                                        
+                                    {
                                         List<Type> deserializedProbeTypes = protocol.Probes.Select(p => p.GetType()).ToList();
 
                                         foreach (Probe probe in probes)
@@ -176,7 +176,7 @@ namespace SensusService
                                             {
                                                 SensusServiceHelper.Get().Logger.Log("Adding missing probe to protocol:  " + probe.GetType().FullName, LoggingLevel.Normal, typeof(Protocol));
                                                 protocol.AddProbe(probe);
-                                            }     
+                                            }
 
                                         probeSetupWait.Set();
                                     });
@@ -248,7 +248,7 @@ namespace SensusService
                                 finally
                                 {
                                     protocolWait.Set();
-                                }                              
+                                }
                             });
 
                         protocolWait.WaitOne();
@@ -280,18 +280,20 @@ namespace SensusService
                     else if (protocol.Running)
                         SensusServiceHelper.Get().FlashNotificationAsync("You are already participating in \"" + protocol.Name + "\".");
                     else
-                    {                        
+                    {
                         Device.BeginInvokeOnMainThread(async () =>
                             {
-                                // display the protocols page if it isn't already up
                                 ProtocolsPage protocolsPage = null;
-                                Page topPage = App.Current.MainPage.Navigation.NavigationStack.Last();
+
+                                // display the protocols page if it isn't already up
+                                INavigation navigation = Application.Current.MainPage.Navigation;
+                                Page topPage = navigation.NavigationStack.Count > 0 ? navigation.NavigationStack.Last() : null;
                                 if (topPage is ProtocolsPage)
                                     protocolsPage = topPage as ProtocolsPage;
                                 else
                                 {
                                     protocolsPage = new ProtocolsPage();
-                                    await App.Current.MainPage.Navigation.PushAsync(protocolsPage);
+                                    await Application.Current.MainPage.Navigation.PushAsync(protocolsPage);
                                 }
 
                                 // ask user to start protocol
@@ -334,10 +336,10 @@ namespace SensusService
                                 if (probe is FacebookProbe)
                                     probe.Enabled = false;
 
-                                #if __IOS__
+#if __IOS__
                                 if (probe is iOSHealthKitProbe)
                                     probe.Enabled = false;
-                                #endif
+#endif
 
                                 // clear the run-times collection from any script runners. need a clean start, just in case we have one-shot scripts
                                 // that need to run every unit testing execution.
@@ -448,7 +450,7 @@ namespace SensusService
             get { return _storageDirectory; }
             set
             {
-                _storageDirectory = value; 
+                _storageDirectory = value;
 
                 if (!string.IsNullOrWhiteSpace(_storageDirectory) && !Directory.Exists(_storageDirectory))
                 {
@@ -481,7 +483,7 @@ namespace SensusService
         {
             get
             {
-                return _lockPasswordHash; 
+                return _lockPasswordHash;
             }
             set
             {
@@ -628,7 +630,7 @@ namespace SensusService
         public float Participation
         {
             get
-            { 
+            {
                 float[] participations = _probes.Select(probe => probe.GetParticipation())
                                                 .Where(participation => participation != null)
                                                 .Select(participation => participation.GetValueOrDefault())
@@ -686,7 +688,7 @@ namespace SensusService
 
         #region iOS-specific protocol properties
 
-        #if __IOS__
+#if __IOS__
         [OnOffUiProperty("GPS - Pause Location Updates:", true, 25)]
         public bool GpsPauseLocationUpdatesAutomatically { get; set; } = false;
 
@@ -703,9 +705,9 @@ namespace SensusService
 
         [EntryFloatUiProperty("GPS - Deferral Distance (Meters):", true, 29)]
         public float GpsDeferralDistanceMeters
-        { 
+        {
             get
-            { 
+            {
                 return _gpsDeferralDistanceMeters;
             }
             set
@@ -731,7 +733,7 @@ namespace SensusService
                 _gpsDeferralTimeMinutes = value;
             }
         }
-        #endif
+#endif
 
         #endregion
 
@@ -746,7 +748,7 @@ namespace SensusService
             _jsonAnonymizer = new AnonymizedJsonContractResolver(this);
             _shareable = false;
             _pointsOfInterest = new List<PointOfInterest>();
-            _participationHorizonDays = 1;   
+            _participationHorizonDays = 1;
             _groupable = false;
             _groupedProtocols = new List<Protocol>();
             _rewardThreshold = null;
@@ -765,7 +767,7 @@ namespace SensusService
             _name = name;
             _probes = new List<Probe>();
 
-            Reset(true);            
+            Reset(true);
         }
 
         private void AddProbe(Probe probe)
@@ -852,7 +854,7 @@ namespace SensusService
                 {
                     if (_localDataStore == null)
                         throw new Exception("Local data store not defined.");
-                        
+
                     _localDataStore.Start();
 
                     // start remote data store
@@ -860,20 +862,20 @@ namespace SensusService
                     {
                         if (_remoteDataStore == null)
                             throw new Exception("Remote data store not defined.");
-                            
+
                         _remoteDataStore.Start();
 
                         // start probes
                         try
                         {
                             // if we're on iOS, gather up all of the health-kit probes so that we can request their permissions in one batch
-                            #if __IOS__
+#if __IOS__
                             if (HKHealthStore.IsHealthDataAvailable)
                             {
                                 List<iOSHealthKitProbe> enabledHealthKitProbes = new List<iOSHealthKitProbe>();
                                 foreach (Probe probe in _probes)
                                     if (probe.Enabled && probe is iOSHealthKitProbe)
-                                        enabledHealthKitProbes.Add(probe as iOSHealthKitProbe);                                                                            
+                                        enabledHealthKitProbes.Add(probe as iOSHealthKitProbe);
 
                                 if (enabledHealthKitProbes.Count > 0)
                                 {
@@ -891,7 +893,7 @@ namespace SensusService
                                     authorizationWait.WaitOne();
                                 }
                             }
-                            #endif
+#endif
 
                             SensusServiceHelper.Get().Logger.Log("Starting probes for protocol " + _name + ".", LoggingLevel.Normal, GetType());
                             int probesEnabled = 0;
@@ -907,7 +909,7 @@ namespace SensusService
                                         ++probesStarted;
                                     }
                                     catch (Exception)
-                                    {                                        
+                                    {
                                     }
                                 }
 
@@ -929,7 +931,7 @@ namespace SensusService
                             SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
                             SensusServiceHelper.Get().FlashNotificationAsync(message);
                             stopProtocol = true;
-                        }                            
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -960,7 +962,7 @@ namespace SensusService
 
                 if (callback != null)
                     callback();
-        
+
                 return;
             }
 
@@ -998,12 +1000,12 @@ namespace SensusService
 
             // the name in the following text input is used to grab the UI element when unit testing
             consent.Add(new SingleLineTextInput("ConsentCode", "To participate in this study as described above, please indicate your consent by entering the following code:  " + consentCode, Keyboard.Numeric)
-                {
-                    DisplayNumber = false
-                });
+            {
+                DisplayNumber = false
+            });
 
             SensusServiceHelper.Get().PromptForInputsAsync(
-                "Protocol Consent", 
+                "Protocol Consent",
                 consent.ToArray(),
                 null,
                 true,
@@ -1014,7 +1016,7 @@ namespace SensusService
                 false,
                 inputs =>
                 {
-                    if (inputs != null)
+                    if (inputs != null && inputs.Count > 0)
                     {
                         string consentCodeStr = inputs.Last().Value as string;
 
@@ -1142,21 +1144,21 @@ namespace SensusService
                         }
                 }
 
-                #if __ANDROID__
+#if __ANDROID__
                 Sensus.Android.AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as Sensus.Android.AndroidSensusServiceHelper;
                 misc += "Wake lock count:  " + serviceHelper.WakeLockAcquisitionCount + Environment.NewLine;
-                #endif
+#endif
 
                 _mostRecentReport = new ProtocolReportDatum(DateTimeOffset.UtcNow, error, warning, misc, this);
                 SensusServiceHelper.Get().Logger.Log("Protocol report:" + Environment.NewLine + _mostRecentReport, LoggingLevel.Normal, GetType());
 
                 SensusServiceHelper.Get().Logger.Log("Storing protocol report locally.", LoggingLevel.Normal, GetType());
-                _localDataStore.AddNonProbeDatum(_mostRecentReport);
+                _localDataStore.Add(_mostRecentReport);
 
                 if (!_localDataStore.UploadToRemoteDataStore && _forceProtocolReportsToRemoteDataStore)
                 {
                     SensusServiceHelper.Get().Logger.Log("Local data aren't pushed to remote, so we're copying the report datum directly to the remote cache.", LoggingLevel.Normal, GetType());
-                    _remoteDataStore.AddNonProbeDatum(_mostRecentReport);
+                    _remoteDataStore.Add(_mostRecentReport);
                 }
             }
         }
@@ -1165,7 +1167,7 @@ namespace SensusService
         {
             _randomTimeAnchor = DateTime.MinValue;
             _storageDirectory = null;
-            _mostRecentReport = null;            
+            _mostRecentReport = null;
 
             foreach (Probe probe in _probes)
             {
@@ -1215,7 +1217,7 @@ namespace SensusService
                     {
                         try
                         {
-                            probe.Stop(); 
+                            probe.Stop();
                         }
                         catch (Exception ex)
                         {
@@ -1248,7 +1250,7 @@ namespace SensusService
                 }
 
                 SensusServiceHelper.Get().Logger.Log("Stopped protocol \"" + _name + "\".", LoggingLevel.Normal, GetType());
-                SensusServiceHelper.Get().FlashNotificationAsync("Stopped \"" + _name + "\".");
+                SensusServiceHelper.Get().FlashNotificationAsync("Stopped \"" + _name + "\".", false);
             }
         }
 
@@ -1260,7 +1262,7 @@ namespace SensusService
 
                     if (callback != null)
                         callback();
-            
+
                 }).Start();
         }
 

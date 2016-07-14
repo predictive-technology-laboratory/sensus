@@ -20,10 +20,7 @@ using Xamarin.Forms;
 
 namespace SensusUI
 {
-    /// <summary>
-    /// Displays a list of probes for a protocol.
-    /// </summary>
-    public class ProbesPage : ContentPage
+    public abstract class ProbesPage : ContentPage
     {
         private class ProbeTextValueConverter : IValueConverter
         {
@@ -31,7 +28,7 @@ namespace SensusUI
             {
                 if (value == null)
                     return "";
-                
+
                 Probe probe = value as Probe;
 
                 string type = "";
@@ -45,7 +42,7 @@ namespace SensusUI
 
             public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
             {
-                new SensusException("Invalid call to " + GetType().FullName + ".ConvertBack.");
+                SensusException.Report("Invalid call to " + GetType().FullName + ".ConvertBack.");
                 return null;
             }
         }
@@ -56,14 +53,14 @@ namespace SensusUI
             {
                 if (value == null)
                     return Color.Default;
-                
+
                 Probe probe = value as Probe;
                 return probe.Enabled ? Color.Green : Color.Red;
             }
 
             public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
             {
-                new SensusException("Invalid call to " + GetType().FullName + ".ConvertBack.");
+                SensusException.Report("Invalid call to " + GetType().FullName + ".ConvertBack.");
                 return null;
             }
         }
@@ -74,7 +71,7 @@ namespace SensusUI
             {
                 if (value == null)
                     return "";
-                
+
                 Probe probe = value as Probe;
                 Datum mostRecentDatum = probe.MostRecentDatum;
                 return mostRecentDatum == null ? "----------" : mostRecentDatum.DisplayDetail + Environment.NewLine + mostRecentDatum.Timestamp;
@@ -82,7 +79,7 @@ namespace SensusUI
 
             public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
             {
-                new SensusException("Invalid call to " + GetType().FullName + ".ConvertBack.");
+                SensusException.Report("Invalid call to " + GetType().FullName + ".ConvertBack.");
                 return null;
             }
         }
@@ -90,32 +87,38 @@ namespace SensusUI
         private Protocol _protocol;
         private ListView _probesList;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SensusUI.ProbesPage"/> class.
-        /// </summary>
-        /// <param name="protocol">Protocol to display probes for.</param>
-        public ProbesPage(Protocol protocol)
+        protected Protocol Protocol
+        {
+            get
+            {
+                return _protocol;
+            }
+        }
+
+        protected ListView ProbesList
+        {
+            get
+            {
+                return _probesList;
+            }
+        }
+
+        public ProbesPage(Protocol protocol, string title)
         {
             _protocol = protocol;
 
-            Title = "Probes";
+            Title = title;
 
             _probesList = new ListView
             {
                 IsPullToRefreshEnabled = true
             };
-            
+
             _probesList.ItemTemplate = new DataTemplate(typeof(TextCell));
             _probesList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", converter: new ProbeTextValueConverter()));
             _probesList.ItemTemplate.SetBinding(TextCell.TextColorProperty, new Binding(".", converter: new ProbeTextColorValueConverter()));
             _probesList.ItemTemplate.SetBinding(TextCell.DetailProperty, new Binding(".", converter: new ProbeDetailValueConverter()));
-            _probesList.ItemTapped += async (o, e) =>
-                {
-                    ProbePage probePage = new ProbePage(e.Item as Probe);
-                    probePage.Disappearing += (oo, ee) => { Bind(); };  // rebind the probes page to pick up changes in the probe
-                    await Navigation.PushAsync(probePage);
-                    _probesList.SelectedItem = null;
-                };
+            _probesList.ItemTapped += ProbeTapped;
 
             _probesList.Refreshing += (o, e) =>
             {
@@ -125,44 +128,15 @@ namespace SensusUI
 
             Bind();
 
-            ToolbarItems.Add(new ToolbarItem("All", null, async () =>
-                {
-                    if(await DisplayAlert("Enable All Probes", "Are you sure you want to enable all probes?", "Yes", "No"))
-                    {
-                        foreach(Probe probe in _protocol.Probes)
-                            if(SensusServiceHelper.Get().EnableProbeWhenEnablingAll(probe))
-                                probe.Enabled = true;
-
-                        Bind();
-                    }
-                }));
-
-            ToolbarItems.Add(new ToolbarItem("None", null, async () =>
-                {
-                    if(await DisplayAlert("Disable All Probes", "Are you sure you want to disable all probes?", "Yes", "No"))
-                    {
-                        foreach(Probe probe in _protocol.Probes)
-                            probe.Enabled = false;
-
-                        Bind();
-                    }
-                }));
-
             Content = _probesList;
         }
+
+        protected abstract void ProbeTapped(object sender, ItemTappedEventArgs e);
 
         public void Bind()
         {
             _probesList.ItemsSource = null;
             _probesList.ItemsSource = _protocol.Probes;
-        }
-
-        protected override void OnDisappearing()
-        {
-            base.OnDisappearing();
-
-            foreach (Probe probe in _protocol.Probes)
-                probe.OriginallyEnabled = probe.Enabled;
         }
     }
 }

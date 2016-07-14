@@ -17,6 +17,8 @@ using System.Linq;
 using System.Collections.ObjectModel;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions.Abstractions;
+using Newtonsoft.Json;
+using Syncfusion.SfChart.XForms;
 
 namespace SensusService.Probes.Location
 {
@@ -30,6 +32,33 @@ namespace SensusService.Probes.Location
         public ObservableCollection<PointOfInterestProximityTrigger> Triggers
         {
             get { return _triggers; }
+        }
+
+        [JsonIgnore]
+        protected override bool DefaultKeepDeviceAwake
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        [JsonIgnore]
+        protected override string DeviceAwakeWarning
+        {
+            get
+            {
+                return "This setting does not affect iOS or Android.";
+            }
+        }
+
+        [JsonIgnore]
+        protected override string DeviceAsleepWarning
+        {
+            get
+            {
+                return "This setting does not affect iOS or Android.";
+            }
         }
 
         public sealed override string DisplayName
@@ -101,6 +130,26 @@ namespace SensusService.Probes.Location
         protected sealed override void StopListening()
         {
             GpsReceiver.Get().RemoveListener(_positionChangedHandler);
+        }
+
+        protected override ChartSeries GetChartSeries()
+        {
+            return null;
+        }
+
+        protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
+        {
+            return null;
+        }
+
+        protected override ChartAxis GetChartPrimaryAxis()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override RangeAxisBase GetChartSecondaryAxis()
+        {
+            throw new NotImplementedException();
         }
     }
 }

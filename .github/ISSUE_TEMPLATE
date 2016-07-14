@@ -1,0 +1,23 @@
+Answer the following questions depending on the type of issue you are submitting.
+
+# For All Issues
+
+### Which version of Sensus are you currently using?
+
+### Which operating system(s) does this issue involve (Android, iOS, or both)?
+
+# For Enhancement Issues
+
+### What would you like Sensus to do that it does not already do?
+
+# For Bug Report Issues
+
+### What were you doing in Sensus when the issue occurred?
+
+### What did you expect to happen?
+
+### What actually happened?
+
+### Can you reproduce the issue? If so, what are the steps to reproduce the issue?
+
+### Go to the Sensus home screen, tap the gear/dot in the upper-right corner, view the log, and share it with yourself via email. Then download the email attachment and attach the log to this issue.

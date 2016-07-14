@@ -16,7 +16,6 @@ using System;
 using SensusService.Probes.Movement;
 using CoreMotion;
 using Foundation;
-using System.Threading;
 using SensusService;
 using Plugin.Permissions.Abstractions;
 
@@ -25,10 +24,6 @@ namespace Sensus.iOS.Probes.Movement
     public class iOSAccelerometerProbe : AccelerometerProbe
     {
         private CMMotionManager _motionManager;
-
-        public iOSAccelerometerProbe()
-        {
-        }
 
         protected override void Initialize()
         {

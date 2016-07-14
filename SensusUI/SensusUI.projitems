@@ -58,6 +58,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\SliderInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\SingleLineTextInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\MultiLineTextInput.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ProbesEditPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ProbesViewPage.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Inputs\" />

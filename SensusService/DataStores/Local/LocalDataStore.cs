@@ -21,9 +21,9 @@ using System.Threading;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 #if __ANDROID__
-using Java.IO;
 using Java.Util.Zip;
 #elif __IOS__
 using MiniZip.ZipArchive;
@@ -47,61 +47,30 @@ namespace SensusService.DataStores.Local
             set { _uploadToRemoteDataStore = value; }
         }
 
+        [JsonIgnore]
+        public abstract string SizeDescription { get; }
+
         protected LocalDataStore()
         {
             _uploadToRemoteDataStore = true;
 
-            #if DEBUG || UNIT_TESTING
+#if DEBUG || UNIT_TESTING
             CommitDelayMS = 5000;  // 5 seconds...so we can see debugging output quickly
-            #else
-            CommitDelayMS = 60000;
-            #endif
+#else
+            CommitDelayMS = 1000 * 60 * 15;  // 15 minutes
+#endif
         }
 
-        protected sealed override List<Datum> GetDataToCommit(CancellationToken cancellationToken)
-        {
-            List<Datum> dataToCommit = new List<Datum>();
-
-            foreach (Probe probe in Protocol.Probes)
-            {
-                if (cancellationToken.IsCancellationRequested)
-                    break;
-                
-                // the collected data object comes directly from the probe, so lock it down before working with it.
-                ICollection<Datum> collectedData = probe.GetCollectedData();
-                if (collectedData != null)
-                    lock (collectedData)
-                        if (collectedData.Count > 0)
-                            dataToCommit.AddRange(collectedData);
-            }
-
-            SensusServiceHelper.Get().Logger.Log("Retrieved " + dataToCommit.Count + " data elements from probes.", LoggingLevel.Normal, GetType());
-
-            return dataToCommit;
-        }
-
-        protected sealed override void ProcessCommittedData(List<Datum> committedData)
-        {
-            SensusServiceHelper.Get().Logger.Log("Clearing " + committedData.Count + " committed data elements from probes.", LoggingLevel.Normal, GetType());
-
-            foreach (Probe probe in Protocol.Probes)
-                probe.ClearDataCommittedToLocalDataStore(committedData);
-
-            SensusServiceHelper.Get().Logger.Log("Done clearing committed data elements from probes.", LoggingLevel.Normal, GetType());
-        }
-
-        public abstract List<Datum> GetDataForRemoteDataStore(CancellationToken cancellationToken);
-
-        public abstract void ClearDataCommittedToRemoteDataStore(List<Datum> dataCommittedToRemote);
+        public abstract void CommitDataToRemoteDataStore(CancellationToken cancellationToken);
 
         public int WriteDataToZipFile(string zipPath, CancellationToken cancellationToken, Action<string, double> progressCallback)
         {
             // create a zip file to hold all data
-            #if __ANDROID__
+#if __ANDROID__
             ZipOutputStream zipFile = null;
-            #elif __IOS__
+#elif __IOS__
             ZipArchive zipFile = null;
-            #endif
+#endif
 
             // write all data to separate JSON files. zip files for convenience.
             string directory = null;
@@ -154,7 +123,7 @@ namespace SensusService.DataStores.Local
                 if (progressCallback != null)
                     progressCallback("Compressing data...", 0);
 
-                #if __ANDROID__
+#if __ANDROID__
 
                 directoryName += '/';
                 zipFile = new ZipOutputStream(new FileStream(zipPath, FileMode.Create, FileAccess.Write));
@@ -191,11 +160,11 @@ namespace SensusService.DataStores.Local
                 // close entry for directory
                 zipFile.CloseEntry();
 
-                #elif __IOS__
+#elif __IOS__
                 zipFile = new ZipArchive();
                 zipFile.CreateZipFile(zipPath);
                 zipFile.AddFolder(directory, null);
-                #endif
+#endif
 
                 if (progressCallback != null)
                     progressCallback(null, 1);
@@ -209,11 +178,11 @@ namespace SensusService.DataStores.Local
                 {
                     if (zipFile != null)
                     {
-                        #if __ANDROID__
+#if __ANDROID__
                         zipFile.Close();
-                        #elif __IOS__
+#elif __IOS__
                         zipFile.CloseZipFile();
-                        #endif
+#endif
                     }
                 }
                 catch (Exception)
@@ -243,5 +212,14 @@ namespace SensusService.DataStores.Local
         }
 
         protected abstract IEnumerable<Tuple<string, string>> GetDataLinesToWrite(CancellationToken cancellationToken, Action<string, double> progressCallback);
+
+        public override bool TestHealth(ref string error, ref string warning, ref string misc)
+        {
+            bool restart = base.TestHealth(ref error, ref warning, ref misc);
+
+            misc += "Local size (" + GetType().Name + "):  " + SizeDescription + Environment.NewLine;
+
+            return restart;
+        }
     }
 }

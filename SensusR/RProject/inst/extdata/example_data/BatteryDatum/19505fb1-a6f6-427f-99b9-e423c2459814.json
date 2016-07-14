@@ -1,0 +1,4 @@
+[
+{"$type":"SensusService.Probes.Device.BatteryDatum, SensusAndroid","Level":95.0,"Id":"83475b62-0f17-4262-aa93-1cbaac73e062","DeviceId":"287cf65bb08d6f21","Timestamp":"2016-06-22T04:22:39.222712+00:00","ProtocolId":"cc3db0e5-3476-4a2e-9576-bc082880fc73","Anonymized":true},
+{"$type":"SensusService.Probes.Device.BatteryDatum, SensusAndroid","Level":94.0,"Id":"7adde5e7-a4df-40f5-8be1-753a5812d898","DeviceId":"287cf65bb08d6f21","Timestamp":"2016-06-22T04:37:40.300736+00:00","ProtocolId":"cc3db0e5-3476-4a2e-9576-bc082880fc73","Anonymized":true}
+]

@@ -13,12 +13,41 @@
 // limitations under the License.
 
 using System;
+using Newtonsoft.Json;
 using SensusService.Probes;
+using Syncfusion.SfChart.XForms;
 
 namespace SensusService
 {
     public abstract class ListeningAmbientTemperatureProbe : ListeningProbe
     {
+        [JsonIgnore]
+        protected override bool DefaultKeepDeviceAwake
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        [JsonIgnore]
+        protected override string DeviceAwakeWarning
+        {
+            get
+            {
+                return "This setting does not affect iOS. Android devices will use additional power to report all updates.";
+            }
+        }
+
+        [JsonIgnore]
+        protected override string DeviceAsleepWarning
+        {
+            get
+            {
+                return "This setting does not affect iOS. Android devices will sleep and pause updates.";
+            }
+        }
+
         public sealed override Type DatumType
         {
             get
@@ -34,5 +63,37 @@ namespace SensusService
                 return "Temperature";
             }
         }
+
+        protected override ChartSeries GetChartSeries()
+        {
+            return new LineSeries();
+        }
+
+        protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
+        {
+            return new ChartDataPoint(datum.Timestamp.LocalDateTime, (datum as AmbientTemperatureDatum).DegreesCelsius);
+        }
+
+        protected override ChartAxis GetChartPrimaryAxis()
+        {
+            return new DateTimeAxis
+            {
+                Title = new ChartAxisTitle
+                {
+                    Text = "Time"
+                }
+            };
+        }
+
+        protected override RangeAxisBase GetChartSecondaryAxis()
+        {
+            return new NumericalAxis
+            {
+                Title = new ChartAxisTitle
+                {
+                    Text = "Degrees (Celsius)"
+                }
+            };
+        }
     }
-}   
+}

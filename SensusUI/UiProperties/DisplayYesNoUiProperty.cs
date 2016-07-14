@@ -36,7 +36,7 @@ namespace SensusUI.UiProperties
 
             public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
             {
-                new SensusException("Invalid call to " + GetType().FullName + ".ConvertBack.");
+                SensusException.Report("Invalid call to " + GetType().FullName + ".ConvertBack.");
                 return null;
             }
         }

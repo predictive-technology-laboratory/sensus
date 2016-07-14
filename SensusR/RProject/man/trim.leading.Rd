@@ -15,4 +15,7 @@ Result of trimming.
 \description{
 Trim leading white space from a string.
 }
+\examples{
+trim.leading("  asdfasdf")
+}
 

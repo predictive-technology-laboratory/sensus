@@ -52,7 +52,7 @@ namespace Sensus.Android.Probes.Communication
                 double? callDurationSeconds = null;
                 if (_outgoingIncomingTime != null)
                     callDurationSeconds = (DateTime.Now - _outgoingIncomingTime.GetValueOrDefault()).TotalSeconds;
-                    
+
                 StoreDatum(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.Idle, null, callDurationSeconds));
             };
         }

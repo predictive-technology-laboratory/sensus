@@ -19,6 +19,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using Syncfusion.SfChart.XForms;
+using System.Collections.ObjectModel;
 
 namespace SensusService.Probes
 {
@@ -59,7 +61,6 @@ namespace SensusService.Probes
 
         private bool _enabled;
         private bool _running;
-        private HashSet<Datum> _collectedData;
         private Datum _mostRecentDatum;
         private Protocol _protocol;
         private bool _storeData;
@@ -67,6 +68,8 @@ namespace SensusService.Probes
         private bool _originallyEnabled;
         private List<Tuple<bool, DateTime>> _startStopTimes;
         private List<DateTime> _successfulHealthTestTimes;
+        private List<ChartDataPoint> _chartData;
+        private int _maxChartDataCount;
 
         private readonly object _locker = new object();
 
@@ -149,7 +152,7 @@ namespace SensusService.Probes
         [JsonIgnore]
         public DateTimeOffset MostRecentStoreTimestamp
         {
-            get{ return _mostRecentStoreTimestamp; }
+            get { return _mostRecentStoreTimestamp; }
         }
 
         public Protocol Protocol
@@ -188,16 +191,38 @@ namespace SensusService.Probes
         /// <value>The successful health test times.</value>
         public List<DateTime> SuccessfulHealthTestTimes
         {
-            get{ return _successfulHealthTestTimes; }
+            get { return _successfulHealthTestTimes; }
+        }
+
+        [EntryIntegerUiProperty("Max Chart Data Count:", true, 50)]
+        public int MaxChartDataCount
+        {
+            get
+            {
+                return _maxChartDataCount;
+            }
+            set
+            {
+                if (value > 0)
+                    _maxChartDataCount = value;
+
+                // trim chart data collection
+                lock (_chartData)
+                {
+                    while (_chartData.Count > 0 && _chartData.Count > _maxChartDataCount)
+                        _chartData.RemoveAt(0);
+                }
+            }
         }
 
         protected Probe()
         {
             _enabled = _running = false;
             _storeData = true;
-            _collectedData = new HashSet<Datum>();
             _startStopTimes = new List<Tuple<bool, DateTime>>();
             _successfulHealthTestTimes = new List<DateTime>();
+            _maxChartDataCount = 250;
+            _chartData = new List<ChartDataPoint>(_maxChartDataCount + 1);
         }
 
         /// <summary>
@@ -205,7 +230,11 @@ namespace SensusService.Probes
         /// </summary>
         protected virtual void Initialize()
         {
-            _collectedData.Clear();
+            lock (_chartData)
+            {
+                _chartData.Clear();
+            }
+
             _mostRecentDatum = null;
             _mostRecentStoreTimestamp = DateTimeOffset.UtcNow;  // mark storage delay from initialization of probe
         }
@@ -313,34 +342,26 @@ namespace SensusService.Probes
                 datum.ProtocolId = Protocol.Id;
 
                 if (_storeData)
-                    lock (_collectedData)
+                {
+                    _protocol.LocalDataStore.Add(datum);
+
+                    ChartDataPoint chartDataPoint = GetChartDataPointFromDatum(datum);
+
+                    if (chartDataPoint != null)
                     {
-                        SensusServiceHelper.Get().Logger.Log("Storing datum in cache.", LoggingLevel.Verbose, GetType());
-                        _collectedData.Add(datum);
+                        lock (_chartData)
+                        {
+                            _chartData.Add(chartDataPoint);
+
+                            while (_chartData.Count > 0 && _chartData.Count > _maxChartDataCount)
+                                _chartData.RemoveAt(0);
+                        }
                     }
+                }
             }
 
             MostRecentDatum = datum;
             _mostRecentStoreTimestamp = DateTimeOffset.UtcNow;  // this is outside the _storeData restriction above since we just want to track when this method is called.
-        }
-
-        public ICollection<Datum> GetCollectedData()
-        {
-            return _collectedData;
-        }
-
-        public void ClearDataCommittedToLocalDataStore(ICollection<Datum> data)
-        {
-            if (_collectedData != null)
-                lock (_collectedData)
-                {
-                    int cleared = 0;
-                    foreach (Datum datum in data)
-                        if (_collectedData.Remove(datum))
-                            ++cleared;
-
-                    SensusServiceHelper.Get().Logger.Log("Cleared " + cleared + " committed data elements from cache.", LoggingLevel.Debug, GetType());
-                }
         }
 
         protected void StopAsync()
@@ -377,10 +398,6 @@ namespace SensusService.Probes
                         _startStopTimes.Add(new Tuple<bool, DateTime>(false, DateTime.Now));
                         _startStopTimes.RemoveAll(t => t.Item2 < Protocol.ParticipationHorizon);
                     }
-
-                    // clear out the probe's in-memory storage
-                    lock (_collectedData)
-                        _collectedData.Clear();
                 }
                 else
                     SensusServiceHelper.Get().Logger.Log("Attempted to stop probe, but it wasn't running.", LoggingLevel.Normal, GetType());
@@ -397,7 +414,7 @@ namespace SensusService.Probes
         }
 
         public virtual bool TestHealth(ref string error, ref string warning, ref string misc)
-        {                    
+        {
             bool restart = false;
 
             if (!_running)
@@ -413,17 +430,63 @@ namespace SensusService.Probes
         {
             if (_running)
                 throw new Exception("Cannot clear probe while it is running.");
-            
-            _collectedData.Clear();
+
+            lock (_chartData)
+            {
+                _chartData.Clear();
+            }
 
             lock (_startStopTimes)
                 _startStopTimes.Clear();
 
             lock (_successfulHealthTestTimes)
                 _successfulHealthTestTimes.Clear();
-            
+
             _mostRecentDatum = null;
             _mostRecentStoreTimestamp = DateTimeOffset.MinValue;
         }
+
+        public SfChart GetChart()
+        {
+            ChartSeries series = GetChartSeries();
+
+            if (series == null)
+                return null;
+
+            // provide the series with a copy of the chart data. if we provide the actual list, then the
+            // chart wants to auto-update the display on subsequent additions to the list. if this happens,
+            // then we'll need to update the list on the UI thread so that the chart is redrawn correctly.
+            // and if this is the case then we're in trouble because xamarin forms is not always initialized 
+            // when the list is updated with probed data (if the activity is killed).
+            lock (_chartData)
+            {
+                series.ItemsSource = _chartData.ToList();
+            }
+
+            SfChart chart = new SfChart
+            {
+                PrimaryAxis = GetChartPrimaryAxis(),
+                SecondaryAxis = GetChartSecondaryAxis(),
+            };
+
+            chart.Series.Add(series);
+
+            chart.ChartBehaviors.Add(new ChartZoomPanBehavior
+            {
+                EnablePanning = true,
+                EnableZooming = true,
+                EnableDoubleTap = true
+            });
+
+            return chart;
+        }
+
+        protected abstract ChartSeries GetChartSeries();
+
+        protected abstract ChartAxis GetChartPrimaryAxis();
+
+        protected abstract RangeAxisBase GetChartSecondaryAxis();
+
+        protected abstract ChartDataPoint GetChartDataPointFromDatum(Datum datum);
     }
 }

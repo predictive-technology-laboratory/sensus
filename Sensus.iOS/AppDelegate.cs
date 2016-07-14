@@ -29,6 +29,7 @@ using CoreLocation;
 using System.Threading;
 using Plugin.Toasts;
 using SensusService.Probes;
+using Syncfusion.SfChart.XForms.iOS.Renderers;
 
 namespace Sensus.iOS
 {
@@ -49,6 +50,7 @@ namespace Sensus.iOS
             Forms.Init();
             FormsMaps.Init();
             MapExtendRenderer.Init();
+            new SfChartRenderer();
 
             // toasts for iOS
             DependencyService.Register<ToastNotificatorImplementation>();
@@ -151,7 +153,7 @@ namespace Sensus.iOS
 
                     Device.BeginInvokeOnMainThread(() =>
                         {
-                            (App.Current as App).ProtocolsPage.Bind();
+                            (Xamarin.Forms.Application.Current as App).ProtocolsPage.Bind();
                         });
                 });
 
@@ -237,7 +239,7 @@ namespace Sensus.iOS
                         }
 
             serviceHelper.Save();
-            serviceHelper.Stop();
+            serviceHelper.StopProtocols();
         }
     }
 }
