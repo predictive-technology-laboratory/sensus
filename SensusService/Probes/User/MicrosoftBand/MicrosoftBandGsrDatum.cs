@@ -42,7 +42,7 @@ namespace SensusService.Probes.User.MicrosoftBand
         {
             get
             {
-                return "Resistance:  " + Math.Round(_resistance, 2);
+                return "Resistance:  " + Math.Round(_resistance, 0);
             }
         }
 

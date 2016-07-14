@@ -110,6 +110,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandGsrProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandGsrDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandProbeBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />

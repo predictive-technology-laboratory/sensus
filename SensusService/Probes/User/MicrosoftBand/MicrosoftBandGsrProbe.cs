@@ -14,6 +14,7 @@
 
 using System;
 using Microsoft.Band.Portable.Sensors;
+using Newtonsoft.Json;
 using Syncfusion.SfChart.XForms;
 
 namespace SensusService.Probes.User.MicrosoftBand
@@ -40,19 +41,21 @@ namespace SensusService.Probes.User.MicrosoftBand
         {
             get
             {
-                return true;
+                return false;
             }
         }
 
-        protected override string DeviceAsleepWarning
+        [JsonIgnore]
+        protected override string DeviceAwakeWarning
         {
             get
             {
-                return null;
+                return "This setting should not be enabled. It does not affect iOS and will unnecessarily reduce battery life on Android.";
             }
         }
 
-        protected override string DeviceAwakeWarning
+        [JsonIgnore]
+        protected override string DeviceAsleepWarning
         {
             get
             {
@@ -95,4 +98,3 @@ namespace SensusService.Probes.User.MicrosoftBand
         }
     }
 }
-

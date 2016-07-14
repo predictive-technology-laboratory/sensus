@@ -24,21 +24,13 @@ using Syncfusion.SfChart.XForms;
 
 namespace SensusService.Probes.User.MicrosoftBand
 {
-    public abstract class MicrosoftBandProbe<SensorType, ReadingType> : ListeningProbe
-        where ReadingType : IBandSensorReading
+    public abstract class MicrosoftBandProbe<SensorType, ReadingType> : MicrosoftBandProbeBase
         where SensorType : BandSensorBase<ReadingType>
+        where ReadingType : IBandSensorReading
     {
-        private BandClient _bandClient;
-        private BandSensorSampleRate _samplingRate;
+        private const int BAND_CONNECT_TIMEOUT_MS = 20000;
 
-        [JsonIgnore]
-        protected BandClient BandClient
-        {
-            get
-            {
-                return _bandClient;
-            }
-        }
+        private BandSensorSampleRate _samplingRate;
 
         [ListUiProperty("Sampling Rate:", true, 5, new object[] { BandSensorSampleRate.Ms16, BandSensorSampleRate.Ms32, BandSensorSampleRate.Ms128 })]
         public BandSensorSampleRate SamplingRate
@@ -47,7 +39,6 @@ namespace SensusService.Probes.User.MicrosoftBand
             {
                 return _samplingRate;
             }
-
             set
             {
                 _samplingRate = value;
@@ -66,11 +57,6 @@ namespace SensusService.Probes.User.MicrosoftBand
         {
             base.Initialize();
 
-            Connect();
-        }
-
-        private void Connect()
-        {
             ManualResetEvent connectWait = new ManualResetEvent(false);
             Exception connectException = null;
 
@@ -78,7 +64,7 @@ namespace SensusService.Probes.User.MicrosoftBand
             {
                 try
                 {
-                    if (_bandClient == null || !_bandClient.IsConnected)
+                    if (BandClient == null || !BandClient.IsConnected)
                     {
                         BandClientManager bandManager = BandClientManager.Instance;
                         BandDeviceInfo band = (await bandManager.GetPairedBandsAsync()).FirstOrDefault();
@@ -87,19 +73,31 @@ namespace SensusService.Probes.User.MicrosoftBand
                             throw new Exception("No Microsoft Bands are paired with this device. Please pair one.");
                         else
                         {
-                            _bandClient = await bandManager.ConnectAsync(band);
+                            BandClient = await bandManager.ConnectAsync(band);
 
-                            Sensor.ReadingChanged += (o, args) =>
+                            if (BandClient.IsConnected)
                             {
-                                StoreDatum(GetDatumFromReading(args.SensorReading));
-                            };
+                                if (Sensor == null)
+                                    throw new Exception("No sensor present.");
+                                else
+                                {
+                                    Sensor.ReadingChanged += (o, args) =>
+                                    {
+                                        StoreDatum(GetDatumFromReading(args.SensorReading));
+                                    };
+                                }
+                            }
+                            else
+                                throw new Exception("Disconnected.");
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Failed to connect to a Microsoft Band:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Get().Logger.Log("Failed to connect to Microsoft Band:  " + ex.Message, LoggingLevel.Normal, GetType());
                     connectException = ex;
+
+                    DisconnectBandClient();
                 }
                 finally
                 {
@@ -107,7 +105,11 @@ namespace SensusService.Probes.User.MicrosoftBand
                 }
             });
 
-            connectWait.WaitOne();
+            if (!connectWait.WaitOne(BAND_CONNECT_TIMEOUT_MS))
+            {
+                connectException = new Exception("Timed out while trying to connect to Microsoft Band.");
+                DisconnectBandClient();
+            }
 
             if (connectException != null)
                 throw connectException;
@@ -115,14 +117,16 @@ namespace SensusService.Probes.User.MicrosoftBand
 
         protected override void StartListening()
         {
-            Sensor.StartReadingsAsync(_samplingRate);
+            Sensor.StartReadingsAsync(_samplingRate).Wait();
         }
 
         protected abstract Datum GetDatumFromReading(ReadingType reading);
 
         protected override void StopListening()
         {
-            if (_bandClient != null)
+            base.StopListening();
+
+            if (Sensor != null)
             {
                 try
                 {
@@ -132,10 +136,18 @@ namespace SensusService.Probes.User.MicrosoftBand
                 {
                     SensusServiceHelper.Get().Logger.Log("Failed to stop readings:  " + ex.Message, LoggingLevel.Normal, GetType());
                 }
+            }
 
+            DisconnectBandClient();
+        }
+
+        private void DisconnectBandClient()
+        {
+            if (BandClient != null)
+            {
                 try
                 {
-                    _bandClient.DisconnectAsync().Wait();
+                    BandClient.DisconnectAsync().Wait();
                 }
                 catch (Exception ex)
                 {
@@ -143,7 +155,7 @@ namespace SensusService.Probes.User.MicrosoftBand
                 }
                 finally
                 {
-                    _bandClient = null;
+                    BandClient = null;
                 }
             }
         }
@@ -157,16 +169,6 @@ namespace SensusService.Probes.User.MicrosoftBand
                     Text = "Time"
                 }
             };
-        }
-
-        public override bool TestHealth(ref string error, ref string warning, ref string misc)
-        {
-            bool restart = base.TestHealth(ref error, ref warning, ref misc);
-
-            if (_bandClient == null || !_bandClient.IsConnected)
-                restart = true;
-
-            return restart;
         }
     }
 }
