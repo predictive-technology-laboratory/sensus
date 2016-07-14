@@ -148,6 +148,7 @@
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>
+		<string>bluetooth-central</string>
 	</array>
 	<key>CFBundleName</key>
 	<string>Sensus</string>

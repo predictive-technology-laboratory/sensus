@@ -32,6 +32,7 @@ using Android.Widget;
 using Plugin.Permissions;
 
 [assembly: MetaData("com.facebook.sdk.ApplicationId", Value = "@string/app_id")]
+[assembly: UsesPermission(Microsoft.Band.BandClientManager.BindBandService)]
 
 namespace Sensus.Android
 {

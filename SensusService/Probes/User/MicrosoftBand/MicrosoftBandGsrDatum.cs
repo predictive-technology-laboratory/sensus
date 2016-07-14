@@ -13,23 +13,28 @@
 // limitations under the License.
 
 using System;
+using SensusService.Anonymization;
+using SensusService.Anonymization.Anonymizers;
+using SensusService.Probes.User.ProbeTriggerProperties;
 
 namespace SensusService.Probes.User.MicrosoftBand
 {
     public class MicrosoftBandGsrDatum : Datum
     {
-        private float _value;
+        private double _resistance;
 
-        public float Value
+        [Anonymizable(null, new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
+        [DoubleProbeTriggerProperty]
+        public double Resistance
         {
             get
             {
-                return _value;
+                return _resistance;
             }
 
             set
             {
-                _value = value;
+                _resistance = value;
             }
         }
 
@@ -37,7 +42,7 @@ namespace SensusService.Probes.User.MicrosoftBand
         {
             get
             {
-                return "GSR:  " + Math.Round(_value, 2);
+                return "Resistance:  " + Math.Round(_resistance, 2);
             }
         }
 
@@ -48,10 +53,16 @@ namespace SensusService.Probes.User.MicrosoftBand
         {
         }
 
-        public MicrosoftBandGsrDatum(DateTimeOffset timestamp, float value)
+        public MicrosoftBandGsrDatum(DateTimeOffset timestamp, double resistance)
             : base(timestamp)
         {
-            _value = value;
+            _resistance = resistance;
+        }
+
+        public override string ToString()
+        {
+            return base.ToString() + Environment.NewLine +
+                   "Resistance:  " + _resistance;
         }
     }
 }
