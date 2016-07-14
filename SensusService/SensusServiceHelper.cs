@@ -22,7 +22,6 @@ using System.Threading;
 using Newtonsoft.Json;
 using SensusService.Probes;
 using SensusService.Probes.Location;
-using SensusUI.UiProperties;
 using Xamarin;
 using System.Collections.ObjectModel;
 using SensusUI;
@@ -31,12 +30,14 @@ using Xamarin.Forms;
 using SensusService.Exceptions;
 using ZXing.Mobile;
 using ZXing;
-using XLabs.Platform.Device;
-using System.Collections;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
 using System.Threading.Tasks;
+
+#if __IOS__
+using XLabs.Platform.Device;
+#endif
 
 namespace SensusService
 {
@@ -321,7 +322,7 @@ namespace SensusService
         private Dictionary<string, ScheduledCallback> _idCallback;
         private SHA256Managed _hasher;
         private List<PointOfInterest> _pointsOfInterest;
-        private ZXing.Mobile.MobileBarcodeScanner _barcodeScanner;
+        private MobileBarcodeScanner _barcodeScanner;
         private ZXing.Mobile.BarcodeWriter _barcodeWriter;
 
         private readonly object _shareFileLocker = new object();
@@ -349,7 +350,7 @@ namespace SensusService
         }
 
         [JsonIgnore]
-        public ZXing.Mobile.MobileBarcodeScanner BarcodeScanner
+        public MobileBarcodeScanner BarcodeScanner
         {
             get
             {
@@ -416,6 +417,9 @@ namespace SensusService
 
         [JsonIgnore]
         protected abstract bool IsOnMainThread { get; }
+
+        [JsonIgnore]
+        public abstract string Version { get; }
 
         #region iOS GPS listener settings
 
@@ -764,7 +768,9 @@ namespace SensusService
         public bool CallbackIsScheduled(string callbackId)
         {
             lock (_idCallback)
+            {
                 return _idCallback.ContainsKey(callbackId);
+            }
         }
 
         public string GetCallbackUserNotificationMessage(string callbackId)
@@ -843,15 +849,17 @@ namespace SensusService
                                             IssueNotificationAsync(scheduledCallback.UserNotificationMessage, callbackId);
 
                                         // if the callback specified a timeout, request cancellation at the specified time.
-                                        if (scheduledCallback.CallbackTimeout != null)
-                                            scheduledCallback.Canceller.CancelAfter(scheduledCallback.CallbackTimeout.GetValueOrDefault());
+                                        if (scheduledCallback.CallbackTimeout.HasValue)
+                                            scheduledCallback.Canceller.CancelAfter(scheduledCallback.CallbackTimeout.Value);
 
                                         await scheduledCallback.Action(callbackId, scheduledCallback.Canceller.Token, letDeviceSleepCallback);
                                     }
                                 }
                                 catch (Exception ex)
                                 {
-                                    _logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") failed:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                    string errorMessage = "Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") failed:  " + ex.Message;
+                                    _logger.Log(errorMessage, LoggingLevel.Normal, GetType());
+                                    SensusException.Report(errorMessage, ex);
                                 }
                                 finally
                                 {
@@ -942,10 +950,10 @@ namespace SensusService
                 if (_idCallback.TryGetValue(callbackId, out scheduledCallback))
                 {
                     scheduledCallback.Canceller.Cancel();
-                    SensusServiceHelper.Get().Logger.Log("Cancelled callback \"" + scheduledCallback.Name + "\" (" + callbackId + ").", LoggingLevel.Normal, GetType());
+                    _logger.Log("Cancelled callback \"" + scheduledCallback.Name + "\" (" + callbackId + ").", LoggingLevel.Normal, GetType());
                 }
                 else
-                    SensusServiceHelper.Get().Logger.Log("Callback \"" + callbackId + "\" not present. Cannot cancel.", LoggingLevel.Normal, GetType());
+                    _logger.Log("Callback \"" + callbackId + "\" not present. Cannot cancel.", LoggingLevel.Normal, GetType());
             }
         }
 
@@ -954,7 +962,7 @@ namespace SensusService
             if (callbackId != null)
                 lock (_idCallback)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Unscheduling callback \"" + callbackId + "\".", LoggingLevel.Normal, GetType());
+                    _logger.Log("Unscheduling callback \"" + callbackId + "\".", LoggingLevel.Normal, GetType());
 
                     CancelRaisedCallback(callbackId);
                     _idCallback.Remove(callbackId);
@@ -985,7 +993,7 @@ namespace SensusService
 #if !UNIT_TESTING
 
             if (!duration.HasValue)
-                duration = TimeSpan.FromSeconds(4);
+                duration = TimeSpan.FromSeconds(2);
 
             ProtectedFlashNotificationAsync(message, flashLaterIfNotVisible, duration.Value, callback);
 #endif
@@ -1105,7 +1113,7 @@ namespace SensusService
                                                                     // we aren't doing anything else, so the top of the modal stack should be the prompt page; however, check to be sure.
                                                                     if (navigation.ModalStack.Count > 0 && navigation.ModalStack.Last() is PromptForInputsPage)
                                                                     {
-                                                                        SensusServiceHelper.Get().Logger.Log("Popping prompt page with result:  " + result, LoggingLevel.Normal, GetType());
+                                                                        _logger.Log("Popping prompt page with result:  " + result, LoggingLevel.Normal, GetType());
 
                                                                         // animate pop if the user submitted or canceled
                                                                         await navigation.PopModalAsync(stepNumber == inputGroups.Count() && result == PromptForInputsPage.Result.NavigateForward ||
@@ -1209,7 +1217,7 @@ namespace SensusService
                     #region geotag input groups if the user didn't cancel and we've got input groups with inputs that are complete and lacking locations
                     if (inputGroups != null && inputGroups.Any(inputGroup => inputGroup.Geotag && inputGroup.Inputs.Any(input => input.Complete && (input.Latitude == null || input.Longitude == null))))
                     {
-                        SensusServiceHelper.Get().Logger.Log("Geotagging input groups.", LoggingLevel.Normal, GetType());
+                        _logger.Log("Geotagging input groups.", LoggingLevel.Normal, GetType());
 
                         try
                         {
@@ -1241,7 +1249,7 @@ namespace SensusService
                         }
                         catch (Exception ex)
                         {
-                            SensusServiceHelper.Get().Logger.Log("Error geotagging input groups:  " + ex.Message, LoggingLevel.Normal, GetType());
+                            _logger.Log("Error geotagging input groups:  " + ex.Message, LoggingLevel.Normal, GetType());
                         }
                     }
                     #endregion
@@ -1349,7 +1357,7 @@ namespace SensusService
                     else if (currentTypeName == "WinPhoneSensusServiceHelper")
                         convertedJsonLine = jsonLine.Replace("Android", "WinPhone").Replace("iOS", "WinPhone");
                     else
-                        throw new SensusException("Attempted to convert JSON for unknown service helper type:  " + SensusServiceHelper.Get().GetType().FullName);
+                        throw new SensusException("Attempted to convert JSON for unknown service helper type:  " + GetType().FullName);
 
                     if (convertedJsonLine != jsonLine)
                         conversionPerformed = true;
@@ -1440,7 +1448,7 @@ namespace SensusService
 
             new Thread(async () =>
                 {
-                    status = await SensusServiceHelper.Get().ObtainPermissionAsync(permission);
+                    status = await ObtainPermissionAsync(permission);
                     wait.Set();
 
                 }).Start();
@@ -1456,30 +1464,25 @@ namespace SensusService
                 throw new SensusException("Attempted to execute on main thread:  " + actionDescription);
         }
 
-        public virtual void Stop()
+        public void StopProtocols()
         {
-            // stop all protocols
             lock (_registeredProtocols)
             {
                 _logger.Log("Stopping protocols.", LoggingLevel.Normal, GetType());
 
                 foreach (Protocol protocol in _registeredProtocols)
-                {
-                    try
+                    if (protocol.Running)
                     {
-                        protocol.Stop();
+                        try
+                        {
+                            protocol.Stop();
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.Log("Failed to stop protocol \"" + protocol.Name + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        _logger.Log("Failed to stop protocol \"" + protocol.Name + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
-                    }
-                }
             }
-
-            // make sure all logged messages get into the file.
-            _logger.CommitMessageBuffer();
-
-            SINGLETON = null;
         }
     }
 }

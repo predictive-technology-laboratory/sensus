@@ -49,20 +49,7 @@ namespace SensusUI
             views.AddRange(UiProperty.GetPropertyStacks(_protocol));
 
             #region data stores
-            string localDataStoreSize = null;
-            try
-            {
-                if (protocol.LocalDataStore != null)
-                {
-                    if (protocol.LocalDataStore is RamLocalDataStore)
-                        localDataStoreSize = (protocol.LocalDataStore as RamLocalDataStore).DataCount + " items";
-                    else if (protocol.LocalDataStore is FileLocalDataStore)
-                        localDataStoreSize = Math.Round(SensusServiceHelper.GetDirectorySizeMB((protocol.LocalDataStore as FileLocalDataStore).StorageDirectory), 1) + " MB";
-                }
-            }
-            catch (Exception)
-            {
-            }
+            string localDataStoreSize = _protocol.LocalDataStore?.SizeDescription;
 
             Button editLocalDataStoreButton = new Button
             {
@@ -155,7 +142,7 @@ namespace SensusUI
 
             viewProbesButton.Clicked += async (o, e) =>
             {
-                await Navigation.PushAsync(new ProbesPage(_protocol));
+                await Navigation.PushAsync(new ProbesEditPage(_protocol));
             };
 
             views.Add(viewProbesButton);
@@ -203,7 +190,7 @@ namespace SensusUI
                         {
                             if (input == null)
                                 return;
-                                
+
                             string password = input.Value as string;
 
                             if (string.IsNullOrWhiteSpace(password))
@@ -227,7 +214,7 @@ namespace SensusUI
             Content = new ScrollView
             {
                 Content = stack
-            };                        
+            };
         }
 
         protected override void OnAppearing()

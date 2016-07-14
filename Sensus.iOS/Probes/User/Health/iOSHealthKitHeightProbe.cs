@@ -18,6 +18,7 @@ using HealthKit;
 using Xamarin.Forms.Platform.iOS;
 using SensusService;
 using Newtonsoft.Json;
+using Syncfusion.SfChart.XForms;
 
 namespace Sensus.iOS.Probes.User.Health
 {
@@ -60,6 +61,38 @@ namespace Sensus.iOS.Probes.User.Health
                 return null;
             else
                 return new HeightDatum(new DateTimeOffset(quantitySample.StartDate.ToDateTime()), quantitySample.Quantity.GetDoubleValue(HKUnit.Inch));
+        }
+
+        protected override ChartSeries GetChartSeries()
+        {
+            return new LineSeries();
+        }
+
+        protected override ChartAxis GetChartPrimaryAxis()
+        {
+            return new DateTimeAxis
+            {
+                Title = new ChartAxisTitle
+                {
+                    Text = "Time"
+                }
+            };
+        }
+
+        protected override RangeAxisBase GetChartSecondaryAxis()
+        {
+            return new NumericalAxis
+            {
+                Title = new ChartAxisTitle
+                {
+                    Text = "Height (Inches)"
+                }
+            };
+        }
+
+        protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
+        {
+            return new ChartDataPoint(datum.Timestamp.LocalDateTime, (datum as HeightDatum).HeightInches);
         }
     }
 }

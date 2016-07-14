@@ -17,6 +17,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Syncfusion.SfChart.XForms;
 
 namespace SensusService.Probes.User
 {
@@ -155,6 +156,26 @@ namespace SensusService.Probes.User
 
             foreach (ScriptRunner scriptRunner in _scriptRunners)
                 scriptRunner.Stop();
+        }
+
+        protected override ChartSeries GetChartSeries()
+        {
+            return null;
+        }
+
+        protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
+        {
+            return null;
+        }
+
+        protected override ChartAxis GetChartPrimaryAxis()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override RangeAxisBase GetChartSecondaryAxis()
+        {
+            throw new NotImplementedException();
         }
     }
 }

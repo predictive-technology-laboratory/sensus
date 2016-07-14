@@ -19,12 +19,14 @@ using System.Linq;
 using Xamarin.Forms;
 using SensusUI.Inputs;
 using System.Collections.Generic;
-using SensusService.Probes.User;
-using SensusService.Probes;
 using SensusService.Exceptions;
 using System.Threading;
 using ZXing;
 using Plugin.Permissions.Abstractions;
+
+#if __ANDROID__
+using Sensus.Android;
+#endif
 
 namespace SensusUI
 {
@@ -46,7 +48,7 @@ namespace SensusUI
 
             public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
             {
-                new SensusException("Invalid call to " + GetType().FullName + ".ConvertBack.");
+                SensusException.Report("Invalid call to " + GetType().FullName + ".ConvertBack.");
                 return null;
             }
         }
@@ -64,7 +66,7 @@ namespace SensusUI
 
             public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
             {
-                new SensusException("Invalid call to " + GetType().FullName + ".ConvertBack.");
+                SensusException.Report("Invalid call to " + GetType().FullName + ".ConvertBack.");
                 return null;
             }
         }
@@ -130,6 +132,7 @@ namespace SensusUI
                 List<string> actions = new List<string>();
 
                 actions.Add(selectedProtocol.Running ? "Stop" : "Start");
+                actions.Add("View Data");
 
                 if (selectedProtocol.Running)
                     actions.Add("Display Participation");
@@ -180,6 +183,10 @@ namespace SensusUI
                             });
                     }
                 }
+                else if (selectedAction == "View Data")
+                {
+                    await Navigation.PushAsync(new ProbesViewPage(selectedProtocol));
+                }
                 else if (selectedAction == "Display Participation")
                 {
                     CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
@@ -202,16 +209,12 @@ namespace SensusUI
                         {
                             // add participation reward datum to remote data store and commit immediately
                             ParticipationRewardDatum participationRewardDatum = new ParticipationRewardDatum(DateTimeOffset.UtcNow, selectedProtocol.Participation);
-                            selectedProtocol.RemoteDataStore.AddNonProbeDatum(participationRewardDatum);
 
                             bool commitFailed;
 
                             try
                             {
-                                await selectedProtocol.RemoteDataStore.CommitAsync(cancellationTokenSource.Token);
-
-                                // we should not have any remaining non-probe data
-                                commitFailed = selectedProtocol.RemoteDataStore.HasNonProbeDatumToCommit(participationRewardDatum.Id);
+                                commitFailed = !await selectedProtocol.RemoteDataStore.CommitAsync(participationRewardDatum, cancellationTokenSource.Token);
                             }
                             catch (Exception)
                             {
@@ -355,6 +358,19 @@ namespace SensusUI
                                 {
                                     selectedProtocolCopy.ResetForSharing();
 
+                                    // reset data counts
+                                    if (selectedProtocolCopy.LocalDataStore != null)
+                                    {
+                                        selectedProtocolCopy.LocalDataStore.AddedDataCount = 0;
+                                        selectedProtocolCopy.LocalDataStore.CommittedDataCount = 0;
+                                    }
+
+                                    if (selectedProtocolCopy.RemoteDataStore != null)
+                                    {
+                                        selectedProtocolCopy.RemoteDataStore.AddedDataCount = 0;
+                                        selectedProtocolCopy.RemoteDataStore.CommittedDataCount = 0;
+                                    }
+
                                     // write protocol to file and share
                                     string sharePath = SensusServiceHelper.Get().GetSharePath(".json");
                                     selectedProtocolCopy.Save(sharePath);
@@ -442,6 +458,8 @@ namespace SensusUI
                         buttons.Add("Stop Sensus");
 #endif
 
+                        buttons.Add("About Sensus");
+
                         string action = await DisplayActionSheet("Other Actions", "Back", null, buttons.ToArray());
 
                         if (action == "New Protocol")
@@ -487,8 +505,16 @@ namespace SensusUI
                         }
 #if __ANDROID__
                         else if (action == "Stop Sensus" && await DisplayAlert("Confirm", "Are you sure you want to stop Sensus? This will end your participation in all studies.", "Stop Sensus", "Go Back"))
-                            SensusServiceHelper.Get().Stop();
+                        {
+                            AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
+                            serviceHelper.StopProtocols();
+                            serviceHelper.Service.Stop();
+                        }
 #endif
+                        else if (action == "About Sensus")
+                        {
+                            await DisplayAlert("About Sensus", "Version:  " + SensusServiceHelper.Get().Version, "OK");
+                        }
                     }));
         }
 

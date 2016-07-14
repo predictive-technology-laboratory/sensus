@@ -16,6 +16,7 @@ using System;
 using Newtonsoft.Json;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions.Abstractions;
+using Syncfusion.SfChart.XForms;
 
 namespace SensusService.Probes.Location
 {
@@ -92,6 +93,39 @@ namespace SensusService.Probes.Location
         protected sealed override void StopListening()
         {
             GpsReceiver.Get().RemoveListener(_positionChangedHandler);
+        }
+
+        protected override ChartSeries GetChartSeries()
+        {
+            return new LineSeries();
+        }
+
+        protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
+        {
+            LocationDatum location = datum as LocationDatum;
+            return new ChartDataPoint(location.Longitude, location.Latitude);
+        }
+
+        protected override ChartAxis GetChartPrimaryAxis()
+        {
+            return new NumericalAxis
+            {
+                Title = new ChartAxisTitle
+                {
+                    Text = "Longitude"
+                }
+            };
+        }
+
+        protected override RangeAxisBase GetChartSecondaryAxis()
+        {
+            return new NumericalAxis
+            {
+                Title = new ChartAxisTitle
+                {
+                    Text = "Latitude"
+                }
+            };
         }
     }
 }

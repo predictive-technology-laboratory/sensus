@@ -16,7 +16,6 @@ using System;
 using Android.Database;
 using Android.OS;
 using Android.Provider;
-using SensusService.Probes;
 using SensusService.Probes.Communication;
 using Xamarin;
 
@@ -65,11 +64,11 @@ namespace Sensus.Android.Probes.Communication
                     int sentMessageType;
 
                     // https://github.com/predictive-technology-laboratory/sensus/wiki/Backwards-Compatibility
-                    #if __ANDROID_19__
+#if __ANDROID_19__
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
                         sentMessageType = (int)SmsMessageType.Sent;  // API level 19
                     else
-                    #endif
+#endif
                         sentMessageType = 2;
 
                     if (protocol != null || type != sentMessageType)
@@ -80,11 +79,11 @@ namespace Sensus.Android.Probes.Communication
                     DateTimeOffset dotNetDateTime = new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(unixTimeMS);
                     string message = cursor.GetString(cursor.GetColumnIndexOrThrow("body"));
 
-                    _outgoingSMS(new SmsDatum(dotNetDateTime, null, toNumber, message));
+                    _outgoingSMS(new SmsDatum(dotNetDateTime, null, toNumber, message, true));
 
                     _mostRecentlyObservedSmsURI = uri.ToString();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     // if anything goes wrong, report exception to Insights
                     try

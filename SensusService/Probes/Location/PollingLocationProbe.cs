@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions.Abstractions;
+using Syncfusion.SfChart.XForms;
 
 namespace SensusService.Probes.Location
 {
@@ -65,6 +66,39 @@ namespace SensusService.Probes.Location
                 throw new Exception("Failed to get GPS reading.");
             else
                 return new Datum[] { new LocationDatum(currentPosition.Timestamp, currentPosition.Accuracy, currentPosition.Latitude, currentPosition.Longitude) };
+        }
+
+        protected override ChartSeries GetChartSeries()
+        {
+            return new LineSeries();
+        }
+
+        protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
+        {
+            LocationDatum location = datum as LocationDatum;
+            return new ChartDataPoint(location.Longitude, location.Latitude);
+        }
+
+        protected override ChartAxis GetChartPrimaryAxis()
+        {
+            return new NumericalAxis
+            {
+                Title = new ChartAxisTitle
+                {
+                    Text = "Longitude"
+                }
+            };
+        }
+
+        protected override RangeAxisBase GetChartSecondaryAxis()
+        {
+            return new NumericalAxis
+            {
+                Title = new ChartAxisTitle
+                {
+                    Text = "Latitude"
+                }
+            };
         }
     }
 }

@@ -126,7 +126,7 @@ namespace SensusService.DataStores.Remote
             return new AmazonS3Client(credentials, amazonRegion);
         }
 
-        protected override Task<List<Datum>> CommitDataAsync(List<Datum> data, CancellationToken cancellationToken)
+        public override Task<List<Datum>> CommitAsync(IEnumerable<Datum> data, CancellationToken cancellationToken)
         {
             return Task.Run(async () =>
                 {
@@ -138,7 +138,7 @@ namespace SensusService.DataStores.Remote
 
                         DateTimeOffset commitStartTime = DateTimeOffset.UtcNow;
 
-                        List<Datum> committedData = new List<Datum>(data.Count);
+                        List<Datum> committedData = new List<Datum>();
 
                         #region group data by type and get JSON for each datum
                         Dictionary<string, List<Datum>> datumTypeData = new Dictionary<string, List<Datum>>();
@@ -159,7 +159,7 @@ namespace SensusService.DataStores.Remote
 
                                 try
                                 {
-                                    if ((await PutJsonAsync(s3, GetDatumKey(datum), "[" + Environment.NewLine + datumJSON + Environment.NewLine + "]", cancellationToken)).HttpStatusCode == HttpStatusCode.OK)
+                                    if ((await PutJsonAsync(s3, GetDatumKey(datum), "[" + Environment.NewLine + datumJSON + Environment.NewLine + "]", cancellationToken)) == HttpStatusCode.OK)
                                         committedData.Add(datum);
                                 }
                                 catch (Exception ex)
@@ -207,7 +207,7 @@ namespace SensusService.DataStores.Remote
 
                             try
                             {
-                                if ((await PutJsonAsync(s3, key, json.ToString(), cancellationToken)).HttpStatusCode == HttpStatusCode.OK)
+                                if ((await PutJsonAsync(s3, key, json.ToString(), cancellationToken)) == HttpStatusCode.OK)
                                     committedData.AddRange(datumTypeData[datumType]);
                             }
                             catch (Exception ex)
@@ -228,17 +228,25 @@ namespace SensusService.DataStores.Remote
                 });
         }
 
-        private Task<PutObjectResponse> PutJsonAsync(AmazonS3Client s3, string key, string json, CancellationToken cancellationToken)
+        private Task<HttpStatusCode> PutJsonAsync(AmazonS3Client s3, string key, string json, CancellationToken cancellationToken)
         {
-            PutObjectRequest putRequest = new PutObjectRequest
+            return Task.Run(async () =>
             {
-                BucketName = _bucket,
-                Key = key,
-                ContentBody = json,
-                ContentType = "application/json"
-            };
+                PutObjectRequest putRequest = new PutObjectRequest
+                {
+                    BucketName = _bucket,
+                    Key = key,
+                    ContentBody = json,
+                    ContentType = "application/json"
+                };
 
-            return s3.PutObjectAsync(putRequest, cancellationToken);
+                HttpStatusCode responseCode = (await s3.PutObjectAsync(putRequest, cancellationToken)).HttpStatusCode;
+
+                if (responseCode == HttpStatusCode.OK)
+                    MostRecentSuccessfulCommitTime = DateTime.Now;
+
+                return responseCode;
+            });
         }
 
         public override string GetDatumKey(Datum datum)

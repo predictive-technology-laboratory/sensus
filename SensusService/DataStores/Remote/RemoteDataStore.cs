@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using System;
 
 namespace SensusService.DataStores.Remote
 {
@@ -53,34 +54,45 @@ namespace SensusService.DataStores.Remote
 #if DEBUG || UNIT_TESTING
             CommitDelayMS = 10000;  // 10 seconds...so we can see debugging output quickly
 #else
-            CommitDelayMS = 1000 * 60 * 30;  // every 30 minutes
+            CommitDelayMS = 1000 * 60 * 60;  // every 60 minutes
 #endif
         }
 
-        protected sealed override List<Datum> GetDataToCommit(CancellationToken cancellationToken)
+        protected sealed override Task CycleAsync(string callbackId, CancellationToken cancellationToken, Action letDeviceSleepCallback)
         {
-            List<Datum> dataToCommit = new List<Datum>();
-
-            if (cancellationToken.IsCancellationRequested)
-                SensusServiceHelper.Get().Logger.Log("Cancelled retrieval of data from local data store.", LoggingLevel.Normal, GetType());
-            else if (!Protocol.LocalDataStore.UploadToRemoteDataStore)
-                SensusServiceHelper.Get().Logger.Log("Remote data store upload is disabled.", LoggingLevel.Normal, GetType());
-            else if (_requireWiFi && !SensusServiceHelper.Get().WiFiConnected)
-                SensusServiceHelper.Get().Logger.Log("Required WiFi but device WiFi is not connected.", LoggingLevel.Normal, GetType());
-            else if (_requireCharging && !SensusServiceHelper.Get().IsCharging)
-                SensusServiceHelper.Get().Logger.Log("Required charging but device is not charging.", LoggingLevel.Normal, GetType());
-            else
+            return Task.Run(async () =>
             {
-                dataToCommit = Protocol.LocalDataStore.GetDataForRemoteDataStore(cancellationToken);
-                SensusServiceHelper.Get().Logger.Log("Retrieved " + dataToCommit.Count + " data elements from local data store.", LoggingLevel.Normal, GetType());
-            }
+                if (cancellationToken.IsCancellationRequested)
+                    SensusServiceHelper.Get().Logger.Log("Cancelled retrieval of data from local data store.", LoggingLevel.Normal, GetType());
+                else if (!Protocol.LocalDataStore.UploadToRemoteDataStore)
+                    SensusServiceHelper.Get().Logger.Log("Remote data store upload is disabled.", LoggingLevel.Normal, GetType());
+                else if (_requireWiFi && !SensusServiceHelper.Get().WiFiConnected)
+                    SensusServiceHelper.Get().Logger.Log("Required WiFi but device WiFi is not connected.", LoggingLevel.Normal, GetType());
+                else if (_requireCharging && !SensusServiceHelper.Get().IsCharging)
+                    SensusServiceHelper.Get().Logger.Log("Required charging but device is not charging.", LoggingLevel.Normal, GetType());
+                else
+                {
+#if __IOS__
+                    // on ios the user must activate the app in order to save data. give the user some feedback to let them know that this is 
+                    // going to happen and might take some time. if they background the app the commit will be canceled if it runs out of background
+                    // time.
+                    SensusServiceHelper.Get().FlashNotificationAsync("Submitting data. Please wait for success confirmation...");
+#endif
 
-            return dataToCommit;
-        }
+                    // first commmit any data that have accumulated in the internal memory of the remote data store, e.g., protocol report
+                    // data when we are not committing local data to remote but we are also forcing report data.
+                    await base.CycleAsync(callbackId, cancellationToken, letDeviceSleepCallback);
 
-        protected sealed override void ProcessCommittedData(List<Datum> committedData)
-        {
-            Protocol.LocalDataStore.ClearDataCommittedToRemoteDataStore(committedData);
+                    // instruct the local data store to commit its data to the remote data store.
+                    Protocol.LocalDataStore.CommitDataToRemoteDataStore(cancellationToken);
+
+#if __IOS__
+                    // on ios the user must activate the app in order to save data. give the user some feedback to let them know that the data were stored remotely.
+                    if (this is RemoteDataStore)
+                        SensusServiceHelper.Get().FlashNotificationAsync("Submitted data to the \"" + Protocol.Name + "\" study. Thank you!");
+#endif
+                }
+            });
         }
 
         public abstract string GetDatumKey(Datum datum);

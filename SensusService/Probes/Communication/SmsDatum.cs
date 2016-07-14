@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Newtonsoft.Json;
 using SensusService.Probes.User.ProbeTriggerProperties;
 using System;
 using System.Text.RegularExpressions;
@@ -26,6 +25,7 @@ namespace SensusService.Probes.Communication
         private string _fromNumber;
         private string _toNumber;
         private string _message;
+        private bool _participantIsSender;
 
         [StringProbeTriggerProperty("From #")]
         [Anonymizable("From #", typeof(StringHashAnonymizer), false)]
@@ -51,6 +51,21 @@ namespace SensusService.Probes.Communication
             set { _message = value; }
         }
 
+        [BooleanProbeTriggerProperty]
+        [Anonymizable("Participant Is Sender:", null, false)]
+        public bool ParticipantIsSender
+        {
+            get
+            {
+                return _participantIsSender;
+            }
+
+            set
+            {
+                _participantIsSender = value;
+            }
+        }
+
         public override string DisplayDetail
         {
             get { return _message; }
@@ -63,20 +78,22 @@ namespace SensusService.Probes.Communication
         {
         }
 
-        public SmsDatum(DateTimeOffset timestamp, string fromNumber, string toNumber, string message)
+        public SmsDatum(DateTimeOffset timestamp, string fromNumber, string toNumber, string message, bool participantIsSender)
             : base(timestamp)
         {
             FromNumber = fromNumber == null ? "" : fromNumber;
             ToNumber = toNumber == null ? "" : toNumber;
             _message = message == null ? "" : message;
+            _participantIsSender = participantIsSender;
         }
 
         public override string ToString()
         {
             return base.ToString() + Environment.NewLine +
-            "From:  " + _fromNumber + Environment.NewLine +
-            "To:  " + _toNumber + Environment.NewLine +
-            "Message:  " + _message;
+                       "From:  " + _fromNumber + Environment.NewLine +
+                       "To:  " + _toNumber + Environment.NewLine +
+                       "Message:  " + _message + Environment.NewLine +
+                       "Sender:  " + _participantIsSender;
         }
     }
 }

@@ -92,8 +92,12 @@ namespace SensusService
             _operatingSystem = SensusServiceHelper.Get().OperatingSystem;
             _probeParticipation = new Dictionary<string, float>();
 
-            foreach (Probe probe in protocol.Probes.Where(probe => probe.GetParticipation() != null).OrderBy(probe => probe.DisplayName))
-                _probeParticipation.Add(probe.DisplayName, probe.GetParticipation().GetValueOrDefault());
+            List<Tuple<Probe, float?>> probeParticipations = protocol.Probes.Select(probe => new Tuple<Probe, float?>(probe, probe.GetParticipation()))
+                                                                            .Where(probeParticipation => probeParticipation.Item2.HasValue)
+                                                                            .OrderBy(probeParticipation => probeParticipation.Item1.GetType().FullName).ToList();
+
+            foreach (Tuple<Probe, float?> probeParticipation in probeParticipations)
+                _probeParticipation.Add(probeParticipation.Item1.GetType().FullName, probeParticipation.Item2.Value);
         }
 
         public override string ToString()

@@ -1914,6 +1914,18 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f04000f
 			public const int design_snackbar_out = 2130968591;
 			
+			// aapt resource value: 0x7f040010
+			public const int fadein = 2130968592;
+			
+			// aapt resource value: 0x7f040011
+			public const int fadeout = 2130968593;
+			
+			// aapt resource value: 0x7f040012
+			public const int scale_in = 2130968594;
+			
+			// aapt resource value: 0x7f040013
+			public const int scale_out = 2130968595;
+			
 			static Animation()
 			{
 				global::Android.Runtime.ResourceIdManager.UpdateIdValues();
@@ -4653,8 +4665,8 @@ namespace Sensus.Android
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f0c00b3
-			public const int action0 = 2131493043;
+			// aapt resource value: 0x7f0c00c2
+			public const int action0 = 2131493058;
 			
 			// aapt resource value: 0x7f0c0070
 			public const int action_bar = 2131492976;
@@ -4680,8 +4692,8 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0c0071
 			public const int action_context_bar = 2131492977;
 			
-			// aapt resource value: 0x7f0c00b7
-			public const int action_divider = 2131493047;
+			// aapt resource value: 0x7f0c00c6
+			public const int action_divider = 2131493062;
 			
 			// aapt resource value: 0x7f0c0004
 			public const int action_menu_divider = 2131492868;
@@ -4719,11 +4731,17 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0c004b
 			public const int automatic = 2131492939;
 			
+			// aapt resource value: 0x7f0c008b
+			public const int axisLayout = 2131493003;
+			
 			// aapt resource value: 0x7f0c003e
 			public const int beginning = 2131492926;
 			
 			// aapt resource value: 0x7f0c001f
 			public const int bottom = 2131492895;
+			
+			// aapt resource value: 0x7f0c00d0
+			public const int bottom_labels = 2131493072;
 			
 			// aapt resource value: 0x7f0c0048
 			public const int box_count = 2131492936;
@@ -4734,8 +4752,8 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0c005a
 			public const int buttonPanel = 2131492954;
 			
-			// aapt resource value: 0x7f0c0099
-			public const int calendar_grid = 2131493017;
+			// aapt resource value: 0x7f0c00a8
+			public const int calendar_grid = 2131493032;
 			
 			// aapt resource value: 0x7f0c0080
 			public const int calendar_view = 2131492992;
@@ -4743,11 +4761,11 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0c007f
 			public const int calendarr_pager = 2131492991;
 			
-			// aapt resource value: 0x7f0c00b4
-			public const int cancel_action = 2131493044;
+			// aapt resource value: 0x7f0c00c3
+			public const int cancel_action = 2131493059;
 			
-			// aapt resource value: 0x7f0c0088
-			public const int cancel_button = 2131493000;
+			// aapt resource value: 0x7f0c0097
+			public const int cancel_button = 2131493015;
 			
 			// aapt resource value: 0x7f0c0020
 			public const int center = 2131492896;
@@ -4758,11 +4776,17 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0c0022
 			public const int center_vertical = 2131492898;
 			
+			// aapt resource value: 0x7f0c0085
+			public const int chartAreaLayout = 2131492997;
+			
+			// aapt resource value: 0x7f0c0084
+			public const int chartTitle = 2131492996;
+			
 			// aapt resource value: 0x7f0c0068
 			public const int checkbox = 2131492968;
 			
-			// aapt resource value: 0x7f0c00ba
-			public const int chronometer = 2131493050;
+			// aapt resource value: 0x7f0c00c9
+			public const int chronometer = 2131493065;
 			
 			// aapt resource value: 0x7f0c0029
 			public const int clip_horizontal = 2131492905;
@@ -4773,38 +4797,41 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0c0041
 			public const int collapseActionView = 2131492929;
 			
-			// aapt resource value: 0x7f0c008a
-			public const int com_facebook_body_frame = 2131493002;
+			// aapt resource value: 0x7f0c0099
+			public const int com_facebook_body_frame = 2131493017;
 			
-			// aapt resource value: 0x7f0c008c
-			public const int com_facebook_button_xout = 2131493004;
+			// aapt resource value: 0x7f0c009b
+			public const int com_facebook_button_xout = 2131493019;
 			
-			// aapt resource value: 0x7f0c0085
-			public const int com_facebook_device_auth_instructions = 2131492997;
+			// aapt resource value: 0x7f0c0094
+			public const int com_facebook_device_auth_instructions = 2131493012;
 			
-			// aapt resource value: 0x7f0c0084
-			public const int com_facebook_device_dialog_title = 2131492996;
+			// aapt resource value: 0x7f0c0093
+			public const int com_facebook_device_dialog_title = 2131493011;
 			
-			// aapt resource value: 0x7f0c0083
-			public const int com_facebook_fragment_container = 2131492995;
+			// aapt resource value: 0x7f0c0092
+			public const int com_facebook_fragment_container = 2131493010;
 			
-			// aapt resource value: 0x7f0c0089
-			public const int com_facebook_login_activity_progress_bar = 2131493001;
+			// aapt resource value: 0x7f0c0098
+			public const int com_facebook_login_activity_progress_bar = 2131493016;
 			
-			// aapt resource value: 0x7f0c008e
-			public const int com_facebook_tooltip_bubble_view_bottom_pointer = 2131493006;
+			// aapt resource value: 0x7f0c009d
+			public const int com_facebook_tooltip_bubble_view_bottom_pointer = 2131493021;
 			
-			// aapt resource value: 0x7f0c008d
-			public const int com_facebook_tooltip_bubble_view_text_body = 2131493005;
+			// aapt resource value: 0x7f0c009c
+			public const int com_facebook_tooltip_bubble_view_text_body = 2131493020;
 			
-			// aapt resource value: 0x7f0c008b
-			public const int com_facebook_tooltip_bubble_view_top_pointer = 2131493003;
+			// aapt resource value: 0x7f0c009a
+			public const int com_facebook_tooltip_bubble_view_top_pointer = 2131493018;
 			
-			// aapt resource value: 0x7f0c0086
-			public const int confirmation_code = 2131492998;
+			// aapt resource value: 0x7f0c0095
+			public const int confirmation_code = 2131493013;
 			
-			// aapt resource value: 0x7f0c00c0
-			public const int contentFrame = 2131493056;
+			// aapt resource value: 0x7f0c00d1
+			public const int content = 2131493073;
+			
+			// aapt resource value: 0x7f0c00d4
+			public const int contentFrame = 2131493076;
 			
 			// aapt resource value: 0x7f0c0060
 			public const int contentPanel = 2131492960;
@@ -4818,26 +4845,29 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0c0014
 			public const int dark = 2131492884;
 			
+			// aapt resource value: 0x7f0c0089
+			public const int dataMarkerLayout = 2131493001;
+			
 			// aapt resource value: 0x7f0c006e
 			public const int decor_content_parent = 2131492974;
 			
 			// aapt resource value: 0x7f0c0056
 			public const int default_activity_button = 2131492950;
 			
-			// aapt resource value: 0x7f0c0090
-			public const int design_bottom_sheet = 2131493008;
+			// aapt resource value: 0x7f0c009f
+			public const int design_bottom_sheet = 2131493023;
 			
-			// aapt resource value: 0x7f0c0097
-			public const int design_menu_item_action_area = 2131493015;
+			// aapt resource value: 0x7f0c00a6
+			public const int design_menu_item_action_area = 2131493030;
 			
-			// aapt resource value: 0x7f0c0096
-			public const int design_menu_item_action_area_stub = 2131493014;
+			// aapt resource value: 0x7f0c00a5
+			public const int design_menu_item_action_area_stub = 2131493029;
 			
-			// aapt resource value: 0x7f0c0095
-			public const int design_menu_item_text = 2131493013;
+			// aapt resource value: 0x7f0c00a4
+			public const int design_menu_item_text = 2131493028;
 			
-			// aapt resource value: 0x7f0c0094
-			public const int design_navigation_view = 2131493012;
+			// aapt resource value: 0x7f0c00a3
+			public const int design_navigation_view = 2131493027;
 			
 			// aapt resource value: 0x7f0c0032
 			public const int disableHome = 2131492914;
@@ -4851,8 +4881,8 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0c0023
 			public const int end = 2131492899;
 			
-			// aapt resource value: 0x7f0c00bf
-			public const int end_padder = 2131493055;
+			// aapt resource value: 0x7f0c00ce
+			public const int end_padder = 2131493070;
 			
 			// aapt resource value: 0x7f0c0018
 			public const int enterAlways = 2131492888;
@@ -4881,6 +4911,12 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0c002e
 			public const int @fixed = 2131492910;
 			
+			// aapt resource value: 0x7f0c0086
+			public const int gridLineLayout = 2131492998;
+			
+			// aapt resource value: 0x7f0c00d2
+			public const int gridLinesLayout = 2131493074;
+			
 			// aapt resource value: 0x7f0c0006
 			public const int home = 2131492870;
 			
@@ -4893,6 +4929,9 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0c0058
 			public const int icon = 2131492952;
 			
+			// aapt resource value: 0x7f0c0090
+			public const int iconView = 2131493008;
+			
 			// aapt resource value: 0x7f0c0010
 			public const int icon_only = 2131492880;
 			
@@ -4902,14 +4941,17 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0c0055
 			public const int image = 2131492949;
 			
-			// aapt resource value: 0x7f0c00be
-			public const int info = 2131493054;
+			// aapt resource value: 0x7f0c00cd
+			public const int info = 2131493069;
 			
 			// aapt resource value: 0x7f0c004a
 			public const int inline = 2131492938;
 			
 			// aapt resource value: 0x7f0c0001
 			public const int item_touch_helper_previous_elevation = 2131492865;
+			
+			// aapt resource value: 0x7f0c0091
+			public const int label = 2131493009;
 			
 			// aapt resource value: 0x7f0c004e
 			public const int large = 2131492942;
@@ -4920,14 +4962,26 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0c0082
 			public const int left_arrow = 2131492994;
 			
+			// aapt resource value: 0x7f0c008d
+			public const int legendHeader = 2131493005;
+			
+			// aapt resource value: 0x7f0c008f
+			public const int legendItemsLayout = 2131493007;
+			
+			// aapt resource value: 0x7f0c008e
+			public const int legendScrollView = 2131493006;
+			
+			// aapt resource value: 0x7f0c008c
+			public const int legendViewGroup = 2131493004;
+			
 			// aapt resource value: 0x7f0c0015
 			public const int light = 2131492885;
 			
-			// aapt resource value: 0x7f0c00b8
-			public const int line1 = 2131493048;
+			// aapt resource value: 0x7f0c00c7
+			public const int line1 = 2131493063;
 			
-			// aapt resource value: 0x7f0c00bc
-			public const int line3 = 2131493052;
+			// aapt resource value: 0x7f0c00cb
+			public const int line3 = 2131493067;
 			
 			// aapt resource value: 0x7f0c0030
 			public const int listMode = 2131492912;
@@ -4935,11 +4989,11 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0c0057
 			public const int list_item = 2131492951;
 			
-			// aapt resource value: 0x7f0c00b6
-			public const int media_actions = 2131493046;
+			// aapt resource value: 0x7f0c00c5
+			public const int media_actions = 2131493061;
 			
-			// aapt resource value: 0x7f0c0098
-			public const int messenger_send_button = 2131493016;
+			// aapt resource value: 0x7f0c00a7
+			public const int messenger_send_button = 2131493031;
 			
 			// aapt resource value: 0x7f0c003f
 			public const int middle = 2131492927;
@@ -4947,83 +5001,83 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0c002d
 			public const int mini = 2131492909;
 			
-			// aapt resource value: 0x7f0c00a5
-			public const int mr_art = 2131493029;
-			
-			// aapt resource value: 0x7f0c009a
-			public const int mr_chooser_list = 2131493018;
-			
-			// aapt resource value: 0x7f0c009d
-			public const int mr_chooser_route_desc = 2131493021;
-			
-			// aapt resource value: 0x7f0c009b
-			public const int mr_chooser_route_icon = 2131493019;
-			
-			// aapt resource value: 0x7f0c009c
-			public const int mr_chooser_route_name = 2131493020;
-			
-			// aapt resource value: 0x7f0c00a2
-			public const int mr_close = 2131493026;
-			
-			// aapt resource value: 0x7f0c00a8
-			public const int mr_control_divider = 2131493032;
-			
-			// aapt resource value: 0x7f0c00ae
-			public const int mr_control_play_pause = 2131493038;
-			
-			// aapt resource value: 0x7f0c00b1
-			public const int mr_control_subtitle = 2131493041;
-			
-			// aapt resource value: 0x7f0c00b0
-			public const int mr_control_title = 2131493040;
-			
-			// aapt resource value: 0x7f0c00af
-			public const int mr_control_title_container = 2131493039;
-			
-			// aapt resource value: 0x7f0c00a3
-			public const int mr_custom_control = 2131493027;
-			
-			// aapt resource value: 0x7f0c00a4
-			public const int mr_default_control = 2131493028;
-			
-			// aapt resource value: 0x7f0c009f
-			public const int mr_dialog_area = 2131493023;
-			
-			// aapt resource value: 0x7f0c009e
-			public const int mr_expandable_area = 2131493022;
-			
-			// aapt resource value: 0x7f0c00b2
-			public const int mr_group_expand_collapse = 2131493042;
-			
-			// aapt resource value: 0x7f0c00a6
-			public const int mr_media_main_control = 2131493030;
-			
-			// aapt resource value: 0x7f0c00a1
-			public const int mr_name = 2131493025;
-			
-			// aapt resource value: 0x7f0c00a7
-			public const int mr_playback_control = 2131493031;
-			
-			// aapt resource value: 0x7f0c00a0
-			public const int mr_title_bar = 2131493024;
+			// aapt resource value: 0x7f0c00b4
+			public const int mr_art = 2131493044;
 			
 			// aapt resource value: 0x7f0c00a9
-			public const int mr_volume_control = 2131493033;
-			
-			// aapt resource value: 0x7f0c00aa
-			public const int mr_volume_group_list = 2131493034;
+			public const int mr_chooser_list = 2131493033;
 			
 			// aapt resource value: 0x7f0c00ac
-			public const int mr_volume_item_icon = 2131493036;
+			public const int mr_chooser_route_desc = 2131493036;
+			
+			// aapt resource value: 0x7f0c00aa
+			public const int mr_chooser_route_icon = 2131493034;
+			
+			// aapt resource value: 0x7f0c00ab
+			public const int mr_chooser_route_name = 2131493035;
+			
+			// aapt resource value: 0x7f0c00b1
+			public const int mr_close = 2131493041;
+			
+			// aapt resource value: 0x7f0c00b7
+			public const int mr_control_divider = 2131493047;
+			
+			// aapt resource value: 0x7f0c00bd
+			public const int mr_control_play_pause = 2131493053;
+			
+			// aapt resource value: 0x7f0c00c0
+			public const int mr_control_subtitle = 2131493056;
+			
+			// aapt resource value: 0x7f0c00bf
+			public const int mr_control_title = 2131493055;
+			
+			// aapt resource value: 0x7f0c00be
+			public const int mr_control_title_container = 2131493054;
+			
+			// aapt resource value: 0x7f0c00b2
+			public const int mr_custom_control = 2131493042;
+			
+			// aapt resource value: 0x7f0c00b3
+			public const int mr_default_control = 2131493043;
+			
+			// aapt resource value: 0x7f0c00ae
+			public const int mr_dialog_area = 2131493038;
 			
 			// aapt resource value: 0x7f0c00ad
-			public const int mr_volume_slider = 2131493037;
+			public const int mr_expandable_area = 2131493037;
+			
+			// aapt resource value: 0x7f0c00c1
+			public const int mr_group_expand_collapse = 2131493057;
+			
+			// aapt resource value: 0x7f0c00b5
+			public const int mr_media_main_control = 2131493045;
+			
+			// aapt resource value: 0x7f0c00b0
+			public const int mr_name = 2131493040;
+			
+			// aapt resource value: 0x7f0c00b6
+			public const int mr_playback_control = 2131493046;
+			
+			// aapt resource value: 0x7f0c00af
+			public const int mr_title_bar = 2131493039;
+			
+			// aapt resource value: 0x7f0c00b8
+			public const int mr_volume_control = 2131493048;
+			
+			// aapt resource value: 0x7f0c00b9
+			public const int mr_volume_group_list = 2131493049;
+			
+			// aapt resource value: 0x7f0c00bb
+			public const int mr_volume_item_icon = 2131493051;
+			
+			// aapt resource value: 0x7f0c00bc
+			public const int mr_volume_slider = 2131493052;
 			
 			// aapt resource value: 0x7f0c0039
 			public const int multiply = 2131492921;
 			
-			// aapt resource value: 0x7f0c0093
-			public const int navigation_header_container = 2131493011;
+			// aapt resource value: 0x7f0c00a2
+			public const int navigation_header_container = 2131493026;
 			
 			// aapt resource value: 0x7f0c0043
 			public const int never = 2131492931;
@@ -5052,8 +5106,8 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0c001e
 			public const int pin = 2131492894;
 			
-			// aapt resource value: 0x7f0c0087
-			public const int progress_bar = 2131492999;
+			// aapt resource value: 0x7f0c0096
+			public const int progress_bar = 2131493014;
 			
 			// aapt resource value: 0x7f0c0007
 			public const int progress_circular = 2131492871;
@@ -5069,6 +5123,9 @@ namespace Sensus.Android
 			
 			// aapt resource value: 0x7f0c0081
 			public const int right_arrow = 2131492993;
+			
+			// aapt resource value: 0x7f0c0083
+			public const int rootLayout = 2131492995;
 			
 			// aapt resource value: 0x7f0c000e
 			public const int satellite = 2131492878;
@@ -5124,6 +5181,9 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0c007e
 			public const int select_dialog_listview = 2131492990;
 			
+			// aapt resource value: 0x7f0c0088
+			public const int seriesLayout = 2131493000;
+			
 			// aapt resource value: 0x7f0c0069
 			public const int shortcut = 2131492969;
 			
@@ -5139,11 +5199,11 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0c004f
 			public const int small = 2131492943;
 			
-			// aapt resource value: 0x7f0c0092
-			public const int snackbar_action = 2131493010;
+			// aapt resource value: 0x7f0c00a1
+			public const int snackbar_action = 2131493025;
 			
-			// aapt resource value: 0x7f0c0091
-			public const int snackbar_text = 2131493009;
+			// aapt resource value: 0x7f0c00a0
+			public const int snackbar_text = 2131493024;
 			
 			// aapt resource value: 0x7f0c001c
 			public const int snap = 2131492892;
@@ -5169,8 +5229,11 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0c0027
 			public const int start = 2131492903;
 			
-			// aapt resource value: 0x7f0c00b5
-			public const int status_bar_latest_event_content = 2131493045;
+			// aapt resource value: 0x7f0c00c4
+			public const int status_bar_latest_event_content = 2131493060;
+			
+			// aapt resource value: 0x7f0c0087
+			public const int stripLinesLayout = 2131492999;
 			
 			// aapt resource value: 0x7f0c007b
 			public const int submit_area = 2131492987;
@@ -5178,20 +5241,26 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0c0031
 			public const int tabMode = 2131492913;
 			
+			// aapt resource value: 0x7f0c008a
+			public const int technicalIndicatorLayout = 2131493002;
+			
 			// aapt resource value: 0x7f0c000f
 			public const int terrain = 2131492879;
 			
-			// aapt resource value: 0x7f0c00bd
-			public const int text = 2131493053;
+			// aapt resource value: 0x7f0c00cc
+			public const int text = 2131493068;
 			
-			// aapt resource value: 0x7f0c00bb
-			public const int text2 = 2131493051;
+			// aapt resource value: 0x7f0c00ca
+			public const int text2 = 2131493066;
 			
 			// aapt resource value: 0x7f0c0063
 			public const int textSpacerNoButtons = 2131492963;
 			
-			// aapt resource value: 0x7f0c00b9
-			public const int time = 2131493049;
+			// aapt resource value: 0x7f0c00d3
+			public const int thumbLayout = 2131493075;
+			
+			// aapt resource value: 0x7f0c00c8
+			public const int time = 2131493064;
 			
 			// aapt resource value: 0x7f0c0059
 			public const int title = 2131492953;
@@ -5205,8 +5274,11 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0c005d
 			public const int topPanel = 2131492957;
 			
-			// aapt resource value: 0x7f0c008f
-			public const int touch_outside = 2131493007;
+			// aapt resource value: 0x7f0c00cf
+			public const int top_labels = 2131493071;
+			
+			// aapt resource value: 0x7f0c009e
+			public const int touch_outside = 2131493022;
 			
 			// aapt resource value: 0x7f0c0047
 			public const int unknown = 2131492935;
@@ -5220,8 +5292,8 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f0c0000
 			public const int view_offset_helper = 2131492864;
 			
-			// aapt resource value: 0x7f0c00ab
-			public const int volume_item_container = 2131493035;
+			// aapt resource value: 0x7f0c00ba
+			public const int volume_item_container = 2131493050;
 			
 			// aapt resource value: 0x7f0c0012
 			public const int wide = 2131492882;
@@ -5395,139 +5467,151 @@ namespace Sensus.Android
 			public const int calendar_picker = 2130903067;
 			
 			// aapt resource value: 0x7f03001c
-			public const int com_facebook_activity_layout = 2130903068;
+			public const int chart_layout = 2130903068;
 			
 			// aapt resource value: 0x7f03001d
-			public const int com_facebook_device_auth_dialog_fragment = 2130903069;
+			public const int chart_legend = 2130903069;
 			
 			// aapt resource value: 0x7f03001e
-			public const int com_facebook_login_fragment = 2130903070;
+			public const int chart_legend_item = 2130903070;
 			
 			// aapt resource value: 0x7f03001f
-			public const int com_facebook_tooltip_bubble = 2130903071;
+			public const int com_facebook_activity_layout = 2130903071;
 			
 			// aapt resource value: 0x7f030020
-			public const int design_bottom_sheet_dialog = 2130903072;
+			public const int com_facebook_device_auth_dialog_fragment = 2130903072;
 			
 			// aapt resource value: 0x7f030021
-			public const int design_layout_snackbar = 2130903073;
+			public const int com_facebook_login_fragment = 2130903073;
 			
 			// aapt resource value: 0x7f030022
-			public const int design_layout_snackbar_include = 2130903074;
+			public const int com_facebook_tooltip_bubble = 2130903074;
 			
 			// aapt resource value: 0x7f030023
-			public const int design_layout_tab_icon = 2130903075;
+			public const int design_bottom_sheet_dialog = 2130903075;
 			
 			// aapt resource value: 0x7f030024
-			public const int design_layout_tab_text = 2130903076;
+			public const int design_layout_snackbar = 2130903076;
 			
 			// aapt resource value: 0x7f030025
-			public const int design_menu_item_action_area = 2130903077;
+			public const int design_layout_snackbar_include = 2130903077;
 			
 			// aapt resource value: 0x7f030026
-			public const int design_navigation_item = 2130903078;
+			public const int design_layout_tab_icon = 2130903078;
 			
 			// aapt resource value: 0x7f030027
-			public const int design_navigation_item_header = 2130903079;
+			public const int design_layout_tab_text = 2130903079;
 			
 			// aapt resource value: 0x7f030028
-			public const int design_navigation_item_separator = 2130903080;
+			public const int design_menu_item_action_area = 2130903080;
 			
 			// aapt resource value: 0x7f030029
-			public const int design_navigation_item_subheader = 2130903081;
+			public const int design_navigation_item = 2130903081;
 			
 			// aapt resource value: 0x7f03002a
-			public const int design_navigation_menu = 2130903082;
+			public const int design_navigation_item_header = 2130903082;
 			
 			// aapt resource value: 0x7f03002b
-			public const int design_navigation_menu_item = 2130903083;
+			public const int design_navigation_item_separator = 2130903083;
 			
 			// aapt resource value: 0x7f03002c
-			public const int dialog = 2130903084;
+			public const int design_navigation_item_subheader = 2130903084;
 			
 			// aapt resource value: 0x7f03002d
-			public const int messenger_button_send_blue_large = 2130903085;
+			public const int design_navigation_menu = 2130903085;
 			
 			// aapt resource value: 0x7f03002e
-			public const int messenger_button_send_blue_round = 2130903086;
+			public const int design_navigation_menu_item = 2130903086;
 			
 			// aapt resource value: 0x7f03002f
-			public const int messenger_button_send_blue_small = 2130903087;
+			public const int dialog = 2130903087;
 			
 			// aapt resource value: 0x7f030030
-			public const int messenger_button_send_white_large = 2130903088;
+			public const int messenger_button_send_blue_large = 2130903088;
 			
 			// aapt resource value: 0x7f030031
-			public const int messenger_button_send_white_round = 2130903089;
+			public const int messenger_button_send_blue_round = 2130903089;
 			
 			// aapt resource value: 0x7f030032
-			public const int messenger_button_send_white_small = 2130903090;
+			public const int messenger_button_send_blue_small = 2130903090;
 			
 			// aapt resource value: 0x7f030033
-			public const int month = 2130903091;
+			public const int messenger_button_send_white_large = 2130903091;
 			
 			// aapt resource value: 0x7f030034
-			public const int mr_chooser_dialog = 2130903092;
+			public const int messenger_button_send_white_round = 2130903092;
 			
 			// aapt resource value: 0x7f030035
-			public const int mr_chooser_list_item = 2130903093;
+			public const int messenger_button_send_white_small = 2130903093;
 			
 			// aapt resource value: 0x7f030036
-			public const int mr_controller_material_dialog_b = 2130903094;
+			public const int month = 2130903094;
 			
 			// aapt resource value: 0x7f030037
-			public const int mr_controller_volume_item = 2130903095;
+			public const int mr_chooser_dialog = 2130903095;
 			
 			// aapt resource value: 0x7f030038
-			public const int mr_playback_control = 2130903096;
+			public const int mr_chooser_list_item = 2130903096;
 			
 			// aapt resource value: 0x7f030039
-			public const int mr_volume_control = 2130903097;
+			public const int mr_controller_material_dialog_b = 2130903097;
 			
 			// aapt resource value: 0x7f03003a
-			public const int notification_media_action = 2130903098;
+			public const int mr_controller_volume_item = 2130903098;
 			
 			// aapt resource value: 0x7f03003b
-			public const int notification_media_cancel_action = 2130903099;
+			public const int mr_playback_control = 2130903099;
 			
 			// aapt resource value: 0x7f03003c
-			public const int notification_template_big_media = 2130903100;
+			public const int mr_volume_control = 2130903100;
 			
 			// aapt resource value: 0x7f03003d
-			public const int notification_template_big_media_narrow = 2130903101;
+			public const int notification_media_action = 2130903101;
 			
 			// aapt resource value: 0x7f03003e
-			public const int notification_template_lines = 2130903102;
+			public const int notification_media_cancel_action = 2130903102;
 			
 			// aapt resource value: 0x7f03003f
-			public const int notification_template_media = 2130903103;
+			public const int notification_template_big_media = 2130903103;
 			
 			// aapt resource value: 0x7f030040
-			public const int notification_template_part_chronometer = 2130903104;
+			public const int notification_template_big_media_narrow = 2130903104;
 			
 			// aapt resource value: 0x7f030041
-			public const int notification_template_part_time = 2130903105;
+			public const int notification_template_lines = 2130903105;
 			
 			// aapt resource value: 0x7f030042
-			public const int select_dialog_item_material = 2130903106;
+			public const int notification_template_media = 2130903106;
 			
 			// aapt resource value: 0x7f030043
-			public const int select_dialog_multichoice_material = 2130903107;
+			public const int notification_template_part_chronometer = 2130903107;
 			
 			// aapt resource value: 0x7f030044
-			public const int select_dialog_singlechoice_material = 2130903108;
+			public const int notification_template_part_time = 2130903108;
 			
 			// aapt resource value: 0x7f030045
-			public const int support_simple_spinner_dropdown_item = 2130903109;
+			public const int range_navigator_layout = 2130903109;
 			
 			// aapt resource value: 0x7f030046
-			public const int week = 2130903110;
+			public const int select_dialog_item_material = 2130903110;
 			
 			// aapt resource value: 0x7f030047
-			public const int zxingscanneractivitylayout = 2130903111;
+			public const int select_dialog_multichoice_material = 2130903111;
 			
 			// aapt resource value: 0x7f030048
-			public const int zxingscannerfragmentlayout = 2130903112;
+			public const int select_dialog_singlechoice_material = 2130903112;
+			
+			// aapt resource value: 0x7f030049
+			public const int support_simple_spinner_dropdown_item = 2130903113;
+			
+			// aapt resource value: 0x7f03004a
+			public const int week = 2130903114;
+			
+			// aapt resource value: 0x7f03004b
+			public const int zxingscanneractivitylayout = 2130903115;
+			
+			// aapt resource value: 0x7f03004c
+			public const int zxingscannerfragmentlayout = 2130903116;
 			
 			static Layout()
 			{
@@ -5542,11 +5626,11 @@ namespace Sensus.Android
 		public partial class String
 		{
 			
-			// aapt resource value: 0x7f08004b
-			public const int ApplicationName = 2131230795;
+			// aapt resource value: 0x7f08004f
+			public const int ApplicationName = 2131230799;
 			
-			// aapt resource value: 0x7f08004a
-			public const int Hello = 2131230794;
+			// aapt resource value: 0x7f08004e
+			public const int Hello = 2131230798;
 			
 			// aapt resource value: 0x7f080031
 			public const int abc_action_bar_home_description = 2131230769;
@@ -5605,11 +5689,11 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f080043
 			public const int abc_toolbar_collapse_description = 2131230787;
 			
-			// aapt resource value: 0x7f08005e
-			public const int app_id = 2131230814;
+			// aapt resource value: 0x7f080062
+			public const int app_id = 2131230818;
 			
-			// aapt resource value: 0x7f08005f
-			public const int app_name = 2131230815;
+			// aapt resource value: 0x7f080063
+			public const int app_name = 2131230819;
 			
 			// aapt resource value: 0x7f08002e
 			public const int appbar_scrolling_view_behavior = 2131230766;
@@ -5626,56 +5710,56 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f080030
 			public const int character_counter_pattern = 2131230768;
 			
-			// aapt resource value: 0x7f08004c
-			public const int com_facebook_device_auth_instructions = 2131230796;
-			
-			// aapt resource value: 0x7f08004d
-			public const int com_facebook_image_download_unknown_error = 2131230797;
-			
-			// aapt resource value: 0x7f08004e
-			public const int com_facebook_internet_permission_error_message = 2131230798;
-			
-			// aapt resource value: 0x7f08004f
-			public const int com_facebook_internet_permission_error_title = 2131230799;
-			
 			// aapt resource value: 0x7f080050
-			public const int com_facebook_like_button_liked = 2131230800;
+			public const int com_facebook_device_auth_instructions = 2131230800;
 			
 			// aapt resource value: 0x7f080051
-			public const int com_facebook_like_button_not_liked = 2131230801;
+			public const int com_facebook_image_download_unknown_error = 2131230801;
 			
 			// aapt resource value: 0x7f080052
-			public const int com_facebook_loading = 2131230802;
+			public const int com_facebook_internet_permission_error_message = 2131230802;
 			
 			// aapt resource value: 0x7f080053
-			public const int com_facebook_loginview_cancel_action = 2131230803;
+			public const int com_facebook_internet_permission_error_title = 2131230803;
 			
 			// aapt resource value: 0x7f080054
-			public const int com_facebook_loginview_log_in_button = 2131230804;
+			public const int com_facebook_like_button_liked = 2131230804;
 			
 			// aapt resource value: 0x7f080055
-			public const int com_facebook_loginview_log_in_button_long = 2131230805;
+			public const int com_facebook_like_button_not_liked = 2131230805;
 			
 			// aapt resource value: 0x7f080056
-			public const int com_facebook_loginview_log_out_action = 2131230806;
+			public const int com_facebook_loading = 2131230806;
 			
 			// aapt resource value: 0x7f080057
-			public const int com_facebook_loginview_log_out_button = 2131230807;
+			public const int com_facebook_loginview_cancel_action = 2131230807;
 			
 			// aapt resource value: 0x7f080058
-			public const int com_facebook_loginview_logged_in_as = 2131230808;
+			public const int com_facebook_loginview_log_in_button = 2131230808;
 			
 			// aapt resource value: 0x7f080059
-			public const int com_facebook_loginview_logged_in_using_facebook = 2131230809;
+			public const int com_facebook_loginview_log_in_button_long = 2131230809;
 			
 			// aapt resource value: 0x7f08005a
-			public const int com_facebook_send_button_text = 2131230810;
+			public const int com_facebook_loginview_log_out_action = 2131230810;
 			
 			// aapt resource value: 0x7f08005b
-			public const int com_facebook_share_button_text = 2131230811;
+			public const int com_facebook_loginview_log_out_button = 2131230811;
 			
 			// aapt resource value: 0x7f08005c
-			public const int com_facebook_tooltip_default = 2131230812;
+			public const int com_facebook_loginview_logged_in_as = 2131230812;
+			
+			// aapt resource value: 0x7f08005d
+			public const int com_facebook_loginview_logged_in_using_facebook = 2131230813;
+			
+			// aapt resource value: 0x7f08005e
+			public const int com_facebook_send_button_text = 2131230814;
+			
+			// aapt resource value: 0x7f08005f
+			public const int com_facebook_share_button_text = 2131230815;
+			
+			// aapt resource value: 0x7f080060
+			public const int com_facebook_tooltip_default = 2131230816;
 			
 			// aapt resource value: 0x7f080015
 			public const int common_google_play_services_api_unavailable_text = 2131230741;
@@ -5764,23 +5848,23 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f08001b
 			public const int common_signin_button_text_long = 2131230747;
 			
-			// aapt resource value: 0x7f080046
-			public const int day_name_format = 2131230790;
+			// aapt resource value: 0x7f08004a
+			public const int day_name_format = 2131230794;
+			
+			// aapt resource value: 0x7f08004d
+			public const int full_date_format = 2131230797;
+			
+			// aapt resource value: 0x7f08004b
+			public const int invalid_date = 2131230795;
 			
 			// aapt resource value: 0x7f080049
-			public const int full_date_format = 2131230793;
+			public const int library_name = 2131230793;
 			
-			// aapt resource value: 0x7f080047
-			public const int invalid_date = 2131230791;
+			// aapt resource value: 0x7f080061
+			public const int messenger_send_button_text = 2131230817;
 			
-			// aapt resource value: 0x7f080045
-			public const int library_name = 2131230789;
-			
-			// aapt resource value: 0x7f08005d
-			public const int messenger_send_button_text = 2131230813;
-			
-			// aapt resource value: 0x7f080048
-			public const int month_name_format = 2131230792;
+			// aapt resource value: 0x7f08004c
+			public const int month_name_format = 2131230796;
 			
 			// aapt resource value: 0x7f08001f
 			public const int mr_button_content_description = 2131230751;
@@ -5827,8 +5911,20 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f08002d
 			public const int mr_user_route_category_name = 2131230765;
 			
+			// aapt resource value: 0x7f080045
+			public const int q = 2131230789;
+			
+			// aapt resource value: 0x7f080046
+			public const int quarter = 2131230790;
+			
 			// aapt resource value: 0x7f080044
 			public const int status_bar_notification_info_overflow = 2131230788;
+			
+			// aapt resource value: 0x7f080047
+			public const int w = 2131230791;
+			
+			// aapt resource value: 0x7f080048
+			public const int week = 2131230792;
 			
 			static String()
 			{

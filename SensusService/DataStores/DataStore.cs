@@ -29,6 +29,71 @@ namespace SensusService.DataStores
     /// </summary>
     public abstract class DataStore
     {
+        protected static Task CommitChunksAsync(HashSet<Datum> data, DataStore dataStore, CancellationToken cancellationToken)
+        {
+            return Task.Run(async () =>
+            {
+                int chunkSize = 10000;
+
+                // the data set passed in is open to modification, and callers might continue adding data after this method returns.
+                // so, we can't simply run until data is empty since it may never be empty. instead, run a predetermined number of 
+                // chunks.
+                int maxNumChunks;
+                lock (data)
+                {
+                    maxNumChunks = (int)Math.Ceiling(data.Count / (double)chunkSize);
+                }
+
+                HashSet<Datum> chunk = new HashSet<Datum>();
+
+                // process all chunks, stopping for cancellation.
+                int chunksCommitted = 0;
+                while (!cancellationToken.IsCancellationRequested && chunksCommitted < maxNumChunks)
+                {
+                    // build a new chunk, stopping for cancellation, exhaustion of data, or full chunk.
+                    chunk.Clear();
+
+                    lock (data)
+                    {
+                        foreach (Datum datum in data)
+                        {
+                            chunk.Add(datum);
+
+                            if (cancellationToken.IsCancellationRequested || chunk.Count >= chunkSize)
+                                break;
+                        }
+                    }
+
+                    // commit chunk as long as we're not canceled and the chunk has something in it
+                    int dataCommitted = 0;
+                    if (!cancellationToken.IsCancellationRequested && chunk.Count > 0)
+                    {
+                        List<Datum> committedData = await dataStore.CommitAsync(chunk, cancellationToken);
+
+                        lock (data)
+                        {
+                            foreach (Datum committedDatum in committedData)
+                            {
+                                // remove committed data from the data that were passed in. if we check for and break
+                                // on cancellation here, the committed data will not be treated as such. we need to 
+                                // remove them from the data collection to indicate to the caller that they were committed.
+                                data.Remove(committedDatum);
+                                ++dataCommitted;
+                                ++dataStore.CommittedDataCount;
+                            }
+                        }
+                    }
+
+                    // if we failed to commit anything, then we've been canceled, there's nothing to commit, or the commit failed.
+                    // in any of these cases, we should not proceed with the next chunk. the caller will need to retry the commit.
+                    if (dataCommitted == 0)
+                        break;
+
+                    ++chunksCommitted;
+                }
+            });
+        }
+
         /// <summary>
         /// We don't mind commit callbacks lag, since it don't affect any performance metrics and
         /// the latencies aren't inspected when testing data store health or participation. It also
@@ -41,8 +106,10 @@ namespace SensusService.DataStores
         private bool _running;
         private Protocol _protocol;
         private DateTime? _mostRecentSuccessfulCommitTime;
-        private List<Datum> _nonProbeDataToCommit;
+        private HashSet<Datum> _data;
         private string _commitCallbackId;
+        private long _addedDataCount;
+        private long _committedDataCount;
 
         [EntryIntegerUiProperty("Commit Delay (MS):", true, 2)]
         public int CommitDelayMS
@@ -86,6 +153,19 @@ namespace SensusService.DataStores
         }
 
         [JsonIgnore]
+        protected DateTime? MostRecentSuccessfulCommitTime
+        {
+            get
+            {
+                return _mostRecentSuccessfulCommitTime;
+            }
+            set
+            {
+                _mostRecentSuccessfulCommitTime = value;
+            }
+        }
+
+        [JsonIgnore]
         public bool Running
         {
             get { return _running; }
@@ -97,20 +177,50 @@ namespace SensusService.DataStores
         [JsonIgnore]
         public abstract bool Clearable { get; }
 
+        /// <summary>
+        /// Gets or sets the number of data ever commited to this data store.
+        /// </summary>
+        /// <value>The committed data count.</value>
+        public long CommittedDataCount
+        {
+            get
+            {
+                return _committedDataCount;
+            }
+
+            set
+            {
+                _committedDataCount = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the number of data ever added to this data store.
+        /// </summary>
+        /// <value>The added data count.</value>
+        public long AddedDataCount
+        {
+            get
+            {
+                return _addedDataCount;
+            }
+
+            set
+            {
+                _addedDataCount = value;
+            }
+        }
+
         protected DataStore()
         {
             _commitDelayMS = 10000;
             _commitTimeoutMinutes = 5;
             _running = false;
             _mostRecentSuccessfulCommitTime = null;
-            _nonProbeDataToCommit = new List<Datum>();
+            _data = new HashSet<Datum>();
             _commitCallbackId = null;
-        }
-
-        public void AddNonProbeDatum(Datum datum)
-        {
-            lock (_nonProbeDataToCommit)
-                _nonProbeDataToCommit.Add(datum);
+            _committedDataCount = 0;
+            _addedDataCount = 0;
         }
 
         /// <summary>
@@ -125,133 +235,51 @@ namespace SensusService.DataStores
                 _mostRecentSuccessfulCommitTime = DateTime.Now;
                 string userNotificationMessage = null;
 
+#if __IOS__
                 // we can't wake up the app on ios. this is problematic since data need to be stored locally and remotely
                 // in something of a reliable schedule; otherwise, we risk data loss (e.g., from device restarts, app kills, etc.).
                 // so, do the best possible thing and bug the user with a notification indicating that data need to be stored.
                 // only do this for the remote data store to that we don't get duplicate notifications.
-#if __IOS__
                 if (this is RemoteDataStore)
                     userNotificationMessage = "Sensus needs to submit your data for the \"" + _protocol.Name + "\" study. Please open this notification.";
 #endif
 
-                ScheduledCallback callback = new ScheduledCallback(CommitAsync, GetType().FullName + " Commit", TimeSpan.FromMinutes(_commitTimeoutMinutes), userNotificationMessage);
+                ScheduledCallback callback = new ScheduledCallback(CycleAsync, GetType().FullName + " Commit", TimeSpan.FromMinutes(_commitTimeoutMinutes), userNotificationMessage);
                 _commitCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(callback, _commitDelayMS, _commitDelayMS, COMMIT_CALLBACK_LAG);
             }
         }
 
-        private Task CommitAsync(string callbackId, CancellationToken cancellationToken, Action letDeviceSleepCallback)
+        public void Add(Datum datum)
         {
-            return CommitAsync(cancellationToken);
+            lock (_data)
+            {
+                _data.Add(datum);
+                ++_addedDataCount;
+            }
         }
 
-        public Task CommitAsync(CancellationToken cancellationToken)
+        protected virtual Task CycleAsync(string callbackId, CancellationToken cancellationToken, Action letDeviceSleepCallback)
         {
             return Task.Run(async () =>
-                {
-                    if (_running)
-                    {
-                        int? numDataCommitted = null;
-
-                        try
-                        {
-                            // on ios the user must activate the app in order to save data. give the user some feedback to let them know that this is 
-                            // going to happen and might take some time. if they background the app the commit will be canceled if it runs out of background
-                            // time.
-#if __IOS__
-                            if (this is RemoteDataStore)
-                                SensusServiceHelper.Get().FlashNotificationAsync("Submitting data. Please wait for success confirmation...");
-#endif
-
-                            SensusServiceHelper.Get().Logger.Log("Committing data.", LoggingLevel.Normal, GetType());
-
-                            DateTime commitStartTime = DateTime.Now;
-
-                            List<Datum> dataToCommit = null;
-                            try
-                            {
-                                dataToCommit = GetDataToCommit(cancellationToken);
-                                if (dataToCommit == null)
-                                    throw new DataStoreException("Null collection returned by GetDataToCommit");
-                            }
-                            catch (Exception ex)
-                            {
-                                SensusServiceHelper.Get().Logger.Log("Failed to get data to commit:  " + ex.Message, LoggingLevel.Normal, GetType(), true);
-                            }
-
-                            if (dataToCommit != null && !cancellationToken.IsCancellationRequested)
-                            {
-                                // add in non-probe data (e.g., that from protocol reports or participation reward verifications)
-                                lock (_nonProbeDataToCommit)
-                                    foreach (Datum datum in _nonProbeDataToCommit)
-                                        dataToCommit.Add(datum);
-
-                                List<Datum> committedData = null;
-                                try
-                                {
-                                    committedData = await CommitDataAsync(dataToCommit, cancellationToken);
-
-                                    if (committedData == null)
-                                        throw new DataStoreException("Null collection returned by CommitData");
-
-                                    _mostRecentSuccessfulCommitTime = DateTime.Now;
-                                    numDataCommitted = committedData.Count;
-                                }
-                                catch (Exception ex)
-                                {
-                                    SensusServiceHelper.Get().Logger.Log("Failed to commit data:  " + ex.Message, LoggingLevel.Normal, GetType(), true);
-                                }
-
-                                // don't check cancellation token here, since we've committed data and need to process the results (i.e., remove from probe caches or delete from local data store). if we don't always do this we'll end up committing duplicate data on next commit.
-                                if (committedData != null && committedData.Count > 0)
-                                {
-                                    try
-                                    {
-                                        // remove any non-probe data that were committed from the in-memory store.
-                                        lock (_nonProbeDataToCommit)
-                                            foreach (Datum datum in committedData)
-                                                _nonProbeDataToCommit.Remove(datum);
-
-                                        ProcessCommittedData(committedData);
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        SensusServiceHelper.Get().Logger.Log("Failed to process committed data:  " + ex.Message, LoggingLevel.Normal, GetType(), true);
-                                    }
-                                }
-                            }
-
-                            SensusServiceHelper.Get().Logger.Log("Finished commit in " + (DateTime.Now - commitStartTime).TotalSeconds + " seconds.", LoggingLevel.Normal, GetType());
-
-                            // on ios the user must activate the app in order to save data. give the user some feedback to let them know that the data were stored remotely.
-#if __IOS__
-                            if (numDataCommitted != null && this is RemoteDataStore)
-                            {
-                                int numDataCommittedValue = numDataCommitted.GetValueOrDefault();
-                                SensusServiceHelper.Get().FlashNotificationAsync("Submitted " + numDataCommittedValue + " data item" + (numDataCommittedValue == 1 ? "" : "s") + " to the \"" + _protocol.Name + "\" study." + (numDataCommittedValue > 0 ? " Thank you!" : ""));
-                            }
-#endif
-                        }
-                        catch (Exception ex)
-                        {
-                            SensusServiceHelper.Get().Logger.Log("Commit failed:  " + ex.Message, LoggingLevel.Normal, GetType(), true);
-                        }
-                    }
-                });
+            {
+                if (_running)
+                    await CommitChunksAsync(_data, this, cancellationToken);
+            });
         }
 
-        protected abstract List<Datum> GetDataToCommit(CancellationToken cancellationToken);
+        public async Task<bool> CommitAsync(Datum datum, CancellationToken cancellationToken)
+        {
+            return (await CommitAsync(new Datum[] { datum }, cancellationToken)).Contains(datum);
+        }
 
-        protected abstract Task<List<Datum>> CommitDataAsync(List<Datum> data, CancellationToken cancellationToken);
-
-        protected abstract void ProcessCommittedData(List<Datum> committedData);
+        public abstract Task<List<Datum>> CommitAsync(IEnumerable<Datum> data, CancellationToken cancellationToken);
 
         public virtual void Clear()
         {
-        }
-
-        public bool HasNonProbeDatumToCommit(string datumId)
-        {
-            return _nonProbeDataToCommit.Any(datum => datum.Id == datumId);
+            lock (_data)
+            {
+                _data.Clear();
+            }
         }
 
         /// <summary>
@@ -288,6 +316,14 @@ namespace SensusService.DataStores
             if (msElapsedSinceLastCommit > (_commitDelayMS + 5000))  // system timer callbacks aren't always fired exactly as scheduled, resulting in health tests that identify warning conditions for delayed data storage. allow a small fudge factor to ignore most of these warnings warnings.
                 warning += "Datastore \"" + GetType().FullName + "\" has not committed data in " + msElapsedSinceLastCommit + "ms (commit delay = " + _commitDelayMS + "ms)." + Environment.NewLine;
 
+            lock (_data)
+            {
+                string dataStoreName = GetType().Name;
+                misc += "Data added (" + dataStoreName + "):  " + _addedDataCount + Environment.NewLine +
+                        "Data in memory (" + dataStoreName + "):  " + _data.Count + Environment.NewLine +
+                        "Data committed (" + dataStoreName + "):  " + _committedDataCount + Environment.NewLine;
+            }
+
             return restart;
         }
 
@@ -297,8 +333,12 @@ namespace SensusService.DataStores
                 throw new Exception("Cannot clear data store for sharing while it is running.");
 
             _mostRecentSuccessfulCommitTime = null;
-            _nonProbeDataToCommit.Clear();
             _commitCallbackId = null;
+
+            lock (_data)
+            {
+                _data.Clear();
+            }
         }
 
         public DataStore Copy()

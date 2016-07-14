@@ -15,6 +15,7 @@
 using System;
 using System.Threading;
 using Newtonsoft.Json;
+using Syncfusion.SfChart.XForms;
 
 namespace SensusService.Probes.Movement
 {
@@ -94,6 +95,26 @@ namespace SensusService.Probes.Movement
             base.ResetForSharing();
 
             _stabilizing = false;
+        }
+
+        protected override ChartSeries GetChartSeries()
+        {
+            return null;
+        }
+
+        protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
+        {
+            return null;
+        }
+
+        protected override ChartAxis GetChartPrimaryAxis()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override RangeAxisBase GetChartSecondaryAxis()
+        {
+            throw new NotImplementedException();
         }
     }
 }

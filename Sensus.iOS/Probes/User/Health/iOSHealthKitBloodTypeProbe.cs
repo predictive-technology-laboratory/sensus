@@ -20,6 +20,7 @@ using System.Threading;
 using Foundation;
 using SensusService.Probes.User.Health;
 using Newtonsoft.Json;
+using Syncfusion.SfChart.XForms;
 
 namespace Sensus.iOS.Probes.User.Health
 {
@@ -86,6 +87,26 @@ namespace Sensus.iOS.Probes.User.Health
                 throw new Exception("Error reading blood type:  " + error.Description);
 
             return data;
+        }
+
+        protected override ChartSeries GetChartSeries()
+        {
+            return null;
+        }
+
+        protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
+        {
+            return null;
+        }
+
+        protected override ChartAxis GetChartPrimaryAxis()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override RangeAxisBase GetChartSecondaryAxis()
+        {
+            throw new NotImplementedException();
         }
     }
 }

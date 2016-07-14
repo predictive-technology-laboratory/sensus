@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions.Abstractions;
+using Syncfusion.SfChart.XForms;
 
 namespace SensusService.Probes.Movement
 {
@@ -25,7 +26,7 @@ namespace SensusService.Probes.Movement
     {
         private Position _previousPosition;
 
-        private readonly object _locker = new object();
+        private readonly object _previousPositionLocker = new object();
 
         public sealed override string DisplayName
         {
@@ -45,10 +46,6 @@ namespace SensusService.Probes.Movement
             }
         }
 
-        public PollingSpeedProbe()
-        {
-        }
-
         protected override void Initialize()
         {
             base.Initialize();
@@ -65,24 +62,23 @@ namespace SensusService.Probes.Movement
 
         protected override void InternalStart()
         {
-            lock (_locker)
-            {
-                _previousPosition = null;  // do this before starting the base-class poller so it doesn't race to grab a stale previous location.
-                base.InternalStart();               
-            }
+            // reset previous position before starting the base-class poller so it doesn't race to grab a stale previous location.
+            _previousPosition = null;
+
+            base.InternalStart();
         }
 
         protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
         {
-            lock (_locker)
+            SpeedDatum datum = null;
+
+            Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken);
+
+            if (currentPosition == null)
+                throw new Exception("Failed to get GPS reading.");
+            else
             {
-                SpeedDatum datum = null;
-
-                Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken);
-
-                if (currentPosition == null)
-                    throw new Exception("Failed to get GPS reading.");
-                else
+                lock (_previousPositionLocker)
                 {
                     if (_previousPosition == null)
                         _previousPosition = currentPosition;
@@ -92,28 +88,44 @@ namespace SensusService.Probes.Movement
                         _previousPosition = currentPosition;
                     }
                 }
-
-                if (datum == null)
-                    return new Datum[] { };  // datum will be null on the first poll and where polls return locations out of order (rare). these should count toward participation.
-                else
-                    return new Datum[] { datum };
             }
+
+            if (datum == null)
+                return new Datum[] { };  // datum will be null on the first poll and where polls return locations out of order (rare). these should count toward participation.
+            else
+                return new Datum[] { datum };
         }
 
-        public override void ResetForSharing()
+        protected override ChartSeries GetChartSeries()
         {
-            base.ResetForSharing();
-
-            _previousPosition = null;
+            return new LineSeries();
         }
 
-        public override void Stop()
+        protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
         {
-            lock (_locker)
+            return new ChartDataPoint(datum.Timestamp.LocalDateTime, (datum as SpeedDatum).KPH);
+        }
+
+        protected override ChartAxis GetChartPrimaryAxis()
+        {
+            return new DateTimeAxis
             {
-                base.Stop();
-                _previousPosition = null;  // reset previous location so it doesn't get used when this probe is restarted.
-            }
+                Title = new ChartAxisTitle
+                {
+                    Text = "Time"
+                }
+            };
+        }
+
+        protected override RangeAxisBase GetChartSecondaryAxis()
+        {
+            return new NumericalAxis
+            {
+                Title = new ChartAxisTitle
+                {
+                    Text = "Speed (KPH)"
+                }
+            };
         }
     }
 }

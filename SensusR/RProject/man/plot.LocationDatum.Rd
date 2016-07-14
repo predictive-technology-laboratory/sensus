@@ -9,13 +9,14 @@
 \arguments{
 \item{x}{Location data.}
 
-\item{...}{Other plotting parameters to pass to \code{\link{qmap}}.}
+\item{...}{Arguments to pass to plotting routines. This can include two special arguments:  qmap.args (passed to \code{\link{qmap}}) and geom.point.args (passed to \code{\link{geom_point}}).}
 }
 \description{
 Plot location data.
 }
 \examples{
-data = read.sensus.json(system.file("extdata", "example.data.txt", package="SensusR"))
+data.path = system.file("extdata", "example_data", package="SensusR")
+data = sensus.read.json(data.path)
 plot(data$LocationDatum)
 }
 

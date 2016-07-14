@@ -15,6 +15,8 @@
 using Android.Hardware;
 using SensusService.Probes.Location;
 using System;
+using Syncfusion.SfChart.XForms;
+using SensusService;
 
 namespace Sensus.Android.Probes.Location
 {
@@ -97,6 +99,26 @@ namespace Sensus.Android.Probes.Location
         {
             _magnetometerListener.Stop();
             _accelerometerListener.Stop();
+        }
+
+        protected override ChartSeries GetChartSeries()
+        {
+            return null;
+        }
+
+        protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
+        {
+            return null;
+        }
+
+        protected override ChartAxis GetChartPrimaryAxis()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override RangeAxisBase GetChartSecondaryAxis()
+        {
+            throw new NotImplementedException();
         }
     }
 }

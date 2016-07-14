@@ -14,6 +14,7 @@
 
 using System;
 using Newtonsoft.Json;
+using Syncfusion.SfChart.XForms;
 
 namespace SensusService.Probes.Context
 {
@@ -62,6 +63,26 @@ namespace SensusService.Probes.Context
         public sealed override Type DatumType
         {
             get { return typeof(BluetoothDeviceProximityDatum); }
+        }
+
+        protected override ChartSeries GetChartSeries()
+        {
+            return null;
+        }
+
+        protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
+        {
+            return null;
+        }
+
+        protected override ChartAxis GetChartPrimaryAxis()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override RangeAxisBase GetChartSecondaryAxis()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -1153,12 +1153,12 @@ namespace SensusService
                 SensusServiceHelper.Get().Logger.Log("Protocol report:" + Environment.NewLine + _mostRecentReport, LoggingLevel.Normal, GetType());
 
                 SensusServiceHelper.Get().Logger.Log("Storing protocol report locally.", LoggingLevel.Normal, GetType());
-                _localDataStore.AddNonProbeDatum(_mostRecentReport);
+                _localDataStore.Add(_mostRecentReport);
 
                 if (!_localDataStore.UploadToRemoteDataStore && _forceProtocolReportsToRemoteDataStore)
                 {
                     SensusServiceHelper.Get().Logger.Log("Local data aren't pushed to remote, so we're copying the report datum directly to the remote cache.", LoggingLevel.Normal, GetType());
-                    _remoteDataStore.AddNonProbeDatum(_mostRecentReport);
+                    _remoteDataStore.Add(_mostRecentReport);
                 }
             }
         }
@@ -1250,7 +1250,7 @@ namespace SensusService
                 }
 
                 SensusServiceHelper.Get().Logger.Log("Stopped protocol \"" + _name + "\".", LoggingLevel.Normal, GetType());
-                SensusServiceHelper.Get().FlashNotificationAsync("Stopped \"" + _name + "\".");
+                SensusServiceHelper.Get().FlashNotificationAsync("Stopped \"" + _name + "\".", false);
             }
         }
 

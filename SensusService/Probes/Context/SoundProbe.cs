@@ -14,6 +14,7 @@
 
 using System;
 using SensusUI.UiProperties;
+using Syncfusion.SfChart.XForms;
 
 namespace SensusService.Probes.Context
 {
@@ -49,6 +50,38 @@ namespace SensusService.Probes.Context
         protected SoundProbe()
         {
             _sampleLengthMS = 5000;
+        }
+
+        protected override ChartSeries GetChartSeries()
+        {
+            return new LineSeries();
+        }
+
+        protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
+        {
+            return new ChartDataPoint(datum.Timestamp.LocalDateTime, (datum as SoundDatum).Decibels);
+        }
+
+        protected override ChartAxis GetChartPrimaryAxis()
+        {
+            return new DateTimeAxis
+            {
+                Title = new ChartAxisTitle
+                {
+                    Text = "Time"
+                }
+            };
+        }
+
+        protected override RangeAxisBase GetChartSecondaryAxis()
+        {
+            return new NumericalAxis
+            {
+                Title = new ChartAxisTitle
+                {
+                    Text = "Decibels"
+                }
+            };
         }
     }
 }
