@@ -13,13 +13,13 @@ rm(list=ls())
 
 shinyServer(function(input, output) {
 
-  	mode <- 1			# for survey plot testing; 1 = separate plots, 2 = one plot with shared x axis
-
+	# capitalizes the first letter of a string
   	cap <- function(x) {
 		s <- strsplit(x, " ")[[1]]
 		paste(toupper(substring(s, 1,1)), substring(s, 2), sep = "", collapse = " ")
 	}
 
+	# keep track of which panel is displayed
   	current.panel <- reactiveValues(
   		panel = "data.source"
   	)
@@ -232,7 +232,6 @@ shinyServer(function(input, output) {
 
 	# refreshes data
 	refresh.data <- function() {
-		# print(input$type)
 		frame <- NULL
 		# PostgreSQL
 		if (data.connection$source == "pg") {
@@ -248,8 +247,6 @@ shinyServer(function(input, output) {
 				temp.frame$presentationtimestamp <- temp.frame$anonymized
 				temp.frame$locationtimestamp <- temp.frame$anonymized
 				temp.frame$completionrecords <- temp.frame$anonymized
-				print(ncol(frame))
-				print(ncol(temp.frame))
 				frame <- rbind(frame, temp.frame)
 			} else {
 				frame <- dbReadTable(connection, paste0(input$type, "datum"))
@@ -287,7 +284,6 @@ shinyServer(function(input, output) {
 
 	# poll for data at intervals
 	data <- reactivePoll(15000, NULL, check.data, refresh.data)
-	# observe(print(data()))
 
 
 
@@ -494,9 +490,6 @@ shinyServer(function(input, output) {
 	output$script.y.axis <- renderUI({
 		selectInput("script.y.axis", "Y Axis:", names(data()))
 	})
-	# output$script.separate.y.axes <- renderUI({
-	# 	checkboxInput("script.separate.y.axes", "Separate y axes:")
-	# })
 	output$script.hide.legend <- renderUI({
 		checkboxInput("script.hide.legend", "Hide legend:")
 	})
@@ -599,17 +592,6 @@ shinyServer(function(input, output) {
 			} else {
 				frame <- data()
 			}
-			# correct projection if map view
-			if (input$location.plot.type == "Map") {
-				frame <- data()
-				coordinates(frame)<- ~longitude+latitude
-				# print(class(frame))
-				# print(proj4string(frame))
-				proj4string(frame)<-CRS("+proj=longlat +datum=NAD83")
-				shapes <- readOGR(dsn="/Users/wesbonelli/Documents/research/rshiny/shapefiles/albemarle_boundary", "albemarle_boundary")
-				frame <- spTransform(frame, CRS(proj4string(shapes)))
-				frame <- data.frame(frame)
-			}
 		}
 		if (input$type == "script") {
 			if (data.connection$source == "pg") {
@@ -653,7 +635,7 @@ shinyServer(function(input, output) {
 		frame
 	})
 
-	# TODO catch display errors and print them
+	# TODO catch display errors and show them in an alert box or something
 
 	# ===========================================================================================================================
 	# plot
@@ -698,9 +680,8 @@ shinyServer(function(input, output) {
 		}
 		plot <- ggplotly(gg)
 	})
-	# TODO figure out why first two maps aren't displaying correctly
+	# TODO figure out why map won't display or reimplement... looks to be a common issue but none of the fixes work: https://stackoverflow.com/questions/34465947/plotly-maps-not-rendering-in-r
 	output$location.plot.map <- renderPlotly({
-
 		g <- list(
 		  scope = 'usa',
 		  projection = list(type = 'albers usa'),
@@ -712,19 +693,6 @@ shinyServer(function(input, output) {
 		  subunitwidth = 0.5
 		)
 		plot <- plot_ly(filtered.data(), lat = latitude, lon = longitude, type = 'scattergeo', mode = 'markers') %>% layout(title = 'Map', geo = g)
-
-		# world_map <- map_data("world")
-		# geo_data <- data.frame(long=c(20,20,100,100,20,20,100,100),
-		#                        lat=c(0,0,0,0,0,0,0,0),
-		#                        value=c(10,30,40,50,20,20,100,100),
-		#                        colour=rep(c("colour_1", "colour_2"), each=4))
-		# gg <- ggplot() + coord_fixed() + geom_polygon(data=world_map, aes(x=long, y=lat, group=group)) + geom_point(data=geo_data, aes(x=long, y=lat, colour=colour, size=value), position="jitter", alpha=I(0.5)) + theme(legend.position="none")
-		# print(gg)
-
-		# shapes <- readOGR(dsn="/Users/wesbonelli/Documents/research/rshiny/shapefiles/albemarle_boundary", "albemarle_boundary")
-		# gg <- ggplot() + geom_polygon(data=shapes, aes(x=long, y = lat, group=group)) + geom_point(data = filtered.data(), aes(x=longitude, y =latitude), color = "red")
-		# plot <- ggplotly(gg)
-
 	})
 	output$script.plot <- renderPlotly({
 		gg <- ggplot(filtered.data(), aes_string(x = input$script.x.axis, y = input$script.y.axis)) + geom_point(aes(color = run), size = 2) + facet_grid(deviceid ~ .) + theme(strip.background = element_blank(), strip.text = element_blank())

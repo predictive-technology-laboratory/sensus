@@ -115,8 +115,6 @@ class Refresh extends TimerTask  {
 				System.out.print(".");
 				_process = Runtime.getRuntime().exec(_command);
 				System.out.print(".");
-//				_process.waitFor();
-//				System.out.print(".");
 				BufferedReader _reader = new BufferedReader(new InputStreamReader(_process.getInputStream()));
 				String _output = null;
 				while ((_output = _reader.readLine()) != null) {
@@ -138,7 +136,6 @@ class Refresh extends TimerTask  {
 				}
 				System.out.print(".");
 				// TODO make sure we have the files we expect
-//				System.out.println("Checking to make sure files exist...");
 				
 			} catch (Exception _ex) {
 				System.err.println(_ex.getClass().getName() + ": " + _ex.getMessage());
@@ -300,12 +297,7 @@ class Refresh extends TimerTask  {
 				_connection.close();
 			}
 			
-//			// check for and remove duplicates
-//			String _query = null;
-//			for (String _type : _types) {
-//				_query = "SELECT * FROM (SELECT id, ROW_NUMBER() OVER(PARTITION BY id ORDER BY id asc) AS ROW FROM " + _type + ") duplicates WHERE duplicates.Row > 1;";
-//				_statement.executeUpdate(_query);
-//			}
+			// TODO check for and remove duplicates
 			
 		System.out.println("Done.");
 		} catch (Exception _ex) {
