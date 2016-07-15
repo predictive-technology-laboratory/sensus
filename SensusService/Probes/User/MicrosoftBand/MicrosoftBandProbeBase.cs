@@ -58,22 +58,24 @@ namespace SensusService
                                 SensusServiceHelper.Get().Logger.Log("Attempting to restart Band probe.", LoggingLevel.Normal, probe.GetType());
                                 probe.Restart();
                             }
-                            catch (Exception)
+                            catch (Exception ex)
                             {
+                                SensusServiceHelper.Get().Logger.Log("Failed to restart Band probe:  " + ex.Message, LoggingLevel.Normal, probe.GetType());
                             }
                         }
                         else
                         {
                             // it's possible that the device was re-paired, resulting in the client being connected but the
                             // readings being disrupted. ensure that readings are coming by starting them every time we test
-                            // the probe. if the readings are already coming this will have no effect. if they were distrupted
+                            // the probe. if the readings are already coming this will have no effect. if they were disrupted
                             // the readings will be restarted.
                             try
                             {
                                 probe.StartReadings();
                             }
-                            catch (Exception)
+                            catch (Exception ex)
                             {
+                                SensusServiceHelper.Get().Logger.Log("Failed to start readings for Band probe:  " + ex.Message, LoggingLevel.Normal, probe.GetType());
                             }
                         }
                     }
