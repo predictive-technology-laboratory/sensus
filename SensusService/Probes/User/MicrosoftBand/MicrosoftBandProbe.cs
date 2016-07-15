@@ -82,9 +82,9 @@ namespace SensusService.Probes.User.MicrosoftBand
                                 else
                                 {
                                     Sensor.ReadingChanged += (o, args) =>
-                                    {
-                                        StoreDatum(GetDatumFromReading(args.SensorReading));
-                                    };
+                                   {
+                                       StoreDatum(GetDatumFromReading(args.SensorReading));
+                                   };
                                 }
                             }
                             else
@@ -117,6 +117,11 @@ namespace SensusService.Probes.User.MicrosoftBand
 
         protected override void StartListening()
         {
+            StartReadings();
+        }
+
+        protected override void StartReadings()
+        {
             Sensor.StartReadingsAsync(_samplingRate).Wait();
         }
 
@@ -126,24 +131,12 @@ namespace SensusService.Probes.User.MicrosoftBand
         {
             base.StopListening();
 
-            if (Sensor != null)
-            {
-                try
-                {
-                    Sensor.StopReadingsAsync().Wait();
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Failed to stop readings:  " + ex.Message, LoggingLevel.Normal, GetType());
-                }
-            }
-
             DisconnectBandClient();
         }
 
         private void DisconnectBandClient()
         {
-            if (BandClient != null)
+            if (BandClient != null && BandClient.IsConnected)
             {
                 try
                 {

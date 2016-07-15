@@ -30,7 +30,7 @@ namespace Sensus.iOS.Probes.User.Health
         {
             get
             {
-                return "Blood Type (HealthKit)";
+                return "HealthKit Blood Type";
             }
         }
 

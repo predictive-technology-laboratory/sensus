@@ -37,12 +37,57 @@ namespace SensusService
             }
         }
 
+        public static Task TestBandClientsAsync(string callbackId, CancellationToken cancellationToken, Action letDeviceSleepCallback)
+        {
+            return Task.Run(() =>
+            {
+                List<MicrosoftBandProbeBase> bandProbesThatShouldBeRunning = BandProbesThatShouldBeRunning;
+
+                // if no band probes should be running, then ignore the current test and unschedule the test callback.
+                if (bandProbesThatShouldBeRunning.Count == 0)
+                    CancelHealthTest();
+                else
+                {
+                    foreach (MicrosoftBandProbeBase probe in bandProbesThatShouldBeRunning)
+                    {
+                        // restart if this probe is not running or if the band client is not connected
+                        if (!probe.Running || probe.BandClient == null || !probe.BandClient.IsConnected)
+                        {
+                            try
+                            {
+                                SensusServiceHelper.Get().Logger.Log("Attempting to restart Band probe.", LoggingLevel.Normal, probe.GetType());
+                                probe.Restart();
+                            }
+                            catch (Exception)
+                            {
+                            }
+                        }
+                        else
+                        {
+                            // it's possible that the device was re-paired, resulting in the client being connected but the
+                            // readings being disrupted. ensure that readings are coming by starting them every time we test
+                            // the probe. if the readings are already coming this will have no effect. if they were distrupted
+                            // the readings will be restarted.
+                            try
+                            {
+                                probe.StartReadings();
+                            }
+                            catch (Exception)
+                            {
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
         private static void CancelHealthTest()
         {
             lock (HEALTH_TEST_LOCKER)
             {
                 if (HEALTH_TEST_CALLBACK_ID != null)
                 {
+                    SensusServiceHelper.Get().Logger.Log("Canceling health test.", LoggingLevel.Verbose, typeof(MicrosoftBandProbeBase));
                     SensusServiceHelper.Get().UnscheduleCallback(HEALTH_TEST_CALLBACK_ID);
                     HEALTH_TEST_CALLBACK_ID = null;
                 }
@@ -83,6 +128,8 @@ namespace SensusService
             }
         }
 
+        protected abstract void StartReadings();
+
         protected override void StopListening()
         {
             // only cancel the static health test if none of the band probes should be running.
@@ -90,33 +137,9 @@ namespace SensusService
                 CancelHealthTest();
         }
 
-        public static Task TestBandClientsAsync(string callbackId, CancellationToken cancellationToken, Action letDeviceSleepCallback)
+        public override bool TestHealth(ref string error, ref string warning, ref string misc)
         {
-            return Task.Run(() =>
-            {
-                List<MicrosoftBandProbeBase> bandProbesThatShouldBeRunning = BandProbesThatShouldBeRunning;
-
-                // if no band probes should be running, then ignore the current test and unschedule the test callback.
-                if (bandProbesThatShouldBeRunning.Count == 0)
-                    CancelHealthTest();
-                else
-                {
-                    foreach (MicrosoftBandProbeBase probe in bandProbesThatShouldBeRunning)
-                    {
-                        // restart if this probe is not running or if the band client is not connected
-                        if (!probe.Running || probe.BandClient == null || !probe.BandClient.IsConnected)
-                        {
-                            try
-                            {
-                                probe.Restart();
-                            }
-                            catch (Exception)
-                            {
-                            }
-                        }
-                    }
-                }
-            });
+            return false;
         }
     }
 }

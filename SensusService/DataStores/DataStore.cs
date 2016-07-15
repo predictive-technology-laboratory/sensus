@@ -255,6 +255,8 @@ namespace SensusService.DataStores
             {
                 _data.Add(datum);
                 ++_addedDataCount;
+
+                SensusServiceHelper.Get().Logger.Log("Stored datum.", LoggingLevel.Debug, GetType());
             }
         }
 

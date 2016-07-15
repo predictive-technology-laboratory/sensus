@@ -30,7 +30,7 @@ namespace Sensus.iOS.Probes.User.Health
         {
             get
             {
-                return "Birthdate (HealthKit)";
+                return "HealthKit Birthdate";
             }
         }
 
