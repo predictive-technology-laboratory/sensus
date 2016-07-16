@@ -240,7 +240,6 @@ namespace SensusService.DataStores.Remote
                     ContentType = "application/json"
                 };
 
-
                 HttpStatusCode responseCode = (await s3.PutObjectAsync(putRequest, cancellationToken)).HttpStatusCode;
 
                 if (responseCode == HttpStatusCode.OK)
