@@ -34,13 +34,10 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AndroidLinkMode>None</AndroidLinkMode>
-    <AndroidSupportedAbis>armeabi;armeabi-v7a;x86</AndroidSupportedAbis>
+    <AndroidSupportedAbis>armeabi-v7a</AndroidSupportedAbis>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <CustomCommands>
-      <CustomCommands>
-        <Command type="BeforeBuild" command="touch Assets/UnitTestingProtocol.json" workingdir="${ProjectDir}" />
-      </CustomCommands>
-    </CustomCommands>
+    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
+    <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
@@ -301,6 +298,12 @@
     </Reference>
     <Reference Include="Xam.Plugin.MapExtend.Android">
       <HintPath>..\packages\mapextend\android\Xam.Plugin.MapExtend.Android.dll</HintPath>
+    </Reference>
+    <Reference Include="Xam.Plugin.MapExtend.Abstractions">
+      <HintPath>..\..\mapextend\android\Xam.Plugin.MapExtend.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Xam.Plugin.MapExtend.Android">
+      <HintPath>..\..\mapextend\android\Xam.Plugin.MapExtend.Android.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

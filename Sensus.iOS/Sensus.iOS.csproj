@@ -343,6 +343,12 @@
     <Reference Include="ZipArchive">
       <HintPath>..\Components\ZipArchive-1.4.0.1\lib\ios-unified\ZipArchive.dll</HintPath>
     </Reference>
+    <Reference Include="Xam.Plugin.MapExtend.Abstractions">
+      <HintPath>..\..\mapextend\ios\Xam.Plugin.MapExtend.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Xam.Plugin.MapExtend.iOSUnified">
+      <HintPath>..\..\mapextend\ios\Xam.Plugin.MapExtend.iOSUnified.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Contents.json">
