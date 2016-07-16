@@ -247,6 +247,7 @@ namespace SensusService.DataStores.Remote
         private Task<HttpStatusCode> PutJsonAsync(AmazonS3Client s3, string key, string json, bool compress, CancellationToken cancellationToken)
         {
             // zip json string if option is selected
+            // from https://stackoverflow.com/questions/2798467/c-sharp-code-to-gzip-and-upload-a-string-to-amazon-s3
             MemoryStream compressed = new MemoryStream();
             if (compress)
             {
