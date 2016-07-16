@@ -26,6 +26,7 @@ using Amazon.S3.Model;
 using Xamarin;
 using System.Threading.Tasks;
 using System.IO;
+using System.IO.Compression;
 using Newtonsoft.Json;
 using System.Net;
 
@@ -36,6 +37,7 @@ namespace SensusService.DataStores.Remote
         private string _bucket;
         private string _folder;
         private string _cognitoIdentityPoolId;
+        private bool _compress;
 
         [EntryStringUiProperty("Bucket:", true, 2)]
         public string Bucket
@@ -86,6 +88,19 @@ namespace SensusService.DataStores.Remote
             }
         }
 
+        [OnOffUiProperty("Compress:", true, 5)]
+        public bool Compress
+        {
+            get
+            {
+                return _compress;
+            }
+            set
+            {
+                _compress = value;
+            }
+        }
+
         [JsonIgnore]
         public override bool CanRetrieveCommittedData
         {
@@ -116,6 +131,7 @@ namespace SensusService.DataStores.Remote
         public AmazonS3RemoteDataStore()
         {
             _bucket = _folder = "";
+            _compress = false;
         }
 
         private AmazonS3Client InitializeS3()
@@ -159,7 +175,7 @@ namespace SensusService.DataStores.Remote
 
                                 try
                                 {
-                                    if ((await PutJsonAsync(s3, GetDatumKey(datum), "[" + Environment.NewLine + datumJSON + Environment.NewLine + "]", cancellationToken)) == HttpStatusCode.OK)
+                                    if ((await PutJsonAsync(s3, GetDatumKey(datum), "[" + Environment.NewLine + datumJSON + Environment.NewLine + "]", _compress, cancellationToken)) == HttpStatusCode.OK)
                                         committedData.Add(datum);
                                 }
                                 catch (Exception ex)
@@ -207,7 +223,7 @@ namespace SensusService.DataStores.Remote
 
                             try
                             {
-                                if ((await PutJsonAsync(s3, key, json.ToString(), cancellationToken)) == HttpStatusCode.OK)
+                                if ((await PutJsonAsync(s3, key, json.ToString(), _compress, cancellationToken)) == HttpStatusCode.OK)
                                     committedData.AddRange(datumTypeData[datumType]);
                             }
                             catch (Exception ex)
@@ -228,17 +244,40 @@ namespace SensusService.DataStores.Remote
                 });
         }
 
-        private Task<HttpStatusCode> PutJsonAsync(AmazonS3Client s3, string key, string json, CancellationToken cancellationToken)
+        private Task<HttpStatusCode> PutJsonAsync(AmazonS3Client s3, string key, string json, bool compress, CancellationToken cancellationToken)
         {
+            // zip json string if option is selected
+            MemoryStream compressed = new MemoryStream();
+            if (compress)
+            {
+                using (GZipStream zip = new GZipStream(compressed, CompressionMode.Compress, true))
+                {
+                    byte[] buffer = Encoding.UTF8.GetBytes(json);
+                    zip.Write(buffer, 0, buffer.Length);
+                    zip.Flush();
+                }
+
+                compressed.Position = 0;
+            }
+
             return Task.Run(async () =>
             {
                 PutObjectRequest putRequest = new PutObjectRequest
                 {
                     BucketName = _bucket,
                     Key = key,
-                    ContentBody = json,
-                    ContentType = "application/json"
+                    ContentType = compress ? "application/zip" : "application/json"
                 };
+
+                if (compress)
+                {
+                    putRequest.InputStream = compressed;
+                }
+                else
+                {
+                    putRequest.ContentBody = json;
+                }
+
 
                 HttpStatusCode responseCode = (await s3.PutObjectAsync(putRequest, cancellationToken)).HttpStatusCode;
 
