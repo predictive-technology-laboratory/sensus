@@ -18,13 +18,13 @@ using Syncfusion.SfChart.XForms;
 
 namespace SensusService.Probes.User.MicrosoftBand
 {
-    public class MicrosoftBandGsrProbe : MicrosoftBandProbe<BandGsrSensor, BandGsrReading>
+    public class MicrosoftBandLightProbe : MicrosoftBandProbe<BandAmbientLightSensor, BandAmbientLightReading>
     {
         public override Type DatumType
         {
             get
             {
-                return typeof(MicrosoftBandGsrDatum);
+                return typeof(MicrosoftBandLightDatum);
             }
         }
 
@@ -32,21 +32,21 @@ namespace SensusService.Probes.User.MicrosoftBand
         {
             get
             {
-                return "Microsoft Band GSR";
+                return "Microsoft Band Light";
             }
         }
 
-        protected override BandGsrSensor Sensor
+        protected override BandAmbientLightSensor Sensor
         {
             get
             {
-                return BandClient?.SensorManager.Gsr;
+                return BandClient?.SensorManager.AmbientLight;
             }
         }
 
-        protected override Datum GetDatumFromReading(BandGsrReading reading)
+        protected override Datum GetDatumFromReading(BandAmbientLightReading reading)
         {
-            return new MicrosoftBandGsrDatum(DateTimeOffset.UtcNow, reading.Resistance);
+            return new MicrosoftBandLightDatum(DateTimeOffset.UtcNow, reading.Brightness);
         }
 
         protected override ChartSeries GetChartSeries()
@@ -56,7 +56,7 @@ namespace SensusService.Probes.User.MicrosoftBand
 
         protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
         {
-            return new ChartDataPoint(datum.Timestamp.LocalDateTime, (datum as MicrosoftBandGsrDatum).Resistance);
+            return new ChartDataPoint(datum.Timestamp.LocalDateTime, (datum as MicrosoftBandLightDatum).Brightness);
         }
 
         protected override RangeAxisBase GetChartSecondaryAxis()
@@ -65,7 +65,7 @@ namespace SensusService.Probes.User.MicrosoftBand
             {
                 Title = new ChartAxisTitle
                 {
-                    Text = "Resistance"
+                    Text = "Brightness"
                 }
             };
         }

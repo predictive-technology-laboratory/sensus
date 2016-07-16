@@ -18,13 +18,13 @@ using Syncfusion.SfChart.XForms;
 
 namespace SensusService.Probes.User.MicrosoftBand
 {
-    public class MicrosoftBandGsrProbe : MicrosoftBandProbe<BandGsrSensor, BandGsrReading>
+    public class MicrosoftBandSkinTemperatureProbe : MicrosoftBandProbe<BandSkinTemperatureSensor, BandSkinTemperatureReading>
     {
         public override Type DatumType
         {
             get
             {
-                return typeof(MicrosoftBandGsrDatum);
+                return typeof(MicrosoftBandSkinTemperatureDatum);
             }
         }
 
@@ -32,21 +32,21 @@ namespace SensusService.Probes.User.MicrosoftBand
         {
             get
             {
-                return "Microsoft Band GSR";
+                return "Microsoft Band Skin Temperature";
             }
         }
 
-        protected override BandGsrSensor Sensor
+        protected override BandSkinTemperatureSensor Sensor
         {
             get
             {
-                return BandClient?.SensorManager.Gsr;
+                return BandClient?.SensorManager.SkinTemperature;
             }
         }
 
-        protected override Datum GetDatumFromReading(BandGsrReading reading)
+        protected override Datum GetDatumFromReading(BandSkinTemperatureReading reading)
         {
-            return new MicrosoftBandGsrDatum(DateTimeOffset.UtcNow, reading.Resistance);
+            return new MicrosoftBandSkinTemperatureDatum(DateTimeOffset.UtcNow, reading.Temperature);
         }
 
         protected override ChartSeries GetChartSeries()
@@ -56,7 +56,7 @@ namespace SensusService.Probes.User.MicrosoftBand
 
         protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
         {
-            return new ChartDataPoint(datum.Timestamp.LocalDateTime, (datum as MicrosoftBandGsrDatum).Resistance);
+            return new ChartDataPoint(datum.Timestamp.LocalDateTime, (datum as MicrosoftBandSkinTemperatureDatum).Temperature);
         }
 
         protected override RangeAxisBase GetChartSecondaryAxis()
@@ -65,7 +65,7 @@ namespace SensusService.Probes.User.MicrosoftBand
             {
                 Title = new ChartAxisTitle
                 {
-                    Text = "Resistance"
+                    Text = "Temperature"
                 }
             };
         }

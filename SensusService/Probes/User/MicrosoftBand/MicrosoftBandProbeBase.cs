@@ -111,6 +111,32 @@ namespace SensusService
             }
         }
 
+        protected override bool DefaultKeepDeviceAwake
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        [JsonIgnore]
+        protected override string DeviceAwakeWarning
+        {
+            get
+            {
+                return "This setting should not be enabled. It does not affect iOS and will unnecessarily reduce battery life on Android.";
+            }
+        }
+
+        [JsonIgnore]
+        protected override string DeviceAsleepWarning
+        {
+            get
+            {
+                return null;
+            }
+        }
+
         protected override void Initialize()
         {
             base.Initialize();

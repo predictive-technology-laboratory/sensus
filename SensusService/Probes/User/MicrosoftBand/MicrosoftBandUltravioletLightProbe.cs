@@ -18,13 +18,13 @@ using Syncfusion.SfChart.XForms;
 
 namespace SensusService.Probes.User.MicrosoftBand
 {
-    public class MicrosoftBandGsrProbe : MicrosoftBandProbe<BandGsrSensor, BandGsrReading>
+    public class MicrosoftBandUltravioletLightProbe : MicrosoftBandProbe<BandUltravioletLightSensor, BandUltravioletLightReading>
     {
         public override Type DatumType
         {
             get
             {
-                return typeof(MicrosoftBandGsrDatum);
+                return typeof(MicrosoftBandUltravioletLightDatum);
             }
         }
 
@@ -32,42 +32,36 @@ namespace SensusService.Probes.User.MicrosoftBand
         {
             get
             {
-                return "Microsoft Band GSR";
+                return "Microsoft Band UV Light";
             }
         }
 
-        protected override BandGsrSensor Sensor
+        protected override BandUltravioletLightSensor Sensor
         {
             get
             {
-                return BandClient?.SensorManager.Gsr;
+                return BandClient?.SensorManager.UltravioletLight;
             }
         }
 
-        protected override Datum GetDatumFromReading(BandGsrReading reading)
+        protected override Datum GetDatumFromReading(BandUltravioletLightReading reading)
         {
-            return new MicrosoftBandGsrDatum(DateTimeOffset.UtcNow, reading.Resistance);
+            return new MicrosoftBandUltravioletLightDatum(DateTimeOffset.UtcNow, reading.Level);
         }
 
         protected override ChartSeries GetChartSeries()
         {
-            return new LineSeries();
+            return null;
         }
 
         protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
         {
-            return new ChartDataPoint(datum.Timestamp.LocalDateTime, (datum as MicrosoftBandGsrDatum).Resistance);
+            return null;
         }
 
         protected override RangeAxisBase GetChartSecondaryAxis()
         {
-            return new NumericalAxis
-            {
-                Title = new ChartAxisTitle
-                {
-                    Text = "Resistance"
-                }
-            };
+            return null;
         }
     }
 }

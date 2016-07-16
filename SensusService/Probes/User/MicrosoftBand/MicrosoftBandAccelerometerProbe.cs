@@ -18,13 +18,13 @@ using Syncfusion.SfChart.XForms;
 
 namespace SensusService.Probes.User.MicrosoftBand
 {
-    public class MicrosoftBandGsrProbe : MicrosoftBandProbe<BandGsrSensor, BandGsrReading>
+    public class MicrosoftBandAccelerometerProbe : MicrosoftBandProbe<BandAccelerometerSensor, BandAccelerometerReading>
     {
         public override Type DatumType
         {
             get
             {
-                return typeof(MicrosoftBandGsrDatum);
+                return typeof(MicrosoftBandAccelerometerDatum);
             }
         }
 
@@ -32,42 +32,36 @@ namespace SensusService.Probes.User.MicrosoftBand
         {
             get
             {
-                return "Microsoft Band GSR";
+                return "Microsoft Band Accelerometer";
             }
         }
 
-        protected override BandGsrSensor Sensor
+        protected override BandAccelerometerSensor Sensor
         {
             get
             {
-                return BandClient?.SensorManager.Gsr;
+                return BandClient?.SensorManager.Accelerometer;
             }
         }
 
-        protected override Datum GetDatumFromReading(BandGsrReading reading)
+        protected override Datum GetDatumFromReading(BandAccelerometerReading reading)
         {
-            return new MicrosoftBandGsrDatum(DateTimeOffset.UtcNow, reading.Resistance);
+            return new MicrosoftBandAccelerometerDatum(DateTimeOffset.UtcNow, reading.AccelerationX, reading.AccelerationY, reading.AccelerationZ);
         }
 
         protected override ChartSeries GetChartSeries()
         {
-            return new LineSeries();
+            return null;
         }
 
         protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
         {
-            return new ChartDataPoint(datum.Timestamp.LocalDateTime, (datum as MicrosoftBandGsrDatum).Resistance);
+            return null;
         }
 
         protected override RangeAxisBase GetChartSecondaryAxis()
         {
-            return new NumericalAxis
-            {
-                Title = new ChartAxisTitle
-                {
-                    Text = "Resistance"
-                }
-            };
+            return null;
         }
     }
 }
