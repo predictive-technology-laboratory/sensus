@@ -32,9 +32,11 @@ namespace SensusService
 
         private static BandClient BAND_CLIENT;
         private static bool BAND_CLIENT_CONNECTING = false;
-        private const int BAND_CLIENT_CONNECT_TIMEOUT_MS = 20000;
+        private const int BAND_CLIENT_CONNECT_TIMEOUT_MS = 5000;
+        private const int BAND_CLIENT_CONNECT_ATTEMPTS = 5;
         private static ManualResetEvent BAND_CLIENT_CONNECT_WAIT = new ManualResetEvent(false);
         private static object BAND_CLIENT_LOCKER = new object();
+        private static List<MicrosoftBandProbeBase> CONFIGURE_PROBES_IF_CONNECTED = new List<MicrosoftBandProbeBase>();
 
         private static string HEALTH_TEST_CALLBACK_ID;
         private const int HEALTH_TEST_DELAY_MS = 60000;
@@ -57,9 +59,15 @@ namespace SensusService
             }
         }
 
-        protected static void ConnectClient()
+        protected static void ConnectClient(MicrosoftBandProbeBase configureProbeIfConnected = null)
         {
-            bool runConnectTask = false;
+            if (configureProbeIfConnected != null)
+            {
+                lock (CONFIGURE_PROBES_IF_CONNECTED)
+                {
+                    CONFIGURE_PROBES_IF_CONNECTED.Add(configureProbeIfConnected);
+                }
+            }
 
             lock (BAND_CLIENT_LOCKER)
             {
@@ -67,37 +75,71 @@ namespace SensusService
                 {
                     BAND_CLIENT_CONNECTING = true;
                     BAND_CLIENT_CONNECT_WAIT.Reset();
-                    runConnectTask = true;
-                }
-            }
 
-            if (runConnectTask)
-            {
-                Task.Run(async () =>
+                    Task.Run(async () =>
                     {
                         try
                         {
-                            if (BAND_CLIENT == null || !BAND_CLIENT.IsConnected)
+                            // if we already have a connection, configure any waiting probes
+                            if (BAND_CLIENT?.IsConnected ?? false)
                             {
-                                BandClientManager bandManager = BandClientManager.Instance;
-                                BandDeviceInfo band = (await bandManager.GetPairedBandsAsync()).FirstOrDefault();
-                                if (band != null)
+                                lock (CONFIGURE_PROBES_IF_CONNECTED)
                                 {
-                                    BAND_CLIENT = await bandManager.ConnectAsync(band);
-
-                                    if (BAND_CLIENT?.IsConnected ?? false)
+                                    foreach (MicrosoftBandProbeBase probe in CONFIGURE_PROBES_IF_CONNECTED)
                                     {
-                                        foreach (MicrosoftBandProbeBase probe in BandProbesThatShouldBeRunning)
+                                        try
                                         {
-                                            try
-                                            {
-                                                probe.ConfigureSensor();
-                                            }
-                                            catch (Exception ex)
-                                            {
-                                                SensusServiceHelper.Get().Logger.Log("Failed to start readings for Band probe:  " + ex.Message, LoggingLevel.Normal, probe.GetType());
-                                            }
+                                            probe.ConfigureSensor();
                                         }
+                                        catch (Exception ex)
+                                        {
+                                            SensusServiceHelper.Get().Logger.Log("Failed to configure probe on existing connection:  " + ex.Message, LoggingLevel.Normal, probe.GetType());
+                                        }
+                                    }
+
+                                    CONFIGURE_PROBES_IF_CONNECTED.Clear();
+                                }
+                            }
+                            // otherwise, attempt to connect
+                            else
+                            {
+                                int connectAttemptsLeft = BAND_CLIENT_CONNECT_ATTEMPTS;
+
+                                while (connectAttemptsLeft-- > 0 && (BAND_CLIENT == null || !BAND_CLIENT.IsConnected))
+                                {
+                                    BandClientManager bandManager = BandClientManager.Instance;
+                                    BandDeviceInfo band = (await bandManager.GetPairedBandsAsync()).FirstOrDefault();
+                                    if (band == null)
+                                        SensusServiceHelper.Get().Logger.Log("No Bands connected. Retrying...", LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
+                                    else
+                                    {
+                                        Task<BandClient> connectTask = bandManager.ConnectAsync(band);
+
+                                        if (await Task.WhenAny(connectTask, Task.Delay(BAND_CLIENT_CONNECT_TIMEOUT_MS)) == connectTask)
+                                            BAND_CLIENT = await connectTask;
+                                        else
+                                            SensusServiceHelper.Get().Logger.Log("Timed out while connecting. Retrying...", LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
+                                    }
+                                }
+
+                                // if we connected successfully, configure all probes that should be running
+                                if (BAND_CLIENT?.IsConnected ?? false)
+                                {
+                                    foreach (MicrosoftBandProbeBase probe in BandProbesThatShouldBeRunning)
+                                    {
+                                        try
+                                        {
+                                            probe.ConfigureSensor();
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            SensusServiceHelper.Get().Logger.Log("Failed to start readings for Band probe:  " + ex.Message, LoggingLevel.Normal, probe.GetType());
+                                        }
+                                    }
+
+                                    lock (CONFIGURE_PROBES_IF_CONNECTED)
+                                    {
+                                        CONFIGURE_PROBES_IF_CONNECTED.Clear();
                                     }
                                 }
                             }
@@ -112,13 +154,10 @@ namespace SensusService
                             BAND_CLIENT_CONNECTING = false;
                         }
                     });
+                }
             }
 
-            if (!BAND_CLIENT_CONNECT_WAIT.WaitOne(BAND_CLIENT_CONNECT_TIMEOUT_MS))
-            {
-                BAND_CLIENT_CONNECTING = false;
-                throw new Exception("Timed out while trying to connect to Microsoft Band.");
-            }
+            BAND_CLIENT_CONNECT_WAIT.WaitOne();
 
             if (BAND_CLIENT == null || !BAND_CLIENT.IsConnected)
                 throw new Exception("Failed to connect to Microsoft Band.");
@@ -245,7 +284,7 @@ namespace SensusService
                 }
             }
 
-            ConnectClient();
+            ConnectClient(this);
         }
 
         protected abstract void ConfigureSensor();

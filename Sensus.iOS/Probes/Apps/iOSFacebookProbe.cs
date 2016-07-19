@@ -101,8 +101,8 @@ namespace Sensus.iOS.Probes.Apps
                     // if the user cancelled the login, don't prompt them again
                     if (loginCancelled)
                         throw new NotSupportedException(message + " User cancelled login.");
-                // if the user did not cancel the login, allow the login to be presented again when the health test is run
-                else
+                    // if the user did not cancel the login, allow the login to be presented again when the health test is run
+                    else
                         throw new Exception(message);
                 }
             }
@@ -139,7 +139,7 @@ namespace Sensus.iOS.Probes.Apps
                         try
                         {
                             GraphRequestConnection requestConnection = new GraphRequestConnection();
-                
+
                             #region add requests to connection
                             foreach (Tuple<string, List<string>> edgeFieldQuery in GetEdgeFieldQueries())
                             {
@@ -153,7 +153,7 @@ namespace Sensus.iOS.Probes.Apps
                                                            AccessToken.CurrentAccessToken.TokenString,
                                                            null,
                                                            "GET");
-                            
+
                                 ManualResetEvent responseWait = new ManualResetEvent(false);
 
                                 requestConnection.AddRequest(request, (connection, result, error) =>
@@ -228,7 +228,7 @@ namespace Sensus.iOS.Probes.Apps
                                 exception = new Exception("Request connection contained zero requests.");
                             else
                             {
-                                SensusServiceHelper.Get().Logger.Log("Starting request connection with " + responseWaits.Count + " requests.", LoggingLevel.Normal, GetType());                    
+                                SensusServiceHelper.Get().Logger.Log("Starting request connection with " + responseWaits.Count + " requests.", LoggingLevel.Normal, GetType());
                                 requestConnection.Start();
                             }
 

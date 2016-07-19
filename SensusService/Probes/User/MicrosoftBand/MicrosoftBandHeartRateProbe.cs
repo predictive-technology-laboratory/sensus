@@ -49,7 +49,6 @@ namespace SensusService.Probes.User.MicrosoftBand
 
         protected override void StartReadings()
         {
-            // TODO:  Debug
             if (Sensor.UserConsented == UserConsent.Unspecified)
             {
                 ManualResetEvent consentWait = new ManualResetEvent(false);

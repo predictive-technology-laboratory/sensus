@@ -344,10 +344,10 @@
       <HintPath>..\Components\ZipArchive-1.4.0.1\lib\ios-unified\ZipArchive.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Band.iOS">
-      <HintPath>..\packages\Xamarin.Microsoft.Band.Native.1.3.10.1\lib\XamariniOS\Microsoft.Band.iOS.dll</HintPath>
+      <HintPath>..\packages\msband\ios\Microsoft.Band.iOS.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Band.Portable">
-      <HintPath>..\packages\Xamarin.Microsoft.Band.1.3.10.1\lib\XamariniOS\Microsoft.Band.Portable.dll</HintPath>
+      <HintPath>..\packages\msband\ios\Microsoft.Band.Portable.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -439,10 +439,6 @@
   <ItemGroup>
     <XamarinComponentReference Include="ZipArchive">
       <Version>1.4.0.1</Version>
-      <Visible>False</Visible>
-    </XamarinComponentReference>
-    <XamarinComponentReference Include="microsoft-band-sdk">
-      <Version>1.3.10.1</Version>
       <Visible>False</Visible>
     </XamarinComponentReference>
   </ItemGroup>
