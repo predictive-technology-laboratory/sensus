@@ -28,7 +28,7 @@ namespace Sensus.iOS.Probes.User.Health
         {
             get
             {
-                return "Height (HealthKit)";
+                return "HealthKit Height";
             }
         }
 

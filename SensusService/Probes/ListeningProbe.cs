@@ -43,7 +43,7 @@ namespace SensusService.Probes
             }
             set
             {
-                // warn the user about this setting
+                // warn the user about this setting if it's being changed
                 if (value != _keepDeviceAwake && SensusServiceHelper.Get() != null)
                 {
                     TimeSpan duration = TimeSpan.FromSeconds(6);
@@ -52,9 +52,9 @@ namespace SensusService.Probes
                         SensusServiceHelper.Get().FlashNotificationAsync(DeviceAwakeWarning, false, duration);
                     else if (!value && !string.IsNullOrWhiteSpace(DeviceAsleepWarning))
                         SensusServiceHelper.Get().FlashNotificationAsync(DeviceAsleepWarning, false, duration);
-
-                    _keepDeviceAwake = value;
                 }
+
+                _keepDeviceAwake = value;
             }
         }
 

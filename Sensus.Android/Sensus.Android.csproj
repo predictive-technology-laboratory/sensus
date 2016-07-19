@@ -302,6 +302,12 @@
     <Reference Include="Xam.Plugin.MapExtend.Android">
       <HintPath>..\packages\mapextend\android\Xam.Plugin.MapExtend.Android.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Band.Android">
+      <HintPath>..\packages\msband\android\Microsoft.Band.Android.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Band.Portable">
+      <HintPath>..\packages\msband\android\Microsoft.Band.Portable.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AndroidActivityResultRequestCode.cs" />

@@ -343,6 +343,12 @@
     <Reference Include="ZipArchive">
       <HintPath>..\Components\ZipArchive-1.4.0.1\lib\ios-unified\ZipArchive.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Band.iOS">
+      <HintPath>..\packages\msband\ios\Microsoft.Band.iOS.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Band.Portable">
+      <HintPath>..\packages\msband\ios\Microsoft.Band.Portable.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Contents.json">

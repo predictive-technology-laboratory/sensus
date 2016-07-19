@@ -184,6 +184,18 @@ namespace SensusService
                                 probeSetupWait.WaitOne();
                                 #endregion
 
+                                // when doing cross-platform conversions, there may be triggers that reference probes that aren't available on the
+                                // current platform. remove these triggers and warn the user that the script will not run.
+                                // https://insights.xamarin.com/app/Sensus-Production/issues/999
+                                foreach (ScriptProbe probe in protocol.Probes.Where(probe => probe is ScriptProbe))
+                                    foreach (ScriptRunner scriptRunner in probe.ScriptRunners)
+                                        foreach (Probes.User.Trigger trigger in scriptRunner.Triggers.ToList())
+                                            if (trigger.Probe == null)
+                                            {
+                                                scriptRunner.Triggers.Remove(trigger);
+                                                SensusServiceHelper.Get().FlashNotificationAsync("Warning:  " + scriptRunner.Name + " trigger is not valid on this device.");
+                                            }
+
                                 SensusServiceHelper.Get().RegisterProtocol(protocol);
                             }
                             else
@@ -897,7 +909,6 @@ namespace SensusService
 
                             SensusServiceHelper.Get().Logger.Log("Starting probes for protocol " + _name + ".", LoggingLevel.Normal, GetType());
                             int probesEnabled = 0;
-                            int probesStarted = 0;
                             foreach (Probe probe in _probes)
                                 if (probe.Enabled)
                                 {
@@ -906,7 +917,6 @@ namespace SensusService
                                     try
                                     {
                                         probe.Start();
-                                        ++probesStarted;
                                     }
                                     catch (Exception)
                                     {
@@ -915,8 +925,6 @@ namespace SensusService
 
                             if (probesEnabled == 0)
                                 throw new Exception("No probes were enabled.");
-                            else if (probesStarted == 0)
-                                throw new Exception("No probes started.");
                             else
                             {
                                 // on android when the activity is stopped the service is restarted, which restarts the protocols. if the user then 

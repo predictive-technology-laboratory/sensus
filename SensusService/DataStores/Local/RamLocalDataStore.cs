@@ -41,7 +41,10 @@ namespace SensusService.DataStores.Local
         {
             get
             {
-                return CommittedDataCount + " items";
+                lock (_data)
+                {
+                    return _data.Count + " items";
+                }
             }
         }
 

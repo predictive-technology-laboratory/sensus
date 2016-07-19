@@ -18,6 +18,7 @@ using CoreMotion;
 using Foundation;
 using SensusService;
 using Plugin.Permissions.Abstractions;
+using System.Threading;
 
 namespace Sensus.iOS.Probes.Movement
 {
@@ -45,14 +46,11 @@ namespace Sensus.iOS.Probes.Movement
         {
             base.StartListening();
 
-            Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
-                {
-                    _motionManager.StartAccelerometerUpdates(NSOperationQueue.CurrentQueue, (data, error) =>
-                        {
-                            if (!Stabilizing)
-                                StoreDatum(new AccelerometerDatum(DateTimeOffset.UtcNow, data.Acceleration.X, data.Acceleration.Y, data.Acceleration.Z));
-                        });
-                });
+            _motionManager.StartAccelerometerUpdates(new NSOperationQueue(), (data, error) =>
+            {
+                if (!Stabilizing)
+                    StoreDatum(new AccelerometerDatum(DateTimeOffset.UtcNow, data.Acceleration.X, data.Acceleration.Y, data.Acceleration.Z));
+            });
         }
 
         protected override void StopListening()

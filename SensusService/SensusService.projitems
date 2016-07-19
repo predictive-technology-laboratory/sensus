@@ -107,9 +107,42 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ScriptRunDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ProbeTriggerProperties\DoubleProbeTriggerProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\ProbeTriggerProperties\StringProbeTriggerProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandGsrProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandGsrDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandProbeBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandLightProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandDistanceProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandAccelerometerProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandStepProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandGyroscopeProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandHeartRateProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandPedometerProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandRRIntervalProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandSkinTemperatureProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandContactProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandCaloriesProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandAirTempreatureProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandAirPressureProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandCaloriesDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandHeartRateDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandAccelerometerDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandStepDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandLightDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandAirPressureDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandAirTemperatureDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandDistanceDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandGyroscopeDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandPedometerDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandRRIntervalDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandSkinTemperatureDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandContactDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandUltravioletLightProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandUltravioletLightDatum.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\" />
   </ItemGroup>
 </Project>

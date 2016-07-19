@@ -23,17 +23,22 @@ namespace SensusUI
         public ProbesEditPage(Protocol protocol)
             : base(protocol, "Edit Probes")
         {
-            ToolbarItems.Add(new ToolbarItem("All", null, async () =>
-                {
-                    if (await DisplayAlert("Enable All Probes", "Are you sure you want to enable all probes?", "Yes", "No"))
+            // enabling all probes is only available when the protocol is stopped. the enable is an async operation, and 
+            // the probes don't play nice with each other when starting concurrently.
+            if (!protocol.Running)
+            {
+                ToolbarItems.Add(new ToolbarItem("All", null, async () =>
                     {
-                        foreach (Probe probe in Protocol.Probes)
-                            if (SensusServiceHelper.Get().EnableProbeWhenEnablingAll(probe))
-                                probe.Enabled = true;
+                        if (await DisplayAlert("Enable All Probes", "Are you sure you want to enable all probes?", "Yes", "No"))
+                        {
+                            foreach (Probe probe in Protocol.Probes)
+                                if (SensusServiceHelper.Get().EnableProbeWhenEnablingAll(probe))
+                                    probe.Enabled = true;
 
-                        Bind();
-                    }
-                }));
+                            Bind();
+                        }
+                    }));
+            }
 
             ToolbarItems.Add(new ToolbarItem("None", null, async () =>
                 {
