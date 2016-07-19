@@ -26,6 +26,7 @@ using Amazon.S3.Model;
 using Xamarin;
 using System.Threading.Tasks;
 using System.IO;
+using System.IO.Compression;
 using Newtonsoft.Json;
 using System.Net;
 
@@ -36,6 +37,7 @@ namespace SensusService.DataStores.Remote
         private string _bucket;
         private string _folder;
         private string _cognitoIdentityPoolId;
+        private bool _compress;
 
         [EntryStringUiProperty("Bucket:", true, 2)]
         public string Bucket
@@ -86,6 +88,19 @@ namespace SensusService.DataStores.Remote
             }
         }
 
+        [OnOffUiProperty("Compress:", true, 5)]
+        public bool Compress
+        {
+            get
+            {
+                return _compress;
+            }
+            set
+            {
+                _compress = value;
+            }
+        }
+
         [JsonIgnore]
         public override bool CanRetrieveCommittedData
         {
@@ -116,6 +131,7 @@ namespace SensusService.DataStores.Remote
         public AmazonS3RemoteDataStore()
         {
             _bucket = _folder = "";
+            _compress = false;
         }
 
         private AmazonS3Client InitializeS3()
@@ -235,10 +251,28 @@ namespace SensusService.DataStores.Remote
                 PutObjectRequest putRequest = new PutObjectRequest
                 {
                     BucketName = _bucket,
-                    Key = key,
-                    ContentBody = json,
-                    ContentType = "application/json"
+                    Key = key + (_compress ? ".gz" : ""),
+                    ContentType = _compress ? "application/zip" : "application/json"
                 };
+
+                if (_compress)
+                {
+                    // zip json string if option is selected -- from https://stackoverflow.com/questions/2798467/c-sharp-code-to-gzip-and-upload-a-string-to-amazon-s3
+                    MemoryStream compressed = new MemoryStream();
+
+                    using (GZipStream zip = new GZipStream(compressed, CompressionMode.Compress, true))
+                    {
+                        byte[] buffer = Encoding.UTF8.GetBytes(json);
+                        zip.Write(buffer, 0, buffer.Length);
+                        zip.Flush();
+                    }
+
+                    compressed.Position = 0;
+
+                    putRequest.InputStream = compressed;
+                }
+                else
+                    putRequest.ContentBody = json;
 
                 HttpStatusCode responseCode = (await s3.PutObjectAsync(putRequest, cancellationToken)).HttpStatusCode;
 
