@@ -2,10 +2,13 @@
 	
 angular.module('myApp', [
 	  	'ngRoute',
-	  	'myApp.LandingPage',
-	  	'myApp.AnotherPage',
+		'myApp.LoginPage',
+		'myApp.CreateResearcherPage',
+		'myApp.StudyLandingPage',
+		'myApp.CreateStudyPage',
+		'myApp.AnotherPage',
 	  	'myApp.version'
 	])
 .config(['$routeProvider', function($routeProvider) {
-  	$routeProvider.otherwise({redirectTo: '/LandingPage'});
+  	$routeProvider.otherwise({redirectTo: '/LoginPage'});
 }]);

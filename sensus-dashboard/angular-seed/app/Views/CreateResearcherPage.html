@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body>
+        <h2 class="bodyheader">Create Researcher Account</h2>
+
+        <table class="body">
+                <colgroup>
+                        <col>
+                        <col>
+                </colgroup>
+                <tr>
+                        <form id="study">
+                                <fieldset  class="body">
+                                        <input name="researcherFirstName" type="text" placeholder="First Name" size="50" ng-model="formData.researcherFirstName"><br>
+                                        <input name="researcherLastName" type="text" placeholder="Last Name" size="50" ng-model="formData.researcherLastName"><br>
+                                        <input name="researcherEmailAddress" type="text" placeholder="Email Address" size="50" ng-model="formData.researcherEmailAddress"><br>
+					<input name="researcherPassword" type="text" placeholder="Password" size="50" ng-model="formData.researcherPassword"><br>
+                                        <p>
+                                        <label text-align="center"></label><input class="body" type="submit" value="Create" data-ng-click="onCreate()"/>
+                                        <label text-align="center"></label><input class="body" type="submit" value="Cancel" data-ng-click="onCancel()"/>
+                                </fieldset>
+                        </form>
+
+                </tr>
+        </table>
+</body>
+</html>
