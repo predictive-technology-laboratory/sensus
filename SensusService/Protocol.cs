@@ -35,6 +35,7 @@ using SensusService.Probes.Apps;
 using SensusService.Probes.Movement;
 using System.Text;
 using Plugin.Geolocator.Abstractions;
+using System.Threading.Tasks;
 
 #if __IOS__
 using HealthKit;
@@ -1040,135 +1041,137 @@ namespace SensusService
                 });
         }
 
-        public void TestHealthAsync(bool userInitiated, Action callback = null)
+        public Task TestHealthAsync(bool userInitiated, CancellationToken cancellationToken = default(CancellationToken))
         {
-            new Thread(() =>
-                {
-                    TestHealth(userInitiated);
-
-                    if (callback != null)
-                        callback();
-
-                }).Start();
-        }
-
-        public void TestHealth(bool userInitiated)
-        {
-            lock (_locker)
+            return Task.Run(async () =>
             {
-                string error = null;
-                string warning = null;
-                string misc = null;
+                #region build report
 
-                if (!_running)
+                ProtocolReportDatum report;
+
+                lock (_locker)
                 {
-                    error += "Restarting protocol \"" + _name + "\"...";
-                    try
+                    string error = null;
+                    string warning = null;
+                    string misc = null;
+
+                    if (!_running)
                     {
-                        Stop();
-                        Start();
-                    }
-                    catch (Exception ex)
-                    {
-                        error += ex.Message + "...";
+                        error += "Restarting protocol \"" + _name + "\"...";
+                        try
+                        {
+                            Stop();
+                            Start();
+                        }
+                        catch (Exception ex)
+                        {
+                            error += ex.Message + "...";
+                        }
+
+                        if (_running)
+                            error += "restarted protocol." + Environment.NewLine;
+                        else
+                            error += "failed to restart protocol." + Environment.NewLine;
                     }
 
                     if (_running)
-                        error += "restarted protocol." + Environment.NewLine;
-                    else
-                        error += "failed to restart protocol." + Environment.NewLine;
-                }
-
-                if (_running)
-                {
-                    if (_localDataStore == null)
-                        error += "No local data store present on protocol." + Environment.NewLine;
-                    else if (_localDataStore.TestHealth(ref error, ref warning, ref misc))
                     {
-                        error += "Restarting local data store...";
-
-                        try
+                        if (_localDataStore == null)
+                            error += "No local data store present on protocol." + Environment.NewLine;
+                        else if (_localDataStore.TestHealth(ref error, ref warning, ref misc))
                         {
-                            _localDataStore.Restart();
-                        }
-                        catch (Exception ex)
-                        {
-                            error += ex.Message + "...";
-                        }
+                            error += "Restarting local data store...";
 
-                        if (!_localDataStore.Running)
-                            error += "failed to restart local data store." + Environment.NewLine;
-                    }
-
-                    if (_remoteDataStore == null)
-                        error += "No remote data store present on protocol." + Environment.NewLine;
-                    else if (_remoteDataStore.TestHealth(ref error, ref warning, ref misc))
-                    {
-                        error += "Restarting remote data store...";
-
-                        try
-                        {
-                            _remoteDataStore.Restart();
-                        }
-                        catch (Exception ex)
-                        {
-                            error += ex.Message + "...";
-                        }
-
-                        if (!_remoteDataStore.Running)
-                            error += "failed to restart remote data store." + Environment.NewLine;
-                    }
-
-                    foreach (Probe probe in _probes)
-                        if (probe.Enabled)
-                        {
-                            if (probe.TestHealth(ref error, ref warning, ref misc))
+                            try
                             {
-                                error += "Restarting probe \"" + probe.GetType().FullName + "\"...";
-
-                                try
-                                {
-                                    probe.Restart();
-                                }
-                                catch (Exception ex)
-                                {
-                                    error += ex.Message + "...";
-                                }
-
-                                if (!probe.Running)
-                                    error += "failed to restart probe \"" + probe.GetType().FullName + "\"." + Environment.NewLine;
+                                _localDataStore.Restart();
                             }
-                            else
+                            catch (Exception ex)
                             {
-                                // keep track of successful system-initiated health tests within the participation horizon. this 
-                                // tells use how consistently the probe is running.
-                                if (!userInitiated)
-                                    lock (probe.SuccessfulHealthTestTimes)
+                                error += ex.Message + "...";
+                            }
+
+                            if (!_localDataStore.Running)
+                                error += "failed to restart local data store." + Environment.NewLine;
+                        }
+
+                        if (_remoteDataStore == null)
+                            error += "No remote data store present on protocol." + Environment.NewLine;
+                        else if (_remoteDataStore.TestHealth(ref error, ref warning, ref misc))
+                        {
+                            error += "Restarting remote data store...";
+
+                            try
+                            {
+                                _remoteDataStore.Restart();
+                            }
+                            catch (Exception ex)
+                            {
+                                error += ex.Message + "...";
+                            }
+
+                            if (!_remoteDataStore.Running)
+                                error += "failed to restart remote data store." + Environment.NewLine;
+                        }
+
+                        foreach (Probe probe in _probes)
+                            if (probe.Enabled)
+                            {
+                                if (probe.TestHealth(ref error, ref warning, ref misc))
+                                {
+                                    error += "Restarting probe \"" + probe.GetType().FullName + "\"...";
+
+                                    try
                                     {
-                                        probe.SuccessfulHealthTestTimes.Add(DateTime.Now);
-                                        probe.SuccessfulHealthTestTimes.RemoveAll(healthTestTime => healthTestTime < ParticipationHorizon);
+                                        probe.Restart();
                                     }
+                                    catch (Exception ex)
+                                    {
+                                        error += ex.Message + "...";
+                                    }
+
+                                    if (!probe.Running)
+                                        error += "failed to restart probe \"" + probe.GetType().FullName + "\"." + Environment.NewLine;
+                                }
+                                else
+                                {
+                                    // keep track of successful system-initiated health tests within the participation horizon. this 
+                                    // tells use how consistently the probe is running.
+                                    if (!userInitiated)
+                                        lock (probe.SuccessfulHealthTestTimes)
+                                        {
+                                            probe.SuccessfulHealthTestTimes.Add(DateTime.Now);
+                                            probe.SuccessfulHealthTestTimes.RemoveAll(healthTestTime => healthTestTime < ParticipationHorizon);
+                                        }
+                                }
                             }
-                        }
-                }
+                    }
 
 #if __ANDROID__
-                Sensus.Android.AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as Sensus.Android.AndroidSensusServiceHelper;
-                misc += "Wake lock count:  " + serviceHelper.WakeLockAcquisitionCount + Environment.NewLine;
+                    Sensus.Android.AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as Sensus.Android.AndroidSensusServiceHelper;
+                    misc += "Wake lock count:  " + serviceHelper.WakeLockAcquisitionCount + Environment.NewLine;
 #endif
 
-                _mostRecentReport = new ProtocolReportDatum(DateTimeOffset.UtcNow, error, warning, misc, this);
-                SensusServiceHelper.Get().Logger.Log("Protocol report:" + Environment.NewLine + _mostRecentReport, LoggingLevel.Normal, GetType());
+                    report = new ProtocolReportDatum(DateTimeOffset.UtcNow, error, warning, misc, this);
+                    SensusServiceHelper.Get().Logger.Log("Protocol report:" + Environment.NewLine + report, LoggingLevel.Normal, GetType());
+                }
+
+                #endregion
 
                 SensusServiceHelper.Get().Logger.Log("Storing protocol report locally.", LoggingLevel.Normal, GetType());
-                _localDataStore.Add(_mostRecentReport);
+                await _localDataStore.AddAsync(report, cancellationToken);
 
                 if (!_localDataStore.UploadToRemoteDataStore && _forceProtocolReportsToRemoteDataStore)
                 {
                     SensusServiceHelper.Get().Logger.Log("Local data aren't pushed to remote, so we're copying the report datum directly to the remote cache.", LoggingLevel.Normal, GetType());
-                    _remoteDataStore.Add(_mostRecentReport);
+                    await _remoteDataStore.AddAsync(report, cancellationToken);
                 }
-            }
+
+                lock (_locker)
+                {
+                    _mostRecentReport = report;
+                }
+            });
         }
 
         public void ResetForSharing()

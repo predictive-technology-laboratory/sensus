@@ -30,30 +30,30 @@ namespace Sensus.Android.Probes.Communication
 
         public AndroidTelephonyProbe()
         {
-            _outgoingCallCallback = (sender, outgoingNumber) =>
+            _outgoingCallCallback = async (sender, outgoingNumber) =>
             {
                 _outgoingIncomingTime = DateTime.Now;
 
-                StoreDatum(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.OutgoingCall, outgoingNumber, null));
+                await StoreDatumAsync(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.OutgoingCall, outgoingNumber, null));
             };
 
             _idleIncomingCallListener = new AndroidTelephonyIdleIncomingListener();
 
-            _idleIncomingCallListener.IncomingCall += (o, incomingNumber) =>
+            _idleIncomingCallListener.IncomingCall += async (o, incomingNumber) =>
             {
                 _outgoingIncomingTime = DateTime.Now;
 
-                StoreDatum(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.IncomingCall, incomingNumber, null));
+                await StoreDatumAsync(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.IncomingCall, incomingNumber, null));
             };
 
-            _idleIncomingCallListener.Idle += (o, e) =>
+            _idleIncomingCallListener.Idle += async (o, e) =>
             {
                 // only calculate call duration if we have previously received an incoming or outgoing call event (android might report idle upon startup)
                 double? callDurationSeconds = null;
                 if (_outgoingIncomingTime != null)
                     callDurationSeconds = (DateTime.Now - _outgoingIncomingTime.GetValueOrDefault()).TotalSeconds;
 
-                StoreDatum(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.Idle, null, callDurationSeconds));
+                await StoreDatumAsync(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.Idle, null, callDurationSeconds));
             };
         }
 

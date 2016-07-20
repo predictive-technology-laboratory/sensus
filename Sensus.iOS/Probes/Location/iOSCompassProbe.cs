@@ -27,10 +27,10 @@ namespace Sensus.iOS.Probes.Location
 
         public iOSCompassProbe()
         {
-            _positionChangedHandler = (o, e) =>
+            _positionChangedHandler = async (o, e) =>
                 {
                     SensusServiceHelper.Get().Logger.Log("Received compass change notification.", LoggingLevel.Verbose, GetType());
-                    StoreDatum(new CompassDatum(e.Position.Timestamp, e.Position.Heading));
+                    await StoreDatumAsync(new CompassDatum(e.Position.Timestamp, e.Position.Heading));
                 };
         }
 

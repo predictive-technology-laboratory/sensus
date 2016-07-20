@@ -16,6 +16,8 @@ using SensusUI.UiProperties;
 using System;
 using System.Linq;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace SensusService.Probes
 {
@@ -197,11 +199,13 @@ namespace SensusService.Probes
 
         protected abstract void StopListening();
 
-        public sealed override void StoreDatum(Datum datum)
+        public sealed override Task StoreDatumAsync(Datum datum, CancellationToken cancellationToken = default(CancellationToken))
         {
             float storesPerSecond = 1 / (float)(DateTimeOffset.UtcNow - MostRecentStoreTimestamp).TotalSeconds;
             if (storesPerSecond <= _maxDataStoresPerSecond)
-                base.StoreDatum(datum);
+                return base.StoreDatumAsync(datum, cancellationToken);
+            else
+                return Task.FromResult(false);
         }
 
         public override void ResetForSharing()

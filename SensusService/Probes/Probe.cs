@@ -21,6 +21,7 @@ using System.Reflection;
 using System.Threading;
 using Syncfusion.SfChart.XForms;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace SensusService.Probes
 {
@@ -334,8 +335,12 @@ namespace SensusService.Probes
             }
         }
 
-        public virtual void StoreDatum(Datum datum)
+        public virtual Task StoreDatumAsync(Datum datum, CancellationToken cancellationToken)
         {
+            // track the most recent datum and call timestamp regardless of whether the datum is null or whether we're storing data
+            MostRecentDatum = datum;
+            _mostRecentStoreTimestamp = DateTimeOffset.UtcNow;
+
             // datum is allowed to be null, indicating the the probe attempted to obtain data but it didn't find any (in the case of polling probes).
             if (datum != null)
             {
@@ -343,8 +348,6 @@ namespace SensusService.Probes
 
                 if (_storeData)
                 {
-                    _protocol.LocalDataStore.Add(datum);
-
                     ChartDataPoint chartDataPoint = GetChartDataPointFromDatum(datum);
 
                     if (chartDataPoint != null)
@@ -357,11 +360,12 @@ namespace SensusService.Probes
                                 _chartData.RemoveAt(0);
                         }
                     }
+
+                    return _protocol.LocalDataStore.AddAsync(datum, cancellationToken);
                 }
             }
 
-            MostRecentDatum = datum;
-            _mostRecentStoreTimestamp = DateTimeOffset.UtcNow;  // this is outside the _storeData restriction above since we just want to track when this method is called.
+            return Task.FromResult(false);
         }
 
         protected void StopAsync()

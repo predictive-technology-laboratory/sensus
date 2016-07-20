@@ -23,10 +23,10 @@ namespace Sensus.Android.Probes.Network
 
         public AndroidListeningWlanProbe()
         {
-            _wlanConnectionChangedCallback = (sender, wlanDatum) =>
-                {
-                    StoreDatum(wlanDatum);
-                };
+            _wlanConnectionChangedCallback = async (sender, wlanDatum) =>
+            {
+                await StoreDatumAsync(wlanDatum);
+            };
         }
 
         protected override void StartListening()

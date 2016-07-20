@@ -422,15 +422,14 @@ namespace SensusUI
                 {
                     if (SensusServiceHelper.Get().ProtocolShouldBeRunning(selectedProtocol))
                     {
-                        selectedProtocol.TestHealthAsync(true, () =>
+                        await selectedProtocol.TestHealthAsync(true);
+
+                        Device.BeginInvokeOnMainThread(async () =>
                             {
-                                Device.BeginInvokeOnMainThread(async () =>
-                                    {
-                                        if (selectedProtocol.MostRecentReport == null)
-                                            await DisplayAlert("No Report", "Status check failed.", "OK");
-                                        else
-                                            await Navigation.PushAsync(new ViewTextLinesPage("Protocol Status", selectedProtocol.MostRecentReport.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList(), null, null));
-                                    });
+                                if (selectedProtocol.MostRecentReport == null)
+                                    await DisplayAlert("No Report", "Status check failed.", "OK");
+                                else
+                                    await Navigation.PushAsync(new ViewTextLinesPage("Protocol Status", selectedProtocol.MostRecentReport.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList(), null, null));
                             });
                     }
                     else

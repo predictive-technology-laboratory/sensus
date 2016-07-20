@@ -22,6 +22,8 @@ namespace SensusService.DataStores.Local
 {
     public class RamLocalDataStore : LocalDataStore
     {
+        private const int REMOTE_COMMIT_TRIGGER_DATA_COUNT = 50000;
+
         private HashSet<Datum> _data;
 
         [JsonIgnore]
@@ -56,35 +58,45 @@ namespace SensusService.DataStores.Local
         public override Task<List<Datum>> CommitAsync(IEnumerable<Datum> data, CancellationToken cancellationToken)
         {
             return Task.Run(() =>
+            {
+                List<Datum> committedData = new List<Datum>();
+
+                lock (_data)
                 {
-                    lock (_data)
+                    foreach (Datum datum in data)
                     {
-                        List<Datum> committedData = new List<Datum>();
+                        if (cancellationToken.IsCancellationRequested)
+                            break;
 
-                        foreach (Datum datum in data)
+                        // all locally stored data, whether on disk or in RAM, should be anonymized as required
+                        // by the protocol. convert datum to/from JSON in order to apply anonymization.
+                        try
                         {
-                            if (cancellationToken.IsCancellationRequested)
-                                break;
-
-                            // all locally stored data, whether on disk or in RAM, should be anonymized as required
-                            // by the protocol. convert datum to/from JSON in order to apply anonymization.
-                            try
-                            {
-                                string anonymizedDatumJSON = datum.GetJSON(Protocol.JsonAnonymizer, false);
-                                Datum anonymizedDatum = Datum.FromJSON(anonymizedDatumJSON);
-                                _data.Add(anonymizedDatum);
-                                MostRecentSuccessfulCommitTime = DateTime.Now;
-                                committedData.Add(anonymizedDatum);
-                            }
-                            catch (Exception ex)
-                            {
-                                SensusServiceHelper.Get().Logger.Log("Failed to add anonymized datum:  " + ex.Message, LoggingLevel.Normal, GetType());
-                            }
+                            string anonymizedDatumJSON = datum.GetJSON(Protocol.JsonAnonymizer, false);
+                            Datum anonymizedDatum = Datum.FromJSON(anonymizedDatumJSON);
+                            _data.Add(anonymizedDatum);
+                            MostRecentSuccessfulCommitTime = DateTime.Now;
+                            committedData.Add(anonymizedDatum);
                         }
-
-                        return committedData;
+                        catch (Exception ex)
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Failed to add anonymized datum:  " + ex.Message, LoggingLevel.Normal, GetType());
+                        }
                     }
-                });
+                }
+
+                CheckSizeAndCommitToRemote(cancellationToken);
+
+                return committedData;
+            });
+        }
+
+        protected override bool TriggerRemoteCommit()
+        {
+            lock (_data)
+            {
+                return _data.Count > REMOTE_COMMIT_TRIGGER_DATA_COUNT;
+            }
         }
 
         public override void CommitDataToRemoteDataStore(CancellationToken cancellationToken)

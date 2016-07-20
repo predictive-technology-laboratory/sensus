@@ -27,7 +27,7 @@ namespace Sensus.Android.Probes.Movement
         {
             _gravity = new float[3];
 
-            _accelerometerListener = new AndroidSensorListener(SensorType.Accelerometer, SensorDelay.Normal, null, e =>
+            _accelerometerListener = new AndroidSensorListener(SensorType.Accelerometer, SensorDelay.Normal, null, async e =>
                 {
                     // should get x, y, and z values
                     if (e.Values.Count != 3)
@@ -49,7 +49,7 @@ namespace Sensus.Android.Probes.Movement
                     float yAccel = e.Values[1] - _gravity[1];
                     float zAccel = e.Values[2] - _gravity[2];
 
-                    StoreDatum(new AccelerometerDatum(DateTimeOffset.UtcNow, xAccel, yAccel, zAccel));
+                    await StoreDatumAsync(new AccelerometerDatum(DateTimeOffset.UtcNow, xAccel, yAccel, zAccel));
                 });
         }
 

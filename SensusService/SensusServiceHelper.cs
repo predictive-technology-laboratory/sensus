@@ -628,7 +628,30 @@ namespace SensusService
 
                 if (_healthTestCallbackId == null)
                 {
-                    ScheduledCallback callback = new ScheduledCallback(TestHealthAsync, "Test Health", TimeSpan.FromMinutes(1));
+                    ScheduledCallback callback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
+                    {
+                        List<Protocol> protocolsToTest = new List<Protocol>();
+
+                        // we've already got a lock on running protocol IDs
+                        lock (_registeredProtocols)
+                        {
+                            foreach (Protocol protocol in _registeredProtocols)
+                                if (_runningProtocolIds.Contains(protocol.Id))
+                                    protocolsToTest.Add(protocol);
+                        }
+
+                        foreach (Protocol protocol in protocolsToTest)
+                        {
+                            if (cancellationToken.IsCancellationRequested)
+                                break;
+
+                            _logger.Log("Sensus health test is running on callback " + callbackId + ".", LoggingLevel.Normal, GetType());
+
+                            await protocol.TestHealthAsync(false, cancellationToken);
+                        }
+
+                    }, "Test Health", TimeSpan.FromMinutes(1));
+
                     _healthTestCallbackId = ScheduleRepeatingCallback(callback, HEALTH_TEST_DELAY_MS, HEALTH_TEST_DELAY_MS, HEALTH_TEST_REPEAT_LAG);
                 }
             }
@@ -1295,26 +1318,6 @@ namespace SensusService
                         };
 
                         await Application.Current.MainPage.Navigation.PushModalAsync(mapPage);
-                    }
-                });
-        }
-
-        public Task TestHealthAsync(string callbackId, CancellationToken cancellationToken, Action letDeviceSleepCallback)
-        {
-            return Task.Run(() =>
-                {
-                    lock (_registeredProtocols)
-                    {
-                        _logger.Log("Sensus health test is running on callback " + callbackId + ".", LoggingLevel.Normal, GetType());
-
-                        foreach (Protocol protocol in _registeredProtocols)
-                        {
-                            if (cancellationToken.IsCancellationRequested)
-                                break;
-
-                            if (_runningProtocolIds.Contains(protocol.Id))
-                                protocol.TestHealth(false);
-                        }
                     }
                 });
         }

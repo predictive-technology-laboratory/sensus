@@ -19,6 +19,7 @@ using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions.Abstractions;
 using Newtonsoft.Json;
 using Syncfusion.SfChart.XForms;
+using System.Collections.Generic;
 
 namespace SensusService.Probes.Location
 {
@@ -81,13 +82,13 @@ namespace SensusService.Probes.Location
         {
             _triggers = new ObservableCollection<PointOfInterestProximityTrigger>();
 
-            _positionChangedHandler = (o, e) =>
+            _positionChangedHandler = async (o, e) =>
             {
+                List<Datum> data = new List<Datum>();
+
                 lock (_locker)
                 {
                     SensusServiceHelper.Get().Logger.Log("Received position change notification.", LoggingLevel.Verbose, GetType());
-
-                    bool datumStored = false;
 
                     if (e.Position != null)
                         foreach (PointOfInterest pointOfInterest in SensusServiceHelper.Get().PointsOfInterest.Union(Protocol.PointsOfInterest))  // POIs are stored on the service helper (e.g., home locations) and the Protocol (e.g., bars), since the former are user-specific and the latter are universal.
@@ -96,15 +97,15 @@ namespace SensusService.Probes.Location
 
                             foreach (PointOfInterestProximityTrigger trigger in _triggers)
                                 if (pointOfInterest.Triggers(trigger, distanceToPointOfInterestMeters))
-                                {
-                                    StoreDatum(new PointOfInterestProximityDatum(e.Position.Timestamp, pointOfInterest, distanceToPointOfInterestMeters, trigger));
-                                    datumStored = true;
-                                }
+                                    data.Add(new PointOfInterestProximityDatum(e.Position.Timestamp, pointOfInterest, distanceToPointOfInterestMeters, trigger));
                         }
-
-                    if (!datumStored)
-                        StoreDatum(null);
                 }
+
+                if (data.Count > 0)
+                    foreach (Datum datum in data)
+                        await StoreDatumAsync(datum);
+                else
+                    await StoreDatumAsync(null);
             };
         }
 

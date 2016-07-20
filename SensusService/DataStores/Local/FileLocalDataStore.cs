@@ -25,6 +25,8 @@ namespace SensusService.DataStores.Local
 {
     public class FileLocalDataStore : LocalDataStore
     {
+        private const int REMOTE_COMMIT_TRIGGER_STORAGE_DIRECTORY_SIZE_MB = 5;
+
         private string _path;
 
         private readonly object _storageDirectoryLocker = new object();
@@ -86,10 +88,10 @@ namespace SensusService.DataStores.Local
         {
             return Task.Run(() =>
                 {
+                    List<Datum> committedData = new List<Datum>();
+
                     lock (_storageDirectoryLocker)
                     {
-                        List<Datum> committedData = new List<Datum>();
-
                         using (StreamWriter file = new StreamWriter(_path, true))
                         {
                             foreach (Datum datum in data)
@@ -135,9 +137,11 @@ namespace SensusService.DataStores.Local
                                 }
                             }
                         }
-
-                        return committedData;
                     }
+
+                    CheckSizeAndCommitToRemote(cancellationToken);
+
+                    return committedData;
                 });
         }
 
@@ -229,6 +233,14 @@ namespace SensusService.DataStores.Local
 
             // all data were either commmitted or dumped to the uncommitted file. clear the batch.
             batch.Clear();
+        }
+
+        protected override bool TriggerRemoteCommit()
+        {
+            lock (_storageDirectoryLocker)
+            {
+                return SensusServiceHelper.GetDirectorySizeMB(StorageDirectory) > REMOTE_COMMIT_TRIGGER_STORAGE_DIRECTORY_SIZE_MB;
+            }
         }
 
         protected override IEnumerable<Tuple<string, string>> GetDataLinesToWrite(CancellationToken cancellationToken, Action<string, double> progressCallback)

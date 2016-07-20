@@ -45,10 +45,10 @@ namespace SensusService.Probes
             {
                 if (value <= 1000)
                     value = 1000;
-                
+
                 if (value != _pollingSleepDurationMS)
                 {
-                    _pollingSleepDurationMS = value; 
+                    _pollingSleepDurationMS = value;
 
                     if (_pollCallbackId != null)
                         _pollCallbackId = SensusServiceHelper.Get().RescheduleRepeatingCallback(_pollCallbackId, _pollingSleepDurationMS, _pollingSleepDurationMS, POLL_CALLBACK_LAG);
@@ -67,7 +67,7 @@ namespace SensusService.Probes
             {
                 if (value < 1)
                     value = 1;
-                
+
                 _pollingTimeoutMinutes = value;
             }
         }
@@ -151,19 +151,19 @@ namespace SensusService.Probes
             {
                 base.InternalStart();
 
-                #if __IOS__
+#if __IOS__
                 string userNotificationMessage = DisplayName + " data requested.";
-                #elif __ANDROID__
+#elif __ANDROID__
                 string userNotificationMessage = null;
-                #elif WINDOWS_PHONE
+#elif WINDOWS_PHONE
                 string userNotificationMessage = null; // TODO:  Should we use a message?
-                #else
-                #error "Unrecognized platform."
-                #endif
+#else
+#error "Unrecognized platform."
+#endif
 
                 ScheduledCallback callback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
                     {
-                        return Task.Run(() =>
+                        return Task.Run(async () =>
                             {
                                 if (Running)
                                 {
@@ -194,7 +194,7 @@ namespace SensusService.Probes
 
                                             try
                                             {
-                                                StoreDatum(datum);
+                                                await StoreDatumAsync(datum, cancellationToken);
                                             }
                                             catch (Exception ex)
                                             {
