@@ -25,9 +25,9 @@ namespace Sensus.Android.Probes.Context
         public AndroidLightProbe()
         {
             _lightListener = new AndroidSensorListener(SensorType.Light, SensorDelay.Normal, null, async e =>
-                {
-                    await StoreDatumAsync(new LightDatum(DateTimeOffset.UtcNow, e.Values[0]));
-                });
+            {
+                await StoreDatumAsync(new LightDatum(DateTimeOffset.UtcNow, e.Values[0]));
+            });
         }
 
         protected override void Initialize()

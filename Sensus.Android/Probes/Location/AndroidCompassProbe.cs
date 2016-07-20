@@ -64,11 +64,11 @@ namespace Sensus.Android.Probes.Location
 
         private Task StoreHeadingAsync(float[] magneticFieldValues = null, float[] accelerometerValues = null)
         {
-            // TODO:  Debug this
             lock (this)
             {
                 float[] rotationMatrix = new float[9];
 
+                // if either the accelerometer or magnetic field values are missing, use the old ones
                 if (SensorManager.GetRotationMatrix(rotationMatrix, null, accelerometerValues ?? _accelerometerValues, magneticFieldValues ?? _magneticFieldValues))
                 {
                     float[] azimuthPitchRoll = new float[3];
@@ -83,6 +83,7 @@ namespace Sensus.Android.Probes.Location
                     return StoreDatumAsync(new CompassDatum(DateTimeOffset.UtcNow, heading));
                 }
 
+                // update values for next call
                 if (magneticFieldValues != null)
                     _magneticFieldValues = magneticFieldValues;
 

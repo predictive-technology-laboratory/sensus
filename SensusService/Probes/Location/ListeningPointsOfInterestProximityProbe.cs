@@ -28,8 +28,6 @@ namespace SensusService.Probes.Location
         private ObservableCollection<PointOfInterestProximityTrigger> _triggers;
         private EventHandler<PositionEventArgs> _positionChangedHandler;
 
-        private readonly object _locker = new object();
-
         public ObservableCollection<PointOfInterestProximityTrigger> Triggers
         {
             get { return _triggers; }
@@ -86,20 +84,17 @@ namespace SensusService.Probes.Location
             {
                 List<Datum> data = new List<Datum>();
 
-                lock (_locker)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Received position change notification.", LoggingLevel.Verbose, GetType());
+                SensusServiceHelper.Get().Logger.Log("Received position change notification.", LoggingLevel.Verbose, GetType());
 
-                    if (e.Position != null)
-                        foreach (PointOfInterest pointOfInterest in SensusServiceHelper.Get().PointsOfInterest.Union(Protocol.PointsOfInterest))  // POIs are stored on the service helper (e.g., home locations) and the Protocol (e.g., bars), since the former are user-specific and the latter are universal.
-                        {
-                            double distanceToPointOfInterestMeters = pointOfInterest.KmDistanceTo(e.Position) * 1000;
+                if (e.Position != null)
+                    foreach (PointOfInterest pointOfInterest in SensusServiceHelper.Get().PointsOfInterest.Union(Protocol.PointsOfInterest))  // POIs are stored on the service helper (e.g., home locations) and the Protocol (e.g., bars), since the former are user-specific and the latter are universal.
+                    {
+                        double distanceToPointOfInterestMeters = pointOfInterest.KmDistanceTo(e.Position) * 1000;
 
-                            foreach (PointOfInterestProximityTrigger trigger in _triggers)
-                                if (pointOfInterest.Triggers(trigger, distanceToPointOfInterestMeters))
-                                    data.Add(new PointOfInterestProximityDatum(e.Position.Timestamp, pointOfInterest, distanceToPointOfInterestMeters, trigger));
-                        }
-                }
+                        foreach (PointOfInterestProximityTrigger trigger in _triggers)
+                            if (pointOfInterest.Triggers(trigger, distanceToPointOfInterestMeters))
+                                data.Add(new PointOfInterestProximityDatum(e.Position.Timestamp, pointOfInterest, distanceToPointOfInterestMeters, trigger));
+                    }
 
                 if (data.Count > 0)
                     foreach (Datum datum in data)

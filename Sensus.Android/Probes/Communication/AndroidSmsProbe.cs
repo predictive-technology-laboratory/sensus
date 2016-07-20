@@ -30,12 +30,12 @@ namespace Sensus.Android.Probes.Communication
         public AndroidSmsProbe()
         {
             _smsOutgoingObserver = new AndroidSmsOutgoingObserver(Application.Context, async outgoingSmsDatum =>
-                {
-                    // the observer doesn't set the from number
-                    outgoingSmsDatum.FromNumber = _telephonyManager.Line1Number;
+            {
+                // the observer doesn't set the from number (current device)
+                outgoingSmsDatum.FromNumber = _telephonyManager.Line1Number;
 
-                    await StoreDatumAsync(outgoingSmsDatum);
-                });
+                await StoreDatumAsync(outgoingSmsDatum);
+            });
 
             _incomingSmsCallback = async (sender, incomingSmsDatum) =>
             {

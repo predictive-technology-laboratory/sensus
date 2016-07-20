@@ -93,7 +93,7 @@ namespace SensusService.Probes.Communication
                        "From:  " + _fromNumber + Environment.NewLine +
                        "To:  " + _toNumber + Environment.NewLine +
                        "Message:  " + _message + Environment.NewLine +
-                       "Sender:  " + _participantIsSender;
+                       "Participant is Sender:  " + _participantIsSender;
         }
     }
 }

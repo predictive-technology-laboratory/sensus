@@ -25,7 +25,7 @@ namespace SensusService.DataStores.Local
 {
     public class FileLocalDataStore : LocalDataStore
     {
-        private const int REMOTE_COMMIT_TRIGGER_STORAGE_DIRECTORY_SIZE_MB = 5;
+        private const double REMOTE_COMMIT_TRIGGER_STORAGE_DIRECTORY_SIZE_MB = 5;
 
         private string _path;
 
@@ -239,7 +239,7 @@ namespace SensusService.DataStores.Local
         {
             lock (_storageDirectoryLocker)
             {
-                return SensusServiceHelper.GetDirectorySizeMB(StorageDirectory) > REMOTE_COMMIT_TRIGGER_STORAGE_DIRECTORY_SIZE_MB;
+                return SensusServiceHelper.GetDirectorySizeMB(StorageDirectory) >= REMOTE_COMMIT_TRIGGER_STORAGE_DIRECTORY_SIZE_MB;
             }
         }
 

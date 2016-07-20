@@ -18,6 +18,7 @@ using Android.Net;
 using Android.Net.Wifi;
 using SensusService.Probes.Network;
 using System;
+using SensusService;
 
 namespace Sensus.Android.Probes.Network
 {
@@ -48,7 +49,7 @@ namespace Sensus.Android.Probes.Network
         {
             string accessPointBSSID = null;
 
-            if (AndroidSensusServiceHelper.Get().WiFiConnected)
+            if (SensusServiceHelper.Get().WiFiConnected)
             {
                 WifiManager wifiManager = Application.Context.GetSystemService(global::Android.Content.Context.WifiService) as WifiManager;
                 accessPointBSSID = wifiManager.ConnectionInfo.BSSID;

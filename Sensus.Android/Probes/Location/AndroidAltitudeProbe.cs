@@ -25,14 +25,14 @@ namespace Sensus.Android.Probes.Location
         public AndroidAltitudeProbe()
         {
             _altitudeListener = new AndroidSensorListener(SensorType.Pressure, SensorDelay.Normal, null, async e =>
-                {
-                    // http://www.srh.noaa.gov/images/epz/wxcalc/pressureAltitude.pdf
-                    double hPa = e.Values[0];
-                    double stdPressure = 1013.25;
-                    double altitude = (1 - Math.Pow((hPa / stdPressure), 0.190284)) * 145366.45;
+            {
+                // http://www.srh.noaa.gov/images/epz/wxcalc/pressureAltitude.pdf
+                double hPa = e.Values[0];
+                double stdPressure = 1013.25;
+                double altitude = (1 - Math.Pow((hPa / stdPressure), 0.190284)) * 145366.45;
 
-                    await StoreDatumAsync(new AltitudeDatum(DateTimeOffset.UtcNow, -1, altitude));
-                });
+                await StoreDatumAsync(new AltitudeDatum(DateTimeOffset.UtcNow, -1, altitude));
+            });
         }
 
         protected override void Initialize()

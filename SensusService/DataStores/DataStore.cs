@@ -13,12 +13,10 @@
 // limitations under the License.
 
 using Newtonsoft.Json;
-using SensusService.Exceptions;
 using SensusUI.UiProperties;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using System.Linq;
 using SensusService.DataStores.Remote;
 using System.Threading.Tasks;
 
@@ -263,6 +261,8 @@ namespace SensusService.DataStores
                 // if we've accumulated a chunk, commit it locally to reduce memory pressure
                 if (_data.Count >= COMMIT_CHUNK_SIZE && !_sizeTriggeredCommitRunning)
                 {
+                    SensusServiceHelper.Get().Logger.Log("Running size-triggered commit.", LoggingLevel.Normal, GetType());
+
                     _sizeTriggeredCommitRunning = true;
 
                     return Task.Run(async () =>

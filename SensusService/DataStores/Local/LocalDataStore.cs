@@ -84,13 +84,15 @@ namespace SensusService.DataStores.Local
 
             if (runCommit)
             {
+                SensusServiceHelper.Get().Logger.Log("Running size-triggered commit to remote.", LoggingLevel.Normal, GetType());
+
                 try
                 {
                     CommitDataToRemoteDataStore(cancellationToken);
                 }
                 catch (Exception ex)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Failed to run size-triggered remote commit:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Get().Logger.Log("Failed to run size-triggered commit to remote:  " + ex.Message, LoggingLevel.Normal, GetType());
                 }
                 finally
                 {
