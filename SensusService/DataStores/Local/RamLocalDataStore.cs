@@ -95,7 +95,7 @@ namespace SensusService.DataStores.Local
         {
             lock (_data)
             {
-                return _data.Count > REMOTE_COMMIT_TRIGGER_DATA_COUNT;
+                return _data.Count >= REMOTE_COMMIT_TRIGGER_DATA_COUNT;
             }
         }
 

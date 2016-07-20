@@ -632,7 +632,7 @@ namespace SensusService
                     {
                         List<Protocol> protocolsToTest = new List<Protocol>();
 
-                        // we've already got a lock on running protocol IDs
+                        // we've already got a lock on running protocol IDs. just need a lock on the protocols.
                         lock (_registeredProtocols)
                         {
                             foreach (Protocol protocol in _registeredProtocols)
@@ -640,14 +640,14 @@ namespace SensusService
                                     protocolsToTest.Add(protocol);
                         }
 
-                        foreach (Protocol protocol in protocolsToTest)
+                        foreach (Protocol protocolToTest in protocolsToTest)
                         {
                             if (cancellationToken.IsCancellationRequested)
                                 break;
 
-                            _logger.Log("Sensus health test is running on callback " + callbackId + ".", LoggingLevel.Normal, GetType());
+                            _logger.Log("Sensus health test for protocol \"" + protocolToTest.Name + "\" is running on callback " + callbackId + ".", LoggingLevel.Normal, GetType());
 
-                            await protocol.TestHealthAsync(false, cancellationToken);
+                            await protocolToTest.TestHealthAsync(false, cancellationToken);
                         }
 
                     }, "Test Health", TimeSpan.FromMinutes(1));
