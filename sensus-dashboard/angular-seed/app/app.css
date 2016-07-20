@@ -1,0 +1,68 @@
+e/***** fonts *****/
+
+/*@font-face {
+	font-family: 'Aaargh';
+	src: url('Aaargh-webfont.eot');
+	src: url('Aaargh-webfont.eot?iefix') format('embedded-opentype'),
+		url('Aaargh-webfont.woff') format('woff'),
+		url('Aaargh-webfont.ttf') format('truetype'),
+		url('Aaargh-webfont.svg#webfont') format('svg');
+}*/
+
+
+
+
+
+/***** text styles *****/
+
+.label {
+	display:inline-block
+	text-align:center
+}
+
+.header {
+	/*font-family: 'Aaargh', Arial, sans-serif;*/
+	border-bottom: 0.05em solid black;
+	padding: 0px 0px 0px 10px;
+}
+
+.bodyheader {
+	/*font-family: 'Aaargh', Arial, sans-serif;*/
+	text-align: center;
+}
+
+.menu {
+  	list-style: none;
+  	padding: 0 0 0 0;
+}
+
+.menu li {
+	display: inline;
+}
+
+.body {
+	/*font-family: 'Aaargh', Arial, sans-serif;*/
+	text-align: center;
+}
+
+.button {
+	/*font-family: 'Aaargh', Arial, sans-serif;*/
+	padding: 5px;
+    text-align: center;
+}
+
+
+
+
+
+/***** input styles *****/
+
+input[type=text] {
+	/*font-family: 'Aaargh', Arial, sans-serif;*/
+	padding: 5px;
+}
+
+input[type=file] {
+	font-family: 'Aaargh', Arial, sans-serif;
+	padding: 5px;
+}

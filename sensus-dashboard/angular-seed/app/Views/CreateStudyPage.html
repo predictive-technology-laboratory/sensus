@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<h2 class="bodyheader">Create New Study</h2>
+	
+	<table class="body">
+		<colgroup>
+			<col>
+			<col>
+		</colgroup>
+		<tr>
+			<form id="study">
+				<fieldset  class="body">
+					<input name="studyName" type="text" placeholder="Study Name" size="50" ng-model="formData.studyName"><br>
+					<input name="studyStartDate" type="text" placeholder="Study Start Date" size="50" ng-model="formData.studyStartDate"><br>
+					<input name="studyEndDate" type="text" placeholder="Study End Date (optional)" size="50" ng-model="formData.studyEndDate"><br>
+					<p>
+					<label text-align="center"></label><input class="body" type="submit" value="Create" data-ng-click="onCreate()"/>
+					<label text-align="center"></label><input class="body" type="submit" value="Cancel" data-ng-click="onCancel()"/>
+				</fieldset>
+			</form>
+			
+		</tr>
+	</table>
+</body>
+</html>

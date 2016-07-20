@@ -1,0 +1,347 @@
+sapply(1:num, function(i) {#
+			ids <- c(ids, directories[i])#
+			frames[[i]] = sensus.read.json(paste0("/Users/wesbonelli/Documents/research/rshiny/data/summer-testing/", directories[i], "/ScriptDatum"), recursive = FALSE)#
+  		})
+ids
+directories[1]
+ids <- vector(num)
+ids <= vector("list", num)
+ids <- vector("list", num)
+ids
+sapply(1:num, function(i) {#
+			ids[[i]] = directories[i]#
+			frames[[i]] = sensus.read.json(paste0("/Users/wesbonelli/Documents/research/rshiny/data/summer-testing/", directories[i], "/ScriptDatum"), recursive = FALSE)#
+  		})
+ids
+sapply(1:num, function(i) {#
+  			current <- directories[i]#
+			ids[[i]] <- current#
+			frames[[i]] = sensus.read.json(paste0("/Users/wesbonelli/Documents/research/rshiny/data/summer-testing/", directories[i], "/ScriptDatum"), recursive = FALSE)#
+  		})
+ids
+frames
+sapply(1:num, function(i) {#
+  			print(i)#
+  		})
+sapply(1:num, function(i) {#
+  			current <- directories[i]#
+			print(current)#
+  		})
+sapply(1:num, function(i) {#
+			print(directories[i])#
+			frames[[i]] = sensus.read.json(paste0("/Users/wesbonelli/Documents/research/rshiny/data/summer-testing/", directories[i], "/ScriptDatum"), recursive = FALSE)#
+  		})
+sapply(1:num, function(i) {#
+			ids[[i]] <- directories[i]#
+			print(ids[i])#
+  		})
+sapply(1:num, function(i) {#
+			ids[[i]] <- directories[i]#
+  		})
+ids
+ids[[]]
+ids[1]
+ids[[1]]
+sapply(1:num, function(i) {#
+			ids[i] <- directories[i]#
+  		})
+ids
+ids <- numeric(5)
+ids
+sapply(1:num, function(i) {#
+			ids[i] <- directories[i]#
+  		})
+ids
+for (i in 1:num) {}#
+			ids[i] <- directories[i]#
+  		})
+for (i in 1:num) {#
+			ids[[i]] <- directories[i]#
+  		}
+ids
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+frames = list()#
+  		for (i in 1:num) {#
+			frames[[directories[i]]] <- sensus.read.json(paste0("/Users/wesbonelli/Documents/research/rshiny/data/summer-testing/", directories[i], "/ScriptDatum"), recursive = FALSE)#
+			# frames[[directories[i]]]$ScriptDatum$Timestamp <- as.POSIXct(frames[[directories[i]]]$ScriptDatum$Timestamp, origin = "1582-10-14", format = "%a/%b/%d %H:%M:%S")#
+  		}#
+  		frames
+frames
+frames[[1]]
+frames[1]
+frames[9999]
+frames = list()#
+  		for (i in 1:num) {#
+  			current <- directories[i]#
+			frames[[current]] <- sensus.read.json(paste0("/Users/wesbonelli/Documents/research/rshiny/data/summer-testing/", current, "/ScriptDatum"), recursive = FALSE)#
+			frames[[current]]$ScriptDatum$Timestamp <- as.POSIXct(frames[[current]]$ScriptDatum$Timestamp, origin = "1582-10-14", format = "%a/%b/%d %H:%M:%S")#
+  		}#
+  		frames
+frames = list()#
+  		for (i in 1:num) {#
+  			current <- directories[i]#
+			frames[[current]] <- sensus.read.json(paste0("/Users/wesbonelli/Documents/research/rshiny/data/summer-testing/", current, "/ScriptDatum"), recursive = FALSE)#
+			#frames[[current]]$ScriptDatum$Timestamp <- as.POSIXct(frames[[current]]$ScriptDatum$Timestamp, origin = "1582-10-14", format = "%a/%b/%d %H:%M:%S")#
+  		}#
+  		frames
+frames[[9999]]$ScriptDatum
+frames[[9999]]$ScriptDatum$Timestamp
+frames = list()#
+  		for (i in 1:num) {#
+  			current <- directories[i]#
+			frames[[current]] <- sensus.read.json(paste0("/Users/wesbonelli/Documents/research/rshiny/data/summer-testing/", current, "/ScriptDatum"), recursive = FALSE)#
+			frames[[current]]$ScriptDatum$Timestamp <- as.POSIXct(frames[[current]]$ScriptDatum$Timestamp, origin = "1582-10-14", format = "%a/%b/%d %H:%M:%S")#
+  		}
+frames = list()#
+  		for (i in 1:num) {#
+  			current <- directories[i]#
+			frames[[current]] <- sensus.read.json(paste0("/Users/wesbonelli/Documents/research/rshiny/data/summer-testing/", current, "/ScriptDatum"), recursive = FALSE)#
+			lapply(frames[[current]]$ScriptDatum$Timestamp, as.POSIXct(frames[[current]]$ScriptDatum$Timestamp, origin = "1582-10-14", format = "%a/%b/%d %H:%M:%S"))#
+  		}
+frames = list()#
+  		for (i in 1:num) {#
+  			current <- directories[i]#
+			frames[[current]] <- sensus.read.json(paste0("/Users/wesbonelli/Documents/research/rshiny/data/summer-testing/", current, "/ScriptDatum"), recursive = FALSE)#
+			lapply(frames[[current]]$ScriptDatum$Timestamp, as.POSIXct(origin = "1582-10-14", format = "%a/%b/%d %H:%M:%S"))#
+  		}
+frames = list()#
+  		for (i in 1:num) {#
+  			current <- directories[i]#
+			frames[[current]] <- sensus.read.json(paste0("/Users/wesbonelli/Documents/research/rshiny/data/summer-testing/", current, "/ScriptDatum"), recursive = FALSE)#
+			lapply(frames[[current]]$ScriptDatum$Timestamp, function(x) format(as.POSIXct(x, origin = "1582-10-14", format = "%a/%b/%d %H:%M:%S")))#
+  		}
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+frames[[id]]$ScriptDatum
+frames[[9999]]$ScriptDatum
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+frames[[9999]]
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+frames[which(frames$ScriptDatum$ScriptName == input$surveyType),]
+frames[which(frames$ScriptDatum$ScriptName == "EOD"),]
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+rm(list=ls())#
+directories = as.integer(sub("/", "", sub(".* ", "", sub(".*PRE", "", system(paste("aws s3 ls s3://summertesting"), intern = TRUE)))))#
+for (n in directories) {#
+	sensus.sync.from.aws.s3(paste0("s3://summertesting/", n, "/ScriptDatum"), local.path = paste0("/Users/wesbonelli/Documents/research/rshiny/data/summer-testing/", n, "/ScriptDatum"), delete = FALSE)#
+}
+library(SensusR)
+rm(list=ls())#
+directories = as.integer(sub("/", "", sub(".* ", "", sub(".*PRE", "", system(paste("aws s3 ls s3://summertesting"), intern = TRUE)))))#
+for (n in directories) {#
+	sensus.sync.from.aws.s3(paste0("s3://summertesting/", n, "/ScriptDatum"), local.path = paste0("/Users/wesbonelli/Documents/research/rshiny/data/summer-testing/", n, "/ScriptDatum"), delete = FALSE)#
+}
+rm(list=ls())#
+directories = sub("/", "", sub(".* ", "", sub(".*PRE", "", system(paste("aws s3 ls s3://summertesting"), intern = TRUE))))#
+for (n in directories) {#
+	sensus.sync.from.aws.s3(paste0("s3://summertesting/", n, "/ScriptDatum"), local.path = paste0("/Users/wesbonelli/Documents/research/rshiny/data/summer-testing/", n, "/ScriptDatum"), delete = FALSE)#
+}
+library(shiny)
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_single_participant")
+directories = as.integer(sub("/", "", sub(".* ", "", sub(".*PRE", "", system(paste("aws s3 ls s3://summertesting"), intern = TRUE)))))#
+  		for (n in directories) {#
+			sensus.sync.from.aws.s3(paste0("s3://summertesting/", n, "/ScriptDatum"), local.path = paste0("/Users/wesbonelli/Documents/research/rshiny/data/summertesting/", n, "/ScriptDatum"), delete = FALSE)#
+		}
+frame <- sensus.read.json(paste0("/Users/wesbonelli/Documents/research/rshiny/data/summertesting/", input$participant, "/ScriptDatum"))#
+  		lapply(frame$ScriptDatum$Timestamp, function(x) format(as.POSIXct(x, origin = "1582-10-14", format = "%a/%b/%d %H:%M:%S")))
+frame <- sensus.read.json(paste0("/Users/wesbonelli/Documents/research/rshiny/data/summertesting/9999/ScriptDatum"))#
+  		lapply(frame$ScriptDatum$Timestamp, function(x) format(as.POSIXct(x, origin = "1582-10-14", format = "%a/%b/%d %H:%M:%S")))
+frame
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_single_participant")
+library(plotly)
+p <- plot_ly(selectedData()$ScriptDatum, x = Timestamp, y = ScriptName, mode = "markers")#
+  		p <- layout(title = input$participant, xaxis = list(title = ""), yaxis = list(title = ""))
+p <- plot_ly(frame$ScriptDatum, x = Timestamp, y = ScriptName, mode = "markers")#
+  		p <- layout(title = input$participant, xaxis = list(title = ""), yaxis = list(title = ""))
+p
+p <- plot_ly(frame$ScriptDatum, x = Timestamp, y = ScriptName, mode = "markers")#
+  		p <- layout(title = "9999", xaxis = list(title = ""), yaxis = list(title = ""))
+p
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_single_participant")
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+library(SensusR)
+directories = sub("/", "", sub(".* ", "", sub(".*PRE", "", system(paste("aws s3 ls s3://summertesting"), intern = TRUE))))#
+for (n in directories) {#
+    sensus.sync.from.aws.s3(paste0("s3://summertesting/", n, "/ScriptDatum"), local.path = [local path], delete = FALSE)#
+}
+directories = sub("/", "", sub(".* ", "", sub(".*PRE", "", system(paste("aws s3 ls s3://summertesting"), intern = TRUE))))#
+for (n in directories) {#
+    sensus.sync.from.aws.s3(paste0("s3://summertesting/", n, "/ScriptDatum"), local.path = ""/Users/wesbonelli/Documents/research/rshiny/data/summertesting", delete = FALSE)#
+}
+directories = sub("/", "", sub(".* ", "", sub(".*PRE", "", system(paste("aws s3 ls s3://summertesting"), intern = TRUE))))#
+for (n in directories) {#
+    sensus.sync.from.aws.s3(paste0("s3://summertesting/", n, "/ScriptDatum"), local.path = "/Users/wesbonelli/Documents/research/rshiny/data/summertesting", delete = FALSE)#
+}
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_single_participant")
+library(shiny)
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_single_participant")
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+library(shiny)
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+library(shiny)
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+library(shiny)
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+library(shiny)
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+library(shiny)
+sensus.sync.from.aws.s3(paste0("s3://summertesting/9999/ScriptDatum"), local.path = paste0("/Users/wesbonelli/Documents/research/rshiny/data/summertesting/9999/ScriptDatum"), delete = FALSE)
+library(SensusR)
+sensus.sync.from.aws.s3(paste0("s3://summertesting/9999/ScriptDatum"), local.path = paste0("/Users/wesbonelli/Documents/research/rshiny/data/summertesting/9999/ScriptDatum"), delete = FALSE)
+frame <- data.frame(sensus.read.json(paste0("/Users/wesbonelli/Documents/research/rshiny/data/summertesting/9999/ScriptDatum"), recursive = FALSE))
+frame
+frame <- data.frame(sensus.read.json(paste0("/Users/wesbonelli/Documents/research/rshiny/data/summertesting/9999/ProtocolReportDatum"), recursive = FALSE))
+frame
+sensus.sync.from.aws.s3(paste0("s3://summertesting/9999/ScriptDatum"), local.path = paste0("/Users/wesbonelli/Documents/research/rshiny/data/summertesting/9999/ScriptDatum"), delete = FALSE)
+sensus.sync.from.aws.s3(paste0("s3://summertesting/9999/ProtocolReportDatum"), local.path = paste0("/Users/wesbonelli/Documents/research/rshiny/data/summertesting/9999/ProtocolReportDatum"), delete = FALSE)
+frame <- data.frame(sensus.read.json(paste0("/Users/wesbonelli/Documents/research/rshiny/data/summertesting/9999/ProtocolReportDatum"), recursive = FALSE))
+frame
+remove.package("SensusR")
+remove.packages("SensusR")
+sensus.sync.from.aws.s3(paste0("s3://summertesting/9999/ProtocolReportDatum"), local.path = paste0("/Users/wesbonelli/Documents/research/rshiny/data/summertesting/9999/ProtocolReportDatum"), delete = FALSE)
+rm(list = ls())
+sensus.sync.from.aws.s3(paste0("s3://summertesting/9999/ProtocolReportDatum"), local.path = paste0("/Users/wesbonelli/Documents/research/rshiny/data/summertesting/9999/ProtocolReportDatum"), delete = FALSE)
+install.packages("SensusR")
+library(SensusR)
+sensus.sync.from.aws.s3(paste0("s3://summertesting/9999/ProtocolReportDatum"), local.path = paste0("/Users/wesbonelli/Documents/research/rshiny/data/summertesting/9999/ProtocolReportDatum"), delete = FALSE)
+frame = NULL
+frame <- data.frame(sensus.read.json(paste0("/Users/wesbonelli/Documents/research/rshiny/data/summertesting/9999/ProtocolReportDatum"), recursive = FALSE))
+frame
+sensus.read.json(paste0("/Users/wesbonelli/Documents/research/rshiny/data/summertesting/9999/ProtocolReportDatum"), recursive = FALSE)
+install.packages("RPostgreSQL")
+pw <- "hobby"
+pw
+drv <- dbDriver("PostgreSQL")
+library(RPostgreSQL)
+drv <- dbDriver("PostgreSQL")
+con <- dbConnect(drv, dbname = "sensus_portal", host = "localhost", port = "5432", user = "postgres", password = pw)
+dbExistsTable(con, "ScriptDatum")
+con
+dbGetQuery(con, "select * from datum")
+dbGetQuery(con, "select * from datum;")
+dbGetQuery(con, "select * from scriptdatum;")
+dbExistsTable(con, "scriptdatum")
+dbExistsTable(con, "ScriptDatum")
+sensus.sync.from.aws.s3(paste0("s3://summertesting/), local.path = paste0("/Users/wesbonelli/Documents/research/rshiny/data/summertesting/), delete = FALSE)
+sensus.sync.from.aws.s3(paste0("s3://summertesting/), local.path = paste0("/Users/wesbonelli/Documents/research/rshiny/data/summertesting/""), delete = FALSE)
+sensus.sync.from.aws.s3(paste0("s3://summertesting/), local.path = paste0("/Users/wesbonelli/Documents/research/rshiny/data/summertesting/"), delete = FALSE)
+)
+sensus.sync.from.aws.s3("s3://summertesting/, local.path = "/Users/wesbonelli/Documents/research/rshiny/data/summertesting/", delete = FALSE)
+sensus.sync.from.aws.s3("s3://summertesting/", local.path = "/Users/wesbonelli/Documents/research/rshiny/data/summertesting/", delete = FALSE)
+library(shiny)
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_single_participant")
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+library(shiny)
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+``
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+library(RPostgreSQL)
+drv <- dbDriver("PostgreSQL")
+con <- dbConnect(drv, dbname = "sensus_portal", host = "localhost", port = 5432, user = "postgres", password = "hobby")
+dbExistsTable(con, "scriptdatum")
+d <- dbGetQuery(con, "alter table accelerometerdatum add column protocolid;")
+d <- dbGetQuery(con, "alter table accelerometerdatum add column protocolid")
+d <- dbGetQuery(con, "alter table accelerometerdatum add column protocolid character varying(500)")
+d <- dbGetQuery(con, "alter table altitudedatum add column protocolid character varying(500)")
+d <- dbGetQuery(con, "alter table ambienttemeperaturedatum add column protocolid character varying(500)")
+d <- dbGetQuery(con, "alter table ambienttemperaturedatum add column protocolid character varying(500)")
+d <- dbGetQuery(con, "alter table batterydatum add column protocolid character varying(500)")
+d <- dbGetQuery(con, "alter table biologicalsexdatum add column protocolid character varying(500)")
+d <- dbGetQuery(con, "alter table birthdatedatum add column protocolid character varying(500)")
+d <- dbGetQuery(con, "alter table bloodtypedatum add column protocolid character varying(500)")
+d <- dbGetQuery(con, "alter table bluetoothdeviceproximitydatum add column protocolid character varying(500)")
+d <- dbGetQuery(con, "alter table celltowerdatum add column protocolid character varying(500)")
+d <- dbGetQuery(con, "alter table compassdatum add column protocolid character varying(500)")
+d <- dbGetQuery(con, "alter table facebookdatum add column protocolid character varying(500)")
+d <- dbGetQuery(con, "alter table heightdatum add column protocolid character varying(500)")
+d <- dbGetQuery(con, "alter table imprecisedatum add column protocolid character varying(500)")
+d <- dbGetQuery(con, "alter table lightdatum add column protocolid character varying(500)")
+d <- dbGetQuery(con, "alter table locationdatum add column protocolid character varying(500)")
+d <- dbGetQuery(con, "alter table participationrewarddatum add column protocolid character varying(500)")
+d <- dbGetQuery(con, "alter table pointofinteresteproximitydatum add column protocolid character varying(500)")
+d <- dbGetQuery(con, "alter table pointofinterestproximitydatum add column protocolid character varying(500)")
+d <- dbGetQuery(con, "alter table protocolreportdatum add column protocolid character varying(500)")
+d <- dbGetQuery(con, "alter table screendatum add column protocolid character varying(500)")
+d <- dbGetQuery(con, "alter table scriprtdatum add column protocolid character varying(500)")
+d <- dbGetQuery(con, "alter table scriptdatum add column protocolid character varying(500)")
+d <- dbGetQuery(con, "alter table scriptresponsedatum add column protocolid character varying(500)")
+d <- dbGetQuery(con, "alter table scriptrundatum add column protocolid character varying(500)")
+d <- dbGetQuery(con, "alter table smsdatum add column protocolid character varying(500)")
+d <- dbGetQuery(con, "alter table sunddatum add column protocolid character varying(500)")
+d <- dbGetQuery(con, "alter table sounddatum add column protocolid character varying(500)")
+d <- dbGetQuery(con, "alter table speeddatum add column protocolid character varying(500)")
+d <- dbGetQuery(con, "alter table telephonydatum add column protocolid character varying(500)")
+d <- dbGetQuery(con, "alter table wlandatum add column protocolid character varying(500)")
+d <- dbGetQuery(con, "alter table wlandatum add column timestamp character varying(500)")
+d <- dbGetQuery(con, "alter table wlandatum add column on character varying(500)")
+d <- dbGetQuery(con, "alter table wlandatum add column name character varying(500)")
+d <- dbGetQuery(con, "alter table wlandatum add column level character varying(500)")
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+library(shiny)
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+library(shiny)
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+library(shiny)
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+library(shiny)
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+pg.driver <- dbDriver("PostgreSQL")
+pg.connection <- dbConnect(pg.driver, dbname = sensus_portal, host = localhost, port = 5432, user = postgres, password = hobby)
+pg.connection <- dbConnect(pg.driver, dbname = "sensus_portal", host = "localhost", port = 5432, user = "postgres", password = "hobby")
+library(RPostgreSQL)
+pg.connection <- dbConnect(pg.driver, dbname = "sensus_portal", host = "localhost", port = 5432, user = "postgres", password = "hobby")
+pg.driver <- dbDriver("PostgreSQL")
+pg.connection <- dbConnect(pg.driver, dbname = "sensus_portal", host = "localhost", port = 5432, user = "postgres", password = "hobby")
+dbDisconnect(pg.connection)
+dbUnloadDriver(drv)
+dbUnloadDriver(pg.driver)
+library(shiny)
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+library(shiny)
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+library(shiny)
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+library(shiny)
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+library(shiny)
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+library(shiny)
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+library(shiny)
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+library(shiny)
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+library(shiny)
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+library(shiny)
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+library(shiny)
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+library(shiny)
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+library(shiny)
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
+runApp("/Users/wesbonelli/Documents/research/rshiny/json_data_format/survey_all_participants")
