@@ -25,7 +25,8 @@ namespace SensusService.DataStores.Local
 {
     public class FileLocalDataStore : LocalDataStore
     {
-        private const double REMOTE_COMMIT_TRIGGER_STORAGE_DIRECTORY_SIZE_MB = 5;
+        private const double REMOTE_COMMIT_TRIGGER_STORAGE_DIRECTORY_SIZE_MB = 10;
+        private const double MAX_FILE_SIZE_MB = 1;
 
         private string _path;
 
@@ -92,51 +93,73 @@ namespace SensusService.DataStores.Local
 
                     lock (_storageDirectoryLocker)
                     {
-                        using (StreamWriter file = new StreamWriter(_path, true))
+                        try
                         {
-                            foreach (Datum datum in data)
+                            using (StreamWriter file = new StreamWriter(_path, true))
                             {
-                                if (cancellationToken.IsCancellationRequested)
-                                    break;
+                                foreach (Datum datum in data)
+                                {
+                                    if (cancellationToken.IsCancellationRequested)
+                                        break;
 
-                                // get JSON for datum
-                                string datumJSON = null;
-                                try
-                                {
-                                    datumJSON = datum.GetJSON(Protocol.JsonAnonymizer, false);
-                                }
-                                catch (Exception ex)
-                                {
-                                    SensusServiceHelper.Get().Logger.Log("Failed to get JSON for datum:  " + ex.Message, LoggingLevel.Normal, GetType());
-                                }
-
-                                // write JSON to file
-                                if (datumJSON != null)
-                                {
+                                    // get JSON for datum
+                                    string datumJSON = null;
                                     try
                                     {
-                                        file.WriteLine(datumJSON);
-                                        MostRecentSuccessfulCommitTime = DateTime.Now;
-                                        committedData.Add(datum);
+                                        datumJSON = datum.GetJSON(Protocol.JsonAnonymizer, false);
                                     }
                                     catch (Exception ex)
                                     {
-                                        SensusServiceHelper.Get().Logger.Log("Failed to write datum JSON to local file:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                        SensusServiceHelper.Get().Logger.Log("Failed to get JSON for datum:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                    }
 
-                                        // something went wrong with file write...switch to a new file in the hope that it will work better
+                                    // write JSON to file
+                                    if (datumJSON != null)
+                                    {
                                         try
                                         {
-                                            WriteToNewPath();
-                                            SensusServiceHelper.Get().Logger.Log("Initialized new local file.", LoggingLevel.Normal, GetType());
+                                            file.WriteLine(datumJSON);
+                                            MostRecentSuccessfulCommitTime = DateTime.Now;
+                                            committedData.Add(datum);
                                         }
-                                        catch (Exception ex2)
+                                        catch (Exception ex)
                                         {
-                                            SensusServiceHelper.Get().Logger.Log("Failed to initialize new file after failing to write the old one:  " + ex2.Message, LoggingLevel.Normal, GetType());
+                                            SensusServiceHelper.Get().Logger.Log("Failed to write datum JSON to local file:  " + ex.Message, LoggingLevel.Normal, GetType());
+
+                                            // something went wrong with file write...switch to a new file in the hope that it will work better
+                                            try
+                                            {
+                                                WriteToNewPath();
+                                                SensusServiceHelper.Get().Logger.Log("Initialized new local file.", LoggingLevel.Normal, GetType());
+                                            }
+                                            catch (Exception ex2)
+                                            {
+                                                SensusServiceHelper.Get().Logger.Log("Failed to initialize new file after failing to write the old one:  " + ex2.Message, LoggingLevel.Normal, GetType());
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
+                        catch (Exception ex)
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Failed to write data:  " + ex.Message, LoggingLevel.Normal, GetType());
+
+                            // something went wrong with file write...switch to a new file in the hope that it will work better
+                            try
+                            {
+                                WriteToNewPath();
+                                SensusServiceHelper.Get().Logger.Log("Initialized new local file.", LoggingLevel.Normal, GetType());
+                            }
+                            catch (Exception ex2)
+                            {
+                                SensusServiceHelper.Get().Logger.Log("Failed to initialize new file after failing to write the old one:  " + ex2.Message, LoggingLevel.Normal, GetType());
+                            }
+                        }
+
+                        // switch to a new path if the current one has grown too large
+                        if (SensusServiceHelper.GetFileSizeMB(_path) >= MAX_FILE_SIZE_MB)
+                            WriteToNewPath();
                     }
 
                     CheckSizeAndCommitToRemote(cancellationToken);
@@ -349,6 +372,22 @@ namespace SensusService.DataStores.Local
             base.ClearForSharing();
 
             _path = null;
+        }
+
+        public override bool TestHealth(ref string error, ref string warning, ref string misc)
+        {
+            bool restart = base.TestHealth(ref error, ref warning, ref misc);
+
+            lock(_storageDirectoryLocker)
+            {
+                int fileCount = Directory.GetFiles(StorageDirectory).Length;
+
+                string name = GetType().Name;
+                misc += "Number of files (" + name + "):  " + fileCount + Environment.NewLine +
+                        "Average file size (MB) (" + name + "):  " + Math.Round(SensusServiceHelper.GetDirectorySizeMB(StorageDirectory) / (float)fileCount, 2) + Environment.NewLine;
+            }
+
+            return restart;
         }
     }
 }

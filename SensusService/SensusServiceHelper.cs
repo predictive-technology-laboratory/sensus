@@ -256,9 +256,14 @@ namespace SensusService
             double directorySizeMB = 0;
 
             foreach (string path in Directory.GetFiles(directory))
-                directorySizeMB += new FileInfo(path).Length / (1024d * 1024d);
+                directorySizeMB += GetFileSizeMB(path);
 
             return directorySizeMB;
+        }
+
+        public static double GetFileSizeMB(string path)
+        {
+            return new FileInfo(path).Length / (1024d * 1024d);
         }
 
         #region encryption
