@@ -492,6 +492,11 @@ namespace Sensus.iOS
                 });
         }
 
+        public override bool EnableBluetooth(bool lowEnergy, string rationale)
+        {
+            return false;
+        }
+
         #region methods not implemented in ios
 
         public override void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)

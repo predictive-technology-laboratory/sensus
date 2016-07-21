@@ -61,6 +61,9 @@ namespace SensusService
 
         protected static void ConnectClient(MicrosoftBandProbeBase configureProbeIfConnected = null)
         {
+            if (!SensusServiceHelper.Get().EnableBluetooth(true, "Sensus uses Bluetooth to collect data from your Microsoft Band, which is being used in one of your studies."))
+                return;
+
             if (configureProbeIfConnected != null)
             {
                 lock (CONFIGURE_PROBES_IF_CONNECTED)
@@ -78,6 +81,17 @@ namespace SensusService
 
                     Task.Run(async () =>
                     {
+                        // check if the client has been disposed
+                        try
+                        {
+                            if (BAND_CLIENT?.IsConnected ?? false)
+                                SensusServiceHelper.Get().Logger.Log("Client connected.", LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
+                        }
+                        catch (ObjectDisposedException)
+                        {
+                            BAND_CLIENT = null;
+                        }
+
                         try
                         {
                             // if we already have a connection, configure any waiting probes
@@ -298,14 +312,29 @@ namespace SensusService
 
         protected override void StopListening()
         {
+            StopReadings();
+
             // only cancel the static health test if none of the band probes should be running.
             lock (HEALTH_TEST_LOCKER)
             {
                 if (BandProbesThatShouldBeRunning.Count == 0)
+                {
                     CancelHealthTest();
-            }
 
-            StopReadings();
+                    // disconnect the client
+                    if (BAND_CLIENT?.IsConnected ?? false)
+                    {
+                        try
+                        {
+                            BAND_CLIENT.DisconnectAsync().Wait();
+                        }
+                        catch (Exception ex)
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Failed to disconnect client:  " + ex.Message, LoggingLevel.Normal, GetType());
+                        }
+                    }
+                }
+            }
         }
 
         protected abstract void StopReadings();

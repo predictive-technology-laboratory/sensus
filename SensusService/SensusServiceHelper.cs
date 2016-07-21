@@ -620,6 +620,8 @@ namespace SensusService
 
         public abstract ImageSource GetQrCodeImageSource(string contents);
 
+        public abstract bool EnableBluetooth(bool lowEnergy, string rationale);
+
         #endregion
 
         #region add/remove running protocol ids
