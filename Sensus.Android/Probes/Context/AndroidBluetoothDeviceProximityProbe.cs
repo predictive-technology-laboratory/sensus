@@ -25,10 +25,10 @@ namespace Sensus.Android.Probes.Context
 
         public AndroidBluetoothDeviceProximityProbe()
         {
-            _deviceFoundCallback = (sender, bluetoothDeviceProximityDatum) =>
-                {
-                    StoreDatum(bluetoothDeviceProximityDatum);
-                };
+            _deviceFoundCallback = async (sender, bluetoothDeviceProximityDatum) =>
+            {
+                await StoreDatumAsync(bluetoothDeviceProximityDatum);
+            };
         }
 
         protected override void Initialize()

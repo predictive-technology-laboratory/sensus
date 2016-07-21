@@ -256,9 +256,14 @@ namespace SensusService
             double directorySizeMB = 0;
 
             foreach (string path in Directory.GetFiles(directory))
-                directorySizeMB += new FileInfo(path).Length / (1024d * 1024d);
+                directorySizeMB += GetFileSizeMB(path);
 
             return directorySizeMB;
+        }
+
+        public static double GetFileSizeMB(string path)
+        {
+            return new FileInfo(path).Length / (1024d * 1024d);
         }
 
         #region encryption
@@ -615,6 +620,19 @@ namespace SensusService
 
         public abstract ImageSource GetQrCodeImageSource(string contents);
 
+        public virtual bool EnableBluetooth(bool lowEnergy, string rationale)
+        {
+            try
+            {
+                AssertNotOnMainThread(GetType() + " EnableBluetooth");
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         #endregion
 
         #region add/remove running protocol ids
@@ -628,7 +646,30 @@ namespace SensusService
 
                 if (_healthTestCallbackId == null)
                 {
-                    ScheduledCallback callback = new ScheduledCallback(TestHealthAsync, "Test Health", TimeSpan.FromMinutes(1));
+                    ScheduledCallback callback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
+                    {
+                        List<Protocol> protocolsToTest = new List<Protocol>();
+
+                        // we've already got a lock on running protocol IDs. just need a lock on the protocols.
+                        lock (_registeredProtocols)
+                        {
+                            foreach (Protocol protocol in _registeredProtocols)
+                                if (_runningProtocolIds.Contains(protocol.Id))
+                                    protocolsToTest.Add(protocol);
+                        }
+
+                        foreach (Protocol protocolToTest in protocolsToTest)
+                        {
+                            if (cancellationToken.IsCancellationRequested)
+                                break;
+
+                            _logger.Log("Sensus health test for protocol \"" + protocolToTest.Name + "\" is running on callback " + callbackId + ".", LoggingLevel.Normal, GetType());
+
+                            await protocolToTest.TestHealthAsync(false, cancellationToken);
+                        }
+
+                    }, "Test Health", TimeSpan.FromMinutes(1));
+
                     _healthTestCallbackId = ScheduleRepeatingCallback(callback, HEALTH_TEST_DELAY_MS, HEALTH_TEST_DELAY_MS, HEALTH_TEST_REPEAT_LAG);
                 }
             }
@@ -1295,26 +1336,6 @@ namespace SensusService
                         };
 
                         await Application.Current.MainPage.Navigation.PushModalAsync(mapPage);
-                    }
-                });
-        }
-
-        public Task TestHealthAsync(string callbackId, CancellationToken cancellationToken, Action letDeviceSleepCallback)
-        {
-            return Task.Run(() =>
-                {
-                    lock (_registeredProtocols)
-                    {
-                        _logger.Log("Sensus health test is running on callback " + callbackId + ".", LoggingLevel.Normal, GetType());
-
-                        foreach (Protocol protocol in _registeredProtocols)
-                        {
-                            if (cancellationToken.IsCancellationRequested)
-                                break;
-
-                            if (_runningProtocolIds.Contains(protocol.Id))
-                                protocol.TestHealth(false);
-                        }
                     }
                 });
         }

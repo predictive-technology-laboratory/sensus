@@ -50,17 +50,45 @@ namespace SensusService
             }
         }
 
+        private static List<MicrosoftBandProbeBase> BandProbesThatAreRunning
+        {
+            get
+            {
+                return SensusServiceHelper.Get().RegisteredProtocols.SelectMany(protocol => protocol.Probes.Where(probe => probe.Running && probe is MicrosoftBandProbeBase)).Cast<MicrosoftBandProbeBase>().ToList();
+            }
+        }
+
         [JsonIgnore]
         protected static BandClient BandClient
         {
             get
             {
+                // the client can become disposed (at least on android) when the user turns bluetooth off/on. the client won't be null,
+                // so we risk an object disposed when referencing the client. test this out below and set the client to null if it's disposed.
+                try
+                {
+                    if (BAND_CLIENT?.IsConnected ?? false)
+                        SensusServiceHelper.Get().Logger.Log("Client connected.", LoggingLevel.Debug, typeof(MicrosoftBandProbeBase));
+                }
+                catch (ObjectDisposedException)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Client disposed.", LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
+                    BAND_CLIENT = null;
+                }
+
                 return BAND_CLIENT;
+            }
+            set
+            {
+                BAND_CLIENT = value;
             }
         }
 
         protected static void ConnectClient(MicrosoftBandProbeBase configureProbeIfConnected = null)
         {
+            if (!SensusServiceHelper.Get().EnableBluetooth(true, "Sensus uses Bluetooth to collect data from your Microsoft Band, which is being used in one of your studies."))
+                return;
+
             if (configureProbeIfConnected != null)
             {
                 lock (CONFIGURE_PROBES_IF_CONNECTED)
@@ -81,7 +109,7 @@ namespace SensusService
                         try
                         {
                             // if we already have a connection, configure any waiting probes
-                            if (BAND_CLIENT?.IsConnected ?? false)
+                            if (BandClient?.IsConnected ?? false)
                             {
                                 lock (CONFIGURE_PROBES_IF_CONNECTED)
                                 {
@@ -105,25 +133,28 @@ namespace SensusService
                             {
                                 int connectAttemptsLeft = BAND_CLIENT_CONNECT_ATTEMPTS;
 
-                                while (connectAttemptsLeft-- > 0 && (BAND_CLIENT == null || !BAND_CLIENT.IsConnected))
+                                while (connectAttemptsLeft-- > 0 && (BandClient == null || !BandClient.IsConnected))
                                 {
                                     BandClientManager bandManager = BandClientManager.Instance;
                                     BandDeviceInfo band = (await bandManager.GetPairedBandsAsync()).FirstOrDefault();
                                     if (band == null)
+                                    {
                                         SensusServiceHelper.Get().Logger.Log("No Bands connected. Retrying...", LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
+                                        Thread.Sleep(BAND_CLIENT_CONNECT_TIMEOUT_MS);
+                                    }
                                     else
                                     {
                                         Task<BandClient> connectTask = bandManager.ConnectAsync(band);
 
                                         if (await Task.WhenAny(connectTask, Task.Delay(BAND_CLIENT_CONNECT_TIMEOUT_MS)) == connectTask)
-                                            BAND_CLIENT = await connectTask;
+                                            BandClient = await connectTask;
                                         else
                                             SensusServiceHelper.Get().Logger.Log("Timed out while connecting. Retrying...", LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
                                     }
                                 }
 
                                 // if we connected successfully, configure all probes that should be running
-                                if (BAND_CLIENT?.IsConnected ?? false)
+                                if (BandClient?.IsConnected ?? false)
                                 {
                                     foreach (MicrosoftBandProbeBase probe in BandProbesThatShouldBeRunning)
                                     {
@@ -159,7 +190,7 @@ namespace SensusService
 
             BAND_CLIENT_CONNECT_WAIT.WaitOne();
 
-            if (BAND_CLIENT == null || !BAND_CLIENT.IsConnected)
+            if (BandClient == null || !BandClient.IsConnected)
                 throw new Exception("Failed to connect to Microsoft Band.");
         }
 
@@ -298,14 +329,31 @@ namespace SensusService
 
         protected override void StopListening()
         {
+            StopReadings();
+
             // only cancel the static health test if none of the band probes should be running.
             lock (HEALTH_TEST_LOCKER)
             {
                 if (BandProbesThatShouldBeRunning.Count == 0)
+                {
                     CancelHealthTest();
+                }
             }
 
-            StopReadings();
+            // disconnect the client if no band probes are actually running.
+            if (BandProbesThatAreRunning.Count == 0 && (BandClient?.IsConnected ?? false))
+            {
+                try
+                {
+                    SensusServiceHelper.Get().Logger.Log("All Band probes have stopped. Disconnecting client.", LoggingLevel.Normal, GetType());
+                    BandClient.DisconnectAsync().Wait();
+                    BandClient = null;
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Failed to disconnect client:  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
+            }
         }
 
         protected abstract void StopReadings();

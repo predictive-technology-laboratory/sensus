@@ -24,10 +24,10 @@ namespace Sensus.Android.Probes.Context
 
         public AndroidAmbientTemperatureProbe()
         {
-            _temperatureListener = new AndroidSensorListener(SensorType.AmbientTemperature, SensorDelay.Normal, null, e =>
-                {
-                    StoreDatum(new AmbientTemperatureDatum(DateTimeOffset.UtcNow, e.Values[0]));
-                });
+            _temperatureListener = new AndroidSensorListener(SensorType.AmbientTemperature, SensorDelay.Normal, null, async e =>
+            {
+                await StoreDatumAsync(new AmbientTemperatureDatum(DateTimeOffset.UtcNow, e.Values[0]));
+            });
         }
 
         protected override void Initialize()

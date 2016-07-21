@@ -73,10 +73,12 @@ namespace SensusService.Probes.Movement
 
         public ListeningSpeedProbe()
         {
-            _positionChangedHandler = (o, e) =>
+            _positionChangedHandler = async (o, e) =>
             {
                 if (e.Position == null)
                     return;
+
+                Datum datum = null;
 
                 lock (_locker)
                 {
@@ -86,10 +88,13 @@ namespace SensusService.Probes.Movement
                         _previousPosition = e.Position;
                     else if (e.Position.Timestamp > _previousPosition.Timestamp)  // it has happened (rarely) that positions come in out of order...drop any such positions.
                     {
-                        StoreDatum(new SpeedDatum(e.Position.Timestamp, _previousPosition, e.Position));
+                        datum = new SpeedDatum(e.Position.Timestamp, _previousPosition, e.Position);
                         _previousPosition = e.Position;
                     }
                 }
+
+                if (datum != null)
+                    await StoreDatumAsync(datum);
             };
         }
 

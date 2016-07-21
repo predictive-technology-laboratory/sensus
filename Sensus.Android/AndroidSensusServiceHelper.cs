@@ -35,6 +35,7 @@ using System.Linq;
 using ZXing.Mobile;
 using Android.Graphics;
 using Android.Media;
+using Android.Bluetooth;
 
 namespace Sensus.Android
 {
@@ -51,6 +52,7 @@ namespace Sensus.Android
         private int _wakeLockAcquisitionCount;
         private List<Action<AndroidMainActivity>> _actionsToRunUsingMainActivity;
         private Dictionary<string, PendingIntent> _callbackIdPendingIntent;
+        private bool _userDeniedBluetoothEnable;
 
         [JsonIgnore]
         public AndroidSensusService Service
@@ -128,10 +130,24 @@ namespace Sensus.Android
             get { return _wakeLockAcquisitionCount; }
         }
 
+        public bool UserDeniedBluetoothEnable
+        {
+            get
+            {
+                return _userDeniedBluetoothEnable;
+            }
+
+            set
+            {
+                _userDeniedBluetoothEnable = value;
+            }
+        }
+
         public AndroidSensusServiceHelper()
         {
             _actionsToRunUsingMainActivity = new List<Action<AndroidMainActivity>>();
             _callbackIdPendingIntent = new Dictionary<string, PendingIntent>();
+            _userDeniedBluetoothEnable = false;
         }
 
         public void SetService(AndroidSensusService service)
@@ -539,6 +555,84 @@ namespace Sensus.Android
                     ms.Seek(0, SeekOrigin.Begin);
                     return ms;
                 });
+        }
+
+        /// <summary>
+        /// Enables the Bluetooth adapter, or prompts the user to do so if we cannot do this programmatically. Must not be called from the UI thread.
+        /// </summary>
+        /// <returns><c>true</c>, if Bluetooth was enabled, <c>false</c> otherwise.</returns>
+        /// <param name="lowEnergy">If set to <c>true</c> low energy.</param>
+        /// <param name="rationale">Rationale.</param>
+        public override bool EnableBluetooth(bool lowEnergy, string rationale)
+        {
+            base.EnableBluetooth(lowEnergy, rationale);
+
+            bool enabled = false;
+
+            // ensure that the device has the required feature
+            if (!_service.PackageManager.HasSystemFeature(lowEnergy ? PackageManager.FeatureBluetoothLe : PackageManager.FeatureBluetooth))
+            {
+                FlashNotificationAsync("This device does not have the Bluetooth " + (lowEnergy ? "Low Energy" : "") + " feature.", true);
+                return enabled;
+            }
+
+            ManualResetEvent enableWait = new ManualResetEvent(false);
+
+            // check whether bluetooth is enabled
+            BluetoothManager bluetoothManager = _service.GetSystemService(Context.BluetoothService) as BluetoothManager;
+            BluetoothAdapter bluetoothAdapter = bluetoothManager.Adapter;
+            if (bluetoothAdapter == null || !bluetoothAdapter.IsEnabled)
+            {
+                // if it's not and if the user has previously denied bluetooth, quit now.
+                if (_userDeniedBluetoothEnable)
+                    enableWait.Set();
+                else
+                {
+                    // bring up sensus
+                    RunActionUsingMainActivityAsync(mainActivity =>
+                    {
+                        mainActivity.RunOnUiThread(async () =>
+                        {
+                            try
+                            {
+                                // explain why we need bluetooth
+                                await Xamarin.Forms.Application.Current.MainPage.DisplayAlert("Bluetooth", "Sensus will now prompt you to enable Bluetooth. " + rationale, "OK");
+
+                                // prompt for permission
+                                Intent enableIntent = new Intent(BluetoothAdapter.ActionRequestEnable);
+                                mainActivity.GetActivityResultAsync(enableIntent, AndroidActivityResultRequestCode.EnableBluetooth, resultIntent =>
+                                {
+                                    if (resultIntent.Item1 == Result.Canceled)
+                                        _userDeniedBluetoothEnable = true;
+                                    else if (resultIntent.Item1 == Result.Ok)
+                                        enabled = true;
+
+                                    enableWait.Set();
+                                });
+
+                            }
+                            catch (Exception ex)
+                            {
+                                Logger.Log("Failed to start Bluetooth:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                enableWait.Set();
+                            }
+                        });
+
+                    }, true, false);
+                }
+            }
+            else
+            {
+                enabled = true;
+                enableWait.Set();
+            }
+
+            enableWait.WaitOne();
+
+            if (enabled)
+                _userDeniedBluetoothEnable = false;
+
+            return enabled;
         }
 
         #endregion

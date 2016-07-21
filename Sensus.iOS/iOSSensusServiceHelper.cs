@@ -29,6 +29,7 @@ using SensusService.Probes.Movement;
 using MessageUI;
 using System.IO;
 using Newtonsoft.Json;
+using CoreBluetooth;
 
 namespace Sensus.iOS
 {
@@ -38,6 +39,7 @@ namespace Sensus.iOS
 
         public const string SENSUS_CALLBACK_REPEAT_DELAY = "SENSUS-CALLBACK-REPEAT-DELAY";
         public const string SENSUS_CALLBACK_ACTIVATION_ID = "SENSUS-CALLBACK-ACTIVATION-ID";
+        private const int BLUETOOTH_ENABLE_TIMEOUT_MS = 10000;
 
         /// <summary>
         /// Cancels a UILocalNotification. This will succeed in one of two conditions:  (1) if the notification to be
@@ -483,13 +485,59 @@ namespace Sensus.iOS
         public override ImageSource GetQrCodeImageSource(string contents)
         {
             return ImageSource.FromStream(() =>
+            {
+                UIImage bitmap = BarcodeWriter.Write(contents);
+                MemoryStream ms = new MemoryStream();
+                bitmap.AsPNG().AsStream().CopyTo(ms);
+                ms.Seek(0, SeekOrigin.Begin);
+                return ms;
+            });
+        }
+
+        /// <summary>
+        /// Enables the Bluetooth adapter, or prompts the user to do so if we cannot do this programmatically. Must not be called from the UI thread.
+        /// </summary>
+        /// <returns><c>true</c>, if Bluetooth was enabled, <c>false</c> otherwise.</returns>
+        /// <param name="lowEnergy">If set to <c>true</c> low energy.</param>
+        /// <param name="rationale">Rationale.</param>
+        public override bool EnableBluetooth(bool lowEnergy, string rationale)
+        {
+            base.EnableBluetooth(lowEnergy, rationale);
+
+            bool enabled = false;
+            ManualResetEvent enableWait = new ManualResetEvent(false);
+
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                try
                 {
-                    UIImage bitmap = BarcodeWriter.Write(contents);
-                    MemoryStream ms = new MemoryStream();
-                    bitmap.AsPNG().AsStream().CopyTo(ms);
-                    ms.Seek(0, SeekOrigin.Begin);
-                    return ms;
-                });
+                    CBCentralManager manager = new CBCentralManager(CoreFoundation.DispatchQueue.CurrentQueue);
+                    manager.UpdatedState += (sender, e) =>
+                    {
+                        if (manager.State == CBCentralManagerState.PoweredOn)
+                        {
+                            enabled = true;
+                            enableWait.Set();
+                        }
+                    };
+
+                    if (manager.State == CBCentralManagerState.PoweredOn)
+                    {
+                        enabled = true;
+                        enableWait.Set();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log("Failed while requesting Bluetooth enable:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    enableWait.Set();
+                }
+            });
+
+            if (!enableWait.WaitOne(BLUETOOTH_ENABLE_TIMEOUT_MS))
+                Logger.Log("Timed out while waiting for user to enable Bluetooth.", LoggingLevel.Normal, GetType());
+
+            return enabled;
         }
 
         #region methods not implemented in ios

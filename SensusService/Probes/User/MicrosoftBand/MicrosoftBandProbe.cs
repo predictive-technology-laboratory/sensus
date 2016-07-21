@@ -33,9 +33,9 @@ namespace SensusService.Probes.User.MicrosoftBand
                 Sensor.ReadingChanged += ReadingChanged;
         }
 
-        private void ReadingChanged(object sender, BandSensorReadingEventArgs<ReadingType> args)
+        private async void ReadingChanged(object sender, BandSensorReadingEventArgs<ReadingType> args)
         {
-            StoreDatum(GetDatumFromReading(args.SensorReading));
+            await StoreDatumAsync(GetDatumFromReading(args.SensorReading));
         }
 
         protected override void StartReadings()

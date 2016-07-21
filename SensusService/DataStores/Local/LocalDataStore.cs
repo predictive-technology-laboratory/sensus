@@ -39,6 +39,9 @@ namespace SensusService.DataStores.Local
     public abstract class LocalDataStore : DataStore
     {
         private bool _uploadToRemoteDataStore;
+        private bool _sizeTriggeredRemoteCommitRunning;
+
+        private readonly object _sizeTriggeredRemoteCommitLocker = new object();
 
         [OnOffUiProperty("Upload to Remote:", true, 3)]
         public bool UploadToRemoteDataStore
@@ -53,6 +56,7 @@ namespace SensusService.DataStores.Local
         protected LocalDataStore()
         {
             _uploadToRemoteDataStore = true;
+            _sizeTriggeredRemoteCommitRunning = false;
 
 #if DEBUG || UNIT_TESTING
             CommitDelayMS = 5000;  // 5 seconds...so we can see debugging output quickly
@@ -62,6 +66,40 @@ namespace SensusService.DataStores.Local
         }
 
         public abstract void CommitDataToRemoteDataStore(CancellationToken cancellationToken);
+
+        protected abstract bool TriggerRemoteCommit();
+
+        protected void CheckSizeAndCommitToRemote(CancellationToken cancellationToken)
+        {
+            bool runCommit = false;
+
+            lock (_sizeTriggeredRemoteCommitLocker)
+            {
+                if (TriggerRemoteCommit() && !_sizeTriggeredRemoteCommitRunning)
+                {
+                    _sizeTriggeredRemoteCommitRunning = true;
+                    runCommit = true;
+                }
+            }
+
+            if (runCommit)
+            {
+                SensusServiceHelper.Get().Logger.Log("Running size-triggered commit to remote.", LoggingLevel.Normal, GetType());
+
+                try
+                {
+                    CommitDataToRemoteDataStore(cancellationToken);
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Failed to run size-triggered commit to remote:  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
+                finally
+                {
+                    _sizeTriggeredRemoteCommitRunning = false;
+                }
+            }
+        }
 
         public int WriteDataToZipFile(string zipPath, CancellationToken cancellationToken, Action<string, double> progressCallback)
         {

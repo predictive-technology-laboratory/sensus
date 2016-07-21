@@ -19,6 +19,7 @@ using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions.Abstractions;
 using Newtonsoft.Json;
 using Syncfusion.SfChart.XForms;
+using System.Collections.Generic;
 
 namespace SensusService.Probes.Location
 {
@@ -26,8 +27,6 @@ namespace SensusService.Probes.Location
     {
         private ObservableCollection<PointOfInterestProximityTrigger> _triggers;
         private EventHandler<PositionEventArgs> _positionChangedHandler;
-
-        private readonly object _locker = new object();
 
         public ObservableCollection<PointOfInterestProximityTrigger> Triggers
         {
@@ -81,30 +80,27 @@ namespace SensusService.Probes.Location
         {
             _triggers = new ObservableCollection<PointOfInterestProximityTrigger>();
 
-            _positionChangedHandler = (o, e) =>
+            _positionChangedHandler = async (o, e) =>
             {
-                lock (_locker)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Received position change notification.", LoggingLevel.Verbose, GetType());
+                List<Datum> data = new List<Datum>();
 
-                    bool datumStored = false;
+                SensusServiceHelper.Get().Logger.Log("Received position change notification.", LoggingLevel.Verbose, GetType());
 
-                    if (e.Position != null)
-                        foreach (PointOfInterest pointOfInterest in SensusServiceHelper.Get().PointsOfInterest.Union(Protocol.PointsOfInterest))  // POIs are stored on the service helper (e.g., home locations) and the Protocol (e.g., bars), since the former are user-specific and the latter are universal.
-                        {
-                            double distanceToPointOfInterestMeters = pointOfInterest.KmDistanceTo(e.Position) * 1000;
+                if (e.Position != null)
+                    foreach (PointOfInterest pointOfInterest in SensusServiceHelper.Get().PointsOfInterest.Union(Protocol.PointsOfInterest))  // POIs are stored on the service helper (e.g., home locations) and the Protocol (e.g., bars), since the former are user-specific and the latter are universal.
+                    {
+                        double distanceToPointOfInterestMeters = pointOfInterest.KmDistanceTo(e.Position) * 1000;
 
-                            foreach (PointOfInterestProximityTrigger trigger in _triggers)
-                                if (pointOfInterest.Triggers(trigger, distanceToPointOfInterestMeters))
-                                {
-                                    StoreDatum(new PointOfInterestProximityDatum(e.Position.Timestamp, pointOfInterest, distanceToPointOfInterestMeters, trigger));
-                                    datumStored = true;
-                                }
-                        }
+                        foreach (PointOfInterestProximityTrigger trigger in _triggers)
+                            if (pointOfInterest.Triggers(trigger, distanceToPointOfInterestMeters))
+                                data.Add(new PointOfInterestProximityDatum(e.Position.Timestamp, pointOfInterest, distanceToPointOfInterestMeters, trigger));
+                    }
 
-                    if (!datumStored)
-                        StoreDatum(null);
-                }
+                if (data.Count > 0)
+                    foreach (Datum datum in data)
+                        await StoreDatumAsync(datum);
+                else
+                    await StoreDatumAsync(null);
             };
         }
 

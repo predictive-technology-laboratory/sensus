@@ -13,12 +13,10 @@
 // limitations under the License.
 
 using Newtonsoft.Json;
-using SensusService.Exceptions;
 using SensusUI.UiProperties;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using System.Linq;
 using SensusService.DataStores.Remote;
 using System.Threading.Tasks;
 
@@ -29,19 +27,19 @@ namespace SensusService.DataStores
     /// </summary>
     public abstract class DataStore
     {
+        private const int COMMIT_CHUNK_SIZE = 10000;
+
         protected static Task CommitChunksAsync(HashSet<Datum> data, DataStore dataStore, CancellationToken cancellationToken)
         {
             return Task.Run(async () =>
             {
-                int chunkSize = 10000;
-
                 // the data set passed in is open to modification, and callers might continue adding data after this method returns.
                 // so, we can't simply run until data is empty since it may never be empty. instead, run a predetermined number of 
                 // chunks.
                 int maxNumChunks;
                 lock (data)
                 {
-                    maxNumChunks = (int)Math.Ceiling(data.Count / (double)chunkSize);
+                    maxNumChunks = (int)Math.Ceiling(data.Count / (double)COMMIT_CHUNK_SIZE);
                 }
 
                 HashSet<Datum> chunk = new HashSet<Datum>();
@@ -59,7 +57,7 @@ namespace SensusService.DataStores
                         {
                             chunk.Add(datum);
 
-                            if (cancellationToken.IsCancellationRequested || chunk.Count >= chunkSize)
+                            if (cancellationToken.IsCancellationRequested || chunk.Count >= COMMIT_CHUNK_SIZE)
                                 break;
                         }
                     }
@@ -110,6 +108,7 @@ namespace SensusService.DataStores
         private string _commitCallbackId;
         private long _addedDataCount;
         private long _committedDataCount;
+        private bool _sizeTriggeredCommitRunning;
 
         [EntryIntegerUiProperty("Commit Delay (MS):", true, 2)]
         public int CommitDelayMS
@@ -221,6 +220,7 @@ namespace SensusService.DataStores
             _commitCallbackId = null;
             _committedDataCount = 0;
             _addedDataCount = 0;
+            _sizeTriggeredCommitRunning = false;
         }
 
         /// <summary>
@@ -249,7 +249,7 @@ namespace SensusService.DataStores
             }
         }
 
-        public void Add(Datum datum)
+        public Task AddAsync(Datum datum, CancellationToken cancellationToken)
         {
             lock (_data)
             {
@@ -257,6 +257,32 @@ namespace SensusService.DataStores
                 ++_addedDataCount;
 
                 SensusServiceHelper.Get().Logger.Log("Stored datum:  " + datum.GetType().Name, LoggingLevel.Debug, GetType());
+
+                // if we've accumulated a chunk, commit it locally to reduce memory pressure
+                if (_data.Count >= COMMIT_CHUNK_SIZE && !_sizeTriggeredCommitRunning)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Running size-triggered commit.", LoggingLevel.Normal, GetType());
+
+                    _sizeTriggeredCommitRunning = true;
+
+                    return Task.Run(async () =>
+                    {
+                        try
+                        {
+                            await CommitChunksAsync(_data, this, cancellationToken);
+                        }
+                        catch (Exception ex)
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Failed to run size-triggered commit:  " + ex.Message, LoggingLevel.Normal, GetType());
+                        }
+                        finally
+                        {
+                            _sizeTriggeredCommitRunning = false;
+                        }
+                    });
+                }
+
+                return Task.FromResult(false);
             }
         }
 
