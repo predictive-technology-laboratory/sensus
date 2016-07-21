@@ -29,6 +29,7 @@ using SensusService.Probes.Movement;
 using MessageUI;
 using System.IO;
 using Newtonsoft.Json;
+using CoreBluetooth;
 
 namespace Sensus.iOS
 {
@@ -38,6 +39,7 @@ namespace Sensus.iOS
 
         public const string SENSUS_CALLBACK_REPEAT_DELAY = "SENSUS-CALLBACK-REPEAT-DELAY";
         public const string SENSUS_CALLBACK_ACTIVATION_ID = "SENSUS-CALLBACK-ACTIVATION-ID";
+        private const int BLUETOOTH_ENABLE_TIMEOUT_MS = 10000;
 
         /// <summary>
         /// Cancels a UILocalNotification. This will succeed in one of two conditions:  (1) if the notification to be
@@ -492,9 +494,43 @@ namespace Sensus.iOS
                 });
         }
 
+        // TODO:  Check power consumption problem after disconnect. Why were the band probes taking readings after the protocol was stopped?
         public override bool EnableBluetooth(bool lowEnergy, string rationale)
         {
-            return false;
+            bool enabled = false;
+            ManualResetEvent enableWait = new ManualResetEvent(false);
+
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                try
+                {
+                    CBCentralManager manager = new CBCentralManager(CoreFoundation.DispatchQueue.CurrentQueue);
+                    manager.UpdatedState += (sender, e) =>
+                    {
+                        if (manager.State == CBCentralManagerState.PoweredOn)
+                        {
+                            enabled = true;
+                            enableWait.Set();
+                        }
+                    };
+
+                    if (manager.State == CBCentralManagerState.PoweredOn)
+                    {
+                        enabled = true;
+                        enableWait.Set();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log("Failed while requesting Bluetooth enable:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    enableWait.Set();
+                }
+            });
+
+            if (!enableWait.WaitOne(BLUETOOTH_ENABLE_TIMEOUT_MS))
+                Logger.Log("Timed out while waiting for user to enable Bluetooth.", LoggingLevel.Normal, GetType());
+
+            return enabled;
         }
 
         #region methods not implemented in ios

@@ -124,7 +124,10 @@ namespace SensusService
                                     BandClientManager bandManager = BandClientManager.Instance;
                                     BandDeviceInfo band = (await bandManager.GetPairedBandsAsync()).FirstOrDefault();
                                     if (band == null)
+                                    {
                                         SensusServiceHelper.Get().Logger.Log("No Bands connected. Retrying...", LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
+                                        Thread.Sleep(BAND_CLIENT_CONNECT_TIMEOUT_MS);
+                                    }
                                     else
                                     {
                                         Task<BandClient> connectTask = bandManager.ConnectAsync(band);
