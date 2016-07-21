@@ -485,13 +485,13 @@ namespace Sensus.iOS
         public override ImageSource GetQrCodeImageSource(string contents)
         {
             return ImageSource.FromStream(() =>
-                {
-                    UIImage bitmap = BarcodeWriter.Write(contents);
-                    MemoryStream ms = new MemoryStream();
-                    bitmap.AsPNG().AsStream().CopyTo(ms);
-                    ms.Seek(0, SeekOrigin.Begin);
-                    return ms;
-                });
+            {
+                UIImage bitmap = BarcodeWriter.Write(contents);
+                MemoryStream ms = new MemoryStream();
+                bitmap.AsPNG().AsStream().CopyTo(ms);
+                ms.Seek(0, SeekOrigin.Begin);
+                return ms;
+            });
         }
 
         // TODO:  Check power consumption problem after disconnect. Why were the band probes taking readings after the protocol was stopped?

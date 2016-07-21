@@ -55,7 +55,24 @@ namespace SensusService
         {
             get
             {
+                // the client can become disposed (at least on android) when the user turns bluetooth off/on. the client won't be null,
+                // so we risk an object disposed when referencing the client. test this out below and set the client to null if it's disposed.
+                try
+                {
+                    if (BAND_CLIENT?.IsConnected ?? false)
+                        SensusServiceHelper.Get().Logger.Log("Client connected.", LoggingLevel.Debug, typeof(MicrosoftBandProbeBase));
+                }
+                catch (ObjectDisposedException)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Client disposed.", LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
+                    BAND_CLIENT = null;
+                }
+
                 return BAND_CLIENT;
+            }
+            set
+            {
+                BAND_CLIENT = value;
             }
         }
 
@@ -81,21 +98,10 @@ namespace SensusService
 
                     Task.Run(async () =>
                     {
-                        // check if the client has been disposed
-                        try
-                        {
-                            if (BAND_CLIENT?.IsConnected ?? false)
-                                SensusServiceHelper.Get().Logger.Log("Client connected.", LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
-                        }
-                        catch (ObjectDisposedException)
-                        {
-                            BAND_CLIENT = null;
-                        }
-
                         try
                         {
                             // if we already have a connection, configure any waiting probes
-                            if (BAND_CLIENT?.IsConnected ?? false)
+                            if (BandClient?.IsConnected ?? false)
                             {
                                 lock (CONFIGURE_PROBES_IF_CONNECTED)
                                 {
@@ -119,7 +125,7 @@ namespace SensusService
                             {
                                 int connectAttemptsLeft = BAND_CLIENT_CONNECT_ATTEMPTS;
 
-                                while (connectAttemptsLeft-- > 0 && (BAND_CLIENT == null || !BAND_CLIENT.IsConnected))
+                                while (connectAttemptsLeft-- > 0 && (BandClient == null || !BandClient.IsConnected))
                                 {
                                     BandClientManager bandManager = BandClientManager.Instance;
                                     BandDeviceInfo band = (await bandManager.GetPairedBandsAsync()).FirstOrDefault();
@@ -133,14 +139,14 @@ namespace SensusService
                                         Task<BandClient> connectTask = bandManager.ConnectAsync(band);
 
                                         if (await Task.WhenAny(connectTask, Task.Delay(BAND_CLIENT_CONNECT_TIMEOUT_MS)) == connectTask)
-                                            BAND_CLIENT = await connectTask;
+                                            BandClient = await connectTask;
                                         else
                                             SensusServiceHelper.Get().Logger.Log("Timed out while connecting. Retrying...", LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
                                     }
                                 }
 
                                 // if we connected successfully, configure all probes that should be running
-                                if (BAND_CLIENT?.IsConnected ?? false)
+                                if (BandClient?.IsConnected ?? false)
                                 {
                                     foreach (MicrosoftBandProbeBase probe in BandProbesThatShouldBeRunning)
                                     {
@@ -176,7 +182,7 @@ namespace SensusService
 
             BAND_CLIENT_CONNECT_WAIT.WaitOne();
 
-            if (BAND_CLIENT == null || !BAND_CLIENT.IsConnected)
+            if (BandClient == null || !BandClient.IsConnected)
                 throw new Exception("Failed to connect to Microsoft Band.");
         }
 
@@ -325,11 +331,11 @@ namespace SensusService
                     CancelHealthTest();
 
                     // disconnect the client
-                    if (BAND_CLIENT?.IsConnected ?? false)
+                    if (BandClient?.IsConnected ?? false)
                     {
                         try
                         {
-                            BAND_CLIENT.DisconnectAsync().Wait();
+                            BandClient.DisconnectAsync().Wait();
                         }
                         catch (Exception ex)
                         {
