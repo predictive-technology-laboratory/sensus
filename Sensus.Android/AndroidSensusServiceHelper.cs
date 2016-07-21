@@ -557,6 +557,12 @@ namespace Sensus.Android
                 });
         }
 
+        /// <summary>
+        /// Enables the Bluetooth adapter, or prompts the user to do so if we cannot do this programmatically. Must not be called from the UI thread.
+        /// </summary>
+        /// <returns><c>true</c>, if Bluetooth was enabled, <c>false</c> otherwise.</returns>
+        /// <param name="lowEnergy">If set to <c>true</c> low energy.</param>
+        /// <param name="rationale">Rationale.</param>
         public override bool EnableBluetooth(bool lowEnergy, string rationale)
         {
             base.EnableBluetooth(lowEnergy, rationale);
