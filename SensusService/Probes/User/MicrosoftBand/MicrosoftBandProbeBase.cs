@@ -50,6 +50,14 @@ namespace SensusService
             }
         }
 
+        private static List<MicrosoftBandProbeBase> BandProbesThatAreRunning
+        {
+            get
+            {
+                return SensusServiceHelper.Get().RegisteredProtocols.SelectMany(protocol => protocol.Probes.Where(probe => probe.Running && probe is MicrosoftBandProbeBase)).Cast<MicrosoftBandProbeBase>().ToList();
+            }
+        }
+
         [JsonIgnore]
         protected static BandClient BandClient
         {
@@ -330,19 +338,21 @@ namespace SensusService
                 if (BandProbesThatShouldBeRunning.Count == 0)
                 {
                     CancelHealthTest();
+                }
+            }
 
-                    // disconnect the client
-                    if (BandClient?.IsConnected ?? false)
-                    {
-                        try
-                        {
-                            BandClient.DisconnectAsync().Wait();
-                        }
-                        catch (Exception ex)
-                        {
-                            SensusServiceHelper.Get().Logger.Log("Failed to disconnect client:  " + ex.Message, LoggingLevel.Normal, GetType());
-                        }
-                    }
+            // disconnect the client if no band probes are actually running.
+            if (BandProbesThatAreRunning.Count == 0 && (BandClient?.IsConnected ?? false))
+            {
+                try
+                {
+                    SensusServiceHelper.Get().Logger.Log("All Band probes have stopped. Disconnecting client.", LoggingLevel.Normal, GetType());
+                    BandClient.DisconnectAsync().Wait();
+                    BandClient = null;
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Failed to disconnect client:  " + ex.Message, LoggingLevel.Normal, GetType());
                 }
             }
         }
