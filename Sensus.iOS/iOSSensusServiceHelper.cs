@@ -497,6 +497,8 @@ namespace Sensus.iOS
         // TODO:  Check power consumption problem after disconnect. Why were the band probes taking readings after the protocol was stopped?
         public override bool EnableBluetooth(bool lowEnergy, string rationale)
         {
+            base.EnableBluetooth(lowEnergy, rationale);
+
             bool enabled = false;
             ManualResetEvent enableWait = new ManualResetEvent(false);
 

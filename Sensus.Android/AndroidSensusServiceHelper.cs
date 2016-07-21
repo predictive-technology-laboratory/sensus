@@ -559,6 +559,8 @@ namespace Sensus.Android
 
         public override bool EnableBluetooth(bool lowEnergy, string rationale)
         {
+            base.EnableBluetooth(lowEnergy, rationale);
+
             bool enabled = false;
 
             // ensure that the device has the required feature

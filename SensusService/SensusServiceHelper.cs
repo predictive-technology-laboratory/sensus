@@ -620,7 +620,18 @@ namespace SensusService
 
         public abstract ImageSource GetQrCodeImageSource(string contents);
 
-        public abstract bool EnableBluetooth(bool lowEnergy, string rationale);
+        public virtual bool EnableBluetooth(bool lowEnergy, string rationale)
+        {
+            try
+            {
+                AssertNotOnMainThread(GetType() + " EnableBluetooth");
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
 
         #endregion
 
