@@ -15,5 +15,6 @@ Imports:
     plyr (>= 1.8.3),
     sp (>= 1.1-1),
     ggmap (>= 2.6.1),
-    ggplot2 (>= 2.0.0)
+    ggplot2 (>= 2.0.0),
+    R.utils (>= 2.3.0)
 RoxygenNote: 5.0.1

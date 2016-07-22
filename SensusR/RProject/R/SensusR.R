@@ -21,10 +21,11 @@ NULL
 #' @param local.path Path to location on local machine.
 #' @param aws.path Path to AWS client.
 #' @param delete Whether or not to delete local files that are not present in the S3 path.
+#' @param decompress Whether or not to decompress any gzip files after downloading them.
 #' @return Local path to location of downloaded data.
 #' @examples 
-#' # data.path = sensus.sync.from.aws.s3("s3://bucket/path/to/data", "~/Desktop/data")
-sensus.sync.from.aws.s3 = function(s3.path, profile = "default", local.path = tempfile(), aws.path = "/usr/local/bin/aws", delete = TRUE)
+#' # data.path = sensus.sync.from.aws.s3("s3://bucket/path/to/data", local.path = "~/Desktop/data")
+sensus.sync.from.aws.s3 = function(s3.path, profile = "default", local.path = tempfile(), aws.path = "/usr/local/bin/aws", delete = TRUE, decompress = TRUE)
 {
   aws.args = paste("s3 --profile", profile, "sync ", s3.path, local.path, sep = " ")
   
@@ -34,6 +35,17 @@ sensus.sync.from.aws.s3 = function(s3.path, profile = "default", local.path = te
   }
   
   exit.code = system2(aws.path, aws.args)
+  
+  if(decompress)
+  {
+    gz.paths = list.files(local.path, recursive = TRUE, full.names = TRUE, include.dirs = FALSE, pattern = "*.gz")
+  
+    for(gz.path in gz.paths)
+    {
+      gunzip(gz.path)
+    }
+  }
+  
   return(local.path)
 }
 
