@@ -175,7 +175,8 @@ namespace SensusService.DataStores.Remote
 
                                 try
                                 {
-                                    if ((await PutJsonAsync(s3, GetDatumKey(datum), "[" + Environment.NewLine + datumJSON + Environment.NewLine + "]", cancellationToken)) == HttpStatusCode.OK)
+                                    // do not compress the json. it's too small to do much good.
+                                    if ((await PutJsonAsync(s3, GetDatumKey(datum), "[" + Environment.NewLine + datumJSON + Environment.NewLine + "]", false, cancellationToken)) == HttpStatusCode.OK)
                                         committedData.Add(datum);
                                 }
                                 catch (Exception ex)
@@ -223,7 +224,7 @@ namespace SensusService.DataStores.Remote
 
                             try
                             {
-                                if ((await PutJsonAsync(s3, key, json.ToString(), cancellationToken)) == HttpStatusCode.OK)
+                                if ((await PutJsonAsync(s3, key, json.ToString(), _compress, cancellationToken)) == HttpStatusCode.OK)
                                     committedData.AddRange(datumTypeData[datumType]);
                             }
                             catch (Exception ex)
@@ -244,18 +245,18 @@ namespace SensusService.DataStores.Remote
                 });
         }
 
-        private Task<HttpStatusCode> PutJsonAsync(AmazonS3Client s3, string key, string json, CancellationToken cancellationToken)
+        private Task<HttpStatusCode> PutJsonAsync(AmazonS3Client s3, string key, string json, bool compress, CancellationToken cancellationToken)
         {
             return Task.Run(async () =>
             {
                 PutObjectRequest putRequest = new PutObjectRequest
                 {
                     BucketName = _bucket,
-                    Key = key + (_compress ? ".gz" : ""),
-                    ContentType = _compress ? "application/zip" : "application/json"
+                    Key = key + (compress ? ".gz" : ""),
+                    ContentType = compress ? "application/gzip" : "application/json"
                 };
 
-                if (_compress)
+                if (compress)
                 {
                     // zip json string if option is selected -- from https://stackoverflow.com/questions/2798467/c-sharp-code-to-gzip-and-upload-a-string-to-amazon-s3
                     MemoryStream compressed = new MemoryStream();

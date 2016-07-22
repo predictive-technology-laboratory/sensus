@@ -222,7 +222,7 @@ namespace SensusService.Probes
             _storeData = true;
             _startStopTimes = new List<Tuple<bool, DateTime>>();
             _successfulHealthTestTimes = new List<DateTime>();
-            _maxChartDataCount = 250;
+            _maxChartDataCount = 10;
             _chartData = new List<ChartDataPoint>(_maxChartDataCount + 1);
         }
 

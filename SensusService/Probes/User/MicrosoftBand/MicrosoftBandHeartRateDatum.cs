@@ -24,7 +24,7 @@ namespace SensusService.Probes.User.MicrosoftBand
         private double _heartRate;
 
         [Anonymizable(null, new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
-        [DoubleProbeTriggerProperty]
+        [DoubleProbeTriggerProperty("Heart Rate")]
         public double HeartRate
         {
             get
@@ -42,7 +42,7 @@ namespace SensusService.Probes.User.MicrosoftBand
         {
             get
             {
-                return "Heart Rate:  " + Math.Round(_heartRate, 0);
+                return "Heart Rate:  " + Math.Round(_heartRate, 1);
             }
         }
 
