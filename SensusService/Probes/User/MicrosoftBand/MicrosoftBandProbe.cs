@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using Microsoft.Band.Portable;
 using Microsoft.Band.Portable.Sensors;
 using Newtonsoft.Json;
 
@@ -22,16 +23,54 @@ namespace SensusService.Probes.User.MicrosoftBand
         where SensorType : BandSensorBase<ReadingType>
         where ReadingType : IBandSensorReading
     {
-        [JsonIgnore]
-        protected abstract SensorType Sensor { get; }
+        private SensorType _sensor;
 
-        protected override void ConfigureSensor()
+        protected SensorType Sensor
         {
-            if (Sensor == null)
-                throw new Exception("Sensor not connected.");
-            else
-                Sensor.ReadingChanged += ReadingChanged;
+            get
+            {
+                return _sensor;
+            }
         }
+
+        protected override void Configure(BandClient bandClient)
+        {
+            SensorType bandClientSensor = GetSensor(bandClient);
+
+            // if we're currently configured with the sensor from the client, do nothing
+            if (ReferenceEquals(_sensor, bandClientSensor))
+                return;
+
+            // if we have a sensor that isn't from the client, tear it down so that we do not continue to receive readings from it.
+            if (_sensor != null)
+            {
+                // disconnect reading callback
+                try
+                {
+                    _sensor.ReadingChanged -= ReadingChanged;
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Failed to remove reading-changed handler when reconfiguring probe:  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
+
+                // unregister listener
+                try
+                {
+                    _sensor.StopReadingsAsync().Wait();
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Failed to stop readings when reconfiguring probe:  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
+            }
+
+            // set up the new sensor
+            _sensor = bandClientSensor;
+            _sensor.ReadingChanged += ReadingChanged;
+        }
+
+        protected abstract SensorType GetSensor(BandClient bandClient);
 
         private async void ReadingChanged(object sender, BandSensorReadingEventArgs<ReadingType> args)
         {
@@ -40,18 +79,18 @@ namespace SensusService.Probes.User.MicrosoftBand
 
         protected override void StartReadings()
         {
-            if (Sensor == null)
-                throw new Exception("Sensor not connected.");
+            if (_sensor == null)
+                throw new Exception("Sensor not configured.");
             else
-                Sensor.StartReadingsAsync(SamplingRate).Wait();
+                _sensor.StartReadingsAsync(SamplingRate).Wait();
         }
 
         protected abstract Datum GetDatumFromReading(ReadingType reading);
 
         protected override void StopReadings()
         {
-            if (Sensor != null)
-                Sensor.StopReadingsAsync().Wait();
+            if (_sensor != null)
+                _sensor.StopReadingsAsync().Wait();
         }
     }
 }

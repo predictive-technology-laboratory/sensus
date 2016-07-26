@@ -39,12 +39,9 @@ namespace SensusService.Probes.User.MicrosoftBand
             }
         }
 
-        protected override BandRRIntervalSensor Sensor
+        protected override BandRRIntervalSensor GetSensor(BandClient bandClient)
         {
-            get
-            {
-                return BandClient?.SensorManager.RRInterval;
-            }
+                return bandClient.SensorManager.RRInterval;
         }
 
         protected override void StartReadings()

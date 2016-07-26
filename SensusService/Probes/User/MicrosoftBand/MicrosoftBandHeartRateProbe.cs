@@ -39,12 +39,9 @@ namespace SensusService.Probes.User.MicrosoftBand
             }
         }
 
-        protected override BandHeartRateSensor Sensor
+        protected override BandHeartRateSensor GetSensor(BandClient bandClient)
         {
-            get
-            {
-                return BandClient?.SensorManager.HeartRate;
-            }
+            return bandClient.SensorManager.HeartRate;
         }
 
         protected override void StartReadings()

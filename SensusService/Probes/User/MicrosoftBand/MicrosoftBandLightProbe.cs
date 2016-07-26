@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using Microsoft.Band.Portable;
 using Microsoft.Band.Portable.Sensors;
 using Syncfusion.SfChart.XForms;
 
@@ -36,12 +37,9 @@ namespace SensusService.Probes.User.MicrosoftBand
             }
         }
 
-        protected override BandAmbientLightSensor Sensor
+        protected override BandAmbientLightSensor GetSensor(BandClient bandClient)
         {
-            get
-            {
-                return BandClient?.SensorManager.AmbientLight;
-            }
+            return bandClient.SensorManager.AmbientLight;
         }
 
         protected override Datum GetDatumFromReading(BandAmbientLightReading reading)

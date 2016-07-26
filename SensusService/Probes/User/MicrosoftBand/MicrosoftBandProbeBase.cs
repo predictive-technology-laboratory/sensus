@@ -37,6 +37,11 @@ namespace SensusService
         private static ManualResetEvent BAND_CLIENT_CONNECT_WAIT = new ManualResetEvent(false);
         private static object BAND_CLIENT_LOCKER = new object();
         private static List<MicrosoftBandProbeBase> CONFIGURE_PROBES_IF_CONNECTED = new List<MicrosoftBandProbeBase>();
+        private static int CLIENT_CONNECT_ATTEMPTS = 0;
+        private static int CLIENT_CONNECT_SUCCESSES = 0;
+        private static int CLIENT_CONNECT_TIMEOUTS = 0;
+        private static int CLIENT_DISCONNECT_ATTEMPTS = 0;
+        private static int CLIENT_DISCONNECT_SUCCESSES = 0;
 
         private static string HEALTH_TEST_CALLBACK_ID;
         private const int HEALTH_TEST_DELAY_MS = 60000;
@@ -59,7 +64,7 @@ namespace SensusService
         }
 
         [JsonIgnore]
-        protected static BandClient BandClient
+        private static BandClient BandClient
         {
             get
             {
@@ -68,11 +73,11 @@ namespace SensusService
                 try
                 {
                     if (BAND_CLIENT?.IsConnected ?? false)
-                        SensusServiceHelper.Get().Logger.Log("Client connected.", LoggingLevel.Debug, typeof(MicrosoftBandProbeBase));
+                        SensusServiceHelper.Get().Logger.Log("Client is connected.", LoggingLevel.Debug, typeof(MicrosoftBandProbeBase));
                 }
                 catch (ObjectDisposedException)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Client disposed.", LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
+                    SensusServiceHelper.Get().Logger.Log("Client is disposed.", LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
                     BAND_CLIENT = null;
                 }
 
@@ -117,7 +122,7 @@ namespace SensusService
                                     {
                                         try
                                         {
-                                            probe.ConfigureSensor();
+                                            probe.Configure(BandClient);
                                         }
                                         catch (Exception ex)
                                         {
@@ -144,32 +149,39 @@ namespace SensusService
                                     }
                                     else
                                     {
+                                        ++CLIENT_CONNECT_ATTEMPTS;
                                         Task<BandClient> connectTask = bandManager.ConnectAsync(band);
 
                                         if (await Task.WhenAny(connectTask, Task.Delay(BAND_CLIENT_CONNECT_TIMEOUT_MS)) == connectTask)
+                                        {
                                             BandClient = await connectTask;
+                                            ++CLIENT_CONNECT_SUCCESSES;
+                                        }
                                         else
+                                        {
                                             SensusServiceHelper.Get().Logger.Log("Timed out while connecting. Retrying...", LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
+                                            ++CLIENT_CONNECT_TIMEOUTS;
+                                        }
                                     }
                                 }
 
-                                // if we connected successfully, configure all probes that should be running
+                                // if we connected successfully, use the new client to (re)configure all probes that should be running.
                                 if (BandClient?.IsConnected ?? false)
                                 {
-                                    foreach (MicrosoftBandProbeBase probe in BandProbesThatShouldBeRunning)
-                                    {
-                                        try
-                                        {
-                                            probe.ConfigureSensor();
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            SensusServiceHelper.Get().Logger.Log("Failed to start readings for Band probe:  " + ex.Message, LoggingLevel.Normal, probe.GetType());
-                                        }
-                                    }
-
                                     lock (CONFIGURE_PROBES_IF_CONNECTED)
                                     {
+                                        foreach (MicrosoftBandProbeBase probe in BandProbesThatShouldBeRunning)
+                                        {
+                                            try
+                                            {
+                                                probe.Configure(BandClient);
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                SensusServiceHelper.Get().Logger.Log("Failed to start readings for Band probe:  " + ex.Message, LoggingLevel.Normal, probe.GetType());
+                                            }
+                                        }
+
                                         CONFIGURE_PROBES_IF_CONNECTED.Clear();
                                     }
                                 }
@@ -199,13 +211,10 @@ namespace SensusService
             return Task.Run(() =>
             {
                 // if no band probes should be running, then ignore the current test and unschedule the test callback.
-                lock (HEALTH_TEST_LOCKER)
+                if (BandProbesThatShouldBeRunning.Count == 0)
                 {
-                    if (BandProbesThatShouldBeRunning.Count == 0)
-                    {
-                        CancelHealthTest();
-                        return;
-                    }
+                    CancelHealthTest();
+                    return;
                 }
 
                 // ensure that client is connected
@@ -318,7 +327,7 @@ namespace SensusService
             ConnectClient(this);
         }
 
-        protected abstract void ConfigureSensor();
+        protected abstract void Configure(BandClient bandClient);
 
         protected override void StartListening()
         {
@@ -332,13 +341,8 @@ namespace SensusService
             StopReadings();
 
             // only cancel the static health test if none of the band probes should be running.
-            lock (HEALTH_TEST_LOCKER)
-            {
-                if (BandProbesThatShouldBeRunning.Count == 0)
-                {
-                    CancelHealthTest();
-                }
-            }
+            if (BandProbesThatShouldBeRunning.Count == 0)
+                CancelHealthTest();
 
             // disconnect the client if no band probes are actually running.
             if (BandProbesThatAreRunning.Count == 0 && (BandClient?.IsConnected ?? false))
@@ -346,8 +350,10 @@ namespace SensusService
                 try
                 {
                     SensusServiceHelper.Get().Logger.Log("All Band probes have stopped. Disconnecting client.", LoggingLevel.Normal, GetType());
+                    ++CLIENT_DISCONNECT_ATTEMPTS;
                     BandClient.DisconnectAsync().Wait();
                     BandClient = null;
+                    ++CLIENT_DISCONNECT_SUCCESSES;
                 }
                 catch (Exception ex)
                 {
@@ -360,6 +366,18 @@ namespace SensusService
 
         public override bool TestHealth(ref string error, ref string warning, ref string misc)
         {
+            if (CLIENT_CONNECT_ATTEMPTS != CLIENT_CONNECT_SUCCESSES ||
+                CLIENT_DISCONNECT_ATTEMPTS != CLIENT_DISCONNECT_SUCCESSES)
+            {
+                string name = GetType().Name;
+
+                misc += "Client connect attempts [" + name + "]:  " + CLIENT_CONNECT_ATTEMPTS + Environment.NewLine +
+                        "Client connnect successes [" + name + "]:  " + CLIENT_CONNECT_SUCCESSES + Environment.NewLine +
+                        "Client connect timeouts [" + name + "]:  " + CLIENT_CONNECT_TIMEOUTS + Environment.NewLine +
+                        "Client disconnect attempts [" + name + "]:  " + CLIENT_DISCONNECT_ATTEMPTS + Environment.NewLine +
+                        "Client disconnect successes [" + name + "]:  " + CLIENT_DISCONNECT_SUCCESSES + Environment.NewLine;
+            }
+
             return false;
         }
 
