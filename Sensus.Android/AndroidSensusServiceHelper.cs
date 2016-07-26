@@ -721,7 +721,7 @@ namespace Sensus.Android
             lock (_wakeLock)
             {
                 _wakeLock.Acquire();
-                Logger.Log("Wake lock acquisition count:  " + ++_wakeLockAcquisitionCount, LoggingLevel.Normal, GetType());
+                Logger.Log("Wake lock acquisition count:  " + ++_wakeLockAcquisitionCount, LoggingLevel.Verbose, GetType());
             }
         }
 
@@ -730,7 +730,7 @@ namespace Sensus.Android
             lock (_wakeLock)
             {
                 _wakeLock.Release();
-                Logger.Log("Wake lock acquisition count:  " + --_wakeLockAcquisitionCount, LoggingLevel.Normal, GetType());
+                Logger.Log("Wake lock acquisition count:  " + --_wakeLockAcquisitionCount, LoggingLevel.Verbose, GetType());
             }
         }
 

@@ -29,7 +29,7 @@ namespace SensusService.Probes.Location
         {
             get
             {
-                return false;
+                return true;
             }
         }
 
@@ -38,7 +38,7 @@ namespace SensusService.Probes.Location
         {
             get
             {
-                return "This setting does not affect iOS or Android.";
+                return "This setting does not affect iOS. Android devices will use additional power to report all updates.";
             }
         }
 
@@ -47,7 +47,7 @@ namespace SensusService.Probes.Location
         {
             get
             {
-                return "This setting does not affect iOS or Android.";
+                return "This setting does not affect iOS. Android devices will sleep and pause updates.";
             }
         }
 
