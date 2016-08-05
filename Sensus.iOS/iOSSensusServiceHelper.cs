@@ -30,6 +30,7 @@ using MessageUI;
 using System.IO;
 using Newtonsoft.Json;
 using CoreBluetooth;
+using SensusService.Exceptions;
 
 namespace Sensus.iOS
 {
@@ -52,6 +53,8 @@ namespace Sensus.iOS
         private static void CancelLocalNotification(UILocalNotification notification)
         {
             Device.BeginInvokeOnMainThread(() =>
+            {
+                try
                 {
                     string callbackId = notification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ID_KEY)).ToString();
 
@@ -77,7 +80,12 @@ namespace Sensus.iOS
                     // that `notification` is the actual notification object and not, for example, the one originally passed to ScheduleLocalNotification.
                     if (!notificationCanceled)
                         UIApplication.SharedApplication.CancelLocalNotification(notification);
-                });
+                }
+                catch (Exception ex)
+                {
+                    SensusException.Report("Failed to cancel notification.", ex, false);
+                }
+            });
         }
 
         #endregion
