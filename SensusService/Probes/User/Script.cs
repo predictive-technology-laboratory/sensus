@@ -27,7 +27,6 @@ namespace SensusService.Probes.User
         private DateTimeOffset? _firstRunTimestamp;
         private Datum _previousDatum;
         private Datum _currentDatum;
-        private DateTimeOffset? _presentationTimestamp;
         private string _id;
 
         public string Id
@@ -63,18 +62,6 @@ namespace SensusService.Probes.User
         {
             get { return _currentDatum; }
             set { _currentDatum = value; }
-        }
-
-        public DateTimeOffset? PresentationTimestamp
-        {
-            get
-            {
-                return _presentationTimestamp;
-            }
-            set
-            {
-                _presentationTimestamp = value;
-            }
         }
 
         [JsonIgnore]

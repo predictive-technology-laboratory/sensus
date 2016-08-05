@@ -587,68 +587,59 @@ namespace SensusService.Probes.User
         /// <param name="postDisplayCallback">Called when it is okay for the device to sleep.</param>
         private void Run(Script script, Datum previousDatum = null, Datum currentDatum = null, Action postDisplayCallback = null)
         {
-            if (script.PresentationTimestamp == null)
-                script.PresentationTimestamp = DateTimeOffset.UtcNow;
-
             bool isRerun = script.FirstRunTimestamp.HasValue;
 
             lock (_runTimes)
             {
-                if (_oneShot)
+                // do not run a one-shot script if it has already been run and this is not a rerun. it's okay to re-run a one-shot
+                // because the user will have explicitly indicated to do the re-run.
+                if (_oneShot && _runTimes.Count > 0 && !isRerun)
                 {
-                    // run one-shot only if the script runner has never been run, or if it has been run but this is a rerun -- the latter will only happen if the first-run script is being rerun.
-                    bool runOneShot = _runTimes.Count == 0 || isRerun;
-
-                    if (!runOneShot)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Not running one-shot script multiple times.", LoggingLevel.Normal, GetType());
-                        return;
-                    }
+                    SensusServiceHelper.Get().Logger.Log("Not running one-shot script multiple times.", LoggingLevel.Normal, GetType());
+                    return;
                 }
 
-                // submit a separate datum indicating the running of the script. this differs from the script's presentation time because the user
-                // might choose to never submit script responses. in this case, there will be no script data or presentation times. the separate
-                // datum submitted here will always be submitted upon first run of the script.
+                // track participation by noting all times that the script was first run.
                 if (!isRerun)
                 {
-                    Task.Run(async () =>
-                    {
-                        DateTimeOffset runTime = DateTimeOffset.UtcNow;
-
-                        // geotag the script-run datum if any of the input groups are also geotagged. if none of the groups are geotagged, then
-                        // it wouldn't make sense to gather location data from a user privacy perspective.
-                        double? latitude = null;
-                        double? longitude = null;
-                        DateTimeOffset? locationTimestamp = null;
-                        if (script.InputGroups.Any(inputGroup => inputGroup.Geotag))
-                        {
-                            try
-                            {
-                                Position currentPosition = GpsReceiver.Get().GetReading(default(CancellationToken));
-
-                                if (currentPosition == null)
-                                    throw new Exception("GPS receiver returned null position.");
-
-                                latitude = currentPosition.Latitude;
-                                longitude = currentPosition.Longitude;
-                                locationTimestamp = currentPosition.Timestamp;
-                            }
-                            catch (Exception ex)
-                            {
-                                SensusServiceHelper.Get().Logger.Log("Failed to get position for script-run datum:  " + ex.Message, LoggingLevel.Normal, GetType());
-                            }
-                        }
-
-                        await _probe.StoreDatumAsync(new ScriptRunDatum(runTime, _script.Id, _name, script.Id, script.CurrentDatum == null ? null : script.CurrentDatum.Id, latitude, longitude, locationTimestamp), default(CancellationToken));
-                    });
-
-                    // add run time and remove all run times before the participation horizon
                     _runTimes.Add(DateTime.Now);
-                    _runTimes.RemoveAll(runTime => runTime < _probe.Protocol.ParticipationHorizon);
+                    _runTimes.RemoveAll(r => r < _probe.Protocol.ParticipationHorizon);
                 }
             }
 
             SensusServiceHelper.Get().Logger.Log("Running \"" + _name + "\".", LoggingLevel.Normal, GetType());
+
+            DateTimeOffset runTime = DateTimeOffset.UtcNow;
+
+            // submit a separate datum indicating each time the script was run.
+            Task.Run(async () =>
+            {
+                // geotag the script-run datum if any of the input groups are also geotagged. if none of the groups are geotagged, then
+                // it wouldn't make sense to gather location data from a user.
+                double? latitude = null;
+                double? longitude = null;
+                DateTimeOffset? locationTimestamp = null;
+                if (script.InputGroups.Any(inputGroup => inputGroup.Geotag))
+                {
+                    try
+                    {
+                        Position currentPosition = GpsReceiver.Get().GetReading(default(CancellationToken));
+
+                        if (currentPosition == null)
+                            throw new Exception("GPS receiver returned null position.");
+
+                        latitude = currentPosition.Latitude;
+                        longitude = currentPosition.Longitude;
+                        locationTimestamp = currentPosition.Timestamp;
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Failed to get position for script-run datum:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
+                }
+
+                await _probe.StoreDatumAsync(new ScriptRunDatum(runTime, _script.Id, _name, script.Id, script.CurrentDatum?.Id, latitude, longitude, locationTimestamp), default(CancellationToken));
+            });
 
             // this method can be called with previous / current datum values (e.g., when the script is first triggered). it 
             // can also be called without previous / current datum values (e.g., when triggering randomly or rerunning). if
@@ -668,44 +659,46 @@ namespace SensusService.Probes.User
             // of background time, the callback may be rescheduled which will require use of the UI thread submitting the new UILocalNotification. ios will not
             // permit this.
             SensusServiceHelper.Get().PromptForInputsAsync(script.FirstRunTimestamp, script.InputGroups, null, _allowCancel, null, "You will not receive credit for your responses if you cancel. Do you want to cancel?", "You have not completed all required fields. You will not receive credit for your responses if you continue. Do you want to continue?", "Are you ready to submit your responses?", _displayProgress, postDisplayCallback, async inputGroups =>
-                {
-                    bool canceled = inputGroups == null;
+            {
+                // if this is the first time the script has been run then set the timestamp. we set this here because we passed 
+                // the value to the PromptForInputsAsync method, which uses the timestamp value to display an indication that 
+                // the prompt is a rerun.
+                if (!isRerun)
+                    script.FirstRunTimestamp = runTime;
 
-                    // process all inputs in the script
-                    foreach (InputGroup inputGroup in script.InputGroups)
-                        foreach (Input input in inputGroup.Inputs)
+                bool canceled = inputGroups == null;
+
+                // process all inputs in the script
+                foreach (InputGroup inputGroup in script.InputGroups)
+                    foreach (Input input in inputGroup.Inputs)
+                    {
+                        // only consider inputs that still need to be stored. if an input has already been stored, it should be ignored.
+                        if (input.NeedsToBeStored)
                         {
-                            // only consider inputs that still need to be stored. if an input has already been stored, it should be ignored.
-                            if (input.NeedsToBeStored)
+                            // if the user canceled the prompts, reset the input. we reset here within the above if-check because if an
+                            // input has already been stored we should not reset it. its value and read-only status are fixed for all 
+                            // time, even if the prompts are later redisplayed by the invalid script handler.
+                            if (canceled)
+                                input.Reset();
+                            else if (input.Valid && input.Display)  // store all inputs that are valid and displayed. some might be valid from previous responses but not displayed because the user navigated back through the survey and changed a previous response that caused a subsesequently displayed input to be hidden via display contingencies.
                             {
-                                // if the user canceled the prompts, reset the input. we reset here within the above if-check because if an
-                                // input has already been stored we should not reset it. its value and read-only status are fixed for all 
-                                // time, even if the prompts are later redisplayed by the invalid script handler.
-                                if (canceled)
-                                    input.Reset();
-                                else if (input.Valid && input.Display)  // store all inputs that are valid and displayed. some might be valid from previous responses but not displayed because the user navigated back through the survey and changed a previous response that caused a subsesequently displayed input to be hidden via display contingencies.
-                                {
-                                    // the _script.Id allows us to link the data to the script that the user created. it never changes. on the other hand, the script
-                                    // that is passed into this method is always a copy of the user-created script. the script.Id allows us to link the various data
-                                    // collected from the user into a single logical response. each run of the script has its own script.Id so that responses can be
-                                    // grouped across runs. this is the difference between scriptId and runId in the following line.
-                                    await _probe.StoreDatumAsync(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow), _script.Id, _name, input.GroupId, input.Id, script.Id, input.Value, script.CurrentDatum == null ? null : script.CurrentDatum.Id, input.Latitude, input.Longitude, script.PresentationTimestamp.GetValueOrDefault(), input.LocationUpdateTimestamp, input.CompletionRecords), default(CancellationToken));
+                                // the _script.Id allows us to link the data to the script that the user created. it never changes. on the other hand, the script
+                                // that is passed into this method is always a copy of the user-created script. the script.Id allows us to link the various data
+                                // collected from the user into a single logical response. each run of the script has its own script.Id so that responses can be
+                                // grouped across runs. this is the difference between scriptId and runId in the following line.
+                                await _probe.StoreDatumAsync(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow), _script.Id, _name, input.GroupId, input.Id, script.Id, input.Value, script.CurrentDatum?.Id, input.Latitude, input.Longitude, input.LocationUpdateTimestamp, script.FirstRunTimestamp.Value, input.CompletionRecords), default(CancellationToken));
 
-                                    // once inputs are stored, they should not be stored again, nor should the user be able to modify them if the script is rerun.
-                                    input.NeedsToBeStored = false;
-                                    Xamarin.Forms.Device.BeginInvokeOnMainThread(() => input.Enabled = false);
-                                }
+                                // once inputs are stored, they should not be stored again, nor should the user be able to modify them if the script is rerun.
+                                input.NeedsToBeStored = false;
+                                Xamarin.Forms.Device.BeginInvokeOnMainThread(() => input.Enabled = false);
                             }
                         }
+                    }
 
-                    inputWait.Set();
-                });
+                inputWait.Set();
+            });
 
             inputWait.WaitOne();
-
-            // if this is the first run, set the timestamp.
-            if (!isRerun)
-                script.FirstRunTimestamp = DateTimeOffset.UtcNow;
 
             SensusServiceHelper.Get().Logger.Log("\"" + _name + "\" has finished running.", LoggingLevel.Normal, typeof(Script));
 
@@ -737,14 +730,14 @@ namespace SensusService.Probes.User
             return restart;
         }
 
-        public void ClearForSharing()
+        public void Reset()
         {
             _invalidScripts.Clear();
+            _rerunCallbackId = null;
             _numScriptsAgedOut = 0;
+            _randomTriggerCallbackId = null;
             _runTimes.Clear();
             _completionTimes.Clear();
-            _rerunCallbackId = null;
-            _randomTriggerCallbackId = null;
         }
 
         public void Restart()
