@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using Microsoft.Band.Portable.Sensors;
 using SensusUI.UiProperties;
 using Syncfusion.SfChart.XForms;
+using SensusService.Probes.User.MicrosoftBand;
 
 namespace SensusService
 {
@@ -190,7 +191,7 @@ namespace SensusService
             BAND_CLIENT_CONNECT_WAIT.WaitOne();
 
             if (BandClient == null || !BandClient.IsConnected)
-                throw new Exception("Failed to connect to Microsoft Band.");
+                throw new MicrosoftBandClientConnectException("Failed to connect to Microsoft Band.");
         }
 
         public static Task TestBandClientAsync(string callbackId, CancellationToken cancellationToken, Action letDeviceSleepCallback)

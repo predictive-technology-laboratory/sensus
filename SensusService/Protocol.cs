@@ -36,6 +36,7 @@ using SensusService.Probes.Movement;
 using System.Text;
 using Plugin.Geolocator.Abstractions;
 using System.Threading.Tasks;
+using SensusService.Probes.User.MicrosoftBand;
 
 #if __IOS__
 using HealthKit;
@@ -963,14 +964,25 @@ namespace SensusService
 
                             SensusServiceHelper.Get().Logger.Log("Starting probes for protocol " + _name + ".", LoggingLevel.Normal, GetType());
                             int probesEnabled = 0;
+                            bool startMicrosoftBandProbes = true;
                             foreach (Probe probe in _probes)
                                 if (probe.Enabled)
                                 {
                                     ++probesEnabled;
 
+                                    if (probe is MicrosoftBandProbeBase && !startMicrosoftBandProbes)
+                                        continue;
+
                                     try
                                     {
                                         probe.Start();
+                                    }
+                                    catch (MicrosoftBandClientConnectException)
+                                    {
+                                        // if we failed to start a microsoft band probe due to a client connect exception, don't attempt to start the other
+                                        // band probes. instead, rely on the band health check to periodically attempt to connect to the band. if and when this
+                                        // succeeds, all band probes will then be started.
+                                        startMicrosoftBandProbes = false;
                                     }
                                     catch (Exception)
                                     {
@@ -1316,10 +1328,11 @@ namespace SensusService
             try
             {
                 Directory.Delete(StorageDirectory, true);
+                _storageDirectory = null;
             }
             catch (Exception ex)
             {
-                SensusServiceHelper.Get().Logger.Log("Failed to delete protocol storage directory \"" + StorageDirectory + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
+                SensusServiceHelper.Get().Logger.Log("Failed to delete protocol storage directory:  " + ex.Message, LoggingLevel.Normal, GetType());
             }
         }
 
