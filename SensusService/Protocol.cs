@@ -800,14 +800,31 @@ namespace SensusService
 
         private void Reset(bool resetId)
         {
-            // pick a random time within the first 1000 years AD.
-            _randomTimeAnchor = new DateTimeOffset((long)(new Random().NextDouble() * new DateTimeOffset(1000, 1, 1, 0, 0, 0, new TimeSpan()).Ticks), new TimeSpan());
-
             // reset id and storage directory (directory might exist if deserializing the same protocol multiple times)
             if (resetId)
                 _id = Guid.NewGuid().ToString();
 
             StorageDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), _id);
+
+            // pick a random time anchor within the first 1000 years AD.
+            _randomTimeAnchor = new DateTimeOffset((long)(new Random().NextDouble() * new DateTimeOffset(1000, 1, 1, 0, 0, 0, new TimeSpan()).Ticks), new TimeSpan());
+
+            // reset probes
+            foreach (Probe probe in _probes)
+            {
+                probe.Reset();
+
+                // reset enabled status of probes to the original values. probes can be disabled when the protocol is started (e.g., if the user cancels out of facebook login.)
+                probe.Enabled = probe.OriginallyEnabled;
+            }
+
+            if (_localDataStore != null)
+                _localDataStore.Reset();
+
+            if (_remoteDataStore != null)
+                _remoteDataStore.Reset();
+
+            _mostRecentReport = null;
         }
 
         public void Save(string path)
@@ -823,7 +840,6 @@ namespace SensusService
         {
             DeserializeAsync(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), protocol =>
                 {
-                    // if the id needs to be reset, do it before registering the protocol since the id is used for registration checking.
                     protocol.Reset(resetId);
 
                     if (register)
@@ -1172,27 +1188,6 @@ namespace SensusService
                     _mostRecentReport = report;
                 }
             });
-        }
-
-        public void ResetForSharing()
-        {
-            _randomTimeAnchor = DateTime.MinValue;
-            _storageDirectory = null;
-            _mostRecentReport = null;
-
-            foreach (Probe probe in _probes)
-            {
-                probe.ResetForSharing();
-
-                // reset enabled status of probes to the original values. probes can be disabled when the protocol is started (e.g., if the user cancels out of facebook login.)
-                probe.Enabled = probe.OriginallyEnabled;
-            }
-
-            if (_localDataStore != null)
-                _localDataStore.ClearForSharing();
-
-            if (_remoteDataStore != null)
-                _remoteDataStore.ClearForSharing();
         }
 
         public void StopAsync(Action callback = null)

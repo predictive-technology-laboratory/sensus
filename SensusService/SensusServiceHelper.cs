@@ -1446,13 +1446,23 @@ namespace SensusService
                             rationaleDialogWait.WaitOne();
                         }
 
-                        // request permission from the user. it's happened that the returned dictionary doesn't contain an entry for the requested permission, so check for that (https://insights.xamarin.com/app/Sensus-Production/issues/903).
-                        PermissionStatus status;
-                        Dictionary<Permission, PermissionStatus> permissionStatus = await CrossPermissions.Current.RequestPermissionsAsync(new Permission[] { permission });
-                        if (permissionStatus.TryGetValue(permission, out status))
-                            return status;
-                        else
-                            return PermissionStatus.Unknown;
+                        // request permission from the user
+                        PermissionStatus status = PermissionStatus.Unknown;
+                        try
+                        {
+                            Dictionary<Permission, PermissionStatus> permissionStatus = await CrossPermissions.Current.RequestPermissionsAsync(new Permission[] { permission });
+
+                            // it's happened that the returned dictionary doesn't contain an entry for the requested permission, so check for that(https://insights.xamarin.com/app/Sensus-Production/issues/903).a
+                            if (!permissionStatus.TryGetValue(permission, out status))
+                                throw new Exception("Permission status not returned for request:  " + permission);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.Log("Failed to obtain permission:  " + ex.Message, LoggingLevel.Normal, GetType());
+                            status = PermissionStatus.Unknown;
+                        }
+
+                        return status;
                     }
                 });
         }

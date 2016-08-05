@@ -430,10 +430,10 @@ namespace SensusService.Probes
             return restart;
         }
 
-        public virtual void ResetForSharing()
+        public virtual void Reset()
         {
             if (_running)
-                throw new Exception("Cannot clear probe while it is running.");
+                throw new Exception("Cannot reset probe while it is running.");
 
             lock (_chartData)
             {
@@ -441,10 +441,14 @@ namespace SensusService.Probes
             }
 
             lock (_startStopTimes)
+            {
                 _startStopTimes.Clear();
+            }
 
             lock (_successfulHealthTestTimes)
+            {
                 _successfulHealthTestTimes.Clear();
+            }
 
             _mostRecentDatum = null;
             _mostRecentStoreTimestamp = DateTimeOffset.MinValue;

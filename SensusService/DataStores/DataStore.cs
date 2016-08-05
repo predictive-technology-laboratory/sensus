@@ -355,13 +355,15 @@ namespace SensusService.DataStores
             return restart;
         }
 
-        public virtual void ClearForSharing()
+        public virtual void Reset()
         {
             if (_running)
-                throw new Exception("Cannot clear data store for sharing while it is running.");
+                throw new Exception("Cannot reset data store while it is running.");
 
             _mostRecentSuccessfulCommitTime = null;
             _commitCallbackId = null;
+            _addedDataCount = 0;
+            _committedDataCount = 0;
 
             lock (_data)
             {

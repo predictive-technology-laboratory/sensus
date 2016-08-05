@@ -142,12 +142,12 @@ namespace SensusService.Probes.User
             return restart;
         }
 
-        public override void ResetForSharing()
+        public override void Reset()
         {
-            base.ResetForSharing();
+            base.Reset();
 
             foreach (ScriptRunner scriptRunner in _scriptRunners)
-                scriptRunner.ClearForSharing();
+                scriptRunner.Reset();
         }
 
         public override void Stop()
