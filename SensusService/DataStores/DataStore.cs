@@ -381,7 +381,23 @@ namespace SensusService.DataStores
                 ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
             };
 
-            return JsonConvert.DeserializeObject<DataStore>(JsonConvert.SerializeObject(this, settings), settings);
+            DataStore copy = null;
+            try
+            {
+                SensusServiceHelper.Get().FlashNotificationsEnabled = false;
+                copy = JsonConvert.DeserializeObject<DataStore>(JsonConvert.SerializeObject(this, settings), settings);
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Failed to copy data store:  " + ex.Message, LoggingLevel.Normal, GetType());
+                copy = null;
+            }
+            finally
+            {
+                SensusServiceHelper.Get().FlashNotificationsEnabled = true;
+            }
+
+            return copy;
         }
     }
 }

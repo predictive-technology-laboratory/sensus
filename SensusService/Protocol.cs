@@ -247,7 +247,9 @@ namespace SensusService
                     {
                         ManualResetEvent protocolWait = new ManualResetEvent(false);
 
-                        // always deserialize protocols on the main thread (e.g., since a looper is required for android)
+                        // always deserialize protocols on the main thread (e.g., since a looper is required for android). also, disable
+                        // flash notifications so we don't get any messages that result from properties being set within the protocol.
+                        SensusServiceHelper.Get().FlashNotificationsEnabled = false;
                         Device.BeginInvokeOnMainThread(() =>
                             {
                                 try
@@ -276,6 +278,10 @@ namespace SensusService
                     {
                         SensusServiceHelper.Get().Logger.Log("Failed to deserialize protocol from JSON:  " + ex.Message, LoggingLevel.Normal, typeof(Protocol));
                         SensusServiceHelper.Get().FlashNotificationAsync("Failed to unpack protocol from JSON:  " + ex.Message);
+                    }
+                    finally
+                    {
+                        SensusServiceHelper.Get().FlashNotificationsEnabled = true;
                     }
 
                     if (callback != null)

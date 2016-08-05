@@ -329,6 +329,7 @@ namespace SensusService
         private List<PointOfInterest> _pointsOfInterest;
         private MobileBarcodeScanner _barcodeScanner;
         private ZXing.Mobile.BarcodeWriter _barcodeWriter;
+        private bool _flashNotificationsEnabled;
 
         private readonly object _shareFileLocker = new object();
         private readonly object _saveLocker = new object();
@@ -373,6 +374,18 @@ namespace SensusService
             get
             {
                 return _barcodeWriter;
+            }
+        }
+
+        public bool FlashNotificationsEnabled
+        {
+            get
+            {
+                return _flashNotificationsEnabled;
+            }
+            set
+            {
+                _flashNotificationsEnabled = value;
             }
         }
 
@@ -526,6 +539,8 @@ namespace SensusService
                     Width = qrCodeSize
                 }
             };
+
+            _flashNotificationsEnabled = true;
 
             if (!Directory.Exists(SHARE_DIRECTORY))
                 Directory.CreateDirectory(SHARE_DIRECTORY);
@@ -1033,10 +1048,13 @@ namespace SensusService
             // do not show flash notifications when unit testing, as they can disrupt UI scripting on iOS.
 #if !UNIT_TESTING
 
-            if (!duration.HasValue)
-                duration = TimeSpan.FromSeconds(2);
+            if (_flashNotificationsEnabled)
+            {
+                if (!duration.HasValue)
+                    duration = TimeSpan.FromSeconds(2);
 
-            ProtectedFlashNotificationAsync(message, flashLaterIfNotVisible, duration.Value, callback);
+                ProtectedFlashNotificationAsync(message, flashLaterIfNotVisible, duration.Value, callback);
+            }
 #endif
         }
 
