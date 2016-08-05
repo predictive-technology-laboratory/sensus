@@ -466,7 +466,33 @@ namespace SensusService
 
         public string StorageDirectory
         {
-            get { return _storageDirectory; }
+            get
+            {
+                try
+                {
+                    // test storage directory to ensure that it's valid
+                    if (!Directory.Exists(_storageDirectory) || Directory.GetFiles(_storageDirectory).Length == -1)
+                        throw new Exception("Invalid protocol storage directory.");
+                }
+                catch (Exception)
+                {
+                    // the storage directory is not valid. try resetting the storage directory.
+                    try
+                    {
+                        ResetStorageDirectory();
+
+                        if (!Directory.Exists(_storageDirectory) || Directory.GetFiles(_storageDirectory).Length == -1)
+                            throw new Exception("Failed to reset protocol storage directory.");
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log(ex.Message, LoggingLevel.Normal, GetType());
+                        throw ex;
+                    }
+                }
+
+                return _storageDirectory;
+            }
             set
             {
                 _storageDirectory = value;
@@ -810,7 +836,7 @@ namespace SensusService
             if (resetId)
                 _id = Guid.NewGuid().ToString();
 
-            StorageDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), _id);
+            ResetStorageDirectory();
 
             // pick a random time anchor within the first 1000 years AD.
             _randomTimeAnchor = new DateTimeOffset((long)(new Random().NextDouble() * new DateTimeOffset(1000, 1, 1, 0, 0, 0, new TimeSpan()).Ticks), new TimeSpan());
@@ -831,6 +857,11 @@ namespace SensusService
                 _remoteDataStore.Reset();
 
             _mostRecentReport = null;
+        }
+
+        private void ResetStorageDirectory()
+        {
+            StorageDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), _id);
         }
 
         public void Save(string path)

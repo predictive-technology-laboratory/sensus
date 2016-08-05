@@ -75,8 +75,9 @@ namespace SensusService.Probes.Location
             _readingWait = new ManualResetEvent(false);
             _reading = null;
             _readingTimeoutMS = 120000;
-            _locator = CrossGeolocator.Current;
             _listenerHeadings = new List<Tuple<EventHandler<PositionEventArgs>, bool>>();
+            _locator = CrossGeolocator.Current;
+            _locator.DesiredAccuracy = SensusServiceHelper.Get().GpsDesiredAccuracyMeters;
             _locator.PositionChanged += (o, e) =>
             {
                 SensusServiceHelper.Get().Logger.Log("GPS position has changed.", LoggingLevel.Verbose, GetType());

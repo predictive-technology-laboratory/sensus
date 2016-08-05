@@ -296,7 +296,7 @@ namespace SensusService.Probes
                     SensusServiceHelper.Get().Logger.Log("Failed to stop probe after failing to start it:  " + stopException.Message, LoggingLevel.Normal, GetType());
                 }
 
-                string message = "Failed to start probe \"" + GetType().FullName + "\":  " + startException.Message;
+                string message = "Failed to start probe \"" + GetType().Name + "\":  " + startException.Message;
                 SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
                 SensusServiceHelper.Get().FlashNotificationAsync(message, duration: TimeSpan.FromSeconds(4));
 
