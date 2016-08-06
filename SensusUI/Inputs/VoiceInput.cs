@@ -110,45 +110,45 @@ namespace SensusUI.Inputs
         public void RunAsync(DateTimeOffset? firstRunTimestamp, Action postDisplayCallback, Action<string> callback)
         {
             new Thread(() =>
-                {                    
-                    string outputMessage = _outputMessage;
+            {
+                string outputMessage = _outputMessage;
 
-                    #region temporal analysis for rerun
-                    if (firstRunTimestamp.HasValue && !string.IsNullOrWhiteSpace(_outputMessageRerun))
+                #region temporal analysis
+                if (firstRunTimestamp.HasValue && !string.IsNullOrWhiteSpace(_outputMessageRerun))
+                {
+                    TimeSpan promptAge = DateTimeOffset.UtcNow - firstRunTimestamp.Value;
+
+                    int daysAgo = (int)promptAge.TotalDays;
+                    string daysAgoStr;
+                    if (daysAgo == 0)
+                        daysAgoStr = "today";
+                    else if (daysAgo == 1)
+                        daysAgoStr = "yesterday";
+                    else
+                        daysAgoStr = promptAge.TotalDays + " days ago";
+
+                    outputMessage = string.Format(_outputMessageRerun, daysAgoStr + " at " + firstRunTimestamp.Value.ToLocalTime().DateTime.ToString("h:mm tt"));
+                }
+                #endregion
+
+                SensusServiceHelper.Get().TextToSpeechAsync(outputMessage, () =>
+                {
+                    SensusServiceHelper.Get().RunVoicePromptAsync(outputMessage, postDisplayCallback, response =>
                     {
-                        TimeSpan promptAge = DateTimeOffset.UtcNow - firstRunTimestamp.Value;
+                        Viewed = true;
 
-                        int daysAgo = (int)promptAge.TotalDays;
-                        string daysAgoStr;
-                        if (daysAgo == 0)
-                            daysAgoStr = "today";
-                        else if (daysAgo == 1)
-                            daysAgoStr = "yesterday";
-                        else
-                            daysAgoStr = promptAge.TotalDays + " days ago";
+                        if (string.IsNullOrWhiteSpace(response))
+                            response = null;
 
-                        outputMessage = string.Format(_outputMessageRerun, daysAgoStr + " at " + firstRunTimestamp.Value.ToLocalTime().DateTime.ToString("h:mm tt"));
-                    }
-                    #endregion
+                        _response = response;
 
-                    SensusServiceHelper.Get().TextToSpeechAsync(outputMessage, () =>
-                        {
-                            SensusServiceHelper.Get().RunVoicePromptAsync(outputMessage, postDisplayCallback, response =>
-                                {
-                                    Viewed = true;
+                        Complete = _response != null;
 
-                                    if (string.IsNullOrWhiteSpace(response))
-                                        response = null;
+                        callback(_response);
+                    });
+                });
 
-                                    _response = response;
-
-                                    Complete = _response != null;
-
-                                    callback(_response);
-                                });
-                        });
-
-                }).Start();
+            }).Start();
         }
     }
 }

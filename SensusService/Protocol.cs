@@ -37,6 +37,7 @@ using System.Text;
 using Plugin.Geolocator.Abstractions;
 using System.Threading.Tasks;
 using SensusService.Probes.User.MicrosoftBand;
+using System.Collections.ObjectModel;
 
 #if __IOS__
 using HealthKit;
@@ -411,6 +412,7 @@ namespace SensusService
         private float _gpsDesiredAccuracyMeters;
         private int _gpsMinTimeDelayMS;
         private float _gpsMinDistanceDelayMeters;
+        private ObservableCollection<Script> _scriptsToRun;
 
         private readonly object _locker = new object();
 
@@ -732,6 +734,14 @@ namespace SensusService
             }
         }
 
+        public ObservableCollection<Script> ScriptsToRun
+        {
+            get
+            {
+                return _scriptsToRun;
+            }
+        }
+
         #region iOS-specific protocol properties
 
 #if __IOS__
@@ -801,6 +811,7 @@ namespace SensusService
             _gpsDesiredAccuracyMeters = GPS_DEFAULT_ACCURACY_METERS;
             _gpsMinTimeDelayMS = GPS_DEFAULT_MIN_TIME_DELAY_MS;
             _gpsMinDistanceDelayMeters = GPS_DEFAULT_MIN_DISTANCE_DELAY_METERS;
+            _scriptsToRun = new ObservableCollection<Script>();
         }
 
         /// <summary>

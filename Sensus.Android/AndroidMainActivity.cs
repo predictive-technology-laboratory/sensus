@@ -30,6 +30,7 @@ using Xam.Plugin.MapExtend.Droid;
 using Plugin.CurrentActivity;
 using Android.Widget;
 using Plugin.Permissions;
+using System.Linq;
 
 [assembly: MetaData("com.facebook.sdk.ApplicationId", Value = "@string/app_id")]
 [assembly: UsesPermission(Microsoft.Band.BandClientManager.BindBandService)]
@@ -209,7 +210,7 @@ namespace Sensus.Android
             {
                 serviceHelper.Save();
 
-                if (SensusServiceHelper.PromptForInputsRunning)
+                if (SensusServiceHelper.Get().GetRunningProtocols().Sum(protocol => protocol.ScriptsToRun.Count) > 0)
                     serviceHelper.IssueNotificationAsync("Sensus", "Please open to provide responses.", true, false, INPUT_REQUESTED_NOTIFICATION_ID);
             }
         }

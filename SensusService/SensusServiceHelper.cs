@@ -49,8 +49,6 @@ namespace SensusService
         #region static members
 
         private static SensusServiceHelper SINGLETON;
-        private static readonly object PROMPT_FOR_INPUTS_LOCKER = new object();
-        private static bool PROMPT_FOR_INPUTS_RUNNING = false;
         public const string SENSUS_CALLBACK_KEY = "SENSUS-CALLBACK";
         public const string SENSUS_CALLBACK_ID_KEY = "SENSUS-CALLBACK-ID";
         public const string SENSUS_CALLBACK_REPEATING_KEY = "SENSUS-CALLBACK-REPEATING";
@@ -62,11 +60,6 @@ namespace SensusService
         public static readonly string SHARE_DIRECTORY = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "share");
         private static readonly string LOG_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
         private static readonly string SERIALIZATION_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_service_helper.json");
-
-        public static bool PromptForInputsRunning
-        {
-            get { return PROMPT_FOR_INPUTS_RUNNING; }
-        }
 
 #if DEBUG || UNIT_TESTING
         // test every 30 seconds in debug
@@ -1077,245 +1070,224 @@ namespace SensusService
                 inputGroup.Inputs.Add(input);
 
             PromptForInputsAsync(null, new InputGroup[] { inputGroup }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, null, inputGroups =>
-                {
-                    if (inputGroups == null)
-                        callback(null);
-                    else
-                        callback(inputGroups.SelectMany(g => g.Inputs).ToList());
-                });
+            {
+                if (inputGroups == null)
+                    callback(null);
+                else
+                    callback(inputGroups.SelectMany(g => g.Inputs).ToList());
+            });
         }
 
         public void PromptForInputsAsync(DateTimeOffset? firstPromptTimestamp, IEnumerable<InputGroup> inputGroups, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action postDisplayCallback, Action<IEnumerable<InputGroup>> callback)
         {
             new Thread(() =>
+            {
+                if (inputGroups == null || inputGroups.Count() == 0 || inputGroups.All(inputGroup => inputGroup == null))
                 {
-                    if (inputGroups == null || inputGroups.Count() == 0 || inputGroups.All(inputGroup => inputGroup == null))
-                    {
-                        callback(inputGroups);
-                        return;
-                    }
+                    callback(inputGroups);
+                    return;
+                }
 
-                    // only one prompt can run at a time...enforce that here.
-                    lock (PROMPT_FOR_INPUTS_LOCKER)
+                bool firstPageDisplay = true;
+
+                // keep a stack of input groups that were displayed so that the user can navigate backward. not all groups are displayed due to display
+                // conditions, so we can't simply adjust the index into the input groups.
+                Stack<int> inputGroupNumBackStack = new Stack<int>();
+
+                for (int inputGroupNum = 0; inputGroups != null && inputGroupNum < inputGroups.Count() && !cancellationToken.GetValueOrDefault().IsCancellationRequested; ++inputGroupNum)
+                {
+                    InputGroup inputGroup = inputGroups.ElementAt(inputGroupNum);
+
+                    ManualResetEvent responseWait = new ManualResetEvent(false);
+
+                    try
                     {
-                        if (PROMPT_FOR_INPUTS_RUNNING)
+                        // run voice inputs by themselves, and only if the input group contains exactly one input and that input is a voice input.
+                        if (inputGroup.Inputs.Count == 1 && inputGroup.Inputs[0] is VoiceInput)
                         {
-                            _logger.Log("A prompt is already running. Dropping current prompt request.", LoggingLevel.Normal, GetType());
-                            callback(inputGroups);
-                            return;
-                        }
-                        else
-                            PROMPT_FOR_INPUTS_RUNNING = true;
-                    }
+                            VoiceInput voiceInput = inputGroup.Inputs[0] as VoiceInput;
 
-                    bool firstPageDisplay = true;
-
-                    // keep a stack of input groups that were displayed so that the user can navigate backward. not all groups are displayed due to display
-                    // conditions, so we can't simply adjust the index into the input groups.
-                    Stack<int> inputGroupNumBackStack = new Stack<int>();
-
-                    for (int inputGroupNum = 0; inputGroups != null && inputGroupNum < inputGroups.Count() && !cancellationToken.GetValueOrDefault().IsCancellationRequested; ++inputGroupNum)
-                    {
-                        InputGroup inputGroup = inputGroups.ElementAt(inputGroupNum);
-
-                        ManualResetEvent responseWait = new ManualResetEvent(false);
-
-                        try
-                        {
-                            // run voice inputs by themselves, and only if the input group contains exactly one input and that input is a voice input.
-                            if (inputGroup.Inputs.Count == 1 && inputGroup.Inputs[0] is VoiceInput)
+                            if (voiceInput.Enabled && voiceInput.Display)
                             {
-                                VoiceInput voiceInput = inputGroup.Inputs[0] as VoiceInput;
-
-                                if (voiceInput.Enabled && voiceInput.Display)
-                                {
-                                    // only run the post-display callback the first time a page is displayed. the caller expects the callback
-                                    // to fire only once upon first display.
-                                    voiceInput.RunAsync(firstPromptTimestamp, firstPageDisplay ? postDisplayCallback : null, response =>
-                                        {
-                                            firstPageDisplay = false;
-                                            responseWait.Set();
-                                        });
-                                }
-                                else
-                                    responseWait.Set();
+                                // only run the post-display callback the first time a page is displayed. the caller expects the callback
+                                // to fire only once upon first display.
+                                voiceInput.RunAsync(firstPromptTimestamp, firstPageDisplay ? postDisplayCallback : null, response =>
+                                    {
+                                        firstPageDisplay = false;
+                                        responseWait.Set();
+                                    });
                             }
                             else
-                            {
-                                BringToForeground();
+                                responseWait.Set();
+                        }
+                        else
+                        {
+                            BringToForeground();
 
-                                Device.BeginInvokeOnMainThread(async () =>
+                            Device.BeginInvokeOnMainThread(async () =>
+                            {
+                                // catch any exceptions from preparing and displaying the prompts page
+                                try
+                                {
+                                    int stepNumber = inputGroupNum + 1;
+                                    bool promptPagePopped = false;
+
+                                    PromptForInputsPage promptForInputsPage = new PromptForInputsPage(inputGroup, stepNumber, inputGroups.Count(), inputGroupNumBackStack.Count > 0, showCancelButton, nextButtonText, cancellationToken, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, firstPromptTimestamp, async result =>
                                     {
-                                        // catch any exceptions from preparing and displaying the prompts page
+                                        // catch any exceptions from navigating to the next page
                                         try
                                         {
-                                            int stepNumber = inputGroupNum + 1;
-                                            bool promptPagePopped = false;
-
-                                            PromptForInputsPage promptForInputsPage = new PromptForInputsPage(inputGroup, stepNumber, inputGroups.Count(), inputGroupNumBackStack.Count > 0, showCancelButton, nextButtonText, cancellationToken, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, firstPromptTimestamp, async result =>
-                                                        {
-                                                            // catch any exceptions from navigating to the next page
-                                                            try
-                                                            {
-                                                                // the prompt page has finished and needs to be popped. either the user finished the page or the cancellation token did so, and there 
-                                                                // might be a race condition. lock down the navigation object and check whether the page was already popped. don't do it again.
-                                                                INavigation navigation = Application.Current.MainPage.Navigation;
-                                                                bool pageWasAlreadyPopped;
-                                                                lock (navigation)
-                                                                {
-                                                                    pageWasAlreadyPopped = promptPagePopped;
-                                                                    promptPagePopped = true;
-                                                                }
-
-                                                                if (!pageWasAlreadyPopped)
-                                                                {
-                                                                    // we aren't doing anything else, so the top of the modal stack should be the prompt page; however, check to be sure.
-                                                                    if (navigation.ModalStack.Count > 0 && navigation.ModalStack.Last() is PromptForInputsPage)
-                                                                    {
-                                                                        _logger.Log("Popping prompt page with result:  " + result, LoggingLevel.Normal, GetType());
-
-                                                                        // animate pop if the user submitted or canceled
-                                                                        await navigation.PopModalAsync(stepNumber == inputGroups.Count() && result == PromptForInputsPage.Result.NavigateForward ||
-                                                                                                                       result == PromptForInputsPage.Result.Cancel);
-                                                                    }
-
-                                                                    if (result == PromptForInputsPage.Result.Cancel)
-                                                                        inputGroups = null;
-                                                                    else if (result == PromptForInputsPage.Result.NavigateBackward)
-                                                                        inputGroupNum = inputGroupNumBackStack.Pop() - 1;
-                                                                    else
-                                                                        inputGroupNumBackStack.Push(inputGroupNum);  // keep the group in the back stack and move to the next group
-                                                                }
-                                                            }
-                                                            catch (Exception ex)
-                                                            {
-                                                                // report exception and set wait handle if anything goes wrong while processing the current input group.
-                                                                try
-                                                                {
-                                                                    Insights.Report(ex, Insights.Severity.Critical);
-                                                                }
-                                                                catch { }
-                                                            }
-                                                            finally
-                                                            {
-                                                                // ensure that the response wait is always set
-                                                                responseWait.Set();
-                                                            }
-                                                        });
-
-                                            // do not display prompts page under the following conditions:  1) there are no inputs displayed on it. 2) the cancellation 
-                                            // token has requested a cancellation. if any of these conditions are true, set the wait handle and continue to the next input group.
-                                            if (promptForInputsPage.DisplayedInputCount == 0)
+                                            // the prompt page has finished and needs to be popped. either the user finished the page or the cancellation token did so, and there 
+                                            // might be a race condition. lock down the navigation object and check whether the page was already popped. don't do it again.
+                                            INavigation navigation = Application.Current.MainPage.Navigation;
+                                            bool pageWasAlreadyPopped;
+                                            lock (navigation)
                                             {
-                                                // if we're on the final input group and no inputs were shown, then we're at the end and we're ready to submit the 
-                                                // users' responses. first check that the user is ready to submit. if the user isn't ready then move back to the previous 
-                                                // input group in the backstack, if there is one.
-                                                if (inputGroupNum >= inputGroups.Count() - 1 && // this is the final input group
-                                                    inputGroupNumBackStack.Count > 0 && // there is an input group to go back to (the current one was not displayed)
-                                                    !string.IsNullOrWhiteSpace(submitConfirmation) && // we have a submit confirmation
-                                                    !(await Application.Current.MainPage.DisplayAlert("Confirm", submitConfirmation, "Yes", "No"))) // user is not ready to submit
+                                                pageWasAlreadyPopped = promptPagePopped;
+                                                promptPagePopped = true;
+                                            }
+
+                                            if (!pageWasAlreadyPopped)
+                                            {
+                                                // we aren't doing anything else, so the top of the modal stack should be the prompt page; however, check to be sure.
+                                                if (navigation.ModalStack.Count > 0 && navigation.ModalStack.Last() is PromptForInputsPage)
                                                 {
-                                                    inputGroupNum = inputGroupNumBackStack.Pop() - 1;
+                                                    _logger.Log("Popping prompt page with result:  " + result, LoggingLevel.Normal, GetType());
+
+                                                    // animate pop if the user submitted or canceled
+                                                    await navigation.PopModalAsync(stepNumber == inputGroups.Count() && result == PromptForInputsPage.Result.NavigateForward ||
+                                                                                   result == PromptForInputsPage.Result.Cancel);
                                                 }
 
-                                                responseWait.Set();
-                                            }
-                                            // don't display page if we've been canceled
-                                            else if (cancellationToken.GetValueOrDefault().IsCancellationRequested)
-                                                responseWait.Set();
-                                            else
-                                            {
-                                                // display page. only animate the display for the first page.
-                                                await Application.Current.MainPage.Navigation.PushModalAsync(promptForInputsPage, firstPageDisplay);
-
-                                                // only run the post-display callback the first time a page is displayed. the caller expects the callback
-                                                // to fire only once upon first display.
-                                                if (firstPageDisplay && postDisplayCallback != null)
-                                                    postDisplayCallback();
-
-                                                firstPageDisplay = false;
+                                                if (result == PromptForInputsPage.Result.Cancel)
+                                                    inputGroups = null;
+                                                else if (result == PromptForInputsPage.Result.NavigateBackward)
+                                                    inputGroupNum = inputGroupNumBackStack.Pop() - 1;
+                                                else
+                                                    inputGroupNumBackStack.Push(inputGroupNum);  // keep the group in the back stack and move to the next group
                                             }
                                         }
                                         catch (Exception ex)
                                         {
+                                            // report exception and set wait handle if anything goes wrong while processing the current input group.
                                             try
                                             {
                                                 Insights.Report(ex, Insights.Severity.Critical);
                                             }
                                             catch { }
-
-                                            // if anything bad happens, set the wait handle to ensure we get out of the prompt.
+                                        }
+                                        finally
+                                        {
+                                            // ensure that the response wait is always set
                                             responseWait.Set();
                                         }
                                     });
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            // report exception and set wait handle if anything goes wrong while processing the current input group.
-                            try
-                            {
-                                Insights.Report(ex, Insights.Severity.Critical);
-                            }
-                            catch { }
 
-                            responseWait.Set();
-                        }
+                                    // do not display prompts page under the following conditions:  1) there are no inputs displayed on it. 2) the cancellation 
+                                    // token has requested a cancellation. if any of these conditions are true, set the wait handle and continue to the next input group.
+                                    if (promptForInputsPage.DisplayedInputCount == 0)
+                                    {
+                                        // if we're on the final input group and no inputs were shown, then we're at the end and we're ready to submit the 
+                                        // users' responses. first check that the user is ready to submit. if the user isn't ready then move back to the previous 
+                                        // input group in the backstack, if there is one.
+                                        if (inputGroupNum >= inputGroups.Count() - 1 && // this is the final input group
+                                        inputGroupNumBackStack.Count > 0 && // there is an input group to go back to (the current one was not displayed)
+                                        !string.IsNullOrWhiteSpace(submitConfirmation) && // we have a submit confirmation
+                                        !(await Application.Current.MainPage.DisplayAlert("Confirm", submitConfirmation, "Yes", "No"))) // user is not ready to submit
+                                        {
+                                            inputGroupNum = inputGroupNumBackStack.Pop() - 1;
+                                        }
 
-                        responseWait.WaitOne();
+                                        responseWait.Set();
+                                    }
+                                    // don't display page if we've been canceled
+                                    else if (cancellationToken.GetValueOrDefault().IsCancellationRequested)
+                                        responseWait.Set();
+                                    else
+                                    {
+                                        // display page. only animate the display for the first page.
+                                        await Application.Current.MainPage.Navigation.PushModalAsync(promptForInputsPage, firstPageDisplay);
+
+                                        // only run the post-display callback the first time a page is displayed. the caller expects the callback
+                                        // to fire only once upon first display.
+                                        if (firstPageDisplay && postDisplayCallback != null)
+                                            postDisplayCallback();
+
+                                        firstPageDisplay = false;
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    try
+                                    {
+                                        Insights.Report(ex, Insights.Severity.Critical);
+                                    }
+                                    catch { }
+
+                                    // if anything bad happens, set the wait handle to ensure we get out of the prompt.
+                                    responseWait.Set();
+                                }
+                            });
+                        }
                     }
-
-                    // at this point we're done showing pages to the user. anything that needs to happen below with GPS tagging or subsequently
-                    // in the callback can happen concurrently with any calls that might happen to come into this method. if the callback
-                    // calls into this method immediately, there could be a race condition between the call and a call from some other part of 
-                    // the system. this is okay, as the latter call is always in a race condition anyway. if the imagined callback is beaten
-                    // to its reentrant call of this method by a call from somewhere else in the system, the callback might be prevented from 
-                    // executing; however, can't think of a place where this might happen with negative consequences.
-                    PROMPT_FOR_INPUTS_RUNNING = false;
-
-                    #region geotag input groups if the user didn't cancel and we've got input groups with inputs that are complete and lacking locations
-                    if (inputGroups != null && inputGroups.Any(inputGroup => inputGroup.Geotag && inputGroup.Inputs.Any(input => input.Complete && (input.Latitude == null || input.Longitude == null))))
+                    catch (Exception ex)
                     {
-                        _logger.Log("Geotagging input groups.", LoggingLevel.Normal, GetType());
-
+                        // report exception and set wait handle if anything goes wrong while processing the current input group.
                         try
                         {
-                            Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken.GetValueOrDefault());
-
-                            if (currentPosition != null)
-                                foreach (InputGroup inputGroup in inputGroups)
-                                    if (inputGroup.Geotag)
-                                        foreach (Input input in inputGroup.Inputs)
-                                            if (input.Complete)
-                                            {
-                                                bool locationUpdated = false;
-
-                                                if (input.Latitude == null)
-                                                {
-                                                    input.Latitude = currentPosition.Latitude;
-                                                    locationUpdated = true;
-                                                }
-
-                                                if (input.Longitude == null)
-                                                {
-                                                    input.Longitude = currentPosition.Longitude;
-                                                    locationUpdated = true;
-                                                }
-
-                                                if (locationUpdated)
-                                                    input.LocationUpdateTimestamp = currentPosition.Timestamp;
-                                            }
+                            Insights.Report(ex, Insights.Severity.Critical);
                         }
-                        catch (Exception ex)
-                        {
-                            _logger.Log("Error geotagging input groups:  " + ex.Message, LoggingLevel.Normal, GetType());
-                        }
+                        catch { }
+
+                        responseWait.Set();
                     }
-                    #endregion
 
-                    callback(inputGroups);
+                    responseWait.WaitOne();
+                }
 
-                }).Start();
+                #region geotag input groups if the user didn't cancel and we've got input groups with inputs that are complete and lacking locations
+                if (inputGroups != null && inputGroups.Any(inputGroup => inputGroup.Geotag && inputGroup.Inputs.Any(input => input.Complete && (input.Latitude == null || input.Longitude == null))))
+                {
+                    _logger.Log("Geotagging input groups.", LoggingLevel.Normal, GetType());
+
+                    try
+                    {
+                        Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken.GetValueOrDefault());
+
+                        if (currentPosition != null)
+                            foreach (InputGroup inputGroup in inputGroups)
+                                if (inputGroup.Geotag)
+                                    foreach (Input input in inputGroup.Inputs)
+                                        if (input.Complete)
+                                        {
+                                            bool locationUpdated = false;
+
+                                            if (input.Latitude == null)
+                                            {
+                                                input.Latitude = currentPosition.Latitude;
+                                                locationUpdated = true;
+                                            }
+
+                                            if (input.Longitude == null)
+                                            {
+                                                input.Longitude = currentPosition.Longitude;
+                                                locationUpdated = true;
+                                            }
+
+                                            if (locationUpdated)
+                                                input.LocationUpdateTimestamp = currentPosition.Timestamp;
+                                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Log("Error geotagging input groups:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
+                }
+                #endregion
+
+                callback(inputGroups);
+
+            }).Start();
         }
 
         public void GetPositionsFromMapAsync(Xamarin.Forms.Maps.Position address, string newPinName, Action<List<Xamarin.Forms.Maps.Position>> callback)

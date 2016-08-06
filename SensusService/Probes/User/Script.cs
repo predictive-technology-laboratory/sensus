@@ -23,11 +23,24 @@ namespace SensusService.Probes.User
 {
     public class Script
     {
+        private ScriptRunner _runner;
         private ObservableCollection<InputGroup> _inputGroups;
-        private DateTimeOffset? _firstRunTimestamp;
+        private DateTimeOffset _runTimestamp;
         private Datum _previousDatum;
         private Datum _currentDatum;
         private string _id;
+
+        public ScriptRunner Runner
+        {
+            get
+            {
+                return _runner;
+            }
+            set
+            {
+                _runner = value;
+            }
+        }
 
         public string Id
         {
@@ -46,10 +59,10 @@ namespace SensusService.Probes.User
             get { return _inputGroups; }
         }
 
-        public DateTimeOffset? FirstRunTimestamp
+        public DateTimeOffset RunTimestamp
         {
-            get { return _firstRunTimestamp; }
-            set { _firstRunTimestamp = value; }
+            get { return _runTimestamp; }
+            set { _runTimestamp = value; }
         }
 
         public Datum PreviousDatum
@@ -73,11 +86,11 @@ namespace SensusService.Probes.User
         [JsonIgnore]
         public TimeSpan Age
         {
-            get { return DateTimeOffset.UtcNow - _firstRunTimestamp.Value; }
+            get { return DateTimeOffset.UtcNow - _runTimestamp; }
         }
 
         public Script()
-        {           
+        {
             _id = Guid.NewGuid().ToString();
             _inputGroups = new ObservableCollection<InputGroup>();
         }

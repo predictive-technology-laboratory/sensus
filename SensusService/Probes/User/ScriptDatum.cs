@@ -34,7 +34,7 @@ namespace SensusService.Probes.User
         private string _triggerDatumId;
         private double? _latitude;
         private double? _longitude;
-        private DateTimeOffset _firstRunTimestamp;
+        private DateTimeOffset _runTimestamp;
         private DateTimeOffset? _locationTimestamp;
         private List<InputCompletionRecord> _completionRecords;
 
@@ -131,11 +131,11 @@ namespace SensusService.Probes.User
         {
             get
             {
-                return _firstRunTimestamp;
+                return _runTimestamp;
             }
             set
             {
-                _firstRunTimestamp = value;
+                _runTimestamp = value;
             }
         }
 
@@ -191,7 +191,7 @@ namespace SensusService.Probes.User
             _completionRecords = new List<InputCompletionRecord>();
         }
 
-        public ScriptDatum(DateTimeOffset timestamp, string scriptId, string scriptName, string groupId, string inputId, string runId, object response, string triggerDatumId, double? latitude, double? longitude, DateTimeOffset? locationTimestamp, DateTimeOffset firstRunTimestamp, List<InputCompletionRecord> completionRecords)
+        public ScriptDatum(DateTimeOffset timestamp, string scriptId, string scriptName, string groupId, string inputId, string runId, object response, string triggerDatumId, double? latitude, double? longitude, DateTimeOffset? locationTimestamp, DateTimeOffset runTimestamp, List<InputCompletionRecord> completionRecords)
             : base(timestamp)
         {
             _scriptId = scriptId;
@@ -204,7 +204,7 @@ namespace SensusService.Probes.User
             _latitude = latitude;
             _longitude = longitude;
             _locationTimestamp = locationTimestamp;
-            _firstRunTimestamp = firstRunTimestamp;
+            _runTimestamp = runTimestamp;
             _completionRecords = completionRecords;
         }
 
@@ -219,7 +219,7 @@ namespace SensusService.Probes.User
             "Latitude:  " + _latitude + Environment.NewLine +
             "Longitude:  " + _longitude + Environment.NewLine +
             "Location Timestamp:  " + _locationTimestamp + Environment.NewLine +
-            "First Run Timestamp:  " + _firstRunTimestamp;
+            "Run Timestamp:  " + _runTimestamp;
         }
     }
 }
