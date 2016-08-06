@@ -536,77 +536,77 @@
       <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Network\WlanDatum.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="SensusService.Probes.User.ProbeTriggerProperties.BooleanProbeTriggerProperty">
+  <Class Name="SensusService.Probes.User.Scripts.ProbeTriggerProperties.BooleanProbeTriggerProperty">
     <Position X="1" Y="21.5" Width="3" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\User\ProbeTriggerProperties\BooleanProbeTriggerProperty.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="SensusService.Probes.User.ProbeTriggerProperties.ListProbeTriggerProperty">
+  <Class Name="SensusService.Probes.User.Scripts.ProbeTriggerProperties.ListProbeTriggerProperty">
     <Position X="4.75" Y="21.5" Width="3.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAACAAAAAAAAAAAABAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\User\ProbeTriggerProperties\ListProbeTriggerProperty.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="SensusService.Probes.User.ProbeTriggerProperties.NumberProbeTriggerProperty">
+  <Class Name="SensusService.Probes.User.Scripts.ProbeTriggerProperties.NumberProbeTriggerProperty">
     <Position X="9.25" Y="21.5" Width="3" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\User\ProbeTriggerProperties\NumberProbeTriggerProperty.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="SensusService.Probes.User.ProbeTriggerProperties.ProbeTriggerProperty">
+  <Class Name="SensusService.Probes.User.Scripts.ProbeTriggerProperties.ProbeTriggerProperty">
     <Position X="7.25" Y="18.5" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAIAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\User\ProbeTriggerProperties\ProbeTriggerProperty.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="SensusService.Probes.User.ProbeTriggerProperties.TextProbeTriggerProperty">
+  <Class Name="SensusService.Probes.User.Scripts.ProbeTriggerProperties.TextProbeTriggerProperty">
     <Position X="13" Y="21.5" Width="2.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\User\ProbeTriggerProperties\TextProbeTriggerProperty.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="SensusService.Probes.User.Prompt" Collapsed="true">
+  <Class Name="SensusService.Probes.User.Scripts.Prompt" Collapsed="true">
     <Position X="128" Y="2.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AMAA4QIAGAQAAAIEMAoAAAQAAAAAAAAAAAAAAABACAA=</HashCode>
       <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\User\Prompt.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="SensusService.Probes.User.Script" Collapsed="true">
+  <Class Name="SensusService.Probes.User.Scripts.Script" Collapsed="true">
     <Position X="119.25" Y="4.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAABCAAAAYIAAEAAAAgAEgAAAAAAEEAAAAAABAA=</HashCode>
       <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\User\Script.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="SensusService.Probes.User.ScriptDatum">
+  <Class Name="SensusService.Probes.User.Scripts.ScriptDatum">
     <Position X="38" Y="6.5" Width="5.25" />
     <TypeIdentifier>
       <HashCode>AACAAAAAAABAACAEAAAAAAAAAAAAQAAAAAAAAAACAAA=</HashCode>
       <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\User\ScriptDatum.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="SensusService.Probes.User.ScriptProbe">
+  <Class Name="SensusService.Probes.User.Scripts.ScriptProbe">
     <Position X="99.5" Y="27" Width="4.5" />
     <TypeIdentifier>
       <HashCode>AAQAAAAAASAAAAAAAAABAAEAAAAAAAAAIEAAAAAAAAA=</HashCode>
       <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\User\ScriptProbe.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="SensusService.Probes.User.ScriptRunner" Collapsed="true">
+  <Class Name="SensusService.Probes.User.Scripts.ScriptRunner" Collapsed="true">
     <Position X="121" Y="4.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>EEIAIQDCACAAAJABQAQEAMUAGFEQGFAQIICBAAgoQgM=</HashCode>
       <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\User\ScriptRunner.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="SensusService.Probes.User.Trigger" Collapsed="true">
+  <Class Name="SensusService.Probes.User.Scripts.Trigger" Collapsed="true">
     <Position X="122.75" Y="5.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AEMEAADAKADQBAAMyAQgBAAAIAkkCIAAAAACAACAEQA=</HashCode>
@@ -966,21 +966,21 @@
       <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\Location\ProximityThresholdDirection.cs</FileName>
     </TypeIdentifier>
   </Enum>
-  <Enum Name="SensusService.Probes.User.PromptInputType" Collapsed="true">
+  <Enum Name="SensusService.Probes.User.Scripts.PromptInputType" Collapsed="true">
     <Position X="122.75" Y="7.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAEAAAg=</HashCode>
       <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\User\PromptInputType.cs</FileName>
     </TypeIdentifier>
   </Enum>
-  <Enum Name="SensusService.Probes.User.PromptOutputType" Collapsed="true">
+  <Enum Name="SensusService.Probes.User.Scripts.PromptOutputType" Collapsed="true">
     <Position X="124.5" Y="7.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAg=</HashCode>
       <FileName>C:\Users\Matthew Gerber\Documents\GitHub\sensus\SensusService\Probes\User\PromptOutputType.cs</FileName>
     </TypeIdentifier>
   </Enum>
-  <Enum Name="SensusService.Probes.User.TriggerValueCondition" Collapsed="true">
+  <Enum Name="SensusService.Probes.User.Scripts.TriggerValueCondition" Collapsed="true">
     <Position X="119.25" Y="8.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>ACAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAQBAACA=</HashCode>

@@ -12,27 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace SensusService.Probes.User.ProbeTriggerProperties
+namespace SensusService.Probes.User.Scripts.ProbeTriggerProperties
 {
-    public class ListProbeTriggerProperty : ProbeTriggerProperty
+    public class BooleanProbeTriggerProperty : ProbeTriggerProperty
     {
-        private object[] _items;
-
-        public object[] Items
-        {
-            get { return _items; }
-            set { _items = value; }
-        }
-
-        public ListProbeTriggerProperty(object[] items)
-            : this(null, items)
+        public BooleanProbeTriggerProperty()
+            : base()
         {
         }
 
-        public ListProbeTriggerProperty(string name, object[] items)
+        public BooleanProbeTriggerProperty(string name)
             : base(name)
         {
-            _items = items;
-        }
+        }        
     }
 }

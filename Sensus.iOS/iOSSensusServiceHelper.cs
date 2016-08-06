@@ -454,21 +454,19 @@ namespace Sensus.iOS
 
         public override void IssueNotificationAsync(string message, string id)
         {
-            Device.BeginInvokeOnMainThread(() =>
+            // TODO:  Does this work from background on probe trigger?
+            if (message != null)
+            {
+                UILocalNotification notification = new UILocalNotification
                 {
-                    if (message != null)
-                    {
-                        UILocalNotification notification = new UILocalNotification
-                        {
-                            AlertTitle = "Sensus",
-                            AlertBody = message,
-                            FireDate = DateTime.UtcNow.ToNSDate(),
-                            SoundName = UILocalNotification.DefaultSoundName
-                        };
+                    AlertTitle = "Sensus",
+                    AlertBody = message,
+                    FireDate = DateTime.UtcNow.ToNSDate(),
+                    SoundName = UILocalNotification.DefaultSoundName
+                };
 
-                        UIApplication.SharedApplication.ScheduleLocalNotification(notification);
-                    }
-                });
+                UIApplication.SharedApplication.ScheduleLocalNotification(notification);
+            }
         }
 
         protected override void ProtectedFlashNotificationAsync(string message, bool flashLaterIfNotVisible, TimeSpan duration, Action callback)

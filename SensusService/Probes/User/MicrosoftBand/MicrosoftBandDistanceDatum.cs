@@ -16,9 +16,9 @@ using System;
 using Microsoft.Band.Portable.Sensors;
 using SensusService.Anonymization;
 using SensusService.Anonymization.Anonymizers;
-using SensusService.Probes.User.ProbeTriggerProperties;
+using SensusService.Probes.User.Scripts.ProbeTriggerProperties;
 
-namespace SensusService.Probes.User.MicrosoftBand
+namespace SensusService.Probes.User.Scripts.MicrosoftBand
 {
     public class MicrosoftBandDistanceDatum : Datum
     {

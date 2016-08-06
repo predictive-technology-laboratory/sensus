@@ -19,12 +19,11 @@ using SensusUI.UiProperties;
 using System.Collections.Specialized;
 using System.Threading;
 using System.Linq;
-using SensusUI.Inputs;
 using System.Threading.Tasks;
 using Plugin.Geolocator.Abstractions;
 using SensusService.Probes.Location;
 
-namespace SensusService.Probes.User
+namespace SensusService.Probes.User.Scripts
 {
     public class ScriptRunner
     {
@@ -272,7 +271,7 @@ namespace SensusService.Probes.User
         /// </summary>
         private ScriptRunner()
         {
-            _script = new Script();
+            _script = new Script(this);
             _enabled = false;
             _allowCancel = true;
             _triggers = new ObservableCollection<Trigger>();
@@ -443,21 +442,21 @@ namespace SensusService.Probes.User
                 int triggerDelayMS = (int)(triggerTime - now).TotalMilliseconds;
 
                 ScheduledCallback callback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
+                {
+                    return Task.Run(() =>
                     {
-                        return Task.Run(() =>
-                            {
-                                // if the probe is still running and the runner is enabled, run a copy of the script so that we can retain a pristine version of the original.
-                                // also, when the script prompts display let the caller know that it's okay for the device to sleep.
-                                if (_probe.Running && _enabled)
-                                {
-                                    Run(_script.Copy(), postDisplayCallback: letDeviceSleepCallback);
+                        // if the probe is still running and the runner is enabled, run a copy of the script so that we can retain a pristine version of the original.
+                        // also, when the script prompts display let the caller know that it's okay for the device to sleep.
+                        if (_probe.Running && _enabled)
+                        {
+                            Run(_script.Copy());
 
-                                    // establish the next random trigger callback
-                                    StartRandomTriggerCallbacks();
-                                }
-                            });
+                            // establish the next random trigger callback
+                            StartRandomTriggerCallbacks();
+                        }
+                    });
 
-                    }, "Trigger Randomly", null, userNotificationMessage);
+                }, "Trigger Randomly", null, userNotificationMessage);
 
                 _randomTriggerCallbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(callback, triggerDelayMS);
             }
@@ -476,13 +475,12 @@ namespace SensusService.Probes.User
         }
 
         /// <summary>
-        /// Run the specified script. Will block the caller's thread while waiting for input, so be sure not to call this from the UI thread.
+        /// Run the specified script.
         /// </summary>
         /// <param name="script">Script.</param>
         /// <param name="previousDatum">Previous datum.</param>
         /// <param name="currentDatum">Current datum.</param>
-        /// <param name="postDisplayCallback">Called when it is okay for the device to sleep.</param>
-        private void Run(Script script, Datum previousDatum = null, Datum currentDatum = null, Action postDisplayCallback = null)
+        private void Run(Script script, Datum previousDatum = null, Datum currentDatum = null)
         {
             lock (_runTimes)
             {
@@ -543,9 +541,11 @@ namespace SensusService.Probes.User
                 script.CurrentDatum = currentDatum;
 
             script.RunTimestamp = runTime;
-            script.Runner = this;
 
-            _probe.Protocol.ScriptsToRun.Add(script);
+            lock (_probe.Protocol.ScriptsToRun)
+            {
+                _probe.Protocol.ScriptsToRun.Add(script);
+            }
         }
 
         public bool TestHealth(ref string error, ref string warning, ref string misc)

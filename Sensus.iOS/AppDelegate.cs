@@ -13,8 +13,6 @@
 // limitations under the License.
 
 using System;
-using System.Linq;
-using System.Collections.Generic;
 using Foundation;
 using UIKit;
 using Xamarin.Forms.Platform.iOS;
@@ -26,7 +24,6 @@ using Facebook.CoreKit;
 using Xamarin;
 using Xam.Plugin.MapExtend.iOSUnified;
 using CoreLocation;
-using System.Threading;
 using Plugin.Toasts;
 using SensusService.Probes;
 using Syncfusion.SfChart.XForms.iOS.Renderers;
@@ -54,13 +51,13 @@ namespace Sensus.iOS
 
             // toasts for iOS
             DependencyService.Register<ToastNotificatorImplementation>();
-            ToastNotificatorImplementation.Init(); 
+            ToastNotificatorImplementation.Init();
 
             LoadApplication(new App());
 
             uiApplication.RegisterUserNotificationSettings(UIUserNotificationSettings.GetSettingsForTypes(UIUserNotificationType.Badge | UIUserNotificationType.Sound | UIUserNotificationType.Alert, new NSSet()));
 
-            #if UNIT_TESTING
+#if UNIT_TESTING
             Forms.ViewInitialized += (sender, e) =>
             {
                 if (!string.IsNullOrWhiteSpace(e.View.StyleId))
@@ -68,7 +65,7 @@ namespace Sensus.iOS
             };
 
             Calabash.Start();
-            #endif
+#endif
 
             return base.FinishedLaunching(uiApplication, launchOptions);
         }
@@ -142,14 +139,14 @@ namespace Sensus.iOS
                 {
                     serviceHelper.UpdateCallbackNotificationActivationIdsAsync();
 
-                    #if UNIT_TESTING
+#if UNIT_TESTING
                     // load and run the unit testing protocol
                     string filePath = NSBundle.MainBundle.PathForResource("UnitTestingProtocol", "json");
                     using (Stream file = new FileStream(filePath, FileMode.Open, FileAccess.Read))
                     {
                         Protocol.RunUnitTestingProtocol(file);
                     }
-                    #endif
+#endif
 
                     Device.BeginInvokeOnMainThread(() =>
                         {
@@ -179,39 +176,35 @@ namespace Sensus.iOS
                 }
             }
         }
-		
+
         // This method should be used to release shared resources and it should store the application state.
         // If your application supports background exection this method is called instead of WillTerminate
         // when the user quits.
-        public override void DidEnterBackground(UIApplication application)
+        public override void DidEnterBackground(UIApplication uiApplication)
         {
             iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
 
             // app is no longer active, so reset the activation ID
             serviceHelper.ActivationId = null;
 
-            // leave the user a notification if a prompt is currently running
-            if (iOSSensusServiceHelper.PromptForInputsRunning)
-                serviceHelper.IssueNotificationAsync("Please open to provide responses.", null);
-                
             // save app state in background
-            nint saveTaskId = application.BeginBackgroundTask(() =>
-                {
-                });
+            nint saveTaskId = uiApplication.BeginBackgroundTask(() =>
+            {
+            });
 
             serviceHelper.SaveAsync(() =>
-                {
-                    application.EndBackgroundTask(saveTaskId);
-                }); 
+            {
+                uiApplication.EndBackgroundTask(saveTaskId);
+            });
         }
-		
+
         // This method is called as part of the transiton from background to active state.
-        public override void WillEnterForeground(UIApplication application)
+        public override void WillEnterForeground(UIApplication uiApplication)
         {
         }
-		
+
         // This method is called when the application is about to terminate. Save data, if needed.
-        public override void WillTerminate(UIApplication application)
+        public override void WillTerminate(UIApplication uiApplication)
         {
             // this method won't be called when the user kills the app using multitasking; however,
             // it should be called if the system kills the app when it's running in the background.

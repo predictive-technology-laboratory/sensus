@@ -28,21 +28,20 @@ using System.Linq;
 using System.Reflection;
 using SensusUI;
 using SensusService.Probes.Location;
-using SensusService.Exceptions;
 using SensusUI.Inputs;
-using SensusService.Probes.User;
 using SensusService.Probes.Apps;
 using SensusService.Probes.Movement;
 using System.Text;
-using Plugin.Geolocator.Abstractions;
 using System.Threading.Tasks;
-using SensusService.Probes.User.MicrosoftBand;
+using SensusService.Probes.User.Scripts.MicrosoftBand;
 using System.Collections.ObjectModel;
+using SensusService.Probes.User.Scripts;
 
 #if __IOS__
 using HealthKit;
 using Sensus.iOS.Probes.User.Health;
 using Foundation;
+using Plugin.Geolocator.Abstractions;
 #endif
 
 namespace SensusService
@@ -192,7 +191,7 @@ namespace SensusService
                                 // https://insights.xamarin.com/app/Sensus-Production/issues/999
                                 foreach (ScriptProbe probe in protocol.Probes.Where(probe => probe is ScriptProbe))
                                     foreach (ScriptRunner scriptRunner in probe.ScriptRunners)
-                                        foreach (Probes.User.Trigger trigger in scriptRunner.Triggers.ToList())
+                                        foreach (Probes.User.Scripts.Trigger trigger in scriptRunner.Triggers.ToList())
                                             if (trigger.Probe == null)
                                             {
                                                 scriptRunner.Triggers.Remove(trigger);
@@ -812,6 +811,11 @@ namespace SensusService
             _gpsMinTimeDelayMS = GPS_DEFAULT_MIN_TIME_DELAY_MS;
             _gpsMinDistanceDelayMeters = GPS_DEFAULT_MIN_DISTANCE_DELAY_METERS;
             _scriptsToRun = new ObservableCollection<Script>();
+            _scriptsToRun.CollectionChanged += (o, e) =>
+            {
+                string message = _scriptsToRun.Count == 0 ? null : "You have " + _scriptsToRun.Count + " pending survey" + (_scriptsToRun.Count == 1 ? "" : "s");
+                SensusServiceHelper.Get().IssueNotificationAsync(message, "PENDING-SURVEY-" + _id);
+            };
         }
 
         /// <summary>

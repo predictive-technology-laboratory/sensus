@@ -14,7 +14,7 @@
 
 using System;
 using System.Collections.ObjectModel;
-using SensusService.Probes.User;
+using SensusService.Probes.User.Scripts;
 using Xamarin.Forms;
 
 namespace SensusUI

@@ -13,19 +13,18 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Newtonsoft.Json;
 using SensusUI.Inputs;
 
-namespace SensusService.Probes.User
+namespace SensusService.Probes.User.Scripts
 {
     public class Script
     {
         private ScriptRunner _runner;
         private ObservableCollection<InputGroup> _inputGroups;
-        private DateTimeOffset _runTimestamp;
+        private DateTimeOffset? _runTimestamp;
         private Datum _previousDatum;
         private Datum _currentDatum;
         private string _id;
@@ -59,7 +58,7 @@ namespace SensusService.Probes.User
             get { return _inputGroups; }
         }
 
-        public DateTimeOffset RunTimestamp
+        public DateTimeOffset? RunTimestamp
         {
             get { return _runTimestamp; }
             set { _runTimestamp = value; }
@@ -83,25 +82,27 @@ namespace SensusService.Probes.User
             get { return _inputGroups.Count == 0 || _inputGroups.All(inputGroup => inputGroup.Valid); }
         }
 
-        [JsonIgnore]
-        public TimeSpan Age
+        public Script(ScriptRunner runner)
         {
-            get { return DateTimeOffset.UtcNow - _runTimestamp; }
-        }
-
-        public Script()
-        {
+            _runner = runner;
             _id = Guid.NewGuid().ToString();
             _inputGroups = new ObservableCollection<InputGroup>();
         }
 
         public Script Copy()
         {
+            // don't copy the runner
+            ScriptRunner runner = _runner;
+            _runner = null;
+
             Script copy = JsonConvert.DeserializeObject<Script>(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
 
             // a new GUID is set within the constructor, but it is immediately overwritten with the old id by the JSON deserializer. since the
             // script id is what ties all of the script datum objects together, set a new unique script id here.
             copy.Id = Guid.NewGuid().ToString();
+
+            // set the runner within the current and copied scripts
+            _runner = copy.Runner = runner;
 
             return copy;
         }

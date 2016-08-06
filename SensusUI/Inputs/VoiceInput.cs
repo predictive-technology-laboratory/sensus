@@ -16,7 +16,7 @@ using Newtonsoft.Json;
 using System;
 using System.Threading;
 using SensusUI.UiProperties;
-using SensusService.Probes.User;
+using SensusService.Probes.User.Scripts;
 using SensusService;
 using Xamarin.Forms;
 using SensusService.Exceptions;

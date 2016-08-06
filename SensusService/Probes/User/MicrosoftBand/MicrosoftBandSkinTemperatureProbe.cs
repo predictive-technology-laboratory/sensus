@@ -17,7 +17,7 @@ using Microsoft.Band.Portable;
 using Microsoft.Band.Portable.Sensors;
 using Syncfusion.SfChart.XForms;
 
-namespace SensusService.Probes.User.MicrosoftBand
+namespace SensusService.Probes.User.Scripts.MicrosoftBand
 {
     public class MicrosoftBandSkinTemperatureProbe : MicrosoftBandProbe<BandSkinTemperatureSensor, BandSkinTemperatureReading>
     {

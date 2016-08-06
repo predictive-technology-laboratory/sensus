@@ -14,7 +14,7 @@
 
 using System;
 
-namespace SensusService.Probes.User.MicrosoftBand
+namespace SensusService.Probes.User.Scripts.MicrosoftBand
 {
     public class MicrosoftBandClientConnectException : Exception
     {

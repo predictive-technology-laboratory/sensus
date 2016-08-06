@@ -18,7 +18,7 @@ using System.Collections.Generic;
 using SensusService;
 using System.Threading;
 using Foundation;
-using SensusService.Probes.User.Health;
+using SensusService.Probes.User.Scripts.Health;
 using Newtonsoft.Json;
 using Syncfusion.SfChart.XForms;
 

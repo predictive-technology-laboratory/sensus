@@ -17,7 +17,7 @@ using Microsoft.Band.Portable;
 using Microsoft.Band.Portable.Sensors;
 using Newtonsoft.Json;
 
-namespace SensusService.Probes.User.MicrosoftBand
+namespace SensusService.Probes.User.Scripts.MicrosoftBand
 {
     public abstract class MicrosoftBandProbe<SensorType, ReadingType> : MicrosoftBandProbeBase
         where SensorType : BandSensorBase<ReadingType>

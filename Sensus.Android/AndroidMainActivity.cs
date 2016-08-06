@@ -43,8 +43,6 @@ namespace Sensus.Android
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault }, DataMimeType = "application/json")]  // protocols obtained from "file" and "content" schemes:  http://developer.android.com/guide/components/intents-filters.html#DataTest
     public class AndroidMainActivity : FormsApplicationActivity
     {
-        public static readonly string INPUT_REQUESTED_NOTIFICATION_ID = "INPUT-REQUESTED-NOTIFICATION-ID";
-
         private AndroidSensusServiceConnection _serviceConnection;
         private ManualResetEvent _activityResultWait;
         private AndroidActivityResultRequestCode _activityResultRequestCode;
@@ -170,20 +168,17 @@ namespace Sensus.Android
 
             // start new thread to wait for connection, since we're currently on the UI thread, which the service connection needs in order to complete.
             new Thread(() =>
-                {
-                    _serviceBindWait.WaitOne();
+            {
+                _serviceBindWait.WaitOne();
 
-                    // clear input requested notification
-                    (SensusServiceHelper.Get() as AndroidSensusServiceHelper).IssueNotificationAsync("Sensus", null, true, false, INPUT_REQUESTED_NOTIFICATION_ID);
+                // now that the service connection has been established, dismiss the wait dialog and show protocols.
+                Device.BeginInvokeOnMainThread(() =>
+                    {
+                        serviceBindWaitDialog.Dismiss();
+                        (Xamarin.Forms.Application.Current as App).ProtocolsPage.Bind();
+                    });
 
-                    // now that the service connection has been established, dismiss the wait dialog and show protocols.
-                    Device.BeginInvokeOnMainThread(() =>
-                        {
-                            serviceBindWaitDialog.Dismiss();
-                            (Xamarin.Forms.Application.Current as App).ProtocolsPage.Bind();
-                        });
-
-                }).Start();
+            }).Start();
         }
 
         protected override void OnPause()
@@ -207,12 +202,7 @@ namespace Sensus.Android
             AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
 
             if (serviceHelper != null)
-            {
                 serviceHelper.Save();
-
-                if (SensusServiceHelper.Get().GetRunningProtocols().Sum(protocol => protocol.ScriptsToRun.Count) > 0)
-                    serviceHelper.IssueNotificationAsync("Sensus", "Please open to provide responses.", true, false, INPUT_REQUESTED_NOTIFICATION_ID);
-            }
         }
 
         protected override void OnDestroy()

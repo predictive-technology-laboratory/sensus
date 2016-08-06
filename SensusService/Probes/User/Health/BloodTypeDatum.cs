@@ -14,7 +14,7 @@
 
 using System;
 
-namespace SensusService.Probes.User.Health
+namespace SensusService.Probes.User.Scripts.Health
 {
     public class BloodTypeDatum : Datum
     {

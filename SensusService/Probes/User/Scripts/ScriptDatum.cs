@@ -15,13 +15,12 @@
 using System;
 using SensusService.Anonymization;
 using SensusService.Anonymization.Anonymizers;
-using SensusService.Probes.User.ProbeTriggerProperties;
+using SensusService.Probes.User.Scripts.ProbeTriggerProperties;
 using System.Collections;
-using System.Linq;
 using System.Collections.Generic;
 using SensusUI.Inputs;
 
-namespace SensusService.Probes.User
+namespace SensusService.Probes.User.Scripts
 {
     public class ScriptDatum : Datum
     {
@@ -127,7 +126,7 @@ namespace SensusService.Probes.User
             set { _longitude = value; }
         }
 
-        public DateTimeOffset FirstRunTimestamp
+        public DateTimeOffset RunTimestamp
         {
             get
             {

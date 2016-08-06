@@ -19,7 +19,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Syncfusion.SfChart.XForms;
 
-namespace SensusService.Probes.User
+namespace SensusService.Probes.User.Scripts
 {
     public class ScriptProbe : Probe
     {
