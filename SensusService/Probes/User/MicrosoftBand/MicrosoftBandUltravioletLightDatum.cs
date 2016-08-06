@@ -18,7 +18,7 @@ using SensusService.Anonymization;
 using SensusService.Anonymization.Anonymizers;
 using SensusService.Probes.User.Scripts.ProbeTriggerProperties;
 
-namespace SensusService.Probes.User.Scripts.MicrosoftBand
+namespace SensusService.Probes.User.MicrosoftBand
 {
     public class MicrosoftBandUltravioletLightDatum : Datum
     {

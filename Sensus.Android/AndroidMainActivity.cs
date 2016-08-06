@@ -19,7 +19,6 @@ using Android.OS;
 using SensusService;
 using SensusUI;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using Xamarin.Forms;
@@ -30,7 +29,6 @@ using Xam.Plugin.MapExtend.Droid;
 using Plugin.CurrentActivity;
 using Android.Widget;
 using Plugin.Permissions;
-using System.Linq;
 
 [assembly: MetaData("com.facebook.sdk.ApplicationId", Value = "@string/app_id")]
 [assembly: UsesPermission(Microsoft.Band.BandClientManager.BindBandService)]

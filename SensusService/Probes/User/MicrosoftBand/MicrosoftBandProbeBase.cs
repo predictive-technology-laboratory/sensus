@@ -23,7 +23,7 @@ using System.Collections.Generic;
 using Microsoft.Band.Portable.Sensors;
 using SensusUI.UiProperties;
 using Syncfusion.SfChart.XForms;
-using SensusService.Probes.User.Scripts.MicrosoftBand;
+using SensusService.Probes.User.MicrosoftBand;
 
 namespace SensusService
 {

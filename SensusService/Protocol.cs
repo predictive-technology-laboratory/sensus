@@ -33,7 +33,7 @@ using SensusService.Probes.Apps;
 using SensusService.Probes.Movement;
 using System.Text;
 using System.Threading.Tasks;
-using SensusService.Probes.User.Scripts.MicrosoftBand;
+using SensusService.Probes.User.MicrosoftBand;
 using System.Collections.ObjectModel;
 using SensusService.Probes.User.Scripts;
 
