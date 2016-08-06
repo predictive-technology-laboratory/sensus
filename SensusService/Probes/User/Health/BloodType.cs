@@ -14,7 +14,7 @@
 
 using System;
 
-namespace SensusService.Probes.User.Scripts.Health
+namespace SensusService.Probes.User.Health
 {
     public enum BloodType
     {

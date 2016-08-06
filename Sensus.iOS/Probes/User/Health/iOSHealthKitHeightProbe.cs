@@ -13,7 +13,7 @@
 // limitations under the License.
 
 using System;
-using SensusService.Probes.User.Scripts.Health;
+using SensusService.Probes.User.Health;
 using HealthKit;
 using Xamarin.Forms.Platform.iOS;
 using SensusService;

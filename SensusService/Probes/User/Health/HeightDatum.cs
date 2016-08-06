@@ -17,7 +17,7 @@ using SensusService.Anonymization;
 using SensusService.Anonymization.Anonymizers;
 using SensusService.Probes.User.Scripts.ProbeTriggerProperties;
 
-namespace SensusService.Probes.User.Scripts.Health
+namespace SensusService.Probes.User.Health
 {
     public class HeightDatum : Datum
     {
