@@ -35,7 +35,6 @@ namespace SensusService.Probes.User.Scripts
         private ObservableCollection<Trigger> _triggers;
         private Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>> _triggerHandler;
         private int _maximumAgeMinutes;
-        private int _numScriptsAgedOut;
         private List<Tuple<DateTime, DateTime>> _randomTriggerWindows;
         private string _randomTriggerCallbackId;
         private Random _random;
@@ -124,18 +123,6 @@ namespace SensusService.Probes.User.Scripts
         {
             get { return _maximumAgeMinutes; }
             set { _maximumAgeMinutes = value; }
-        }
-
-        public int NumScriptsAgedOut
-        {
-            get
-            {
-                return _numScriptsAgedOut;
-            }
-            set
-            {
-                _numScriptsAgedOut = value;
-            }
         }
 
         [EntryStringUiProperty("Random Windows:", true, 8)]
@@ -277,7 +264,6 @@ namespace SensusService.Probes.User.Scripts
             _triggers = new ObservableCollection<Trigger>();
             _triggerHandler = new Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>>();
             _maximumAgeMinutes = 10;
-            _numScriptsAgedOut = 0;
             _randomTriggerWindows = new List<Tuple<DateTime, DateTime>>();
             _randomTriggerCallbackId = null;
             _random = new Random();
@@ -550,17 +536,11 @@ namespace SensusService.Probes.User.Scripts
 
         public bool TestHealth(ref string error, ref string warning, ref string misc)
         {
-            bool restart = false;
-
-            if (_numScriptsAgedOut > 0)
-                misc += _numScriptsAgedOut + " \"" + _name + "\" scripts have aged out." + Environment.NewLine;
-
-            return restart;
+            return false;
         }
 
         public void Reset()
         {
-            _numScriptsAgedOut = 0;
             _randomTriggerCallbackId = null;
             _runTimes.Clear();
             _completionTimes.Clear();
