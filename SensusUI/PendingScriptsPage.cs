@@ -19,18 +19,56 @@ using SensusService.Probes.User.Scripts;
 using SensusUI.Inputs;
 using Xamarin.Forms;
 using System.Linq;
+using System.Globalization;
 
 namespace SensusUI
 {
     public class PendingScriptsPage : ContentPage
     {
+        private class ScriptTextConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                if (value == null)
+                    return "";
+
+                Script script = value as Script;
+
+                return script.Runner.Name;
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        private class ScriptDetailConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                if (value == null)
+                    return "";
+
+                Script script = value as Script;
+
+                return script.Runner.Probe.Protocol.Name + " - " + script.RunTimestamp.Value.LocalDateTime;
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public PendingScriptsPage()
         {
             Title = "Pending Surveys";
 
             ListView scriptList = new ListView();
             scriptList.ItemTemplate = new DataTemplate(typeof(TextCell));
-            scriptList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".Runner.Name"));
+            scriptList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", converter: new ScriptTextConverter()));
+            scriptList.ItemTemplate.SetBinding(TextCell.DetailProperty, new Binding(".", converter: new ScriptDetailConverter()));
             scriptList.ItemsSource = SensusServiceHelper.Get().ScriptsToRun;
             scriptList.ItemTapped += (o, e) =>
             {
@@ -87,10 +125,10 @@ namespace SensusUI
 
                     if (!canceled)
                     {
-                        lock (SensusServiceHelper.Get().ScriptsToRun)
+                        Device.BeginInvokeOnMainThread(() =>
                         {
-                            SensusServiceHelper.Get().ScriptsToRun.Remove(script);
-                        }
+                            SensusServiceHelper.Get().RemoveScriptToRun(script);
+                        });
                     }
 
                     SensusServiceHelper.Get().Logger.Log("\"" + script.Runner.Name + "\" has finished running.", LoggingLevel.Normal, typeof(Script));

@@ -793,6 +793,45 @@ namespace SensusService
             }
         }
 
+        public void AddScriptToRun(Script script, RunMode runMode)
+        {
+            lock (_scriptsToRun)
+            {
+                bool add = true;
+
+                List<Script> scriptsWithSameOrigin = _scriptsToRun.Where(s => s.SameOrigin(script)).ToList();
+
+                if (scriptsWithSameOrigin.Count > 0)
+                {
+                    if (runMode == RunMode.SingleKeepOldest)
+                        add = false;
+                    else if (runMode == RunMode.SingleUpdate)
+                        foreach (Script scriptWithSameOrigin in scriptsWithSameOrigin)
+                            _scriptsToRun.Remove(scriptWithSameOrigin);
+                }
+
+                if (add)
+                    _scriptsToRun.Insert(0, script);
+            }
+        }
+
+        public void RemoveScriptToRun(Script script)
+        {
+            lock (_scriptsToRun)
+            {
+                _scriptsToRun.Remove(script);
+            }
+        }
+
+        public void RemoveScriptsToRun(ScriptRunner runner)
+        {
+            lock (_scriptsToRun)
+            {
+                foreach (Script scriptFromRunner in _scriptsToRun.Where(script => ReferenceEquals(script.Runner, runner)).ToList())
+                    _scriptsToRun.Remove(scriptFromRunner);
+            }
+        }
+
         #region callback scheduling
 
         public string ScheduleRepeatingCallback(ScheduledCallback callback, int initialDelayMS, int repeatDelayMS, bool repeatLag)

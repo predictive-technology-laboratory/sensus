@@ -89,6 +89,11 @@ namespace SensusService.Probes.User.Scripts
             _inputGroups = new ObservableCollection<InputGroup>();
         }
 
+        public bool SameOrigin(Script script)
+        {
+            return _runner.Script.Id == script.Runner.Script.Id;
+        }
+
         public Script Copy()
         {
             // don't copy the runner

@@ -111,7 +111,7 @@ namespace SensusUI
 
                 contentLayout.Children.Add(new Label
                 {
-                    Text = "These fields were first displayed " + displayLapseDayDesc + " at " + firstDisplayDateTime.ToShortTimeString() + ".",
+                    Text = "This form was created " + displayLapseDayDesc + " at " + firstDisplayDateTime.ToShortTimeString() + ".",
                     FontSize = 20,
                     HorizontalOptions = LayoutOptions.Start
                 });

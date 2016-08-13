@@ -43,6 +43,7 @@ namespace SensusService.Probes.User.Scripts
         private bool _oneShot;
         private bool _runOnStart;
         private bool _displayProgress;
+        private RunMode _runMode;
 
         private readonly object _locker = new object();
 
@@ -251,6 +252,20 @@ namespace SensusService.Probes.User.Scripts
             }
         }
 
+        [ListUiProperty("Run Mode:", true, 14, new object[] { RunMode.Multiple, RunMode.SingleUpdate, RunMode.SingleKeepOldest })]
+        public RunMode RunMode
+        {
+            get
+            {
+                return _runMode;
+            }
+
+            set
+            {
+                _runMode = value;
+            }
+        }
+
         #endregion
 
         /// <summary>
@@ -272,6 +287,7 @@ namespace SensusService.Probes.User.Scripts
             _oneShot = false;
             _runOnStart = false;
             _displayProgress = true;
+            _runMode = RunMode.SingleUpdate;
 
             _triggers.CollectionChanged += (o, e) =>
             {
@@ -528,10 +544,7 @@ namespace SensusService.Probes.User.Scripts
 
             script.RunTimestamp = runTime;
 
-            lock (SensusServiceHelper.Get().ScriptsToRun)
-            {
-                SensusServiceHelper.Get().ScriptsToRun.Add(script);
-            }
+            SensusServiceHelper.Get().AddScriptToRun(script, _runMode);
         }
 
         public bool TestHealth(ref string error, ref string warning, ref string misc)
@@ -572,12 +585,7 @@ namespace SensusService.Probes.User.Scripts
         {
             StopRandomTriggerCallbacks();
 
-            lock (SensusServiceHelper.Get().ScriptsToRun)
-            {
-                foreach (Script script in SensusServiceHelper.Get().ScriptsToRun.ToList())
-                    if (script.Runner == this)
-                        SensusServiceHelper.Get().ScriptsToRun.Remove(script);
-            }
+            SensusServiceHelper.Get().RemoveScriptsToRun(this);
         }
     }
 }

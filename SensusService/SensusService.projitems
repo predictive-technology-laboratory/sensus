@@ -140,6 +140,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ProbeTriggerProperties\ListProbeTriggerProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ProbeTriggerProperties\ProbeTriggerProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ProbeTriggerProperties\StringProbeTriggerProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\RunMode.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />
