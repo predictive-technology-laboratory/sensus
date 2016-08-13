@@ -528,9 +528,9 @@ namespace SensusService.Probes.User.Scripts
 
             script.RunTimestamp = runTime;
 
-            lock (_probe.Protocol.ScriptsToRun)
+            lock (SensusServiceHelper.Get().ScriptsToRun)
             {
-                _probe.Protocol.ScriptsToRun.Add(script);
+                SensusServiceHelper.Get().ScriptsToRun.Add(script);
             }
         }
 
@@ -571,6 +571,13 @@ namespace SensusService.Probes.User.Scripts
         public void Stop()
         {
             StopRandomTriggerCallbacks();
+
+            lock (SensusServiceHelper.Get().ScriptsToRun)
+            {
+                foreach (Script script in SensusServiceHelper.Get().ScriptsToRun.ToList())
+                    if (script.Runner == this)
+                        SensusServiceHelper.Get().ScriptsToRun.Remove(script);
+            }
         }
     }
 }

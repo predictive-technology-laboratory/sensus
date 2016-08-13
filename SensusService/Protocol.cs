@@ -34,7 +34,6 @@ using SensusService.Probes.Movement;
 using System.Text;
 using System.Threading.Tasks;
 using SensusService.Probes.User.MicrosoftBand;
-using System.Collections.ObjectModel;
 using SensusService.Probes.User.Scripts;
 
 #if __IOS__
@@ -294,41 +293,38 @@ namespace SensusService
         public static void DisplayAndStartAsync(Protocol protocol)
         {
             new Thread(() =>
+            {
+                if (protocol == null)
+                    SensusServiceHelper.Get().FlashNotificationAsync("Protocol is empty. Cannot display or start it.");
+                else if (protocol.Running)
+                    SensusServiceHelper.Get().FlashNotificationAsync("You are already participating in \"" + protocol.Name + "\".");
+                else
                 {
-                    if (protocol == null)
-                        SensusServiceHelper.Get().FlashNotificationAsync("Protocol is empty. Cannot display or start it.");
-                    else if (protocol.Running)
-                        SensusServiceHelper.Get().FlashNotificationAsync("You are already participating in \"" + protocol.Name + "\".");
-                    else
+                    Device.BeginInvokeOnMainThread(async () =>
                     {
-                        Device.BeginInvokeOnMainThread(async () =>
-                            {
-                                ProtocolsPage protocolsPage = null;
+                        ProtocolsPage protocolsPage = null;
 
-                                // display the protocols page if it isn't already up
-                                INavigation navigation = Application.Current.MainPage.Navigation;
-                                Page topPage = navigation.NavigationStack.Count > 0 ? navigation.NavigationStack.Last() : null;
-                                if (topPage is ProtocolsPage)
-                                    protocolsPage = topPage as ProtocolsPage;
-                                else
-                                {
-                                    protocolsPage = new ProtocolsPage();
-                                    await Application.Current.MainPage.Navigation.PushAsync(protocolsPage);
-                                }
+                        // display the protocols page if it isn't already up
+                        INavigation navigation = Application.Current.MainPage.Navigation;
+                        Page topPage = navigation.NavigationStack.Count > 0 ? navigation.NavigationStack.Last() : null;
+                        if (topPage is ProtocolsPage)
+                            protocolsPage = topPage as ProtocolsPage;
+                        else
+                        {
+                            protocolsPage = new ProtocolsPage();
+                            await Application.Current.MainPage.Navigation.PushAsync(protocolsPage);
+                        }
 
-                                // ask user to start protocol
-                                protocol.StartWithUserAgreementAsync("You just opened \"" + protocol.Name + "\" within Sensus.", () =>
-                                    {
-                                        Device.BeginInvokeOnMainThread(() =>
-                                            {
-                                                // rebind to pick up any color changes
-                                                protocolsPage.Bind();
-                                            });
-                                    });
-                            });
-                    }
+                        // ask user to start protocol
+                        protocol.StartWithUserAgreementAsync("You just opened \"" + protocol.Name + "\" within Sensus.", () =>
+                        {
+                            // rebind to pick up any color changes
+                            Device.BeginInvokeOnMainThread(protocolsPage.Bind);
+                        });
+                    });
+                }
 
-                }).Start();
+            }).Start();
         }
 
         public static void RunUnitTestingProtocol(Stream unitTestingProtocolFile)
@@ -411,7 +407,6 @@ namespace SensusService
         private float _gpsDesiredAccuracyMeters;
         private int _gpsMinTimeDelayMS;
         private float _gpsMinDistanceDelayMeters;
-        private ObservableCollection<Script> _scriptsToRun;
 
         private readonly object _locker = new object();
 
@@ -733,14 +728,6 @@ namespace SensusService
             }
         }
 
-        public ObservableCollection<Script> ScriptsToRun
-        {
-            get
-            {
-                return _scriptsToRun;
-            }
-        }
-
         #region iOS-specific protocol properties
 
 #if __IOS__
@@ -810,12 +797,6 @@ namespace SensusService
             _gpsDesiredAccuracyMeters = GPS_DEFAULT_ACCURACY_METERS;
             _gpsMinTimeDelayMS = GPS_DEFAULT_MIN_TIME_DELAY_MS;
             _gpsMinDistanceDelayMeters = GPS_DEFAULT_MIN_DISTANCE_DELAY_METERS;
-            _scriptsToRun = new ObservableCollection<Script>();
-            _scriptsToRun.CollectionChanged += (o, e) =>
-            {
-                string message = _scriptsToRun.Count == 0 ? null : "You have " + _scriptsToRun.Count + " pending survey" + (_scriptsToRun.Count == 1 ? "" : "s");
-                SensusServiceHelper.Get().IssueNotificationAsync(message, "PENDING-SURVEY-" + _id);
-            };
         }
 
         /// <summary>

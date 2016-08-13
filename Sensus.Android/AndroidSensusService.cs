@@ -18,6 +18,8 @@ using Android.OS;
 using SensusService;
 using System;
 using System.Collections.Generic;
+using SensusUI;
+using Xamarin.Forms;
 
 namespace Sensus.Android
 {
@@ -72,9 +74,11 @@ namespace Sensus.Android
                 // requested. furthermore, all calls here should be nonblocking / async so we don't 
                 // tie up the UI thread.
                 serviceHelper.StartAsync(() =>
+                {
+                    // is this a callback intent?
+                    if (intent != null)
                     {
-                        // is this a callback intent?
-                        if (intent != null && intent.GetBooleanExtra(SensusServiceHelper.SENSUS_CALLBACK_KEY, false))
+                        if (intent.GetBooleanExtra(SensusServiceHelper.SENSUS_CALLBACK_KEY, false))
                         {
                             string callbackId = intent.GetStringExtra(SensusServiceHelper.SENSUS_CALLBACK_ID_KEY);
 
@@ -122,9 +126,22 @@ namespace Sensus.Android
                                 serviceHelper.LetDeviceSleep();
                             }
                         }
+                        else if (intent.GetStringExtra(AndroidSensusServiceHelper.NOTIFICATION_EXTRA_ID) == AndroidMainActivity.PENDING_SURVEY_NOTIFICATION_ID)
+                        {
+                            serviceHelper.BringToForeground();
+
+                            Device.BeginInvokeOnMainThread(async () =>
+                            {
+                                await Xamarin.Forms.Application.Current.MainPage.Navigation.PushAsync(new PendingScriptsPage());
+                                serviceHelper.LetDeviceSleep();
+                            });
+                        }
                         else
                             serviceHelper.LetDeviceSleep();
-                    });
+                    }
+                    else
+                        serviceHelper.LetDeviceSleep();
+                });
             }
 
             return StartCommandResult.Sticky;

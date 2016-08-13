@@ -116,7 +116,7 @@ namespace SensusUI
 
         public ProtocolsPage()
         {
-            Title = "Your Sensus Studies";
+            Title = "Your Studies";
 
             _protocolsList = new ListView();
             _protocolsList.ItemTemplate = new DataTemplate(typeof(TextCell));
@@ -500,6 +500,8 @@ namespace SensusUI
                             await DisplayAlert("About Sensus", "Version:  " + SensusServiceHelper.Get().Version, "OK");
                         }
                     }));
+
+            Bind();
         }
 
         public void Bind()

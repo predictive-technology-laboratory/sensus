@@ -34,6 +34,7 @@ using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
 using System.Threading.Tasks;
+using SensusService.Probes.User.Scripts;
 
 #if __IOS__
 using XLabs.Platform.Device;
@@ -85,8 +86,11 @@ namespace SensusService
             #region need the following in order to deserialize protocols between OSs, whose objects contain different members (e.g., iOS service helper has ActivationId, which Android does not)
             Error = (o, e) =>
             {
-                SensusServiceHelper.Get().Logger.Log("Failed to deserialize some part of the JSON:  " + e.ErrorContext.Error.ToString(), LoggingLevel.Normal, typeof(Protocol));
-                e.ErrorContext.Handled = true;
+                if (Get() != null)
+                {
+                    Get().Logger.Log("Failed to deserialize some part of the JSON:  " + e.ErrorContext.Error.ToString(), LoggingLevel.Normal, typeof(Protocol));
+                    e.ErrorContext.Handled = true;
+                }
             },
 
             MissingMemberHandling = MissingMemberHandling.Ignore,  // need to ignore missing members for cross-platform deserialization
@@ -323,6 +327,7 @@ namespace SensusService
         private MobileBarcodeScanner _barcodeScanner;
         private ZXing.Mobile.BarcodeWriter _barcodeWriter;
         private bool _flashNotificationsEnabled;
+        private ObservableCollection<Script> _scriptsToRun;
 
         private readonly object _shareFileLocker = new object();
         private readonly object _saveLocker = new object();
@@ -379,6 +384,14 @@ namespace SensusService
             set
             {
                 _flashNotificationsEnabled = value;
+            }
+        }
+
+        public ObservableCollection<Script> ScriptsToRun
+        {
+            get
+            {
+                return _scriptsToRun;
             }
         }
 
@@ -534,6 +547,7 @@ namespace SensusService
             };
 
             _flashNotificationsEnabled = true;
+            _scriptsToRun = new ObservableCollection<Script>();
 
             if (!Directory.Exists(SHARE_DIRECTORY))
                 Directory.CreateDirectory(SHARE_DIRECTORY);
@@ -1429,7 +1443,7 @@ namespace SensusService
 
                             Device.BeginInvokeOnMainThread(async () =>
                                 {
-                                    await (Application.Current as App).ProtocolsPage.DisplayAlert("Permission Request", "On the next screen, Sensus will request access to your device's " + permission.ToString().ToUpper() + ". " + rationale, "OK");
+                                    await (Application.Current as App).MainPage.DisplayAlert("Permission Request", "On the next screen, Sensus will request access to your device's " + permission.ToString().ToUpper() + ". " + rationale, "OK");
                                     rationaleDialogWait.Set();
                                 });
 

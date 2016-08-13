@@ -41,6 +41,8 @@ namespace Sensus.Android
 {
     public class AndroidSensusServiceHelper : SensusServiceHelper
     {
+        public const string NOTIFICATION_EXTRA_ID = "ID";
+
         private AndroidSensusService _service;
         private ConnectivityManager _connectivityManager;
         private NotificationManager _notificationManager;
@@ -491,27 +493,28 @@ namespace Sensus.Android
             if (_notificationManager != null)
             {
                 new Thread(() =>
+                {
+                    if (message == null)
+                        _notificationManager.Cancel(id, 0);
+                    else
                     {
-                        if (message == null)
-                            _notificationManager.Cancel(id, 0);
-                        else
-                        {
-                            Intent activityIntent = new Intent(_service, typeof(AndroidMainActivity));
-                            PendingIntent pendingIntent = PendingIntent.GetActivity(_service, 0, activityIntent, PendingIntentFlags.UpdateCurrent);
-                            Notification notification = new Notification.Builder(_service)
-                                .SetContentTitle(title)
-                                .SetContentText(message)
-                                .SetSmallIcon(Resource.Drawable.ic_launcher)
-                                .SetContentIntent(pendingIntent)
-                                .SetAutoCancel(autoCancel)
-                                .SetSound(RingtoneManager.GetDefaultUri(RingtoneType.Notification))
-                                .SetVibrate(new long[] { 0, 250, 50, 250 })
-                                .SetOngoing(ongoing).Build();
+                        Intent serviceIntent = new Intent(_service, typeof(AndroidSensusService));
+                        serviceIntent.PutExtra(NOTIFICATION_EXTRA_ID, id);
+                        PendingIntent pendingIntent = PendingIntent.GetService(_service, 0, serviceIntent, PendingIntentFlags.UpdateCurrent);
+                        Notification notification = new Notification.Builder(_service)
+                            .SetContentTitle(title)
+                            .SetContentText(message)
+                            .SetSmallIcon(Resource.Drawable.ic_launcher)
+                            .SetContentIntent(pendingIntent)
+                            .SetAutoCancel(autoCancel)
+                            .SetSound(RingtoneManager.GetDefaultUri(RingtoneType.Notification))
+                            .SetVibrate(new long[] { 0, 250, 50, 250 })
+                            .SetOngoing(ongoing).Build();
 
-                            _notificationManager.Notify(id, 0, notification);
-                        }
+                        _notificationManager.Notify(id, 0, notification);
+                    }
 
-                    }).Start();
+                }).Start();
             }
         }
 

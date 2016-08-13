@@ -136,8 +136,8 @@ namespace Sensus.iOS
             }
 
             serviceHelper.StartAsync(() =>
-                {
-                    serviceHelper.UpdateCallbackNotificationActivationIdsAsync();
+            {
+                serviceHelper.UpdateCallbackNotificationActivationIdsAsync();
 
 #if UNIT_TESTING
                     // load and run the unit testing protocol
@@ -148,11 +148,7 @@ namespace Sensus.iOS
                     }
 #endif
 
-                    Device.BeginInvokeOnMainThread(() =>
-                        {
-                            (Xamarin.Forms.Application.Current as App).ProtocolsPage.Bind();
-                        });
-                });
+            });
 
             // background authorization will be done implicitly when the location manager is used in probes, but the authorization is
             // done asynchronously so it's likely that the probes will believe that GPS is not enabled/authorized even though the user

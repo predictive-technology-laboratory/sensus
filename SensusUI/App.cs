@@ -19,18 +19,9 @@ namespace SensusUI
 {
     public class App : Application
     {
-        public ProtocolsPage _protocolsPage;
-
-        public ProtocolsPage ProtocolsPage
-        {
-            get { return _protocolsPage; }
-        }
-
         public App()
         {
-            _protocolsPage = new ProtocolsPage();
-
-            MainPage = new NavigationPage(_protocolsPage);
+            MainPage = new NavigationPage(new HomePage());
         }
     }
 }

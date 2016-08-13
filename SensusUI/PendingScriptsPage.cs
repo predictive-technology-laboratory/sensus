@@ -18,19 +18,20 @@ using SensusService;
 using SensusService.Probes.User.Scripts;
 using SensusUI.Inputs;
 using Xamarin.Forms;
+using System.Linq;
 
 namespace SensusUI
 {
     public class PendingScriptsPage : ContentPage
     {
-        public PendingScriptsPage(Protocol protocol)
+        public PendingScriptsPage()
         {
             Title = "Pending Surveys";
 
             ListView scriptList = new ListView();
             scriptList.ItemTemplate = new DataTemplate(typeof(TextCell));
             scriptList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".Runner.Name"));
-            scriptList.ItemsSource = protocol.ScriptsToRun;
+            scriptList.ItemsSource = SensusServiceHelper.Get().ScriptsToRun;
             scriptList.ItemTapped += (o, e) =>
             {
                 if (scriptList.SelectedItem == null)
@@ -38,7 +39,10 @@ namespace SensusUI
 
                 Script script = scriptList.SelectedItem as Script;
 
-                SensusServiceHelper.Get().PromptForInputsAsync(script.RunTimestamp, script.InputGroups, null, script.Runner.AllowCancel, null, "You will not receive credit for your responses if you cancel. Do you want to cancel?", "You have not completed all required fields. You will not receive credit for your responses if you continue. Do you want to continue?", "Are you ready to submit your responses?", script.Runner.DisplayProgress, null, async inputGroups =>
+                // reset list selection
+                scriptList.SelectedItem = null;
+
+                SensusServiceHelper.Get().PromptForInputsAsync(script.RunTimestamp, script.InputGroups, null, script.Runner.AllowCancel, null, null, "You have not completed all required fields. You will not receive credit for your responses if you continue. Do you want to continue?", "Are you ready to submit your responses?", script.Runner.DisplayProgress, null, async inputGroups =>
                 {
                     bool canceled = inputGroups == null;
 
@@ -79,10 +83,13 @@ namespace SensusUI
                             script.Runner.CompletionTimes.Add(DateTime.Now);
                             script.Runner.CompletionTimes.RemoveAll(completionTime => completionTime < script.Runner.Probe.Protocol.ParticipationHorizon);
                         }
+                    }
 
-                        lock (protocol.ScriptsToRun)
+                    if (!canceled)
+                    {
+                        lock (SensusServiceHelper.Get().ScriptsToRun)
                         {
-                            protocol.ScriptsToRun.Remove(script);
+                            SensusServiceHelper.Get().ScriptsToRun.Remove(script);
                         }
                     }
 
