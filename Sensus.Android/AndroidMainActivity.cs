@@ -42,8 +42,6 @@ namespace Sensus.Android
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault }, DataMimeType = "application/json")]  // protocols obtained from "file" and "content" schemes:  http://developer.android.com/guide/components/intents-filters.html#DataTest
     public class AndroidMainActivity : FormsApplicationActivity
     {
-        public static readonly string PENDING_SURVEY_NOTIFICATION_ID = "PENDING-SURVEY-NOTIFICATION-ID";
-
         private AndroidSensusServiceConnection _serviceConnection;
         private ManualResetEvent _activityResultWait;
         private AndroidActivityResultRequestCode _activityResultRequestCode;
@@ -173,7 +171,7 @@ namespace Sensus.Android
                 _serviceBindWait.WaitOne();
 
                 // clear pending survey notification       
-                (SensusServiceHelper.Get() as AndroidSensusServiceHelper).IssueNotificationAsync("Sensus", null, true, false, PENDING_SURVEY_NOTIFICATION_ID);
+                (SensusServiceHelper.Get() as AndroidSensusServiceHelper).IssueNotificationAsync("Sensus", null, true, false, SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID);
 
                 // now that the service connection has been established, dismiss the wait dialog and show protocols.
                 Device.BeginInvokeOnMainThread(() =>
@@ -208,9 +206,10 @@ namespace Sensus.Android
             {
                 serviceHelper.Save();
 
+                // leave the user a notification if there are pending surveys
                 int scriptsToRun = serviceHelper.ScriptsToRun.Count;
                 if (scriptsToRun > 0)
-                    serviceHelper.IssueNotificationAsync("Sensus", "Please open to take " + scriptsToRun + " survey" + (scriptsToRun == 1 ? "" : "s") + ".", true, false, PENDING_SURVEY_NOTIFICATION_ID);
+                    serviceHelper.IssueNotificationAsync("Sensus", "Please open to take " + scriptsToRun + " survey" + (scriptsToRun == 1 ? "" : "s") + ".", true, false, SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID);
             }
         }
 

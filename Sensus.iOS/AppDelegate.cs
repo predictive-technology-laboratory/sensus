@@ -183,6 +183,11 @@ namespace Sensus.iOS
             // app is no longer active, so reset the activation ID
             serviceHelper.ActivationId = null;
 
+            // leave the user a notification if there are pending surveys
+            int scriptsToRun = serviceHelper.ScriptsToRun.Count;
+            if (scriptsToRun > 0)
+                serviceHelper.IssueNotificationAsync("Please open to take " + scriptsToRun + " survey" + (scriptsToRun == 1 ? "" : "s") + ".", SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID);
+
             // save app state in background
             nint saveTaskId = uiApplication.BeginBackgroundTask(() =>
             {
