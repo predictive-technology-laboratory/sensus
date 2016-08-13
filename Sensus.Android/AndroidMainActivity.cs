@@ -172,7 +172,7 @@ namespace Sensus.Android
             {
                 _serviceBindWait.WaitOne();
 
-                // clear input requested notification       
+                // clear pending survey notification       
                 (SensusServiceHelper.Get() as AndroidSensusServiceHelper).IssueNotificationAsync("Sensus", null, true, false, PENDING_SURVEY_NOTIFICATION_ID);
 
                 // now that the service connection has been established, dismiss the wait dialog and show protocols.

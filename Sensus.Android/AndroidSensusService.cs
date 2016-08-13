@@ -75,9 +75,9 @@ namespace Sensus.Android
                 // tie up the UI thread.
                 serviceHelper.StartAsync(() =>
                 {
-                    // is this a callback intent?
                     if (intent != null)
                     {
+                        // is this a callback intent?
                         if (intent.GetBooleanExtra(SensusServiceHelper.SENSUS_CALLBACK_KEY, false))
                         {
                             string callbackId = intent.GetStringExtra(SensusServiceHelper.SENSUS_CALLBACK_ID_KEY);
