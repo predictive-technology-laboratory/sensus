@@ -149,10 +149,10 @@ namespace SensusUI
                 }
                 else if (selectedAction == "View Display Conditions")
                 {
-                    await Navigation.PushAsync(new ViewTextLinesPage("Display Conditions", selectedInput.DisplayConditions.Select(displayCondition => displayCondition.ToString()).ToList(), null, async () =>
-                            {
-                                selectedInput.DisplayConditions.Clear();
-                            }));
+                    await Navigation.PushAsync(new ViewTextLinesPage("Display Conditions", selectedInput.DisplayConditions.Select(displayCondition => displayCondition.ToString()).ToList(), null, () =>
+                    {
+                        selectedInput.DisplayConditions.Clear();
+                    }));
                 }
                 else if (selectedAction == "Delete")
                 {

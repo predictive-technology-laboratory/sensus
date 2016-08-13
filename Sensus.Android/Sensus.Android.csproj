@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -120,6 +120,12 @@
     <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Band.Android">
+      <HintPath>..\_Dependencies\msband\android\Microsoft.Band.Android.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Band.Portable">
+      <HintPath>..\_Dependencies\msband\android\Microsoft.Band.Portable.dll</HintPath>
+    </Reference>
     <Reference Include="Mono.Android" />
     <Reference Include="mscorlib" />
     <Reference Include="System" />
@@ -136,12 +142,6 @@
     <Reference Include="Validation">
       <HintPath>..\packages\Validation.2.2.8\lib\portable-net45+dnxcore50+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10\Validation.dll</HintPath>
     </Reference>
-    <Reference Include="Xam.Plugin.MapExtend.Android">
-      <HintPath>..\packages\mapextend\android\Xam.Plugin.MapExtend.Android.dll</HintPath>
-    </Reference>
-    <Reference Include="Xam.Plugin.MapExtend.Abstractions">
-      <HintPath>..\packages\mapextend\android\Xam.Plugin.MapExtend.Abstractions.dll</HintPath>
-    </Reference>
     <Reference Include="ExifLib">
       <HintPath>..\packages\ExifLib.PCL.1.0.1\lib\portable-net45+sl50+win+WindowsPhoneApp81+wp80+Xamarin.iOS10+MonoAndroid10+MonoTouch10\ExifLib.dll</HintPath>
     </Reference>
@@ -154,6 +154,12 @@
     </Reference>
     <Reference Include="Plugin.Permissions.Abstractions">
       <HintPath>..\packages\Plugin.Permissions.1.1.7\lib\MonoAndroid10\Plugin.Permissions.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Xam.Plugin.MapExtend.Abstractions">
+      <HintPath>..\_Dependencies\mapextend\android\Xam.Plugin.MapExtend.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Xam.Plugin.MapExtend.Android">
+      <HintPath>..\_Dependencies\mapextend\android\Xam.Plugin.MapExtend.Android.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Insights">
       <HintPath>..\packages\Xamarin.Insights.1.12.3\lib\MonoAndroid10\Xamarin.Insights.dll</HintPath>
@@ -302,12 +308,6 @@
     <Reference Include="Xam.Plugin.MapExtend.Android">
       <HintPath>..\packages\mapextend\android\Xam.Plugin.MapExtend.Android.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Band.Android">
-      <HintPath>..\packages\msband\android\Microsoft.Band.Android.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Band.Portable">
-      <HintPath>..\packages\msband\android\Microsoft.Band.Portable.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AndroidActivityResultRequestCode.cs" />
@@ -413,9 +413,7 @@
       <Link>Resources\drawable\share.png</Link>
     </AndroidResource>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Assets\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <AndroidAsset Include="Assets\UnitTestingProtocol.json" />
   </ItemGroup>

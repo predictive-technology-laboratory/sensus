@@ -179,7 +179,7 @@ namespace Sensus.iOS
                 }
             }
         }
-		
+        
         // This method should be used to release shared resources and it should store the application state.
         // If your application supports background exection this method is called instead of WillTerminate
         // when the user quits.
@@ -204,12 +204,12 @@ namespace Sensus.iOS
                     application.EndBackgroundTask(saveTaskId);
                 }); 
         }
-		
+        
         // This method is called as part of the transiton from background to active state.
         public override void WillEnterForeground(UIApplication application)
         {
         }
-		
+        
         // This method is called when the application is about to terminate. Save data, if needed.
         public override void WillTerminate(UIApplication application)
         {

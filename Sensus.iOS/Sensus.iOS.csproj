@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -188,9 +188,21 @@
     <MtouchUseRefCounting>true</MtouchUseRefCounting>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Band.iOS">
+      <HintPath>..\_Dependencies\msband\ios\Microsoft.Band.iOS.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Band.Portable">
+      <HintPath>..\_Dependencies\msband\ios\Microsoft.Band.Portable.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
+    <Reference Include="Xam.Plugin.MapExtend.Abstractions">
+      <HintPath>..\_Dependencies\mapextend\ios\Xam.Plugin.MapExtend.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Xam.Plugin.MapExtend.iOSUnified">
+      <HintPath>..\_Dependencies\mapextend\ios\Xam.Plugin.MapExtend.iOSUnified.dll</HintPath>
+    </Reference>
     <Reference Include="Xamarin.iOS" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.Primitives">
@@ -201,12 +213,6 @@
     </Reference>
     <Reference Include="Validation">
       <HintPath>..\packages\Validation.2.2.8\lib\portable-net45+dnxcore50+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10\Validation.dll</HintPath>
-    </Reference>
-    <Reference Include="Xam.Plugin.MapExtend.Abstractions">
-      <HintPath>..\packages\mapextend\ios\Xam.Plugin.MapExtend.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Xam.Plugin.MapExtend.iOSUnified">
-      <HintPath>..\packages\mapextend\ios\Xam.Plugin.MapExtend.iOSUnified.dll</HintPath>
     </Reference>
     <Reference Include="XLabs.Ioc">
       <HintPath>..\packages\XLabs.IoC.2.0.5782\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1+Xamarin.iOS10\XLabs.Ioc.dll</HintPath>
@@ -343,12 +349,6 @@
     <Reference Include="ZipArchive">
       <HintPath>..\Components\ZipArchive-1.4.0.1\lib\ios-unified\ZipArchive.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Band.iOS">
-      <HintPath>..\packages\msband\ios\Microsoft.Band.iOS.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Band.Portable">
-      <HintPath>..\packages\msband\ios\Microsoft.Band.Portable.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Contents.json">
@@ -413,7 +413,9 @@
     <None Include="iOSClassDiagram.cd" />
     <None Include="Info.plist" />
     <None Include="Entitlements.plist" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Main.cs" />
@@ -477,7 +479,5 @@
     </PropertyGroup>
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
   </Target>
-  <ItemGroup>
-    <Folder Include="Probes\User\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>
