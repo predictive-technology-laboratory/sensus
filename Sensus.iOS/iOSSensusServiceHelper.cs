@@ -31,7 +31,6 @@ using System.IO;
 using Newtonsoft.Json;
 using CoreBluetooth;
 using SensusService.Exceptions;
-using System.Threading.Tasks;
 
 namespace Sensus.iOS
 {
