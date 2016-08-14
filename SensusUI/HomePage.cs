@@ -25,6 +25,8 @@ namespace SensusUI
 
             Button studiesButton = new Button
             {
+                BorderColor = Color.Accent,
+                BorderWidth = 1,
                 Text = "Your Studies",
                 FontSize = 30,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
@@ -38,6 +40,8 @@ namespace SensusUI
 
             Button surveysButton = new Button
             {
+                BorderColor = Color.Accent,
+                BorderWidth = 1,
                 Text = "Pending Surveys",
                 FontSize = 30,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
@@ -52,6 +56,7 @@ namespace SensusUI
             Content = new StackLayout
             {
                 Orientation = StackOrientation.Vertical,
+                VerticalOptions = LayoutOptions.FillAndExpand,
                 Children =
                 {
                     studiesButton,

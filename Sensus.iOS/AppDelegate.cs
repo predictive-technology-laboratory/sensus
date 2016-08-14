@@ -165,10 +165,24 @@ namespace Sensus.iOS
             if (notification.UserInfo != null)
             {
                 NSNumber isCallbackValue = notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_KEY)) as NSNumber;
-                if (isCallbackValue != null && isCallbackValue.BoolValue)
+                if (isCallbackValue != null)
                 {
-                    iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
-                    serviceHelper.ServiceCallbackNotificationAsync(notification);
+                    if (isCallbackValue.BoolValue)
+                    {
+                        iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
+                        serviceHelper.ServiceCallbackNotificationAsync(notification);
+                    }
+                }
+                else
+                {
+                    NSString notificationId = notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.NOTIFICATION_ID_KEY)) as NSString;
+                    if (notificationId != null && notificationId.ToString() == SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID)
+                    {
+                        Device.BeginInvokeOnMainThread(async () =>
+                        {
+                            await Xamarin.Forms.Application.Current.MainPage.Navigation.PushAsync(new PendingScriptsPage());
+                        });
+                    }
                 }
             }
         }

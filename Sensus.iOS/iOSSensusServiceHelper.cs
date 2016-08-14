@@ -31,6 +31,7 @@ using System.IO;
 using Newtonsoft.Json;
 using CoreBluetooth;
 using SensusService.Exceptions;
+using System.Threading.Tasks;
 
 namespace Sensus.iOS
 {
@@ -181,31 +182,31 @@ namespace Sensus.iOS
         private void ScheduleCallbackAsync(string callbackId, int delayMS, bool repeating, int repeatDelayMS, bool repeatLag)
         {
             Device.BeginInvokeOnMainThread(() =>
+            {
+                string userNotificationMessage = GetCallbackUserNotificationMessage(callbackId);
+
+                UILocalNotification notification = new UILocalNotification
                 {
-                    string userNotificationMessage = GetCallbackUserNotificationMessage(callbackId);
+                    FireDate = DateTime.UtcNow.AddMilliseconds((double)delayMS).ToNSDate(),
+                    TimeZone = null,  // null for UTC interpretation of FireDate
+                    AlertBody = userNotificationMessage,
+                    UserInfo = GetNotificationUserInfoDictionary(callbackId, repeating, repeatDelayMS, repeatLag)
+                };
 
-                    UILocalNotification notification = new UILocalNotification
-                    {
-                        FireDate = DateTime.UtcNow.AddMilliseconds((double)delayMS).ToNSDate(),
-                        TimeZone = null,  // null for UTC interpretation of FireDate
-                        AlertBody = userNotificationMessage,
-                        UserInfo = GetNotificationUserInfoDictionary(callbackId, repeating, repeatDelayMS, repeatLag)
-                    };
+                // user info can be null if we don't have an activation ID. don't schedule the notification if this happens.
+                if (notification.UserInfo == null)
+                    return;
 
-                    // user info can be null if we don't have an activation ID. don't schedule the notification if this happens.
-                    if (notification.UserInfo == null)
-                        return;
+                if (userNotificationMessage != null)
+                    notification.SoundName = UILocalNotification.DefaultSoundName;
 
-                    if (userNotificationMessage != null)
-                        notification.SoundName = UILocalNotification.DefaultSoundName;
+                lock (_callbackIdNotification)
+                    _callbackIdNotification.Add(callbackId, notification);
 
-                    lock (_callbackIdNotification)
-                        _callbackIdNotification.Add(callbackId, notification);
+                UIApplication.SharedApplication.ScheduleLocalNotification(notification);
 
-                    UIApplication.SharedApplication.ScheduleLocalNotification(notification);
-
-                    Logger.Log("Callback " + callbackId + " scheduled for " + notification.FireDate + " (" + (repeating ? "repeating" : "one-time") + "). " + _callbackIdNotification.Count + " total callbacks in iOS service helper.", LoggingLevel.Debug, GetType());
-                });
+                Logger.Log("Callback " + callbackId + " scheduled for " + notification.FireDate + " (" + (repeating ? "repeating" : "one-time") + "). " + _callbackIdNotification.Count + " total callbacks in iOS service helper.", LoggingLevel.Debug, GetType());
+            });
         }
 
         public void ServiceCallbackNotificationAsync(UILocalNotification callbackNotification)
@@ -230,10 +231,10 @@ namespace Sensus.iOS
                 _callbackIdNotification.Remove(callbackId);
 
             nint callbackTaskId = UIApplication.SharedApplication.BeginBackgroundTask(() =>
-                {
-                    // if we're out of time running in the background, cancel the callback.
-                    CancelRaisedCallback(callbackId);
-                });
+            {
+                // if we're out of time running in the background, cancel the callback.
+                CancelRaisedCallback(callbackId);
+            });
 
             bool repeating = (callbackNotification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber).BoolValue;
             int repeatDelayMS = (callbackNotification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_DELAY)) as NSNumber).Int32Value;
@@ -242,32 +243,32 @@ namespace Sensus.iOS
             // raise callback but don't notify user since we would have already done so when the UILocalNotification was delivered to the notification tray.
             RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, false,
 
-                // schedule new callback at the specified time.
-                repeatCallbackTime =>
+            // schedule new callback at the specified time.
+            repeatCallbackTime =>
+            {
+                Device.BeginInvokeOnMainThread(() =>
                 {
-                    Device.BeginInvokeOnMainThread(() =>
-                        {
-                            callbackNotification.FireDate = repeatCallbackTime.ToUniversalTime().ToNSDate();
+                    callbackNotification.FireDate = repeatCallbackTime.ToUniversalTime().ToNSDate();
 
-                            // add back to the platform-specific notification collection, so that the notification is updated and reissued if/when the app is reactivated
-                            lock (_callbackIdNotification)
-                                _callbackIdNotification.Add(callbackId, callbackNotification);
+                    // add back to the platform-specific notification collection, so that the notification is updated and reissued if/when the app is reactivated
+                    lock (_callbackIdNotification)
+                        _callbackIdNotification.Add(callbackId, callbackNotification);
 
-                            UIApplication.SharedApplication.ScheduleLocalNotification(callbackNotification);
-                        });
-                },
-
-                // nothing to do if the callback thinks we can sleep.
-                null,
-
-                // notification has been serviced, so end background task
-                () =>
-                {
-                    Device.BeginInvokeOnMainThread(() =>
-                        {
-                            UIApplication.SharedApplication.EndBackgroundTask(callbackTaskId);
-                        });
+                    UIApplication.SharedApplication.ScheduleLocalNotification(callbackNotification);
                 });
+            },
+
+            // nothing to do if the callback thinks we can sleep.
+            null,
+
+            // notification has been serviced, so end background task
+            () =>
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    UIApplication.SharedApplication.EndBackgroundTask(callbackTaskId);
+                });
+            });
         }
 
         protected override void UnscheduleCallbackPlatformSpecific(string callbackId)
@@ -454,19 +455,22 @@ namespace Sensus.iOS
 
         public override void IssueNotificationAsync(string message, string id)
         {
-            // TODO:  Does this work from background on probe trigger?
-            if (message != null)
+            Device.BeginInvokeOnMainThread(() =>
             {
-                UILocalNotification notification = new UILocalNotification
+                if (message != null)
                 {
-                    AlertTitle = "Sensus",
-                    AlertBody = message,
-                    FireDate = DateTime.UtcNow.ToNSDate(),
-                    SoundName = UILocalNotification.DefaultSoundName
-                };
+                    UILocalNotification notification = new UILocalNotification
+                    {
+                        AlertTitle = "Sensus",
+                        AlertBody = message,
+                        FireDate = DateTime.UtcNow.ToNSDate(),
+                        SoundName = UILocalNotification.DefaultSoundName,
+                        UserInfo = new NSDictionary(NOTIFICATION_ID_KEY, id)
+                    };
 
-                UIApplication.SharedApplication.ScheduleLocalNotification(notification);
-            }
+                    UIApplication.SharedApplication.ScheduleLocalNotification(notification);
+                }
+            });
         }
 
         protected override void ProtectedFlashNotificationAsync(string message, bool flashLaterIfNotVisible, TimeSpan duration, Action callback)

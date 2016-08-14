@@ -41,8 +41,6 @@ namespace Sensus.Android
 {
     public class AndroidSensusServiceHelper : SensusServiceHelper
     {
-        public const string NOTIFICATION_EXTRA_ID = "ID";
-
         private AndroidSensusService _service;
         private ConnectivityManager _connectivityManager;
         private NotificationManager _notificationManager;
@@ -499,7 +497,7 @@ namespace Sensus.Android
                     else
                     {
                         Intent serviceIntent = new Intent(_service, typeof(AndroidSensusService));
-                        serviceIntent.PutExtra(NOTIFICATION_EXTRA_ID, id);
+                        serviceIntent.PutExtra(NOTIFICATION_ID_KEY, id);
                         PendingIntent pendingIntent = PendingIntent.GetService(_service, 0, serviceIntent, PendingIntentFlags.UpdateCurrent);
                         Notification notification = new Notification.Builder(_service)
                             .SetContentTitle(title)
