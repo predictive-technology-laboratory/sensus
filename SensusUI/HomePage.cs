@@ -27,7 +27,7 @@ namespace SensusUI
             {
                 BorderColor = Color.Accent,
                 BorderWidth = 1,
-                Text = "Your Studies",
+                Text = "Manage My Studies",
                 FontSize = 30,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 VerticalOptions = LayoutOptions.FillAndExpand
@@ -42,7 +42,7 @@ namespace SensusUI
             {
                 BorderColor = Color.Accent,
                 BorderWidth = 1,
-                Text = "Pending Surveys",
+                Text = "Take Surveys",
                 FontSize = 30,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 VerticalOptions = LayoutOptions.FillAndExpand
