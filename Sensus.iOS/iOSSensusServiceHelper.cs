@@ -452,7 +452,7 @@ namespace Sensus.iOS
                 }).Start();
         }
 
-        public override void IssueNotificationAsync(string message, string id)
+        public override void IssueNotificationAsync(string message, string id, bool playSound, bool vibrate)
         {
             Device.BeginInvokeOnMainThread(() =>
             {
@@ -463,9 +463,11 @@ namespace Sensus.iOS
                         AlertTitle = "Sensus",
                         AlertBody = message,
                         FireDate = DateTime.UtcNow.ToNSDate(),
-                        SoundName = UILocalNotification.DefaultSoundName,
                         UserInfo = new NSDictionary(NOTIFICATION_ID_KEY, id)
                     };
+
+                    if (playSound)
+                        notification.SoundName = UILocalNotification.DefaultSoundName;
 
                     UIApplication.SharedApplication.ScheduleLocalNotification(notification);
                 }
@@ -475,12 +477,12 @@ namespace Sensus.iOS
         protected override void ProtectedFlashNotificationAsync(string message, bool flashLaterIfNotVisible, TimeSpan duration, Action callback)
         {
             Device.BeginInvokeOnMainThread(() =>
-                {
-                    DependencyService.Get<IToastNotificator>().Notify(ToastNotificationType.Info, "", message + Environment.NewLine, duration);
+            {
+                DependencyService.Get<IToastNotificator>().Notify(ToastNotificationType.Info, "", message + Environment.NewLine, duration);
 
-                    if (callback != null)
-                        callback();
-                });
+                if (callback != null)
+                    callback();
+            });
         }
 
         public override bool EnableProbeWhenEnablingAll(Probe probe)

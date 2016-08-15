@@ -481,12 +481,12 @@ namespace Sensus.Android
 
         #region notifications
 
-        public override void IssueNotificationAsync(string message, string id)
+        public override void IssueNotificationAsync(string message, string id, bool playSound, bool vibrate)
         {
-            IssueNotificationAsync("Sensus", message, true, false, id);
+            IssueNotificationAsync("Sensus", message, true, false, id, playSound, vibrate);
         }
 
-        public void IssueNotificationAsync(string title, string message, bool autoCancel, bool ongoing, string id)
+        public void IssueNotificationAsync(string title, string message, bool autoCancel, bool ongoing, string id, bool playSound, bool vibrate)
         {
             if (_notificationManager != null)
             {
@@ -499,17 +499,22 @@ namespace Sensus.Android
                         Intent serviceIntent = new Intent(_service, typeof(AndroidSensusService));
                         serviceIntent.PutExtra(NOTIFICATION_ID_KEY, id);
                         PendingIntent pendingIntent = PendingIntent.GetService(_service, 0, serviceIntent, PendingIntentFlags.UpdateCurrent);
-                        Notification notification = new Notification.Builder(_service)
+
+                        Notification.Builder builder = new Notification.Builder(_service)
                             .SetContentTitle(title)
                             .SetContentText(message)
                             .SetSmallIcon(Resource.Drawable.ic_launcher)
                             .SetContentIntent(pendingIntent)
                             .SetAutoCancel(autoCancel)
-                            .SetSound(RingtoneManager.GetDefaultUri(RingtoneType.Notification))
-                            .SetVibrate(new long[] { 0, 250, 50, 250 })
-                            .SetOngoing(ongoing).Build();
+                            .SetOngoing(ongoing);
 
-                        _notificationManager.Notify(id, 0, notification);
+                        if (playSound)
+                            builder.SetSound(RingtoneManager.GetDefaultUri(RingtoneType.Notification));
+
+                        if (vibrate)
+                            builder.SetVibrate(new long[] { 0, 250, 50, 250 });
+
+                        _notificationManager.Notify(id, 0, builder.Build());
                     }
 
                 }).Start();
@@ -519,23 +524,23 @@ namespace Sensus.Android
         protected override void ProtectedFlashNotificationAsync(string message, bool flashLaterIfNotVisible, TimeSpan duration, Action callback)
         {
             new Thread(() =>
+            {
+                RunActionUsingMainActivityAsync(mainActivity =>
                 {
-                    RunActionUsingMainActivityAsync(mainActivity =>
-                        {
-                            mainActivity.RunOnUiThread(() =>
-                                {
-                                    int shortToasts = (int)Math.Ceiling(duration.TotalSeconds / 2);  // each short toast is 2 seconds.
+                    mainActivity.RunOnUiThread(() =>
+                    {
+                        int shortToasts = (int)Math.Ceiling(duration.TotalSeconds / 2);  // each short toast is 2 seconds.
 
-                                    for (int i = 0; i < shortToasts; ++i)
-                                        Toast.MakeText(mainActivity, message, ToastLength.Short).Show();
+                        for (int i = 0; i < shortToasts; ++i)
+                            Toast.MakeText(mainActivity, message, ToastLength.Short).Show();
 
-                                    if (callback != null)
-                                        callback();
-                                });
+                        if (callback != null)
+                            callback();
+                    });
 
-                        }, false, flashLaterIfNotVisible);
+                }, false, flashLaterIfNotVisible);
 
-                }).Start();
+            }).Start();
         }
 
         public override bool EnableProbeWhenEnablingAll(Probe probe)
@@ -549,13 +554,13 @@ namespace Sensus.Android
         public override Xamarin.Forms.ImageSource GetQrCodeImageSource(string contents)
         {
             return Xamarin.Forms.ImageSource.FromStream(() =>
-                {
-                    Bitmap bitmap = BarcodeWriter.Write(contents);
-                    MemoryStream ms = new MemoryStream();
-                    bitmap.Compress(Bitmap.CompressFormat.Png, 100, ms);
-                    ms.Seek(0, SeekOrigin.Begin);
-                    return ms;
-                });
+            {
+                Bitmap bitmap = BarcodeWriter.Write(contents);
+                MemoryStream ms = new MemoryStream();
+                bitmap.Compress(Bitmap.CompressFormat.Png, 100, ms);
+                ms.Seek(0, SeekOrigin.Begin);
+                return ms;
+            });
         }
 
         /// <summary>

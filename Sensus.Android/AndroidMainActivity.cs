@@ -170,8 +170,7 @@ namespace Sensus.Android
             {
                 _serviceBindWait.WaitOne();
 
-                // clear pending survey notification       
-                (SensusServiceHelper.Get() as AndroidSensusServiceHelper).IssueNotificationAsync("Sensus", null, true, false, SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID);
+                SensusServiceHelper.Get().ClearPendingSurveysNotificationAsync();
 
                 // now that the service connection has been established, dismiss the wait dialog and show protocols.
                 Device.BeginInvokeOnMainThread(() =>
@@ -200,16 +199,12 @@ namespace Sensus.Android
 
             base.OnStop();
 
-            AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
+            SensusServiceHelper serviceHelper = SensusServiceHelper.Get();
 
             if (serviceHelper != null)
             {
                 serviceHelper.Save();
-
-                // leave the user a notification if there are pending surveys
-                int scriptsToRun = serviceHelper.ScriptsToRun.Count;
-                if (scriptsToRun > 0)
-                    serviceHelper.IssueNotificationAsync("Sensus", "Please open to take " + scriptsToRun + " survey" + (scriptsToRun == 1 ? "" : "s") + ".", true, false, SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID);
+                serviceHelper.IssuePendingSurveysNotificationAsync(true, true);
             }
         }
 

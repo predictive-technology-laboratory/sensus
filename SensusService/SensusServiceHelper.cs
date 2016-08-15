@@ -625,7 +625,7 @@ namespace SensusService
 
         public abstract void RunVoicePromptAsync(string prompt, Action postDisplayCallback, Action<string> callback);
 
-        public abstract void IssueNotificationAsync(string message, string id);
+        public abstract void IssueNotificationAsync(string message, string id, bool playSound, bool vibrate);
 
         public abstract void KeepDeviceAwake();
 
@@ -813,7 +813,10 @@ namespace SensusService
                 }
 
                 if (add)
+                {
                     _scriptsToRun.Insert(0, script);
+                    IssuePendingSurveysNotificationAsync(true, true);
+                }
             }
         }
 
@@ -822,6 +825,7 @@ namespace SensusService
             lock (_scriptsToRun)
             {
                 _scriptsToRun.Remove(script);
+                IssuePendingSurveysNotificationAsync(false, false);
             }
         }
 
@@ -831,7 +835,25 @@ namespace SensusService
             {
                 foreach (Script scriptFromRunner in _scriptsToRun.Where(script => ReferenceEquals(script.Runner, runner)).ToList())
                     _scriptsToRun.Remove(scriptFromRunner);
+
+                IssuePendingSurveysNotificationAsync(false, false);
             }
+        }
+
+        public void IssuePendingSurveysNotificationAsync(bool playSound, bool vibrate)
+        {
+            string message = null;
+
+            int scriptsToRun = _scriptsToRun.Count;
+            if (scriptsToRun > 0)
+                message = "You have " + scriptsToRun + " pending survey" + (scriptsToRun == 1 ? "" : "s") + ".";
+
+            IssueNotificationAsync(message, PENDING_SURVEY_NOTIFICATION_ID, playSound, vibrate);
+        }
+
+        public void ClearPendingSurveysNotificationAsync()
+        {
+            IssueNotificationAsync(null, PENDING_SURVEY_NOTIFICATION_ID, false, false);
         }
 
         #region callback scheduling
@@ -950,7 +972,7 @@ namespace SensusService
                                     _logger.Log("Raising callback \"" + scheduledCallback.Name + "\" (" + callbackId + ").", LoggingLevel.Normal, GetType());
 
                                     if (notifyUser)
-                                        IssueNotificationAsync(scheduledCallback.UserNotificationMessage, callbackId);
+                                        IssueNotificationAsync(scheduledCallback.UserNotificationMessage, callbackId, true, true);
 
                                     // if the callback specified a timeout, request cancellation at the specified time.
                                     if (scheduledCallback.CallbackTimeout.HasValue)
