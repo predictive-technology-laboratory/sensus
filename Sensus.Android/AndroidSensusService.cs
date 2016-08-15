@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using SensusUI;
 using Xamarin.Forms;
+using System.Linq;
 
 namespace Sensus.Android
 {
@@ -132,7 +133,11 @@ namespace Sensus.Android
 
                             Device.BeginInvokeOnMainThread(async () =>
                             {
-                                await Xamarin.Forms.Application.Current.MainPage.Navigation.PushAsync(new PendingScriptsPage());
+                                IReadOnlyList<Page> navigationStack = Xamarin.Forms.Application.Current.MainPage.Navigation.NavigationStack;
+                                Page topPage = navigationStack.Count == 0 ? null : navigationStack.Last();
+                                if (!(topPage is PendingScriptsPage))
+                                    await Xamarin.Forms.Application.Current.MainPage.Navigation.PushAsync(new PendingScriptsPage());
+
                                 serviceHelper.LetDeviceSleep();
                             });
                         }

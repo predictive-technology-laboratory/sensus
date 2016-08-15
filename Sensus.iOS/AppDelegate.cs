@@ -27,6 +27,8 @@ using CoreLocation;
 using Plugin.Toasts;
 using SensusService.Probes;
 using Syncfusion.SfChart.XForms.iOS.Renderers;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Sensus.iOS
 {
@@ -118,7 +120,7 @@ namespace Sensus.iOS
 
         public override void OnActivated(UIApplication uiApplication)
         {
-            // since all notifications are about to be rescheduled, clear any scheduled / delivered notifications.
+            // since all notifications are about to be rescheduled/serviced, clear all current notifications.
             UIApplication.SharedApplication.CancelAllLocalNotifications();
             UIApplication.SharedApplication.ApplicationIconBadgeNumber = 0;
 
@@ -175,13 +177,20 @@ namespace Sensus.iOS
                 }
                 else
                 {
-                    NSString notificationId = notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.NOTIFICATION_ID_KEY)) as NSString;
-                    if (notificationId != null && notificationId.ToString() == SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID)
+                    // check whether the user opened a pending-survey notification
+                    if (application.ApplicationState != UIApplicationState.Active)
                     {
-                        Device.BeginInvokeOnMainThread(async () =>
+                        NSString notificationId = notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.NOTIFICATION_ID_KEY)) as NSString;
+                        if (notificationId != null && notificationId.ToString() == SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID)
                         {
-                            await Xamarin.Forms.Application.Current.MainPage.Navigation.PushAsync(new PendingScriptsPage());
-                        });
+                            Device.BeginInvokeOnMainThread(async () =>
+                            {
+                                IReadOnlyList<Page> navigationStack = Xamarin.Forms.Application.Current.MainPage.Navigation.NavigationStack;
+                                Page topPage = navigationStack.Count == 0 ? null : navigationStack.Last();
+                                if(!(topPage is PendingScriptsPage))
+                                await Xamarin.Forms.Application.Current.MainPage.Navigation.PushAsync(new PendingScriptsPage());
+                            });
+                        }
                     }
                 }
             }
