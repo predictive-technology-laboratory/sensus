@@ -46,7 +46,6 @@ namespace Sensus.iOS
 
         private Dictionary<string, UILocalNotification> _callbackIdNotification;
         private string _activationId;
-        private Dictionary<string, UILocalNotification> _nonCallbackIdNotification;
 
         [JsonIgnore]
         public string ActivationId
@@ -109,7 +108,6 @@ namespace Sensus.iOS
         public iOSSensusServiceHelper()
         {
             _callbackIdNotification = new Dictionary<string, UILocalNotification>();
-            _nonCallbackIdNotification = new Dictionary<string, UILocalNotification>();
 
             UIDevice.CurrentDevice.BatteryMonitoringEnabled = true;
         }
@@ -177,6 +175,7 @@ namespace Sensus.iOS
         /// <param name="notificationIdKey">Key for ID in UserInfo of the UILocalNotification.</param>
         private void CancelLocalNotification(UILocalNotification notification, string notificationIdKey)
         {
+            // set up action to cancel notification
             Action cancel = () =>
             {
                 try
@@ -212,10 +211,12 @@ namespace Sensus.iOS
                 }
             };
 
+            // if we're already on the main thread, cancel directly
             if (IsOnMainThread)
                 cancel();
             else
             {
+                // run the cancellation on the main thread and wait for it to complete (the current method is synchronous).
                 ManualResetEvent cancelWait = new ManualResetEvent(false);
 
                 Device.BeginInvokeOnMainThread(() =>
@@ -478,22 +479,11 @@ namespace Sensus.iOS
 
         public override void IssueNotificationAsync(string message, string id, bool playSound, bool vibrate)
         {
-            UILocalNotification notification;
-
-            lock (_nonCallbackIdNotification)
-            {
-                if (_nonCallbackIdNotification.TryGetValue(id, out notification))
-                {
-                    CancelLocalNotification(notification, NOTIFICATION_ID_KEY);
-                    _nonCallbackIdNotification.Remove(id);
-                }
-            }
-
             if (message != null)
             {
                 Device.BeginInvokeOnMainThread(() =>
                 {
-                    notification = new UILocalNotification
+                    UILocalNotification notification = new UILocalNotification
                     {
                         AlertTitle = "Sensus",
                         AlertBody = message,

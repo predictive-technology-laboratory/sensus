@@ -131,6 +131,7 @@ namespace Sensus.Android
                         {
                             serviceHelper.BringToForeground();
 
+                            // display the pending scripts page if it is not already on the top of the navigation stack
                             Device.BeginInvokeOnMainThread(async () =>
                             {
                                 IReadOnlyList<Page> navigationStack = Xamarin.Forms.Application.Current.MainPage.Navigation.NavigationStack;

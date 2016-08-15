@@ -177,18 +177,20 @@ namespace Sensus.iOS
                 }
                 else
                 {
-                    // check whether the user opened a pending-survey notification
+                    // check whether the user opened a pending-survey notification (indicated by an application state that is not active). we'll
+                    // also get notifications when the app is active, due to how we manage pending-survey notifications.
                     if (application.ApplicationState != UIApplicationState.Active)
                     {
                         NSString notificationId = notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.NOTIFICATION_ID_KEY)) as NSString;
                         if (notificationId != null && notificationId.ToString() == SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID)
                         {
+                            // display the pending scripts page if it is not already on the top of the navigation stack
                             Device.BeginInvokeOnMainThread(async () =>
                             {
                                 IReadOnlyList<Page> navigationStack = Xamarin.Forms.Application.Current.MainPage.Navigation.NavigationStack;
                                 Page topPage = navigationStack.Count == 0 ? null : navigationStack.Last();
-                                if(!(topPage is PendingScriptsPage))
-                                await Xamarin.Forms.Application.Current.MainPage.Navigation.PushAsync(new PendingScriptsPage());
+                                if (!(topPage is PendingScriptsPage))
+                                    await Xamarin.Forms.Application.Current.MainPage.Navigation.PushAsync(new PendingScriptsPage());
                             });
                         }
                     }
