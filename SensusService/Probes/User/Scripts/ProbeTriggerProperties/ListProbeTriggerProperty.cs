@@ -12,18 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace SensusService.Probes.User.ProbeTriggerProperties
+namespace SensusService.Probes.User.Scripts.ProbeTriggerProperties
 {
-    public class DoubleProbeTriggerProperty : ProbeTriggerProperty
+    public class ListProbeTriggerProperty : ProbeTriggerProperty
     {
-        public DoubleProbeTriggerProperty()
-            : base()
+        private object[] _items;
+
+        public object[] Items
+        {
+            get { return _items; }
+            set { _items = value; }
+        }
+
+        public ListProbeTriggerProperty(object[] items)
+            : this(null, items)
         {
         }
 
-        public DoubleProbeTriggerProperty(string name)
+        public ListProbeTriggerProperty(string name, object[] items)
             : base(name)
         {
-        }        
+            _items = items;
+        }
     }
 }

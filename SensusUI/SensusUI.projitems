@@ -60,6 +60,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Inputs\MultiLineTextInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProbesEditPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProbesViewPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PendingScriptsPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HomePage.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Inputs\" />

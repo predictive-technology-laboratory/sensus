@@ -16,7 +16,7 @@ using System;
 using Newtonsoft.Json;
 using SensusService.Anonymization;
 using SensusService.Anonymization.Anonymizers;
-using SensusService.Probes.User.ProbeTriggerProperties;
+using SensusService.Probes.User.Scripts.ProbeTriggerProperties;
 using Plugin.Geolocator.Abstractions;
 
 namespace SensusService.Probes.Movement

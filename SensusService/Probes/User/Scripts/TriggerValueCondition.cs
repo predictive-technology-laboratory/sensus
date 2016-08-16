@@ -12,21 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Sensus.Android;
-using System;
-using Xamarin.Forms;
-using Xamarin.Forms.Platform.Android;
-
-[assembly: ExportRenderer(typeof(TextCell), typeof(TextCellRendererFix))]
-
-namespace Sensus.Android
+namespace SensusService.Probes.User.Scripts
 {
-    public class TextCellRendererFix : TextCellRenderer
+    public enum TriggerValueCondition
     {
-        protected override void OnCellPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs args)
-        {
-            try { base.OnCellPropertyChanged(sender, args); }
-            catch (Exception) { }
-        }
+        LessThan,
+        LessThanOrEqual,
+        Equal,
+        GreaterThanOrEqual,
+        GreaterThan
     }
 }

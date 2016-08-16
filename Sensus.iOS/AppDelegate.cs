@@ -13,8 +13,6 @@
 // limitations under the License.
 
 using System;
-using System.Linq;
-using System.Collections.Generic;
 using Foundation;
 using UIKit;
 using Xamarin.Forms.Platform.iOS;
@@ -26,10 +24,11 @@ using Facebook.CoreKit;
 using Xamarin;
 using Xam.Plugin.MapExtend.iOSUnified;
 using CoreLocation;
-using System.Threading;
 using Plugin.Toasts;
 using SensusService.Probes;
 using Syncfusion.SfChart.XForms.iOS.Renderers;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Sensus.iOS
 {
@@ -54,13 +53,13 @@ namespace Sensus.iOS
 
             // toasts for iOS
             DependencyService.Register<ToastNotificatorImplementation>();
-            ToastNotificatorImplementation.Init(); 
+            ToastNotificatorImplementation.Init();
 
             LoadApplication(new App());
 
             uiApplication.RegisterUserNotificationSettings(UIUserNotificationSettings.GetSettingsForTypes(UIUserNotificationType.Badge | UIUserNotificationType.Sound | UIUserNotificationType.Alert, new NSSet()));
 
-            #if UNIT_TESTING
+#if UNIT_TESTING
             Forms.ViewInitialized += (sender, e) =>
             {
                 if (!string.IsNullOrWhiteSpace(e.View.StyleId))
@@ -68,7 +67,7 @@ namespace Sensus.iOS
             };
 
             Calabash.Start();
-            #endif
+#endif
 
             return base.FinishedLaunching(uiApplication, launchOptions);
         }
@@ -121,7 +120,7 @@ namespace Sensus.iOS
 
         public override void OnActivated(UIApplication uiApplication)
         {
-            // since all notifications are about to be rescheduled, clear any scheduled / delivered notifications.
+            // since all notifications are about to be rescheduled/serviced, clear all current notifications.
             UIApplication.SharedApplication.CancelAllLocalNotifications();
             UIApplication.SharedApplication.ApplicationIconBadgeNumber = 0;
 
@@ -139,23 +138,19 @@ namespace Sensus.iOS
             }
 
             serviceHelper.StartAsync(() =>
-                {
-                    serviceHelper.UpdateCallbackNotificationActivationIdsAsync();
+            {
+                serviceHelper.UpdateCallbackNotificationActivationIdsAsync();
 
-                    #if UNIT_TESTING
+#if UNIT_TESTING
                     // load and run the unit testing protocol
                     string filePath = NSBundle.MainBundle.PathForResource("UnitTestingProtocol", "json");
                     using (Stream file = new FileStream(filePath, FileMode.Open, FileAccess.Read))
                     {
                         Protocol.RunUnitTestingProtocol(file);
                     }
-                    #endif
+#endif
 
-                    Device.BeginInvokeOnMainThread(() =>
-                        {
-                            (Xamarin.Forms.Application.Current as App).ProtocolsPage.Bind();
-                        });
-                });
+            });
 
             // background authorization will be done implicitly when the location manager is used in probes, but the authorization is
             // done asynchronously so it's likely that the probes will believe that GPS is not enabled/authorized even though the user
@@ -172,46 +167,67 @@ namespace Sensus.iOS
             if (notification.UserInfo != null)
             {
                 NSNumber isCallbackValue = notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_KEY)) as NSNumber;
-                if (isCallbackValue != null && isCallbackValue.BoolValue)
+                if (isCallbackValue != null)
                 {
-                    iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
-                    serviceHelper.ServiceCallbackNotificationAsync(notification);
+                    if (isCallbackValue.BoolValue)
+                    {
+                        iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
+                        serviceHelper.ServiceCallbackNotificationAsync(notification);
+                    }
+                }
+                else
+                {
+                    // check whether the user opened a pending-survey notification (indicated by an application state that is not active). we'll
+                    // also get notifications when the app is active, due to how we manage pending-survey notifications.
+                    if (application.ApplicationState != UIApplicationState.Active)
+                    {
+                        NSString notificationId = notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.NOTIFICATION_ID_KEY)) as NSString;
+                        if (notificationId != null && notificationId.ToString() == SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID)
+                        {
+                            // display the pending scripts page if it is not already on the top of the navigation stack
+                            Device.BeginInvokeOnMainThread(async () =>
+                            {
+                                IReadOnlyList<Page> navigationStack = Xamarin.Forms.Application.Current.MainPage.Navigation.NavigationStack;
+                                Page topPage = navigationStack.Count == 0 ? null : navigationStack.Last();
+                                if (!(topPage is PendingScriptsPage))
+                                    await Xamarin.Forms.Application.Current.MainPage.Navigation.PushAsync(new PendingScriptsPage());
+                            });
+                        }
+                    }
                 }
             }
         }
-		
+
         // This method should be used to release shared resources and it should store the application state.
         // If your application supports background exection this method is called instead of WillTerminate
         // when the user quits.
-        public override void DidEnterBackground(UIApplication application)
+        public override void DidEnterBackground(UIApplication uiApplication)
         {
             iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
 
             // app is no longer active, so reset the activation ID
             serviceHelper.ActivationId = null;
 
-            // leave the user a notification if a prompt is currently running
-            if (iOSSensusServiceHelper.PromptForInputsRunning)
-                serviceHelper.IssueNotificationAsync("Please open to provide responses.", null);
-                
+            serviceHelper.IssuePendingSurveysNotificationAsync(true, true);
+
             // save app state in background
-            nint saveTaskId = application.BeginBackgroundTask(() =>
-                {
-                });
+            nint saveTaskId = uiApplication.BeginBackgroundTask(() =>
+            {
+            });
 
             serviceHelper.SaveAsync(() =>
-                {
-                    application.EndBackgroundTask(saveTaskId);
-                }); 
+            {
+                uiApplication.EndBackgroundTask(saveTaskId);
+            });
         }
-		
+
         // This method is called as part of the transiton from background to active state.
-        public override void WillEnterForeground(UIApplication application)
+        public override void WillEnterForeground(UIApplication uiApplication)
         {
         }
-		
+
         // This method is called when the application is about to terminate. Save data, if needed.
-        public override void WillTerminate(UIApplication application)
+        public override void WillTerminate(UIApplication uiApplication)
         {
             // this method won't be called when the user kills the app using multitasking; however,
             // it should be called if the system kills the app when it's running in the background.

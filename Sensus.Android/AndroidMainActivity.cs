@@ -19,7 +19,6 @@ using Android.OS;
 using SensusService;
 using SensusUI;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using Xamarin.Forms;
@@ -30,6 +29,7 @@ using Xam.Plugin.MapExtend.Droid;
 using Plugin.CurrentActivity;
 using Android.Widget;
 using Plugin.Permissions;
+using System.Linq;
 
 [assembly: MetaData("com.facebook.sdk.ApplicationId", Value = "@string/app_id")]
 [assembly: UsesPermission(Microsoft.Band.BandClientManager.BindBandService)]
@@ -42,8 +42,6 @@ namespace Sensus.Android
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault }, DataMimeType = "application/json")]  // protocols obtained from "file" and "content" schemes:  http://developer.android.com/guide/components/intents-filters.html#DataTest
     public class AndroidMainActivity : FormsApplicationActivity
     {
-        public static readonly string INPUT_REQUESTED_NOTIFICATION_ID = "INPUT-REQUESTED-NOTIFICATION-ID";
-
         private AndroidSensusServiceConnection _serviceConnection;
         private ManualResetEvent _activityResultWait;
         private AndroidActivityResultRequestCode _activityResultRequestCode;
@@ -169,20 +167,18 @@ namespace Sensus.Android
 
             // start new thread to wait for connection, since we're currently on the UI thread, which the service connection needs in order to complete.
             new Thread(() =>
+            {
+                _serviceBindWait.WaitOne();
+
+                SensusServiceHelper.Get().ClearPendingSurveysNotificationAsync();
+
+                // now that the service connection has been established, dismiss the wait dialog and show protocols.
+                Device.BeginInvokeOnMainThread(() =>
                 {
-                    _serviceBindWait.WaitOne();
+                    serviceBindWaitDialog.Dismiss();
+                });
 
-                    // clear input requested notification
-                    (SensusServiceHelper.Get() as AndroidSensusServiceHelper).IssueNotificationAsync("Sensus", null, true, false, INPUT_REQUESTED_NOTIFICATION_ID);
-
-                    // now that the service connection has been established, dismiss the wait dialog and show protocols.
-                    Device.BeginInvokeOnMainThread(() =>
-                        {
-                            serviceBindWaitDialog.Dismiss();
-                            (Xamarin.Forms.Application.Current as App).ProtocolsPage.Bind();
-                        });
-
-                }).Start();
+            }).Start();
         }
 
         protected override void OnPause()
@@ -203,14 +199,12 @@ namespace Sensus.Android
 
             base.OnStop();
 
-            AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
+            SensusServiceHelper serviceHelper = SensusServiceHelper.Get();
 
             if (serviceHelper != null)
             {
                 serviceHelper.Save();
-
-                if (SensusServiceHelper.PromptForInputsRunning)
-                    serviceHelper.IssueNotificationAsync("Sensus", "Please open to provide responses.", true, false, INPUT_REQUESTED_NOTIFICATION_ID);
+                serviceHelper.IssuePendingSurveysNotificationAsync(true, true);
             }
         }
 
@@ -268,70 +262,70 @@ namespace Sensus.Android
         private void OpenIntentAsync(Intent intent)
         {
             new Thread(() =>
+            {
+                // wait for service helper to be initialized, since this method might be called before the service starts up
+                // and initializes the service helper.
+                int timeToWaitMS = 60000;
+                int waitIntervalMS = 1000;
+                while (SensusServiceHelper.Get() == null && timeToWaitMS > 0)
                 {
-                    // wait for service helper to be initialized, since this method might be called before the service starts up
-                    // and initializes the service helper.
-                    int timeToWaitMS = 60000;
-                    int waitIntervalMS = 1000;
-                    while (SensusServiceHelper.Get() == null && timeToWaitMS > 0)
+                    Thread.Sleep(waitIntervalMS);
+                    timeToWaitMS -= waitIntervalMS;
+                }
+
+                if (SensusServiceHelper.Get() == null)
+                {
+                    // don't use SensusServiceHelper.Get().FlashNotificationAsync because service helper is null
+                    RunOnUiThread(() =>
                     {
-                        Thread.Sleep(waitIntervalMS);
-                        timeToWaitMS -= waitIntervalMS;
-                    }
+                        Toast.MakeText(this, "Failed to get service helper. Cannot open Intent.", ToastLength.Long);
+                    });
 
-                    if (SensusServiceHelper.Get() == null)
+                    return;
+                }
+
+                // open page to view protocol if a protocol was passed to us
+                if (intent.Data != null)
+                {
+                    global::Android.Net.Uri dataURI = intent.Data;
+
+                    try
                     {
-                        // don't use SensusServiceHelper.Get().FlashNotificationAsync because service helper is null
-                        RunOnUiThread(() =>
-                            {
-                                Toast.MakeText(this, "Failed to get service helper. Cannot open Intent.", ToastLength.Long);
-                            });
-
-                        return;
-                    }
-
-                    // open page to view protocol if a protocol was passed to us
-                    if (intent.Data != null)
-                    {
-                        global::Android.Net.Uri dataURI = intent.Data;
-
-                        try
+                        if (intent.Scheme == "http" || intent.Scheme == "https")
+                            Protocol.DeserializeAsync(new Uri(dataURI.ToString()), Protocol.DisplayAndStartAsync);
+                        else if (intent.Scheme == "content" || intent.Scheme == "file")
                         {
-                            if (intent.Scheme == "http" || intent.Scheme == "https")
-                                Protocol.DeserializeAsync(new Uri(dataURI.ToString()), Protocol.DisplayAndStartAsync);
-                            else if (intent.Scheme == "content" || intent.Scheme == "file")
+                            byte[] bytes = null;
+
+                            try
                             {
-                                byte[] bytes = null;
-
-                                try
-                                {
-                                    MemoryStream memoryStream = new MemoryStream();
-                                    Stream inputStream = ContentResolver.OpenInputStream(dataURI);
-                                    inputStream.CopyTo(memoryStream);
-                                    inputStream.Close();
-                                    bytes = memoryStream.ToArray();
-                                }
-                                catch (Exception ex)
-                                {
-                                    SensusServiceHelper.Get().Logger.Log("Failed to read bytes from local file URI \"" + dataURI + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
-                                }
-
-                                if (bytes != null)
-                                    Protocol.DeserializeAsync(bytes, Protocol.DisplayAndStartAsync);
+                                MemoryStream memoryStream = new MemoryStream();
+                                Stream inputStream = ContentResolver.OpenInputStream(dataURI);
+                                inputStream.CopyTo(memoryStream);
+                                inputStream.Close();
+                                bytes = memoryStream.ToArray();
                             }
-                            else
-                                SensusServiceHelper.Get().Logger.Log("Sensus didn't know what to do with URI \"" + dataURI + "\".", LoggingLevel.Normal, GetType());
-                        }
-                        catch (Exception ex)
-                        {
-                            Device.BeginInvokeOnMainThread(() =>
-                                {
-                                    new AlertDialog.Builder(this).SetTitle("Failed to get protocol").SetMessage(ex.Message).Show();
-                                });
-                        }
-                    }
+                            catch (Exception ex)
+                            {
+                                SensusServiceHelper.Get().Logger.Log("Failed to read bytes from local file URI \"" + dataURI + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
+                            }
 
-                }).Start();
+                            if (bytes != null)
+                                Protocol.DeserializeAsync(bytes, Protocol.DisplayAndStartAsync);
+                        }
+                        else
+                            SensusServiceHelper.Get().Logger.Log("Sensus didn't know what to do with URI \"" + dataURI + "\".", LoggingLevel.Normal, GetType());
+                    }
+                    catch (Exception ex)
+                    {
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            new AlertDialog.Builder(this).SetTitle("Failed to get protocol").SetMessage(ex.Message).Show();
+                        });
+                    }
+                }
+
+            }).Start();
         }
 
         #endregion
@@ -341,37 +335,37 @@ namespace Sensus.Android
         public void GetActivityResultAsync(Intent intent, AndroidActivityResultRequestCode requestCode, Action<Tuple<Result, Intent>> callback)
         {
             new Thread(() =>
+            {
+                lock (_locker)
                 {
-                    lock (_locker)
+                    _activityResultRequestCode = requestCode;
+                    _activityResult = null;
+
+                    _activityResultWait.Reset();
+
+                    try
                     {
-                        _activityResultRequestCode = requestCode;
-                        _activityResult = null;
-
-                        _activityResultWait.Reset();
-
+                        StartActivityForResult(intent, (int)requestCode);
+                    }
+                    catch (Exception ex)
+                    {
                         try
                         {
-                            StartActivityForResult(intent, (int)requestCode);
+                            Insights.Report(ex, Insights.Severity.Error);
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
-                            try
-                            {
-                                Insights.Report(ex, Insights.Severity.Error);
-                            }
-                            catch (Exception)
-                            {
-                            }
-
-                            _activityResultWait.Set();
                         }
 
-                        _activityResultWait.WaitOne();
-
-                        callback(_activityResult);
+                        _activityResultWait.Set();
                     }
 
-                }).Start();
+                    _activityResultWait.WaitOne();
+
+                    callback(_activityResult);
+                }
+
+            }).Start();
         }
 
         protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)

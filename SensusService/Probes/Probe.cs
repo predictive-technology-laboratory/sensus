@@ -35,22 +35,22 @@ namespace SensusService.Probes
         public static void GetAllAsync(Action<List<Probe>> callback)
         {
             new Thread(() =>
+            {
+                List<Probe> probes = null;
+                ManualResetEvent probesWait = new ManualResetEvent(false);
+
+                // the reflection stuff we do below (at least on android) needs to be run on the main thread.
+                Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
                 {
-                    List<Probe> probes = null;
-                    ManualResetEvent probesWait = new ManualResetEvent(false);
+                    probes = Assembly.GetExecutingAssembly().GetTypes().Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(Probe))).Select(t => Activator.CreateInstance(t) as Probe).OrderBy(p => p.DisplayName).ToList();
+                    probesWait.Set();
+                });
 
-                    // the reflection stuff we do below (at least on android) needs to be run on the main thread.
-                    Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
-                        {
-                            probes = Assembly.GetExecutingAssembly().GetTypes().Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(Probe))).Select(t => Activator.CreateInstance(t) as Probe).OrderBy(p => p.DisplayName).ToList();
-                            probesWait.Set();
-                        });
+                probesWait.WaitOne();
 
-                    probesWait.WaitOne();
+                callback(probes);
 
-                    callback(probes);
-
-                }).Start();
+            }).Start();
         }
 
         #endregion

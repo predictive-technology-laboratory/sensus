@@ -314,7 +314,6 @@
     <Compile Include="AndroidSensusServiceHelper.cs" />
     <Compile Include="AndroidSensusServiceBootStarter.cs" />
     <Compile Include="AndroidTextToSpeech.cs" />
-    <Compile Include="AndroidExportRendererFix.cs" />
     <Compile Include="AndroidMainActivity.cs" />
     <Compile Include="Probes\Context\AndroidBluetoothBroadcastReceiver.cs" />
     <Compile Include="Probes\Communication\AndroidTelephonyOutgoingBroadcastReceiver.cs" />

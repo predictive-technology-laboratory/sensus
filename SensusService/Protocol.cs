@@ -28,20 +28,19 @@ using System.Linq;
 using System.Reflection;
 using SensusUI;
 using SensusService.Probes.Location;
-using SensusService.Exceptions;
 using SensusUI.Inputs;
-using SensusService.Probes.User;
 using SensusService.Probes.Apps;
 using SensusService.Probes.Movement;
 using System.Text;
-using Plugin.Geolocator.Abstractions;
 using System.Threading.Tasks;
 using SensusService.Probes.User.MicrosoftBand;
+using SensusService.Probes.User.Scripts;
 
 #if __IOS__
 using HealthKit;
 using Sensus.iOS.Probes.User.Health;
 using Foundation;
+using Plugin.Geolocator.Abstractions;
 #endif
 
 namespace SensusService
@@ -191,7 +190,7 @@ namespace SensusService
                                 // https://insights.xamarin.com/app/Sensus-Production/issues/999
                                 foreach (ScriptProbe probe in protocol.Probes.Where(probe => probe is ScriptProbe))
                                     foreach (ScriptRunner scriptRunner in probe.ScriptRunners)
-                                        foreach (Probes.User.Trigger trigger in scriptRunner.Triggers.ToList())
+                                        foreach (Probes.User.Scripts.Trigger trigger in scriptRunner.Triggers.ToList())
                                             if (trigger.Probe == null)
                                             {
                                                 scriptRunner.Triggers.Remove(trigger);
@@ -241,94 +240,91 @@ namespace SensusService
         public static void DeserializeAsync(string json, Action<Protocol> callback)
         {
             new Thread(() =>
+            {
+                Protocol protocol = null;
+
+                try
                 {
-                    Protocol protocol = null;
+                    ManualResetEvent protocolWait = new ManualResetEvent(false);
 
-                    try
+                    // always deserialize protocols on the main thread (e.g., since a looper is required for android). also, disable
+                    // flash notifications so we don't get any messages that result from properties being set within the protocol.
+                    SensusServiceHelper.Get().FlashNotificationsEnabled = false;
+                    Device.BeginInvokeOnMainThread(() =>
                     {
-                        ManualResetEvent protocolWait = new ManualResetEvent(false);
-
-                        // always deserialize protocols on the main thread (e.g., since a looper is required for android). also, disable
-                        // flash notifications so we don't get any messages that result from properties being set within the protocol.
-                        SensusServiceHelper.Get().FlashNotificationsEnabled = false;
-                        Device.BeginInvokeOnMainThread(() =>
-                            {
-                                try
-                                {
-                                    protocol = JsonConvert.DeserializeObject<Protocol>(json, SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
-                                }
-                                catch (Exception ex)
-                                {
-                                    SensusServiceHelper.Get().Logger.Log("Error while deserializing protocol from JSON:  " + ex.Message, LoggingLevel.Normal, typeof(Protocol));
-                                }
-                                finally
-                                {
-                                    protocolWait.Set();
-                                }
-                            });
-
-                        protocolWait.WaitOne();
-
-                        if (protocol == null)
+                        try
                         {
-                            SensusServiceHelper.Get().Logger.Log("Failed to deserialize protocol from JSON.", LoggingLevel.Normal, typeof(Protocol));
-                            SensusServiceHelper.Get().FlashNotificationAsync("Failed to unpack protocol from JSON.");
+                            protocol = JsonConvert.DeserializeObject<Protocol>(json, SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Failed to deserialize protocol from JSON:  " + ex.Message, LoggingLevel.Normal, typeof(Protocol));
-                        SensusServiceHelper.Get().FlashNotificationAsync("Failed to unpack protocol from JSON:  " + ex.Message);
-                    }
-                    finally
-                    {
-                        SensusServiceHelper.Get().FlashNotificationsEnabled = true;
-                    }
+                        catch (Exception ex)
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Error while deserializing protocol from JSON:  " + ex.Message, LoggingLevel.Normal, typeof(Protocol));
+                        }
+                        finally
+                        {
+                            protocolWait.Set();
+                        }
+                    });
 
-                    if (callback != null)
-                        callback(protocol);
+                    protocolWait.WaitOne();
 
-                }).Start();
+                    if (protocol == null)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Failed to deserialize protocol from JSON.", LoggingLevel.Normal, typeof(Protocol));
+                        SensusServiceHelper.Get().FlashNotificationAsync("Failed to unpack protocol from JSON.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Failed to deserialize protocol from JSON:  " + ex.Message, LoggingLevel.Normal, typeof(Protocol));
+                    SensusServiceHelper.Get().FlashNotificationAsync("Failed to unpack protocol from JSON:  " + ex.Message);
+                }
+                finally
+                {
+                    SensusServiceHelper.Get().FlashNotificationsEnabled = true;
+                }
+
+                if (callback != null)
+                    callback(protocol);
+
+            }).Start();
         }
 
         public static void DisplayAndStartAsync(Protocol protocol)
         {
             new Thread(() =>
+            {
+                if (protocol == null)
+                    SensusServiceHelper.Get().FlashNotificationAsync("Protocol is empty. Cannot display or start it.");
+                else if (protocol.Running)
+                    SensusServiceHelper.Get().FlashNotificationAsync("You are already participating in \"" + protocol.Name + "\".");
+                else
                 {
-                    if (protocol == null)
-                        SensusServiceHelper.Get().FlashNotificationAsync("Protocol is empty. Cannot display or start it.");
-                    else if (protocol.Running)
-                        SensusServiceHelper.Get().FlashNotificationAsync("You are already participating in \"" + protocol.Name + "\".");
-                    else
+                    Device.BeginInvokeOnMainThread(async () =>
                     {
-                        Device.BeginInvokeOnMainThread(async () =>
-                            {
-                                ProtocolsPage protocolsPage = null;
+                        ProtocolsPage protocolsPage = null;
 
-                                // display the protocols page if it isn't already up
-                                INavigation navigation = Application.Current.MainPage.Navigation;
-                                Page topPage = navigation.NavigationStack.Count > 0 ? navigation.NavigationStack.Last() : null;
-                                if (topPage is ProtocolsPage)
-                                    protocolsPage = topPage as ProtocolsPage;
-                                else
-                                {
-                                    protocolsPage = new ProtocolsPage();
-                                    await Application.Current.MainPage.Navigation.PushAsync(protocolsPage);
-                                }
+                        // display the protocols page if it isn't already up
+                        INavigation navigation = Application.Current.MainPage.Navigation;
+                        Page topPage = navigation.NavigationStack.Count > 0 ? navigation.NavigationStack.Last() : null;
+                        if (topPage is ProtocolsPage)
+                            protocolsPage = topPage as ProtocolsPage;
+                        else
+                        {
+                            protocolsPage = new ProtocolsPage();
+                            await Application.Current.MainPage.Navigation.PushAsync(protocolsPage);
+                        }
 
-                                // ask user to start protocol
-                                protocol.StartWithUserAgreementAsync("You just opened \"" + protocol.Name + "\" within Sensus.", () =>
-                                    {
-                                        Device.BeginInvokeOnMainThread(() =>
-                                            {
-                                                // rebind to pick up any color changes
-                                                protocolsPage.Bind();
-                                            });
-                                    });
-                            });
-                    }
+                        // ask user to start protocol
+                        protocol.StartWithUserAgreementAsync("You just opened \"" + protocol.Name + "\" within Sensus.", () =>
+                        {
+                            // rebind to pick up any color changes
+                            Device.BeginInvokeOnMainThread(protocolsPage.Bind);
+                        });
+                    });
+                }
 
-                }).Start();
+            }).Start();
         }
 
         public static void RunUnitTestingProtocol(Stream unitTestingProtocolFile)

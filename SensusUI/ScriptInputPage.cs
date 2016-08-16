@@ -16,7 +16,7 @@ using System;
 using Xamarin.Forms;
 using SensusUI.UiProperties;
 using System.Collections.Generic;
-using SensusService.Probes.User;
+using SensusService.Probes.User.Scripts;
 using SensusUI.Inputs;
 
 namespace SensusUI

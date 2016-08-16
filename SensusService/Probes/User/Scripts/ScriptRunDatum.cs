@@ -14,7 +14,7 @@
 
 using System;
 
-namespace SensusService.Probes.User
+namespace SensusService.Probes.User.Scripts
 {
     public class ScriptRunDatum : Datum
     {
