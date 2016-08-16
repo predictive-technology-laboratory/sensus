@@ -8,8 +8,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Sensus.iOS</RootNamespace>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>    
     <ReleaseVersion>2.0.0</ReleaseVersion>
     <AssemblyName>SensusiOS</AssemblyName>
   </PropertyGroup>
@@ -189,19 +188,19 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Band.iOS">
-      <HintPath>..\_Dependencies\msband\ios\Microsoft.Band.iOS.dll</HintPath>
+      <HintPath>..\dependencies\msband\ios\Microsoft.Band.iOS.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Band.Portable">
-      <HintPath>..\_Dependencies\msband\ios\Microsoft.Band.Portable.dll</HintPath>
+      <HintPath>..\dependencies\msband\ios\Microsoft.Band.Portable.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="Xam.Plugin.MapExtend.Abstractions">
-      <HintPath>..\_Dependencies\mapextend\ios\Xam.Plugin.MapExtend.Abstractions.dll</HintPath>
+      <HintPath>..\dependencies\mapextend\ios\Xam.Plugin.MapExtend.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Xam.Plugin.MapExtend.iOSUnified">
-      <HintPath>..\_Dependencies\mapextend\ios\Xam.Plugin.MapExtend.iOSUnified.dll</HintPath>
+      <HintPath>..\dependencies\mapextend\ios\Xam.Plugin.MapExtend.iOSUnified.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.iOS" />
     <Reference Include="System.Net.Http" />
@@ -469,15 +468,8 @@
     <BundleResource Include="Resources\UnitTestingProtocol.json" />
   </ItemGroup>
   <ItemGroup />
-  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
   <Import Project="..\packages\Xamarin.Insights.1.12.3\build\Xamarin.iOS10\Xamarin.Insights.targets" Condition="Exists('..\packages\Xamarin.Insights.1.12.3\build\Xamarin.iOS10\Xamarin.Insights.targets')" />
-  <Import Project="..\packages\Xamarin.Forms.2.3.0.49\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.2.3.0.49\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
-  </Target>
+  <Import Project="..\packages\Xamarin.Forms.2.3.0.49\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.2.3.0.49\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />  
   <ItemGroup />
 </Project>
