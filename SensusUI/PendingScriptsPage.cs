@@ -65,6 +65,8 @@ namespace SensusUI
         {
             Title = "Pending Surveys";
 
+            SensusServiceHelper.Get().RemoveOldScripts();
+
             ListView scriptList = new ListView();
             scriptList.ItemTemplate = new DataTemplate(typeof(TextCell));
             scriptList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", converter: new ScriptTextConverter()));
@@ -136,6 +138,23 @@ namespace SensusUI
             };
 
             Content = scriptList;
+
+            System.Timers.Timer filterTimer = new System.Timers.Timer(1000);
+
+            filterTimer.Elapsed += (sender, e) =>
+            {
+                Device.BeginInvokeOnMainThread(SensusServiceHelper.Get().RemoveOldScripts);
+            };
+
+            Appearing += (sender, e) =>
+            {
+                filterTimer.Start();
+            };
+
+            Disappearing += (sender, e) =>
+            {
+                filterTimer.Stop();
+            };
         }
     }
 }

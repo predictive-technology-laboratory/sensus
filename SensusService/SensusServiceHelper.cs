@@ -824,8 +824,8 @@ namespace SensusService
         {
             lock (_scriptsToRun)
             {
-                _scriptsToRun.Remove(script);
-                IssuePendingSurveysNotificationAsync(false, false);
+                if (_scriptsToRun.Remove(script))
+                    IssuePendingSurveysNotificationAsync(false, false);
             }
         }
 
@@ -833,10 +833,29 @@ namespace SensusService
         {
             lock (_scriptsToRun)
             {
-                foreach (Script scriptFromRunner in _scriptsToRun.Where(script => ReferenceEquals(script.Runner, runner)).ToList())
-                    _scriptsToRun.Remove(scriptFromRunner);
+                bool removed = false;
 
-                IssuePendingSurveysNotificationAsync(false, false);
+                foreach (Script scriptFromRunner in _scriptsToRun.Where(script => ReferenceEquals(script.Runner, runner)).ToList())
+                    if (_scriptsToRun.Remove(scriptFromRunner))
+                        removed = true;
+
+                if (removed)
+                    IssuePendingSurveysNotificationAsync(false, false);
+            }
+        }
+
+        public void RemoveOldScripts()
+        {
+            lock (_scriptsToRun)
+            {
+                bool removed = false;
+
+                foreach (Script script in _scriptsToRun.ToList())
+                    if (script.Age.TotalMinutes >= script.Runner.MaximumAgeMinutes && _scriptsToRun.Remove(script))
+                        removed = true;
+
+                if (removed)
+                    IssuePendingSurveysNotificationAsync(false, false);
             }
         }
 

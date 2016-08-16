@@ -240,54 +240,54 @@ namespace SensusService
         public static void DeserializeAsync(string json, Action<Protocol> callback)
         {
             new Thread(() =>
+            {
+                Protocol protocol = null;
+
+                try
                 {
-                    Protocol protocol = null;
+                    ManualResetEvent protocolWait = new ManualResetEvent(false);
 
-                    try
+                    // always deserialize protocols on the main thread (e.g., since a looper is required for android). also, disable
+                    // flash notifications so we don't get any messages that result from properties being set within the protocol.
+                    SensusServiceHelper.Get().FlashNotificationsEnabled = false;
+                    Device.BeginInvokeOnMainThread(() =>
                     {
-                        ManualResetEvent protocolWait = new ManualResetEvent(false);
-
-                        // always deserialize protocols on the main thread (e.g., since a looper is required for android). also, disable
-                        // flash notifications so we don't get any messages that result from properties being set within the protocol.
-                        SensusServiceHelper.Get().FlashNotificationsEnabled = false;
-                        Device.BeginInvokeOnMainThread(() =>
-                            {
-                                try
-                                {
-                                    protocol = JsonConvert.DeserializeObject<Protocol>(json, SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
-                                }
-                                catch (Exception ex)
-                                {
-                                    SensusServiceHelper.Get().Logger.Log("Error while deserializing protocol from JSON:  " + ex.Message, LoggingLevel.Normal, typeof(Protocol));
-                                }
-                                finally
-                                {
-                                    protocolWait.Set();
-                                }
-                            });
-
-                        protocolWait.WaitOne();
-
-                        if (protocol == null)
+                        try
                         {
-                            SensusServiceHelper.Get().Logger.Log("Failed to deserialize protocol from JSON.", LoggingLevel.Normal, typeof(Protocol));
-                            SensusServiceHelper.Get().FlashNotificationAsync("Failed to unpack protocol from JSON.");
+                            protocol = JsonConvert.DeserializeObject<Protocol>(json, SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Failed to deserialize protocol from JSON:  " + ex.Message, LoggingLevel.Normal, typeof(Protocol));
-                        SensusServiceHelper.Get().FlashNotificationAsync("Failed to unpack protocol from JSON:  " + ex.Message);
-                    }
-                    finally
-                    {
-                        SensusServiceHelper.Get().FlashNotificationsEnabled = true;
-                    }
+                        catch (Exception ex)
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Error while deserializing protocol from JSON:  " + ex.Message, LoggingLevel.Normal, typeof(Protocol));
+                        }
+                        finally
+                        {
+                            protocolWait.Set();
+                        }
+                    });
 
-                    if (callback != null)
-                        callback(protocol);
+                    protocolWait.WaitOne();
 
-                }).Start();
+                    if (protocol == null)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Failed to deserialize protocol from JSON.", LoggingLevel.Normal, typeof(Protocol));
+                        SensusServiceHelper.Get().FlashNotificationAsync("Failed to unpack protocol from JSON.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Failed to deserialize protocol from JSON:  " + ex.Message, LoggingLevel.Normal, typeof(Protocol));
+                    SensusServiceHelper.Get().FlashNotificationAsync("Failed to unpack protocol from JSON:  " + ex.Message);
+                }
+                finally
+                {
+                    SensusServiceHelper.Get().FlashNotificationsEnabled = true;
+                }
+
+                if (callback != null)
+                    callback(protocol);
+
+            }).Start();
         }
 
         public static void DisplayAndStartAsync(Protocol protocol)

@@ -309,110 +309,110 @@ namespace Sensus.iOS
         public override void ShareFileAsync(string path, string subject, string mimeType)
         {
             Device.BeginInvokeOnMainThread(() =>
+            {
+                if (MFMailComposeViewController.CanSendMail)
                 {
-                    if (MFMailComposeViewController.CanSendMail)
-                    {
-                        MFMailComposeViewController mailer = new MFMailComposeViewController();
-                        mailer.SetSubject(subject);
-                        mailer.AddAttachmentData(NSData.FromUrl(NSUrl.FromFilename(path)), mimeType, Path.GetFileName(path));
-                        mailer.Finished += (sender, e) => mailer.DismissViewControllerAsync(true);
-                        UIApplication.SharedApplication.KeyWindow.RootViewController.PresentViewController(mailer, true, null);
-                    }
-                    else
-                        SensusServiceHelper.Get().FlashNotificationAsync("You do not have any mail accounts configured. Please configure one before attempting to send emails from Sensus.");
-                });
+                    MFMailComposeViewController mailer = new MFMailComposeViewController();
+                    mailer.SetSubject(subject);
+                    mailer.AddAttachmentData(NSData.FromUrl(NSUrl.FromFilename(path)), mimeType, Path.GetFileName(path));
+                    mailer.Finished += (sender, e) => mailer.DismissViewControllerAsync(true);
+                    UIApplication.SharedApplication.KeyWindow.RootViewController.PresentViewController(mailer, true, null);
+                }
+                else
+                    SensusServiceHelper.Get().FlashNotificationAsync("You do not have any mail accounts configured. Please configure one before attempting to send emails from Sensus.");
+            });
         }
 
         public override void SendEmailAsync(string toAddress, string subject, string message)
         {
             Device.BeginInvokeOnMainThread(() =>
+            {
+                if (MFMailComposeViewController.CanSendMail)
                 {
-                    if (MFMailComposeViewController.CanSendMail)
-                    {
-                        MFMailComposeViewController mailer = new MFMailComposeViewController();
-                        mailer.SetToRecipients(new string[] { toAddress });
-                        mailer.SetSubject(subject);
-                        mailer.SetMessageBody(message, false);
-                        mailer.Finished += (sender, e) => mailer.DismissViewControllerAsync(true);
-                        UIApplication.SharedApplication.KeyWindow.RootViewController.PresentViewController(mailer, true, null);
-                    }
-                    else
-                        SensusServiceHelper.Get().FlashNotificationAsync("You do not have any mail accounts configured. Please configure one before attempting to send emails from Sensus.");
-                });
+                    MFMailComposeViewController mailer = new MFMailComposeViewController();
+                    mailer.SetToRecipients(new string[] { toAddress });
+                    mailer.SetSubject(subject);
+                    mailer.SetMessageBody(message, false);
+                    mailer.Finished += (sender, e) => mailer.DismissViewControllerAsync(true);
+                    UIApplication.SharedApplication.KeyWindow.RootViewController.PresentViewController(mailer, true, null);
+                }
+                else
+                    SensusServiceHelper.Get().FlashNotificationAsync("You do not have any mail accounts configured. Please configure one before attempting to send emails from Sensus.");
+            });
         }
 
         public override void TextToSpeechAsync(string text, Action callback)
         {
             new Thread(() =>
+            {
+                try
                 {
-                    try
-                    {
-                        new AVSpeechSynthesizer().SpeakUtterance(new AVSpeechUtterance(text));
-                    }
-                    catch (Exception ex)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Failed to speak utterance:  " + ex.Message, LoggingLevel.Normal, GetType());
-                    }
+                    new AVSpeechSynthesizer().SpeakUtterance(new AVSpeechUtterance(text));
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Failed to speak utterance:  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
 
-                    if (callback != null)
-                        callback();
+                if (callback != null)
+                    callback();
 
-                }).Start();
+            }).Start();
         }
 
         public override void RunVoicePromptAsync(string prompt, Action postDisplayCallback, Action<string> callback)
         {
             new Thread(() =>
+            {
+                string input = null;
+                ManualResetEvent dialogDismissWait = new ManualResetEvent(false);
+
+                Device.BeginInvokeOnMainThread(() =>
                 {
-                    string input = null;
-                    ManualResetEvent dialogDismissWait = new ManualResetEvent(false);
+                    ManualResetEvent dialogShowWait = new ManualResetEvent(false);
 
-                    Device.BeginInvokeOnMainThread(() =>
-                        {
-                            ManualResetEvent dialogShowWait = new ManualResetEvent(false);
+                    UIAlertView dialog = new UIAlertView("Sensus is requesting input...", prompt, null, "Cancel", "OK");
+                    dialog.AlertViewStyle = UIAlertViewStyle.PlainTextInput;
+                    dialog.Dismissed += (o, e) =>
+                    {
+                        dialogDismissWait.Set();
+                    };
+                    dialog.Presented += (o, e) =>
+                    {
+                        dialogShowWait.Set();
 
-                            UIAlertView dialog = new UIAlertView("Sensus is requesting input...", prompt, null, "Cancel", "OK");
-                            dialog.AlertViewStyle = UIAlertViewStyle.PlainTextInput;
-                            dialog.Dismissed += (o, e) =>
-                            {
-                                dialogDismissWait.Set();
-                            };
-                            dialog.Presented += (o, e) =>
-                            {
-                                dialogShowWait.Set();
+                        if (postDisplayCallback != null)
+                            postDisplayCallback();
+                    };
+                    dialog.Clicked += (o, e) =>
+                    {
+                        if (e.ButtonIndex == 1)
+                            input = dialog.GetTextField(0).Text;
+                    };
 
-                                if (postDisplayCallback != null)
-                                    postDisplayCallback();
-                            };
-                            dialog.Clicked += (o, e) =>
-                            {
-                                if (e.ButtonIndex == 1)
-                                    input = dialog.GetTextField(0).Text;
-                            };
+                    dialog.Show();
 
-                            dialog.Show();
+                    #region voice recognizer
 
-                            #region voice recognizer
+                    new Thread(() =>
+                    {
+                        // wait for the dialog to be shown so it doesn't hide our speech recognizer activity
+                        dialogShowWait.WaitOne();
 
-                            new Thread(() =>
-                                {
-                                    // wait for the dialog to be shown so it doesn't hide our speech recognizer activity
-                                    dialogShowWait.WaitOne();
+                        // there's a slight race condition between the dialog showing and speech recognition showing. pause here to prevent the dialog from hiding the speech recognizer.
+                        Thread.Sleep(1000);
 
-                                    // there's a slight race condition between the dialog showing and speech recognition showing. pause here to prevent the dialog from hiding the speech recognizer.
-                                    Thread.Sleep(1000);
+                        // TODO:  Add speech recognition
 
-                                    // TODO:  Add speech recognition
+                    }).Start();
 
-                                }).Start();
+                    #endregion
+                });
 
-                            #endregion
-                        });
+                dialogDismissWait.WaitOne();
+                callback(input);
 
-                    dialogDismissWait.WaitOne();
-                    callback(input);
-
-                }).Start();
+            }).Start();
         }
 
         public override void IssueNotificationAsync(string message, string id, bool playSound, bool vibrate)

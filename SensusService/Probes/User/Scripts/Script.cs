@@ -82,6 +82,15 @@ namespace SensusService.Probes.User.Scripts
             get { return _inputGroups.Count == 0 || _inputGroups.All(inputGroup => inputGroup.Valid); }
         }
 
+        [JsonIgnore]
+        public TimeSpan Age
+        {
+            get
+            {
+                return DateTimeOffset.UtcNow - _runTimestamp.Value;
+            }
+        }
+
         public Script(ScriptRunner runner)
         {
             _runner = runner;

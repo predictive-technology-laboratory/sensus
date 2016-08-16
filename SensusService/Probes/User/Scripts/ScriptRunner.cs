@@ -34,7 +34,7 @@ namespace SensusService.Probes.User.Scripts
         private bool _allowCancel;
         private ObservableCollection<Trigger> _triggers;
         private Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>> _triggerHandler;
-        private int _maximumAgeMinutes;
+        private float _maximumAgeMinutes;
         private List<Tuple<DateTime, DateTime>> _randomTriggerWindows;
         private string _randomTriggerCallbackId;
         private Random _random;
@@ -119,8 +119,8 @@ namespace SensusService.Probes.User.Scripts
             get { return _triggers; }
         }
 
-        [EntryIntegerUiProperty("Maximum Age (Mins.):", true, 7)]
-        public int MaximumAgeMinutes
+        [EntryFloatUiProperty("Maximum Age (Mins.):", true, 7)]
+        public float MaximumAgeMinutes
         {
             get { return _maximumAgeMinutes; }
             set { _maximumAgeMinutes = value; }

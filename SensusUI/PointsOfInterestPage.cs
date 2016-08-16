@@ -67,75 +67,75 @@ namespace SensusUI
                     }
                 }
             };
-            
+
             Bind();
 
             Content = _pointsOfInterestList;
 
             ToolbarItems.Add(new ToolbarItem(null, "plus.png", () =>
+            {
+                SensusServiceHelper.Get().PromptForInputsAsync(
+                    "Define Point Of Interest",
+                    new Input[]
                     {
-                        SensusServiceHelper.Get().PromptForInputsAsync(
-                            "Define Point Of Interest", 
-                            new Input[]
-                            {
-                                new SingleLineTextInput("POI Name:", Keyboard.Text) { Required = false },
-                                new SingleLineTextInput("POI Type:", Keyboard.Text) { Required = false },
-                                new SingleLineTextInput("Address:", Keyboard.Text) { Required = false }
-                            },
-                            null,
-                            true, 
-                            null,
-                            null,
-                            null,
-                            null,
-                            false,
-                            inputs =>
-                            {
-                                if (inputs == null)
-                                    return;
-                            
-                                string name = inputs[0].Value as string;
-                                string type = inputs[1].Value as string;
-                                string address = inputs[2].Value as string;
+                        new SingleLineTextInput("POI Name:", Keyboard.Text) { Required = false },
+                        new SingleLineTextInput("POI Type:", Keyboard.Text) { Required = false },
+                        new SingleLineTextInput("Address:", Keyboard.Text) { Required = false }
+                    },
+                    null,
+                    true,
+                    null,
+                    null,
+                    null,
+                    null,
+                    false,
+                    inputs =>
+                    {
+                        if (inputs == null)
+                            return;
 
-                                if (string.IsNullOrWhiteSpace(name) && string.IsNullOrWhiteSpace(type))
-                                    SensusServiceHelper.Get().FlashNotificationAsync("You must enter either a name or type (or both).");
-                                else
+                        string name = inputs[0].Value as string;
+                        string type = inputs[1].Value as string;
+                        string address = inputs[2].Value as string;
+
+                        if (string.IsNullOrWhiteSpace(name) && string.IsNullOrWhiteSpace(type))
+                            SensusServiceHelper.Get().FlashNotificationAsync("You must enter either a name or type (or both).");
+                        else
+                        {
+                            Action<List<Position>> addPOI = new Action<List<Position>>(poiPositions =>
+                            {
+                                Device.BeginInvokeOnMainThread(async () =>
                                 {
-                                    Action<List<Position>> addPOI = new Action<List<Position>>(poiPositions =>
-                                        {        
-                                            Device.BeginInvokeOnMainThread(async () =>
-                                                {
-                                                    if (poiPositions != null && poiPositions.Count > 0 && await DisplayAlert("Add POI?", "Would you like to add " + poiPositions.Count + " point(s) of interest?", "Yes", "No"))
-                                                        foreach (Position poiPosition in poiPositions)
-                                                        {
-                                                            _pointsOfInterest.Add(new PointOfInterest(name, type, poiPosition.ToGeolocationPosition()));
+                                    if (poiPositions != null && poiPositions.Count > 0 && await DisplayAlert("Add POI?", "Would you like to add " + poiPositions.Count + " point(s) of interest?", "Yes", "No"))
+                                        foreach (Position poiPosition in poiPositions)
+                                        {
+                                            _pointsOfInterest.Add(new PointOfInterest(name, type, poiPosition.ToGeolocationPosition()));
 
-                                                            Bind();
-                                                        }
-                                                });
-                                        });
-
-                                    string newPinName = name + (string.IsNullOrWhiteSpace(type) ? "" : " (" + type + ")");
-
-                                    if (string.IsNullOrWhiteSpace(address))
-                                    {
-                                        // cancel existing token source if we have one
-                                        if (_gpsCancellationTokenSource != null && !_gpsCancellationTokenSource.IsCancellationRequested)
-                                            _gpsCancellationTokenSource.Cancel();
-
-                                        _gpsCancellationTokenSource = new CancellationTokenSource();
-                                        
-                                        Plugin.Geolocator.Abstractions.Position gpsPosition = GpsReceiver.Get().GetReading(_gpsCancellationTokenSource.Token);
-
-                                        if (gpsPosition != null)
-                                            SensusServiceHelper.Get().GetPositionsFromMapAsync(gpsPosition.ToFormsPosition(), newPinName, addPOI);
-                                    }
-                                    else
-                                        SensusServiceHelper.Get().GetPositionsFromMapAsync(address, newPinName, addPOI);
-                                }
+                                            Bind();
+                                        }
+                                });
                             });
-                    }));
+
+                            string newPinName = name + (string.IsNullOrWhiteSpace(type) ? "" : " (" + type + ")");
+
+                            if (string.IsNullOrWhiteSpace(address))
+                            {
+                                // cancel existing token source if we have one
+                                if (_gpsCancellationTokenSource != null && !_gpsCancellationTokenSource.IsCancellationRequested)
+                                    _gpsCancellationTokenSource.Cancel();
+
+                                _gpsCancellationTokenSource = new CancellationTokenSource();
+
+                                Plugin.Geolocator.Abstractions.Position gpsPosition = GpsReceiver.Get().GetReading(_gpsCancellationTokenSource.Token);
+
+                                if (gpsPosition != null)
+                                    SensusServiceHelper.Get().GetPositionsFromMapAsync(gpsPosition.ToFormsPosition(), newPinName, addPOI);
+                            }
+                            else
+                                SensusServiceHelper.Get().GetPositionsFromMapAsync(address, newPinName, addPOI);
+                        }
+                    });
+            }));
 
             Disappearing += (o, e) =>
             {
@@ -147,10 +147,10 @@ namespace SensusUI
         private void Bind()
         {
             Device.BeginInvokeOnMainThread(() =>
-                {
-                    _pointsOfInterestList.ItemsSource = null;
-                    _pointsOfInterestList.ItemsSource = _pointsOfInterest;
-                });
+            {
+                _pointsOfInterestList.ItemsSource = null;
+                _pointsOfInterestList.ItemsSource = _pointsOfInterest;
+            });
         }
     }
 }
