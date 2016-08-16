@@ -208,9 +208,9 @@ namespace SensusService.Probes
                 return Task.FromResult(false);
         }
 
-        public override void ResetForSharing()
+        public override void Reset()
         {
-            base.ResetForSharing();
+            base.Reset();
 
             _deviceAwake = false;
         }

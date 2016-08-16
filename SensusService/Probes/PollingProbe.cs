@@ -242,9 +242,9 @@ namespace SensusService.Probes
             return restart;
         }
 
-        public override void ResetForSharing()
+        public override void Reset()
         {
-            base.ResetForSharing();
+            base.Reset();
 
             _isPolling = false;
             _pollCallbackId = null;

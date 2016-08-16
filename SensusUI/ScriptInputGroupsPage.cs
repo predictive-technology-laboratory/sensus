@@ -14,7 +14,7 @@
 
 using System;
 using Xamarin.Forms;
-using SensusService.Probes.User;
+using SensusService.Probes.User.Scripts;
 using SensusUI.Inputs;
 using System.Collections.Generic;
 using System.Linq;

@@ -15,13 +15,12 @@
 using System;
 using SensusService.Anonymization;
 using SensusService.Anonymization.Anonymizers;
-using SensusService.Probes.User.ProbeTriggerProperties;
+using SensusService.Probes.User.Scripts.ProbeTriggerProperties;
 using System.Collections;
-using System.Linq;
 using System.Collections.Generic;
 using SensusUI.Inputs;
 
-namespace SensusService.Probes.User
+namespace SensusService.Probes.User.Scripts
 {
     public class ScriptDatum : Datum
     {
@@ -34,7 +33,7 @@ namespace SensusService.Probes.User
         private string _triggerDatumId;
         private double? _latitude;
         private double? _longitude;
-        private DateTimeOffset _presentationTimestamp;
+        private DateTimeOffset _runTimestamp;
         private DateTimeOffset? _locationTimestamp;
         private List<InputCompletionRecord> _completionRecords;
 
@@ -127,15 +126,15 @@ namespace SensusService.Probes.User
             set { _longitude = value; }
         }
 
-        public DateTimeOffset PresentationTimestamp
+        public DateTimeOffset RunTimestamp
         {
             get
             {
-                return _presentationTimestamp;
+                return _runTimestamp;
             }
             set
             {
-                _presentationTimestamp = value;
+                _runTimestamp = value;
             }
         }
 
@@ -191,7 +190,7 @@ namespace SensusService.Probes.User
             _completionRecords = new List<InputCompletionRecord>();
         }
 
-        public ScriptDatum(DateTimeOffset timestamp, string scriptId, string scriptName, string groupId, string inputId, string runId, object response, string triggerDatumId, double? latitude, double? longitude, DateTimeOffset presentationTimestamp, DateTimeOffset? locationTimestamp, List<InputCompletionRecord> completionRecords)
+        public ScriptDatum(DateTimeOffset timestamp, string scriptId, string scriptName, string groupId, string inputId, string runId, object response, string triggerDatumId, double? latitude, double? longitude, DateTimeOffset? locationTimestamp, DateTimeOffset runTimestamp, List<InputCompletionRecord> completionRecords)
             : base(timestamp)
         {
             _scriptId = scriptId;
@@ -203,8 +202,8 @@ namespace SensusService.Probes.User
             _triggerDatumId = triggerDatumId == null ? "" : triggerDatumId;
             _latitude = latitude;
             _longitude = longitude;
-            _presentationTimestamp = presentationTimestamp;
             _locationTimestamp = locationTimestamp;
+            _runTimestamp = runTimestamp;
             _completionRecords = completionRecords;
         }
 
@@ -218,8 +217,8 @@ namespace SensusService.Probes.User
             "Response:  " + _response + Environment.NewLine +
             "Latitude:  " + _latitude + Environment.NewLine +
             "Longitude:  " + _longitude + Environment.NewLine +
-            "Presentation Timestamp:  " + _presentationTimestamp + Environment.NewLine +
-            "Location Timestamp:  " + _locationTimestamp;
+            "Location Timestamp:  " + _locationTimestamp + Environment.NewLine +
+            "Run Timestamp:  " + _runTimestamp;
         }
     }
 }

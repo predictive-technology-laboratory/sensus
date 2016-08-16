@@ -116,7 +116,7 @@ namespace SensusUI
 
         public ProtocolsPage()
         {
-            Title = "Your Sensus Studies";
+            Title = "Your Studies";
 
             _protocolsList = new ListView();
             _protocolsList.ItemTemplate = new DataTemplate(typeof(TextCell));
@@ -160,27 +160,27 @@ namespace SensusUI
 
                 // must reset the protocol select manually
                 Device.BeginInvokeOnMainThread(() =>
-                    {
-                        _protocolsList.SelectedItem = null;
-                    });
+                {
+                    _protocolsList.SelectedItem = null;
+                });
 
                 if (selectedAction == "Start")
                 {
                     selectedProtocol.StartWithUserAgreementAsync(null, () =>
-                        {
-                            // rebind to pick up color and running status changes
-                            Device.BeginInvokeOnMainThread(Bind);
-                        });
+                    {
+                        // rebind to pick up color and running status changes
+                        Device.BeginInvokeOnMainThread(Bind);
+                    });
                 }
                 else if (selectedAction == "Stop")
                 {
                     if (await DisplayAlert("Confirm Stop", "Are you sure you want to stop " + selectedProtocol.Name + "?", "Yes", "No"))
                     {
                         selectedProtocol.StopAsync(() =>
-                            {
-                                // rebind to pick up color and running status changes
-                                Device.BeginInvokeOnMainThread(Bind);
-                            });
+                        {
+                            // rebind to pick up color and running status changes
+                            Device.BeginInvokeOnMainThread(Bind);
+                        });
                     }
                 }
                 else if (selectedAction == "View Data")
@@ -229,10 +229,10 @@ namespace SensusUI
                                 cancellationTokenSource.Cancel();
 
                             Device.BeginInvokeOnMainThread(async () =>
-                                {
-                                    // only show the QR code for the reward datum if the datum was committed to the remote data store and if the data store can retrieve it.
-                                    await Navigation.PushAsync(new ParticipationReportPage(selectedProtocol, participationRewardDatum, !commitFailed && (selectedProtocol.RemoteDataStore?.CanRetrieveCommittedData ?? false)));
-                                });
+                            {
+                                // only show the QR code for the reward datum if the datum was committed to the remote data store and if the data store can retrieve it.
+                                await Navigation.PushAsync(new ParticipationReportPage(selectedProtocol, participationRewardDatum, !commitFailed && (selectedProtocol.RemoteDataStore?.CanRetrieveCommittedData ?? false)));
+                            });
                         },
                         inputs =>
                         {
@@ -353,29 +353,14 @@ namespace SensusUI
                 {
                     Action ShareSelectedProtocol = new Action(() =>
                         {
-                            // make a deep copy of the selected protocol so we can reset it for sharing
+                            // make a deep copy of the selected protocol so we can reset it for sharing. don't reset the id of the protocol to keep
+                            // it in the same study. also do not register the copy since we're just going to send it off.
                             selectedProtocol.CopyAsync(false, false, selectedProtocolCopy =>
                                 {
-                                    selectedProtocolCopy.ResetForSharing();
-
-                                    // reset data counts
-                                    if (selectedProtocolCopy.LocalDataStore != null)
-                                    {
-                                        selectedProtocolCopy.LocalDataStore.AddedDataCount = 0;
-                                        selectedProtocolCopy.LocalDataStore.CommittedDataCount = 0;
-                                    }
-
-                                    if (selectedProtocolCopy.RemoteDataStore != null)
-                                    {
-                                        selectedProtocolCopy.RemoteDataStore.AddedDataCount = 0;
-                                        selectedProtocolCopy.RemoteDataStore.CommittedDataCount = 0;
-                                    }
-
                                     // write protocol to file and share
                                     string sharePath = SensusServiceHelper.Get().GetSharePath(".json");
                                     selectedProtocolCopy.Save(sharePath);
                                     SensusServiceHelper.Get().ShareFileAsync(sharePath, "Sensus Protocol:  " + selectedProtocolCopy.Name, "application/json");
-
                                 });
                         });
 
@@ -515,6 +500,8 @@ namespace SensusUI
                             await DisplayAlert("About Sensus", "Version:  " + SensusServiceHelper.Get().Version, "OK");
                         }
                     }));
+
+            Bind();
         }
 
         public void Bind()

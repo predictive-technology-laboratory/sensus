@@ -19,7 +19,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Syncfusion.SfChart.XForms;
 
-namespace SensusService.Probes.User
+namespace SensusService.Probes.User.Scripts
 {
     public class ScriptProbe : Probe
     {
@@ -142,12 +142,12 @@ namespace SensusService.Probes.User
             return restart;
         }
 
-        public override void ResetForSharing()
+        public override void Reset()
         {
-            base.ResetForSharing();
+            base.Reset();
 
             foreach (ScriptRunner scriptRunner in _scriptRunners)
-                scriptRunner.ClearForSharing();
+                scriptRunner.Reset();
         }
 
         public override void Stop()

@@ -347,21 +347,23 @@ namespace SensusService.DataStores
             lock (_data)
             {
                 string dataStoreName = GetType().Name;
-                misc += "Data added (" + dataStoreName + "):  " + _addedDataCount + Environment.NewLine +
-                        "Data in memory (" + dataStoreName + "):  " + _data.Count + Environment.NewLine +
-                        "Data committed (" + dataStoreName + "):  " + _committedDataCount + Environment.NewLine;
+                misc += dataStoreName + " - added:  " + _addedDataCount + Environment.NewLine +
+                        dataStoreName + " - in memory:  " + _data.Count + Environment.NewLine +
+                        dataStoreName + " - committed:  " + _committedDataCount + Environment.NewLine;
             }
 
             return restart;
         }
 
-        public virtual void ClearForSharing()
+        public virtual void Reset()
         {
             if (_running)
-                throw new Exception("Cannot clear data store for sharing while it is running.");
+                throw new Exception("Cannot reset data store while it is running.");
 
             _mostRecentSuccessfulCommitTime = null;
             _commitCallbackId = null;
+            _addedDataCount = 0;
+            _committedDataCount = 0;
 
             lock (_data)
             {
@@ -379,7 +381,23 @@ namespace SensusService.DataStores
                 ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
             };
 
-            return JsonConvert.DeserializeObject<DataStore>(JsonConvert.SerializeObject(this, settings), settings);
+            DataStore copy = null;
+            try
+            {
+                SensusServiceHelper.Get().FlashNotificationsEnabled = false;
+                copy = JsonConvert.DeserializeObject<DataStore>(JsonConvert.SerializeObject(this, settings), settings);
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Failed to copy data store:  " + ex.Message, LoggingLevel.Normal, GetType());
+                copy = null;
+            }
+            finally
+            {
+                SensusServiceHelper.Get().FlashNotificationsEnabled = true;
+            }
+
+            return copy;
         }
     }
 }

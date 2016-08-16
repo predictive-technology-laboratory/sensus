@@ -367,9 +367,9 @@ namespace SensusService.DataStores.Local
             }
         }
 
-        public override void ClearForSharing()
+        public override void Reset()
         {
-            base.ClearForSharing();
+            base.Reset();
 
             _path = null;
         }

@@ -34,6 +34,7 @@ using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
 using System.Threading.Tasks;
+using SensusService.Probes.User.Scripts;
 
 #if __IOS__
 using XLabs.Platform.Device;
@@ -49,24 +50,19 @@ namespace SensusService
         #region static members
 
         private static SensusServiceHelper SINGLETON;
-        private static readonly object PROMPT_FOR_INPUTS_LOCKER = new object();
-        private static bool PROMPT_FOR_INPUTS_RUNNING = false;
         public const string SENSUS_CALLBACK_KEY = "SENSUS-CALLBACK";
         public const string SENSUS_CALLBACK_ID_KEY = "SENSUS-CALLBACK-ID";
         public const string SENSUS_CALLBACK_REPEATING_KEY = "SENSUS-CALLBACK-REPEATING";
         public const string SENSUS_CALLBACK_REPEAT_DELAY_KEY = "SENSUS-CALLBACK-REPEAT-DELAY";
         public const string SENSUS_CALLBACK_REPEAT_LAG_KEY = "SENSUS-CALLBACK-REPEAT-LAG";
+        public const string NOTIFICATION_ID_KEY = "ID";
+        public const string PENDING_SURVEY_NOTIFICATION_ID = "PENDING-SURVEY-NOTIFICATION";
         public const int PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS = 60;
         protected const string XAMARIN_INSIGHTS_APP_KEY = "";
         private const string ENCRYPTION_KEY = "";
         public static readonly string SHARE_DIRECTORY = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "share");
         private static readonly string LOG_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
         private static readonly string SERIALIZATION_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_service_helper.json");
-
-        public static bool PromptForInputsRunning
-        {
-            get { return PROMPT_FOR_INPUTS_RUNNING; }
-        }
 
 #if DEBUG || UNIT_TESTING
         // test every 30 seconds in debug
@@ -92,8 +88,11 @@ namespace SensusService
             #region need the following in order to deserialize protocols between OSs, whose objects contain different members (e.g., iOS service helper has ActivationId, which Android does not)
             Error = (o, e) =>
             {
-                SensusServiceHelper.Get().Logger.Log("Failed to deserialize some part of the JSON:  " + e.ErrorContext.Error.ToString(), LoggingLevel.Normal, typeof(Protocol));
-                e.ErrorContext.Handled = true;
+                if (Get() != null)
+                {
+                    Get().Logger.Log("Failed to deserialize some part of the JSON:  " + e.ErrorContext.Error.ToString(), LoggingLevel.Normal, typeof(Protocol));
+                    e.ErrorContext.Handled = true;
+                }
             },
 
             MissingMemberHandling = MissingMemberHandling.Ignore,  // need to ignore missing members for cross-platform deserialization
@@ -329,6 +328,8 @@ namespace SensusService
         private List<PointOfInterest> _pointsOfInterest;
         private MobileBarcodeScanner _barcodeScanner;
         private ZXing.Mobile.BarcodeWriter _barcodeWriter;
+        private bool _flashNotificationsEnabled;
+        private ObservableCollection<Script> _scriptsToRun;
 
         private readonly object _shareFileLocker = new object();
         private readonly object _saveLocker = new object();
@@ -373,6 +374,26 @@ namespace SensusService
             get
             {
                 return _barcodeWriter;
+            }
+        }
+
+        public bool FlashNotificationsEnabled
+        {
+            get
+            {
+                return _flashNotificationsEnabled;
+            }
+            set
+            {
+                _flashNotificationsEnabled = value;
+            }
+        }
+
+        public ObservableCollection<Script> ScriptsToRun
+        {
+            get
+            {
+                return _scriptsToRun;
             }
         }
 
@@ -527,6 +548,9 @@ namespace SensusService
                 }
             };
 
+            _flashNotificationsEnabled = true;
+            _scriptsToRun = new ObservableCollection<Script>();
+
             if (!Directory.Exists(SHARE_DIRECTORY))
                 Directory.CreateDirectory(SHARE_DIRECTORY);
 
@@ -601,7 +625,7 @@ namespace SensusService
 
         public abstract void RunVoicePromptAsync(string prompt, Action postDisplayCallback, Action<string> callback);
 
-        public abstract void IssueNotificationAsync(string message, string id);
+        public abstract void IssueNotificationAsync(string message, string id, bool playSound, bool vibrate);
 
         public abstract void KeepDeviceAwake();
 
@@ -771,6 +795,86 @@ namespace SensusService
             }
         }
 
+        public void AddScriptToRun(Script script, RunMode runMode)
+        {
+            lock (_scriptsToRun)
+            {
+                bool add = true;
+
+                List<Script> scriptsWithSameOrigin = _scriptsToRun.Where(s => s.SameOrigin(script)).ToList();
+
+                if (scriptsWithSameOrigin.Count > 0)
+                {
+                    if (runMode == RunMode.SingleKeepOldest)
+                        add = false;
+                    else if (runMode == RunMode.SingleUpdate)
+                        foreach (Script scriptWithSameOrigin in scriptsWithSameOrigin)
+                            _scriptsToRun.Remove(scriptWithSameOrigin);
+                }
+
+                if (add)
+                {
+                    _scriptsToRun.Insert(0, script);
+                    IssuePendingSurveysNotificationAsync(true, true);
+                }
+            }
+        }
+
+        public void RemoveScriptToRun(Script script)
+        {
+            lock (_scriptsToRun)
+            {
+                if (_scriptsToRun.Remove(script))
+                    IssuePendingSurveysNotificationAsync(false, false);
+            }
+        }
+
+        public void RemoveScriptsToRun(ScriptRunner runner)
+        {
+            lock (_scriptsToRun)
+            {
+                bool removed = false;
+
+                foreach (Script scriptFromRunner in _scriptsToRun.Where(script => ReferenceEquals(script.Runner, runner)).ToList())
+                    if (_scriptsToRun.Remove(scriptFromRunner))
+                        removed = true;
+
+                if (removed)
+                    IssuePendingSurveysNotificationAsync(false, false);
+            }
+        }
+
+        public void RemoveOldScripts()
+        {
+            lock (_scriptsToRun)
+            {
+                bool removed = false;
+
+                foreach (Script script in _scriptsToRun.ToList())
+                    if (script.Age.TotalMinutes >= script.Runner.MaximumAgeMinutes && _scriptsToRun.Remove(script))
+                        removed = true;
+
+                if (removed)
+                    IssuePendingSurveysNotificationAsync(false, false);
+            }
+        }
+
+        public void IssuePendingSurveysNotificationAsync(bool playSound, bool vibrate)
+        {
+            string message = null;
+
+            int scriptsToRun = _scriptsToRun.Count;
+            if (scriptsToRun > 0)
+                message = "You have " + scriptsToRun + " pending survey" + (scriptsToRun == 1 ? "" : "s") + ".";
+
+            IssueNotificationAsync(message, PENDING_SURVEY_NOTIFICATION_ID, playSound, vibrate);
+        }
+
+        public void ClearPendingSurveysNotificationAsync()
+        {
+            IssueNotificationAsync(null, PENDING_SURVEY_NOTIFICATION_ID, false, false);
+        }
+
         #region callback scheduling
 
         public string ScheduleRepeatingCallback(ScheduledCallback callback, int initialDelayMS, int repeatDelayMS, bool repeatLag)
@@ -845,138 +949,138 @@ namespace SensusService
             DateTime callbackStartTime = DateTime.Now;
 
             new Thread(async () =>
+            {
+                try
                 {
-                    try
-                    {
-                        ScheduledCallback scheduledCallback = null;
+                    ScheduledCallback scheduledCallback = null;
 
-                        lock (_idCallback)
+                    lock (_idCallback)
+                    {
+                        // do we have callback information for the passed callbackId? we might not, in the case where the callback is canceled by the user and the system fires it subsequently.
+                        if (!_idCallback.TryGetValue(callbackId, out scheduledCallback))
                         {
-                            // do we have callback information for the passed callbackId? we might not, in the case where the callback is canceled by the user and the system fires it subsequently.
-                            if (!_idCallback.TryGetValue(callbackId, out scheduledCallback))
+                            _logger.Log("Callback " + callbackId + " is not valid. Unscheduling.", LoggingLevel.Normal, GetType());
+                            UnscheduleCallback(callbackId);
+                        }
+                    }
+
+                    if (scheduledCallback != null)
+                    {
+                        // the same callback action cannot be run multiple times concurrently. drop the current callback if it's already running. multiple
+                        // callers might compete for the same callback, but only one will win the lock below and it will exclude all others until it has executed.
+                        bool actionAlreadyRunning = true;
+                        lock (scheduledCallback)
+                        {
+                            if (!scheduledCallback.Running)
                             {
-                                _logger.Log("Callback " + callbackId + " is not valid. Unscheduling.", LoggingLevel.Normal, GetType());
-                                UnscheduleCallback(callbackId);
+                                actionAlreadyRunning = false;
+                                scheduledCallback.Running = true;
                             }
                         }
 
-                        if (scheduledCallback != null)
+                        if (actionAlreadyRunning)
+                            _logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") is already running. Not running again.", LoggingLevel.Normal, GetType());
+                        else
                         {
-                            // the same callback action cannot be run multiple times concurrently. drop the current callback if it's already running. multiple
-                            // callers might compete for the same callback, but only one will win the lock below and it will exclude all others until it has executed.
-                            bool actionAlreadyRunning = true;
-                            lock (scheduledCallback)
+                            try
                             {
-                                if (!scheduledCallback.Running)
+                                if (scheduledCallback.Canceller.IsCancellationRequested)
+                                    _logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") was cancelled before it was raised.", LoggingLevel.Normal, GetType());
+                                else
                                 {
-                                    actionAlreadyRunning = false;
-                                    scheduledCallback.Running = true;
+                                    _logger.Log("Raising callback \"" + scheduledCallback.Name + "\" (" + callbackId + ").", LoggingLevel.Normal, GetType());
+
+                                    if (notifyUser)
+                                        IssueNotificationAsync(scheduledCallback.UserNotificationMessage, callbackId, true, true);
+
+                                    // if the callback specified a timeout, request cancellation at the specified time.
+                                    if (scheduledCallback.CallbackTimeout.HasValue)
+                                        scheduledCallback.Canceller.CancelAfter(scheduledCallback.CallbackTimeout.Value);
+
+                                    await scheduledCallback.Action(callbackId, scheduledCallback.Canceller.Token, letDeviceSleepCallback);
                                 }
                             }
-
-                            if (actionAlreadyRunning)
-                                _logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") is already running. Not running again.", LoggingLevel.Normal, GetType());
-                            else
+                            catch (Exception ex)
                             {
+                                string errorMessage = "Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") failed:  " + ex.Message;
+                                _logger.Log(errorMessage, LoggingLevel.Normal, GetType());
+                                SensusException.Report(errorMessage, ex);
+                            }
+                            finally
+                            {
+                                // the cancellation token source for the current callback might have been canceled. if this is a repeating callback then we'll need a new
+                                // cancellation token source because they cannot be reset and we're going to use the same scheduled callback again for the next repeat. 
+                                // if we enter the _idCallback lock before CancelRaisedCallback does, then the next raise will be cancelled. if CancelRaisedCallback enters the 
+                                // _idCallback lock first, then the cancellation token source will be overwritten here and the cancel will not have any effect on the next 
+                                // raise. the latter case is a reasonable outcome, since the purpose of CancelRaisedCallback is to terminate a callback that is currently in 
+                                // progress, and the current callback is no longer in progress. if the desired outcome is complete discontinuation of the repeating callback
+                                // then UnscheduleRepeatingCallback should be used -- this method first cancels any raised callbacks and then removes the callback entirely.
                                 try
                                 {
-                                    if (scheduledCallback.Canceller.IsCancellationRequested)
-                                        _logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") was cancelled before it was raised.", LoggingLevel.Normal, GetType());
-                                    else
+                                    if (repeating)
                                     {
-                                        _logger.Log("Raising callback \"" + scheduledCallback.Name + "\" (" + callbackId + ").", LoggingLevel.Normal, GetType());
-
-                                        if (notifyUser)
-                                            IssueNotificationAsync(scheduledCallback.UserNotificationMessage, callbackId);
-
-                                        // if the callback specified a timeout, request cancellation at the specified time.
-                                        if (scheduledCallback.CallbackTimeout.HasValue)
-                                            scheduledCallback.Canceller.CancelAfter(scheduledCallback.CallbackTimeout.Value);
-
-                                        await scheduledCallback.Action(callbackId, scheduledCallback.Canceller.Token, letDeviceSleepCallback);
+                                        lock (_idCallback)
+                                        {
+                                            scheduledCallback.Canceller = new CancellationTokenSource();
+                                        }
                                     }
                                 }
-                                catch (Exception ex)
+                                catch (Exception)
                                 {
-                                    string errorMessage = "Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") failed:  " + ex.Message;
-                                    _logger.Log(errorMessage, LoggingLevel.Normal, GetType());
-                                    SensusException.Report(errorMessage, ex);
                                 }
                                 finally
                                 {
-                                    // the cancellation token source for the current callback might have been canceled. if this is a repeating callback then we'll need a new
-                                    // cancellation token source because they cannot be reset and we're going to use the same scheduled callback again for the next repeat. 
-                                    // if we enter the _idCallback lock before CancelRaisedCallback does, then the next raise will be cancelled. if CancelRaisedCallback enters the 
-                                    // _idCallback lock first, then the cancellation token source will be overwritten here and the cancel will not have any effect on the next 
-                                    // raise. the latter case is a reasonable outcome, since the purpose of CancelRaisedCallback is to terminate a callback that is currently in 
-                                    // progress, and the current callback is no longer in progress. if the desired outcome is complete discontinuation of the repeating callback
-                                    // then UnscheduleRepeatingCallback should be used -- this method first cancels any raised callbacks and then removes the callback entirely.
-                                    try
+                                    // if we marked the callback as running, ensure that we unmark it (note we're nested within two finally blocks so
+                                    // this will always execute). this will allow others to run the callback.
+                                    lock (scheduledCallback)
                                     {
-                                        if (repeating)
-                                        {
-                                            lock (_idCallback)
-                                            {
-                                                scheduledCallback.Canceller = new CancellationTokenSource();
-                                            }
-                                        }
+                                        scheduledCallback.Running = false;
                                     }
-                                    catch (Exception)
+
+                                    // schedule callback again if it was a repeating callback and is still scheduled with a valid repeat delay
+                                    if (repeating && CallbackIsScheduled(callbackId) && repeatDelayMS >= 0 && scheduleRepeatCallback != null)
                                     {
-                                    }
-                                    finally
-                                    {
-                                        // if we marked the callback as running, ensure that we unmark it (note we're nested within two finally blocks so
-                                        // this will always execute). this will allow others to run the callback.
-                                        lock (scheduledCallback)
-                                        {
-                                            scheduledCallback.Running = false;
-                                        }
+                                        DateTime nextCallbackTime;
 
-                                        // schedule callback again if it was a repeating callback and is still scheduled with a valid repeat delay
-                                        if (repeating && CallbackIsScheduled(callbackId) && repeatDelayMS >= 0 && scheduleRepeatCallback != null)
-                                        {
-                                            DateTime nextCallbackTime;
-
-                                            // if this repeating callback is allowed to lag, schedule the repeat from the current time.
-                                            if (repeatLag)
-                                                nextCallbackTime = DateTime.Now.AddMilliseconds(repeatDelayMS);
-                                            else
-                                            {
-                                                // otherwise, schedule the repeat from the time at which the current callback was raised.
-                                                nextCallbackTime = callbackStartTime.AddMilliseconds(repeatDelayMS);
-                                            }
-
-                                            scheduleRepeatCallback(nextCallbackTime);
-                                        }
+                                        // if this repeating callback is allowed to lag, schedule the repeat from the current time.
+                                        if (repeatLag)
+                                            nextCallbackTime = DateTime.Now.AddMilliseconds(repeatDelayMS);
                                         else
-                                            UnscheduleCallback(callbackId);
+                                        {
+                                            // otherwise, schedule the repeat from the time at which the current callback was raised.
+                                            nextCallbackTime = callbackStartTime.AddMilliseconds(repeatDelayMS);
+                                        }
+
+                                        scheduleRepeatCallback(nextCallbackTime);
                                     }
+                                    else
+                                        UnscheduleCallback(callbackId);
                                 }
                             }
                         }
                     }
-                    catch (Exception ex)
+                }
+                catch (Exception ex)
+                {
+                    string errorMessage = "Failed to raise callback:  " + ex.Message;
+
+                    _logger.Log(errorMessage, LoggingLevel.Normal, GetType());
+
+                    try
                     {
-                        string errorMessage = "Failed to raise callback:  " + ex.Message;
-
-                        _logger.Log(errorMessage, LoggingLevel.Normal, GetType());
-
-                        try
-                        {
-                            Insights.Report(new Exception(errorMessage, ex), Insights.Severity.Critical);
-                        }
-                        catch (Exception)
-                        {
-                        }
+                        Insights.Report(new Exception(errorMessage, ex), Insights.Severity.Critical);
                     }
-                    finally
+                    catch (Exception)
                     {
-                        if (finishedCallback != null)
-                            finishedCallback();
                     }
+                }
+                finally
+                {
+                    if (finishedCallback != null)
+                        finishedCallback();
+                }
 
-                }).Start();
+            }).Start();
         }
 
         /// <summary>
@@ -1033,22 +1137,25 @@ namespace SensusService
             // do not show flash notifications when unit testing, as they can disrupt UI scripting on iOS.
 #if !UNIT_TESTING
 
-            if (!duration.HasValue)
-                duration = TimeSpan.FromSeconds(2);
+            if (_flashNotificationsEnabled)
+            {
+                if (!duration.HasValue)
+                    duration = TimeSpan.FromSeconds(2);
 
-            ProtectedFlashNotificationAsync(message, flashLaterIfNotVisible, duration.Value, callback);
+                ProtectedFlashNotificationAsync(message, flashLaterIfNotVisible, duration.Value, callback);
+            }
 #endif
         }
 
         public void PromptForInputAsync(string windowTitle, Input input, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action<Input> callback)
         {
             PromptForInputsAsync(windowTitle, new Input[] { input }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, inputs =>
-                {
-                    if (inputs == null)
-                        callback(null);
-                    else
-                        callback(inputs[0]);
-                });
+            {
+                if (inputs == null)
+                    callback(null);
+                else
+                    callback(inputs[0]);
+            });
         }
 
         public void PromptForInputsAsync(string windowTitle, IEnumerable<Input> inputs, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action<List<Input>> callback)
@@ -1059,245 +1166,224 @@ namespace SensusService
                 inputGroup.Inputs.Add(input);
 
             PromptForInputsAsync(null, new InputGroup[] { inputGroup }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, null, inputGroups =>
-                {
-                    if (inputGroups == null)
-                        callback(null);
-                    else
-                        callback(inputGroups.SelectMany(g => g.Inputs).ToList());
-                });
+            {
+                if (inputGroups == null)
+                    callback(null);
+                else
+                    callback(inputGroups.SelectMany(g => g.Inputs).ToList());
+            });
         }
 
         public void PromptForInputsAsync(DateTimeOffset? firstPromptTimestamp, IEnumerable<InputGroup> inputGroups, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action postDisplayCallback, Action<IEnumerable<InputGroup>> callback)
         {
             new Thread(() =>
+            {
+                if (inputGroups == null || inputGroups.Count() == 0 || inputGroups.All(inputGroup => inputGroup == null))
                 {
-                    if (inputGroups == null || inputGroups.Count() == 0 || inputGroups.All(inputGroup => inputGroup == null))
-                    {
-                        callback(inputGroups);
-                        return;
-                    }
+                    callback(inputGroups);
+                    return;
+                }
 
-                    // only one prompt can run at a time...enforce that here.
-                    lock (PROMPT_FOR_INPUTS_LOCKER)
+                bool firstPageDisplay = true;
+
+                // keep a stack of input groups that were displayed so that the user can navigate backward. not all groups are displayed due to display
+                // conditions, so we can't simply adjust the index into the input groups.
+                Stack<int> inputGroupNumBackStack = new Stack<int>();
+
+                for (int inputGroupNum = 0; inputGroups != null && inputGroupNum < inputGroups.Count() && !cancellationToken.GetValueOrDefault().IsCancellationRequested; ++inputGroupNum)
+                {
+                    InputGroup inputGroup = inputGroups.ElementAt(inputGroupNum);
+
+                    ManualResetEvent responseWait = new ManualResetEvent(false);
+
+                    try
                     {
-                        if (PROMPT_FOR_INPUTS_RUNNING)
+                        // run voice inputs by themselves, and only if the input group contains exactly one input and that input is a voice input.
+                        if (inputGroup.Inputs.Count == 1 && inputGroup.Inputs[0] is VoiceInput)
                         {
-                            _logger.Log("A prompt is already running. Dropping current prompt request.", LoggingLevel.Normal, GetType());
-                            callback(inputGroups);
-                            return;
-                        }
-                        else
-                            PROMPT_FOR_INPUTS_RUNNING = true;
-                    }
+                            VoiceInput voiceInput = inputGroup.Inputs[0] as VoiceInput;
 
-                    bool firstPageDisplay = true;
-
-                    // keep a stack of input groups that were displayed so that the user can navigate backward. not all groups are displayed due to display
-                    // conditions, so we can't simply adjust the index into the input groups.
-                    Stack<int> inputGroupNumBackStack = new Stack<int>();
-
-                    for (int inputGroupNum = 0; inputGroups != null && inputGroupNum < inputGroups.Count() && !cancellationToken.GetValueOrDefault().IsCancellationRequested; ++inputGroupNum)
-                    {
-                        InputGroup inputGroup = inputGroups.ElementAt(inputGroupNum);
-
-                        ManualResetEvent responseWait = new ManualResetEvent(false);
-
-                        try
-                        {
-                            // run voice inputs by themselves, and only if the input group contains exactly one input and that input is a voice input.
-                            if (inputGroup.Inputs.Count == 1 && inputGroup.Inputs[0] is VoiceInput)
+                            if (voiceInput.Enabled && voiceInput.Display)
                             {
-                                VoiceInput voiceInput = inputGroup.Inputs[0] as VoiceInput;
-
-                                if (voiceInput.Enabled && voiceInput.Display)
-                                {
-                                    // only run the post-display callback the first time a page is displayed. the caller expects the callback
-                                    // to fire only once upon first display.
-                                    voiceInput.RunAsync(firstPromptTimestamp, firstPageDisplay ? postDisplayCallback : null, response =>
-                                        {
-                                            firstPageDisplay = false;
-                                            responseWait.Set();
-                                        });
-                                }
-                                else
-                                    responseWait.Set();
+                                // only run the post-display callback the first time a page is displayed. the caller expects the callback
+                                // to fire only once upon first display.
+                                voiceInput.RunAsync(firstPromptTimestamp, firstPageDisplay ? postDisplayCallback : null, response =>
+                                    {
+                                        firstPageDisplay = false;
+                                        responseWait.Set();
+                                    });
                             }
                             else
-                            {
-                                BringToForeground();
+                                responseWait.Set();
+                        }
+                        else
+                        {
+                            BringToForeground();
 
-                                Device.BeginInvokeOnMainThread(async () =>
+                            Device.BeginInvokeOnMainThread(async () =>
+                            {
+                                // catch any exceptions from preparing and displaying the prompts page
+                                try
+                                {
+                                    int stepNumber = inputGroupNum + 1;
+                                    bool promptPagePopped = false;
+
+                                    PromptForInputsPage promptForInputsPage = new PromptForInputsPage(inputGroup, stepNumber, inputGroups.Count(), inputGroupNumBackStack.Count > 0, showCancelButton, nextButtonText, cancellationToken, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, firstPromptTimestamp, async result =>
                                     {
-                                        // catch any exceptions from preparing and displaying the prompts page
+                                        // catch any exceptions from navigating to the next page
                                         try
                                         {
-                                            int stepNumber = inputGroupNum + 1;
-                                            bool promptPagePopped = false;
-
-                                            PromptForInputsPage promptForInputsPage = new PromptForInputsPage(inputGroup, stepNumber, inputGroups.Count(), inputGroupNumBackStack.Count > 0, showCancelButton, nextButtonText, cancellationToken, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, firstPromptTimestamp, async result =>
-                                                        {
-                                                            // catch any exceptions from navigating to the next page
-                                                            try
-                                                            {
-                                                                // the prompt page has finished and needs to be popped. either the user finished the page or the cancellation token did so, and there 
-                                                                // might be a race condition. lock down the navigation object and check whether the page was already popped. don't do it again.
-                                                                INavigation navigation = Application.Current.MainPage.Navigation;
-                                                                bool pageWasAlreadyPopped;
-                                                                lock (navigation)
-                                                                {
-                                                                    pageWasAlreadyPopped = promptPagePopped;
-                                                                    promptPagePopped = true;
-                                                                }
-
-                                                                if (!pageWasAlreadyPopped)
-                                                                {
-                                                                    // we aren't doing anything else, so the top of the modal stack should be the prompt page; however, check to be sure.
-                                                                    if (navigation.ModalStack.Count > 0 && navigation.ModalStack.Last() is PromptForInputsPage)
-                                                                    {
-                                                                        _logger.Log("Popping prompt page with result:  " + result, LoggingLevel.Normal, GetType());
-
-                                                                        // animate pop if the user submitted or canceled
-                                                                        await navigation.PopModalAsync(stepNumber == inputGroups.Count() && result == PromptForInputsPage.Result.NavigateForward ||
-                                                                                                                       result == PromptForInputsPage.Result.Cancel);
-                                                                    }
-
-                                                                    if (result == PromptForInputsPage.Result.Cancel)
-                                                                        inputGroups = null;
-                                                                    else if (result == PromptForInputsPage.Result.NavigateBackward)
-                                                                        inputGroupNum = inputGroupNumBackStack.Pop() - 1;
-                                                                    else
-                                                                        inputGroupNumBackStack.Push(inputGroupNum);  // keep the group in the back stack and move to the next group
-                                                                }
-                                                            }
-                                                            catch (Exception ex)
-                                                            {
-                                                                // report exception and set wait handle if anything goes wrong while processing the current input group.
-                                                                try
-                                                                {
-                                                                    Insights.Report(ex, Insights.Severity.Critical);
-                                                                }
-                                                                catch { }
-                                                            }
-                                                            finally
-                                                            {
-                                                                // ensure that the response wait is always set
-                                                                responseWait.Set();
-                                                            }
-                                                        });
-
-                                            // do not display prompts page under the following conditions:  1) there are no inputs displayed on it. 2) the cancellation 
-                                            // token has requested a cancellation. if any of these conditions are true, set the wait handle and continue to the next input group.
-                                            if (promptForInputsPage.DisplayedInputCount == 0)
+                                            // the prompt page has finished and needs to be popped. either the user finished the page or the cancellation token did so, and there 
+                                            // might be a race condition. lock down the navigation object and check whether the page was already popped. don't do it again.
+                                            INavigation navigation = Application.Current.MainPage.Navigation;
+                                            bool pageWasAlreadyPopped;
+                                            lock (navigation)
                                             {
-                                                // if we're on the final input group and no inputs were shown, then we're at the end and we're ready to submit the 
-                                                // users' responses. first check that the user is ready to submit. if the user isn't ready then move back to the previous 
-                                                // input group in the backstack, if there is one.
-                                                if (inputGroupNum >= inputGroups.Count() - 1 && // this is the final input group
-                                                    inputGroupNumBackStack.Count > 0 && // there is an input group to go back to (the current one was not displayed)
-                                                    !string.IsNullOrWhiteSpace(submitConfirmation) && // we have a submit confirmation
-                                                    !(await Application.Current.MainPage.DisplayAlert("Confirm", submitConfirmation, "Yes", "No"))) // user is not ready to submit
+                                                pageWasAlreadyPopped = promptPagePopped;
+                                                promptPagePopped = true;
+                                            }
+
+                                            if (!pageWasAlreadyPopped)
+                                            {
+                                                // we aren't doing anything else, so the top of the modal stack should be the prompt page; however, check to be sure.
+                                                if (navigation.ModalStack.Count > 0 && navigation.ModalStack.Last() is PromptForInputsPage)
                                                 {
-                                                    inputGroupNum = inputGroupNumBackStack.Pop() - 1;
+                                                    _logger.Log("Popping prompt page with result:  " + result, LoggingLevel.Normal, GetType());
+
+                                                    // animate pop if the user submitted or canceled
+                                                    await navigation.PopModalAsync(stepNumber == inputGroups.Count() && result == PromptForInputsPage.Result.NavigateForward ||
+                                                                                   result == PromptForInputsPage.Result.Cancel);
                                                 }
 
-                                                responseWait.Set();
-                                            }
-                                            // don't display page if we've been canceled
-                                            else if (cancellationToken.GetValueOrDefault().IsCancellationRequested)
-                                                responseWait.Set();
-                                            else
-                                            {
-                                                // display page. only animate the display for the first page.
-                                                await Application.Current.MainPage.Navigation.PushModalAsync(promptForInputsPage, firstPageDisplay);
-
-                                                // only run the post-display callback the first time a page is displayed. the caller expects the callback
-                                                // to fire only once upon first display.
-                                                if (firstPageDisplay && postDisplayCallback != null)
-                                                    postDisplayCallback();
-
-                                                firstPageDisplay = false;
+                                                if (result == PromptForInputsPage.Result.Cancel)
+                                                    inputGroups = null;
+                                                else if (result == PromptForInputsPage.Result.NavigateBackward)
+                                                    inputGroupNum = inputGroupNumBackStack.Pop() - 1;
+                                                else
+                                                    inputGroupNumBackStack.Push(inputGroupNum);  // keep the group in the back stack and move to the next group
                                             }
                                         }
                                         catch (Exception ex)
                                         {
+                                            // report exception and set wait handle if anything goes wrong while processing the current input group.
                                             try
                                             {
                                                 Insights.Report(ex, Insights.Severity.Critical);
                                             }
                                             catch { }
-
-                                            // if anything bad happens, set the wait handle to ensure we get out of the prompt.
+                                        }
+                                        finally
+                                        {
+                                            // ensure that the response wait is always set
                                             responseWait.Set();
                                         }
                                     });
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            // report exception and set wait handle if anything goes wrong while processing the current input group.
-                            try
-                            {
-                                Insights.Report(ex, Insights.Severity.Critical);
-                            }
-                            catch { }
 
-                            responseWait.Set();
-                        }
+                                    // do not display prompts page under the following conditions:  1) there are no inputs displayed on it. 2) the cancellation 
+                                    // token has requested a cancellation. if any of these conditions are true, set the wait handle and continue to the next input group.
+                                    if (promptForInputsPage.DisplayedInputCount == 0)
+                                    {
+                                        // if we're on the final input group and no inputs were shown, then we're at the end and we're ready to submit the 
+                                        // users' responses. first check that the user is ready to submit. if the user isn't ready then move back to the previous 
+                                        // input group in the backstack, if there is one.
+                                        if (inputGroupNum >= inputGroups.Count() - 1 && // this is the final input group
+                                        inputGroupNumBackStack.Count > 0 && // there is an input group to go back to (the current one was not displayed)
+                                        !string.IsNullOrWhiteSpace(submitConfirmation) && // we have a submit confirmation
+                                        !(await Application.Current.MainPage.DisplayAlert("Confirm", submitConfirmation, "Yes", "No"))) // user is not ready to submit
+                                        {
+                                            inputGroupNum = inputGroupNumBackStack.Pop() - 1;
+                                        }
 
-                        responseWait.WaitOne();
+                                        responseWait.Set();
+                                    }
+                                    // don't display page if we've been canceled
+                                    else if (cancellationToken.GetValueOrDefault().IsCancellationRequested)
+                                        responseWait.Set();
+                                    else
+                                    {
+                                        // display page. only animate the display for the first page.
+                                        await Application.Current.MainPage.Navigation.PushModalAsync(promptForInputsPage, firstPageDisplay);
+
+                                        // only run the post-display callback the first time a page is displayed. the caller expects the callback
+                                        // to fire only once upon first display.
+                                        if (firstPageDisplay && postDisplayCallback != null)
+                                            postDisplayCallback();
+
+                                        firstPageDisplay = false;
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    try
+                                    {
+                                        Insights.Report(ex, Insights.Severity.Critical);
+                                    }
+                                    catch { }
+
+                                    // if anything bad happens, set the wait handle to ensure we get out of the prompt.
+                                    responseWait.Set();
+                                }
+                            });
+                        }
                     }
-
-                    // at this point we're done showing pages to the user. anything that needs to happen below with GPS tagging or subsequently
-                    // in the callback can happen concurrently with any calls that might happen to come into this method. if the callback
-                    // calls into this method immediately, there could be a race condition between the call and a call from some other part of 
-                    // the system. this is okay, as the latter call is always in a race condition anyway. if the imagined callback is beaten
-                    // to its reentrant call of this method by a call from somewhere else in the system, the callback might be prevented from 
-                    // executing; however, can't think of a place where this might happen with negative consequences.
-                    PROMPT_FOR_INPUTS_RUNNING = false;
-
-                    #region geotag input groups if the user didn't cancel and we've got input groups with inputs that are complete and lacking locations
-                    if (inputGroups != null && inputGroups.Any(inputGroup => inputGroup.Geotag && inputGroup.Inputs.Any(input => input.Complete && (input.Latitude == null || input.Longitude == null))))
+                    catch (Exception ex)
                     {
-                        _logger.Log("Geotagging input groups.", LoggingLevel.Normal, GetType());
-
+                        // report exception and set wait handle if anything goes wrong while processing the current input group.
                         try
                         {
-                            Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken.GetValueOrDefault());
-
-                            if (currentPosition != null)
-                                foreach (InputGroup inputGroup in inputGroups)
-                                    if (inputGroup.Geotag)
-                                        foreach (Input input in inputGroup.Inputs)
-                                            if (input.Complete)
-                                            {
-                                                bool locationUpdated = false;
-
-                                                if (input.Latitude == null)
-                                                {
-                                                    input.Latitude = currentPosition.Latitude;
-                                                    locationUpdated = true;
-                                                }
-
-                                                if (input.Longitude == null)
-                                                {
-                                                    input.Longitude = currentPosition.Longitude;
-                                                    locationUpdated = true;
-                                                }
-
-                                                if (locationUpdated)
-                                                    input.LocationUpdateTimestamp = currentPosition.Timestamp;
-                                            }
+                            Insights.Report(ex, Insights.Severity.Critical);
                         }
-                        catch (Exception ex)
-                        {
-                            _logger.Log("Error geotagging input groups:  " + ex.Message, LoggingLevel.Normal, GetType());
-                        }
+                        catch { }
+
+                        responseWait.Set();
                     }
-                    #endregion
 
-                    callback(inputGroups);
+                    responseWait.WaitOne();
+                }
 
-                }).Start();
+                #region geotag input groups if the user didn't cancel and we've got input groups with inputs that are complete and lacking locations
+                if (inputGroups != null && inputGroups.Any(inputGroup => inputGroup.Geotag && inputGroup.Inputs.Any(input => input.Complete && (input.Latitude == null || input.Longitude == null))))
+                {
+                    _logger.Log("Geotagging input groups.", LoggingLevel.Normal, GetType());
+
+                    try
+                    {
+                        Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken.GetValueOrDefault());
+
+                        if (currentPosition != null)
+                            foreach (InputGroup inputGroup in inputGroups)
+                                if (inputGroup.Geotag)
+                                    foreach (Input input in inputGroup.Inputs)
+                                        if (input.Complete)
+                                        {
+                                            bool locationUpdated = false;
+
+                                            if (input.Latitude == null)
+                                            {
+                                                input.Latitude = currentPosition.Latitude;
+                                                locationUpdated = true;
+                                            }
+
+                                            if (input.Longitude == null)
+                                            {
+                                                input.Longitude = currentPosition.Longitude;
+                                                locationUpdated = true;
+                                            }
+
+                                            if (locationUpdated)
+                                                input.LocationUpdateTimestamp = currentPosition.Timestamp;
+                                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Log("Error geotagging input groups:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
+                }
+                #endregion
+
+                callback(inputGroups);
+
+            }).Start();
         }
 
         public void GetPositionsFromMapAsync(Xamarin.Forms.Maps.Position address, string newPinName, Action<List<Xamarin.Forms.Maps.Position>> callback)
@@ -1439,20 +1525,30 @@ namespace SensusService
 
                             Device.BeginInvokeOnMainThread(async () =>
                                 {
-                                    await (Application.Current as App).ProtocolsPage.DisplayAlert("Permission Request", "On the next screen, Sensus will request access to your device's " + permission.ToString().ToUpper() + ". " + rationale, "OK");
+                                    await (Application.Current as App).MainPage.DisplayAlert("Permission Request", "On the next screen, Sensus will request access to your device's " + permission.ToString().ToUpper() + ". " + rationale, "OK");
                                     rationaleDialogWait.Set();
                                 });
 
                             rationaleDialogWait.WaitOne();
                         }
 
-                        // request permission from the user. it's happened that the returned dictionary doesn't contain an entry for the requested permission, so check for that (https://insights.xamarin.com/app/Sensus-Production/issues/903).
-                        PermissionStatus status;
-                        Dictionary<Permission, PermissionStatus> permissionStatus = await CrossPermissions.Current.RequestPermissionsAsync(new Permission[] { permission });
-                        if (permissionStatus.TryGetValue(permission, out status))
-                            return status;
-                        else
-                            return PermissionStatus.Unknown;
+                        // request permission from the user
+                        PermissionStatus status = PermissionStatus.Unknown;
+                        try
+                        {
+                            Dictionary<Permission, PermissionStatus> permissionStatus = await CrossPermissions.Current.RequestPermissionsAsync(new Permission[] { permission });
+
+                            // it's happened that the returned dictionary doesn't contain an entry for the requested permission, so check for that(https://insights.xamarin.com/app/Sensus-Production/issues/903).a
+                            if (!permissionStatus.TryGetValue(permission, out status))
+                                throw new Exception("Permission status not returned for request:  " + permission);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.Log("Failed to obtain permission:  " + ex.Message, LoggingLevel.Normal, GetType());
+                            status = PermissionStatus.Unknown;
+                        }
+
+                        return status;
                     }
                 });
         }

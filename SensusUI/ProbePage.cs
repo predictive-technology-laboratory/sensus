@@ -13,18 +13,16 @@
 // limitations under the License.
 
 using SensusService.Probes;
-using SensusService.Probes.User;
+using SensusService.Probes.User.Scripts;
 using SensusUI.UiProperties;
 using Xamarin.Forms;
 using System.Collections.Generic;
-using System;
 using System.Reflection;
 using System.Linq;
 using SensusService;
 using SensusService.Anonymization;
 using SensusService.Anonymization.Anonymizers;
 using SensusService.Probes.Location;
-using System.Text;
 using Newtonsoft.Json;
 using System.IO;
 
@@ -56,17 +54,17 @@ namespace SensusUI
                 type = "Polling";
 
             contentLayout.Children.Add(new ContentView
+            {
+                Content = new Label
                 {
-                    Content = new Label
-                    { 
-                        Text = probe.DisplayName + (type == "" ? "" : " (" + type + ")"),
-                        FontSize = 20, 
-                        FontAttributes = FontAttributes.Italic,
-                        TextColor = Color.Accent,
-                        HorizontalOptions = LayoutOptions.Center 
-                    },
-                    Padding = new Thickness(0, 10, 0, 10)
-                });
+                    Text = probe.DisplayName + (type == "" ? "" : " (" + type + ")"),
+                    FontSize = 20,
+                    FontAttributes = FontAttributes.Italic,
+                    TextColor = Color.Accent,
+                    HorizontalOptions = LayoutOptions.Center
+                },
+                Padding = new Thickness(0, 10, 0, 10)
+            });
 
             foreach (StackLayout stack in UiProperty.GetPropertyStacks(probe))
                 contentLayout.Children.Add(stack);
@@ -95,7 +93,7 @@ namespace SensusUI
                     FontSize = 20
                 };
 
-                contentLayout.Children.Add(shareScriptButton);               
+                contentLayout.Children.Add(shareScriptButton);
 
                 shareScriptButton.Clicked += (o, e) =>
                 {
@@ -136,13 +134,13 @@ namespace SensusUI
             if (anonymizableProperties.Count > 0)
             {
                 contentLayout.Children.Add(new Label
-                    { 
-                        Text = "Anonymization",
-                        FontSize = 20, 
-                        FontAttributes = FontAttributes.Italic,
-                        TextColor = Color.Accent,
-                        HorizontalOptions = LayoutOptions.Center 
-                    });
+                {
+                    Text = "Anonymization",
+                    FontSize = 20,
+                    FontAttributes = FontAttributes.Italic,
+                    TextColor = Color.Accent,
+                    HorizontalOptions = LayoutOptions.Center
+                });
 
                 List<StackLayout> anonymizablePropertyStacks = new List<StackLayout>();
 
@@ -156,14 +154,14 @@ namespace SensusUI
                         FontSize = 20,
                         HorizontalOptions = LayoutOptions.Start
                     };
-                       
+
                     // populate a picker of anonymizers for the current property
                     Picker anonymizerPicker = new Picker
                     {
                         Title = "Select Anonymizer",
                         HorizontalOptions = LayoutOptions.FillAndExpand
                     };
-                
+
                     anonymizerPicker.Items.Add("Do Not Anonymize");
                     foreach (Anonymizer anonymizer in anonymizableAttribute.AvailableAnonymizers)
                         anonymizerPicker.Items.Add(anonymizer.DisplayText);
@@ -176,13 +174,13 @@ namespace SensusUI
 
                         probe.Protocol.JsonAnonymizer.SetAnonymizer(anonymizableProperty, selectedAnonymizer);
                     };
-                    
+
                     // set the picker's index to the current anonymizer (or "Do Not Anonymize" if there is no current)
                     Anonymizer currentAnonymizer = probe.Protocol.JsonAnonymizer.GetAnonymizer(anonymizableProperty);
                     int currentIndex = 0;
                     if (currentAnonymizer != null)
                         currentIndex = anonymizableAttribute.AvailableAnonymizers.IndexOf(currentAnonymizer) + 1;
-                    
+
                     anonymizerPicker.SelectedIndex = currentIndex;
 
                     StackLayout anonymizablePropertyStack = new StackLayout

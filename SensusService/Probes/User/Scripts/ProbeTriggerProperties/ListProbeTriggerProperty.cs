@@ -12,21 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Sensus.Android;
-using System;
-using Xamarin.Forms;
-using Xamarin.Forms.Platform.Android;
-
-[assembly: ExportRenderer(typeof(TextCell), typeof(TextCellRendererFix))]
-
-namespace Sensus.Android
+namespace SensusService.Probes.User.Scripts.ProbeTriggerProperties
 {
-    public class TextCellRendererFix : TextCellRenderer
+    public class ListProbeTriggerProperty : ProbeTriggerProperty
     {
-        protected override void OnCellPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs args)
+        private object[] _items;
+
+        public object[] Items
         {
-            try { base.OnCellPropertyChanged(sender, args); }
-            catch (Exception) { }
+            get { return _items; }
+            set { _items = value; }
+        }
+
+        public ListProbeTriggerProperty(object[] items)
+            : this(null, items)
+        {
+        }
+
+        public ListProbeTriggerProperty(string name, object[] items)
+            : base(name)
+        {
+            _items = items;
         }
     }
 }

@@ -151,9 +151,9 @@ namespace SensusUI
             _protocolRunningChangedAction = (o, running) =>
             {
                 Device.BeginInvokeOnMainThread(() =>
-                    {
-                        editLocalDataStoreButton.IsEnabled = createLocalDataStoreButton.IsEnabled = editRemoteDataStoreButton.IsEnabled = createRemoteDataStoreButton.IsEnabled = !running;
-                    });
+                {
+                    editLocalDataStoreButton.IsEnabled = createLocalDataStoreButton.IsEnabled = editRemoteDataStoreButton.IsEnabled = createRemoteDataStoreButton.IsEnabled = !running;
+                });
             };
 
             StackLayout stack = new StackLayout

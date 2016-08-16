@@ -30,6 +30,8 @@ using MessageUI;
 using System.IO;
 using Newtonsoft.Json;
 using CoreBluetooth;
+using SensusService.Exceptions;
+using System.Linq;
 
 namespace Sensus.iOS
 {
@@ -41,49 +43,11 @@ namespace Sensus.iOS
         public const string SENSUS_CALLBACK_ACTIVATION_ID = "SENSUS-CALLBACK-ACTIVATION-ID";
         private const int BLUETOOTH_ENABLE_TIMEOUT_MS = 10000;
 
-        /// <summary>
-        /// Cancels a UILocalNotification. This will succeed in one of two conditions:  (1) if the notification to be
-        /// cancelled is scheduled (i.e., not delivered); and (2) if the notification to be cancelled has been delivered
-        /// and if the object passed in is the actual notification and not, for example, the one that was passed to
-        /// ScheduleLocalNotification -- once passed to ScheduleLocalNotification, a copy is made and the objects won't test equal
-        /// for cancellation.
-        /// </summary>
-        /// <param name="notification">Notification to cancel.</param>
-        private static void CancelLocalNotification(UILocalNotification notification)
-        {
-            Device.BeginInvokeOnMainThread(() =>
-                {
-                    string callbackId = notification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ID_KEY)).ToString();
-
-                    SensusServiceHelper.Get().Logger.Log("Cancelling local notification for callback \"" + callbackId + "\".", LoggingLevel.Normal, typeof(iOSSensusServiceHelper));
-
-                    // a local notification can be one of two types:  (1) scheduled, in which case it hasn't yet been delivered and should reside
-                    // within the shared application's list of scheduled notifications. the tricky part here is that these notification objects
-                    // aren't reference-equal, so we can't just pass `notification` to CancelLocalNotification. instead, we must search for the 
-                    // notification by id and cancel the appropriate scheduled notification object.
-                    bool notificationCanceled = false;
-                    foreach (UILocalNotification scheduledNotification in UIApplication.SharedApplication.ScheduledLocalNotifications)
-                    {
-                        string scheduledCallbackId = scheduledNotification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ID_KEY)).ToString();
-                        if (scheduledCallbackId == callbackId)
-                        {
-                            UIApplication.SharedApplication.CancelLocalNotification(scheduledNotification);
-                            notificationCanceled = true;
-                        }
-                    }
-
-                    // if we didn't cancel the notification above, then it isn't scheduled and should have already been delivered. if it has been 
-                    // delivered, then our only option for cancelling it is to pass `notification` itself to CancelLocalNotification. this assumes
-                    // that `notification` is the actual notification object and not, for example, the one originally passed to ScheduleLocalNotification.
-                    if (!notificationCanceled)
-                        UIApplication.SharedApplication.CancelLocalNotification(notification);
-                });
-        }
-
         #endregion
 
         private Dictionary<string, UILocalNotification> _callbackIdNotification;
         private string _activationId;
+        private List<UILocalNotification> _nonCallbackNotifications;
 
         [JsonIgnore]
         public string ActivationId
@@ -132,7 +96,7 @@ namespace Sensus.iOS
 
         protected override bool IsOnMainThread
         {
-            get { return NSThread.Current.IsMainThread; }
+            get { return NSThread.IsMain; }
         }
 
         public override string Version
@@ -146,6 +110,7 @@ namespace Sensus.iOS
         public iOSSensusServiceHelper()
         {
             _callbackIdNotification = new Dictionary<string, UILocalNotification>();
+            _nonCallbackNotifications = new List<UILocalNotification>();
 
             UIDevice.CurrentDevice.BatteryMonitoringEnabled = true;
         }
@@ -173,37 +138,39 @@ namespace Sensus.iOS
         private void ScheduleCallbackAsync(string callbackId, int delayMS, bool repeating, int repeatDelayMS, bool repeatLag)
         {
             Device.BeginInvokeOnMainThread(() =>
+            {
+                string userNotificationMessage = GetCallbackUserNotificationMessage(callbackId);
+
+                UILocalNotification notification = new UILocalNotification
                 {
-                    string userNotificationMessage = GetCallbackUserNotificationMessage(callbackId);
+                    FireDate = DateTime.UtcNow.AddMilliseconds((double)delayMS).ToNSDate(),
+                    TimeZone = null,  // null for UTC interpretation of FireDate
+                    AlertBody = userNotificationMessage,
+                    UserInfo = GetNotificationUserInfoDictionary(callbackId, repeating, repeatDelayMS, repeatLag)
+                };
 
-                    UILocalNotification notification = new UILocalNotification
-                    {
-                        FireDate = DateTime.UtcNow.AddMilliseconds((double)delayMS).ToNSDate(),
-                        TimeZone = null,  // null for UTC interpretation of FireDate
-                        AlertBody = userNotificationMessage,
-                        UserInfo = GetNotificationUserInfoDictionary(callbackId, repeating, repeatDelayMS, repeatLag)
-                    };
+                // user info can be null if we don't have an activation ID. don't schedule the notification if this happens.
+                if (notification.UserInfo == null)
+                    return;
 
-                    // user info can be null if we don't have an activation ID. don't schedule the notification if this happens.
-                    if (notification.UserInfo == null)
-                        return;
+                if (userNotificationMessage != null)
+                    notification.SoundName = UILocalNotification.DefaultSoundName;
 
-                    if (userNotificationMessage != null)
-                        notification.SoundName = UILocalNotification.DefaultSoundName;
+                lock (_callbackIdNotification)
+                {
+                    _callbackIdNotification.Add(callbackId, notification);
+                }
 
-                    lock (_callbackIdNotification)
-                        _callbackIdNotification.Add(callbackId, notification);
+                UIApplication.SharedApplication.ScheduleLocalNotification(notification);
 
-                    UIApplication.SharedApplication.ScheduleLocalNotification(notification);
-
-                    Logger.Log("Callback " + callbackId + " scheduled for " + notification.FireDate + " (" + (repeating ? "repeating" : "one-time") + "). " + _callbackIdNotification.Count + " total callbacks in iOS service helper.", LoggingLevel.Debug, GetType());
-                });
+                Logger.Log("Callback " + callbackId + " scheduled for " + notification.FireDate + " (" + (repeating ? "repeating" : "one-time") + "). " + _callbackIdNotification.Count + " total callbacks in iOS service helper.", LoggingLevel.Debug, GetType());
+            });
         }
 
         public void ServiceCallbackNotificationAsync(UILocalNotification callbackNotification)
         {
             // cancel notification (removing it from the tray), since it has served its purpose
-            CancelLocalNotification(callbackNotification);
+            CancelLocalNotification(callbackNotification, SENSUS_CALLBACK_ID_KEY);
 
             string activationId = (callbackNotification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ACTIVATION_ID)) as NSString).ToString();
             string callbackId = (callbackNotification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ID_KEY)) as NSString).ToString();
@@ -219,13 +186,15 @@ namespace Sensus.iOS
             // the facebook login manager returns control to the app). this can lead to duplicate notifications for the same callback, or infinite cycles of app 
             // reactivation if the notification raises a callback that causes it to be reissued (e.g., in the case of facebook login).
             lock (_callbackIdNotification)
+            {
                 _callbackIdNotification.Remove(callbackId);
+            }
 
             nint callbackTaskId = UIApplication.SharedApplication.BeginBackgroundTask(() =>
-                {
-                    // if we're out of time running in the background, cancel the callback.
-                    CancelRaisedCallback(callbackId);
-                });
+            {
+                // if we're out of time running in the background, cancel the callback.
+                CancelRaisedCallback(callbackId);
+            });
 
             bool repeating = (callbackNotification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber).BoolValue;
             int repeatDelayMS = (callbackNotification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_DELAY)) as NSNumber).Int32Value;
@@ -234,32 +203,32 @@ namespace Sensus.iOS
             // raise callback but don't notify user since we would have already done so when the UILocalNotification was delivered to the notification tray.
             RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, false,
 
-                // schedule new callback at the specified time.
-                repeatCallbackTime =>
+            // schedule new callback at the specified time.
+            repeatCallbackTime =>
+            {
+                Device.BeginInvokeOnMainThread(() =>
                 {
-                    Device.BeginInvokeOnMainThread(() =>
-                        {
-                            callbackNotification.FireDate = repeatCallbackTime.ToUniversalTime().ToNSDate();
+                    callbackNotification.FireDate = repeatCallbackTime.ToUniversalTime().ToNSDate();
 
-                            // add back to the platform-specific notification collection, so that the notification is updated and reissued if/when the app is reactivated
-                            lock (_callbackIdNotification)
-                                _callbackIdNotification.Add(callbackId, callbackNotification);
+                    // add back to the platform-specific notification collection, so that the notification is updated and reissued if/when the app is reactivated
+                    lock (_callbackIdNotification)
+                        _callbackIdNotification.Add(callbackId, callbackNotification);
 
-                            UIApplication.SharedApplication.ScheduleLocalNotification(callbackNotification);
-                        });
-                },
-
-                // nothing to do if the callback thinks we can sleep.
-                null,
-
-                // notification has been serviced, so end background task
-                () =>
-                {
-                    Device.BeginInvokeOnMainThread(() =>
-                        {
-                            UIApplication.SharedApplication.EndBackgroundTask(callbackTaskId);
-                        });
+                    UIApplication.SharedApplication.ScheduleLocalNotification(callbackNotification);
                 });
+            },
+
+            // nothing to do if the callback thinks we can sleep.
+            null,
+
+            // notification has been serviced, so end background task
+            () =>
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    UIApplication.SharedApplication.EndBackgroundTask(callbackTaskId);
+                });
+            });
         }
 
         protected override void UnscheduleCallbackPlatformSpecific(string callbackId)
@@ -270,7 +239,7 @@ namespace Sensus.iOS
                 UILocalNotification notification;
                 if (_callbackIdNotification.TryGetValue(callbackId, out notification))
                 {
-                    CancelLocalNotification(notification);
+                    CancelLocalNotification(notification, SENSUS_CALLBACK_ID_KEY);
                     _callbackIdNotification.Remove(callbackId);
                 }
             }
@@ -279,38 +248,40 @@ namespace Sensus.iOS
         public void UpdateCallbackNotificationActivationIdsAsync()
         {
             Device.BeginInvokeOnMainThread(() =>
+            {
+                // this method will be called in one of three conditions:  (1) after sensus has been started and is running, (2)
+                // after sensus has been reactivated and was already running, and (3) after a start attempt was made but failed.
+                // in all three situations, there will be zero or more notifications present in the _callbackIdNotification lookup.
+                // in (1), the notifications will have just been created and will have activation IDs set to the activation ID of
+                // the current object. in (2), the notifications will have stale activation IDs. in (3), there will be no notifications.
+                // the required post-condition of this method is that any present notification objects have activation IDs set to
+                // the activation ID of the current object. so...let's make that happen.
+                lock (_callbackIdNotification)
                 {
-                    // this method will be called in one of three conditions:  (1) after sensus has been started and is running, (2)
-                    // after sensus has been reactivated and was already running, and (3) after a start attempt was made but failed.
-                    // in all three situations, there will be zero or more notifications present in the _callbackIdNotification lookup.
-                    // in (1), the notifications will have just been created and will have activation IDs set to the activation ID of
-                    // the current object. in (2), the notifications will have stale activation IDs. in (3), there will be no notifications.
-                    // the required post-condition of this method is that any present notification objects have activation IDs set to
-                    // the activation ID of the current object. so...let's make that happen.
-                    lock (_callbackIdNotification)
-                        foreach (string callbackId in _callbackIdNotification.Keys)
+                    foreach (string callbackId in _callbackIdNotification.Keys)
+                    {
+                        UILocalNotification notification = _callbackIdNotification[callbackId];
+
+                        if (notification.UserInfo != null)
                         {
-                            UILocalNotification notification = _callbackIdNotification[callbackId];
-
-                            if (notification.UserInfo != null)
+                            // get activation ID and check for condition (2) above
+                            string activationId = (notification.UserInfo.ValueForKey(new NSString(iOSSensusServiceHelper.SENSUS_CALLBACK_ACTIVATION_ID)) as NSString).ToString();
+                            if (activationId != _activationId)
                             {
-                                // get activation ID and check for condition (2) above
-                                string activationId = (notification.UserInfo.ValueForKey(new NSString(iOSSensusServiceHelper.SENSUS_CALLBACK_ACTIVATION_ID)) as NSString).ToString();
-                                if (activationId != _activationId)
-                                {
-                                    // reset the UserInfo to include the current activation ID
-                                    bool repeating = (notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber).BoolValue;
-                                    int repeatDelayMS = (notification.UserInfo.ValueForKey(new NSString(iOSSensusServiceHelper.SENSUS_CALLBACK_REPEAT_DELAY)) as NSNumber).Int32Value;
-                                    bool repeatLag = (notification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_LAG_KEY)) as NSNumber).BoolValue;
-                                    notification.UserInfo = GetNotificationUserInfoDictionary(callbackId, repeating, repeatDelayMS, repeatLag);
+                                // reset the UserInfo to include the current activation ID
+                                bool repeating = (notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber).BoolValue;
+                                int repeatDelayMS = (notification.UserInfo.ValueForKey(new NSString(iOSSensusServiceHelper.SENSUS_CALLBACK_REPEAT_DELAY)) as NSNumber).Int32Value;
+                                bool repeatLag = (notification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_LAG_KEY)) as NSNumber).BoolValue;
+                                notification.UserInfo = GetNotificationUserInfoDictionary(callbackId, repeating, repeatDelayMS, repeatLag);
 
-                                    // since we set the UILocalNotification's FireDate when it was constructed, if it's currently in the past it will fire immediately when scheduled again with the new activation ID.
-                                    if (notification.UserInfo != null)
-                                        UIApplication.SharedApplication.ScheduleLocalNotification(notification);
-                                }
+                                // since we set the UILocalNotification's FireDate when it was constructed, if it's currently in the past it will fire immediately when scheduled again with the new activation ID.
+                                if (notification.UserInfo != null)
+                                    UIApplication.SharedApplication.ScheduleLocalNotification(notification);
                             }
                         }
-                });
+                    }
+                }
+            });
         }
 
         public NSDictionary GetNotificationUserInfoDictionary(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag)
@@ -338,140 +309,233 @@ namespace Sensus.iOS
         public override void ShareFileAsync(string path, string subject, string mimeType)
         {
             Device.BeginInvokeOnMainThread(() =>
+            {
+                if (MFMailComposeViewController.CanSendMail)
                 {
-                    if (MFMailComposeViewController.CanSendMail)
-                    {
-                        MFMailComposeViewController mailer = new MFMailComposeViewController();
-                        mailer.SetSubject(subject);
-                        mailer.AddAttachmentData(NSData.FromUrl(NSUrl.FromFilename(path)), mimeType, Path.GetFileName(path));
-                        mailer.Finished += (sender, e) => mailer.DismissViewControllerAsync(true);
-                        UIApplication.SharedApplication.KeyWindow.RootViewController.PresentViewController(mailer, true, null);
-                    }
-                    else
-                        SensusServiceHelper.Get().FlashNotificationAsync("You do not have any mail accounts configured. Please configure one before attempting to send emails from Sensus.");
-                });
+                    MFMailComposeViewController mailer = new MFMailComposeViewController();
+                    mailer.SetSubject(subject);
+                    mailer.AddAttachmentData(NSData.FromUrl(NSUrl.FromFilename(path)), mimeType, Path.GetFileName(path));
+                    mailer.Finished += (sender, e) => mailer.DismissViewControllerAsync(true);
+                    UIApplication.SharedApplication.KeyWindow.RootViewController.PresentViewController(mailer, true, null);
+                }
+                else
+                    SensusServiceHelper.Get().FlashNotificationAsync("You do not have any mail accounts configured. Please configure one before attempting to send emails from Sensus.");
+            });
         }
 
         public override void SendEmailAsync(string toAddress, string subject, string message)
         {
             Device.BeginInvokeOnMainThread(() =>
+            {
+                if (MFMailComposeViewController.CanSendMail)
                 {
-                    if (MFMailComposeViewController.CanSendMail)
-                    {
-                        MFMailComposeViewController mailer = new MFMailComposeViewController();
-                        mailer.SetToRecipients(new string[] { toAddress });
-                        mailer.SetSubject(subject);
-                        mailer.SetMessageBody(message, false);
-                        mailer.Finished += (sender, e) => mailer.DismissViewControllerAsync(true);
-                        UIApplication.SharedApplication.KeyWindow.RootViewController.PresentViewController(mailer, true, null);
-                    }
-                    else
-                        SensusServiceHelper.Get().FlashNotificationAsync("You do not have any mail accounts configured. Please configure one before attempting to send emails from Sensus.");
-                });
+                    MFMailComposeViewController mailer = new MFMailComposeViewController();
+                    mailer.SetToRecipients(new string[] { toAddress });
+                    mailer.SetSubject(subject);
+                    mailer.SetMessageBody(message, false);
+                    mailer.Finished += (sender, e) => mailer.DismissViewControllerAsync(true);
+                    UIApplication.SharedApplication.KeyWindow.RootViewController.PresentViewController(mailer, true, null);
+                }
+                else
+                    SensusServiceHelper.Get().FlashNotificationAsync("You do not have any mail accounts configured. Please configure one before attempting to send emails from Sensus.");
+            });
         }
 
         public override void TextToSpeechAsync(string text, Action callback)
         {
             new Thread(() =>
+            {
+                try
                 {
-                    try
-                    {
-                        new AVSpeechSynthesizer().SpeakUtterance(new AVSpeechUtterance(text));
-                    }
-                    catch (Exception ex)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Failed to speak utterance:  " + ex.Message, LoggingLevel.Normal, GetType());
-                    }
+                    new AVSpeechSynthesizer().SpeakUtterance(new AVSpeechUtterance(text));
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Failed to speak utterance:  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
 
-                    if (callback != null)
-                        callback();
+                if (callback != null)
+                    callback();
 
-                }).Start();
+            }).Start();
         }
 
         public override void RunVoicePromptAsync(string prompt, Action postDisplayCallback, Action<string> callback)
         {
             new Thread(() =>
+            {
+                string input = null;
+                ManualResetEvent dialogDismissWait = new ManualResetEvent(false);
+
+                Device.BeginInvokeOnMainThread(() =>
                 {
-                    string input = null;
-                    ManualResetEvent dialogDismissWait = new ManualResetEvent(false);
+                    ManualResetEvent dialogShowWait = new ManualResetEvent(false);
 
-                    Device.BeginInvokeOnMainThread(() =>
-                        {
-                            ManualResetEvent dialogShowWait = new ManualResetEvent(false);
+                    UIAlertView dialog = new UIAlertView("Sensus is requesting input...", prompt, null, "Cancel", "OK");
+                    dialog.AlertViewStyle = UIAlertViewStyle.PlainTextInput;
+                    dialog.Dismissed += (o, e) =>
+                    {
+                        dialogDismissWait.Set();
+                    };
+                    dialog.Presented += (o, e) =>
+                    {
+                        dialogShowWait.Set();
 
-                            UIAlertView dialog = new UIAlertView("Sensus is requesting input...", prompt, null, "Cancel", "OK");
-                            dialog.AlertViewStyle = UIAlertViewStyle.PlainTextInput;
-                            dialog.Dismissed += (o, e) =>
-                            {
-                                dialogDismissWait.Set();
-                            };
-                            dialog.Presented += (o, e) =>
-                            {
-                                dialogShowWait.Set();
+                        if (postDisplayCallback != null)
+                            postDisplayCallback();
+                    };
+                    dialog.Clicked += (o, e) =>
+                    {
+                        if (e.ButtonIndex == 1)
+                            input = dialog.GetTextField(0).Text;
+                    };
 
-                                if (postDisplayCallback != null)
-                                    postDisplayCallback();
-                            };
-                            dialog.Clicked += (o, e) =>
-                            {
-                                if (e.ButtonIndex == 1)
-                                    input = dialog.GetTextField(0).Text;
-                            };
+                    dialog.Show();
 
-                            dialog.Show();
+                    #region voice recognizer
 
-                            #region voice recognizer
+                    new Thread(() =>
+                    {
+                        // wait for the dialog to be shown so it doesn't hide our speech recognizer activity
+                        dialogShowWait.WaitOne();
 
-                            new Thread(() =>
-                                {
-                                    // wait for the dialog to be shown so it doesn't hide our speech recognizer activity
-                                    dialogShowWait.WaitOne();
+                        // there's a slight race condition between the dialog showing and speech recognition showing. pause here to prevent the dialog from hiding the speech recognizer.
+                        Thread.Sleep(1000);
 
-                                    // there's a slight race condition between the dialog showing and speech recognition showing. pause here to prevent the dialog from hiding the speech recognizer.
-                                    Thread.Sleep(1000);
+                        // TODO:  Add speech recognition
 
-                                    // TODO:  Add speech recognition
+                    }).Start();
 
-                                }).Start();
+                    #endregion
+                });
 
-                            #endregion
-                        });
+                dialogDismissWait.WaitOne();
+                callback(input);
 
-                    dialogDismissWait.WaitOne();
-                    callback(input);
-
-                }).Start();
+            }).Start();
         }
 
-        public override void IssueNotificationAsync(string message, string id)
+        public override void IssueNotificationAsync(string message, string id, bool playSound, bool vibrate)
         {
-            Device.BeginInvokeOnMainThread(() =>
+            Action IssueNotification = () =>
+            {
+                // cancel any existing notifications with the given id
+                lock (_nonCallbackNotifications)
                 {
-                    if (message != null)
+                    foreach (UILocalNotification notification in _nonCallbackNotifications.ToList())
                     {
-                        UILocalNotification notification = new UILocalNotification
+                        string notificationId = notification.UserInfo.ValueForKey(new NSString(NOTIFICATION_ID_KEY)).ToString();
+                        if (notificationId == id)
                         {
-                            AlertTitle = "Sensus",
-                            AlertBody = message,
-                            FireDate = DateTime.UtcNow.ToNSDate(),
-                            SoundName = UILocalNotification.DefaultSoundName
-                        };
-
-                        UIApplication.SharedApplication.ScheduleLocalNotification(notification);
+                            CancelLocalNotification(notification, NOTIFICATION_ID_KEY);
+                            _nonCallbackNotifications.Remove(notification);
+                        }
                     }
+                }
+
+                // if the message is not null, then schedule the notification.
+                if (message != null)
+                {
+                    UILocalNotification notification = new UILocalNotification
+                    {
+                        AlertTitle = "Sensus",
+                        AlertBody = message,
+                        FireDate = DateTime.UtcNow.ToNSDate(),
+                        UserInfo = new NSDictionary(NOTIFICATION_ID_KEY, id)
+                    };
+
+                    if (playSound)
+                        notification.SoundName = UILocalNotification.DefaultSoundName;
+
+                    lock (_nonCallbackNotifications)
+                    {
+                        _nonCallbackNotifications.Add(notification);
+                    }
+
+                    UIApplication.SharedApplication.ScheduleLocalNotification(notification);
+                }
+            };
+
+            if (IsOnMainThread)
+                IssueNotification();
+            else
+                Device.BeginInvokeOnMainThread(IssueNotification);
+        }
+
+        /// <summary>
+        /// Cancels a UILocalNotification. This will succeed in one of two conditions:  (1) if the notification to be
+        /// cancelled is scheduled (i.e., not delivered); or (2) if the notification to be cancelled has been delivered
+        /// and if the object passed in is the delivered notification and not the one that was passed to
+        /// ScheduleLocalNotification -- once passed to ScheduleLocalNotification, a copy is made and the objects won't test equal
+        /// for cancellation.
+        /// </summary>
+        /// <param name="notification">Notification to cancel.</param>
+        /// <param name="notificationIdKey">Key for ID in UserInfo of the UILocalNotification.</param>
+        private void CancelLocalNotification(UILocalNotification notification, string notificationIdKey)
+        {
+            // set up action to cancel notification
+            Action CancelNotification = () =>
+            {
+                try
+                {
+                    string idToCancel = notification.UserInfo.ValueForKey(new NSString(notificationIdKey)).ToString();
+
+                    Get().Logger.Log("Cancelling local notification \"" + idToCancel + "\".", LoggingLevel.Normal, typeof(iOSSensusServiceHelper));
+
+                    // a local notification can be scheduled, in which case it hasn't yet been delivered and should reside within the shared 
+                    // application's list of scheduled notifications. the tricky part here is that these notification objects aren't reference-equal, 
+                    // so we can't just pass `notification` to CancelLocalNotification. instead, we must search for the notification by id and 
+                    // cancel the appropriate scheduled notification object.
+                    bool notificationCanceled = false;
+                    foreach (UILocalNotification scheduledNotification in UIApplication.SharedApplication.ScheduledLocalNotifications)
+                    {
+                        string scheduledId = scheduledNotification.UserInfo.ValueForKey(new NSString(notificationIdKey))?.ToString();
+                        if (scheduledId == idToCancel)
+                        {
+                            UIApplication.SharedApplication.CancelLocalNotification(scheduledNotification);
+                            notificationCanceled = true;
+                        }
+                    }
+
+                    // if we didn't cancel the notification above, then it isn't scheduled and should have already been delivered. if it has been 
+                    // delivered, then our only option for cancelling it is to pass `notification` itself to CancelLocalNotification. this assumes
+                    // that `notification` is the actual notification object and not, for example, the one originally passed to ScheduleLocalNotification.
+                    if (!notificationCanceled)
+                        UIApplication.SharedApplication.CancelLocalNotification(notification);
+                }
+                catch (Exception ex)
+                {
+                    SensusException.Report("Failed to cancel notification.", ex, false);
+                }
+            };
+
+            // if we're already on the main thread, cancel directly
+            if (IsOnMainThread)
+                CancelNotification();
+            else
+            {
+                // run the cancellation on the main thread and wait for it to complete (the current method is synchronous).
+                ManualResetEvent cancelWait = new ManualResetEvent(false);
+
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    CancelNotification();
+                    cancelWait.Set();
                 });
+
+                cancelWait.WaitOne();
+            }
         }
 
         protected override void ProtectedFlashNotificationAsync(string message, bool flashLaterIfNotVisible, TimeSpan duration, Action callback)
         {
             Device.BeginInvokeOnMainThread(() =>
-                {
-                    DependencyService.Get<IToastNotificator>().Notify(ToastNotificationType.Info, "", message + Environment.NewLine, duration);
+            {
+                DependencyService.Get<IToastNotificator>().Notify(ToastNotificationType.Info, "", message + Environment.NewLine, duration);
 
-                    if (callback != null)
-                        callback();
-                });
+                if (callback != null)
+                    callback();
+            });
         }
 
         public override bool EnableProbeWhenEnablingAll(Probe probe)

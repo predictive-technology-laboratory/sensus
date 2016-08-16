@@ -12,16 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using SensusService;
-using Xamarin.Forms;
-
-namespace SensusUI
+namespace SensusService.Probes.User.Scripts
 {
-    public class App : Application
+    public enum TriggerValueCondition
     {
-        public App()
-        {
-            MainPage = new NavigationPage(new HomePage());
-        }
+        LessThan,
+        LessThanOrEqual,
+        Equal,
+        GreaterThanOrEqual,
+        GreaterThan
     }
 }

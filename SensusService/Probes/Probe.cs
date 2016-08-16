@@ -35,22 +35,22 @@ namespace SensusService.Probes
         public static void GetAllAsync(Action<List<Probe>> callback)
         {
             new Thread(() =>
+            {
+                List<Probe> probes = null;
+                ManualResetEvent probesWait = new ManualResetEvent(false);
+
+                // the reflection stuff we do below (at least on android) needs to be run on the main thread.
+                Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
                 {
-                    List<Probe> probes = null;
-                    ManualResetEvent probesWait = new ManualResetEvent(false);
+                    probes = Assembly.GetExecutingAssembly().GetTypes().Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(Probe))).Select(t => Activator.CreateInstance(t) as Probe).OrderBy(p => p.DisplayName).ToList();
+                    probesWait.Set();
+                });
 
-                    // the reflection stuff we do below (at least on android) needs to be run on the main thread.
-                    Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
-                        {
-                            probes = Assembly.GetExecutingAssembly().GetTypes().Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(Probe))).Select(t => Activator.CreateInstance(t) as Probe).OrderBy(p => p.DisplayName).ToList();
-                            probesWait.Set();
-                        });
+                probesWait.WaitOne();
 
-                    probesWait.WaitOne();
+                callback(probes);
 
-                    callback(probes);
-
-                }).Start();
+            }).Start();
         }
 
         #endregion
@@ -296,7 +296,7 @@ namespace SensusService.Probes
                     SensusServiceHelper.Get().Logger.Log("Failed to stop probe after failing to start it:  " + stopException.Message, LoggingLevel.Normal, GetType());
                 }
 
-                string message = "Failed to start probe \"" + GetType().FullName + "\":  " + startException.Message;
+                string message = "Failed to start probe \"" + GetType().Name + "\":  " + startException.Message;
                 SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
                 SensusServiceHelper.Get().FlashNotificationAsync(message, duration: TimeSpan.FromSeconds(4));
 
@@ -430,10 +430,10 @@ namespace SensusService.Probes
             return restart;
         }
 
-        public virtual void ResetForSharing()
+        public virtual void Reset()
         {
             if (_running)
-                throw new Exception("Cannot clear probe while it is running.");
+                throw new Exception("Cannot reset probe while it is running.");
 
             lock (_chartData)
             {
@@ -441,10 +441,14 @@ namespace SensusService.Probes
             }
 
             lock (_startStopTimes)
+            {
                 _startStopTimes.Clear();
+            }
 
             lock (_successfulHealthTestTimes)
+            {
                 _successfulHealthTestTimes.Clear();
+            }
 
             _mostRecentDatum = null;
             _mostRecentStoreTimestamp = DateTimeOffset.MinValue;
