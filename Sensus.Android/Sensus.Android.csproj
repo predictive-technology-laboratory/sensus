@@ -54,7 +54,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <CustomCommands>
       <CustomCommands>
-        <Command type="BeforeBuild" command="touch Assets/UnitTestingProtocol.json" workingdir="${ProjectDir}" externalConsole="True" />
+        <Command type="BeforeBuild" command="touch Assets/UnitTestingProtocol.json" workingdir="${ProjectDir}" />
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>
