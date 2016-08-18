@@ -70,9 +70,9 @@ namespace Sensus.Android
             get
             {
                 // https://github.com/predictive-technology-laboratory/sensus/wiki/Backwards-Compatibility
-#if __ANDROID_23__
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
-                    return _connectivityManager.GetAllNetworks().Select(network => _connectivityManager.GetNetworkInfo(network)).Any(networkInfo => networkInfo.Type == ConnectivityType.Wifi && networkInfo.IsConnected);  // API level 23
+#if __ANDROID_21__
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+                    return _connectivityManager.GetAllNetworks().Select(network => _connectivityManager.GetNetworkInfo(network)).Any(networkInfo => networkInfo != null && networkInfo.Type == ConnectivityType.Wifi && networkInfo.IsConnected);  // API level 21
                 else
 #endif
                 {
