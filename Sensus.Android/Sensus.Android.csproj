@@ -343,6 +343,7 @@
     <Compile Include="AndroidServiceConnectedEventArgs.cs" />
     <Compile Include="Probes\Apps\AndroidFacebookProbe.cs" />
     <Compile Include="Probes\Context\AndroidAmbientTemperatureProbe.cs" />
+    <Compile Include="TextCellDisposedFix.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
