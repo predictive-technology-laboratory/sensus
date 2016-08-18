@@ -15,3 +15,6 @@ Sensus.Android/Assets/UnitTestingProtocol.json
 Sensus.iOS/Resources/UnitTestingProtocol.json
 .DS_Store
 *SensusR.Rcheck
+
+# Visual Studio 2015 cache/options directory
+.vs/
