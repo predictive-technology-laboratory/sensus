@@ -106,7 +106,7 @@ namespace SensusUI
                                     // that is passed into this method is always a copy of the user-created script. the script.Id allows us to link the various data
                                     // collected from the user into a single logical response. each run of the script has its own script.Id so that responses can be
                                     // grouped across runs. this is the difference between scriptId and runId in the following line.
-                                    await script.Runner.Probe.StoreDatumAsync(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow), script.Runner.Script.Id, script.Runner.Name, input.GroupId, input.Id, script.Id, input.Value, script.CurrentDatum?.Id, input.Latitude, input.Longitude, input.LocationUpdateTimestamp, script.RunTimestamp.Value, input.CompletionRecords), default(CancellationToken));
+                                    await script.Runner.Probe.StoreDatumAsync(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow), script.Runner.Script.Id, script.Runner.Name, input.GroupId, input.Id, script.Id, input.Value, script.CurrentDatum?.Id, input.Latitude, input.Longitude, input.LocationUpdateTimestamp, script.RunTimestamp.Value, input.CompletionRecords, input.SubmissionTimestamp.Value), default(CancellationToken));
 
                                     // once inputs are stored, they should not be stored again, nor should the user be able to modify them if the script is viewed again.
                                     input.NeedsToBeStored = false;

@@ -36,6 +36,7 @@ namespace SensusService.Probes.User.Scripts
         private DateTimeOffset _runTimestamp;
         private DateTimeOffset? _locationTimestamp;
         private List<InputCompletionRecord> _completionRecords;
+        private DateTimeOffset _submissionTimestamp;
 
         public string ScriptId
         {
@@ -182,6 +183,19 @@ namespace SensusService.Probes.User.Scripts
             }
         }
 
+        public DateTimeOffset SubmissionTimestamp
+        {
+            get
+            {
+                return _submissionTimestamp;
+            }
+
+            set
+            {
+                _submissionTimestamp = value;
+            }
+        }
+
         /// <summary>
         /// For JSON deserialization.
         /// </summary>
@@ -190,7 +204,7 @@ namespace SensusService.Probes.User.Scripts
             _completionRecords = new List<InputCompletionRecord>();
         }
 
-        public ScriptDatum(DateTimeOffset timestamp, string scriptId, string scriptName, string groupId, string inputId, string runId, object response, string triggerDatumId, double? latitude, double? longitude, DateTimeOffset? locationTimestamp, DateTimeOffset runTimestamp, List<InputCompletionRecord> completionRecords)
+        public ScriptDatum(DateTimeOffset timestamp, string scriptId, string scriptName, string groupId, string inputId, string runId, object response, string triggerDatumId, double? latitude, double? longitude, DateTimeOffset? locationTimestamp, DateTimeOffset runTimestamp, List<InputCompletionRecord> completionRecords, DateTimeOffset submissionTimestamp)
             : base(timestamp)
         {
             _scriptId = scriptId;
@@ -205,6 +219,7 @@ namespace SensusService.Probes.User.Scripts
             _locationTimestamp = locationTimestamp;
             _runTimestamp = runTimestamp;
             _completionRecords = completionRecords;
+            _submissionTimestamp = submissionTimestamp;
         }
 
         public override string ToString()
@@ -217,8 +232,9 @@ namespace SensusService.Probes.User.Scripts
             "Response:  " + _response + Environment.NewLine +
             "Latitude:  " + _latitude + Environment.NewLine +
             "Longitude:  " + _longitude + Environment.NewLine +
-            "Location Timestamp:  " + _locationTimestamp + Environment.NewLine +
-            "Run Timestamp:  " + _runTimestamp;
+            "Location Timestamp:  " + _locationTimestamp + Environment.NewLine + 
+            "Run Timestamp:  " + _runTimestamp + Environment.NewLine +
+            "Submission Timestamp:  " + _submissionTimestamp;
         }
     }
 }

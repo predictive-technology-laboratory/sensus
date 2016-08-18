@@ -1208,10 +1208,10 @@ namespace SensusService
                                 // only run the post-display callback the first time a page is displayed. the caller expects the callback
                                 // to fire only once upon first display.
                                 voiceInput.RunAsync(firstPromptTimestamp, firstPageDisplay ? postDisplayCallback : null, response =>
-                                    {
-                                        firstPageDisplay = false;
-                                        responseWait.Set();
-                                    });
+                                {
+                                    firstPageDisplay = false;
+                                    responseWait.Set();
+                                });
                             }
                             else
                                 responseWait.Set();
@@ -1280,16 +1280,16 @@ namespace SensusService
                                     });
 
                                     // do not display prompts page under the following conditions:  1) there are no inputs displayed on it. 2) the cancellation 
-                                    // token has requested a cancellation. if any of these conditions are true, set the wait handle and continue to the next input group.
+                                    // token has requested a cancellation. if either of these conditions is true, set the wait handle and continue to the next input group.
                                     if (promptForInputsPage.DisplayedInputCount == 0)
                                     {
                                         // if we're on the final input group and no inputs were shown, then we're at the end and we're ready to submit the 
                                         // users' responses. first check that the user is ready to submit. if the user isn't ready then move back to the previous 
                                         // input group in the backstack, if there is one.
                                         if (inputGroupNum >= inputGroups.Count() - 1 && // this is the final input group
-                                        inputGroupNumBackStack.Count > 0 && // there is an input group to go back to (the current one was not displayed)
-                                        !string.IsNullOrWhiteSpace(submitConfirmation) && // we have a submit confirmation
-                                        !(await Application.Current.MainPage.DisplayAlert("Confirm", submitConfirmation, "Yes", "No"))) // user is not ready to submit
+                                            inputGroupNumBackStack.Count > 0 && // there is an input group to go back to (the current one was not displayed)
+                                            !string.IsNullOrWhiteSpace(submitConfirmation) && // we have a submit confirmation
+                                            !(await Application.Current.MainPage.DisplayAlert("Confirm", submitConfirmation, "Yes", "No"))) // user is not ready to submit
                                         {
                                             inputGroupNum = inputGroupNumBackStack.Pop() - 1;
                                         }
@@ -1341,45 +1341,56 @@ namespace SensusService
                     responseWait.WaitOne();
                 }
 
-                #region geotag input groups if the user didn't cancel and we've got input groups with inputs that are complete and lacking locations
-                if (inputGroups != null && inputGroups.Any(inputGroup => inputGroup.Geotag && inputGroup.Inputs.Any(input => input.Complete && (input.Latitude == null || input.Longitude == null))))
+                // process the inputs if the user didn't cancel
+                if (inputGroups != null)
                 {
-                    _logger.Log("Geotagging input groups.", LoggingLevel.Normal, GetType());
+                    // set the submission timestamp. do this before GPS tagging since the latter could take a while and we want the timestamp to 
+                    // reflect the time that the user hit submit.
+                    DateTimeOffset submissionTimestamp = DateTimeOffset.UtcNow;
+                    foreach (InputGroup inputGroup in inputGroups)
+                        foreach (Input input in inputGroup.Inputs)
+                            input.SubmissionTimestamp = submissionTimestamp;
 
-                    try
+                    #region geotag input groups if we've got input groups with inputs that are complete and lacking locations
+                    if (inputGroups.Any(inputGroup => inputGroup.Geotag && inputGroup.Inputs.Any(input => input.Complete && (input.Latitude == null || input.Longitude == null))))
                     {
-                        Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken.GetValueOrDefault());
+                        _logger.Log("Geotagging input groups.", LoggingLevel.Normal, GetType());
 
-                        if (currentPosition != null)
-                            foreach (InputGroup inputGroup in inputGroups)
-                                if (inputGroup.Geotag)
-                                    foreach (Input input in inputGroup.Inputs)
-                                        if (input.Complete)
-                                        {
-                                            bool locationUpdated = false;
+                        try
+                        {
+                            Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken.GetValueOrDefault());
 
-                                            if (input.Latitude == null)
+                            if (currentPosition != null)
+                                foreach (InputGroup inputGroup in inputGroups)
+                                    if (inputGroup.Geotag)
+                                        foreach (Input input in inputGroup.Inputs)
+                                            if (input.Complete)
                                             {
-                                                input.Latitude = currentPosition.Latitude;
-                                                locationUpdated = true;
-                                            }
+                                                bool locationUpdated = false;
 
-                                            if (input.Longitude == null)
-                                            {
-                                                input.Longitude = currentPosition.Longitude;
-                                                locationUpdated = true;
-                                            }
+                                                if (input.Latitude == null)
+                                                {
+                                                    input.Latitude = currentPosition.Latitude;
+                                                    locationUpdated = true;
+                                                }
 
-                                            if (locationUpdated)
-                                                input.LocationUpdateTimestamp = currentPosition.Timestamp;
-                                        }
+                                                if (input.Longitude == null)
+                                                {
+                                                    input.Longitude = currentPosition.Longitude;
+                                                    locationUpdated = true;
+                                                }
+
+                                                if (locationUpdated)
+                                                    input.LocationUpdateTimestamp = currentPosition.Timestamp;
+                                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.Log("Error geotagging input groups:  " + ex.Message, LoggingLevel.Normal, GetType());
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        _logger.Log("Error geotagging input groups:  " + ex.Message, LoggingLevel.Normal, GetType());
-                    }
+                    #endregion
                 }
-                #endregion
 
                 callback(inputGroups);
 
@@ -1389,41 +1400,41 @@ namespace SensusService
         public void GetPositionsFromMapAsync(Xamarin.Forms.Maps.Position address, string newPinName, Action<List<Xamarin.Forms.Maps.Position>> callback)
         {
             Device.BeginInvokeOnMainThread(async () =>
+            {
+                if (await ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
+                    FlashNotificationAsync("Geolocation is not permitted on this device. Cannot display map.");
+                else
                 {
-                    if (await ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
-                        FlashNotificationAsync("Geolocation is not permitted on this device. Cannot display map.");
-                    else
+                    MapPage mapPage = new MapPage(address, newPinName);
+
+                    mapPage.Disappearing += (o, e) =>
                     {
-                        MapPage mapPage = new MapPage(address, newPinName);
+                        callback(mapPage.Pins.Select(pin => pin.Position).ToList());
+                    };
 
-                        mapPage.Disappearing += (o, e) =>
-                        {
-                            callback(mapPage.Pins.Select(pin => pin.Position).ToList());
-                        };
-
-                        await Application.Current.MainPage.Navigation.PushModalAsync(mapPage);
-                    }
-                });
+                    await Application.Current.MainPage.Navigation.PushModalAsync(mapPage);
+                }
+            });
         }
 
         public void GetPositionsFromMapAsync(string address, string newPinName, Action<List<Xamarin.Forms.Maps.Position>> callback)
         {
             Device.BeginInvokeOnMainThread(async () =>
+            {
+                if (await ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
+                    FlashNotificationAsync("Geolocation is not permitted on this device. Cannot display map.");
+                else
                 {
-                    if (await ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
-                        FlashNotificationAsync("Geolocation is not permitted on this device. Cannot display map.");
-                    else
+                    MapPage mapPage = new MapPage(address, newPinName);
+
+                    mapPage.Disappearing += (o, e) =>
                     {
-                        MapPage mapPage = new MapPage(address, newPinName);
+                        callback(mapPage.Pins.Select(pin => pin.Position).ToList());
+                    };
 
-                        mapPage.Disappearing += (o, e) =>
-                        {
-                            callback(mapPage.Pins.Select(pin => pin.Position).ToList());
-                        };
-
-                        await Application.Current.MainPage.Navigation.PushModalAsync(mapPage);
-                    }
-                });
+                    await Application.Current.MainPage.Navigation.PushModalAsync(mapPage);
+                }
+            });
         }
 
         public void UnregisterProtocol(Protocol protocol)

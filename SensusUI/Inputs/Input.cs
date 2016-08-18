@@ -47,12 +47,13 @@ namespace SensusUI.Inputs
         private Thickness? _padding;
         private bool _frame;
         private List<InputCompletionRecord> _completionRecords;
+        private DateTimeOffset? _submissionTimestamp;
 
         [EntryStringUiProperty("Name:", true, 0)]
         public string Name
         {
-            get{ return _name; }
-            set{ _name = value; }
+            get { return _name; }
+            set { _name = value; }
         }
 
         public string Id
@@ -135,7 +136,7 @@ namespace SensusUI.Inputs
             }
             protected set
             {
-                _complete = value; 
+                _complete = value;
 
                 DateTimeOffset timestamp = DateTimeOffset.UtcNow;
                 object inputValue = null;
@@ -241,7 +242,7 @@ namespace SensusUI.Inputs
         {
             get
             {
-                return _completionTimestamp; 
+                return _completionTimestamp;
             }
         }
 
@@ -301,7 +302,7 @@ namespace SensusUI.Inputs
         {
             get
             {
-                return true; 
+                return true;
             }
         }
 
@@ -322,6 +323,19 @@ namespace SensusUI.Inputs
             }
         }
 
+        public DateTimeOffset? SubmissionTimestamp
+        {
+            get
+            {
+                return _submissionTimestamp;
+            }
+
+            set
+            {
+                _submissionTimestamp = value;
+            }
+        }
+
         public Input()
         {
             _name = DefaultName;
@@ -338,6 +352,7 @@ namespace SensusUI.Inputs
             _padding = null;
             _frame = true;
             _completionRecords = new List<InputCompletionRecord>();
+            _submissionTimestamp = null;
         }
 
         public Input(string labelText)
@@ -366,9 +381,9 @@ namespace SensusUI.Inputs
                 FontSize = _labelFontSize
 
                 // set the style ID on the label so that we can retrieve it when unit testing
-                #if UNIT_TESTING
+#if UNIT_TESTING
                 , StyleId = Name + " Label"
-                #endif
+#endif
             };
         }
 
@@ -394,12 +409,12 @@ namespace SensusUI.Inputs
 
             if (_padding != null)
                 viewContainer.Padding = _padding.GetValueOrDefault();
-            
-            _view = viewContainer; 
+
+            _view = viewContainer;
         }
 
         public void Reset()
-        {            
+        {
             _view = null;
             _complete = false;
             _needsToBeStored = true;
