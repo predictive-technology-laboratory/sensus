@@ -295,12 +295,6 @@
     <Reference Include="XLabs.Forms">
       <HintPath>..\packages\XLabs.Forms.2.0.5782\lib\Xamarin.iOS10\XLabs.Forms.dll</HintPath>
     </Reference>
-    <Reference Include="Xam.Plugin.MapExtend.Abstractions">
-      <HintPath>..\packages\mapextend\ios\Xam.Plugin.MapExtend.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Xam.Plugin.MapExtend.iOSUnified">
-      <HintPath>..\packages\mapextend\ios\Xam.Plugin.MapExtend.iOSUnified.dll</HintPath>
-    </Reference>
     <Reference Include="Syncfusion.SfChart.iOS">
       <HintPath>..\dependencies\Syncfusion\14.2.0.26\Xamarin\lib\ios-unified\Syncfusion.SfChart.iOS.dll</HintPath>
     </Reference>
