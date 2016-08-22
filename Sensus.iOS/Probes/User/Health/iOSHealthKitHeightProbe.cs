@@ -49,7 +49,7 @@ namespace Sensus.iOS.Probes.User.Health
         }
 
         public iOSHealthKitHeightProbe()
-            : base(HKObjectType.GetQuantityType(HKQuantityTypeIdentifierKey.Height))
+            : base(HKQuantityType.Create(HKQuantityTypeIdentifier.Height))
         {
         }
 

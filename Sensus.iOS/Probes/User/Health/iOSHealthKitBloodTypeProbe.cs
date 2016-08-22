@@ -51,7 +51,7 @@ namespace Sensus.iOS.Probes.User.Health
         }
 
         public iOSHealthKitBloodTypeProbe()
-            : base(HKObjectType.GetCharacteristicType(HKCharacteristicTypeIdentifierKey.BloodType))
+            : base(HKCharacteristicType.Create(HKCharacteristicTypeIdentifier.BloodType))
         {
         }
 

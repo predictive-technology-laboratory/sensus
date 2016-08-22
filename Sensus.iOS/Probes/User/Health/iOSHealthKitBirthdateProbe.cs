@@ -51,7 +51,7 @@ namespace Sensus.iOS.Probes.User.Health
         }
 
         public iOSHealthKitBirthdateProbe()
-            : base(HKObjectType.GetCharacteristicType(HKCharacteristicTypeIdentifierKey.DateOfBirth))
+            : base(HKCharacteristicType.Create(HKCharacteristicTypeIdentifier.DateOfBirth))
         {
         }
 
@@ -71,7 +71,7 @@ namespace Sensus.iOS.Probes.User.Health
             }
             else
                 throw new Exception("Error reading date of birth:  " + error.Description);
-                
+
             return data;
         }
 

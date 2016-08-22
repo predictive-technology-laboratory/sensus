@@ -51,7 +51,7 @@ namespace Sensus.iOS.Probes.User.Health
         }
 
         public iOSHealthKitBiologicalSexProbe()
-            : base(HKObjectType.GetCharacteristicType(HKCharacteristicTypeIdentifierKey.BiologicalSex))
+            : base(HKCharacteristicType.Create(HKCharacteristicTypeIdentifier.BiologicalSex))
         {
         }
 
@@ -75,7 +75,7 @@ namespace Sensus.iOS.Probes.User.Health
             }
             else
                 throw new Exception("Error reading biological sex:  " + error.Description);
-            
+
             return data;
         }
 

@@ -65,7 +65,11 @@
     <NoWarn>1701</NoWarn>
     <CustomCommands>
       <CustomCommands>
-        <Command type="BeforeBuild" command="touch Resources/UnitTestingProtocol.json" workingdir="${ProjectDir}" />
+        <Command>
+          <type>BeforeBuild</type>
+          <command>touch Resources/UnitTestingProtocol.json</command>
+          <workingdir>${ProjectDir}</workingdir>
+        </Command>
       </CustomCommands>
     </CustomCommands>
     <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
@@ -88,7 +92,12 @@
     <NoWarn>1701</NoWarn>
     <CustomCommands>
       <CustomCommands>
-        <Command type="BeforeBuild" command="touch Resources/UnitTestingProtocol.json" workingdir="${ProjectDir}" externalConsole="True" />
+        <Command>
+          <type>BeforeBuild</type>
+          <command>touch Resources/UnitTestingProtocol.json</command>
+          <workingdir>${ProjectDir}</workingdir>
+          <externalConsole>True</externalConsole>
+        </Command>
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>
@@ -126,7 +135,13 @@
     <DefineConstants>RELEASE</DefineConstants>
     <CustomCommands>
       <CustomCommands>
-        <Command type="BeforeBuild" command="./Scripts/ios-appstore-build-check.sh" workingdir="${SolutionDir}" externalConsole="True" pauseExternalConsole="True" />
+        <Command>
+          <type>BeforeBuild</type>
+          <command>./Scripts/ios-appstore-build-check.sh</command>
+          <workingdir>${SolutionDir}</workingdir>
+          <externalConsole>True</externalConsole>
+          <pauseExternalConsole>True</pauseExternalConsole>
+        </Command>
       </CustomCommands>
     </CustomCommands>
     <IpaPackageName>
@@ -153,7 +168,12 @@
     <MtouchProfiling>true</MtouchProfiling>
     <CustomCommands>
       <CustomCommands>
-        <Command type="BeforeBuild" command="../Sensus.UiTest/UnitTestingProtocols/PromptForUnitTestingProtocol.sh ios" workingdir="${ProjectDir}" externalConsole="True" />
+        <Command>
+          <type>BeforeBuild</type>
+          <command>../Sensus.UiTest/UnitTestingProtocols/PromptForUnitTestingProtocol.sh ios</command>
+          <workingdir>${ProjectDir}</workingdir>
+          <externalConsole>True</externalConsole>
+        </Command>
       </CustomCommands>
     </CustomCommands>
     <BuildIpa>true</BuildIpa>
@@ -180,7 +200,12 @@
     <MtouchProfiling>true</MtouchProfiling>
     <CustomCommands>
       <CustomCommands>
-        <Command type="BeforeBuild" command="../Sensus.UiTest/UnitTestingProtocols/PromptForUnitTestingProtocol.sh ios" workingdir="${ProjectDir}" externalConsole="True" />
+        <Command>
+          <type>BeforeBuild</type>
+          <command>../Sensus.UiTest/UnitTestingProtocols/PromptForUnitTestingProtocol.sh ios</command>
+          <workingdir>${ProjectDir}</workingdir>
+          <externalConsole>True</externalConsole>
+        </Command>
       </CustomCommands>
     </CustomCommands>
     <BuildIpa>true</BuildIpa>
@@ -306,15 +331,6 @@
     <Reference Include="Xamarin.Forms.Maps">
       <HintPath>..\packages\Xamarin.Forms.Maps.2.3.0.49\lib\Xamarin.iOS10\Xamarin.Forms.Maps.dll</HintPath>
     </Reference>
-    <Reference Include="Syncfusion.SfChart.XForms.iOS">
-      <HintPath>..\Lib\Syncfusion\14.2.0.26\Xamarin\lib\ios-unified\Syncfusion.SfChart.XForms.iOS.dll</HintPath>
-    </Reference>
-    <Reference Include="Syncfusion.SfChart.XForms">
-      <HintPath>..\Lib\Syncfusion\14.2.0.26\Xamarin\lib\ios-unified\Syncfusion.SfChart.XForms.dll</HintPath>
-    </Reference>
-    <Reference Include="Syncfusion.SfChart.iOS">
-      <HintPath>..\Lib\Syncfusion\14.2.0.26\Xamarin\lib\ios-unified\Syncfusion.SfChart.iOS.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -347,6 +363,15 @@
     </Reference>
     <Reference Include="ZipArchive">
       <HintPath>..\Components\ZipArchive-1.4.0.1\lib\ios-unified\ZipArchive.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.SfChart.iOS">
+      <HintPath>..\dependencies\Syncfusion\14.2.0.26\Xamarin\lib\ios-unified\Syncfusion.SfChart.iOS.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.SfChart.XForms">
+      <HintPath>..\dependencies\Syncfusion\14.2.0.26\Xamarin\lib\ios-unified\Syncfusion.SfChart.XForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.SfChart.XForms.iOS">
+      <HintPath>..\dependencies\Syncfusion\14.2.0.26\Xamarin\lib\ios-unified\Syncfusion.SfChart.XForms.iOS.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

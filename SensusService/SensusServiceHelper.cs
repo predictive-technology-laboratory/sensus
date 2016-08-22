@@ -670,16 +670,18 @@ namespace SensusService
 
                 if (_healthTestCallbackId == null)
                 {
-                    ScheduledCallback callback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
+                    ScheduledCallback healthTestCallback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
                     {
                         List<Protocol> protocolsToTest = new List<Protocol>();
 
-                        // we've already got a lock on running protocol IDs. just need a lock on the protocols.
                         lock (_registeredProtocols)
                         {
-                            foreach (Protocol protocol in _registeredProtocols)
-                                if (_runningProtocolIds.Contains(protocol.Id))
-                                    protocolsToTest.Add(protocol);
+                            lock (_runningProtocolIds)
+                            {
+                                foreach (Protocol protocol in _registeredProtocols)
+                                    if (_runningProtocolIds.Contains(protocol.Id))
+                                        protocolsToTest.Add(protocol);
+                            }
                         }
 
                         foreach (Protocol protocolToTest in protocolsToTest)
@@ -694,7 +696,7 @@ namespace SensusService
 
                     }, "Test Health", TimeSpan.FromMinutes(1));
 
-                    _healthTestCallbackId = ScheduleRepeatingCallback(callback, HEALTH_TEST_DELAY_MS, HEALTH_TEST_DELAY_MS, HEALTH_TEST_REPEAT_LAG);
+                    _healthTestCallbackId = ScheduleRepeatingCallback(healthTestCallback, HEALTH_TEST_DELAY_MS, HEALTH_TEST_DELAY_MS, HEALTH_TEST_REPEAT_LAG);
                 }
             }
         }
@@ -801,15 +803,15 @@ namespace SensusService
             {
                 bool add = true;
 
-                List<Script> scriptsWithSameOrigin = _scriptsToRun.Where(s => s.SameOrigin(script)).ToList();
+                List<Script> scriptsWithSameParent = _scriptsToRun.Where(s => s.SharesParentScriptWith(script)).ToList();
 
-                if (scriptsWithSameOrigin.Count > 0)
+                if (scriptsWithSameParent.Count > 0)
                 {
                     if (runMode == RunMode.SingleKeepOldest)
                         add = false;
                     else if (runMode == RunMode.SingleUpdate)
-                        foreach (Script scriptWithSameOrigin in scriptsWithSameOrigin)
-                            _scriptsToRun.Remove(scriptWithSameOrigin);
+                        foreach (Script scriptWithSameParent in scriptsWithSameParent)
+                            _scriptsToRun.Remove(scriptWithSameParent);
                 }
 
                 if (add)
@@ -844,7 +846,7 @@ namespace SensusService
             }
         }
 
-        public void RemoveOldScripts()
+        public void RemoveOldScripts(bool issueNotification)
         {
             lock (_scriptsToRun)
             {
@@ -854,13 +856,15 @@ namespace SensusService
                     if (script.Age.TotalMinutes >= script.Runner.MaximumAgeMinutes && _scriptsToRun.Remove(script))
                         removed = true;
 
-                if (removed)
+                if (removed && issueNotification)
                     IssuePendingSurveysNotificationAsync(false, false);
             }
         }
 
         public void IssuePendingSurveysNotificationAsync(bool playSound, bool vibrate)
         {
+            RemoveOldScripts(false);
+
             string message = null;
 
             int scriptsToRun = _scriptsToRun.Count;

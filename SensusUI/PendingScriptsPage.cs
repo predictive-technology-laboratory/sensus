@@ -18,13 +18,31 @@ using SensusService;
 using SensusService.Probes.User.Scripts;
 using SensusUI.Inputs;
 using Xamarin.Forms;
-using System.Linq;
 using System.Globalization;
+using System.Collections.ObjectModel;
 
 namespace SensusUI
 {
     public class PendingScriptsPage : ContentPage
     {
+        private class ViewVisibleValueConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                if (value == null)
+                    return false;
+
+                int count = (int)value;
+                bool zeroMeansVisible = (bool)parameter;
+                return (count == 0) == zeroMeansVisible;
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                return value;
+            }
+        }
+
         private class ScriptTextConverter : IValueConverter
         {
             public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -65,7 +83,7 @@ namespace SensusUI
         {
             Title = "Pending Surveys";
 
-            SensusServiceHelper.Get().RemoveOldScripts();
+            SensusServiceHelper.Get().RemoveOldScripts(true);
 
             ListView scriptList = new ListView();
             scriptList.ItemTemplate = new DataTemplate(typeof(TextCell));
@@ -137,13 +155,40 @@ namespace SensusUI
                 });
             };
 
-            Content = scriptList;
+            // don't show list when there are no surveys
+            scriptList.BindingContext = SensusServiceHelper.Get().ScriptsToRun;
+            scriptList.SetBinding(IsVisibleProperty, new Binding("Count", converter: new ViewVisibleValueConverter(), converterParameter: false));
+
+            // display an informative message when there are no surveys
+            Label noSurveysLabel = new Label
+            {
+                Text = "You have no pending surveys.",
+                TextColor = Color.Accent,
+                FontSize = 20,
+                VerticalOptions = LayoutOptions.Center,
+                HorizontalOptions = LayoutOptions.Center
+            };
+
+            noSurveysLabel.BindingContext = SensusServiceHelper.Get().ScriptsToRun;
+            noSurveysLabel.SetBinding(IsVisibleProperty, new Binding("Count", converter: new ViewVisibleValueConverter(), converterParameter: true));
+
+            Grid contentGrid = new Grid
+            {
+                RowDefinitions = { new RowDefinition { Height = new GridLength(1, GridUnitType.Star) } },
+                ColumnDefinitions = { new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) } },
+                VerticalOptions = LayoutOptions.FillAndExpand
+            };
+
+            contentGrid.Children.Add(noSurveysLabel, 0, 0);
+            contentGrid.Children.Add(scriptList, 0, 0);
+
+            Content = contentGrid;
 
             System.Timers.Timer filterTimer = new System.Timers.Timer(1000);
 
             filterTimer.Elapsed += (sender, e) =>
             {
-                Device.BeginInvokeOnMainThread(SensusServiceHelper.Get().RemoveOldScripts);
+                Device.BeginInvokeOnMainThread(() => SensusServiceHelper.Get().RemoveOldScripts(true));
             };
 
             Appearing += (sender, e) =>

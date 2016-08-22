@@ -98,7 +98,12 @@ namespace SensusService.Probes.User.Scripts
             _inputGroups = new ObservableCollection<InputGroup>();
         }
 
-        public bool SameOrigin(Script script)
+        /// <summary>
+        /// Checks whether the current and another script share a parent script.
+        /// </summary>
+        /// <returns><c>true</c>, if parent script is shared, <c>false</c> otherwise.</returns>
+        /// <param name="script">Script.</param>
+        public bool SharesParentScriptWith(Script script)
         {
             return _runner.Script.Id == script.Runner.Script.Id;
         }

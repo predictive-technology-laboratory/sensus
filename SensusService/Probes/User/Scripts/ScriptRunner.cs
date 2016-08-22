@@ -467,13 +467,13 @@ namespace SensusService.Probes.User.Scripts
         private void RunAsync(Script script, Datum previousDatum = null, Datum currentDatum = null, Action callback = null)
         {
             new Thread(() =>
-                {
-                    Run(script, previousDatum, currentDatum);
+            {
+                Run(script, previousDatum, currentDatum);
 
-                    if (callback != null)
-                        callback();
+                if (callback != null)
+                    callback();
 
-                }).Start();
+            }).Start();
         }
 
         /// <summary>
