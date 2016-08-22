@@ -5626,11 +5626,11 @@ namespace Sensus.Android
 		public partial class String
 		{
 			
-			// aapt resource value: 0x7f08004f
-			public const int ApplicationName = 2131230799;
+			// aapt resource value: 0x7f08004b
+			public const int ApplicationName = 2131230795;
 			
-			// aapt resource value: 0x7f08004e
-			public const int Hello = 2131230798;
+			// aapt resource value: 0x7f08004a
+			public const int Hello = 2131230794;
 			
 			// aapt resource value: 0x7f080031
 			public const int abc_action_bar_home_description = 2131230769;
@@ -5848,23 +5848,23 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f08001b
 			public const int common_signin_button_text_long = 2131230747;
 			
-			// aapt resource value: 0x7f08004a
-			public const int day_name_format = 2131230794;
-			
-			// aapt resource value: 0x7f08004d
-			public const int full_date_format = 2131230797;
-			
-			// aapt resource value: 0x7f08004b
-			public const int invalid_date = 2131230795;
+			// aapt resource value: 0x7f080046
+			public const int day_name_format = 2131230790;
 			
 			// aapt resource value: 0x7f080049
-			public const int library_name = 2131230793;
+			public const int full_date_format = 2131230793;
+			
+			// aapt resource value: 0x7f080047
+			public const int invalid_date = 2131230791;
+			
+			// aapt resource value: 0x7f080045
+			public const int library_name = 2131230789;
 			
 			// aapt resource value: 0x7f080061
 			public const int messenger_send_button_text = 2131230817;
 			
-			// aapt resource value: 0x7f08004c
-			public const int month_name_format = 2131230796;
+			// aapt resource value: 0x7f080048
+			public const int month_name_format = 2131230792;
 			
 			// aapt resource value: 0x7f08001f
 			public const int mr_button_content_description = 2131230751;
@@ -5911,20 +5911,20 @@ namespace Sensus.Android
 			// aapt resource value: 0x7f08002d
 			public const int mr_user_route_category_name = 2131230765;
 			
-			// aapt resource value: 0x7f080045
-			public const int q = 2131230789;
+			// aapt resource value: 0x7f08004c
+			public const int q = 2131230796;
 			
-			// aapt resource value: 0x7f080046
-			public const int quarter = 2131230790;
+			// aapt resource value: 0x7f08004d
+			public const int quarter = 2131230797;
 			
 			// aapt resource value: 0x7f080044
 			public const int status_bar_notification_info_overflow = 2131230788;
 			
-			// aapt resource value: 0x7f080047
-			public const int w = 2131230791;
+			// aapt resource value: 0x7f08004e
+			public const int w = 2131230798;
 			
-			// aapt resource value: 0x7f080048
-			public const int week = 2131230792;
+			// aapt resource value: 0x7f08004f
+			public const int week = 2131230799;
 			
 			static String()
 			{
