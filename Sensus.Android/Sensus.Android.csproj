@@ -37,7 +37,11 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <CustomCommands>
       <CustomCommands>
-        <Command type="BeforeBuild" command="touch Assets/UnitTestingProtocol.json" workingdir="${ProjectDir}" />
+        <Command>
+          <type>BeforeBuild</type>
+          <command>touch Assets/UnitTestingProtocol.json</command>
+          <workingdir>${ProjectDir}</workingdir>
+        </Command>
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>
@@ -49,11 +53,15 @@
     <WarningLevel>4</WarningLevel>
     <AndroidUseSharedRuntime>False</AndroidUseSharedRuntime>
     <AndroidSupportedAbis>armeabi;armeabi-v7a;x86</AndroidSupportedAbis>
-    <DebugType>full</DebugType>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DebugType></DebugType>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <CustomCommands>
       <CustomCommands>
-        <Command type="BeforeBuild" command="touch Assets/UnitTestingProtocol.json" workingdir="${ProjectDir}" />
+        <Command>
+          <type>BeforeBuild</type>
+          <command>touch Assets/UnitTestingProtocol.json</command>
+          <workingdir>${ProjectDir}</workingdir>
+        </Command>
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>
@@ -97,7 +105,12 @@
     <AndroidSupportedAbis>armeabi;armeabi-v7a;x86</AndroidSupportedAbis>
     <CustomCommands>
       <CustomCommands>
-        <Command type="BeforeBuild" command="../Sensus.UiTest/UnitTestingProtocols/PromptForUnitTestingProtocol.sh android" workingdir="${ProjectDir}" externalConsole="True" />
+        <Command>
+          <type>BeforeBuild</type>
+          <command>../Sensus.UiTest/UnitTestingProtocols/PromptForUnitTestingProtocol.sh android</command>
+          <workingdir>${ProjectDir}</workingdir>
+          <externalConsole>True</externalConsole>
+        </Command>
       </CustomCommands>
     </CustomCommands>
     <AndroidLinkMode>None</AndroidLinkMode>
@@ -113,7 +126,12 @@
     <AndroidSupportedAbis>armeabi;armeabi-v7a;x86</AndroidSupportedAbis>
     <CustomCommands>
       <CustomCommands>
-        <Command type="BeforeBuild" command="../Sensus.UiTest/UnitTestingProtocols/PromptForUnitTestingProtocol.sh android" workingdir="${ProjectDir}" externalConsole="True" />
+        <Command>
+          <type>BeforeBuild</type>
+          <command>../Sensus.UiTest/UnitTestingProtocols/PromptForUnitTestingProtocol.sh android</command>
+          <workingdir>${ProjectDir}</workingdir>
+          <externalConsole>True</externalConsole>
+        </Command>
       </CustomCommands>
     </CustomCommands>
     <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
