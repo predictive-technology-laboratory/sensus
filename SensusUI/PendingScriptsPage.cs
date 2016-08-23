@@ -19,7 +19,6 @@ using SensusService.Probes.User.Scripts;
 using SensusUI.Inputs;
 using Xamarin.Forms;
 using System.Globalization;
-using System.Collections.ObjectModel;
 
 namespace SensusUI
 {
