@@ -157,16 +157,28 @@ namespace Sensus.Android
             if (_service == null)
             {
                 if (_connectivityManager != null)
+                {
                     _connectivityManager.Dispose();
+                    _connectivityManager = null;
+                }
 
                 if (_notificationManager != null)
+                {
                     _notificationManager.Dispose();
+                    _notificationManager = null;
+                }
 
                 if (_textToSpeech != null)
+                {
                     _textToSpeech.Dispose();
+                    _textToSpeech = null;
+                }
 
                 if (_wakeLock != null)
+                {
                     _wakeLock.Dispose();
+                    _wakeLock = null;
+                }
             }
             else
             {
