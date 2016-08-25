@@ -34,12 +34,22 @@ namespace Sensus.Android
     public class AndroidSensusService : Service
     {
         private List<AndroidSensusServiceBinder> _bindings;
+        private Handler _mainThreadHandler;
+
+        public Handler MainThreadHandler
+        {
+            get
+            {
+                return _mainThreadHandler;
+            }
+        }
 
         public override void OnCreate()
         {
             base.OnCreate();
 
             _bindings = new List<AndroidSensusServiceBinder>();
+            _mainThreadHandler = new Handler();
 
             SensusServiceHelper.Initialize(() => new AndroidSensusServiceHelper());
 
@@ -132,7 +142,7 @@ namespace Sensus.Android
                             serviceHelper.BringToForeground();
 
                             // display the pending scripts page if it is not already on the top of the navigation stack
-                            Device.BeginInvokeOnMainThread(async () =>
+                            serviceHelper.RunOnMainThread(async () =>
                             {
                                 IReadOnlyList<Page> navigationStack = Xamarin.Forms.Application.Current.MainPage.Navigation.NavigationStack;
                                 Page topPage = navigationStack.Count == 0 ? null : navigationStack.Last();

@@ -127,7 +127,7 @@ namespace SensusUI
 
                                     // once inputs are stored, they should not be stored again, nor should the user be able to modify them if the script is viewed again.
                                     input.NeedsToBeStored = false;
-                                    Device.BeginInvokeOnMainThread(() => input.Enabled = false);
+                                    SensusServiceHelper.Get().RunOnMainThread(() => input.Enabled = false);
                                 }
                             }
                         }
@@ -143,12 +143,7 @@ namespace SensusUI
                     }
 
                     if (!canceled)
-                    {
-                        Device.BeginInvokeOnMainThread(() =>
-                        {
-                            SensusServiceHelper.Get().RemoveScriptToRun(script);
-                        });
-                    }
+                        SensusServiceHelper.Get().RemoveScriptToRun(script);
 
                     SensusServiceHelper.Get().Logger.Log("\"" + script.Runner.Name + "\" has finished running.", LoggingLevel.Normal, typeof(Script));
                 });
@@ -187,7 +182,7 @@ namespace SensusUI
 
             filterTimer.Elapsed += (sender, e) =>
             {
-                Device.BeginInvokeOnMainThread(() => SensusServiceHelper.Get().RemoveOldScripts(true));
+                SensusServiceHelper.Get().RemoveOldScripts(true);
             };
 
             Appearing += (sender, e) =>

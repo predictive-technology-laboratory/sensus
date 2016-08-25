@@ -53,40 +53,40 @@ namespace Sensus.iOS.Probes.Apps
                 bool loginCancelled = false;
                 string accessTokenError = null;
 
-                Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+                SensusServiceHelper.Get().RunOnMainThread(() =>
+                {
+                    try
                     {
-                        try
+                        LoginManagerRequestTokenHandler loginResultHandler = new LoginManagerRequestTokenHandler((loginResult, error) =>
                         {
-                            LoginManagerRequestTokenHandler loginResultHandler = new LoginManagerRequestTokenHandler((loginResult, error) =>
-                                {
-                                    if (error == null && loginResult.Token != null)
-                                    {
-                                        SensusServiceHelper.Get().Logger.Log("Facebook login succeeded.", SensusService.LoggingLevel.Normal, GetType());
-                                        AccessToken.CurrentAccessToken = loginResult.Token;
-                                        loginWait.Set();
-                                    }
-                                    else if (loginResult != null && loginResult.IsCancelled)
-                                    {
-                                        SensusServiceHelper.Get().Logger.Log("Facebook login cancelled.", SensusService.LoggingLevel.Normal, GetType());
-                                        loginCancelled = true;
-                                        loginWait.Set();
-                                    }
-                                    else
-                                    {
-                                        SensusServiceHelper.Get().Logger.Log("Facebook login failed.", SensusService.LoggingLevel.Normal, GetType());
-                                        loginWait.Set();
-                                    }
-                                });
+                            if (error == null && loginResult.Token != null)
+                            {
+                                SensusServiceHelper.Get().Logger.Log("Facebook login succeeded.", SensusService.LoggingLevel.Normal, GetType());
+                                AccessToken.CurrentAccessToken = loginResult.Token;
+                                loginWait.Set();
+                            }
+                            else if (loginResult != null && loginResult.IsCancelled)
+                            {
+                                SensusServiceHelper.Get().Logger.Log("Facebook login cancelled.", SensusService.LoggingLevel.Normal, GetType());
+                                loginCancelled = true;
+                                loginWait.Set();
+                            }
+                            else
+                            {
+                                SensusServiceHelper.Get().Logger.Log("Facebook login failed.", SensusService.LoggingLevel.Normal, GetType());
+                                loginWait.Set();
+                            }
+                        });
 
-                            new LoginManager().LogInWithReadPermissions(permissionNames, UIApplication.SharedApplication.KeyWindow.RootViewController, loginResultHandler);
-                        }
-                        catch (Exception ex)
-                        {
-                            SensusServiceHelper.Get().Logger.Log("Error while initializing Facebook SDK and/or logging in:  " + ex.Message, LoggingLevel.Normal, GetType());
-                            accessTokenError = ex.Message;
-                            loginWait.Set();
-                        }
-                    });
+                        new LoginManager().LogInWithReadPermissions(permissionNames, UIApplication.SharedApplication.KeyWindow.RootViewController, loginResultHandler);
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Error while initializing Facebook SDK and/or logging in:  " + ex.Message, LoggingLevel.Normal, GetType());
+                        accessTokenError = ex.Message;
+                        loginWait.Set();
+                    }
+                });
 
                 loginWait.WaitOne();
 
@@ -134,111 +134,111 @@ namespace Sensus.iOS.Probes.Apps
                 List<ManualResetEvent> responseWaits = new List<ManualResetEvent>();
                 Exception exception = null;  // can't throw exception from within the UI thread -- it will crash the app. use this variable to check whether an exception did occur.
 
-                Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+                SensusServiceHelper.Get().RunOnMainThread(() =>
+                {
+                    try
                     {
-                        try
+                        GraphRequestConnection requestConnection = new GraphRequestConnection();
+
+                        #region add requests to connection
+                        foreach (Tuple<string, List<string>> edgeFieldQuery in GetEdgeFieldQueries())
                         {
-                            GraphRequestConnection requestConnection = new GraphRequestConnection();
+                            NSDictionary parameters = null;
+                            if (edgeFieldQuery.Item2.Count > 0)
+                                parameters = new NSDictionary("fields", string.Concat(edgeFieldQuery.Item2.Select(field => field + ",")).Trim(','));
 
-                            #region add requests to connection
-                            foreach (Tuple<string, List<string>> edgeFieldQuery in GetEdgeFieldQueries())
+                            GraphRequest request = new GraphRequest(
+                                                       "me" + (edgeFieldQuery.Item1 == null ? "" : "/" + edgeFieldQuery.Item1),
+                                                       parameters,
+                                                       AccessToken.CurrentAccessToken.TokenString,
+                                                       null,
+                                                       "GET");
+
+                            ManualResetEvent responseWait = new ManualResetEvent(false);
+
+                            requestConnection.AddRequest(request, (connection, result, error) =>
                             {
-                                NSDictionary parameters = null;
-                                if (edgeFieldQuery.Item2.Count > 0)
-                                    parameters = new NSDictionary("fields", string.Concat(edgeFieldQuery.Item2.Select(field => field + ",")).Trim(','));
+                                if (error == null)
+                                {
+                                    FacebookDatum datum = new FacebookDatum(DateTimeOffset.UtcNow);
 
-                                GraphRequest request = new GraphRequest(
-                                                           "me" + (edgeFieldQuery.Item1 == null ? "" : "/" + edgeFieldQuery.Item1),
-                                                           parameters,
-                                                           AccessToken.CurrentAccessToken.TokenString,
-                                                           null,
-                                                           "GET");
-
-                                ManualResetEvent responseWait = new ManualResetEvent(false);
-
-                                requestConnection.AddRequest(request, (connection, result, error) =>
+                                    #region set datum properties
+                                    NSDictionary resultDictionary = result as NSDictionary;
+                                    bool valuesSet = false;
+                                    foreach (string resultKey in resultDictionary.Keys.Select(k => k.ToString()))
                                     {
-                                        if (error == null)
+                                        PropertyInfo property;
+                                        if (FacebookDatum.TryGetProperty(resultKey, out property))
                                         {
-                                            FacebookDatum datum = new FacebookDatum(DateTimeOffset.UtcNow);
+                                            object value = null;
 
-                                            #region set datum properties
-                                            NSDictionary resultDictionary = result as NSDictionary;
-                                            bool valuesSet = false;
-                                            foreach (string resultKey in resultDictionary.Keys.Select(k => k.ToString()))
+                                            if (property.PropertyType == typeof(string))
+                                                value = resultDictionary[resultKey].ToString();
+                                            else if (property.PropertyType == typeof(bool?))
                                             {
-                                                PropertyInfo property;
-                                                if (FacebookDatum.TryGetProperty(resultKey, out property))
-                                                {
-                                                    object value = null;
-
-                                                    if (property.PropertyType == typeof(string))
-                                                        value = resultDictionary[resultKey].ToString();
-                                                    else if (property.PropertyType == typeof(bool?))
-                                                    {
-                                                        int parsedBool;
-                                                        if (int.TryParse(resultDictionary[resultKey].ToString(), out parsedBool))
-                                                            value = parsedBool == 1 ? true : false;
-                                                    }
-                                                    else if (property.PropertyType == typeof(DateTimeOffset?))
-                                                    {
-                                                        DateTimeOffset parsedDateTimeOffset;
-                                                        if (DateTimeOffset.TryParse(resultDictionary[resultKey].ToString(), out parsedDateTimeOffset))
-                                                            value = parsedDateTimeOffset;
-                                                    }
-                                                    else if (property.PropertyType == typeof(List<string>))
-                                                    {
-                                                        List<string> values = new List<string>();
-
-                                                        NSArray resultArray = resultDictionary[resultKey] as NSArray;
-                                                        for (nuint i = 0; i < resultArray.Count; ++i)
-                                                            values.Add(resultArray.GetItem<NSObject>(i).ToString());
-
-                                                        value = values;
-                                                    }
-                                                    else
-                                                        throw new SensusException("Unrecognized FacebookDatum property type:  " + property.PropertyType.ToString());
-
-                                                    if (value != null)
-                                                    {
-                                                        property.SetValue(datum, value);
-                                                        valuesSet = true;
-                                                    }
-                                                }
-                                                else
-                                                    SensusServiceHelper.Get().Logger.Log("Unrecognized key in Facebook result dictionary:  " + resultKey, LoggingLevel.Verbose, GetType());
+                                                int parsedBool;
+                                                if (int.TryParse(resultDictionary[resultKey].ToString(), out parsedBool))
+                                                    value = parsedBool == 1 ? true : false;
                                             }
-                                            #endregion
+                                            else if (property.PropertyType == typeof(DateTimeOffset?))
+                                            {
+                                                DateTimeOffset parsedDateTimeOffset;
+                                                if (DateTimeOffset.TryParse(resultDictionary[resultKey].ToString(), out parsedDateTimeOffset))
+                                                    value = parsedDateTimeOffset;
+                                            }
+                                            else if (property.PropertyType == typeof(List<string>))
+                                            {
+                                                List<string> values = new List<string>();
 
-                                            if (valuesSet)
-                                                data.Add(datum);
+                                                NSArray resultArray = resultDictionary[resultKey] as NSArray;
+                                                for (nuint i = 0; i < resultArray.Count; ++i)
+                                                    values.Add(resultArray.GetItem<NSObject>(i).ToString());
+
+                                                value = values;
+                                            }
+                                            else
+                                                throw new SensusException("Unrecognized FacebookDatum property type:  " + property.PropertyType.ToString());
+
+                                            if (value != null)
+                                            {
+                                                property.SetValue(datum, value);
+                                                valuesSet = true;
+                                            }
                                         }
                                         else
-                                            SensusServiceHelper.Get().Logger.Log("Error received while querying Facebook graph API:  " + error.Description, LoggingLevel.Normal, GetType());
+                                            SensusServiceHelper.Get().Logger.Log("Unrecognized key in Facebook result dictionary:  " + resultKey, LoggingLevel.Verbose, GetType());
+                                    }
+                                    #endregion
 
-                                        SensusServiceHelper.Get().Logger.Log("Response for \"" + request.GraphPath + "\" has been processed.", LoggingLevel.Verbose, GetType());
-                                        responseWait.Set();
-                                    });
+                                    if (valuesSet)
+                                        data.Add(datum);
+                                }
+                                else
+                                    SensusServiceHelper.Get().Logger.Log("Error received while querying Facebook graph API:  " + error.Description, LoggingLevel.Normal, GetType());
 
-                                responseWaits.Add(responseWait);
-                            }
-                            #endregion
+                                SensusServiceHelper.Get().Logger.Log("Response for \"" + request.GraphPath + "\" has been processed.", LoggingLevel.Verbose, GetType());
+                                responseWait.Set();
+                            });
 
-                            if (responseWaits.Count == 0)
-                                exception = new Exception("Request connection contained zero requests.");
-                            else
-                            {
-                                SensusServiceHelper.Get().Logger.Log("Starting request connection with " + responseWaits.Count + " requests.", LoggingLevel.Normal, GetType());
-                                requestConnection.Start();
-                            }
-
-                            startWait.Set();
+                            responseWaits.Add(responseWait);
                         }
-                        catch (Exception ex)
+                        #endregion
+
+                        if (responseWaits.Count == 0)
+                            exception = new Exception("Request connection contained zero requests.");
+                        else
                         {
-                            exception = new Exception("Error starting request connection:  " + ex.Message);
+                            SensusServiceHelper.Get().Logger.Log("Starting request connection with " + responseWaits.Count + " requests.", LoggingLevel.Normal, GetType());
+                            requestConnection.Start();
                         }
-                    });
+
+                        startWait.Set();
+                    }
+                    catch (Exception ex)
+                    {
+                        exception = new Exception("Error starting request connection:  " + ex.Message);
+                    }
+                });
 
                 startWait.WaitOne();
 

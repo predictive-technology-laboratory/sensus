@@ -603,6 +603,14 @@ namespace SensusService
             return hashBuilder.ToString();
         }
 
+        public void RunOnMainThread(Action action)
+        {
+            if (IsOnMainThread)
+                action();
+            else
+                RunOnMainThreadNative(action);
+        }
+
         #region platform-specific methods. this functionality cannot be implemented in a cross-platform way. it must be done separately for each platform.
 
         protected abstract void InitializeXamarinInsights();
@@ -656,6 +664,8 @@ namespace SensusService
                 return false;
             }
         }
+
+        protected abstract void RunOnMainThreadNative(Action action);
 
         #endregion
 
@@ -799,7 +809,7 @@ namespace SensusService
 
         public void AddScriptToRun(Script script, RunMode runMode)
         {
-            lock (_scriptsToRun)
+            RunOnMainThread(() =>
             {
                 bool add = true;
 
@@ -819,21 +829,21 @@ namespace SensusService
                     _scriptsToRun.Insert(0, script);
                     IssuePendingSurveysNotificationAsync(true, true);
                 }
-            }
+            });
         }
 
         public void RemoveScriptToRun(Script script)
         {
-            lock (_scriptsToRun)
+            RunOnMainThread(() =>
             {
                 if (_scriptsToRun.Remove(script))
                     IssuePendingSurveysNotificationAsync(false, false);
-            }
+            });
         }
 
         public void RemoveScriptsToRun(ScriptRunner runner)
         {
-            lock (_scriptsToRun)
+            RunOnMainThread(() =>
             {
                 bool removed = false;
 
@@ -843,12 +853,12 @@ namespace SensusService
 
                 if (removed)
                     IssuePendingSurveysNotificationAsync(false, false);
-            }
+            });
         }
 
         public void RemoveOldScripts(bool issueNotification)
         {
-            lock (_scriptsToRun)
+            RunOnMainThread(() =>
             {
                 bool removed = false;
 
@@ -858,7 +868,7 @@ namespace SensusService
 
                 if (removed && issueNotification)
                     IssuePendingSurveysNotificationAsync(false, false);
-            }
+            });
         }
 
         public void IssuePendingSurveysNotificationAsync(bool playSound, bool vibrate)
@@ -1224,7 +1234,7 @@ namespace SensusService
                         {
                             BringToForeground();
 
-                            Device.BeginInvokeOnMainThread(async () =>
+                            RunOnMainThread(async () =>
                             {
                                 // catch any exceptions from preparing and displaying the prompts page
                                 try
@@ -1403,7 +1413,7 @@ namespace SensusService
 
         public void GetPositionsFromMapAsync(Xamarin.Forms.Maps.Position address, string newPinName, Action<List<Xamarin.Forms.Maps.Position>> callback)
         {
-            Device.BeginInvokeOnMainThread(async () =>
+            RunOnMainThread(async () =>
             {
                 if (await ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
                     FlashNotificationAsync("Geolocation is not permitted on this device. Cannot display map.");
@@ -1423,7 +1433,7 @@ namespace SensusService
 
         public void GetPositionsFromMapAsync(string address, string newPinName, Action<List<Xamarin.Forms.Maps.Position>> callback)
         {
-            Device.BeginInvokeOnMainThread(async () =>
+            RunOnMainThread(async () =>
             {
                 if (await ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
                     FlashNotificationAsync("Geolocation is not permitted on this device. Cannot display map.");
@@ -1511,61 +1521,61 @@ namespace SensusService
         public Task<PermissionStatus> ObtainPermissionAsync(Permission permission)
         {
             return Task.Run(async () =>
+            {
+                string rationale = null;
+                if (permission == Permission.Camera)
+                    rationale = "Sensus uses the camera to scan participation barcodes. Sensus will not record images or video.";
+                else if (permission == Permission.Location)
+                    rationale = "Sensus uses GPS to collect location information for studies you have enrolled in.";
+                else if (permission == Permission.Microphone)
+                    rationale = "Sensus uses the microphone to collect sound level information for studies you have enrolled in. Sensus will not record audio.";
+                else if (permission == Permission.Phone)
+                    rationale = "Sensus monitors telephone call metadata for studies you have enrolled in. Sensus will not record audio from calls.";
+                else if (permission == Permission.Sensors)
+                    rationale = "Sensus uses movement sensors to collect various types of information for studies you have enrolled in.";
+                else if (permission == Permission.Storage)
+                    rationale = "Sensus must be able to write to your device's storage for proper operation. Please grant this permission.";
+
+                if (await CrossPermissions.Current.CheckPermissionStatusAsync(permission) == PermissionStatus.Granted)
+                    return PermissionStatus.Granted;
+                else
                 {
-                    string rationale = null;
-                    if (permission == Permission.Camera)
-                        rationale = "Sensus uses the camera to scan participation barcodes. Sensus will not record images or video.";
-                    else if (permission == Permission.Location)
-                        rationale = "Sensus uses GPS to collect location information for studies you have enrolled in.";
-                    else if (permission == Permission.Microphone)
-                        rationale = "Sensus uses the microphone to collect sound level information for studies you have enrolled in. Sensus will not record audio.";
-                    else if (permission == Permission.Phone)
-                        rationale = "Sensus monitors telephone call metadata for studies you have enrolled in. Sensus will not record audio from calls.";
-                    else if (permission == Permission.Sensors)
-                        rationale = "Sensus uses movement sensors to collect various types of information for studies you have enrolled in.";
-                    else if (permission == Permission.Storage)
-                        rationale = "Sensus must be able to write to your device's storage for proper operation. Please grant this permission.";
+                    // the Permissions plugin requires a main activity to be present on android. ensure this below.
+                    BringToForeground();
 
-                    if (await CrossPermissions.Current.CheckPermissionStatusAsync(permission) == PermissionStatus.Granted)
-                        return PermissionStatus.Granted;
-                    else
+                    // display rationale for request to the user if needed
+                    if (rationale != null && await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(permission))
                     {
-                        // the Permissions plugin requires a main activity to be present on android. ensure this below.
-                        BringToForeground();
+                        ManualResetEvent rationaleDialogWait = new ManualResetEvent(false);
 
-                        // display rationale for request to the user if needed
-                        if (rationale != null && await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(permission))
+                        RunOnMainThread(async () =>
                         {
-                            ManualResetEvent rationaleDialogWait = new ManualResetEvent(false);
+                            await (Application.Current as App).MainPage.DisplayAlert("Permission Request", "On the next screen, Sensus will request access to your device's " + permission.ToString().ToUpper() + ". " + rationale, "OK");
+                            rationaleDialogWait.Set();
+                        });
 
-                            Device.BeginInvokeOnMainThread(async () =>
-                                {
-                                    await (Application.Current as App).MainPage.DisplayAlert("Permission Request", "On the next screen, Sensus will request access to your device's " + permission.ToString().ToUpper() + ". " + rationale, "OK");
-                                    rationaleDialogWait.Set();
-                                });
-
-                            rationaleDialogWait.WaitOne();
-                        }
-
-                        // request permission from the user
-                        PermissionStatus status = PermissionStatus.Unknown;
-                        try
-                        {
-                            Dictionary<Permission, PermissionStatus> permissionStatus = await CrossPermissions.Current.RequestPermissionsAsync(new Permission[] { permission });
-
-                            // it's happened that the returned dictionary doesn't contain an entry for the requested permission, so check for that(https://insights.xamarin.com/app/Sensus-Production/issues/903).a
-                            if (!permissionStatus.TryGetValue(permission, out status))
-                                throw new Exception("Permission status not returned for request:  " + permission);
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.Log("Failed to obtain permission:  " + ex.Message, LoggingLevel.Normal, GetType());
-                            status = PermissionStatus.Unknown;
-                        }
-
-                        return status;
+                        rationaleDialogWait.WaitOne();
                     }
-                });
+
+                    // request permission from the user
+                    PermissionStatus status = PermissionStatus.Unknown;
+                    try
+                    {
+                        Dictionary<Permission, PermissionStatus> permissionStatus = await CrossPermissions.Current.RequestPermissionsAsync(new Permission[] { permission });
+
+                        // it's happened that the returned dictionary doesn't contain an entry for the requested permission, so check for that(https://insights.xamarin.com/app/Sensus-Production/issues/903).a
+                        if (!permissionStatus.TryGetValue(permission, out status))
+                            throw new Exception("Permission status not returned for request:  " + permission);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Log("Failed to obtain permission:  " + ex.Message, LoggingLevel.Normal, GetType());
+                        status = PermissionStatus.Unknown;
+                    }
+
+                    return status;
+                }
+            });
         }
 
         /// <summary>

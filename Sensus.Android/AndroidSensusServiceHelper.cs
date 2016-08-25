@@ -655,6 +655,21 @@ namespace Sensus.Android
             return enabled;
         }
 
+        protected override void RunOnMainThreadNative(Action action)
+        {
+            // sensus does not always have an activity, so use the handler on the service to run 
+            // things on the UI thread.
+            ManualResetEvent runWait = new ManualResetEvent(false);
+
+            _service.MainThreadHandler.Post(() =>
+            {
+                action();
+                runWait.Set();
+            });
+
+            runWait.WaitOne();
+        }
+
         #endregion
 
         #region callback scheduling

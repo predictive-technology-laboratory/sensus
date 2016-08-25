@@ -30,6 +30,7 @@ using Plugin.CurrentActivity;
 using Android.Widget;
 using Plugin.Permissions;
 using System.Linq;
+using ZXing.Mobile;
 
 [assembly: MetaData("com.facebook.sdk.ApplicationId", Value = "@string/app_id")]
 [assembly: UsesPermission(Microsoft.Band.BandClientManager.BindBandService)]
@@ -87,6 +88,8 @@ namespace Sensus.Android
             _app = new App();
             LoadApplication(_app);
 
+            MobileBarcodeScanner.Initialize(Application);
+
             _serviceConnection = new AndroidSensusServiceConnection();
 
             _serviceConnection.ServiceConnected += (o, e) =>
@@ -104,7 +107,7 @@ namespace Sensus.Android
                 {
                     try
                     {
-                        e.Binder.SensusServiceHelper.BarcodeScanner = new ZXing.Mobile.MobileBarcodeScanner();
+                        e.Binder.SensusServiceHelper.BarcodeScanner = new MobileBarcodeScanner();
                     }
                     catch (Exception ex)
                     {
@@ -173,10 +176,7 @@ namespace Sensus.Android
                 SensusServiceHelper.Get().ClearPendingSurveysNotificationAsync();
 
                 // now that the service connection has been established, dismiss the wait dialog and show protocols.
-                Device.BeginInvokeOnMainThread(() =>
-                {
-                    serviceBindWaitDialog.Dismiss();
-                });
+                SensusServiceHelper.Get().RunOnMainThread(serviceBindWaitDialog.Dismiss);
 
             }).Start();
         }
@@ -318,7 +318,7 @@ namespace Sensus.Android
                     }
                     catch (Exception ex)
                     {
-                        Device.BeginInvokeOnMainThread(() =>
+                        SensusServiceHelper.Get().RunOnMainThread(() =>
                         {
                             new AlertDialog.Builder(this).SetTitle("Failed to get protocol").SetMessage(ex.Message).Show();
                         });
