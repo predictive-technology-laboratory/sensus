@@ -110,20 +110,25 @@ namespace SensusService.Probes.User.Scripts
 
         public Script Copy()
         {
-            // don't copy the runner
-            ScriptRunner runner = _runner;
-            _runner = null;
+            // multiple threads can call into copy, and we're going to temporarily set _runner = null below. without a lock
+            // we have a race condition where a second caller could set runner = _runner (null).
+            lock (this)
+            {
+                // don't copy the runner object. we want the copy to share the same runner reference.
+                ScriptRunner runner = _runner;
+                _runner = null;
 
-            Script copy = JsonConvert.DeserializeObject<Script>(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
+                Script copy = JsonConvert.DeserializeObject<Script>(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
 
-            // a new GUID is set within the constructor, but it is immediately overwritten with the old id by the JSON deserializer. since the
-            // script id is what ties all of the script datum objects together, set a new unique script id here.
-            copy.Id = Guid.NewGuid().ToString();
+                // a new GUID is set within the constructor, but it is immediately overwritten with the old id by the JSON deserializer. since the
+                // script id is what ties all of the script datum objects together, set a new unique script id here.
+                copy.Id = Guid.NewGuid().ToString();
 
-            // set the runner within the current and copied scripts
-            _runner = copy.Runner = runner;
+                // set the runner within the current and copied scripts
+                _runner = copy.Runner = runner;
 
-            return copy;
+                return copy;
+            }
         }
     }
 }

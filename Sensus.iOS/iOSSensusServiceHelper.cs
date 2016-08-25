@@ -137,10 +137,10 @@ namespace Sensus.iOS
 
         private void ScheduleCallbackAsync(string callbackId, int delayMS, bool repeating, int repeatDelayMS, bool repeatLag)
         {
-            Device.BeginInvokeOnMainThread(() =>
-            {
-                string userNotificationMessage = GetCallbackUserNotificationMessage(callbackId);
+            string userNotificationMessage = GetCallbackUserNotificationMessage(callbackId);
 
+            RunOnMainThread(() =>
+            {
                 UILocalNotification notification = new UILocalNotification
                 {
                     FireDate = DateTime.UtcNow.AddMilliseconds((double)delayMS).ToNSDate(),
@@ -206,7 +206,7 @@ namespace Sensus.iOS
             // schedule new callback at the specified time.
             repeatCallbackTime =>
             {
-                Device.BeginInvokeOnMainThread(() =>
+                RunOnMainThread(() =>
                 {
                     callbackNotification.FireDate = repeatCallbackTime.ToUniversalTime().ToNSDate();
 
@@ -224,7 +224,7 @@ namespace Sensus.iOS
             // notification has been serviced, so end background task
             () =>
             {
-                Device.BeginInvokeOnMainThread(() =>
+                RunOnMainThread(() =>
                 {
                     UIApplication.SharedApplication.EndBackgroundTask(callbackTaskId);
                 });
@@ -247,7 +247,7 @@ namespace Sensus.iOS
 
         public void UpdateCallbackNotificationActivationIdsAsync()
         {
-            Device.BeginInvokeOnMainThread(() =>
+            RunOnMainThread(() =>
             {
                 // this method will be called in one of three conditions:  (1) after sensus has been started and is running, (2)
                 // after sensus has been reactivated and was already running, and (3) after a start attempt was made but failed.
@@ -308,7 +308,7 @@ namespace Sensus.iOS
 
         public override void ShareFileAsync(string path, string subject, string mimeType)
         {
-            Device.BeginInvokeOnMainThread(() =>
+            RunOnMainThread(() =>
             {
                 if (MFMailComposeViewController.CanSendMail)
                 {
@@ -319,13 +319,13 @@ namespace Sensus.iOS
                     UIApplication.SharedApplication.KeyWindow.RootViewController.PresentViewController(mailer, true, null);
                 }
                 else
-                    SensusServiceHelper.Get().FlashNotificationAsync("You do not have any mail accounts configured. Please configure one before attempting to send emails from Sensus.");
+                    FlashNotificationAsync("You do not have any mail accounts configured. Please configure one before attempting to send emails from Sensus.");
             });
         }
 
         public override void SendEmailAsync(string toAddress, string subject, string message)
         {
-            Device.BeginInvokeOnMainThread(() =>
+            RunOnMainThread(() =>
             {
                 if (MFMailComposeViewController.CanSendMail)
                 {
@@ -337,7 +337,7 @@ namespace Sensus.iOS
                     UIApplication.SharedApplication.KeyWindow.RootViewController.PresentViewController(mailer, true, null);
                 }
                 else
-                    SensusServiceHelper.Get().FlashNotificationAsync("You do not have any mail accounts configured. Please configure one before attempting to send emails from Sensus.");
+                    FlashNotificationAsync("You do not have any mail accounts configured. Please configure one before attempting to send emails from Sensus.");
             });
         }
 
@@ -367,7 +367,7 @@ namespace Sensus.iOS
                 string input = null;
                 ManualResetEvent dialogDismissWait = new ManualResetEvent(false);
 
-                Device.BeginInvokeOnMainThread(() =>
+                RunOnMainThread(() =>
                 {
                     ManualResetEvent dialogShowWait = new ManualResetEvent(false);
 
@@ -417,7 +417,7 @@ namespace Sensus.iOS
 
         public override void IssueNotificationAsync(string message, string id, bool playSound, bool vibrate)
         {
-            Action IssueNotification = () =>
+            RunOnMainThread(() =>
             {
                 // cancel any existing notifications with the given id
                 lock (_nonCallbackNotifications)
@@ -454,12 +454,7 @@ namespace Sensus.iOS
 
                     UIApplication.SharedApplication.ScheduleLocalNotification(notification);
                 }
-            };
-
-            if (IsOnMainThread)
-                IssueNotification();
-            else
-                Device.BeginInvokeOnMainThread(IssueNotification);
+            });
         }
 
         /// <summary>
@@ -474,7 +469,7 @@ namespace Sensus.iOS
         private void CancelLocalNotification(UILocalNotification notification, string notificationIdKey)
         {
             // set up action to cancel notification
-            Action CancelNotification = () =>
+            RunOnMainThread(() =>
             {
                 try
                 {
@@ -507,29 +502,12 @@ namespace Sensus.iOS
                 {
                     SensusException.Report("Failed to cancel notification.", ex, false);
                 }
-            };
-
-            // if we're already on the main thread, cancel directly
-            if (IsOnMainThread)
-                CancelNotification();
-            else
-            {
-                // run the cancellation on the main thread and wait for it to complete (the current method is synchronous).
-                ManualResetEvent cancelWait = new ManualResetEvent(false);
-
-                Device.BeginInvokeOnMainThread(() =>
-                {
-                    CancelNotification();
-                    cancelWait.Set();
-                });
-
-                cancelWait.WaitOne();
-            }
+            });
         }
 
         protected override void ProtectedFlashNotificationAsync(string message, bool flashLaterIfNotVisible, TimeSpan duration, Action callback)
         {
-            Device.BeginInvokeOnMainThread(() =>
+            RunOnMainThread(() =>
             {
                 DependencyService.Get<IToastNotificator>().Notify(ToastNotificationType.Info, "", message + Environment.NewLine, duration);
 
@@ -571,7 +549,8 @@ namespace Sensus.iOS
             bool enabled = false;
             ManualResetEvent enableWait = new ManualResetEvent(false);
 
-            Device.BeginInvokeOnMainThread(() =>
+            // the base class will ensure that we're not on the main thread, making the following wait okay.
+            RunOnMainThread(() =>
             {
                 try
                 {
@@ -602,6 +581,19 @@ namespace Sensus.iOS
                 Logger.Log("Timed out while waiting for user to enable Bluetooth.", LoggingLevel.Normal, GetType());
 
             return enabled;
+        }
+
+        protected override void RunOnMainThreadNative(Action action)
+        {
+            ManualResetEvent runWait = new ManualResetEvent(false);
+
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                action();
+                runWait.Set();
+            });
+
+            runWait.WaitOne();
         }
 
         #region methods not implemented in ios

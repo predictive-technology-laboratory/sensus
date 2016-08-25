@@ -166,14 +166,13 @@ namespace Sensus.iOS
         {
             if (notification.UserInfo != null)
             {
+                iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
+
                 NSNumber isCallbackValue = notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_KEY)) as NSNumber;
                 if (isCallbackValue != null)
                 {
                     if (isCallbackValue.BoolValue)
-                    {
-                        iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
                         serviceHelper.ServiceCallbackNotificationAsync(notification);
-                    }
                 }
                 else
                 {
@@ -185,7 +184,7 @@ namespace Sensus.iOS
                         if (notificationId != null && notificationId.ToString() == SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID)
                         {
                             // display the pending scripts page if it is not already on the top of the navigation stack
-                            Device.BeginInvokeOnMainThread(async () =>
+                            serviceHelper.RunOnMainThread(async () =>
                             {
                                 IReadOnlyList<Page> navigationStack = Xamarin.Forms.Application.Current.MainPage.Navigation.NavigationStack;
                                 Page topPage = navigationStack.Count == 0 ? null : navigationStack.Last();

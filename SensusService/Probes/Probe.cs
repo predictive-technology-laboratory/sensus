@@ -20,7 +20,6 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using Syncfusion.SfChart.XForms;
-using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
 namespace SensusService.Probes
@@ -32,25 +31,17 @@ namespace SensusService.Probes
     {
         #region static members
 
-        public static void GetAllAsync(Action<List<Probe>> callback)
+        public static List<Probe> GetAll()
         {
-            new Thread(() =>
+            List<Probe> probes = null;
+
+            // the reflection stuff we do below (at least on android) needs to be run on the main thread.
+            SensusServiceHelper.Get().RunOnMainThread(() =>
             {
-                List<Probe> probes = null;
-                ManualResetEvent probesWait = new ManualResetEvent(false);
+                probes = Assembly.GetExecutingAssembly().GetTypes().Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(Probe))).Select(t => Activator.CreateInstance(t) as Probe).OrderBy(p => p.DisplayName).ToList();
+            });
 
-                // the reflection stuff we do below (at least on android) needs to be run on the main thread.
-                Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
-                {
-                    probes = Assembly.GetExecutingAssembly().GetTypes().Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(Probe))).Select(t => Activator.CreateInstance(t) as Probe).OrderBy(p => p.DisplayName).ToList();
-                    probesWait.Set();
-                });
-
-                probesWait.WaitOne();
-
-                callback(probes);
-
-            }).Start();
+            return probes;
         }
 
         #endregion

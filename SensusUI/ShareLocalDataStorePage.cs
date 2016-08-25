@@ -45,7 +45,7 @@ namespace SensusUI
             {
                 Orientation = StackOrientation.Vertical,
                 VerticalOptions = LayoutOptions.FillAndExpand
-            };            
+            };
 
             Label statusLabel = new Label
             {
@@ -69,78 +69,78 @@ namespace SensusUI
                 FontSize = 20,
                 HorizontalOptions = LayoutOptions.FillAndExpand
             };
-                        
+
             cancelButton.Clicked += async (o, e) =>
             {
                 await Navigation.PopAsync();
             };
 
             contentLayout.Children.Add(cancelButton);
-                                      
+
             new Thread(() =>
-                {         
-                    string sharePath = null;
-                    bool errorWritingShareFile = false;
+            {
+                string sharePath = null;
+                bool errorWritingShareFile = false;
+                try
+                {
+                    sharePath = SensusServiceHelper.Get().GetSharePath(".zip");
+
+                    int numDataWritten = localDataStore.WriteDataToZipFile(sharePath, _cancellationTokenSource.Token, (message, progress) =>
+                    {
+                        SensusServiceHelper.Get().RunOnMainThread(async () =>
+                        {
+                            uint duration = 250;
+
+                            if (message != null)
+                            {
+                                statusLabel.Text = message;
+                                duration = 0;
+                            }
+
+                            await progressBar.ProgressTo(progress, duration, Easing.Linear);
+                        });
+                    });
+
+                    if (numDataWritten == 0)
+                        throw new Exception("No data to share.");
+                }
+                catch (Exception ex)
+                {
+                    errorWritingShareFile = true;
+                    string message = "Error sharing data:  " + ex.Message;
+                    SensusServiceHelper.Get().FlashNotificationAsync(message);
+                    SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+                }
+
+                if (_cancellationTokenSource.IsCancellationRequested || errorWritingShareFile)
+                {
+                    // always delete the file on cancel / error
                     try
-                    {     
-                        sharePath = SensusServiceHelper.Get().GetSharePath(".zip");
-
-                        int numDataWritten = localDataStore.WriteDataToZipFile(sharePath, _cancellationTokenSource.Token, (message, progress) =>
-                            {
-                                Device.BeginInvokeOnMainThread(async () =>
-                                    {
-                                        uint duration = 250;
-
-                                        if (message != null)
-                                        {
-                                            statusLabel.Text = message;
-                                            duration = 0;
-                                        }
-                                        
-                                        await progressBar.ProgressTo(progress, duration, Easing.Linear);
-                                    });
-                            });    
-
-                        if (numDataWritten == 0)
-                            throw new Exception("No data to share.");
-                    }
-                    catch (Exception ex)
                     {
-                        errorWritingShareFile = true;
-                        string message = "Error sharing data:  " + ex.Message;
-                        SensusServiceHelper.Get().FlashNotificationAsync(message);
-                        SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+                        if (File.Exists(sharePath))
+                            File.Delete(sharePath);
                     }
-
-                    if (_cancellationTokenSource.IsCancellationRequested || errorWritingShareFile)
+                    catch (Exception)
                     {
-                        // always delete the file on cancel / error
-                        try
-                        {
-                            if (File.Exists(sharePath))
-                                File.Delete(sharePath);
-                        }
-                        catch (Exception)
-                        {
-                        }
-
-                        // if the window has already been popped then the token will have been cancelled. pop the window if needed.
-                        if (!_cancellationTokenSource.IsCancellationRequested)
-                            Device.BeginInvokeOnMainThread(async () => await Navigation.PopAsync());
                     }
-                    else
+
+                    // if the window has already been popped then the token will have been cancelled. pop the window if needed.
+                    if (!_cancellationTokenSource.IsCancellationRequested)
+                        SensusServiceHelper.Get().RunOnMainThread(async () => await Navigation.PopAsync());
+                }
+                else
+                {
+                    SensusServiceHelper.Get().RunOnMainThread(async () =>
                     {
-                        Device.BeginInvokeOnMainThread(async () =>
-                            {
-                                await Navigation.PopAsync();
-                                SensusServiceHelper.Get().ShareFileAsync(sharePath, "Sensus Data:  " + localDataStore.Protocol.Name, "application/zip");
-                            });
-                    }
+                        await Navigation.PopAsync();
+                        SensusServiceHelper.Get().ShareFileAsync(sharePath, "Sensus Data:  " + localDataStore.Protocol.Name, "application/zip");
+                    });
+                }
 
-                }).Start();
+            }).Start();
 
             Content = new ScrollView
-            { 
+            {
                 Content = contentLayout
             };
         }

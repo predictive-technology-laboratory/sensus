@@ -56,20 +56,14 @@ namespace SensusService
         public const int GPS_DEFAULT_MIN_TIME_DELAY_MS = 5000;
         public const int GPS_DEFAULT_MIN_DISTANCE_DELAY_METERS = 50;
 
-        public static void CreateAsync(string name, Action<Protocol> callback)
+        public static void Create(string name)
         {
-            Probe.GetAllAsync(probes =>
-                {
-                    Protocol protocol = new Protocol(name);
+            Protocol protocol = new Protocol(name);
 
-                    foreach (Probe probe in probes)
-                        protocol.AddProbe(probe);
+            foreach (Probe probe in Probe.GetAll())
+                protocol.AddProbe(probe);
 
-                    SensusServiceHelper.Get().RegisterProtocol(protocol);
-
-                    if (callback != null)
-                        callback(protocol);
-                });
+            SensusServiceHelper.Get().RegisterProtocol(protocol);
         }
 
         public static void DeserializeAsync(Uri webURI, Action<Protocol> callback)
@@ -167,22 +161,16 @@ namespace SensusService
                                 #endregion
 
                                 #region add any probes for the current platform that didn't come through when deserializing. for example, android has a listening WLAN probe, but iOS has a polling WLAN probe. neither will come through on the other platform when deserializing, since the types are not defined.
-                                ManualResetEvent probeSetupWait = new ManualResetEvent(false);
-                                Probe.GetAllAsync(probes =>
+                                List<Type> deserializedProbeTypes = protocol.Probes.Select(p => p.GetType()).ToList();
+
+                                foreach (Probe probe in Probe.GetAll())
+                                {
+                                    if (!deserializedProbeTypes.Contains(probe.GetType()))
                                     {
-                                        List<Type> deserializedProbeTypes = protocol.Probes.Select(p => p.GetType()).ToList();
-
-                                        foreach (Probe probe in probes)
-                                            if (!deserializedProbeTypes.Contains(probe.GetType()))
-                                            {
-                                                SensusServiceHelper.Get().Logger.Log("Adding missing probe to protocol:  " + probe.GetType().FullName, LoggingLevel.Normal, typeof(Protocol));
-                                                protocol.AddProbe(probe);
-                                            }
-
-                                        probeSetupWait.Set();
-                                    });
-
-                                probeSetupWait.WaitOne();
+                                        SensusServiceHelper.Get().Logger.Log("Adding missing probe to protocol:  " + probe.GetType().FullName, LoggingLevel.Normal, typeof(Protocol));
+                                        protocol.AddProbe(probe);
+                                    }
+                                }
                                 #endregion
 
                                 // when doing cross-platform conversions, there may be triggers that reference probes that aren't available on the
@@ -250,7 +238,7 @@ namespace SensusService
                     // always deserialize protocols on the main thread (e.g., since a looper is required for android). also, disable
                     // flash notifications so we don't get any messages that result from properties being set within the protocol.
                     SensusServiceHelper.Get().FlashNotificationsEnabled = false;
-                    Device.BeginInvokeOnMainThread(() =>
+                    SensusServiceHelper.Get().RunOnMainThread(() =>
                     {
                         try
                         {
@@ -300,7 +288,7 @@ namespace SensusService
                     SensusServiceHelper.Get().FlashNotificationAsync("You are already participating in \"" + protocol.Name + "\".");
                 else
                 {
-                    Device.BeginInvokeOnMainThread(async () =>
+                    SensusServiceHelper.Get().RunOnMainThread(async () =>
                     {
                         ProtocolsPage protocolsPage = null;
 
@@ -319,7 +307,7 @@ namespace SensusService
                         protocol.StartWithUserAgreementAsync("You just opened \"" + protocol.Name + "\" within Sensus.", () =>
                         {
                             // rebind to pick up any color changes
-                            Device.BeginInvokeOnMainThread(protocolsPage.Bind);
+                            SensusServiceHelper.Get().RunOnMainThread(protocolsPage.Bind);
                         });
                     });
                 }

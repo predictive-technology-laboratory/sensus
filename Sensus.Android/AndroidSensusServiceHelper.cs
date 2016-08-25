@@ -157,16 +157,28 @@ namespace Sensus.Android
             if (_service == null)
             {
                 if (_connectivityManager != null)
+                {
                     _connectivityManager.Dispose();
+                    _connectivityManager = null;
+                }
 
                 if (_notificationManager != null)
+                {
                     _notificationManager.Dispose();
+                    _notificationManager = null;
+                }
 
                 if (_textToSpeech != null)
+                {
                     _textToSpeech.Dispose();
+                    _textToSpeech = null;
+                }
 
                 if (_wakeLock != null)
+                {
                     _wakeLock.Dispose();
+                    _wakeLock = null;
+                }
             }
             else
             {
@@ -283,43 +295,45 @@ namespace Sensus.Android
         public override void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
         {
             new Thread(() =>
+            {
+                try
                 {
-                    try
-                    {
-                        Intent intent = new Intent(Intent.ActionGetContent);
-                        intent.SetType("*/*");
-                        intent.AddCategory(Intent.CategoryOpenable);
+                    Intent intent = new Intent(Intent.ActionGetContent);
+                    intent.SetType("*/*");
+                    intent.AddCategory(Intent.CategoryOpenable);
 
-                        RunActionUsingMainActivityAsync(mainActivity =>
+                    RunActionUsingMainActivityAsync(mainActivity =>
+                    {
+                        mainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.PromptForFile, result =>
+                        {
+                            if (result != null && result.Item1 == Result.Ok)
                             {
-                                mainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.PromptForFile, result =>
+                                try
+                                {
+                                    using (StreamReader file = new StreamReader(_service.ContentResolver.OpenInputStream(result.Item2.Data)))
                                     {
-                                        if (result != null && result.Item1 == Result.Ok)
-                                            try
-                                            {
-                                                using (StreamReader file = new StreamReader(_service.ContentResolver.OpenInputStream(result.Item2.Data)))
-                                                {
-                                                    callback(file.ReadToEnd());
-                                                }
-                                            }
-                                            catch (Exception ex)
-                                            {
-                                                FlashNotificationAsync("Error reading text file:  " + ex.Message);
-                                            }
-                                    });
+                                        callback(file.ReadToEnd());
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    FlashNotificationAsync("Error reading text file:  " + ex.Message);
+                                }
+                            }
+                        });
 
-                            }, true, false);
-                    }
-                    catch (ActivityNotFoundException)
-                    {
-                        FlashNotificationAsync("Please install a file manager from the Apps store.");
-                    }
-                    catch (Exception ex)
-                    {
-                        FlashNotificationAsync("Something went wrong while prompting you for a file to read:  " + ex.Message);
-                    }
+                    }, true, false);
+                }
+                catch (ActivityNotFoundException)
+                {
+                    FlashNotificationAsync("Please install a file manager from the Apps store.");
+                }
+                catch (Exception ex)
+                {
+                    FlashNotificationAsync("Something went wrong while prompting you for a file to read:  " + ex.Message);
+                }
 
-                }).Start();
+            }).Start();
         }
 
         public override void ShareFileAsync(string path, string subject, string mimeType)
@@ -357,16 +371,16 @@ namespace Sensus.Android
         public override void SendEmailAsync(string toAddress, string subject, string message)
         {
             RunActionUsingMainActivityAsync(mainActivity =>
-                {
-                    Intent emailIntent = new Intent(Intent.ActionSend);
-                    emailIntent.PutExtra(Intent.ExtraEmail, new string[] { toAddress });
-                    emailIntent.PutExtra(Intent.ExtraSubject, subject);
-                    emailIntent.PutExtra(Intent.ExtraText, message);
-                    emailIntent.SetType("text/plain");
+            {
+                Intent emailIntent = new Intent(Intent.ActionSend);
+                emailIntent.PutExtra(Intent.ExtraEmail, new string[] { toAddress });
+                emailIntent.PutExtra(Intent.ExtraSubject, subject);
+                emailIntent.PutExtra(Intent.ExtraText, message);
+                emailIntent.SetType("text/plain");
 
-                    mainActivity.StartActivity(emailIntent);
+                mainActivity.StartActivity(emailIntent);
 
-                }, true, false);
+            }, true, false);
         }
 
         public override void TextToSpeechAsync(string text, Action callback)
@@ -639,6 +653,24 @@ namespace Sensus.Android
                 _userDeniedBluetoothEnable = false;
 
             return enabled;
+        }
+
+        protected override void RunOnMainThreadNative(Action action)
+        {
+            // we'll deadlock below if we're currently on the main thread.
+            AssertNotOnMainThread("Run on main thread.");
+
+            // sensus does not always have an activity, so use the handler on the service to run 
+            // things on the UI thread.
+            ManualResetEvent runWait = new ManualResetEvent(false);
+
+            _service.MainThreadHandler.Post(() =>
+            {
+                action();
+                runWait.Set();
+            });
+
+            runWait.WaitOne();
         }
 
         #endregion
