@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" package="edu.virginia.sie.ptl.sensus" android:versionName="10.0.0-beta-2" android:versionCode="67">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" package="edu.virginia.sie.ptl.sensus" android:versionName="10.0.0-beta-3" android:versionCode="68">
 	<uses-sdk android:minSdkVersion="18" android:targetSdkVersion="23" />
 	<application android:label="Sensus" android:icon="@drawable/ic_launcher">
 		<provider android:name="android.support.v4.content.FileProvider" android:authorities="edu.virginia.sie.ptl.sensus.fileprovider" android:grantUriPermissions="true" android:exported="false">
