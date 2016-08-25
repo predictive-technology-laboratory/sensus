@@ -87,7 +87,7 @@
     </IpaPackageName>
     <DefineConstants>RELEASE</DefineConstants>
     <MtouchUseRefCounting>true</MtouchUseRefCounting>
-    <CodesignProvision>Automatic:AppStore</CodesignProvision>
+    <CodesignProvision></CodesignProvision>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>1701</NoWarn>
     <CustomCommands>
