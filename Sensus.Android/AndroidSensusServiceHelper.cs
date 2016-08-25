@@ -657,6 +657,9 @@ namespace Sensus.Android
 
         protected override void RunOnMainThreadNative(Action action)
         {
+            // we'll deadlock below if we're currently on the main thread.
+            AssertNotOnMainThread("Run on main thread.");
+
             // sensus does not always have an activity, so use the handler on the service to run 
             // things on the UI thread.
             ManualResetEvent runWait = new ManualResetEvent(false);

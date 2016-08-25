@@ -329,6 +329,9 @@ namespace SensusService
         private MobileBarcodeScanner _barcodeScanner;
         private ZXing.Mobile.BarcodeWriter _barcodeWriter;
         private bool _flashNotificationsEnabled;
+
+        // we use the following observable collection in ListViews within Sensus. this is not thread-safe,
+        // so any write operations involving this collection should be performed on the UI thread.
         private ObservableCollection<Script> _scriptsToRun;
 
         private readonly object _shareFileLocker = new object();
