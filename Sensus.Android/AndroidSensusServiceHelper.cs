@@ -608,7 +608,7 @@ namespace Sensus.Android
                     enableWait.Set();
                 else
                 {
-                    // bring up sensus
+                    // bring up sensus so we can request bluetooth enable
                     RunActionUsingMainActivityAsync(mainActivity =>
                     {
                         mainActivity.RunOnUiThread(async () =>
@@ -629,7 +629,6 @@ namespace Sensus.Android
 
                                     enableWait.Set();
                                 });
-
                             }
                             catch (Exception ex)
                             {
