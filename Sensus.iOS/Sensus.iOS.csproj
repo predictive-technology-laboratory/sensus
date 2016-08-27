@@ -119,34 +119,6 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>1701</NoWarn>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
-    <Optimize>true</Optimize>
-    <OutputPath>bin\iPhone\AppStore</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
-    <MtouchArch>ARMv7, ARM64</MtouchArch>
-    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
-    <CodesignKey>iPhone Distribution</CodesignKey>
-    <MtouchUseRefCounting>true</MtouchUseRefCounting>
-    <CodesignProvision>Automatic:AppStore</CodesignProvision>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <NoWarn>1701</NoWarn>
-    <DefineConstants>RELEASE</DefineConstants>
-    <CustomCommands>
-      <CustomCommands>
-        <Command>
-          <type>BeforeBuild</type>
-          <command>./Scripts/ios-appstore-build-check.sh</command>
-          <workingdir>${SolutionDir}</workingdir>
-          <externalConsole>True</externalConsole>
-          <pauseExternalConsole>True</pauseExternalConsole>
-        </Command>
-      </CustomCommands>
-    </CustomCommands>
-    <IpaPackageName>
-    </IpaPackageName>
-  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'LocalUnitTesting|iPhone' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
