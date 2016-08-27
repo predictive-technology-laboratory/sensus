@@ -38,6 +38,8 @@ sensus.sync.from.aws.s3 = function(s3.path, profile = "default", local.path = te
   
   if(decompress)
   {
+    print("Decompressing files...")
+    
     gz.paths = list.files(local.path, recursive = TRUE, full.names = TRUE, include.dirs = FALSE, pattern = "*.gz")
   
     for(gz.path in gz.paths)
