@@ -48,6 +48,7 @@ ipaPath="../../Sensus.iOS/bin/iPhone/Ad-Hoc/SensusiOS-$1.ipa"
 # upload IPA
 echo "Uploading to Diawi..."
 curl -v https://upload.diawi.com -F "file=@$ipaPath" -F token="$4" -F callback_email="$5"
+echo
 if [ $? -ne 0 ]; then
     echo "Error uploading iOS ad-hoc release to Diawi."
     exit $?;
