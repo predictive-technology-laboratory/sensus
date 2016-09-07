@@ -49,7 +49,6 @@ namespace SensusUI
 
             surveysButton.Clicked += async (sender, e) =>
             {
-                await System.Threading.Tasks.Task.Run(() => SensusService.SensusServiceHelper.Get().DisableBluetooth(true, true, "asdf"));
                 await Navigation.PushAsync(new PendingScriptsPage());
             };
 

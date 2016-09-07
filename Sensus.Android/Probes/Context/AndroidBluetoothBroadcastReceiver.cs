@@ -17,12 +17,11 @@ using Android.Bluetooth;
 using Android.Content;
 using SensusService.Probes.Context;
 using System;
-using System.Threading;
 
 namespace Sensus.Android.Probes.Context
 {
     [BroadcastReceiver]
-    [IntentFilter(new string[] { BluetoothDevice.ActionFound, BluetoothAdapter.ActionConnectionStateChanged }, Categories = new string[] { Intent.CategoryDefault })]
+    [IntentFilter(new string[] { BluetoothDevice.ActionFound, BluetoothAdapter.ActionStateChanged }, Categories = new string[] { Intent.CategoryDefault })]
     public class AndroidBluetoothBroadcastReceiver : BroadcastReceiver
     {
         public static event EventHandler<BluetoothDeviceProximityDatum> DEVICE_FOUND;
@@ -37,9 +36,9 @@ namespace Sensus.Android.Probes.Context
                     BluetoothDevice device = intent.GetParcelableExtra(BluetoothDevice.ExtraDevice) as BluetoothDevice;
                     DEVICE_FOUND(this, new BluetoothDeviceProximityDatum(DateTimeOffset.UtcNow, device.Name, device.Address));
                 }
-                else if (intent.Action == BluetoothAdapter.ActionConnectionStateChanged && STATE_CHANGED != null)
+                else if (intent.Action == BluetoothAdapter.ActionStateChanged && STATE_CHANGED != null)
                 {
-                    int stateInt = intent.GetIntExtra(BluetoothAdapter.ExtraConnectionState, -1);
+                    int stateInt = intent.GetIntExtra(BluetoothAdapter.ExtraState, -1);
                     if (stateInt != -1)
                         STATE_CHANGED(this, (State)stateInt);
                 }

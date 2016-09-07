@@ -41,6 +41,7 @@ namespace SensusService
         private static string HEALTH_TEST_CALLBACK_ID;
         private const int HEALTH_TEST_DELAY_MS = 60000;
         private static readonly object HEALTH_TEST_LOCKER = new object();
+        private static bool REENABLE_BLUETOOTH_IF_NEEDED = true;
 
         private static List<MicrosoftBandProbeBase> BandProbesThatShouldBeRunning
         {
@@ -211,10 +212,31 @@ namespace SensusService
                 try
                 {
                     ConnectClient();
+
+                    // we've successfully connected. if we fail at some point in the future, allow the system to reenable bluetooth.
+                    REENABLE_BLUETOOTH_IF_NEEDED = true;
                 }
                 catch (Exception ex)
                 {
                     SensusServiceHelper.Get().Logger.Log("Band client failed to connect:  " + ex.Message, LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
+
+                    // we failed to connect. try reenabling bluetooth if we haven't already tried.
+                    if (REENABLE_BLUETOOTH_IF_NEEDED)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Reenabling Bluetooth...", LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
+                        try
+                        {
+                            SensusServiceHelper.Get().DisableBluetooth(true, true, "Sensus uses Bluetooth to collect data from your Microsoft Band, which is being used in one of your studies.");
+                        }
+                        catch (Exception reenableException)
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Failed to reenable Bluetooth:  " + reenableException.Message, LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
+                        }
+                        finally
+                        {
+                            REENABLE_BLUETOOTH_IF_NEEDED = false;
+                        }
+                    }
                 }
 
                 // it's possible that the device was re-paired, resulting in the client being connected but the

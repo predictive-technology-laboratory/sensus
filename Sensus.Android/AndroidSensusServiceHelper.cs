@@ -679,27 +679,29 @@ namespace Sensus.Android
 
                 try
                 {
-                    RunOnMainThread(() => bluetoothAdapter.Disable());
+                    if (!bluetoothAdapter.Disable())
+                        disableWait.Set();
                 }
                 catch (Exception)
                 {
                     disableWait.Set();
                 }
 
-                disableWait.WaitOne(10000);
+                disableWait.WaitOne(5000);
 
                 if (reenable)
                 {
                     try
                     {
-                        RunOnMainThread(() => bluetoothAdapter.Enable());
+                        if (!bluetoothAdapter.Enable())
+                            enableWait.Set();
                     }
                     catch (Exception)
                     {
                         enableWait.Set();
                     }
 
-                    enableWait.WaitOne(10000);
+                    enableWait.WaitOne(5000);
                 }
 
                 AndroidBluetoothBroadcastReceiver.STATE_CHANGED -= StateChangedHandler;
@@ -707,6 +709,7 @@ namespace Sensus.Android
 
             bool isEnabled = bluetoothAdapter?.IsEnabled ?? false;
 
+            // dispatch an intent to reenable bluetooth, which will require user interaction
             if (reenable && !isEnabled)
                 return EnableBluetooth(lowEnergy, rationale);
             else

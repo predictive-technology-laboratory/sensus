@@ -276,9 +276,6 @@
     <Reference Include="Syncfusion.SfChart.XForms.iOS">
       <HintPath>..\dependencies\Syncfusion\14.2.0.26\Xamarin\lib\ios-unified\Syncfusion.SfChart.XForms.iOS.dll</HintPath>
     </Reference>
-    <Reference Include="ZipArchive">
-      <HintPath>..\Components\ZipArchive-1.4.0.1\lib\ios-unified\ZipArchive.dll</HintPath>
-    </Reference>
     <Reference Include="AWSSDK.Core">
       <HintPath>..\packages\AWSSDK.Core.3.1.10.0\lib\Xamarin.iOS10\AWSSDK.Core.dll</HintPath>
     </Reference>
@@ -338,6 +335,9 @@
     </Reference>
     <Reference Include="Calabash">
       <HintPath>..\packages\Xamarin.TestCloud.Agent.0.19.2\lib\Xamarin.iOS10\Calabash.dll</HintPath>
+    </Reference>
+    <Reference Include="ZipArchive">
+      <HintPath>..\Components\ZipArchive-1.4.0.1\lib\ios-unified\ZipArchive.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
