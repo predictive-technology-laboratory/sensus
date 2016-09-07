@@ -32,17 +32,15 @@ using Newtonsoft.Json;
 using CoreBluetooth;
 using SensusService.Exceptions;
 using System.Linq;
+using CoreFoundation;
 
 namespace Sensus.iOS
 {
     public class iOSSensusServiceHelper : SensusServiceHelper
     {
         #region static members
-
-        public const string SENSUS_CALLBACK_REPEAT_DELAY = "SENSUS-CALLBACK-REPEAT-DELAY";
-        public const string SENSUS_CALLBACK_ACTIVATION_ID = "SENSUS-CALLBACK-ACTIVATION-ID";
+        public const string SENSUS_CALLBACK_ACTIVATION_ID_KEY = "SENSUS-CALLBACK-ACTIVATION-ID";
         private const int BLUETOOTH_ENABLE_TIMEOUT_MS = 10000;
-
         #endregion
 
         private Dictionary<string, UILocalNotification> _callbackIdNotification;
@@ -137,7 +135,9 @@ namespace Sensus.iOS
 
         private void ScheduleCallbackAsync(string callbackId, int delayMS, bool repeating, int repeatDelayMS, bool repeatLag)
         {
+            // the following lines need to precede the run on main thread to avoid deadlocks
             string userNotificationMessage = GetCallbackUserNotificationMessage(callbackId);
+            string notificationId = GetCallbackNotificationId(callbackId);
 
             RunOnMainThread(() =>
             {
@@ -146,7 +146,7 @@ namespace Sensus.iOS
                     FireDate = DateTime.UtcNow.AddMilliseconds((double)delayMS).ToNSDate(),
                     TimeZone = null,  // null for UTC interpretation of FireDate
                     AlertBody = userNotificationMessage,
-                    UserInfo = GetNotificationUserInfoDictionary(callbackId, repeating, repeatDelayMS, repeatLag)
+                    UserInfo = GetNotificationUserInfoDictionary(callbackId, repeating, repeatDelayMS, repeatLag, notificationId)
                 };
 
                 // user info can be null if we don't have an activation ID. don't schedule the notification if this happens.
@@ -172,7 +172,7 @@ namespace Sensus.iOS
             // cancel notification (removing it from the tray), since it has served its purpose
             CancelLocalNotification(callbackNotification, SENSUS_CALLBACK_ID_KEY);
 
-            string activationId = (callbackNotification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ACTIVATION_ID)) as NSString).ToString();
+            string activationId = (callbackNotification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ACTIVATION_ID_KEY)) as NSString).ToString();
             string callbackId = (callbackNotification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ID_KEY)) as NSString).ToString();
 
             // only raise callback if it's from the current activation and if it is scheduled
@@ -197,7 +197,7 @@ namespace Sensus.iOS
             });
 
             bool repeating = (callbackNotification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber).BoolValue;
-            int repeatDelayMS = (callbackNotification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_DELAY)) as NSNumber).Int32Value;
+            int repeatDelayMS = (callbackNotification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_DELAY_KEY)) as NSNumber).Int32Value;
             bool repeatLag = (callbackNotification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_LAG_KEY)) as NSNumber).BoolValue;
 
             // raise callback but don't notify user since we would have already done so when the UILocalNotification was delivered to the notification tray.
@@ -265,14 +265,15 @@ namespace Sensus.iOS
                         if (notification.UserInfo != null)
                         {
                             // get activation ID and check for condition (2) above
-                            string activationId = (notification.UserInfo.ValueForKey(new NSString(iOSSensusServiceHelper.SENSUS_CALLBACK_ACTIVATION_ID)) as NSString).ToString();
+                            string activationId = (notification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ACTIVATION_ID_KEY)) as NSString).ToString();
                             if (activationId != _activationId)
                             {
                                 // reset the UserInfo to include the current activation ID
-                                bool repeating = (notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber).BoolValue;
-                                int repeatDelayMS = (notification.UserInfo.ValueForKey(new NSString(iOSSensusServiceHelper.SENSUS_CALLBACK_REPEAT_DELAY)) as NSNumber).Int32Value;
+                                bool repeating = (notification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber).BoolValue;
+                                int repeatDelayMS = (notification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_DELAY_KEY)) as NSNumber).Int32Value;
                                 bool repeatLag = (notification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_LAG_KEY)) as NSNumber).BoolValue;
-                                notification.UserInfo = GetNotificationUserInfoDictionary(callbackId, repeating, repeatDelayMS, repeatLag);
+                                string notificationId = (notification.UserInfo.ValueForKey(new NSString(NOTIFICATION_ID_KEY)) as NSString)?.ToString();
+                                notification.UserInfo = GetNotificationUserInfoDictionary(callbackId, repeating, repeatDelayMS, repeatLag, notificationId);
 
                                 // since we set the UILocalNotification's FireDate when it was constructed, if it's currently in the past it will fire immediately when scheduled again with the new activation ID.
                                 if (notification.UserInfo != null)
@@ -284,7 +285,7 @@ namespace Sensus.iOS
             });
         }
 
-        public NSDictionary GetNotificationUserInfoDictionary(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag)
+        public NSDictionary GetNotificationUserInfoDictionary(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, string notificationId)
         {
             // we've seen cases where the UserInfo dictionary cannot be serialized because one of its values is null. check all nullable types
             // and return null if found.  if this happens, the UILocalNotification will never be serviced, and things won't return to normal
@@ -295,13 +296,21 @@ namespace Sensus.iOS
             if (callbackId == null || _activationId == null)
                 return null;
 
-            return new NSDictionary(
-                SENSUS_CALLBACK_KEY, true,
+            List<object> keyValuePairs = new object[]
+            {
                 SENSUS_CALLBACK_ID_KEY, callbackId,
                 SENSUS_CALLBACK_REPEATING_KEY, repeating,
-                SENSUS_CALLBACK_REPEAT_DELAY, repeatDelayMS,
+                SENSUS_CALLBACK_REPEAT_DELAY_KEY, repeatDelayMS,
                 SENSUS_CALLBACK_REPEAT_LAG_KEY, repeatLag,
-                SENSUS_CALLBACK_ACTIVATION_ID, _activationId);
+                SENSUS_CALLBACK_ACTIVATION_ID_KEY, _activationId
+
+            }.ToList();
+
+            // add the notification id if there is one
+            if (notificationId != null)
+                keyValuePairs.AddRange(new object[] { NOTIFICATION_ID_KEY, notificationId });
+
+            return new NSDictionary(SENSUS_CALLBACK_KEY, true, keyValuePairs.ToArray());
         }
 
         #endregion
@@ -549,12 +558,11 @@ namespace Sensus.iOS
             bool enabled = false;
             ManualResetEvent enableWait = new ManualResetEvent(false);
 
-            // the base class will ensure that we're not on the main thread, making the following wait okay.
             RunOnMainThread(() =>
             {
                 try
                 {
-                    CBCentralManager manager = new CBCentralManager(CoreFoundation.DispatchQueue.CurrentQueue);
+                    CBCentralManager manager = new CBCentralManager(DispatchQueue.CurrentQueue);
                     manager.UpdatedState += (sender, e) =>
                     {
                         if (manager.State == CBCentralManagerState.PoweredOn)
@@ -577,6 +585,7 @@ namespace Sensus.iOS
                 }
             });
 
+            // the base class will ensure that we're not on the main thread, making the following wait okay.
             if (!enableWait.WaitOne(BLUETOOTH_ENABLE_TIMEOUT_MS))
                 Logger.Log("Timed out while waiting for user to enable Bluetooth.", LoggingLevel.Normal, GetType());
 
@@ -589,8 +598,14 @@ namespace Sensus.iOS
 
             Device.BeginInvokeOnMainThread(() =>
             {
-                action();
-                runWait.Set();
+                try
+                {
+                    action();
+                }
+                finally
+                {
+                    runWait.Set();
+                }
             });
 
             runWait.WaitOne();

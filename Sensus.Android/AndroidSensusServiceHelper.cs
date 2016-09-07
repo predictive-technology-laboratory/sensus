@@ -36,6 +36,7 @@ using ZXing.Mobile;
 using Android.Graphics;
 using Android.Media;
 using Android.Bluetooth;
+using Sensus.Android.Probes.Context;
 
 namespace Sensus.Android
 {
@@ -592,7 +593,7 @@ namespace Sensus.Android
             // ensure that the device has the required feature
             if (!_service.PackageManager.HasSystemFeature(lowEnergy ? PackageManager.FeatureBluetoothLe : PackageManager.FeatureBluetooth))
             {
-                FlashNotificationAsync("This device does not have the Bluetooth " + (lowEnergy ? "Low Energy" : "") + " feature.", true);
+                FlashNotificationAsync("This device does not have Bluetooth " + (lowEnergy ? "Low Energy" : "") + ".", true);
                 return enabled;
             }
 
@@ -654,6 +655,68 @@ namespace Sensus.Android
             return enabled;
         }
 
+        public override bool DisableBluetooth(bool reenable, bool lowEnergy = true, string rationale = null)
+        {
+            base.DisableBluetooth(reenable, lowEnergy, rationale);
+
+            // check whether bluetooth is enabled
+            BluetoothManager bluetoothManager = _service.GetSystemService(Context.BluetoothService) as BluetoothManager;
+            BluetoothAdapter bluetoothAdapter = bluetoothManager.Adapter;
+            if (bluetoothAdapter != null && bluetoothAdapter.IsEnabled)
+            {
+                ManualResetEvent disableWait = new ManualResetEvent(false);
+                ManualResetEvent enableWait = new ManualResetEvent(false);
+
+                EventHandler<global::Android.Bluetooth.State> StateChangedHandler = (sender, newState) =>
+                {
+                    if (newState == global::Android.Bluetooth.State.Off)
+                        disableWait.Set();
+                    else if (newState == global::Android.Bluetooth.State.On)
+                        enableWait.Set();
+                };
+
+                AndroidBluetoothBroadcastReceiver.STATE_CHANGED += StateChangedHandler;
+
+                try
+                {
+                    RunOnMainThread(() => bluetoothAdapter.Disable());
+                }
+                catch (Exception)
+                {
+                    disableWait.Set();
+                }
+
+                disableWait.WaitOne(10000);
+
+                if (reenable)
+                {
+                    try
+                    {
+                        RunOnMainThread(() => bluetoothAdapter.Enable());
+                    }
+                    catch (Exception)
+                    {
+                        enableWait.Set();
+                    }
+
+                    enableWait.WaitOne(10000);
+                }
+
+                AndroidBluetoothBroadcastReceiver.STATE_CHANGED -= StateChangedHandler;
+            }
+
+            bool isEnabled = bluetoothAdapter?.IsEnabled ?? false;
+
+            if (reenable && !isEnabled)
+                return EnableBluetooth(lowEnergy, rationale);
+            else
+                return isEnabled;
+        }
+
+        /// <summary>
+        /// Runs an action on the main thread. Should not be called directly. See SensusServiceHelper.RunOnMainThread.
+        /// </summary>
+        /// <param name="action">Action.</param>
         protected override void RunOnMainThreadNative(Action action)
         {
             // we'll deadlock below if we're currently on the main thread.
@@ -665,8 +728,14 @@ namespace Sensus.Android
 
             _service.MainThreadHandler.Post(() =>
             {
-                action();
-                runWait.Set();
+                try
+                {
+                    action();
+                }
+                finally
+                {
+                    runWait.Set();
+                }
             });
 
             runWait.WaitOne();
@@ -698,6 +767,11 @@ namespace Sensus.Android
             callbackIntent.PutExtra(SENSUS_CALLBACK_REPEATING_KEY, repeating);
             callbackIntent.PutExtra(SENSUS_CALLBACK_REPEAT_DELAY_KEY, repeatDelayMS);
             callbackIntent.PutExtra(SENSUS_CALLBACK_REPEAT_LAG_KEY, repeatLag);
+
+            // add the notification id if there is one
+            string notificationId = GetCallbackNotificationId(callbackId);
+            if (notificationId != null)
+                callbackIntent.PutExtra(NOTIFICATION_ID_KEY, notificationId);
 
             return CreateCallbackPendingIntent(callbackIntent);
         }

@@ -58,6 +58,12 @@ namespace SensusService.Probes.User.Scripts
             get { return _inputGroups; }
         }
 
+        /// <summary>
+        /// Time at which the script was run. On Android this happens in the background at the scheduled/triggered
+        /// time. On iOS this is the triggering time (for trigger-based scripts), and the time that the 
+        /// UILocalNotification appears in the notifications tray (for scheduled scripts).
+        /// </summary>
+        /// <value>The run timestamp.</value>
         public DateTimeOffset? RunTimestamp
         {
             get { return _runTimestamp; }

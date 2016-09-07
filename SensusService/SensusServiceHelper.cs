@@ -668,6 +668,19 @@ namespace SensusService
             }
         }
 
+        public virtual bool DisableBluetooth(bool reenable, bool lowEnergy, string rationale)
+        {
+            try
+            {
+                AssertNotOnMainThread(GetType() + " DisableBluetooth");
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         protected abstract void RunOnMainThreadNative(Action action);
 
         #endregion
@@ -866,7 +879,7 @@ namespace SensusService
                 bool removed = false;
 
                 foreach (Script script in _scriptsToRun.ToList())
-                    if (script.Age.TotalMinutes >= script.Runner.MaximumAgeMinutes && _scriptsToRun.Remove(script))
+                    if (script.Runner.MaximumAgeMinutes.HasValue && script.Age.TotalMinutes >= script.Runner.MaximumAgeMinutes && _scriptsToRun.Remove(script))
                         removed = true;
 
                 if (removed && issueNotification)
@@ -941,6 +954,17 @@ namespace SensusService
             {
                 if (_idCallback.ContainsKey(callbackId))
                     return _idCallback[callbackId].UserNotificationMessage;
+                else
+                    return null;
+            }
+        }
+
+        public string GetCallbackNotificationId(string callbackId)
+        {
+            lock (_idCallback)
+            {
+                if (_idCallback.ContainsKey(callbackId))
+                    return _idCallback[callbackId].NotificationId;
                 else
                     return null;
             }
@@ -1602,11 +1626,11 @@ namespace SensusService
             ManualResetEvent wait = new ManualResetEvent(false);
 
             new Thread(async () =>
-                {
-                    status = await ObtainPermissionAsync(permission);
-                    wait.Set();
+            {
+                status = await ObtainPermissionAsync(permission);
+                wait.Set();
 
-                }).Start();
+            }).Start();
 
             wait.WaitOne();
 

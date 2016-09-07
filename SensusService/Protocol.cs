@@ -1296,13 +1296,13 @@ namespace SensusService
         public void DeleteAsync(Action callback = null)
         {
             new Thread(() =>
-                {
-                    Delete();
+            {
+                Delete();
 
-                    if (callback != null)
-                        callback();
+                if (callback != null)
+                    callback();
 
-                }).Start();
+            }).Start();
         }
 
         public void Delete()

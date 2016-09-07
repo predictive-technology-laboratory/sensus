@@ -75,18 +75,24 @@ namespace SensusService
         public bool Running { get; set; }
 
         /// <summary>
+        /// ID to set on system-level notification bundle.
+        /// </summary>
+        public string NotificationId { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="SensusService.SensusServiceHelper+ScheduledCallback"/> class.
         /// </summary>
         /// <param name="action">Action.</param>
         /// <param name="name">Name.</param>
         /// <param name="callbackTimeout">Callback timeout.</param> 
         /// <param name="userNotificationMessage">User notification message.</param>
-        public ScheduledCallback(ActionDelegate action, string name, TimeSpan? callbackTimeout = null, string userNotificationMessage = null)
+        public ScheduledCallback(ActionDelegate action, string name, TimeSpan? callbackTimeout = null, string userNotificationMessage = null, string notificationId = null)
         {
             Action = action;
             Name = name;
             CallbackTimeout = callbackTimeout;
             UserNotificationMessage = userNotificationMessage;
+            NotificationId = notificationId;
             Running = false;
         }
     }

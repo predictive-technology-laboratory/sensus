@@ -34,7 +34,7 @@ namespace SensusService.Probes.User.Scripts
         private bool _allowCancel;
         private ObservableCollection<Trigger> _triggers;
         private Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>> _triggerHandler;
-        private float _maximumAgeMinutes;
+        private float? _maximumAgeMinutes;
         private List<Tuple<DateTime, DateTime>> _randomTriggerWindows;
         private string _randomTriggerCallbackId;
         private Random _random;
@@ -120,7 +120,7 @@ namespace SensusService.Probes.User.Scripts
         }
 
         [EntryFloatUiProperty("Maximum Age (Mins.):", true, 7)]
-        public float MaximumAgeMinutes
+        public float? MaximumAgeMinutes
         {
             get { return _maximumAgeMinutes; }
             set { _maximumAgeMinutes = value; }
@@ -173,14 +173,14 @@ namespace SensusService.Probes.User.Scripts
 
                 // sort windows by increasing hour and minute of the window start (day, month, and year are irrelevant)
                 _randomTriggerWindows.Sort((window1, window2) =>
-                    {
-                        int hourComparison = window1.Item1.Hour.CompareTo(window2.Item1.Hour);
+                {
+                    int hourComparison = window1.Item1.Hour.CompareTo(window2.Item1.Hour);
 
-                        if (hourComparison != 0)
-                            return hourComparison;
-                        else
-                            return window1.Item1.Minute.CompareTo(window2.Item1.Minute);
-                    });
+                    if (hourComparison != 0)
+                        return hourComparison;
+                    else
+                        return window1.Item1.Minute.CompareTo(window2.Item1.Minute);
+                });
 
                 if (_probe != null && _probe.Running && _enabled && _randomTriggerWindows.Count > 0)  // probe can be null during deserialization if this property is set first
                     StartRandomTriggerCallbacksAsync();
@@ -278,7 +278,7 @@ namespace SensusService.Probes.User.Scripts
             _allowCancel = true;
             _triggers = new ObservableCollection<Trigger>();
             _triggerHandler = new Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>>();
-            _maximumAgeMinutes = 10;
+            _maximumAgeMinutes = null;
             _randomTriggerWindows = new List<Tuple<DateTime, DateTime>>();
             _randomTriggerCallbackId = null;
             _random = new Random();
@@ -405,16 +405,6 @@ namespace SensusService.Probes.User.Scripts
 
                 SensusServiceHelper.Get().Logger.Log("Starting random script trigger callbacks.", LoggingLevel.Normal, GetType());
 
-#if __IOS__
-                string userNotificationMessage = "Please open to provide input.";
-#elif __ANDROID__
-                string userNotificationMessage = null;
-#elif WINDOWS_PHONE
-                string userNotificationMessage = null; // TODO:  Should we use a message?
-#else
-#error "Unrecognized platform."
-#endif
-
                 // find next future trigger window, ignoring month, day, and year of windows. the windows are already sorted.
                 DateTime triggerWindowStart = default(DateTime);
                 DateTime triggerWindowEnd = default(DateTime);
@@ -451,14 +441,33 @@ namespace SensusService.Probes.User.Scripts
                         // also, when the script prompts display let the caller know that it's okay for the device to sleep.
                         if (_probe.Running && _enabled)
                         {
-                            Run(_script.Copy());
+                            Script script = _script.Copy();
+                            script.RunTimestamp = triggerTime.ToUniversalTime();
+                            Run(script);
 
                             // establish the next random trigger callback
                             StartRandomTriggerCallbacks();
                         }
                     });
 
-                }, "Trigger Randomly", null, userNotificationMessage);
+                }, "Trigger Randomly");
+
+#if __IOS__
+                // we won't have a way to update the "X Pending Surveys" notification on ios. the best we can do is
+                // display a new notification describing the survey and showing its expiration time (if there is one).
+                string userNotificationMessage = "Please open to take survey.";
+                if (_maximumAgeMinutes.HasValue)
+                {
+                    DateTime expirationTime = triggerTime.AddMinutes(_maximumAgeMinutes.Value);
+                    userNotificationMessage += " Expires on " + expirationTime.ToShortDateString() + " at " + expirationTime.ToShortTimeString() + ".";
+                }
+
+                callback.UserNotificationMessage = userNotificationMessage;
+
+                // on ios we need a separate indicator that the surveys page should be displayed when the user opens
+                // the notification. this is achieved by setting the notification ID to the pending survey notification ID.
+                callback.NotificationId = SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID;
+#endif
 
                 _randomTriggerCallbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(callback, triggerDelayMS);
             }
@@ -484,6 +493,15 @@ namespace SensusService.Probes.User.Scripts
         /// <param name="currentDatum">Current datum.</param>
         private void Run(Script script, Datum previousDatum = null, Datum currentDatum = null)
         {
+            SensusServiceHelper.Get().Logger.Log("Running \"" + _name + "\".", LoggingLevel.Normal, GetType());
+
+            // on android, scripts are always run as scheduled (even in the background), so we just set the run timestamp
+            // here. on ios, trigger-based scripts are run on demand (even in the background), so we can also set the 
+            // timestamp here. schedule-based scripts have their run timestamp set to the UILocalNotification fire time, and
+            // this is done prior to calling the current method. so we shouldn't reset the run timestamp here.
+            if (script.RunTimestamp == null)
+                script.RunTimestamp = DateTimeOffset.UtcNow;
+
             lock (_runTimes)
             {
                 // do not run a one-shot script if it has already been run
@@ -493,14 +511,11 @@ namespace SensusService.Probes.User.Scripts
                     return;
                 }
 
-                // track participation by noting all times that the script was first run.
+                // track participation by recording the current time. use this instead of the script's run timestamp, since
+                // the latter is the time of notification on ios rather than the time that the user actually viewed the script.
                 _runTimes.Add(DateTime.Now);
                 _runTimes.RemoveAll(r => r < _probe.Protocol.ParticipationHorizon);
             }
-
-            SensusServiceHelper.Get().Logger.Log("Running \"" + _name + "\".", LoggingLevel.Normal, GetType());
-
-            DateTimeOffset runTime = DateTimeOffset.UtcNow;
 
             // submit a separate datum indicating each time the script was run.
             Task.Run(async () =>
@@ -529,7 +544,7 @@ namespace SensusService.Probes.User.Scripts
                     }
                 }
 
-                await _probe.StoreDatumAsync(new ScriptRunDatum(runTime, _script.Id, _name, script.Id, script.CurrentDatum?.Id, latitude, longitude, locationTimestamp), default(CancellationToken));
+                await _probe.StoreDatumAsync(new ScriptRunDatum(script.RunTimestamp.Value, _script.Id, _name, script.Id, script.CurrentDatum?.Id, latitude, longitude, locationTimestamp), default(CancellationToken));
             });
 
             // this method can be called with previous / current datum values (e.g., when the script is first triggered). it 
@@ -541,8 +556,6 @@ namespace SensusService.Probes.User.Scripts
 
             if (currentDatum != null)
                 script.CurrentDatum = currentDatum;
-
-            script.RunTimestamp = runTime;
 
             SensusServiceHelper.Get().AddScriptToRun(script, _runMode);
         }
