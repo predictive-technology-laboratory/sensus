@@ -410,7 +410,12 @@
   <Import Project="..\packages\Xamarin.Insights.1.12.3\build\MonoAndroid10\Xamarin.Insights.targets" Condition="Exists('..\packages\Xamarin.Insights.1.12.3\build\MonoAndroid10\Xamarin.Insights.targets')" />
   <Import Project="..\packages\Xamarin.Android.Support.Vector.Drawable.23.3.0\build\Xamarin.Android.Support.Vector.Drawable.targets" Condition="Exists('..\packages\Xamarin.Android.Support.Vector.Drawable.23.3.0\build\Xamarin.Android.Support.Vector.Drawable.targets')" />
   <Import Project="..\packages\Xamarin.Forms.2.3.1.114\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.2.3.1.114\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Sensus.Tools\Sensus.Tools.csproj">
+      <Project>{7cff68ae-2b49-4650-a30c-939f7ebd33d7}</Project>
+      <Name>Sensus.Tools</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="..\SensusUI\Icons\minus.png">
       <Link>Resources\drawable\minus.png</Link>
