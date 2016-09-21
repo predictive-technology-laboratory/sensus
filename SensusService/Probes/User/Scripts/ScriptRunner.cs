@@ -38,7 +38,7 @@ namespace SensusService.Probes.User.Scripts
         private Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>> _triggerHandler;
         private float? _maximumAgeMinutes;
         private List<Tuple<DateTime, DateTime, DateTime?>> _triggerWindows;     // first two items are start/end of window. last item is date of last run
-        private ConcurrentDictionary<string, Tuple<DateTime, DateTime>> _triggerWindowCallbacks;
+        private Dictionary<string, Tuple<DateTime, DateTime>> _triggerWindowCallbacks;
         private Random _random;
         private List<DateTime> _runTimes;
         private List<DateTime> _completionTimes;
@@ -192,7 +192,7 @@ namespace SensusService.Probes.User.Scripts
             }
         }
 
-        public ConcurrentDictionary<string, Tuple<DateTime, DateTime>> TriggerWindowCallbacks
+        public Dictionary<string, Tuple<DateTime, DateTime>> TriggerWindowCallbacks
         {
             get { return _triggerWindowCallbacks; }
         }
@@ -295,7 +295,7 @@ namespace SensusService.Probes.User.Scripts
             _triggerHandler = new Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>>();
             _maximumAgeMinutes = null;
             _triggerWindows = new List<Tuple<DateTime, DateTime, DateTime?>>();
-            _triggerWindowCallbacks = new ConcurrentDictionary<string, Tuple<DateTime, DateTime>>();
+            _triggerWindowCallbacks = new Dictionary<string, Tuple<DateTime, DateTime>>();
             _random = new Random();
             _runTimes = new List<DateTime>();
             _completionTimes = new List<DateTime>();
@@ -435,8 +435,10 @@ namespace SensusService.Probes.User.Scripts
             callback.NotificationId = SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID;
 #endif
 
-            if (!_triggerWindowCallbacks.TryAdd(SensusServiceHelper.Get().ScheduleOneTimeCallback(callback, ((int)((triggerWindowStart.AddSeconds(_random.NextDouble() * (triggerWindowEnd - triggerWindowStart).TotalSeconds)) - DateTime.Now).TotalMilliseconds)), new Tuple<DateTime, DateTime>(triggerWindowStart, triggerWindowEnd)))
-                SensusServiceHelper.Get().Logger.Log("Unable to schedule random trigger window callback: " + triggerWindowStart + " - " + triggerWindowEnd + ".", LoggingLevel.Normal, GetType());
+            lock (_triggerWindowCallbacks) {
+                _triggerWindowCallbacks.Add(SensusServiceHelper.Get().ScheduleOneTimeCallback(callback, ((int)((triggerWindowStart.AddSeconds(_random.NextDouble() * (triggerWindowEnd - triggerWindowStart).TotalSeconds)) - DateTime.Now).TotalMilliseconds)), new Tuple<DateTime, DateTime>(triggerWindowStart, triggerWindowEnd));
+            }
+                //SensusServiceHelper.Get().Logger.Log("Unable to schedule random trigger window callback: " + triggerWindowStart + " - " + triggerWindowEnd + ".", LoggingLevel.Normal, GetType());
         }
 
         private Task RunUponCallback(string callbackId, Tuple<DateTime, DateTime, DateTime?> triggerWindow)
@@ -613,7 +615,10 @@ namespace SensusService.Probes.User.Scripts
 
         public void Reset()
         {
-            _triggerWindowCallbacks.Clear();
+            lock (_triggerWindowCallbacks)
+            {
+                _triggerWindowCallbacks.Clear();
+            }
             _runTimes.Clear();
             _completionTimes.Clear();
         }
@@ -636,13 +641,17 @@ namespace SensusService.Probes.User.Scripts
         private void StopTriggerCallbacks()
         {
             String logMessage = "Stopping random trigger callbacks.";
-            if (!_triggerWindowCallbacks.IsEmpty)
+            if (_triggerWindowCallbacks.Any())
             {
-                foreach (var triggerCallbackId in _triggerWindowCallbacks.Keys)
+                lock (_triggerWindowCallbacks)
                 {
-                    SensusServiceHelper.Get().UnscheduleCallback(triggerCallbackId);
+                    foreach (var triggerCallbackId in _triggerWindowCallbacks.Keys)
+                    {
+                        SensusServiceHelper.Get().UnscheduleCallback(triggerCallbackId);
+                    }
+
+                    _triggerWindowCallbacks.Clear();
                 }
-                _triggerWindowCallbacks.Clear();
             }
             else
             {

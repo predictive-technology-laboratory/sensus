@@ -14,8 +14,8 @@
 
 using System;
 using System.Linq;
-using System.Collections.Generic;
 using Newtonsoft.Json.Serialization;
+using System.Collections.Concurrent;
 
 namespace SensusService
 {
@@ -23,7 +23,7 @@ namespace SensusService
     {
         protected override JsonContract CreateContract(Type objectType)
         {
-            if (objectType.GetInterfaces().Any(i => i == typeof(IDictionary<,>) || (i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDictionary<,>))))
+            if (objectType.IsGenericType && objectType.GetGenericTypeDefinition() == typeof(ConcurrentDictionary<,>))
             {
                 return CreateArrayContract(objectType);
             }

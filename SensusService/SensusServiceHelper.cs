@@ -1675,8 +1675,6 @@ namespace SensusService
             var specificTime = script.Runner.TriggerWindowCallbacks.Any() && script.Runner.TriggerWindowCallbacks.ContainsKey(script.CallbackId) && script.Runner.TriggerWindowCallbacks[script.CallbackId].Item1 == script.Runner.TriggerWindowCallbacks[script.CallbackId].Item2;
 
             return pastMaxAge || (script.Runner.InvalidateScriptWhenWindowEnds && windowEnded && !specificTime);
-
-            return false;
         }
         #endregion
     }
