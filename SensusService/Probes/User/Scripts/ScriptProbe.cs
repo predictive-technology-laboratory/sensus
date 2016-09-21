@@ -70,9 +70,9 @@ namespace SensusService.Probes.User.Scripts
                         if (scriptRunner.RunOnStart)
                             collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + scriptRunner.Name + ":  Once when the study is started.");
 
-                        if (scriptRunner.RandomTriggerWindows != "")
+                        if (scriptRunner.TriggerWindows != "")
                         {
-                            string windows = scriptRunner.RandomTriggerWindows;
+                            string windows = scriptRunner.TriggerWindows;
                             string collectionDescriptionPrefix = "Randomly during hours ";
                             int commaCount = windows.Count(c => c == ',');
                             if (commaCount == 0)

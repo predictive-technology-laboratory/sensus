@@ -22,6 +22,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Plugin.Geolocator.Abstractions;
 using SensusService.Probes.Location;
+using System.Collections.Concurrent;
+using Newtonsoft.Json;
 
 namespace SensusService.Probes.User.Scripts
 {
@@ -35,8 +37,8 @@ namespace SensusService.Probes.User.Scripts
         private ObservableCollection<Trigger> _triggers;
         private Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>> _triggerHandler;
         private float? _maximumAgeMinutes;
-        private List<Tuple<DateTime, DateTime>> _randomTriggerWindows;
-        private string _randomTriggerCallbackId;
+        private List<Tuple<DateTime, DateTime, DateTime?>> _triggerWindows;     // first two items are start/end of window. last item is date of last run
+        private ConcurrentDictionary<string, Tuple<DateTime, DateTime>> _triggerWindowCallbacks;
         private Random _random;
         private List<DateTime> _runTimes;
         private List<DateTime> _completionTimes;
@@ -44,6 +46,7 @@ namespace SensusService.Probes.User.Scripts
         private bool _runOnStart;
         private bool _displayProgress;
         private RunMode _runMode;
+        private bool _invalidateScriptWhenWindowEnds;
 
         private readonly object _locker = new object();
 
@@ -127,14 +130,14 @@ namespace SensusService.Probes.User.Scripts
         }
 
         [EntryStringUiProperty("Random Windows:", true, 8)]
-        public string RandomTriggerWindows
+        public string TriggerWindows
         {
             get
             {
-                if (_randomTriggerWindows.Count == 0)
+                if (_triggerWindows.Count == 0)
                     return "";
                 else
-                    return string.Concat(_randomTriggerWindows.Select((window, index) => (index == 0 ? "" : ", ") +
+                    return string.Concat(_triggerWindows.Select((window, index) => (index == 0 ? "" : ", ") +
                             (
                                 window.Item1 == window.Item2 ? window.Item1.Hour + ":" + window.Item1.Minute.ToString().PadLeft(2, '0') :
                                 window.Item1.Hour + ":" + window.Item1.Minute.ToString().PadLeft(2, '0') + "-" + window.Item2.Hour + ":" + window.Item2.Minute.ToString().PadLeft(2, '0')
@@ -142,10 +145,10 @@ namespace SensusService.Probes.User.Scripts
             }
             set
             {
-                if (value == RandomTriggerWindows)
+                if (value == TriggerWindows)
                     return;
 
-                _randomTriggerWindows.Clear();
+                _triggerWindows.Clear();
 
                 try
                 {
@@ -164,7 +167,7 @@ namespace SensusService.Probes.User.Scripts
                                 throw new Exception();
                         }
 
-                        _randomTriggerWindows.Add(new Tuple<DateTime, DateTime>(start, end));
+                        _triggerWindows.Add(new Tuple<DateTime, DateTime, DateTime?>(start, end, null));
                     }
                 }
                 catch (Exception)
@@ -172,7 +175,7 @@ namespace SensusService.Probes.User.Scripts
                 }
 
                 // sort windows by increasing hour and minute of the window start (day, month, and year are irrelevant)
-                _randomTriggerWindows.Sort((window1, window2) =>
+                _triggerWindows.Sort((window1, window2) =>
                 {
                     int hourComparison = window1.Item1.Hour.CompareTo(window2.Item1.Hour);
 
@@ -182,11 +185,16 @@ namespace SensusService.Probes.User.Scripts
                         return window1.Item1.Minute.CompareTo(window2.Item1.Minute);
                 });
 
-                if (_probe != null && _probe.Running && _enabled && _randomTriggerWindows.Count > 0)  // probe can be null during deserialization if this property is set first
-                    StartRandomTriggerCallbacksAsync();
+                if (_probe != null && _probe.Running && _enabled && _triggerWindows.Count > 0)  // probe can be null during deserialization if this property is set first
+                    StartTriggerCallbacksAsync();
                 else if (SensusServiceHelper.Get() != null)  // service helper can be null when deserializing
                     StopRandomTriggerCallbackAsync();
             }
+        }
+
+        public ConcurrentDictionary<string, Tuple<DateTime, DateTime>> TriggerWindowCallbacks
+        {
+            get { return _triggerWindowCallbacks; }
         }
 
         public List<DateTime> RunTimes
@@ -279,8 +287,8 @@ namespace SensusService.Probes.User.Scripts
             _triggers = new ObservableCollection<Trigger>();
             _triggerHandler = new Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>>();
             _maximumAgeMinutes = null;
-            _randomTriggerWindows = new List<Tuple<DateTime, DateTime>>();
-            _randomTriggerCallbackId = null;
+            _triggerWindows = new List<Tuple<DateTime, DateTime, DateTime?>>();
+            _triggerWindowCallbacks = new ConcurrentDictionary<string, Tuple<DateTime, DateTime>>();
             _random = new Random();
             _runTimes = new List<DateTime>();
             _completionTimes = new List<DateTime>();
@@ -288,6 +296,7 @@ namespace SensusService.Probes.User.Scripts
             _runOnStart = false;
             _displayProgress = true;
             _runMode = RunMode.SingleUpdate;
+            _invalidateScriptWhenWindowEnds = false;
 
             _triggers.CollectionChanged += (o, e) =>
             {
@@ -375,8 +384,8 @@ namespace SensusService.Probes.User.Scripts
 
         public void Start()
         {
-            if (_randomTriggerWindows.Count > 0)
-                StartRandomTriggerCallbacksAsync();
+            if (_triggerWindows.Count > 0)
+                StartTriggerCallbacksAsync();
 
             // use the async version below for a couple reasons. first, we're in a non-async method and we want to ensure
             // that the script won't be running on the UI thread. second, from the caller's perspective the prompt should 
@@ -385,91 +394,116 @@ namespace SensusService.Probes.User.Scripts
                 RunAsync(_script.Copy());
         }
 
-        private void StartRandomTriggerCallbacksAsync()
+        private void StartTriggerCallbacksAsync()
         {
             new Thread(() =>
             {
-                StartRandomTriggerCallbacks();
+                StartTriggerCallbacks();
 
             }).Start();
         }
 
-        private void StartRandomTriggerCallbacks()
+        private void ScheduleTriggerWindowCallback(Tuple<DateTime, DateTime, DateTime?> triggerWindow, bool useCurrentTimeAsStart)
+        {
+            DateTime triggerWindowStart = useCurrentTimeAsStart ? DateTime.Now : triggerWindow.Item1;
+            DateTime triggerWindowEnd = triggerWindow.Item2;
+            DateTime? triggerWindowLastRun = triggerWindow.Item3;
+
+            ScheduledCallback callback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) => RunUponCallback(callbackId, triggerWindow), "Trigger Randomly");
+
+#if __IOS__
+            // we won't have a way to update the "X Pending Surveys" notification on ios. the best we can do is
+            // display a new notification describing the survey and showing its expiration time (if there is one).
+            string userNotificationMessage = "Please open to take survey.";
+            if (_maximumAgeMinutes.HasValue)
+            {
+                DateTime expirationTime = triggerTime.AddMinutes(_maximumAgeMinutes.Value);
+                userNotificationMessage += " Expires on " + expirationTime.ToShortDateString() + " at " + expirationTime.ToShortTimeString() + ".";
+            }
+
+            callback.UserNotificationMessage = userNotificationMessage;
+
+            // on ios we need a separate indicator that the surveys page should be displayed when the user opens
+            // the notification. this is achieved by setting the notification ID to the pending survey notification ID.
+            callback.NotificationId = SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID;
+#endif
+
+            if (!_triggerWindowCallbacks.TryAdd(SensusServiceHelper.Get().ScheduleOneTimeCallback(callback, ((int)((triggerWindowStart.AddSeconds(_random.NextDouble() * (triggerWindowEnd - triggerWindowStart).TotalSeconds)) - DateTime.Now).TotalMilliseconds)), new Tuple<DateTime, DateTime>(triggerWindowStart, triggerWindowEnd)))
+                SensusServiceHelper.Get().Logger.Log("Unable to schedule random trigger window callback: " + triggerWindowStart + " - " + triggerWindowEnd + ".", LoggingLevel.Normal, GetType());
+        }
+
+        private Task RunUponCallback(string callbackId, Tuple<DateTime, DateTime, DateTime?> triggerWindow)
+        {
+            return Task.Run(() =>
+                {
+                    // if the probe is still running and the runner is enabled, run a copy of the script so that we can retain a pristine version of the original.
+                    // also, when the script prompts display let the caller know that it's okay for the device to sleep.
+                    if (_probe.Running && _enabled)
+                    {
+                        Script scriptCopyToRun = _script.Copy();
+
+                        // update this trigger window's last run date
+                        triggerWindow = new Tuple<DateTime, DateTime, DateTime?>(triggerWindow.Item1, triggerWindow.Item2, DateTime.Now.Date);
+
+                        // expose the script's callback id so we can access the window it's running in from SensusServiceHelper
+                        scriptCopyToRun.CallbackId = callbackId;
+
+                        Run(scriptCopyToRun);
+                    }
+                });
+        }
+
+        private void StartTriggerCallbacks()
         {
             lock (_locker)
             {
-                if (_randomTriggerWindows.Count == 0)
+                if (_triggerWindows.Count == 0)
                     return;
 
-                StopRandomTriggerCallbacks();
+                StopTriggerCallbacks();
 
                 SensusServiceHelper.Get().Logger.Log("Starting random script trigger callbacks.", LoggingLevel.Normal, GetType());
 
-                // find next future trigger window, ignoring month, day, and year of windows. the windows are already sorted.
                 DateTime triggerWindowStart = default(DateTime);
                 DateTime triggerWindowEnd = default(DateTime);
+                DateTime? triggerWindowLastRun = null;
                 DateTime now = DateTime.Now;
-                bool foundTriggerWindow = false;
-                foreach (Tuple<DateTime, DateTime> randomTriggerWindow in _randomTriggerWindows)
+
+                // find trigger windows, ignoring month, day, and year. the windows are already sorted.
+                // schedule callbacks for two weeks.
+                foreach (Tuple<DateTime, DateTime, DateTime?> triggerWindow in _triggerWindows)
                 {
-                    if (randomTriggerWindow.Item1.Hour > now.Hour || (randomTriggerWindow.Item1.Hour == now.Hour && randomTriggerWindow.Item1.Minute > now.Minute))
+                    triggerWindowStart = new DateTime(now.Year, now.Month, now.Day, triggerWindow.Item1.Hour, triggerWindow.Item1.Minute, 0);
+                    triggerWindowEnd = new DateTime(now.Year, now.Month, now.Day, triggerWindow.Item2.Hour, triggerWindow.Item2.Minute, 0);
+                    if (triggerWindow.Item3.HasValue)
+                        triggerWindowLastRun = triggerWindow.Item3.Value;
+
+                    // if this window has not yet started today, schedule a callback within it
+                    if (triggerWindowStart.Hour > now.Hour || (triggerWindowStart.Hour == now.Hour && triggerWindowStart.Minute > now.Minute && triggerWindowEnd.Minute > now.Minute))
                     {
-                        triggerWindowStart = new DateTime(now.Year, now.Month, now.Day, randomTriggerWindow.Item1.Hour, randomTriggerWindow.Item1.Minute, 0);
-                        triggerWindowEnd = new DateTime(now.Year, now.Month, now.Day, randomTriggerWindow.Item2.Hour, randomTriggerWindow.Item2.Minute, 0);
-                        foundTriggerWindow = true;
-                        break;
+                        ScheduleTriggerWindowCallback(triggerWindow, false);
+                    }
+
+                    // if we're inside the window with more than 5 minutes left and the window
+                    // hasn't run yet today, schedule a callback within the remaining time
+                    else if ((triggerWindowLastRun.HasValue && triggerWindowLastRun.Value.Date < DateTime.Now.Date) && (triggerWindowEnd.Hour > now.Hour || (triggerWindowEnd.Hour == now.Hour && triggerWindowEnd.Minute > now.AddMinutes(5).Minute)))
+                    {
+                        ScheduleTriggerWindowCallback(triggerWindow, true);
+                    }
+
+                    // schedule callbacks for the next two weeks
+                    Tuple<DateTime, DateTime, DateTime?> nextTriggerWindow = new Tuple<DateTime, DateTime, DateTime?>(triggerWindowStart.AddDays(1), triggerWindowEnd.AddDays(1), triggerWindowLastRun);
+                    DateTime protocolStopTime = new DateTime(_probe.Protocol.EndDate.Year, _probe.Protocol.EndDate.Month, _probe.Protocol.EndDate.Day, _probe.Protocol.EndTime.Hours, _probe.Protocol.EndTime.Minutes, 0);
+                    int horizon = 0;
+                    while (nextTriggerWindow.Item2 < protocolStopTime && horizon < 14)
+                    {
+                        ScheduleTriggerWindowCallback(nextTriggerWindow, false);
+
+                        nextTriggerWindow = new Tuple<DateTime, DateTime, DateTime?>(nextTriggerWindow.Item1.AddDays(1), nextTriggerWindow.Item2.AddDays(1), nextTriggerWindow.Item3);
+
+                        horizon += 1;
                     }
                 }
-
-                // if there were no future trigger windows, skip to the next day and use the first trigger window
-                if (!foundTriggerWindow)
-                {
-                    Tuple<DateTime, DateTime> firstRandomTriggerWindow = _randomTriggerWindows.First();
-                    triggerWindowStart = new DateTime(now.Year, now.Month, now.Day, firstRandomTriggerWindow.Item1.Hour, firstRandomTriggerWindow.Item1.Minute, 0).AddDays(1);
-                    triggerWindowEnd = new DateTime(now.Year, now.Month, now.Day, firstRandomTriggerWindow.Item2.Hour, firstRandomTriggerWindow.Item2.Minute, 0).AddDays(1);
-                }
-
-                // schedule callback for random offset into trigger window
-                DateTime triggerTime = triggerWindowStart.AddSeconds(_random.NextDouble() * (triggerWindowEnd - triggerWindowStart).TotalSeconds);
-                int triggerDelayMS = (int)(triggerTime - now).TotalMilliseconds;
-
-                ScheduledCallback callback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
-                {
-                    return Task.Run(() =>
-                    {
-                        // if the probe is still running and the runner is enabled, run a copy of the script so that we can retain a pristine version of the original.
-                        // also, when the script prompts display let the caller know that it's okay for the device to sleep.
-                        if (_probe.Running && _enabled)
-                        {
-                            Script script = _script.Copy();
-                            script.RunTimestamp = triggerTime.ToUniversalTime();
-                            Run(script);
-
-                            // establish the next random trigger callback
-                            StartRandomTriggerCallbacks();
-                        }
-                    });
-
-                }, "Trigger Randomly");
-
-#if __IOS__
-                // we won't have a way to update the "X Pending Surveys" notification on ios. the best we can do is
-                // display a new notification describing the survey and showing its expiration time (if there is one).
-                string userNotificationMessage = "Please open to take survey.";
-                if (_maximumAgeMinutes.HasValue)
-                {
-                    DateTime expirationTime = triggerTime.AddMinutes(_maximumAgeMinutes.Value);
-                    userNotificationMessage += " Expires on " + expirationTime.ToShortDateString() + " at " + expirationTime.ToShortTimeString() + ".";
-                }
-
-                callback.UserNotificationMessage = userNotificationMessage;
-
-                // on ios we need a separate indicator that the surveys page should be displayed when the user opens
-                // the notification. this is achieved by setting the notification ID to the pending survey notification ID.
-                callback.NotificationId = SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID;
-#endif
-
-                _randomTriggerCallbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(callback, triggerDelayMS);
             }
         }
 
@@ -560,6 +594,11 @@ namespace SensusService.Probes.User.Scripts
             SensusServiceHelper.Get().AddScriptToRun(script, _runMode);
         }
 
+        public void RescheduleTriggerCallbacks()
+        {
+            StartTriggerCallbacksAsync();
+        }
+
         public bool TestHealth(ref string error, ref string warning, ref string misc)
         {
             return false;
@@ -567,7 +606,7 @@ namespace SensusService.Probes.User.Scripts
 
         public void Reset()
         {
-            _randomTriggerCallbackId = null;
+            _triggerWindowCallbacks.Clear();
             _runTimes.Clear();
             _completionTimes.Clear();
         }
@@ -582,22 +621,32 @@ namespace SensusService.Probes.User.Scripts
         {
             new Thread(() =>
                 {
-                    StopRandomTriggerCallbacks();
+                    StopTriggerCallbacks();
 
                 }).Start();
         }
 
-        private void StopRandomTriggerCallbacks()
+        private void StopTriggerCallbacks()
         {
-            SensusServiceHelper.Get().Logger.Log("Stopping random trigger callbacks.", LoggingLevel.Normal, GetType());
-            SensusServiceHelper.Get().UnscheduleCallback(_randomTriggerCallbackId);
-            _randomTriggerCallbackId = null;
+            String logMessage = "Stopping random trigger callbacks.";
+            if (!_triggerWindowCallbacks.IsEmpty)
+            {
+                foreach (var triggerCallbackId in _triggerWindowCallbacks.Keys)
+                {
+                    SensusServiceHelper.Get().UnscheduleCallback(triggerCallbackId);
+                }
+                _triggerWindowCallbacks.Clear();
+            }
+            else
+            {
+                logMessage += ".. none to stop.";
+            }
+            SensusServiceHelper.Get().Logger.Log(logMessage, LoggingLevel.Normal, GetType());
         }
 
         public void Stop()
         {
-            StopRandomTriggerCallbacks();
-
+            StopTriggerCallbacks();
             SensusServiceHelper.Get().RemoveScriptsToRun(this);
         }
     }
