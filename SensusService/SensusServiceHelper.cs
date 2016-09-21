@@ -26,6 +26,7 @@ using Xamarin;
 using System.Collections.ObjectModel;
 using SensusUI;
 using SensusUI.Inputs;
+using Sensus.Tools;
 using Xamarin.Forms;
 using SensusService.Exceptions;
 using ZXing.Mobile;
@@ -320,7 +321,7 @@ namespace SensusService
         #endregion
 
         private Logger _logger;
-        private ObservableCollection<Protocol> _registeredProtocols;
+        private ConcurrentObservableCollection<Protocol> _registeredProtocols;
         private List<string> _runningProtocolIds;
         private string _healthTestCallbackId;
         private Dictionary<string, ScheduledCallback> _idCallback;
@@ -332,7 +333,7 @@ namespace SensusService
 
         // we use the following observable collection in ListViews within Sensus. this is not thread-safe,
         // so any write operations involving this collection should be performed on the UI thread.
-        private ObservableCollection<Script> _scriptsToRun;
+        private ConcurrentObservableCollection<Script> _scriptsToRun;
 
         private readonly object _shareFileLocker = new object();
         private readonly object _saveLocker = new object();
@@ -343,7 +344,7 @@ namespace SensusService
             get { return _logger; }
         }
 
-        public ObservableCollection<Protocol> RegisteredProtocols
+        public ConcurrentObservableCollection<Protocol> RegisteredProtocols
         {
             get { return _registeredProtocols; }
         }
@@ -392,7 +393,7 @@ namespace SensusService
             }
         }
 
-        public ObservableCollection<Script> ScriptsToRun
+        public ConcurrentObservableCollection<Script> ScriptsToRun
         {
             get
             {
@@ -525,7 +526,7 @@ namespace SensusService
             if (SINGLETON != null)
                 throw new SensusException("Attempted to construct new service helper when singleton already existed.");
 
-            _registeredProtocols = new ObservableCollection<Protocol>();
+            _registeredProtocols = new ConcurrentObservableCollection<Protocol>();
             _runningProtocolIds = new List<string>();
             _healthTestCallbackId = null;
             _idCallback = new Dictionary<string, ScheduledCallback>();
@@ -552,7 +553,7 @@ namespace SensusService
             };
 
             _flashNotificationsEnabled = true;
-            _scriptsToRun = new ObservableCollection<Script>();
+            _scriptsToRun = new ConcurrentObservableCollection<Script>();
 
             if (!Directory.Exists(SHARE_DIRECTORY))
                 Directory.CreateDirectory(SHARE_DIRECTORY);
