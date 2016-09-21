@@ -1657,7 +1657,7 @@ namespace SensusService
             if (!_scriptsToRun.Any())
             {
                 _logger.Log("Rescheduling trigger callbacks.", LoggingLevel.Normal, GetType());
-                //runner.RescheduleTriggerCallbacks();
+                runner.RescheduleTriggerCallbacks();
             }
         }
 
@@ -1671,10 +1671,10 @@ namespace SensusService
         private bool Expired(Script script)
         {
             var pastMaxAge = script.Age.TotalMinutes >= script.Runner.MaximumAgeMinutes;
-            //var windowEnded = script.Runner.TriggerWindowCallbacks.Any() && script.Runner.TriggerWindowCallbacks.ContainsKey(script.CallbackId) && script.Runner.TriggerWindowCallbacks[script.CallbackId].Item2 > DateTime.Now;
-            //var specificTime = script.Runner.TriggerWindowCallbacks.Any() && script.Runner.TriggerWindowCallbacks.ContainsKey(script.CallbackId) && script.Runner.TriggerWindowCallbacks[script.CallbackId].Item1 == script.Runner.TriggerWindowCallbacks[script.CallbackId].Item2;
+            var windowEnded = script.Runner.TriggerWindowCallbacks.Any() && script.Runner.TriggerWindowCallbacks.ContainsKey(script.CallbackId) && script.Runner.TriggerWindowCallbacks[script.CallbackId].Item2 > DateTime.Now;
+            var specificTime = script.Runner.TriggerWindowCallbacks.Any() && script.Runner.TriggerWindowCallbacks.ContainsKey(script.CallbackId) && script.Runner.TriggerWindowCallbacks[script.CallbackId].Item1 == script.Runner.TriggerWindowCallbacks[script.CallbackId].Item2;
 
-            //return pastMaxAge || (script.Runner.InvalidateScriptWhenWindowEnds && windowEnded && !specificTime);
+            return pastMaxAge || (script.Runner.InvalidateScriptWhenWindowEnds && windowEnded && !specificTime);
 
             return false;
         }

@@ -408,23 +408,20 @@ namespace SensusService.DataStores
                 ContractResolver = new DictionaryAsArrayContractResolver()
             };
 
-            DataStore copy = null;
             try
             {
                 SensusServiceHelper.Get().FlashNotificationsEnabled = false;
-                copy = JsonConvert.DeserializeObject<DataStore>(JsonConvert.SerializeObject(this, settings), settings);
+                return JsonConvert.DeserializeObject<DataStore>(JsonConvert.SerializeObject(this, settings), settings);
             }
             catch (Exception ex)
             {
-                SensusServiceHelper.Get().Logger.Log("Failed to copy data store:  " + ex.Message, LoggingLevel.Normal, GetType());
-                copy = null;
+                SensusServiceHelper.Get().Logger.Log($"Failed to copy data store:  {ex.Message}", LoggingLevel.Normal, GetType());
+                throw;
             }
             finally
             {
                 SensusServiceHelper.Get().FlashNotificationsEnabled = true;
             }
-
-            return copy;
         }
     }
 }

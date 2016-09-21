@@ -274,6 +274,13 @@ namespace SensusService.Probes.User.Scripts
             }
         }
 
+        [OnOffUiProperty("Invalidate Script When Window Ends:", true, 15)]
+        public bool InvalidateScriptWhenWindowEnds
+        {
+            get { return _invalidateScriptWhenWindowEnds; }
+            set { _invalidateScriptWhenWindowEnds = value; }
+        }
+
         #endregion
 
         /// <summary>
