@@ -333,7 +333,7 @@ namespace SensusService
 
         // we use the following observable collection in ListViews within Sensus. this is not thread-safe,
         // so any write operations involving this collection should be performed on the UI thread.
-        private ConcurrentObservableCollection<Script> _scriptsToRun;
+        private ObservableCollection<Script> _scriptsToRun;
 
         private readonly object _shareFileLocker = new object();
         private readonly object _saveLocker = new object();
@@ -393,7 +393,7 @@ namespace SensusService
             }
         }
 
-        public ConcurrentObservableCollection<Script> ScriptsToRun
+        public ObservableCollection<Script> ScriptsToRun
         {
             get
             {
@@ -553,7 +553,7 @@ namespace SensusService
             };
 
             _flashNotificationsEnabled = true;
-            _scriptsToRun = new ConcurrentObservableCollection<Script>();
+            _scriptsToRun = new ObservableCollection<Script>();
 
             if (!Directory.Exists(SHARE_DIRECTORY))
                 Directory.CreateDirectory(SHARE_DIRECTORY);
@@ -756,14 +756,11 @@ namespace SensusService
 
         public void SaveAsync(Action callback = null)
         {
-            new Thread(() =>
-                {
-                    Save();
-
-                    if (callback != null)
-                        callback();
-
-                }).Start();
+            Task.Run(() =>
+            {
+                Save();
+                callback?.Invoke();
+            });
         }
 
         public void Save()
@@ -807,20 +804,20 @@ namespace SensusService
         /// </summary>
         public void Start()
         {
-            lock (_registeredProtocols)
+            foreach (var protocol in _registeredProtocols)
             {
-                foreach (Protocol protocol in _registeredProtocols)
-                    if (!protocol.Running && _runningProtocolIds.Contains(protocol.Id))
-                        protocol.Start();
+                if (!protocol.Running && _runningProtocolIds.Contains(protocol.Id))
+                {
+                    protocol.Start();
+                }
             }
         }
 
         public void RegisterProtocol(Protocol protocol)
         {
-            lock (_registeredProtocols)
+            if (!_registeredProtocols.Contains(protocol))
             {
-                if (!_registeredProtocols.Contains(protocol))
-                    _registeredProtocols.Add(protocol);
+                _registeredProtocols.Add(protocol);
             }
         }
 
@@ -828,24 +825,23 @@ namespace SensusService
         {
             RunOnMainThread(() =>
             {
-                bool add = true;
+                var scriptsWithSameParent = _scriptsToRun.Where(s => s.SharesParentScriptWith(script)).ToArray();
 
-                List<Script> scriptsWithSameParent = _scriptsToRun.Where(s => s.SharesParentScriptWith(script)).ToList();
-
-                if (scriptsWithSameParent.Count > 0)
+                if (scriptsWithSameParent.Any() && runMode == RunMode.SingleKeepOldest)
                 {
-                    if (runMode == RunMode.SingleKeepOldest)
-                        add = false;
-                    else if (runMode == RunMode.SingleUpdate)
-                        foreach (Script scriptWithSameParent in scriptsWithSameParent)
-                            _scriptsToRun.Remove(scriptWithSameParent);
+                    return;
                 }
 
-                if (add)
+                if (scriptsWithSameParent.Any() && runMode == RunMode.SingleUpdate)
                 {
-                    _scriptsToRun.Insert(0, script);
-                    IssuePendingSurveysNotificationAsync(true, true);
+                    foreach (var scriptWithSameParent in scriptsWithSameParent)
+                    {
+                        _scriptsToRun.Remove(scriptWithSameParent);
+                    }
                 }
+
+                _scriptsToRun.Insert(0, script);
+                IssuePendingSurveysNotificationAsync(true, true);
             });
         }
 
@@ -853,8 +849,7 @@ namespace SensusService
         {
             RunOnMainThread(() =>
             {
-                if (_scriptsToRun.Remove(script))
-                    IssuePendingSurveysNotificationAsync(false, false);
+                RemoveScripts(true, script);
             });
         }
 
@@ -862,14 +857,7 @@ namespace SensusService
         {
             RunOnMainThread(() =>
             {
-                bool removed = false;
-
-                foreach (Script scriptFromRunner in _scriptsToRun.Where(script => ReferenceEquals(script.Runner, runner)).ToList())
-                    if (_scriptsToRun.Remove(scriptFromRunner))
-                        removed = true;
-
-                if (removed)
-                    IssuePendingSurveysNotificationAsync(false, false);
+                RemoveScripts(true, _scriptsToRun.Where(script => script.Runner == runner).ToArray());
             });
         }
 
@@ -877,14 +865,7 @@ namespace SensusService
         {
             RunOnMainThread(() =>
             {
-                bool removed = false;
-
-                foreach (Script script in _scriptsToRun.ToList())
-                    if (script.Runner.MaximumAgeMinutes.HasValue && script.Age.TotalMinutes >= script.Runner.MaximumAgeMinutes && _scriptsToRun.Remove(script))
-                        removed = true;
-
-                if (removed && issueNotification)
-                    IssuePendingSurveysNotificationAsync(false, false);
+                RemoveScripts(true, _scriptsToRun.Where(Expired).ToArray());
             });
         }
 
@@ -892,13 +873,7 @@ namespace SensusService
         {
             RemoveOldScripts(false);
 
-            string message = null;
-
-            int scriptsToRun = _scriptsToRun.Count;
-            if (scriptsToRun > 0)
-                message = "You have " + scriptsToRun + " pending survey" + (scriptsToRun == 1 ? "" : "s") + ".";
-
-            IssueNotificationAsync(message, PENDING_SURVEY_NOTIFICATION_ID, playSound, vibrate);
+            IssueNotificationAsync(PendingSurveyMessage(_scriptsToRun.Count), PENDING_SURVEY_NOTIFICATION_ID, playSound, vibrate);
         }
 
         public void ClearPendingSurveysNotificationAsync()
@@ -1161,9 +1136,7 @@ namespace SensusService
 
         public void TextToSpeechAsync(string text)
         {
-            TextToSpeechAsync(text, () =>
-                {
-                });
+            TextToSpeechAsync(text, () => { });
         }
 
         /// <summary>
@@ -1481,11 +1454,8 @@ namespace SensusService
 
         public void UnregisterProtocol(Protocol protocol)
         {
-            lock (_registeredProtocols)
-            {
-                protocol.Stop();
-                _registeredProtocols.Remove(protocol);
-            }
+            _registeredProtocols.Remove(protocol);
+            protocol.Stop();
         }
 
         /// <summary>
@@ -1646,23 +1616,68 @@ namespace SensusService
 
         public void StopProtocols()
         {
-            lock (_registeredProtocols)
-            {
-                _logger.Log("Stopping protocols.", LoggingLevel.Normal, GetType());
+            _logger.Log("Stopping protocols.", LoggingLevel.Normal, GetType());
 
-                foreach (Protocol protocol in _registeredProtocols)
-                    if (protocol.Running)
-                    {
-                        try
-                        {
-                            protocol.Stop();
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.Log("Failed to stop protocol \"" + protocol.Name + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
-                        }
-                    }
+            foreach (var protocol in _registeredProtocols.ToArray().Where(p => p.Running))
+            {
+                try
+                {
+                    protocol.Stop();
+                }
+                catch (Exception ex)
+                {
+                    _logger.Log($"Failed to stop protocol \"{protocol.Name}\": {ex.Message}", LoggingLevel.Normal, GetType());
+                }
             }
         }
+
+        #region Private Methods
+
+        private void RemoveScripts(bool issueNotification, params Script[] scripts)
+        {
+            var removed = false;
+
+            foreach (var script in scripts)
+            {
+                removed = _scriptsToRun.Remove(script);
+                RescheduleTriggerCallbacks(script.Runner);
+            }
+
+            if (removed)
+            {
+                IssuePendingSurveysNotificationAsync(false, false);
+            }
+        }
+
+        /// <summary>
+        /// Try to reschedule scripts
+        /// </summary>
+        private void RescheduleTriggerCallbacks(ScriptRunner runner)
+        {
+            if (!_scriptsToRun.Any())
+            {
+                _logger.Log("Rescheduling trigger callbacks.", LoggingLevel.Normal, GetType());
+                //runner.RescheduleTriggerCallbacks();
+            }
+        }
+
+        private string PendingSurveyMessage(int scriptsToRunCount)
+        {
+            var s = scriptsToRunCount == 1 ? "" : "s";
+
+            return scriptsToRunCount == 0 ? null : $"You have {scriptsToRunCount} pending survey{s}.";
+        }
+
+        private bool Expired(Script script)
+        {
+            var pastMaxAge = script.Age.TotalMinutes >= script.Runner.MaximumAgeMinutes;
+            //var windowEnded = script.Runner.TriggerWindowCallbacks.Any() && script.Runner.TriggerWindowCallbacks.ContainsKey(script.CallbackId) && script.Runner.TriggerWindowCallbacks[script.CallbackId].Item2 > DateTime.Now;
+            //var specificTime = script.Runner.TriggerWindowCallbacks.Any() && script.Runner.TriggerWindowCallbacks.ContainsKey(script.CallbackId) && script.Runner.TriggerWindowCallbacks[script.CallbackId].Item1 == script.Runner.TriggerWindowCallbacks[script.CallbackId].Item2;
+
+            //return pastMaxAge || (script.Runner.InvalidateScriptWhenWindowEnds && windowEnded && !specificTime);
+
+            return false;
+        }
+        #endregion
     }
 }
