@@ -171,6 +171,7 @@ namespace SensusService
                                         protocol.AddProbe(probe);
                                     }
                                 }
+
                                 #endregion
 
                                 // when doing cross-platform conversions, there may be triggers that reference probes that aren't available on the
@@ -288,7 +289,7 @@ namespace SensusService
                     SensusServiceHelper.Get().FlashNotificationAsync("You are already participating in \"" + protocol.Name + "\".");
                 else
                 {
-                    SensusServiceHelper.Get().RunOnMainThread(async () =>
+                    Device.BeginInvokeOnMainThread(() =>
                     {
                         ProtocolsPage protocolsPage = null;
 
@@ -300,14 +301,14 @@ namespace SensusService
                         else
                         {
                             protocolsPage = new ProtocolsPage();
-                            await Application.Current.MainPage.Navigation.PushAsync(protocolsPage);
+                            SensusServiceHelper.Get().RunOnMainThread(protocolsPage.Bind);
                         }
 
                         // ask user to start protocol
                         protocol.StartWithUserAgreementAsync("You just opened \"" + protocol.Name + "\" within Sensus.", () =>
                         {
                             // rebind to pick up any color changes
-                            SensusServiceHelper.Get().RunOnMainThread(protocolsPage.Bind);
+                            Device.BeginInvokeOnMainThread(protocolsPage.Bind);
                         });
                     });
                 }
@@ -376,6 +377,10 @@ namespace SensusService
         private string _name;
         private List<Probe> _probes;
         private bool _running;
+        private bool _scheduledToStart;
+        private bool _scheduledToStop;
+        private string _scheduledStartCallbackId;
+        private string _scheduledStopCallbackId;
         private LocalDataStore _localDataStore;
         private RemoteDataStore _remoteDataStore;
         private string _storageDirectory;
@@ -387,6 +392,10 @@ namespace SensusService
         private bool _shareable;
         private List<PointOfInterest> _pointsOfInterest;
         private string _description;
+        private DateTime _startTime;
+        private bool _startImmediately;
+        private DateTime _endTime;
+        private bool _continueIndefinitely;
         private int _participationHorizonDays;
         private string _contactEmail;
         private bool _groupable;
@@ -421,6 +430,18 @@ namespace SensusService
         public bool Running
         {
             get { return _running; }
+        }
+
+        [JsonIgnore]
+        public bool ScheduledToStart
+        {
+            get { return _scheduledToStart; }
+        }
+
+        [JsonIgnore]
+        public bool ScheduledToStop
+        {
+            get { return _scheduledToStop; }
         }
 
         public LocalDataStore LocalDataStore
@@ -502,13 +523,6 @@ namespace SensusService
             set { _mostRecentReport = value; }
         }
 
-        [OnOffUiProperty("Force Reports to Remote:", true, 20)]
-        public bool ForceProtocolReportsToRemoteDataStore
-        {
-            get { return _forceProtocolReportsToRemoteDataStore; }
-            set { _forceProtocolReportsToRemoteDataStore = value; }
-        }
-
         public string LockPasswordHash
         {
             get
@@ -570,7 +584,97 @@ namespace SensusService
             }
         }
 
-        [EntryIntegerUiProperty("Participation Horizon (Days):", true, 16)]
+        [DateUiProperty("Start Date:", true, 16)]
+        public DateTime StartDate
+        {
+            get
+            {
+                return _startTime;
+            }
+            set
+            {
+                _startTime = new DateTime(value.Year, value.Month, value.Day, _startTime.Hour, _startTime.Minute, _startTime.Second);
+            }
+        }
+
+        [TimeUiProperty("Start Time:", true, 17)]
+        public TimeSpan StartTime
+        {
+            get
+            {
+                return _startTime.TimeOfDay;
+            }
+            set
+            {
+                _startTime = new DateTime(_startTime.Year, _startTime.Month, _startTime.Day, value.Hours, value.Minutes, value.Seconds);
+                Console.WriteLine(new DateTime(_startTime.Year, _startTime.Month, _startTime.Day, value.Hours, value.Minutes, value.Seconds));
+            }
+        }
+
+        [OnOffUiProperty("Start Immediately", true, 18)]
+        public bool StartImmediately
+        {
+            get
+            {
+                return _startImmediately;
+            }
+            set
+            {
+                if (value == true)
+                {
+                    SensusServiceHelper.Get().FlashNotificationAsync("Setting this option will override Start Date/Time.");
+                }
+                _startImmediately = value;
+            }
+        }
+
+        [DateUiProperty("End Date:", true, 19)]
+        public DateTime EndDate
+        {
+            get
+            {
+                return _endTime;
+            }
+            set
+            {
+                _endTime = new DateTime(value.Year, value.Month, value.Day, _endTime.Hour, _endTime.Minute, _endTime.Second);
+            }
+        }
+
+        [TimeUiProperty("End Time:", true, 20)]
+        public TimeSpan EndTime
+        {
+            get
+            {
+                return _endTime.TimeOfDay;
+            }
+            set
+            {
+                _endTime = new DateTime(_endTime.Year, _endTime.Month, _endTime.Day, value.Hours, value.Minutes, value.Seconds);
+            }
+        }
+
+        [OnOffUiProperty("Continue Indefinitely:", true, 21)]
+        public bool ContinueIndefinitely
+        {
+            get
+            {
+                return _continueIndefinitely;
+            }
+            set
+            {
+                _continueIndefinitely = value;
+            }
+        }
+
+        [OnOffUiProperty("Force Reports to Remote:", true, 22)]
+        public bool ForceProtocolReportsToRemoteDataStore
+        {
+            get { return _forceProtocolReportsToRemoteDataStore; }
+            set { _forceProtocolReportsToRemoteDataStore = value; }
+        }
+
+        [EntryIntegerUiProperty("Participation Horizon (Days):", true, 23)]
         public int ParticipationHorizonDays
         {
             get
@@ -589,7 +693,7 @@ namespace SensusService
             get { return DateTime.Now.AddDays(-_participationHorizonDays); }
         }
 
-        [EntryStringUiProperty("Contact Email:", true, 18)]
+        [EntryStringUiProperty("Contact Email:", true, 24)]
         public string ContactEmail
         {
             get
@@ -602,7 +706,7 @@ namespace SensusService
             }
         }
 
-        [OnOffUiProperty(null, true, 19)]
+        [OnOffUiProperty(null, true, 25)]
         public bool Groupable
         {
             get
@@ -627,7 +731,7 @@ namespace SensusService
             }
         }
 
-        [EntryFloatUiProperty("Reward Threshold:", true, 20)]
+        [EntryFloatUiProperty("Reward Threshold:", true, 26)]
         public float? RewardThreshold
         {
             get
@@ -674,7 +778,7 @@ namespace SensusService
             }
         }
 
-        [EntryFloatUiProperty("GPS - Desired Accuracy (Meters):", true, 21)]
+        [EntryFloatUiProperty("GPS - Desired Accuracy (Meters):", true, 27)]
         public float GpsDesiredAccuracyMeters
         {
             get { return _gpsDesiredAccuracyMeters; }
@@ -687,7 +791,7 @@ namespace SensusService
             }
         }
 
-        [EntryIntegerUiProperty("GPS - Minimum Time Delay (MS):", true, 22)]
+        [EntryIntegerUiProperty("GPS - Minimum Time Delay (MS):", true, 28)]
         public int GpsMinTimeDelayMS
         {
             get { return _gpsMinTimeDelayMS; }
@@ -700,7 +804,7 @@ namespace SensusService
             }
         }
 
-        [EntryFloatUiProperty("GPS - Minimum Distance Delay (Meters):", true, 23)]
+        [EntryFloatUiProperty("GPS - Minimum Distance Delay (Meters):", true, 29)]
         public float GpsMinDistanceDelayMeters
         {
             get
@@ -719,21 +823,21 @@ namespace SensusService
         #region iOS-specific protocol properties
 
 #if __IOS__
-        [OnOffUiProperty("GPS - Pause Location Updates:", true, 25)]
+        [OnOffUiProperty("GPS - Pause Location Updates:", true, 30)]
         public bool GpsPauseLocationUpdatesAutomatically { get; set; } = false;
 
-        [ListUiProperty("GPS - Pause Activity Type:", true, 26, new object[] { ActivityType.Other, ActivityType.AutomotiveNavigation, ActivityType.Fitness, ActivityType.OtherNavigation })]
+        [ListUiProperty("GPS - Pause Activity Type:", true, 31, new object[] { ActivityType.Other, ActivityType.AutomotiveNavigation, ActivityType.Fitness, ActivityType.OtherNavigation })]
         public ActivityType GpsPauseActivityType { get; set; } = ActivityType.Other;
 
-        [OnOffUiProperty("GPS - Significant Changes:", true, 27)]
+        [OnOffUiProperty("GPS - Significant Changes:", true, 32)]
         public bool GpsListenForSignificantChanges { get; set; } = false;
 
-        [OnOffUiProperty("GPS - Defer Location Updates:", true, 28)]
+        [OnOffUiProperty("GPS - Defer Location Updates:", true, 33)]
         public bool GpsDeferLocationUpdates { get; set; } = false;
 
         private float _gpsDeferralDistanceMeters = 500;
 
-        [EntryFloatUiProperty("GPS - Deferral Distance (Meters):", true, 29)]
+        [EntryFloatUiProperty("GPS - Deferral Distance (Meters):", true, 34)]
         public float GpsDeferralDistanceMeters
         {
             get
@@ -751,7 +855,7 @@ namespace SensusService
 
         private float _gpsDeferralTimeMinutes = 5;
 
-        [EntryFloatUiProperty("GPS - Deferral Time (Mins.):", true, 30)]
+        [EntryFloatUiProperty("GPS - Deferral Time (Mins.):", true, 35)]
         public float GpsDeferralTimeMinutes
         {
             get { return _gpsDeferralTimeMinutes; }
@@ -773,12 +877,20 @@ namespace SensusService
         private Protocol()
         {
             _running = false;
+            _scheduledToStart = false;
+            _scheduledToStop = false;
+            _scheduledStartCallbackId = "";
+            _scheduledStopCallbackId = "";
             _forceProtocolReportsToRemoteDataStore = false;
             _lockPasswordHash = "";
             _jsonAnonymizer = new AnonymizedJsonContractResolver(this);
             _shareable = false;
             _pointsOfInterest = new List<PointOfInterest>();
             _participationHorizonDays = 1;
+            _startTime = DateTime.Now;
+            _endTime = DateTime.Now;
+            _startImmediately = false;
+            _continueIndefinitely = true;
             _groupable = false;
             _groupedProtocols = new List<Protocol>();
             _rewardThreshold = null;
@@ -892,6 +1004,8 @@ namespace SensusService
                     return;
                 else
                     _running = true;
+
+                _scheduledToStart = false;
 
                 if (ProtocolRunningChanged != null)
                     ProtocolRunningChanged(this, _running);
@@ -1012,6 +1126,50 @@ namespace SensusService
             }
         }
 
+        public void ScheduleStart()
+        {
+            DateTime startTime = new DateTime(_startTime.Year, _startTime.Month, _startTime.Day, _startTime.Hour, _startTime.Minute, 0);
+            TimeSpan timeUntilStart = startTime - DateTime.Now;
+            ScheduledCallback startProtocolCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
+            {
+                return Task.Run(() =>
+                {
+                    Start();
+                });
+
+            }, "Start protocol", null, "Protocol started.");
+            _scheduledStartCallbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(startProtocolCallback, (int)timeUntilStart.TotalMilliseconds);
+            _scheduledToStart = true;
+        }
+
+        public void CancelScheduledStart()
+        {
+            SensusServiceHelper.Get().UnscheduleCallback(_scheduledStartCallbackId);
+            _scheduledToStart = false;
+        }
+
+        public void ScheduleStop()
+        {
+            DateTime stopTime = new DateTime(_endTime.Year, _endTime.Month, _endTime.Day, _endTime.Hour, _endTime.Minute, 0);
+            TimeSpan timeUntilStop = stopTime - DateTime.Now;
+            ScheduledCallback stopProtocolCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
+            {
+                return Task.Run(() =>
+                {
+                    Stop();
+                });
+
+            }, "Stop protocol", null, "Protocol stopped.");
+            _scheduledStopCallbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(stopProtocolCallback, (int)timeUntilStop.TotalMilliseconds);
+            _scheduledToStop = true;
+        }
+
+        public void CancelScheduledStop()
+        {
+            SensusServiceHelper.Get().UnscheduleCallback(_scheduledStopCallbackId);
+            _scheduledToStop = false;
+        }
+
         public void StartWithUserAgreementAsync(string startupMessage, Action callback = null)
         {
             if (!_probes.Any(probe => probe.Enabled))
@@ -1043,6 +1201,10 @@ namespace SensusService
             if (!string.IsNullOrWhiteSpace(_description))
                 consent.Add(new LabelOnlyInput(_description));
 
+            bool isPriorToStart = !(DateTime.Now > new DateTime(_startTime.Year, _startTime.Month, _startTime.Day, _startTime.Hour, _startTime.Minute, 0));
+
+            consent.Add(new LabelOnlyInput("This study will start " + ((!_startImmediately && isPriorToStart) ? "on " + _startTime.Month + "/" + _startTime.Day + "/" + _startTime.Year + " at " + _startTime.Hour + ":" + _startTime.Minute : "immediately") + " and " + ((!_continueIndefinitely) ? "stop on " + _endTime.Month + "/" + _endTime.Day + "/" + _endTime.Year + " at " + _endTime.Hour + ":" + _endTime.Minute + "." : "continue indefinitely.")));
+
             consent.Add(new LabelOnlyInput("This study would like to collect the following data from your device:"));
 
             LabelOnlyInput collectionDescriptionLabel = null;
@@ -1053,7 +1215,6 @@ namespace SensusService
                 collectionDescriptionLabel = new LabelOnlyInput(collectionDescription.ToString(), collectionDescriptionFontSize);
 
             collectionDescriptionLabel.Padding = new Thickness(20, 0, 0, 0);
-
             consent.Add(collectionDescriptionLabel);
 
             // the name in the following text input is used to grab the UI element when unit testing
@@ -1080,7 +1241,17 @@ namespace SensusService
 
                         int consentCodeInt;
                         if (int.TryParse(consentCodeStr, out consentCodeInt) && consentCodeInt == consentCode)
-                            Start();
+                        {
+                            // start protocol or schedule start
+                            if (_startImmediately || (_startTime.Date.Equals(DateTime.Now.Date) && DateTime.Now.TimeOfDay > _startTime.TimeOfDay))
+                                Start();
+                            else
+                                ScheduleStart();
+
+                            // schedule stop if necessary
+                            if (!_continueIndefinitely)
+                                ScheduleStop();
+                        }
                         else
                             SensusServiceHelper.Get().FlashNotificationAsync("Incorrect code entered.");
                     }
@@ -1208,12 +1379,12 @@ namespace SensusService
                 #endregion
 
                 SensusServiceHelper.Get().Logger.Log("Storing protocol report locally.", LoggingLevel.Normal, GetType());
-                await _localDataStore.AddAsync(report, cancellationToken);
+                await _localDataStore.AddAsync(report, cancellationToken, false);
 
                 if (!_localDataStore.UploadToRemoteDataStore && _forceProtocolReportsToRemoteDataStore)
                 {
                     SensusServiceHelper.Get().Logger.Log("Local data aren't pushed to remote, so we're copying the report datum directly to the remote cache.", LoggingLevel.Normal, GetType());
-                    await _remoteDataStore.AddAsync(report, cancellationToken);
+                    await _remoteDataStore.AddAsync(report, cancellationToken, false);
                 }
 
                 lock (_locker)
@@ -1296,13 +1467,13 @@ namespace SensusService
         public void DeleteAsync(Action callback = null)
         {
             new Thread(() =>
-            {
-                Delete();
+                {
+                    Delete();
 
-                if (callback != null)
-                    callback();
+                    if (callback != null)
+                        callback();
 
-            }).Start();
+                }).Start();
         }
 
         public void Delete()

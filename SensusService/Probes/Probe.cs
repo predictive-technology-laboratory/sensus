@@ -62,6 +62,7 @@ namespace SensusService.Probes
         private List<DateTime> _successfulHealthTestTimes;
         private List<ChartDataPoint> _chartData;
         private int _maxChartDataCount;
+        private bool _runLocalCommitOnStore;
 
         private readonly object _locker = new object();
 
@@ -204,6 +205,19 @@ namespace SensusService.Probes
                     while (_chartData.Count > 0 && _chartData.Count > _maxChartDataCount)
                         _chartData.RemoveAt(0);
                 }
+            }
+        }
+
+        [OnOffUiProperty("Run Local Commit On Store:", true, 14)]
+        public bool RunLocalCommitOnStore
+        {
+            get
+            {
+                return _runLocalCommitOnStore;
+            }
+            set
+            {
+                _runLocalCommitOnStore = value;
             }
         }
 
@@ -352,7 +366,7 @@ namespace SensusService.Probes
                         }
                     }
 
-                    return _protocol.LocalDataStore.AddAsync(datum, cancellationToken);
+                    return _protocol.LocalDataStore.AddAsync(datum, cancellationToken, _runLocalCommitOnStore);
                 }
             }
 
