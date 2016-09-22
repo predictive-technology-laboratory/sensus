@@ -60,7 +60,7 @@ namespace Sensus.Tools
         #region Public Methods
         public IEnumerator<T> GetEnumerator()
         {
-            lock (this)
+            lock (_observableCollection)
             {
                 return Materialize().GetEnumerator();
             }
@@ -73,7 +73,7 @@ namespace Sensus.Tools
 
         public void Add(T item)
         {
-            lock (this)
+            lock (_observableCollection)
             {
                 _observableCollection.Add(item);
             }
@@ -81,7 +81,7 @@ namespace Sensus.Tools
 
         public void Clear()
         {
-            lock (this)
+            lock (_observableCollection)
             {
                 _observableCollection.Clear();
             }
@@ -107,7 +107,7 @@ namespace Sensus.Tools
 
         public bool Remove(T item)
         {
-            lock (this)
+            lock (_observableCollection)
             {
                 return _observableCollection.Remove(item);
             }
@@ -115,7 +115,7 @@ namespace Sensus.Tools
 
         public void Insert(int index, T item)
         {
-            lock (this)
+            lock (_observableCollection)
             {
                 _observableCollection.Insert(index, item);
             }

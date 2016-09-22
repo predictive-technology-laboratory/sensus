@@ -34,9 +34,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="ConcurrentObservableCollection.cs" />
+    <Compile Include="Concurrent\ConcurrentObservableCollection.cs" />
+    <Compile Include="Concurrent\IConcurrentStrategy.cs" />
+    <Compile Include="Concurrent\LockConcurrentStrategy.cs" />
+    <Compile Include="Dispose\Disposable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tests\ConcurrentObservableCollectionTests.cs" />
+    <Compile Include="Tests\Concurrent\ConcurrentObservableCollectionTests.cs" />
+    <Compile Include="Tests\Dispose\DisposableTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">

@@ -409,6 +409,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Concurrent\SynchronizeMainConcurrentStrategy.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
     <Compile Include="iOSSensusServiceHelper.cs" />

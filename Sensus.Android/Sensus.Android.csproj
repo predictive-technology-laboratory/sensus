@@ -331,6 +331,7 @@
     <Compile Include="AndroidSensusServiceBootStarter.cs" />
     <Compile Include="AndroidTextToSpeech.cs" />
     <Compile Include="AndroidMainActivity.cs" />
+    <Compile Include="Concurrent\SynchronizeMainConcurrentStrategy.cs" />
     <Compile Include="Probes\Context\AndroidBluetoothBroadcastReceiver.cs" />
     <Compile Include="Probes\Communication\AndroidTelephonyOutgoingBroadcastReceiver.cs" />
     <Compile Include="Probes\Communication\AndroidTelephonyIdleIncomingListener.cs" />
