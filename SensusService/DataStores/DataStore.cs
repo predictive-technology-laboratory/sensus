@@ -405,7 +405,6 @@ namespace SensusService.DataStores
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                 TypeNameHandling = TypeNameHandling.All,
                 ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-                ContractResolver = new DictionaryAsArrayContractResolver()
             };
 
             try
