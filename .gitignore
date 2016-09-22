@@ -11,6 +11,7 @@ SensusR/SensusR_*.tar.gz
 *~
 androidpublisher.dat
 client_secrets.json
+Sensus.Android/Resources/Resource.designer.cs
 Sensus.Android/Assets/UnitTestingProtocol.json
 Sensus.iOS/Resources/UnitTestingProtocol.json
 .DS_Store
