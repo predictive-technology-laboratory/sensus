@@ -418,7 +418,11 @@ namespace SensusService.Probes.User.Scripts
 
             ScheduledCallback callback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) => RunUponCallback(callbackId, triggerWindow), "Trigger Randomly");
 
+            int millisecondsToTriggerTime = ((int)((triggerWindowStart.AddSeconds(_random.NextDouble() * (triggerWindowEnd - triggerWindowStart).TotalSeconds)) - DateTime.Now).TotalMilliseconds);
+
 #if __IOS__
+            DateTime triggerTime = DateTime.Now.AddMilliseconds(millisecondsToTriggerTime);
+
             // we won't have a way to update the "X Pending Surveys" notification on ios. the best we can do is
             // display a new notification describing the survey and showing its expiration time (if there is one).
             string userNotificationMessage = "Please open to take survey.";
