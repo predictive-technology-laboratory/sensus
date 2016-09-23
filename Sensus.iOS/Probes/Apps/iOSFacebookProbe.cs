@@ -53,7 +53,7 @@ namespace Sensus.iOS.Probes.Apps
                 bool loginCancelled = false;
                 string accessTokenError = null;
 
-                SensusServiceHelper.Get().RunOnMainThread(() =>
+                SensusServiceHelper.Get().MainThreadSynchronizer.ExecuteThreadSafe(() =>
                 {
                     try
                     {
@@ -134,7 +134,7 @@ namespace Sensus.iOS.Probes.Apps
                 List<ManualResetEvent> responseWaits = new List<ManualResetEvent>();
                 Exception exception = null;  // can't throw exception from within the UI thread -- it will crash the app. use this variable to check whether an exception did occur.
 
-                SensusServiceHelper.Get().RunOnMainThread(() =>
+                SensusServiceHelper.Get().MainThreadSynchronizer.ExecuteThreadSafe(() =>
                 {
                     try
                     {

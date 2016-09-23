@@ -15,7 +15,7 @@
 using System;
 using Xamarin.UITest;
 
-namespace Sensus.UiTest
+namespace Sensus.UiTest.Tools
 {
     public static class ExtensionMethods
     {

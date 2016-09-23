@@ -36,7 +36,7 @@ namespace SensusService.Probes
             List<Probe> probes = null;
 
             // the reflection stuff we do below (at least on android) needs to be run on the main thread.
-            SensusServiceHelper.Get().RunOnMainThread(() =>
+            SensusServiceHelper.Get().MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
                 probes = Assembly.GetExecutingAssembly().GetTypes().Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(Probe))).Select(t => Activator.CreateInstance(t) as Probe).OrderBy(p => p.DisplayName).ToList();
             });

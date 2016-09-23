@@ -12,25 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
+using Sensus.Tools.Tests;
+using Sensus.Android.Concurrent;
 using NUnit.Framework;
-using System.Reflection;
-using System.IO;
 using Xamarin.UITest;
-using Xamarin.UITest.Queries;
 
-namespace Sensus.UiTest
+namespace Sensus.Tests.Android.Concurrent
 {
-    public class AndroidTests : Tests
+    [TestFixture]
+    public class MainConcurrentTests : IConcurrentTests
     {
-        protected override IApp GetApp()
-        {
-            return ConfigureApp.Android.StartApp();
-        }
+        #region Fields
+        private IApp _app;
+        #endregion
 
-        protected override Func<AppQuery, AppQuery> GetStatusLinesQuery()
+        [SetUp]
+        public void BeforeEachTest()
         {
-            return c => c.Class("TextCellRenderer_TextCellView").Class("TextView");
+            _app = ConfigureApp.Android.StartApp(); //.ApkFile("../../../Sensus.Android/bin/Release/edu.virginia.sie.ptl.sensus.apk").StartApp();
+            Concurrent = new MainConcurrent();
         }
     }
 }

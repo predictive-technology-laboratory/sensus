@@ -21,7 +21,7 @@
     <AndroidUseLatestPlatformSdk>false</AndroidUseLatestPlatformSdk>
     <ReleaseVersion>2.0.0</ReleaseVersion>
     <TargetFrameworkVersion>v6.0</TargetFrameworkVersion>
-    <AssemblyName>SensusAndroid</AssemblyName>
+    <AssemblyName>Sensus.Android</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -331,7 +331,7 @@
     <Compile Include="AndroidSensusServiceBootStarter.cs" />
     <Compile Include="AndroidTextToSpeech.cs" />
     <Compile Include="AndroidMainActivity.cs" />
-    <Compile Include="Concurrent\SynchronizeMainConcurrentStrategy.cs" />
+    <Compile Include="Concurrent\MainConcurrent.cs" />
     <Compile Include="Probes\Context\AndroidBluetoothBroadcastReceiver.cs" />
     <Compile Include="Probes\Communication\AndroidTelephonyOutgoingBroadcastReceiver.cs" />
     <Compile Include="Probes\Communication\AndroidTelephonyIdleIncomingListener.cs" />
@@ -409,12 +409,6 @@
   <Import Project="..\packages\Xamarin.Android.Support.Vector.Drawable.23.3.0\build\Xamarin.Android.Support.Vector.Drawable.targets" Condition="Exists('..\packages\Xamarin.Android.Support.Vector.Drawable.23.3.0\build\Xamarin.Android.Support.Vector.Drawable.targets')" />
   <Import Project="..\packages\Xamarin.Forms.2.3.1.114\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.2.3.1.114\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />
   <ItemGroup>
-    <ProjectReference Include="..\Sensus.Tools\Sensus.Tools.csproj">
-      <Project>{7cff68ae-2b49-4650-a30c-939f7ebd33d7}</Project>
-      <Name>Sensus.Tools</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="..\SensusUI\Icons\minus.png">
       <Link>Resources\drawable\minus.png</Link>
     </AndroidResource>
@@ -428,8 +422,13 @@
       <Link>Resources\drawable\share.png</Link>
     </AndroidResource>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <AndroidAsset Include="Assets\UnitTestingProtocol.json" />
+    <ProjectReference Include="..\Sensus.Tools\Sensus.Tools.csproj">
+      <Project>{7cff68ae-2b49-4650-a30c-939f7ebd33d7}</Project>
+      <Name>Sensus.Tools</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\README.txt" />
   </ItemGroup>
 </Project>

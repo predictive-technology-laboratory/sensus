@@ -13,24 +13,13 @@
 // limitations under the License.
 
 using System;
-using NUnit.Framework;
-using System.Reflection;
-using System.IO;
-using Xamarin.UITest;
-using Xamarin.UITest.Queries;
 
-namespace Sensus.UiTest
+namespace Sensus.Tools
 {
-    public class iOSTests : Tests
+    public interface IConcurrent : IDisposable
     {
-        protected override IApp GetApp()
-        {
-            return ConfigureApp.iOS.StartApp();
-        }
+        void ExecuteThreadSafe(Action action);
 
-        protected override Func<AppQuery, AppQuery> GetStatusLinesQuery()
-        {
-            return c => c.Class("UITableViewLabel");
-        }
+        T ExecuteThreadSafe<T>(Func<T> func);
     }
 }

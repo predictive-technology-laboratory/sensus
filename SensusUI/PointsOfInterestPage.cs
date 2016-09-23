@@ -104,7 +104,7 @@ namespace SensusUI
                         {
                             Action<List<Position>> addPOI = new Action<List<Position>>(poiPositions =>
                             {
-                                SensusServiceHelper.Get().RunOnMainThread(async () =>
+                                SensusServiceHelper.Get().MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                                 {
                                     if (poiPositions != null && poiPositions.Count > 0 && await DisplayAlert("Add POI?", "Would you like to add " + poiPositions.Count + " point(s) of interest?", "Yes", "No"))
                                         foreach (Position poiPosition in poiPositions)
@@ -146,7 +146,7 @@ namespace SensusUI
 
         private void Bind()
         {
-            SensusServiceHelper.Get().RunOnMainThread(() =>
+            SensusServiceHelper.Get().MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
                 _pointsOfInterestList.ItemsSource = null;
                 _pointsOfInterestList.ItemsSource = _pointsOfInterest;

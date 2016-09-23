@@ -19,15 +19,24 @@ namespace Sensus.Tools.Tests
 {
     [TestFixture]
     public class ConcurrentObservableCollectionTests
-    {
+    {        
         #region Fields
         private const int DelayTime = 250;
+        private readonly IConcurrent Concurrent;
         #endregion
+
+        public ConcurrentObservableCollectionTests(): this(new LockConcurrent())
+        { }
+
+        public ConcurrentObservableCollectionTests(IConcurrent concurrent)
+        {
+            Concurrent = concurrent;
+        }
 
         [Test]
         public void AddIsThreadSafe()
         {
-            var test = new ConcurrentObservableCollection<int> { 1, 2, 3 };
+            var test = new ConcurrentObservableCollection<int> (Concurrent) { 1, 2, 3 };
 
             var task1 = Task.Run(() =>
             {
@@ -50,7 +59,7 @@ namespace Sensus.Tools.Tests
         [Test]
         public void InsertIsThreadSafe()
         {
-            var test = new ConcurrentObservableCollection<int> { 1, 2, 3 };
+            var test = new ConcurrentObservableCollection<int>(Concurrent) { 1, 2, 3 };
 
             var task1 = Task.Run(() =>
             {
@@ -73,7 +82,7 @@ namespace Sensus.Tools.Tests
         [Test]
         public void RemoveIsThreadSafe()
         {
-            var test = new ConcurrentObservableCollection<int> { 1, 2, 3 };
+            var test = new ConcurrentObservableCollection<int>(Concurrent) { 1, 2, 3 };
 
             var task1 = Task.Run(() =>
             {
@@ -96,7 +105,7 @@ namespace Sensus.Tools.Tests
         [Test]
         public void ClearIsThreadSafe()
         {
-            var test = new ConcurrentObservableCollection<int> { 1, 2, 3 };
+            var test = new ConcurrentObservableCollection<int>(Concurrent) { 1, 2, 3 };
 
             var task1 = Task.Run(() =>
             {
@@ -118,7 +127,7 @@ namespace Sensus.Tools.Tests
         [Test]
         public void ContainsIsThreadSafe()
         {
-            var test = new ConcurrentObservableCollection<int> { 1, 2, 3 };
+            var test = new ConcurrentObservableCollection<int>(Concurrent) { 1, 2, 3 };
 
             var task1 = Task.Run(() =>
             {
@@ -146,7 +155,7 @@ namespace Sensus.Tools.Tests
         [Test]
         public void CopyToIsThreadSafe()
         {
-            var test = new ConcurrentObservableCollection<int> { 1, 2, 3 };
+            var test = new ConcurrentObservableCollection<int>(Concurrent) { 1, 2, 3 };
             var out1 = new int[5];
             var out2 = new int[5];
 

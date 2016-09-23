@@ -23,14 +23,14 @@ namespace Sensus.Android.Concurrent
     /// <remarks>
     /// Device.BeginInvokeOnMainThread invokes off the activity. Sensus does not always have an activity, so we create a handler bound to the main thread's looper instead.
     /// </remarks>
-    public class SynchronizeMainConcurrentStrategy: Disposable, IConcurrentStrategy
+    public class MainConcurrent: Disposable, IConcurrent
     {
         #region Fields
         private readonly Handler _handler;
         #endregion
 
         #region Constructor
-        public SynchronizeMainConcurrentStrategy()
+        public MainConcurrent()
         {
             _handler = new Handler(Looper.MainLooper);
         }
@@ -66,7 +66,7 @@ namespace Sensus.Android.Concurrent
             }
         }
 
-        public T ExecutThreadSafe<T>(Func<T> func)
+        public T ExecuteThreadSafe<T>(Func<T> func)
         {
             if (func == null)
             {

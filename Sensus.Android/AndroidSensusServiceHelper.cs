@@ -36,6 +36,7 @@ using ZXing.Mobile;
 using Android.Graphics;
 using Android.Media;
 using Android.Bluetooth;
+using Sensus.Android.Concurrent;
 using Sensus.Android.Probes.Context;
 
 namespace Sensus.Android
@@ -144,7 +145,7 @@ namespace Sensus.Android
             }
         }
 
-        public AndroidSensusServiceHelper()
+        public AndroidSensusServiceHelper(): base(new MainConcurrent())
         {
             _actionsToRunUsingMainActivity = new List<Action<AndroidMainActivity>>();
             _callbackIdPendingIntent = new Dictionary<string, PendingIntent>();
@@ -715,35 +716,6 @@ namespace Sensus.Android
             else
                 return isEnabled;
         }
-
-        /// <summary>
-        /// Runs an action on the main thread. Should not be called directly. See SensusServiceHelper.RunOnMainThread.
-        /// </summary>
-        /// <param name="action">Action.</param>
-        protected override void RunOnMainThreadNative(Action action)
-        {
-            // we'll deadlock below if we're currently on the main thread.
-            AssertNotOnMainThread("Run on main thread.");
-
-            // sensus does not always have an activity, so use the handler on the service to run 
-            // things on the UI thread.
-            ManualResetEvent runWait = new ManualResetEvent(false);
-
-            _service.MainThreadHandler.Post(() =>
-            {
-                try
-                {
-                    action();
-                }
-                finally
-                {
-                    runWait.Set();
-                }
-            });
-
-            runWait.WaitOne();
-        }
-
         #endregion
 
         #region callback scheduling

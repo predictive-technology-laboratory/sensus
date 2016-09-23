@@ -19,7 +19,7 @@ using Xamarin.Forms;
 
 namespace Sensus.iOS.Concurrent
 {
-    public class SynchronizeMainConcurrentStrategy: Disposable, IConcurrentStrategy
+    public class MainConcurrent: Disposable, IConcurrent
     {
         public void ExecuteThreadSafe(Action action)
         {
@@ -45,7 +45,7 @@ namespace Sensus.iOS.Concurrent
             runWait.WaitOne();
         }
 
-        public T ExecutThreadSafe<T>(Func<T> func)
+        public T ExecuteThreadSafe<T>(Func<T> func)
         {
             if (func == null)
             {

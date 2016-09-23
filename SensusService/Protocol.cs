@@ -239,7 +239,7 @@ namespace SensusService
                     // always deserialize protocols on the main thread (e.g., since a looper is required for android). also, disable
                     // flash notifications so we don't get any messages that result from properties being set within the protocol.
                     SensusServiceHelper.Get().FlashNotificationsEnabled = false;
-                    SensusServiceHelper.Get().RunOnMainThread(() =>
+                    SensusServiceHelper.Get().MainThreadSynchronizer.ExecuteThreadSafe(() =>
                     {
                         try
                         {
@@ -301,7 +301,7 @@ namespace SensusService
                         else
                         {
                             protocolsPage = new ProtocolsPage();
-                            SensusServiceHelper.Get().RunOnMainThread(protocolsPage.Bind);
+                            SensusServiceHelper.Get().MainThreadSynchronizer.ExecuteThreadSafe(protocolsPage.Bind);
                         }
 
                         // ask user to start protocol

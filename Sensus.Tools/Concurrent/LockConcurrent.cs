@@ -16,21 +16,16 @@ using System;
 
 namespace Sensus.Tools
 {
-    public class LockConcurrentStrategy: Disposable, IConcurrentStrategy
+    public class LockConcurrent: Disposable, IConcurrent
     {
         #region Fields
         private readonly object _lock;
         #endregion
 
         #region Constructors
-        public LockConcurrentStrategy(object @lock)
+        public LockConcurrent(object @lock = null)
         {
-            if (@lock == null)
-            {
-                throw new ArgumentNullException(nameof(@lock));
-            }
-
-            _lock = @lock;
+            _lock = @lock ?? this;
         }
         #endregion
 
@@ -48,7 +43,7 @@ namespace Sensus.Tools
             }
         }
 
-        public T ExecutThreadSafe<T>(Func<T> func)
+        public T ExecuteThreadSafe<T>(Func<T> func)
         {
             if (func == null)
             {

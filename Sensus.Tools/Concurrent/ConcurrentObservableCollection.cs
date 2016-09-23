@@ -11,7 +11,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-﻿using System.Collections;
+
+using System.Collections;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -26,6 +27,8 @@ namespace Sensus.Tools
     /// </summary>
     public class ConcurrentObservableCollection<T>: INotifyCollectionChanged, INotifyPropertyChanged, ICollection<T>
     {
+        private readonly IConcurrent _concurrent;
+
         #region Fields
         private readonly ObservableCollection<T> _observableCollection;
         #endregion
@@ -51,8 +54,9 @@ namespace Sensus.Tools
         #endregion
 
         #region Constructors
-        public ConcurrentObservableCollection()
+        public ConcurrentObservableCollection(IConcurrent concurrent)
         {
+            _concurrent           = concurrent;
             _observableCollection = new ObservableCollection<T>();
         }
         #endregion
@@ -60,10 +64,7 @@ namespace Sensus.Tools
         #region Public Methods
         public IEnumerator<T> GetEnumerator()
         {
-            lock (_observableCollection)
-            {
-                return Materialize().GetEnumerator();
-            }
+            return _concurrent.ExecuteThreadSafe(() => Materialize().GetEnumerator());
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -73,18 +74,12 @@ namespace Sensus.Tools
 
         public void Add(T item)
         {
-            lock (_observableCollection)
-            {
-                _observableCollection.Add(item);
-            }
+            _concurrent.ExecuteThreadSafe(() => _observableCollection.Add(item));
         }
 
         public void Clear()
         {
-            lock (_observableCollection)
-            {
-                _observableCollection.Clear();
-            }
+            _concurrent.ExecuteThreadSafe(() =>_observableCollection.Clear());
         }
 
         /// <remarks>
@@ -107,18 +102,12 @@ namespace Sensus.Tools
 
         public bool Remove(T item)
         {
-            lock (_observableCollection)
-            {
-                return _observableCollection.Remove(item);
-            }
+            return _concurrent.ExecuteThreadSafe(() => _observableCollection.Remove(item));
         }
 
         public void Insert(int index, T item)
         {
-            lock (_observableCollection)
-            {
-                _observableCollection.Insert(index, item);
-            }
+            _concurrent.ExecuteThreadSafe(() => _observableCollection.Insert(index, item)) ;
         }
         #endregion
 

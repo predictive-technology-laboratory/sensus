@@ -320,8 +320,7 @@ namespace SensusService
 
         #endregion
 
-        private Logger _logger;
-        private ConcurrentObservableCollection<Protocol> _registeredProtocols;
+        private Logger _logger;        
         private List<string> _runningProtocolIds;
         private string _healthTestCallbackId;
         private Dictionary<string, ScheduledCallback> _idCallback;
@@ -331,9 +330,8 @@ namespace SensusService
         private ZXing.Mobile.BarcodeWriter _barcodeWriter;
         private bool _flashNotificationsEnabled;
 
-        // we use the following observable collection in ListViews within Sensus. this is not thread-safe,
-        // so any write operations involving this collection should be performed on the UI thread.
-        private ObservableCollection<Script> _scriptsToRun;
+        private ConcurrentObservableCollection<Protocol> _registeredProtocols;
+        private ConcurrentObservableCollection<Script> _scriptsToRun;
 
         private readonly object _shareFileLocker = new object();
         private readonly object _saveLocker = new object();
@@ -393,7 +391,7 @@ namespace SensusService
             }
         }
 
-        public ObservableCollection<Script> ScriptsToRun
+        public ConcurrentObservableCollection<Script> ScriptsToRun
         {
             get
             {
@@ -430,6 +428,9 @@ namespace SensusService
                 return runningProtocols.Count == 0 ? Protocol.GPS_DEFAULT_MIN_DISTANCE_DELAY_METERS : runningProtocols.Min(p => p.GpsMinDistanceDelayMeters);
             }
         }
+
+        [JsonIgnore]
+        public IConcurrent MainThreadSynchronizer { get; }
 
         #region platform-specific properties
 
@@ -521,17 +522,23 @@ namespace SensusService
 
         #endregion
 
-        protected SensusServiceHelper()
+        protected SensusServiceHelper(IConcurrent mainSync)
         {
             if (SINGLETON != null)
+            {
                 throw new SensusException("Attempted to construct new service helper when singleton already existed.");
+            }
 
-            _registeredProtocols = new ConcurrentObservableCollection<Protocol>();
-            _runningProtocolIds = new List<string>();
+            MainThreadSynchronizer = mainSync;
+
+            _registeredProtocols = new ConcurrentObservableCollection<Protocol>(new LockConcurrent());
+            _scriptsToRun        = new ConcurrentObservableCollection<Script>(MainThreadSynchronizer);
+
+            _runningProtocolIds   = new List<string>();
             _healthTestCallbackId = null;
-            _idCallback = new Dictionary<string, ScheduledCallback>();
-            _hasher = new SHA256Managed();
-            _pointsOfInterest = new List<PointOfInterest>();
+            _idCallback           = new Dictionary<string, ScheduledCallback>();
+            _hasher               = new SHA256Managed();
+            _pointsOfInterest     = new List<PointOfInterest>();
 
             // ensure that the entire QR code is always visible by using 90% the minimum screen dimension as the QR code size.
 #if __ANDROID__
@@ -545,15 +552,16 @@ namespace SensusService
             _barcodeWriter = new ZXing.Mobile.BarcodeWriter
             {
                 Format = BarcodeFormat.QR_CODE,
+
                 Options = new ZXing.Common.EncodingOptions
                 {
                     Height = qrCodeSize,
-                    Width = qrCodeSize
+                    Width  = qrCodeSize
                 }
             };
 
             _flashNotificationsEnabled = true;
-            _scriptsToRun = new ObservableCollection<Script>();
+            
 
             if (!Directory.Exists(SHARE_DIRECTORY))
                 Directory.CreateDirectory(SHARE_DIRECTORY);
@@ -605,14 +613,6 @@ namespace SensusService
                 hashBuilder.Append(b.ToString("x"));
 
             return hashBuilder.ToString();
-        }
-
-        public void RunOnMainThread(Action action)
-        {
-            if (IsOnMainThread)
-                action();
-            else
-                RunOnMainThreadNative(action);
         }
 
         #region platform-specific methods. this functionality cannot be implemented in a cross-platform way. it must be done separately for each platform.
@@ -681,8 +681,6 @@ namespace SensusService
                 return false;
             }
         }
-
-        protected abstract void RunOnMainThreadNative(Action action);
 
         #endregion
 
@@ -823,50 +821,38 @@ namespace SensusService
 
         public void AddScriptToRun(Script script, RunMode runMode)
         {
-            RunOnMainThread(() =>
+            var scriptsWithSameParent = _scriptsToRun.Where(s => s.SharesParentScriptWith(script)).ToArray();
+
+            if (scriptsWithSameParent.Any() && runMode == RunMode.SingleKeepOldest)
             {
-                var scriptsWithSameParent = _scriptsToRun.Where(s => s.SharesParentScriptWith(script)).ToArray();
+                return;
+            }
 
-                if (scriptsWithSameParent.Any() && runMode == RunMode.SingleKeepOldest)
+            if (scriptsWithSameParent.Any() && runMode == RunMode.SingleUpdate)
+            {
+                foreach (var scriptWithSameParent in scriptsWithSameParent)
                 {
-                    return;
+                    _scriptsToRun.Remove(scriptWithSameParent);
                 }
+            }
 
-                if (scriptsWithSameParent.Any() && runMode == RunMode.SingleUpdate)
-                {
-                    foreach (var scriptWithSameParent in scriptsWithSameParent)
-                    {
-                        _scriptsToRun.Remove(scriptWithSameParent);
-                    }
-                }
-
-                _scriptsToRun.Insert(0, script);
-                IssuePendingSurveysNotificationAsync(true, true);
-            });
+            _scriptsToRun.Insert(0, script);
+            IssuePendingSurveysNotificationAsync(true, true);
         }
 
         public void RemoveScriptToRun(Script script)
         {
-            RunOnMainThread(() =>
-            {
-                RemoveScripts(true, script);
-            });
+            RemoveScripts(true, script);
         }
 
         public void RemoveScriptsToRun(ScriptRunner runner)
         {
-            RunOnMainThread(() =>
-            {
-                RemoveScripts(true, _scriptsToRun.Where(script => script.Runner == runner).ToArray());
-            });
+            RemoveScripts(true, _scriptsToRun.Where(script => script.Runner == runner).ToArray());
         }
 
         public void RemoveOldScripts(bool issueNotification)
         {
-            RunOnMainThread(() =>
-            {
-                RemoveScripts(true, _scriptsToRun.Where(Expired).ToArray());
-            });
+            RemoveScripts(true, _scriptsToRun.Where(Expired).ToArray());
         }
 
         public void IssuePendingSurveysNotificationAsync(bool playSound, bool vibrate)
@@ -1235,7 +1221,7 @@ namespace SensusService
                         {
                             BringToForeground();
 
-                            RunOnMainThread(async () =>
+                            MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                             {
                                 // catch any exceptions from preparing and displaying the prompts page
                                 try
@@ -1414,7 +1400,7 @@ namespace SensusService
 
         public void GetPositionsFromMapAsync(Xamarin.Forms.Maps.Position address, string newPinName, Action<List<Xamarin.Forms.Maps.Position>> callback)
         {
-            RunOnMainThread(async () =>
+            MainThreadSynchronizer.ExecuteThreadSafe(async () =>
             {
                 if (await ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
                     FlashNotificationAsync("Geolocation is not permitted on this device. Cannot display map.");
@@ -1434,7 +1420,7 @@ namespace SensusService
 
         public void GetPositionsFromMapAsync(string address, string newPinName, Action<List<Xamarin.Forms.Maps.Position>> callback)
         {
-            RunOnMainThread(async () =>
+            MainThreadSynchronizer.ExecuteThreadSafe(async () =>
             {
                 if (await ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
                     FlashNotificationAsync("Geolocation is not permitted on this device. Cannot display map.");
@@ -1535,43 +1521,39 @@ namespace SensusService
                     rationale = "Sensus must be able to write to your device's storage for proper operation. Please grant this permission.";
 
                 if (await CrossPermissions.Current.CheckPermissionStatusAsync(permission) == PermissionStatus.Granted)
-                    return PermissionStatus.Granted;
-                else
                 {
-                    // the Permissions plugin requires a main activity to be present on android. ensure this below.
-                    BringToForeground();
+                    return PermissionStatus.Granted;
+                }
+                // the Permissions plugin requires a main activity to be present on android. ensure this below.
+                BringToForeground();
 
-                    // display rationale for request to the user if needed
-                    if (rationale != null && await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(permission))
+                // display rationale for request to the user if needed
+                if (rationale != null && await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(permission))
+                {
+                    MainThreadSynchronizer.ExecuteThreadSafe(() =>
                     {
-                        ManualResetEvent rationaleDialogWait = new ManualResetEvent(false);
+                        Application.Current.MainPage.DisplayAlert("Permission Request", $"On the next screen, Sensus will request access to your device's {permission.ToString().ToUpper()}. {rationale}", "OK").Wait();
+                    });
+                }
 
-                        RunOnMainThread(async () =>
-                        {
-                            await (Application.Current as App).MainPage.DisplayAlert("Permission Request", "On the next screen, Sensus will request access to your device's " + permission.ToString().ToUpper() + ". " + rationale, "OK");
-                            rationaleDialogWait.Set();
-                        });
+                // request permission from the user                    
+                try
+                {
+                    PermissionStatus status;
 
-                        rationaleDialogWait.WaitOne();
-                    }
-
-                    // request permission from the user
-                    PermissionStatus status = PermissionStatus.Unknown;
-                    try
+                    // it's happened that the returned dictionary doesn't contain an entry for the requested permission, so check for that(https://insights.xamarin.com/app/Sensus-Production/issues/903).a
+                    if ( !(await CrossPermissions.Current.RequestPermissionsAsync(permission)).TryGetValue(permission, out status) )
                     {
-                        Dictionary<Permission, PermissionStatus> permissionStatus = await CrossPermissions.Current.RequestPermissionsAsync(new Permission[] { permission });
-
-                        // it's happened that the returned dictionary doesn't contain an entry for the requested permission, so check for that(https://insights.xamarin.com/app/Sensus-Production/issues/903).a
-                        if (!permissionStatus.TryGetValue(permission, out status))
-                            throw new Exception("Permission status not returned for request:  " + permission);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.Log("Failed to obtain permission:  " + ex.Message, LoggingLevel.Normal, GetType());
-                        status = PermissionStatus.Unknown;
+                        throw new Exception($"Permission status not returned for request:  {permission}");
                     }
 
                     return status;
+                }
+                catch (Exception ex)
+                {
+                    _logger.Log($"Failed to obtain permission:  {ex.Message}", LoggingLevel.Normal, GetType());
+
+                    return PermissionStatus.Unknown;
                 }
             });
         }

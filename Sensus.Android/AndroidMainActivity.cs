@@ -176,7 +176,7 @@ namespace Sensus.Android
                 SensusServiceHelper.Get().ClearPendingSurveysNotificationAsync();
 
                 // now that the service connection has been established, dismiss the wait dialog and show protocols.
-                SensusServiceHelper.Get().RunOnMainThread(serviceBindWaitDialog.Dismiss);
+                SensusServiceHelper.Get().MainThreadSynchronizer.ExecuteThreadSafe(serviceBindWaitDialog.Dismiss);
 
             }).Start();
         }
@@ -318,7 +318,7 @@ namespace Sensus.Android
                     }
                     catch (Exception ex)
                     {
-                        SensusServiceHelper.Get().RunOnMainThread(() =>
+                        SensusServiceHelper.Get().MainThreadSynchronizer.ExecuteThreadSafe(() =>
                         {
                             new AlertDialog.Builder(this).SetTitle("Failed to get protocol").SetMessage(ex.Message).Show();
                         });

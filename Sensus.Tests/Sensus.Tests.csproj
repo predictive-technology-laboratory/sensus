@@ -47,51 +47,69 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="nunit.core, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnitTestAdapter.2.0.0\lib\nunit.core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="nunit.core.interfaces, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnitTestAdapter.2.0.0\lib\nunit.core.interfaces.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="nunit.util, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnitTestAdapter.2.0.0\lib\nunit.util.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="NUnit.VisualStudio.TestAdapter, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4cb40d35494691ac, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnitTestAdapter.2.0.0\lib\NUnit.VisualStudio.TestAdapter.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Net.Http.Extensions, Version=2.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\net45\System.Net.Http.Extensions.dll</HintPath>
+    <Reference Include="Xamarin.UITest, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xamarin.UITest.2.0.0-beta01\lib\Xamarin.UITest.dll</HintPath>
       <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Net.Http.Primitives, Version=4.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\net45\System.Net.Http.Primitives.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Net.Http.WebRequest" />
-    <Reference Include="Xamarin.UITest">
-      <HintPath>..\packages\Xamarin.UITest.1.2.0\lib\Xamarin.UITest.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+    <None Include="Protocols\5.0.0-android-file-s3-all-probes.sensus" />
+    <None Include="Protocols\5.0.0-ios-file-s3-all-probes.sensus" />
+    <None Include="Protocols\5.1.0-android-file-s3-all-probes.sensus" />
+    <None Include="Protocols\5.1.0-ios-file-s3-all-probes.sensus" />
+    <None Include="Protocols\5.2.0-android-file-s3-all-probes.sensus" />
+    <None Include="Protocols\5.2.0-ios-file-s3-all-probes.sensus" />
+    <None Include="Protocols\5.3.0-android-file-s3-all-probes.sensus" />
+    <None Include="Protocols\5.3.0-ios-file-s3-all-probes.sensus" />
+    <None Include="Protocols\5.5.0-android-file-s3-all-probes.json" />
+    <None Include="Protocols\5.5.0-ios-file-s3-all-probes.json" />
+    <None Include="Protocols\7.0.0-android-file-s3-all-probes.json" />
+    <None Include="Protocols\7.0.0-ios-file-s3-all-probes.json" />
+    <None Include="Protocols\PromptForUnitTestingProtocol.sh" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Tests.cs" />
-    <Compile Include="iOSTests.cs" />
-    <Compile Include="AndroidTests.cs" />
-    <Compile Include="ExtensionMethods.cs" />
+    <Compile Include="Android\Concurrent\MainConcurrentTests.cs" />
+    <Compile Include="Tools\Tests.cs" />
+    <Compile Include="iOS\iOSTests.cs" />
+    <Compile Include="Android\AndroidTests.cs" />
+    <Compile Include="Tools\ExtensionMethods.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sensus.Android\Sensus.Android.csproj">
-      <Project>{D33B6CDB-795C-4826-B131-47C526ACE07F}</Project>
+      <Project>{d33b6cdb-795c-4826-b131-47c526ace07f}</Project>
       <Name>Sensus.Android</Name>
-      <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
-      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\Sensus.iOS\Sensus.iOS.csproj">
-      <Project>{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}</Project>
+      <Project>{acfa56bf-b959-4caf-a2a7-981a9e48e17c}</Project>
       <Name>Sensus.iOS</Name>
-      <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
-      <Private>False</Private>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="UnitTestingProtocols\PromptForUnitTestingProtocol.sh" />
+    <ProjectReference Include="..\Sensus.Tools\Sensus.Tools.csproj">
+      <Project>{7cff68ae-2b49-4650-a30c-939f7ebd33d7}</Project>
+      <Name>Sensus.Tools</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
