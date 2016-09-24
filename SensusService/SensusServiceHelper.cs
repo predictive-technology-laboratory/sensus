@@ -852,7 +852,7 @@ namespace SensusService
 
         public void RemoveOldScripts(bool issueNotification)
         {
-            RemoveScripts(true, _scriptsToRun.Where(Expired).ToArray());
+            RemoveScripts(issueNotification, _scriptsToRun.Where(Expired).ToArray());
         }
 
         public void IssuePendingSurveysNotificationAsync(bool playSound, bool vibrate)
@@ -1625,7 +1625,7 @@ namespace SensusService
                 RescheduleTriggerCallbacks(script.Runner);
             }
 
-            if (removed)
+            if (removed && issueNotification)
             {
                 IssuePendingSurveysNotificationAsync(false, false);
             }
