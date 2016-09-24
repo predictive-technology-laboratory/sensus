@@ -331,7 +331,6 @@
     <Compile Include="AndroidSensusServiceBootStarter.cs" />
     <Compile Include="AndroidTextToSpeech.cs" />
     <Compile Include="AndroidMainActivity.cs" />
-    <Compile Include="Concurrent\MainConcurrent.cs" />
     <Compile Include="Probes\Context\AndroidBluetoothBroadcastReceiver.cs" />
     <Compile Include="Probes\Communication\AndroidTelephonyOutgoingBroadcastReceiver.cs" />
     <Compile Include="Probes\Communication\AndroidTelephonyIdleIncomingListener.cs" />
@@ -423,6 +422,10 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Sensus.Android.Tools\Sensus.Android.Tools.csproj">
+      <Project>{9657183d-6303-43ca-9526-6d1033878f64}</Project>
+      <Name>Sensus.Android.Tools</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sensus.Tools\Sensus.Tools.csproj">
       <Project>{7cff68ae-2b49-4650-a30c-939f7ebd33d7}</Project>
       <Name>Sensus.Tools</Name>

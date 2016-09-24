@@ -410,7 +410,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Concurrent\MainConcurrent.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
     <Compile Include="iOSSensusServiceHelper.cs" />
@@ -463,6 +462,12 @@
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
   <Import Project="..\packages\Xamarin.Insights.1.12.3\build\Xamarin.iOS10\Xamarin.Insights.targets" Condition="Exists('..\packages\Xamarin.Insights.1.12.3\build\Xamarin.iOS10\Xamarin.Insights.targets')" />
   <ItemGroup>
+    <ProjectReference Include="..\Sensus.iOS.Tools\Sensus.iOS.Tools.csproj">
+      <Project>{6380da9c-4477-4877-840d-d41cf7d417ca}</Project>
+      <Name>Sensus.iOS.Tools</Name>
+      <IsAppExtension>false</IsAppExtension>
+      <IsWatchApp>false</IsWatchApp>
+    </ProjectReference>
     <ProjectReference Include="..\Sensus.Tools\Sensus.Tools.csproj">
       <Project>{7cff68ae-2b49-4650-a30c-939f7ebd33d7}</Project>
       <Name>Sensus.Tools</Name>

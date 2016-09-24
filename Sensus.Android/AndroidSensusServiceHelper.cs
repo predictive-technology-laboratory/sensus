@@ -36,7 +36,6 @@ using ZXing.Mobile;
 using Android.Graphics;
 using Android.Media;
 using Android.Bluetooth;
-using Sensus.Android.Concurrent;
 using Sensus.Android.Probes.Context;
 
 namespace Sensus.Android
@@ -145,7 +144,7 @@ namespace Sensus.Android
             }
         }
 
-        public AndroidSensusServiceHelper(): base(new MainConcurrent())
+        public AndroidSensusServiceHelper(): base(new Sensus.Android.Tools.MainConcurrent()) 
         {
             _actionsToRunUsingMainActivity = new List<Action<AndroidMainActivity>>();
             _callbackIdPendingIntent = new Dictionary<string, PendingIntent>();

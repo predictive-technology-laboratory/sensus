@@ -5,11 +5,11 @@
     <MinimumVisualStudioVersion>10.0</MinimumVisualStudioVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{7CFF68AE-2B49-4650-A30C-939F7EBD33D7}</ProjectGuid>
+    <ProjectGuid>{EF54B5C9-E38E-48B9-8B8C-1ECBE5C5680E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sensus.Tools</RootNamespace>
-    <AssemblyName>Sensus.Tools</AssemblyName>
+    <RootNamespace>Sensus.Tools.Tests</RootNamespace>
+    <AssemblyName>Sensus.Tools.Tests</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -34,11 +34,26 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Concurrent\ConcurrentObservableCollection.cs" />
-    <Compile Include="Concurrent\IConcurrent.cs" />
-    <Compile Include="Concurrent\LockConcurrent.cs" />
-    <Compile Include="Dispose\Disposable.cs" />
+    <Compile Include="Concurrent\ConcurrentObservableCollectionTests.cs" />
+    <Compile Include="Concurrent\IConcurrentTests.cs" />
+    <Compile Include="Concurrent\LockConcurrentTests.cs" />
+    <Compile Include="Dispose\DisposableTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sensus.Tools\Sensus.Tools.csproj">
+      <Project>{7cff68ae-2b49-4650-a30c-939f7ebd33d7}</Project>
+      <Name>Sensus.Tools</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
