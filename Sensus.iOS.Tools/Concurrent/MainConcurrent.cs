@@ -14,6 +14,7 @@
 
 using System;
 using System.Threading;
+using Foundation;
 using Sensus.Tools;
 using Xamarin.Forms;
 
@@ -26,6 +27,11 @@ namespace Sensus.iOS.Concurrent
             if (action == null)
             {
                 throw new ArgumentNullException();
+            }
+
+            if (NSThread.IsMain)
+            {
+                action();
             }
 
             var runWait = new ManualResetEvent(false);
@@ -50,6 +56,11 @@ namespace Sensus.iOS.Concurrent
             if (func == null)
             {
                 throw new ArgumentNullException(nameof(func));
+            }
+
+            if (NSThread.IsMain)
+            {
+                return func();
             }
 
             var result = default(T);
