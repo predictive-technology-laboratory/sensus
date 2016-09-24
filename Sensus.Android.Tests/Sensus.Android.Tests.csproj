@@ -135,9 +135,6 @@
     <None Include="Properties\AndroidManifest.xml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="MainActivity.cs.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Sensus.Android.Tools\Sensus.Android.Tools.csproj">
       <Project>{9657183d-6303-43ca-9526-6d1033878f64}</Project>
       <Name>Sensus.Android.Tools</Name>

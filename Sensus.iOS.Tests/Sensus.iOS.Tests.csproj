@@ -147,9 +147,6 @@
     <Reference Include="Xamarin.iOS" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="AppDelegate.cs.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Sensus.iOS.Tools\Sensus.iOS.Tools.csproj">
       <Project>{6380da9c-4477-4877-840d-d41cf7d417ca}</Project>
       <Name>Sensus.iOS.Tools</Name>
