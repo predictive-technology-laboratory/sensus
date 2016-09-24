@@ -522,14 +522,14 @@ namespace SensusService
 
         #endregion
 
-        protected SensusServiceHelper(IConcurrent mainSync)
+        protected SensusServiceHelper(IConcurrent mainThreadSynchronizer)
         {
             if (SINGLETON != null)
             {
                 throw new SensusException("Attempted to construct new service helper when singleton already existed.");
             }
 
-            MainThreadSynchronizer = mainSync;
+            MainThreadSynchronizer = mainThreadSynchronizer;
 
             _registeredProtocols = new ConcurrentObservableCollection<Protocol>(new LockConcurrent());
             _scriptsToRun        = new ConcurrentObservableCollection<Script>(MainThreadSynchronizer);
