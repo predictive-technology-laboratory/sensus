@@ -78,7 +78,7 @@ namespace SensusUI
 
                 timer.Elapsed += (o, e) =>
                 {
-                    SensusServiceHelper.Get().RunOnMainThread(() =>
+                    SensusServiceHelper.Get().MainThreadSynchronizer.ExecuteThreadSafe(() =>
                     {
                         int secondsLeftBeforeBarcodeExpiration = (int)(SensusServiceHelper.PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS - (DateTimeOffset.UtcNow - participationRewardDatum.Timestamp).TotalSeconds);
 

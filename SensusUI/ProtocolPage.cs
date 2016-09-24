@@ -150,7 +150,7 @@ namespace SensusUI
 
             _protocolRunningChangedAction = (o, running) =>
             {
-                SensusServiceHelper.Get().RunOnMainThread(() =>
+                SensusServiceHelper.Get().MainThreadSynchronizer.ExecuteThreadSafe(() =>
                 {
                     editLocalDataStoreButton.IsEnabled = createLocalDataStoreButton.IsEnabled = editRemoteDataStoreButton.IsEnabled = createRemoteDataStoreButton.IsEnabled = !running;
                 });
@@ -198,7 +198,7 @@ namespace SensusUI
                             else
                             {
                                 _protocol.LockPasswordHash = SensusServiceHelper.Get().GetHash(password);
-                                SensusServiceHelper.Get().RunOnMainThread(() => lockButton.Text = "Unlock");
+                                SensusServiceHelper.Get().MainThreadSynchronizer.ExecuteThreadSafe(() => lockButton.Text = "Unlock");
                             }
                         });
                 }

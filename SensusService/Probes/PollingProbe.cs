@@ -19,6 +19,9 @@ using System.Threading;
 using Newtonsoft.Json;
 using System.Linq;
 using System.Threading.Tasks;
+#if __IOS__
+using CoreLocation;
+#endif
 
 namespace SensusService.Probes
 {
@@ -34,6 +37,11 @@ namespace SensusService.Probes
         private bool _isPolling;
         private string _pollCallbackId;
         private List<DateTime> _pollTimes;
+#if __IOS__
+        private bool _significantChangePoll;
+        private bool _significantChangeOverrideScheduledPolls;
+        private CLLocationManager _locationManager;
+#endif
 
         private readonly object _locker = new object();
 
@@ -95,6 +103,22 @@ namespace SensusService.Probes
             get { return _pollTimes; }
         }
 
+#if __IOS__
+        [OnOffUiProperty("Significant Change Poll:", true, 7)]
+        public bool SignificantChangePoll
+        {
+            get { return _significantChangePoll; }
+            set { _significantChangePoll = value; }
+        }
+
+        [OnOffUiProperty("Significant Change Override Scheduled Polls:", true, 8)]
+        public bool SignificantChangeOverrideScheduledPolls
+        {
+            get { return _significantChangeOverrideScheduledPolls; }
+            set { _significantChangeOverrideScheduledPolls = value; }
+        }
+#endif
+
         public override string CollectionDescription
         {
             get
@@ -143,6 +167,11 @@ namespace SensusService.Probes
             _isPolling = false;
             _pollCallbackId = null;
             _pollTimes = new List<DateTime>();
+#if __IOS__
+            _significantChangePoll = false;
+            _significantChangeOverrideScheduledPolls = false;
+            _locationManager = new CLLocationManager();
+#endif
         }
 
         protected override void InternalStart()
@@ -208,7 +237,32 @@ namespace SensusService.Probes
 
                     }, GetType().FullName + " Poll", TimeSpan.FromMinutes(_pollingTimeoutMinutes), userNotificationMessage);
 
+#if __IOS__
+                if (_significantChangePoll)
+                {
+                    _locationManager.RequestAlwaysAuthorization();
+                    _locationManager.DistanceFilter = 5.0;
+                    _locationManager.PausesLocationUpdatesAutomatically = true;
+                    _locationManager.AllowsBackgroundLocationUpdates = true;
+
+                    if (CLLocationManager.LocationServicesEnabled)
+                    {
+                        _locationManager.StartMonitoringSignificantLocationChanges();
+                    }
+                    else
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Location services not enabled; please enable in Settings.", LoggingLevel.Normal, GetType());
+                    }
+
+                    _locationManager.LocationsUpdated += (o, e) => SensusServiceHelper.Get().ScheduleOneTimeCallback(callback, 0);
+                }
+                if (!_significantChangeOverrideScheduledPolls || !_significantChangePoll)
+                {
+                    _pollCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(callback, 0, _pollingSleepDurationMS, POLL_CALLBACK_LAG);
+                }
+#elif __ANDROID__
                 _pollCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(callback, 0, _pollingSleepDurationMS, POLL_CALLBACK_LAG);
+#endif
             }
         }
 
@@ -219,6 +273,11 @@ namespace SensusService.Probes
             lock (_locker)
             {
                 base.Stop();
+
+#if __IOS__
+                if (_significantChangePoll)
+                    _locationManager.StopMonitoringSignificantLocationChanges();
+#endif
 
                 SensusServiceHelper.Get().UnscheduleCallback(_pollCallbackId);
                 _pollCallbackId = null;

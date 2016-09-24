@@ -109,6 +109,7 @@ namespace SensusService.DataStores
         private long _addedDataCount;
         private long _committedDataCount;
         private bool _sizeTriggeredCommitRunning;
+        private bool _sampleTriggeredCommitRunning;
 
         [EntryIntegerUiProperty("Commit Delay (MS):", true, 2)]
         public int CommitDelayMS
@@ -221,6 +222,7 @@ namespace SensusService.DataStores
             _committedDataCount = 0;
             _addedDataCount = 0;
             _sizeTriggeredCommitRunning = false;
+            _sampleTriggeredCommitRunning = false;
         }
 
         /// <summary>
@@ -249,7 +251,7 @@ namespace SensusService.DataStores
             }
         }
 
-        public Task AddAsync(Datum datum, CancellationToken cancellationToken)
+        public Task AddAsync(Datum datum, CancellationToken cancellationToken, bool runLocalCommitOnStore)
         {
             lock (_data)
             {
@@ -278,6 +280,30 @@ namespace SensusService.DataStores
                         finally
                         {
                             _sizeTriggeredCommitRunning = false;
+                        }
+                    });
+                }
+
+                // if the probe's RunLocalCommitOnStore option is set to true, commit it locally
+                else if (runLocalCommitOnStore && !_sampleTriggeredCommitRunning)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Running sample-triggered commit.", LoggingLevel.Normal, GetType());
+
+                    _sampleTriggeredCommitRunning = true;
+
+                    return Task.Run(async () =>
+                    {
+                        try
+                        {
+                            await CommitChunksAsync(_data, this, cancellationToken);
+                        }
+                        catch (Exception ex)
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Failed to run sample-triggered commit:  " + ex.Message, LoggingLevel.Normal, GetType());
+                        }
+                        finally
+                        {
+                            _sampleTriggeredCommitRunning = false;
                         }
                     });
                 }
@@ -378,26 +404,23 @@ namespace SensusService.DataStores
                 PreserveReferencesHandling = PreserveReferencesHandling.None,
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                 TypeNameHandling = TypeNameHandling.All,
-                ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
+                ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
             };
 
-            DataStore copy = null;
             try
             {
                 SensusServiceHelper.Get().FlashNotificationsEnabled = false;
-                copy = JsonConvert.DeserializeObject<DataStore>(JsonConvert.SerializeObject(this, settings), settings);
+                return JsonConvert.DeserializeObject<DataStore>(JsonConvert.SerializeObject(this, settings), settings);
             }
             catch (Exception ex)
             {
-                SensusServiceHelper.Get().Logger.Log("Failed to copy data store:  " + ex.Message, LoggingLevel.Normal, GetType());
-                copy = null;
+                SensusServiceHelper.Get().Logger.Log($"Failed to copy data store:  {ex.Message}", LoggingLevel.Normal, GetType());
+                throw;
             }
             finally
             {
                 SensusServiceHelper.Get().FlashNotificationsEnabled = true;
             }
-
-            return copy;
         }
     }
 }

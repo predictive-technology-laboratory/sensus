@@ -28,6 +28,7 @@ namespace SensusService.Probes.User.Scripts
         private Datum _previousDatum;
         private Datum _currentDatum;
         private string _id;
+        private string _callbackId;
 
         public ScriptRunner Runner
         {
@@ -51,6 +52,12 @@ namespace SensusService.Probes.User.Scripts
             {
                 _id = value;
             }
+        }
+
+        public string CallbackId
+        {
+            get { return _callbackId; }
+            set { _callbackId = value; }
         }
 
         public ObservableCollection<InputGroup> InputGroups
@@ -101,6 +108,7 @@ namespace SensusService.Probes.User.Scripts
         {
             _runner = runner;
             _id = Guid.NewGuid().ToString();
+            _callbackId = "";
             _inputGroups = new ObservableCollection<InputGroup>();
         }
 
