@@ -401,6 +401,7 @@
     <InterfaceDefinition Include="Resources\LaunchScreen.xib" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="iOSClassDiagram.cd" />
     <None Include="Info.plist" />
     <None Include="Entitlements.plist" />
@@ -457,16 +458,20 @@
     <BundleResource Include="..\SensusUI\Icons\gear_wrench.png">
       <Link>Resources\gear_wrench.png</Link>
     </BundleResource>
-    <BundleResource Include="Resources\UnitTestingProtocol.json" />
   </ItemGroup>
+  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
+  <Import Project="..\packages\Xamarin.Insights.1.12.3\build\Xamarin.iOS10\Xamarin.Insights.targets" Condition="Exists('..\packages\Xamarin.Insights.1.12.3\build\Xamarin.iOS10\Xamarin.Insights.targets')" />
   <ItemGroup>
+    <ProjectReference Include="..\Sensus.iOS.Tools\Sensus.iOS.Tools.csproj">
+      <Project>{6380da9c-4477-4877-840d-d41cf7d417ca}</Project>
+      <Name>Sensus.iOS.Tools</Name>
+      <IsAppExtension>false</IsAppExtension>
+      <IsWatchApp>false</IsWatchApp>
+    </ProjectReference>
     <ProjectReference Include="..\Sensus.Tools\Sensus.Tools.csproj">
       <Project>{7cff68ae-2b49-4650-a30c-939f7ebd33d7}</Project>
       <Name>Sensus.Tools</Name>
     </ProjectReference>
   </ItemGroup>
-  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
-  <Import Project="..\packages\Xamarin.Insights.1.12.3\build\Xamarin.iOS10\Xamarin.Insights.targets" Condition="Exists('..\packages\Xamarin.Insights.1.12.3\build\Xamarin.iOS10\Xamarin.Insights.targets')" />
-  <ItemGroup />
   <Import Project="..\packages\Xamarin.Forms.2.3.1.114\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.2.3.1.114\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />
 </Project>

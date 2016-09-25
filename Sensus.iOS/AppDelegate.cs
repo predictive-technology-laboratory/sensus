@@ -181,7 +181,7 @@ namespace Sensus.iOS
                     if (notificationId != null && notificationId.ToString() == SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID)
                     {
                         // display the pending scripts page if it is not already on the top of the navigation stack
-                        serviceHelper.RunOnMainThread(async () =>
+                        serviceHelper.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                         {
                             IReadOnlyList<Page> navigationStack = Xamarin.Forms.Application.Current.MainPage.Navigation.NavigationStack;
                             Page topPage = navigationStack.Count == 0 ? null : navigationStack.Last();
