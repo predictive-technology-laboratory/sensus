@@ -33,22 +33,25 @@ namespace Sensus.iOS.Concurrent
             {
                 action();
             }
-
-            var runWait = new ManualResetEvent(false);
-
-            Device.BeginInvokeOnMainThread(() =>
+            else
             {
-                try
-                {
-                    action();
-                }
-                finally
-                {
-                    runWait.Set();
-                }
-            });
+                var runWait = new ManualResetEvent(false);
 
-            runWait.WaitOne();
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    try
+                    {
+                        action();
+                    }
+                    finally
+                    {
+                        runWait.Set();
+                    }
+                });
+
+                runWait.WaitOne();
+
+            }
         }
 
         public T ExecuteThreadSafe<T>(Func<T> func)
@@ -62,24 +65,26 @@ namespace Sensus.iOS.Concurrent
             {
                 return func();
             }
-
-            var result = default(T);
-            var runWait = new ManualResetEvent(false);
-
-            Device.BeginInvokeOnMainThread(() =>
+            else
             {
-                try
-                {
-                    result = func();
-                }
-                finally
-                {
-                    runWait.Set();
-                }
-            });
+                var result = default(T);
+                var runWait = new ManualResetEvent(false);
 
-            runWait.WaitOne();
-            return result;
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    try
+                    {
+                        result = func();
+                    }
+                    finally
+                    {
+                        runWait.Set();
+                    }
+                });
+
+                runWait.WaitOne();
+                return result;
+            }
         }
     }
 }

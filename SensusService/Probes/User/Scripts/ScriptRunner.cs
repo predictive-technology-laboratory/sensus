@@ -198,6 +198,11 @@ namespace SensusService.Probes.User.Scripts
             get { return _triggerWindowCallbacks; }
         }
 
+        public Tuple<DateTime, DateTime> LastTriggerWindowScheduled
+        {
+            get { return _lastTriggerWindowScheduled; }
+        }
+
         public List<DateTime> RunTimes
         {
             get
@@ -416,7 +421,6 @@ namespace SensusService.Probes.User.Scripts
         {
             DateTime triggerWindowStart = triggerWindow.Item1;
             DateTime triggerWindowEnd = triggerWindow.Item2;
-            DateTime? triggerWindowLastRun = triggerWindow.Item3;
 
             ScheduledCallback callback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) => RunUponCallback(callbackId, triggerWindow), "Trigger Randomly");
 
@@ -461,6 +465,9 @@ namespace SensusService.Probes.User.Scripts
 
                         // update this trigger window's last run date
                         triggerWindow = new Tuple<DateTime, DateTime, DateTime?>(triggerWindow.Item1, triggerWindow.Item2, DateTime.Now.Date);
+
+                        // attach the trigger window's start time to the script so we can measure age
+                        scriptCopyToRun.TriggerWindowStartTime = triggerWindow.Item1;
 
                         // expose the script's callback id so we can access the window it's running in from SensusServiceHelper
                         scriptCopyToRun.CallbackId = callbackId;

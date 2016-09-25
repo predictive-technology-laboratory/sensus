@@ -1652,7 +1652,7 @@ namespace SensusService
 
         private bool Expired(Script script)
         {
-            var pastMaxAge = script.Age.TotalMinutes >= script.Runner.MaximumAgeMinutes;
+            var pastMaxAge = script.Age.Value.TotalMinutes >= script.Runner.MaximumAgeMinutes;
             var windowEnded = script.Runner.TriggerWindowCallbacks.Any() && script.Runner.TriggerWindowCallbacks.ContainsKey(script.CallbackId) && script.Runner.TriggerWindowCallbacks[script.CallbackId].Item2 > DateTime.Now;
             var specificTime = script.Runner.TriggerWindowCallbacks.Any() && script.Runner.TriggerWindowCallbacks.ContainsKey(script.CallbackId) && script.Runner.TriggerWindowCallbacks[script.CallbackId].Item1 == script.Runner.TriggerWindowCallbacks[script.CallbackId].Item2;
 
