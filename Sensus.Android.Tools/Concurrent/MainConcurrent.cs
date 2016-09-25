@@ -24,13 +24,16 @@ namespace Sensus.Android.Tools
     /// </remarks>
     public class MainConcurrent: Disposable, IConcurrent
     {
+        private readonly int? _waitTime;
+
         #region Fields
         private readonly Handler _handler;
         #endregion
 
         #region Constructor
-        public MainConcurrent()
+        public MainConcurrent(int? waitTime = null)
         {
+            _waitTime = waitTime;
             _handler = new Handler(Looper.MainLooper);
         }
         #endregion
@@ -61,7 +64,8 @@ namespace Sensus.Android.Tools
                         runWait.Set();
                     }
                 });
-                runWait.WaitOne();
+
+                if (_waitTime != null) runWait.WaitOne(_waitTime.Value); else runWait.WaitOne();
             }
         }
 
@@ -93,7 +97,7 @@ namespace Sensus.Android.Tools
                     }
                 });
 
-                runWait.WaitOne();
+                if (_waitTime != null) runWait.WaitOne(_waitTime.Value); else runWait.WaitOne();
 
                 return result;
             }
