@@ -147,21 +147,36 @@ namespace Sensus.Tools.Tests
         public void InnerActionIsThreadSafe()
         {
             var test = new List<int> { 1, 2, 3 };
+            var cancel = new System.Threading.CancellationTokenSource();
 
-            _concurrent.ExecuteThreadSafe(() =>
+            var task = Task.Run(() =>
             {
                 _concurrent.ExecuteThreadSafe(() =>
                 {
-                    test.Add(4);
-
-                    foreach (var i in test)
+                    _concurrent.ExecuteThreadSafe(() =>
                     {
-                        Task.Delay(DelayTime).Wait();
-                    }
 
-                    test.Add(5);
+                        test.Add(4);
+
+                        foreach (var i in test)
+                        {
+                            Task.Delay(DelayTime).Wait();
+                        }
+
+                        test.Add(5);
+                    });
                 });
-            });
+            }, cancel.Token);
+
+            task.Wait(3000);
+
+            if (!task.IsCompleted)
+            {
+                cancel.Cancel();
+                throw new System.Exception("It appears that we deadlocked");
+            }
+
+            Assert.IsTrue(task.IsCompleted);
 
             Assert.Contains(4, test);
             Assert.Contains(5, test);
@@ -171,19 +186,40 @@ namespace Sensus.Tools.Tests
         public void InnerFuncIsThreadSafe()
         {
             var test = new List<int> { 1, 2, 3 };
+            var output = default(List<int>);
+            var cancel = new System.Threading.CancellationTokenSource();
 
-            var output = _concurrent.ExecuteThreadSafe(() =>
+            var task = Task.Run(() =>
             {
-                return _concurrent.ExecuteThreadSafe(() =>
+                output = _concurrent.ExecuteThreadSafe(() =>
                 {
-                    foreach (var i in test)
+                    return _concurrent.ExecuteThreadSafe(() =>
                     {
-                        Task.Delay(DelayTime).Wait();
-                    }
+                        test.Add(4);
 
-                    return test;
+                        foreach (var i in test)
+                        {
+                            Task.Delay(DelayTime).Wait();
+                        }
+
+                        test.Add(5);
+
+                        return test;
+                    });
                 });
-            });
+            }, cancel.Token);
+
+            task.Wait(3000);
+
+            if (!task.IsCompleted)
+            {
+                cancel.Cancel();
+                throw new System.Exception("It appears that we deadlocked");
+            }
+
+            Assert.Contains(4, output);
+            Assert.Contains(5, output);
+            Assert.AreSame(test, output);
         }
     }
 }
