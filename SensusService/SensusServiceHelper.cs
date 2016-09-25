@@ -36,6 +36,7 @@ using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
 using System.Threading.Tasks;
 using SensusService.Probes.User.Scripts;
+using System.Collections.Concurrent;
 
 #if __IOS__
 using XLabs.Platform.Device;
@@ -323,7 +324,7 @@ namespace SensusService
         private Logger _logger;        
         private List<string> _runningProtocolIds;
         private string _healthTestCallbackId;
-        private Dictionary<string, ScheduledCallback> _idCallback;
+        private ConcurrentDictionary<string, ScheduledCallback> _idCallback;
         private SHA256Managed _hasher;
         private List<PointOfInterest> _pointsOfInterest;
         private MobileBarcodeScanner _barcodeScanner;
@@ -536,7 +537,7 @@ namespace SensusService
 
             _runningProtocolIds   = new List<string>();
             _healthTestCallbackId = null;
-            _idCallback           = new Dictionary<string, ScheduledCallback>();
+            _idCallback           = new ConcurrentDictionary<string, ScheduledCallback>();
             _hasher               = new SHA256Managed();
             _pointsOfInterest     = new List<PointOfInterest>();
 
@@ -871,80 +872,59 @@ namespace SensusService
 
         public string ScheduleRepeatingCallback(ScheduledCallback callback, int initialDelayMS, int repeatDelayMS, bool repeatLag)
         {
-            lock (_idCallback)
-            {
-                string callbackId = AddCallback(callback);
-                ScheduleRepeatingCallback(callbackId, initialDelayMS, repeatDelayMS, repeatLag);
-                return callbackId;
-            }
+            string callbackId = AddCallback(callback);
+            ScheduleRepeatingCallback(callbackId, initialDelayMS, repeatDelayMS, repeatLag);
+            return callbackId;
         }
 
         public string ScheduleOneTimeCallback(ScheduledCallback callback, int delayMS)
         {
-            lock (_idCallback)
-            {
-                string callbackId = AddCallback(callback);
-                ScheduleOneTimeCallback(callbackId, delayMS);
-                return callbackId;
-            }
+            string callbackId = AddCallback(callback);
+            ScheduleOneTimeCallback(callbackId, delayMS);
+            return callbackId;
         }
 
         private string AddCallback(ScheduledCallback callback)
         {
-            lock (_idCallback)
-            {
-                // treat the callback as if it were brand new, even if it might have been previously used (e.g., if it's being reschedueld). set a
-                // new ID and cancellation token.
-                callback.Id = Guid.NewGuid().ToString();
-                callback.Canceller = new CancellationTokenSource();
-                _idCallback.Add(callback.Id, callback);
-                return callback.Id;
-            }
+            // treat the callback as if it were brand new, even if it might have been previously used (e.g., if it's being reschedueld). set a
+            // new ID and cancellation token.
+            callback.Id = Guid.NewGuid().ToString();
+            callback.Canceller = new CancellationTokenSource();
+            _idCallback.TryAdd(callback.Id, callback);
+            return callback.Id;
         }
 
         public bool CallbackIsScheduled(string callbackId)
         {
-            lock (_idCallback)
-            {
-                return _idCallback.ContainsKey(callbackId);
-            }
+            return _idCallback.ContainsKey(callbackId);
         }
 
         public string GetCallbackUserNotificationMessage(string callbackId)
         {
-            lock (_idCallback)
-            {
-                if (_idCallback.ContainsKey(callbackId))
-                    return _idCallback[callbackId].UserNotificationMessage;
-                else
-                    return null;
-            }
+            if (_idCallback.ContainsKey(callbackId))
+                return _idCallback[callbackId].UserNotificationMessage;
+            else
+                return null;
         }
 
         public string GetCallbackNotificationId(string callbackId)
         {
-            lock (_idCallback)
-            {
-                if (_idCallback.ContainsKey(callbackId))
-                    return _idCallback[callbackId].NotificationId;
-                else
-                    return null;
-            }
+            if (_idCallback.ContainsKey(callbackId))
+                return _idCallback[callbackId].NotificationId;
+            else
+                return null;
         }
 
         public string RescheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag)
         {
-            lock (_idCallback)
+            ScheduledCallback scheduledCallback;
+            if (_idCallback.TryGetValue(callbackId, out scheduledCallback))
             {
-                ScheduledCallback scheduledCallback;
-                if (_idCallback.TryGetValue(callbackId, out scheduledCallback))
-                {
-                    UnscheduleCallback(callbackId);
-                    return ScheduleRepeatingCallback(scheduledCallback, initialDelayMS, repeatDelayMS, repeatLag);
-                }
-                else
-                    return null;
+                UnscheduleCallback(callbackId);
+                return ScheduleRepeatingCallback(scheduledCallback, initialDelayMS, repeatDelayMS, repeatLag);
             }
+            else
+                return null;
         }
 
         public void RaiseCallbackAsync(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, bool notifyUser, Action<DateTime> scheduleRepeatCallback, Action letDeviceSleepCallback, Action finishedCallback)
@@ -957,14 +937,11 @@ namespace SensusService
                 {
                     ScheduledCallback scheduledCallback = null;
 
-                    lock (_idCallback)
+                    // do we have callback information for the passed callbackId? we might not, in the case where the callback is canceled by the user and the system fires it subsequently.
+                    if (!_idCallback.TryGetValue(callbackId, out scheduledCallback))
                     {
-                        // do we have callback information for the passed callbackId? we might not, in the case where the callback is canceled by the user and the system fires it subsequently.
-                        if (!_idCallback.TryGetValue(callbackId, out scheduledCallback))
-                        {
-                            _logger.Log("Callback " + callbackId + " is not valid. Unscheduling.", LoggingLevel.Normal, GetType());
-                            UnscheduleCallback(callbackId);
-                        }
+                        _logger.Log("Callback " + callbackId + " is not valid. Unscheduling.", LoggingLevel.Normal, GetType());
+                        UnscheduleCallback(callbackId);
                     }
 
                     if (scheduledCallback != null)
@@ -1092,30 +1069,28 @@ namespace SensusService
         /// <param name="callbackId">Callback identifier.</param>
         public void CancelRaisedCallback(string callbackId)
         {
-            lock (_idCallback)
+            ScheduledCallback scheduledCallback;
+            if (_idCallback.TryGetValue(callbackId, out scheduledCallback))
             {
-                ScheduledCallback scheduledCallback;
-                if (_idCallback.TryGetValue(callbackId, out scheduledCallback))
-                {
-                    scheduledCallback.Canceller.Cancel();
-                    _logger.Log("Cancelled callback \"" + scheduledCallback.Name + "\" (" + callbackId + ").", LoggingLevel.Normal, GetType());
-                }
-                else
-                    _logger.Log("Callback \"" + callbackId + "\" not present. Cannot cancel.", LoggingLevel.Normal, GetType());
+                scheduledCallback.Canceller.Cancel();
+                _logger.Log("Cancelled callback \"" + scheduledCallback.Name + "\" (" + callbackId + ").", LoggingLevel.Normal, GetType());
             }
+            else
+                _logger.Log("Callback \"" + callbackId + "\" not present. Cannot cancel.", LoggingLevel.Normal, GetType());
         }
 
         public void UnscheduleCallback(string callbackId)
         {
             if (callbackId != null)
-                lock (_idCallback)
-                {
-                    _logger.Log("Unscheduling callback \"" + callbackId + "\".", LoggingLevel.Normal, GetType());
+            {
+                _logger.Log("Unscheduling callback \"" + callbackId + "\".", LoggingLevel.Normal, GetType());
 
-                    CancelRaisedCallback(callbackId);
-                    _idCallback.Remove(callbackId);
-                    UnscheduleCallbackPlatformSpecific(callbackId);
-                }
+                var output = default(ScheduledCallback);
+
+                CancelRaisedCallback(callbackId);
+                _idCallback.TryRemove(callbackId, out output);
+                UnscheduleCallbackPlatformSpecific(callbackId);
+            }
         }
 
         #endregion
@@ -1652,7 +1627,7 @@ namespace SensusService
 
         private bool Expired(Script script)
         {
-            var pastMaxAge = script.Age.TotalMinutes >= script.Runner.MaximumAgeMinutes;
+            var pastMaxAge = script.Age?.TotalMinutes >= script.Runner.MaximumAgeMinutes;
             var windowEnded = script.Runner.TriggerWindowCallbacks.Any() && script.Runner.TriggerWindowCallbacks.ContainsKey(script.CallbackId) && script.Runner.TriggerWindowCallbacks[script.CallbackId].Item2 > DateTime.Now;
             var specificTime = script.Runner.TriggerWindowCallbacks.Any() && script.Runner.TriggerWindowCallbacks.ContainsKey(script.CallbackId) && script.Runner.TriggerWindowCallbacks[script.CallbackId].Item1 == script.Runner.TriggerWindowCallbacks[script.CallbackId].Item2;
 

@@ -144,7 +144,7 @@
       <Name>Sensus.Tools.Tests</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sensus.Tools\Sensus.Tools.csproj">
-      <Project>{7cff68ae-2b49-4650-a30c-939f7ebd33d7}</Project>
+      <Project>{c26c649e-f32a-4b1e-93ed-89bda3784d10}</Project>
       <Name>Sensus.Tools</Name>
     </ProjectReference>
   </ItemGroup>
