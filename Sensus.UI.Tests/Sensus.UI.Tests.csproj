@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{7C2C81C9-7DF9-4676-B6DC-738CEB5990D9}</ProjectGuid>
+    <ProjectGuid>{306FDC42-BB95-4DFD-B867-654EA3F941E9}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>Sensus.Tests.UI</RootNamespace>
     <AssemblyName>Sensus.Tests.UI</AssemblyName>
