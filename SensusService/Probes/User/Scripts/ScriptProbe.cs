@@ -24,10 +24,17 @@ namespace SensusService.Probes.User.Scripts
     public class ScriptProbe : Probe
     {
         private ObservableCollection<ScriptRunner> _scriptRunners;
+        private int _scriptCallbacksScheduled;
 
         public ObservableCollection<ScriptRunner> ScriptRunners
         {
             get { return _scriptRunners; }
+        }
+
+        public int ScriptCallbacksScheduled
+        {
+            get { return _scriptCallbacksScheduled; }
+            set { _scriptCallbacksScheduled = value; }
         }
 
         public sealed override string DisplayName
@@ -96,6 +103,7 @@ namespace SensusService.Probes.User.Scripts
         public ScriptProbe()
         {            
             _scriptRunners = new ObservableCollection<ScriptRunner>();
+            _scriptCallbacksScheduled = 0;
         }
 
         protected override void Initialize()
@@ -148,6 +156,8 @@ namespace SensusService.Probes.User.Scripts
 
             foreach (ScriptRunner scriptRunner in _scriptRunners)
                 scriptRunner.Reset();
+
+            _scriptCallbacksScheduled = 0;
         }
 
         public override void Stop()
@@ -156,6 +166,8 @@ namespace SensusService.Probes.User.Scripts
 
             foreach (ScriptRunner scriptRunner in _scriptRunners)
                 scriptRunner.Stop();
+
+            _scriptCallbacksScheduled = 0;
         }
 
         protected override ChartSeries GetChartSeries()

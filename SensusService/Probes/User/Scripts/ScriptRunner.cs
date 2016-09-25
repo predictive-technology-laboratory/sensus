@@ -39,6 +39,7 @@ namespace SensusService.Probes.User.Scripts
         private float? _maximumAgeMinutes;
         private List<Tuple<DateTime, DateTime, DateTime?>> _triggerWindows;     // first two items are start/end of window. last item is date of last run
         private Dictionary<string, Tuple<DateTime, DateTime>> _triggerWindowCallbacks;
+        private Tuple<DateTime, DateTime> _lastTriggerWindowScheduled;
         private Random _random;
         private List<DateTime> _runTimes;
         private List<DateTime> _completionTimes;
@@ -296,6 +297,7 @@ namespace SensusService.Probes.User.Scripts
             _maximumAgeMinutes = null;
             _triggerWindows = new List<Tuple<DateTime, DateTime, DateTime?>>();
             _triggerWindowCallbacks = new Dictionary<string, Tuple<DateTime, DateTime>>();
+            _lastTriggerWindowScheduled = null;
             _random = new Random();
             _runTimes = new List<DateTime>();
             _completionTimes = new List<DateTime>();
@@ -410,9 +412,9 @@ namespace SensusService.Probes.User.Scripts
             }).Start();
         }
 
-        private void ScheduleTriggerWindowCallback(Tuple<DateTime, DateTime, DateTime?> triggerWindow, bool useCurrentTimeAsStart)
+        private void ScheduleTriggerWindowCallback(Tuple<DateTime, DateTime, DateTime?> triggerWindow)
         {
-            DateTime triggerWindowStart = useCurrentTimeAsStart ? DateTime.Now : triggerWindow.Item1;
+            DateTime triggerWindowStart = triggerWindow.Item1;
             DateTime triggerWindowEnd = triggerWindow.Item2;
             DateTime? triggerWindowLastRun = triggerWindow.Item3;
 
@@ -440,9 +442,11 @@ namespace SensusService.Probes.User.Scripts
 #endif
 
             lock (_triggerWindowCallbacks) {
-                _triggerWindowCallbacks.Add(SensusServiceHelper.Get().ScheduleOneTimeCallback(callback, ((int)((triggerWindowStart.AddSeconds(_random.NextDouble() * (triggerWindowEnd - triggerWindowStart).TotalSeconds)) - DateTime.Now).TotalMilliseconds)), new Tuple<DateTime, DateTime>(triggerWindowStart, triggerWindowEnd));
+                _triggerWindowCallbacks.Add(SensusServiceHelper.Get().ScheduleOneTimeCallback(callback, millisecondsToTriggerTime), new Tuple<DateTime, DateTime>(triggerWindowStart, triggerWindowEnd));
             }
-                //SensusServiceHelper.Get().Logger.Log("Unable to schedule random trigger window callback: " + triggerWindowStart + " - " + triggerWindowEnd + ".", LoggingLevel.Normal, GetType());
+
+            _probe.ScriptCallbacksScheduled += 1;
+            _lastTriggerWindowScheduled = new Tuple<DateTime, DateTime>(triggerWindowStart, triggerWindowEnd);
         }
 
         private Task RunUponCallback(string callbackId, Tuple<DateTime, DateTime, DateTime?> triggerWindow)
@@ -466,58 +470,110 @@ namespace SensusService.Probes.User.Scripts
                 });
         }
 
-        private void StartTriggerCallbacks()
+        public void ScheduleTriggerCallbacks()
         {
             lock (_locker)
             {
                 if (_triggerWindows.Count == 0)
                     return;
 
-                StopTriggerCallbacks();
+                SensusServiceHelper.Get().Logger.Log("Scheduling script trigger callbacks.", LoggingLevel.Normal, GetType());
 
-                SensusServiceHelper.Get().Logger.Log("Starting random script trigger callbacks.", LoggingLevel.Normal, GetType());
+                List<Tuple<DateTime, DateTime, DateTime?>> triggerWindowsToSchedule = new List<Tuple<DateTime, DateTime, DateTime?>>();
 
-                DateTime triggerWindowStart = default(DateTime);
-                DateTime triggerWindowEnd = default(DateTime);
-                DateTime? triggerWindowLastRun = null;
-                DateTime now = DateTime.Now;
+                DateTime protocolStopTime = new DateTime(_probe.Protocol.EndDate.Year, _probe.Protocol.EndDate.Month, _probe.Protocol.EndDate.Day, _probe.Protocol.EndTime.Hours, _probe.Protocol.EndTime.Minutes, 0);
 
-                // find trigger windows, ignoring month, day, and year. the windows are already sorted.
-                // schedule callbacks for two weeks.
-                foreach (Tuple<DateTime, DateTime, DateTime?> triggerWindow in _triggerWindows)
+                int dayOffset = 0;
+                int daysUntilProtocolStop = protocolStopTime.Subtract(DateTime.Now).Days + 2;
+
+                int numTriggerWindows = _triggerWindows.Count;
+
+                // build a list of trigger window callbacks to schedule
+                while (dayOffset < daysUntilProtocolStop && dayOffset < 32 && triggerWindowsToSchedule.Count < (32 / _probe.ScriptRunners.Count))
                 {
-                    triggerWindowStart = new DateTime(now.Year, now.Month, now.Day, triggerWindow.Item1.Hour, triggerWindow.Item1.Minute, 0);
-                    triggerWindowEnd = new DateTime(now.Year, now.Month, now.Day, triggerWindow.Item2.Hour, triggerWindow.Item2.Minute, 0);
-                    if (triggerWindow.Item3.HasValue)
-                        triggerWindowLastRun = triggerWindow.Item3.Value;
-
-                    // if this window has not yet started today, schedule a callback within it
-                    if (triggerWindowStart.Hour > now.Hour || (triggerWindowStart.Hour == now.Hour && triggerWindowStart.Minute > now.Minute && triggerWindowEnd.Minute > now.Minute))
+                    foreach (Tuple<DateTime, DateTime, DateTime?> triggerWindow in _triggerWindows)
                     {
-                        ScheduleTriggerWindowCallback(triggerWindow, false);
+                        DateTime triggerWindowStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, triggerWindow.Item1.Hour, triggerWindow.Item1.Minute, 0);
+                        DateTime triggerWindowEnd = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, triggerWindow.Item2.Hour, triggerWindow.Item2.Minute, 0);
+                        DateTime? triggerWindowLastRun = triggerWindow.Item3;
+
+                        triggerWindowStart = triggerWindowStart.AddDays(dayOffset);
+                        triggerWindowEnd = triggerWindowEnd.AddDays(dayOffset);
+
+                        // skip already scheduled windows
+                        if (_lastTriggerWindowScheduled != null && (triggerWindowStart <= _lastTriggerWindowScheduled.Item1 && triggerWindowEnd <= _lastTriggerWindowScheduled.Item2))
+                        {
+                            continue;
+                        }
+
+                        // if we're on the current day, only schedule scripts within:
+                        // 1) windows that haven't started yet, or
+                        // 2) windows that have already started but end in greater than 5 minutes
+                        if (dayOffset == 0)
+                        {
+                            bool windowStartsLater = triggerWindowStart.Hour > DateTime.Now.Hour || (triggerWindowStart.Hour == DateTime.Now.Hour && triggerWindowStart.Minute > DateTime.Now.Minute);
+                            bool windowEndsLater = triggerWindowEnd.Hour > DateTime.Now.Hour || (triggerWindowEnd.Hour == DateTime.Now.Hour && triggerWindowEnd.Minute > DateTime.Now.AddMinutes(5).Minute);
+
+                            bool windowHasNotRunToday = !(triggerWindowLastRun.HasValue) || triggerWindowLastRun.Value.Date < DateTime.Now.Date;
+
+                            // if the window starts later today, schedule the script at random time within it
+                            if (windowStartsLater)
+                            {
+                                triggerWindowsToSchedule.Add(new Tuple<DateTime, DateTime, DateTime?>(triggerWindowStart, triggerWindowEnd, triggerWindowLastRun));
+                            }
+
+                            // if we're within the window, it hasn't run yet today,
+                            // and there are more than 5 minutes left, schedule the
+                            // script within the remaining time
+                            else if (windowEndsLater && windowHasNotRunToday)
+                            {
+                                triggerWindowsToSchedule.Add(new Tuple<DateTime, DateTime, DateTime?>(DateTime.Now, triggerWindowEnd, triggerWindowLastRun));
+                            }
+                        }
+
+                        // if we're on the last day of the study, only schedule scripts in windows
+                        // that end before the protocol stop time.
+                        else if (dayOffset + 1 == daysUntilProtocolStop)
+                        {
+                            if (triggerWindowEnd <= protocolStopTime)
+                            {
+                                triggerWindowsToSchedule.Add(new Tuple<DateTime, DateTime, DateTime?>(triggerWindowStart, triggerWindowEnd, triggerWindowLastRun));
+                            }
+                        }
+
+                        // otherwise we know we can schedule the script.
+                        else
+                        {
+                            triggerWindowsToSchedule.Add(new Tuple<DateTime, DateTime, DateTime?>(triggerWindowStart, triggerWindowEnd, triggerWindowLastRun));
+                        }
                     }
 
-                    // if we're inside the window with more than 5 minutes left and the window
-                    // hasn't run yet today, schedule a callback within the remaining time
-                    else if ((triggerWindowLastRun.HasValue && triggerWindowLastRun.Value.Date < DateTime.Now.Date) && (triggerWindowEnd.Hour > now.Hour || (triggerWindowEnd.Hour == now.Hour && triggerWindowEnd.Minute > now.AddMinutes(5).Minute)))
-                    {
-                        ScheduleTriggerWindowCallback(triggerWindow, true);
-                    }
+                    // increment the day
+                    dayOffset += 1;
+                }
 
-                    // schedule callbacks for the next two weeks
-                    Tuple<DateTime, DateTime, DateTime?> nextTriggerWindow = new Tuple<DateTime, DateTime, DateTime?>(triggerWindowStart.AddDays(1), triggerWindowEnd.AddDays(1), triggerWindowLastRun);
-                    DateTime protocolStopTime = new DateTime(_probe.Protocol.EndDate.Year, _probe.Protocol.EndDate.Month, _probe.Protocol.EndDate.Day, _probe.Protocol.EndTime.Hours, _probe.Protocol.EndTime.Minutes, 0);
-                    int horizon = 0;
-                    while (nextTriggerWindow.Item2 < protocolStopTime && horizon < 14)
-                    {
-                        ScheduleTriggerWindowCallback(nextTriggerWindow, false);
+                foreach (Tuple<DateTime, DateTime, DateTime?> triggerWindowToSchedule in triggerWindowsToSchedule)
+                {
+                    // iOS only uses the 64 most recent callbacks scheduled by an app, so we need to
+                    // impose a hard limit (32) to prevent more recently scheduled callbacks from overwriting those scheduled earlier.
+                    // we also need to make sure each script definition gets a share under the hard limit, so let's
+                    // divide it by the number of script definitions.
+                    if (_probe.ScriptCallbacksScheduled >= (32 / _probe.ScriptRunners.Count))
+                        break;
 
-                        nextTriggerWindow = new Tuple<DateTime, DateTime, DateTime?>(nextTriggerWindow.Item1.AddDays(1), nextTriggerWindow.Item2.AddDays(1), nextTriggerWindow.Item3);
-
-                        horizon += 1;
-                    }
+                    ScheduleTriggerWindowCallback(triggerWindowToSchedule);
                 }
             }
+        }
+
+        private void StartTriggerCallbacks()
+        {
+            new Thread(() =>
+            {
+                StopTriggerCallbacks();
+                SensusServiceHelper.Get().Logger.Log("Starting script trigger callbacks.", LoggingLevel.Normal, GetType());
+                ScheduleTriggerCallbacks();
+            }).Start();
         }
 
         private void RunAsync(Script script, Datum previousDatum = null, Datum currentDatum = null, Action callback = null)
@@ -625,6 +681,7 @@ namespace SensusService.Probes.User.Scripts
             }
             _runTimes.Clear();
             _completionTimes.Clear();
+            _lastTriggerWindowScheduled = null;
         }
 
         public void Restart()
@@ -644,7 +701,7 @@ namespace SensusService.Probes.User.Scripts
 
         private void StopTriggerCallbacks()
         {
-            String logMessage = "Stopping random trigger callbacks.";
+            String logMessage = "Stopping script trigger callbacks.";
             if (_triggerWindowCallbacks.Any())
             {
                 lock (_triggerWindowCallbacks)
@@ -656,6 +713,8 @@ namespace SensusService.Probes.User.Scripts
 
                     _triggerWindowCallbacks.Clear();
                 }
+
+                _lastTriggerWindowScheduled = null;
             }
             else
             {

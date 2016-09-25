@@ -1657,7 +1657,7 @@ namespace SensusService
             if (!_scriptsToRun.Any())
             {
                 _logger.Log("Rescheduling trigger callbacks.", LoggingLevel.Normal, GetType());
-                runner.RescheduleTriggerCallbacks();
+                runner.ScheduleTriggerCallbacks();
             }
         }
 
