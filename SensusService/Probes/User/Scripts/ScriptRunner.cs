@@ -491,12 +491,15 @@ namespace SensusService.Probes.User.Scripts
                 DateTime protocolStopTime = new DateTime(_probe.Protocol.EndDate.Year, _probe.Protocol.EndDate.Month, _probe.Protocol.EndDate.Day, _probe.Protocol.EndTime.Hours, _probe.Protocol.EndTime.Minutes, 0);
 
                 int dayOffset = 0;
-                int daysUntilProtocolStop = protocolStopTime.Subtract(DateTime.Now).Days + 2;
+
+                // if the protocol is scheduled to stop, set daysUntilProtocolStop.
+                // if it's not, use 32 days.
+                int daysUntilProtocolStop = _probe.Protocol.ScheduledToStop ?  protocolStopTime.Subtract(DateTime.Now).Days + 2 : 32;
 
                 int numTriggerWindows = _triggerWindows.Count;
 
                 // build a list of trigger window callbacks to schedule
-                while (dayOffset < daysUntilProtocolStop && dayOffset < 32 && triggerWindowsToSchedule.Count < (32 / _probe.ScriptRunners.Count))
+                while (dayOffset < daysUntilProtocolStop && triggerWindowsToSchedule.Count < (32 / _probe.ScriptRunners.Count))
                 {
                     foreach (Tuple<DateTime, DateTime, DateTime?> triggerWindow in _triggerWindows)
                     {
