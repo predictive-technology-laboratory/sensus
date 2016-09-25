@@ -105,10 +105,6 @@
       <Project>{acfa56bf-b959-4caf-a2a7-981a9e48e17c}</Project>
       <Name>Sensus.iOS</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Sensus.Tools\Sensus.Tools.csproj">
-      <Project>{7cff68ae-2b49-4650-a30c-939f7ebd33d7}</Project>
-      <Name>Sensus.Tools</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
