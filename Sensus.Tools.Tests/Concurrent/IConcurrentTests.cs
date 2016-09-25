@@ -97,5 +97,93 @@ namespace Sensus.Tools.Tests
 
             Task.WaitAll(task1, task2);
         }
+
+        [Test]
+        public void BasicActionIsThreadSafe()
+        {
+            var test = new List<int> { 1, 2, 3 };
+
+            _concurrent.ExecuteThreadSafe(() =>
+            {
+                test.Add(4);
+
+                foreach (var i in test)
+                {
+                    Task.Delay(DelayTime).Wait();
+                }
+
+                test.Add(5);
+            });
+
+            Assert.Contains(4, test);
+            Assert.Contains(5, test);
+        }
+
+        [Test]
+        public void BasicFuncIsThreadSafe()
+        {
+            var test = new List<int> { 1, 2, 3 };
+
+            var output = _concurrent.ExecuteThreadSafe(() =>
+            {
+                test.Add(4);
+
+                foreach (var i in test)
+                {
+                    Task.Delay(DelayTime).Wait();
+                }
+
+                test.Add(5);
+
+                return test;
+            });
+
+            Assert.Contains(4, output);
+            Assert.Contains(5, output);
+            Assert.AreSame(test, output);
+        }
+
+        [Test]
+        public void InnerActionIsThreadSafe()
+        {
+            var test = new List<int> { 1, 2, 3 };
+
+            _concurrent.ExecuteThreadSafe(() =>
+            {
+                _concurrent.ExecuteThreadSafe(() =>
+                {
+                    test.Add(4);
+
+                    foreach (var i in test)
+                    {
+                        Task.Delay(DelayTime).Wait();
+                    }
+
+                    test.Add(5);
+                });
+            });
+
+            Assert.Contains(4, test);
+            Assert.Contains(5, test);
+        }
+
+        [Test]
+        public void InnerFuncIsThreadSafe()
+        {
+            var test = new List<int> { 1, 2, 3 };
+
+            var output = _concurrent.ExecuteThreadSafe(() =>
+            {
+                return _concurrent.ExecuteThreadSafe(() =>
+                {
+                    foreach (var i in test)
+                    {
+                        Task.Delay(DelayTime).Wait();
+                    }
+
+                    return test;
+                });
+            });
+        }
     }
 }
