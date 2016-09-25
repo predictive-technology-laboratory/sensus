@@ -96,16 +96,6 @@
     <Compile Include="Android\AndroidTests.cs" />
     <Compile Include="Tools\IAppExtensions.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Sensus.Android\Sensus.Android.csproj">
-      <Project>{d33b6cdb-795c-4826-b131-47c526ace07f}</Project>
-      <Name>Sensus.Android</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Sensus.iOS\Sensus.iOS.csproj">
-      <Project>{acfa56bf-b959-4caf-a2a7-981a9e48e17c}</Project>
-      <Name>Sensus.iOS</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
