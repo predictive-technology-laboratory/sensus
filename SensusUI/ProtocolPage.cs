@@ -62,7 +62,13 @@ namespace SensusUI
             editLocalDataStoreButton.Clicked += async (o, e) =>
             {
                 if (_protocol.LocalDataStore != null)
-                    await Navigation.PushAsync(new DataStorePage(_protocol, _protocol.LocalDataStore.Copy(), true, false));
+                {
+                    DataStore copy = _protocol.LocalDataStore.Copy();
+                    if (copy == null)
+                        SensusServiceHelper.Get().FlashNotificationAsync("Failed to edit data store.");
+                    else
+                        await Navigation.PushAsync(new DataStorePage(_protocol, copy, true, false));
+                }
             };
 
             Button createLocalDataStoreButton = new Button
@@ -95,7 +101,13 @@ namespace SensusUI
             editRemoteDataStoreButton.Clicked += async (o, e) =>
             {
                 if (_protocol.RemoteDataStore != null)
-                    await Navigation.PushAsync(new DataStorePage(_protocol, _protocol.RemoteDataStore.Copy(), false, false));
+                {
+                    DataStore copy = _protocol.RemoteDataStore.Copy();
+                    if (copy == null)
+                        SensusServiceHelper.Get().FlashNotificationAsync("Failed to edit data store.");
+                    else
+                        await Navigation.PushAsync(new DataStorePage(_protocol, copy, false, false));
+                }
             };
 
             Button createRemoteDataStoreButton = new Button

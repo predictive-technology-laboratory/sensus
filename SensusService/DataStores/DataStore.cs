@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Threading;
 using SensusService.DataStores.Remote;
 using System.Threading.Tasks;
+using SensusService.Exceptions;
 
 namespace SensusService.DataStores
 {
@@ -109,7 +110,7 @@ namespace SensusService.DataStores
         private long _addedDataCount;
         private long _committedDataCount;
         private bool _sizeTriggeredCommitRunning;
-        private bool _sampleTriggeredCommitRunning;
+        private bool _forcedCommitRunning;
 
         [EntryIntegerUiProperty("Commit Delay (MS):", true, 2)]
         public int CommitDelayMS
@@ -222,7 +223,7 @@ namespace SensusService.DataStores
             _committedDataCount = 0;
             _addedDataCount = 0;
             _sizeTriggeredCommitRunning = false;
-            _sampleTriggeredCommitRunning = false;
+            _forcedCommitRunning = false;
         }
 
         /// <summary>
@@ -251,7 +252,7 @@ namespace SensusService.DataStores
             }
         }
 
-        public Task AddAsync(Datum datum, CancellationToken cancellationToken, bool runLocalCommitOnStore)
+        public Task AddAsync(Datum datum, CancellationToken cancellationToken, bool forceCommit)
         {
             lock (_data)
             {
@@ -260,52 +261,54 @@ namespace SensusService.DataStores
 
                 SensusServiceHelper.Get().Logger.Log("Stored datum:  " + datum.GetType().Name, LoggingLevel.Debug, GetType());
 
-                // if we've accumulated a chunk, commit it locally to reduce memory pressure
-                if (_data.Count >= COMMIT_CHUNK_SIZE && !_sizeTriggeredCommitRunning)
+                // TODO:  Test
+                if (!_sizeTriggeredCommitRunning && !_forcedCommitRunning)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Running size-triggered commit.", LoggingLevel.Normal, GetType());
-
-                    _sizeTriggeredCommitRunning = true;
-
-                    return Task.Run(async () =>
+                    // if we've accumulated a chunk, commit it locally to reduce memory pressure
+                    if (_data.Count >= COMMIT_CHUNK_SIZE)
                     {
-                        try
-                        {
-                            await CommitChunksAsync(_data, this, cancellationToken);
-                        }
-                        catch (Exception ex)
-                        {
-                            SensusServiceHelper.Get().Logger.Log("Failed to run size-triggered commit:  " + ex.Message, LoggingLevel.Normal, GetType());
-                        }
-                        finally
-                        {
-                            _sizeTriggeredCommitRunning = false;
-                        }
-                    });
-                }
+                        SensusServiceHelper.Get().Logger.Log("Running size-triggered commit.", LoggingLevel.Normal, GetType());
 
-                // if the probe's RunLocalCommitOnStore option is set to true, commit it locally
-                else if (runLocalCommitOnStore && !_sampleTriggeredCommitRunning)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Running sample-triggered commit.", LoggingLevel.Normal, GetType());
+                        _sizeTriggeredCommitRunning = true;
 
-                    _sampleTriggeredCommitRunning = true;
-
-                    return Task.Run(async () =>
+                        return Task.Run(async () =>
+                        {
+                            try
+                            {
+                                await CommitChunksAsync(_data, this, cancellationToken);
+                            }
+                            catch (Exception ex)
+                            {
+                                SensusServiceHelper.Get().Logger.Log("Failed to run size-triggered commit:  " + ex.Message, LoggingLevel.Normal, GetType());
+                            }
+                            finally
+                            {
+                                _sizeTriggeredCommitRunning = false;
+                            }
+                        });
+                    }
+                    else if (forceCommit)
                     {
-                        try
+                        SensusServiceHelper.Get().Logger.Log("Running forced commit.", LoggingLevel.Normal, GetType());
+
+                        _forcedCommitRunning = true;
+
+                        return Task.Run(async () =>
                         {
-                            await CommitChunksAsync(_data, this, cancellationToken);
-                        }
-                        catch (Exception ex)
-                        {
-                            SensusServiceHelper.Get().Logger.Log("Failed to run sample-triggered commit:  " + ex.Message, LoggingLevel.Normal, GetType());
-                        }
-                        finally
-                        {
-                            _sampleTriggeredCommitRunning = false;
-                        }
-                    });
+                            try
+                            {
+                                await CommitChunksAsync(_data, this, cancellationToken);
+                            }
+                            catch (Exception ex)
+                            {
+                                SensusServiceHelper.Get().Logger.Log("Failed to run forced commit:  " + ex.Message, LoggingLevel.Normal, GetType());
+                            }
+                            finally
+                            {
+                                _forcedCommitRunning = false;
+                            }
+                        });
+                    }
                 }
 
                 return Task.FromResult(false);
@@ -414,8 +417,10 @@ namespace SensusService.DataStores
             }
             catch (Exception ex)
             {
-                SensusServiceHelper.Get().Logger.Log($"Failed to copy data store:  {ex.Message}", LoggingLevel.Normal, GetType());
-                throw;
+                string message = $"Failed to copy data store:  {ex.Message}";
+                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+                SensusException.Report(message, ex);
+                return null;
             }
             finally
             {

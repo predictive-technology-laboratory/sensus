@@ -20,7 +20,7 @@ using Xamarin.Forms;
 
 namespace Sensus.iOS.Concurrent
 {
-    public class MainConcurrent: Disposable, IConcurrent
+    public class MainConcurrent : Disposable, IConcurrent
     {
         private readonly int? _waitTime;
 
@@ -56,7 +56,10 @@ namespace Sensus.iOS.Concurrent
                     }
                 });
 
-                if (_waitTime != null) runWait.WaitOne(_waitTime.Value); else runWait.WaitOne();
+                if (_waitTime != null)
+                    runWait.WaitOne(_waitTime.Value);
+                else
+                    runWait.WaitOne();
 
             }
         }

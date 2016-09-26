@@ -24,7 +24,6 @@ namespace SensusService.Probes.User.Scripts
     {
         private ScriptRunner _runner;
         private ObservableCollection<InputGroup> _inputGroups;
-        private DateTimeOffset? _triggerWindowStartTime;
         private DateTimeOffset? _runTimestamp;
         private Datum _previousDatum;
         private Datum _currentDatum;
@@ -66,12 +65,6 @@ namespace SensusService.Probes.User.Scripts
             get { return _inputGroups; }
         }
 
-        public DateTimeOffset? TriggerWindowStartTime
-        {
-            get { return _triggerWindowStartTime; }
-            set { _triggerWindowStartTime = value; }
-        }
-
         /// <summary>
         /// Time at which the script was run. On Android this happens in the background at the scheduled/triggered
         /// time. On iOS this is the triggering time (for trigger-based scripts), and the time that the 
@@ -107,7 +100,7 @@ namespace SensusService.Probes.User.Scripts
         {
             get
             {
-                return DateTimeOffset.UtcNow - _triggerWindowStartTime;        // we want to measure age from the beginning of the trigger window, not from when the script ran.
+                return DateTimeOffset.UtcNow - _runTimestamp;
             }
         }
 
@@ -117,7 +110,6 @@ namespace SensusService.Probes.User.Scripts
             _id = Guid.NewGuid().ToString();
             _callbackId = "";
             _inputGroups = new ObservableCollection<InputGroup>();
-            _triggerWindowStartTime = null;
         }
 
         /// <summary>

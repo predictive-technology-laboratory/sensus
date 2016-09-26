@@ -445,7 +445,8 @@ namespace SensusService.Probes.User.Scripts
             callback.NotificationId = SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID;
 #endif
 
-            lock (_triggerWindowCallbacks) {
+            lock (_triggerWindowCallbacks)
+            {
                 _triggerWindowCallbacks.Add(SensusServiceHelper.Get().ScheduleOneTimeCallback(callback, millisecondsToTriggerTime), new Tuple<DateTime, DateTime>(triggerWindowStart, triggerWindowEnd));
             }
 
@@ -467,7 +468,7 @@ namespace SensusService.Probes.User.Scripts
                         triggerWindow = new Tuple<DateTime, DateTime, DateTime?>(triggerWindow.Item1, triggerWindow.Item2, DateTime.Now.Date);
 
                         // attach the trigger window's start time to the script so we can measure age
-                        scriptCopyToRun.TriggerWindowStartTime = triggerWindow.Item1;
+                        scriptCopyToRun.RunTimestamp = triggerWindow.Item1;
 
                         // expose the script's callback id so we can access the window it's running in from SensusServiceHelper
                         scriptCopyToRun.CallbackId = callbackId;
@@ -495,7 +496,7 @@ namespace SensusService.Probes.User.Scripts
                 // if the protocol is scheduled to stop, set daysUntilProtocolStop.
                 // if it's not, use 28 days (callbacks can be scheduled a maximum of 28 days in the future
                 // do to integer overflow of callback scheduling's delayMS parameter)
-                int daysUntilProtocolStop = _probe.Protocol.ScheduledToStop ?  protocolStopTime.Subtract(DateTime.Now).Days + 2 : 28;
+                int daysUntilProtocolStop = _probe.Protocol.ScheduledToStop ? protocolStopTime.Subtract(DateTime.Now).Days + 2 : 28;
 
                 int numTriggerWindows = _triggerWindows.Count;
 

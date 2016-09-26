@@ -22,7 +22,7 @@ namespace Sensus.Android.Tools
     /// <remarks>
     /// Device.BeginInvokeOnMainThread invokes off the activity. Sensus does not always have an activity, so we create a handler bound to the main thread's looper instead.
     /// </remarks>
-    public class MainConcurrent: Disposable, IConcurrent
+    public class MainConcurrent : Disposable, IConcurrent
     {
         private readonly int? _waitTime;
 
@@ -65,7 +65,10 @@ namespace Sensus.Android.Tools
                     }
                 });
 
-                if (_waitTime != null) runWait.WaitOne(_waitTime.Value); else runWait.WaitOne();
+                if (_waitTime != null)
+                    runWait.WaitOne(_waitTime.Value);
+                else
+                    runWait.WaitOne();
             }
         }
 
@@ -83,7 +86,7 @@ namespace Sensus.Android.Tools
             else
             {
                 var runWait = new ManualResetEvent(false);
-                var result  = default(T);
+                var result = default(T);
 
                 _handler.Post(() =>
                 {
