@@ -22,6 +22,13 @@ namespace Sensus.iOS.Concurrent
 {
     public class MainConcurrent: Disposable, IConcurrent
     {
+        private readonly int? _waitTime;
+
+        public MainConcurrent(int? waitTime = null)
+        {
+            _waitTime = waitTime;
+        }
+
         public void ExecuteThreadSafe(Action action)
         {
             if (action == null)
@@ -49,7 +56,7 @@ namespace Sensus.iOS.Concurrent
                     }
                 });
 
-                runWait.WaitOne();
+                if (_waitTime != null) runWait.WaitOne(_waitTime.Value); else runWait.WaitOne();
 
             }
         }
@@ -82,7 +89,8 @@ namespace Sensus.iOS.Concurrent
                     }
                 });
 
-                runWait.WaitOne();
+                if (_waitTime != null) runWait.WaitOne(_waitTime.Value); else runWait.WaitOne();
+
                 return result;
             }
         }
