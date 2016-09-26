@@ -620,10 +620,6 @@ namespace SensusService
             }
             set
             {
-                if (value == true)
-                {
-                    SensusServiceHelper.Get().FlashNotificationAsync("Setting this option will override Start Date/Time.");
-                }
                 _startImmediately = value;
             }
         }
