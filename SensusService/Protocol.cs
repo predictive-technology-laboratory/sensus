@@ -607,7 +607,6 @@ namespace SensusService
             set
             {
                 _startTime = new DateTime(_startTime.Year, _startTime.Month, _startTime.Day, value.Hours, value.Minutes, value.Seconds);
-                Console.WriteLine(new DateTime(_startTime.Year, _startTime.Month, _startTime.Day, value.Hours, value.Minutes, value.Seconds));
             }
         }
 
@@ -620,10 +619,6 @@ namespace SensusService
             }
             set
             {
-                if (value == true)
-                {
-                    SensusServiceHelper.Get().FlashNotificationAsync("Setting this option will override Start Date/Time.");
-                }
                 _startImmediately = value;
             }
         }

@@ -37,7 +37,7 @@ namespace SensusService.Probes.User.Scripts
         private ObservableCollection<Trigger> _triggers;
         private Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>> _triggerHandler;
         private float? _maximumAgeMinutes;
-        private List<Tuple<DateTime, DateTime, DateTime?>> _triggerWindows;     // first two items are start/end of window. last item is date of last run
+        private List<Tuple<DateTime, DateTime, DateTime?>> _triggerWindows;
         private Dictionary<string, Tuple<DateTime, DateTime>> _triggerWindowCallbacks;
         private Tuple<DateTime, DateTime> _lastTriggerWindowScheduled;
         private Random _random;
@@ -491,12 +491,16 @@ namespace SensusService.Probes.User.Scripts
                 DateTime protocolStopTime = new DateTime(_probe.Protocol.EndDate.Year, _probe.Protocol.EndDate.Month, _probe.Protocol.EndDate.Day, _probe.Protocol.EndTime.Hours, _probe.Protocol.EndTime.Minutes, 0);
 
                 int dayOffset = 0;
-                int daysUntilProtocolStop = protocolStopTime.Subtract(DateTime.Now).Days + 2;
+
+                // if the protocol is scheduled to stop, set daysUntilProtocolStop.
+                // if it's not, use 28 days (callbacks can be scheduled a maximum of 28 days in the future
+                // do to integer overflow of callback scheduling's delayMS parameter)
+                int daysUntilProtocolStop = _probe.Protocol.ScheduledToStop ?  protocolStopTime.Subtract(DateTime.Now).Days + 2 : 28;
 
                 int numTriggerWindows = _triggerWindows.Count;
 
                 // build a list of trigger window callbacks to schedule
-                while (dayOffset < daysUntilProtocolStop && dayOffset < 32 && triggerWindowsToSchedule.Count < (32 / _probe.ScriptRunners.Count))
+                while (dayOffset < daysUntilProtocolStop && dayOffset < 28 && triggerWindowsToSchedule.Count < (32 / _probe.ScriptRunners.Count))
                 {
                     foreach (Tuple<DateTime, DateTime, DateTime?> triggerWindow in _triggerWindows)
                     {
