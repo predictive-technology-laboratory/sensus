@@ -566,7 +566,7 @@ namespace SensusService.Probes.User.Scripts
 
                 foreach (Tuple<DateTime, DateTime, DateTime?> triggerWindowToSchedule in triggerWindowsToSchedule)
                 {
-                    // iOS only uses the 64 most recent callbacks scheduled by an app, so we need to
+                    // iOS only uses the 64 soonest firing callbacks scheduled by an app, so we need to
                     // impose a hard limit (32) to prevent more recently scheduled callbacks from overwriting those scheduled earlier.
                     // we also need to make sure each script definition gets a share under the hard limit, so let's
                     // divide it by the number of script definitions.
@@ -677,7 +677,7 @@ namespace SensusService.Probes.User.Scripts
 
         public void RescheduleTriggerCallbacks()
         {
-            StartTriggerCallbacksAsync();
+            ScheduleTriggerCallbacks();
         }
 
         public bool TestHealth(ref string error, ref string warning, ref string misc)
