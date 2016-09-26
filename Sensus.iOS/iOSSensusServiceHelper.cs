@@ -176,8 +176,6 @@ namespace Sensus.iOS
             string activationId = (callbackNotification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ACTIVATION_ID_KEY)) as NSString).ToString();
             string callbackId = (callbackNotification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ID_KEY)) as NSString).ToString();
 
-            // HERE
-
             // only raise callback if it's from the current activation and if it is scheduled
             if (activationId != _activationId || !CallbackIsScheduled(callbackId))
                 return;
