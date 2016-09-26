@@ -607,7 +607,6 @@ namespace SensusService
             set
             {
                 _startTime = new DateTime(_startTime.Year, _startTime.Month, _startTime.Day, value.Hours, value.Minutes, value.Seconds);
-                Console.WriteLine(new DateTime(_startTime.Year, _startTime.Month, _startTime.Day, value.Hours, value.Minutes, value.Seconds));
             }
         }
 
