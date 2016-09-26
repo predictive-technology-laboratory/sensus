@@ -100,6 +100,7 @@ namespace SensusService.Probes.User.Scripts
         {
             get
             {
+                // TODO:  Does this provide the correct age when _runTimestamp is set by window-triggering, which uses DateTime objects.
                 return DateTimeOffset.UtcNow - _runTimestamp;
             }
         }

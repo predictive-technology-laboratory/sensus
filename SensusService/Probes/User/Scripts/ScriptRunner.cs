@@ -463,8 +463,12 @@ namespace SensusService.Probes.User.Scripts
                     {
                         Script scriptCopyToRun = _script.Copy();
 
-                        // update this trigger window's last run date
-                        triggerWindow = new Tuple<DateTime, DateTime, DateTime?>(triggerWindow.Item1, triggerWindow.Item2, DateTime.Now.Date);
+                        // TODO:  Replace the element of _triggerWindows with start/end that match the current triggerWindow, setting 
+                        // the last-fired time to DateTime.Now.Date. make sure to lock _triggerWindows prior to iterating. also, prevent
+                        // user from entering the same window twice (in setter).
+                        //int replaceIndex = _triggerWindows.FindIndex(window => window.Item1 == triggerWindow.Item1 && window.Item2 == triggerWindow.Item2);
+                        //_triggerWindows[replaceIndex] = ...;
+                        //triggerWindow = new Tuple<DateTime, DateTime, DateTime?>(triggerWindow.Item1, triggerWindow.Item2, DateTime.Now.Date);
 
                         // TODO attach run time to script so we can measure age
 
@@ -472,6 +476,8 @@ namespace SensusService.Probes.User.Scripts
                         scriptCopyToRun.CallbackId = callbackId;
 
                         Run(scriptCopyToRun);
+
+                        // TODO:  Reschedule all windowed callbacks here?
                     }
                 });
         }
@@ -495,8 +501,6 @@ namespace SensusService.Probes.User.Scripts
                 // if it's not, use 32 days.
                 int daysUntilProtocolStop = _probe.Protocol.ScheduledToStop ?  protocolStopTime.Subtract(DateTime.Now).Days + 2 : 32;
 
-                int numTriggerWindows = _triggerWindows.Count;
-
                 // build a list of trigger window callbacks to schedule
                 while (dayOffset < daysUntilProtocolStop && triggerWindowsToSchedule.Count < (32 / _probe.ScriptRunners.Count))
                 {
@@ -510,7 +514,7 @@ namespace SensusService.Probes.User.Scripts
                         triggerWindowEnd = triggerWindowEnd.AddDays(dayOffset);
 
                         // skip already scheduled windows
-                        if (_lastTriggerWindowScheduled != null && (triggerWindowStart <= _lastTriggerWindowScheduled.Item1 && triggerWindowEnd <= _lastTriggerWindowScheduled.Item2))
+                        if (_lastTriggerWindowScheduled != null && triggerWindowEnd <= _lastTriggerWindowScheduled.Item2)
                         {
                             continue;
                         }
@@ -671,12 +675,7 @@ namespace SensusService.Probes.User.Scripts
 
             SensusServiceHelper.Get().AddScriptToRun(script, _runMode);
         }
-
-        public void RescheduleTriggerCallbacks()
-        {
-            StartTriggerCallbacksAsync();
-        }
-
+        
         public bool TestHealth(ref string error, ref string warning, ref string misc)
         {
             return false;
