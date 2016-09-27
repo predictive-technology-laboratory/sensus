@@ -1597,24 +1597,11 @@ namespace SensusService
             foreach (var script in scripts)
             {
                 removed = _scriptsToRun.Remove(script);
-                RescheduleTriggerCallbacks(script.Runner);
             }
 
             if (removed && issueNotification)
             {
                 IssuePendingSurveysNotificationAsync(false, false);
-            }
-        }
-
-        /// <summary>
-        /// Try to reschedule scripts
-        /// </summary>
-        private void RescheduleTriggerCallbacks(ScriptRunner runner)
-        {
-            if (!_scriptsToRun.Any())
-            {
-                _logger.Log("Rescheduling trigger callbacks.", LoggingLevel.Normal, GetType());
-                runner.ScheduleTriggerCallbacks();
             }
         }
 

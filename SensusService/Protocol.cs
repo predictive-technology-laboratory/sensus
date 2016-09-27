@@ -1198,7 +1198,7 @@ namespace SensusService
 
             bool isPriorToStart = !(DateTime.Now > new DateTime(_startTime.Year, _startTime.Month, _startTime.Day, _startTime.Hour, _startTime.Minute, 0));
 
-            consent.Add(new LabelOnlyInput("This study will start " + ((!_startImmediately && isPriorToStart) ? "on " + _startTime.Month + "/" + _startTime.Day + "/" + _startTime.Year + " at " + _startTime.Hour + ":" + _startTime.Minute : "immediately") + " and " + ((!_continueIndefinitely) ? "stop on " + _endTime.Month + "/" + _endTime.Day + "/" + _endTime.Year + " at " + _endTime.Hour + ":" + _endTime.Minute + "." : "continue indefinitely.")));
+            consent.Add(new LabelOnlyInput("This study will start " + ((!_startImmediately && isPriorToStart) ? "on " + _startTime.Month + "/" + _startTime.Day + "/" + _startTime.Year + " at " + _startTime.ToString("HH:mm") : "immediately") + " and " + ((!_continueIndefinitely) ? "stop on " + _endTime.Month + "/" + _endTime.Day + "/" + _endTime.Year + " at " + _endTime.ToString("HH:mm") + "." : "continue indefinitely.")));
 
             consent.Add(new LabelOnlyInput("This study would like to collect the following data from your device:"));
 
