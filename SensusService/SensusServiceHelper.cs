@@ -884,6 +884,11 @@ namespace SensusService
             return callbackId;
         }
 
+        public string ScheduleOneTimeCallback(ScheduledCallback callback, DateTime callbackTime)
+        {
+            return ScheduleOneTimeCallback(callback, (int)(callbackTime - DateTime.Now).TotalMilliseconds);
+        }
+
         private string AddCallback(ScheduledCallback callback)
         {
             // treat the callback as if it were brand new, even if it might have been previously used (e.g., if it's being reschedueld). set a
