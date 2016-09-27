@@ -43,7 +43,7 @@ namespace SensusUI
                 if (protocol == null)
                     return null;
                 else
-                    return protocol.Name + " (" + (protocol.Running ? "Running" : (protocol.ScheduledToStart ? "Scheduled: " + protocol.StartDate.Month + "/" + protocol.StartDate.Day + "/" + protocol.StartDate.Year + " " + protocol.StartTime : "Stopped")) + ")";
+                    return protocol.Name + " (" + (protocol.Running ? "Running" : (protocol.ScheduledStartCallbackId != null ? "Scheduled: " + protocol.StartDate.ToShortDateString() + " " + (protocol.StartDate.Date + protocol.StartTime).ToShortTimeString() : "Stopped")) + ")";
             }
 
             public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -61,7 +61,7 @@ namespace SensusUI
                 if (protocol == null)
                     return Color.Default;
                 else
-                    return protocol.Running ? Color.Green : (protocol.ScheduledToStart ? Color.Olive : Color.Red);
+                    return protocol.Running ? Color.Green : (protocol.ScheduledStartCallbackId != null ? Color.Olive : Color.Red);
             }
 
             public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -116,7 +116,10 @@ namespace SensusUI
 
         private void Refresh()
         {
-            Device.BeginInvokeOnMainThread(Bind);
+            SensusServiceHelper.Get().MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            {
+                Bind();
+            });
         }
 
         public ProtocolsPage()
@@ -156,21 +159,19 @@ namespace SensusUI
                         actions.Add("Ungroup");
                 }
 
-                bool isPriorToStart = !(DateTime.Now > new DateTime(selectedProtocol.StartDate.Year, selectedProtocol.StartDate.Month, selectedProtocol.StartDate.Day, selectedProtocol.StartTime.Hours, selectedProtocol.StartTime.Minutes, 0));
-                if (!selectedProtocol.ScheduledToStart && !selectedProtocol.Running && !selectedProtocol.StartImmediately && isPriorToStart)
-                {
-                    actions.Remove("Start");
-                    actions.Insert(0, "Schedule To Start");
-                }
+                //bool isPriorToStart = !(DateTime.Now > new DateTime(selectedProtocol.StartDate.Year, selectedProtocol.StartDate.Month, selectedProtocol.StartDate.Day, selectedProtocol.StartTime.Hours, selectedProtocol.StartTime.Minutes, 0));
+                //if (selectedProtocol.ScheduledStartCallbackId == null && !selectedProtocol.Running && !selectedProtocol.StartImmediately && isPriorToStart)
+                //{
+                //    actions.Remove("Start");
+                //    actions.Insert(0, "Schedule To Start");
+                //}
 
                 if (selectedProtocol.Running)
-                    actions.Remove("Schedule To Start");
                     actions.Add("Status");
 
-                if (!selectedProtocol.Running && selectedProtocol.ScheduledToStart)
+                if (!selectedProtocol.Running && selectedProtocol.ScheduledStartCallbackId != null)
                 {
                     actions.Remove("Start");
-                    actions.Remove("Schedule To Start");
                     actions.Insert(0, "Cancel Scheduled Start");
                 }
 
@@ -184,7 +185,7 @@ namespace SensusUI
                     _protocolsList.SelectedItem = null;
                 });
 
-                if (selectedAction == "Start" || selectedAction == "Schedule To Start")
+                if (selectedAction == "Start")
                 {
                     selectedProtocol.StartWithUserAgreementAsync(null, () =>
                     {
@@ -532,21 +533,21 @@ namespace SensusUI
 
             Bind();
 
-            System.Timers.Timer filterTimer = new System.Timers.Timer(1000);
+            System.Timers.Timer refreshTimer = new System.Timers.Timer(1000);
 
-            filterTimer.Elapsed += (sender, e) =>
+            refreshTimer.Elapsed += (sender, e) =>
             {
                 Refresh();
             };
 
             Appearing += (sender, e) =>
             {
-                filterTimer.Start();
+                refreshTimer.Start();
             };
 
             Disappearing += (sender, e) =>
             {
-                filterTimer.Stop();
+                refreshTimer.Stop();
             };
         }
 

@@ -377,8 +377,6 @@ namespace SensusService
         private string _name;
         private List<Probe> _probes;
         private bool _running;
-        private bool _scheduledToStart;
-        private bool _scheduledToStop;
         private string _scheduledStartCallbackId;
         private string _scheduledStopCallbackId;
         private LocalDataStore _localDataStore;
@@ -433,15 +431,15 @@ namespace SensusService
         }
 
         [JsonIgnore]
-        public bool ScheduledToStart
+        public String ScheduledStartCallbackId
         {
-            get { return _scheduledToStart; }
+            get { return _scheduledStartCallbackId; }
         }
 
         [JsonIgnore]
-        public bool ScheduledToStop
+        public String ScheduledStopCallbackId
         {
-            get { return _scheduledToStop; }
+            get { return _scheduledStopCallbackId; }
         }
 
         public LocalDataStore LocalDataStore
@@ -872,10 +870,8 @@ namespace SensusService
         private Protocol()
         {
             _running = false;
-            _scheduledToStart = false;
-            _scheduledToStop = false;
-            _scheduledStartCallbackId = "";
-            _scheduledStopCallbackId = "";
+            _scheduledStartCallbackId = null;
+            _scheduledStopCallbackId = null;
             _forceProtocolReportsToRemoteDataStore = false;
             _lockPasswordHash = "";
             _jsonAnonymizer = new AnonymizedJsonContractResolver(this);
@@ -991,7 +987,7 @@ namespace SensusService
                 }).Start();
         }
 
-        public void Start()
+        private void StartInternal()
         {
             lock (_locker)
             {
@@ -1000,7 +996,7 @@ namespace SensusService
                 else
                     _running = true;
 
-                _scheduledToStart = false;
+                _scheduledStartCallbackId = null;
 
                 if (ProtocolRunningChanged != null)
                     ProtocolRunningChanged(this, _running);
@@ -1121,26 +1117,42 @@ namespace SensusService
             }
         }
 
+        public void Start()
+        {
+            // start the protocol if _startImmediately is set or if _startTimestamp has passed
+            if (_startImmediately || (DateTime.Now > _startTimestamp))
+                StartInternal();
+            else
+                ScheduleStart();
+
+            // schedule stop if necessary
+            if (!_continueIndefinitely)
+                ScheduleStop();
+        }
+
         public void ScheduleStart()
         {
-            DateTime startTime = new DateTime(_startTimestamp.Year, _startTimestamp.Month, _startTimestamp.Day, _startTimestamp.Hour, _startTimestamp.Minute, 0);
-            TimeSpan timeUntilStart = startTime - DateTime.Now;
+            DateTime startTimestamp = new DateTime(_startTimestamp.Year, _startTimestamp.Month, _startTimestamp.Day, _startTimestamp.Hour, _startTimestamp.Minute, 0);
+            TimeSpan timeUntilStart = startTimestamp - DateTime.Now;
             ScheduledCallback startProtocolCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
             {
                 return Task.Run(() =>
                 {
-                    Start();
+                    StartInternal();
+                    _scheduledStartCallbackId = null;
                 });
-
+#if __ANDROID__
             }, "Start protocol", null, "Protocol started.");
+#elif __IOS__
+            }, "Start protocol", null, "Please open to start this study.");
+#endif
             _scheduledStartCallbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(startProtocolCallback, (int)timeUntilStart.TotalMilliseconds);
-            _scheduledToStart = true;
         }
 
         public void CancelScheduledStart()
         {
             SensusServiceHelper.Get().UnscheduleCallback(_scheduledStartCallbackId);
-            _scheduledToStart = false;
+            _scheduledStartCallbackId = null;
         }
 
         public void ScheduleStop()
@@ -1152,17 +1164,17 @@ namespace SensusService
                 return Task.Run(() =>
                 {
                     Stop();
+                    _scheduledStopCallbackId = null;
                 });
 
             }, "Stop protocol", null, "Protocol stopped.");
             _scheduledStopCallbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(stopProtocolCallback, (int)timeUntilStop.TotalMilliseconds);
-            _scheduledToStop = true;
         }
 
         public void CancelScheduledStop()
         {
             SensusServiceHelper.Get().UnscheduleCallback(_scheduledStopCallbackId);
-            _scheduledToStop = false;
+            _scheduledStopCallbackId = null;
         }
 
         public void StartWithUserAgreementAsync(string startupMessage, Action callback = null)
@@ -1198,7 +1210,7 @@ namespace SensusService
 
             bool isPriorToStart = !(DateTime.Now > new DateTime(_startTimestamp.Year, _startTimestamp.Month, _startTimestamp.Day, _startTimestamp.Hour, _startTimestamp.Minute, 0));
 
-            consent.Add(new LabelOnlyInput("This study will start " + ((!_startImmediately && isPriorToStart) ? "on " + _startTime.Month + "/" + _startTime.Day + "/" + _startTime.Year + " at " + _startTime.ToString("HH:mm") : "immediately") + " and " + ((!_continueIndefinitely) ? "stop on " + _endTime.Month + "/" + _endTime.Day + "/" + _endTime.Year + " at " + _endTime.ToString("HH:mm") + "." : "continue indefinitely.")));
+            consent.Add(new LabelOnlyInput("This study will start " + ((!_startImmediately && isPriorToStart) ? "on " + _startTimestamp.ToShortDateString() + " at " + _startTimestamp.ToShortTimeString() : "immediately") + " and " + ((!_continueIndefinitely) ? "stop on " + _endTimestamp.ToShortDateString() + " at " + _endTimestamp.ToShortTimeString() + "." : "continue indefinitely.")));
 
             consent.Add(new LabelOnlyInput("This study would like to collect the following data from your device:"));
 
@@ -1237,15 +1249,7 @@ namespace SensusService
                         int consentCodeInt;
                         if (int.TryParse(consentCodeStr, out consentCodeInt) && consentCodeInt == consentCode)
                         {
-                            // start protocol or schedule start
-                            if (_startImmediately || (_startTimestamp.Date.Equals(DateTime.Now.Date) && DateTime.Now.TimeOfDay > _startTimestamp.TimeOfDay))
-                                Start();
-                            else
-                                ScheduleStart();
-
-                            // schedule stop if necessary
-                            if (!_continueIndefinitely)
-                                ScheduleStop();
+                            Start();
                         }
                         else
                             SensusServiceHelper.Get().FlashNotificationAsync("Incorrect code entered.");

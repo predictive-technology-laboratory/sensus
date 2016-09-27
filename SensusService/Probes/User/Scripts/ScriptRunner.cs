@@ -507,7 +507,7 @@ namespace SensusService.Probes.User.Scripts
                 List<Tuple<DateTime, DateTime, DateTime?>> triggerWindowsToSchedule = new List<Tuple<DateTime, DateTime, DateTime?>>();
 
                 DateTime protocolStop = new DateTime(_probe.Protocol.EndDate.Year, _probe.Protocol.EndDate.Month, _probe.Protocol.EndDate.Day, _probe.Protocol.EndTime.Hours, _probe.Protocol.EndTime.Minutes, 0);
-                int dayIndexMax = _probe.Protocol.ScheduledToStop ? protocolStop.Subtract(DateTime.Now).Days + 2 : 28;
+                int dayIndexMax = _probe.Protocol.ScheduledStopCallbackId != null ? protocolStop.Subtract(DateTime.Now).Days + 2 : 28;
 
                 int dayIndex = 0;
 
