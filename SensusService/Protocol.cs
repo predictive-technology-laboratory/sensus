@@ -392,9 +392,9 @@ namespace SensusService
         private bool _shareable;
         private List<PointOfInterest> _pointsOfInterest;
         private string _description;
-        private DateTime _startTime;
+        private DateTime _startTimestamp;
         private bool _startImmediately;
-        private DateTime _endTime;
+        private DateTime _endTimestamp;
         private bool _continueIndefinitely;
         private int _participationHorizonDays;
         private string _contactEmail;
@@ -589,11 +589,11 @@ namespace SensusService
         {
             get
             {
-                return _startTime;
+                return _startTimestamp;
             }
             set
             {
-                _startTime = new DateTime(value.Year, value.Month, value.Day, _startTime.Hour, _startTime.Minute, _startTime.Second);
+                _startTimestamp = new DateTime(value.Year, value.Month, value.Day, _startTimestamp.Hour, _startTimestamp.Minute, _startTimestamp.Second);
             }
         }
 
@@ -602,15 +602,15 @@ namespace SensusService
         {
             get
             {
-                return _startTime.TimeOfDay;
+                return _startTimestamp.TimeOfDay;
             }
             set
             {
-                _startTime = new DateTime(_startTime.Year, _startTime.Month, _startTime.Day, value.Hours, value.Minutes, value.Seconds);
+                _startTimestamp = new DateTime(_startTimestamp.Year, _startTimestamp.Month, _startTimestamp.Day, value.Hours, value.Minutes, value.Seconds);
             }
         }
 
-        [OnOffUiProperty("Start Immediately", true, 18)]
+        [OnOffUiProperty("Start Immediately:", true, 18)]
         public bool StartImmediately
         {
             get
@@ -628,11 +628,11 @@ namespace SensusService
         {
             get
             {
-                return _endTime;
+                return _endTimestamp;
             }
             set
             {
-                _endTime = new DateTime(value.Year, value.Month, value.Day, _endTime.Hour, _endTime.Minute, _endTime.Second);
+                _endTimestamp = new DateTime(value.Year, value.Month, value.Day, _endTimestamp.Hour, _endTimestamp.Minute, _endTimestamp.Second);
             }
         }
 
@@ -641,11 +641,11 @@ namespace SensusService
         {
             get
             {
-                return _endTime.TimeOfDay;
+                return _endTimestamp.TimeOfDay;
             }
             set
             {
-                _endTime = new DateTime(_endTime.Year, _endTime.Month, _endTime.Day, value.Hours, value.Minutes, value.Seconds);
+                _endTimestamp = new DateTime(_endTimestamp.Year, _endTimestamp.Month, _endTimestamp.Day, value.Hours, value.Minutes, value.Seconds);
             }
         }
 
@@ -882,8 +882,8 @@ namespace SensusService
             _shareable = false;
             _pointsOfInterest = new List<PointOfInterest>();
             _participationHorizonDays = 1;
-            _startTime = DateTime.Now;
-            _endTime = DateTime.Now;
+            _startTimestamp = DateTime.Now;
+            _endTimestamp = DateTime.Now;
             _startImmediately = false;
             _continueIndefinitely = true;
             _groupable = false;
@@ -1123,7 +1123,7 @@ namespace SensusService
 
         public void ScheduleStart()
         {
-            DateTime startTime = new DateTime(_startTime.Year, _startTime.Month, _startTime.Day, _startTime.Hour, _startTime.Minute, 0);
+            DateTime startTime = new DateTime(_startTimestamp.Year, _startTimestamp.Month, _startTimestamp.Day, _startTimestamp.Hour, _startTimestamp.Minute, 0);
             TimeSpan timeUntilStart = startTime - DateTime.Now;
             ScheduledCallback startProtocolCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
             {
@@ -1145,7 +1145,7 @@ namespace SensusService
 
         public void ScheduleStop()
         {
-            DateTime stopTime = new DateTime(_endTime.Year, _endTime.Month, _endTime.Day, _endTime.Hour, _endTime.Minute, 0);
+            DateTime stopTime = new DateTime(_endTimestamp.Year, _endTimestamp.Month, _endTimestamp.Day, _endTimestamp.Hour, _endTimestamp.Minute, 0);
             TimeSpan timeUntilStop = stopTime - DateTime.Now;
             ScheduledCallback stopProtocolCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
             {
@@ -1196,9 +1196,9 @@ namespace SensusService
             if (!string.IsNullOrWhiteSpace(_description))
                 consent.Add(new LabelOnlyInput(_description));
 
-            bool isPriorToStart = !(DateTime.Now > new DateTime(_startTime.Year, _startTime.Month, _startTime.Day, _startTime.Hour, _startTime.Minute, 0));
+            bool isPriorToStart = !(DateTime.Now > new DateTime(_startTimestamp.Year, _startTimestamp.Month, _startTimestamp.Day, _startTimestamp.Hour, _startTimestamp.Minute, 0));
 
-            consent.Add(new LabelOnlyInput("This study will start " + ((!_startImmediately && isPriorToStart) ? "on " + _startTime.Month + "/" + _startTime.Day + "/" + _startTime.Year + " at " + _startTime.Hour + ":" + _startTime.Minute : "immediately") + " and " + ((!_continueIndefinitely) ? "stop on " + _endTime.Month + "/" + _endTime.Day + "/" + _endTime.Year + " at " + _endTime.Hour + ":" + _endTime.Minute + "." : "continue indefinitely.")));
+            consent.Add(new LabelOnlyInput("This study will start " + ((!_startImmediately && isPriorToStart) ? "on " + _startTimestamp.Month + "/" + _startTimestamp.Day + "/" + _startTimestamp.Year + " at " + _startTimestamp.Hour + ":" + _startTimestamp.Minute : "immediately") + " and " + ((!_continueIndefinitely) ? "stop on " + _endTimestamp.Month + "/" + _endTimestamp.Day + "/" + _endTimestamp.Year + " at " + _endTimestamp.Hour + ":" + _endTimestamp.Minute + "." : "continue indefinitely.")));
 
             consent.Add(new LabelOnlyInput("This study would like to collect the following data from your device:"));
 
@@ -1238,7 +1238,7 @@ namespace SensusService
                         if (int.TryParse(consentCodeStr, out consentCodeInt) && consentCodeInt == consentCode)
                         {
                             // start protocol or schedule start
-                            if (_startImmediately || (_startTime.Date.Equals(DateTime.Now.Date) && DateTime.Now.TimeOfDay > _startTime.TimeOfDay))
+                            if (_startImmediately || (_startTimestamp.Date.Equals(DateTime.Now.Date) && DateTime.Now.TimeOfDay > _startTimestamp.TimeOfDay))
                                 Start();
                             else
                                 ScheduleStart();
