@@ -37,7 +37,7 @@ namespace SensusService.Probes.User.Scripts
         private ObservableCollection<Trigger> _triggers;
         private Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>> _triggerHandler;
         private float? _maximumAgeMinutes;
-        private List<Tuple<DateTime, DateTime, DateTime?>> _triggerWindows;
+        private List<Tuple<DateTime, DateTime, DateTime?>> _triggerWindows;     // first two items are start/end of window. last item is date of last run
         private Dictionary<string, Tuple<DateTime, DateTime>> _triggerWindowCallbacks;
         private Tuple<DateTime, DateTime> _lastTriggerWindowScheduled;
         private Random _random;
@@ -445,8 +445,7 @@ namespace SensusService.Probes.User.Scripts
             callback.NotificationId = SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID;
 #endif
 
-            lock (_triggerWindowCallbacks)
-            {
+            lock (_triggerWindowCallbacks) {
                 _triggerWindowCallbacks.Add(SensusServiceHelper.Get().ScheduleOneTimeCallback(callback, millisecondsToTriggerTime), new Tuple<DateTime, DateTime>(triggerWindowStart, triggerWindowEnd));
             }
 
@@ -471,8 +470,7 @@ namespace SensusService.Probes.User.Scripts
                         //_triggerWindows[replaceIndex] = ...;
                         //triggerWindow = new Tuple<DateTime, DateTime, DateTime?>(triggerWindow.Item1, triggerWindow.Item2, DateTime.Now.Date);
 
-                        // attach the trigger window's start time to the script so we can measure age
-                        scriptCopyToRun.RunTimestamp = triggerWindow.Item1;
+                        // TODO attach run time to script so we can measure age
 
                         // expose the script's callback id so we can access the window it's running in from SensusServiceHelper
                         scriptCopyToRun.CallbackId = callbackId;
@@ -500,12 +498,11 @@ namespace SensusService.Probes.User.Scripts
                 int dayOffset = 0;
 
                 // if the protocol is scheduled to stop, set daysUntilProtocolStop.
-                // if it's not, use 28 days (callbacks can be scheduled a maximum of 28 days in the future
-                // do to integer overflow of callback scheduling's delayMS parameter)
-                int daysUntilProtocolStop = _probe.Protocol.ScheduledToStop ? protocolStopTime.Subtract(DateTime.Now).Days + 2 : 28;
+                // if it's not, use 32 days.
+                int daysUntilProtocolStop = _probe.Protocol.ScheduledToStop ?  protocolStopTime.Subtract(DateTime.Now).Days + 2 : 32;
 
                 // build a list of trigger window callbacks to schedule
-                while (dayOffset < daysUntilProtocolStop && dayOffset < 28 && triggerWindowsToSchedule.Count < (32 / _probe.ScriptRunners.Count))
+                while (dayOffset < daysUntilProtocolStop && triggerWindowsToSchedule.Count < (32 / _probe.ScriptRunners.Count))
                 {
                     foreach (Tuple<DateTime, DateTime, DateTime?> triggerWindow in _triggerWindows)
                     {
@@ -570,7 +567,7 @@ namespace SensusService.Probes.User.Scripts
 
                 foreach (Tuple<DateTime, DateTime, DateTime?> triggerWindowToSchedule in triggerWindowsToSchedule)
                 {
-                    // iOS only uses the 64 soonest firing callbacks scheduled by an app, so we need to
+                    // iOS only uses the 64 most recent callbacks scheduled by an app, so we need to
                     // impose a hard limit (32) to prevent more recently scheduled callbacks from overwriting those scheduled earlier.
                     // we also need to make sure each script definition gets a share under the hard limit, so let's
                     // divide it by the number of script definitions.
@@ -678,7 +675,7 @@ namespace SensusService.Probes.User.Scripts
 
             SensusServiceHelper.Get().AddScriptToRun(script, _runMode);
         }
-
+        
         public bool TestHealth(ref string error, ref string warning, ref string misc)
         {
             return false;
