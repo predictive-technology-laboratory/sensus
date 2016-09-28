@@ -75,7 +75,7 @@ namespace SensusService.Probes.User.Scripts
             /// </remarks>
             public Schedule NextSchedule(DateTime date, bool windowExpiration, TimeSpan? maxAge)
             {
-                var timeUntil = TimeTillStart(date.TimeOfDay) + RandomWindowTime();
+                var timeUntil = NowTill(date.TimeOfDay) + TimeTillStart(date.TimeOfDay) + RandomWindowTime();
 
                 var winExpiration = windowExpiration ? date.Add(TimeTillEnd(date.TimeOfDay)) : DateTime.MaxValue;
                 var ageExpiration = maxAge   != null ? date.Add(timeUntil).Add(maxAge.Value) : DateTime.MaxValue;                
@@ -113,6 +113,11 @@ namespace SensusService.Probes.User.Scripts
             private TimeSpan TimeTillEnd(TimeSpan time)
             {
                 return TimeTill(time, End);
+            }
+
+            private TimeSpan NowTill(TimeSpan time)
+            {
+                return TimeTill(DateTime.Now.TimeOfDay, time);
             }
 
             private TimeSpan TimeTill(TimeSpan start, TimeSpan end)
@@ -460,7 +465,7 @@ namespace SensusService.Probes.User.Scripts
                 {
                     foreach (var scheduleTrigger in _scheduleTriggers)
                     {
-                        yield return scheduleTrigger.NextSchedule(startDate, WindowExpiration, ageExpiration);
+                        yield return scheduleTrigger.NextSchedule(currentDate, WindowExpiration, ageExpiration);
                     }
                 }
             }
