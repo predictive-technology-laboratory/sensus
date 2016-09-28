@@ -266,7 +266,7 @@ namespace SensusService.Probes
                     _pollCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(_callback, 0, _pollingSleepDurationMS, POLL_CALLBACK_LAG);
                 }
 #elif __ANDROID__
-                _pollCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(callback, 0, _pollingSleepDurationMS, POLL_CALLBACK_LAG);
+                _pollCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(_callback, 0, _pollingSleepDurationMS, POLL_CALLBACK_LAG);
 #endif
             }
         }
