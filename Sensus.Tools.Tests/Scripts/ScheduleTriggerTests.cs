@@ -28,6 +28,22 @@ namespace Sensus.Tools.Tests.Scripts
         }
 
         [Test]
+        public void PointScheduleToString()
+        {
+            var t = ScheduleTrigger.Parse("10:22");
+
+            Assert.AreEqual("10:22", t.ToString());
+        }
+
+        [Test]
+        public void WindowScheduleToString()
+        {
+            var t = ScheduleTrigger.Parse("10:22-12:22");
+
+            Assert.AreEqual("10:22-12:22", t.ToString());
+        }
+
+        [Test]
         public void NextScheduleWindowNoExpiration()
         {
             var t = ScheduleTrigger.Parse("10:22-12:22");
@@ -133,6 +149,25 @@ namespace Sensus.Tools.Tests.Scripts
                 Assert.LessOrEqual(nextSchedule.TimeUntil, TimeSpan.FromDays(8).Add(TimeSpan.FromHours(2)));
                 Assert.AreEqual(from + nextSchedule.TimeUntil + expir, nextSchedule.ExpireDate);
             }
+        }
+
+        [Test]
+        public void WindowScheduleCompareToDifferent()
+        {
+            var t1 = ScheduleTrigger.Parse("10:22-12:22");
+            var t2 = ScheduleTrigger.Parse("10:23-12:23");
+
+            Assert.LessOrEqual(t1.CompareTo(t2), 0);
+            Assert.GreaterOrEqual(t2.CompareTo(t1), 0);
+        }
+
+        [Test]
+        public void WindowScheduleCompareToEqual()
+        {
+            var t1 = ScheduleTrigger.Parse("10:22-12:22");
+            var t2 = ScheduleTrigger.Parse("10:22-12:22");
+
+            Assert.AreEqual(0, t1.CompareTo(t2));
         }
     }
 }

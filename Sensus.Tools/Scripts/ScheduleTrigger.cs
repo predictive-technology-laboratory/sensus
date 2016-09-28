@@ -68,7 +68,8 @@ namespace Sensus.Tools.Scripts
 
         public override string ToString()
         {
-            return Start == End ? $"{Start:H:mm}" : $"{Start:H:mm}-{End:H:mm}";
+            //String interpolation doesn't seem to work here for some reason. E.g., $"{Start:hh:mm}"
+            return Start == End ? Start.ToString("hh\\:mm") : Start.ToString("hh\\:mm") + "-" + End.ToString("hh\\:mm");
         }
 
         public int CompareTo(ScheduleTrigger comparee)

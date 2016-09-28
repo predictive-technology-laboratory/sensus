@@ -40,7 +40,7 @@ namespace SensusService.Probes.User.Scripts
         private readonly object _locker = new object();
         #endregion
 
-        #region properties
+        #region Properties
         public ScriptProbe Probe { get; set; }
 
         public Script Script { get; set; }
