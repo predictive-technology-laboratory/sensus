@@ -18,5 +18,20 @@ namespace Sensus.Tools.Extensions
         {
             return d2 > d1 ? d2.Value : d1;
         }
+
+        public static DateTime Min(this DateTime d1, DateTime d2)
+        {
+            return d1 < d2 ? d1 : d2;
+        }
+
+        public static DateTime Min(this DateTime? d1, DateTime d2)
+        {
+            return d1 < d2 ? d1.Value : d2;
+        }
+
+        public static DateTime Min(this DateTime d1, DateTime? d2)
+        {
+            return d2 < d1 ? d2.Value : d1;
+        }
     }
 }

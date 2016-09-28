@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using Sensus.Tools;
 using Sensus.Tools.Extensions;
+using Sensus.Tools.Scripts;
 using SensusUI.UiProperties;
 using SensusService.Probes.Location;
 
@@ -27,129 +28,6 @@ namespace SensusService.Probes.User.Scripts
 {
     public class ScriptRunner
     {
-        #region Private Classes
-        private class ScheduleTrigger: IComparable<ScheduleTrigger>
-        {
-            #region Static Methods
-            public static ScheduleTrigger Parse(string window)
-            {
-                var startEnd = window.Trim().Split('-');
-
-                if (startEnd.Length == 1)
-                {
-                    return new ScheduleTrigger
-                    {
-                        //for some reason DateTime.Parse seems to be more forgiving
-                        Start = DateTime.Parse(startEnd[0].Trim()).TimeOfDay,
-                        End   = DateTime.Parse(startEnd[0].Trim()).TimeOfDay,
-                    };
-                }
-                
-                if(startEnd.Length == 2 )
-                {                    
-                    var result = new ScheduleTrigger
-                    {
-                        //for some reason DateTime.Parse seems to be more forgiving
-                        Start = DateTime.Parse(startEnd[0].Trim()).TimeOfDay,
-                        End   = DateTime.Parse(startEnd[1].Trim()).TimeOfDay,
-                    };
-
-                    if (result.Start > result.End)
-                    {
-                        throw new Exception($"Improper trigger byTime ({window})");
-                    }
-                }
-
-                throw new Exception($"Improper trigger byTime ({window})");
-            }
-            #endregion
-            
-            #region Properties
-            private TimeSpan Start { get; set; }
-            private TimeSpan End { get; set; }
-            private TimeSpan Window => End - Start;
-            #endregion
-
-            #region Public Methods
-            /// <remarks>
-            /// If we are currently in the previous window we skip it. This may not be perfect but it makes everything else infinitely simpler to do.
-            /// </remarks>
-            public Schedule NextSchedule(DateTime date, bool windowExpiration, TimeSpan? maxAge)
-            {
-                var timeUntil = NowTill(date.TimeOfDay) + TimeTillStart(date.TimeOfDay) + RandomWindowTime();
-
-                var winExpiration = windowExpiration ? date.Add(TimeTillEnd(date.TimeOfDay)) : DateTime.MaxValue;
-                var ageExpiration = maxAge   != null ? date.Add(timeUntil).Add(maxAge.Value) : DateTime.MaxValue;                
-
-                return new Schedule
-                {
-                    TimeUntil      = timeUntil,
-                    ExpirationDate = Min(winExpiration, ageExpiration)
-                };
-            }
-
-            public override string ToString()
-            {
-                return Start == End ? $"{Start:H:mm}" : $"{Start:H:mm}-{End:H:mm}";
-            }
-
-            public int CompareTo(ScheduleTrigger comparee)
-            {
-                return Start.CompareTo(comparee.Start);
-            }
-            #endregion
-
-            #region Private Methods
-
-            private DateTime Min(DateTime d1, DateTime d2)
-            {
-                return d1 < d2 ? d1 : d2;
-            }
-
-            private TimeSpan TimeTillStart(TimeSpan time)
-            {
-                return TimeTill(time, Start);
-            }
-
-            private TimeSpan TimeTillEnd(TimeSpan time)
-            {
-                return TimeTill(time, End);
-            }
-
-            private TimeSpan NowTill(TimeSpan time)
-            {
-                return TimeTill(DateTime.Now.TimeOfDay, time);
-            }
-
-            private TimeSpan TimeTill(TimeSpan start, TimeSpan end)
-            {
-                var timeTillStart = (end - start).Ticks;
-
-                if (timeTillStart < 0)
-                {
-                    timeTillStart += TimeSpan.TicksPerDay;
-                }
-
-                return TimeSpan.FromTicks(timeTillStart);
-            }
-
-            private TimeSpan RandomWindowTime()
-            {
-                var zeroToOne = new Random((int)DateTime.Now.Ticks).NextDouble();
-
-                return TimeSpan.FromTicks((long)(Window.Ticks * zeroToOne));
-            }
-            #endregion
-        }
-
-        private class Schedule
-        {
-            public DateTime RunTime => DateTime.Now + TimeUntil;
-            public TimeSpan TimeUntil { get; set; }
-            public DateTime ExpirationDate { get; set; }
-        }
-        #endregion
-
         private bool _enabled;        
 
         private readonly Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>> _triggerHandlers;
@@ -415,7 +293,7 @@ namespace SensusService.Probes.User.Scripts
 
                     var copy = new Script(Script)
                     {
-                        ExpirationDate = schedule.ExpirationDate,
+                        ExpirationDate = schedule.ExpireDate,
                         RunTimestamp   = DateTime.Now,
                     };
     
@@ -428,9 +306,9 @@ namespace SensusService.Probes.User.Scripts
 
 #if __IOS__
             // we won't have a way to update the "X Pending Surveys" notification on ios. the best we can do is display a new notification describing the survey and showing its expiration time (if there is one).                                                
-            if (schedule.ExpirationDate < DateTime.MaxValue)
+            if (schedule.ExpireDate < DateTime.MaxValue)
             {
-                callback.UserNotificationMessage = $"Please open to take survey. Expires on {schedule.ExpirationDate:MM/dd/yy at HH:mm:ss}.";
+                callback.UserNotificationMessage = $"Please open to take survey. Expires on {schedule.ExpireDate:MM/dd/yy at HH:mm:ss}.";
             }
             else
             {
