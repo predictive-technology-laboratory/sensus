@@ -39,8 +39,9 @@ namespace SensusService.Probes.User.Scripts
                 {
                     return new ScheduleTrigger
                     {
-                        Start = TimeSpan.Parse(startEnd[0].Trim()),
-                        End   = TimeSpan.Parse(startEnd[0].Trim()),
+                        //for some reason DateTime.Parse seems to be more forgiving
+                        Start = DateTime.Parse(startEnd[0].Trim()).TimeOfDay,
+                        End   = DateTime.Parse(startEnd[0].Trim()).TimeOfDay,
                     };
                 }
                 
@@ -48,9 +49,9 @@ namespace SensusService.Probes.User.Scripts
                 {                    
                     var result = new ScheduleTrigger
                     {
-                        Start = TimeSpan.Parse(startEnd[0].Trim()),
-                        End   = TimeSpan.Parse(startEnd[1].Trim()),
-
+                        //for some reason DateTime.Parse seems to be more forgiving
+                        Start = DateTime.Parse(startEnd[0].Trim()).TimeOfDay,
+                        End   = DateTime.Parse(startEnd[1].Trim()).TimeOfDay,
                     };
 
                     if (result.Start > result.End)
