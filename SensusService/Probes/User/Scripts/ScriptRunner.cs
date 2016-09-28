@@ -31,13 +31,22 @@ namespace SensusService.Probes.User.Scripts
     {
         #region private classes
 
-        private class TriggerWindow
+        private struct TriggerWindow: IComparable<TriggerWindow>
         {
+            #region Static Methods
+            public static TriggerWindow Parse(string value)
+            {
+                return new TriggerWindow(value);
+            }
+            #endregion
+            
+            #region Properties
             public DateTime Start { get; set; }
             public DateTime End { get; set; }
             public DateTime? MostRecentRun { get; set; }
+            #endregion
 
-            public TriggerWindow() { }
+            #region Constructors
 
             public TriggerWindow(TriggerWindow window)
             {
@@ -46,6 +55,22 @@ namespace SensusService.Probes.User.Scripts
                 MostRecentRun = window.MostRecentRun;
             }
 
+            public TriggerWindow(string window)
+            {
+                string[] startEnd = window.Trim().Split('-');
+
+                Start = DateTime.Parse(startEnd[0].Trim());
+                End   = startEnd.Length == 1 ? Start : DateTime.Parse(startEnd[1].Trim());
+                MostRecentRun = null;
+
+                if (Start > End)
+                {
+                    throw new Exception($"Improper trigger window ({window})");
+                }
+            }
+            #endregion
+
+            #region Public Methods
             public DateTime CreateTriggerTime()
             {
                 var length    = (End - Start).TotalSeconds;
@@ -68,6 +93,34 @@ namespace SensusService.Probes.User.Scripts
             {
                 return !(MostRecentRun.HasValue) || MostRecentRun.Value.Date < DateTime.Now.Date;
             }
+
+            public override string ToString()
+            {
+                return Start == End ? HourMinute(Start.TimeOfDay) : $"{HourMinute(Start.TimeOfDay)}-{HourMinute(End.TimeOfDay)}";
+            }
+
+            public int CompareTo(TriggerWindow compare)
+            {
+                int hourComparison = Start.Hour.CompareTo(compare.Start.Hour);
+
+                if (hourComparison != 0)
+                {
+                    return hourComparison;
+                }
+                else
+                {
+                    return Start.Minute.CompareTo(compare.Start.Minute);
+                }
+
+            }
+            #endregion
+
+            #region Private Methods
+            private string HourMinute(TimeSpan time)
+            {
+                return $"{time.Hours}:{time.Minutes.ToString().PadLeft(2, '0')}";
+            }
+            #endregion
         }
 
         #endregion
@@ -177,61 +230,42 @@ namespace SensusService.Probes.User.Scripts
         {
             get
             {
-                if (_triggerWindows.Count == 0)
-                    return "";
-                else
-                    return string.Concat(_triggerWindows.Select((window, index) => (index == 0 ? "" : ", ") +
-                            (
-                                window.Start == window.End ? window.Start.Hour + ":" + window.Start.Minute.ToString().PadLeft(2, '0') :
-                                window.Start.Hour + ":" + window.Start.Minute.ToString().PadLeft(2, '0') + "-" + window.End.Hour + ":" + window.End.Minute.ToString().PadLeft(2, '0')
-                            )));
+                lock(_triggerWindows)
+                {
+                    return string.Join(", ", _triggerWindows.Select(w => w.ToString()));
+                }
             }
             set
             {
-                if (value == TriggerWindows)
-                    return;
+                if (value == TriggerWindows) return;
 
-                _triggerWindows.Clear();
-
-                try
+                lock(_triggerWindows)
                 {
-                    foreach (string window in value.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                    _triggerWindows.Clear();
+
+                    try
                     {
-                        string[] startEnd = window.Trim().Split('-');
-
-                        DateTime start = DateTime.Parse(startEnd[0].Trim());
-                        DateTime end = start;
-
-                        if (startEnd.Length > 1)
-                        {
-                            end = DateTime.Parse(startEnd[1].Trim());
-
-                            if (start > end)
-                                throw new Exception();
-                        }
-
-                        _triggerWindows.Add(new TriggerWindow { Start = start, End = end, MostRecentRun = null });
+                        _triggerWindows.AddRange(value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(TriggerWindow.Parse));
                     }
+                    catch
+                    {
+                        //ignore improperly formatted trigger windows
+                    }
+
+                    // sort windows by increasing hour and minute of the window start (day, month, and year are irrelevant)
+                    _triggerWindows.Sort();
                 }
-                catch (Exception)
+                // probe can be null during deserialization if this property is set first
+                if (_probe != null && _probe.Running && _enabled && _triggerWindows.Count > 0)
                 {
-                }
-
-                // sort windows by increasing hour and minute of the window start (day, month, and year are irrelevant)
-                _triggerWindows.Sort((window1, window2) =>
-                {
-                    int hourComparison = window1.Start.Hour.CompareTo(window2.Start.Hour);
-
-                    if (hourComparison != 0)
-                        return hourComparison;
-                    else
-                        return window1.Start.Minute.CompareTo(window2.Start.Minute);
-                });
-
-                if (_probe != null && _probe.Running && _enabled && _triggerWindows.Count > 0)  // probe can be null during deserialization if this property is set first
                     StartTriggerCallbacksAsync();
-                else if (SensusServiceHelper.Get() != null)  // service helper can be null when deserializing
+                }
+
+                // service helper can be null when deserializing
+                else if (SensusServiceHelper.Get() != null)  
+                {
                     StopRandomTriggerCallbackAsync();
+                }
             }
         }
 
@@ -469,9 +503,11 @@ namespace SensusService.Probes.User.Scripts
                     // Replace the element of _triggerWindows with start/end that match the current triggerWindow, setting 
                     // the last-fired time to DateTime.Now.Date. make sure to lock _triggerWindows prior to iterating. also, prevent
                     // user from entering the same window twice (in setter).
-                    int replaceIndex = _triggerWindows.FindIndex(window => window.Start == triggerWindow.Start && window.End == triggerWindow.End);
-
-                    _triggerWindows[replaceIndex] = new TriggerWindow(triggerWindow) { MostRecentRun = DateTime.Now };
+                    lock(_triggerWindows)
+                    {
+                        int replaceIndex = _triggerWindows.FindIndex(window => window.Start.TimeOfDay == triggerWindow.Start.TimeOfDay && window.End.TimeOfDay == triggerWindow.End.TimeOfDay);
+                        _triggerWindows[replaceIndex] = new TriggerWindow(triggerWindow) { MostRecentRun = DateTime.Now };
+                    }
 
                     // attach run time to script so we can measure age
                     scriptCopyToRun.RunTimestamp = triggerTime;
@@ -557,39 +593,42 @@ namespace SensusService.Probes.User.Scripts
 
         private IEnumerable<TriggerWindow> FindTriggerCallbacksByDay(int dayIndex, int dayIndexMax, DateTime protocolStop)
         {
-            foreach (TriggerWindow triggerWindow in _triggerWindows)
+            lock(_triggerWindows)
             {
-                TriggerWindow window = new TriggerWindow
+                foreach (TriggerWindow triggerWindow in _triggerWindows)
                 {
-                    Start = triggerWindow.Start.AddDays(dayIndex),
-                    End = triggerWindow.End.AddDays(dayIndex),
-                    MostRecentRun = triggerWindow.MostRecentRun
-                };
+                    TriggerWindow window = new TriggerWindow
+                    {
+                        Start = triggerWindow.Start.AddDays(dayIndex),
+                        End = triggerWindow.End.AddDays(dayIndex),
+                        MostRecentRun = triggerWindow.MostRecentRun
+                    };
 
-                // skip already scheduled scripts
-                if (_mostRecentTriggerWindowCallback != null && window.End <= _triggerWindowCallbacks[_mostRecentTriggerWindowCallback].Item2)
-                {
-                    continue;
-                }
+                    // skip already scheduled scripts
+                    if (_mostRecentTriggerWindowCallback != null && window.End <= _triggerWindowCallbacks[_mostRecentTriggerWindowCallback].Item2)
+                    {
+                        continue;
+                    }
 
-                if (dayIndex == 0 && window.StartsLater())
-                {
-                    yield return window;
-                }
+                    if (dayIndex == 0 && window.StartsLater())
+                    {
+                        yield return window;
+                    }
 
-                else if (dayIndex == 0 && window.EndsLater() && window.HasNotRunToday())
-                {
-                    yield return new TriggerWindow(window) { Start = DateTime.Now };
-                }
+                    else if (dayIndex == 0 && window.EndsLater() && window.HasNotRunToday())
+                    {
+                        yield return new TriggerWindow(window) { Start = DateTime.Now };
+                    }
 
-                else if (0 < dayIndex && dayIndex + 1 < dayIndexMax)
-                {
-                    yield return window;
-                }
+                    else if (0 < dayIndex && dayIndex + 1 < dayIndexMax)
+                    {
+                        yield return window;
+                    }
 
-                else if (window.Start.AddMinutes(5) <= protocolStop)
-                {
-                    yield return window;
+                    else if (window.Start.AddMinutes(5) <= protocolStop)
+                    {
+                        yield return window;
+                    }
                 }
             }
         }
