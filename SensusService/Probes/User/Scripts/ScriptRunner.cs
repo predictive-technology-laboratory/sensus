@@ -50,17 +50,17 @@ namespace SensusService.Probes.User.Scripts
 
             public TriggerWindow(TriggerWindow window)
             {
-                Start = window.Start;
-                End = window.End;
+                Start         = window.Start;
+                End           = window.End;
                 MostRecentRun = window.MostRecentRun;
             }
 
-            public TriggerWindow(string window)
+            private TriggerWindow(string window)
             {
-                string[] startEnd = window.Trim().Split('-');
+                var startEnd = window.Trim().Split('-');
 
-                Start = DateTime.Parse(startEnd[0].Trim());
-                End   = startEnd.Length == 1 ? Start : DateTime.Parse(startEnd[1].Trim());
+                Start         = DateTime.Parse(startEnd[0].Trim());
+                End           = startEnd.Length == 1 ? Start : DateTime.Parse(startEnd[1].Trim());
                 MostRecentRun = null;
 
                 if (Start > End)
@@ -73,6 +73,8 @@ namespace SensusService.Probes.User.Scripts
             #region Public Methods
             public int MillisecondsToTrigger()
             {
+                if (End == Start) return (int)(End - DateTime.Now).TotalMilliseconds;
+                
                 var window1  = (End - Start).TotalMilliseconds;
                 var window2  = (End - DateTime.Now).TotalMilliseconds;
 
@@ -494,7 +496,12 @@ namespace SensusService.Probes.User.Scripts
         {
             int millisecondsToTrigger = triggerWindow.MillisecondsToTrigger();
 
-            ScheduledCallback callback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
+            if (millisecondsToTrigger < 0)
+            {
+                return;
+            }
+
+            var callback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
             {
                 return Task.Run(() =>
                 {
@@ -524,23 +531,23 @@ namespace SensusService.Probes.User.Scripts
 
                     // check trigger window callbacks and reschedule if needed
                     ScheduleTriggerCallbacks();
-                });
+                }, cancellationToken);
             }, "Trigger Randomly");
 
+
+
 #if __IOS__
-            // we won't have a way to update the "X Pending Surveys" notification on ios. the best we can do is
-            // display a new notification describing the survey and showing its expiration time (if there is one).
-            string userNotificationMessage = "Please open to take survey.";
+            // we won't have a way to update the "X Pending Surveys" notification on ios. the best we can do is display a new notification describing the survey and showing its expiration time (if there is one).                                                
             if (_maximumAgeMinutes.HasValue)
             {
-                DateTime expirationTime = millisecondsToTrigger.AddMinutes(_maximumAgeMinutes.Value);
-                userNotificationMessage += " Expires on " + expirationTime.ToShortDateString() + " at " + expirationTime.ToShortTimeString() + ".";
+                callback.UserNotificationMessage = $"Please open to take survey. Expires on {DateTime.Now.AddMilliseconds(millisecondsToTrigger).AddMinutes(_maximumAgeMinutes.Value):MM/dd/yy at H:mm:ss}.";
             }
-
-            callback.UserNotificationMessage = userNotificationMessage;
-
-            // on ios we need a separate indicator that the surveys page should be displayed when the user opens
-            // the notification. this is achieved by setting the notification ID to the pending survey notification ID.
+            else
+            {
+                callback.UserNotificationMessage = "Please open to take survey.";
+            }
+            
+            // on ios we need a separate indicator that the surveys page should be displayed when the user opens the notification. this is achieved by setting the notification ID to the pending survey notification ID.
             callback.NotificationId = SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID;
 #endif
 
@@ -580,14 +587,13 @@ namespace SensusService.Probes.User.Scripts
         /// </remarks>
         private IEnumerable<TriggerWindow> FindTriggerCallbacks()
         {
-            List<TriggerWindow> triggerWindowsToSchedule = new List<TriggerWindow>();
+            var triggerWindowsToSchedule = new List<TriggerWindow>();
 
-            DateTime protocolStop = new DateTime(_probe.Protocol.EndDate.Year, _probe.Protocol.EndDate.Month, _probe.Protocol.EndDate.Day, _probe.Protocol.EndTime.Hours, _probe.Protocol.EndTime.Minutes, 0);
-            int dayIndexMax = _probe.Protocol.ScheduledStopCallbackId != null ? protocolStop.Subtract(DateTime.Now).Days + 2 : 28;
+            var protocolStop       = new DateTime(_probe.Protocol.EndDate.Year, _probe.Protocol.EndDate.Month, _probe.Protocol.EndDate.Day, _probe.Protocol.EndTime.Hours, _probe.Protocol.EndTime.Minutes, 0);
+            var dayIndexMax        = _probe.Protocol.ScheduledStopCallbackId != null ? protocolStop.Subtract(DateTime.Now).Days + 2 : 28;
+            var callbackAllocation = CallbackAllocation();
 
-            int callbackAllocation = CallbackAllocation();
-
-            for (int dayIndex = 0; dayIndex < dayIndexMax && dayIndex < 28 && triggerWindowsToSchedule.Count < callbackAllocation; dayIndex++)
+            for (var dayIndex = 0; dayIndex < dayIndexMax && dayIndex < 28 && triggerWindowsToSchedule.Count < callbackAllocation; dayIndex++)
             {
                 triggerWindowsToSchedule.AddRange(FindTriggerCallbacksByDay(dayIndex, dayIndexMax, protocolStop));
             }
@@ -599,12 +605,12 @@ namespace SensusService.Probes.User.Scripts
         {
             lock(_triggerWindows)
             {
-                foreach (TriggerWindow triggerWindow in _triggerWindows)
+                foreach (var triggerWindow in _triggerWindows)
                 {
-                    TriggerWindow window = new TriggerWindow
+                    var window = new TriggerWindow
                     {
-                        Start = triggerWindow.Start.AddDays(dayIndex),
-                        End = triggerWindow.End.AddDays(dayIndex),
+                        Start         = triggerWindow.Start.AddDays(dayIndex),
+                        End           = triggerWindow.End.AddDays(dayIndex),
                         MostRecentRun = triggerWindow.MostRecentRun
                     };
 
@@ -647,7 +653,7 @@ namespace SensusService.Probes.User.Scripts
                 SensusServiceHelper.Get().Logger.Log("Scheduling script trigger callbacks.", LoggingLevel.Normal, GetType());
 
                 // schedule the callbacks
-                foreach (TriggerWindow triggerWindowToSchedule in FindTriggerCallbacks())
+                foreach (var triggerWindowToSchedule in FindTriggerCallbacks())
                 {
                     ScheduleTriggerWindowCallback(triggerWindowToSchedule);
                 }
