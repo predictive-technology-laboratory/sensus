@@ -73,16 +73,19 @@ namespace SensusService.Probes.User.Scripts
             #region Public Methods
             public int MillisecondsToTrigger()
             {
+                // if the window's start and end are the same, it's a specific time.
+                // just use the length of time between now and the window.
                 if (End == Start) return (int)(End - DateTime.Now).TotalMilliseconds;
-                
-                var window1  = (End - Start).TotalMilliseconds;
-                var window2  = (End - DateTime.Now).TotalMilliseconds;
 
-                var windowsize = Math.Min(window1, window2);
-
+                // otherwise it's a random window. find the length of the window,
+                // generate a random offset into the window, add that duration to
+                // the window's start time, and find the length of time between now and that time.
+                var windowLength  = (End - Start).TotalMilliseconds;
                 var zeroToOne = new Random((int)DateTime.Now.Ticks).NextDouble();
+                var offsetIntoWindow = windowLength * zeroToOne;
+                var startPlusOffset = Start.AddMilliseconds(offsetIntoWindow);
 
-                return (int)(zeroToOne * windowsize);
+                return (int)(startPlusOffset - DateTime.Now).TotalMilliseconds;
             }
 
             public bool StartsLater()
@@ -521,7 +524,8 @@ namespace SensusService.Probes.User.Scripts
                     }
 
                     // attach run time to script so we can measure age
-                    scriptCopyToRun.RunTimestamp = DateTime.Now.AddMilliseconds(millisecondsToTrigger);
+                    //scriptCopyToRun.RunTimestamp = DateTime.Now.AddMilliseconds(millisecondsToTrigger);
+                    scriptCopyToRun.RunTimestamp = DateTime.Now;
 
                     // expose the script's callback id so we can access the window it's running in from SensusServiceHelper
                     scriptCopyToRun.CallbackId = callbackId;
@@ -540,7 +544,8 @@ namespace SensusService.Probes.User.Scripts
             // we won't have a way to update the "X Pending Surveys" notification on ios. the best we can do is display a new notification describing the survey and showing its expiration time (if there is one).                                                
             if (_maximumAgeMinutes.HasValue)
             {
-                callback.UserNotificationMessage = $"Please open to take survey. Expires on {DateTime.Now.AddMilliseconds(millisecondsToTrigger).AddMinutes(_maximumAgeMinutes.Value):MM/dd/yy at H:mm:ss}.";
+                DateTime expirationTimestamp = DateTime.Now.AddMilliseconds(millisecondsToTrigger).AddMinutes(_maximumAgeMinutes.Value);
+                callback.UserNotificationMessage = $"Please open to take survey. Expires on " + expirationTimestamp.ToShortDateString() + " at " + expirationTimestamp.ToShortTimeString() + ".";
             }
             else
             {
