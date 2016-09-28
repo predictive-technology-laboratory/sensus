@@ -16,31 +16,17 @@ using System;
 
 namespace SensusService.Probes.User.Scripts.ProbeTriggerProperties
 {
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    public abstract class ProbeTriggerProperty : Attribute
+    [AttributeUsage(AttributeTargets.Property)]
+    public class ProbeTriggerProperty : Attribute
     {
-        private string _name;
+        public string Name { get; set; }
 
-        public string Name
-        {
-            get
-            {
-                return _name;
-            }
-            set
-            {
-                _name = value;
-            }
-        }
+        protected ProbeTriggerProperty()
+        { }
 
-        public ProbeTriggerProperty()
+        protected ProbeTriggerProperty(string name): this()
         {
-        }
-
-        public ProbeTriggerProperty(string name)
-            : this()
-        {
-            _name = name;
+            Name = name;
         }
     }
 }

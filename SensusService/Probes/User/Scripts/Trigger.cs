@@ -24,45 +24,18 @@ namespace SensusService.Probes.User.Scripts
     /// </summary>
     public class Trigger
     {
-        private Probe _probe;
-        private string _datumPropertyName;
-        private TriggerValueCondition _condition;
         private object _conditionValue;
-        private Type _conditionValueEnumType;
-        private bool _change;
-        private bool _fireRepeatedly;
-        private bool _fireCriteriaMetOnPreviousCall;
-        private Regex _regularExpression;
-        private bool _ignoreFirstDatum;
+        private Type _conditionValueEnumType;        
         private bool _firstDatum;
-        private TimeSpan _startTime;
-        private TimeSpan _endTime;
 
-        private readonly object _locker = new object();
+        public Probe Probe { get; set; }
 
-        public Probe Probe
-        {
-            get { return _probe; }
-            set { _probe = value; }
-        }
-
-        public string DatumPropertyName
-        {
-            get { return _datumPropertyName; }
-            set { _datumPropertyName = value; }
-        }
+        public string DatumPropertyName { get; set; }
 
         [JsonIgnore]
-        public PropertyInfo DatumProperty
-        {
-            get { return _probe.DatumType.GetProperty(_datumPropertyName); }
-        }
+        public PropertyInfo DatumProperty => Probe.DatumType.GetProperty(DatumPropertyName);
 
-        public TriggerValueCondition Condition
-        {
-            get { return _condition; }
-            set { _condition = value; }
-        }
+        public TriggerValueCondition Condition { get; set; }
 
         public object ConditionValue
         {
@@ -73,7 +46,9 @@ namespace SensusService.Probes.User.Scripts
 
                 // convert to enumerated type if we have the string type name
                 if (_conditionValueEnumType != null)
+                {
                     _conditionValue = Enum.ToObject(_conditionValueEnumType, _conditionValue);
+                }
             }
         }
 
@@ -95,174 +70,181 @@ namespace SensusService.Probes.User.Scripts
 
                     // convert to enumerated type if we have the integer value
                     if (_conditionValue != null)
+                    {
                         _conditionValue = Enum.ToObject(_conditionValueEnumType, _conditionValue);
+                    }
                 }
             }
         }
 
-        public bool Change
-        {
-            get { return _change; }
-            set { _change = value; }
-        }
+        public bool Change { get; set; }
 
-        public bool FireRepeatedly
-        {
-            get { return _fireRepeatedly; }
-            set { _fireRepeatedly = value; }
-        }
+        public bool FireRepeatedly { get; set; }
 
-        public bool FireCriteriaMetOnPreviousCall
-        {
-            get
-            {
-                return _fireCriteriaMetOnPreviousCall;
-            }
-            set
-            {
-                _fireCriteriaMetOnPreviousCall = value;
-            }
-        }
+        public bool FireCriteriaMetOnPreviousCall { get; set; }
 
-        public string RegularExpressionText
-        {
-            get { return _regularExpression == null ? null : _regularExpression.ToString(); }
-            set
-            {
-                if (value != null)
-                    _regularExpression = new Regex(value);
-            }
-        }
+        public string RegularExpressionText { get; set; }
 
-        public bool IgnoreFirstDatum
-        {
-            get { return _ignoreFirstDatum; }
-            set { _ignoreFirstDatum = value; }
-        }
+        public bool IgnoreFirstDatum { get; set; }
 
-        public TimeSpan StartTime
-        {
-            get { return _startTime; }
-            set { _startTime = value; }
-        }
+        public TimeSpan StartTime { get; set; }
 
-        public TimeSpan EndTime
-        {
-            get { return _endTime; }
-            set { _endTime = value; }
-        }
+        public TimeSpan EndTime { get; set; }
 
         private Trigger()
         {
             Reset();
         }
 
-        public Trigger(Probe probe, PropertyInfo datumProperty, TriggerValueCondition condition, object conditionValue, bool change, bool fireRepeatedly, bool useRegularExpressions, bool ignoreFirstDatum, TimeSpan startTime, TimeSpan endTime)
-            : this()
+        public Trigger(Probe probe, PropertyInfo datumProperty, TriggerValueCondition condition, object conditionValue, bool change, bool fireRepeatedly, bool useRegularExpressions, bool ignoreFirstDatum, TimeSpan startTime, TimeSpan endTime): this()
         {
-            if (probe == null)
-                throw new Exception("Trigger is missing Probe selection.");
-            else if (datumProperty == null)
-                throw new Exception("Trigger is missing Property selection.");
-            else if (conditionValue == null)
-                throw new Exception("Trigger is missing Value selection.");
-            else if (endTime <= startTime)
-                throw new Exception("Trigger Start Time must precede End Time.");
+            if (probe          == null) throw new Exception("Trigger is missing Probe selection.");
+            if (datumProperty  == null) throw new Exception("Trigger is missing Property selection.");
+            if (conditionValue == null) throw new Exception("Trigger is missing Value selection.");
+            if (endTime   <= startTime) throw new Exception("Trigger Start Time must precede End Time.");
             
-            _probe = probe;
-            _datumPropertyName = datumProperty.Name;
-            _condition = condition;
-            _conditionValue = conditionValue;
-            _change = change;
-            _fireRepeatedly = fireRepeatedly;
-            _ignoreFirstDatum = ignoreFirstDatum;
-            _startTime = startTime;
-            _endTime = endTime;
+            Probe             = probe;
+            DatumPropertyName = datumProperty.Name;
+            Condition         = condition;
+            _conditionValue   = conditionValue;
+            Change            = change;
+            FireRepeatedly    = fireRepeatedly;
+            IgnoreFirstDatum  = ignoreFirstDatum;
+            StartTime         = startTime;
+            EndTime           = endTime;
 
             if (useRegularExpressions)
-                _regularExpression = new Regex(_conditionValue.ToString());
+            {
+                RegularExpressionText = _conditionValue.ToString();
+            }
         }
 
         public void Reset()
         {
-            _fireCriteriaMetOnPreviousCall = false;
+            FireCriteriaMetOnPreviousCall = false;
             _firstDatum = true;
         }
 
         public bool FireFor(object value)
         {
-            lock (_locker)
+            try
             {
-                bool conditionSatisfied;
+                var satisfyCondition = SatisfyCondition(value);
+                var ignoreCondition  = IgnoreCondition();
 
-                if (_regularExpression == null)
-                {
-                    int compareTo;
-                    try
-                    {
-                        compareTo = ((IComparable)value).CompareTo(_conditionValue);
-                    }
-                    catch (Exception ex)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Trigger failed to compare values:  " + ex.Message, LoggingLevel.Normal, GetType());
-                        return false;
-                    }
+                var fireCriteriaMet    = FireCriteriaMet(ignoreCondition, satisfyCondition);
+                var fireRepeatMet      = FireRepeatMet(fireCriteriaMet);
+                var fireWindowMet      = FireWindowMet();
+      
+                FireCriteriaMetOnPreviousCall = fireCriteriaMet;
 
-                    conditionSatisfied = _condition == TriggerValueCondition.Equal && compareTo == 0 ||
-                    _condition == TriggerValueCondition.GreaterThan && compareTo > 0 ||
-                    _condition == TriggerValueCondition.GreaterThanOrEqual && compareTo >= 0 ||
-                    _condition == TriggerValueCondition.LessThan && compareTo < 0 ||
-                    _condition == TriggerValueCondition.LessThanOrEqual && compareTo <= 0;
-                }
-                else
-                {
-                    try
-                    {
-                        conditionSatisfied = _regularExpression.Match(value.ToString()).Success;
-                    }
-                    catch (Exception ex)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Trigger failed to run Regex.Match:  " + ex.Message, LoggingLevel.Normal, GetType());
-                        return false;
-                    }
-                }
-
-                // the processing of repeated fires depends on first-datum status as well as satisfaction of the condition
-                bool fireCriteriaMet = (!_ignoreFirstDatum || !_firstDatum) &&
-                                       conditionSatisfied;
-
-                // whether or not to fire depends on the fire criteria, preferences about repeats, and time restrictions
-                bool fire = fireCriteriaMet &&
-                            (_fireRepeatedly || !_fireCriteriaMetOnPreviousCall) &&
-                            (DateTime.Now.TimeOfDay >= _startTime && DateTime.Now.TimeOfDay <= _endTime);
-
-                _fireCriteriaMetOnPreviousCall = fireCriteriaMet;
                 _firstDatum = false;
 
-                return fire;
+                return fireCriteriaMet && fireRepeatMet && fireWindowMet;
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log(ex.Message, LoggingLevel.Normal, GetType());
+                return false;
             }
         }
 
         public override string ToString()
         {
-            return _probe.DisplayName + " (" + _datumPropertyName + " " + _condition + " " + _conditionValue + ")";
+            return $"{Probe.DisplayName} ({DatumPropertyName} {Condition} {_conditionValue})";
         }
 
         public override bool Equals(object obj)
         {
-            Trigger trigger = obj as Trigger;
+            var trigger = obj as Trigger;
 
-            return trigger != null &&
-            _probe == trigger.Probe &&
-            _datumPropertyName == trigger.DatumPropertyName &&
-            _condition == trigger.Condition &&
-            _conditionValue == trigger.ConditionValue &&
-            _change == trigger.Change;
+            return trigger != null && Probe == trigger.Probe && DatumPropertyName == trigger.DatumPropertyName && Condition == trigger.Condition && ConditionValue == trigger.ConditionValue && Change == trigger.Change;
         }
 
         public override int GetHashCode()
         {
             return ToString().GetHashCode();
         }
+
+        #region Private Methods
+        private bool SatisfyCondition(object value)
+        {
+            if (RegularExpressionText == null)
+            {
+                try
+                {
+                    var compareTo = ((IComparable)value).CompareTo(_conditionValue);
+
+                    if (Condition == TriggerValueCondition.Equal) return compareTo == 0;
+                    if (Condition == TriggerValueCondition.GreaterThan) return compareTo > 0;
+                    if (Condition == TriggerValueCondition.GreaterThanOrEqual) return compareTo >= 0;
+                    if (Condition == TriggerValueCondition.LessThan) return compareTo < 0;
+                    if (Condition == TriggerValueCondition.LessThanOrEqual) return compareTo <= 0;
+
+                    throw new Exception($"Trigger failed recognize Condition:  {Condition}");
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Trigger failed to compare values:  {ex.Message}", ex);
+                }
+            }
+            else
+            {
+                try
+                {
+                    return Regex.IsMatch(value.ToString(), RegularExpressionText);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Trigger failed to run Regex.Match:  {ex.Message}", ex);
+                }
+            }
+        }
+
+        private bool IgnoreCondition()
+        {
+            if (!_firstDatum || !IgnoreFirstDatum)
+            {
+                _firstDatum = false;
+
+                return true;
+            }
+
+            lock (this)
+            {
+                if (!_firstDatum) return true; 
+
+                return _firstDatum = false;
+            }
+        }
+
+        private static bool FireCriteriaMet(bool ignoreCondition, bool satisfyCondition)
+        {
+            return !ignoreCondition && satisfyCondition;
+        }
+
+        private bool FireRepeatMet(bool fireCriteriaMet)
+        {
+            if (FireRepeatedly)
+            {
+                FireCriteriaMetOnPreviousCall = fireCriteriaMet;
+                return true;
+            }
+
+            lock (this)
+            {
+                var result = !FireCriteriaMetOnPreviousCall;
+
+                FireCriteriaMetOnPreviousCall = fireCriteriaMet;
+
+                return result;
+            }            
+        }
+
+        private bool FireWindowMet()
+        {
+            return StartTime <= DateTime.Now.TimeOfDay && DateTime.Now.TimeOfDay <= EndTime;
+        }
+        #endregion
     }
 }

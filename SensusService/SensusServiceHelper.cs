@@ -889,7 +889,7 @@ namespace SensusService
         /// </remarks>
         public string ScheduleOneTimeCallback(ScheduledCallback callback, DateTime callbackTime)
         {
-            throw new Exception("Don't ever do this. Take my word for it.");
+            throw new Exception("Don't ever do this. Take my word for it. See method remarks for why.");
             //return ScheduleOneTimeCallback(callback, (int)(callbackTime - DateTime.Now).TotalMilliseconds);
         }
 
@@ -1624,12 +1624,7 @@ namespace SensusService
 
         private bool Expired(Script script)
         {
-            var pastMaxAge = script.Age?.TotalMinutes >= script.Runner.MaximumAgeMinutes;
-            var windowEnded = script.Runner.TriggerWindowCallbacks.Any() && script.Runner.TriggerWindowCallbacks.ContainsKey(script.CallbackId) && script.Runner.TriggerWindowCallbacks[script.CallbackId].Item2 < DateTime.Now;
-            var specificTime = script.Runner.TriggerWindowCallbacks.Any() && script.Runner.TriggerWindowCallbacks.ContainsKey(script.CallbackId) && script.Runner.TriggerWindowCallbacks[script.CallbackId].Item1 == script.Runner.TriggerWindowCallbacks[script.CallbackId].Item2;
-
-            // only filter out specific-time scripts if we're past the max age
-            return pastMaxAge || (script.Runner.InvalidateScriptWhenWindowEnds && windowEnded && !specificTime);
+            return script.ExpirationDate < DateTime.Now;
         }
         #endregion
     }

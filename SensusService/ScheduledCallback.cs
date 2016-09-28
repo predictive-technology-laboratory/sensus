@@ -88,12 +88,12 @@ namespace SensusService
         /// <param name="userNotificationMessage">User notification message.</param>
         public ScheduledCallback(ActionDelegate action, string name, TimeSpan? callbackTimeout = null, string userNotificationMessage = null, string notificationId = null)
         {
-            Action = action;
-            Name = name;
-            CallbackTimeout = callbackTimeout;
+            Action                  = action;
+            Name                    = name;
+            CallbackTimeout         = callbackTimeout;
             UserNotificationMessage = userNotificationMessage;
-            NotificationId = notificationId;
-            Running = false;
+            NotificationId          = notificationId;
+            Running                 = false;
         }
     }
 }

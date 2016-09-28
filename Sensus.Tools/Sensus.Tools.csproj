@@ -40,6 +40,7 @@
     <Compile Include="Concurrent\IConcurrent.cs" />
     <Compile Include="Concurrent\LockConcurrent.cs" />
     <Compile Include="Dispose\Disposable.cs" />
+    <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
