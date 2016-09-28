@@ -71,22 +71,26 @@ namespace SensusService.Probes.User.Scripts
             #endregion
 
             #region Public Methods
-            public DateTime CreateTriggerTime()
+            public int MillisecondsToTrigger()
             {
-                var length    = (End - Start).TotalSeconds;
+                var window1  = (End - Start).TotalMilliseconds;
+                var window2  = (End - DateTime.Now).TotalMilliseconds;
+
+                var windowsize = Math.Min(window1, window2);
+
                 var zeroToOne = new Random((int)DateTime.Now.Ticks).NextDouble();
 
-                return Start.AddSeconds(zeroToOne * length);
+                return (int)(zeroToOne * windowsize);
             }
 
             public bool StartsLater()
             {
-                return Start.TimeOfDay < DateTime.Now.TimeOfDay;
+                return Start.TimeOfDay > DateTime.Now.TimeOfDay;
             }
 
             public bool EndsLater()
             {
-                return End.TimeOfDay < DateTime.Now.TimeOfDay.Add(new TimeSpan(0, 5, 0));
+                return End.TimeOfDay > DateTime.Now.TimeOfDay.Add(new TimeSpan(0, 5, 0));
             }
 
             public bool HasNotRunToday()
@@ -488,7 +492,7 @@ namespace SensusService.Probes.User.Scripts
 
         private void ScheduleTriggerWindowCallback(TriggerWindow triggerWindow)
         {
-            DateTime triggerTime = triggerWindow.CreateTriggerTime();
+            int millisecondsToTrigger = triggerWindow.MillisecondsToTrigger();
 
             ScheduledCallback callback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
             {
@@ -510,7 +514,7 @@ namespace SensusService.Probes.User.Scripts
                     }
 
                     // attach run time to script so we can measure age
-                    scriptCopyToRun.RunTimestamp = triggerTime;
+                    scriptCopyToRun.RunTimestamp = DateTime.Now.AddMilliseconds(millisecondsToTrigger);
 
                     // expose the script's callback id so we can access the window it's running in from SensusServiceHelper
                     scriptCopyToRun.CallbackId = callbackId;
@@ -529,7 +533,7 @@ namespace SensusService.Probes.User.Scripts
             string userNotificationMessage = "Please open to take survey.";
             if (_maximumAgeMinutes.HasValue)
             {
-                DateTime expirationTime = triggerTime.AddMinutes(_maximumAgeMinutes.Value);
+                DateTime expirationTime = millisecondsToTrigger.AddMinutes(_maximumAgeMinutes.Value);
                 userNotificationMessage += " Expires on " + expirationTime.ToShortDateString() + " at " + expirationTime.ToShortTimeString() + ".";
             }
 
@@ -540,7 +544,7 @@ namespace SensusService.Probes.User.Scripts
             callback.NotificationId = SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID;
 #endif
 
-            String triggerWindowCallbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(callback, triggerTime);
+            String triggerWindowCallbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(callback, millisecondsToTrigger);
 
             lock (_triggerWindowCallbacks) 
             {
