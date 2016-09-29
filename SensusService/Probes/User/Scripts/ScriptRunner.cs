@@ -315,7 +315,7 @@ namespace SensusService.Probes.User.Scripts
             {
                 foreach (var schedule in GetSchedulesStartingFrom(_maxScheduleDate ?? DateTime.Now).Take(32/Probe.ScriptRunners.Count))
                 {
-                    if (schedule.RunTime > Probe.Protocol.EndDate)
+                    if (!Probe.Protocol.ContinueIndefinitely && schedule.RunTime > Probe.Protocol.EndDate)
                     {
                         break;
                     }
