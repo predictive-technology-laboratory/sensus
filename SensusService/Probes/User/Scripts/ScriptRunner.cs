@@ -313,9 +313,14 @@ namespace SensusService.Probes.User.Scripts
 
             lock (_scheduleTriggers)
             {
-                foreach (var schedule in GetSchedulesStartingFrom(_maxScheduleDate ?? DateTime.Now).Take(32/Probe.ScriptRunners.Count))
+                foreach (var schedule in SchedulesStartingFrom(_maxScheduleDate ?? DateTime.Now))
                 {
                     if (!Probe.Protocol.ContinueIndefinitely && schedule.RunTime > Probe.Protocol.EndDate)
+                    {
+                        break;
+                    }
+
+                    if (_scheduledCallbackIds.Count > 32 / Probe.ScriptRunners.Count)
                     {
                         break;
                     }
@@ -325,7 +330,7 @@ namespace SensusService.Probes.User.Scripts
                         continue;
                     }
 
-                    ScheduleCallback(schedule);
+                    ScheduleCallback(schedule);                    
                 }
             }
         }
@@ -417,14 +422,20 @@ namespace SensusService.Probes.User.Scripts
             }
         }
 
-        private IEnumerable<Schedule> GetSchedulesStartingFrom(DateTime startDate)
+        private IEnumerable<Schedule> SchedulesStartingFrom(DateTime startDate)
         {
-            var ageExpiration = MaxAgeMinutes == null ? (TimeSpan?)null : TimeSpan.FromMinutes(MaxAgeMinutes.Value);
+            var ageExpiration  = MaxAgeMinutes == null ? (TimeSpan?)null : TimeSpan.FromMinutes(MaxAgeMinutes.Value);
+            var futureDistance = TimeSpan.FromDays(8);
 
             lock (_scheduleTriggers)
             {
-                for (var currentDate = startDate; currentDate - startDate < TimeSpan.FromDays(8); currentDate += TimeSpan.FromDays(1))
+                for (var currentDate = startDate; currentDate - startDate < futureDistance && currentDate - DateTime.Now < futureDistance; currentDate += TimeSpan.FromDays(1))
                 {
+                    if (currentDate < DateTime.Now)
+                    {
+                        continue;
+                    }
+
                     foreach (var scheduleTrigger in _scheduleTriggers)
                     {
                         yield return scheduleTrigger.NextSchedule(DateTime.Now, currentDate, WindowExpiration, ageExpiration);
