@@ -385,7 +385,7 @@ namespace SensusService.Probes.User.Scripts
             // we won't have a way to update the "X Pending Surveys" notification on ios. the best we can do is display a new notification describing the survey and showing its expiration time (if there is one).                                                
             if (script.ExpirationDate < DateTime.MaxValue)
             {
-                callback.UserNotificationMessage = "Please open to take survey. Expires " + script.ExpirationDate.ToString("on MM/dd/yy at HH\\:mm\\:ss") +  ".";
+                callback.UserNotificationMessage = "Please open to take survey. Expires on " + script.ExpirationDate.ToShortDateString() + " at " + script.ExpirationDate.ToShortTimeString() + ".";
             }
             else
             {

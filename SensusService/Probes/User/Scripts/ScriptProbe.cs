@@ -24,7 +24,6 @@ namespace SensusService.Probes.User.Scripts
     public class ScriptProbe : Probe
     {
         private ObservableCollection<ScriptRunner> _scriptRunners;
-        private int _scriptCallbacksScheduled;
 
         public ObservableCollection<ScriptRunner> ScriptRunners
         {
@@ -152,8 +151,6 @@ namespace SensusService.Probes.User.Scripts
             {
                 scriptRunner.Reset();
             }
-
-            _scriptCallbacksScheduled = 0;
         }
 
         public override void Stop()
@@ -162,8 +159,6 @@ namespace SensusService.Probes.User.Scripts
 
             foreach (ScriptRunner scriptRunner in _scriptRunners)
                 scriptRunner.Stop();
-
-            _scriptCallbacksScheduled = 0;
         }
 
         protected override ChartSeries GetChartSeries()
