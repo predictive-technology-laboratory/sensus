@@ -331,7 +331,7 @@ namespace SensusService
                 // only schedule the callback if we haven't done so already. the callback should be global across all band probes.
                 if (HEALTH_TEST_CALLBACK_ID == null)
                 {
-                    ScheduledCallback callback = new ScheduledCallback(TestBandClientAsync, "Microsoft Band Health Test", TimeSpan.FromMinutes(5));
+                    ScheduledCallback callback = new ScheduledCallback("Microsoft Band Health Test", TestBandClientAsync, TimeSpan.FromMinutes(5));
                     HEALTH_TEST_CALLBACK_ID = SensusServiceHelper.Get().ScheduleRepeatingCallback(callback, HEALTH_TEST_DELAY_MS, HEALTH_TEST_DELAY_MS, false);
                 }
             }

@@ -91,33 +91,24 @@ namespace SensusService.Probes.User.Scripts
             {
                 if (value == TriggerWindows) return;
 
-                lock(_scheduleTriggers)
+                lock (_scheduleTriggers)
                 {
                     _scheduleTriggers.Clear();
 
                     try
                     {
-                        _scheduleTriggers.AddRange(value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(ScheduleTrigger.Parse));
+                        _scheduleTriggers.AddRange(value.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries).Select(ScheduleTrigger.Parse));
                     }
                     catch
                     {
                         //ignore improperly formatted trigger windows
                     }
-
-                    // sort windows by increasing Start Time
+                    
                     _scheduleTriggers.Sort();
                 }
-                // probe can be null during deserialization if this property is set first
-                if (Probe != null && Probe.Running && _enabled && _scheduleTriggers.Count > 0)
-                {
-                    StartScheduleCallbacksAsync();
-                }
 
-                // service helper can be null when deserializing
-                else if (SensusServiceHelper.Get() != null)  
-                {
-                    StopScheduledCallbacks();
-                }
+                UnscheduleCallbacks();
+                ScheduleCallbacks();
             }
         }
 
@@ -259,7 +250,11 @@ namespace SensusService.Probes.User.Scripts
 
         public void Start()
         {
-            StartScheduleCallbacksAsync();
+            Task.Run(() =>
+            {
+                UnscheduleCallbacks();
+                ScheduleCallbacks();
+            });
 
             // use the async version below for a couple reasons. first, we're in a non-async method and we want to ensure
             // that the script won't be running on the UI thread. second, from the caller's perspective the prompt should 
@@ -277,15 +272,10 @@ namespace SensusService.Probes.User.Scripts
 
         public void Reset()
         {
-            lock (_scheduledCallbackIds)
-            {
-                _scheduledCallbackIds.Clear();
-            }
+            UnscheduleCallbacks();
 
             RunTimes.Clear();
-            CompletionTimes.Clear();
-
-            _maxScheduleDate = null;
+            CompletionTimes.Clear();            
         }
 
         public void Restart()
@@ -296,7 +286,7 @@ namespace SensusService.Probes.User.Scripts
 
         public void Stop()
         {
-            StopScheduledCallbacks();
+            UnscheduleCallbacks();
             SensusServiceHelper.Get().RemoveScriptsToRun(this);
         }
         #endregion
@@ -304,12 +294,12 @@ namespace SensusService.Probes.User.Scripts
         #region Private Methods
         private void ScheduleCallbacks()
         {
-            if (_scheduleTriggers.Count == 0)
+            if (_scheduleTriggers.Count == 0 || Probe == null || SensusServiceHelper.Get() == null)
             {
                 return;
             }
 
-            SensusServiceHelper.Get().Logger.Log("Scheduling script trigger callbacks.", LoggingLevel.Normal, GetType());
+            SensusServiceHelper.Get().Logger.Log("Scheduling Script Callbacks.", LoggingLevel.Normal, GetType());
 
             lock (_scheduleTriggers)
             {
@@ -330,43 +320,11 @@ namespace SensusService.Probes.User.Scripts
                         continue;
                     }
 
-                    ScheduleCallback(schedule);                    
+                    ScheduleCallback(schedule);
                 }
             }
-        }
 
-        private void StartScheduledCallbacks()
-        {
-            StopScheduledCallbacks();
-            SensusServiceHelper.Get().Logger.Log("Starting script trigger callbacks.", LoggingLevel.Normal, GetType());
-            ScheduleCallbacks();
-        }
-
-        private void StopScheduledCallbacks()
-        {
-            if (_scheduledCallbackIds.Count == 0) return;
-
-            SensusServiceHelper.Get().Logger.Log("Stopping Schedule Callbacks.", LoggingLevel.Normal, GetType());
-
-            lock (_scheduledCallbackIds)
-            {
-                foreach (var scheduledCallbackId in _scheduledCallbackIds)
-                {
-                    SensusServiceHelper.Get().UnscheduleCallback(scheduledCallbackId);
-                }
-
-                _scheduledCallbackIds.Clear();
-            }
-
-            SensusServiceHelper.Get().Logger.Log("Stopped Schedule Callbacks.", LoggingLevel.Normal, GetType());
-        }
-
-        private Task StartScheduleCallbacksAsync()
-        {
-            return Task.Run(() =>
-            {
-                StartScheduledCallbacks();
-            });
+            SensusServiceHelper.Get().Logger.Log("Scheduled Script Callbacks.", LoggingLevel.Normal, GetType());
         }
 
         private void ScheduleCallback(Schedule schedule)
@@ -376,33 +334,61 @@ namespace SensusService.Probes.User.Scripts
                 return;
             }
 
-            var callback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
+            lock (_scheduledCallbackIds)
+            {
+                var timeUntil = (int)schedule.TimeUntil.TotalMilliseconds;
+                var callback = CreateCallback(new Script(Script) { ExpirationDate = schedule.ExpirationDate });
+                var callbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(callback, timeUntil);
+
+                _scheduledCallbackIds.Add(callbackId);
+            }
+
+            _maxScheduleDate = _maxScheduleDate.Max(schedule.RunTime);
+        }
+
+        private void UnscheduleCallbacks()
+        {
+            if (_scheduledCallbackIds.Count == 0 || SensusServiceHelper.Get() == null)
+            {
+                return;
+            }
+
+            SensusServiceHelper.Get().Logger.Log("Unscheduling Script Callbacks.", LoggingLevel.Normal, GetType());
+
+            lock (_scheduledCallbackIds)
+            {
+                foreach (var scheduledCallbackId in _scheduledCallbackIds)
+                {
+                    SensusServiceHelper.Get().UnscheduleCallback(scheduledCallbackId);
+                }
+
+                _scheduledCallbackIds.Clear();
+                _maxScheduleDate = null;
+            }
+
+            SensusServiceHelper.Get().Logger.Log("Unscheduled Script Callbacks.", LoggingLevel.Normal, GetType());
+        }        
+
+        private ScheduledCallback CreateCallback(Script script)
+        {
+            var callback = new ScheduledCallback("Trigger Randomly", (callbackId, cancellationToken, letDeviceSleepCallback) =>
             {
                 return Task.Run(() =>
                 {
-                    if (!Probe.Running || !_enabled)
-                    {
-                        return;
-                    }
+                    if (!Probe.Running || !_enabled) return;                    
 
-                    var copy = new Script(Script)
-                    {
-                        ExpirationDate = schedule.ExpireDate,
-                        RunTimestamp = DateTime.Now,
-                    };
-
-                    Run(copy);
+                    Run(script);
 
                     ScheduleCallbacks();
 
                 }, cancellationToken);
-            }, "Trigger Randomly");
+            });
 
 #if __IOS__
             // we won't have a way to update the "X Pending Surveys" notification on ios. the best we can do is display a new notification describing the survey and showing its expiration time (if there is one).                                                
-            if (schedule.ExpireDate < DateTime.MaxValue)
+            if (script.ExpirationDate < DateTime.MaxValue)
             {
-                callback.UserNotificationMessage = $"Please open to take survey. Expires on {schedule.ExpireDate:MM/dd/yy at HH:mm:ss}.";
+                callback.UserNotificationMessage = "Please open to take survey. Expires " + script.ExpirationDate.ToString("on MM/dd/yy at HH\\:mm\\:ss") +  ".";
             }
             else
             {
@@ -411,13 +397,9 @@ namespace SensusService.Probes.User.Scripts
             
             // on ios we need a separate indicator that the surveys page should be displayed when the user opens the notification. this is achieved by setting the notification ID to the pending survey notification ID.
             callback.NotificationId = SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID;
-#endif            
-            _maxScheduleDate = _maxScheduleDate.Max(schedule.RunTime);
+#endif
 
-            lock (_scheduledCallbackIds)
-            {
-                _scheduledCallbackIds.Add(SensusServiceHelper.Get().ScheduleOneTimeCallback(callback, (int)schedule.TimeUntil.TotalMilliseconds));
-            }
+            return callback;
         }
 
         private IEnumerable<Schedule> SchedulesStartingFrom(DateTime startDate)

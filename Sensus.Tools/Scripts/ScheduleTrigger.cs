@@ -62,7 +62,7 @@ namespace Sensus.Tools.Scripts
             return new Schedule
             {
                 TimeUntil  = timeUntilRng,
-                ExpireDate = winExpiration.Min(ageExpiration)
+                ExpirationDate = winExpiration.Min(ageExpiration)
             };
         }
 

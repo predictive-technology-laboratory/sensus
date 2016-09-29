@@ -57,7 +57,7 @@ namespace Sensus.Tools.Tests.Scripts
 
                 Assert.GreaterOrEqual(nextSchedule.TimeUntil, TimeSpan.FromDays(8));
                 Assert.LessOrEqual(nextSchedule.TimeUntil, TimeSpan.FromDays(8).Add(TimeSpan.FromHours(2)));
-                Assert.AreEqual(DateTime.MaxValue, nextSchedule.ExpireDate);
+                Assert.AreEqual(DateTime.MaxValue, nextSchedule.ExpirationDate);
             }
         }
 
@@ -74,7 +74,7 @@ namespace Sensus.Tools.Tests.Scripts
                 var nextSchedule = t.NextSchedule(from, after, false, null);
 
                 Assert.AreEqual(TimeSpan.FromDays(8), nextSchedule.TimeUntil);
-                Assert.AreEqual(DateTime.MaxValue, nextSchedule.ExpireDate);
+                Assert.AreEqual(DateTime.MaxValue, nextSchedule.ExpirationDate);
             }
         }
 
@@ -91,7 +91,7 @@ namespace Sensus.Tools.Tests.Scripts
                 var nextSchedule = t.NextSchedule(from, after, false, null);
 
                 Assert.AreEqual(TimeSpan.FromDays(31), nextSchedule.TimeUntil);
-                Assert.AreEqual(DateTime.MaxValue, nextSchedule.ExpireDate);
+                Assert.AreEqual(DateTime.MaxValue, nextSchedule.ExpirationDate);
             }
         }
 
@@ -110,7 +110,7 @@ namespace Sensus.Tools.Tests.Scripts
                 
                 Assert.GreaterOrEqual(nextSchedule.TimeUntil, TimeSpan.FromDays(8));
                 Assert.LessOrEqual(nextSchedule.TimeUntil, TimeSpan.FromDays(8).Add(TimeSpan.FromHours(2)));
-                Assert.AreEqual(from + nextSchedule.TimeUntil + expir, nextSchedule.ExpireDate);
+                Assert.AreEqual(from + nextSchedule.TimeUntil + expir, nextSchedule.ExpirationDate);
             }
         }
 
@@ -128,7 +128,7 @@ namespace Sensus.Tools.Tests.Scripts
 
                 Assert.GreaterOrEqual(nextSchedule.TimeUntil, TimeSpan.FromDays(8));
                 Assert.LessOrEqual(nextSchedule.TimeUntil, TimeSpan.FromDays(8).Add(TimeSpan.FromHours(2)));
-                Assert.AreEqual(from.AddDays(8).AddHours(2), nextSchedule.ExpireDate);
+                Assert.AreEqual(from.AddDays(8).AddHours(2), nextSchedule.ExpirationDate);
             }
         }
 
@@ -147,7 +147,7 @@ namespace Sensus.Tools.Tests.Scripts
 
                 Assert.GreaterOrEqual(nextSchedule.TimeUntil, TimeSpan.FromDays(8));
                 Assert.LessOrEqual(nextSchedule.TimeUntil, TimeSpan.FromDays(8).Add(TimeSpan.FromHours(2)));
-                Assert.AreEqual(from + nextSchedule.TimeUntil + expir, nextSchedule.ExpireDate);
+                Assert.AreEqual(from + nextSchedule.TimeUntil + expir, nextSchedule.ExpirationDate);
             }
         }
 

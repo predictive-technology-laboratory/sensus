@@ -6,6 +6,6 @@ namespace Sensus.Tools.Scripts
     {
         public DateTime RunTime => DateTime.Now + TimeUntil;
         public TimeSpan TimeUntil { get; set; }
-        public DateTime ExpireDate { get; set; }
+        public DateTime ExpirationDate { get; set; }
     }
 }

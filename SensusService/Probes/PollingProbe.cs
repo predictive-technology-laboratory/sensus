@@ -196,52 +196,52 @@ namespace SensusService.Probes
 #error "Unrecognized platform."
 #endif
 
-                _callback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
+                _callback = new ScheduledCallback(GetType().FullName + " Poll", (callbackId, cancellationToken, letDeviceSleepCallback) =>
                 {
                     return Task.Run(async () =>
+                    {
+                        if (Running)
                         {
-                            if (Running)
+                            _isPolling = true;
+
+                            IEnumerable<Datum> data = null;
+                            try
                             {
-                                _isPolling = true;
+                                SensusServiceHelper.Get().Logger.Log("Polling.", LoggingLevel.Normal, GetType());
+                                data = Poll(cancellationToken);
 
-                                IEnumerable<Datum> data = null;
-                                try
+                                lock (_pollTimes)
                                 {
-                                    SensusServiceHelper.Get().Logger.Log("Polling.", LoggingLevel.Normal, GetType());
-                                    data = Poll(cancellationToken);
-
-                                    lock (_pollTimes)
-                                    {
-                                        _pollTimes.Add(DateTime.Now);
-                                        _pollTimes.RemoveAll(pollTime => pollTime < Protocol.ParticipationHorizon);
-                                    }
+                                    _pollTimes.Add(DateTime.Now);
+                                    _pollTimes.RemoveAll(pollTime => pollTime < Protocol.ParticipationHorizon);
                                 }
-                                catch (Exception ex)
-                                {
-                                    SensusServiceHelper.Get().Logger.Log("Failed to poll:  " + ex.Message, LoggingLevel.Normal, GetType());
-                                }
-
-                                if (data != null)
-                                    foreach (Datum datum in data)
-                                    {
-                                        if (cancellationToken.IsCancellationRequested)
-                                            break;
-
-                                        try
-                                        {
-                                            await StoreDatumAsync(datum, cancellationToken);
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            SensusServiceHelper.Get().Logger.Log("Failed to store datum:  " + ex.Message, LoggingLevel.Normal, GetType());
-                                        }
-                                    }
-
-                                _isPolling = false;
                             }
-                        });
+                            catch (Exception ex)
+                            {
+                                SensusServiceHelper.Get().Logger.Log("Failed to poll:  " + ex.Message, LoggingLevel.Normal, GetType());
+                            }
 
-                }, GetType().FullName + " Poll", TimeSpan.FromMinutes(_pollingTimeoutMinutes), userNotificationMessage);
+                            if (data != null)
+                                foreach (Datum datum in data)
+                                {
+                                    if (cancellationToken.IsCancellationRequested)
+                                        break;
+
+                                    try
+                                    {
+                                        await StoreDatumAsync(datum, cancellationToken);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        SensusServiceHelper.Get().Logger.Log("Failed to store datum:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                    }
+                                }
+
+                            _isPolling = false;
+                        }
+                    });
+
+                }, TimeSpan.FromMinutes(_pollingTimeoutMinutes), userNotificationMessage);
 
 #if __IOS__
                 if (_significantChangePoll)

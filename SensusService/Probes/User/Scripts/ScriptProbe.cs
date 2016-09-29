@@ -148,8 +148,10 @@ namespace SensusService.Probes.User.Scripts
         {
             base.Reset();
 
-            foreach (ScriptRunner scriptRunner in _scriptRunners)
+            foreach (var scriptRunner in _scriptRunners)
+            {
                 scriptRunner.Reset();
+            }
 
             _scriptCallbacksScheduled = 0;
         }

@@ -82,11 +82,12 @@ namespace SensusService
         /// <summary>
         /// Initializes a new instance of the <see cref="ScheduledCallback"/> class.
         /// </summary>
-        /// <param name="action">Action.</param>
-        /// <param name="name">Name.</param>
-        /// <param name="callbackTimeout">Callback timeout.</param> 
-        /// <param name="userNotificationMessage">User notification message.</param>
-        public ScheduledCallback(ActionDelegate action, string name, TimeSpan? callbackTimeout = null, string userNotificationMessage = null, string notificationId = null)
+        /// <param name="name">Name</param>
+        /// <param name="action">Action</param>
+        /// <param name="callbackTimeout">Callback Timeout</param>
+        /// <param name="userNotificationMessage">User notification message</param>
+        /// <param name="notificationId"></param>
+        public ScheduledCallback(string name, ActionDelegate action, TimeSpan? callbackTimeout = null, string userNotificationMessage = null, string notificationId = null)
         {
             Action                  = action;
             Name                    = name;

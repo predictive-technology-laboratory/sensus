@@ -1134,7 +1134,7 @@ namespace SensusService
         {
             DateTime startTimestamp = new DateTime(_startTimestamp.Year, _startTimestamp.Month, _startTimestamp.Day, _startTimestamp.Hour, _startTimestamp.Minute, 0);
             TimeSpan timeUntilStart = startTimestamp - DateTime.Now;
-            ScheduledCallback startProtocolCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
+            ScheduledCallback startProtocolCallback = new ScheduledCallback("Start protocol", (callbackId, cancellationToken, letDeviceSleepCallback) =>
             {
                 return Task.Run(() =>
                 {
@@ -1142,7 +1142,7 @@ namespace SensusService
                     _scheduledStartCallbackId = null;
                 });
 #if __ANDROID__
-            }, "Start protocol", null, "Protocol started.");
+            }, null, "Protocol started.");
 #elif __IOS__
             }, "Start protocol", null, "Please open to start this study.");
 #endif
@@ -1159,7 +1159,7 @@ namespace SensusService
         {
             DateTime stopTime = new DateTime(_endTimestamp.Year, _endTimestamp.Month, _endTimestamp.Day, _endTimestamp.Hour, _endTimestamp.Minute, 0);
             TimeSpan timeUntilStop = stopTime - DateTime.Now;
-            ScheduledCallback stopProtocolCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
+            ScheduledCallback stopProtocolCallback = new ScheduledCallback("Stop protocol", (callbackId, cancellationToken, letDeviceSleepCallback) =>
             {
                 return Task.Run(() =>
                 {
@@ -1167,7 +1167,7 @@ namespace SensusService
                     _scheduledStopCallbackId = null;
                 });
 
-            }, "Stop protocol", null, "Protocol stopped.");
+            }, null, "Protocol stopped.");
             _scheduledStopCallbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(stopProtocolCallback, (int)timeUntilStop.TotalMilliseconds);
         }
 
