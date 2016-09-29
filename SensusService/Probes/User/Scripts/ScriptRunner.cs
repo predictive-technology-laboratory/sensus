@@ -336,7 +336,7 @@ namespace SensusService.Probes.User.Scripts
                 var callback   = CreateCallback(new Script(Script) { ExpirationDate = schedule.ExpirationDate });
                 var callbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(callback, timeUntil);
 
-                SensusServiceHelper.Get().Logger.Log($"Scheduled Script Callback for script {Script.Id} at {schedule.RunTime} ({callbackId})", LoggingLevel.Debug , GetType());
+                SensusServiceHelper.Get().Logger.Log($"Scheduled Script Callback for script {Script.Id} at {schedule.RunTime} ({callbackId})", LoggingLevel.Normal , GetType());
 
                 _scheduledCallbackIds.Add(callbackId);
             }
@@ -356,7 +356,7 @@ namespace SensusService.Probes.User.Scripts
                 foreach (var scheduledCallbackId in _scheduledCallbackIds)
                 {
                     SensusServiceHelper.Get().UnscheduleCallback(scheduledCallbackId);
-                    SensusServiceHelper.Get().Logger.Log($"Unscheduled Script Callback for script {Script.Id} at {DateTime.Now} ({scheduledCallbackId})", LoggingLevel.Debug, GetType());
+                    SensusServiceHelper.Get().Logger.Log($"Unscheduled Script Callback for script {Script.Id} at {DateTime.Now} ({scheduledCallbackId})", LoggingLevel.Normal, GetType());
                 }
 
                 _scheduledCallbackIds.Clear();
@@ -370,7 +370,7 @@ namespace SensusService.Probes.User.Scripts
             {
                 return Task.Run(() =>
                 {
-                    SensusServiceHelper.Get().Logger.Log($"Executed Script Callback for script {Script.Id} at {DateTime.Now} ({callbackId})", LoggingLevel.Debug, GetType());
+                    SensusServiceHelper.Get().Logger.Log($"Executed Script Callback for script {Script.Id} at {DateTime.Now} ({callbackId})", LoggingLevel.Normal, GetType());
 
                     if (!Probe.Running || !_enabled) return;                    
 
