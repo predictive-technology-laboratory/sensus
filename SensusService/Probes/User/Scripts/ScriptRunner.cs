@@ -299,11 +299,9 @@ namespace SensusService.Probes.User.Scripts
                 return;
             }
 
-            SensusServiceHelper.Get().Logger.Log("Scheduling Script Callbacks.", LoggingLevel.Normal, GetType());
-
             lock (_scheduleTriggers)
             {
-                foreach (var schedule in SchedulesStartingFrom(_maxScheduleDate ?? DateTime.Now))
+                foreach (var schedule in SchedulesStartingFrom(_maxScheduleDate.Max(DateTime.Now)))
                 {
                     if (!Probe.Protocol.ContinueIndefinitely && schedule.RunTime > Probe.Protocol.EndDate)
                     {
@@ -322,9 +320,7 @@ namespace SensusService.Probes.User.Scripts
 
                     ScheduleCallback(schedule);
                 }
-            }
-
-            SensusServiceHelper.Get().Logger.Log("Scheduled Script Callbacks.", LoggingLevel.Normal, GetType());
+            }            
         }
 
         private void ScheduleCallback(Schedule schedule)
@@ -336,9 +332,11 @@ namespace SensusService.Probes.User.Scripts
 
             lock (_scheduledCallbackIds)
             {
-                var timeUntil = (int)schedule.TimeUntil.TotalMilliseconds;
-                var callback = CreateCallback(new Script(Script) { ExpirationDate = schedule.ExpirationDate });
+                var timeUntil  = (int)schedule.TimeUntil.TotalMilliseconds;
+                var callback   = CreateCallback(new Script(Script) { ExpirationDate = schedule.ExpirationDate });
                 var callbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(callback, timeUntil);
+
+                SensusServiceHelper.Get().Logger.Log($"Scheduled Script Callback for script {Script.Id} at {schedule.RunTime} ({callbackId})", LoggingLevel.Debug , GetType());
 
                 _scheduledCallbackIds.Add(callbackId);
             }
@@ -351,22 +349,19 @@ namespace SensusService.Probes.User.Scripts
             if (_scheduledCallbackIds.Count == 0 || SensusServiceHelper.Get() == null)
             {
                 return;
-            }
-
-            SensusServiceHelper.Get().Logger.Log("Unscheduling Script Callbacks.", LoggingLevel.Normal, GetType());
+            }            
 
             lock (_scheduledCallbackIds)
             {
                 foreach (var scheduledCallbackId in _scheduledCallbackIds)
                 {
                     SensusServiceHelper.Get().UnscheduleCallback(scheduledCallbackId);
+                    SensusServiceHelper.Get().Logger.Log($"Unscheduled Script Callback for script {Script.Id} at {DateTime.Now} ({scheduledCallbackId})", LoggingLevel.Debug, GetType());
                 }
 
                 _scheduledCallbackIds.Clear();
                 _maxScheduleDate = null;
             }
-
-            SensusServiceHelper.Get().Logger.Log("Unscheduled Script Callbacks.", LoggingLevel.Normal, GetType());
         }        
 
         private ScheduledCallback CreateCallback(Script script)
@@ -375,6 +370,8 @@ namespace SensusService.Probes.User.Scripts
             {
                 return Task.Run(() =>
                 {
+                    SensusServiceHelper.Get().Logger.Log($"Executed Script Callback for script {Script.Id} at {DateTime.Now} ({callbackId})", LoggingLevel.Debug, GetType());
+
                     if (!Probe.Running || !_enabled) return;                    
 
                     Run(script);
@@ -411,11 +408,6 @@ namespace SensusService.Probes.User.Scripts
             {
                 for (var currentDate = startDate; currentDate - startDate < futureDistance && currentDate - DateTime.Now < futureDistance; currentDate += TimeSpan.FromDays(1))
                 {
-                    if (currentDate < DateTime.Now)
-                    {
-                        continue;
-                    }
-
                     foreach (var scheduleTrigger in _scheduleTriggers)
                     {
                         yield return scheduleTrigger.NextSchedule(DateTime.Now, currentDate, WindowExpiration, ageExpiration);
