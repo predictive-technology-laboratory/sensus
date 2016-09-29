@@ -69,7 +69,7 @@ namespace SensusService
         public string Id { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="SensusService.ScheduledCallback"/> is running.
+        /// Gets or sets a value indicating whether this <see cref="ScheduledCallback"/> is running.
         /// </summary>
         /// <value><c>true</c> if running; otherwise, <c>false</c>.</value>
         public bool Running { get; set; }
@@ -80,7 +80,7 @@ namespace SensusService
         public string NotificationId { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SensusService.SensusServiceHelper+ScheduledCallback"/> class.
+        /// Initializes a new instance of the <see cref="ScheduledCallback"/> class.
         /// </summary>
         /// <param name="action">Action.</param>
         /// <param name="name">Name.</param>

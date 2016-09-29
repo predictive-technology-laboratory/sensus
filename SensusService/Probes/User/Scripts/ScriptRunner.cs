@@ -411,10 +411,8 @@ namespace SensusService.Probes.User.Scripts
             
             // on ios we need a separate indicator that the surveys page should be displayed when the user opens the notification. this is achieved by setting the notification ID to the pending survey notification ID.
             callback.NotificationId = SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID;
-#endif
-            Probe.ScriptCallbacksScheduled += 1;
-
-            _maxScheduleDate = _maxScheduleDate.Max(DateTime.Now + schedule.TimeUntil);
+#endif            
+            _maxScheduleDate = _maxScheduleDate.Max(schedule.RunTime);
 
             lock (_scheduledCallbackIds)
             {

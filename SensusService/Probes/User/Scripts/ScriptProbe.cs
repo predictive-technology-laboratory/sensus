@@ -31,12 +31,6 @@ namespace SensusService.Probes.User.Scripts
             get { return _scriptRunners; }
         }
 
-        public int ScriptCallbacksScheduled
-        {
-            get { return _scriptCallbacksScheduled; }
-            set { _scriptCallbacksScheduled = value; }
-        }
-
         public sealed override string DisplayName
         {
             get { return "Scripted Interactions"; }
