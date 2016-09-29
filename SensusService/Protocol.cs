@@ -1134,6 +1134,7 @@ namespace SensusService
         {
             DateTime startTimestamp = new DateTime(_startTimestamp.Year, _startTimestamp.Month, _startTimestamp.Day, _startTimestamp.Hour, _startTimestamp.Minute, 0);
             TimeSpan timeUntilStart = startTimestamp - DateTime.Now;
+
             ScheduledCallback startProtocolCallback = new ScheduledCallback("Start protocol", (callbackId, cancellationToken, letDeviceSleepCallback) =>
             {
                 return Task.Run(() =>
@@ -1144,7 +1145,7 @@ namespace SensusService
 #if __ANDROID__
             }, null, "Protocol started.");
 #elif __IOS__
-            }, "Start protocol", null, "Please open to start this study.");
+            }, null, "Please open to start this study.");
 #endif
             _scheduledStartCallbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(startProtocolCallback, (int)timeUntilStart.TotalMilliseconds);
         }
