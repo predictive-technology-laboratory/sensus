@@ -250,6 +250,7 @@ namespace SensusService.Probes.User.Scripts
 
         public void Start()
         {
+            SensusServiceHelper.Get().Logger.Log("Start", LoggingLevel.Normal, GetType());
             Task.Run(() =>
             {
                 UnscheduleCallbacks();
@@ -280,12 +281,14 @@ namespace SensusService.Probes.User.Scripts
 
         public void Restart()
         {
+            SensusServiceHelper.Get().Logger.Log("Restart", LoggingLevel.Normal, GetType());
             Stop();
             Start();
         }
 
         public void Stop()
         {
+            SensusServiceHelper.Get().Logger.Log("Stop", LoggingLevel.Normal, GetType());
             UnscheduleCallbacks();
             SensusServiceHelper.Get().RemoveScriptsToRun(this);
         }
