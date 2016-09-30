@@ -297,7 +297,7 @@ namespace SensusService.Probes.User.Scripts
         #region Private Methods
         private void ScheduleCallbacks()
         {
-            if (_scheduledCallbackIds.Count == 0 || SensusServiceHelper.Get() == null || Probe == null || !Probe.Protocol.Running || !_enabled)
+            if (_scheduleTriggers.Count == 0 || SensusServiceHelper.Get() == null || Probe == null || !Probe.Protocol.Running || !_enabled)
             {
                 return;
             }
