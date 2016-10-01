@@ -250,7 +250,6 @@ namespace SensusService.Probes.User.Scripts
 
         public void Start()
         {
-            SensusServiceHelper.Get().Logger.Log("Start", LoggingLevel.Normal, GetType());
             Task.Run(() =>
             {
                 UnscheduleCallbacks();
@@ -288,7 +287,7 @@ namespace SensusService.Probes.User.Scripts
         public void Stop()
         {            
             UnscheduleCallbacks();
-            SensusServiceHelper.Get().RemoveScriptsToRun(this);
+            SensusServiceHelper.Get().RemoveScriptRunner(this);
         }
         #endregion
 
@@ -446,7 +445,7 @@ namespace SensusService.Probes.User.Scripts
             // here. on ios, trigger-based scripts are run on demand (even in the background), so we can also set the 
             // timestamp here. schedule-based scripts have their run timestamp set to the UILocalNotification fire time, and
             // this is done prior to calling the current method. so we shouldn't reset the run timestamp here.
-            script.RunTimestamp = script.RunTimestamp ?? DateTimeOffset.UtcNow;
+            script.RunTime = script.RunTime ?? DateTimeOffset.UtcNow;
 
             // do not run a one-shot script if it has already been run
             if (OneShot && RunTimes.Count > 0)
@@ -492,7 +491,7 @@ namespace SensusService.Probes.User.Scripts
                     }
                 }
 
-                await Probe.StoreDatumAsync(new ScriptRunDatum(script.RunTimestamp.Value, Script.Id, Name, script.Id, script.CurrentDatum?.Id, latitude, longitude, locationTimestamp), default(CancellationToken));
+                await Probe.StoreDatumAsync(new ScriptRunDatum(script.RunTime.Value, Script.Id, Name, script.Id, script.CurrentDatum?.Id, latitude, longitude, locationTimestamp), default(CancellationToken));
             });
 
             // this method can be called with previous / current datum values (e.g., when the script is first triggered). it 

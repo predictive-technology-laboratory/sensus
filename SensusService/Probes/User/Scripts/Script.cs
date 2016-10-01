@@ -26,7 +26,7 @@ namespace SensusService.Probes.User.Scripts
         #region Properties
         public ScriptRunner Runner { get; }
 
-        public string Id { get; }        
+        public string Id { get; }
 
         public ObservableCollection<InputGroup> InputGroups { get; }
 
@@ -35,27 +35,26 @@ namespace SensusService.Probes.User.Scripts
         /// time. On iOS this is the triggering time (for trigger-based scripts), and the time that the 
         /// UILocalNotification appears in the notifications tray (for scheduled scripts).
         /// </summary>
-        public DateTimeOffset? RunTimestamp { get; set; }
+        public DateTimeOffset? RunTime { get; set; }
 
         public Datum PreviousDatum { get; set; }
 
         public Datum CurrentDatum { get; set; }
 
+        public DateTime? ExpirationDate { get; set; }
+
         [JsonIgnore]
         public bool Valid => InputGroups.Count == 0 || InputGroups.All(inputGroup => inputGroup.Valid);
 
         [JsonIgnore]
-        // TODO:  Does this provide the correct age when _runTimestamp is set by window-triggering, which uses DateTime objects.
-        public TimeSpan? Age => DateTimeOffset.UtcNow - RunTimestamp;
-
-        public DateTime ExpirationDate { get; set; }
+        public bool Expired => ExpirationDate < DateTime.Now;
         #endregion
 
         #region Constructors
         public Script(Script script): this(script.Runner)
         {            
             InputGroups   = new ObservableCollection<InputGroup>(script.InputGroups);
-            RunTimestamp  = script.RunTimestamp;
+            RunTime       = script.RunTime;
             PreviousDatum = script.PreviousDatum;
             CurrentDatum  = script.CurrentDatum;
         }

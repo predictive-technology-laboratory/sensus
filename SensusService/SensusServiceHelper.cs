@@ -841,24 +841,24 @@ namespace SensusService
             IssuePendingSurveysNotificationAsync(true, true);
         }
 
-        public void RemoveScriptToRun(Script script)
+        public void RemoveScript(Script script)
         {
             RemoveScripts(true, script);
         }
 
-        public void RemoveScriptsToRun(ScriptRunner runner)
+        public void RemoveScriptRunner(ScriptRunner runner)
         {
             RemoveScripts(true, _scriptsToRun.Where(script => script.Runner == runner).ToArray());
         }
 
-        public void RemoveOldScripts(bool issueNotification)
+        public void RemoveExpiredScripts(bool issueNotification)
         {
             RemoveScripts(issueNotification, _scriptsToRun.Where(Expired).ToArray());
         }
 
         public void IssuePendingSurveysNotificationAsync(bool playSound, bool vibrate)
         {
-            RemoveOldScripts(false);
+            RemoveExpiredScripts(false);
 
             IssueNotificationAsync(PendingSurveyMessage(_scriptsToRun.Count), PENDING_SURVEY_NOTIFICATION_ID, playSound, vibrate);
         }
