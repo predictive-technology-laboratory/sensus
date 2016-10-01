@@ -853,7 +853,7 @@ namespace SensusService
 
         public void RemoveExpiredScripts(bool issueNotification)
         {
-            RemoveScripts(issueNotification, _scriptsToRun.Where(Expired).ToArray());
+            RemoveScripts(issueNotification, _scriptsToRun.Where(s => s.Expired).ToArray());
         }
 
         public void IssuePendingSurveysNotificationAsync(bool playSound, bool vibrate)
@@ -1620,11 +1620,6 @@ namespace SensusService
             var s = scriptsToRunCount == 1 ? "" : "s";
 
             return scriptsToRunCount == 0 ? null : $"You have {scriptsToRunCount} pending survey{s}.";
-        }
-
-        private bool Expired(Script script)
-        {
-            return script.ExpirationDate < DateTime.Now;
         }
         #endregion
     }
