@@ -281,14 +281,12 @@ namespace SensusService.Probes.User.Scripts
 
         public void Restart()
         {
-            SensusServiceHelper.Get().Logger.Log("Restart", LoggingLevel.Normal, GetType());
             Stop();
             Start();
         }
 
         public void Stop()
-        {
-            SensusServiceHelper.Get().Logger.Log("Stop", LoggingLevel.Normal, GetType());
+        {            
             UnscheduleCallbacks();
             SensusServiceHelper.Get().RemoveScriptsToRun(this);
         }
@@ -380,11 +378,13 @@ namespace SensusService.Probes.User.Scripts
                 {
                     SensusServiceHelper.Get().Logger.Log($"Executed Script Callback for script {Script.Id} at {DateTime.Now} ({callbackId})", LoggingLevel.Normal, GetType());
 
-                    if (!Probe.Running || !_enabled) return;                    
+                    if (!Probe.Running || !_enabled) return;
 
                     Run(script);
 
                     ScheduleCallbacks();
+
+                    _scheduledCallbackIds.Remove(callbackId);
 
                 }, cancellationToken);
             });
