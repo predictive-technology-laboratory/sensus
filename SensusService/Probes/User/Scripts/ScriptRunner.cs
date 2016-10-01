@@ -19,8 +19,8 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using Sensus.Tools;
-using Sensus.Tools.Extensions;
 using Sensus.Tools.Scripts;
+using Sensus.Tools.Extensions;
 using SensusUI.UiProperties;
 using SensusService.Probes.Location;
 
