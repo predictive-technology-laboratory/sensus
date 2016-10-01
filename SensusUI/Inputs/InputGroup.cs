@@ -13,130 +13,102 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using SensusUI.UiProperties;
 using Newtonsoft.Json;
-using SensusService;
 
 namespace SensusUI.Inputs
 {
     public class InputGroup
     {
-        private string _id;
-        private string _name;
-        private ObservableCollection<Input> _inputs;
-        private bool _geotag;
-
-        public string Id
-        {
-            get
-            {
-                return _id;
-            }
-            set
-            {
-                _id = value;
-
-                foreach (Input input in _inputs)
-                    input.GroupId = _id;
-            }
-        }
+        #region Properties     
+        public string Id { get; }
+        
+        public ObservableCollection<Input> Inputs { get; }
 
         [EntryStringUiProperty(null, true, 0)]
-        public string Name
-        {
-            get
-            {
-                return _name;
-            }
-            set
-            {
-                _name = value;
-            }
-        }
-
-        public ObservableCollection<Input> Inputs
-        {
-            get { return _inputs; }
-        }
+        public string Name { get; set; }
 
         [OnOffUiProperty(null, true, 1)]
-        public bool Geotag
-        {
-            get
-            {
-                return _geotag;
-            }
-            set
-            {
-                _geotag = value;
-            }
-        }
+        public bool Geotag { get; set; }
 
         /// <summary>
-        /// Gets a value indicating whether this <see cref="SensusUI.Inputs.InputGroup"/> is valid. A valid
-        /// input group is one in which each <see cref="SensusUI.Inputs.Input"/> in the group is valid. An
-        /// input group with no inputs is deemed valid by default.
+        /// Gets a value indicating whether this <see cref="InputGroup"/> is valid.
+        /// A valid input group is one in which each <see cref="Input"/> in the group is valid.
+        /// An input group with no inputs is deemed valid by default.
         /// </summary>
-        /// <value><c>true</c> if valid; otherwise, <c>false</c>.</value>
         [JsonIgnore]
-        public bool Valid
+        public bool Valid => Inputs.All(i => i?.Valid ?? true);
+        #endregion
+
+        #region Constructors
+        public InputGroup()
         {
-            get { return _inputs.Count == 0 || _inputs.All(input => input == null || input.Valid); }
+            Id     = Guid.NewGuid().ToString();
+            Inputs = NewObservableCollection();
+            Geotag = false;
         }
 
-        /// <summary>
-        /// For JSON.NET deserialization.
-        /// </summary>
-        private InputGroup()
+        public InputGroup(InputGroup inputGroup)
         {
-            _id = Guid.NewGuid().ToString();
-            _inputs = new ObservableCollection<Input>();
-            _geotag = false;
+            Id     = inputGroup.Id;
+            Inputs = NewObservableCollection();
+            Name   = inputGroup.Name;
+            Geotag = inputGroup.Geotag;
 
-            _inputs.CollectionChanged += (o, e) =>
+            foreach (var input in inputGroup.Inputs)
             {
-                if (e.Action == NotifyCollectionChangedAction.Add)
-                    foreach (Input input in e.NewItems)
-                        input.GroupId = _id;
-                else if (e.Action == NotifyCollectionChangedAction.Remove)
-                    foreach (Input input in e.OldItems)
-                        input.GroupId = null;
-            };
+                Inputs.Add(input.Copy());
+            }
         }
 
-        public InputGroup(string name)
-            : this()
+        [JsonConstructor]
+        private InputGroup(string id, ObservableCollection<Input> inputs)
         {
-            _name = name;
+            Id     = id;
+            Inputs = inputs;
         }
+        #endregion
 
-        public InputGroup(string name, Input input)
-            : this(name)
-        {
-            _inputs.Add(input);
-        }
-
-        public InputGroup Copy()
-        {
-            InputGroup copy = JsonConvert.DeserializeObject<InputGroup>(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
-
-            // give the copy a new group id (this also resets the group id for inputs in the group)
-            copy.Id = Guid.NewGuid().ToString();
-
-            // give each input in the copy a new id
-            foreach (Input input in copy.Inputs)
-                input.Id = Guid.NewGuid().ToString();
-
-            return copy;
-        }
-
+        #region Public Methods
         public override string ToString()
         {
-            return _name;
+            return Name;
         }
+        #endregion
+
+        #region Private Methods
+        private ObservableCollection<Input> NewObservableCollection()
+        {
+            var collection = new ObservableCollection<Input>();
+
+            //I've tested this and the closure still looks up Id by reference.
+            //That means we don't need to update this handler when Id changes. 
+            collection.CollectionChanged += CollectionChanged;
+
+            return collection;
+        }
+
+        private void CollectionChanged(object o, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (Input input in e.NewItems)
+                {
+                    input.GroupId = Id;
+                }
+            }
+
+            if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                foreach (Input input in e.OldItems)
+                {
+                    input.GroupId = null;
+                }
+            }
+        }
+        #endregion
     }
 }

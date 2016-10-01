@@ -208,7 +208,7 @@ namespace SensusService.Probes.User.Scripts
                             // the async version of run to ensure that we are not on the UI thread.
                             if (trigger.FireFor(currentDatumValue))
                             {
-                                RunAsync(new Script(Script), previousDatum, currentDatum);
+                                RunAsync(new Script(Script, Guid.NewGuid()), previousDatum, currentDatum);
                             }
                         };
 
@@ -261,7 +261,7 @@ namespace SensusService.Probes.User.Scripts
             // not need to finish running in order for the runner to be considered started.
             if (RunOnStart)
             {
-                RunAsync(new Script(Script));
+                RunAsync(new Script(Script, Guid.NewGuid()));
             }
         }
         
@@ -352,7 +352,7 @@ namespace SensusService.Probes.User.Scripts
             lock (_scheduledCallbackIds)
             {
                 var timeUntil = (int)schedule.TimeUntil.TotalMilliseconds;
-                var callback = CreateCallback(new Script(Script) { ExpirationDate = schedule.ExpirationDate });
+                var callback = CreateCallback(new Script(Script, Guid.NewGuid()) { ExpirationDate = schedule.ExpirationDate });
                 var callbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(callback, timeUntil);
 
                 SensusServiceHelper.Get().Logger.Log($"Scheduled Script Callback for script {Script.Id} at {schedule.RunTime} ({callbackId})", LoggingLevel.Normal, GetType());

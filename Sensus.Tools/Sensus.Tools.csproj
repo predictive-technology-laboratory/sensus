@@ -41,6 +41,7 @@
     <Compile Include="Concurrent\LockConcurrent.cs" />
     <Compile Include="Dispose\Disposable.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
+    <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scripts\Schedule.cs" />
     <Compile Include="Scripts\ScheduleTrigger.cs" />

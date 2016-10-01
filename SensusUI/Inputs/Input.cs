@@ -415,16 +415,16 @@ namespace SensusUI.Inputs
 
         public void Reset()
         {
-            _view = null;
-            _complete = false;
-            _needsToBeStored = true;
-            _latitude = null;
-            _longitude = null;
+            _view                    = null;
+            _complete                = false;
+            _needsToBeStored         = true;
+            _latitude                = null;
+            _longitude               = null;
             _locationUpdateTimestamp = null;
-            _viewed = false;
-            _completionTimestamp = null;
-            _backgroundColor = null;
-            _padding = null;
+            _viewed                  = false;
+            _completionTimestamp     = null;
+            _backgroundColor         = null;
+            _padding                 = null;
         }
 
         public virtual bool ValueMatches(object conditionValue, bool conjunctive)

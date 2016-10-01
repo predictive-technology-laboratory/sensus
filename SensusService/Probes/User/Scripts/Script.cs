@@ -17,6 +17,7 @@ using System.Linq;
 using System.Collections.ObjectModel;
 
 using Newtonsoft.Json;
+using Sensus.Tools;
 using SensusUI.Inputs;
 
 namespace SensusService.Probes.User.Scripts
@@ -24,9 +25,9 @@ namespace SensusService.Probes.User.Scripts
     public class Script
     {
         #region Properties
-        public ScriptRunner Runner { get; }
-
         public string Id { get; }
+
+        public ScriptRunner Runner { get; }
 
         public ObservableCollection<InputGroup> InputGroups { get; }
 
@@ -51,19 +52,34 @@ namespace SensusService.Probes.User.Scripts
         #endregion
 
         #region Constructors
-        public Script(Script script): this(script.Runner)
-        {            
-            InputGroups   = new ObservableCollection<InputGroup>(script.InputGroups);
+        public Script(Script script)
+        {
+            Id            = script.Id;
+            InputGroups   = script.InputGroups.Select(g => new InputGroup(g)).ToObservableCollection();
+            Runner        = script.Runner;
             RunTime       = script.RunTime;
             PreviousDatum = script.PreviousDatum;
             CurrentDatum  = script.CurrentDatum;
         }
 
+        public Script(Script script, Guid guid): this(script)
+        {
+            Id = guid.ToString();
+        }
+        
         public Script(ScriptRunner runner)
         {
-            Runner      = runner;
             Id          = Guid.NewGuid().ToString();
+            Runner      = runner;
             InputGroups = new ObservableCollection<InputGroup>();
+        }
+
+        [JsonConstructor]
+        private Script(ScriptRunner runner, string id, ObservableCollection<InputGroup> inputGroups)
+        {
+            Id          = id;
+            Runner      = runner;            
+            InputGroups = inputGroups;
         }
         #endregion
 

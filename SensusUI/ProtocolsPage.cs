@@ -224,10 +224,7 @@ namespace SensusUI
                     // pop up wait screen while we submit the participation reward datum
                     SensusServiceHelper.Get().PromptForInputsAsync(
                         null,
-                        new InputGroup[]
-                        {
-                            new InputGroup("Please Wait", new LabelOnlyInput("Submitting participation information.", false))
-                        },
+                        new [] { new InputGroup { Name = "Please Wait", Inputs = { new LabelOnlyInput("Submitting participation information.", false) }} },
                         cancellationTokenSource.Token,
                         false,
                         "Cancel",
@@ -310,10 +307,7 @@ namespace SensusUI
                         // pop up wait screen while we get the participation reward datum
                         SensusServiceHelper.Get().PromptForInputsAsync(
                             null,
-                            new InputGroup[]
-                            {
-                                new InputGroup("Please Wait", new LabelOnlyInput("Retrieving participation information.", false))
-                            },
+                            new [] { new InputGroup { Name = "Please Wait", Inputs = { new LabelOnlyInput("Retrieving participation information.", false) } } },
                             cancellationTokenSource.Token,
                             false,
                             "Cancel",

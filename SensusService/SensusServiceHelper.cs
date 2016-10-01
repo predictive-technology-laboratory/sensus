@@ -83,9 +83,9 @@ namespace SensusService
         public static readonly JsonSerializerSettings JSON_SERIALIZER_SETTINGS = new JsonSerializerSettings
         {
             PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-            TypeNameHandling = TypeNameHandling.All,
-            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+            ReferenceLoopHandling      = ReferenceLoopHandling.Serialize,
+            TypeNameHandling           = TypeNameHandling.All,
+            ConstructorHandling        = ConstructorHandling.AllowNonPublicDefaultConstructor,
 
             #region need the following in order to deserialize protocols between OSs, whose objects contain different members (e.g., iOS service helper has ActivationId, which Android does not)
             Error = (o, e) =>
@@ -1134,28 +1134,24 @@ namespace SensusService
 
         public void PromptForInputAsync(string windowTitle, Input input, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action<Input> callback)
         {
-            PromptForInputsAsync(windowTitle, new Input[] { input }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, inputs =>
+            PromptForInputsAsync(windowTitle, new [] { input }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, inputs =>
             {
-                if (inputs == null)
-                    callback(null);
-                else
-                    callback(inputs[0]);
+                callback(inputs?.First());
             });
         }
 
         public void PromptForInputsAsync(string windowTitle, IEnumerable<Input> inputs, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action<List<Input>> callback)
         {
-            InputGroup inputGroup = new InputGroup(windowTitle);
+            var inputGroup = new InputGroup { Name = windowTitle };
 
-            foreach (Input input in inputs)
-                inputGroup.Inputs.Add(input);
-
-            PromptForInputsAsync(null, new InputGroup[] { inputGroup }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, null, inputGroups =>
+            foreach (var input in inputs)
             {
-                if (inputGroups == null)
-                    callback(null);
-                else
-                    callback(inputGroups.SelectMany(g => g.Inputs).ToList());
+                inputGroup.Inputs.Add(input);
+            }
+
+            PromptForInputsAsync(null, new [] { inputGroup }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, null, inputGroups =>
+            {
+                callback(inputGroups?.SelectMany(g => g.Inputs).ToList());
             });
         }
 
