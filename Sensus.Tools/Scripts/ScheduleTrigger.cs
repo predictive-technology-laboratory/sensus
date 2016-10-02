@@ -12,6 +12,36 @@ namespace Sensus.Tools.Scripts
 
         #region Properties
         public int WindowCount => _windows.Count;
+        public string Windows
+        {
+            get
+            {
+                lock (_windows)
+                {
+                    return string.Join(", ", _windows);
+                }
+            }
+            set
+            {
+                if (value == Windows) return;
+
+                lock (_windows)
+                {
+                    _windows.Clear();
+
+                    try
+                    {
+                        _windows.AddRange(value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(ScheduleWindow.Parse));
+                    }
+                    catch
+                    {
+                        //ignore improperly formatted trigger windows
+                    }
+
+                    _windows.Sort();
+                }
+            }
+        }
         public TimeSpan? ExpireAge { get; set; }
         public bool ExpireWindow { get; set; }
         #endregion
@@ -24,35 +54,6 @@ namespace Sensus.Tools.Scripts
         #endregion
 
         #region Public Methods
-        public void DeserializeWindows(string windows)
-        {
-            if (windows == SerlializeWindows()) return;
-
-            lock (_windows)
-            {
-                    _windows.Clear();
-
-                    try
-                    {
-                        _windows.AddRange(windows.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(ScheduleWindow.Parse));
-                    }
-                    catch
-                    {
-                        //ignore improperly formatted trigger windows
-                    }
-
-                _windows.Sort();
-            }
-        }
-
-        public string SerlializeWindows()
-        {
-            lock (_windows)
-            {
-                return string.Join(", ", _windows);
-            }
-        }
-
         public IEnumerable<Schedule> SchedulesAfter(DateTime startDate, DateTime afterDate)
         {
             var eightDays = TimeSpan.FromDays(8);

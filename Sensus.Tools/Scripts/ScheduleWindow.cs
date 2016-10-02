@@ -56,12 +56,12 @@ namespace Sensus.Tools.Scripts
             var timeUntilRng = TimeBetween(from, after) + TimeTillStart(after.TimeOfDay) + RandomWindowTime();
             var timeUntilEnd = TimeBetween(from, after) + TimeTillEnd(after.TimeOfDay);
 
-            var winExpiration = windowExpiration ? from.Add(timeUntilEnd) : DateTime.MaxValue;
-            var ageExpiration = maxAge != null   ? from.Add(timeUntilRng).Add(maxAge.Value) : DateTime.MaxValue;
+            var winExpiration = Start == End   ? DateTime.MaxValue : windowExpiration ? from.Add(timeUntilEnd) : DateTime.MaxValue;
+            var ageExpiration = maxAge != null ? from.Add(timeUntilRng).Add(maxAge.Value) : DateTime.MaxValue;
 
             return new Schedule
             {
-                TimeUntil  = timeUntilRng,
+                TimeUntil      = timeUntilRng,
                 ExpirationDate = winExpiration.Min(ageExpiration)
             };
         }

@@ -89,11 +89,11 @@ namespace SensusService.Probes.User.Scripts
         {
             get
             {
-                return _scheduleTrigger.SerlializeWindows();
+                return _scheduleTrigger.Windows;
             }
             set
             {
-                _scheduleTrigger.DeserializeWindows(value);
+                _scheduleTrigger.Windows = value;
             }
         }
 

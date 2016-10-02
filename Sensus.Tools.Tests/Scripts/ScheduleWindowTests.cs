@@ -79,7 +79,7 @@ namespace Sensus.Tools.Tests.Scripts
         }
 
         [Test]
-        public void NextSchedulePointNoExpirationOverflow()
+        public void NextSchedulePointExpirationNotTooBig()
         {
             var t = ScheduleWindow.Parse("10:22");
 
@@ -96,7 +96,21 @@ namespace Sensus.Tools.Tests.Scripts
         }
 
         [Test]
-        public void NextScheduleWindowAgeExpiration()
+        public void NextSchedulePointExpirationExpireWindow()
+        {
+            var t = ScheduleWindow.Parse("10:22");
+
+            var from = new DateTime(1986, 4, 18, 10, 22, 0);
+            var after = from.AddDays(30);
+
+            var nextSchedule = t.NextSchedule(from, after, true, null);
+
+            Assert.AreEqual(TimeSpan.FromDays(31), nextSchedule.TimeUntil);
+            Assert.AreEqual(DateTime.MaxValue, nextSchedule.ExpirationDate);
+        }
+
+        [Test]
+        public void NextScheduleWindowExpireAge()
         {
             var t = ScheduleWindow.Parse("10:22-12:22");
 
@@ -115,7 +129,7 @@ namespace Sensus.Tools.Tests.Scripts
         }
 
         [Test]
-        public void NextScheduleWindowEndExpiration()
+        public void NextScheduleWindowExpireWindow()
         {
             var t = ScheduleWindow.Parse("10:22-12:22");
 
