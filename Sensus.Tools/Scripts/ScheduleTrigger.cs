@@ -1,116 +1,74 @@
 ﻿using System;
-using Sensus.Tools.Extensions;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Sensus.Tools.Scripts
 {
-    public class ScheduleTrigger : IComparable<ScheduleTrigger>
+    public class ScheduleTrigger
     {
-        #region Static Methods
-        public static ScheduleTrigger Parse(string window)
-        {
-            var startEnd = window.Trim().Split('-');
-
-            if (startEnd.Length == 1)
-            {
-                return new ScheduleTrigger
-                {
-                    //for some reason DateTime.Parse seems to be more forgiving
-                    Start = DateTime.Parse(startEnd[0].Trim()).TimeOfDay,
-                    End   = DateTime.Parse(startEnd[0].Trim()).TimeOfDay,
-                };
-            }
-
-            if (startEnd.Length == 2)
-            {
-                var result = new ScheduleTrigger
-                {
-                    //for some reason DateTime.Parse seems to be more forgiving
-                    Start = DateTime.Parse(startEnd[0].Trim()).TimeOfDay,
-                    End   = DateTime.Parse(startEnd[1].Trim()).TimeOfDay,
-                };
-
-                if (result.Start > result.End)
-                {
-                    throw new Exception($"Improper trigger byTime ({window})");
-                }
-
-                return result;
-            }
-
-            throw new Exception($"Improper trigger byTime ({window})");
-        }
+        #region Fields
+        private readonly List<ScheduleWindow> _windows;
         #endregion
 
         #region Properties
-        public TimeSpan Start { get; private set; }
-        public TimeSpan End { get; private set; }
-        public TimeSpan Window => End - Start;
+        public int WindowCount => _windows.Count;
+        public TimeSpan? ExpireAge { get; set; }
+        public bool ExpireWindow { get; set; }
+        #endregion
+
+        #region Constructor
+        public ScheduleTrigger()
+        {
+            _windows = new List<ScheduleWindow>(); 
+        }
         #endregion
 
         #region Public Methods
-        /// <remarks>
-        /// If we are currently in the previous window we skip it. This may not be perfect but it makes everything else infinitely simpler to do.
-        /// </remarks>
-        public Schedule NextSchedule(DateTime from, DateTime after, bool windowExpiration, TimeSpan? maxAge)
+        public void DeserializeWindows(string windows)
         {
-            var timeUntilRng = TimeBetween(from, after) + TimeTillStart(after.TimeOfDay) + RandomWindowTime();
-            var timeUntilEnd = TimeBetween(from, after) + TimeTillEnd(after.TimeOfDay);
+            if (windows == SerlializeWindows()) return;
 
-            var winExpiration = windowExpiration ? from.Add(timeUntilEnd) : DateTime.MaxValue;
-            var ageExpiration = maxAge != null   ? from.Add(timeUntilRng).Add(maxAge.Value) : DateTime.MaxValue;
-
-            return new Schedule
+            lock (_windows)
             {
-                TimeUntil  = timeUntilRng,
-                ExpirationDate = winExpiration.Min(ageExpiration)
-            };
-        }
+                    _windows.Clear();
 
-        public override string ToString()
-        {
-            //String interpolation doesn't seem to work here for some reason. E.g., $"{Start:hh:mm}"
-            return Start == End ? Start.ToString("hh\\:mm") : Start.ToString("hh\\:mm") + "-" + End.ToString("hh\\:mm");
-        }
+                    try
+                    {
+                        _windows.AddRange(windows.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(ScheduleWindow.Parse));
+                    }
+                    catch
+                    {
+                        //ignore improperly formatted trigger windows
+                    }
 
-        public int CompareTo(ScheduleTrigger comparee)
-        {
-            return Start.CompareTo(comparee.Start);
-        }
-        #endregion
-
-        #region Private Methods        
-        private TimeSpan TimeBetween(DateTime start, DateTime end)
-        {
-            return end - start;
-        }
-
-        private TimeSpan TimeTillStart(TimeSpan time)
-        {
-            return TimeTill(time, Start);
-        }
-
-        private TimeSpan TimeTillEnd(TimeSpan time)
-        {
-            return TimeTill(time, Start) + TimeTill(Start, End);
-        }
-
-        private TimeSpan TimeTill(TimeSpan start, TimeSpan end)
-        {
-            var timeTillStart = (end - start).Ticks;
-
-            if (timeTillStart <= 0)
-            {
-                timeTillStart += TimeSpan.TicksPerDay;
+                _windows.Sort();
             }
-
-            return TimeSpan.FromTicks(timeTillStart);
         }
 
-        private TimeSpan RandomWindowTime()
+        public string SerlializeWindows()
         {
-            var zeroToOne = new Random((int)DateTime.Now.Ticks).NextDouble();
+            lock (_windows)
+            {
+                return string.Join(", ", _windows);
+            }
+        }
 
-            return TimeSpan.FromTicks((long)(Window.Ticks * zeroToOne));
+        public IEnumerable<Schedule> SchedulesAfter(DateTime startDate, DateTime afterDate)
+        {
+            var eightDays = TimeSpan.FromDays(8);
+            var oneDay    = TimeSpan.FromDays(1);
+
+            lock (_windows)
+            {
+                for (; afterDate - startDate < eightDays; afterDate += oneDay)
+                {
+                    //It is important that these are ordered otherwise we might skip windows since we use the _maxScheduledDate to determine which schedule comes next.
+                    foreach (var schedule in _windows.Select(s => s.NextSchedule(startDate, afterDate, ExpireWindow, ExpireAge)).OrderBy(s => s.TimeUntil).ToArray())
+                    {
+                        yield return schedule;
+                    }
+                }
+            }            
         }
         #endregion
     }

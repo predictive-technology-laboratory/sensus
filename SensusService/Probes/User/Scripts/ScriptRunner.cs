@@ -33,9 +33,9 @@ namespace SensusService.Probes.User.Scripts
 
         private readonly Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>> _triggerHandlers;
 
-        private DateTime? _maxScheduleDate;
+        private DateTime? _maxScheduledDate;
         private readonly List<string> _scheduledCallbackIds;
-        private readonly List<ScheduleTrigger> _scheduleTriggers;
+        private readonly ScheduleTrigger _scheduleTrigger;
 
         private readonly object _locker = new object();
         #endregion
@@ -75,40 +75,25 @@ namespace SensusService.Probes.User.Scripts
         public ConcurrentObservableCollection<Trigger> Triggers { get; }
 
         [EntryFloatUiProperty("Maximum Age (Mins.):", true, 7)]
-        public float? MaxAgeMinutes { get; set; }
+        public double? MaxAgeMinutes
+        {
+            get { return _scheduleTrigger.ExpireAge?.TotalMinutes; }
+            set { _scheduleTrigger.ExpireAge = value == null ? (TimeSpan?) null : TimeSpan.FromMinutes(value.Value); }
+        }
+
+        [OnOffUiProperty("Expire Script When Window Ends:", true, 15)]
+        public bool WindowExpiration { get; set; }
 
         [EntryStringUiProperty("Random Windows:", true, 8)]
         public string TriggerWindows
         {
             get
             {
-                lock(_scheduleTriggers)
-                {
-                    return string.Join(", ", _scheduleTriggers.Select(w => w.ToString()));
-                }
+                return _scheduleTrigger.SerlializeWindows();
             }
             set
             {
-                if (value == TriggerWindows) return;
-
-                lock (_scheduleTriggers)
-                {
-                    _scheduleTriggers.Clear();
-
-                    try
-                    {
-                        _scheduleTriggers.AddRange(value.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries).Select(ScheduleTrigger.Parse));
-                    }
-                    catch
-                    {
-                        //ignore improperly formatted trigger windows
-                    }
-                    
-                    _scheduleTriggers.Sort();
-                }
-
-                UnscheduleCallbacks();
-                ScheduleCallbacks();
+                _scheduleTrigger.DeserializeWindows(value);
             }
         }
 
@@ -127,9 +112,6 @@ namespace SensusService.Probes.User.Scripts
 
         [ListUiProperty("Run Mode:", true, 14, new object[] { RunMode.Multiple, RunMode.SingleUpdate, RunMode.SingleKeepOldest })]
         public RunMode RunMode { get; set; }
-
-        [OnOffUiProperty("Expire Script When Window Ends:", true, 15)]
-        public bool WindowExpiration { get; set; }
         #endregion
 
         #region Constructor
@@ -141,7 +123,7 @@ namespace SensusService.Probes.User.Scripts
             Triggers              = new ConcurrentObservableCollection<Trigger>(new LockConcurrent());
             _triggerHandlers      = new Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>>();
             MaxAgeMinutes         = null;
-            _scheduleTriggers     = new List<ScheduleTrigger>();
+            _scheduleTrigger      = new ScheduleTrigger();
             _scheduledCallbackIds = new List<string>();
             RunTimes              = new List<DateTime>();
             CompletionTimes       = new List<DateTime>();
@@ -149,7 +131,7 @@ namespace SensusService.Probes.User.Scripts
             RunOnStart            = false;
             DisplayProgress       = true;
             RunMode               = RunMode.SingleUpdate;
-            WindowExpiration = false;
+            WindowExpiration      = false;
 
             Triggers.CollectionChanged += (o, e) =>
             {
@@ -294,27 +276,24 @@ namespace SensusService.Probes.User.Scripts
         #region Private Methods
         private void ScheduleCallbacks()
         {
-            if (_scheduleTriggers.Count == 0 || SensusServiceHelper.Get() == null || Probe == null || !Probe.Protocol.Running || !_enabled)
+            if (_scheduleTrigger.WindowCount == 0 || SensusServiceHelper.Get() == null || Probe == null || !Probe.Protocol.Running || !_enabled)
             {
                 return;
             }
-
-            lock (_scheduleTriggers)
+            
+            foreach (var schedule in _scheduleTrigger.SchedulesAfter(DateTime.Now, _maxScheduledDate.Max(DateTime.Now)))
             {
-                foreach (var schedule in SchedulesStartingFrom(_maxScheduleDate.Max(DateTime.Now)))
+                if (!Probe.Protocol.ContinueIndefinitely && schedule.RunTime > Probe.Protocol.EndDate)
                 {
-                    if (!Probe.Protocol.ContinueIndefinitely && schedule.RunTime > Probe.Protocol.EndDate)
-                    {
-                        break;
-                    }
-
-                    if (_scheduledCallbackIds.Count > 32 / Probe.ScriptRunners.Count)
-                    {
-                        break;
-                    }
-
-                    ScheduleCallback(schedule);
+                    break;
                 }
+
+                if (_scheduledCallbackIds.Count > 32 / Probe.ScriptRunners.Count)
+                {
+                    break;
+                }
+
+                ScheduleCallback(schedule);
             }
         }        
 
@@ -333,7 +312,7 @@ namespace SensusService.Probes.User.Scripts
                 }
 
                 _scheduledCallbackIds.Clear();
-                _maxScheduleDate = null;
+                _maxScheduledDate = null;
             }
         }
 
@@ -355,7 +334,7 @@ namespace SensusService.Probes.User.Scripts
                 _scheduledCallbackIds.Add(callbackId);
             }
 
-            _maxScheduleDate = _maxScheduleDate.Max(schedule.RunTime);
+            _maxScheduledDate = _maxScheduledDate.Max(schedule.RunTime);
         }
 
         private void UnscheduleCallback(string scheduledCallbackId)
@@ -399,24 +378,6 @@ namespace SensusService.Probes.User.Scripts
 #endif
 
             return callback;
-        }
-
-        private IEnumerable<Schedule> SchedulesStartingFrom(DateTime startDate)
-        {
-            var ageExpiration  = MaxAgeMinutes == null ? (TimeSpan?)null : TimeSpan.FromMinutes(MaxAgeMinutes.Value);
-            var futureDistance = TimeSpan.FromDays(8);
-
-            lock (_scheduleTriggers)
-            {
-                for (var afterDate = startDate; afterDate - startDate < futureDistance && afterDate - DateTime.Now < futureDistance; afterDate += TimeSpan.FromDays(1))
-                {
-                    //It is important that these are ordered otherwise we might skip windows since we use the _maxScheduledDate to determine which schedule comes next.
-                    foreach (var scheduleTrigger in _scheduleTriggers.Select(s => s.NextSchedule(DateTime.Now, afterDate, WindowExpiration, ageExpiration)).OrderBy(s => s.TimeUntil).ToArray())
-                    {
-                        yield return scheduleTrigger;
-                    }
-                }
-            }
         }
 
         private Task RunAsync(Script script, Datum previousDatum = null, Datum currentDatum = null)
