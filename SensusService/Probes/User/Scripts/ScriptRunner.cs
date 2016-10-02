@@ -74,15 +74,22 @@ namespace SensusService.Probes.User.Scripts
 
         public ConcurrentObservableCollection<Trigger> Triggers { get; }
 
-        [EntryFloatUiProperty("Maximum Age (Mins.):", true, 7)]
+        [EntryDoubleUiProperty("Maximum Age (Mins.):", true, 7)]
         public double? MaxAgeMinutes
         {
             get { return _scheduleTrigger.ExpireAge?.TotalMinutes; }
-            set { _scheduleTrigger.ExpireAge = value == null ? (TimeSpan?) null : TimeSpan.FromMinutes(value.Value); }
+            set
+            {
+                _scheduleTrigger.ExpireAge = (value == null) ? (TimeSpan?) null : TimeSpan.FromMinutes(value.Value);
+            }
         }
 
         [OnOffUiProperty("Expire Script When Window Ends:", true, 15)]
-        public bool WindowExpiration { get; set; }
+        public bool WindowExpiration
+        {
+            get { return _scheduleTrigger.ExpireWindow; }
+            set { _scheduleTrigger.ExpireWindow = value; }
+        }
 
         [EntryStringUiProperty("Random Windows:", true, 8)]
         public string TriggerWindows
@@ -117,21 +124,20 @@ namespace SensusService.Probes.User.Scripts
         #region Constructor
         private ScriptRunner()
         {
-            Script                = new Script(this);
+            _scheduleTrigger      = new ScheduleTrigger(); //this needs to be above
             _enabled              = false;
-            AllowCancel           = true;
-            Triggers              = new ConcurrentObservableCollection<Trigger>(new LockConcurrent());
             _triggerHandlers      = new Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>>();
-            MaxAgeMinutes         = null;
-            _scheduleTrigger      = new ScheduleTrigger();
             _scheduledCallbackIds = new List<string>();
-            RunTimes              = new List<DateTime>();
-            CompletionTimes       = new List<DateTime>();
-            OneShot               = false;
-            RunOnStart            = false;
-            DisplayProgress       = true;
-            RunMode               = RunMode.SingleUpdate;
-            WindowExpiration      = false;
+
+            Script           = new Script(this);                        
+            Triggers         = new ConcurrentObservableCollection<Trigger>(new LockConcurrent());
+            RunTimes         = new List<DateTime>();
+            CompletionTimes  = new List<DateTime>();
+            AllowCancel      = true;
+            OneShot          = false;
+            RunOnStart       = false;
+            DisplayProgress  = true;
+            RunMode          = RunMode.SingleUpdate;            
 
             Triggers.CollectionChanged += (o, e) =>
             {
