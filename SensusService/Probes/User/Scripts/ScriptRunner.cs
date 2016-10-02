@@ -313,11 +313,6 @@ namespace SensusService.Probes.User.Scripts
                         break;
                     }
 
-                    if (schedule.RunTime < _maxScheduleDate)
-                    {
-                        continue;
-                    }
-
                     ScheduleCallback(schedule);
                 }
             }
@@ -413,11 +408,11 @@ namespace SensusService.Probes.User.Scripts
 
             lock (_scheduleTriggers)
             {
-                for (var currentDate = startDate; currentDate - startDate < futureDistance && currentDate - DateTime.Now < futureDistance; currentDate += TimeSpan.FromDays(1))
+                for (var afterDate = startDate; afterDate - startDate < futureDistance && afterDate - DateTime.Now < futureDistance; afterDate += TimeSpan.FromDays(1))
                 {
                     foreach (var scheduleTrigger in _scheduleTriggers)
                     {
-                        yield return scheduleTrigger.NextSchedule(DateTime.Now, currentDate, WindowExpiration, ageExpiration);
+                        yield return scheduleTrigger.NextSchedule(DateTime.Now, afterDate, WindowExpiration, ageExpiration);
                     }
                 }
             }
