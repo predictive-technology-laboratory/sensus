@@ -31,6 +31,8 @@ namespace SensusService.Probes.User.Scripts
 
         public ObservableCollection<InputGroup> InputGroups { get; }
 
+        public DateTimeOffset ScheduledRunTime { get; set; }
+
         /// <summary>
         /// Time at which the script was run. On Android this happens in the background at the scheduled/triggered
         /// time. On iOS this is the triggering time (for trigger-based scripts), and the time that the 
@@ -57,6 +59,7 @@ namespace SensusService.Probes.User.Scripts
             Id            = script.Id;
             InputGroups   = script.InputGroups.Select(g => new InputGroup(g)).ToObservableCollection();
             Runner        = script.Runner;
+            ScheduledRunTime = script.ScheduledRunTime;
             RunTime       = script.RunTime;
             PreviousDatum = script.PreviousDatum;
             CurrentDatum  = script.CurrentDatum;

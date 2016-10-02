@@ -347,7 +347,7 @@ namespace SensusService.Probes.User.Scripts
             lock (_scheduledCallbackIds)
             {
                 var timeUntil = (int)schedule.TimeUntil.TotalMilliseconds;
-                var callback = CreateCallback(new Script(Script, Guid.NewGuid()) { ExpirationDate = schedule.ExpirationDate });
+                var callback = CreateCallback(new Script(Script, Guid.NewGuid()) { ExpirationDate = schedule.ExpirationDate, ScheduledRunTime = schedule.RunTime });
                 var callbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(callback, timeUntil);
 
                 SensusServiceHelper.Get().Logger.Log($"Scheduled for {schedule.RunTime} ({callbackId})", LoggingLevel.Normal, GetType());
@@ -487,7 +487,7 @@ namespace SensusService.Probes.User.Scripts
                     }
                 }
 
-                await Probe.StoreDatumAsync(new ScriptRunDatum(script.RunTime.Value, Script.Id, Name, script.Id, script.CurrentDatum?.Id, latitude, longitude, locationTimestamp), default(CancellationToken));
+                await Probe.StoreDatumAsync(new ScriptRunDatum(script.RunTime.Value, Script.Id, Name, script.Id, script.ScheduledRunTime, script.CurrentDatum?.Id, latitude, longitude, locationTimestamp), default(CancellationToken));
             });
 
             // this method can be called with previous / current datum values (e.g., when the script is first triggered). it 
