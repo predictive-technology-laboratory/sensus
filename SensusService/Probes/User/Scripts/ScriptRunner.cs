@@ -350,7 +350,7 @@ namespace SensusService.Probes.User.Scripts
                 var callback = CreateCallback(new Script(Script, Guid.NewGuid()) { ExpirationDate = schedule.ExpirationDate });
                 var callbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(callback, timeUntil);
 
-                SensusServiceHelper.Get().Logger.Log($"Scheduled Script Callback for script {Script.Id} at {schedule.RunTime} ({callbackId})", LoggingLevel.Normal, GetType());
+                SensusServiceHelper.Get().Logger.Log($"Scheduled for {schedule.RunTime} ({callbackId})", LoggingLevel.Normal, GetType());
 
                 _scheduledCallbackIds.Add(callbackId);
             }
@@ -361,7 +361,7 @@ namespace SensusService.Probes.User.Scripts
         private void UnscheduleCallback(string scheduledCallbackId)
         {
             SensusServiceHelper.Get().UnscheduleCallback(scheduledCallbackId);
-            SensusServiceHelper.Get().Logger.Log($"Unscheduled Script Callback for script {Script.Id} at {DateTime.Now} ({scheduledCallbackId})", LoggingLevel.Normal, GetType());
+            SensusServiceHelper.Get().Logger.Log($"Unscheduled ({scheduledCallbackId})", LoggingLevel.Normal, GetType());
         }
 
         private ScheduledCallback CreateCallback(Script script)
@@ -370,7 +370,7 @@ namespace SensusService.Probes.User.Scripts
             {
                 return Task.Run(() =>
                 {
-                    SensusServiceHelper.Get().Logger.Log($"Executed Script Callback for script {Script.Id} at {DateTime.Now} ({callbackId})", LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Get().Logger.Log($"Executed ({callbackId})", LoggingLevel.Normal, GetType());
 
                     if (!Probe.Running || !_enabled) return;
 
@@ -410,9 +410,10 @@ namespace SensusService.Probes.User.Scripts
             {
                 for (var afterDate = startDate; afterDate - startDate < futureDistance && afterDate - DateTime.Now < futureDistance; afterDate += TimeSpan.FromDays(1))
                 {
-                    foreach (var scheduleTrigger in _scheduleTriggers)
+                    //It is important that these are ordered otherwise we might skip windows since we use the _maxScheduledDate to determine which schedule comes next.
+                    foreach (var scheduleTrigger in _scheduleTriggers.Select(s => s.NextSchedule(DateTime.Now, afterDate, WindowExpiration, ageExpiration)).OrderBy(s => s.TimeUntil).ToArray())
                     {
-                        yield return scheduleTrigger.NextSchedule(DateTime.Now, afterDate, WindowExpiration, ageExpiration);
+                        yield return scheduleTrigger;
                     }
                 }
             }
