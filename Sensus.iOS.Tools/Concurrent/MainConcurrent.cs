@@ -56,11 +56,10 @@ namespace Sensus.iOS.Concurrent
                     }
                 });
 
-                if (_waitTime != null)
-                    runWait.WaitOne(_waitTime.Value);
-                else
+                if (_waitTime == null)
                     runWait.WaitOne();
-
+                else
+                    runWait.WaitOne(_waitTime.Value);
             }
         }
 
@@ -92,7 +91,10 @@ namespace Sensus.iOS.Concurrent
                     }
                 });
 
-                if (_waitTime != null) runWait.WaitOne(_waitTime.Value); else runWait.WaitOne();
+                if (_waitTime == null)
+                    runWait.WaitOne();
+                else
+                    runWait.WaitOne(_waitTime.Value);
 
                 return result;
             }

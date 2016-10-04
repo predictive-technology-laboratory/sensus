@@ -53,6 +53,7 @@ namespace Sensus.Android.Tools
             else
             {
                 var runWait = new ManualResetEvent(false);
+
                 _handler.Post(() =>
                 {
                     try
@@ -65,10 +66,10 @@ namespace Sensus.Android.Tools
                     }
                 });
 
-                if (_waitTime != null)
-                    runWait.WaitOne(_waitTime.Value);
-                else
+                if (_waitTime == null)
                     runWait.WaitOne();
+                else
+                    runWait.WaitOne(_waitTime.Value);
             }
         }
 
@@ -100,7 +101,10 @@ namespace Sensus.Android.Tools
                     }
                 });
 
-                if (_waitTime != null) runWait.WaitOne(_waitTime.Value); else runWait.WaitOne();
+                if (_waitTime == null)
+                    runWait.WaitOne();
+                else
+                    runWait.WaitOne(_waitTime.Value);
 
                 return result;
             }
