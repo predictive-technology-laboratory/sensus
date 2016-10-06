@@ -55,7 +55,7 @@
     <ConsolePause>false</ConsolePause>
     <MtouchArch>ARMv7, ARM64</MtouchArch>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
-    <CodesignKey>iPhone Developer: Laura Barnes (V846837GK6)</CodesignKey>
+    <CodesignKey>iPhone Developer</CodesignKey>
     <MtouchDebug>true</MtouchDebug>
     <IpaPackageName>
     </IpaPackageName>
@@ -64,7 +64,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>1701</NoWarn>
     <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
-    <CodesignProvision>06a42c97-22b8-430a-80fb-c57384ba76e9</CodesignProvision>
+    <CodesignProvision></CodesignProvision>
     <MtouchLink>SdkOnly</MtouchLink>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
@@ -75,12 +75,12 @@
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <MtouchArch>ARMv7, ARM64</MtouchArch>
     <ConsolePause>false</ConsolePause>
-    <CodesignKey>iPhone Distribution: Laura Barnes (4L7V22645F)</CodesignKey>
+    <CodesignKey>iPhone Distribution</CodesignKey>
     <IpaPackageName>
     </IpaPackageName>
     <DefineConstants>RELEASE</DefineConstants>
     <MtouchUseRefCounting>true</MtouchUseRefCounting>
-    <CodesignProvision>820fe3ac-89cf-4fd5-9c0d-1e1163e7cdff</CodesignProvision>
+    <CodesignProvision></CodesignProvision>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>1701</NoWarn>
   </PropertyGroup>
