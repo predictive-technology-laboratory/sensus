@@ -69,7 +69,7 @@ namespace SensusService
         public string Id { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="SensusService.ScheduledCallback"/> is running.
+        /// Gets or sets a value indicating whether this <see cref="ScheduledCallback"/> is running.
         /// </summary>
         /// <value><c>true</c> if running; otherwise, <c>false</c>.</value>
         public bool Running { get; set; }
@@ -80,20 +80,21 @@ namespace SensusService
         public string NotificationId { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SensusService.SensusServiceHelper+ScheduledCallback"/> class.
+        /// Initializes a new instance of the <see cref="ScheduledCallback"/> class.
         /// </summary>
-        /// <param name="action">Action.</param>
-        /// <param name="name">Name.</param>
-        /// <param name="callbackTimeout">Callback timeout.</param> 
-        /// <param name="userNotificationMessage">User notification message.</param>
-        public ScheduledCallback(ActionDelegate action, string name, TimeSpan? callbackTimeout = null, string userNotificationMessage = null, string notificationId = null)
+        /// <param name="name">Name</param>
+        /// <param name="action">Action</param>
+        /// <param name="callbackTimeout">Callback Timeout</param>
+        /// <param name="userNotificationMessage">User notification message</param>
+        /// <param name="notificationId"></param>
+        public ScheduledCallback(string name, ActionDelegate action, TimeSpan? callbackTimeout = null, string userNotificationMessage = null, string notificationId = null)
         {
-            Action = action;
-            Name = name;
-            CallbackTimeout = callbackTimeout;
+            Action                  = action;
+            Name                    = name;
+            CallbackTimeout         = callbackTimeout;
             UserNotificationMessage = userNotificationMessage;
-            NotificationId = notificationId;
-            Running = false;
+            NotificationId          = notificationId;
+            Running                 = false;
         }
     }
 }

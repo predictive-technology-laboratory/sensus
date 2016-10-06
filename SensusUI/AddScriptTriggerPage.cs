@@ -45,40 +45,36 @@ namespace SensusUI
 
             Title = "Add Trigger";
 
-            List<Probe> enabledProbes = _scriptRunner.Probe.Protocol.Probes.Where(p => p != _scriptRunner.Probe && p.Enabled).ToList();
-            if (enabledProbes.Count == 0)
+            var enabledProbes = _scriptRunner.Probe.Protocol.Probes.Where(p => p != _scriptRunner.Probe && p.Enabled).ToArray();
+
+            if (!enabledProbes.Any())
             {
-                Content = new Label
-                {
-                    Text = "No enabled probes. Please enable them before creating triggers.",
-                    FontSize = 20
-                };
+                Content = new Label { Text = "No enabled probes. Please enable them before creating triggers.", FontSize = 20 };
 
                 return;
             }
 
-            StackLayout contentLayout = new StackLayout
+            var contentLayout = new StackLayout
             {
-                Orientation = StackOrientation.Vertical,
+                Orientation     = StackOrientation.Vertical,
                 VerticalOptions = LayoutOptions.FillAndExpand
             };
 
-            Label probeLabel = new Label
-            {
-                Text = "Probe:",
-                FontSize = 20
-            };
+            var probeLabel = new Label { Text = "Probe:", FontSize = 20 };
 
             Picker probePicker = new Picker { Title = "Select Probe", HorizontalOptions = LayoutOptions.FillAndExpand };
+
             foreach (Probe enabledProbe in enabledProbes)
+            {
                 probePicker.Items.Add(enabledProbe.DisplayName);
+            }
 
             contentLayout.Children.Add(new StackLayout
-                {
-                    Orientation = StackOrientation.Horizontal,
-                    HorizontalOptions = LayoutOptions.FillAndExpand,
-                    Children = { probeLabel, probePicker }
-                });
+            {
+                Orientation = StackOrientation.Horizontal,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                Children = { probeLabel, probePicker }
+            });
 
             StackLayout triggerDefinitionLayout = new StackLayout
             {
@@ -108,7 +104,8 @@ namespace SensusUI
 
                 _selectedProbe = enabledProbes[probePicker.SelectedIndex];
 
-                PropertyInfo[] datumProperties = _selectedProbe.DatumType.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(p => p.GetCustomAttributes<ProbeTriggerProperty>().Count() > 0).ToArray();
+                PropertyInfo[] datumProperties = _selectedProbe.DatumType.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(p => p.GetCustomAttributes<ProbeTriggerProperty>().Any()).ToArray();
+
                 if (datumProperties.Length == 0)
                     return;
                     
@@ -122,16 +119,16 @@ namespace SensusUI
                 Picker datumPropertyPicker = new Picker { Title = "Select Datum Property", HorizontalOptions = LayoutOptions.FillAndExpand };
                 foreach (PropertyInfo datumProperty in datumProperties)
                 {
-                    ProbeTriggerProperty triggerProperty = datumProperty.GetCustomAttributes<ProbeTriggerProperty>().First();
+                    var triggerProperty = datumProperty.GetCustomAttributes<ProbeTriggerProperty>().First();
                     datumPropertyPicker.Items.Add(triggerProperty.Name ?? datumProperty.Name);
                 }
 
                 triggerDefinitionLayout.Children.Add(new StackLayout
-                    {
-                        Orientation = StackOrientation.Horizontal,
-                        HorizontalOptions = LayoutOptions.FillAndExpand,
-                        Children = { datumPropertyLabel, datumPropertyPicker }
-                    });
+                {
+                    Orientation = StackOrientation.Horizontal,
+                    HorizontalOptions = LayoutOptions.FillAndExpand,
+                    Children = { datumPropertyLabel, datumPropertyPicker }
+                });
                 #endregion
 
                 #region condition picker (same for all datum types)
@@ -388,9 +385,8 @@ namespace SensusUI
                 }
                 catch (Exception ex)
                 {
-                    string message = "Failed to add trigger:  " + ex.Message;
-                    SensusServiceHelper.Get().FlashNotificationAsync(message);
-                    SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Get().FlashNotificationAsync($"Failed to add trigger:  {ex.Message}");
+                    SensusServiceHelper.Get().Logger.Log($"Failed to add trigger:  {ex.Message}", LoggingLevel.Normal, GetType());
                 }
             };
 

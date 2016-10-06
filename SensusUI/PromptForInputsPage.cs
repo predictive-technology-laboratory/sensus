@@ -219,7 +219,7 @@ namespace SensusUI
                 string confirmationMessage = "";
 
                 if (!string.IsNullOrWhiteSpace(incompleteSubmissionConfirmation) && !inputGroup.Valid)
-                    confirmationMessage += incompleteSubmissionConfirmation;
+                    confirmationMessage += !inputGroup.IncompleteSubmissionConfirmation.Equals("") ? inputGroup.IncompleteSubmissionConfirmation : incompleteSubmissionConfirmation;
                 else if (nextButton.Text == "Submit" && !string.IsNullOrWhiteSpace(submitConfirmation))
                     confirmationMessage += submitConfirmation;
 
@@ -260,7 +260,7 @@ namespace SensusUI
                 {
                     // it is possible for the token to be canceled from a thread other than the UI thread. the finished callback will do 
                     // things with the UI, so ensure that the finished callback is run on the UI thread.
-                    SensusServiceHelper.Get().RunOnMainThread(() =>
+                    SensusServiceHelper.Get().MainThreadSynchronizer.ExecuteThreadSafe(() =>
                     {
                         SensusServiceHelper.Get().Logger.Log("Cancellation token has been cancelled.", LoggingLevel.Normal, GetType());
                         _finishedCallback(Result.Cancel);

@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using Xamarin.Forms;
 using SensusService.Probes.User.Scripts;
 using SensusUI.Inputs;
@@ -71,7 +70,7 @@ namespace SensusUI
                     _groupsList.SelectedItem = null;
                 }
                 else if (selectedAction == "Copy")
-                    script.InputGroups.Add(selectedInputGroup.Copy());
+                    script.InputGroups.Add(new InputGroup(selectedInputGroup));
                 else if (selectedAction == "Delete")
                 {
                     if (await DisplayAlert("Delete " + selectedInputGroup.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
@@ -82,10 +81,7 @@ namespace SensusUI
                 }
             };
 
-            ToolbarItems.Add(new ToolbarItem(null, "plus.png", () =>
-                    {
-                        _script.InputGroups.Add(new InputGroup("New Input Group"));
-                    }));
+            ToolbarItems.Add(new ToolbarItem(null, "plus.png", () => { _script.InputGroups.Add(new InputGroup { Name = "New Input Group" }); }));
 
             Bind();
             Content = _groupsList;

@@ -19,6 +19,9 @@ using System.Threading;
 using Newtonsoft.Json;
 using System.Linq;
 using System.Threading.Tasks;
+#if __IOS__
+using CoreLocation;
+#endif
 
 namespace SensusService.Probes
 {
@@ -34,6 +37,12 @@ namespace SensusService.Probes
         private bool _isPolling;
         private string _pollCallbackId;
         private List<DateTime> _pollTimes;
+        private ScheduledCallback _callback;
+#if __IOS__
+        private bool _significantChangePoll;
+        private bool _significantChangeOverrideScheduledPolls;
+        private CLLocationManager _locationManager;
+#endif
 
         private readonly object _locker = new object();
 
@@ -95,6 +104,22 @@ namespace SensusService.Probes
             get { return _pollTimes; }
         }
 
+#if __IOS__
+        [OnOffUiProperty("Significant Change Poll:", true, 7)]
+        public bool SignificantChangePoll
+        {
+            get { return _significantChangePoll; }
+            set { _significantChangePoll = value; }
+        }
+
+        [OnOffUiProperty("Significant Change Override Scheduled Polls:", true, 8)]
+        public bool SignificantChangeOverrideScheduledPolls
+        {
+            get { return _significantChangeOverrideScheduledPolls; }
+            set { _significantChangeOverrideScheduledPolls = value; }
+        }
+#endif
+
         public override string CollectionDescription
         {
             get
@@ -143,6 +168,16 @@ namespace SensusService.Probes
             _isPolling = false;
             _pollCallbackId = null;
             _pollTimes = new List<DateTime>();
+#if __IOS__
+            _significantChangePoll = false;
+            _significantChangeOverrideScheduledPolls = false;
+            _locationManager = new CLLocationManager();
+            _locationManager.LocationsUpdated += (sender, e) =>
+            {
+                // TODO:  Test
+                SensusServiceHelper.Get().ScheduleOneTimeCallback(_callback, 0);
+            };
+#endif
         }
 
         protected override void InternalStart()
@@ -161,54 +196,78 @@ namespace SensusService.Probes
 #error "Unrecognized platform."
 #endif
 
-                ScheduledCallback callback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
+                _callback = new ScheduledCallback(GetType().FullName + " Poll", (callbackId, cancellationToken, letDeviceSleepCallback) =>
+                {
+                    return Task.Run(async () =>
                     {
-                        return Task.Run(async () =>
-                            {
-                                if (Running)
-                                {
-                                    _isPolling = true;
+                        if (Running)
+                        {
+                            _isPolling = true;
 
-                                    IEnumerable<Datum> data = null;
+                            IEnumerable<Datum> data = null;
+                            try
+                            {
+                                SensusServiceHelper.Get().Logger.Log("Polling.", LoggingLevel.Normal, GetType());
+                                data = Poll(cancellationToken);
+
+                                lock (_pollTimes)
+                                {
+                                    _pollTimes.Add(DateTime.Now);
+                                    _pollTimes.RemoveAll(pollTime => pollTime < Protocol.ParticipationHorizon);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                SensusServiceHelper.Get().Logger.Log("Failed to poll:  " + ex.Message, LoggingLevel.Normal, GetType());
+                            }
+
+                            if (data != null)
+                                foreach (Datum datum in data)
+                                {
+                                    if (cancellationToken.IsCancellationRequested)
+                                        break;
+
                                     try
                                     {
-                                        SensusServiceHelper.Get().Logger.Log("Polling.", LoggingLevel.Normal, GetType());
-                                        data = Poll(cancellationToken);
-
-                                        lock (_pollTimes)
-                                        {
-                                            _pollTimes.Add(DateTime.Now);
-                                            _pollTimes.RemoveAll(pollTime => pollTime < Protocol.ParticipationHorizon);
-                                        }
+                                        await StoreDatumAsync(datum, cancellationToken);
                                     }
                                     catch (Exception ex)
                                     {
-                                        SensusServiceHelper.Get().Logger.Log("Failed to poll:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                        SensusServiceHelper.Get().Logger.Log("Failed to store datum:  " + ex.Message, LoggingLevel.Normal, GetType());
                                     }
-
-                                    if (data != null)
-                                        foreach (Datum datum in data)
-                                        {
-                                            if (cancellationToken.IsCancellationRequested)
-                                                break;
-
-                                            try
-                                            {
-                                                await StoreDatumAsync(datum, cancellationToken);
-                                            }
-                                            catch (Exception ex)
-                                            {
-                                                SensusServiceHelper.Get().Logger.Log("Failed to store datum:  " + ex.Message, LoggingLevel.Normal, GetType());
-                                            }
-                                        }
-
-                                    _isPolling = false;
                                 }
-                            });
 
-                    }, GetType().FullName + " Poll", TimeSpan.FromMinutes(_pollingTimeoutMinutes), userNotificationMessage);
+                            _isPolling = false;
+                        }
+                    });
 
-                _pollCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(callback, 0, _pollingSleepDurationMS, POLL_CALLBACK_LAG);
+                }, TimeSpan.FromMinutes(_pollingTimeoutMinutes), userNotificationMessage);
+
+#if __IOS__
+                if (_significantChangePoll)
+                {
+                    _locationManager.RequestAlwaysAuthorization();
+                    _locationManager.DistanceFilter = 5.0;
+                    _locationManager.PausesLocationUpdatesAutomatically = false;
+                    _locationManager.AllowsBackgroundLocationUpdates = true;
+
+                    if (CLLocationManager.LocationServicesEnabled)
+                    {
+                        _locationManager.StartMonitoringSignificantLocationChanges();
+                    }
+                    else
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Location services not enabled; please enable in Settings.", LoggingLevel.Normal, GetType());
+                    }
+                }
+
+                if (!_significantChangeOverrideScheduledPolls || !_significantChangePoll)
+                {
+                    _pollCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(_callback, 0, _pollingSleepDurationMS, POLL_CALLBACK_LAG);
+                }
+#elif __ANDROID__
+                _pollCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(_callback, 0, _pollingSleepDurationMS, POLL_CALLBACK_LAG);
+#endif
             }
         }
 
@@ -219,6 +278,11 @@ namespace SensusService.Probes
             lock (_locker)
             {
                 base.Stop();
+
+#if __IOS__
+                if (_significantChangePoll)
+                    _locationManager.StopMonitoringSignificantLocationChanges();
+#endif
 
                 SensusServiceHelper.Get().UnscheduleCallback(_pollCallbackId);
                 _pollCallbackId = null;

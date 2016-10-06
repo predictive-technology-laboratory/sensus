@@ -69,7 +69,7 @@ namespace SensusUI
 
                 Script script = value as Script;
 
-                return script.Runner.Probe.Protocol.Name + " - " + script.RunTimestamp.Value.LocalDateTime;
+                return script.Runner.Probe.Protocol.Name + " - " + script.RunTime.Value.LocalDateTime;
             }
 
             public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -82,7 +82,7 @@ namespace SensusUI
         {
             Title = "Pending Surveys";
 
-            SensusServiceHelper.Get().RemoveOldScripts(true);
+            SensusServiceHelper.Get().RemoveExpiredScripts(true);
 
             ListView scriptList = new ListView();
             scriptList.ItemTemplate = new DataTemplate(typeof(TextCell));
@@ -99,7 +99,7 @@ namespace SensusUI
                 // reset list selection
                 scriptList.SelectedItem = null;
 
-                SensusServiceHelper.Get().PromptForInputsAsync(script.RunTimestamp, script.InputGroups, null, script.Runner.AllowCancel, null, null, "You have not completed all required fields. You will not receive credit for your responses if you continue. Do you want to continue?", "Are you ready to submit your responses?", script.Runner.DisplayProgress, null, async inputGroups =>
+                SensusServiceHelper.Get().PromptForInputsAsync(script.RunTime, script.InputGroups, null, script.Runner.AllowCancel, null, null, "You have not completed all required fields. You will not receive credit for your responses if you continue. Do you want to continue?", "Are you ready to submit your responses?", script.Runner.DisplayProgress, null, async inputGroups =>
                 {
                     bool canceled = inputGroups == null;
 
@@ -123,11 +123,11 @@ namespace SensusUI
                                     // that is passed into this method is always a copy of the user-created script. the script.Id allows us to link the various data
                                     // collected from the user into a single logical response. each run of the script has its own script.Id so that responses can be
                                     // grouped across runs. this is the difference between scriptId and runId in the following line.
-                                    await script.Runner.Probe.StoreDatumAsync(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow), script.Runner.Script.Id, script.Runner.Name, input.GroupId, input.Id, script.Id, input.Value, script.CurrentDatum?.Id, input.Latitude, input.Longitude, input.LocationUpdateTimestamp, script.RunTimestamp.Value, input.CompletionRecords, input.SubmissionTimestamp.Value), default(CancellationToken));
+                                    await script.Runner.Probe.StoreDatumAsync(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow), script.Runner.Script.Id, script.Runner.Name, input.GroupId, input.Id, script.Id, input.Value, script.CurrentDatum?.Id, input.Latitude, input.Longitude, input.LocationUpdateTimestamp, script.RunTime.Value, input.CompletionRecords, input.SubmissionTimestamp.Value), default(CancellationToken));
 
                                     // once inputs are stored, they should not be stored again, nor should the user be able to modify them if the script is viewed again.
                                     input.NeedsToBeStored = false;
-                                    SensusServiceHelper.Get().RunOnMainThread(() => input.Enabled = false);
+                                    SensusServiceHelper.Get().MainThreadSynchronizer.ExecuteThreadSafe(() => input.Enabled = false);
                                 }
                             }
                         }
@@ -143,7 +143,7 @@ namespace SensusUI
                     }
 
                     if (!canceled)
-                        SensusServiceHelper.Get().RemoveScriptToRun(script);
+                        SensusServiceHelper.Get().RemoveScript(script);
 
                     SensusServiceHelper.Get().Logger.Log("\"" + script.Runner.Name + "\" has finished running.", LoggingLevel.Normal, typeof(Script));
                 });
@@ -182,7 +182,7 @@ namespace SensusUI
 
             filterTimer.Elapsed += (sender, e) =>
             {
-                SensusServiceHelper.Get().RemoveOldScripts(true);
+                SensusServiceHelper.Get().RemoveExpiredScripts(true);
             };
 
             Appearing += (sender, e) =>

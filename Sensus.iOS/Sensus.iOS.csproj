@@ -8,7 +8,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Sensus.iOS</RootNamespace>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>    
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <ReleaseVersion>2.0.0</ReleaseVersion>
     <AssemblyName>SensusiOS</AssemblyName>
   </PropertyGroup>
@@ -25,7 +25,7 @@
     <MtouchDebug>true</MtouchDebug>
     <CodesignKey>iPhone Developer</CodesignKey>
     <MtouchUseRefCounting>true</MtouchUseRefCounting>
-    <MtouchLink>None</MtouchLink>
+    <MtouchLink>SdkOnly</MtouchLink>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>1701</NoWarn>
     <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
@@ -39,7 +39,7 @@
     <ConsolePause>false</ConsolePause>
     <MtouchLink>None</MtouchLink>
     <MtouchUseRefCounting>true</MtouchUseRefCounting>
-    <CodesignKey>iPhone Developer</CodesignKey>
+    <CodesignKey>iPhone Distribution</CodesignKey>
     <DefineConstants>RELEASE</DefineConstants>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>1701</NoWarn>
@@ -55,7 +55,7 @@
     <ConsolePause>false</ConsolePause>
     <MtouchArch>ARMv7, ARM64</MtouchArch>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
-    <CodesignKey>iPhone Developer</CodesignKey>
+    <CodesignKey>iPhone Developer: Laura Barnes (V846837GK6)</CodesignKey>
     <MtouchDebug>true</MtouchDebug>
     <IpaPackageName>
     </IpaPackageName>
@@ -63,16 +63,9 @@
     <BuildIpa>true</BuildIpa>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>1701</NoWarn>
-    <CustomCommands>
-      <CustomCommands>
-        <Command>
-          <type>BeforeBuild</type>
-          <command>touch Resources/UnitTestingProtocol.json</command>
-          <workingdir>${ProjectDir}</workingdir>
-        </Command>
-      </CustomCommands>
-    </CustomCommands>
     <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
+    <CodesignProvision>06a42c97-22b8-430a-80fb-c57384ba76e9</CodesignProvision>
+    <MtouchLink>SdkOnly</MtouchLink>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <Optimize>true</Optimize>
@@ -82,24 +75,14 @@
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <MtouchArch>ARMv7, ARM64</MtouchArch>
     <ConsolePause>false</ConsolePause>
-    <CodesignKey>iPhone Distribution</CodesignKey>
+    <CodesignKey>iPhone Distribution: Laura Barnes (4L7V22645F)</CodesignKey>
     <IpaPackageName>
     </IpaPackageName>
     <DefineConstants>RELEASE</DefineConstants>
     <MtouchUseRefCounting>true</MtouchUseRefCounting>
-    <CodesignProvision></CodesignProvision>
+    <CodesignProvision>820fe3ac-89cf-4fd5-9c0d-1e1163e7cdff</CodesignProvision>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>1701</NoWarn>
-    <CustomCommands>
-      <CustomCommands>
-        <Command>
-          <type>BeforeBuild</type>
-          <command>touch Resources/UnitTestingProtocol.json</command>
-          <workingdir>${ProjectDir}</workingdir>
-          <externalConsole>True</externalConsole>
-        </Command>
-      </CustomCommands>
-    </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
     <Optimize>true</Optimize>
@@ -111,7 +94,7 @@
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <IpaIncludeArtwork>true</IpaIncludeArtwork>
     <CodesignKey>iPhone Distribution</CodesignKey>
-    <CodesignProvision>Automatic:AdHoc</CodesignProvision>
+    <CodesignProvision></CodesignProvision>
     <BuildIpa>true</BuildIpa>
     <IpaPackageName>edu.virginia.sie.ptl.sensus</IpaPackageName>
     <MtouchUseRefCounting>true</MtouchUseRefCounting>
@@ -400,6 +383,7 @@
     <InterfaceDefinition Include="Resources\LaunchScreen.xib" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="iOSClassDiagram.cd" />
     <None Include="Info.plist" />
     <None Include="Entitlements.plist" />
@@ -456,11 +440,20 @@
     <BundleResource Include="..\SensusUI\Icons\gear_wrench.png">
       <Link>Resources\gear_wrench.png</Link>
     </BundleResource>
-    <BundleResource Include="Resources\UnitTestingProtocol.json" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
   <Import Project="..\packages\Xamarin.Insights.1.12.3\build\Xamarin.iOS10\Xamarin.Insights.targets" Condition="Exists('..\packages\Xamarin.Insights.1.12.3\build\Xamarin.iOS10\Xamarin.Insights.targets')" />
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Sensus.iOS.Tools\Sensus.iOS.Tools.csproj">
+      <Project>{6380da9c-4477-4877-840d-d41cf7d417ca}</Project>
+      <Name>Sensus.iOS.Tools</Name>
+      <IsAppExtension>false</IsAppExtension>
+      <IsWatchApp>false</IsWatchApp>
+    </ProjectReference>
+    <ProjectReference Include="..\Sensus.Tools\Sensus.Tools.csproj">
+      <Project>{c26c649e-f32a-4b1e-93ed-89bda3784d10}</Project>
+      <Name>Sensus.Tools</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="..\packages\Xamarin.Forms.2.3.1.114\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.2.3.1.114\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />
 </Project>

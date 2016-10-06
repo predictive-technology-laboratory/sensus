@@ -13,128 +13,88 @@
 // limitations under the License.
 
 using System;
-using System.Collections.ObjectModel;
 using System.Linq;
+using System.Collections.ObjectModel;
+
 using Newtonsoft.Json;
+using Sensus.Tools;
 using SensusUI.Inputs;
 
 namespace SensusService.Probes.User.Scripts
 {
     public class Script
     {
-        private ScriptRunner _runner;
-        private ObservableCollection<InputGroup> _inputGroups;
-        private DateTimeOffset? _runTimestamp;
-        private Datum _previousDatum;
-        private Datum _currentDatum;
-        private string _id;
+        #region Properties
+        public string Id { get; }
 
-        public ScriptRunner Runner
-        {
-            get
-            {
-                return _runner;
-            }
-            set
-            {
-                _runner = value;
-            }
-        }
+        public ScriptRunner Runner { get; }
 
-        public string Id
-        {
-            get
-            {
-                return _id;
-            }
-            set
-            {
-                _id = value;
-            }
-        }
+        public ObservableCollection<InputGroup> InputGroups { get; }
 
-        public ObservableCollection<InputGroup> InputGroups
-        {
-            get { return _inputGroups; }
-        }
+        public DateTimeOffset ScheduledRunTime { get; set; }
 
         /// <summary>
         /// Time at which the script was run. On Android this happens in the background at the scheduled/triggered
         /// time. On iOS this is the triggering time (for trigger-based scripts), and the time that the 
         /// UILocalNotification appears in the notifications tray (for scheduled scripts).
         /// </summary>
-        /// <value>The run timestamp.</value>
-        public DateTimeOffset? RunTimestamp
-        {
-            get { return _runTimestamp; }
-            set { _runTimestamp = value; }
-        }
+        public DateTimeOffset? RunTime { get; set; }
 
-        public Datum PreviousDatum
-        {
-            get { return _previousDatum; }
-            set { _previousDatum = value; }
-        }
+        public Datum PreviousDatum { get; set; }
 
-        public Datum CurrentDatum
-        {
-            get { return _currentDatum; }
-            set { _currentDatum = value; }
-        }
+        public Datum CurrentDatum { get; set; }
+
+        public DateTime? ExpirationDate { get; set; }
 
         [JsonIgnore]
-        public bool Valid
-        {
-            get { return _inputGroups.Count == 0 || _inputGroups.All(inputGroup => inputGroup.Valid); }
-        }
+        public bool Valid => InputGroups.Count == 0 || InputGroups.All(inputGroup => inputGroup.Valid);
 
         [JsonIgnore]
-        public TimeSpan Age
+        public bool Expired => ExpirationDate < DateTime.Now;
+        #endregion
+
+        #region Constructors
+        public Script(Script script)
         {
-            get
-            {
-                return DateTimeOffset.UtcNow - _runTimestamp.Value;
-            }
+            Id            = script.Id;
+            InputGroups   = script.InputGroups.Select(g => new InputGroup(g)).ToObservableCollection();
+            Runner        = script.Runner;
+            ScheduledRunTime = script.ScheduledRunTime;
+            RunTime       = script.RunTime;
+            PreviousDatum = script.PreviousDatum;
+            CurrentDatum  = script.CurrentDatum;
         }
 
+        public Script(Script script, Guid guid): this(script)
+        {
+            Id = guid.ToString();
+        }
+        
         public Script(ScriptRunner runner)
         {
-            _runner = runner;
-            _id = Guid.NewGuid().ToString();
-            _inputGroups = new ObservableCollection<InputGroup>();
+            Id          = Guid.NewGuid().ToString();
+            Runner      = runner;
+            InputGroups = new ObservableCollection<InputGroup>();
         }
 
+        [JsonConstructor]
+        private Script(ScriptRunner runner, string id, ObservableCollection<InputGroup> inputGroups)
+        {
+            Id          = id;
+            Runner      = runner;            
+            InputGroups = inputGroups;
+        }
+        #endregion
+
+        #region Public Methods
         /// <summary>
         /// Checks whether the current and another script share a parent script.
         /// </summary>
         /// <returns><c>true</c>, if parent script is shared, <c>false</c> otherwise.</returns>
-        /// <param name="script">Script.</param>
         public bool SharesParentScriptWith(Script script)
         {
-            return _runner.Script.Id == script.Runner.Script.Id;
+            return Runner.Script.Id == script.Runner.Script.Id;
         }
-
-        public Script Copy()
-        {
-            // multiple threads can call into copy, and we're going to temporarily set _runner = null below. without a lock
-            // we have a race condition where a second caller could set runner = _runner (null).
-            lock (this)
-            {
-                // don't copy the runner object. we want the copy to share the same runner reference.
-                ScriptRunner runner = _runner;
-                _runner = null;
-
-                Script copy = JsonConvert.DeserializeObject<Script>(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
-
-                // a new GUID is set within the constructor, but it is immediately overwritten with the old id by the JSON deserializer. since the
-                // script id is what ties all of the script datum objects together, set a new unique script id here.
-                copy.Id = Guid.NewGuid().ToString();
-
-                // set the runner within the current and copied scripts
-                _runner = copy.Runner = runner;
-
-                return copy;
-            }
-        }
+        #endregion
     }
 }

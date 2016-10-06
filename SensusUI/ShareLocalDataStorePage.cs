@@ -87,7 +87,7 @@ namespace SensusUI
 
                     int numDataWritten = localDataStore.WriteDataToZipFile(sharePath, _cancellationTokenSource.Token, (message, progress) =>
                     {
-                        SensusServiceHelper.Get().RunOnMainThread(async () =>
+                        SensusServiceHelper.Get().MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                         {
                             uint duration = 250;
 
@@ -126,11 +126,11 @@ namespace SensusUI
 
                     // if the window has already been popped then the token will have been cancelled. pop the window if needed.
                     if (!_cancellationTokenSource.IsCancellationRequested)
-                        SensusServiceHelper.Get().RunOnMainThread(async () => await Navigation.PopAsync());
+                        SensusServiceHelper.Get().MainThreadSynchronizer.ExecuteThreadSafe(async () => await Navigation.PopAsync());
                 }
                 else
                 {
-                    SensusServiceHelper.Get().RunOnMainThread(async () =>
+                    SensusServiceHelper.Get().MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                     {
                         await Navigation.PopAsync();
                         SensusServiceHelper.Get().ShareFileAsync(sharePath, "Sensus Data:  " + localDataStore.Protocol.Name, "application/zip");

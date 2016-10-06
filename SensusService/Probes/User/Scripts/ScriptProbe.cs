@@ -70,9 +70,9 @@ namespace SensusService.Probes.User.Scripts
                         if (scriptRunner.RunOnStart)
                             collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + scriptRunner.Name + ":  Once when the study is started.");
 
-                        if (scriptRunner.RandomTriggerWindows != "")
+                        if (scriptRunner.TriggerWindows != "")
                         {
-                            string windows = scriptRunner.RandomTriggerWindows;
+                            string windows = scriptRunner.TriggerWindows;
                             string collectionDescriptionPrefix = "Randomly during hours ";
                             int commaCount = windows.Count(c => c == ',');
                             if (commaCount == 0)
@@ -96,6 +96,7 @@ namespace SensusService.Probes.User.Scripts
         public ScriptProbe()
         {            
             _scriptRunners = new ObservableCollection<ScriptRunner>();
+            //_scriptCallbacksScheduled = 0;
         }
 
         protected override void Initialize()
@@ -146,8 +147,10 @@ namespace SensusService.Probes.User.Scripts
         {
             base.Reset();
 
-            foreach (ScriptRunner scriptRunner in _scriptRunners)
+            foreach (var scriptRunner in _scriptRunners)
+            {
                 scriptRunner.Reset();
+            }
         }
 
         public override void Stop()

@@ -33,6 +33,7 @@ using CoreBluetooth;
 using SensusService.Exceptions;
 using System.Linq;
 using CoreFoundation;
+using Sensus.iOS.Concurrent;
 
 namespace Sensus.iOS
 {
@@ -105,7 +106,7 @@ namespace Sensus.iOS
             }
         }
 
-        public iOSSensusServiceHelper()
+        public iOSSensusServiceHelper(): base(new MainConcurrent())
         {
             _callbackIdNotification = new Dictionary<string, UILocalNotification>();
             _nonCallbackNotifications = new List<UILocalNotification>();
@@ -139,7 +140,7 @@ namespace Sensus.iOS
             string userNotificationMessage = GetCallbackUserNotificationMessage(callbackId);
             string notificationId = GetCallbackNotificationId(callbackId);
 
-            RunOnMainThread(() =>
+            MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
                 UILocalNotification notification = new UILocalNotification
                 {
@@ -163,7 +164,7 @@ namespace Sensus.iOS
 
                 UIApplication.SharedApplication.ScheduleLocalNotification(notification);
 
-                Logger.Log("Callback " + callbackId + " scheduled for " + notification.FireDate + " (" + (repeating ? "repeating" : "one-time") + "). " + _callbackIdNotification.Count + " total callbacks in iOS service helper.", LoggingLevel.Debug, GetType());
+                Logger.Log("Callback " + callbackId + " scheduled for " + notification.FireDate + " (" + (repeating ? "repeating" : "one-time") + "). " + _callbackIdNotification.Count + " total callbacks in iOS service helper.", LoggingLevel.Normal, GetType());
             });
         }
 
@@ -206,7 +207,7 @@ namespace Sensus.iOS
             // schedule new callback at the specified time.
             repeatCallbackTime =>
             {
-                RunOnMainThread(() =>
+                MainThreadSynchronizer.ExecuteThreadSafe(() =>
                 {
                     callbackNotification.FireDate = repeatCallbackTime.ToUniversalTime().ToNSDate();
 
@@ -224,7 +225,7 @@ namespace Sensus.iOS
             // notification has been serviced, so end background task
             () =>
             {
-                RunOnMainThread(() =>
+                MainThreadSynchronizer.ExecuteThreadSafe(() =>
                 {
                     UIApplication.SharedApplication.EndBackgroundTask(callbackTaskId);
                 });
@@ -247,7 +248,7 @@ namespace Sensus.iOS
 
         public void UpdateCallbackNotificationActivationIdsAsync()
         {
-            RunOnMainThread(() =>
+            MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
                 // this method will be called in one of three conditions:  (1) after sensus has been started and is running, (2)
                 // after sensus has been reactivated and was already running, and (3) after a start attempt was made but failed.
@@ -317,7 +318,7 @@ namespace Sensus.iOS
 
         public override void ShareFileAsync(string path, string subject, string mimeType)
         {
-            RunOnMainThread(() =>
+            MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
                 if (MFMailComposeViewController.CanSendMail)
                 {
@@ -334,7 +335,7 @@ namespace Sensus.iOS
 
         public override void SendEmailAsync(string toAddress, string subject, string message)
         {
-            RunOnMainThread(() =>
+            MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
                 if (MFMailComposeViewController.CanSendMail)
                 {
@@ -376,7 +377,7 @@ namespace Sensus.iOS
                 string input = null;
                 ManualResetEvent dialogDismissWait = new ManualResetEvent(false);
 
-                RunOnMainThread(() =>
+                MainThreadSynchronizer.ExecuteThreadSafe(() =>
                 {
                     ManualResetEvent dialogShowWait = new ManualResetEvent(false);
 
@@ -426,7 +427,7 @@ namespace Sensus.iOS
 
         public override void IssueNotificationAsync(string message, string id, bool playSound, bool vibrate)
         {
-            RunOnMainThread(() =>
+            MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
                 // cancel any existing notifications with the given id
                 lock (_nonCallbackNotifications)
@@ -478,7 +479,7 @@ namespace Sensus.iOS
         private void CancelLocalNotification(UILocalNotification notification, string notificationIdKey)
         {
             // set up action to cancel notification
-            RunOnMainThread(() =>
+            MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
                 try
                 {
@@ -516,12 +517,11 @@ namespace Sensus.iOS
 
         protected override void ProtectedFlashNotificationAsync(string message, bool flashLaterIfNotVisible, TimeSpan duration, Action callback)
         {
-            RunOnMainThread(() =>
+            MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
                 DependencyService.Get<IToastNotificator>().Notify(ToastNotificationType.Info, "", message + Environment.NewLine, duration);
 
-                if (callback != null)
-                    callback();
+                callback?.Invoke();
             });
         }
 
@@ -558,7 +558,7 @@ namespace Sensus.iOS
             bool enabled = false;
             ManualResetEvent enableWait = new ManualResetEvent(false);
 
-            RunOnMainThread(() =>
+            MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
                 try
                 {
@@ -590,25 +590,6 @@ namespace Sensus.iOS
                 Logger.Log("Timed out while waiting for user to enable Bluetooth.", LoggingLevel.Normal, GetType());
 
             return enabled;
-        }
-
-        protected override void RunOnMainThreadNative(Action action)
-        {
-            ManualResetEvent runWait = new ManualResetEvent(false);
-
-            Device.BeginInvokeOnMainThread(() =>
-            {
-                try
-                {
-                    action();
-                }
-                finally
-                {
-                    runWait.Set();
-                }
-            });
-
-            runWait.WaitOne();
         }
 
         #region methods not implemented in ios

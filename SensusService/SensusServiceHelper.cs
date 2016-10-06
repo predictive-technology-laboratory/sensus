@@ -26,6 +26,7 @@ using Xamarin;
 using System.Collections.ObjectModel;
 using SensusUI;
 using SensusUI.Inputs;
+using Sensus.Tools;
 using Xamarin.Forms;
 using SensusService.Exceptions;
 using ZXing.Mobile;
@@ -35,6 +36,7 @@ using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
 using System.Threading.Tasks;
 using SensusService.Probes.User.Scripts;
+using System.Collections.Concurrent;
 
 #if __IOS__
 using XLabs.Platform.Device;
@@ -81,9 +83,9 @@ namespace SensusService
         public static readonly JsonSerializerSettings JSON_SERIALIZER_SETTINGS = new JsonSerializerSettings
         {
             PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-            TypeNameHandling = TypeNameHandling.All,
-            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+            ReferenceLoopHandling      = ReferenceLoopHandling.Serialize,
+            TypeNameHandling           = TypeNameHandling.All,
+            ConstructorHandling        = ConstructorHandling.AllowNonPublicDefaultConstructor,
 
             #region need the following in order to deserialize protocols between OSs, whose objects contain different members (e.g., iOS service helper has ActivationId, which Android does not)
             Error = (o, e) =>
@@ -319,20 +321,18 @@ namespace SensusService
 
         #endregion
 
-        private Logger _logger;
-        private ObservableCollection<Protocol> _registeredProtocols;
+        private Logger _logger;        
         private List<string> _runningProtocolIds;
         private string _healthTestCallbackId;
-        private Dictionary<string, ScheduledCallback> _idCallback;
+        private ConcurrentDictionary<string, ScheduledCallback> _idCallback;
         private SHA256Managed _hasher;
         private List<PointOfInterest> _pointsOfInterest;
         private MobileBarcodeScanner _barcodeScanner;
         private ZXing.Mobile.BarcodeWriter _barcodeWriter;
         private bool _flashNotificationsEnabled;
 
-        // we use the following observable collection in ListViews within Sensus. this is not thread-safe,
-        // so any write operations involving this collection should be performed on the UI thread.
-        private ObservableCollection<Script> _scriptsToRun;
+        private ConcurrentObservableCollection<Protocol> _registeredProtocols;
+        private ConcurrentObservableCollection<Script> _scriptsToRun;
 
         private readonly object _shareFileLocker = new object();
         private readonly object _saveLocker = new object();
@@ -343,7 +343,7 @@ namespace SensusService
             get { return _logger; }
         }
 
-        public ObservableCollection<Protocol> RegisteredProtocols
+        public ConcurrentObservableCollection<Protocol> RegisteredProtocols
         {
             get { return _registeredProtocols; }
         }
@@ -392,7 +392,7 @@ namespace SensusService
             }
         }
 
-        public ObservableCollection<Script> ScriptsToRun
+        public ConcurrentObservableCollection<Script> ScriptsToRun
         {
             get
             {
@@ -429,6 +429,9 @@ namespace SensusService
                 return runningProtocols.Count == 0 ? Protocol.GPS_DEFAULT_MIN_DISTANCE_DELAY_METERS : runningProtocols.Min(p => p.GpsMinDistanceDelayMeters);
             }
         }
+
+        [JsonIgnore]
+        public IConcurrent MainThreadSynchronizer { get; }
 
         #region platform-specific properties
 
@@ -520,17 +523,23 @@ namespace SensusService
 
         #endregion
 
-        protected SensusServiceHelper()
+        protected SensusServiceHelper(IConcurrent mainThreadSynchronizer)
         {
             if (SINGLETON != null)
+            {
                 throw new SensusException("Attempted to construct new service helper when singleton already existed.");
+            }
 
-            _registeredProtocols = new ObservableCollection<Protocol>();
-            _runningProtocolIds = new List<string>();
+            MainThreadSynchronizer = mainThreadSynchronizer;
+
+            _registeredProtocols = new ConcurrentObservableCollection<Protocol>(new LockConcurrent());
+            _scriptsToRun        = new ConcurrentObservableCollection<Script>(MainThreadSynchronizer);
+
+            _runningProtocolIds   = new List<string>();
             _healthTestCallbackId = null;
-            _idCallback = new Dictionary<string, ScheduledCallback>();
-            _hasher = new SHA256Managed();
-            _pointsOfInterest = new List<PointOfInterest>();
+            _idCallback           = new ConcurrentDictionary<string, ScheduledCallback>();
+            _hasher               = new SHA256Managed();
+            _pointsOfInterest     = new List<PointOfInterest>();
 
             // ensure that the entire QR code is always visible by using 90% the minimum screen dimension as the QR code size.
 #if __ANDROID__
@@ -544,15 +553,16 @@ namespace SensusService
             _barcodeWriter = new ZXing.Mobile.BarcodeWriter
             {
                 Format = BarcodeFormat.QR_CODE,
+
                 Options = new ZXing.Common.EncodingOptions
                 {
                     Height = qrCodeSize,
-                    Width = qrCodeSize
+                    Width  = qrCodeSize
                 }
             };
 
             _flashNotificationsEnabled = true;
-            _scriptsToRun = new ObservableCollection<Script>();
+            
 
             if (!Directory.Exists(SHARE_DIRECTORY))
                 Directory.CreateDirectory(SHARE_DIRECTORY);
@@ -604,14 +614,6 @@ namespace SensusService
                 hashBuilder.Append(b.ToString("x"));
 
             return hashBuilder.ToString();
-        }
-
-        public void RunOnMainThread(Action action)
-        {
-            if (IsOnMainThread)
-                action();
-            else
-                RunOnMainThreadNative(action);
         }
 
         #region platform-specific methods. this functionality cannot be implemented in a cross-platform way. it must be done separately for each platform.
@@ -681,8 +683,6 @@ namespace SensusService
             }
         }
 
-        protected abstract void RunOnMainThreadNative(Action action);
-
         #endregion
 
         #region add/remove running protocol ids
@@ -696,7 +696,7 @@ namespace SensusService
 
                 if (_healthTestCallbackId == null)
                 {
-                    ScheduledCallback healthTestCallback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
+                    ScheduledCallback healthTestCallback = new ScheduledCallback("Test Health", async (callbackId, cancellationToken, letDeviceSleepCallback) =>
                     {
                         List<Protocol> protocolsToTest = new List<Protocol>();
 
@@ -720,7 +720,7 @@ namespace SensusService
                             await protocolToTest.TestHealthAsync(false, cancellationToken);
                         }
 
-                    }, "Test Health", TimeSpan.FromMinutes(1));
+                    }, TimeSpan.FromMinutes(1));
 
                     _healthTestCallbackId = ScheduleRepeatingCallback(healthTestCallback, HEALTH_TEST_DELAY_MS, HEALTH_TEST_DELAY_MS, HEALTH_TEST_REPEAT_LAG);
                 }
@@ -755,14 +755,11 @@ namespace SensusService
 
         public void SaveAsync(Action callback = null)
         {
-            new Thread(() =>
-                {
-                    Save();
-
-                    if (callback != null)
-                        callback();
-
-                }).Start();
+            Task.Run(() =>
+            {
+                Save();
+                callback?.Invoke();
+            });
         }
 
         public void Save()
@@ -806,98 +803,64 @@ namespace SensusService
         /// </summary>
         public void Start()
         {
-            lock (_registeredProtocols)
+            foreach (var protocol in _registeredProtocols)
             {
-                foreach (Protocol protocol in _registeredProtocols)
-                    if (!protocol.Running && _runningProtocolIds.Contains(protocol.Id))
-                        protocol.Start();
+                if (!protocol.Running && _runningProtocolIds.Contains(protocol.Id))
+                {
+                    protocol.Start();
+                }
             }
         }
 
         public void RegisterProtocol(Protocol protocol)
         {
-            lock (_registeredProtocols)
+            if (!_registeredProtocols.Contains(protocol))
             {
-                if (!_registeredProtocols.Contains(protocol))
-                    _registeredProtocols.Add(protocol);
+                _registeredProtocols.Add(protocol);
             }
         }
 
         public void AddScriptToRun(Script script, RunMode runMode)
         {
-            RunOnMainThread(() =>
+            var scriptsWithSameParent = _scriptsToRun.Where(s => s.SharesParentScriptWith(script)).ToArray();
+
+            if (scriptsWithSameParent.Any() && runMode == RunMode.SingleKeepOldest)
             {
-                bool add = true;
+                return;
+            }
 
-                List<Script> scriptsWithSameParent = _scriptsToRun.Where(s => s.SharesParentScriptWith(script)).ToList();
-
-                if (scriptsWithSameParent.Count > 0)
+            if (scriptsWithSameParent.Any() && runMode == RunMode.SingleUpdate)
+            {
+                foreach (var scriptWithSameParent in scriptsWithSameParent)
                 {
-                    if (runMode == RunMode.SingleKeepOldest)
-                        add = false;
-                    else if (runMode == RunMode.SingleUpdate)
-                        foreach (Script scriptWithSameParent in scriptsWithSameParent)
-                            _scriptsToRun.Remove(scriptWithSameParent);
+                    _scriptsToRun.Remove(scriptWithSameParent);
                 }
+            }
 
-                if (add)
-                {
-                    _scriptsToRun.Insert(0, script);
-                    IssuePendingSurveysNotificationAsync(true, true);
-                }
-            });
+            _scriptsToRun.Insert(0, script);
+            IssuePendingSurveysNotificationAsync(true, true);
         }
 
-        public void RemoveScriptToRun(Script script)
+        public void RemoveScript(Script script)
         {
-            RunOnMainThread(() =>
-            {
-                if (_scriptsToRun.Remove(script))
-                    IssuePendingSurveysNotificationAsync(false, false);
-            });
+            RemoveScripts(true, script);
         }
 
-        public void RemoveScriptsToRun(ScriptRunner runner)
+        public void RemoveScriptRunner(ScriptRunner runner)
         {
-            RunOnMainThread(() =>
-            {
-                bool removed = false;
-
-                foreach (Script scriptFromRunner in _scriptsToRun.Where(script => ReferenceEquals(script.Runner, runner)).ToList())
-                    if (_scriptsToRun.Remove(scriptFromRunner))
-                        removed = true;
-
-                if (removed)
-                    IssuePendingSurveysNotificationAsync(false, false);
-            });
+            RemoveScripts(true, _scriptsToRun.Where(script => script.Runner == runner).ToArray());
         }
 
-        public void RemoveOldScripts(bool issueNotification)
+        public void RemoveExpiredScripts(bool issueNotification)
         {
-            RunOnMainThread(() =>
-            {
-                bool removed = false;
-
-                foreach (Script script in _scriptsToRun.ToList())
-                    if (script.Runner.MaximumAgeMinutes.HasValue && script.Age.TotalMinutes >= script.Runner.MaximumAgeMinutes && _scriptsToRun.Remove(script))
-                        removed = true;
-
-                if (removed && issueNotification)
-                    IssuePendingSurveysNotificationAsync(false, false);
-            });
+            RemoveScripts(issueNotification, _scriptsToRun.Where(s => s.Expired).ToArray());
         }
 
         public void IssuePendingSurveysNotificationAsync(bool playSound, bool vibrate)
         {
-            RemoveOldScripts(false);
+            RemoveExpiredScripts(false);
 
-            string message = null;
-
-            int scriptsToRun = _scriptsToRun.Count;
-            if (scriptsToRun > 0)
-                message = "You have " + scriptsToRun + " pending survey" + (scriptsToRun == 1 ? "" : "s") + ".";
-
-            IssueNotificationAsync(message, PENDING_SURVEY_NOTIFICATION_ID, playSound, vibrate);
+            IssueNotificationAsync(PendingSurveyMessage(_scriptsToRun.Count), PENDING_SURVEY_NOTIFICATION_ID, playSound, vibrate);
         }
 
         public void ClearPendingSurveysNotificationAsync()
@@ -909,80 +872,68 @@ namespace SensusService
 
         public string ScheduleRepeatingCallback(ScheduledCallback callback, int initialDelayMS, int repeatDelayMS, bool repeatLag)
         {
-            lock (_idCallback)
-            {
-                string callbackId = AddCallback(callback);
-                ScheduleRepeatingCallback(callbackId, initialDelayMS, repeatDelayMS, repeatLag);
-                return callbackId;
-            }
+            string callbackId = AddCallback(callback);
+            ScheduleRepeatingCallback(callbackId, initialDelayMS, repeatDelayMS, repeatLag);
+            return callbackId;
         }
 
         public string ScheduleOneTimeCallback(ScheduledCallback callback, int delayMS)
         {
-            lock (_idCallback)
-            {
-                string callbackId = AddCallback(callback);
-                ScheduleOneTimeCallback(callbackId, delayMS);
-                return callbackId;
-            }
+            string callbackId = AddCallback(callback);
+            ScheduleOneTimeCallback(callbackId, delayMS);
+            return callbackId;
+        }
+
+        /// <remarks>
+        /// The problem with this approach is that if it takes too long to reach this method param name="callbackTime" can potentially be in the past.
+        /// </remarks>
+        public string ScheduleOneTimeCallback(ScheduledCallback callback, DateTime callbackTime)
+        {
+            throw new Exception("Don't ever do this. Take my word for it. See method remarks for why.");
+            //return ScheduleOneTimeCallback(callback, (int)(callbackTime - DateTime.Now).TotalMilliseconds);
         }
 
         private string AddCallback(ScheduledCallback callback)
         {
-            lock (_idCallback)
-            {
-                // treat the callback as if it were brand new, even if it might have been previously used (e.g., if it's being reschedueld). set a
-                // new ID and cancellation token.
-                callback.Id = Guid.NewGuid().ToString();
-                callback.Canceller = new CancellationTokenSource();
-                _idCallback.Add(callback.Id, callback);
-                return callback.Id;
-            }
+            // treat the callback as if it were brand new, even if it might have been previously used (e.g., if it's being reschedueld). set a
+            // new ID and cancellation token.
+            callback.Id = Guid.NewGuid().ToString();
+            callback.Canceller = new CancellationTokenSource();
+            _idCallback.TryAdd(callback.Id, callback);
+            return callback.Id;
         }
 
         public bool CallbackIsScheduled(string callbackId)
         {
-            lock (_idCallback)
-            {
-                return _idCallback.ContainsKey(callbackId);
-            }
+            return _idCallback.ContainsKey(callbackId);
         }
 
         public string GetCallbackUserNotificationMessage(string callbackId)
         {
-            lock (_idCallback)
-            {
-                if (_idCallback.ContainsKey(callbackId))
-                    return _idCallback[callbackId].UserNotificationMessage;
-                else
-                    return null;
-            }
+            if (_idCallback.ContainsKey(callbackId))
+                return _idCallback[callbackId].UserNotificationMessage;
+            else
+                return null;
         }
 
         public string GetCallbackNotificationId(string callbackId)
         {
-            lock (_idCallback)
-            {
-                if (_idCallback.ContainsKey(callbackId))
-                    return _idCallback[callbackId].NotificationId;
-                else
-                    return null;
-            }
+            if (_idCallback.ContainsKey(callbackId))
+                return _idCallback[callbackId].NotificationId;
+            else
+                return null;
         }
 
         public string RescheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag)
         {
-            lock (_idCallback)
+            ScheduledCallback scheduledCallback;
+            if (_idCallback.TryGetValue(callbackId, out scheduledCallback))
             {
-                ScheduledCallback scheduledCallback;
-                if (_idCallback.TryGetValue(callbackId, out scheduledCallback))
-                {
-                    UnscheduleCallback(callbackId);
-                    return ScheduleRepeatingCallback(scheduledCallback, initialDelayMS, repeatDelayMS, repeatLag);
-                }
-                else
-                    return null;
+                UnscheduleCallback(callbackId);
+                return ScheduleRepeatingCallback(scheduledCallback, initialDelayMS, repeatDelayMS, repeatLag);
             }
+            else
+                return null;
         }
 
         public void RaiseCallbackAsync(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, bool notifyUser, Action<DateTime> scheduleRepeatCallback, Action letDeviceSleepCallback, Action finishedCallback)
@@ -995,14 +946,11 @@ namespace SensusService
                 {
                     ScheduledCallback scheduledCallback = null;
 
-                    lock (_idCallback)
+                    // do we have callback information for the passed callbackId? we might not, in the case where the callback is canceled by the user and the system fires it subsequently.
+                    if (!_idCallback.TryGetValue(callbackId, out scheduledCallback))
                     {
-                        // do we have callback information for the passed callbackId? we might not, in the case where the callback is canceled by the user and the system fires it subsequently.
-                        if (!_idCallback.TryGetValue(callbackId, out scheduledCallback))
-                        {
-                            _logger.Log("Callback " + callbackId + " is not valid. Unscheduling.", LoggingLevel.Normal, GetType());
-                            UnscheduleCallback(callbackId);
-                        }
+                        _logger.Log("Callback " + callbackId + " is not valid. Unscheduling.", LoggingLevel.Normal, GetType());
+                        UnscheduleCallback(callbackId);
                     }
 
                     if (scheduledCallback != null)
@@ -1130,39 +1078,35 @@ namespace SensusService
         /// <param name="callbackId">Callback identifier.</param>
         public void CancelRaisedCallback(string callbackId)
         {
-            lock (_idCallback)
+            ScheduledCallback scheduledCallback;
+            if (_idCallback.TryGetValue(callbackId, out scheduledCallback))
             {
-                ScheduledCallback scheduledCallback;
-                if (_idCallback.TryGetValue(callbackId, out scheduledCallback))
-                {
-                    scheduledCallback.Canceller.Cancel();
-                    _logger.Log("Cancelled callback \"" + scheduledCallback.Name + "\" (" + callbackId + ").", LoggingLevel.Normal, GetType());
-                }
-                else
-                    _logger.Log("Callback \"" + callbackId + "\" not present. Cannot cancel.", LoggingLevel.Normal, GetType());
+                scheduledCallback.Canceller.Cancel();
+                _logger.Log("Cancelled callback \"" + scheduledCallback.Name + "\" (" + callbackId + ").", LoggingLevel.Normal, GetType());
             }
+            else
+                _logger.Log("Callback \"" + callbackId + "\" not present. Cannot cancel.", LoggingLevel.Normal, GetType());
         }
 
         public void UnscheduleCallback(string callbackId)
         {
             if (callbackId != null)
-                lock (_idCallback)
-                {
-                    _logger.Log("Unscheduling callback \"" + callbackId + "\".", LoggingLevel.Normal, GetType());
+            {
+                _logger.Log("Unscheduling callback \"" + callbackId + "\".", LoggingLevel.Normal, GetType());
 
-                    CancelRaisedCallback(callbackId);
-                    _idCallback.Remove(callbackId);
-                    UnscheduleCallbackPlatformSpecific(callbackId);
-                }
+                var output = default(ScheduledCallback);
+
+                CancelRaisedCallback(callbackId);
+                _idCallback.TryRemove(callbackId, out output);
+                UnscheduleCallbackPlatformSpecific(callbackId);
+            }
         }
 
         #endregion
 
         public void TextToSpeechAsync(string text)
         {
-            TextToSpeechAsync(text, () =>
-                {
-                });
+            TextToSpeechAsync(text, () => { });
         }
 
         /// <summary>
@@ -1190,28 +1134,24 @@ namespace SensusService
 
         public void PromptForInputAsync(string windowTitle, Input input, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action<Input> callback)
         {
-            PromptForInputsAsync(windowTitle, new Input[] { input }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, inputs =>
+            PromptForInputsAsync(windowTitle, new [] { input }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, inputs =>
             {
-                if (inputs == null)
-                    callback(null);
-                else
-                    callback(inputs[0]);
+                callback(inputs?.First());
             });
         }
 
         public void PromptForInputsAsync(string windowTitle, IEnumerable<Input> inputs, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action<List<Input>> callback)
         {
-            InputGroup inputGroup = new InputGroup(windowTitle);
+            var inputGroup = new InputGroup { Name = windowTitle };
 
-            foreach (Input input in inputs)
-                inputGroup.Inputs.Add(input);
-
-            PromptForInputsAsync(null, new InputGroup[] { inputGroup }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, null, inputGroups =>
+            foreach (var input in inputs)
             {
-                if (inputGroups == null)
-                    callback(null);
-                else
-                    callback(inputGroups.SelectMany(g => g.Inputs).ToList());
+                inputGroup.Inputs.Add(input);
+            }
+
+            PromptForInputsAsync(null, new [] { inputGroup }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, null, inputGroups =>
+            {
+                callback(inputGroups?.SelectMany(g => g.Inputs).ToList());
             });
         }
 
@@ -1261,7 +1201,7 @@ namespace SensusService
                         {
                             BringToForeground();
 
-                            RunOnMainThread(async () =>
+                            MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                             {
                                 // catch any exceptions from preparing and displaying the prompts page
                                 try
@@ -1440,7 +1380,7 @@ namespace SensusService
 
         public void GetPositionsFromMapAsync(Xamarin.Forms.Maps.Position address, string newPinName, Action<List<Xamarin.Forms.Maps.Position>> callback)
         {
-            RunOnMainThread(async () =>
+            MainThreadSynchronizer.ExecuteThreadSafe(async () =>
             {
                 if (await ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
                     FlashNotificationAsync("Geolocation is not permitted on this device. Cannot display map.");
@@ -1460,7 +1400,7 @@ namespace SensusService
 
         public void GetPositionsFromMapAsync(string address, string newPinName, Action<List<Xamarin.Forms.Maps.Position>> callback)
         {
-            RunOnMainThread(async () =>
+            MainThreadSynchronizer.ExecuteThreadSafe(async () =>
             {
                 if (await ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
                     FlashNotificationAsync("Geolocation is not permitted on this device. Cannot display map.");
@@ -1480,11 +1420,8 @@ namespace SensusService
 
         public void UnregisterProtocol(Protocol protocol)
         {
-            lock (_registeredProtocols)
-            {
-                protocol.Stop();
-                _registeredProtocols.Remove(protocol);
-            }
+            _registeredProtocols.Remove(protocol);
+            protocol.Stop();
         }
 
         /// <summary>
@@ -1564,43 +1501,39 @@ namespace SensusService
                     rationale = "Sensus must be able to write to your device's storage for proper operation. Please grant this permission.";
 
                 if (await CrossPermissions.Current.CheckPermissionStatusAsync(permission) == PermissionStatus.Granted)
-                    return PermissionStatus.Granted;
-                else
                 {
-                    // the Permissions plugin requires a main activity to be present on android. ensure this below.
-                    BringToForeground();
+                    return PermissionStatus.Granted;
+                }
+                // the Permissions plugin requires a main activity to be present on android. ensure this below.
+                BringToForeground();
 
-                    // display rationale for request to the user if needed
-                    if (rationale != null && await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(permission))
+                // display rationale for request to the user if needed
+                if (rationale != null && await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(permission))
+                {
+                    MainThreadSynchronizer.ExecuteThreadSafe(() =>
                     {
-                        ManualResetEvent rationaleDialogWait = new ManualResetEvent(false);
+                        Application.Current.MainPage.DisplayAlert("Permission Request", $"On the next screen, Sensus will request access to your device's {permission.ToString().ToUpper()}. {rationale}", "OK").Wait();
+                    });
+                }
 
-                        RunOnMainThread(async () =>
-                        {
-                            await (Application.Current as App).MainPage.DisplayAlert("Permission Request", "On the next screen, Sensus will request access to your device's " + permission.ToString().ToUpper() + ". " + rationale, "OK");
-                            rationaleDialogWait.Set();
-                        });
+                // request permission from the user                    
+                try
+                {
+                    PermissionStatus status;
 
-                        rationaleDialogWait.WaitOne();
-                    }
-
-                    // request permission from the user
-                    PermissionStatus status = PermissionStatus.Unknown;
-                    try
+                    // it's happened that the returned dictionary doesn't contain an entry for the requested permission, so check for that(https://insights.xamarin.com/app/Sensus-Production/issues/903).a
+                    if ( !(await CrossPermissions.Current.RequestPermissionsAsync(permission)).TryGetValue(permission, out status) )
                     {
-                        Dictionary<Permission, PermissionStatus> permissionStatus = await CrossPermissions.Current.RequestPermissionsAsync(new Permission[] { permission });
-
-                        // it's happened that the returned dictionary doesn't contain an entry for the requested permission, so check for that(https://insights.xamarin.com/app/Sensus-Production/issues/903).a
-                        if (!permissionStatus.TryGetValue(permission, out status))
-                            throw new Exception("Permission status not returned for request:  " + permission);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.Log("Failed to obtain permission:  " + ex.Message, LoggingLevel.Normal, GetType());
-                        status = PermissionStatus.Unknown;
+                        throw new Exception($"Permission status not returned for request:  {permission}");
                     }
 
                     return status;
+                }
+                catch (Exception ex)
+                {
+                    _logger.Log($"Failed to obtain permission:  {ex.Message}", LoggingLevel.Normal, GetType());
+
+                    return PermissionStatus.Unknown;
                 }
             });
         }
@@ -1645,23 +1578,45 @@ namespace SensusService
 
         public void StopProtocols()
         {
-            lock (_registeredProtocols)
-            {
-                _logger.Log("Stopping protocols.", LoggingLevel.Normal, GetType());
+            _logger.Log("Stopping protocols.", LoggingLevel.Normal, GetType());
 
-                foreach (Protocol protocol in _registeredProtocols)
-                    if (protocol.Running)
-                    {
-                        try
-                        {
-                            protocol.Stop();
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.Log("Failed to stop protocol \"" + protocol.Name + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
-                        }
-                    }
+            foreach (var protocol in _registeredProtocols.ToArray().Where(p => p.Running))
+            {
+                try
+                {
+                    protocol.Stop();
+                }
+                catch (Exception ex)
+                {
+                    _logger.Log($"Failed to stop protocol \"{protocol.Name}\": {ex.Message}", LoggingLevel.Normal, GetType());
+                }
             }
         }
+
+        #region Private Methods
+
+        private void RemoveScripts(bool issueNotification, params Script[] scripts)
+        {
+            var removed = false;
+
+            foreach (var script in scripts)
+            {
+                if (_scriptsToRun.Remove(script))
+                    removed = true;
+            }
+
+            if (removed && issueNotification)
+            {
+                IssuePendingSurveysNotificationAsync(false, false);
+            }
+        }
+
+        private string PendingSurveyMessage(int scriptsToRunCount)
+        {
+            var s = scriptsToRunCount == 1 ? "" : "s";
+
+            return scriptsToRunCount == 0 ? null : $"You have {scriptsToRunCount} pending survey{s}.";
+        }
+        #endregion
     }
 }
