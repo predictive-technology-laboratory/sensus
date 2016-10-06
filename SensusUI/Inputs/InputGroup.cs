@@ -31,7 +31,10 @@ namespace SensusUI.Inputs
         [EntryStringUiProperty(null, true, 0)]
         public string Name { get; set; }
 
-        [OnOffUiProperty(null, true, 1)]
+        [EntryStringUiProperty("Incomplete Submission Confirmation:", true, 1)]
+        public String IncompleteSubmissionConfirmation { get; set; }
+
+        [OnOffUiProperty(null, true, 2)]
         public bool Geotag { get; set; }
 
         /// <summary>
@@ -56,6 +59,7 @@ namespace SensusUI.Inputs
             Id     = inputGroup.Id;
             Inputs = NewObservableCollection();
             Name   = inputGroup.Name;
+            IncompleteSubmissionConfirmation = inputGroup.IncompleteSubmissionConfirmation;
             Geotag = inputGroup.Geotag;
 
             foreach (var input in inputGroup.Inputs)
