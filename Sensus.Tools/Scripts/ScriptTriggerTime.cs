@@ -16,10 +16,10 @@ using System;
 
 namespace Sensus.Tools.Scripts
 {
-    public class Schedule
+    public class ScriptTriggerTime
     {
-        public DateTime RunTime => DateTime.Now + TimeUntil;
-        public TimeSpan TimeUntil { get; set; }
-        public DateTime ExpirationDate { get; set; }
+        public DateTime DateTime => DateTime.Now + TimeTill;
+        public TimeSpan TimeTill { get; set; }
+        public DateTime Expiration { get; set; }
     }
 }

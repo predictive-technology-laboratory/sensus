@@ -21,11 +21,12 @@ namespace Sensus.Tools.Scripts
     public class ScheduleTrigger
     {
         #region Fields
-        private readonly List<ScheduleWindow> _windows;
+        private readonly List<TriggerWindow> _windows;
         #endregion
 
         #region Properties
         public int WindowCount => _windows.Count;
+
         public string Windows
         {
             get
@@ -37,7 +38,8 @@ namespace Sensus.Tools.Scripts
             }
             set
             {
-                if (value == Windows) return;
+                if (value == Windows)
+                    return;
 
                 lock (_windows)
                 {
@@ -45,45 +47,53 @@ namespace Sensus.Tools.Scripts
 
                     try
                     {
-                        _windows.AddRange(value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(ScheduleWindow.Parse));
+                        _windows.AddRange(value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(TriggerWindow.Parse));
                     }
                     catch
                     {
-                        //ignore improperly formatted trigger windows
+                        // ignore improperly formatted trigger windows
                     }
 
                     _windows.Sort();
                 }
             }
         }
-        public TimeSpan? ExpireAge { get; set; }
-        public bool ExpireWindow { get; set; }
+
+        public TimeSpan? MaxAge { get; set; }
+        public bool WindowExpiration { get; set; }
         #endregion
 
         #region Constructor
         public ScheduleTrigger()
         {
-            _windows = new List<ScheduleWindow>(); 
+            _windows = new List<TriggerWindow>();
         }
         #endregion
 
         #region Public Methods
-        public IEnumerable<Schedule> SchedulesAfter(DateTime startDate, DateTime afterDate)
+        /// <summary>
+        /// Gets trigger times relative to a given time after some other time.
+        /// </summary>
+        /// <returns>Trigger times.</returns>
+        /// <param name="from">Get trigger times relative to this time.</param>
+        /// <param name="after">Get trigger times after this time.</param>
+        public IEnumerable<ScriptTriggerTime> GetTriggerTimes(DateTime from, DateTime after)
         {
             var eightDays = TimeSpan.FromDays(8);
-            var oneDay    = TimeSpan.FromDays(1);
+            var oneDay = TimeSpan.FromDays(1);
 
             lock (_windows)
             {
-                for (; afterDate - startDate < eightDays; afterDate += oneDay)
+                // return trigger times up to 8 days beyond the from time
+                for (; after - from < eightDays; after += oneDay)
                 {
-                    //It is important that these are ordered otherwise we might skip windows since we use the _maxScheduledDate to determine which schedule comes next.
-                    foreach (var schedule in _windows.Select(s => s.NextSchedule(startDate, afterDate, ExpireWindow, ExpireAge)).OrderBy(s => s.TimeUntil).ToArray())
+                    // It is important that these are ordered otherwise we might skip windows since we use the _maxScheduledDate to determine which schedule comes next.
+                    foreach (var triggerTime in _windows.Select(window => window.GetNextTriggerTime(from, after, WindowExpiration, MaxAge)).OrderBy(window => window.TimeTill).ToArray())
                     {
-                        yield return schedule;
+                        yield return triggerTime;
                     }
                 }
-            }            
+            }
         }
         #endregion
     }
