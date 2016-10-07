@@ -880,7 +880,7 @@ namespace SensusService
             _participationHorizonDays = 1;
             _startTimestamp = DateTime.Now;
             _endTimestamp = DateTime.Now;
-            _startImmediately = false;
+            _startImmediately = true;
             _continueIndefinitely = true;
             _groupable = false;
             _groupedProtocols = new List<Protocol>();
@@ -1119,21 +1119,18 @@ namespace SensusService
 
         public void Start()
         {
-            // start the protocol if _startImmediately is set or if _startTimestamp has passed
             if (_startImmediately || (DateTime.Now > _startTimestamp))
                 StartInternal();
             else
                 ScheduleStart();
 
-            // schedule stop if necessary
             if (!_continueIndefinitely)
                 ScheduleStop();
         }
 
         public void ScheduleStart()
         {
-            DateTime startTimestamp = new DateTime(_startTimestamp.Year, _startTimestamp.Month, _startTimestamp.Day, _startTimestamp.Hour, _startTimestamp.Minute, 0);
-            TimeSpan timeUntilStart = startTimestamp - DateTime.Now;
+            TimeSpan timeUntilStart = _startTimestamp - DateTime.Now;
 
             ScheduledCallback startProtocolCallback = new ScheduledCallback("Start protocol", (callbackId, cancellationToken, letDeviceSleepCallback) =>
             {
@@ -1143,9 +1140,9 @@ namespace SensusService
                     _scheduledStartCallbackId = null;
                 });
 #if __ANDROID__
-            }, null, "Protocol started.");
+            }, null, $"Started study {Name}.");
 #elif __IOS__
-            }, null, "Please open to start this study.");
+            }, null, $"Please open to start study {Name}.");
 #endif
             _scheduledStartCallbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(startProtocolCallback, (int)timeUntilStart.TotalMilliseconds);
         }
@@ -1158,8 +1155,7 @@ namespace SensusService
 
         public void ScheduleStop()
         {
-            DateTime stopTime = new DateTime(_endTimestamp.Year, _endTimestamp.Month, _endTimestamp.Day, _endTimestamp.Hour, _endTimestamp.Minute, 0);
-            TimeSpan timeUntilStop = stopTime - DateTime.Now;
+            TimeSpan timeUntilStop = _endTimestamp - DateTime.Now;
             ScheduledCallback stopProtocolCallback = new ScheduledCallback("Stop protocol", (callbackId, cancellationToken, letDeviceSleepCallback) =>
             {
                 return Task.Run(() =>
@@ -1168,7 +1164,8 @@ namespace SensusService
                     _scheduledStopCallbackId = null;
                 });
 
-            }, null, "Protocol stopped.");
+            }, null, $"Stopped study {Name}.");
+
             _scheduledStopCallbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(stopProtocolCallback, (int)timeUntilStop.TotalMilliseconds);
         }
 
@@ -1209,9 +1206,8 @@ namespace SensusService
             if (!string.IsNullOrWhiteSpace(_description))
                 consent.Add(new LabelOnlyInput(_description));
 
-            bool isPriorToStart = !(DateTime.Now > new DateTime(_startTimestamp.Year, _startTimestamp.Month, _startTimestamp.Day, _startTimestamp.Hour, _startTimestamp.Minute, 0));
-
-            consent.Add(new LabelOnlyInput("This study will start " + ((!_startImmediately && isPriorToStart) ? "on " + _startTimestamp.ToShortDateString() + " at " + _startTimestamp.ToShortTimeString() : "immediately") + " and " + ((!_continueIndefinitely) ? "stop on " + _endTimestamp.ToShortDateString() + " at " + _endTimestamp.ToShortTimeString() + "." : "continue indefinitely.")));
+            consent.Add(new LabelOnlyInput("This study will start " + (_startImmediately || DateTime.Now >= _startTimestamp ? "immediately" : "on " + _startTimestamp.ToShortDateString() + " at " + _startTimestamp.ToShortTimeString()) +
+                                           " and " + (_continueIndefinitely ? "continue indefinitely." : "stop on " + _endTimestamp.ToShortDateString() + " at " + _endTimestamp.ToShortTimeString() + ".")));
 
             consent.Add(new LabelOnlyInput("This study would like to collect the following data from your device:"));
 
@@ -1467,13 +1463,13 @@ namespace SensusService
         public void DeleteAsync(Action callback = null)
         {
             new Thread(() =>
-                {
-                    Delete();
+            {
+                Delete();
 
-                    if (callback != null)
-                        callback();
+                if (callback != null)
+                    callback();
 
-                }).Start();
+            }).Start();
         }
 
         public void Delete()

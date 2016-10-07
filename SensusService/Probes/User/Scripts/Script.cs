@@ -31,13 +31,8 @@ namespace SensusService.Probes.User.Scripts
 
         public ObservableCollection<InputGroup> InputGroups { get; }
 
-        public DateTimeOffset ScheduledRunTime { get; set; }
+        public DateTimeOffset? ScheduledRunTime { get; set; }
 
-        /// <summary>
-        /// Time at which the script was run. On Android this happens in the background at the scheduled/triggered
-        /// time. On iOS this is the triggering time (for trigger-based scripts), and the time that the 
-        /// UILocalNotification appears in the notifications tray (for scheduled scripts).
-        /// </summary>
         public DateTimeOffset? RunTime { get; set; }
 
         public Datum PreviousDatum { get; set; }

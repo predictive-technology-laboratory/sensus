@@ -69,7 +69,7 @@ namespace SensusUI
 
                 Script script = value as Script;
 
-                return script.Runner.Probe.Protocol.Name + " - " + script.RunTime.Value.LocalDateTime;
+                return script.Runner.Probe.Protocol.Name + " - " + script.ScheduledRunTime.Value.LocalDateTime;
             }
 
             public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

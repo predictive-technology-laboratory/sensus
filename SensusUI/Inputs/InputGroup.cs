@@ -25,7 +25,7 @@ namespace SensusUI.Inputs
     {
         #region Properties     
         public string Id { get; }
-        
+
         public ObservableCollection<Input> Inputs { get; }
 
         [EntryStringUiProperty(null, true, 0)]
@@ -49,16 +49,16 @@ namespace SensusUI.Inputs
         #region Constructors
         public InputGroup()
         {
-            Id     = Guid.NewGuid().ToString();
+            Id = Guid.NewGuid().ToString();
             Inputs = NewObservableCollection();
             Geotag = false;
         }
 
         public InputGroup(InputGroup inputGroup)
         {
-            Id     = inputGroup.Id;
+            Id = inputGroup.Id;
             Inputs = NewObservableCollection();
-            Name   = inputGroup.Name;
+            Name = inputGroup.Name;
             IncompleteSubmissionConfirmation = inputGroup.IncompleteSubmissionConfirmation;
             Geotag = inputGroup.Geotag;
 
@@ -71,7 +71,7 @@ namespace SensusUI.Inputs
         [JsonConstructor]
         private InputGroup(string id, ObservableCollection<Input> inputs)
         {
-            Id     = id;
+            Id = id;
             Inputs = inputs;
         }
         #endregion

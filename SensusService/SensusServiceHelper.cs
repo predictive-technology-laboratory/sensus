@@ -884,15 +884,6 @@ namespace SensusService
             return callbackId;
         }
 
-        /// <remarks>
-        /// The problem with this approach is that if it takes too long to reach this method param name="callbackTime" can potentially be in the past.
-        /// </remarks>
-        public string ScheduleOneTimeCallback(ScheduledCallback callback, DateTime callbackTime)
-        {
-            throw new Exception("Don't ever do this. Take my word for it. See method remarks for why.");
-            //return ScheduleOneTimeCallback(callback, (int)(callbackTime - DateTime.Now).TotalMilliseconds);
-        }
-
         private string AddCallback(ScheduledCallback callback)
         {
             // treat the callback as if it were brand new, even if it might have been previously used (e.g., if it's being reschedueld). set a

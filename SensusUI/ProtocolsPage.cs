@@ -159,13 +159,6 @@ namespace SensusUI
                         actions.Add("Ungroup");
                 }
 
-                //bool isPriorToStart = !(DateTime.Now > new DateTime(selectedProtocol.StartDate.Year, selectedProtocol.StartDate.Month, selectedProtocol.StartDate.Day, selectedProtocol.StartTime.Hours, selectedProtocol.StartTime.Minutes, 0));
-                //if (selectedProtocol.ScheduledStartCallbackId == null && !selectedProtocol.Running && !selectedProtocol.StartImmediately && isPriorToStart)
-                //{
-                //    actions.Remove("Start");
-                //    actions.Insert(0, "Schedule To Start");
-                //}
-
                 if (selectedProtocol.Running)
                     actions.Add("Status");
 
@@ -179,7 +172,7 @@ namespace SensusUI
 
                 string selectedAction = await DisplayActionSheet(selectedProtocol.Name, "Cancel", null, actions.ToArray());
 
-                // must reset the protocol select manually
+                // must reset the protocol selection manually
                 Device.BeginInvokeOnMainThread(() =>
                 {
                     _protocolsList.SelectedItem = null;

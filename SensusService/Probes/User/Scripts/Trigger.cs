@@ -25,8 +25,7 @@ namespace SensusService.Probes.User.Scripts
     public class Trigger
     {
         private object _conditionValue;
-        private Type _conditionValueEnumType;        
-        private bool _firstDatum;
+        private Type _conditionValueEnumType;
 
         public Probe Probe { get; set; }
 
@@ -81,11 +80,9 @@ namespace SensusService.Probes.User.Scripts
 
         public bool FireRepeatedly { get; set; }
 
-        public bool FireCriteriaMetOnPreviousCall { get; set; }
+        public bool FireValueConditionMetOnPreviousCall { get; set; }
 
         public string RegularExpressionText { get; set; }
-
-        public bool IgnoreFirstDatum { get; set; }
 
         public TimeSpan StartTime { get; set; }
 
@@ -96,22 +93,21 @@ namespace SensusService.Probes.User.Scripts
             Reset();
         }
 
-        public Trigger(Probe probe, PropertyInfo datumProperty, TriggerValueCondition condition, object conditionValue, bool change, bool fireRepeatedly, bool useRegularExpressions, bool ignoreFirstDatum, TimeSpan startTime, TimeSpan endTime): this()
+        public Trigger(Probe probe, PropertyInfo datumProperty, TriggerValueCondition condition, object conditionValue, bool change, bool fireRepeatedly, bool useRegularExpressions, TimeSpan startTime, TimeSpan endTime) : this()
         {
-            if (probe          == null) throw new Exception("Trigger is missing Probe selection.");
-            if (datumProperty  == null) throw new Exception("Trigger is missing Property selection.");
+            if (probe == null) throw new Exception("Trigger is missing Probe selection.");
+            if (datumProperty == null) throw new Exception("Trigger is missing Property selection.");
             if (conditionValue == null) throw new Exception("Trigger is missing Value selection.");
-            if (endTime   <= startTime) throw new Exception("Trigger Start Time must precede End Time.");
-            
-            Probe             = probe;
+            if (endTime <= startTime) throw new Exception("Trigger Start Time must precede End Time.");
+
+            Probe = probe;
             DatumPropertyName = datumProperty.Name;
-            Condition         = condition;
-            _conditionValue   = conditionValue;
-            Change            = change;
-            FireRepeatedly    = fireRepeatedly;
-            IgnoreFirstDatum  = ignoreFirstDatum;
-            StartTime         = startTime;
-            EndTime           = endTime;
+            Condition = condition;
+            _conditionValue = conditionValue;
+            Change = change;
+            FireRepeatedly = fireRepeatedly;
+            StartTime = startTime;
+            EndTime = endTime;
 
             if (useRegularExpressions)
             {
@@ -121,26 +117,20 @@ namespace SensusService.Probes.User.Scripts
 
         public void Reset()
         {
-            FireCriteriaMetOnPreviousCall = false;
-            _firstDatum = true;
+            FireValueConditionMetOnPreviousCall = false;
         }
 
         public bool FireFor(object value)
         {
             try
             {
-                var satisfyCondition = SatisfyCondition(value);
-                var ignoreCondition  = IgnoreCondition();
+                var fireValueConditionMet = FireValueConditionMet(value);
+                var fireRepeatConditionMet = FireRepeatConditionMet();
+                var fireWindowConditionMet = FireWindowConditionMet();
 
-                var fireCriteriaMet    = FireCriteriaMet(ignoreCondition, satisfyCondition);
-                var fireRepeatMet      = FireRepeatMet(fireCriteriaMet);
-                var fireWindowMet      = FireWindowMet();
-      
-                FireCriteriaMetOnPreviousCall = fireCriteriaMet;
+                FireValueConditionMetOnPreviousCall = fireValueConditionMet;
 
-                _firstDatum = false;
-
-                return fireCriteriaMet && fireRepeatMet && fireWindowMet;
+                return fireValueConditionMet && fireRepeatConditionMet && fireWindowConditionMet;
             }
             catch (Exception ex)
             {
@@ -167,7 +157,7 @@ namespace SensusService.Probes.User.Scripts
         }
 
         #region Private Methods
-        private bool SatisfyCondition(object value)
+        private bool FireValueConditionMet(object value)
         {
             if (RegularExpressionText == null)
             {
@@ -201,47 +191,12 @@ namespace SensusService.Probes.User.Scripts
             }
         }
 
-        private bool IgnoreCondition()
+        private bool FireRepeatConditionMet()
         {
-            if (!_firstDatum || !IgnoreFirstDatum)
-            {
-                _firstDatum = false;
-
-                return true;
-            }
-
-            lock (this)
-            {
-                if (!_firstDatum) return true; 
-
-                return _firstDatum = false;
-            }
+            return FireRepeatedly || !FireValueConditionMetOnPreviousCall;
         }
 
-        private static bool FireCriteriaMet(bool ignoreCondition, bool satisfyCondition)
-        {
-            return !ignoreCondition && satisfyCondition;
-        }
-
-        private bool FireRepeatMet(bool fireCriteriaMet)
-        {
-            if (FireRepeatedly)
-            {
-                FireCriteriaMetOnPreviousCall = fireCriteriaMet;
-                return true;
-            }
-
-            lock (this)
-            {
-                var result = !FireCriteriaMetOnPreviousCall;
-
-                FireCriteriaMetOnPreviousCall = fireCriteriaMet;
-
-                return result;
-            }            
-        }
-
-        private bool FireWindowMet()
+        private bool FireWindowConditionMet()
         {
             return StartTime <= DateTime.Now.TimeOfDay && DateTime.Now.TimeOfDay <= EndTime;
         }

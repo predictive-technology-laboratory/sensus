@@ -174,7 +174,6 @@ namespace SensusService.Probes
             _locationManager = new CLLocationManager();
             _locationManager.LocationsUpdated += (sender, e) =>
             {
-                // TODO:  Test
                 SensusServiceHelper.Get().ScheduleOneTimeCallback(_callback, 0);
             };
 #endif
@@ -257,11 +256,12 @@ namespace SensusService.Probes
                     }
                     else
                     {
-                        SensusServiceHelper.Get().Logger.Log("Location services not enabled; please enable in Settings.", LoggingLevel.Normal, GetType());
+                        SensusServiceHelper.Get().Logger.Log("Location services not enabled.", LoggingLevel.Normal, GetType());
                     }
                 }
 
-                if (!_significantChangeOverrideScheduledPolls || !_significantChangePoll)
+                // schedule the callback if we're not doing significant-change polling, or if we are but the latter doesn't override the former.
+                if (!_significantChangePoll || !_significantChangeOverrideScheduledPolls)
                 {
                     _pollCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(_callback, 0, _pollingSleepDurationMS, POLL_CALLBACK_LAG);
                 }
