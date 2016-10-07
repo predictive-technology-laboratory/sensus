@@ -159,7 +159,7 @@ namespace SensusService.Probes.User.Scripts
                             {
                                 if (!Probe.Running || !_enabled || previousCurrentDatum.Item2 == null)
                                 {
-                                    trigger.FireCriteriaMetOnPreviousCall = false;  // this covers the case when the current datum is null. for some probes, the null datum is meaningful and is emitted in order for their state to be tracked appropriately (e.g., POI probe).
+                                    trigger.FireValueConditionMetOnPreviousCall = false;  // this covers the case when the current datum is null. for some probes, the null datum is meaningful and is emitted in order for their state to be tracked appropriately (e.g., POI probe).
                                     return;
                                 }
                             }
