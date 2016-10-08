@@ -59,19 +59,19 @@ namespace Sensus.Tools.Tests.Scripts
         {
             var schedule = new ScheduleTrigger { Windows = "10:00, 10:10-10:20" };
 
-            var startDate = new DateTime(1986, 4, 18, 0, 0, 0);
+            var fromDate = new DateTime(1986, 4, 18, 0, 0, 0);
             var afterDate = new DateTime(1986, 4, 18, 0, 0, 0);
 
-            var schedules = schedule.SchedulesAfter(startDate, afterDate).Take(6).ToArray();
+            var triggerTimes = schedule.GetTriggerTimes(fromDate, afterDate).Take(6).ToArray();
 
-            Assert.AreEqual(new TimeSpan(0, 10, 0, 0), schedules[0].TimeUntil);
-            Assert.IsTrue(new TimeSpan(0, 10, 10, 0) <= schedules[1].TimeUntil && schedules[1].TimeUntil <= new TimeSpan(0, 10, 20, 0));
+            Assert.AreEqual(new TimeSpan(0, 10, 0, 0), triggerTimes[0].TimeTill);
+            Assert.IsTrue(new TimeSpan(0, 10, 10, 0) <= triggerTimes[1].TimeTill && triggerTimes[1].TimeTill <= new TimeSpan(0, 10, 20, 0));
 
-            Assert.AreEqual(new TimeSpan(1, 10, 0, 0), schedules[2].TimeUntil);
-            Assert.IsTrue(new TimeSpan(1, 10, 10, 0) <= schedules[3].TimeUntil && schedules[3].TimeUntil <= new TimeSpan(1, 10, 20, 0));
+            Assert.AreEqual(new TimeSpan(1, 10, 0, 0), triggerTimes[2].TimeTill);
+            Assert.IsTrue(new TimeSpan(1, 10, 10, 0) <= triggerTimes[3].TimeTill && triggerTimes[3].TimeTill <= new TimeSpan(1, 10, 20, 0));
 
-            Assert.AreEqual(new TimeSpan(2, 10, 0, 0), schedules[4].TimeUntil);
-            Assert.IsTrue(new TimeSpan(2, 10, 10, 0) <= schedules[5].TimeUntil && schedules[5].TimeUntil <= new TimeSpan(2, 10, 20, 0));
+            Assert.AreEqual(new TimeSpan(2, 10, 0, 0), triggerTimes[4].TimeTill);
+            Assert.IsTrue(new TimeSpan(2, 10, 10, 0) <= triggerTimes[5].TimeTill && triggerTimes[5].TimeTill <= new TimeSpan(2, 10, 20, 0));
         }
 
         [Test]
@@ -79,19 +79,19 @@ namespace Sensus.Tools.Tests.Scripts
         {
             var schedule = new ScheduleTrigger { Windows = "10:00, 10:20-10:30" };
 
-            var startDate = new DateTime(1986, 4, 18, 10, 10, 0);
+            var fromDate = new DateTime(1986, 4, 18, 10, 10, 0);
             var afterDate = new DateTime(1986, 4, 18, 10, 10, 0);
 
-            var schedules = schedule.SchedulesAfter(startDate, afterDate).Take(6).ToArray();
+            var triggerTimes = schedule.GetTriggerTimes(fromDate, afterDate).Take(6).ToArray();
 
-            Assert.IsTrue(new TimeSpan(0, 0, 10, 0) <= schedules[0].TimeUntil && schedules[0].TimeUntil <= new TimeSpan(0, 0, 20, 0));
-            Assert.AreEqual(new TimeSpan(0, 23, 50, 0), schedules[1].TimeUntil);
+            Assert.IsTrue(new TimeSpan(0, 0, 10, 0) <= triggerTimes[0].TimeTill && triggerTimes[0].TimeTill <= new TimeSpan(0, 0, 20, 0));
+            Assert.AreEqual(new TimeSpan(0, 23, 50, 0), triggerTimes[1].TimeTill);
 
-            Assert.IsTrue(new TimeSpan(1, 0, 10, 0) <= schedules[2].TimeUntil && schedules[2].TimeUntil <= new TimeSpan(1, 0, 20, 0));
-            Assert.AreEqual(new TimeSpan(1, 23, 50, 0), schedules[3].TimeUntil);
+            Assert.IsTrue(new TimeSpan(1, 0, 10, 0) <= triggerTimes[2].TimeTill && triggerTimes[2].TimeTill <= new TimeSpan(1, 0, 20, 0));
+            Assert.AreEqual(new TimeSpan(1, 23, 50, 0), triggerTimes[3].TimeTill);
 
-            Assert.IsTrue(new TimeSpan(2, 0, 10, 0) <= schedules[4].TimeUntil && schedules[4].TimeUntil <= new TimeSpan(2, 0, 20, 0));
-            Assert.AreEqual(new TimeSpan(2, 23, 50, 0), schedules[5].TimeUntil);
+            Assert.IsTrue(new TimeSpan(2, 0, 10, 0) <= triggerTimes[4].TimeTill && triggerTimes[4].TimeTill <= new TimeSpan(2, 0, 20, 0));
+            Assert.AreEqual(new TimeSpan(2, 23, 50, 0), triggerTimes[5].TimeTill);
         }
 
         [Test]
@@ -99,19 +99,19 @@ namespace Sensus.Tools.Tests.Scripts
         {
             var schedule = new ScheduleTrigger { Windows = "10:00, 10:20-10:30" };
 
-            var startDate = new DateTime(1986, 4, 18, 10, 10, 0);
+            var fromDate = new DateTime(1986, 4, 18, 10, 10, 0);
             var afterDate = new DateTime(1986, 4, 19, 10, 10, 0);
 
-            var schedules = schedule.SchedulesAfter(startDate, afterDate).Take(6).ToArray();
+            var triggerTimes = schedule.GetTriggerTimes(fromDate, afterDate).Take(6).ToArray();
 
-            Assert.IsTrue(new TimeSpan(1, 0, 10, 0) <= schedules[0].TimeUntil && schedules[0].TimeUntil <= new TimeSpan(1, 0, 20, 0));
-            Assert.AreEqual(new TimeSpan(1, 23, 50, 0), schedules[1].TimeUntil);
+            Assert.IsTrue(new TimeSpan(1, 0, 10, 0) <= triggerTimes[0].TimeTill && triggerTimes[0].TimeTill <= new TimeSpan(1, 0, 20, 0));
+            Assert.AreEqual(new TimeSpan(1, 23, 50, 0), triggerTimes[1].TimeTill);
 
-            Assert.IsTrue(new TimeSpan(2, 0, 10, 0) <= schedules[2].TimeUntil && schedules[2].TimeUntil <= new TimeSpan(2, 0, 20, 0));
-            Assert.AreEqual(new TimeSpan(2, 23, 50, 0), schedules[3].TimeUntil);
+            Assert.IsTrue(new TimeSpan(2, 0, 10, 0) <= triggerTimes[2].TimeTill && triggerTimes[2].TimeTill <= new TimeSpan(2, 0, 20, 0));
+            Assert.AreEqual(new TimeSpan(2, 23, 50, 0), triggerTimes[3].TimeTill);
 
-            Assert.IsTrue(new TimeSpan(3, 0, 10, 0) <= schedules[4].TimeUntil && schedules[4].TimeUntil <= new TimeSpan(3, 0, 20, 0));
-            Assert.AreEqual(new TimeSpan(3, 23, 50, 0), schedules[5].TimeUntil);
+            Assert.IsTrue(new TimeSpan(3, 0, 10, 0) <= triggerTimes[4].TimeTill && triggerTimes[4].TimeTill <= new TimeSpan(3, 0, 20, 0));
+            Assert.AreEqual(new TimeSpan(3, 23, 50, 0), triggerTimes[5].TimeTill);
         }
 
         [Test]
@@ -119,12 +119,12 @@ namespace Sensus.Tools.Tests.Scripts
         {
             var schedule = new ScheduleTrigger { Windows = "10:00" };            
 
-            var startDate = new DateTime(1986, 4, 18, 0, 0, 0);
+            var fromDate = new DateTime(1986, 4, 18, 0, 0, 0);
             var afterDate = new DateTime(1986, 4, 19, 0, 0, 0);
 
-            var scheduleCount = schedule.SchedulesAfter(startDate, afterDate).Count();
+            var triggerTimeCount = schedule.GetTriggerTimes(fromDate, afterDate).Count();
 
-            Assert.AreEqual(7, scheduleCount);
+            Assert.AreEqual(7, triggerTimeCount);
         }
 
         [Test]
@@ -132,26 +132,26 @@ namespace Sensus.Tools.Tests.Scripts
         {
             var schedule = new ScheduleTrigger {Windows = "10:00, 10:10-10:20"};
 
-            var startDate = new DateTime(1986, 4, 18, 0, 0, 0);
+            var fromDate = new DateTime(1986, 4, 18, 0, 0, 0);
             var afterDate = new DateTime(1986, 4, 18, 0, 0, 0);
 
-            var schedules = schedule.SchedulesAfter(startDate, afterDate).Take(6).ToArray();
+            var triggerTimes = schedule.GetTriggerTimes(fromDate, afterDate).Take(6).ToArray();
 
-            Assert.AreEqual(new TimeSpan(0, 10, 0, 0), schedules[0].TimeUntil);
-            Assert.IsTrue(new TimeSpan(0, 10, 10, 0) <= schedules[1].TimeUntil && schedules[1].TimeUntil <= new TimeSpan(0, 10, 20, 0));
+            Assert.AreEqual(new TimeSpan(0, 10, 0, 0), triggerTimes[0].TimeTill);
+            Assert.IsTrue(new TimeSpan(0, 10, 10, 0) <= triggerTimes[1].TimeTill && triggerTimes[1].TimeTill <= new TimeSpan(0, 10, 20, 0));
 
-            Assert.AreEqual(new TimeSpan(1, 10, 0, 0), schedules[2].TimeUntil);
-            Assert.IsTrue(new TimeSpan(1, 10, 10, 0) <= schedules[3].TimeUntil && schedules[3].TimeUntil <= new TimeSpan(1, 10, 20, 0));
+            Assert.AreEqual(new TimeSpan(1, 10, 0, 0), triggerTimes[2].TimeTill);
+            Assert.IsTrue(new TimeSpan(1, 10, 10, 0) <= triggerTimes[3].TimeTill && triggerTimes[3].TimeTill <= new TimeSpan(1, 10, 20, 0));
 
-            Assert.AreEqual(new TimeSpan(2, 10, 0, 0), schedules[4].TimeUntil);
-            Assert.IsTrue(new TimeSpan(2, 10, 10, 0) <= schedules[5].TimeUntil && schedules[5].TimeUntil <= new TimeSpan(2, 10, 20, 0));
+            Assert.AreEqual(new TimeSpan(2, 10, 0, 0), triggerTimes[4].TimeTill);
+            Assert.IsTrue(new TimeSpan(2, 10, 10, 0) <= triggerTimes[5].TimeTill && triggerTimes[5].TimeTill <= new TimeSpan(2, 10, 20, 0));
 
-            Assert.AreEqual(DateTime.MaxValue, schedules[0].ExpirationDate);
-            Assert.AreEqual(DateTime.MaxValue, schedules[1].ExpirationDate);
-            Assert.AreEqual(DateTime.MaxValue, schedules[2].ExpirationDate);
-            Assert.AreEqual(DateTime.MaxValue, schedules[3].ExpirationDate);
-            Assert.AreEqual(DateTime.MaxValue, schedules[4].ExpirationDate);
-            Assert.AreEqual(DateTime.MaxValue, schedules[5].ExpirationDate);
+            Assert.AreEqual(DateTime.MaxValue, triggerTimes[0].Expiration);
+            Assert.AreEqual(DateTime.MaxValue, triggerTimes[1].Expiration);
+            Assert.AreEqual(DateTime.MaxValue, triggerTimes[2].Expiration);
+            Assert.AreEqual(DateTime.MaxValue, triggerTimes[3].Expiration);
+            Assert.AreEqual(DateTime.MaxValue, triggerTimes[4].Expiration);
+            Assert.AreEqual(DateTime.MaxValue, triggerTimes[5].Expiration);
         }
 
         [Test]
@@ -159,30 +159,29 @@ namespace Sensus.Tools.Tests.Scripts
         {
             var schedule = new ScheduleTrigger
             {
-                ExpireAge = TimeSpan.FromMinutes(10),
                 Windows   = "10:00, 10:10-10:20"
             };
 
-            var startDate = new DateTime(1986, 4, 18, 0, 0, 0);
+            var fromDate = new DateTime(1986, 4, 18, 0, 0, 0);
             var afterDate = new DateTime(1986, 4, 18, 0, 0, 0);
 
-            var schedules = schedule.SchedulesAfter(startDate, afterDate).Take(6).ToArray();
+            var triggerTimes = schedule.GetTriggerTimes(fromDate, afterDate, TimeSpan.FromMinutes(10)).Take(6).ToArray();
 
-            Assert.AreEqual(new TimeSpan(0, 10, 0, 0), schedules[0].TimeUntil);
-            Assert.IsTrue(new TimeSpan(0, 10, 10, 0) <= schedules[1].TimeUntil && schedules[1].TimeUntil <= new TimeSpan(0, 10, 20, 0));
+            Assert.AreEqual(new TimeSpan(0, 10, 0, 0), triggerTimes[0].TimeTill);
+            Assert.IsTrue(new TimeSpan(0, 10, 10, 0) <= triggerTimes[1].TimeTill && triggerTimes[1].TimeTill <= new TimeSpan(0, 10, 20, 0));
 
-            Assert.AreEqual(new TimeSpan(1, 10, 0, 0), schedules[2].TimeUntil);
-            Assert.IsTrue(new TimeSpan(1, 10, 10, 0) <= schedules[3].TimeUntil && schedules[3].TimeUntil <= new TimeSpan(1, 10, 20, 0));
+            Assert.AreEqual(new TimeSpan(1, 10, 0, 0), triggerTimes[2].TimeTill);
+            Assert.IsTrue(new TimeSpan(1, 10, 10, 0) <= triggerTimes[3].TimeTill && triggerTimes[3].TimeTill <= new TimeSpan(1, 10, 20, 0));
 
-            Assert.AreEqual(new TimeSpan(2, 10, 0, 0), schedules[4].TimeUntil);
-            Assert.IsTrue(new TimeSpan(2, 10, 10, 0) <= schedules[5].TimeUntil && schedules[5].TimeUntil <= new TimeSpan(2, 10, 20, 0));
+            Assert.AreEqual(new TimeSpan(2, 10, 0, 0), triggerTimes[4].TimeTill);
+            Assert.IsTrue(new TimeSpan(2, 10, 10, 0) <= triggerTimes[5].TimeTill && triggerTimes[5].TimeTill <= new TimeSpan(2, 10, 20, 0));
 
-            Assert.AreEqual(startDate + schedules[0].TimeUntil + TimeSpan.FromMinutes(10), schedules[0].ExpirationDate);
-            Assert.AreEqual(startDate + schedules[1].TimeUntil + TimeSpan.FromMinutes(10), schedules[1].ExpirationDate);
-            Assert.AreEqual(startDate + schedules[2].TimeUntil + TimeSpan.FromMinutes(10), schedules[2].ExpirationDate);
-            Assert.AreEqual(startDate + schedules[3].TimeUntil + TimeSpan.FromMinutes(10), schedules[3].ExpirationDate);
-            Assert.AreEqual(startDate + schedules[4].TimeUntil + TimeSpan.FromMinutes(10), schedules[4].ExpirationDate);
-            Assert.AreEqual(startDate + schedules[5].TimeUntil + TimeSpan.FromMinutes(10), schedules[5].ExpirationDate);
+            Assert.AreEqual(fromDate + triggerTimes[0].TimeTill + TimeSpan.FromMinutes(10), triggerTimes[0].Expiration);
+            Assert.AreEqual(fromDate + triggerTimes[1].TimeTill + TimeSpan.FromMinutes(10), triggerTimes[1].Expiration);
+            Assert.AreEqual(fromDate + triggerTimes[2].TimeTill + TimeSpan.FromMinutes(10), triggerTimes[2].Expiration);
+            Assert.AreEqual(fromDate + triggerTimes[3].TimeTill + TimeSpan.FromMinutes(10), triggerTimes[3].Expiration);
+            Assert.AreEqual(fromDate + triggerTimes[4].TimeTill + TimeSpan.FromMinutes(10), triggerTimes[4].Expiration);
+            Assert.AreEqual(fromDate + triggerTimes[5].TimeTill + TimeSpan.FromMinutes(10), triggerTimes[5].Expiration);
         }
 
         [Test]
@@ -190,30 +189,30 @@ namespace Sensus.Tools.Tests.Scripts
         {
             var schedule = new ScheduleTrigger
             {
-                ExpireWindow = true,
+                WindowExpiration = true,
                 Windows      = "10:00, 10:10-10:20"
             };
 
-            var startDate = new DateTime(1986, 4, 18, 0, 0, 0);
+            var fromDate = new DateTime(1986, 4, 18, 0, 0, 0);
             var afterDate = new DateTime(1986, 4, 18, 0, 0, 0);
 
-            var schedules = schedule.SchedulesAfter(startDate, afterDate).Take(6).ToArray();
+            var triggerTimes = schedule.GetTriggerTimes(fromDate, afterDate).Take(6).ToArray();
 
-            Assert.AreEqual(new TimeSpan(0, 10, 0, 0), schedules[0].TimeUntil);
-            Assert.IsTrue(new TimeSpan(0, 10, 10, 0) <= schedules[1].TimeUntil && schedules[1].TimeUntil <= new TimeSpan(0, 10, 20, 0));
+            Assert.AreEqual(new TimeSpan(0, 10, 0, 0), triggerTimes[0].TimeTill);
+            Assert.IsTrue(new TimeSpan(0, 10, 10, 0) <= triggerTimes[1].TimeTill && triggerTimes[1].TimeTill <= new TimeSpan(0, 10, 20, 0));
 
-            Assert.AreEqual(new TimeSpan(1, 10, 0, 0), schedules[2].TimeUntil);
-            Assert.IsTrue(new TimeSpan(1, 10, 10, 0) <= schedules[3].TimeUntil && schedules[3].TimeUntil <= new TimeSpan(1, 10, 20, 0));
+            Assert.AreEqual(new TimeSpan(1, 10, 0, 0), triggerTimes[2].TimeTill);
+            Assert.IsTrue(new TimeSpan(1, 10, 10, 0) <= triggerTimes[3].TimeTill && triggerTimes[3].TimeTill <= new TimeSpan(1, 10, 20, 0));
 
-            Assert.AreEqual(new TimeSpan(2, 10, 0, 0), schedules[4].TimeUntil);
-            Assert.IsTrue(new TimeSpan(2, 10, 10, 0) <= schedules[5].TimeUntil && schedules[5].TimeUntil <= new TimeSpan(2, 10, 20, 0));
+            Assert.AreEqual(new TimeSpan(2, 10, 0, 0), triggerTimes[4].TimeTill);
+            Assert.IsTrue(new TimeSpan(2, 10, 10, 0) <= triggerTimes[5].TimeTill && triggerTimes[5].TimeTill <= new TimeSpan(2, 10, 20, 0));
 
-            Assert.AreEqual(DateTime.MaxValue, schedules[0].ExpirationDate);
-            Assert.AreEqual(new DateTime(1986, 4, 18, 10, 20, 00), schedules[1].ExpirationDate);
-            Assert.AreEqual(DateTime.MaxValue, schedules[2].ExpirationDate);
-            Assert.AreEqual(new DateTime(1986, 4, 19, 10, 20, 00), schedules[3].ExpirationDate);
-            Assert.AreEqual(DateTime.MaxValue, schedules[4].ExpirationDate);
-            Assert.AreEqual(new DateTime(1986, 4, 20, 10, 20, 00), schedules[5].ExpirationDate);
+            Assert.AreEqual(DateTime.MaxValue, triggerTimes[0].Expiration);
+            Assert.AreEqual(new DateTime(1986, 4, 18, 10, 20, 00), triggerTimes[1].Expiration);
+            Assert.AreEqual(DateTime.MaxValue, triggerTimes[2].Expiration);
+            Assert.AreEqual(new DateTime(1986, 4, 19, 10, 20, 00), triggerTimes[3].Expiration);
+            Assert.AreEqual(DateTime.MaxValue, triggerTimes[4].Expiration);
+            Assert.AreEqual(new DateTime(1986, 4, 20, 10, 20, 00), triggerTimes[5].Expiration);
         }
 
         [Test]
@@ -221,31 +220,30 @@ namespace Sensus.Tools.Tests.Scripts
         {
             var schedule = new ScheduleTrigger
             {
-                ExpireWindow = true,
-                ExpireAge = TimeSpan.FromMinutes(5),
+                WindowExpiration = true,
                 Windows = "10:00, 10:10-10:20"
             };
 
-            var startDate = new DateTime(1986, 4, 18, 0, 0, 0);
+            var fromDate = new DateTime(1986, 4, 18, 0, 0, 0);
             var afterDate = new DateTime(1986, 4, 18, 0, 0, 0);
 
-            var schedules = schedule.SchedulesAfter(startDate, afterDate).Take(6).ToArray();
+            var triggerTimes = schedule.GetTriggerTimes(fromDate, afterDate, TimeSpan.FromMinutes(5)).Take(6).ToArray();
 
-            Assert.AreEqual(new TimeSpan(0, 10, 0, 0), schedules[0].TimeUntil);
-            Assert.IsTrue(new TimeSpan(0, 10, 10, 0) <= schedules[1].TimeUntil && schedules[1].TimeUntil <= new TimeSpan(0, 10, 20, 0));
+            Assert.AreEqual(new TimeSpan(0, 10, 0, 0), triggerTimes[0].TimeTill);
+            Assert.IsTrue(new TimeSpan(0, 10, 10, 0) <= triggerTimes[1].TimeTill && triggerTimes[1].TimeTill <= new TimeSpan(0, 10, 20, 0));
 
-            Assert.AreEqual(new TimeSpan(1, 10, 0, 0), schedules[2].TimeUntil);
-            Assert.IsTrue(new TimeSpan(1, 10, 10, 0) <= schedules[3].TimeUntil && schedules[3].TimeUntil <= new TimeSpan(1, 10, 20, 0));
+            Assert.AreEqual(new TimeSpan(1, 10, 0, 0), triggerTimes[2].TimeTill);
+            Assert.IsTrue(new TimeSpan(1, 10, 10, 0) <= triggerTimes[3].TimeTill && triggerTimes[3].TimeTill <= new TimeSpan(1, 10, 20, 0));
 
-            Assert.AreEqual(new TimeSpan(2, 10, 0, 0), schedules[4].TimeUntil);
-            Assert.IsTrue(new TimeSpan(2, 10, 10, 0) <= schedules[5].TimeUntil && schedules[5].TimeUntil <= new TimeSpan(2, 10, 20, 0));
+            Assert.AreEqual(new TimeSpan(2, 10, 0, 0), triggerTimes[4].TimeTill);
+            Assert.IsTrue(new TimeSpan(2, 10, 10, 0) <= triggerTimes[5].TimeTill && triggerTimes[5].TimeTill <= new TimeSpan(2, 10, 20, 0));
 
-            Assert.AreEqual(startDate + schedules[0].TimeUntil + TimeSpan.FromMinutes(5), schedules[0].ExpirationDate);
-            Assert.AreEqual(new DateTime(1986, 4, 18, 10, 20, 00).Min(startDate + schedules[1].TimeUntil + TimeSpan.FromMinutes(5)), schedules[1].ExpirationDate);
-            Assert.AreEqual(startDate + schedules[2].TimeUntil + TimeSpan.FromMinutes(5), schedules[2].ExpirationDate);
-            Assert.AreEqual(new DateTime(1986, 4, 19, 10, 20, 00).Min(startDate + schedules[3].TimeUntil + TimeSpan.FromMinutes(5)), schedules[3].ExpirationDate);
-            Assert.AreEqual(startDate + schedules[4].TimeUntil + TimeSpan.FromMinutes(5), schedules[4].ExpirationDate);
-            Assert.AreEqual(new DateTime(1986, 4, 20, 10, 20, 00).Min(startDate + schedules[5].TimeUntil + TimeSpan.FromMinutes(5)), schedules[5].ExpirationDate);
+            Assert.AreEqual(fromDate + triggerTimes[0].TimeTill + TimeSpan.FromMinutes(5), triggerTimes[0].Expiration);
+            Assert.AreEqual(new DateTime(1986, 4, 18, 10, 20, 00).Min(fromDate + triggerTimes[1].TimeTill + TimeSpan.FromMinutes(5)), triggerTimes[1].Expiration);
+            Assert.AreEqual(fromDate + triggerTimes[2].TimeTill + TimeSpan.FromMinutes(5), triggerTimes[2].Expiration);
+            Assert.AreEqual(new DateTime(1986, 4, 19, 10, 20, 00).Min(fromDate + triggerTimes[3].TimeTill + TimeSpan.FromMinutes(5)), triggerTimes[3].Expiration);
+            Assert.AreEqual(fromDate + triggerTimes[4].TimeTill + TimeSpan.FromMinutes(5), triggerTimes[4].Expiration);
+            Assert.AreEqual(new DateTime(1986, 4, 20, 10, 20, 00).Min(fromDate + triggerTimes[5].TimeTill + TimeSpan.FromMinutes(5)), triggerTimes[5].Expiration);
         }
     }
 }

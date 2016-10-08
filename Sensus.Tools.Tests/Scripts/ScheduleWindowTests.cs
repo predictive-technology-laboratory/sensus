@@ -10,7 +10,7 @@ namespace Sensus.Tools.Tests.Scripts
         [Test]
         public void PointScheduleTriggerParse()
         {
-            var t = ScheduleWindow.Parse("10:22");
+            var t = TriggerWindow.Parse("10:22");
 
             Assert.AreEqual(new TimeSpan(0, 10, 22, 0), t.Start);
             Assert.AreEqual(new TimeSpan(0, 10, 22, 0), t.End);
@@ -20,7 +20,7 @@ namespace Sensus.Tools.Tests.Scripts
         [Test]
         public void WindowScheduleTriggerParse()
         {
-            var t = ScheduleWindow.Parse("10:22-12:22");
+            var t = TriggerWindow.Parse("10:22-12:22");
 
             Assert.AreEqual(new TimeSpan(0, 10, 22, 0), t.Start);
             Assert.AreEqual(new TimeSpan(0, 12, 22, 0), t.End);
@@ -30,7 +30,7 @@ namespace Sensus.Tools.Tests.Scripts
         [Test]
         public void PointScheduleToString()
         {
-            var t = ScheduleWindow.Parse("10:22");
+            var t = TriggerWindow.Parse("10:22");
 
             Assert.AreEqual("10:22", t.ToString());
         }
@@ -38,7 +38,7 @@ namespace Sensus.Tools.Tests.Scripts
         [Test]
         public void WindowScheduleToString()
         {
-            var t = ScheduleWindow.Parse("10:22-12:22");
+            var t = TriggerWindow.Parse("10:22-12:22");
 
             Assert.AreEqual("10:22-12:22", t.ToString());
         }
@@ -46,73 +46,73 @@ namespace Sensus.Tools.Tests.Scripts
         [Test]
         public void NextScheduleWindowNoExpiration()
         {
-            var t = ScheduleWindow.Parse("10:22-12:22");
+            var t = TriggerWindow.Parse("10:22-12:22");
 
             var from  = new DateTime(1986,4,18, 10, 22, 0);
             var after = new DateTime(1986,4,25, 10, 22, 0);
 
             for (var i = 0; i < 100; i++)
             {
-                var nextSchedule = t.NextSchedule(from, after, false, null);
+                var nextTriggerTime = t.GetNextTriggerTime(from, after, false, null);
 
-                Assert.GreaterOrEqual(nextSchedule.TimeUntil, TimeSpan.FromDays(8));
-                Assert.LessOrEqual(nextSchedule.TimeUntil, TimeSpan.FromDays(8).Add(TimeSpan.FromHours(2)));
-                Assert.AreEqual(DateTime.MaxValue, nextSchedule.ExpirationDate);
+                Assert.GreaterOrEqual(nextTriggerTime.TimeTill, TimeSpan.FromDays(8));
+                Assert.LessOrEqual(nextTriggerTime.TimeTill, TimeSpan.FromDays(8).Add(TimeSpan.FromHours(2)));
+                Assert.AreEqual(DateTime.MaxValue, nextTriggerTime.Expiration);
             }
         }
 
         [Test]
         public void NextSchedulePointNoExpiration()
         {
-            var t = ScheduleWindow.Parse("10:22");
+            var t = TriggerWindow.Parse("10:22");
 
             var from = new DateTime(1986, 4, 18, 10, 22, 0);
             var after = new DateTime(1986, 4, 25, 10, 22, 0);
 
             for (var i = 0; i < 100; i++)
             {
-                var nextSchedule = t.NextSchedule(from, after, false, null);
+                var nextTriggerTime = t.GetNextTriggerTime(from, after, false, null);
 
-                Assert.AreEqual(TimeSpan.FromDays(8), nextSchedule.TimeUntil);
-                Assert.AreEqual(DateTime.MaxValue, nextSchedule.ExpirationDate);
+                Assert.AreEqual(TimeSpan.FromDays(8), nextTriggerTime.TimeTill);
+                Assert.AreEqual(DateTime.MaxValue, nextTriggerTime.Expiration);
             }
         }
 
         [Test]
         public void NextSchedulePointExpirationNotTooBig()
         {
-            var t = ScheduleWindow.Parse("10:22");
+            var t = TriggerWindow.Parse("10:22");
 
             var from = new DateTime(1986, 4, 18, 10, 22, 0);
             var after = from.AddDays(30);
 
             for (var i = 0; i < 100; i++)
             {
-                var nextSchedule = t.NextSchedule(from, after, false, null);
+                var nextTriggerTime = t.GetNextTriggerTime(from, after, false, null);
 
-                Assert.AreEqual(TimeSpan.FromDays(31), nextSchedule.TimeUntil);
-                Assert.AreEqual(DateTime.MaxValue, nextSchedule.ExpirationDate);
+                Assert.AreEqual(TimeSpan.FromDays(31), nextTriggerTime.TimeTill);
+                Assert.AreEqual(DateTime.MaxValue, nextTriggerTime.Expiration);
             }
         }
 
         [Test]
         public void NextSchedulePointExpirationExpireWindow()
         {
-            var t = ScheduleWindow.Parse("10:22");
+            var t = TriggerWindow.Parse("10:22");
 
             var from = new DateTime(1986, 4, 18, 10, 22, 0);
             var after = from.AddDays(30);
 
-            var nextSchedule = t.NextSchedule(from, after, true, null);
+            var nextTriggerTime = t.GetNextTriggerTime(from, after, true, null);
 
-            Assert.AreEqual(TimeSpan.FromDays(31), nextSchedule.TimeUntil);
-            Assert.AreEqual(DateTime.MaxValue, nextSchedule.ExpirationDate);
+            Assert.AreEqual(TimeSpan.FromDays(31), nextTriggerTime.TimeTill);
+            Assert.AreEqual(DateTime.MaxValue, nextTriggerTime.Expiration);
         }
 
         [Test]
         public void NextScheduleWindowExpireAge()
         {
-            var t = ScheduleWindow.Parse("10:22-12:22");
+            var t = TriggerWindow.Parse("10:22-12:22");
 
             var from  = new DateTime(1986, 4, 18, 10, 22, 0);
             var after = new DateTime(1986, 4, 25, 10, 22, 0);
@@ -120,36 +120,36 @@ namespace Sensus.Tools.Tests.Scripts
 
             for (var i = 0; i < 100; i++)
             {
-                var nextSchedule = t.NextSchedule(from, after, false, expir);
+                var nextTriggerTime = t.GetNextTriggerTime(from, after, false, expir);
                 
-                Assert.GreaterOrEqual(nextSchedule.TimeUntil, TimeSpan.FromDays(8));
-                Assert.LessOrEqual(nextSchedule.TimeUntil, TimeSpan.FromDays(8).Add(TimeSpan.FromHours(2)));
-                Assert.AreEqual(from + nextSchedule.TimeUntil + expir, nextSchedule.ExpirationDate);
+                Assert.GreaterOrEqual(nextTriggerTime.TimeTill, TimeSpan.FromDays(8));
+                Assert.LessOrEqual(nextTriggerTime.TimeTill, TimeSpan.FromDays(8).Add(TimeSpan.FromHours(2)));
+                Assert.AreEqual(from + nextTriggerTime.TimeTill + expir, nextTriggerTime.Expiration);
             }
         }
 
         [Test]
         public void NextScheduleWindowExpireWindow()
         {
-            var t = ScheduleWindow.Parse("10:22-12:22");
+            var t = TriggerWindow.Parse("10:22-12:22");
 
             var from  = new DateTime(1986, 4, 18, 10, 22, 0);
             var after = new DateTime(1986, 4, 25, 10, 22, 0);
 
             for (var i = 0; i < 100; i++)
             {
-                var nextSchedule = t.NextSchedule(from, after, true, null);
+                var nextTriggerTime = t.GetNextTriggerTime(from, after, true, null);
 
-                Assert.GreaterOrEqual(nextSchedule.TimeUntil, TimeSpan.FromDays(8));
-                Assert.LessOrEqual(nextSchedule.TimeUntil, TimeSpan.FromDays(8).Add(TimeSpan.FromHours(2)));
-                Assert.AreEqual(from.AddDays(8).AddHours(2), nextSchedule.ExpirationDate);
+                Assert.GreaterOrEqual(nextTriggerTime.TimeTill, TimeSpan.FromDays(8));
+                Assert.LessOrEqual(nextTriggerTime.TimeTill, TimeSpan.FromDays(8).Add(TimeSpan.FromHours(2)));
+                Assert.AreEqual(from.AddDays(8).AddHours(2), nextTriggerTime.Expiration);
             }
         }
 
         [Test]
         public void NextScheduleWindowMinExpiration()
         {
-            var t = ScheduleWindow.Parse("10:22-12:22");
+            var t = TriggerWindow.Parse("10:22-12:22");
 
             var from  = new DateTime(1986, 4, 18, 10, 22, 0);
             var after = new DateTime(1986, 4, 25, 10, 22, 0);
@@ -157,19 +157,19 @@ namespace Sensus.Tools.Tests.Scripts
 
             for (var i = 0; i < 100; i++)
             {
-                var nextSchedule = t.NextSchedule(from, after, true, expir);
+                var nextTriggerTime = t.GetNextTriggerTime(from, after, true, expir);
 
-                Assert.GreaterOrEqual(nextSchedule.TimeUntil, TimeSpan.FromDays(8));
-                Assert.LessOrEqual(nextSchedule.TimeUntil, TimeSpan.FromDays(8).Add(TimeSpan.FromHours(2)));
-                Assert.AreEqual(from + nextSchedule.TimeUntil + expir, nextSchedule.ExpirationDate);
+                Assert.GreaterOrEqual(nextTriggerTime.TimeTill, TimeSpan.FromDays(8));
+                Assert.LessOrEqual(nextTriggerTime.TimeTill, TimeSpan.FromDays(8).Add(TimeSpan.FromHours(2)));
+                Assert.AreEqual(from + nextTriggerTime.TimeTill + expir, nextTriggerTime.Expiration);
             }
         }
 
         [Test]
         public void WindowScheduleCompareToDifferent()
         {
-            var t1 = ScheduleWindow.Parse("10:22-12:22");
-            var t2 = ScheduleWindow.Parse("10:23-12:23");
+            var t1 = TriggerWindow.Parse("10:22-12:22");
+            var t2 = TriggerWindow.Parse("10:23-12:23");
 
             Assert.LessOrEqual(t1.CompareTo(t2), 0);
             Assert.GreaterOrEqual(t2.CompareTo(t1), 0);
@@ -178,8 +178,8 @@ namespace Sensus.Tools.Tests.Scripts
         [Test]
         public void WindowScheduleCompareToEqual()
         {
-            var t1 = ScheduleWindow.Parse("10:22-12:22");
-            var t2 = ScheduleWindow.Parse("10:22-12:22");
+            var t1 = TriggerWindow.Parse("10:22-12:22");
+            var t2 = TriggerWindow.Parse("10:22-12:22");
 
             Assert.AreEqual(0, t1.CompareTo(t2));
         }

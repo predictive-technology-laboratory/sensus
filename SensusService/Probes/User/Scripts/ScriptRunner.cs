@@ -29,10 +29,10 @@ namespace SensusService.Probes.User.Scripts
     public class ScriptRunner
     {
         #region Fields
-        private bool _enabled;        
+        private bool _enabled;
 
         private readonly Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>> _triggerHandlers;
-
+        private TimeSpan? _maxAge;
         private DateTime? _maxScheduledDate;
         private readonly List<string> _scheduledCallbackIds;
         private readonly ScheduleTrigger _scheduleTrigger;
@@ -77,18 +77,21 @@ namespace SensusService.Probes.User.Scripts
         [EntryDoubleUiProperty("Maximum Age (Mins.):", true, 7)]
         public double? MaxAgeMinutes
         {
-            get { return _scheduleTrigger.ExpireAge?.TotalMinutes; }
+            get
+            {
+                return _maxAge?.TotalMinutes;
+            }
             set
             {
-                _scheduleTrigger.ExpireAge = (value == null) ? (TimeSpan?) null : TimeSpan.FromMinutes(value.Value);
+                _maxAge = value == null ? default(TimeSpan?) : TimeSpan.FromMinutes(value.Value <= 0 ? 10 : value.Value);
             }
         }
 
         [OnOffUiProperty("Expire Script When Window Ends:", true, 15)]
         public bool WindowExpiration
         {
-            get { return _scheduleTrigger.ExpireWindow; }
-            set { _scheduleTrigger.ExpireWindow = value; }
+            get { return _scheduleTrigger.WindowExpiration; }
+            set { _scheduleTrigger.WindowExpiration = value; }
         }
 
         [EntryStringUiProperty("Random Windows:", true, 8)]
@@ -124,20 +127,21 @@ namespace SensusService.Probes.User.Scripts
         #region Constructor
         private ScriptRunner()
         {
-            _scheduleTrigger      = new ScheduleTrigger(); //this needs to be above
-            _enabled              = false;
-            _triggerHandlers      = new Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>>();
+            _scheduleTrigger = new ScheduleTrigger(); //this needs to be above
+            _enabled = false;
+            _maxAge = null;
+            _triggerHandlers = new Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>>();
             _scheduledCallbackIds = new List<string>();
 
-            Script           = new Script(this);                        
-            Triggers         = new ConcurrentObservableCollection<Trigger>(new LockConcurrent());
-            RunTimes         = new List<DateTime>();
-            CompletionTimes  = new List<DateTime>();
-            AllowCancel      = true;
-            OneShot          = false;
-            RunOnStart       = false;
-            DisplayProgress  = true;
-            RunMode          = RunMode.SingleUpdate;            
+            Script = new Script(this);
+            Triggers = new ConcurrentObservableCollection<Trigger>(new LockConcurrent());
+            RunTimes = new List<DateTime>();
+            CompletionTimes = new List<DateTime>();
+            AllowCancel = true;
+            OneShot = false;
+            RunOnStart = false;
+            DisplayProgress = true;
+            RunMode = RunMode.SingleUpdate;
 
             Triggers.CollectionChanged += (o, e) =>
             {
@@ -159,7 +163,7 @@ namespace SensusService.Probes.User.Scripts
                             {
                                 if (!Probe.Running || !_enabled || previousCurrentDatum.Item2 == null)
                                 {
-                                    trigger.FireCriteriaMetOnPreviousCall = false;  // this covers the case when the current datum is null. for some probes, the null datum is meaningful and is emitted in order for their state to be tracked appropriately (e.g., POI probe).
+                                    trigger.FireValueConditionMetOnPreviousCall = false;  // this covers the case when the current datum is null. for some probes, the null datum is meaningful and is emitted in order for their state to be tracked appropriately (e.g., POI probe).
                                     return;
                                 }
                             }
@@ -220,7 +224,7 @@ namespace SensusService.Probes.User.Scripts
             };
         }
 
-        public ScriptRunner(string name, ScriptProbe probe): this()
+        public ScriptRunner(string name, ScriptProbe probe) : this()
         {
             Name = name;
             Probe = probe;
@@ -252,7 +256,7 @@ namespace SensusService.Probes.User.Scripts
                 RunAsync(new Script(Script, Guid.NewGuid()));
             }
         }
-        
+
         public bool TestHealth(ref string error, ref string warning, ref string misc)
         {
             return false;
@@ -263,7 +267,7 @@ namespace SensusService.Probes.User.Scripts
             UnscheduleCallbacks();
 
             RunTimes.Clear();
-            CompletionTimes.Clear();            
+            CompletionTimes.Clear();
         }
 
         public void Restart()
@@ -273,7 +277,7 @@ namespace SensusService.Probes.User.Scripts
         }
 
         public void Stop()
-        {            
+        {
             UnscheduleCallbacks();
             SensusServiceHelper.Get().RemoveScriptRunner(this);
         }
@@ -286,10 +290,10 @@ namespace SensusService.Probes.User.Scripts
             {
                 return;
             }
-            
-            foreach (var schedule in _scheduleTrigger.SchedulesAfter(DateTime.Now, _maxScheduledDate.Max(DateTime.Now)))
+
+            foreach (var triggerTime in _scheduleTrigger.GetTriggerTimes(DateTime.Now, _maxScheduledDate.Max(DateTime.Now), _maxAge))
             {
-                if (!Probe.Protocol.ContinueIndefinitely && schedule.RunTime > Probe.Protocol.EndDate)
+                if (!Probe.Protocol.ContinueIndefinitely && triggerTime.DateTime > Probe.Protocol.EndDate)
                 {
                     break;
                 }
@@ -299,16 +303,16 @@ namespace SensusService.Probes.User.Scripts
                     break;
                 }
 
-                ScheduleCallback(schedule);
+                ScheduleScriptRun(triggerTime);
             }
-        }        
+        }
 
         private void UnscheduleCallbacks()
         {
             if (_scheduledCallbackIds.Count == 0 || SensusServiceHelper.Get() == null)
             {
                 return;
-            }            
+            }
 
             lock (_scheduledCallbackIds)
             {
@@ -322,25 +326,25 @@ namespace SensusService.Probes.User.Scripts
             }
         }
 
-        private void ScheduleCallback(Schedule schedule)
+        private void ScheduleScriptRun(ScriptTriggerTime triggerTime)
         {
-            if (schedule.TimeUntil <= TimeSpan.FromMinutes(1))
+            if (triggerTime.TimeTill <= TimeSpan.FromMinutes(1))
             {
                 return;
             }
 
             lock (_scheduledCallbackIds)
             {
-                var timeUntil = (int)schedule.TimeUntil.TotalMilliseconds;
-                var callback = CreateCallback(new Script(Script, Guid.NewGuid()) { ExpirationDate = schedule.ExpirationDate, ScheduledRunTime = schedule.RunTime });
-                var callbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(callback, timeUntil);
+                var delayMS = (int)triggerTime.TimeTill.TotalMilliseconds;
+                var callback = CreateCallback(new Script(Script, Guid.NewGuid()) { ExpirationDate = triggerTime.Expiration, ScheduledRunTime = triggerTime.DateTime });
+                var callbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(callback, delayMS);
 
-                SensusServiceHelper.Get().Logger.Log($"Scheduled for {schedule.RunTime} ({callbackId})", LoggingLevel.Normal, GetType());
+                SensusServiceHelper.Get().Logger.Log($"Scheduled for {triggerTime.DateTime} ({callbackId})", LoggingLevel.Normal, GetType());
 
                 _scheduledCallbackIds.Add(callbackId);
             }
 
-            _maxScheduledDate = _maxScheduledDate.Max(schedule.RunTime);
+            _maxScheduledDate = _maxScheduledDate.Max(triggerTime.DateTime);
         }
 
         private void UnscheduleCallback(string scheduledCallbackId)
@@ -351,13 +355,14 @@ namespace SensusService.Probes.User.Scripts
 
         private ScheduledCallback CreateCallback(Script script)
         {
-            var callback = new ScheduledCallback("Trigger Randomly", (callbackId, cancellationToken, letDeviceSleepCallback) =>
+            var callback = new ScheduledCallback("Window Trigger", (callbackId, cancellationToken, letDeviceSleepCallback) =>
             {
                 return Task.Run(() =>
                 {
                     SensusServiceHelper.Get().Logger.Log($"Executed ({callbackId})", LoggingLevel.Normal, GetType());
 
-                    if (!Probe.Running || !_enabled) return;
+                    if (!Probe.Running || !_enabled)
+                        return;
 
                     Run(script);
 
@@ -404,11 +409,22 @@ namespace SensusService.Probes.User.Scripts
         {
             SensusServiceHelper.Get().Logger.Log($"Running \"{Name}\".", LoggingLevel.Normal, GetType());
 
-            // on android, scripts are always run as scheduled (even in the background), so we just set the run timestamp
-            // here. on ios, trigger-based scripts are run on demand (even in the background), so we can also set the 
-            // timestamp here. schedule-based scripts have their run timestamp set to the UILocalNotification fire time, and
-            // this is done prior to calling the current method. so we shouldn't reset the run timestamp here.
-            script.RunTime = script.RunTime ?? DateTimeOffset.UtcNow;
+            script.RunTime = DateTimeOffset.UtcNow;
+
+            // scheduled scripts have their expiration dates set when they're scheduled. scripts triggered by other probes
+            // as well as on-start scripts will not yet have their expiration dates set. so check the script we've been 
+            // given and set the expiration date if needed.
+            if (script.ExpirationDate == null && _maxAge.HasValue)
+            {
+                script.ExpirationDate = script.Birthdate + _maxAge.Value;
+            }
+
+            // script could have already expired (e.g., if user took too long to open notification).
+            if (script.ExpirationDate.HasValue && script.ExpirationDate.Value < DateTime.Now)
+            {
+                SensusServiceHelper.Get().Logger.Log("Script expired before it was run.", LoggingLevel.Normal, GetType());
+                return;
+            }
 
             // do not run a one-shot script if it has already been run
             if (OneShot && RunTimes.Count > 0)
@@ -454,7 +470,7 @@ namespace SensusService.Probes.User.Scripts
                     }
                 }
 
-                await Probe.StoreDatumAsync(new ScriptRunDatum(script.RunTime.Value, Script.Id, Name, script.Id, script.ScheduledRunTime, script.CurrentDatum?.Id, latitude, longitude, locationTimestamp), default(CancellationToken));
+                await Probe.StoreDatumAsync(new ScriptRunDatum(script.RunTime.Value, Script.Id, Name, script.Id, script.ScheduledRunTime.Value, script.CurrentDatum?.Id, latitude, longitude, locationTimestamp), default(CancellationToken));
             });
 
             // this method can be called with previous / current datum values (e.g., when the script is first triggered). it 

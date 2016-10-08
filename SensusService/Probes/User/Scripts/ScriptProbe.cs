@@ -96,7 +96,6 @@ namespace SensusService.Probes.User.Scripts
         public ScriptProbe()
         {            
             _scriptRunners = new ObservableCollection<ScriptRunner>();
-            //_scriptCallbacksScheduled = 0;
         }
 
         protected override void Initialize()

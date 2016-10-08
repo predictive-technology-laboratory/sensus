@@ -261,7 +261,6 @@ namespace SensusService.DataStores
 
                 SensusServiceHelper.Get().Logger.Log("Stored datum:  " + datum.GetType().Name, LoggingLevel.Debug, GetType());
 
-                // TODO:  Test
                 if (!_sizeTriggeredCommitRunning && !_forcedCommitRunning)
                 {
                     // if we've accumulated a chunk, commit it locally to reduce memory pressure
@@ -407,7 +406,7 @@ namespace SensusService.DataStores
                 PreserveReferencesHandling = PreserveReferencesHandling.None,
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                 TypeNameHandling = TypeNameHandling.All,
-                ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+                ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
             };
 
             try

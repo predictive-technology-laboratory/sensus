@@ -31,13 +31,13 @@ namespace SensusUI
         /// <param name="scriptRunner">Script runner to display.</param>
         public ScriptRunnerPage(ScriptRunner scriptRunner)
         {
-            Title = "Script";                  
+            Title = "Script";
 
             StackLayout contentLayout = new StackLayout
-                {
-                    Orientation = StackOrientation.Vertical,
-                    VerticalOptions = LayoutOptions.FillAndExpand
-                };
+            {
+                Orientation = StackOrientation.Vertical,
+                VerticalOptions = LayoutOptions.FillAndExpand
+            };
 
             foreach (StackLayout stack in UiProperty.GetPropertyStacks(scriptRunner))
                 contentLayout.Children.Add(stack);
@@ -71,7 +71,7 @@ namespace SensusUI
             contentLayout.Children.Add(editTriggersButton);
 
             Content = new ScrollView
-            { 
+            {
                 Content = contentLayout
             };
         }

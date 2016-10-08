@@ -87,7 +87,6 @@ namespace SensusUI
             Switch changeSwitch = new Switch();
             Switch regexSwitch = new Switch();
             Switch fireRepeatedlySwitch = new Switch();
-            Switch ignoreFirstDatumSwitch = new Switch();
             TimePicker startTimePicker = new TimePicker { HorizontalOptions = LayoutOptions.FillAndExpand };
             TimePicker endTimePicker = new TimePicker { HorizontalOptions = LayoutOptions.FillAndExpand };
 
@@ -317,23 +316,6 @@ namespace SensusUI
                     });
                 #endregion
 
-                #region ignore first datum
-                Label ignoreFirstDatumLabel = new Label
-                {
-                    Text = "Ignore First Datum:",
-                    FontSize = 20
-                };
-
-                ignoreFirstDatumSwitch.IsToggled = false;
-
-                triggerDefinitionLayout.Children.Add(new StackLayout
-                    {
-                        Orientation = StackOrientation.Horizontal,
-                        HorizontalOptions = LayoutOptions.FillAndExpand,
-                        Children = { ignoreFirstDatumLabel, ignoreFirstDatumSwitch }
-                    });
-                #endregion
-
                 #region start/end times
                 Label startTimeLabel = new Label
                 {
@@ -380,7 +362,7 @@ namespace SensusUI
             {
                 try
                 {
-                    _scriptRunner.Triggers.Add(new SensusService.Probes.User.Scripts.Trigger(_selectedProbe, _selectedDatumProperty, _selectedCondition, _conditionValue, changeSwitch.IsToggled, fireRepeatedlySwitch.IsToggled, regexSwitch.IsToggled, ignoreFirstDatumSwitch.IsToggled, startTimePicker.Time, endTimePicker.Time));
+                    _scriptRunner.Triggers.Add(new SensusService.Probes.User.Scripts.Trigger(_selectedProbe, _selectedDatumProperty, _selectedCondition, _conditionValue, changeSwitch.IsToggled, fireRepeatedlySwitch.IsToggled, regexSwitch.IsToggled, startTimePicker.Time, endTimePicker.Time));
                     await Navigation.PopAsync();
                 }
                 catch (Exception ex)
