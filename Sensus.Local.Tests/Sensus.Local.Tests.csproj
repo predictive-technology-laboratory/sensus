@@ -140,10 +140,10 @@
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
-  <Import Project="..\SensusService\SensusService.projitems" Label="Shared" />
-  <Import Project="..\SensusUI\SensusUI.projitems" Label="Shared" />
-  <Import Project="..\SensusTests\SensusTests.projitems" Label="Shared" />
-  <Import Project="..\Sensus.Service.Core\Sensus.Service.Core.projitems" Label="Shared" />
+  <Import Project="..\Sensus.Service\Sensus.Service.projitems" Label="Shared" />
+  <Import Project="..\Sensus.Service.Tests\Sensus.Service.Tests.projitems" Label="Shared" />
+  <Import Project="..\Sensus.Service.UI\Sensus.Service.UI.projitems" Label="Shared" />
+  <Import Project="..\Sensus.Service.Tools\Sensus.Service.Tools.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

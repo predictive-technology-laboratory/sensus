@@ -129,9 +129,9 @@
   <ItemGroup>
     <None Include="Properties\AndroidManifest.xml" />
   </ItemGroup>
-  <Import Project="..\SensusTests\SensusTests.projitems" Label="Shared" />
-  <Import Project="..\Sensus.Android.Service\Sensus.Android.Service.projitems" Label="Shared" />
-  <Import Project="..\Sensus.Service.Core\Sensus.Service.Core.projitems" Label="Shared" />
+  <Import Project="..\Sensus.Service.Tests\Sensus.Service.Tests.projitems" Label="Shared" />
+  <Import Project="..\Sensus.Service.Tools\Sensus.Service.Tools.projitems" Label="Shared" />
+  <Import Project="..\Sensus.Service.Android\Sensus.Service.Android.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

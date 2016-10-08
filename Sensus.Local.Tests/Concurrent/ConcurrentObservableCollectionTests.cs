@@ -20,7 +20,7 @@ namespace Sensus.Tools.Tests
     [TestFixture]
     public class ConcurrentObservableCollectionTests
     {        
-        #region Fields
+        #region Fields        
         private const int DelayTime = 250;
         private readonly IConcurrent Concurrent;
         #endregion

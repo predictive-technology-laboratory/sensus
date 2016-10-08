@@ -412,10 +412,6 @@
     <Compile Include="Probes\User\Health\iOSHealthKitBloodTypeProbe.cs" />
     <Compile Include="Probes\User\Health\iOSHealthKitBirthdateProbe.cs" />
   </ItemGroup>
-  <Import Project="..\SensusService\SensusService.projitems" Label="Shared" Condition="Exists('..\SensusService\SensusService.projitems')" />
-  <Import Project="..\SensusUI\SensusUI.projitems" Label="Shared" Condition="Exists('..\SensusUI\SensusUI.projitems')" />
-  <Import Project="..\Sensus.Service.Core\Sensus.Service.Core.projitems" Label="Shared" />
-  <Import Project="..\Sensus.Service.iOS\Sensus.Service.iOS.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
     <XamarinComponentReference Include="ZipArchive">
@@ -424,28 +420,32 @@
     </XamarinComponentReference>
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="..\SensusUI\Icons\minus.png">
+    <BundleResource Include="..\Sensus.Service.UI\Icons\minus.png">
       <Link>Resources\minus.png</Link>
     </BundleResource>
-    <BundleResource Include="..\SensusUI\Icons\pencil.png">
+    <BundleResource Include="..\Sensus.Service.UI\Icons\pencil.png">
       <Link>Resources\pencil.png</Link>
     </BundleResource>
-    <BundleResource Include="..\SensusUI\Icons\plus.png">
+    <BundleResource Include="..\Sensus.Service.UI\Icons\plus.png">
       <Link>Resources\plus.png</Link>
     </BundleResource>
-    <BundleResource Include="..\SensusUI\Icons\share.png">
+    <BundleResource Include="..\Sensus.Service.UI\Icons\share.png">
       <Link>Resources\share.png</Link>
     </BundleResource>
-    <BundleResource Include="..\SensusUI\Icons\check.png">
+    <BundleResource Include="..\Sensus.Service.UI\Icons\check.png">
       <Link>Resources\check.png</Link>
     </BundleResource>
-    <BundleResource Include="..\SensusUI\Icons\x.png">
+    <BundleResource Include="..\Sensus.Service.UI\Icons\x.png">
       <Link>Resources\x.png</Link>
     </BundleResource>
-    <BundleResource Include="..\SensusUI\Icons\gear_wrench.png">
+    <BundleResource Include="..\Sensus.Service.UI\Icons\gear_wrench.png">
       <Link>Resources\gear_wrench.png</Link>
     </BundleResource>
   </ItemGroup>
+  <Import Project="..\Sensus.Service\Sensus.Service.projitems" Label="Shared" />
+  <Import Project="..\Sensus.Service.iOS\Sensus.Service.iOS.projitems" Label="Shared" />
+  <Import Project="..\Sensus.Service.Tools\Sensus.Service.Tools.projitems" Label="Shared" />
+  <Import Project="..\Sensus.Service.UI\Sensus.Service.UI.projitems" Label="Shared" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
   <Import Project="..\packages\Xamarin.Insights.1.12.3\build\Xamarin.iOS10\Xamarin.Insights.targets" Condition="Exists('..\packages\Xamarin.Insights.1.12.3\build\Xamarin.iOS10\Xamarin.Insights.targets')" />
   <Import Project="..\packages\Xamarin.Forms.2.3.1.114\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.2.3.1.114\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />

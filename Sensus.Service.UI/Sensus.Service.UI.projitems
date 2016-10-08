@@ -6,7 +6,7 @@
     <SharedGUID>5b75b250-ccc2-43bf-91d7-5dafaf0dcc6b</SharedGUID>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
-    <Import_RootNamespace>SensusUI</Import_RootNamespace>
+    <Import_RootNamespace>Sensus.Service.UI</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)App.cs" />

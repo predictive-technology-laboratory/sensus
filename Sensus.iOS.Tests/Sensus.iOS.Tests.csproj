@@ -149,9 +149,9 @@
     </Reference>
     <Reference Include="Xamarin.iOS" />
   </ItemGroup>
-  <Import Project="..\SensusTests\SensusTests.projitems" Label="Shared" />
   <Import Project="..\Sensus.Service.iOS\Sensus.Service.iOS.projitems" Label="Shared" />
-  <Import Project="..\Sensus.Service.Core\Sensus.Service.Core.projitems" Label="Shared" />
+  <Import Project="..\Sensus.Service.Tools\Sensus.Service.Tools.projitems" Label="Shared" />
+  <Import Project="..\Sensus.Service.Tests\Sensus.Service.Tests.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

@@ -3,12 +3,12 @@
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <HasSharedItems>true</HasSharedItems>
-    <SharedGUID>b6e23da5-2716-426b-9f8f-9c47bd6b68d3</SharedGUID>
+    <SharedGUID>542cbe5f-b59a-422d-b0b9-6123121cb203</SharedGUID>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
-    <Import_RootNamespace>Sensus.Android.Service</Import_RootNamespace>
+    <Import_RootNamespace>Sensus.Service.Tests</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Concurrent\MainConcurrent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Concurrent\IConcurrentTests.cs" />
   </ItemGroup>
 </Project>
