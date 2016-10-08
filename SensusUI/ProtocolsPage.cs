@@ -273,10 +273,10 @@ namespace SensusUI
                         if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Camera) != PermissionStatus.Granted)
                             throw new Exception("Could not access camera.");
 
+#if __ANDROID__ || __IOS__
                         ZXing.Mobile.MobileBarcodeScanner scanner = SensusServiceHelper.Get().BarcodeScanner;
 
-                        if (scanner == null)
-                            throw new Exception("Barcode scanner not present.");
+                        if (scanner == null) throw new Exception("Barcode scanner not present.");
 
                         scanner.TopText = "Position a Sensus participation barcode in the window below, with the red line across the middle of the barcode.";
                         scanner.BottomText = "Sensus is not recording any of these images. Sensus is only trying to find a barcode.";
@@ -286,6 +286,7 @@ namespace SensusUI
                         {
                             PossibleFormats = new BarcodeFormat[] { BarcodeFormat.QR_CODE }.ToList()
                         });
+#endif
                     }
                     catch (Exception ex)
                     {

@@ -29,8 +29,10 @@ using SensusUI.Inputs;
 using Sensus.Tools;
 using Xamarin.Forms;
 using SensusService.Exceptions;
+#if __ANDROID__ || __IOS__
 using ZXing.Mobile;
 using ZXing;
+#endif
 using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
@@ -289,7 +291,8 @@ namespace SensusService
 #elif WINDOWS_PHONE
             return ProtectedData.Protect(Encoding.Unicode.GetBytes(unencryptedString), EncryptionKeyBytes);
 #else
-#error "Unrecognized platform."
+#warning "Unrecognized platform."
+            return null;
 #endif
         }
 
@@ -313,7 +316,8 @@ namespace SensusService
             byte[] unencryptedBytes = ProtectedData.Unprotect(encryptedBytes, EncryptionKeyBytes);
             return Encoding.Unicode.GetString(unencryptedBytes, 0, unencryptedBytes.Length);
 #else
-#error "Unrecognized platform."
+#warning "Unrecognized platform."
+            return "";
 #endif
         }
 
@@ -327,8 +331,12 @@ namespace SensusService
         private ConcurrentDictionary<string, ScheduledCallback> _idCallback;
         private SHA256Managed _hasher;
         private List<PointOfInterest> _pointsOfInterest;
+
+#if __IOS__ || __ANDROID__
         private MobileBarcodeScanner _barcodeScanner;
         private ZXing.Mobile.BarcodeWriter _barcodeWriter;
+#endif
+
         private bool _flashNotificationsEnabled;
 
         private ConcurrentObservableCollection<Protocol> _registeredProtocols;
@@ -358,6 +366,7 @@ namespace SensusService
             get { return _pointsOfInterest; }
         }
 
+#if __IOS__ || __ANDROID__
         [JsonIgnore]
         public MobileBarcodeScanner BarcodeScanner
         {
@@ -379,6 +388,7 @@ namespace SensusService
                 return _barcodeWriter;
             }
         }
+#endif
 
         public bool FlashNotificationsEnabled
         {
@@ -547,9 +557,11 @@ namespace SensusService
 #elif __IOS__
             int qrCodeSize = (int)(0.9 * Math.Min(AppleDevice.CurrentDevice.Display.Height, AppleDevice.CurrentDevice.Display.Width));
 #else
-#error "Unrecognized platform"
+#warning "Unrecognized platform"
+            int qrCodeSize = 0;
 #endif
 
+#if __IOS__ || __ANDROID__
             _barcodeWriter = new ZXing.Mobile.BarcodeWriter
             {
                 Format = BarcodeFormat.QR_CODE,
@@ -557,9 +569,11 @@ namespace SensusService
                 Options = new ZXing.Common.EncodingOptions
                 {
                     Height = qrCodeSize,
-                    Width  = qrCodeSize
+                    Width = qrCodeSize
                 }
             };
+#endif
+
 
             _flashNotificationsEnabled = true;
             

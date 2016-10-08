@@ -90,7 +90,7 @@ namespace SensusService
 #elif WINDOWS_PHONE
                 // TODO:  Read bytes and display.
 #else
-#error "Unrecognized platform."
+#warning "Unrecognized platform"
 #endif
 
                 downloadClient.DownloadDataAsync(webURI);
@@ -1143,6 +1143,8 @@ namespace SensusService
             }, null, $"Started study: {Name}.");
 #elif __IOS__
             }, null, $"Please open to start study {Name}.");
+#else
+            }, null, $"Started study: {Name}.");
 #endif
 
             _scheduledStartCallbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(startProtocolCallback, (int)timeUntilStart.TotalMilliseconds);
@@ -1172,6 +1174,8 @@ namespace SensusService
             }, null, $"Stopped study: {Name}.");
 #elif __IOS__
             }, null, $"Please open to stop study: {Name}.");
+#else
+            }, null, $"Started study: {Name}.");
 #endif
 
             _scheduledStopCallbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(stopProtocolCallback, (int)timeUntilStop.TotalMilliseconds);

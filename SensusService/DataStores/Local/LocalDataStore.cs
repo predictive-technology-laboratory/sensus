@@ -28,7 +28,7 @@ using Java.Util.Zip;
 #elif __IOS__
 using MiniZip.ZipArchive;
 #else
-#error "Unrecognized platform."
+#warning "Unrecognized platform"
 #endif
 
 namespace SensusService.DataStores.Local
@@ -214,7 +214,9 @@ namespace SensusService.DataStores.Local
                 // ensure that zip file is closed.
                 try
                 {
+#if __ANDROID__ || __IOS__
                     if (zipFile != null)
+#endif
                     {
 #if __ANDROID__
                         zipFile.Close();

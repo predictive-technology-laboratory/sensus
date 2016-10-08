@@ -32,7 +32,8 @@ namespace SensusUI
 #elif WINDOWS_PHONE
             string userNotificationMessage = null; // TODO:  How to increase score?
 #else
-#error "Unrecognized platform."
+#warning "Unrecognized platform."
+            string howToIncreaseScore = "You can increase your score by opening Sensus more often and responding to questions that Sensus asks you.";
 #endif
 
             StackLayout contentLayout = new StackLayout

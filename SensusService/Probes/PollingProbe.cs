@@ -192,7 +192,8 @@ namespace SensusService.Probes
 #elif WINDOWS_PHONE
                 string userNotificationMessage = null; // TODO:  Should we use a message?
 #else
-#error "Unrecognized platform."
+#warning "Unrecognized platform"
+                string userNotificationMessage = null;
 #endif
 
                 _callback = new ScheduledCallback(GetType().FullName + " Poll", (callbackId, cancellationToken, letDeviceSleepCallback) =>

@@ -142,7 +142,8 @@ namespace SensusService.Probes
                 double participationHorizonSeconds = TimeSpan.FromDays(Protocol.ParticipationHorizonDays).TotalSeconds;
                 return (float)(runningSeconds / participationHorizonSeconds);
 #else
-#error "Unrecognized platform."
+#warning "Unrecognized platform"
+                return 0;
 #endif
             }
         }
