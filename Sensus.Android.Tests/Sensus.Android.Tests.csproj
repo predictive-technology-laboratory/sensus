@@ -129,24 +129,9 @@
   <ItemGroup>
     <None Include="Properties\AndroidManifest.xml" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Sensus.Android.Tools\Sensus.Android.Tools.csproj">
-      <Project>{9657183d-6303-43ca-9526-6d1033878f64}</Project>
-      <Name>Sensus.Android.Tools</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Sensus.Tools.Tests\Sensus.Tools.Tests.csproj">
-      <Project>{ef54b5c9-e38e-48b9-8b8c-1ecbe5c5680e}</Project>
-      <Name>Sensus.Tools.Tests</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Sensus.ToolsTests1\Sensus.ToolsTests1.csproj">
-      <Project>{b11b3650-c440-40f2-834d-339d5ff8cd96}</Project>
-      <Name>Sensus.ToolsTests1</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Sensus.Tools\Sensus.Tools.csproj">
-      <Project>{c26c649e-f32a-4b1e-93ed-89bda3784d10}</Project>
-      <Name>Sensus.Tools</Name>
-    </ProjectReference>
-  </ItemGroup>
+  <Import Project="..\SensusTests\SensusTests.projitems" Label="Shared" />
+  <Import Project="..\Sensus.Android.Service\Sensus.Android.Service.projitems" Label="Shared" />
+  <Import Project="..\Sensus.Service.Core\Sensus.Service.Core.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

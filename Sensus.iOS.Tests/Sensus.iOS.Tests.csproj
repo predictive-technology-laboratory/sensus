@@ -149,26 +149,9 @@
     </Reference>
     <Reference Include="Xamarin.iOS" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Sensus.iOS.Tools\Sensus.iOS.Tools.csproj">
-      <Project>{6380da9c-4477-4877-840d-d41cf7d417ca}</Project>
-      <Name>Sensus.iOS.Tools</Name>
-      <IsAppExtension>false</IsAppExtension>
-      <IsWatchApp>false</IsWatchApp>
-    </ProjectReference>
-    <ProjectReference Include="..\Sensus.Tools.Tests\Sensus.Tools.Tests.csproj">
-      <Project>{ef54b5c9-e38e-48b9-8b8c-1ecbe5c5680e}</Project>
-      <Name>Sensus.Tools.Tests</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Sensus.ToolsTests1\Sensus.ToolsTests1.csproj">
-      <Project>{b11b3650-c440-40f2-834d-339d5ff8cd96}</Project>
-      <Name>Sensus.ToolsTests1</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Sensus.Tools\Sensus.Tools.csproj">
-      <Project>{c26c649e-f32a-4b1e-93ed-89bda3784d10}</Project>
-      <Name>Sensus.Tools</Name>
-    </ProjectReference>
-  </ItemGroup>
+  <Import Project="..\SensusTests\SensusTests.projitems" Label="Shared" />
+  <Import Project="..\Sensus.Service.iOS\Sensus.Service.iOS.projitems" Label="Shared" />
+  <Import Project="..\Sensus.Service.Core\Sensus.Service.Core.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

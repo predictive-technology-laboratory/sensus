@@ -120,7 +120,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Concurrent\ConcurrentObservableCollectionTests.cs" />
+    <Compile Include="Concurrent\LockConcurrentTests.cs" />
+    <Compile Include="Dispose\DisposableTests.cs" />
+    <Compile Include="Extensions\DateTimeExtensionTests.cs" />
+    <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scripts\ScheduleTriggerTests.cs" />
+    <Compile Include="Scripts\ScheduleWindowTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -131,13 +138,12 @@
     <Analyzer Include="..\packages\AWSSDK.SecurityToken.3.1.4.5\analyzers\dotnet\cs\AWSSDK.SecurityToken.CodeAnalysis.dll" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Sensus.Tools\Sensus.Tools.csproj">
-      <Project>{c26c649e-f32a-4b1e-93ed-89bda3784d10}</Project>
-      <Name>Sensus.Tools</Name>
-    </ProjectReference>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="..\SensusService\SensusService.projitems" Label="Shared" />
   <Import Project="..\SensusUI\SensusUI.projitems" Label="Shared" />
+  <Import Project="..\SensusTests\SensusTests.projitems" Label="Shared" />
+  <Import Project="..\Sensus.Service.Core\Sensus.Service.Core.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
