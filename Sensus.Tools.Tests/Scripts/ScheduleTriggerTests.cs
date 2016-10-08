@@ -159,14 +159,13 @@ namespace Sensus.Tools.Tests.Scripts
         {
             var schedule = new ScheduleTrigger
             {
-                MaxAge = TimeSpan.FromMinutes(10),
                 Windows   = "10:00, 10:10-10:20"
             };
 
             var fromDate = new DateTime(1986, 4, 18, 0, 0, 0);
             var afterDate = new DateTime(1986, 4, 18, 0, 0, 0);
 
-            var triggerTimes = schedule.GetTriggerTimes(fromDate, afterDate).Take(6).ToArray();
+            var triggerTimes = schedule.GetTriggerTimes(fromDate, afterDate, TimeSpan.FromMinutes(10)).Take(6).ToArray();
 
             Assert.AreEqual(new TimeSpan(0, 10, 0, 0), triggerTimes[0].TimeTill);
             Assert.IsTrue(new TimeSpan(0, 10, 10, 0) <= triggerTimes[1].TimeTill && triggerTimes[1].TimeTill <= new TimeSpan(0, 10, 20, 0));
@@ -222,14 +221,13 @@ namespace Sensus.Tools.Tests.Scripts
             var schedule = new ScheduleTrigger
             {
                 WindowExpiration = true,
-                MaxAge = TimeSpan.FromMinutes(5),
                 Windows = "10:00, 10:10-10:20"
             };
 
             var fromDate = new DateTime(1986, 4, 18, 0, 0, 0);
             var afterDate = new DateTime(1986, 4, 18, 0, 0, 0);
 
-            var triggerTimes = schedule.GetTriggerTimes(fromDate, afterDate).Take(6).ToArray();
+            var triggerTimes = schedule.GetTriggerTimes(fromDate, afterDate, TimeSpan.FromMinutes(5)).Take(6).ToArray();
 
             Assert.AreEqual(new TimeSpan(0, 10, 0, 0), triggerTimes[0].TimeTill);
             Assert.IsTrue(new TimeSpan(0, 10, 10, 0) <= triggerTimes[1].TimeTill && triggerTimes[1].TimeTill <= new TimeSpan(0, 10, 20, 0));

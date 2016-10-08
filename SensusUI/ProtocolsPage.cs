@@ -191,6 +191,7 @@ namespace SensusUI
                     if (await DisplayAlert("Confirm Cancel", "Are you sure you want to cancel " + selectedProtocol.Name + "?", "Yes", "No"))
                     {
                         selectedProtocol.CancelScheduledStart();
+
                         // rebind to pick up color and running status changes
                         Refresh();
                     }

@@ -32,7 +32,7 @@ namespace SensusService.Probes.User.Scripts
         private bool _enabled;
 
         private readonly Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>> _triggerHandlers;
-
+        private TimeSpan? _maxAge;
         private DateTime? _maxScheduledDate;
         private readonly List<string> _scheduledCallbackIds;
         private readonly ScheduleTrigger _scheduleTrigger;
@@ -77,10 +77,13 @@ namespace SensusService.Probes.User.Scripts
         [EntryDoubleUiProperty("Maximum Age (Mins.):", true, 7)]
         public double? MaxAgeMinutes
         {
-            get { return _scheduleTrigger.MaxAge?.TotalMinutes; }
+            get
+            {
+                return _maxAge?.TotalMinutes;
+            }
             set
             {
-                _scheduleTrigger.MaxAge = (value == null) ? (TimeSpan?)null : TimeSpan.FromMinutes(value.Value);
+                _maxAge = value == null ? default(TimeSpan?) : TimeSpan.FromMinutes(value.Value <= 0 ? 10 : value.Value);
             }
         }
 
@@ -126,6 +129,7 @@ namespace SensusService.Probes.User.Scripts
         {
             _scheduleTrigger = new ScheduleTrigger(); //this needs to be above
             _enabled = false;
+            _maxAge = null;
             _triggerHandlers = new Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>>();
             _scheduledCallbackIds = new List<string>();
 
@@ -287,7 +291,7 @@ namespace SensusService.Probes.User.Scripts
                 return;
             }
 
-            foreach (var triggerTime in _scheduleTrigger.GetTriggerTimes(DateTime.Now, _maxScheduledDate.Max(DateTime.Now)))
+            foreach (var triggerTime in _scheduleTrigger.GetTriggerTimes(DateTime.Now, _maxScheduledDate.Max(DateTime.Now), _maxAge))
             {
                 if (!Probe.Protocol.ContinueIndefinitely && triggerTime.DateTime > Probe.Protocol.EndDate)
                 {
@@ -406,6 +410,21 @@ namespace SensusService.Probes.User.Scripts
             SensusServiceHelper.Get().Logger.Log($"Running \"{Name}\".", LoggingLevel.Normal, GetType());
 
             script.RunTime = DateTimeOffset.UtcNow;
+
+            // scheduled scripts have their expiration dates set when they're scheduled. scripts triggered by other probes
+            // as well as on-start scripts will not yet have their expiration dates set. so check the script we've been 
+            // given and set the expiration date if needed.
+            if (script.ExpirationDate == null && _maxAge.HasValue)
+            {
+                script.ExpirationDate = script.Birthdate + _maxAge.Value;
+            }
+
+            // script could have already expired (e.g., if user took too long to open notification).
+            if (script.ExpirationDate.HasValue && script.ExpirationDate.Value < DateTime.Now)
+            {
+                SensusServiceHelper.Get().Logger.Log("Script expired before it was run.", LoggingLevel.Normal, GetType());
+                return;
+            }
 
             // do not run a one-shot script if it has already been run
             if (OneShot && RunTimes.Count > 0)

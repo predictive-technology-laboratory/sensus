@@ -582,33 +582,7 @@ namespace SensusService
             }
         }
 
-        [DateUiProperty("Start Date:", true, 16)]
-        public DateTime StartDate
-        {
-            get
-            {
-                return _startTimestamp;
-            }
-            set
-            {
-                _startTimestamp = new DateTime(value.Year, value.Month, value.Day, _startTimestamp.Hour, _startTimestamp.Minute, _startTimestamp.Second);
-            }
-        }
-
-        [TimeUiProperty("Start Time:", true, 17)]
-        public TimeSpan StartTime
-        {
-            get
-            {
-                return _startTimestamp.TimeOfDay;
-            }
-            set
-            {
-                _startTimestamp = new DateTime(_startTimestamp.Year, _startTimestamp.Month, _startTimestamp.Day, value.Hours, value.Minutes, value.Seconds);
-            }
-        }
-
-        [OnOffUiProperty("Start Immediately:", true, 18)]
+        [OnOffUiProperty("Start Immediately:", true, 16)]
         public bool StartImmediately
         {
             get
@@ -621,7 +595,46 @@ namespace SensusService
             }
         }
 
-        [DateUiProperty("End Date:", true, 19)]
+        [DateUiProperty("Start Date:", true, 17)]
+        public DateTime StartDate
+        {
+            get
+            {
+                return _startTimestamp;
+            }
+            set
+            {
+                _startTimestamp = new DateTime(value.Year, value.Month, value.Day, _startTimestamp.Hour, _startTimestamp.Minute, _startTimestamp.Second);
+            }
+        }
+
+        [TimeUiProperty("Start Time:", true, 18)]
+        public TimeSpan StartTime
+        {
+            get
+            {
+                return _startTimestamp.TimeOfDay;
+            }
+            set
+            {
+                _startTimestamp = new DateTime(_startTimestamp.Year, _startTimestamp.Month, _startTimestamp.Day, value.Hours, value.Minutes, value.Seconds);
+            }
+        }
+
+        [OnOffUiProperty("Continue Indefinitely:", true, 19)]
+        public bool ContinueIndefinitely
+        {
+            get
+            {
+                return _continueIndefinitely;
+            }
+            set
+            {
+                _continueIndefinitely = value;
+            }
+        }
+
+        [DateUiProperty("End Date:", true, 20)]
         public DateTime EndDate
         {
             get
@@ -634,7 +647,7 @@ namespace SensusService
             }
         }
 
-        [TimeUiProperty("End Time:", true, 20)]
+        [TimeUiProperty("End Time:", true, 21)]
         public TimeSpan EndTime
         {
             get
@@ -644,19 +657,6 @@ namespace SensusService
             set
             {
                 _endTimestamp = new DateTime(_endTimestamp.Year, _endTimestamp.Month, _endTimestamp.Day, value.Hours, value.Minutes, value.Seconds);
-            }
-        }
-
-        [OnOffUiProperty("Continue Indefinitely:", true, 21)]
-        public bool ContinueIndefinitely
-        {
-            get
-            {
-                return _continueIndefinitely;
-            }
-            set
-            {
-                _continueIndefinitely = value;
             }
         }
 
@@ -1140,10 +1140,11 @@ namespace SensusService
                     _scheduledStartCallbackId = null;
                 });
 #if __ANDROID__
-            }, null, $"Started study {Name}.");
+            }, null, $"Started study: {Name}.");
 #elif __IOS__
             }, null, $"Please open to start study {Name}.");
 #endif
+
             _scheduledStartCallbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(startProtocolCallback, (int)timeUntilStart.TotalMilliseconds);
         }
 
@@ -1151,11 +1152,15 @@ namespace SensusService
         {
             SensusServiceHelper.Get().UnscheduleCallback(_scheduledStartCallbackId);
             _scheduledStartCallbackId = null;
+
+            // we might have scheduled a stop when starting the protocol, so be sure to cancel it.
+            CancelScheduledStop();
         }
 
         public void ScheduleStop()
         {
             TimeSpan timeUntilStop = _endTimestamp - DateTime.Now;
+
             ScheduledCallback stopProtocolCallback = new ScheduledCallback("Stop protocol", (callbackId, cancellationToken, letDeviceSleepCallback) =>
             {
                 return Task.Run(() =>
@@ -1163,8 +1168,11 @@ namespace SensusService
                     Stop();
                     _scheduledStopCallbackId = null;
                 });
-
-            }, null, $"Stopped study {Name}.");
+#if __ANDROID__
+            }, null, $"Stopped study: {Name}.");
+#elif __IOS__
+            }, null, $"Please open to stop study: {Name}.");
+#endif
 
             _scheduledStopCallbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(stopProtocolCallback, (int)timeUntilStop.TotalMilliseconds);
         }
@@ -1180,10 +1188,14 @@ namespace SensusService
             if (!_probes.Any(probe => probe.Enabled))
             {
                 SensusServiceHelper.Get().FlashNotificationAsync("Probes not enabled. Cannot start.");
+                callback?.Invoke();
+                return;
+            }
 
-                if (callback != null)
-                    callback();
-
+            if (!_continueIndefinitely && _endTimestamp <= DateTime.Now)
+            {
+                SensusServiceHelper.Get().FlashNotificationAsync("You cannot start this study because it has already ended.");
+                callback?.Invoke();
                 return;
             }
 
@@ -1252,8 +1264,7 @@ namespace SensusService
                             SensusServiceHelper.Get().FlashNotificationAsync("Incorrect code entered.");
                     }
 
-                    if (callback != null)
-                        callback();
+                    callback?.Invoke();
                 });
         }
 
@@ -1413,6 +1424,9 @@ namespace SensusService
 
                 if (ProtocolRunningChanged != null)
                     ProtocolRunningChanged(this, _running);
+
+                // the user might have force-stopped the protocol before the scheduled stop fired. don't fire the scheduled stop.
+                CancelScheduledStop();
 
                 SensusServiceHelper.Get().RemoveRunningProtocolId(_id);
 

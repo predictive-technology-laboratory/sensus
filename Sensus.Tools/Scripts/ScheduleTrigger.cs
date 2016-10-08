@@ -59,7 +59,6 @@ namespace Sensus.Tools.Scripts
             }
         }
 
-        public TimeSpan? MaxAge { get; set; }
         public bool WindowExpiration { get; set; }
         #endregion
 
@@ -77,7 +76,8 @@ namespace Sensus.Tools.Scripts
         /// <returns>Trigger times.</returns>
         /// <param name="from">Get trigger times relative to this time.</param>
         /// <param name="after">Get trigger times after this time.</param>
-        public IEnumerable<ScriptTriggerTime> GetTriggerTimes(DateTime from, DateTime after)
+        /// <param name="maxAge">Maximum age of the trigger.</param>
+        public IEnumerable<ScriptTriggerTime> GetTriggerTimes(DateTime from, DateTime after, TimeSpan? maxAge = null)
         {
             var eightDays = TimeSpan.FromDays(8);
             var oneDay = TimeSpan.FromDays(1);
@@ -88,7 +88,7 @@ namespace Sensus.Tools.Scripts
                 for (; after - from < eightDays; after += oneDay)
                 {
                     // It is important that these are ordered otherwise we might skip windows since we use the _maxScheduledDate to determine which schedule comes next.
-                    foreach (var triggerTime in _windows.Select(window => window.GetNextTriggerTime(from, after, WindowExpiration, MaxAge)).OrderBy(window => window.TimeTill).ToArray())
+                    foreach (var triggerTime in _windows.Select(window => window.GetNextTriggerTime(from, after, WindowExpiration, maxAge)).OrderBy(window => window.TimeTill).ToArray())
                     {
                         yield return triggerTime;
                     }

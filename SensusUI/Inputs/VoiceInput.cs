@@ -127,7 +127,7 @@ namespace SensusUI.Inputs
                     else
                         daysAgoStr = promptAge.TotalDays + " days ago";
 
-                    outputMessage = string.Format(_outputMessageRerun, daysAgoStr + " at " + firstRunTimestamp.Value.ToLocalTime().DateTime.ToString("h:mm tt"));
+                    outputMessage = string.Format(_outputMessageRerun, daysAgoStr + " at " + firstRunTimestamp.Value.LocalDateTime.ToString("h:mm tt"));
                 }
                 #endregion
 

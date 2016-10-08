@@ -46,37 +46,51 @@ namespace SensusService.Probes.User.Scripts
 
         [JsonIgnore]
         public bool Expired => ExpirationDate < DateTime.Now;
+
+        /// <summary>
+        /// Gets the birthdate of the script.
+        /// </summary>
+        /// <value>The birthdate.</value>
+        /// <remarks>
+        /// The scheduled time will always be slightly before the run time, depending on latencies in the android/ios alarm/notification systems.
+        /// Furthermore, on ios notifications are delivered to the tray and not to the app when the app is backgrounded. The user must open the 
+        /// notification in order for the script to run. In this case the scheduled time could significantly precede the run time. In any case, 
+        /// the scheduled time is the right thing to use as the script's birthdate.
+        /// </remarks>
+        [JsonIgnore]
+        public DateTime Birthdate => (ScheduledRunTime ?? RunTime).Value.LocalDateTime;
         #endregion
 
         #region Constructors
         public Script(Script script)
         {
-            Id            = script.Id;
-            InputGroups   = script.InputGroups.Select(g => new InputGroup(g)).ToObservableCollection();
-            Runner        = script.Runner;
+            Id = script.Id;
+            Runner = script.Runner;
+            InputGroups = script.InputGroups.Select(g => new InputGroup(g)).ToObservableCollection();
             ScheduledRunTime = script.ScheduledRunTime;
-            RunTime       = script.RunTime;
+            RunTime = script.RunTime;
             PreviousDatum = script.PreviousDatum;
-            CurrentDatum  = script.CurrentDatum;
+            CurrentDatum = script.CurrentDatum;
+            ExpirationDate = script.ExpirationDate;
         }
 
-        public Script(Script script, Guid guid): this(script)
+        public Script(Script script, Guid guid) : this(script)
         {
             Id = guid.ToString();
         }
-        
+
         public Script(ScriptRunner runner)
         {
-            Id          = Guid.NewGuid().ToString();
-            Runner      = runner;
+            Id = Guid.NewGuid().ToString();
+            Runner = runner;
             InputGroups = new ObservableCollection<InputGroup>();
         }
 
         [JsonConstructor]
         private Script(ScriptRunner runner, string id, ObservableCollection<InputGroup> inputGroups)
         {
-            Id          = id;
-            Runner      = runner;            
+            Id = id;
+            Runner = runner;
             InputGroups = inputGroups;
         }
         #endregion

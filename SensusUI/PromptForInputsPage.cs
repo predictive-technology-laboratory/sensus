@@ -99,7 +99,7 @@ namespace SensusUI
             // for prompts that have been shown before, display the original timestamp.
             if (firstPromptTimestamp.HasValue)
             {
-                DateTime firstDisplayDateTime = firstPromptTimestamp.Value.ToLocalTime().DateTime;
+                DateTime firstDisplayDateTime = firstPromptTimestamp.Value.LocalDateTime;
 
                 string displayLapseDayDesc;
                 if (firstDisplayDateTime.Date == DateTime.Now.Date)
@@ -111,7 +111,7 @@ namespace SensusUI
 
                 contentLayout.Children.Add(new Label
                 {
-                    Text = "This form was created " + displayLapseDayDesc + " at " + firstDisplayDateTime.ToShortTimeString() + ".",
+                    Text = "This survey was issued " + displayLapseDayDesc + " at " + firstDisplayDateTime.ToShortTimeString() + ".",
                     FontSize = 20,
                     HorizontalOptions = LayoutOptions.Start
                 });
