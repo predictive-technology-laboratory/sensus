@@ -12,12 +12,146 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 using System;
-namespace Sensus.ToolsTests1
+using SensusService;
+using SensusService.Probes;
+using Xamarin.Forms;
+using Sensus.Tools;
+
+namespace Sensus.Local.Tests
 {
-    public class TestSensusServiceHelper
+    public class TestSensusServiceHelper : SensusServiceHelper
     {
-        public TestSensusServiceHelper()
+        public TestSensusServiceHelper(IConcurrent concurrent): base (concurrent)
         {
+            
+        }
+
+        public override string DeviceId
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public override bool IsCharging
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public override string OperatingSystem
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public override string Version
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public override bool WiFiConnected
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        protected override bool IsOnMainThread
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public override void BringToForeground()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool EnableProbeWhenEnablingAll(Probe probe)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override ImageSource GetQrCodeImageSource(string contents)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void IssueNotificationAsync(string message, string id, bool playSound, bool vibrate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void KeepDeviceAwake()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void LetDeviceSleep()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void RunVoicePromptAsync(string prompt, Action postDisplayCallback, Action<string> callback)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void SendEmailAsync(string toAddress, string subject, string message)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void ShareFileAsync(string path, string subject, string mimeType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void TextToSpeechAsync(string text, Action callback)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void InitializeXamarinInsights()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void ProtectedFlashNotificationAsync(string message, bool flashLaterIfNotVisible, TimeSpan duration, Action callback)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void ScheduleOneTimeCallback(string callbackId, int delayMS)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void UnscheduleCallbackPlatformSpecific(string callbackId)
+        {
+            throw new NotImplementedException();
         }
     }
 }
