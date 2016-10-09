@@ -15,17 +15,11 @@ using System;
 using SensusService;
 using SensusService.Probes;
 using Xamarin.Forms;
-using Sensus.Tools;
 
 namespace Sensus.Local.Tests
 {
     public class TestSensusServiceHelper : SensusServiceHelper
     {
-        public TestSensusServiceHelper(IConcurrent concurrent): base (concurrent)
-        {
-            
-        }
-
         public override string DeviceId
         {
             get

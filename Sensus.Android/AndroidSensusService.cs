@@ -21,6 +21,8 @@ using System.Collections.Generic;
 using SensusUI;
 using Xamarin.Forms;
 using System.Linq;
+using Sensus.Service.Android.Context;
+using Sensus.Service.Tools.Context;
 
 namespace Sensus.Android
 {
@@ -31,7 +33,7 @@ namespace Sensus.Android
     /// to support integration with other apps.
     /// </summary>
     [Service(Exported = false)]
-    public class AndroidSensusService : Service
+    public class AndroidSensusService : global::Android.App.Service
     {
         private List<AndroidSensusServiceBinder> _bindings;
         private Handler _mainThreadHandler;
@@ -56,6 +58,7 @@ namespace Sensus.Android
             // this handler.
             _mainThreadHandler = new Handler();
 
+            SensusContext.Current = new AndroidSensusContext();
             SensusServiceHelper.Initialize(() => new AndroidSensusServiceHelper());
 
             AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
@@ -147,7 +150,7 @@ namespace Sensus.Android
                             serviceHelper.BringToForeground();
 
                             // display the pending scripts page if it is not already on the top of the navigation stack
-                            serviceHelper.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                             {
                                 IReadOnlyList<Page> navigationStack = Xamarin.Forms.Application.Current.MainPage.Navigation.NavigationStack;
                                 Page topPage = navigationStack.Count == 0 ? null : navigationStack.Last();

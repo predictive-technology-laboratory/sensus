@@ -16,6 +16,7 @@ using System;
 using Xamarin.Forms;
 using SensusService;
 using System.Timers;
+using Sensus.Service.Tools.Context;
 
 namespace SensusUI
 {
@@ -79,7 +80,7 @@ namespace SensusUI
 
                 timer.Elapsed += (o, e) =>
                 {
-                    SensusServiceHelper.Get().MainThreadSynchronizer.ExecuteThreadSafe(() =>
+                    SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                     {
                         int secondsLeftBeforeBarcodeExpiration = (int)(SensusServiceHelper.PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS - (DateTimeOffset.UtcNow - participationRewardDatum.Timestamp).TotalSeconds);
 

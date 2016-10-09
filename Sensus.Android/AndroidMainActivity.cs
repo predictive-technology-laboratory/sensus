@@ -30,6 +30,7 @@ using Plugin.CurrentActivity;
 using Android.Widget;
 using Plugin.Permissions;
 using System.Linq;
+using Sensus.Service.Tools.Context;
 using ZXing.Mobile;
 
 [assembly: MetaData("com.facebook.sdk.ApplicationId", Value = "@string/app_id")]
@@ -176,7 +177,7 @@ namespace Sensus.Android
                 SensusServiceHelper.Get().ClearPendingSurveysNotificationAsync();
 
                 // now that the service connection has been established, dismiss the wait dialog and show protocols.
-                SensusServiceHelper.Get().MainThreadSynchronizer.ExecuteThreadSafe(serviceBindWaitDialog.Dismiss);
+                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(serviceBindWaitDialog.Dismiss);
 
             }).Start();
         }
@@ -318,7 +319,7 @@ namespace Sensus.Android
                     }
                     catch (Exception ex)
                     {
-                        SensusServiceHelper.Get().MainThreadSynchronizer.ExecuteThreadSafe(() =>
+                        SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                         {
                             new AlertDialog.Builder(this).SetTitle("Failed to get protocol").SetMessage(ex.Message).Show();
                         });

@@ -19,6 +19,7 @@ using SensusService.Exceptions;
 using System.Linq;
 using SensusUI.Inputs;
 using System.Threading;
+using Sensus.Service.Tools.Context;
 using SensusService;
 
 namespace SensusUI
@@ -260,7 +261,7 @@ namespace SensusUI
                 {
                     // it is possible for the token to be canceled from a thread other than the UI thread. the finished callback will do 
                     // things with the UI, so ensure that the finished callback is run on the UI thread.
-                    SensusServiceHelper.Get().MainThreadSynchronizer.ExecuteThreadSafe(() =>
+                    SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                     {
                         SensusServiceHelper.Get().Logger.Log("Cancellation token has been cancelled.", LoggingLevel.Normal, GetType());
                         _finishedCallback(Result.Cancel);

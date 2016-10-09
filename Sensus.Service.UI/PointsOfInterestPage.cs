@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Sensus.Service.Tools.Context;
 using SensusService;
 using SensusService.Probes.Location;
 using Xamarin.Forms;
@@ -104,7 +105,7 @@ namespace SensusUI
                         {
                             Action<List<Position>> addPOI = new Action<List<Position>>(poiPositions =>
                             {
-                                SensusServiceHelper.Get().MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                                 {
                                     if (poiPositions != null && poiPositions.Count > 0 && await DisplayAlert("Add POI?", "Would you like to add " + poiPositions.Count + " point(s) of interest?", "Yes", "No"))
                                         foreach (Position poiPosition in poiPositions)
@@ -146,7 +147,7 @@ namespace SensusUI
 
         private void Bind()
         {
-            SensusServiceHelper.Get().MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
                 _pointsOfInterestList.ItemsSource = null;
                 _pointsOfInterestList.ItemsSource = _pointsOfInterest;

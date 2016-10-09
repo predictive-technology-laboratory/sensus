@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Sensus.Service.Tools.Context;
 using Xamarin.Forms;
 using SensusUI.Inputs;
 
@@ -162,7 +163,7 @@ namespace SensusUI
 
             _protocolRunningChangedAction = (o, running) =>
             {
-                SensusServiceHelper.Get().MainThreadSynchronizer.ExecuteThreadSafe(() =>
+                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                 {
                     editLocalDataStoreButton.IsEnabled = createLocalDataStoreButton.IsEnabled = editRemoteDataStoreButton.IsEnabled = createRemoteDataStoreButton.IsEnabled = !running;
                 });
@@ -210,7 +211,7 @@ namespace SensusUI
                             else
                             {
                                 _protocol.LockPasswordHash = SensusServiceHelper.Get().GetHash(password);
-                                SensusServiceHelper.Get().MainThreadSynchronizer.ExecuteThreadSafe(() => lockButton.Text = "Unlock");
+                                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() => lockButton.Text = "Unlock");
                             }
                         });
                 }

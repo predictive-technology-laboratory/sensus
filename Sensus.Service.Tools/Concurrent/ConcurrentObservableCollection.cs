@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
+using Sensus.Service.Tools.Context;
 
 namespace Sensus.Tools
 {
@@ -54,6 +55,12 @@ namespace Sensus.Tools
         #endregion
 
         #region Constructors
+        public ConcurrentObservableCollection()
+        {
+            _concurrent = SensusContext.Current.MainThreadSynchronizer;
+            _observableCollection = new ObservableCollection<T>();
+        }
+
         public ConcurrentObservableCollection(IConcurrent concurrent)
         {
             _concurrent           = concurrent;

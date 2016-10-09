@@ -39,7 +39,7 @@ using Plugin.Permissions.Abstractions;
 using System.Threading.Tasks;
 using SensusService.Probes.User.Scripts;
 using System.Collections.Concurrent;
-
+using Sensus.Service.Tools.Context;
 #if __IOS__
 using XLabs.Platform.Device;
 #endif
@@ -52,7 +52,6 @@ namespace SensusService
     public abstract class SensusServiceHelper
     {
         #region static members
-
         private static SensusServiceHelper SINGLETON;
         public const string SENSUS_CALLBACK_KEY = "SENSUS-CALLBACK";
         public const string SENSUS_CALLBACK_ID_KEY = "SENSUS-CALLBACK-ID";
@@ -64,15 +63,21 @@ namespace SensusService
         public const int PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS = 60;
         protected const string XAMARIN_INSIGHTS_APP_KEY = "";
         private const string ENCRYPTION_KEY = "";
-        public static readonly string SHARE_DIRECTORY = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "share");
-        private static readonly string LOG_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
-        private static readonly string SERIALIZATION_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_service_helper.json");
+
+        public static readonly string SHARE_DIRECTORY =
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "share");
+
+        private static readonly string LOG_PATH =
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
+
+        private static readonly string SERIALIZATION_PATH =
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_service_helper.json");
 
 #if DEBUG || UNIT_TESTING
         // test every 30 seconds in debug
         public const int HEALTH_TEST_DELAY_MS = 30000;
 #elif RELEASE
-        // test every 15 minutes in release
+// test every 15 minutes in release
         public const int HEALTH_TEST_DELAY_MS = 900000;
 #endif
 
@@ -99,8 +104,10 @@ namespace SensusService
                 }
             },
 
-            MissingMemberHandling = MissingMemberHandling.Ignore,  // need to ignore missing members for cross-platform deserialization
-            Formatting = Formatting.Indented  // must use indented formatting in order for cross-platform type conversion to work (depends on each "$type" name-value pair being on own line).
+            MissingMemberHandling = MissingMemberHandling.Ignore,
+            // need to ignore missing members for cross-platform deserialization
+            Formatting = Formatting.Indented
+            // must use indented formatting in order for cross-platform type conversion to work (depends on each "$type" name-value pair being on own line).
             #endregion
         };
 
@@ -121,102 +128,96 @@ namespace SensusService
         /// <param name="createNew">Function for creating a new service helper, if one is needed.</param>
         public static void Initialize(Func<SensusServiceHelper> createNew)
         {
-            if (SINGLETON == null)
+            if (SINGLETON != null)
             {
-                Exception deserializeException;
+                SINGLETON.Logger.Log("Serivce helper already initialized. Nothing to do.", LoggingLevel.Normal, SINGLETON.GetType());
+
+                return;
+            }
+
+            Exception deserializeException;
+            if (!TryDeserializeSingleton(out deserializeException))
+            {
+                // we failed to deserialize. wait a bit and try again. but don't wait too long since we're holding up the 
+                // app-load sequence, which is not allowed to take too much time.
+                Thread.Sleep(5000);
+
                 if (!TryDeserializeSingleton(out deserializeException))
                 {
-                    // we failed to deserialize. wait a bit and try again. but don't wait too long since we're holding up the 
-                    // app-load sequence, which is not allowed to take too much time.
-                    Thread.Sleep(5000);
-
-                    if (!TryDeserializeSingleton(out deserializeException))
+                    // we really couldn't deserialize the service helper! try to create a new service helper...
+                    try
                     {
-                        // we really couldn't deserialize the service helper! try to create a new service helper...
+                        SINGLETON = createNew();
+                    }
+                    catch (Exception singletonCreationException)
+                    {
+                        #region crash app and report to insights
+
+                        string error = "Failed to construct service helper:  " + singletonCreationException.Message + Environment.NewLine + singletonCreationException.StackTrace;
+                        Console.Error.WriteLine(error);
+                        Exception exceptionToReport = new Exception(error);
+
                         try
                         {
-                            SINGLETON = createNew();
+                            Insights.Report(exceptionToReport, Insights.Severity.Error);
                         }
-                        catch (Exception singletonCreationException)
+                        catch (Exception insightsReportException)
                         {
-                            #region crash app and report to insights
-                            string error = "Failed to construct service helper:  " + singletonCreationException.Message + System.Environment.NewLine + singletonCreationException.StackTrace;
-                            Console.Error.WriteLine(error);
-                            Exception exceptionToReport = new Exception(error);
-
-                            try
-                            {
-                                Insights.Report(exceptionToReport, Xamarin.Insights.Severity.Error);
-                            }
-                            catch (Exception insightsReportException)
-                            {
-                                Console.Error.WriteLine("Failed to report exception to Xamarin Insights:  " + insightsReportException.Message);
-                            }
-
-                            throw exceptionToReport;
-                            #endregion
+                            Console.Error.WriteLine("Failed to report exception to Xamarin Insights:  " + insightsReportException.Message);
                         }
 
-                        SINGLETON.Logger.Log("Repeatedly failed to deserialize service helper. Most recent exception:  " + deserializeException.Message, LoggingLevel.Normal, SINGLETON.GetType());
-                        SINGLETON.Logger.Log("Created new service helper after failing to deserialize the old one.", LoggingLevel.Normal, SINGLETON.GetType());
+                        throw exceptionToReport;
+
+                        #endregion
                     }
+
+                    SINGLETON.Logger.Log("Repeatedly failed to deserialize service helper. Most recent exception:  " + deserializeException.Message, LoggingLevel.Normal, SINGLETON.GetType());
+                    SINGLETON.Logger.Log("Created new service helper after failing to deserialize the old one.", LoggingLevel.Normal, SINGLETON.GetType());
                 }
             }
-            else
-                SINGLETON.Logger.Log("Serivce helper already initialized. Nothing to do.", LoggingLevel.Normal, SINGLETON.GetType());
         }
 
         private static bool TryDeserializeSingleton(out Exception ex)
         {
             ex = null;
-            string errorMessage = null;
-
-            // read bytes
-            byte[] encryptedJsonBytes = null;
             try
             {
-                encryptedJsonBytes = ReadAllBytes(SERIALIZATION_PATH);
-            }
-            catch (Exception exception)
-            {
-                errorMessage = "Failed to read service helper file into byte array:  " + exception.Message;
-                Console.Error.WriteLine(errorMessage);
-            }
+                byte[] encryptedJsonBytes;
+                try
+                {
+                    encryptedJsonBytes = ReadAllBytes(SERIALIZATION_PATH);
+                }
+                catch (Exception exception)
+                {
+                    throw new Exception($"Failed to read service helper file into byte array:  {exception.Message}");
+                }
 
-            if (encryptedJsonBytes != null)
-            {
-                // decrypt JSON
-                string decryptedJSON = null;
+                string decryptedJSON;
                 try
                 {
                     decryptedJSON = Decrypt(encryptedJsonBytes);
                 }
                 catch (Exception exception)
                 {
-                    errorMessage = "Failed to decrypt service helper byte array (length=" + encryptedJsonBytes.Length + ") into JSON:  " + exception.Message;
-                    Console.Error.WriteLine(errorMessage);
+                    throw new Exception($"Failed to decrypt service helper byte array (length={encryptedJsonBytes.Length}) into JSON:  {exception.Message}");
                 }
 
-                if (decryptedJSON != null)
+                try
                 {
-                    // deserialize service helper
-                    try
-                    {
-                        SINGLETON = JsonConvert.DeserializeObject<SensusServiceHelper>(decryptedJSON, JSON_SERIALIZER_SETTINGS);
-                    }
-                    catch (Exception exception)
-                    {
-                        errorMessage = "Failed to deserialize service helper JSON (length=" + decryptedJSON.Length + ") into service helper:  " + exception.Message;
-                        Console.Error.WriteLine(errorMessage);
-                    }
+                    SINGLETON = JsonConvert.DeserializeObject<SensusServiceHelper>(decryptedJSON, JSON_SERIALIZER_SETTINGS);
+                }
+                catch (Exception exception)
+                {
+                    throw new Exception($"Failed to deserialize service helper JSON (length={decryptedJSON.Length}) into service helper:  {exception.Message}");
                 }
             }
+            catch (Exception exception)
+            {
+                ex = exception;
+                Console.Error.WriteLine(exception.Message);
+            }
 
-            if (errorMessage != null)
-                ex = new Exception(errorMessage);
-
-            if (SINGLETON != null)
-                SINGLETON.Logger.Log("Deserialized service helper with " + SINGLETON.RegisteredProtocols.Count + " protocols.", LoggingLevel.Normal, SINGLETON.GetType());
+            SINGLETON?.Logger.Log("Deserialized service helper with " + SINGLETON.RegisteredProtocols.Count + " protocols.", LoggingLevel.Normal, SINGLETON.GetType());
 
             return SINGLETON != null;
         }
@@ -267,6 +268,14 @@ namespace SensusService
         public static double GetFileSizeMB(string path)
         {
             return new FileInfo(path).Length / (1024d * 1024d);
+        }
+
+        /// <remarks>
+        /// For testing purposes only
+        /// </remarks>
+        public static void ClearSingleton()
+        {
+            SINGLETON = null;
         }
 
         #region encryption
@@ -440,9 +449,6 @@ namespace SensusService
             }
         }
 
-        [JsonIgnore]
-        public IConcurrent MainThreadSynchronizer { get; }
-
         #region platform-specific properties
 
         [JsonIgnore]
@@ -533,17 +539,17 @@ namespace SensusService
 
         #endregion
 
-        protected SensusServiceHelper(IConcurrent mainThreadSynchronizer)
+        #region Constructors
+        [JsonConstructor]
+        protected SensusServiceHelper()
         {
             if (SINGLETON != null)
             {
                 throw new SensusException("Attempted to construct new service helper when singleton already existed.");
             }
 
-            MainThreadSynchronizer = mainThreadSynchronizer;
-
-            _registeredProtocols = new ConcurrentObservableCollection<Protocol>(new LockConcurrent());
-            _scriptsToRun        = new ConcurrentObservableCollection<Script>(MainThreadSynchronizer);
+            _registeredProtocols = new ConcurrentObservableCollection<Protocol>();
+            _scriptsToRun        = new ConcurrentObservableCollection<Script>();
 
             _runningProtocolIds   = new List<string>();
             _healthTestCallbackId = null;
@@ -617,6 +623,7 @@ namespace SensusService
                 }
             }
         }
+        #endregion
 
         public string GetHash(string s)
         {
@@ -1206,7 +1213,7 @@ namespace SensusService
                         {
                             BringToForeground();
 
-                            MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                             {
                                 // catch any exceptions from preparing and displaying the prompts page
                                 try
@@ -1385,7 +1392,7 @@ namespace SensusService
 
         public void GetPositionsFromMapAsync(Xamarin.Forms.Maps.Position address, string newPinName, Action<List<Xamarin.Forms.Maps.Position>> callback)
         {
-            MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
             {
                 if (await ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
                     FlashNotificationAsync("Geolocation is not permitted on this device. Cannot display map.");
@@ -1405,7 +1412,7 @@ namespace SensusService
 
         public void GetPositionsFromMapAsync(string address, string newPinName, Action<List<Xamarin.Forms.Maps.Position>> callback)
         {
-            MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
             {
                 if (await ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
                     FlashNotificationAsync("Geolocation is not permitted on this device. Cannot display map.");
@@ -1515,7 +1522,7 @@ namespace SensusService
                 // display rationale for request to the user if needed
                 if (rationale != null && await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(permission))
                 {
-                    MainThreadSynchronizer.ExecuteThreadSafe(() =>
+                    SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                     {
                         Application.Current.MainPage.DisplayAlert("Permission Request", $"On the next screen, Sensus will request access to your device's {permission.ToString().ToUpper()}. {rationale}", "OK").Wait();
                     });

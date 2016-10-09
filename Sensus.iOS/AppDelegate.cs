@@ -29,6 +29,8 @@ using SensusService.Probes;
 using Syncfusion.SfChart.XForms.iOS.Renderers;
 using System.Collections.Generic;
 using System.Linq;
+using Sensus.Service.iOS.Context;
+using Sensus.Service.Tools.Context;
 
 namespace Sensus.iOS
 {
@@ -40,6 +42,7 @@ namespace Sensus.iOS
     {
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
+            SensusContext.Current = new iOSSensusContext();
             SensusServiceHelper.Initialize(() => new iOSSensusServiceHelper());
 
             // facebook settings
@@ -181,7 +184,7 @@ namespace Sensus.iOS
                     if (notificationId != null && notificationId.ToString() == SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID)
                     {
                         // display the pending scripts page if it is not already on the top of the navigation stack
-                        serviceHelper.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                        SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                         {
                             IReadOnlyList<Page> navigationStack = Xamarin.Forms.Application.Current.MainPage.Navigation.NavigationStack;
                             Page topPage = navigationStack.Count == 0 ? null : navigationStack.Last();

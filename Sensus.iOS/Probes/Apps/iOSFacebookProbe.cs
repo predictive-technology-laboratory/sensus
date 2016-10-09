@@ -20,6 +20,7 @@ using System.Threading;
 using Facebook.CoreKit;
 using Facebook.LoginKit;
 using Foundation;
+using Sensus.Service.Tools.Context;
 using SensusService;
 using SensusService.Exceptions;
 using SensusService.Probes.Apps;
@@ -53,7 +54,7 @@ namespace Sensus.iOS.Probes.Apps
                 bool loginCancelled = false;
                 string accessTokenError = null;
 
-                SensusServiceHelper.Get().MainThreadSynchronizer.ExecuteThreadSafe(() =>
+                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                 {
                     try
                     {
@@ -134,7 +135,7 @@ namespace Sensus.iOS.Probes.Apps
                 List<ManualResetEvent> responseWaits = new List<ManualResetEvent>();
                 Exception exception = null;  // can't throw exception from within the UI thread -- it will crash the app. use this variable to check whether an exception did occur.
 
-                SensusServiceHelper.Get().MainThreadSynchronizer.ExecuteThreadSafe(() =>
+                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                 {
                     try
                     {

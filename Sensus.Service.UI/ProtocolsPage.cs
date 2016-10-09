@@ -23,7 +23,7 @@ using SensusService.Exceptions;
 using System.Threading;
 using ZXing;
 using Plugin.Permissions.Abstractions;
-
+using Sensus.Service.Tools.Context;
 #if __ANDROID__
 using Sensus.Android;
 #endif
@@ -116,7 +116,7 @@ namespace SensusUI
 
         private void Refresh()
         {
-            SensusServiceHelper.Get().MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
                 Bind();
             });

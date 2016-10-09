@@ -19,6 +19,7 @@ using SensusService.Probes.User.Scripts;
 using SensusUI.Inputs;
 using Xamarin.Forms;
 using System.Globalization;
+using Sensus.Service.Tools.Context;
 
 namespace SensusUI
 {
@@ -127,7 +128,7 @@ namespace SensusUI
 
                                     // once inputs are stored, they should not be stored again, nor should the user be able to modify them if the script is viewed again.
                                     input.NeedsToBeStored = false;
-                                    SensusServiceHelper.Get().MainThreadSynchronizer.ExecuteThreadSafe(() => input.Enabled = false);
+                                    SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() => input.Enabled = false);
                                 }
                             }
                         }

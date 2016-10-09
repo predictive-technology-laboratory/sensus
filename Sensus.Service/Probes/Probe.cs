@@ -21,6 +21,7 @@ using System.Reflection;
 using System.Threading;
 using Syncfusion.SfChart.XForms;
 using System.Threading.Tasks;
+using Sensus.Service.Tools.Context;
 
 namespace SensusService.Probes
 {
@@ -36,7 +37,7 @@ namespace SensusService.Probes
             List<Probe> probes = null;
 
             // the reflection stuff we do below (at least on android) needs to be run on the main thread.
-            SensusServiceHelper.Get().MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
                 probes = Assembly.GetExecutingAssembly().GetTypes().Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(Probe))).Select(t => Activator.CreateInstance(t) as Probe).OrderBy(p => p.DisplayName).ToList();
             });

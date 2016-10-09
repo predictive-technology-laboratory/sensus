@@ -10,5 +10,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\IConcurrentTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Context\TestSensusContext.cs" />
   </ItemGroup>
 </Project>

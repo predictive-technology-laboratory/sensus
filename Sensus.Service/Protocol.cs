@@ -33,6 +33,7 @@ using SensusService.Probes.Apps;
 using SensusService.Probes.Movement;
 using System.Text;
 using System.Threading.Tasks;
+using Sensus.Service.Tools.Context;
 using SensusService.Probes.User.MicrosoftBand;
 using SensusService.Probes.User.Scripts;
 
@@ -239,7 +240,7 @@ namespace SensusService
                     // always deserialize protocols on the main thread (e.g., since a looper is required for android). also, disable
                     // flash notifications so we don't get any messages that result from properties being set within the protocol.
                     SensusServiceHelper.Get().FlashNotificationsEnabled = false;
-                    SensusServiceHelper.Get().MainThreadSynchronizer.ExecuteThreadSafe(() =>
+                    SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                     {
                         try
                         {
@@ -301,7 +302,7 @@ namespace SensusService
                         else
                         {
                             protocolsPage = new ProtocolsPage();
-                            SensusServiceHelper.Get().MainThreadSynchronizer.ExecuteThreadSafe(protocolsPage.Bind);
+                            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(protocolsPage.Bind);
                         }
 
                         // ask user to start protocol
