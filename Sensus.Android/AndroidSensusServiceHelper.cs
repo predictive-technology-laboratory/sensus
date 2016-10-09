@@ -144,11 +144,11 @@ namespace Sensus.Android
             }
         }
 
-        public AndroidSensusServiceHelper(): base(new Sensus.Android.Tools.MainConcurrent()) 
+        public AndroidSensusServiceHelper()
         {
             _actionsToRunUsingMainActivity = new List<Action<AndroidMainActivity>>();
-            _callbackIdPendingIntent = new Dictionary<string, PendingIntent>();
-            _userDeniedBluetoothEnable = false;
+            _callbackIdPendingIntent       = new Dictionary<string, PendingIntent>();
+            _userDeniedBluetoothEnable     = false;
         }
 
         public void SetService(AndroidSensusService service)
