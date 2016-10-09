@@ -25,7 +25,7 @@ namespace Sensus.Local.Tests
     public class SensusServiceHelperTests
     {
         [Test]
-        public void Test()
+        public void SerializeTest()
         {
             TestSensusServiceHelper service = new TestSensusServiceHelper(new LockConcurrent());
             SensusService.SensusServiceHelper.Initialize(() => service);
@@ -37,7 +37,7 @@ namespace Sensus.Local.Tests
         }
 
         [Test]
-        public void RegisteredProtocolTest()
+        public void RegisteredProtocolsTest()
         {
             TestSensusServiceHelper service = new TestSensusServiceHelper(new LockConcurrent());
             SensusService.SensusServiceHelper.Initialize(() => service);
