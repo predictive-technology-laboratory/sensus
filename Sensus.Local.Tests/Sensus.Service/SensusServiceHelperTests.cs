@@ -14,10 +14,9 @@
 using System.Linq;
 using NUnit.Framework;
 using Newtonsoft.Json;
+using SensusService;
 using Sensus.Service.iOS.Context;
 using Sensus.Service.Tools.Context;
-using Sensus.Tools;
-using SensusService;
 using SensusService.Probes.Location;
 using SensusService.Probes.User.Scripts;
 
@@ -48,12 +47,12 @@ namespace Sensus.Local.Tests
         [Test]
         public void SerializeAndDeserializeNoExceptionTest()
         {
-            var service = new TestSensusServiceHelper();
-
-            var serial   = JsonConvert.SerializeObject(service, _jsonSerializerSettings);
+            var service1 = new TestSensusServiceHelper();
+            var serial   = JsonConvert.SerializeObject(service1, _jsonSerializerSettings);
+            service1.RegisteredProtocols.Clear();
             var service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial, _jsonSerializerSettings);
 
-            Assert.AreEqual(0, service.RegisteredProtocols.Count);
+            Assert.AreEqual(0, service1.RegisteredProtocols.Count);
             Assert.AreEqual(0, service2.RegisteredProtocols.Count);
         }
 
@@ -95,8 +94,6 @@ namespace Sensus.Local.Tests
             Assert.AreEqual(2, service1.RegisteredProtocols.Count);
             Assert.AreEqual(2, service2.RegisteredProtocols.Count);
 
-            Assert.AreEqual(service1.RegisteredProtocols.First().Name, service2.RegisteredProtocols.First().Name);
-
             Assert.AreEqual(service1.RegisteredProtocols.Skip(0).Take(1).Single().Name, service2.RegisteredProtocols.Skip(0).Take(1).Single().Name);
             Assert.AreEqual(service1.RegisteredProtocols.Skip(1).Take(1).Single().Name, service2.RegisteredProtocols.Skip(1).Take(1).Single().Name);
         }
@@ -104,92 +101,92 @@ namespace Sensus.Local.Tests
         [Test]
         public void RunningProtocolIdsTest()
         {
-            TestSensusServiceHelper service = new TestSensusServiceHelper();
-            SensusServiceHelper.Initialize(() => service);
+            var service1 = new TestSensusServiceHelper();
 
-            service.RunningProtocolIds.Clear();
-
+            SensusServiceHelper.Initialize(() => service1);
+            
             Protocol.Create("Test");
 
-            foreach (var protocol in service.RegisteredProtocols)
-            {
-                service.RunningProtocolIds.Add(protocol.Id);
-            }
+            service1.RunningProtocolIds.Clear();
+            service1.RunningProtocolIds.Add(service1.RegisteredProtocols.Single().Id);
 
-            var serial = JsonConvert.SerializeObject(service, _jsonSerializerSettings);
+            var serial = JsonConvert.SerializeObject(service1, _jsonSerializerSettings);
 
             SensusServiceHelper.ClearSingleton();
 
             var service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial, _jsonSerializerSettings);
 
-            Assert.AreEqual(service.RunningProtocolIds.Count, service2.RunningProtocolIds.Count);
-            Assert.AreEqual(service.RunningProtocolIds.First(), service2.RunningProtocolIds.First());
+            Assert.AreEqual(service1.RunningProtocolIds.Count   , service2.RunningProtocolIds.Count);
+            Assert.AreEqual(service1.RunningProtocolIds.Single(), service2.RunningProtocolIds.Single());
         }
 
         [Test]
         public void PointsOfInterestTest()
         {
-            TestSensusServiceHelper service = new TestSensusServiceHelper();
-            SensusServiceHelper.Initialize(() => service);
+            var service1 = new TestSensusServiceHelper();
 
-            service.PointsOfInterest.Clear();
+            SensusServiceHelper.Initialize(() => service1);
 
-            service.PointsOfInterest.Add(new PointOfInterest("Test", "Test", null));
+            service1.PointsOfInterest.Clear();
+            service1.PointsOfInterest.Add(new PointOfInterest("Test", "Test", null));
 
-            var serial = JsonConvert.SerializeObject(service);
+            var serial = JsonConvert.SerializeObject(service1, _jsonSerializerSettings);
 
             SensusServiceHelper.ClearSingleton();
 
-            var service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial);
+            var service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial, _jsonSerializerSettings);
 
-            Assert.AreEqual(service.PointsOfInterest.Count, service2.PointsOfInterest.Count);
-            Assert.AreEqual(service.PointsOfInterest.First().Name, service2.PointsOfInterest.First().Name);
+            Assert.AreEqual(service1.PointsOfInterest.Count, service2.PointsOfInterest.Count);
+            Assert.AreEqual(service1.PointsOfInterest.Single().Name, service2.PointsOfInterest.Single().Name);
         }
 
         [Test]
         public void FlashNotificationsEnabledTest()
         {
-            TestSensusServiceHelper service = new TestSensusServiceHelper();
-            SensusServiceHelper.Initialize(() => service);
+            var service1 = new TestSensusServiceHelper();
 
-            service.FlashNotificationsEnabled = true;
+            SensusServiceHelper.Initialize(() => service1);
 
-            var serial = JsonConvert.SerializeObject(service);
+            service1.FlashNotificationsEnabled = true;
+
+            var serial = JsonConvert.SerializeObject(service1, _jsonSerializerSettings);
 
             SensusServiceHelper.ClearSingleton();
 
             var service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial);
 
-            Assert.AreEqual(service.FlashNotificationsEnabled, service2.FlashNotificationsEnabled);
+            Assert.AreEqual(service1.FlashNotificationsEnabled, service2.FlashNotificationsEnabled);
 
-            service.FlashNotificationsEnabled = false;
+            service1.FlashNotificationsEnabled = false;
 
-            serial = JsonConvert.SerializeObject(service);
+            serial = JsonConvert.SerializeObject(service1);
 
             SensusServiceHelper.ClearSingleton();
 
             service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial);
 
-            Assert.AreEqual(service.FlashNotificationsEnabled, service2.FlashNotificationsEnabled);
+            Assert.AreEqual(service1.FlashNotificationsEnabled, service2.FlashNotificationsEnabled);
         }
 
         [Test]
         public void ScriptsToRunTest()
         {
-            TestSensusServiceHelper service = new TestSensusServiceHelper();
-            SensusServiceHelper.Initialize(() => service);
+            var service1 = new TestSensusServiceHelper();
 
-            service.RunningProtocolIds.Clear();
+            SensusServiceHelper.Initialize(() => service1);
 
-            service.ScriptsToRun.Add(new Script(new ScriptRunner("Test", new ScriptProbe())));
+            service1.RunningProtocolIds.Clear();
 
-            var serial = JsonConvert.SerializeObject(service);
+            service1.ScriptsToRun.Add(new Script(new ScriptRunner("Test", new ScriptProbe())));
+
+            var serial = JsonConvert.SerializeObject(service1, _jsonSerializerSettings);
 
             SensusServiceHelper.ClearSingleton();
+
             var service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial);
 
-            Assert.AreEqual(service.ScriptsToRun.Count, service2.ScriptsToRun.Count);
-            Assert.AreEqual(service.ScriptsToRun.First().Id, service2.ScriptsToRun.First().Id);
+            Assert.AreEqual(service1.ScriptsToRun.Count, service2.ScriptsToRun.Count);
+            Assert.AreEqual(service1.ScriptsToRun.Single().Id, service2.ScriptsToRun.Single().Id);
         }
     }
 }

@@ -203,7 +203,7 @@ namespace SensusService
                 }
 
                 try
-                {
+                {                    
                     SINGLETON = JsonConvert.DeserializeObject<SensusServiceHelper>(decryptedJSON, JSON_SERIALIZER_SETTINGS);
                 }
                 catch (Exception exception)
