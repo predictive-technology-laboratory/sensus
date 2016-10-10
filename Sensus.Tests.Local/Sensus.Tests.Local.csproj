@@ -7,8 +7,8 @@
     <ProjectGuid>{B11B3650-C440-40F2-834D-339D5FF8CD96}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sensus.Local.Tests</RootNamespace>
-    <AssemblyName>Sensus.Local.Tests</AssemblyName>
+    <RootNamespace>Sensus.Tests.Local</RootNamespace>
+    <AssemblyName>Sensus.Tests.Local</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
@@ -145,10 +145,8 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup />
-  <Import Project="..\Sensus.Service\Sensus.Service.projitems" Label="Shared" />
-  <Import Project="..\Sensus.Service.Tests\Sensus.Service.Tests.projitems" Label="Shared" />
-  <Import Project="..\Sensus.Service.UI\Sensus.Service.UI.projitems" Label="Shared" />
-  <Import Project="..\Sensus.Service.Tools\Sensus.Service.Tools.projitems" Label="Shared" />
+  <Import Project="..\Sensus.Shared\Sensus.Shared.projitems" Label="Shared" />
+  <Import Project="..\Sensus.Shared.Tests\Sensus.Shared.Tests.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

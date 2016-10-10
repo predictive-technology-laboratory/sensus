@@ -420,32 +420,30 @@
     </XamarinComponentReference>
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="..\Sensus.Service.UI\Icons\minus.png">
+    <BundleResource Include="..\Sensus.Shared\UI\Icons\minus.png">
       <Link>Resources\minus.png</Link>
     </BundleResource>
-    <BundleResource Include="..\Sensus.Service.UI\Icons\pencil.png">
+    <BundleResource Include="..\Sensus.Shared\UI\Icons\pencil.png">
       <Link>Resources\pencil.png</Link>
     </BundleResource>
-    <BundleResource Include="..\Sensus.Service.UI\Icons\plus.png">
+    <BundleResource Include="..\Sensus.Shared\UI\Icons\plus.png">
       <Link>Resources\plus.png</Link>
     </BundleResource>
-    <BundleResource Include="..\Sensus.Service.UI\Icons\share.png">
+    <BundleResource Include="..\Sensus.Shared\UI\Icons\share.png">
       <Link>Resources\share.png</Link>
     </BundleResource>
-    <BundleResource Include="..\Sensus.Service.UI\Icons\check.png">
+    <BundleResource Include="..\Sensus.Shared\UI\Icons\check.png">
       <Link>Resources\check.png</Link>
     </BundleResource>
-    <BundleResource Include="..\Sensus.Service.UI\Icons\x.png">
+    <BundleResource Include="..\Sensus.Shared\UI\Icons\x.png">
       <Link>Resources\x.png</Link>
     </BundleResource>
-    <BundleResource Include="..\Sensus.Service.UI\Icons\gear_wrench.png">
+    <BundleResource Include="..\Sensus.Shared\UI\Icons\gear_wrench.png">
       <Link>Resources\gear_wrench.png</Link>
     </BundleResource>
   </ItemGroup>
-  <Import Project="..\Sensus.Service\Sensus.Service.projitems" Label="Shared" />
-  <Import Project="..\Sensus.Service.iOS\Sensus.Service.iOS.projitems" Label="Shared" />
-  <Import Project="..\Sensus.Service.Tools\Sensus.Service.Tools.projitems" Label="Shared" />
-  <Import Project="..\Sensus.Service.UI\Sensus.Service.UI.projitems" Label="Shared" />
+  <Import Project="..\Sensus.Shared\Sensus.Shared.projitems" Label="Shared" />
+  <Import Project="..\Sensus.Shared.iOS\Sensus.Shared.iOS.projitems" Label="Shared" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
   <Import Project="..\packages\Xamarin.Insights.1.12.3\build\Xamarin.iOS10\Xamarin.Insights.targets" Condition="Exists('..\packages\Xamarin.Insights.1.12.3\build\Xamarin.iOS10\Xamarin.Insights.targets')" />
   <Import Project="..\packages\Xamarin.Forms.2.3.1.114\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.2.3.1.114\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />

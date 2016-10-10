@@ -36,11 +36,13 @@ using ZXing.Mobile;
 using Android.Graphics;
 using Android.Media;
 using Android.Bluetooth;
+using Android.Hardware;
 using Sensus.Android.Probes.Context;
+using Sensus.Service.Android;
 
 namespace Sensus.Android
 {
-    public class AndroidSensusServiceHelper : SensusServiceHelper
+    public class AndroidSensusServiceHelper : SensusServiceHelper, IAndroidSensusServiceHelper
     {
         private AndroidSensusService _service;
         private ConnectivityManager _connectivityManager;
@@ -54,12 +56,6 @@ namespace Sensus.Android
         private List<Action<AndroidMainActivity>> _actionsToRunUsingMainActivity;
         private Dictionary<string, PendingIntent> _callbackIdPendingIntent;
         private bool _userDeniedBluetoothEnable;
-
-        [JsonIgnore]
-        public AndroidSensusService Service
-        {
-            get { return _service; }
-        }
 
         public override string DeviceId
         {
@@ -833,5 +829,15 @@ namespace Sensus.Android
         }
 
         #endregion
+
+        public void StopAnroidSensusService()
+        {
+            _service.Stop();
+        }
+
+        public SensorManager GetSensorManager()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

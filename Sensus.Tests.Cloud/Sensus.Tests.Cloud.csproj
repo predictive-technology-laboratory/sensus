@@ -5,8 +5,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{306FDC42-BB95-4DFD-B867-654EA3F941E9}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Sensus.Cloud.Tests</RootNamespace>
-    <AssemblyName>Sensus.Cloud.Tests</AssemblyName>
+    <RootNamespace>Sensus.Tests.Cloud</RootNamespace>
+    <AssemblyName>Sensus.Tests.Cloud</AssemblyName>
     <ReleaseVersion>2.0.0</ReleaseVersion>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <NuGetPackageImportStamp>

@@ -1379,8 +1379,7 @@ namespace SensusService
                     }
 
 #if __ANDROID__
-                    Sensus.Android.AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as Sensus.Android.AndroidSensusServiceHelper;
-                    misc += "Wake lock count:  " + serviceHelper.WakeLockAcquisitionCount + Environment.NewLine;
+                    misc += "Wake lock count:  " + (SensusServiceHelper.Get() as Sensus.Service.Android.IAndroidSensusServiceHelper)?.WakeLockAcquisitionCount + Environment.NewLine;
 #endif
 
                     report = new ProtocolReportDatum(DateTimeOffset.UtcNow, error, warning, misc, this);
