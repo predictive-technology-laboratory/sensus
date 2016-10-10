@@ -7,8 +7,8 @@
     <ProjectGuid>{B11B3650-C440-40F2-834D-339D5FF8CD96}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sensus.ToolsTests1</RootNamespace>
-    <AssemblyName>Sensus.ToolsTests1</AssemblyName>
+    <RootNamespace>Sensus.Local.Tests</RootNamespace>
+    <AssemblyName>Sensus.Local.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>

@@ -14,7 +14,7 @@
 
 using NUnit.Framework;
 using Sensus.Android.Tools;
-using Sensus.Tools.Tests;
+using Sensus.Local.Tests;
 
 namespace Sensus.Tests.Android.Concurrent
 {

@@ -4,7 +4,7 @@ using NUnit.Framework;
 using Sensus.Tools.Extensions;
 using Sensus.Tools.Scripts;
 
-namespace Sensus.Tools.Tests.Scripts
+namespace Sensus.Local.Tests.Scripts
 {
     [TestFixture]
     public class ScheduleTriggerTests

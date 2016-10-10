@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using Sensus.Tools.Scripts;
 
-namespace Sensus.Tools.Tests.Scripts
+namespace Sensus.Local.Tests.Scripts
 {
     [TestFixture]
     public class ScheduleWindowTests

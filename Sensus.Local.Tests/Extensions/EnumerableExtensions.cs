@@ -1,4 +1,4 @@
-﻿namespace Sensus.Tools.Tests.Extensions
+﻿namespace Sensus.Local.Tetsts
 {
     public class EnumerableExtensions
     {

@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using Sensus.Tools.Extensions;
 
-namespace Sensus.Tools.Tests.Extensions
+namespace Sensus.Local.Tetsts
 {
     [TestFixture]
     public class DateTimeExtensionTests

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 using NUnit.Framework;
-using Sensus.Tools.Tests;
+using Sensus.Local.Tests;
 using Sensus.iOS.Concurrent;
 
 namespace Sensus.Tests.Android.Concurrent
