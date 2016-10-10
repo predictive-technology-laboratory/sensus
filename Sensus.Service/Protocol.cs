@@ -111,7 +111,7 @@ namespace SensusService
         {
             try
             {
-                string json = SensusServiceHelper.Get().ConvertJsonForCrossPlatform(SensusServiceHelper.Decrypt(bytes));
+                string json = SensusServiceHelper.Get().ConvertJsonForCrossPlatform(SensusContext.Current.Encryption.Decrypt(bytes));
 
                 DeserializeAsync(json, protocol =>
                 {
@@ -328,7 +328,7 @@ namespace SensusService
                 using (MemoryStream protocolStream = new MemoryStream())
                 {
                     unitTestingProtocolFile.CopyTo(protocolStream);
-                    string protocolJSON = SensusServiceHelper.Get().ConvertJsonForCrossPlatform(SensusServiceHelper.Decrypt(protocolStream.ToArray()));
+                    string protocolJSON = SensusServiceHelper.Get().ConvertJsonForCrossPlatform(SensusContext.Current.Encryption.Decrypt(protocolStream.ToArray()));
                     DeserializeAsync(protocolJSON, protocol =>
                         {
                             if (protocol == null)
@@ -956,7 +956,7 @@ namespace SensusService
         {
             using (FileStream file = new FileStream(path, FileMode.Create, FileAccess.Write))
             {
-                byte[] encryptedBytes = SensusServiceHelper.Encrypt(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS));
+                byte[] encryptedBytes = SensusContext.Current.Encryption.Encrypt(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS));
                 file.Write(encryptedBytes, 0, encryptedBytes.Length);
             }
         }

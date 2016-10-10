@@ -16,6 +16,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Context\Platform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Context\SensusContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Dispose\Disposable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Encryption\IEncryption.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Encryption\SimpleEncryption.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Encryption\WindowsEncryption.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\DateTimeExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\EnumerableExtensions.cs" />
   </ItemGroup>

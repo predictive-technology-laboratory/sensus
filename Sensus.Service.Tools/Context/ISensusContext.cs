@@ -6,5 +6,7 @@ namespace Sensus.Service.Tools.Context
     {
         Platform Platform { get; }
         IConcurrent MainThreadSynchronizer { get; }
+
+        IEncryption Encryption { get; }
     }
 }

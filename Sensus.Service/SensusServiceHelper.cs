@@ -62,7 +62,7 @@ namespace SensusService
         public const string PENDING_SURVEY_NOTIFICATION_ID = "PENDING-SURVEY-NOTIFICATION";
         public const int PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS = 60;
         protected const string XAMARIN_INSIGHTS_APP_KEY = "";
-        private const string ENCRYPTION_KEY = "";
+        public const string ENCRYPTION_KEY = "";
 
         public static readonly string SHARE_DIRECTORY =
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "share");
@@ -110,17 +110,6 @@ namespace SensusService
             // must use indented formatting in order for cross-platform type conversion to work (depends on each "$type" name-value pair being on own line).
             #endregion
         };
-
-        private static byte[] EncryptionKeyBytes
-        {
-            get
-            {
-                byte[] encryptionKeyBytes = new byte[32];
-                byte[] bytes = Encoding.UTF8.GetBytes(ENCRYPTION_KEY);
-                Array.Copy(bytes, encryptionKeyBytes, Math.Min(bytes.Length, encryptionKeyBytes.Length));
-                return encryptionKeyBytes;
-            }
-        }
 
         /// <summary>
         /// Initializes the sensus service helper. Must be called when app first starts, from the main / UI thread.
@@ -195,7 +184,7 @@ namespace SensusService
                 string decryptedJSON;
                 try
                 {
-                    decryptedJSON = Decrypt(encryptedJsonBytes);
+                    decryptedJSON = SensusContext.Current.Encryption.Decrypt(encryptedJsonBytes);
                 }
                 catch (Exception exception)
                 {
@@ -277,54 +266,6 @@ namespace SensusService
         {
             SINGLETON = null;
         }
-
-        #region encryption
-
-        public static byte[] Encrypt(string unencryptedString)
-        {
-#if WINDOWS_PHONE
-            return ProtectedData.Protect(Encoding.Unicode.GetBytes(unencryptedString), EncryptionKeyBytes);
-#else
-            using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
-            {
-                byte[] encryptionKeyBytes = EncryptionKeyBytes;
-                aes.KeySize = encryptionKeyBytes.Length * 8;
-
-                byte[] initialization = new byte[16];
-                aes.BlockSize = initialization.Length * 8;
-
-                using (ICryptoTransform transform = aes.CreateEncryptor(encryptionKeyBytes, initialization))
-                {
-                    byte[] unencrypted = Encoding.Unicode.GetBytes(unencryptedString);
-                    return transform.TransformFinalBlock(unencrypted, 0, unencrypted.Length);
-                }
-            }
-#endif
-        }
-
-        public static string Decrypt(byte[] encryptedBytes)
-        {
-#if WINDOWS_PHONE
-            byte[] unencryptedBytes = ProtectedData.Unprotect(encryptedBytes, EncryptionKeyBytes);
-            return Encoding.Unicode.GetString(unencryptedBytes, 0, unencryptedBytes.Length);
-#else
-            using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
-            {
-                byte[] encryptionKeyBytes = EncryptionKeyBytes;
-                aes.KeySize = encryptionKeyBytes.Length * 8;
-
-                byte[] initialization = new byte[16];
-                aes.BlockSize = initialization.Length * 8;
-
-                using (ICryptoTransform transform = aes.CreateDecryptor(encryptionKeyBytes, initialization))
-                {
-                    return Encoding.Unicode.GetString(transform.TransformFinalBlock(encryptedBytes, 0, encryptedBytes.Length));
-                }
-            }
-#endif
-        }
-
-        #endregion
 
         #endregion
 
@@ -786,7 +727,7 @@ namespace SensusService
                 try
                 {
                     string serviceHelperJSON = JsonConvert.SerializeObject(this, JSON_SERIALIZER_SETTINGS);
-                    byte[] encryptedBytes = Encrypt(serviceHelperJSON);
+                    byte[] encryptedBytes = SensusContext.Current.Encryption.Encrypt(serviceHelperJSON);
                     File.WriteAllBytes(SERIALIZATION_PATH, encryptedBytes);
 
                     _logger.Log("Serialized service helper with " + _registeredProtocols.Count + " protocols.", LoggingLevel.Normal, GetType());

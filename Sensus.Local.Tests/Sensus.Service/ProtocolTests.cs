@@ -78,8 +78,7 @@ namespace Sensus.Local.Tests
                 Groupable                             = true
             };
 
-            var serialize1 = SensusServiceHelper.Encrypt(JsonConvert.SerializeObject(protocol1, _jsonSerializerSettings));
-            var runWait = new ManualResetEvent(false);
+            var serialize1 = SensusContext.Current.Encryption.Encrypt(JsonConvert.SerializeObject(protocol1, _jsonSerializerSettings));            
 
             Protocol.DeserializeAsync(serialize1, protocol2 =>
             {

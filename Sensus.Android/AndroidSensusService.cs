@@ -36,15 +36,6 @@ namespace Sensus.Android
     public class AndroidSensusService : global::Android.App.Service
     {
         private List<AndroidSensusServiceBinder> _bindings;
-        private Handler _mainThreadHandler;
-
-        public Handler MainThreadHandler
-        {
-            get
-            {
-                return _mainThreadHandler;
-            }
-        }
 
         public override void OnCreate()
         {
@@ -52,13 +43,7 @@ namespace Sensus.Android
 
             _bindings = new List<AndroidSensusServiceBinder>();
 
-            // sensus is a service-oriented app; however, we often need to run actions on the main thread. using
-            // xamarin forms device.begininvoke appears to invoke off the activity, which will not work. by instantiating
-            // a handler here, we will capture the main thread within the service, and we'll be able to invoke on
-            // this handler.
-            _mainThreadHandler = new Handler();
-
-            SensusContext.Current = new AndroidSensusContext();
+            SensusContext.Current = new AndroidSensusContext(SensusServiceHelper.ENCRYPTION_KEY);
             SensusServiceHelper.Initialize(() => new AndroidSensusServiceHelper());
 
             AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;

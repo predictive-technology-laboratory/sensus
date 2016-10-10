@@ -42,7 +42,7 @@ namespace Sensus.iOS
     {
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
-            SensusContext.Current = new iOSSensusContext();
+            SensusContext.Current = new iOSSensusContext(SensusServiceHelper.ENCRYPTION_KEY);
             SensusServiceHelper.Initialize(() => new iOSSensusServiceHelper());
 
             // facebook settings
