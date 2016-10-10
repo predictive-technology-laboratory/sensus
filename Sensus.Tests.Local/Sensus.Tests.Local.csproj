@@ -126,12 +126,11 @@
     <Compile Include="Dispose\DisposableTests.cs" />
     <Compile Include="Encryption\SimpleEncryptionTests.cs" />
     <Compile Include="Extensions\DateTimeExtensionTests.cs" />
-    <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scripts\ScheduleTriggerTests.cs" />
     <Compile Include="Scripts\ScheduleWindowTests.cs" />
-    <Compile Include="Sensus.Service\ProtocolTests.cs" />
-    <Compile Include="Sensus.Service\SensusServiceHelperTests.cs" />
+    <Compile Include="Shared\ProtocolTests.cs" />
+    <Compile Include="Shared\SensusServiceHelperTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

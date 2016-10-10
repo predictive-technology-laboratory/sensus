@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Threading;
 using Newtonsoft.Json;
-using SensusService;
 using NUnit.Framework;
 using Sensus.Service.iOS.Context;
 using Sensus.Service.Tools.Context;
+using SensusService;
 
-namespace Sensus.Local.Tests
+namespace Sensus.Tests.Local.Shared
 {
     [TestFixture]
     public class ProtocolTests

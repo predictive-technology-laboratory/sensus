@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using Sensus.Service.Tools;
 
-namespace Sensus.ToolsTests1.Encryption
+namespace Sensus.Tests.Local.Encryption
 {
     [TestFixture]
     public class SimpleEncryptionTests

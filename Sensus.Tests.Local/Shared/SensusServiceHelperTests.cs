@@ -11,16 +11,18 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 using System.Linq;
-using NUnit.Framework;
 using Newtonsoft.Json;
-using SensusService;
+using NUnit.Framework;
 using Sensus.Service.iOS.Context;
 using Sensus.Service.Tools.Context;
+using Sensus.Tests.Local.Classes;
+using SensusService;
 using SensusService.Probes.Location;
 using SensusService.Probes.User.Scripts;
 
-namespace Sensus.Local.Tests
+namespace Sensus.Tests.Local.Shared
 {
     [TestFixture]
     public class SensusServiceHelperTests
