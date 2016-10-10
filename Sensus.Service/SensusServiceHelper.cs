@@ -282,7 +282,9 @@ namespace SensusService
 
         public static byte[] Encrypt(string unencryptedString)
         {
-#if (__ANDROID__ || __IOS__)
+#if WINDOWS_PHONE
+            return ProtectedData.Protect(Encoding.Unicode.GetBytes(unencryptedString), EncryptionKeyBytes);
+#else
             using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
             {
                 byte[] encryptionKeyBytes = EncryptionKeyBytes;
@@ -297,17 +299,15 @@ namespace SensusService
                     return transform.TransformFinalBlock(unencrypted, 0, unencrypted.Length);
                 }
             }
-#elif WINDOWS_PHONE
-            return ProtectedData.Protect(Encoding.Unicode.GetBytes(unencryptedString), EncryptionKeyBytes);
-#else
-#warning "Unrecognized platform."
-            return null;
 #endif
         }
 
         public static string Decrypt(byte[] encryptedBytes)
         {
-#if __ANDROID__ || __IOS__
+#if WINDOWS_PHONE
+            byte[] unencryptedBytes = ProtectedData.Unprotect(encryptedBytes, EncryptionKeyBytes);
+            return Encoding.Unicode.GetString(unencryptedBytes, 0, unencryptedBytes.Length);
+#else
             using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
             {
                 byte[] encryptionKeyBytes = EncryptionKeyBytes;
@@ -321,12 +321,6 @@ namespace SensusService
                     return Encoding.Unicode.GetString(transform.TransformFinalBlock(encryptedBytes, 0, encryptedBytes.Length));
                 }
             }
-#elif WINDOWS_PHONE
-            byte[] unencryptedBytes = ProtectedData.Unprotect(encryptedBytes, EncryptionKeyBytes);
-            return Encoding.Unicode.GetString(unencryptedBytes, 0, unencryptedBytes.Length);
-#else
-#warning "Unrecognized platform."
-            return "";
 #endif
         }
 
@@ -449,7 +443,7 @@ namespace SensusService
             }
         }
 
-        #region platform-specific properties
+#region platform-specific properties
 
         [JsonIgnore]
         public abstract bool IsCharging { get; }
@@ -469,7 +463,7 @@ namespace SensusService
         [JsonIgnore]
         public abstract string Version { get; }
 
-        #region iOS GPS listener settings
+#region iOS GPS listener settings
 
 #if __IOS__
 
@@ -535,11 +529,11 @@ namespace SensusService
 
 #endif
 
-        #endregion
+#endregion
 
-        #endregion
+#endregion
 
-        #region Constructors
+#region Constructors
         [JsonConstructor]
         protected SensusServiceHelper()
         {
@@ -623,7 +617,7 @@ namespace SensusService
                 }
             }
         }
-        #endregion
+#endregion
 
         public string GetHash(string s)
         {
@@ -637,7 +631,7 @@ namespace SensusService
             return hashBuilder.ToString();
         }
 
-        #region platform-specific methods. this functionality cannot be implemented in a cross-platform way. it must be done separately for each platform.
+#region platform-specific methods. this functionality cannot be implemented in a cross-platform way. it must be done separately for each platform.
 
         protected abstract void InitializeXamarinInsights();
 
@@ -704,9 +698,9 @@ namespace SensusService
             }
         }
 
-        #endregion
+#endregion
 
-        #region add/remove running protocol ids
+#region add/remove running protocol ids
 
         public void AddRunningProtocolId(string id)
         {
@@ -772,7 +766,7 @@ namespace SensusService
             return _registeredProtocols.Where(p => p.Running).ToList();
         }
 
-        #endregion
+#endregion
 
         public void SaveAsync(Action callback = null)
         {
@@ -889,7 +883,7 @@ namespace SensusService
             IssueNotificationAsync(null, PENDING_SURVEY_NOTIFICATION_ID, false, false);
         }
 
-        #region callback scheduling
+#region callback scheduling
 
         public string ScheduleRepeatingCallback(ScheduledCallback callback, int initialDelayMS, int repeatDelayMS, bool repeatLag)
         {
@@ -1114,7 +1108,7 @@ namespace SensusService
             }
         }
 
-        #endregion
+#endregion
 
         public void TextToSpeechAsync(string text)
         {
@@ -1344,7 +1338,7 @@ namespace SensusService
                         foreach (Input input in inputGroup.Inputs)
                             input.SubmissionTimestamp = submissionTimestamp;
 
-                    #region geotag input groups if we've got input groups with inputs that are complete and lacking locations
+#region geotag input groups if we've got input groups with inputs that are complete and lacking locations
                     if (inputGroups.Any(inputGroup => inputGroup.Geotag && inputGroup.Inputs.Any(input => input.Complete && (input.Latitude == null || input.Longitude == null))))
                     {
                         _logger.Log("Geotagging input groups.", LoggingLevel.Normal, GetType());
@@ -1382,7 +1376,7 @@ namespace SensusService
                             _logger.Log("Error geotagging input groups:  " + ex.Message, LoggingLevel.Normal, GetType());
                         }
                     }
-                    #endregion
+#endregion
                 }
 
                 callback(inputGroups);
@@ -1605,7 +1599,7 @@ namespace SensusService
             }
         }
 
-        #region Private Methods
+#region Private Methods
 
         private void RemoveScripts(bool issueNotification, params Script[] scripts)
         {
@@ -1629,6 +1623,6 @@ namespace SensusService
 
             return scriptsToRunCount == 0 ? null : $"You have {scriptsToRunCount} pending survey{s}.";
         }
-        #endregion
+#endregion
     }
 }

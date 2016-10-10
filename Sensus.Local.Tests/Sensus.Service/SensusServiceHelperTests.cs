@@ -192,5 +192,11 @@ namespace Sensus.Local.Tests
             Assert.AreEqual(service1.ScriptsToRun.Count, service2.ScriptsToRun.Count);
             Assert.AreEqual(service1.ScriptsToRun.Single().Id, service2.ScriptsToRun.Single().Id);
         }
+
+        [Test]
+        public void EncryptDecryptTest()
+        {
+            Assert.AreEqual("A", SensusServiceHelper.Decrypt(SensusServiceHelper.Encrypt("A")));
+        }
     }
 }

@@ -277,7 +277,7 @@ namespace SensusService
                 if (callback != null)
                     callback(protocol);
 
-            }).Start();
+            });
         }
 
         public static void DisplayAndStartAsync(Protocol protocol)
