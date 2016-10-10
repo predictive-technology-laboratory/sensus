@@ -8,9 +8,11 @@ namespace Sensus.Service.iOS.Context
     {
         public TestSensusContext()
         {
+            Platform               = Platform.Test;
             MainThreadSynchronizer = new LockConcurrent();
         }
 
+        public Platform Platform { get; }
         public IConcurrent MainThreadSynchronizer { get; set; }
     }
 }

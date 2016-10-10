@@ -8,8 +8,11 @@ namespace Sensus.Service.Android.Context
     {
         public AndroidSensusContext()
         {
+            Platform               = Platform.Android;
             MainThreadSynchronizer = new MainConcurrent();
         }
+
+        public Platform Platform { get; }
 
         public IConcurrent MainThreadSynchronizer { get; }
     }
