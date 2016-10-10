@@ -31,15 +31,19 @@ namespace Sensus.Local.Tests
 
         #region SetUp
         [TestFixtureSetUp]
-        public void SetUp()
+        public void TestFixtureSetUp()
         {
             _jsonSerializerSettings = SensusServiceHelper.JSON_SERIALIZER_SETTINGS;
 
             //we don't want to quietly handle errors when testing.
             _jsonSerializerSettings.Error = null;
 
-            SensusContext.Current = new TestSensusContext();
+            SensusContext.Current = new TestSensusContext();            
+        }
 
+        [SetUp]
+        public void TestSetUp()
+        {
             SensusServiceHelper.ClearSingleton();
         }
         #endregion

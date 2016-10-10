@@ -895,8 +895,7 @@ namespace SensusService
         /// Called by static CreateAsync. Should not be called directly by outside callers.
         /// </summary>
         /// <param name="name">Name.</param>
-        private Protocol(string name)
-            : this()
+        public Protocol(string name): this()
         {
             _name = name;
             _probes = new List<Probe>();
