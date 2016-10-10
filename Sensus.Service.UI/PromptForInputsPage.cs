@@ -220,7 +220,7 @@ namespace SensusUI
                 string confirmationMessage = "";
 
                 if (!string.IsNullOrWhiteSpace(incompleteSubmissionConfirmation) && !inputGroup.Valid)
-                    confirmationMessage += !inputGroup.IncompleteSubmissionConfirmation.Equals("") ? inputGroup.IncompleteSubmissionConfirmation : incompleteSubmissionConfirmation;
+                    confirmationMessage += incompleteSubmissionConfirmation;
                 else if (nextButton.Text == "Submit" && !string.IsNullOrWhiteSpace(submitConfirmation))
                     confirmationMessage += submitConfirmation;
 
