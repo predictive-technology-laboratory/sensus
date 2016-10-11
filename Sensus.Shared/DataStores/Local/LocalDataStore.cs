@@ -216,7 +216,6 @@ namespace Sensus.Shared.DataStores.Local
                 {
 #if __ANDROID__ || __IOS__
                     if (zipFile != null)
-#endif
                     {
 #if __ANDROID__
                         zipFile.Close();
@@ -224,6 +223,7 @@ namespace Sensus.Shared.DataStores.Local
                         zipFile.CloseZipFile();
 #endif
                     }
+#endif
                 }
                 catch (Exception)
                 {
