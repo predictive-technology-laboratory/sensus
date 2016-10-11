@@ -6,7 +6,7 @@
     <SharedGUID>ca15dd76-c484-4a56-a03f-9ef242294d55</SharedGUID>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
-    <Import_RootNamespace>Sensus.Service.iOS</Import_RootNamespace>
+    <Import_RootNamespace>Sensus.Shared.iOS</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\MainConcurrent.cs" />
