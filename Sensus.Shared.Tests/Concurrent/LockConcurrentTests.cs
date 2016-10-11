@@ -1,8 +1,7 @@
 ﻿using NUnit.Framework;
-using Sensus.Local.Tests;
 using Sensus.Tools;
 
-namespace Sensus.Tests.Local.Concurrent
+namespace Sensus.Shared.Tests.Concurrent
 {
     [TestFixture]
     public class LockConcurrentTests: IConcurrentTests

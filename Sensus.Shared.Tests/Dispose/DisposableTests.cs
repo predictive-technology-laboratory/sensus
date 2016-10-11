@@ -16,7 +16,7 @@ using System;
 using NUnit.Framework;
 using Sensus.Tools;
 
-namespace Sensus.Tests.Local.Dispose
+namespace Sensus.Shared.Tests.Dispose
 {
     [TestFixture]
     public class DisposableTests

@@ -17,12 +17,12 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using Sensus.Service.iOS.Context;
 using Sensus.Service.Tools.Context;
-using Sensus.Tests.Local.Classes;
+using Sensus.Shared.Tests.Classes;
 using SensusService;
 using SensusService.Probes.Location;
 using SensusService.Probes.User.Scripts;
 
-namespace Sensus.Tests.Local.Shared
+namespace Sensus.Shared.Tests.Core
 {
     [TestFixture]
     public class SensusServiceHelperTests

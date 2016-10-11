@@ -14,9 +14,9 @@
 
 using NUnit.Framework;
 using Sensus.Android.Tools;
-using Sensus.Local.Tests;
+using Sensus.Shared.Tests.Concurrent;
 
-namespace Sensus.Tests.Android.Concurrent
+namespace Sensus.Android.Tests.Concurrent
 {
     [TestFixture]
     public class MainConcurrentTests : IConcurrentTests
