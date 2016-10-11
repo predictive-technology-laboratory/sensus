@@ -18,7 +18,7 @@ using System.Collections.Generic;
 using Sensus.Shared;
 using HealthKit;
 
-namespace Sensus.iOS.Probes.User.Health
+namespace Sensus.Shared.iOS.Probes.User.Health
 {
     public abstract class iOSHealthKitSamplingProbe : iOSHealthKitProbe
     {

@@ -13,19 +13,26 @@
 // limitations under the License.
 
 using System;
+using Sensus.Shared.Probes.Network;
+using Foundation;
+using SystemConfiguration;
 using System.Collections.Generic;
-using System.Threading;
 using Sensus.Shared;
-using Sensus.Shared.Probes.Device;
-using UIKit;
+using System.Threading;
 
-namespace Sensus.iOS.Probes.Device
+namespace Sensus.Shared.iOS.Network.Probes
 {
-    public class iOSBatteryProbe : BatteryProbe
+    public class iOSPollingWlanProbe : PollingWlanProbe
     {
         protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
         {
-            return new Datum[] { new BatteryDatum(DateTimeOffset.UtcNow, (int)(UIDevice.CurrentDevice.BatteryLevel * 100)) };  // report value [0,100] to be same as android
+            NSDictionary networkInfo;
+
+            string bssid = null;
+            if (CaptiveNetwork.TryCopyCurrentNetworkInfo("en0", out networkInfo) != StatusCode.NoKey && networkInfo != null)
+                bssid = networkInfo[CaptiveNetwork.NetworkInfoKeyBSSID].ToString();
+
+            return new Datum[] { new WlanDatum(DateTimeOffset.UtcNow, bssid) };
         }
     }
 }

@@ -19,11 +19,9 @@ namespace Sensus.Shared.Encryption
 {
     class WindowsEncryption: IEncryption
     {
-        private readonly byte[] EncryptionKeyBytes;
-
         public WindowsEncryption(string encryptionKey)
         {
-            EncryptionKeyBytes = Encoding.Unicode.GetBytes(encryptionKey);
+            
         }
 
         public byte[] Encrypt(string unencryptedValue)

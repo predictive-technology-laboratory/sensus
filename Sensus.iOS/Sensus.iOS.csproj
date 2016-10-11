@@ -399,18 +399,6 @@
     <Compile Include="AppDelegate.cs" />
     <Compile Include="iOSSensusServiceHelper.cs" />
     <Compile Include="NetworkConnectivity.cs" />
-    <Compile Include="Probes\Context\iOSSoundProbe.cs" />
-    <Compile Include="Probes\Device\iOSBatteryProbe.cs" />
-    <Compile Include="Probes\Location\iOSCompassProbe.cs" />
-    <Compile Include="Probes\Movement\iOSAccelerometerProbe.cs" />
-    <Compile Include="Probes\Network\iOSPollingWlanProbe.cs" />
-    <Compile Include="Probes\Apps\iOSFacebookProbe.cs" />
-    <Compile Include="Probes\User\Health\iOSHealthKitProbe.cs" />
-    <Compile Include="Probes\User\Health\iOSHealthKitHeightProbe.cs" />
-    <Compile Include="Probes\User\Health\iOSHealthKitSamplingProbe.cs" />
-    <Compile Include="Probes\User\Health\iOSHealthKitBiologicalSexProbe.cs" />
-    <Compile Include="Probes\User\Health\iOSHealthKitBloodTypeProbe.cs" />
-    <Compile Include="Probes\User\Health\iOSHealthKitBirthdateProbe.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>

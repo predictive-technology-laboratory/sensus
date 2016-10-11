@@ -39,8 +39,8 @@ using Sensus.Shared.Probes.User.Scripts;
 
 #if __IOS__
 using HealthKit;
-using Sensus.iOS.Probes.User.Health;
 using Foundation;
+using Sensus.Shared.iOS.Probes.User.Health;
 using Plugin.Geolocator.Abstractions;
 #endif
 

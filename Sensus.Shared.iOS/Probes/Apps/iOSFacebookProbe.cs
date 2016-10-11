@@ -21,13 +21,11 @@ using Facebook.CoreKit;
 using Facebook.LoginKit;
 using Foundation;
 using Sensus.Shared.Context;
-using Sensus.Shared;
 using Sensus.Shared.Exceptions;
 using Sensus.Shared.Probes.Apps;
-using Xamarin.Forms;
 using UIKit;
 
-namespace Sensus.iOS.Probes.Apps
+namespace Sensus.Shared.iOS.Probes.Apps
 {
     public class iOSFacebookProbe : FacebookProbe
     {

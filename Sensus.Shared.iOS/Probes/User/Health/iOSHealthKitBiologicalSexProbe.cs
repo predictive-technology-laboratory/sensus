@@ -12,24 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using HealthKit;
-using Foundation;
 using System;
-using System.Threading;
 using System.Collections.Generic;
 using Sensus.Shared;
+using System.Threading;
+using HealthKit;
+using Foundation;
 using Sensus.Shared.Probes.User.Health;
 using Syncfusion.SfChart.XForms;
 
-namespace Sensus.iOS.Probes.User.Health
+namespace Sensus.Shared.iOS.Probes.User.Health
 {
-    public class iOSHealthKitBloodTypeProbe : iOSHealthKitProbe
+    public class iOSHealthKitBiologicalSexProbe : iOSHealthKitProbe
     {
         public sealed override string DisplayName
         {
             get
             {
-                return "HealthKit Blood Type";
+                return "HealthKit Biological Sex";
             }
         }
 
@@ -37,7 +37,7 @@ namespace Sensus.iOS.Probes.User.Health
         {
             get
             {
-                return typeof(BloodTypeDatum);
+                return typeof(BiologicalSexDatum);
             }
         }
 
@@ -49,8 +49,8 @@ namespace Sensus.iOS.Probes.User.Health
             }
         }
 
-        public iOSHealthKitBloodTypeProbe()
-            : base(HKCharacteristicType.Create(HKCharacteristicTypeIdentifier.BloodType))
+        public iOSHealthKitBiologicalSexProbe()
+            : base(HKCharacteristicType.Create(HKCharacteristicTypeIdentifier.BiologicalSex))
         {
         }
 
@@ -59,31 +59,21 @@ namespace Sensus.iOS.Probes.User.Health
             List<Datum> data = new List<Datum>();
 
             NSError error;
-            HKBloodTypeObject bloodType = HealthStore.GetBloodType(out error);
+            HKBiologicalSexObject biologicalSex = HealthStore.GetBiologicalSex(out error);
 
             if (error == null)
             {
-                if (bloodType.BloodType == HKBloodType.ABNegative)
-                    data.Add(new BloodTypeDatum(DateTimeOffset.Now, BloodType.ABNegative));
-                else if (bloodType.BloodType == HKBloodType.ABPositive)
-                    data.Add(new BloodTypeDatum(DateTimeOffset.Now, BloodType.ABPositive));
-                else if (bloodType.BloodType == HKBloodType.ANegative)
-                    data.Add(new BloodTypeDatum(DateTimeOffset.Now, BloodType.ANegative));
-                else if (bloodType.BloodType == HKBloodType.APositive)
-                    data.Add(new BloodTypeDatum(DateTimeOffset.Now, BloodType.APositive));
-                else if (bloodType.BloodType == HKBloodType.BNegative)
-                    data.Add(new BloodTypeDatum(DateTimeOffset.Now, BloodType.BNegative));
-                else if (bloodType.BloodType == HKBloodType.BPositive)
-                    data.Add(new BloodTypeDatum(DateTimeOffset.Now, BloodType.BPositive));
-                else if (bloodType.BloodType == HKBloodType.ONegative)
-                    data.Add(new BloodTypeDatum(DateTimeOffset.Now, BloodType.ONegative));
-                else if (bloodType.BloodType == HKBloodType.OPositive)
-                    data.Add(new BloodTypeDatum(DateTimeOffset.Now, BloodType.OPositive));
+                if (biologicalSex.BiologicalSex == HKBiologicalSex.Female)
+                    data.Add(new BiologicalSexDatum(DateTimeOffset.Now, BiologicalSex.Female));
+                else if (biologicalSex.BiologicalSex == HKBiologicalSex.Male)
+                    data.Add(new BiologicalSexDatum(DateTimeOffset.Now, BiologicalSex.Male));
+                else if (biologicalSex.BiologicalSex == HKBiologicalSex.Other)
+                    data.Add(new BiologicalSexDatum(DateTimeOffset.Now, BiologicalSex.Other));
                 else
-                    throw new Exception("User has not provided -- or has not allowed access to -- their blood type.");
+                    throw new Exception("User has not provided -- or has not allowed access to -- their biological sex.");
             }
             else
-                throw new Exception("Error reading blood type:  " + error.Description);
+                throw new Exception("Error reading biological sex:  " + error.Description);
 
             return data;
         }

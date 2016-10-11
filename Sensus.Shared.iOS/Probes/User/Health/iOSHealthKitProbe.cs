@@ -19,7 +19,7 @@ using Newtonsoft.Json;
 using Sensus.Shared;
 using Sensus.Shared.Probes;
 
-namespace Sensus.iOS.Probes.User.Health
+namespace Sensus.Shared.iOS.Probes.User.Health
 {
     public abstract class iOSHealthKitProbe : PollingProbe
     {

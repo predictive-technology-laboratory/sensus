@@ -20,7 +20,7 @@ using Sensus.Shared;
 using Plugin.Permissions.Abstractions;
 using System.Threading;
 
-namespace Sensus.iOS.Probes.Movement
+namespace Sensus.Shared.iOS.Probes.Movement
 {
     public class iOSAccelerometerProbe : AccelerometerProbe
     {

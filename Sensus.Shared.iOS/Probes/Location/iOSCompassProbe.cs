@@ -19,7 +19,7 @@ using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions.Abstractions;
 using Syncfusion.SfChart.XForms;
 
-namespace Sensus.iOS.Probes.Location
+namespace Sensus.Shared.iOS.Probes.Location
 {
     public class iOSCompassProbe : CompassProbe
     {

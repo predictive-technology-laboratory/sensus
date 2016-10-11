@@ -22,7 +22,7 @@ using Foundation;
 using Xamarin.Forms.Platform.iOS;
 using Syncfusion.SfChart.XForms;
 
-namespace Sensus.iOS.Probes.User.Health
+namespace Sensus.Shared.iOS.Probes.User.Health
 {
     public class iOSHealthKitBirthdateProbe : iOSHealthKitProbe
     {
