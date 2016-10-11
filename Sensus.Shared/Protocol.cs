@@ -895,7 +895,7 @@ namespace SensusService
         /// Called by static CreateAsync. Should not be called directly by outside callers.
         /// </summary>
         /// <param name="name">Name.</param>
-        public Protocol(string name): this()
+        public Protocol(string name) : this()
         {
             _name = name;
             _probes = new List<Probe>();
@@ -1175,7 +1175,7 @@ namespace SensusService
 #elif __IOS__
             }, null, $"Please open to stop study: {Name}.");
 #else
-            }, null, $"Started study: {Name}.");
+            }, null, $"Stopped study: {Name}.");
 #endif
 
             _scheduledStopCallbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(stopProtocolCallback, (int)timeUntilStop.TotalMilliseconds);

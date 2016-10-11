@@ -143,8 +143,8 @@ namespace Sensus.Android
         public AndroidSensusServiceHelper()
         {
             _actionsToRunUsingMainActivity = new List<Action<AndroidMainActivity>>();
-            _callbackIdPendingIntent       = new Dictionary<string, PendingIntent>();
-            _userDeniedBluetoothEnable     = false;
+            _callbackIdPendingIntent = new Dictionary<string, PendingIntent>();
+            _userDeniedBluetoothEnable = false;
         }
 
         public void SetService(AndroidSensusService service)
@@ -820,24 +820,24 @@ namespace Sensus.Android
             ManualResetEvent foregroundWait = new ManualResetEvent(false);
 
             RunActionUsingMainActivityAsync(mainActivity =>
-                {
-                    foregroundWait.Set();
+            {
+                foregroundWait.Set();
 
-                }, true, false);
+            }, true, false);
 
             foregroundWait.WaitOne();
         }
 
         #endregion
 
-        public void StopAnroidSensusService()
+        public void StopAndroidSensusService()
         {
             _service.Stop();
         }
 
         public SensorManager GetSensorManager()
         {
-            throw new NotImplementedException();
+            return _service.GetSystemService(Context.SensorService) as SensorManager;
         }
     }
 }

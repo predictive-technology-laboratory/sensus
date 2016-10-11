@@ -64,20 +64,15 @@ namespace SensusService
         protected const string XAMARIN_INSIGHTS_APP_KEY = "";
         public const string ENCRYPTION_KEY = "";
 
-        public static readonly string SHARE_DIRECTORY =
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "share");
-
-        private static readonly string LOG_PATH =
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
-
-        private static readonly string SERIALIZATION_PATH =
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_service_helper.json");
+        public static readonly string SHARE_DIRECTORY = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "share");
+        private static readonly string LOG_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
+        private static readonly string SERIALIZATION_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_service_helper.json");
 
 #if DEBUG || UNIT_TESTING
         // test every 30 seconds in debug
         public const int HEALTH_TEST_DELAY_MS = 30000;
 #elif RELEASE
-// test every 15 minutes in release
+        // test every 15 minutes in release
         public const int HEALTH_TEST_DELAY_MS = 900000;
 #endif
 
@@ -90,9 +85,9 @@ namespace SensusService
         public static readonly JsonSerializerSettings JSON_SERIALIZER_SETTINGS = new JsonSerializerSettings
         {
             PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-            ReferenceLoopHandling      = ReferenceLoopHandling.Serialize,
-            TypeNameHandling           = TypeNameHandling.All,
-            ConstructorHandling        = ConstructorHandling.AllowNonPublicDefaultConstructor,
+            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+            TypeNameHandling = TypeNameHandling.All,
+            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
 
             #region need the following in order to deserialize protocols between OSs, whose objects contain different members (e.g., iOS service helper has ActivationId, which Android does not)
             Error = (o, e) =>
@@ -104,10 +99,11 @@ namespace SensusService
                 }
             },
 
-            MissingMemberHandling = MissingMemberHandling.Ignore,
             // need to ignore missing members for cross-platform deserialization
-            Formatting = Formatting.Indented
+            MissingMemberHandling = MissingMemberHandling.Ignore,
+
             // must use indented formatting in order for cross-platform type conversion to work (depends on each "$type" name-value pair being on own line).
+            Formatting = Formatting.Indented
             #endregion
         };
 
@@ -192,7 +188,7 @@ namespace SensusService
                 }
 
                 try
-                {                    
+                {
                     SINGLETON = JsonConvert.DeserializeObject<SensusServiceHelper>(decryptedJSON, JSON_SERIALIZER_SETTINGS);
                 }
                 catch (Exception exception)
@@ -269,7 +265,7 @@ namespace SensusService
 
         #endregion
 
-        private Logger _logger;        
+        private Logger _logger;
         private List<string> _runningProtocolIds;
         private string _healthTestCallbackId;
         private ConcurrentDictionary<string, ScheduledCallback> _idCallback;
@@ -384,7 +380,7 @@ namespace SensusService
             }
         }
 
-#region platform-specific properties
+        #region platform-specific properties
 
         [JsonIgnore]
         public abstract bool IsCharging { get; }
@@ -404,7 +400,7 @@ namespace SensusService
         [JsonIgnore]
         public abstract string Version { get; }
 
-#region iOS GPS listener settings
+        #region iOS GPS listener settings
 
 #if __IOS__
 
@@ -470,11 +466,11 @@ namespace SensusService
 
 #endif
 
-#endregion
+        #endregion
 
-#endregion
+        #endregion
 
-#region Constructors
+        #region Constructors
         [JsonConstructor]
         protected SensusServiceHelper()
         {
@@ -484,13 +480,13 @@ namespace SensusService
             }
 
             _registeredProtocols = new ConcurrentObservableCollection<Protocol>();
-            _scriptsToRun        = new ConcurrentObservableCollection<Script>();
+            _scriptsToRun = new ConcurrentObservableCollection<Script>();
 
-            _runningProtocolIds   = new List<string>();
+            _runningProtocolIds = new List<string>();
             _healthTestCallbackId = null;
-            _idCallback           = new ConcurrentDictionary<string, ScheduledCallback>();
-            _hasher               = new SHA256Managed();
-            _pointsOfInterest     = new List<PointOfInterest>();
+            _idCallback = new ConcurrentDictionary<string, ScheduledCallback>();
+            _hasher = new SHA256Managed();
+            _pointsOfInterest = new List<PointOfInterest>();
 
             // ensure that the entire QR code is always visible by using 90% the minimum screen dimension as the QR code size.
 #if __ANDROID__
@@ -517,7 +513,7 @@ namespace SensusService
 
 
             _flashNotificationsEnabled = true;
-            
+
 
             if (!Directory.Exists(SHARE_DIRECTORY))
                 Directory.CreateDirectory(SHARE_DIRECTORY);
@@ -558,7 +554,7 @@ namespace SensusService
                 }
             }
         }
-#endregion
+        #endregion
 
         public string GetHash(string s)
         {
@@ -572,7 +568,7 @@ namespace SensusService
             return hashBuilder.ToString();
         }
 
-#region platform-specific methods. this functionality cannot be implemented in a cross-platform way. it must be done separately for each platform.
+        #region platform-specific methods. this functionality cannot be implemented in a cross-platform way. it must be done separately for each platform.
 
         protected abstract void InitializeXamarinInsights();
 
@@ -639,9 +635,9 @@ namespace SensusService
             }
         }
 
-#endregion
+        #endregion
 
-#region add/remove running protocol ids
+        #region add/remove running protocol ids
 
         public void AddRunningProtocolId(string id)
         {
@@ -707,7 +703,7 @@ namespace SensusService
             return _registeredProtocols.Where(p => p.Running).ToList();
         }
 
-#endregion
+        #endregion
 
         public void SaveAsync(Action callback = null)
         {
@@ -824,7 +820,7 @@ namespace SensusService
             IssueNotificationAsync(null, PENDING_SURVEY_NOTIFICATION_ID, false, false);
         }
 
-#region callback scheduling
+        #region callback scheduling
 
         public string ScheduleRepeatingCallback(ScheduledCallback callback, int initialDelayMS, int repeatDelayMS, bool repeatLag)
         {
@@ -1049,7 +1045,7 @@ namespace SensusService
             }
         }
 
-#endregion
+        #endregion
 
         public void TextToSpeechAsync(string text)
         {
@@ -1081,10 +1077,10 @@ namespace SensusService
 
         public void PromptForInputAsync(string windowTitle, Input input, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action<Input> callback)
         {
-            PromptForInputsAsync(windowTitle, new [] { input }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, inputs =>
-            {
-                callback(inputs?.First());
-            });
+            PromptForInputsAsync(windowTitle, new[] { input }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, inputs =>
+           {
+               callback(inputs?.First());
+           });
         }
 
         public void PromptForInputsAsync(string windowTitle, IEnumerable<Input> inputs, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action<List<Input>> callback)
@@ -1096,10 +1092,10 @@ namespace SensusService
                 inputGroup.Inputs.Add(input);
             }
 
-            PromptForInputsAsync(null, new [] { inputGroup }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, null, inputGroups =>
-            {
-                callback(inputGroups?.SelectMany(g => g.Inputs).ToList());
-            });
+            PromptForInputsAsync(null, new[] { inputGroup }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, null, inputGroups =>
+           {
+               callback(inputGroups?.SelectMany(g => g.Inputs).ToList());
+           });
         }
 
         public void PromptForInputsAsync(DateTimeOffset? firstPromptTimestamp, IEnumerable<InputGroup> inputGroups, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action postDisplayCallback, Action<IEnumerable<InputGroup>> callback)
@@ -1279,7 +1275,7 @@ namespace SensusService
                         foreach (Input input in inputGroup.Inputs)
                             input.SubmissionTimestamp = submissionTimestamp;
 
-#region geotag input groups if we've got input groups with inputs that are complete and lacking locations
+                    #region geotag input groups if we've got input groups with inputs that are complete and lacking locations
                     if (inputGroups.Any(inputGroup => inputGroup.Geotag && inputGroup.Inputs.Any(input => input.Complete && (input.Latitude == null || input.Longitude == null))))
                     {
                         _logger.Log("Geotagging input groups.", LoggingLevel.Normal, GetType());
@@ -1317,7 +1313,7 @@ namespace SensusService
                             _logger.Log("Error geotagging input groups:  " + ex.Message, LoggingLevel.Normal, GetType());
                         }
                     }
-#endregion
+                    #endregion
                 }
 
                 callback(inputGroups);
@@ -1469,7 +1465,7 @@ namespace SensusService
                     PermissionStatus status;
 
                     // it's happened that the returned dictionary doesn't contain an entry for the requested permission, so check for that(https://insights.xamarin.com/app/Sensus-Production/issues/903).a
-                    if ( !(await CrossPermissions.Current.RequestPermissionsAsync(permission)).TryGetValue(permission, out status) )
+                    if (!(await CrossPermissions.Current.RequestPermissionsAsync(permission)).TryGetValue(permission, out status))
                     {
                         throw new Exception($"Permission status not returned for request:  {permission}");
                     }
@@ -1540,7 +1536,7 @@ namespace SensusService
             }
         }
 
-#region Private Methods
+        #region Private Methods
 
         private void RemoveScripts(bool issueNotification, params Script[] scripts)
         {
@@ -1564,6 +1560,6 @@ namespace SensusService
 
             return scriptsToRunCount == 0 ? null : $"You have {scriptsToRunCount} pending survey{s}.";
         }
-#endregion
+        #endregion
     }
 }
