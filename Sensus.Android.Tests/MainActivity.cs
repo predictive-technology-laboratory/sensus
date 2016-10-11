@@ -43,7 +43,7 @@ namespace Sensus.Android.Tests
             //nunit.AddTestAssembly(typeof(MyTests).Assembly);
 
             // Do you want to automatically run tests when the app starts?
-            nunit.AutoRun = true;
+            nunit.AutoRun = false;
 
             LoadApplication(nunit);
         }

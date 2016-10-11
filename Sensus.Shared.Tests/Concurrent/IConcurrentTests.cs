@@ -169,7 +169,7 @@ namespace Sensus.Local.Tests
                 });
             }, cancel.Token);
 
-            task.Wait(3000);
+            task.Wait(1000);
 
             if (!task.IsCompleted)
             {
@@ -210,7 +210,7 @@ namespace Sensus.Local.Tests
                 });
             }, cancel.Token);
 
-            task.Wait(3000);
+            task.Wait(1000);
 
             if (!task.IsCompleted)
             {

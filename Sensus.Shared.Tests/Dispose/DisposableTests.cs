@@ -23,9 +23,12 @@ namespace Sensus.Tests.Local.Dispose
     {
         private class BadPattern : Disposable
         {
+            public bool FixDispose { private get; set; }            
+
             protected override void Dispose(bool disposing)
             {
                 //this sould call base.Dispose(disposing). Otherwise, other classes in the inheritance hierarchy might not have their resources disposed.
+                if (FixDispose) { base.Dispose(disposing); }
             }
         }
 
@@ -50,44 +53,51 @@ namespace Sensus.Tests.Local.Dispose
         [Test]
         public void BadPatternThrowsException()
         {
-            var badPattern = new BadPattern();
+            using (var badPattern = new BadPattern())
+            {
+                Assert.Throws<InvalidOperationException>(badPattern.Dispose);
 
-            Assert.Throws<InvalidOperationException>(badPattern.Dispose);
+                badPattern.FixDispose = true;
+            }
         }
 
         [Test]
         public void GoodPatternThrowsNoException()
         {
-            var goodPattern = new GoodPattern();
-
-            Assert.DoesNotThrow(goodPattern.Dispose);
+            using (var goodPattern = new GoodPattern())
+            {
+                Assert.DoesNotThrow(goodPattern.Dispose);
+            }
         }
 
         [Test]
         public void GoodPatternMultiDisposeThrowsNoException()
         {
-            var goodPattern = new GoodPattern();
-
-            Assert.DoesNotThrow(goodPattern.Dispose);
-            Assert.DoesNotThrow(goodPattern.Dispose);
+            using (var goodPattern = new GoodPattern())
+            {
+                Assert.DoesNotThrow(goodPattern.Dispose);
+                Assert.DoesNotThrow(goodPattern.Dispose);
+            }
         }
 
         [Test]
         public void GoodPatternDisposeCheckPassesBeforeDispose()
         {
-            var goodPattern = new GoodPattern();
-            
-            Assert.DoesNotThrow(goodPattern.DisposeCheck);
+            using (var goodPattern = new GoodPattern())
+            {
+                Assert.DoesNotThrow(goodPattern.DisposeCheck);
+            }
         }
 
         [Test]
         public void GoodPatternDisposeCheckFailsAfterDispose()
         {
-            var goodPattern = new GoodPattern();
+            using (var goodPattern = new GoodPattern())
+            {
+                goodPattern.Dispose();
 
-            goodPattern.Dispose();
-
-            Assert.Throws<ObjectDisposedException>(goodPattern.DisposeCheck);            
+                Assert.Throws<ObjectDisposedException>(goodPattern.DisposeCheck);
+            }
         }
     }
 }

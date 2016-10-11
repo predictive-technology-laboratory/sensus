@@ -21,7 +21,7 @@ namespace Sensus.Tests.Android.Concurrent
     [TestFixture]
     public class MainConcurrentTests : IConcurrentTests
     {
-        public MainConcurrentTests() : base(new MainConcurrent(5000))
+        public MainConcurrentTests() : base(new MainConcurrent(1000))
         {
             
         }
