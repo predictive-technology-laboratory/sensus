@@ -17,7 +17,7 @@ using SensusService;
 using SensusService.Probes;
 using Xamarin.Forms;
 
-namespace Sensus.Tests.Local.Classes
+namespace Sensus.Shared.Tests.Classes
 {
     public class TestSensusServiceHelper : SensusServiceHelper
     {

@@ -19,7 +19,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\DateTimeExtensionTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Scripts\ScheduleTriggerTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Scripts\ScheduleWindowTests.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Shared\ProtocolTests.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Shared\SensusServiceHelperTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\ProtocolTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\SensusServiceHelperTests.cs" />
   </ItemGroup>
 </Project>

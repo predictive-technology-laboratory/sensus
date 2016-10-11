@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using Sensus.Tools;
 
-namespace Sensus.Tests.Local.Concurrent
+namespace Sensus.Shared.Tests.Concurrent
 {
     [TestFixture]
     public class ConcurrentObservableCollectionTests

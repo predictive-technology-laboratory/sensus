@@ -5,7 +5,7 @@ using Sensus.Service.iOS.Context;
 using Sensus.Service.Tools.Context;
 using SensusService;
 
-namespace Sensus.Tests.Local.Shared
+namespace Sensus.Shared.Tests.Core
 {
     [TestFixture]
     public class ProtocolTests
