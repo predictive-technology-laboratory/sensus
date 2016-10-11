@@ -28,13 +28,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.Tests.Cloud", "Sensu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.Tests.Local", "Sensus.Tests.Local\Sensus.Tests.Local.csproj", "{B11B3650-C440-40F2-834D-339D5FF8CD96}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Sensus.Shared", "Sensus.Shared\Sensus.Shared.shproj", "{B2F65FE8-F266-4C0C-B4A8-D326002B9180}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Sensus", "Sensus.Shared\Sensus.shproj", "{B2F65FE8-F266-4C0C-B4A8-D326002B9180}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Sensus.Shared.Android", "Sensus.Shared.Android\Sensus.Shared.Android.shproj", "{B6E23DA5-2716-426B-9F8F-9C47BD6B68D3}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Sensus.Android.Shared", "Sensus.Shared.Android\Sensus.Android.Shared.shproj", "{B6E23DA5-2716-426B-9F8F-9C47BD6B68D3}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Sensus.Shared.iOS", "Sensus.Shared.iOS\Sensus.Shared.iOS.shproj", "{CA15DD76-C484-4A56-A03F-9EF242294D55}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Sensus.iOS.Shared", "Sensus.Shared.iOS\Sensus.iOS.Shared.shproj", "{CA15DD76-C484-4A56-A03F-9EF242294D55}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Sensus.Shared.Tests", "Sensus.Shared.Tests\Sensus.Shared.Tests.shproj", "{542CBE5F-B59A-422D-B0B9-6123121CB203}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Sensus.Tests.Shared", "Sensus.Shared.Tests\Sensus.Tests.Shared.shproj", "{542CBE5F-B59A-422D-B0B9-6123121CB203}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution

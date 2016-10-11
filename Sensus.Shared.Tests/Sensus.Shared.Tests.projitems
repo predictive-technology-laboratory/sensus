@@ -9,7 +9,17 @@
     <Import_RootNamespace>Sensus.Service.Tests</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Classes\TestSensusContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Classes\TestSensusServiceHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Concurrent\ConcurrentObservableCollectionTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\IConcurrentTests.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Context\TestSensusContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Concurrent\LockConcurrentTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Dispose\DisposableTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Encryption\SimpleEncryptionTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\DateTimeExtensionTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Scripts\ScheduleTriggerTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Scripts\ScheduleWindowTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shared\ProtocolTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shared\SensusServiceHelperTests.cs" />
   </ItemGroup>
 </Project>
