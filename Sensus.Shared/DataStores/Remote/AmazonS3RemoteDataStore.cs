@@ -14,7 +14,7 @@
 
 using System;
 using System.Collections.Generic;
-using SensusUI.UiProperties;
+using Sensus.Shared.UI.UiProperties;
 using Newtonsoft.Json.Serialization;
 using System.Linq;
 using System.Text;
@@ -30,7 +30,7 @@ using System.IO.Compression;
 using Newtonsoft.Json;
 using System.Net;
 
-namespace SensusService.DataStores.Remote
+namespace Sensus.Shared.DataStores.Remote
 {
     public class AmazonS3RemoteDataStore : RemoteDataStore
     {

@@ -12,20 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using SensusService;
-using SensusService.DataStores;
-using SensusService.DataStores.Local;
-using SensusService.DataStores.Remote;
-using SensusUI.UiProperties;
+using Sensus.Shared.DataStores;
+using Sensus.Shared.DataStores.Local;
+using Sensus.Shared.DataStores.Remote;
+using Sensus.Shared.UI.UiProperties;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Sensus.Service.Tools.Context;
+using System.Collections.Generic;
+using Sensus.Shared.Context;
+using Sensus.Shared.UI.Inputs;
 using Xamarin.Forms;
-using SensusUI.Inputs;
 
-namespace SensusUI
+namespace Sensus.Shared.UI
 {
     /// <summary>
     /// Displays a single protocol.
@@ -36,7 +35,7 @@ namespace SensusUI
         private EventHandler<bool> _protocolRunningChangedAction;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SensusUI.ProtocolPage"/> class.
+        /// Initializes a new instance of the <see cref="ProtocolPage"/> class.
         /// </summary>
         /// <param name="protocol">Protocol to display.</param>
         public ProtocolPage(Protocol protocol)

@@ -13,10 +13,10 @@
 // limitations under the License.
 
 using System;
-using SensusService.Probes.Movement;
+using Sensus.Shared.Probes.Movement;
 using Plugin.Geolocator.Abstractions;
 
-namespace SensusService.Probes.Location
+namespace Sensus.Shared.Probes.Location
 {
     public class PointOfInterest
     {

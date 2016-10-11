@@ -16,7 +16,7 @@ using System;
 using Xamarin.Forms;
 using Newtonsoft.Json;
 
-namespace SensusUI.Inputs
+namespace Sensus.Shared.UI.Inputs
 {
     public class LabelOnlyInput : Input
     {
@@ -49,7 +49,7 @@ namespace SensusUI.Inputs
         }
 
         /// <summary>
-        /// Gets a value indicating whether this <see cref="SensusUI.Inputs.LabelOnlyInput"/> stores completion records. Always
+        /// Gets a value indicating whether this <see cref="Sensus.Shared.Inputs.LabelOnlyInput"/> stores completion records. Always
         /// returns false, since label-only inputs are complete by definition and repeated deserialization will accumulate
         /// completion records that don't have meaning:  https://github.com/predictive-technology-laboratory/sensus/issues/126
         /// </summary>

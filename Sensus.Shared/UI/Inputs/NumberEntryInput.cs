@@ -16,7 +16,7 @@ using System;
 using Xamarin.Forms;
 using Newtonsoft.Json;
 
-namespace SensusUI.Inputs
+namespace Sensus.Shared.UI.Inputs
 {
     public class NumberEntryInput : Input
     {

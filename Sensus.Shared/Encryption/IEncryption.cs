@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Sensus.Service.Tools
+namespace Sensus.Shared.Encryption
 {
     public interface IEncryption
     {

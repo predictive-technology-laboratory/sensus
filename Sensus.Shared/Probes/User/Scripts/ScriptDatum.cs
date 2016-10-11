@@ -13,14 +13,14 @@
 // limitations under the License.
 
 using System;
-using SensusService.Anonymization;
-using SensusService.Anonymization.Anonymizers;
-using SensusService.Probes.User.Scripts.ProbeTriggerProperties;
 using System.Collections;
 using System.Collections.Generic;
-using SensusUI.Inputs;
+using Sensus.Shared.Anonymization;
+using Sensus.Shared.Anonymization.Anonymizers;
+using Sensus.Shared.Probes.User.Scripts.ProbeTriggerProperties;
+using Sensus.Shared.UI.Inputs;
 
-namespace SensusService.Probes.User.Scripts
+namespace Sensus.Shared.Probes.User.Scripts
 {
     public class ScriptDatum : Datum
     {

@@ -13,11 +13,9 @@
 // limitations under the License.
 
 using System;
-using SensusService.Probes;
-using SensusService.Probes.Communication;
 using Syncfusion.SfChart.XForms;
 
-namespace SensusService
+namespace Sensus.Shared.Probes.Communication
 {
     public abstract class PollingTelephonyProbe : PollingProbe
     {

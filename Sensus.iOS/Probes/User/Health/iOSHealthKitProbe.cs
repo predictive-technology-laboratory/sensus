@@ -12,13 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using SensusService.Probes;
-using HealthKit;
-using Newtonsoft.Json;
-using Foundation;
 using System.Threading;
-using SensusService;
+using HealthKit;
+using Foundation;
+using Newtonsoft.Json;
+using Sensus.Shared;
+using Sensus.Shared.Probes;
 
 namespace Sensus.iOS.Probes.User.Health
 {

@@ -15,9 +15,9 @@
 using System;
 using Xamarin.Forms;
 using Newtonsoft.Json;
-using SensusUI.UiProperties;
+using Sensus.Shared.UI.UiProperties;
 
-namespace SensusUI.Inputs
+namespace Sensus.Shared.UI.Inputs
 {
     public class MultiLineTextInput : Input
     {

@@ -14,13 +14,14 @@
 
 using System;
 using NUnit.Framework;
-using Sensus.Tools;
+using Sensus.Shared.Dispose;
 
 namespace Sensus.Shared.Tests.Dispose
 {
     [TestFixture]
     public class DisposableTests
     {
+        #region Private Classes
         private class BadPattern : Disposable
         {
             public bool FixDispose { private get; set; }            
@@ -49,6 +50,7 @@ namespace Sensus.Shared.Tests.Dispose
                 base.Dispose(true);
             }
         }
+        #endregion
 
         [Test]
         public void BadPatternThrowsException()

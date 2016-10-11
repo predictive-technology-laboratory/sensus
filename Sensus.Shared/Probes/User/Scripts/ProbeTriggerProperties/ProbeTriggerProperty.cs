@@ -14,7 +14,7 @@
 
 using System;
 
-namespace SensusService.Probes.User.Scripts.ProbeTriggerProperties
+namespace Sensus.Shared.Probes.User.Scripts.ProbeTriggerProperties
 {
     [AttributeUsage(AttributeTargets.Property)]
     public class ProbeTriggerProperty : Attribute

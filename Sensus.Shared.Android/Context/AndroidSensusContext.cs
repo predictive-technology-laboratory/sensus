@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Sensus.Tools;
+using Sensus.Shared.Encryption;
+using Sensus.Shared.Concurrent;
 using Sensus.Android.Tools;
-using Sensus.Service.Tools;
-using Sensus.Service.Tools.Context;
+using Sensus.Shared.Context;
 
 namespace Sensus.Service.Android.Context
 {

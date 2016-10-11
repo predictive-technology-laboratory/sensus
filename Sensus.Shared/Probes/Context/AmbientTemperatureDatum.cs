@@ -13,12 +13,11 @@
 // limitations under the License.
 
 using System;
-using SensusService.Probes.User.Scripts.ProbeTriggerProperties;
-using Newtonsoft.Json;
-using SensusService.Anonymization;
-using SensusService.Anonymization.Anonymizers;
+using Sensus.Shared.Anonymization;
+using Sensus.Shared.Anonymization.Anonymizers;
+using Sensus.Shared.Probes.User.Scripts.ProbeTriggerProperties;
 
-namespace SensusService
+namespace Sensus.Shared.Probes.Context
 {
     public class AmbientTemperatureDatum : Datum
     {

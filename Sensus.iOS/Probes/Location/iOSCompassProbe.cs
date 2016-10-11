@@ -13,8 +13,8 @@
 // limitations under the License.
 
 using System;
-using SensusService.Probes.Location;
-using SensusService;
+using Sensus.Shared.Probes.Location;
+using Sensus.Shared;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions.Abstractions;
 using Syncfusion.SfChart.XForms;

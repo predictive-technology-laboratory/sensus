@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Sensus.Tools;
+using Sensus.Shared.Concurrent;
+using Sensus.Shared.Encryption;
 
-namespace Sensus.Service.Tools.Context
+namespace Sensus.Shared.Context
 {
     /// <summary>
     /// Defines platform-specific fields that should not be serialized as part of the service helper.

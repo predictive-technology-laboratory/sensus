@@ -12,14 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Android.Hardware;
-using SensusService.Probes.Location;
 using System;
-using Syncfusion.SfChart.XForms;
-using SensusService;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Android.Hardware;
+using Sensus.Shared;
+using Sensus.Shared.Probes.Location;
+using Syncfusion.SfChart.XForms;
 
 namespace Sensus.Android.Probes.Location
 {

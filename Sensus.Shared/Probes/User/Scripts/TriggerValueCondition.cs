@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace SensusService.Probes.User.Scripts
+namespace Sensus.Shared.Probes.User.Scripts
 {
     public enum TriggerValueCondition
     {

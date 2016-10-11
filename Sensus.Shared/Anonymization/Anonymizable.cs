@@ -13,12 +13,12 @@
 // limitations under the License.
 
 using System;
-using SensusService.Anonymization;
+using Sensus.Shared.Anonymization;
 using System.Collections.Generic;
-using SensusService.Anonymization.Anonymizers;
-using SensusService.Exceptions;
+using Sensus.Shared.Anonymization.Anonymizers;
+using Sensus.Shared.Exceptions;
 
-namespace SensusService.Anonymization
+namespace Sensus.Shared.Anonymization
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public class Anonymizable : Attribute
@@ -43,7 +43,7 @@ namespace SensusService.Anonymization
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SensusService.Anonymization.Anonymizable"/> class.
+        /// Initializes a new instance of the <see cref="Anonymizable"/> class.
         /// </summary>
         /// <param name="propertyDisplayName">Property display name.</param>
         /// <param name="availableAnonymizerTypes">Available anonymizer types.</param>

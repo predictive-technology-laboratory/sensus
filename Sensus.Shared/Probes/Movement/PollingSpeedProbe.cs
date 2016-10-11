@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using SensusService.Probes.Location;
 using System;
-using System.Collections.Generic;
 using System.Threading;
+using System.Collections.Generic;
+using Sensus.Shared.Probes.Location;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions.Abstractions;
 using Syncfusion.SfChart.XForms;
 
-namespace SensusService.Probes.Movement
+namespace Sensus.Shared.Probes.Movement
 {
     public class PollingSpeedProbe : PollingProbe
     {

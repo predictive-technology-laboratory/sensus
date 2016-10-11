@@ -15,12 +15,11 @@
 using System.Linq;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using Sensus.Service.iOS.Context;
-using Sensus.Service.Tools.Context;
+using Sensus.Shared.Context;
+using Sensus.Shared.Test.Classes;
 using Sensus.Shared.Tests.Classes;
-using SensusService;
-using SensusService.Probes.Location;
-using SensusService.Probes.User.Scripts;
+using Sensus.Shared.Probes.Location;
+using Sensus.Shared.Probes.User.Scripts;
 
 namespace Sensus.Shared.Tests.Core
 {

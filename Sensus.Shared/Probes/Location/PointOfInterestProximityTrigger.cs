@@ -14,7 +14,7 @@
 
 using System;
 
-namespace SensusService.Probes.Location
+namespace Sensus.Shared.Probes.Location
 {
     public class PointOfInterestProximityTrigger
     {

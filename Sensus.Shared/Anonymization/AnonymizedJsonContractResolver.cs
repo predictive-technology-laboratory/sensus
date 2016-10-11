@@ -15,15 +15,15 @@
 using System;
 using Newtonsoft.Json.Serialization;
 using System.Reflection;
-using SensusService.Anonymization;
+using Sensus.Shared.Anonymization;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using SensusService.Exceptions;
-using SensusService.Anonymization.Anonymizers;
 using Newtonsoft.Json;
 using System.Linq;
+using Sensus.Shared.Anonymization.Anonymizers;
+using Sensus.Shared.Exceptions;
 
-namespace SensusService.Anonymization
+namespace Sensus.Shared.Anonymization
 {
     public class AnonymizedJsonContractResolver : DefaultContractResolver
     {

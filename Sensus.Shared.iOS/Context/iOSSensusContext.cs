@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Sensus.Tools;
-using Sensus.Service.Tools;
-using Sensus.Service.Tools.Context;
-using Sensus.iOS.Concurrent;
+using Sensus.Shared.Context;
+using Sensus.Shared.Concurrent;
+using Sensus.Shared.Encryption;
+using Sensus.Shared.iOS.Concurrent;
 
-namespace Sensus.Service.iOS.Context
+namespace Sensus.Shared.iOS.Context
 {
     public class iOSSensusContext: ISensusContext
     {

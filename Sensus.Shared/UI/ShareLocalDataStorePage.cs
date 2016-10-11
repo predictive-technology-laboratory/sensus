@@ -13,15 +13,13 @@
 // limitations under the License.
 
 using System;
-using Xamarin.Forms;
-using System.Threading;
-using SensusService.DataStores.Local;
-using SensusService;
 using System.IO;
-using System.Collections.Generic;
-using Sensus.Service.Tools.Context;
+using System.Threading;
+using Sensus.Shared.Context;
+using Sensus.Shared.DataStores.Local;
+using Xamarin.Forms;
 
-namespace SensusUI
+namespace Sensus.Shared.UI
 {
     /// <summary>
     /// Displays the progress of sharing a local data store. Data must be collected and written to a file
@@ -33,7 +31,7 @@ namespace SensusUI
         private CancellationTokenSource _cancellationTokenSource;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SensusUI.ShareLocalDataStorePage"/> class.
+        /// Initializes a new instance of the <see cref="ShareLocalDataStorePage"/> class.
         /// </summary>
         /// <param name="localDataStore">Local data store to display.</param>
         public ShareLocalDataStorePage(LocalDataStore localDataStore)

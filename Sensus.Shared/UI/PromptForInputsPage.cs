@@ -13,16 +13,14 @@
 // limitations under the License.
 
 using System;
-using Xamarin.Forms;
-using System.Collections.Generic;
-using SensusService.Exceptions;
 using System.Linq;
-using SensusUI.Inputs;
 using System.Threading;
-using Sensus.Service.Tools.Context;
-using SensusService;
+using System.Collections.Generic;
+using Sensus.Shared.Context;
+using Sensus.Shared.UI.Inputs;
+using Xamarin.Forms;
 
-namespace SensusUI
+namespace Sensus.Shared.UI
 {
     public class PromptForInputsPage : ContentPage
     {

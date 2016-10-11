@@ -15,7 +15,7 @@
 using System;
 using Plugin.Geolocator.Abstractions;
 
-namespace SensusService
+namespace Sensus.Shared
 {
     public static class ExtensionMethods
     {

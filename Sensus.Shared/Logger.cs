@@ -13,13 +13,11 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using Xamarin;
 
-namespace SensusService
+namespace Sensus.Shared
 {
     public class Logger
     {
@@ -134,7 +132,7 @@ namespace SensusService
                     }
                     catch (Exception ex)
                     {
-                        Log("Error committing message buffer:  " + ex.Message, SensusService.LoggingLevel.Normal, GetType());
+                        Log("Error committing message buffer:  " + ex.Message, LoggingLevel.Normal, GetType());
                     }
 
                     _messageBuffer.Clear();
@@ -175,7 +173,7 @@ namespace SensusService
                 }
                 catch (Exception ex)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Error reading log file:  " + ex.Message, SensusService.LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Get().Logger.Log("Error reading log file:  " + ex.Message, LoggingLevel.Normal, GetType());
                 }
 
                 if (mostRecentFirst)
@@ -197,7 +195,7 @@ namespace SensusService
                 }
                 catch (Exception ex)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Failed to copy log file to \"" + path + "\":  " + ex.Message, SensusService.LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Get().Logger.Log("Failed to copy log file to \"" + path + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
                 }
             }
         }

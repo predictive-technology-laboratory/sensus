@@ -12,23 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using SensusService;
 using System;
 using System.IO;
 using System.Linq;
-using Xamarin.Forms;
-using SensusUI.Inputs;
-using System.Collections.Generic;
-using SensusService.Exceptions;
 using System.Threading;
+using System.Collections.Generic;
+using Xamarin.Forms;
+using Sensus.Shared.Context;
+using Sensus.Shared.UI.Inputs;
+using Sensus.Shared.Exceptions;
 using ZXing;
 using Plugin.Permissions.Abstractions;
-using Sensus.Service.Tools.Context;
+
 #if __ANDROID__
 using Sensus.Android;
 #endif
 
-namespace SensusUI
+namespace Sensus.Shared.UI
 {
     /// <summary>
     /// Displays all protocols.

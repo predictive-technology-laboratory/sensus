@@ -13,10 +13,10 @@
 // limitations under the License.
 
 using System;
-using SensusService.Probes.Movement;
+using Sensus.Shared.Probes.Movement;
 using CoreMotion;
 using Foundation;
-using SensusService;
+using Sensus.Shared;
 using Plugin.Permissions.Abstractions;
 using System.Threading;
 

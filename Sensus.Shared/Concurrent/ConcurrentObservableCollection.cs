@@ -18,9 +18,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
-using Sensus.Service.Tools.Context;
+using Sensus.Shared.Context;
 
-namespace Sensus.Tools
+namespace Sensus.Shared.Concurrent
 {
     /// <summary>
     /// This is terrifying and a bad idea on many levels. However, I think it is still better than sprinkling lock code throughout the entire system.

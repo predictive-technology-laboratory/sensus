@@ -14,14 +14,13 @@
 
 using System;
 using System.Threading;
-using SensusService;
-using SensusService.Probes.User.Scripts;
-using SensusUI.Inputs;
-using Xamarin.Forms;
 using System.Globalization;
-using Sensus.Service.Tools.Context;
+using Sensus.Shared.Context;
+using Sensus.Shared.UI.Inputs;
+using Sensus.Shared.Probes.User.Scripts;
+using Xamarin.Forms;
 
-namespace SensusUI
+namespace Sensus.Shared.UI
 {
     public class PendingScriptsPage : ContentPage
     {

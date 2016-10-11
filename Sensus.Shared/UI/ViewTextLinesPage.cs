@@ -15,11 +15,9 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using Xamarin.Forms;
-using SensusService;
 
-namespace SensusUI
+namespace Sensus.Shared.UI
 {
     /// <summary>
     /// Displays lines of text.
@@ -27,7 +25,7 @@ namespace SensusUI
     public class ViewTextLinesPage : ContentPage
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SensusUI.ViewTextLinesPage"/> class.
+        /// Initializes a new instance of the <see cref="ViewTextLinesPage"/> class.
         /// </summary>
         /// <param name="title">Title of page.</param>
         /// <param name="lines">Lines to display.</param>

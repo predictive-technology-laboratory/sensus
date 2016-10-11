@@ -12,12 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using SensusUI.UiProperties;
 using Xamarin.Forms;
 using System.Reflection;
 
-namespace SensusUI
+namespace Sensus.Shared.UI.UiProperties
 {
     public class EditorUiProperty : UiProperty
     {

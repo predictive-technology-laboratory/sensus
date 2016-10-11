@@ -15,8 +15,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using SensusService;
-using SensusService.Probes.Device;
+using Sensus.Shared;
+using Sensus.Shared.Probes.Device;
 using UIKit;
 
 namespace Sensus.iOS.Probes.Device

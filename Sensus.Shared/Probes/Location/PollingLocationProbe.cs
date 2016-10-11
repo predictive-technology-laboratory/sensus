@@ -13,13 +13,13 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using System.Threading;
+using System.Collections.Generic;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions.Abstractions;
 using Syncfusion.SfChart.XForms;
 
-namespace SensusService.Probes.Location
+namespace Sensus.Shared.Probes.Location
 {
     /// <summary>
     /// Probes location information.

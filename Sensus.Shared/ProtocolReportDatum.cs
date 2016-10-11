@@ -12,13 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Sensus.Shared.Probes;
 using System;
-using System.Collections.Generic;
-using SensusService.Probes;
 using System.Linq;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 
-namespace SensusService
+namespace Sensus.Shared
 {
     public class ProtocolReportDatum : Datum
     {

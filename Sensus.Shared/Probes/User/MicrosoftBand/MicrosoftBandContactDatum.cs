@@ -15,7 +15,7 @@
 using System;
 using Microsoft.Band.Portable.Sensors;
 
-namespace SensusService.Probes.User.MicrosoftBand
+namespace Sensus.Shared.Probes.User.MicrosoftBand
 {
     public class MicrosoftBandContactDatum : Datum
     {

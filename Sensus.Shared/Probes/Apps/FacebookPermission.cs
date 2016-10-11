@@ -13,9 +13,9 @@
 // limitations under the License.
 
 using System;
-using SensusService.Exceptions;
+using Sensus.Shared.Exceptions;
 
-namespace SensusService.Probes.Apps
+namespace Sensus.Shared.Probes.Apps
 {
     [AttributeUsage(AttributeTargets.Property, Inherited = true, AllowMultiple = false)]
     public class FacebookPermission : Attribute

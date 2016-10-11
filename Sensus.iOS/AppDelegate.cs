@@ -13,24 +13,24 @@
 // limitations under the License.
 
 using System;
-using Foundation;
-using UIKit;
-using Xamarin.Forms.Platform.iOS;
-using Xamarin.Forms;
-using SensusUI;
-using SensusService;
 using System.IO;
-using Facebook.CoreKit;
+using System.Linq;
+using System.Collections.Generic;
 using Xamarin;
+using Xamarin.Forms;
+using Xamarin.Forms.Platform.iOS;
 using Xam.Plugin.MapExtend.iOSUnified;
+using Sensus.Shared;
+using Sensus.Shared.UI;
+using Sensus.Shared.Probes;
+using Sensus.Shared.Context;
+using Sensus.Shared.iOS.Context;
+using UIKit;
+using Foundation;
 using CoreLocation;
 using Plugin.Toasts;
-using SensusService.Probes;
+using Facebook.CoreKit;
 using Syncfusion.SfChart.XForms.iOS.Renderers;
-using System.Collections.Generic;
-using System.Linq;
-using Sensus.Service.iOS.Context;
-using Sensus.Service.Tools.Context;
 
 namespace Sensus.iOS
 {

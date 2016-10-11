@@ -21,7 +21,7 @@ using Newtonsoft.Json;
 using Syncfusion.SfChart.XForms;
 using System.Collections.Generic;
 
-namespace SensusService.Probes.Location
+namespace Sensus.Shared.Probes.Location
 {
     public class ListeningPointsOfInterestProximityProbe : ListeningProbe, IPointsOfInterestProximityProbe
     {

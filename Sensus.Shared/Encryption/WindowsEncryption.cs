@@ -15,7 +15,7 @@
 using System;
 using System.Text;
 
-namespace Sensus.Service.Tools
+namespace Sensus.Shared.Encryption
 {
     class WindowsEncryption: IEncryption
     {

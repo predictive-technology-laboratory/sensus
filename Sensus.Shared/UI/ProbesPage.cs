@@ -12,13 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using SensusService;
-using SensusService.Exceptions;
-using SensusService.Probes;
 using System;
+using Sensus.Shared.Probes;
+using Sensus.Shared.Exceptions;
 using Xamarin.Forms;
 
-namespace SensusUI
+namespace Sensus.Shared.UI
 {
     public abstract class ProbesPage : ContentPage
     {

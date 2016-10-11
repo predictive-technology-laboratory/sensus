@@ -17,7 +17,7 @@ using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 
-namespace SensusUI.UiProperties
+namespace Sensus.Shared.UI.UiProperties
 {
     /// <summary>
     /// Decorated members should be rendered as lists.

@@ -15,14 +15,15 @@
 using Android.App;
 using Android.Content;
 using Android.OS;
-using SensusService;
 using System;
-using System.Collections.Generic;
-using SensusUI;
-using Xamarin.Forms;
 using System.Linq;
+using System.Collections.Generic;
+using Xamarin.Forms;
+using Sensus.Shared;
+using Sensus.Shared.UI;
+using Sensus.Shared.Context;
 using Sensus.Service.Android.Context;
-using Sensus.Service.Tools.Context;
+
 
 namespace Sensus.Android
 {

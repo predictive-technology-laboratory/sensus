@@ -13,12 +13,12 @@
 // limitations under the License.
 
 using Xamarin.Forms;
-using SensusService.Probes.User.Scripts;
-using SensusUI.Inputs;
-using System.Collections.Generic;
+using Sensus.Shared.UI.Inputs;
+using Sensus.Shared.Probes.User.Scripts;
 using System.Linq;
+using System.Collections.Generic;
 
-namespace SensusUI
+namespace Sensus.Shared.UI
 {
     public class ScriptInputGroupsPage : ContentPage
     {

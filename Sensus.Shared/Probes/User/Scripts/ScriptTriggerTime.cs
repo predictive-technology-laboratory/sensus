@@ -14,7 +14,7 @@
 
 using System;
 
-namespace Sensus.Tools.Scripts
+namespace Sensus.Shared.Probes.User.Scripts
 {
     public class ScriptTriggerTime
     {

@@ -13,12 +13,11 @@
 // limitations under the License.
 
 using System;
-using Xamarin.Forms;
-using SensusService;
 using System.Timers;
-using Sensus.Service.Tools.Context;
+using Sensus.Shared.Context;
+using Xamarin.Forms;
 
-namespace SensusUI
+namespace Sensus.Shared.UI
 {
     public class ParticipationReportPage : ContentPage
     {

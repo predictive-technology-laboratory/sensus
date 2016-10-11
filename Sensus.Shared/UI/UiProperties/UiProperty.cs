@@ -13,17 +13,17 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Collections.Generic;
 using Xamarin.Forms;
 
-namespace SensusUI.UiProperties
+namespace Sensus.Shared.UI.UiProperties
 {
     /// <summary>
     /// Attribute used to declare that a property should be rendered within the UI.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Property)]
     public abstract class UiProperty : Attribute
     {
         /// <summary>

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Sensus.Service.Tools.Context
+namespace Sensus.Shared.Context
 {
     /// <summary>
     /// Singleton holder of the current platform-specific context.

@@ -16,7 +16,7 @@ using System;
 using Xamarin.Forms;
 using System.Reflection;
 
-namespace SensusUI.UiProperties
+namespace Sensus.Shared.UI.UiProperties
 {
     /// <summary>
     /// Decorated members should be rendered as editable floating-point values.

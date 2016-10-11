@@ -13,29 +13,29 @@
 // limitations under the License.
 
 using Newtonsoft.Json;
-using SensusService.DataStores.Local;
-using SensusService.DataStores.Remote;
-using SensusService.Probes;
-using SensusUI.UiProperties;
+using Sensus.Shared.DataStores.Local;
+using Sensus.Shared.DataStores.Remote;
+using Sensus.Shared.Probes;
+using Sensus.Shared.UI.UiProperties;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Threading;
 using Xamarin.Forms;
-using SensusService.Anonymization;
+using Sensus.Shared.Anonymization;
 using System.Linq;
 using System.Reflection;
-using SensusUI;
-using SensusService.Probes.Location;
-using SensusUI.Inputs;
-using SensusService.Probes.Apps;
-using SensusService.Probes.Movement;
+using Sensus.Shared.UI;
+using Sensus.Shared.Probes.Location;
+using Sensus.Shared.UI.Inputs;
+using Sensus.Shared.Probes.Apps;
+using Sensus.Shared.Probes.Movement;
 using System.Text;
 using System.Threading.Tasks;
-using Sensus.Service.Tools.Context;
-using SensusService.Probes.User.MicrosoftBand;
-using SensusService.Probes.User.Scripts;
+using Sensus.Shared.Context;
+using Sensus.Shared.Probes.User.MicrosoftBand;
+using Sensus.Shared.Probes.User.Scripts;
 
 #if __IOS__
 using HealthKit;
@@ -44,7 +44,7 @@ using Foundation;
 using Plugin.Geolocator.Abstractions;
 #endif
 
-namespace SensusService
+namespace Sensus.Shared
 {
     /// <summary>
     /// Container for probes, data stores, and all other information needed to run a collection experiment.

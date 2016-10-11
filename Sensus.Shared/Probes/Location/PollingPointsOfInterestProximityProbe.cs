@@ -13,14 +13,14 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Plugin.Geolocator.Abstractions;
 using Syncfusion.SfChart.XForms;
 
-namespace SensusService.Probes.Location
+namespace Sensus.Shared.Probes.Location
 {
     public class PollingPointsOfInterestProximityProbe : PollingProbe, IPointsOfInterestProximityProbe
     {

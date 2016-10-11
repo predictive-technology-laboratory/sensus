@@ -12,14 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using HealthKit;
-using System.Collections.Generic;
-using SensusService;
-using System.Threading;
 using Foundation;
-using SensusService.Probes.User.Health;
-using Newtonsoft.Json;
+using System;
+using System.Threading;
+using System.Collections.Generic;
+using Sensus.Shared;
+using Sensus.Shared.Probes.User.Health;
 using Syncfusion.SfChart.XForms;
 
 namespace Sensus.iOS.Probes.User.Health

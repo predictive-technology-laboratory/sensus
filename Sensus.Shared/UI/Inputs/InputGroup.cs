@@ -16,10 +16,10 @@ using System;
 using System.Linq;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using SensusUI.UiProperties;
+using Sensus.Shared.UI.UiProperties;
 using Newtonsoft.Json;
 
-namespace SensusUI.Inputs
+namespace Sensus.Shared.UI.Inputs
 {
     public class InputGroup
     {
@@ -46,7 +46,7 @@ namespace SensusUI.Inputs
         #region Constructors
         public InputGroup()
         {
-            Id = Guid.NewGuid().ToString();
+            Id     = Guid.NewGuid().ToString();
             Inputs = NewObservableCollection();
             Geotag = false;
         }
@@ -67,7 +67,7 @@ namespace SensusUI.Inputs
         [JsonConstructor]
         private InputGroup(string id, ObservableCollection<Input> inputs)
         {
-            Id = id;
+            Id     = id;
             Inputs = inputs;
         }
         #endregion

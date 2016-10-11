@@ -12,29 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using SensusService;
-using Xamarin;
-using SensusService.Probes.Location;
-using SensusService.Probes;
-using Xamarin.Forms.Platform.iOS;
 using UIKit;
 using Foundation;
-using Xamarin.Forms;
-using System.Collections.Generic;
-using AVFoundation;
-using System.Threading;
-using Plugin.Toasts;
-using SensusService.Probes.Movement;
-using MessageUI;
+using System;
 using System.IO;
-using Newtonsoft.Json;
-using CoreBluetooth;
-using SensusService.Exceptions;
 using System.Linq;
+using System.Threading;
+using System.Collections.Generic;
+using Sensus.Shared;
+using Sensus.Shared.Probes;
+using Sensus.Shared.Context;
+using Sensus.Shared.Exceptions;
+using Sensus.Shared.Probes.Movement;
+using Sensus.Shared.Probes.Location;
+using Xamarin;
+using Xamarin.Forms;
+using Xamarin.Forms.Platform.iOS;
+using MessageUI;
+using AVFoundation;
+using Plugin.Toasts;
+using CoreBluetooth;
+using Newtonsoft.Json;
 using CoreFoundation;
-using Sensus.iOS.Concurrent;
-using Sensus.Service.Tools.Context;
 
 namespace Sensus.iOS
 {

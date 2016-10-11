@@ -12,13 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using Xamarin.Forms;
-using SensusService.Probes.User.Scripts;
-using SensusUI.UiProperties;
-using System.Collections.Generic;
+using Sensus.Shared.UI.UiProperties;
+using Sensus.Shared.Probes.User.Scripts;
 
-namespace SensusUI
+namespace Sensus.Shared.UI
 {
     /// <summary>
     /// Displays a script runner, allowing the user to edit its prompts and triggers.
@@ -26,7 +24,7 @@ namespace SensusUI
     public class ScriptRunnerPage : ContentPage
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SensusUI.ScriptRunnerPage"/> class.
+        /// Initializes a new instance of the <see cref="ScriptRunnerPage"/> class.
         /// </summary>
         /// <param name="scriptRunner">Script runner to display.</param>
         public ScriptRunnerPage(ScriptRunner scriptRunner)

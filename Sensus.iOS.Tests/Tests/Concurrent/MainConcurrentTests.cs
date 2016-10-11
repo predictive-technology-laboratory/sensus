@@ -13,7 +13,7 @@
 // limitations under the License.
 
 using NUnit.Framework;
-using Sensus.iOS.Concurrent;
+using Sensus.Shared.iOS.Concurrent;
 using Sensus.Shared.Tests.Concurrent;
 
 namespace Sensus.iOS.Tests.Concurrent

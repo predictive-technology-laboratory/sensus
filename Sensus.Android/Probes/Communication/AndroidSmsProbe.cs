@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using Android.App;
 using Android.Telephony;
-using SensusService.Probes.Communication;
-using System;
-using SensusService;
+using Sensus.Shared;
+using Sensus.Shared.Probes.Communication;
 using Plugin.Permissions.Abstractions;
 
 namespace Sensus.Android.Probes.Communication

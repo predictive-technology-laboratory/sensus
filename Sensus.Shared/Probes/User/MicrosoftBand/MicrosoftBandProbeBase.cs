@@ -12,20 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Newtonsoft.Json;
+using Microsoft.Band.Portable;
+
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Band.Portable;
-using Newtonsoft.Json;
-using SensusService.Probes;
-using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Band.Portable.Sensors;
-using SensusUI.UiProperties;
 using Syncfusion.SfChart.XForms;
-using SensusService.Probes.User.MicrosoftBand;
+using Sensus.Shared.UI.UiProperties;
 
-namespace SensusService
+namespace Sensus.Shared.Probes.User.MicrosoftBand
 {
     public abstract class MicrosoftBandProbeBase : ListeningProbe
     {

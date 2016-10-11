@@ -12,10 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using Newtonsoft.Json;
 
-namespace SensusService.Anonymization.Anonymizers
+namespace Sensus.Shared.Anonymization.Anonymizers
 {    
     public abstract class Anonymizer
     {

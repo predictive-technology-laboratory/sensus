@@ -16,7 +16,7 @@ using System;
 using Newtonsoft.Json;
 using Syncfusion.SfChart.XForms;
 
-namespace SensusService.Probes.Communication
+namespace Sensus.Shared.Probes.Communication
 {
     /// <summary>
     /// Probes information about SMS messages sent and received.

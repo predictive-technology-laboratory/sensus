@@ -13,10 +13,10 @@
 // limitations under the License.
 
 using System;
-using SensusService.Exceptions;
+using Sensus.Shared.Exceptions;
 using System.Collections.Generic;
 
-namespace SensusService.Anonymization.Anonymizers
+namespace Sensus.Shared.Anonymization.Anonymizers
 {
     public class StringHashAnonymizer : Anonymizer
     {        

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 using Newtonsoft.Json;
-using SensusUI.UiProperties;
+using Sensus.Shared.UI.UiProperties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,9 +21,9 @@ using System.Reflection;
 using System.Threading;
 using Syncfusion.SfChart.XForms;
 using System.Threading.Tasks;
-using Sensus.Service.Tools.Context;
+using Sensus.Shared.Context;
 
-namespace SensusService.Probes
+namespace Sensus.Shared.Probes
 {
     /// <summary>
     /// An abstract probe.

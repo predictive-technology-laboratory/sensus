@@ -15,12 +15,11 @@
 using System;
 using System.Linq;
 using System.Collections.ObjectModel;
-
 using Newtonsoft.Json;
-using Sensus.Tools;
-using SensusUI.Inputs;
+using Sensus.Shared.UI.Inputs;
+using Sensus.Shared.Extensions;
 
-namespace SensusService.Probes.User.Scripts
+namespace Sensus.Shared.Probes.User.Scripts
 {
     public class Script
     {

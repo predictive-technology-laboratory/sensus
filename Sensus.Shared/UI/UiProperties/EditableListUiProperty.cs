@@ -21,7 +21,7 @@ using System.Linq;
 using System.Globalization;
 using System.Reflection;
 
-namespace SensusUI.UiProperties
+namespace Sensus.Shared.UI.UiProperties
 {
     public class EditableListUiProperty : UiProperty
     {

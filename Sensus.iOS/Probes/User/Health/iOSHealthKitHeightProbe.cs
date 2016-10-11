@@ -13,11 +13,10 @@
 // limitations under the License.
 
 using System;
-using SensusService.Probes.User.Health;
+using Sensus.Shared;
+using Sensus.Shared.Probes.User.Health;
 using HealthKit;
 using Xamarin.Forms.Platform.iOS;
-using SensusService;
-using Newtonsoft.Json;
 using Syncfusion.SfChart.XForms;
 
 namespace Sensus.iOS.Probes.User.Health

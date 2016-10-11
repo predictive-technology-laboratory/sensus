@@ -14,10 +14,9 @@
 
 using System;
 using Newtonsoft.Json;
-using SensusService.Probes;
 using Syncfusion.SfChart.XForms;
 
-namespace SensusService
+namespace Sensus.Shared.Probes.Context
 {
     public abstract class ListeningAmbientTemperatureProbe : ListeningProbe
     {

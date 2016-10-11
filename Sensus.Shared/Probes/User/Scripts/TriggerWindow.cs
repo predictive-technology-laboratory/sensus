@@ -13,9 +13,9 @@
 // limitations under the License.
 
 using System;
-using Sensus.Tools.Extensions;
+using Sensus.Shared.Extensions;
 
-namespace Sensus.Tools.Scripts
+namespace Sensus.Shared.Probes.User.Scripts
 {
     public class TriggerWindow : IComparable<TriggerWindow>
     {

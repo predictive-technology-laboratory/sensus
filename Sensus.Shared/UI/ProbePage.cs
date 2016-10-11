@@ -12,21 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using SensusService.Probes;
-using SensusService.Probes.User.Scripts;
-using SensusUI.UiProperties;
-using Xamarin.Forms;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Linq;
-using SensusService;
-using SensusService.Anonymization;
-using SensusService.Anonymization.Anonymizers;
-using SensusService.Probes.Location;
-using Newtonsoft.Json;
 using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Collections.Generic;
+using Sensus.Shared.Probes;
+using Sensus.Shared.Anonymization;
+using Sensus.Shared.UI.UiProperties;
+using Sensus.Shared.Probes.Location;
+using Sensus.Shared.Probes.User.Scripts;
+using Sensus.Shared.Anonymization.Anonymizers;
+using Xamarin.Forms;
+using Newtonsoft.Json;
 
-namespace SensusUI
+namespace Sensus.Shared.UI
 {
     /// <summary>
     /// Displays a single probe.
@@ -34,7 +33,7 @@ namespace SensusUI
     public class ProbePage : ContentPage
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SensusUI.ProbePage"/> class.
+        /// Initializes a new instance of the <see cref="ProbePage"/> class.
         /// </summary>
         /// <param name="probe">Probe to display.</param>
         public ProbePage(Probe probe)

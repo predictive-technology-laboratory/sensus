@@ -14,12 +14,10 @@
 
 using System;
 using Xamarin.Forms;
-using SensusUI.UiProperties;
-using System.Threading;
-using SensusService;
 using Newtonsoft.Json;
+using Sensus.Shared.UI.UiProperties;
 
-namespace SensusUI.Inputs
+namespace Sensus.Shared.UI.Inputs
 {
     public class SliderInput : Input
     {

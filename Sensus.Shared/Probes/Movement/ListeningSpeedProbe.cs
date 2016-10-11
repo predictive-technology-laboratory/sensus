@@ -13,13 +13,13 @@
 // limitations under the License.
 
 using System;
-using SensusService.Probes.Location;
+using Sensus.Shared.Probes.Location;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions.Abstractions;
 using Newtonsoft.Json;
 using Syncfusion.SfChart.XForms;
 
-namespace SensusService.Probes.Movement
+namespace Sensus.Shared.Probes.Movement
 {
     public class ListeningSpeedProbe : ListeningProbe
     {

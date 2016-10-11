@@ -14,7 +14,7 @@
 
 using System;
 
-namespace SensusService.Anonymization.Anonymizers
+namespace Sensus.Shared.Anonymization.Anonymizers
 {
     public class DoubleRoundingThousandthsAnonymizer : DoubleRoundingAnonymizer
     {

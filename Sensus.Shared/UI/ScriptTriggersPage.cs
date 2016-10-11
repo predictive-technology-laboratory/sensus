@@ -12,12 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using SensusService.Probes.User.Scripts;
 using System.Linq;
+using Sensus.Shared.Probes.User.Scripts;
 using Xamarin.Forms;
-using SensusService;
 
-namespace SensusUI
+namespace Sensus.Shared.UI
 {
     /// <summary>
     /// Displays  triggers for a script runner.
@@ -25,7 +24,7 @@ namespace SensusUI
     public class ScriptTriggersPage : ContentPage
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SensusUI.ScriptTriggersPage"/> class.
+        /// Initializes a new instance of the <see cref="ScriptTriggersPage"/> class.
         /// </summary>
         /// <param name="scriptRunner">Script runner to display.</param>
         public ScriptTriggersPage(ScriptRunner scriptRunner)
@@ -41,7 +40,7 @@ namespace SensusUI
                 if (triggerList.SelectedItem == null)
                     return;
 
-                SensusService.Probes.User.Scripts.Trigger selectedTrigger = triggerList.SelectedItem as SensusService.Probes.User.Scripts.Trigger;
+                Probes.User.Scripts.Trigger selectedTrigger = triggerList.SelectedItem as Probes.User.Scripts.Trigger;
 
                 string selectedAction = await DisplayActionSheet(selectedTrigger.ToString(), "Cancel", null, "Delete");
 

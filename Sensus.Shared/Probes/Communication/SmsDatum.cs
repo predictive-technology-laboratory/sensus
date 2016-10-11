@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using SensusService.Probes.User.Scripts.ProbeTriggerProperties;
 using System;
 using System.Text.RegularExpressions;
-using SensusService.Anonymization;
-using SensusService.Anonymization.Anonymizers;
+using Sensus.Shared.Anonymization;
+using Sensus.Shared.Anonymization.Anonymizers;
+using Sensus.Shared.Probes.User.Scripts.ProbeTriggerProperties;
 
-namespace SensusService.Probes.Communication
+namespace Sensus.Shared.Probes.Communication
 {
     public class SmsDatum : Datum
     {

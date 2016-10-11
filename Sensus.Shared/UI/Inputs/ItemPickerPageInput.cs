@@ -15,19 +15,19 @@
 using System;
 using Xamarin.Forms;
 using System.Collections.Generic;
-using SensusService;
-using SensusService.Probes;
+using Sensus.Shared;
+using Sensus.Shared.Probes;
 using System.IO;
 using Newtonsoft.Json;
 using System.Threading;
-using SensusService.Exceptions;
-using SensusUI.Inputs;
+using Sensus.Shared.Exceptions;
+using Sensus.Shared.UI.Inputs;
 using System.Linq;
 using System.Globalization;
-using SensusUI.UiProperties;
+using Sensus.Shared.UI.UiProperties;
 using Xamarin;
 
-namespace SensusUI.Inputs
+namespace Sensus.Shared.UI.Inputs
 {
     public class ItemPickerPageInput : ItemPickerInput
     {

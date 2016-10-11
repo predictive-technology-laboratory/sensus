@@ -12,16 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using SensusService;
-using SensusService.Probes;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
+using System.Collections.Generic;
 using Xamarin.Forms;
-using SensusService.Probes.Location;
+using Sensus.Shared.Probes.Location;
 
-namespace SensusUI
+namespace Sensus.Shared.UI
 {
     /// <summary>
     /// Allows the user to add a proximity trigger to a proximity probe.
@@ -35,7 +32,7 @@ namespace SensusUI
         private ProximityThresholdDirection _thresholdDirection;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SensusUI.AddProximityTriggerPage"/> class.
+        /// Initializes a new instance of the <see cref="AddProximityTriggerPage"/> class.
         /// </summary>
         /// <param name="proximityProbe">Proximity probe to add trigger to.</param>
         public AddProximityTriggerPage(IPointsOfInterestProximityProbe proximityProbe)

@@ -18,7 +18,7 @@ using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions.Abstractions;
 using Syncfusion.SfChart.XForms;
 
-namespace SensusService.Probes.Location
+namespace Sensus.Shared.Probes.Location
 {
     public class ListeningLocationProbe : ListeningProbe
     {

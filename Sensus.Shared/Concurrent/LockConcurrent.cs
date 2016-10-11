@@ -13,8 +13,9 @@
 // limitations under the License.
 
 using System;
+using Sensus.Shared.Dispose;
 
-namespace Sensus.Tools
+namespace Sensus.Shared.Concurrent
 {
     public class LockConcurrent: Disposable, IConcurrent
     {

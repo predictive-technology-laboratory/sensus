@@ -13,13 +13,12 @@
 // limitations under the License.
 
 using System;
-using Newtonsoft.Json;
-using SensusService.Anonymization;
-using SensusService.Anonymization.Anonymizers;
-using SensusService.Probes.User.Scripts.ProbeTriggerProperties;
+using Sensus.Shared.Anonymization;
+using Sensus.Shared.Anonymization.Anonymizers;
+using Sensus.Shared.Probes.User.Scripts.ProbeTriggerProperties;
 using Plugin.Geolocator.Abstractions;
 
-namespace SensusService.Probes.Movement
+namespace Sensus.Shared.Probes.Movement
 {
     public class SpeedDatum : ImpreciseDatum
     {

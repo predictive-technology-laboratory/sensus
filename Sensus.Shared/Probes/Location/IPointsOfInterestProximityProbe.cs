@@ -15,7 +15,7 @@
 using System;
 using System.Collections.ObjectModel;
 
-namespace SensusService.Probes.Location
+namespace Sensus.Shared.Probes.Location
 {
     public interface IPointsOfInterestProximityProbe
     {

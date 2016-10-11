@@ -14,7 +14,7 @@
 
 using System;
 
-namespace SensusService
+namespace Sensus.Shared
 {
     public class ParticipationRewardDatum : Datum
     {

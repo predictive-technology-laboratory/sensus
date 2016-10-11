@@ -14,9 +14,9 @@
 
 using System;
 using Xamarin.Forms;
-using SensusService;
+using Sensus.Shared;
 
-namespace SensusUI
+namespace Sensus.Shared.UI
 {
     public class VerifiedParticipationPage : ContentPage
     {

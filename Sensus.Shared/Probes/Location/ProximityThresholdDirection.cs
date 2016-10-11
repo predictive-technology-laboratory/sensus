@@ -12,9 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-
-namespace SensusService.Probes.Location
+namespace Sensus.Shared.Probes.Location
 {
     public enum ProximityThresholdDirection
     {

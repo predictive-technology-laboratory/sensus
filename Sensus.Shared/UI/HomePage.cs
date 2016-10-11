@@ -14,7 +14,7 @@
 
 using Xamarin.Forms;
 
-namespace SensusUI
+namespace Sensus.Shared.UI
 {
     public class HomePage : ContentPage
     {

@@ -14,7 +14,7 @@
 
 using System;
 
-namespace SensusUI.Inputs
+namespace Sensus.Shared.UI.Inputs
 {
     public enum InputValueCondition
     {

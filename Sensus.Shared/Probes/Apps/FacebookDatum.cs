@@ -13,12 +13,12 @@
 // limitations under the License.
 
 using System;
-using SensusService.Anonymization;
-using SensusService.Anonymization.Anonymizers;
-using System.Collections.Generic;
 using System.Reflection;
+using System.Collections.Generic;
+using Sensus.Shared.Anonymization;
+using Sensus.Shared.Anonymization.Anonymizers;
 
-namespace SensusService.Probes.Apps
+namespace Sensus.Shared.Probes.Apps
 {
     public class FacebookDatum : Datum
     {

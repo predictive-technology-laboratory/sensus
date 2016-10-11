@@ -13,15 +13,15 @@
 // limitations under the License.
 
 using Newtonsoft.Json;
-using SensusUI.UiProperties;
 using System;
-using System.Collections.Generic;
 using System.Threading;
-using SensusService.DataStores.Remote;
 using System.Threading.Tasks;
-using SensusService.Exceptions;
+using System.Collections.Generic;
+using Sensus.Shared.UI.UiProperties;
+using Sensus.Shared.Exceptions;
+using Sensus.Shared.DataStores.Remote;
 
-namespace SensusService.DataStores
+namespace Sensus.Shared.DataStores
 {
     /// <summary>
     /// An abstract repository for probed data.

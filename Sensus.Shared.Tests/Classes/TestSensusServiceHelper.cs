@@ -13,8 +13,7 @@
 // limitations under the License.
 
 using System;
-using SensusService;
-using SensusService.Probes;
+using Sensus.Shared.Probes;
 using Xamarin.Forms;
 
 namespace Sensus.Shared.Tests.Classes

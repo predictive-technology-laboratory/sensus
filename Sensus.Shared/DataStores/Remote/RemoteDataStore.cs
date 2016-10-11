@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using SensusUI.UiProperties;
+using Sensus.Shared.UI.UiProperties;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System;
 
-namespace SensusService.DataStores.Remote
+namespace Sensus.Shared.DataStores.Remote
 {
     /// <summary>
     /// Responsible for transferring data from a local data store to remote media.

@@ -12,13 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Foundation;
 using System;
 using System.Threading;
-using Foundation;
-using Sensus.Tools;
+using Sensus.Shared.Dispose;
+using Sensus.Shared.Concurrent;
 using Xamarin.Forms;
 
-namespace Sensus.iOS.Concurrent
+namespace Sensus.Shared.iOS.Concurrent
 {
     public class MainConcurrent : Disposable, IConcurrent
     {

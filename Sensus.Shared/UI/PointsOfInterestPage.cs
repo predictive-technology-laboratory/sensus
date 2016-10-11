@@ -12,18 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using Sensus.Service.Tools.Context;
-using SensusService;
-using SensusService.Probes.Location;
 using Xamarin.Forms;
-using SensusUI.Inputs;
 using Xamarin.Forms.Maps;
+using System;
+using System.Threading;
+using System.Collections.Generic;
+using Sensus.Shared.Context;
+using Sensus.Shared.UI.Inputs;
+using Sensus.Shared.Probes.Location;
 
-namespace SensusUI
+namespace Sensus.Shared.UI
 {
     /// <summary>
     /// Displays points of interest, allowing the user to add/delete them.
@@ -35,10 +33,9 @@ namespace SensusUI
         private CancellationTokenSource _gpsCancellationTokenSource;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SensusUI.PointsOfInterestPage"/> class.
+        /// Initializes a new instance of the <see cref="PointsOfInterestPage"/> class.
         /// </summary>
-        /// <param name="pointsOfInterest">Points of interest to display.</param>
-        /// <param name="changeCallback">Called when a POI is added/deleted.</param>
+        /// <param name="pointsOfInterest">Points of interest to display.</param>        
         public PointsOfInterestPage(List<PointOfInterest> pointsOfInterest)
         {
             _pointsOfInterest = pointsOfInterest;

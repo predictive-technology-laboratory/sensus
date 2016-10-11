@@ -18,13 +18,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using Sensus.Tools;
-using Sensus.Tools.Scripts;
-using Sensus.Tools.Extensions;
-using SensusUI.UiProperties;
-using SensusService.Probes.Location;
+using Sensus.Shared.Concurrent;
+using Sensus.Shared.Extensions;
+using Sensus.Shared.UI.UiProperties;
+using Sensus.Shared.Probes.Location;
 
-namespace SensusService.Probes.User.Scripts
+namespace Sensus.Shared.Probes.User.Scripts
 {
     public class ScriptRunner
     {

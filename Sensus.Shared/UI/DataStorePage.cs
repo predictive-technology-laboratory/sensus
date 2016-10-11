@@ -12,17 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using SensusService;
-using SensusService.DataStores;
-using SensusService.DataStores.Local;
-using SensusService.DataStores.Remote;
-using SensusUI.UiProperties;
-using System;
 using System.Collections.Generic;
-using System.IO;
+using Sensus.Shared.DataStores;
+using Sensus.Shared.UI.UiProperties;
+using Sensus.Shared.DataStores.Local;
+using Sensus.Shared.DataStores.Remote;
 using Xamarin.Forms;
 
-namespace SensusUI
+namespace Sensus.Shared.UI
 {
     /// <summary>
     /// Displays a data store.
@@ -30,7 +27,7 @@ namespace SensusUI
     public class DataStorePage : ContentPage
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SensusUI.DataStorePage"/> class.
+        /// Initializes a new instance of the <see cref="DataStorePage"/> class.
         /// </summary>
         /// <param name="protocol">Protocol to which data store is to be bound.</param>
         /// <param name="dataStore">Data store to display.</param>

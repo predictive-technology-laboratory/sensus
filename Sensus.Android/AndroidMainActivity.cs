@@ -12,26 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Android.App;
-using Android.Content;
-using Android.Content.PM;
-using Android.OS;
-using SensusService;
-using SensusUI;
 using System;
 using System.IO;
 using System.Threading;
-using Xamarin.Forms;
-using Xamarin.Forms.Platform.Android;
-using Xamarin.Facebook;
+using Android.OS;
+using Android.App;
+using Android.Widget;
+using Android.Content;
+using Android.Content.PM;
+using Sensus.Shared;
+using Sensus.Shared.UI;
+using Sensus.Shared.Context;
 using Xamarin;
+using Xamarin.Forms;
+using Xamarin.Facebook;
+using Xamarin.Forms.Platform.Android;
 using Xam.Plugin.MapExtend.Droid;
 using Plugin.CurrentActivity;
-using Android.Widget;
-using Plugin.Permissions;
-using System.Linq;
-using Sensus.Service.Tools.Context;
 using ZXing.Mobile;
+
+#if __ANDROID_23__
+using Plugin.Permissions;
+#endif
 
 [assembly: MetaData("com.facebook.sdk.ApplicationId", Value = "@string/app_id")]
 [assembly: UsesPermission(Microsoft.Band.BandClientManager.BindBandService)]

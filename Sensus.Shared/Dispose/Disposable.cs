@@ -14,7 +14,7 @@
 
 using System;
 
-namespace Sensus.Tools
+namespace Sensus.Shared.Dispose
 {
     /// <summary>
     /// This implements the Dispose pattern suggested by Microsoft at http://msdn.microsoft.com/en-us/library/fs2xkftw.aspx

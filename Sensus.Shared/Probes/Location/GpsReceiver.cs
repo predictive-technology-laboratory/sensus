@@ -12,17 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using SensusService.Exceptions;
 using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Plugin.Geolocator.Abstractions;
-using Plugin.Geolocator;
-using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Collections.Generic;
+using Plugin.Geolocator;
+using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions.Abstractions;
 
-namespace SensusService.Probes.Location
+namespace Sensus.Shared.Probes.Location
 {
     /// <summary>
     /// A GPS receiver. Implemented as a singleton.

@@ -13,38 +13,42 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
+using System.Linq;
 using System.Threading;
-using Newtonsoft.Json;
-using SensusService.Probes;
-using SensusService.Probes.Location;
-using Xamarin;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
-using SensusUI;
-using SensusUI.Inputs;
-using Sensus.Tools;
+
+using Xamarin;
 using Xamarin.Forms;
-using SensusService.Exceptions;
+using Newtonsoft.Json;
+
+using Sensus.Shared.UI;
+using Sensus.Shared.Probes;
+using Sensus.Shared.Context;
+using Sensus.Shared.UI.Inputs;
+using Sensus.Shared.Concurrent;
+using Sensus.Shared.Exceptions;
+using Sensus.Shared.Probes.Location;
+using Sensus.Shared.Probes.User.Scripts;
+
+using Plugin.Permissions;
+using Plugin.Geolocator.Abstractions;
+using Plugin.Permissions.Abstractions;
+
 #if __ANDROID__ || __IOS__
 using ZXing.Mobile;
 using ZXing;
 #endif
-using Plugin.Geolocator.Abstractions;
-using Plugin.Permissions;
-using Plugin.Permissions.Abstractions;
-using System.Threading.Tasks;
-using SensusService.Probes.User.Scripts;
-using System.Collections.Concurrent;
-using Sensus.Service.Tools.Context;
 #if __IOS__
 using XLabs.Platform.Device;
 #endif
 
-namespace SensusService
+namespace Sensus.Shared
 {
     /// <summary>
     /// Provides platform-independent service functionality.

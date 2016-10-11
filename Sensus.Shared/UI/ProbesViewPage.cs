@@ -12,13 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using SensusService;
-using SensusService.Probes;
+using Sensus.Shared.Probes;
 using Syncfusion.SfChart.XForms;
 using Xamarin.Forms;
 using System;
 
-namespace SensusUI
+namespace Sensus.Shared.UI
 {
     public class ProbesViewPage : ProbesPage
     {

@@ -20,10 +20,10 @@ using System.Threading;
 using Facebook.CoreKit;
 using Facebook.LoginKit;
 using Foundation;
-using Sensus.Service.Tools.Context;
-using SensusService;
-using SensusService.Exceptions;
-using SensusService.Probes.Apps;
+using Sensus.Shared.Context;
+using Sensus.Shared;
+using Sensus.Shared.Exceptions;
+using Sensus.Shared.Probes.Apps;
 using Xamarin.Forms;
 using UIKit;
 
@@ -62,19 +62,19 @@ namespace Sensus.iOS.Probes.Apps
                         {
                             if (error == null && loginResult.Token != null)
                             {
-                                SensusServiceHelper.Get().Logger.Log("Facebook login succeeded.", SensusService.LoggingLevel.Normal, GetType());
+                                SensusServiceHelper.Get().Logger.Log("Facebook login succeeded.", Shared.LoggingLevel.Normal, GetType());
                                 AccessToken.CurrentAccessToken = loginResult.Token;
                                 loginWait.Set();
                             }
                             else if (loginResult != null && loginResult.IsCancelled)
                             {
-                                SensusServiceHelper.Get().Logger.Log("Facebook login cancelled.", SensusService.LoggingLevel.Normal, GetType());
+                                SensusServiceHelper.Get().Logger.Log("Facebook login cancelled.", Shared.LoggingLevel.Normal, GetType());
                                 loginCancelled = true;
                                 loginWait.Set();
                             }
                             else
                             {
-                                SensusServiceHelper.Get().Logger.Log("Facebook login failed.", SensusService.LoggingLevel.Normal, GetType());
+                                SensusServiceHelper.Get().Logger.Log("Facebook login failed.", Shared.LoggingLevel.Normal, GetType());
                                 loginWait.Set();
                             }
                         });

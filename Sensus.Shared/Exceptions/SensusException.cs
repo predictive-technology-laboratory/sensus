@@ -15,7 +15,7 @@
 using System;
 using Xamarin;
 
-namespace SensusService.Exceptions
+namespace Sensus.Shared.Exceptions
 {
     public class SensusException : Exception
     {

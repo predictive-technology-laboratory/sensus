@@ -14,7 +14,7 @@
 
 using System;
 
-namespace Sensus.Tools
+namespace Sensus.Shared.Concurrent
 {
     public interface IConcurrent : IDisposable
     {

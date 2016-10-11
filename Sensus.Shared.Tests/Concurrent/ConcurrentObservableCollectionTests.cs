@@ -14,7 +14,7 @@
 
 using System.Threading.Tasks;
 using NUnit.Framework;
-using Sensus.Tools;
+using Sensus.Shared.Concurrent;
 
 namespace Sensus.Shared.Tests.Concurrent
 {

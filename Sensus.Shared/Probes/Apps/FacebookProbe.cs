@@ -13,16 +13,16 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using SensusUI.UiProperties;
 using System.Threading;
-using SensusService.Anonymization;
-using SensusService.Anonymization.Anonymizers;
+using System.Reflection;
+using System.Collections.Generic;
+using Sensus.Shared.UI.UiProperties;
+using Sensus.Shared.Anonymization;
+using Sensus.Shared.Anonymization.Anonymizers;
 using Syncfusion.SfChart.XForms;
 
-namespace SensusService.Probes.Apps
+namespace Sensus.Shared.Probes.Apps
 {
     /// <summary>
     /// Use the following command to generate the debug keyhash:

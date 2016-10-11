@@ -17,7 +17,7 @@ using System.Linq;
 using System.Text;
 using System.Security.Cryptography;
 
-namespace Sensus.Service.Tools
+namespace Sensus.Shared.Encryption
 {
     class SimpleEncryption: IEncryption
     {

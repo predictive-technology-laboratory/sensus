@@ -19,9 +19,8 @@ using Xam.Plugin.MapExtend.Abstractions;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using Xamarin;
-using SensusService;
 
-namespace SensusUI
+namespace Sensus.Shared.UI
 {
     public class MapPage : ContentPage
     {
@@ -81,7 +80,7 @@ namespace SensusUI
                         try
                         {
                             string errorMessage = "Failed to search for address:  " + ex.Message;
-                            SensusServiceHelper.Get().Logger.Log(errorMessage, SensusService.LoggingLevel.Normal, GetType());
+                            SensusServiceHelper.Get().Logger.Log(errorMessage, LoggingLevel.Normal, GetType());
                             SensusServiceHelper.Get().FlashNotificationAsync(errorMessage);
                         }
                         catch (Exception)

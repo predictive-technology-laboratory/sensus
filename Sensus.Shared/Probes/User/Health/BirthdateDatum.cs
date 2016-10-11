@@ -14,7 +14,7 @@
 
 using System;
 
-namespace SensusService
+namespace Sensus.Shared.Probes.User.Health
 {
     public class BirthdateDatum : Datum
     {

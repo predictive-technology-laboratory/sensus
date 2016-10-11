@@ -14,7 +14,7 @@
 
 using System;
 
-namespace SensusService.Probes.User.Health
+namespace Sensus.Shared.Probes.User.Health
 {
     public class BiologicalSexDatum : Datum
     {

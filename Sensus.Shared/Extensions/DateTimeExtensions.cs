@@ -14,7 +14,7 @@
 
 using System;
 
-namespace Sensus.Tools.Extensions
+namespace Sensus.Shared.Extensions
 {
     public static class DateTimeExtensions
     {

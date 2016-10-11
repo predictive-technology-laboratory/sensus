@@ -12,11 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Newtonsoft.Json;
-using SensusService.Probes.User.Scripts.ProbeTriggerProperties;
+using Sensus.Shared.Probes.User.Scripts.ProbeTriggerProperties;
 using System;
 
-namespace SensusService.Probes.Device
+namespace Sensus.Shared.Probes.Device
 {
     public class ScreenDatum : Datum
     {

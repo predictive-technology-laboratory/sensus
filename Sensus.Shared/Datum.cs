@@ -14,11 +14,10 @@
 
 using System;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using SensusService.Anonymization;
-using SensusService.Anonymization.Anonymizers;
+using Sensus.Shared.Anonymization;
+using Sensus.Shared.Anonymization.Anonymizers;
 
-namespace SensusService
+namespace Sensus.Shared
 {
     /// <summary>
     /// A single unit of sensed information returned by a probe.

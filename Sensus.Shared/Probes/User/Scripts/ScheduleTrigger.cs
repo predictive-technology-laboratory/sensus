@@ -16,7 +16,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace Sensus.Tools.Scripts
+namespace Sensus.Shared.Probes.User.Scripts
 {
     public class ScheduleTrigger
     {

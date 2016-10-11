@@ -13,10 +13,9 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using System.Threading;
-using SensusService;
-using Sensus.iOS.Probes.User.Health;
+using System.Collections.Generic;
+using Sensus.Shared;
 using HealthKit;
 
 namespace Sensus.iOS.Probes.User.Health

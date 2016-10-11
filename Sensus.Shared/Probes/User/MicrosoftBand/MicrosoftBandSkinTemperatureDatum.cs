@@ -13,11 +13,11 @@
 // limitations under the License.
 
 using System;
-using SensusService.Anonymization;
-using SensusService.Anonymization.Anonymizers;
-using SensusService.Probes.User.Scripts.ProbeTriggerProperties;
+using Sensus.Shared.Anonymization;
+using Sensus.Shared.Anonymization.Anonymizers;
+using Sensus.Shared.Probes.User.Scripts.ProbeTriggerProperties;
 
-namespace SensusService.Probes.User.MicrosoftBand
+namespace Sensus.Shared.Probes.User.MicrosoftBand
 {
     public class MicrosoftBandSkinTemperatureDatum : Datum
     {

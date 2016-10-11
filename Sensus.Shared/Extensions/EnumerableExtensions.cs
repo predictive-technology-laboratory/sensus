@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Linq;
 
-namespace Sensus.Tools
+namespace Sensus.Shared.Extensions
 {
     public static class EnumerableExtensions
     {

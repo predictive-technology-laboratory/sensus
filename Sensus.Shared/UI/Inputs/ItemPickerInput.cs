@@ -13,9 +13,9 @@
 // limitations under the License.
 
 using System;
-using SensusUI.UiProperties;
+using Sensus.Shared.UI.UiProperties;
 
-namespace SensusUI.Inputs
+namespace Sensus.Shared.UI.Inputs
 {
     public abstract class ItemPickerInput : Input
     {

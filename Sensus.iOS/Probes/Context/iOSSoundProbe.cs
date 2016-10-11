@@ -13,12 +13,12 @@
 // limitations under the License.
 
 using System;
-using SensusService.Probes.Context;
+using Sensus.Shared.Probes.Context;
 using System.Collections.Generic;
 using AVFoundation;
 using Foundation;
 using System.IO;
-using SensusService;
+using Sensus.Shared;
 using System.Threading;
 using Plugin.Permissions.Abstractions;
 

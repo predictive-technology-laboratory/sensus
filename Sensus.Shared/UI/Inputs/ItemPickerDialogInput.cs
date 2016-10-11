@@ -14,12 +14,12 @@
 
 using System;
 using Xamarin.Forms;
-using SensusUI.UiProperties;
+using Sensus.Shared.UI.UiProperties;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 
-namespace SensusUI.Inputs
+namespace Sensus.Shared.UI.Inputs
 {
     public class ItemPickerDialogInput : ItemPickerInput
     {

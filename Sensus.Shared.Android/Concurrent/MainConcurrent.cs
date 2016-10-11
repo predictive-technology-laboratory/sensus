@@ -14,7 +14,8 @@
 
 using System;
 using System.Threading;
-using Sensus.Tools;
+using Sensus.Shared.Dispose;
+using Sensus.Shared.Concurrent;
 using Android.OS;
 
 namespace Sensus.Android.Tools

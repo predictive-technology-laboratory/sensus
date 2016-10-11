@@ -13,12 +13,12 @@
 // limitations under the License.
 
 using Newtonsoft.Json;
-using SensusService.Probes.User.Scripts.ProbeTriggerProperties;
 using System;
-using SensusService.Anonymization;
-using SensusService.Anonymization.Anonymizers;
+using Sensus.Shared.Anonymization;
+using Sensus.Shared.Anonymization.Anonymizers;
+using Sensus.Shared.Probes.User.Scripts.ProbeTriggerProperties;
 
-namespace SensusService.Probes.Network
+namespace Sensus.Shared.Probes.Network
 {
     public class CellTowerDatum : Datum
     {

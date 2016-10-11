@@ -16,7 +16,7 @@ using System;
 using Newtonsoft.Json;
 using Syncfusion.SfChart.XForms;
 
-namespace SensusService.Probes.Context
+namespace Sensus.Shared.Probes.Context
 {
     public abstract class BluetoothDeviceProximityProbe : ListeningProbe
     {

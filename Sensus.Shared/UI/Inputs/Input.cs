@@ -14,16 +14,16 @@
 
 using System;
 using Xamarin.Forms;
-using SensusService.Exceptions;
-using SensusUI.UiProperties;
+using Sensus.Shared.Exceptions;
+using Sensus.Shared.UI.UiProperties;
 using Newtonsoft.Json;
 using System.Threading;
 using System.Collections.Generic;
 using System.Linq;
-using SensusService;
+using Sensus.Shared;
 using Xamarin;
 
-namespace SensusUI.Inputs
+namespace Sensus.Shared.UI.Inputs
 {
     public abstract class Input
     {
@@ -121,7 +121,7 @@ namespace SensusUI.Inputs
         public abstract object Value { get; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the user has interacted with this <see cref="SensusUI.Inputs.Input"/>,
+        /// Gets or sets a value indicating whether the user has interacted with this <see cref="Input"/>,
         /// leaving it in a state of completion. Contrast with Valid, which merely indicates that the 
         /// state of the input will not prevent the user from moving through an input request (e.g., in the case
         /// of inputs that are not required).
@@ -156,7 +156,7 @@ namespace SensusUI.Inputs
         }
 
         /// <summary>
-        /// Gets a value indicating whether this <see cref="SensusUI.Inputs.Input"/> is valid. A valid input is one that
+        /// Gets a value indicating whether this <see cref="Input"/> is valid. A valid input is one that
         /// is complete, one that has been viewed but is not required, or one that isn't displayed. In short, it is an
         /// input state that should not prevent the user from proceeding through an input request.
         /// </summary>

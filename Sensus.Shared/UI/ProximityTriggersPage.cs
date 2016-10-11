@@ -12,13 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using Xamarin.Forms;
-using SensusService.Probes.Location;
 using System.Linq;
-using SensusService;
+using Sensus.Shared;
+using Sensus.Shared.Probes.Location;
+using Xamarin.Forms;
 
-namespace SensusUI
+namespace Sensus.Shared.UI
 {
     /// <summary>
     /// Displays proximity triggers.

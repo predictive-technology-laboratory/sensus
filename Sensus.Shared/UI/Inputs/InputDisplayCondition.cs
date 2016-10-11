@@ -15,7 +15,7 @@
 using System;
 using Newtonsoft.Json;
 
-namespace SensusUI.Inputs
+namespace Sensus.Shared.UI.Inputs
 {
     public class InputDisplayCondition
     {

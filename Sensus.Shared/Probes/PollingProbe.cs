@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using SensusUI.UiProperties;
 using System;
-using System.Collections.Generic;
-using System.Threading;
-using Newtonsoft.Json;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using Sensus.Shared.UI.UiProperties;
+using Newtonsoft.Json;
 #if __IOS__
 using CoreLocation;
 #endif
 
-namespace SensusService.Probes
+namespace Sensus.Shared.Probes
 {
     public abstract class PollingProbe : Probe
     {

@@ -12,17 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using SensusService;
-using SensusService.Probes;
-using SensusService.Probes.User.Scripts;
-using SensusService.Probes.User.Scripts.ProbeTriggerProperties;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Sensus.Shared.Probes;
+using Sensus.Shared.Probes.User.Scripts;
+using Sensus.Shared.Probes.User.Scripts.ProbeTriggerProperties;
 using Xamarin.Forms;
 
-namespace SensusUI
+namespace Sensus.Shared.UI
 {
     /// <summary>
     /// Allows the user to add a script trigger to a script runner.
@@ -36,7 +34,7 @@ namespace SensusUI
         private object _conditionValue;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SensusUI.AddScriptTriggerPage"/> class.
+        /// Initializes a new instance of the <see cref="AddScriptTriggerPage"/> class.
         /// </summary>
         /// <param name="scriptRunner">Script runner to add trigger to.</param>
         public AddScriptTriggerPage(ScriptRunner scriptRunner)
@@ -362,7 +360,7 @@ namespace SensusUI
             {
                 try
                 {
-                    _scriptRunner.Triggers.Add(new SensusService.Probes.User.Scripts.Trigger(_selectedProbe, _selectedDatumProperty, _selectedCondition, _conditionValue, changeSwitch.IsToggled, fireRepeatedlySwitch.IsToggled, regexSwitch.IsToggled, startTimePicker.Time, endTimePicker.Time));
+                    _scriptRunner.Triggers.Add(new Sensus.Shared.Probes.User.Scripts.Trigger(_selectedProbe, _selectedDatumProperty, _selectedCondition, _conditionValue, changeSwitch.IsToggled, fireRepeatedlySwitch.IsToggled, regexSwitch.IsToggled, startTimePicker.Time, endTimePicker.Time));
                     await Navigation.PopAsync();
                 }
                 catch (Exception ex)

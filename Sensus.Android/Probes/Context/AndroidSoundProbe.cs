@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Android.Media;
-using SensusService;
-using SensusService.Probes.Context;
 using System;
-using System.Collections.Generic;
 using System.Threading;
+using System.Collections.Generic;
+using Android.Media;
+using Sensus.Shared;
+using Sensus.Shared.Probes.Context;
 using Plugin.Permissions.Abstractions;
 
 namespace Sensus.Android.Probes.Context

@@ -12,16 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Newtonsoft.Json;
 using System;
 using System.Threading;
-using SensusUI.UiProperties;
-using SensusService.Probes.User.Scripts;
-using SensusService;
 using Xamarin.Forms;
-using SensusService.Exceptions;
+using Newtonsoft.Json;
+using Sensus.Shared.Exceptions;
+using Sensus.Shared.UI.UiProperties;
 
-namespace SensusUI.Inputs
+namespace Sensus.Shared.UI.Inputs
 {
     public class VoiceInput : Input
     {

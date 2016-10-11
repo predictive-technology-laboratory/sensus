@@ -13,11 +13,11 @@
 // limitations under the License.
 
 using System;
-using SensusService.Probes.Network;
+using Sensus.Shared.Probes.Network;
 using Foundation;
 using SystemConfiguration;
 using System.Collections.Generic;
-using SensusService;
+using Sensus.Shared;
 using System.Threading;
 
 namespace Sensus.iOS.Network.Probes

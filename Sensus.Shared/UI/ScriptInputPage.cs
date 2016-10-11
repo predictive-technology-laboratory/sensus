@@ -12,14 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using Xamarin.Forms;
-using SensusUI.UiProperties;
-using System.Collections.Generic;
-using SensusService.Probes.User.Scripts;
-using SensusUI.Inputs;
+using Sensus.Shared.UI.Inputs;
+using Sensus.Shared.UI.UiProperties;
 
-namespace SensusUI
+namespace Sensus.Shared.UI
 {
     public class ScriptInputPage : ContentPage
     {

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using SensusService.Probes.Network;
+using Sensus.Shared.Probes.Network;
 using System;
 
 namespace Sensus.Android.Probes.Network

@@ -13,13 +13,13 @@
 // limitations under the License.
 
 using System;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Collections.ObjectModel;
 using Syncfusion.SfChart.XForms;
 
-namespace SensusService.Probes.User.Scripts
+namespace Sensus.Shared.Probes.User.Scripts
 {
     public class ScriptProbe : Probe
     {

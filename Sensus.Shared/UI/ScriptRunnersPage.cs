@@ -12,12 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.ObjectModel;
-using SensusService.Probes.User.Scripts;
+using Sensus.Shared.Probes.User.Scripts;
 using Xamarin.Forms;
 
-namespace SensusUI
+namespace Sensus.Shared.UI
 {
     /// <summary>
     /// Displays script runners for a script probe.
@@ -28,7 +26,7 @@ namespace SensusUI
         private ListView _scriptRunnersList;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SensusUI.ScriptRunnersPage"/> class.
+        /// Initializes a new instance of the <see cref="ScriptRunnersPage"/> class.
         /// </summary>
         /// <param name="probe">Probe to display.</param>
         public ScriptRunnersPage(ScriptProbe probe)

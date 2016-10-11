@@ -14,11 +14,11 @@
 
 using System;
 using System.Collections.Generic;
-using SensusService;
+using Sensus.Shared;
 using System.Threading;
 using HealthKit;
 using Foundation;
-using SensusService.Probes.User.Health;
+using Sensus.Shared.Probes.User.Health;
 using Newtonsoft.Json;
 using Syncfusion.SfChart.XForms;
 

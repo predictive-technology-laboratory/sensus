@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using SensusService.Exceptions;
 using System;
 using Xamarin.Forms;
 using System.Reflection;
+using Sensus.Shared.Exceptions;
 
-namespace SensusUI.UiProperties
+namespace Sensus.Shared.UI.UiProperties
 {
     /// <summary>
     /// Decorated members should be rendered as display-only text.
