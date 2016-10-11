@@ -22,7 +22,7 @@ namespace Sensus.Local.Tests
     public abstract class IConcurrentTests
     {        
         #region Fields
-        private const int DelayTime = 250;
+        private const int DelayTime = 100;
         private readonly IConcurrent _concurrent;
         #endregion
 
