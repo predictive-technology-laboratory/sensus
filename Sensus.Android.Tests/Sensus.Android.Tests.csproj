@@ -304,6 +304,9 @@
     <None Include="packages.config" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
+    <None Include="..\Sensus.Android\Properties\AndroidManifest.xml">
+      <Link>Properties\AndroidManifest.xml</Link>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\ic_launcher.png" />
