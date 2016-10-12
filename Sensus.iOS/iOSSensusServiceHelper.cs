@@ -495,6 +495,7 @@ namespace Sensus.iOS
                     foreach (UILocalNotification scheduledNotification in UIApplication.SharedApplication.ScheduledLocalNotifications)
                     {
                         string scheduledId = scheduledNotification.UserInfo.ValueForKey(new NSString(notificationIdKey))?.ToString();
+
                         if (scheduledId == idToCancel)
                         {
                             UIApplication.SharedApplication.CancelLocalNotification(scheduledNotification);
