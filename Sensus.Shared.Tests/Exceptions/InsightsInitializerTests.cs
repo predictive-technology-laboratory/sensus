@@ -14,6 +14,7 @@
 
 using NUnit.Framework;
 using Sensus.Shared.Exceptions;
+using System;
 
 namespace Sensus.Shared.Tests.Exceptions
 {
@@ -21,58 +22,69 @@ namespace Sensus.Shared.Tests.Exceptions
     public class IInsightsInitializerTests
     {
         #region Classes
-        private class DummyInitializer : IInsightsInitializer
+        private class ActionInitializer : IInsightsInitializer
         {
-            public void Initialize(string insightsKey)
-            {
-                
-            }
-        }
+            private readonly Action<string> _action;
 
-        private class SuccessInitializer: IInsightsInitializer
-        {
+            public ActionInitializer(Action<string> action)
+            {
+                _action = action;
+            } 
+
             public void Initialize(string insightsKey)
             {
-                throw new SuccessException("You passed the test");
+                _action(insightsKey);
             }
         }
-        #endregion
+        #endregion        
 
         #region Fields
-        private readonly IInsightsInitializer _initializer;
+        private readonly IInsightsInitializer _platformInitializer;
         #endregion
 
         #region Constructors
-        public IInsightsInitializerTests(): this(new DummyInitializer()) { }
+        public IInsightsInitializerTests(): this(new ActionInitializer(s => {})) { }
 
-        protected IInsightsInitializerTests(IInsightsInitializer initializer)
+        protected IInsightsInitializerTests(IInsightsInitializer platformInitializer)
         {
-            _initializer = initializer;
+            _platformInitializer = platformInitializer;
         }
         #endregion
 
         [Test]
         public void PlatformInitializerDoesNotExplodeWithKeyTest()
         {
-            Assert.DoesNotThrow(() => InsightInitialization.Initialize(_initializer, "Fake-Key", false));
+            Assert.DoesNotThrow(() => InsightInitialization.Initialize(_platformInitializer, "Fake-Key", false));
         }
 
         [Test]
-        public void PassedInInitializerCalledTest()
+        public void PlatformInitializerDoesNotExplodeWithoutKeyTest()
         {
-            Assert.Throws<SuccessException>(() => InsightInitialization.Initialize(new SuccessInitializer(), "Fake-Key", false));
+            Assert.DoesNotThrow(() => InsightInitialization.Initialize(_platformInitializer, "", false));
+        }
+
+        [Test]
+        public void InitializerCalledTest()
+        {
+            Assert.Throws<SuccessException>(() => InsightInitialization.Initialize(new ActionInitializer(s => { throw new SuccessException("You passed the test"); }), "Fake-Key", false));
+        }
+
+        [Test]
+        public void InitializerGivenCorrectKeyAsParameterTest()
+        {
+            InsightInitialization.Initialize(new ActionInitializer(s => { Assert.AreEqual("Fake-Key", s); }), "Fake-Key", false);
         }
 
         [Test]
         public void InitializerNotCalledWhenKeyIsEmptyTest()
         {
-            Assert.DoesNotThrow(() => InsightInitialization.Initialize(new SuccessInitializer(), "", false));
+            InsightInitialization.Initialize(new ActionInitializer(s => { Assert.Fail(); }), "", false);
         }
 
         [Test]
-        public void AllExceptionsSuprressedTest()
+        public void InitializerExceptionsSuprressedTest()
         {
-            Assert.DoesNotThrow(() => InsightInitialization.Initialize(new SuccessInitializer(), "Fake-Key"));
+            Assert.DoesNotThrow(() => InsightInitialization.Initialize(new ActionInitializer(s => { throw new Exception(); }), "Fake-Key"));
         }
     }
 }
