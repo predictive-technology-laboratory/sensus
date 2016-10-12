@@ -14,9 +14,9 @@
 
 using Android.App;
 using Android.Telephony;
-using SensusService.Probes.Communication;
+using Sensus.Shared.Probes.Communication;
 using System;
-using SensusService;
+using Sensus.Shared;
 using Plugin.Permissions.Abstractions;
 
 namespace Sensus.Android.Probes.Communication

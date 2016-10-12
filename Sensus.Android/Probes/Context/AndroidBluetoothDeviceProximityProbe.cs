@@ -11,10 +11,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-using SensusService.Probes.Context;
 using System;
-using SensusService;
+using Sensus.Shared;
+using Sensus.Shared.Probes.Context;
 using Plugin.Permissions.Abstractions;
 
 namespace Sensus.Android.Probes.Context

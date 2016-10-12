@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>542cbe5f-b59a-422d-b0b9-6123121cb203</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Sensus.Shared.Tests</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Classes\TestSensusContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Classes\TestSensusServiceHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Concurrent\ConcurrentObservableCollectionTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Concurrent\IConcurrentTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Concurrent\LockConcurrentTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Dispose\DisposableTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Encryption\SimpleEncryptionTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\DateTimeExtensionTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Scripts\ScheduleTriggerTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Scripts\ScheduleWindowTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\ProtocolTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\SensusServiceHelperTests.cs" />
+  </ItemGroup>
+</Project>

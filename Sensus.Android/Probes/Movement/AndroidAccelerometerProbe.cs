@@ -13,7 +13,7 @@
 // limitations under the License.
 
 using Android.Hardware;
-using SensusService.Probes.Movement;
+using Sensus.Shared.Probes.Movement;
 using System;
 
 namespace Sensus.Android.Probes.Movement

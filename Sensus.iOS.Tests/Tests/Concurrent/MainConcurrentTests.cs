@@ -13,10 +13,10 @@
 // limitations under the License.
 
 using NUnit.Framework;
-using Sensus.Tools.Tests;
-using Sensus.iOS.Concurrent;
+using Sensus.Shared.iOS.Concurrent;
+using Sensus.Shared.Tests.Concurrent;
 
-namespace Sensus.Tests.Android.Concurrent
+namespace Sensus.iOS.Tests.Concurrent
 {
     [TestFixture]
     public class MainConcurrentTests : IConcurrentTests

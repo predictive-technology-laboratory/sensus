@@ -20,12 +20,12 @@ using Android.App;
 using Android.OS;
 using Android.Runtime;
 using Org.Json;
-using SensusService;
-using SensusService.Probes.Apps;
+using Sensus.Shared;
+using Sensus.Shared.Probes.Apps;
 using Xamarin.Facebook;
 using Xamarin.Facebook.Login;
 using System.Reflection;
-using SensusService.Exceptions;
+using Sensus.Shared.Exceptions;
 
 namespace Sensus.Android.Probes.Apps
 {
@@ -108,14 +108,14 @@ namespace Sensus.Android.Probes.Apps
                                     {
                                         HandleSuccess = loginResult =>
                                         {
-                                            SensusServiceHelper.Get().Logger.Log("Facebook login succeeded.", SensusService.LoggingLevel.Normal, GetType());
+                                            SensusServiceHelper.Get().Logger.Log("Facebook login succeeded.", Shared.LoggingLevel.Normal, GetType());
                                             AccessToken.CurrentAccessToken = loginResult.AccessToken;
                                             loginWait.Set();
                                         },
 
                                         HandleCancel = () =>
                                         {
-                                            SensusServiceHelper.Get().Logger.Log("Facebook login cancelled.", SensusService.LoggingLevel.Normal, GetType());
+                                            SensusServiceHelper.Get().Logger.Log("Facebook login cancelled.", Shared.LoggingLevel.Normal, GetType());
                                             AccessToken.CurrentAccessToken = null;
                                             loginCancelled = true;
                                             loginWait.Set();
@@ -123,7 +123,7 @@ namespace Sensus.Android.Probes.Apps
 
                                         HandleError = loginResult =>
                                         {
-                                            SensusServiceHelper.Get().Logger.Log("Facebook login failed.", SensusService.LoggingLevel.Normal, GetType());
+                                            SensusServiceHelper.Get().Logger.Log("Facebook login failed.", Shared.LoggingLevel.Normal, GetType());
                                             AccessToken.CurrentAccessToken = null;
                                             loginWait.Set();
                                         },

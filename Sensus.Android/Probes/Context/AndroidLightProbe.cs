@@ -13,7 +13,7 @@
 // limitations under the License.
 
 using Android.Hardware;
-using SensusService.Probes.Context;
+using Sensus.Shared.Probes.Context;
 using System;
 
 namespace Sensus.Android.Probes.Context

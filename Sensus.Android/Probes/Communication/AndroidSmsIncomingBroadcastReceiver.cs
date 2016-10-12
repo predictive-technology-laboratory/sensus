@@ -16,7 +16,7 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Telephony;
-using SensusService.Probes.Communication;
+using Sensus.Shared.Probes.Communication;
 using System;
 
 namespace Sensus.Android.Probes.Communication

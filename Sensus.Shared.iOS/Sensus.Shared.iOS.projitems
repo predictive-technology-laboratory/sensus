@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>ca15dd76-c484-4a56-a03f-9ef242294d55</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Sensus.Shared.iOS</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Concurrent\MainConcurrent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Context\iOSSensusContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\iOSFacebookProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\iOSSoundProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Device\iOSBatteryProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\iOSCompassProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\iOSAccelerometerProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\iOSPollingWlanProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthKitBiologicalSexProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthKitBirthdateProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthKitBloodTypeProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthKitHeightProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthKitProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthKitSamplingProbe.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Probes\" />
+  </ItemGroup>
+</Project>

@@ -13,15 +13,15 @@
 // limitations under the License.
 
 using NUnit.Framework;
-using Sensus.Android.Tools;
-using Sensus.Tools.Tests;
+using Sensus.Shared.Android.Concurrent;
+using Sensus.Shared.Tests.Concurrent;
 
-namespace Sensus.Tests.Android.Concurrent
+namespace Sensus.Android.Tests.Concurrent
 {
     [TestFixture]
     public class MainConcurrentTests : IConcurrentTests
     {
-        public MainConcurrentTests() : base(new MainConcurrent(5000))
+        public MainConcurrentTests() : base(new MainConcurrent(1000))
         {
             
         }

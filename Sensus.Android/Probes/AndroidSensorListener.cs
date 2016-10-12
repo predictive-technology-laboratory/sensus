@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using SensusService;
+using Sensus.Shared;
 using System;
 using Android.Hardware;
 
@@ -41,11 +41,14 @@ namespace Sensus.Android.Probes
 
         public void Initialize()
         {
-            _sensorManager = (SensusServiceHelper.Get() as AndroidSensusServiceHelper).Service.GetSystemService(global::Android.Content.Context.SensorService) as SensorManager;
+            _sensorManager = ((AndroidSensusServiceHelper)SensusServiceHelper.Get()).GetSensorManager();
 
             _sensor = _sensorManager.GetDefaultSensor(_sensorType);
+
             if (_sensor == null)
+            {
                 throw new NotSupportedException("No sensors present for sensor type " + _sensorType);
+            }
         }
 
         public void Start()

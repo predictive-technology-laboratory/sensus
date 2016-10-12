@@ -27,7 +27,7 @@ using Android.OS;
 
 namespace Sensus.Android.Tests
 {
-    [Activity(Label = "NUnit", Icon = "@drawable/icon", Theme = "@android:style/Theme.Holo.Light", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Label = "@string/app_name", MainLauncher = true, LaunchMode = LaunchMode.SingleTask, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsApplicationActivity
     {
         protected override void OnCreate(Bundle savedInstanceState)
@@ -36,14 +36,13 @@ namespace Sensus.Android.Tests
 
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
 
+            SetUp.SetUpFixture.SetUp();
+
             // This will load all tests within the current project
-            var nunit = new NUnit.Runner.App();
+            var nunit = new NUnit.Runner.App { AutoRun = false };
 
             // If you want to add tests in another assembly
             //nunit.AddTestAssembly(typeof(MyTests).Assembly);
-
-            // Do you want to automatically run tests when the app starts?
-            nunit.AutoRun = true;
 
             LoadApplication(nunit);
         }

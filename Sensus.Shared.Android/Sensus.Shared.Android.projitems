@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>b6e23da5-2716-426b-9f8f-9c47bd6b68d3</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Sensus.Shared.Android</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Concurrent\MainConcurrent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Context\AndroidSensusContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IAndroidSensusServiceHelper.cs" />
+  </ItemGroup>
+</Project>

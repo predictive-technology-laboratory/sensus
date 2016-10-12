@@ -29,20 +29,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>1701</NoWarn>
     <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
-    <Optimize>true</Optimize>
-    <OutputPath>bin\iPhoneSimulator\Release</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <MtouchArch>i386</MtouchArch>
-    <ConsolePause>false</ConsolePause>
-    <MtouchLink>None</MtouchLink>
-    <MtouchUseRefCounting>true</MtouchUseRefCounting>
-    <CodesignKey>iPhone Distribution</CodesignKey>
-    <DefineConstants>RELEASE</DefineConstants>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <NoWarn>1701</NoWarn>
+    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
     <DebugSymbols>true</DebugSymbols>
@@ -60,11 +47,12 @@
     <IpaPackageName>
     </IpaPackageName>
     <MtouchUseRefCounting>true</MtouchUseRefCounting>
-    <BuildIpa>true</BuildIpa>
+    <BuildIpa>false</BuildIpa>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>1701</NoWarn>
     <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
-    <CodesignProvision></CodesignProvision>
+    <CodesignProvision>
+    </CodesignProvision>
     <MtouchLink>SdkOnly</MtouchLink>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
@@ -80,7 +68,8 @@
     </IpaPackageName>
     <DefineConstants>RELEASE</DefineConstants>
     <MtouchUseRefCounting>true</MtouchUseRefCounting>
-    <CodesignProvision></CodesignProvision>
+    <CodesignProvision>
+    </CodesignProvision>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>1701</NoWarn>
   </PropertyGroup>
@@ -94,77 +83,14 @@
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <IpaIncludeArtwork>true</IpaIncludeArtwork>
     <CodesignKey>iPhone Distribution</CodesignKey>
-    <CodesignProvision></CodesignProvision>
+    <CodesignProvision>
+    </CodesignProvision>
     <BuildIpa>true</BuildIpa>
     <IpaPackageName>edu.virginia.sie.ptl.sensus</IpaPackageName>
     <MtouchUseRefCounting>true</MtouchUseRefCounting>
     <DefineConstants>RELEASE</DefineConstants>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>1701</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'LocalUnitTesting|iPhone' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\iPhone\Debug</OutputPath>
-    <DefineConstants>DEBUG;UNIT_TESTING</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <NoWarn>1701</NoWarn>
-    <MtouchArch>ARMv7, ARM64</MtouchArch>
-    <MtouchI18n>
-    </MtouchI18n>
-    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
-    <IpaPackageName>
-    </IpaPackageName>
-    <ConsolePause>false</ConsolePause>
-    <CodesignKey>iPhone Developer</CodesignKey>
-    <MtouchDebug>true</MtouchDebug>
-    <MtouchProfiling>true</MtouchProfiling>
-    <CustomCommands>
-      <CustomCommands>
-        <Command>
-          <type>BeforeBuild</type>
-          <command>../Sensus.UiTest/UnitTestingProtocols/PromptForUnitTestingProtocol.sh ios</command>
-          <workingdir>${ProjectDir}</workingdir>
-          <externalConsole>True</externalConsole>
-        </Command>
-      </CustomCommands>
-    </CustomCommands>
-    <BuildIpa>true</BuildIpa>
-    <MtouchUseRefCounting>true</MtouchUseRefCounting>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'XamarinTestCloud|iPhone' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\iPhone\Debug</OutputPath>
-    <DefineConstants>DEBUG;UNIT_TESTING</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <NoWarn>1701</NoWarn>
-    <MtouchArch>ARMv7, ARM64</MtouchArch>
-    <MtouchI18n>
-    </MtouchI18n>
-    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
-    <IpaPackageName>
-    </IpaPackageName>
-    <ConsolePause>false</ConsolePause>
-    <CodesignKey>iPhone Developer</CodesignKey>
-    <MtouchDebug>true</MtouchDebug>
-    <MtouchProfiling>true</MtouchProfiling>
-    <CustomCommands>
-      <CustomCommands>
-        <Command>
-          <type>BeforeBuild</type>
-          <command>../Sensus.UiTest/UnitTestingProtocols/PromptForUnitTestingProtocol.sh ios</command>
-          <workingdir>${ProjectDir}</workingdir>
-          <externalConsole>True</externalConsole>
-        </Command>
-      </CustomCommands>
-    </CustomCommands>
-    <BuildIpa>true</BuildIpa>
-    <MtouchUseRefCounting>true</MtouchUseRefCounting>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Band.iOS">
@@ -396,21 +322,7 @@
     <Compile Include="AppDelegate.cs" />
     <Compile Include="iOSSensusServiceHelper.cs" />
     <Compile Include="NetworkConnectivity.cs" />
-    <Compile Include="Probes\Context\iOSSoundProbe.cs" />
-    <Compile Include="Probes\Device\iOSBatteryProbe.cs" />
-    <Compile Include="Probes\Location\iOSCompassProbe.cs" />
-    <Compile Include="Probes\Movement\iOSAccelerometerProbe.cs" />
-    <Compile Include="Probes\Network\iOSPollingWlanProbe.cs" />
-    <Compile Include="Probes\Apps\iOSFacebookProbe.cs" />
-    <Compile Include="Probes\User\Health\iOSHealthKitProbe.cs" />
-    <Compile Include="Probes\User\Health\iOSHealthKitHeightProbe.cs" />
-    <Compile Include="Probes\User\Health\iOSHealthKitSamplingProbe.cs" />
-    <Compile Include="Probes\User\Health\iOSHealthKitBiologicalSexProbe.cs" />
-    <Compile Include="Probes\User\Health\iOSHealthKitBloodTypeProbe.cs" />
-    <Compile Include="Probes\User\Health\iOSHealthKitBirthdateProbe.cs" />
   </ItemGroup>
-  <Import Project="..\SensusService\SensusService.projitems" Label="Shared" Condition="Exists('..\SensusService\SensusService.projitems')" />
-  <Import Project="..\SensusUI\SensusUI.projitems" Label="Shared" Condition="Exists('..\SensusUI\SensusUI.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
     <XamarinComponentReference Include="ZipArchive">
@@ -419,41 +331,31 @@
     </XamarinComponentReference>
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="..\SensusUI\Icons\minus.png">
+    <BundleResource Include="..\Sensus.Shared\UI\Icons\minus.png">
       <Link>Resources\minus.png</Link>
     </BundleResource>
-    <BundleResource Include="..\SensusUI\Icons\pencil.png">
+    <BundleResource Include="..\Sensus.Shared\UI\Icons\pencil.png">
       <Link>Resources\pencil.png</Link>
     </BundleResource>
-    <BundleResource Include="..\SensusUI\Icons\plus.png">
+    <BundleResource Include="..\Sensus.Shared\UI\Icons\plus.png">
       <Link>Resources\plus.png</Link>
     </BundleResource>
-    <BundleResource Include="..\SensusUI\Icons\share.png">
+    <BundleResource Include="..\Sensus.Shared\UI\Icons\share.png">
       <Link>Resources\share.png</Link>
     </BundleResource>
-    <BundleResource Include="..\SensusUI\Icons\check.png">
+    <BundleResource Include="..\Sensus.Shared\UI\Icons\check.png">
       <Link>Resources\check.png</Link>
     </BundleResource>
-    <BundleResource Include="..\SensusUI\Icons\x.png">
+    <BundleResource Include="..\Sensus.Shared\UI\Icons\x.png">
       <Link>Resources\x.png</Link>
     </BundleResource>
-    <BundleResource Include="..\SensusUI\Icons\gear_wrench.png">
+    <BundleResource Include="..\Sensus.Shared\UI\Icons\gear_wrench.png">
       <Link>Resources\gear_wrench.png</Link>
     </BundleResource>
   </ItemGroup>
+  <Import Project="..\Sensus.Shared\Sensus.Shared.projitems" Label="Shared" />
+  <Import Project="..\Sensus.Shared.iOS\Sensus.Shared.iOS.projitems" Label="Shared" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
   <Import Project="..\packages\Xamarin.Insights.1.12.3\build\Xamarin.iOS10\Xamarin.Insights.targets" Condition="Exists('..\packages\Xamarin.Insights.1.12.3\build\Xamarin.iOS10\Xamarin.Insights.targets')" />
-  <ItemGroup>
-    <ProjectReference Include="..\Sensus.iOS.Tools\Sensus.iOS.Tools.csproj">
-      <Project>{6380da9c-4477-4877-840d-d41cf7d417ca}</Project>
-      <Name>Sensus.iOS.Tools</Name>
-      <IsAppExtension>false</IsAppExtension>
-      <IsWatchApp>false</IsWatchApp>
-    </ProjectReference>
-    <ProjectReference Include="..\Sensus.Tools\Sensus.Tools.csproj">
-      <Project>{c26c649e-f32a-4b1e-93ed-89bda3784d10}</Project>
-      <Name>Sensus.Tools</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="..\packages\Xamarin.Forms.2.3.1.114\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.2.3.1.114\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />
 </Project>

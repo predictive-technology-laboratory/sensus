@@ -12,25 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Android.App;
-using Android.Content;
-using Android.Content.PM;
-using Android.OS;
-using SensusService;
-using SensusUI;
 using System;
 using System.IO;
 using System.Threading;
-using Xamarin.Forms;
-using Xamarin.Forms.Platform.Android;
-using Xamarin.Facebook;
+using Android.OS;
+using Android.App;
+using Android.Widget;
+using Android.Content;
+using Android.Content.PM;
+using Sensus.Shared;
+using Sensus.Shared.UI;
+using Sensus.Shared.Context;
 using Xamarin;
+using Xamarin.Forms;
+using Xamarin.Facebook;
+using Xamarin.Forms.Platform.Android;
 using Xam.Plugin.MapExtend.Droid;
 using Plugin.CurrentActivity;
-using Android.Widget;
-using Plugin.Permissions;
-using System.Linq;
 using ZXing.Mobile;
+
+#if __ANDROID_23__
+using Plugin.Permissions;
+#endif
 
 [assembly: MetaData("com.facebook.sdk.ApplicationId", Value = "@string/app_id")]
 [assembly: UsesPermission(Microsoft.Band.BandClientManager.BindBandService)]
@@ -176,7 +179,7 @@ namespace Sensus.Android
                 SensusServiceHelper.Get().ClearPendingSurveysNotificationAsync();
 
                 // now that the service connection has been established, dismiss the wait dialog and show protocols.
-                SensusServiceHelper.Get().MainThreadSynchronizer.ExecuteThreadSafe(serviceBindWaitDialog.Dismiss);
+                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(serviceBindWaitDialog.Dismiss);
 
             }).Start();
         }
@@ -318,7 +321,7 @@ namespace Sensus.Android
                     }
                     catch (Exception ex)
                     {
-                        SensusServiceHelper.Get().MainThreadSynchronizer.ExecuteThreadSafe(() =>
+                        SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                         {
                             new AlertDialog.Builder(this).SetTitle("Failed to get protocol").SetMessage(ex.Message).Show();
                         });

@@ -26,21 +26,23 @@ using Android.Speech;
 using Android.Support.V4.Content;
 using Android.Widget;
 using Newtonsoft.Json;
-using SensusService;
+using Sensus.Shared;
 using Xamarin;
-using SensusService.Probes.Location;
-using SensusService.Probes;
-using SensusService.Probes.Movement;
+using Sensus.Shared.Probes.Location;
+using Sensus.Shared.Probes;
+using Sensus.Shared.Probes.Movement;
 using System.Linq;
 using ZXing.Mobile;
 using Android.Graphics;
 using Android.Media;
 using Android.Bluetooth;
+using Android.Hardware;
 using Sensus.Android.Probes.Context;
+using Sensus.Shared.Android;
 
 namespace Sensus.Android
 {
-    public class AndroidSensusServiceHelper : SensusServiceHelper
+    public class AndroidSensusServiceHelper : SensusServiceHelper, IAndroidSensusServiceHelper
     {
         private AndroidSensusService _service;
         private ConnectivityManager _connectivityManager;
@@ -54,12 +56,6 @@ namespace Sensus.Android
         private List<Action<AndroidMainActivity>> _actionsToRunUsingMainActivity;
         private Dictionary<string, PendingIntent> _callbackIdPendingIntent;
         private bool _userDeniedBluetoothEnable;
-
-        [JsonIgnore]
-        public AndroidSensusService Service
-        {
-            get { return _service; }
-        }
 
         public override string DeviceId
         {
@@ -144,7 +140,7 @@ namespace Sensus.Android
             }
         }
 
-        public AndroidSensusServiceHelper(): base(new Sensus.Android.Tools.MainConcurrent()) 
+        public AndroidSensusServiceHelper()
         {
             _actionsToRunUsingMainActivity = new List<Action<AndroidMainActivity>>();
             _callbackIdPendingIntent = new Dictionary<string, PendingIntent>();
@@ -824,14 +820,24 @@ namespace Sensus.Android
             ManualResetEvent foregroundWait = new ManualResetEvent(false);
 
             RunActionUsingMainActivityAsync(mainActivity =>
-                {
-                    foregroundWait.Set();
+            {
+                foregroundWait.Set();
 
-                }, true, false);
+            }, true, false);
 
             foregroundWait.WaitOne();
         }
 
         #endregion
+
+        public void StopAndroidSensusService()
+        {
+            _service.Stop();
+        }
+
+        public SensorManager GetSensorManager()
+        {
+            return _service.GetSystemService(Context.SensorService) as SensorManager;
+        }
     }
 }
