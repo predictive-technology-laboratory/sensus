@@ -19,14 +19,11 @@ namespace Sensus.Shared.iOS.Exceptions
 {
     public class InsightsInitializer:IInsightsInitializer
     {
-        public void Initialize()
+        public void Initialize(string insightsKey)
         {
-            Xamarin.Insights.Initialize(SensusServiceHelper.XAMARIN_INSIGHTS_APP_KEY);
+            Xamarin.Insights.Initialize(insightsKey);
 
-            if (Xamarin.Insights.IsInitialized)
-            {
-                Xamarin.Insights.Identify(UIDevice.CurrentDevice.IdentifierForVendor.AsString(), "Device ID", UIDevice.CurrentDevice.IdentifierForVendor.AsString());
-            }
+            Xamarin.Insights.Identify(UIDevice.CurrentDevice.IdentifierForVendor.AsString(), "Device ID", UIDevice.CurrentDevice.IdentifierForVendor.AsString());
         }
     }
 }

@@ -28,9 +28,9 @@ namespace Sensus.Shared.Android.Exceptions
             _deviceId = deviceId;
         }
 
-        public void Initialize()
+        public void Initialize(string insightsKey)
         {            
-            Insights.Initialize(SensusServiceHelper.XAMARIN_INSIGHTS_APP_KEY, Application.Context);
+            Insights.Initialize(insightsKey, Application.Context);
             Insights.Identify(_deviceId, "Device ID", _deviceId);
         }
     }
