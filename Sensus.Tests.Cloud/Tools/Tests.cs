@@ -18,9 +18,8 @@ using NUnit.Framework;
 using System.Linq;
 using Xamarin.UITest.Queries;
 using System.Threading;
-using Sensus.UiTest.Tools;
 
-namespace Sensus.UiTest
+namespace Sensus.Tests.Cloud
 {
     //[TestFixture]
     public abstract class Tests

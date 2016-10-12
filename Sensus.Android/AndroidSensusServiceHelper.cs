@@ -38,7 +38,7 @@ using Android.Media;
 using Android.Bluetooth;
 using Android.Hardware;
 using Sensus.Android.Probes.Context;
-using Sensus.Service.Android;
+using Sensus.Shared.Android;
 
 namespace Sensus.Android
 {

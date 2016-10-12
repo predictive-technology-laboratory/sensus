@@ -14,7 +14,7 @@
 
 using Android.Hardware;
 
-namespace Sensus.Service.Android
+namespace Sensus.Shared.Android
 {
     interface IAndroidSensusServiceHelper
     {

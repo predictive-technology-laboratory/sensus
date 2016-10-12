@@ -16,7 +16,7 @@ using System;
 using Xamarin.UITest;
 using Xamarin.UITest.Queries;
 
-namespace Sensus.UiTest.iOS
+namespace Sensus.Tests.Cloud
 {
     public class iOSTests : Tests
     {

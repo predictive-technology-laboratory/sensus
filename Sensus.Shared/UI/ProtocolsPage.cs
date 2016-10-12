@@ -510,7 +510,7 @@ namespace Sensus.Shared.UI
                         else if (action == "Stop Sensus" && await DisplayAlert("Confirm", "Are you sure you want to stop Sensus? This will end your participation in all studies.", "Stop Sensus", "Go Back"))
                         {
                             SensusServiceHelper.Get().StopProtocols();
-                            (SensusServiceHelper.Get() as Sensus.Service.Android.IAndroidSensusServiceHelper)?.StopAndroidSensusService();
+                            (SensusServiceHelper.Get() as Android.IAndroidSensusServiceHelper)?.StopAndroidSensusService();
                         }
 #endif
                         else if (action == "About Sensus")

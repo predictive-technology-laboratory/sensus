@@ -18,7 +18,7 @@ using Sensus.Shared.Dispose;
 using Sensus.Shared.Concurrent;
 using Android.OS;
 
-namespace Sensus.Android.Tools
+namespace Sensus.Shared.Android.Concurrent
 {
     /// <remarks>
     /// Device.BeginInvokeOnMainThread invokes off the activity. Sensus does not always have an activity, so we create a handler bound to the main thread's looper instead.

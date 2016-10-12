@@ -22,8 +22,7 @@ using Xamarin.Forms;
 using Sensus.Shared;
 using Sensus.Shared.UI;
 using Sensus.Shared.Context;
-using Sensus.Service.Android.Context;
-
+using Sensus.Shared.Android.Context;
 
 namespace Sensus.Android
 {

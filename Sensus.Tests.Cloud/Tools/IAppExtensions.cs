@@ -15,7 +15,7 @@
 using System;
 using Xamarin.UITest;
 
-namespace Sensus.UiTest.Tools
+namespace Sensus.Tests.Cloud
 {
     public static class IAppExtensions
     {

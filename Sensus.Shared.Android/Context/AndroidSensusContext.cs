@@ -14,10 +14,10 @@
 
 using Sensus.Shared.Encryption;
 using Sensus.Shared.Concurrent;
-using Sensus.Android.Tools;
+using Sensus.Shared.Android.Concurrent;
 using Sensus.Shared.Context;
 
-namespace Sensus.Service.Android.Context
+namespace Sensus.Shared.Android.Context
 {
     public class AndroidSensusContext : ISensusContext
     {

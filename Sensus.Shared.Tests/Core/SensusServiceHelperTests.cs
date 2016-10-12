@@ -52,146 +52,167 @@ namespace Sensus.Shared.Tests.Core
         [Test]
         public void SerializeAndDeserializeNoExceptionTest()
         {
-            var service1 = new TestSensusServiceHelper();
-            var serial   = JsonConvert.SerializeObject(service1, _jsonSerializerSettings);
-            service1.RegisteredProtocols.Clear();
-            var service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial, _jsonSerializerSettings);
+            Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+            {
+                var service1 = new TestSensusServiceHelper();
+                var serial = JsonConvert.SerializeObject(service1, _jsonSerializerSettings);
+                service1.RegisteredProtocols.Clear();
+                var service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial, _jsonSerializerSettings);
 
-            Assert.AreEqual(0, service1.RegisteredProtocols.Count);
-            Assert.AreEqual(0, service2.RegisteredProtocols.Count);
+                Assert.AreEqual(0, service1.RegisteredProtocols.Count);
+                Assert.AreEqual(0, service2.RegisteredProtocols.Count);
+            });
         }
 
         [Test]
         public void RegisteredOneProtocolTest()
         {
-            TestSensusServiceHelper service1 = new TestSensusServiceHelper();
-            SensusServiceHelper.Initialize(() => service1);
+            Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+            {
+                TestSensusServiceHelper service1 = new TestSensusServiceHelper();
+                SensusServiceHelper.Initialize(() => service1);
 
-            service1.RegisteredProtocols.Clear();
+                service1.RegisteredProtocols.Clear();
 
-            Protocol.Create("Test");
+                Protocol.Create("Test");
 
-            var serial = JsonConvert.SerializeObject(service1, _jsonSerializerSettings);
+                var serial = JsonConvert.SerializeObject(service1, _jsonSerializerSettings);
 
-            SensusServiceHelper.ClearSingleton();
+                SensusServiceHelper.ClearSingleton();
 
-            var service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial, _jsonSerializerSettings);
+                var service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial, _jsonSerializerSettings);
 
-            Assert.AreEqual(service1.RegisteredProtocols.Count, service2.RegisteredProtocols.Count);
-            Assert.AreEqual(service1.RegisteredProtocols.First().Name, service2.RegisteredProtocols.First().Name);
+                Assert.AreEqual(service1.RegisteredProtocols.Count, service2.RegisteredProtocols.Count);
+                Assert.AreEqual(service1.RegisteredProtocols.First().Name, service2.RegisteredProtocols.First().Name);
+            });
         }
 
         [Test]
         public void RegisteredTwoProtocolsTest()
         {
-            TestSensusServiceHelper service1 = new TestSensusServiceHelper();
-            SensusServiceHelper.Initialize(() => service1);
+            Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+            {
+                TestSensusServiceHelper service1 = new TestSensusServiceHelper();
+                SensusServiceHelper.Initialize(() => service1);
 
-            service1.RegisteredProtocols.Clear();
+                service1.RegisteredProtocols.Clear();
 
-            Protocol.Create("Test1");
-            Protocol.Create("Test2");
+                Protocol.Create("Test1");
+                Protocol.Create("Test2");
 
-            var serial = JsonConvert.SerializeObject(service1, _jsonSerializerSettings);
-            SensusServiceHelper.ClearSingleton();
-            var service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial, _jsonSerializerSettings);
+                var serial = JsonConvert.SerializeObject(service1, _jsonSerializerSettings);
+                SensusServiceHelper.ClearSingleton();
+                var service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial, _jsonSerializerSettings);
 
-            Assert.AreEqual(2, service1.RegisteredProtocols.Count);
-            Assert.AreEqual(2, service2.RegisteredProtocols.Count);
+                Assert.AreEqual(2, service1.RegisteredProtocols.Count);
+                Assert.AreEqual(2, service2.RegisteredProtocols.Count);
 
-            Assert.AreEqual(service1.RegisteredProtocols.Skip(0).Take(1).Single().Name, service2.RegisteredProtocols.Skip(0).Take(1).Single().Name);
-            Assert.AreEqual(service1.RegisteredProtocols.Skip(1).Take(1).Single().Name, service2.RegisteredProtocols.Skip(1).Take(1).Single().Name);
+                Assert.AreEqual(service1.RegisteredProtocols.Skip(0).Take(1).Single().Name, service2.RegisteredProtocols.Skip(0).Take(1).Single().Name);
+                Assert.AreEqual(service1.RegisteredProtocols.Skip(1).Take(1).Single().Name, service2.RegisteredProtocols.Skip(1).Take(1).Single().Name);
+            });
         }
 
         [Test]
         public void RunningProtocolIdsTest()
         {
-            var service1 = new TestSensusServiceHelper();
+            Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+            {
+                var service1 = new TestSensusServiceHelper();
 
-            SensusServiceHelper.Initialize(() => service1);
-            
-            Protocol.Create("Test");
+                SensusServiceHelper.Initialize(() => service1);
 
-            service1.RunningProtocolIds.Clear();
-            service1.RunningProtocolIds.Add(service1.RegisteredProtocols.Single().Id);
+                Protocol.Create("Test");
 
-            var serial = JsonConvert.SerializeObject(service1, _jsonSerializerSettings);
+                service1.RunningProtocolIds.Clear();
+                service1.RunningProtocolIds.Add(service1.RegisteredProtocols.Single().Id);
 
-            SensusServiceHelper.ClearSingleton();
+                var serial = JsonConvert.SerializeObject(service1, _jsonSerializerSettings);
 
-            var service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial, _jsonSerializerSettings);
+                SensusServiceHelper.ClearSingleton();
 
-            Assert.AreEqual(service1.RunningProtocolIds.Count   , service2.RunningProtocolIds.Count);
-            Assert.AreEqual(service1.RunningProtocolIds.Single(), service2.RunningProtocolIds.Single());
+                var service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial, _jsonSerializerSettings);
+
+                Assert.AreEqual(service1.RunningProtocolIds.Count, service2.RunningProtocolIds.Count);
+                Assert.AreEqual(service1.RunningProtocolIds.Single(), service2.RunningProtocolIds.Single());
+            });
         }
 
         [Test]
         public void PointsOfInterestTest()
         {
-            var service1 = new TestSensusServiceHelper();
+            Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+            {
+                var service1 = new TestSensusServiceHelper();
 
-            SensusServiceHelper.Initialize(() => service1);
+                SensusServiceHelper.Initialize(() => service1);
 
-            service1.PointsOfInterest.Clear();
-            service1.PointsOfInterest.Add(new PointOfInterest("Test", "Test", null));
+                service1.PointsOfInterest.Clear();
+                service1.PointsOfInterest.Add(new PointOfInterest("Test", "Test", null));
 
-            var serial = JsonConvert.SerializeObject(service1, _jsonSerializerSettings);
+                var serial = JsonConvert.SerializeObject(service1, _jsonSerializerSettings);
 
-            SensusServiceHelper.ClearSingleton();
+                SensusServiceHelper.ClearSingleton();
 
-            var service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial, _jsonSerializerSettings);
+                var service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial, _jsonSerializerSettings);
 
-            Assert.AreEqual(service1.PointsOfInterest.Count, service2.PointsOfInterest.Count);
-            Assert.AreEqual(service1.PointsOfInterest.Single().Name, service2.PointsOfInterest.Single().Name);
+                Assert.AreEqual(service1.PointsOfInterest.Count, service2.PointsOfInterest.Count);
+                Assert.AreEqual(service1.PointsOfInterest.Single().Name, service2.PointsOfInterest.Single().Name);
+            });
         }
 
         [Test]
         public void FlashNotificationsEnabledTest()
         {
-            var service1 = new TestSensusServiceHelper();
+            Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+            {
+                var service1 = new TestSensusServiceHelper();
 
-            SensusServiceHelper.Initialize(() => service1);
+                SensusServiceHelper.Initialize(() => service1);
 
-            service1.FlashNotificationsEnabled = true;
+                service1.FlashNotificationsEnabled = true;
 
-            var serial = JsonConvert.SerializeObject(service1, _jsonSerializerSettings);
+                var serial = JsonConvert.SerializeObject(service1, _jsonSerializerSettings);
 
-            SensusServiceHelper.ClearSingleton();
+                SensusServiceHelper.ClearSingleton();
 
-            var service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial);
+                var service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial);
 
-            Assert.AreEqual(service1.FlashNotificationsEnabled, service2.FlashNotificationsEnabled);
+                Assert.AreEqual(service1.FlashNotificationsEnabled, service2.FlashNotificationsEnabled);
 
-            service1.FlashNotificationsEnabled = false;
+                service1.FlashNotificationsEnabled = false;
 
-            serial = JsonConvert.SerializeObject(service1);
+                serial = JsonConvert.SerializeObject(service1);
 
-            SensusServiceHelper.ClearSingleton();
+                SensusServiceHelper.ClearSingleton();
 
-            service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial);
+                service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial);
 
-            Assert.AreEqual(service1.FlashNotificationsEnabled, service2.FlashNotificationsEnabled);
+                Assert.AreEqual(service1.FlashNotificationsEnabled, service2.FlashNotificationsEnabled);
+            });
         }
 
         [Test]
         public void ScriptsToRunTest()
         {
-            var service1 = new TestSensusServiceHelper();
+            Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+            {
+                var service1 = new TestSensusServiceHelper();
 
-            SensusServiceHelper.Initialize(() => service1);
+                SensusServiceHelper.Initialize(() => service1);
 
-            service1.RunningProtocolIds.Clear();
+                service1.RunningProtocolIds.Clear();
 
-            service1.ScriptsToRun.Add(new Script(new ScriptRunner("Test", new ScriptProbe())));
+                service1.ScriptsToRun.Add(new Script(new ScriptRunner("Test", new ScriptProbe())));
 
-            var serial = JsonConvert.SerializeObject(service1, _jsonSerializerSettings);
+                var serial = JsonConvert.SerializeObject(service1, _jsonSerializerSettings);
 
-            SensusServiceHelper.ClearSingleton();
+                SensusServiceHelper.ClearSingleton();
 
-            var service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial);
+                var service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial);
 
-            Assert.AreEqual(service1.ScriptsToRun.Count, service2.ScriptsToRun.Count);
-            Assert.AreEqual(service1.ScriptsToRun.Single().Id, service2.ScriptsToRun.Single().Id);
+                Assert.AreEqual(service1.ScriptsToRun.Count, service2.ScriptsToRun.Count);
+                Assert.AreEqual(service1.ScriptsToRun.Single().Id, service2.ScriptsToRun.Single().Id);
+            });
         }
     }
 }

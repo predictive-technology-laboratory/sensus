@@ -13,7 +13,7 @@
 // limitations under the License.
 
 using NUnit.Framework;
-using Sensus.Android.Tools;
+using Sensus.Shared.Android.Concurrent;
 using Sensus.Shared.Tests.Concurrent;
 
 namespace Sensus.Android.Tests.Concurrent
