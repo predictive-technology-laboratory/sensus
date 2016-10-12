@@ -1,15 +1,12 @@
-﻿using NUnit.Framework;
-using Sensus.Shared.Context;
+﻿using Sensus.Shared.Context;
 using Sensus.Shared.Test.Classes;
 using Sensus.Shared.Android.Concurrent;
 
-namespace Sensus.Shared.Tests //this namespace has to align with the tests we want this fixture for
-{
-    [SetUpFixture]
-    public class SetUpFixture
-    {
-        [SetUp]
-        public void SetUp()
+namespace Sensus.Android.Tests.SetUp
+{  
+    public static class SetUpFixture
+    {        
+        public static void SetUp()
         {
             SensusContext.Current = new TestSensusContext
             {
