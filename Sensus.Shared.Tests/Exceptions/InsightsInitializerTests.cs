@@ -23,7 +23,7 @@ namespace Sensus.Shared.Tests.Exceptions
         #region Classes
         private class DummyInitializer : IInsightsInitializer
         {
-            public void Initialize()
+            public void Initialize(string insightsKey)
             {
                 
             }
@@ -31,7 +31,7 @@ namespace Sensus.Shared.Tests.Exceptions
 
         private class SuccessInitializer: IInsightsInitializer
         {
-            public void Initialize()
+            public void Initialize(string insightsKey)
             {
                 throw new SuccessException("You passed the test");
             }
@@ -52,21 +52,27 @@ namespace Sensus.Shared.Tests.Exceptions
         #endregion
 
         [Test]
-        public void DoesNotExplodeTest()
+        public void PlatformInitializerDoesNotExplodeWithKeyTest()
         {
-            Assert.DoesNotThrow(() => InsightInitialization.Initialize(_initializer, false));
+            Assert.DoesNotThrow(() => InsightInitialization.Initialize(_initializer, "Fake-Key", false));
         }
 
         [Test]
-        public void InitializerCalledTest()
+        public void PassedInInitializerCalledTest()
         {
-            Assert.Throws<SuccessException>(() => InsightInitialization.Initialize(new SuccessInitializer(), false));
+            Assert.Throws<SuccessException>(() => InsightInitialization.Initialize(new SuccessInitializer(), "Fake-Key", false));
+        }
+
+        [Test]
+        public void InitializerNotCalledWhenKeyIsEmptyTest()
+        {
+            Assert.DoesNotThrow(() => InsightInitialization.Initialize(new SuccessInitializer(), "", false));
         }
 
         [Test]
         public void AllExceptionsSuprressedTest()
         {
-            Assert.DoesNotThrow(() => InsightInitialization.Initialize(new SuccessInitializer()));
+            Assert.DoesNotThrow(() => InsightInitialization.Initialize(new SuccessInitializer(), "Fake-Key"));
         }
     }
 }

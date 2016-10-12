@@ -515,20 +515,6 @@ namespace Sensus.Shared
                 }
             };
 #endif
-
-            if(!Insights.IsInitialized && string.IsNullOrEmpty(XAMARIN_INSIGHTS_APP_KEY))
-            {
-                _logger.Log("Xamarin Insights key is empty -- not initialized.", LoggingLevel.Normal, GetType());
-            }
-            else if (!Insights.IsInitialized)
-            {
-                _logger.Log("Xamarin Insights failed to initialize.", LoggingLevel.Normal, GetType());
-            }
-            else
-            {
-                _logger.Log("Xamarin Insights sucessfully initialized.", LoggingLevel.Normal, GetType());
-            }
-
             _flashNotificationsEnabled = true;
 
 
@@ -545,6 +531,19 @@ namespace Sensus.Shared
 
             _logger = new Logger(LOG_PATH, loggingLevel, Console.Error);
             _logger.Log("Log file started at \"" + LOG_PATH + "\".", LoggingLevel.Normal, GetType());
+
+            if (!Insights.IsInitialized && string.IsNullOrEmpty(XAMARIN_INSIGHTS_APP_KEY))
+            {
+                _logger.Log("Xamarin Insights key is empty -- not initialized.", LoggingLevel.Normal, GetType());
+            }
+            else if (!Insights.IsInitialized)
+            {
+                _logger.Log("Xamarin Insights failed to initialize.", LoggingLevel.Normal, GetType());
+            }
+            else
+            {
+                _logger.Log("Xamarin Insights sucessfully initialized.", LoggingLevel.Normal, GetType());
+            }
         }
         #endregion
 

@@ -16,9 +16,9 @@ namespace Sensus.Shared.Exceptions
 {
     public static class InsightInitialization
     {
-        public static void Initialize(IInsightsInitializer platformSpecific, bool suppressException = true)
+        public static void Initialize(IInsightsInitializer platformSpecific, string insightsKey, bool suppressException = true)
         {
-            if (string.IsNullOrEmpty(SensusServiceHelper.XAMARIN_INSIGHTS_APP_KEY)) return;
+            if (string.IsNullOrEmpty(insightsKey)) return;
             
             try
             {
@@ -31,7 +31,7 @@ namespace Sensus.Shared.Exceptions
                     }
                 };
 
-                platformSpecific.Initialize();
+                platformSpecific.Initialize(insightsKey);
             }
             catch
             {

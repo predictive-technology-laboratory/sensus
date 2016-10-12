@@ -16,6 +16,6 @@ namespace Sensus.Shared.Exceptions
 {
     public interface IInsightsInitializer
     {
-        void Initialize();
+        void Initialize(string insightsKey);
     }
 }

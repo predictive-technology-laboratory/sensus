@@ -44,7 +44,7 @@ namespace Sensus.iOS
     {
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
-            InsightInitialization.Initialize(new InsightsInitializer());
+            InsightInitialization.Initialize(new InsightsInitializer(), SensusServiceHelper.XAMARIN_INSIGHTS_APP_KEY);
 
             SensusContext.Current = new iOSSensusContext(SensusServiceHelper.ENCRYPTION_KEY);
             SensusServiceHelper.Initialize(() => new iOSSensusServiceHelper());

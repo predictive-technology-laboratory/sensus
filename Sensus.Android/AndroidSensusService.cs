@@ -44,7 +44,7 @@ namespace Sensus.Android
         {
             base.OnCreate();            
 
-            InsightInitialization.Initialize(new InsightsInitializer(Settings.Secure.GetString(ContentResolver, Settings.Secure.AndroidId)));
+            InsightInitialization.Initialize(new InsightsInitializer(Settings.Secure.GetString(ContentResolver, Settings.Secure.AndroidId)), SensusServiceHelper.XAMARIN_INSIGHTS_APP_KEY);
 
             SensusContext.Current = new AndroidSensusContext(SensusServiceHelper.ENCRYPTION_KEY);
             SensusServiceHelper.Initialize(() => new AndroidSensusServiceHelper());
