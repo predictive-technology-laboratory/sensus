@@ -496,7 +496,8 @@ namespace Sensus.Shared
 #if __ANDROID__
             int qrCodeSize = (int)(0.9 * Math.Min(XLabs.Platform.Device.Display.Metrics.WidthPixels, XLabs.Platform.Device.Display.Metrics.HeightPixels));
 #elif __IOS__
-            int qrCodeSize = (int)(0.9 * Math.Min(AppleDevice.CurrentDevice.Display.Height, AppleDevice.CurrentDevice.Display.Width));
+            //In order for AppleDevice calls to work we need to be on the UI thread. We should always be on the made thread when creating new SensusServiceHelpers. Still, just to be safe, we're explicitly synchronizing 
+            int qrCodeSize = SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() => (int)(0.9 * Math.Min(AppleDevice.CurrentDevice.Display.Height, AppleDevice.CurrentDevice.Display.Width)));
 #else
 #warning "Unrecognized platform"
             int qrCodeSize = 0;

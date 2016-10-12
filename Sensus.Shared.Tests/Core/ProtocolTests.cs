@@ -16,7 +16,6 @@ using System;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using Sensus.Shared.Context;
-using Sensus.Shared.Test.Classes;
 
 namespace Sensus.Shared.Tests.Core
 {
@@ -35,8 +34,6 @@ namespace Sensus.Shared.Tests.Core
 
             //we don't want to quietly handle errors when testing.
             _jsonSerializerSettings.Error = null;
-
-            SensusContext.Current = new TestSensusContext();
         }
         #endregion
 

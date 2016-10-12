@@ -93,6 +93,7 @@
   <ItemGroup>
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
+    <Compile Include="SetUp\SetUpFixture.cs" />
     <Compile Include="Tests\Concurrent\MainConcurrentTests.cs" />
     <None Include="app.config" />
     <None Include="Entitlements.plist" />
