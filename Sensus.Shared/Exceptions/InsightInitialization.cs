@@ -18,26 +18,25 @@ namespace Sensus.Shared.Exceptions
     {
         public static void Initialize(IInsightsInitializer platformSpecific, bool suppressException = true)
         {
-            if(string.IsNullOrEmpty(SensusServiceHelper.XAMARIN_INSIGHTS_APP_KEY))
+            if (string.IsNullOrEmpty(SensusServiceHelper.XAMARIN_INSIGHTS_APP_KEY)) return;
+            
+            try
             {
-                try
+                // see https://developer.xamarin.com/guides/insights/platform-features/advanced-topics/dealing-with-startup-crashes/
+                Xamarin.Insights.HasPendingCrashReport += (sender, isStartupCrash) =>
                 {
-                    // see https://developer.xamarin.com/guides/insights/platform-features/advanced-topics/dealing-with-startup-crashes/
-                    Xamarin.Insights.HasPendingCrashReport += (sender, isStartupCrash) =>
+                    if (isStartupCrash)
                     {
-                        if (isStartupCrash)
-                        {
-                            Xamarin.Insights.PurgePendingCrashReports().Wait();
-                        }
-                    };
+                        Xamarin.Insights.PurgePendingCrashReports().Wait();
+                    }
+                };
 
-                    platformSpecific.Initialize();
-                }
-                catch
-                {
-                    if (!suppressException) throw;
-                    /* If we fail to setup our error report code no reason to throw an exception we'll never see. Godspeed user. */
-                }
+                platformSpecific.Initialize();
+            }
+            catch
+            {
+                if (!suppressException) throw;
+                /* If we fail to setup our error report code no reason to throw an exception we'll never see. Godspeed user. */
             }
         }
     }
