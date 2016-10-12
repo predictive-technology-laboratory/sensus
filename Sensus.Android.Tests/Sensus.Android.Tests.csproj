@@ -297,6 +297,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SetUp\SetUpFixture.cs" />
     <Compile Include="Tests\Concurrent\MainConcurrentTests.cs" />
+    <Compile Include="Tests\Exceptions\InsightsInitializerTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

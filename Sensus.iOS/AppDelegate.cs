@@ -24,12 +24,14 @@ using Sensus.Shared;
 using Sensus.Shared.UI;
 using Sensus.Shared.Probes;
 using Sensus.Shared.Context;
+using Sensus.Shared.Exceptions;
 using Sensus.Shared.iOS.Context;
 using UIKit;
 using Foundation;
 using CoreLocation;
 using Plugin.Toasts;
 using Facebook.CoreKit;
+using Sensus.Shared.iOS.Exceptions;
 using Syncfusion.SfChart.XForms.iOS.Renderers;
 
 namespace Sensus.iOS
@@ -38,10 +40,12 @@ namespace Sensus.iOS
     // User Interface of the application, as well as listening (and optionally responding) to
     // application events from iOS.
     [Register("AppDelegate")]
-    public partial class AppDelegate : FormsApplicationDelegate
+    public class AppDelegate : FormsApplicationDelegate
     {
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
+            InsightInitialization.Initialize(new InsightsInitializer());
+
             SensusContext.Current = new iOSSensusContext(SensusServiceHelper.ENCRYPTION_KEY);
             SensusServiceHelper.Initialize(() => new iOSSensusServiceHelper());
 

@@ -18,11 +18,14 @@ using Android.OS;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using Android.Provider;
 using Xamarin.Forms;
 using Sensus.Shared;
 using Sensus.Shared.UI;
 using Sensus.Shared.Context;
+using Sensus.Shared.Exceptions;
 using Sensus.Shared.Android.Context;
+using Sensus.Shared.Android.Exceptions;
 
 namespace Sensus.Android
 {
@@ -33,15 +36,15 @@ namespace Sensus.Android
     /// to support integration with other apps.
     /// </summary>
     [Service(Exported = false)]
-    public class AndroidSensusService : global::Android.App.Service
+    public class AndroidSensusService : Service
     {
-        private List<AndroidSensusServiceBinder> _bindings;
+        private readonly List<AndroidSensusServiceBinder> _bindings = new List<AndroidSensusServiceBinder>();
 
         public override void OnCreate()
         {
-            base.OnCreate();
+            base.OnCreate();            
 
-            _bindings = new List<AndroidSensusServiceBinder>();
+            InsightInitialization.Initialize(new InsightsInitializer(Settings.Secure.GetString(ContentResolver, Settings.Secure.AndroidId)));
 
             SensusContext.Current = new AndroidSensusContext(SensusServiceHelper.ENCRYPTION_KEY);
             SensusServiceHelper.Initialize(() => new AndroidSensusServiceHelper());

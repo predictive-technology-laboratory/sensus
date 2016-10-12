@@ -26,6 +26,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Encryption\IEncryption.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Encryption\SimpleEncryption.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Encryption\WindowsEncryption.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\IInsightsInitializer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\InsightInitialization.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\SensusException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\DateTimeExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\EnumerableExtensions.cs" />

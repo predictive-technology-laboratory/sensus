@@ -12,5 +12,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\MainConcurrent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Context\AndroidSensusContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IAndroidSensusServiceHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\InsightsInitializer.cs" />
   </ItemGroup>
 </Project>

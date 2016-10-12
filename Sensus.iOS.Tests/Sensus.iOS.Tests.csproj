@@ -48,6 +48,7 @@
     <Compile Include="AppDelegate.cs" />
     <Compile Include="SetUp\SetUpFixture.cs" />
     <Compile Include="Tests\Concurrent\MainConcurrentTests.cs" />
+    <Compile Include="Tests\Exceptions\InsightsInitializerTests.cs" />
     <None Include="app.config" />
     <None Include="Entitlements.plist" />
     <Compile Include="Properties\AssemblyInfo.cs" />
