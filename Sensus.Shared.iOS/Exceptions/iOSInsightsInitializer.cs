@@ -13,17 +13,20 @@
 // limitations under the License.
 
 using Sensus.Shared.Exceptions;
-using UIKit;
+using Xamarin;
 
 namespace Sensus.Shared.iOS.Exceptions
 {
-    public class InsightsInitializer:IInsightsInitializer
+    public class iOSInsightsInitializer : InsightsInitializer
     {
-        public void Initialize(string insightsKey)
+        public iOSInsightsInitializer(string deviceId)
+            : base(deviceId)
         {
-            Xamarin.Insights.Initialize(insightsKey);
+        }
 
-            Xamarin.Insights.Identify(UIDevice.CurrentDevice.IdentifierForVendor.AsString(), "Device ID", UIDevice.CurrentDevice.IdentifierForVendor.AsString());
+        protected override void InitializePlatformSpecific(string insightsKey)
+        {
+            Insights.Initialize(insightsKey);
         }
     }
 }

@@ -18,20 +18,16 @@ using Sensus.Shared.Exceptions;
 
 namespace Sensus.Shared.Android.Exceptions
 {
-    public class InsightsInitializer:IInsightsInitializer
+    public class AndroidInsightsInitializer : InsightsInitializer
     {
-        private readonly string _deviceId;
-
-        public InsightsInitializer(string deviceId)
+        public AndroidInsightsInitializer(string deviceId)
+            : base(deviceId)
         {
-            
-            _deviceId = deviceId;
         }
 
-        public void Initialize(string insightsKey)
-        {            
+        protected override void InitializePlatformSpecific(string insightsKey)
+        {
             Insights.Initialize(insightsKey, Application.Context);
-            Insights.Identify(_deviceId, "Device ID", _deviceId);
         }
     }
 }

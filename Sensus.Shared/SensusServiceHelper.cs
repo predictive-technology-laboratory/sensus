@@ -89,9 +89,9 @@ namespace Sensus.Shared
         public static readonly JsonSerializerSettings JSON_SERIALIZER_SETTINGS = new JsonSerializerSettings
         {
             PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-            ReferenceLoopHandling      = ReferenceLoopHandling.Serialize,
-            TypeNameHandling           = TypeNameHandling.All,
-            ConstructorHandling        = ConstructorHandling.AllowNonPublicDefaultConstructor,
+            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+            TypeNameHandling = TypeNameHandling.All,
+            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
 
             #region need the following in order to deserialize protocols between OSs, whose objects contain different members (e.g., iOS service helper has ActivationId, which Android does not)
             Error = (o, e) =>
@@ -532,7 +532,7 @@ namespace Sensus.Shared
             _logger = new Logger(LOG_PATH, loggingLevel, Console.Error);
             _logger.Log("Log file started at \"" + LOG_PATH + "\".", LoggingLevel.Normal, GetType());
 
-            if (!Insights.IsInitialized && string.IsNullOrEmpty(XAMARIN_INSIGHTS_APP_KEY))
+            if (!Insights.IsInitialized && string.IsNullOrWhiteSpace(XAMARIN_INSIGHTS_APP_KEY))
             {
                 _logger.Log("Xamarin Insights key is empty -- not initialized.", LoggingLevel.Normal, GetType());
             }

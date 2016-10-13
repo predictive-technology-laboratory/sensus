@@ -20,7 +20,7 @@ fi
 sed -i '' "s/public const string ENCRYPTION_KEY = \"\"/public const string ENCRYPTION_KEY = \"$2\"/g" ../../Sensus.Shared/SensusServiceHelper.cs
 
 # set xamarin insights key to production value                                                                                                                                                                                                                                      
-sed -i '' "s/protected const string XAMARIN_INSIGHTS_APP_KEY = \"\"/protected const string XAMARIN_INSIGHTS_APP_KEY = \"$3\"/g" ../../Sensus.Shared/SensusServiceHelper.cs
+sed -i '' "s/public const string XAMARIN_INSIGHTS_APP_KEY = \"\"/public const string XAMARIN_INSIGHTS_APP_KEY = \"$3\"/g" ../../Sensus.Shared/SensusServiceHelper.cs
 
 # update Sensus version in plist file
 awk "/<key>CFBundleVersion<\/key>/ {f=1; print; next} f {\$1=\"\t<string>$1</string>\"; f=0} 1" ../../Sensus.iOS/Info.plist > tmp && mv tmp ../../Sensus.iOS/Info.plist

@@ -17,8 +17,8 @@ using Sensus.Shared.Tests.Exceptions;
 
 namespace Sensus.Android.Tests.Tests.Exceptions
 {
-    public class InsightsInitializerTests: IInsightsInitializerTests
+    public class InsightsInitializerTests : IInsightsInitializerTests
     {
-        public InsightsInitializerTests() : base(new InsightsInitializer("Fake-Device-Id")) { }
+        public InsightsInitializerTests() : base(new AndroidInsightsInitializer("Fake-Device-Id")) { }
     }
 }

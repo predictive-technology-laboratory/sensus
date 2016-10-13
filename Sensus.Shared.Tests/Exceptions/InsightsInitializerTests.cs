@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ namespace Sensus.Shared.Tests.Exceptions
             public ActionInitializer(Action<string> action)
             {
                 _action = action;
-            } 
+            }
 
             public void Initialize(string insightsKey)
             {
@@ -43,7 +43,7 @@ namespace Sensus.Shared.Tests.Exceptions
         #endregion
 
         #region Constructors
-        public IInsightsInitializerTests(): this(new ActionInitializer(s => {})) { }
+        public IInsightsInitializerTests() : this(new ActionInitializer(s => { })) { }
 
         protected IInsightsInitializerTests(IInsightsInitializer platformInitializer)
         {
@@ -54,37 +54,37 @@ namespace Sensus.Shared.Tests.Exceptions
         [Test]
         public void PlatformInitializerDoesNotExplodeWithKeyTest()
         {
-            Assert.DoesNotThrow(() => InsightInitialization.Initialize(_platformInitializer, "Fake-Key", false));
+            Assert.DoesNotThrow(() => InsightsInitialization.Initialize(_platformInitializer, "Fake-Key", false));
         }
 
         [Test]
         public void PlatformInitializerDoesNotExplodeWithoutKeyTest()
         {
-            Assert.DoesNotThrow(() => InsightInitialization.Initialize(_platformInitializer, "", false));
+            Assert.DoesNotThrow(() => InsightsInitialization.Initialize(_platformInitializer, "", false));
         }
 
         [Test]
         public void InitializerCalledTest()
         {
-            Assert.Throws<SuccessException>(() => InsightInitialization.Initialize(new ActionInitializer(s => { throw new SuccessException("You passed the test"); }), "Fake-Key", false));
+            Assert.Throws<SuccessException>(() => InsightsInitialization.Initialize(new ActionInitializer(s => { throw new SuccessException("You passed the test"); }), "Fake-Key", false));
         }
 
         [Test]
         public void InitializerGivenCorrectKeyAsParameterTest()
         {
-            InsightInitialization.Initialize(new ActionInitializer(s => { Assert.AreEqual("Fake-Key", s); }), "Fake-Key", false);
+            InsightsInitialization.Initialize(new ActionInitializer(s => { Assert.AreEqual("Fake-Key", s); }), "Fake-Key", false);
         }
 
         [Test]
         public void InitializerNotCalledWhenKeyIsEmptyTest()
         {
-            InsightInitialization.Initialize(new ActionInitializer(s => { Assert.Fail(); }), "", false);
+            InsightsInitialization.Initialize(new ActionInitializer(s => { Assert.Fail(); }), "", false);
         }
 
         [Test]
         public void InitializerExceptionsSuprressedTest()
         {
-            Assert.DoesNotThrow(() => InsightInitialization.Initialize(new ActionInitializer(s => { throw new Exception(); }), "Fake-Key"));
+            Assert.DoesNotThrow(() => InsightsInitialization.Initialize(new ActionInitializer(s => { throw new Exception(); }), "Fake-Key"));
         }
     }
 }
