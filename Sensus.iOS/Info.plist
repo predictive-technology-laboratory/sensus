@@ -154,5 +154,11 @@
 	<string>Sensus</string>
 	<key>CFBundleVersion</key>
 	<string>12.0.0</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Sensus does not use or transmit you calendar information in any way.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Sensus does not use or transmit photos in any way.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Certain Sensus studies use wearable sensors to gather data. You will be alerted when joining such studies.</string>
 </dict>
 </plist>
