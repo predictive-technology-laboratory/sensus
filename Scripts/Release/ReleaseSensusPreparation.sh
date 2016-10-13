@@ -12,4 +12,4 @@ git pull
 sed -i '' "s/public const string ENCRYPTION_KEY = \"\"/public const string ENCRYPTION_KEY = \"$5\"/g" ../../Sensus.Shared/SensusServiceHelper.cs
 
 # set xamarin insights key to production value
-sed -i '' "s/protected const string XAMARIN_INSIGHTS_APP_KEY = \"\"/protected const string XAMARIN_INSIGHTS_APP_KEY = \"$6\"/g" ../../Sensus.Shared/SensusServiceHelper.cs
+sed -i '' "s/public const string XAMARIN_INSIGHTS_APP_KEY = \"\"/public const string XAMARIN_INSIGHTS_APP_KEY = \"$6\"/g" ../../Sensus.Shared/SensusServiceHelper.cs

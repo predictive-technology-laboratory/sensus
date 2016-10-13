@@ -114,14 +114,6 @@ namespace Sensus.iOS
             UIDevice.CurrentDevice.BatteryMonitoringEnabled = true;
         }
 
-        protected override void InitializeXamarinInsights()
-        {
-            Insights.Initialize(XAMARIN_INSIGHTS_APP_KEY);
-
-            if (Insights.IsInitialized)
-                Insights.Identify(DeviceId, "Device ID", DeviceId);
-        }
-
         #region callback scheduling
 
         protected override void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag)

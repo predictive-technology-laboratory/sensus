@@ -16,6 +16,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\LockConcurrentTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Dispose\DisposableTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Encryption\SimpleEncryptionTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\InsightsInitializerTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\DateTimeExtensionTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Scripts\ScheduleTriggerTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Scripts\ScheduleWindowTests.cs" />

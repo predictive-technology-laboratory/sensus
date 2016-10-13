@@ -123,11 +123,6 @@ namespace Sensus.Shared.Tests.Classes
             throw new NotImplementedException();
         }
 
-        protected override void InitializeXamarinInsights()
-        {
-            throw new NotImplementedException();
-        }
-
         protected override void ProtectedFlashNotificationAsync(string message, bool flashLaterIfNotVisible, TimeSpan duration, Action callback)
         {
             throw new NotImplementedException();

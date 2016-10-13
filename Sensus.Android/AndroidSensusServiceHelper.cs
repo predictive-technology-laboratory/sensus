@@ -185,10 +185,6 @@ namespace Sensus.Android
                 _wakeLock = (_service.GetSystemService(Context.PowerService) as PowerManager).NewWakeLock(WakeLockFlags.Partial, "SENSUS");
                 _wakeLockAcquisitionCount = 0;
                 _deviceId = Settings.Secure.GetString(_service.ContentResolver, Settings.Secure.AndroidId);
-
-                // must initialize after _deviceId is set
-                if (Insights.IsInitialized)
-                    Insights.Identify(_deviceId, "Device ID", _deviceId);
             }
         }
 
@@ -283,12 +279,6 @@ namespace Sensus.Android
         #endregion
 
         #region miscellaneous platform-specific functions
-
-        protected override void InitializeXamarinInsights()
-        {
-            Insights.Initialize(XAMARIN_INSIGHTS_APP_KEY, Application.Context);  // can't reference _service here since this method is called from the base class constructor, before the service is set.
-        }
-
         public override void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
         {
             new Thread(() =>

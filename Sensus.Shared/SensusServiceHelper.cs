@@ -65,7 +65,7 @@ namespace Sensus.Shared
         public const string NOTIFICATION_ID_KEY = "ID";
         public const string PENDING_SURVEY_NOTIFICATION_ID = "PENDING-SURVEY-NOTIFICATION";
         public const int PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS = 60;
-        protected const string XAMARIN_INSIGHTS_APP_KEY = "";
+        public const string XAMARIN_INSIGHTS_APP_KEY = "";
         public const string ENCRYPTION_KEY = "";
 
         public static readonly string SHARE_DIRECTORY = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "share");
@@ -515,8 +515,6 @@ namespace Sensus.Shared
                 }
             };
 #endif
-
-
             _flashNotificationsEnabled = true;
 
 
@@ -534,29 +532,17 @@ namespace Sensus.Shared
             _logger = new Logger(LOG_PATH, loggingLevel, Console.Error);
             _logger.Log("Log file started at \"" + LOG_PATH + "\".", LoggingLevel.Normal, GetType());
 
-            if (Insights.IsInitialized)
-                _logger.Log("Xamarin Insights is already initialized.", LoggingLevel.Normal, GetType());
-            else if (string.IsNullOrWhiteSpace(XAMARIN_INSIGHTS_APP_KEY))
-                _logger.Log("Xamarin Insights API key is empty. Not initializing.", LoggingLevel.Normal, GetType());  // xamarin allows to initialize with a null key, which fails with exception but results in IsInitialized being true. prevent that here.
+            if (!Insights.IsInitialized && string.IsNullOrWhiteSpace(XAMARIN_INSIGHTS_APP_KEY))
+            {
+                _logger.Log("Xamarin Insights key is empty -- not initialized.", LoggingLevel.Normal, GetType());
+            }
+            else if (!Insights.IsInitialized)
+            {
+                _logger.Log("Xamarin Insights failed to initialize.", LoggingLevel.Normal, GetType());
+            }
             else
             {
-                try
-                {
-                    _logger.Log("Initializing Xamarin Insights.", LoggingLevel.Normal, GetType());
-
-                    // wait for startup crash to be logged -- https://insights.xamarin.com/docs
-                    Insights.HasPendingCrashReport += (sender, isStartupCrash) =>
-                    {
-                        if (isStartupCrash)
-                            Insights.PurgePendingCrashReports().Wait();
-                    };
-
-                    InitializeXamarinInsights();
-                }
-                catch (Exception ex)
-                {
-                    _logger.Log("Failed to initialize Xamarin insights:  " + ex.Message, LoggingLevel.Normal, GetType());
-                }
+                _logger.Log("Xamarin Insights sucessfully initialized.", LoggingLevel.Normal, GetType());
             }
         }
         #endregion
@@ -573,9 +559,7 @@ namespace Sensus.Shared
             return hashBuilder.ToString();
         }
 
-        #region platform-specific methods. this functionality cannot be implemented in a cross-platform way. it must be done separately for each platform.
-
-        protected abstract void InitializeXamarinInsights();
+        #region platform-specific methods. this functionality cannot be implemented in a cross-platform way. it must be done separately for each platform.        
 
         protected abstract void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag);
 
