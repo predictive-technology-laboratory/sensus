@@ -8,7 +8,7 @@ if [ "$currentKey" == "" ]; then
     exit 1
 fi
 
-currentKey=$(grep "protected const string XAMARIN_INSIGHTS_APP_KEY = \"\"" ./Sensus.Shared/SensusServiceHelper.cs)
+currentKey=$(grep "public const string XAMARIN_INSIGHTS_APP_KEY = \"\"" ./Sensus.Shared/SensusServiceHelper.cs)
 if [ "$currentKey" == "" ]; then
     echo "[ERROR] You are not allowed to commit a Xamarin Insights API key."
     exit 1

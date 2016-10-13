@@ -12,31 +12,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Xamarin;
+
 namespace Sensus.Shared.Exceptions
 {
-    public static class InsightInitialization
+    public static class InsightsInitialization
     {
-        public static void Initialize(IInsightsInitializer platformSpecific, string insightsKey, bool suppressException = true)
+        public static void Initialize(IInsightsInitializer initializer, string insightsKey, bool suppressException = true)
         {
-            if (string.IsNullOrEmpty(insightsKey)) return;
-            
+            if (string.IsNullOrWhiteSpace(insightsKey))
+                return;
+
             try
             {
                 // see https://developer.xamarin.com/guides/insights/platform-features/advanced-topics/dealing-with-startup-crashes/
-                Xamarin.Insights.HasPendingCrashReport += (sender, isStartupCrash) =>
+                Insights.HasPendingCrashReport += (sender, isStartupCrash) =>
                 {
                     if (isStartupCrash)
                     {
-                        Xamarin.Insights.PurgePendingCrashReports().Wait();
+                        Insights.PurgePendingCrashReports().Wait();
                     }
                 };
 
-                platformSpecific.Initialize(insightsKey);
+                initializer.Initialize(insightsKey);
             }
             catch
             {
-                if (!suppressException) throw;
-                /* If we fail to setup our error report code no reason to throw an exception we'll never see. Godspeed user. */
+                // If we fail to setup our error report code no reason to throw an exception we'll never see. Godspeed user.
+                if (!suppressException)
+                    throw;
             }
         }
     }

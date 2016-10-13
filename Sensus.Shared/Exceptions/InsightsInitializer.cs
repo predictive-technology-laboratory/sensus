@@ -12,13 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Sensus.Shared.iOS.Exceptions;
-using Sensus.Shared.Tests.Exceptions;
+using Xamarin;
 
-namespace Sensus.iOS.Tests.Tests.Exceptions
+namespace Sensus.Shared.Exceptions
 {
-    public class InsightsInitializerTests : IInsightsInitializerTests
+    public abstract class InsightsInitializer : IInsightsInitializer
     {
-        public InsightsInitializerTests() : base(new iOSInsightsInitializer("Fake-Device-Id")) { }
+        private readonly string _deviceId;
+
+        public InsightsInitializer(string deviceId)
+        {
+            _deviceId = deviceId;
+        }
+
+        public void Initialize(string insightsKey)
+        {
+            InitializePlatformSpecific(insightsKey);
+
+            Insights.Identify(_deviceId, "Device ID", _deviceId);
+        }
+
+        protected abstract void InitializePlatformSpecific(string insightsKey);
     }
 }
