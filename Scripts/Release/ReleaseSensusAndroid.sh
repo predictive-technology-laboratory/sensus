@@ -14,14 +14,14 @@ echo "The following differences will be used to build the Android release."
 git difftool
 
 # build APK
-xbuild /t:Rebuild /p:Configuration=Release ../../Sensus.Android/Sensus.Android.csproj
+xbuild /p:Configuration=Release /p:Platform=Android /t:Rebuild ../../Sensus.Android/Sensus.Android.csproj
 if [ $? -ne 0 ]; then 
     echo "Error building release."
     exit $?;
 fi
 
 # sign APK
-xbuild /t:SignAndroidPackage /p:Configuration=Release /p:AndroidKeyStore=true /p:AndroidSigningKeyAlias=sensus /p:AndroidSigningKeyPass=$3 /p:AndroidSigningKeyStore=$2 /p:AndroidSigningStorePass=$3 ../../Sensus.Android/Sensus.Android.csproj
+xbuild /p:Configuration=Release /p:Platform=Android /p:AndroidKeyStore=true /p:AndroidSigningKeyAlias=sensus /p:AndroidSigningKeyPass=$3 /p:AndroidSigningKeyStore=$2 /p:AndroidSigningStorePass=$3 /t:SignAndroidPackage ../../Sensus.Android/Sensus.Android.csproj
 if [ $? -ne 0 ]; then
     echo "Error signing APK."
     exit $?;
