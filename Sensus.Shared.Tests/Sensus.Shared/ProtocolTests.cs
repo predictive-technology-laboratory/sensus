@@ -70,7 +70,7 @@ namespace Sensus.Shared.Tests.Core
             Assert.AreEqual(protocol1.Groupable, protocol2.Groupable);
         }
 
-        [Test, Ignore ("Too many dependencies to get this working right now")]
+        [Test, Explicit ("Too many dependencies to get this working right now")]
         public void ProtocolSerializeEncryptDeserializeTest()
         {
             var protocol1 = new Protocol("abc")

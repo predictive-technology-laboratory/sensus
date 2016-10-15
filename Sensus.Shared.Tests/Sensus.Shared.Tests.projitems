@@ -11,16 +11,16 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Classes\TestSensusContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Classes\TestSensusServiceHelper.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Concurrent\ConcurrentObservableCollectionTests.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Concurrent\IConcurrentTests.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Concurrent\LockConcurrentTests.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Dispose\DisposableTests.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Encryption\SimpleEncryptionTests.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\InsightsInitializerTests.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Extensions\DateTimeExtensionTests.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Scripts\ScheduleTriggerTests.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Scripts\ScheduleWindowTests.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\ProtocolTests.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\SensusServiceHelperTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Concurrent\ConcurrentObservableCollectionTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Concurrent\IConcurrentTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Concurrent\LockConcurrentTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Dispose\DisposableTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Encryption\SimpleEncryptionTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Exceptions\InsightsInitializerTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Extensions\DateTimeExtensionTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Probes\User\Scripts\ScheduleTriggerTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Probes\User\Scripts\ScheduleWindowTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\ProtocolTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\SensusServiceHelperTests.cs" />
   </ItemGroup>
 </Project>
