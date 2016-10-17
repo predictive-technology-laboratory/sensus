@@ -143,7 +143,7 @@ namespace Sensus.Shared.Tests.Scripts
         }
 
         [Test]
-        public void NextScheduleWindowExpireWindow()
+        public void NextScheduleWindowWithExpireWindow()
         {
             var t = TriggerWindow.Parse("10:22-12:22");
 
@@ -161,7 +161,7 @@ namespace Sensus.Shared.Tests.Scripts
         }
 
         [Test]
-        public void NextScheduleWindowMinExpiration()
+        public void NextScheduleWindowWithExpirationTime()
         {
             var t = TriggerWindow.Parse("10:22-12:22");
 
@@ -170,12 +170,12 @@ namespace Sensus.Shared.Tests.Scripts
             var expir = TimeSpan.FromMinutes(1);
 
             for (var i = 0; i < 100; i++)
-            {
-                var nextTriggerTime = t.GetNextTriggerTime(from, after, true, expir);
+            { 
+                var nextTriggerTime = t.GetNextTriggerTime(from, after, false, expir);
 
                 Assert.GreaterOrEqual(nextTriggerTime.TimeTill, TimeSpan.FromDays(8));
                 Assert.LessOrEqual(nextTriggerTime.TimeTill, TimeSpan.FromDays(8).Add(TimeSpan.FromHours(2)));
-                Assert.AreEqual(from + nextTriggerTime.TimeTill + expir, nextTriggerTime.Expiration);
+                Assert.That(nextTriggerTime.Expiration, Is.EqualTo(from + nextTriggerTime.TimeTill + expir).Within(TimeSpan.FromSeconds(1)));
             }
         }
 
