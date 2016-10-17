@@ -34,6 +34,7 @@ using Plugin.Toasts;
 using CoreBluetooth;
 using Newtonsoft.Json;
 using CoreFoundation;
+using UserNotifications;
 
 namespace Sensus.iOS
 {
@@ -134,30 +135,66 @@ namespace Sensus.iOS
 
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
-                UILocalNotification notification = new UILocalNotification
+                if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
                 {
-                    FireDate   = DateTime.UtcNow.AddMilliseconds(delayMS).ToNSDate(),
-                    TimeZone   = null,  // null for UTC interpretation of FireDate
-                    AlertTitle = "Sensus",
-                    AlertBody  = userNotificationMessage,
-                    UserInfo   = GetNotificationUserInfoDictionary(callbackId, repeating, repeatDelayMS, repeatLag, notificationId)
-                };
+                    UNMutableNotificationContent content = new UNMutableNotificationContent
+                    {
+                        Title = "Sensus",
+                        UserInfo = GetNotificationUserInfoDictionary(callbackId, repeating, repeatDelayMS, repeatLag, notificationId)
+                    };
 
-                // user info can be null if we don't have an activation ID. don't schedule the notification if this happens.
-                if (notification.UserInfo == null)
-                    return;
+                    if (userNotificationMessage != null)
+                        content.Body = userNotificationMessage;
 
-                if (userNotificationMessage != null)
-                    notification.SoundName = UILocalNotification.DefaultSoundName;
+                    // user info can be null if we don't have an activation ID. don't schedule the notification if this happens.
+                    if (content.UserInfo == null)
+                        return;
 
-                lock (_callbackIdNotification)
-                {
-                    _callbackIdNotification.Add(callbackId, notification);
+                    lock (_callbackIdNotification)
+                    {
+                        //_callbackIdNotification.Add(callbackId, notification);
+                    }
+
+                    if (userNotificationMessage != null)
+                        content.Sound = UNNotificationSound.Default;
+
+                    UNTimeIntervalNotificationTrigger trigger = UNTimeIntervalNotificationTrigger.CreateTrigger(delayMS / 1000d, false);
+
+                    UNNotificationRequest request = UNNotificationRequest.FromIdentifier(callbackId, content, trigger);
+
+                    UNUserNotificationCenter.Current.AddNotificationRequest(request, error =>
+                    {
+                    });
+
+                    Logger.Log("Callback " + callbackId + " scheduled for " + trigger.NextTriggerDate + " (" + (repeating ? "repeating" : "one-time") + "). " + _callbackIdNotification.Count + " total callbacks in iOS service helper.", LoggingLevel.Normal, GetType());
                 }
+                else
+                {
+                    UILocalNotification notification = new UILocalNotification
+                    {
+                        FireDate = DateTime.UtcNow.AddMilliseconds(delayMS).ToNSDate(),
+                        TimeZone = null,  // null for UTC interpretation of FireDate
+                        AlertTitle = "Sensus",
+                        AlertBody = userNotificationMessage,
+                        UserInfo = GetNotificationUserInfoDictionary(callbackId, repeating, repeatDelayMS, repeatLag, notificationId)
+                    };
 
-                UIApplication.SharedApplication.ScheduleLocalNotification(notification);
+                    // user info can be null if we don't have an activation ID. don't schedule the notification if this happens.
+                    if (notification.UserInfo == null)
+                        return;
 
-                Logger.Log("Callback " + callbackId + " scheduled for " + notification.FireDate + " (" + (repeating ? "repeating" : "one-time") + "). " + _callbackIdNotification.Count + " total callbacks in iOS service helper.", LoggingLevel.Normal, GetType());
+                    if (userNotificationMessage != null)
+                        notification.SoundName = UILocalNotification.DefaultSoundName;
+
+                    lock (_callbackIdNotification)
+                    {
+                        _callbackIdNotification.Add(callbackId, notification);
+                    }
+
+                    UIApplication.SharedApplication.ScheduleLocalNotification(notification);
+
+                    Logger.Log("Callback " + callbackId + " scheduled for " + notification.FireDate + " (" + (repeating ? "repeating" : "one-time") + "). " + _callbackIdNotification.Count + " total callbacks in iOS service helper.", LoggingLevel.Normal, GetType());
+                }
             });
         }
 
