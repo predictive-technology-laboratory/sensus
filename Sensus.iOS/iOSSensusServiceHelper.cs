@@ -136,10 +136,11 @@ namespace Sensus.iOS
             {
                 UILocalNotification notification = new UILocalNotification
                 {
-                    FireDate = DateTime.UtcNow.AddMilliseconds((double)delayMS).ToNSDate(),
-                    TimeZone = null,  // null for UTC interpretation of FireDate
-                    AlertBody = userNotificationMessage,
-                    UserInfo = GetNotificationUserInfoDictionary(callbackId, repeating, repeatDelayMS, repeatLag, notificationId)
+                    FireDate   = DateTime.UtcNow.AddMilliseconds(delayMS).ToNSDate(),
+                    TimeZone   = null,  // null for UTC interpretation of FireDate
+                    AlertTitle = "Sensus",
+                    AlertBody  = userNotificationMessage,
+                    UserInfo   = GetNotificationUserInfoDictionary(callbackId, repeating, repeatDelayMS, repeatLag, notificationId)
                 };
 
                 // user info can be null if we don't have an activation ID. don't schedule the notification if this happens.
