@@ -23,7 +23,7 @@ using Xamarin.Forms.Platform.iOS;
 
 namespace Sensus.Shared.iOS
 {
-    public class iOSUILocalNotificationNotifier : Notifier
+    public class iOSUILocalNotificationNotifier : Notifier, IiOSNotifier
     {
         private List<UILocalNotification> _notifications;
 
@@ -53,19 +53,22 @@ namespace Sensus.Shared.iOS
                 // if the message is not null, then schedule the notification.
                 if (message != null)
                 {
+                    // all properties below were introduced in iOS 8.0. we currently target 8.0 and above, so these should be safe to set.
                     UILocalNotification notification = new UILocalNotification
                     {
                         AlertBody = message,
+                        TimeZone = null,  // null for UTC interpretation of FireDate
                         FireDate = DateTime.UtcNow.ToNSDate(),
                         UserInfo = new NSDictionary(NOTIFICATION_ID_KEY, id)
                     };
 
-                    // https://developer.apple.com/reference/uikit/uilocalnotification/1616647-alerttitle
-                    if (UIDevice.CurrentDevice.CheckSystemVersion(8, 2))
-                        notification.AlertTitle = "Sensus";
-
+                    // also in 8.0
                     if (playSound)
                         notification.SoundName = UILocalNotification.DefaultSoundName;
+
+                    // the following UILocalNotification property was introduced in iOS 8.2:  https://developer.apple.com/reference/uikit/uilocalnotification/1616647-alerttitle
+                    if (UIDevice.CurrentDevice.CheckSystemVersion(8, 2))
+                        notification.AlertTitle = "Sensus";
 
                     lock (_notifications)
                     {

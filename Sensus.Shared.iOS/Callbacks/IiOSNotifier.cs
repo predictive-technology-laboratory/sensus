@@ -12,15 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Foundation;
 using UIKit;
 
 namespace Sensus.Shared.iOS
 {
-    public interface IIosCallbackScheduler
+    public interface IiOSNotifier : INotifier
     {
-        void UpdateCallbackActivationIdsAsync(string newActivationId);
-
-        void ServiceCallbackAsync(NSDictionary callbackInfo, UIApplicationState applicationState);
+        void CancelLocalNotification(UILocalNotification notification, string notificationIdKey);
     }
 }

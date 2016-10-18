@@ -143,7 +143,7 @@ namespace Sensus.iOS
 
             serviceHelper.StartAsync(() =>
             {
-                (SensusContext.Current.CallbackScheduler as IIosCallbackScheduler).UpdateCallbackActivationIdsAsync(SensusContext.Current.ActivationId);
+                (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler).UpdateCallbackActivationIdsAsync(SensusContext.Current.ActivationId);
 
 #if UNIT_TESTING
                     // load and run the unit testing protocol
@@ -168,17 +168,19 @@ namespace Sensus.iOS
 
         public override void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)
         {
-            // UILocalNotifications were obsoleted in iOS 10, and we should not be receiving them. furthermore, we won't have
-            // any idea how to service them on iOS 10. so just report the problem to Insights and bail.
+            // UILocalNotifications were obsoleted in iOS 10.0, and we should not be receiving them. furthermore, we won't have
+            // any idea how to service them on iOS 10.0 and above. so just report the problem to Insights and bail.
             if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
                 SensusException.Report("Received UILocalNotification in iOS 10 or later.");
             else
             {
+                // we're in iOS < 10.0, which means we should have a notifier and scheduler to handle the notification.
+
                 // cancel notification (removing it from the tray), since it has served its purpose
-                (SensusContext.Current.Notifier as iOSUILocalNotificationNotifier)?.CancelLocalNotification(notification, CallbackScheduler.SENSUS_CALLBACK_ID_KEY);
+                (SensusContext.Current.Notifier as IiOSNotifier)?.CancelLocalNotification(notification, CallbackScheduler.SENSUS_CALLBACK_ID_KEY);
 
                 // service the callback
-                (SensusContext.Current.CallbackScheduler as IIosCallbackScheduler)?.ServiceCallbackAsync(notification.UserInfo, application.ApplicationState);
+                (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler)?.ServiceCallbackAsync(notification.UserInfo, application.ApplicationState);
             }
         }
 

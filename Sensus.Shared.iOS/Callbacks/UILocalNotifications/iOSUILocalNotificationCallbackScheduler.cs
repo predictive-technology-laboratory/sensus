@@ -32,7 +32,7 @@ namespace Sensus.Shared.iOS
 
         protected override void ScheduleCallbackAsync(string callbackId, int delayMS, bool repeating, int repeatDelayMS, bool repeatLag)
         {
-            // the following lines need to precede the run on main thread to avoid deadlocks
+            // the following lines need to precede the run on main thread to avoid deadlocks -- this is an old comment. not sure if it's still the case.
             string userNotificationMessage = GetCallbackUserNotificationMessage(callbackId);
             string notificationId = GetCallbackNotificationId(callbackId);
 
@@ -44,6 +44,7 @@ namespace Sensus.Shared.iOS
                 if (userInfo == null)
                     return;
 
+                // all properties below were introduced in iOS 8.0. we currently target 8.0 and above, so these should be safe to set.
                 UILocalNotification notification = new UILocalNotification
                 {
                     FireDate = DateTime.UtcNow.AddMilliseconds(delayMS).ToNSDate(),
@@ -52,12 +53,13 @@ namespace Sensus.Shared.iOS
                     UserInfo = userInfo
                 };
 
-                // https://developer.apple.com/reference/uikit/uilocalnotification/1616647-alerttitle
-                if (UIDevice.CurrentDevice.CheckSystemVersion(8, 2))
-                    notification.AlertTitle = "Sensus";
-
+                // also in 8.0
                 if (userNotificationMessage != null)
                     notification.SoundName = UILocalNotification.DefaultSoundName;
+                
+                // the following UILocalNotification property was introduced in iOS 8.2:  https://developer.apple.com/reference/uikit/uilocalnotification/1616647-alerttitle
+                if (UIDevice.CurrentDevice.CheckSystemVersion(8, 2))
+                    notification.AlertTitle = "Sensus";
 
                 lock (_callbackIdNotification)
                 {
@@ -105,7 +107,7 @@ namespace Sensus.Shared.iOS
                     });
                 }
             },
-                                    
+
             letDeviceSleepCallback, finishedCallback);
         }
 

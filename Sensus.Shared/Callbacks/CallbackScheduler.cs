@@ -36,15 +36,29 @@ namespace Sensus.Shared
             _idCallback = new ConcurrentDictionary<string, ScheduledCallback>();
         }
 
+        #region platform-specific methods
         protected abstract void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag);
         protected abstract void ScheduleOneTimeCallback(string callbackId, int delayMS);
         protected abstract void UnscheduleCallbackPlatformSpecific(string callbackId);
+        #endregion
 
         public string ScheduleRepeatingCallback(ScheduledCallback callback, int initialDelayMS, int repeatDelayMS, bool repeatLag)
         {
             string callbackId = AddCallback(callback);
             ScheduleRepeatingCallback(callbackId, initialDelayMS, repeatDelayMS, repeatLag);
             return callbackId;
+        }
+
+        public string RescheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag)
+        {
+            ScheduledCallback scheduledCallback;
+            if (_idCallback.TryGetValue(callbackId, out scheduledCallback))
+            {
+                UnscheduleCallback(callbackId);
+                return ScheduleRepeatingCallback(scheduledCallback, initialDelayMS, repeatDelayMS, repeatLag);
+            }
+            else
+                return null;
         }
 
         public string ScheduleOneTimeCallback(ScheduledCallback callback, int delayMS)
@@ -81,18 +95,6 @@ namespace Sensus.Shared
         {
             if (_idCallback.ContainsKey(callbackId))
                 return _idCallback[callbackId].NotificationId;
-            else
-                return null;
-        }
-
-        public string RescheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag)
-        {
-            ScheduledCallback scheduledCallback;
-            if (_idCallback.TryGetValue(callbackId, out scheduledCallback))
-            {
-                UnscheduleCallback(callbackId);
-                return ScheduleRepeatingCallback(scheduledCallback, initialDelayMS, repeatDelayMS, repeatLag);
-            }
             else
                 return null;
         }
@@ -250,7 +252,7 @@ namespace Sensus.Shared
         }
 
         /// <summary>
-        /// Unschedules the callback, first cancelling any executions that are currently running, then removing the callback from the scheduler.
+        /// Unschedules the callback, first cancelling any executions that are currently running and then removing the callback from the scheduler.
         /// </summary>
         /// <param name="callbackId">Callback identifier.</param>
         public void UnscheduleCallback(string callbackId)
@@ -259,10 +261,14 @@ namespace Sensus.Shared
             {
                 SensusServiceHelper.Get().Logger.Log("Unscheduling callback \"" + callbackId + "\".", LoggingLevel.Normal, GetType());
 
-                var output = default(ScheduledCallback);
-
+                // interrupt any current executions
                 CancelRaisedCallback(callbackId);
-                _idCallback.TryRemove(callbackId, out output);
+
+                // remove from the scheduler
+                ScheduledCallback removedCallback;
+                _idCallback.TryRemove(callbackId, out removedCallback);
+
+                // tell the current platform cancel its hook into the system's callback architecture
                 UnscheduleCallbackPlatformSpecific(callbackId);
             }
         }

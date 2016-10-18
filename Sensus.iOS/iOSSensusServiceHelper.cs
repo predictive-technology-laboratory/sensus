@@ -16,25 +16,18 @@ using UIKit;
 using Foundation;
 using System;
 using System.IO;
-using System.Linq;
 using System.Threading;
-using System.Collections.Generic;
 using Sensus.Shared;
 using Sensus.Shared.Probes;
 using Sensus.Shared.Context;
-using Sensus.Shared.Exceptions;
 using Sensus.Shared.Probes.Movement;
 using Sensus.Shared.Probes.Location;
-using Xamarin;
 using Xamarin.Forms;
-using Xamarin.Forms.Platform.iOS;
 using MessageUI;
 using AVFoundation;
 using Plugin.Toasts;
 using CoreBluetooth;
-using Newtonsoft.Json;
 using CoreFoundation;
-using UserNotifications;
 
 namespace Sensus.iOS
 {

@@ -24,7 +24,7 @@ using Xamarin.Forms;
 
 namespace Sensus.Shared.iOS
 {
-    public abstract class iOSCallbackScheduler : CallbackScheduler, IIosCallbackScheduler
+    public abstract class iOSCallbackScheduler : CallbackScheduler, IiOSCallbackScheduler
     {
         public const string SENSUS_CALLBACK_ACTIVATION_ID_KEY = "SENSUS-CALLBACK-ACTIVATION-ID";
 
