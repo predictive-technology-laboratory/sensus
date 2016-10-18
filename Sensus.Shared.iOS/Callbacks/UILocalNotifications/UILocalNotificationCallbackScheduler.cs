@@ -22,11 +22,11 @@ using Xamarin.Forms.Platform.iOS;
 
 namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
 {
-    public class iOSUILocalNotificationCallbackScheduler : iOSCallbackScheduler
+    public class UILocalNotificationCallbackScheduler : iOSCallbackScheduler
     {
         private Dictionary<string, UILocalNotification> _callbackIdNotification;
 
-        public iOSUILocalNotificationCallbackScheduler()
+        public UILocalNotificationCallbackScheduler()
         {
             _callbackIdNotification = new Dictionary<string, UILocalNotification>();
         }
@@ -165,7 +165,7 @@ namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
                 UILocalNotification notification;
                 if (_callbackIdNotification.TryGetValue(callbackId, out notification))
                 {
-                    (SensusContext.Current.Notifier as iOSUILocalNotificationNotifier)?.CancelLocalNotification(notification, SENSUS_CALLBACK_ID_KEY);
+                    (SensusContext.Current.Notifier as UILocalNotificationNotifier)?.CancelLocalNotification(notification, SENSUS_CALLBACK_ID_KEY);
                     _callbackIdNotification.Remove(callbackId);
                 }
             }

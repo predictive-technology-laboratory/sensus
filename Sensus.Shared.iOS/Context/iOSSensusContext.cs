@@ -42,14 +42,14 @@ namespace Sensus.Shared.iOS.Context
             // iOS introduced a new notification center in 10.0 based on UNUserNotifications
             if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
             {
-                CallbackScheduler = new iOSUNUserNotificationCallbackScheduler();
-                Notifier = new iOSUNUserNotificationNotifier();
+                CallbackScheduler = new UNUserNotificationCallbackScheduler();
+                Notifier = new UNUserNotificationNotifier();
             }
             // use the pre-10.0 approach based on UILocalNotifications
             else
             {
-                CallbackScheduler = new iOSUILocalNotificationCallbackScheduler();
-                Notifier = new iOSUILocalNotificationNotifier();
+                CallbackScheduler = new UILocalNotificationCallbackScheduler();
+                Notifier = new UILocalNotificationNotifier();
             }
         }
         #endregion

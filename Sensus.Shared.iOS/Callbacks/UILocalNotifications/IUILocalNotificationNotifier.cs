@@ -17,7 +17,7 @@ using UIKit;
 
 namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
 {
-    public interface IiOSUILocalNotificationNotifier : INotifier
+    public interface IUILocalNotificationNotifier : INotifier
     {
         void CancelLocalNotification(UILocalNotification notification, string notificationIdKey);
     }

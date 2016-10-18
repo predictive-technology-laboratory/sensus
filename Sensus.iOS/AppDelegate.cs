@@ -180,7 +180,7 @@ namespace Sensus.iOS
                 // we're in iOS < 10.0, which means we should have a notifier and scheduler to handle the notification.
 
                 // cancel notification (removing it from the tray), since it has served its purpose
-                (SensusContext.Current.Notifier as IiOSUILocalNotificationNotifier)?.CancelLocalNotification(notification, CallbackScheduler.SENSUS_CALLBACK_ID_KEY);
+                (SensusContext.Current.Notifier as IUILocalNotificationNotifier)?.CancelLocalNotification(notification, CallbackScheduler.SENSUS_CALLBACK_ID_KEY);
 
                 // service the callback
                 (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler)?.ServiceCallbackAsync(notification.UserInfo, application.ApplicationState);

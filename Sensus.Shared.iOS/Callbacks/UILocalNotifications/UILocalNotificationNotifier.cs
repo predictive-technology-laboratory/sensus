@@ -24,11 +24,11 @@ using Xamarin.Forms.Platform.iOS;
 
 namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
 {
-    public class iOSUILocalNotificationNotifier : Notifier, IiOSUILocalNotificationNotifier
+    public class UILocalNotificationNotifier : Notifier, IUILocalNotificationNotifier
     {
         private List<UILocalNotification> _notifications;
 
-        public iOSUILocalNotificationNotifier()
+        public UILocalNotificationNotifier()
         {
             _notifications = new List<UILocalNotification>();
         }

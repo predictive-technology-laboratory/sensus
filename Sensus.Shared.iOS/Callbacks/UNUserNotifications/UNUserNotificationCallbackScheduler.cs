@@ -17,9 +17,9 @@ using UserNotifications;
 
 namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
 {
-    public class iOSUNUserNotificationCallbackScheduler : iOSCallbackScheduler
+    public class UNUserNotificationCallbackScheduler : iOSCallbackScheduler
     {
-        public iOSUNUserNotificationCallbackScheduler()
+        public UNUserNotificationCallbackScheduler()
         {
         }
 
