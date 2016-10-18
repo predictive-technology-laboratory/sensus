@@ -12,24 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using Sensus.Shared.Callbacks;
 using UserNotifications;
 
 namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
 {
-    public class UNUserNotificationNotifier : Notifier, IUNUserNotificationNotifier
+    public interface IUNUserNotificationNotifier : INotifier
     {
-        public void CancelNotification(string notificationId)
-        {
-            var notificationIds = new[] { notificationId };
-            UNUserNotificationCenter.Current.RemoveDeliveredNotifications(notificationIds);
-            UNUserNotificationCenter.Current.RemovePendingNotificationRequests(notificationIds);
-        }
-
-        public override void IssueNotificationAsync(string message, string id, bool playSound, bool vibrate)
-        {
-            throw new NotImplementedException();
-        }
+        void CancelNotification(string notificationId);
     }
 }

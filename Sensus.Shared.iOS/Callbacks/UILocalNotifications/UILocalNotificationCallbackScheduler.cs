@@ -39,37 +39,32 @@ namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
 
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
-                NSDictionary userInfo = GetCallbackUserInfoDictionary(callbackId, repeating, repeatDelayMS, repeatLag, notificationId, SensusContext.Current.ActivationId);
+                NSDictionary callbackInfo = GetCallbackInfo(callbackId, repeating, repeatDelayMS, repeatLag, notificationId, SensusContext.Current.ActivationId);
 
                 // user info can be null (e.g., if we don't have an activation ID). don't schedule the notification if this happens.
-                if (userInfo == null)
+                if (callbackInfo == null)
                     return;
 
                 // all properties below were introduced in iOS 8.0. we currently target 8.0 and above, so these should be safe to set.
-                UILocalNotification notification = new UILocalNotification
+                UILocalNotification callbackNotification = new UILocalNotification
                 {
                     FireDate = DateTime.UtcNow.AddMilliseconds(delayMS).ToNSDate(),
                     TimeZone = null,  // null for UTC interpretation of FireDate
                     AlertBody = userNotificationMessage,
-                    UserInfo = userInfo
+                    UserInfo = callbackInfo
                 };
 
                 // also in 8.0
                 if (userNotificationMessage != null)
-                    notification.SoundName = UILocalNotification.DefaultSoundName;
-                
+                    callbackNotification.SoundName = UILocalNotification.DefaultSoundName;
+
                 // the following UILocalNotification property was introduced in iOS 8.2:  https://developer.apple.com/reference/uikit/uilocalnotification/1616647-alerttitle
                 if (UIDevice.CurrentDevice.CheckSystemVersion(8, 2))
-                    notification.AlertTitle = "Sensus";
+                    callbackNotification.AlertTitle = "Sensus";
 
-                lock (_callbackIdNotification)
-                {
-                    _callbackIdNotification.Add(callbackId, notification);
-                }
+                ScheduleCallbackNotification(callbackNotification, callbackId);
 
-                UIApplication.SharedApplication.ScheduleLocalNotification(notification);
-
-                SensusServiceHelper.Get().Logger.Log("Callback " + callbackId + " scheduled for " + notification.FireDate + " (" + (repeating ? "repeating" : "one-time") + "). " + _callbackIdNotification.Count + " total callbacks in iOS service helper.", LoggingLevel.Normal, GetType());
+                SensusServiceHelper.Get().Logger.Log("Callback " + callbackId + " scheduled for " + callbackNotification.FireDate + " (" + (repeating ? "repeating" : "one-time") + "). " + _callbackIdNotification.Count + " total callbacks in scheduler.", LoggingLevel.Normal, GetType());
             });
         }
 
@@ -84,7 +79,7 @@ namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
             UILocalNotification callbackNotification;
             lock (_callbackIdNotification)
             {
-                _callbackIdNotification.TryGetValue(callbackId, out callbackNotification);
+                callbackNotification = _callbackIdNotification[callbackId];
                 _callbackIdNotification.Remove(callbackId);
             }
 
@@ -98,13 +93,7 @@ namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
                     {
                         callbackNotification.FireDate = repeatCallbackTime.ToUniversalTime().ToNSDate();
 
-                        // add back to the platform-specific notification collection, so that the notification is updated and reissued if/when the app is reactivated
-                        lock (_callbackIdNotification)
-                        {
-                            _callbackIdNotification.Add(callbackId, callbackNotification);
-                        }
-
-                        UIApplication.SharedApplication.ScheduleLocalNotification(callbackNotification);
+                        ScheduleCallbackNotification(callbackNotification, callbackId);
                     });
                 }
             },
@@ -112,14 +101,25 @@ namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
             letDeviceSleepCallback, finishedCallback);
         }
 
+        private void ScheduleCallbackNotification(UILocalNotification callbackNotification, string callbackId)
+        {
+            // add to the platform-specific notification collection, so that the notification is updated and reissued if/when the app is reactivated
+            lock (_callbackIdNotification)
+            {
+                _callbackIdNotification.Add(callbackId, callbackNotification);
+            }
+
+            UIApplication.SharedApplication.ScheduleLocalNotification(callbackNotification);
+        }
+
         public override void UpdateCallbackActivationIdsAsync(string newActivationId)
         {
-            // since all notifications are about to be rescheduled, clear all current notifications.
-            UIApplication.SharedApplication.CancelAllLocalNotifications();
-            UIApplication.SharedApplication.ApplicationIconBadgeNumber = 0;
-
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
+                // since all notifications are about to be rescheduled, clear all current notifications.
+                UIApplication.SharedApplication.CancelAllLocalNotifications();
+                UIApplication.SharedApplication.ApplicationIconBadgeNumber = 0;
+
                 // this method will be called in one of three conditions:  (1) after sensus has been started and is running, (2)
                 // after sensus has been reactivated and was already running, and (3) after a start attempt was made but failed.
                 // in all three situations, there will be zero or more notifications present in the _callbackIdNotification lookup.
@@ -144,7 +144,7 @@ namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
                                 int repeatDelayMS = (notification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_DELAY_KEY)) as NSNumber).Int32Value;
                                 bool repeatLag = (notification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_LAG_KEY)) as NSNumber).BoolValue;
                                 string notificationId = (notification.UserInfo.ValueForKey(new NSString(Notifier.NOTIFICATION_ID_KEY)) as NSString)?.ToString();
-                                notification.UserInfo = GetCallbackUserInfoDictionary(callbackId, repeating, repeatDelayMS, repeatLag, notificationId, newActivationId);
+                                notification.UserInfo = GetCallbackInfo(callbackId, repeating, repeatDelayMS, repeatLag, notificationId, newActivationId);
 
                                 // since we set the UILocalNotification's FireDate when it was constructed, if it's currently in the past it will fire immediately 
                                 // when scheduled again with the new activation ID.

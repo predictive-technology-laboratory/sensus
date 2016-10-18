@@ -13,23 +13,20 @@
 // limitations under the License.
 
 using System;
-using Sensus.Shared.Callbacks;
+using Sensus.Shared.Context;
 using UserNotifications;
 
 namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
 {
-    public class UNUserNotificationNotifier : Notifier, IUNUserNotificationNotifier
+    public class UNUserNotificationDelegate : UNUserNotificationCenterDelegate
     {
-        public void CancelNotification(string notificationId)
+        public override void DidReceiveNotificationResponse(UNUserNotificationCenter center, UNNotificationResponse response, Action completionHandler)
         {
-            var notificationIds = new[] { notificationId };
-            UNUserNotificationCenter.Current.RemoveDeliveredNotifications(notificationIds);
-            UNUserNotificationCenter.Current.RemovePendingNotificationRequests(notificationIds);
-        }
+            base.DidReceiveNotificationResponse(center, response, completionHandler);
 
-        public override void IssueNotificationAsync(string message, string id, bool playSound, bool vibrate)
-        {
-            throw new NotImplementedException();
+            (SensusContext.Current.Notifier as IUNUserNotificationNotifier).CancelNotification(response?.Notification.Request.Identifier);
+
+            (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler)?.ServiceCallbackAsync(response?.Notification?.Request?.Content?.UserInfo);
         }
     }
 }

@@ -42,7 +42,7 @@ namespace Sensus.Shared.iOS.Callbacks
 
         public abstract void UpdateCallbackActivationIdsAsync(string newActivationId);
 
-        public NSDictionary GetCallbackUserInfoDictionary(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, string notificationId, string activationId)
+        public NSDictionary GetCallbackInfo(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, string notificationId, string activationId)
         {
             // we've seen cases where the UserInfo dictionary cannot be serialized because one of its values is null. if this happens, the 
             // callback won't be serviced, and things won't return to normal until Sensus is activated by the user and the callbacks are 
@@ -70,7 +70,7 @@ namespace Sensus.Shared.iOS.Callbacks
             return new NSDictionary(SENSUS_CALLBACK_KEY, true, keyValuePairs.ToArray());
         }
 
-        public void ServiceCallbackAsync(NSDictionary callbackInfo, UIApplicationState applicationState)
+        public void ServiceCallbackAsync(NSDictionary callbackInfo)
         {
             // check whether the passed information describes a callback
             NSNumber isCallbackValue = callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_KEY)) as NSNumber;
@@ -113,7 +113,7 @@ namespace Sensus.Shared.iOS.Callbacks
 
             // check whether the user opened a pending-survey notification (indicated by an application state that is not active). we'll
             // also get notifications when the app is active, due to how we manage pending-survey notifications.
-            if (applicationState != UIApplicationState.Active)
+            if (UIApplication.SharedApplication.ApplicationState != UIApplicationState.Active)
             {
                 NSString notificationId = callbackInfo.ValueForKey(new NSString(Notifier.NOTIFICATION_ID_KEY)) as NSString;
                 if (notificationId?.ToString() == SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID)

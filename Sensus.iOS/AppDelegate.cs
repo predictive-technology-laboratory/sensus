@@ -183,7 +183,7 @@ namespace Sensus.iOS
                 (SensusContext.Current.Notifier as IUILocalNotificationNotifier)?.CancelLocalNotification(notification, CallbackScheduler.SENSUS_CALLBACK_ID_KEY);
 
                 // service the callback
-                (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler)?.ServiceCallbackAsync(notification.UserInfo, application.ApplicationState);
+                (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler)?.ServiceCallbackAsync(notification.UserInfo);
             }
         }
 

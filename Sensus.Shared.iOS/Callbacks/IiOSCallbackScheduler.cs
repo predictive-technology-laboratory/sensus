@@ -22,6 +22,6 @@ namespace Sensus.Shared.iOS.Callbacks
     {
         void UpdateCallbackActivationIdsAsync(string newActivationId);
 
-        void ServiceCallbackAsync(NSDictionary callbackInfo, UIApplicationState applicationState);
+        void ServiceCallbackAsync(NSDictionary callbackInfo);
     }
 }
