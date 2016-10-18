@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Sensus.Shared
+namespace Sensus.Shared.Callbacks
 {
     public abstract class Notifier : INotifier
     {

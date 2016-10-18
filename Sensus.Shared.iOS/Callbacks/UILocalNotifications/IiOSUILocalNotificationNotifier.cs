@@ -12,11 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Sensus.Shared.Callbacks;
 using UIKit;
 
-namespace Sensus.Shared.iOS
+namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
 {
-    public interface IiOSNotifier : INotifier
+    public interface IiOSUILocalNotificationNotifier : INotifier
     {
         void CancelLocalNotification(UILocalNotification notification, string notificationIdKey);
     }

@@ -13,9 +13,10 @@
 // limitations under the License.
 
 using Foundation;
+using Sensus.Shared.Callbacks;
 using UIKit;
 
-namespace Sensus.Shared.iOS
+namespace Sensus.Shared.iOS.Callbacks
 {
     public interface IiOSCallbackScheduler : ICallbackScheduler
     {

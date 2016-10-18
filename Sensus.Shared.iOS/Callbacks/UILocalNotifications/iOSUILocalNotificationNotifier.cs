@@ -16,14 +16,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Foundation;
+using Sensus.Shared.Callbacks;
 using Sensus.Shared.Context;
 using Sensus.Shared.Exceptions;
 using UIKit;
 using Xamarin.Forms.Platform.iOS;
 
-namespace Sensus.Shared.iOS
+namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
 {
-    public class iOSUILocalNotificationNotifier : Notifier, IiOSNotifier
+    public class iOSUILocalNotificationNotifier : Notifier, IiOSUILocalNotificationNotifier
     {
         private List<UILocalNotification> _notifications;
 
@@ -45,6 +46,8 @@ namespace Sensus.Shared.iOS
                         if (notificationId == id)
                         {
                             CancelLocalNotification(notification, NOTIFICATION_ID_KEY);
+
+                            // TODO:  How do we prevent this collection from growing without bound?
                             _notifications.Remove(notification);
                         }
                     }

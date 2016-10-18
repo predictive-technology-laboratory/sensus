@@ -39,6 +39,7 @@ using Sensus.Shared.Probes.User.Scripts;
 using Plugin.Permissions;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions.Abstractions;
+using Sensus.Shared.Callbacks;
 
 #if __ANDROID__ || __IOS__
 using ZXing.Mobile;

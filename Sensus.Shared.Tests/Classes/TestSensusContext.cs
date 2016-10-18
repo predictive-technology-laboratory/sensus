@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using Sensus.Shared.Callbacks;
 using Sensus.Shared.Concurrent;
 using Sensus.Shared.Context;
 using Sensus.Shared.Encryption;

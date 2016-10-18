@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Sensus.Shared.Callbacks;
 using Sensus.Shared.Concurrent;
 using Sensus.Shared.Encryption;
 

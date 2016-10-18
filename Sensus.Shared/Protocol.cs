@@ -36,6 +36,7 @@ using System.Threading.Tasks;
 using Sensus.Shared.Context;
 using Sensus.Shared.Probes.User.MicrosoftBand;
 using Sensus.Shared.Probes.User.Scripts;
+using Sensus.Shared.Callbacks;
 
 #if __IOS__
 using HealthKit;

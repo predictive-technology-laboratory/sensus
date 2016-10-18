@@ -34,6 +34,9 @@ using Facebook.CoreKit;
 using Sensus.Shared.iOS.Exceptions;
 using Syncfusion.SfChart.XForms.iOS.Renderers;
 using Sensus.Shared.iOS;
+using Sensus.Shared.iOS.Callbacks.UILocalNotifications;
+using Sensus.Shared.iOS.Callbacks;
+using Sensus.Shared.Callbacks;
 
 namespace Sensus.iOS
 {
@@ -177,7 +180,7 @@ namespace Sensus.iOS
                 // we're in iOS < 10.0, which means we should have a notifier and scheduler to handle the notification.
 
                 // cancel notification (removing it from the tray), since it has served its purpose
-                (SensusContext.Current.Notifier as IiOSNotifier)?.CancelLocalNotification(notification, CallbackScheduler.SENSUS_CALLBACK_ID_KEY);
+                (SensusContext.Current.Notifier as IiOSUILocalNotificationNotifier)?.CancelLocalNotification(notification, CallbackScheduler.SENSUS_CALLBACK_ID_KEY);
 
                 // service the callback
                 (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler)?.ServiceCallbackAsync(notification.UserInfo, application.ApplicationState);

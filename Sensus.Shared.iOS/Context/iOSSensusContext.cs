@@ -17,6 +17,9 @@ using Sensus.Shared.Concurrent;
 using Sensus.Shared.Encryption;
 using Sensus.Shared.iOS.Concurrent;
 using UIKit;
+using Sensus.Shared.iOS.Callbacks.UNUserNotifications;
+using Sensus.Shared.iOS.Callbacks.UILocalNotifications;
+using Sensus.Shared.Callbacks;
 
 namespace Sensus.Shared.iOS.Context
 {

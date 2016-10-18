@@ -24,6 +24,7 @@ using Microsoft.Band.Portable.Sensors;
 using Syncfusion.SfChart.XForms;
 using Sensus.Shared.UI.UiProperties;
 using Sensus.Shared.Context;
+using Sensus.Shared.Callbacks;
 
 namespace Sensus.Shared.Probes.User.MicrosoftBand
 {

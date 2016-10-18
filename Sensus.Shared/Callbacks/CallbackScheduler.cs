@@ -19,7 +19,7 @@ using Sensus.Shared.Context;
 using Sensus.Shared.Exceptions;
 using Xamarin;
 
-namespace Sensus.Shared
+namespace Sensus.Shared.Callbacks
 {
     public abstract class CallbackScheduler : ICallbackScheduler
     {

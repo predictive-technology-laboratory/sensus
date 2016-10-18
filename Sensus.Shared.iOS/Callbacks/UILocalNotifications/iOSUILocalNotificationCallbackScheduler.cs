@@ -15,11 +15,12 @@
 using System;
 using System.Collections.Generic;
 using Foundation;
+using Sensus.Shared.Callbacks;
 using Sensus.Shared.Context;
 using UIKit;
 using Xamarin.Forms.Platform.iOS;
 
-namespace Sensus.Shared.iOS
+namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
 {
     public class iOSUILocalNotificationCallbackScheduler : iOSCallbackScheduler
     {

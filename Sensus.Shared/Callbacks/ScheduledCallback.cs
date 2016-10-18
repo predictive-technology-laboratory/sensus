@@ -16,7 +16,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sensus.Shared
+namespace Sensus.Shared.Callbacks
 {
     /// <summary>
     /// Encapsulates information needed to run a scheduled callback.

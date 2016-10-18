@@ -110,7 +110,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\BloodType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolReportDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ParticipationRewardDatum.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ScheduledCallback.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandGsrProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandGsrDatum.cs" />
@@ -218,6 +217,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\CallbackScheduler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\INotifier.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\Notifier.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\ScheduledCallback.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />

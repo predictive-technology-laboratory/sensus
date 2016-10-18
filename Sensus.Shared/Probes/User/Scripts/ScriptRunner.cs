@@ -23,6 +23,7 @@ using Sensus.Shared.Extensions;
 using Sensus.Shared.UI.UiProperties;
 using Sensus.Shared.Probes.Location;
 using Sensus.Shared.Context;
+using Sensus.Shared.Callbacks;
 
 namespace Sensus.Shared.Probes.User.Scripts
 {

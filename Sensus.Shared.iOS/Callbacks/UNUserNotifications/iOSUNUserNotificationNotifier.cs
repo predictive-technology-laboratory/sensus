@@ -13,11 +13,18 @@
 // limitations under the License.
 
 using System;
+using Sensus.Shared.Callbacks;
+using UIKit;
 
-namespace Sensus.Shared.iOS
+namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
 {
     public class iOSUNUserNotificationNotifier : Notifier
     {
+        public void CancelLocalNotification(UILocalNotification notification, string notificationIdKey)
+        {
+            throw new NotImplementedException();
+        }
+
         public override void IssueNotificationAsync(string message, string id, bool playSound, bool vibrate)
         {
             throw new NotImplementedException();

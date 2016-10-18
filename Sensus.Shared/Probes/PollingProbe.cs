@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using Sensus.Shared.UI.UiProperties;
 using Newtonsoft.Json;
 using Sensus.Shared.Context;
+using Sensus.Shared.Callbacks;
 #if __IOS__
 using CoreLocation;
 #endif

@@ -16,13 +16,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Foundation;
-using Sensus.iOS;
+using Sensus.Shared.Callbacks;
 using Sensus.Shared.Context;
 using Sensus.Shared.UI;
 using UIKit;
 using Xamarin.Forms;
 
-namespace Sensus.Shared.iOS
+namespace Sensus.Shared.iOS.Callbacks
 {
     public abstract class iOSCallbackScheduler : CallbackScheduler, IiOSCallbackScheduler
     {
