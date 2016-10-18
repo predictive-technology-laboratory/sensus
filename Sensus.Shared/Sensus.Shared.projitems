@@ -214,11 +214,16 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\ViewTextLinesPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\InsightsInitializer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\InsightsInitialization.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\ICallbackScheduler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\CallbackScheduler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\INotifier.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\Notifier.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\" />
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\" />
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ProbeTriggerProperties\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Callbacks\" />
   </ItemGroup>
 </Project>

@@ -83,11 +83,6 @@ namespace Sensus.Shared.Tests.Classes
             throw new NotImplementedException();
         }
 
-        public override void IssueNotificationAsync(string message, string id, bool playSound, bool vibrate)
-        {
-            throw new NotImplementedException();
-        }
-
         public override void KeepDeviceAwake()
         {
             throw new NotImplementedException();
@@ -124,21 +119,6 @@ namespace Sensus.Shared.Tests.Classes
         }
 
         protected override void ProtectedFlashNotificationAsync(string message, bool flashLaterIfNotVisible, TimeSpan duration, Action callback)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void ScheduleOneTimeCallback(string callbackId, int delayMS)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void UnscheduleCallbackPlatformSpecific(string callbackId)
         {
             throw new NotImplementedException();
         }

@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Sensus.Shared.UI.UiProperties;
 using Newtonsoft.Json;
+using Sensus.Shared.Context;
 #if __IOS__
 using CoreLocation;
 #endif
@@ -60,7 +61,7 @@ namespace Sensus.Shared.Probes
                     _pollingSleepDurationMS = value;
 
                     if (_pollCallbackId != null)
-                        _pollCallbackId = SensusServiceHelper.Get().RescheduleRepeatingCallback(_pollCallbackId, _pollingSleepDurationMS, _pollingSleepDurationMS, POLL_CALLBACK_LAG);
+                        _pollCallbackId = SensusContext.Current.CallbackScheduler.RescheduleRepeatingCallback(_pollCallbackId, _pollingSleepDurationMS, _pollingSleepDurationMS, POLL_CALLBACK_LAG);
                 }
             }
         }
@@ -174,7 +175,7 @@ namespace Sensus.Shared.Probes
             _locationManager = new CLLocationManager();
             _locationManager.LocationsUpdated += (sender, e) =>
             {
-                SensusServiceHelper.Get().ScheduleOneTimeCallback(_callback, 0);
+                SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(_callback, 0);
             };
 #endif
         }
@@ -264,10 +265,10 @@ namespace Sensus.Shared.Probes
                 // schedule the callback if we're not doing significant-change polling, or if we are but the latter doesn't override the former.
                 if (!_significantChangePoll || !_significantChangeOverrideScheduledPolls)
                 {
-                    _pollCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(_callback, 0, _pollingSleepDurationMS, POLL_CALLBACK_LAG);
+                    _pollCallbackId = SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_callback, 0, _pollingSleepDurationMS, POLL_CALLBACK_LAG);
                 }
 #elif __ANDROID__
-                _pollCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(_callback, 0, _pollingSleepDurationMS, POLL_CALLBACK_LAG);
+                _pollCallbackId = SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_callback, 0, _pollingSleepDurationMS, POLL_CALLBACK_LAG);
 #endif
             }
         }
@@ -285,7 +286,7 @@ namespace Sensus.Shared.Probes
                     _locationManager.StopMonitoringSignificantLocationChanges();
 #endif
 
-                SensusServiceHelper.Get().UnscheduleCallback(_pollCallbackId);
+                SensusContext.Current.CallbackScheduler.UnscheduleCallback(_pollCallbackId);
                 _pollCallbackId = null;
             }
         }

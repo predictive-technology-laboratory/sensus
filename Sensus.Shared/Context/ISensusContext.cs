@@ -18,12 +18,15 @@ using Sensus.Shared.Encryption;
 namespace Sensus.Shared.Context
 {
     /// <summary>
-    /// Defines platform-specific fields that should not be serialized as part of the service helper.
+    /// Defines platform-specific fields that should not be serialized as part of the service helper
     /// </summary>
     public interface ISensusContext
     {
         Platform Platform { get; }
         IConcurrent MainThreadSynchronizer { get; }
         IEncryption Encryption { get; }
+        INotifier Notifier { get; }
+        ICallbackScheduler CallbackScheduler { get; }
+        string ActivationId { get; set; }
     }
 }

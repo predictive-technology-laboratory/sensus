@@ -22,6 +22,7 @@ using Sensus.Shared.Concurrent;
 using Sensus.Shared.Extensions;
 using Sensus.Shared.UI.UiProperties;
 using Sensus.Shared.Probes.Location;
+using Sensus.Shared.Context;
 
 namespace Sensus.Shared.Probes.User.Scripts
 {
@@ -336,7 +337,7 @@ namespace Sensus.Shared.Probes.User.Scripts
             {
                 var delayMS = (int)triggerTime.TimeTill.TotalMilliseconds;
                 var callback = CreateCallback(new Script(Script, Guid.NewGuid()) { ExpirationDate = triggerTime.Expiration, ScheduledRunTime = triggerTime.DateTime });
-                var callbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(callback, delayMS);
+                var callbackId = SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(callback, delayMS);
 
                 SensusServiceHelper.Get().Logger.Log($"Scheduled for {triggerTime.DateTime} ({callbackId})", LoggingLevel.Normal, GetType());
 
@@ -348,7 +349,7 @@ namespace Sensus.Shared.Probes.User.Scripts
 
         private void UnscheduleCallback(string scheduledCallbackId)
         {
-            SensusServiceHelper.Get().UnscheduleCallback(scheduledCallbackId);
+            SensusContext.Current.CallbackScheduler.UnscheduleCallback(scheduledCallbackId);
             SensusServiceHelper.Get().Logger.Log($"Unscheduled ({scheduledCallbackId})", LoggingLevel.Normal, GetType());
         }
 

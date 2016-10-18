@@ -12,24 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using Sensus.Shared.Concurrent;
 using Sensus.Shared.Context;
 using Sensus.Shared.Encryption;
 
 namespace Sensus.Shared.Test.Classes
 {
-    public class TestSensusContext: ISensusContext
+    public class TestSensusContext : ISensusContext
     {
-        public TestSensusContext()
-        {
-            Platform               = Platform.Test;
-            MainThreadSynchronizer = new LockConcurrent();
-            Encryption             = new SimpleEncryption("");
-        }
-
         public Platform Platform { get; }
         public IConcurrent MainThreadSynchronizer { get; set; }
         public IEncryption Encryption { get; set; }
+        public INotifier Notifier { get; }
+        public ICallbackScheduler CallbackScheduler { get; }
+        public string ActivationId { get; set; }
 
+        public TestSensusContext()
+        {
+            Platform = Platform.Test;
+            MainThreadSynchronizer = new LockConcurrent();
+            Encryption = new SimpleEncryption("");
+        }
     }
 }

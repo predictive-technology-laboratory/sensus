@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using Sensus.Shared.UI.UiProperties;
 using Sensus.Shared.Exceptions;
 using Sensus.Shared.DataStores.Remote;
+using Sensus.Shared.Context;
 
 namespace Sensus.Shared.DataStores
 {
@@ -126,7 +127,7 @@ namespace Sensus.Shared.DataStores
                     _commitDelayMS = value;
 
                     if (_commitCallbackId != null)
-                        _commitCallbackId = SensusServiceHelper.Get().RescheduleRepeatingCallback(_commitCallbackId, _commitDelayMS, _commitDelayMS, COMMIT_CALLBACK_LAG);
+                        _commitCallbackId = SensusContext.Current.CallbackScheduler.RescheduleRepeatingCallback(_commitCallbackId, _commitDelayMS, _commitDelayMS, COMMIT_CALLBACK_LAG);
                 }
             }
         }
@@ -248,7 +249,7 @@ namespace Sensus.Shared.DataStores
 #endif
 
                 ScheduledCallback callback = new ScheduledCallback(GetType().FullName + " Commit", CycleAsync, TimeSpan.FromMinutes(_commitTimeoutMinutes), userNotificationMessage);
-                _commitCallbackId = SensusServiceHelper.Get().ScheduleRepeatingCallback(callback, _commitDelayMS, _commitDelayMS, COMMIT_CALLBACK_LAG);
+                _commitCallbackId = SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(callback, _commitDelayMS, _commitDelayMS, COMMIT_CALLBACK_LAG);
             }
         }
 
@@ -347,7 +348,7 @@ namespace Sensus.Shared.DataStores
             {
                 _running = false;
                 SensusServiceHelper.Get().Logger.Log("Stopping.", LoggingLevel.Normal, GetType());
-                SensusServiceHelper.Get().UnscheduleCallback(_commitCallbackId);
+                SensusContext.Current.CallbackScheduler.UnscheduleCallback(_commitCallbackId);
                 _commitCallbackId = null;
             }
         }

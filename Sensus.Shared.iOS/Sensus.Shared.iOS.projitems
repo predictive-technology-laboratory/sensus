@@ -24,8 +24,17 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthKitHeightProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthKitProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthKitSamplingProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\iOSCallbackScheduler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\UILocalNotifications\iOSUILocalNotificationCallbackScheduler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\UILocalNotifications\iOSUILocalNotificationNotifier.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\UNUserNotifications\iOSUNUserNotificationCallbackScheduler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\UNUserNotifications\iOSUNUserNotificationNotifier.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\IIosCallbackScheduler.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Callbacks\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Callbacks\UILocalNotifications\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Callbacks\UNUserNotifications\" />
   </ItemGroup>
 </Project>

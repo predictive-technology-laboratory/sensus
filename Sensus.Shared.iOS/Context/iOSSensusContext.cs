@@ -16,21 +16,38 @@ using Sensus.Shared.Context;
 using Sensus.Shared.Concurrent;
 using Sensus.Shared.Encryption;
 using Sensus.Shared.iOS.Concurrent;
+using UIKit;
 
 namespace Sensus.Shared.iOS.Context
 {
-    public class iOSSensusContext: ISensusContext
+    public class iOSSensusContext : ISensusContext
     {
         public Platform Platform { get; }
         public IConcurrent MainThreadSynchronizer { get; }
         public IEncryption Encryption { get; }
+        public ICallbackScheduler CallbackScheduler { get; }
+        public INotifier Notifier { get; }
+        public string ActivationId { get; set; }
 
         #region Constructor
         public iOSSensusContext(string encryptionKey)
         {
-            Platform               = Platform.iOS;
+            Platform = Platform.iOS;
             MainThreadSynchronizer = new MainConcurrent();
-            Encryption             = new SimpleEncryption(encryptionKey);
+            Encryption = new SimpleEncryption(encryptionKey);
+
+            // iOS introduced a new notification center in 10.0 based on UNUserNotifications
+            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
+            {
+                CallbackScheduler = new iOSUNUserNotificationCallbackScheduler();
+                Notifier = new iOSUNUserNotificationNotifier();
+            }
+            // use the pre-10.0 approach based on UILocalNotifications
+            else
+            {
+                CallbackScheduler = new iOSUILocalNotificationCallbackScheduler();
+                Notifier = new iOSUILocalNotificationNotifier();
+            }
         }
         #endregion
     }
