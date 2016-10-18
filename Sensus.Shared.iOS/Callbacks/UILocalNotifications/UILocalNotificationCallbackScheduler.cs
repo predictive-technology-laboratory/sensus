@@ -165,7 +165,7 @@ namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
                 UILocalNotification notification;
                 if (_callbackIdNotification.TryGetValue(callbackId, out notification))
                 {
-                    (SensusContext.Current.Notifier as UILocalNotificationNotifier)?.CancelLocalNotification(notification, SENSUS_CALLBACK_ID_KEY);
+                    (SensusContext.Current.Notifier as UILocalNotificationNotifier)?.CancelNotification(notification, SENSUS_CALLBACK_ID_KEY);
                     _callbackIdNotification.Remove(callbackId);
                 }
             }

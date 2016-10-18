@@ -45,7 +45,7 @@ namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
                         string notificationId = notification.UserInfo.ValueForKey(new NSString(NOTIFICATION_ID_KEY)).ToString();
                         if (notificationId == id)
                         {
-                            CancelLocalNotification(notification, NOTIFICATION_ID_KEY);
+                            CancelNotification(notification, NOTIFICATION_ID_KEY);
 
                             // TODO:  How do we prevent this collection from growing without bound?
                             _notifications.Remove(notification);
@@ -92,7 +92,7 @@ namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
         /// </summary>
         /// <param name="notification">Notification to cancel.</param>
         /// <param name="notificationIdKey">Key for ID in UserInfo of the UILocalNotification.</param>
-        public void CancelLocalNotification(UILocalNotification notification, string notificationIdKey)
+        public void CancelNotification(UILocalNotification notification, string notificationIdKey)
         {
             // set up action to cancel notification
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
