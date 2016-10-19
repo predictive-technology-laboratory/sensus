@@ -36,6 +36,7 @@ using System.Threading.Tasks;
 using Sensus.Shared.Context;
 using Sensus.Shared.Probes.User.MicrosoftBand;
 using Sensus.Shared.Probes.User.Scripts;
+using Sensus.Shared.Callbacks;
 
 #if __IOS__
 using HealthKit;
@@ -330,36 +331,36 @@ namespace Sensus.Shared
                     unitTestingProtocolFile.CopyTo(protocolStream);
                     string protocolJSON = SensusServiceHelper.Get().ConvertJsonForCrossPlatform(SensusContext.Current.Encryption.Decrypt(protocolStream.ToArray()));
                     DeserializeAsync(protocolJSON, protocol =>
+                    {
+                        if (protocol == null)
+                            throw new Exception("Failed to deserialize unit testing protocol.");
+
+                        foreach (Probe probe in protocol.Probes)
                         {
-                            if (protocol == null)
-                                throw new Exception("Failed to deserialize unit testing protocol.");
+                            // unit testing is problematic with probes that take us away from Sensus, since it's difficult to automate UI 
+                            // interaction outside of Sensus. disable any probes that might take us away from Sensus.
 
-                            foreach (Probe probe in protocol.Probes)
-                            {
-                                // unit testing is problematic with probes that take us away from Sensus, since it's difficult to automate UI 
-                                // interaction outside of Sensus. disable any probes that might take us away from Sensus.
-
-                                if (probe is FacebookProbe)
-                                    probe.Enabled = false;
+                            if (probe is FacebookProbe)
+                                probe.Enabled = false;
 
 #if __IOS__
                                 if (probe is iOSHealthKitProbe)
                                     probe.Enabled = false;
 #endif
 
-                                // clear the run-times collection from any script runners. need a clean start, just in case we have one-shot scripts
-                                // that need to run every unit testing execution.
-                                if (probe is ScriptProbe)
-                                    foreach (ScriptRunner scriptRunner in (probe as ScriptProbe).ScriptRunners)
-                                        scriptRunner.RunTimes.Clear();
+                            // clear the run-times collection from any script runners. need a clean start, just in case we have one-shot scripts
+                            // that need to run every unit testing execution.
+                            if (probe is ScriptProbe)
+                                foreach (ScriptRunner scriptRunner in (probe as ScriptProbe).ScriptRunners)
+                                    scriptRunner.RunTimes.Clear();
 
-                                // disable the accelerometer probe, since we use it to trigger a test script that can interrupt UI scripting.
-                                if (probe is AccelerometerProbe)
-                                    probe.Enabled = false;
-                            }
+                            // disable the accelerometer probe, since we use it to trigger a test script that can interrupt UI scripting.
+                            if (probe is AccelerometerProbe)
+                                probe.Enabled = false;
+                        }
 
-                            DisplayAndStartAsync(protocol);
-                        });
+                        DisplayAndStartAsync(protocol);
+                    });
                 }
             }
             catch (Exception ex)
@@ -964,27 +965,27 @@ namespace Sensus.Shared
         public void CopyAsync(bool resetId, bool register, Action<Protocol> callback = null)
         {
             DeserializeAsync(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), protocol =>
-                {
-                    protocol.Reset(resetId);
+            {
+                protocol.Reset(resetId);
 
-                    if (register)
-                        SensusServiceHelper.Get().RegisterProtocol(protocol);
+                if (register)
+                    SensusServiceHelper.Get().RegisterProtocol(protocol);
 
-                    if (callback != null)
-                        callback(protocol);
-                });
+                if (callback != null)
+                    callback(protocol);
+            });
         }
 
         public void StartAsync(Action callback = null)
         {
             new Thread(() =>
-                {
-                    Start();
+            {
+                Start();
 
-                    if (callback != null)
-                        callback();
+                if (callback != null)
+                    callback();
 
-                }).Start();
+            }).Start();
         }
 
         private void StartInternal()
@@ -1147,12 +1148,12 @@ namespace Sensus.Shared
             }, null, $"Started study: {Name}.");
 #endif
 
-            _scheduledStartCallbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(startProtocolCallback, (int)timeUntilStart.TotalMilliseconds);
+            _scheduledStartCallbackId = SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(startProtocolCallback, (int)timeUntilStart.TotalMilliseconds);
         }
 
         public void CancelScheduledStart()
         {
-            SensusServiceHelper.Get().UnscheduleCallback(_scheduledStartCallbackId);
+            SensusContext.Current.CallbackScheduler.UnscheduleCallback(_scheduledStartCallbackId);
             _scheduledStartCallbackId = null;
 
             // we might have scheduled a stop when starting the protocol, so be sure to cancel it.
@@ -1178,12 +1179,12 @@ namespace Sensus.Shared
             }, null, $"Stopped study: {Name}.");
 #endif
 
-            _scheduledStopCallbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(stopProtocolCallback, (int)timeUntilStop.TotalMilliseconds);
+            _scheduledStopCallbackId = SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(stopProtocolCallback, (int)timeUntilStop.TotalMilliseconds);
         }
 
         public void CancelScheduledStop()
         {
-            SensusServiceHelper.Get().UnscheduleCallback(_scheduledStopCallbackId);
+            SensusContext.Current.CallbackScheduler.UnscheduleCallback(_scheduledStopCallbackId);
             _scheduledStopCallbackId = null;
         }
 
@@ -1407,13 +1408,13 @@ namespace Sensus.Shared
         public void StopAsync(Action callback = null)
         {
             new Thread(() =>
-                {
-                    Stop();
+            {
+                Stop();
 
-                    if (callback != null)
-                        callback();
+                if (callback != null)
+                    callback();
 
-                }).Start();
+            }).Start();
         }
 
         public void Stop()

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Sensus.Shared.Callbacks;
 using Sensus.Shared.Context;
 using Sensus.Shared.Concurrent;
 using Sensus.Shared.Encryption;
@@ -24,6 +25,9 @@ namespace Sensus.Shared.iOS.Context
         public Platform Platform { get; }
         public IConcurrent MainThreadSynchronizer { get; }
         public IEncryption Encryption { get; }
+        public ICallbackScheduler CallbackScheduler { get; }
+        public INotifier Notifier { get; }
+        public string ActivationId { get; set; }
 
         #region Constructor
         public iOSSensusContext(string encryptionKey)
