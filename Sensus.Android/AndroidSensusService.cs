@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Android.OS;
 using Android.App;
 using Android.Content;
@@ -23,6 +24,10 @@ using Sensus.Shared.Context;
 using Sensus.Shared.Exceptions;
 using Sensus.Shared.Android.Context;
 using Sensus.Shared.Android.Exceptions;
+using Sensus.Shared.Android.Notifications;
+using Sensus.Shared.Callbacks;
+using Sensus.Shared.Notifications;
+using Sensus.Shared.UI;
 
 namespace Sensus.Android
 {
@@ -58,7 +63,8 @@ namespace Sensus.Android
 
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
-            AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
+            var serviceHelper  = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
+            var scheduleHelper = (CallbackScheduler)SensusContext.Current.CallbackScheduler;            
 
             // there might be a race condition between the calling of this method and the stopping/disposal of the service helper.
             // if the service helper is stopped/disposed before the service is stopped but after this method is called, the service
@@ -77,11 +83,46 @@ namespace Sensus.Android
                 // sensus receives a signal on device boot and for any callback alarms that are 
                 // requested. furthermore, all calls here should be nonblocking / async so we don't 
                 // tie up the UI thread.
-                throw new NotImplementedException();
-                //serviceHelper.StartAsync(() =>
-                //{
+                
+                serviceHelper.StartAsync(() =>
+                {
+                    var meta = new AndroidNotifyMeta(intent);
 
-                //});
+                    if (meta.Type == NotificationType.Undefined)
+                    {
+                        serviceHelper.LetDeviceSleep();
+                        return;
+                    }
+
+                    if (meta.Type == NotificationType.Callback && !scheduleHelper.CallbackIsScheduled(meta.CallbackId))
+                    {
+                        scheduleHelper.UnscheduleCallback(meta.CallbackId);
+                        serviceHelper.LetDeviceSleep();
+                    }
+
+                    if (meta.Type == NotificationType.Callback && scheduleHelper.CallbackIsScheduled(meta.CallbackId))
+                    {
+                        new AndroidNotify(this, Resource.Drawable.ic_launcher).ExecuteCallback(meta, intent);
+                    }
+
+                    if (meta.Type == NotificationType.Script)
+                    {
+                        serviceHelper.BringToForeground();
+
+                        // display the pending scripts page if it is not already on the top of the navigation stack
+                        SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                        {
+                            var topPage = Xamarin.Forms.Application.Current.MainPage.Navigation.NavigationStack.LastOrDefault();
+
+                            if (!(topPage is PendingScriptsPage))
+                            {
+                                await Xamarin.Forms.Application.Current.MainPage.Navigation.PushAsync(new PendingScriptsPage());
+                            }
+
+                            serviceHelper.LetDeviceSleep();
+                        });
+                    }
+                });
 
             }
 
