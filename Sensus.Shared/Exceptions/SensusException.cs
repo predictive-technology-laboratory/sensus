@@ -19,27 +19,32 @@ namespace Sensus.Shared.Exceptions
 {
     public class SensusException : Exception
     {
-        public static void Report(string message, Exception innerException = null, bool throwException = false)
+        #region Static
+        public static void Report(string message, Exception innerException = null)
         {
-            SensusException exception = new SensusException(message, innerException);
-
-            if (throwException)
-                throw exception;
+            Report(new Exception(message, innerException));
         }
 
-        public SensusException(string message, Exception innerException = null)
-            : base(message, innerException)
+        public static void Report(Exception exception)
         {
-            SensusServiceHelper.Get().Logger.Log("Exception being created:  " + message + Environment.NewLine + "Stack:  " + Environment.StackTrace, LoggingLevel.Normal, GetType());
-
             try
             {
-                Insights.Report(this, "Stack Trace", Environment.StackTrace, Insights.Severity.Error);
+                Insights.Report(exception, "Stack Trace", Environment.StackTrace, Insights.Severity.Error);
+
+                SensusServiceHelper.Get().Logger.Log($"Exception:  {exception.Message}{Environment.NewLine}Stack:  {Environment.StackTrace}", LoggingLevel.Normal, exception.GetType());                
             }
             catch (Exception ex)
             {
-                SensusServiceHelper.Get().Logger.Log("Failed to report new exception to Xamarin Insights:  " + ex.Message, LoggingLevel.Normal, GetType());
+                SensusServiceHelper.Get().Logger.Log($"Failed to report new exception to Xamarin Insights:  {ex.Message}", LoggingLevel.Normal, exception.GetType());
             }
         }
+        #endregion
+
+        #region Constructors
+        public SensusException(string message, Exception innerException = null): base(message, innerException)
+        {
+            Report(this);
+        }
+        #endregion
     }
 }

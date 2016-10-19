@@ -12,6 +12,16 @@
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\MainConcurrent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Context\iOSSensusContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\iOSInsightsInitializer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\IiOSCallbackScheduler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\iOSCallbackScheduler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\iOSNotifyMeta.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\UILocalNotifications\IUILocalNotificationNotifier.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\UILocalNotifications\UILocalNotificationCallbackScheduler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\UILocalNotifications\UILocalNotificationNotifier.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\UNUserNotifications\IUNUserNotificationNotifier.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\UNUserNotifications\UNUserNotificationCallbackScheduler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\UNUserNotifications\UNUserNotificationDelegate.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\UNUserNotifications\UNUserNotificationNotifier.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\iOSFacebookProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\iOSSoundProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Device\iOSBatteryProbe.cs" />
@@ -24,20 +34,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthKitHeightProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthKitProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthKitSamplingProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\iOSCallbackScheduler.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\UILocalNotifications\UILocalNotificationCallbackScheduler.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\UILocalNotifications\UILocalNotificationNotifier.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\UNUserNotifications\UNUserNotificationCallbackScheduler.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\UNUserNotifications\UNUserNotificationNotifier.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\IiOSCallbackScheduler.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\UILocalNotifications\IUILocalNotificationNotifier.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\UNUserNotifications\UNUserNotificationDelegate.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\UNUserNotifications\IUNUserNotificationNotifier.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Callbacks\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Callbacks\UILocalNotifications\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Callbacks\UNUserNotifications\" />
   </ItemGroup>
 </Project>

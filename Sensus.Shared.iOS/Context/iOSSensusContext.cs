@@ -12,19 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Sensus.Shared.Callbacks;
 using Sensus.Shared.Context;
 using Sensus.Shared.Concurrent;
 using Sensus.Shared.Encryption;
 using Sensus.Shared.iOS.Concurrent;
-using UIKit;
-using Sensus.Shared.iOS.Callbacks.UNUserNotifications;
-using Sensus.Shared.iOS.Callbacks.UILocalNotifications;
-using Sensus.Shared.Callbacks;
-using UserNotifications;
 
 namespace Sensus.Shared.iOS.Context
 {
-    public class iOSSensusContext : ISensusContext
+    public class iOSSensusContext: ISensusContext
     {
         public Platform Platform { get; }
         public IConcurrent MainThreadSynchronizer { get; }
@@ -36,23 +32,9 @@ namespace Sensus.Shared.iOS.Context
         #region Constructor
         public iOSSensusContext(string encryptionKey)
         {
-            Platform = Platform.iOS;
+            Platform               = Platform.iOS;
             MainThreadSynchronizer = new MainConcurrent();
-            Encryption = new SimpleEncryption(encryptionKey);
-
-            // iOS introduced a new notification center in 10.0 based on UNUserNotifications
-            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
-            {
-                UNUserNotificationCenter.Current.Delegate = new UNUserNotificationDelegate();
-                CallbackScheduler = new UNUserNotificationCallbackScheduler();
-                Notifier = new UNUserNotificationNotifier();
-            }
-            // use the pre-10.0 approach based on UILocalNotifications
-            else
-            {
-                CallbackScheduler = new UILocalNotificationCallbackScheduler();
-                Notifier = new UILocalNotificationNotifier();
-            }
+            Encryption             = new SimpleEncryption(encryptionKey);
         }
         #endregion
     }

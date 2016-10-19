@@ -32,6 +32,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\EnumerableExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ImpreciseDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LoggingLevel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\CallbackScheduler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\ICallbackScheduler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\INotifier.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\INotify.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\INotifyMeta.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\NotificationType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\Notifier.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\ScheduledCallback.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\SmsDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\TelephonyDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\TelephonyState.cs" />
@@ -213,17 +221,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\ViewTextLinesPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\InsightsInitializer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\InsightsInitialization.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\ICallbackScheduler.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\CallbackScheduler.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\INotifier.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\Notifier.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\ScheduledCallback.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\" />
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\" />
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ProbeTriggerProperties\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Callbacks\" />
   </ItemGroup>
 </Project>

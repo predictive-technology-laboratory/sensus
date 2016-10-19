@@ -12,13 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Sensus.Shared.Callbacks;
-using UIKit;
+using System;
+using System.Threading;
 
-namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
+namespace Sensus.Shared.Notifications
 {
-    public interface IUILocalNotificationNotifier : INotifier
+    public interface INotify
     {
-        void CancelNotification(UILocalNotification notification, string notificationIdKey);
+        void ScheduleNotification(string tag, string message, string title, bool autoCancel, bool ongoing, bool playSound, bool vibrate);
+
+        string ScheduleCallback(TimeSpan interval, bool lagAllowed, bool repeating, Action<string, CancellationToken, Action> callback);        
     }
 }

@@ -12,9 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Foundation;
 using Sensus.Shared.Callbacks;
-using UIKit;
+using Sensus.Shared.iOS.Notifications;
 
 namespace Sensus.Shared.iOS.Callbacks
 {
@@ -22,6 +21,6 @@ namespace Sensus.Shared.iOS.Callbacks
     {
         void UpdateCallbackActivationIdsAsync(string newActivationId);
 
-        void ServiceCallbackAsync(NSDictionary callbackInfo);
+        void ServiceCallbackAsync(iOSNotifyMeta meta);
     }
 }

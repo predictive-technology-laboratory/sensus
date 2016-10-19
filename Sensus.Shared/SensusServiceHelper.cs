@@ -20,8 +20,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Security.Cryptography;
-using System.Collections.Concurrent;
-using System.Collections.ObjectModel;
 
 using Xamarin;
 using Xamarin.Forms;
@@ -39,12 +37,12 @@ using Sensus.Shared.Probes.User.Scripts;
 using Plugin.Permissions;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions.Abstractions;
-using Sensus.Shared.Callbacks;
 
 #if __ANDROID__ || __IOS__
 using ZXing.Mobile;
 using ZXing;
 #endif
+
 #if __IOS__
 using XLabs.Platform.Device;
 #endif
@@ -714,13 +712,13 @@ namespace Sensus.Shared
         public void StartAsync(Action callback)
         {
             new Thread(() =>
-                {
-                    Start();
+            {
+                Start();
 
-                    if (callback != null)
-                        callback();
+                if (callback != null)
+                    callback();
 
-                }).Start();
+            }).Start();
         }
 
         /// <summary>
@@ -824,9 +822,9 @@ namespace Sensus.Shared
         public void PromptForInputAsync(string windowTitle, Input input, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action<Input> callback)
         {
             PromptForInputsAsync(windowTitle, new[] { input }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, inputs =>
-           {
-               callback(inputs?.First());
-           });
+            {
+                callback(inputs?.First());
+            });
         }
 
         public void PromptForInputsAsync(string windowTitle, IEnumerable<Input> inputs, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action<List<Input>> callback)
@@ -839,9 +837,9 @@ namespace Sensus.Shared
             }
 
             PromptForInputsAsync(null, new[] { inputGroup }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, null, inputGroups =>
-           {
-               callback(inputGroups?.SelectMany(g => g.Inputs).ToList());
-           });
+            {
+                callback(inputGroups?.SelectMany(g => g.Inputs).ToList());
+            });
         }
 
         public void PromptForInputsAsync(DateTimeOffset? firstPromptTimestamp, IEnumerable<InputGroup> inputGroups, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action postDisplayCallback, Action<IEnumerable<InputGroup>> callback)

@@ -121,6 +121,6 @@ namespace Sensus.Shared.Tests.Classes
         protected override void ProtectedFlashNotificationAsync(string message, bool flashLaterIfNotVisible, TimeSpan duration, Action callback)
         {
             throw new NotImplementedException();
-        }
+        }        
     }
 }

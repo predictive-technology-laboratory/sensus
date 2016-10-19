@@ -14,10 +14,12 @@
 
 using System;
 using System.Collections.Generic;
-using Foundation;
-using Sensus.Shared.Callbacks;
+
 using Sensus.Shared.Context;
 using Sensus.Shared.Exceptions;
+using Sensus.Shared.Notifications;
+using Sensus.Shared.iOS.Notifications;
+
 using UserNotifications;
 
 namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
@@ -31,22 +33,22 @@ namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
             _callbackIdRequest = new Dictionary<string, UNNotificationRequest>();
         }
 
-        protected override void ScheduleCallbackAsync(string callbackId, int delayMS, bool repeating, int repeatDelayMS, bool repeatLag)
-        {
-            string userNotificationMessage = GetCallbackUserNotificationMessage(callbackId);
-            string notificationId = GetCallbackNotificationId(callbackId);
+        protected override void ScheduleCallbackAsync(INotifyMeta meta)
+        {            
+            string userNotificationMessage = GetCallbackUserNotificationMessage(meta.CallbackId);
+           
+            if (meta.CallbackId == null || SensusContext.Current.ActivationId == null) return;
 
-            NSDictionary callbackInfo = GetCallbackInfo(callbackId, repeating, repeatDelayMS, repeatLag, notificationId, SensusContext.Current.ActivationId);
+            var callbackNotificationContent = new UNMutableNotificationContent { Title = "Sensus" };
 
-            // user info can be null (e.g., if we don't have an activation ID). don't schedule the notification if this happens.
-            if (callbackInfo == null)
-                return;
-
-            UNMutableNotificationContent callbackNotificationContent = new UNMutableNotificationContent
+            new iOSNotifyMeta(callbackNotificationContent)
             {
-                Title = "Sensus",
-                UserInfo = callbackInfo
-            };
+                CallbackId   = meta.CallbackId,
+                IsRepeating  = meta.IsRepeating,
+                RepeatDelay  = meta.RepeatDelay,
+                LagAllowed   = meta.LagAllowed,
+                ActivationId = SensusContext.Current.ActivationId
+            };            
 
             if (userNotificationMessage != null)
             {
@@ -54,9 +56,10 @@ namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
                 callbackNotificationContent.Sound = UNNotificationSound.Default;
             }
 
-            UNTimeIntervalNotificationTrigger callbackNotificationTrigger = UNTimeIntervalNotificationTrigger.CreateTrigger(delayMS / 1000d, false);
-            UNNotificationRequest callbackNotificationRequest = UNNotificationRequest.FromIdentifier(callbackId, callbackNotificationContent, callbackNotificationTrigger);
-            AddCallbackNotificationRequest(callbackNotificationRequest, repeating, true);
+            var callbackNotificationTrigger = UNTimeIntervalNotificationTrigger.CreateTrigger(meta.RepeatDelay.TotalSeconds, false);
+            var callbackNotificationRequest = UNNotificationRequest.FromIdentifier(meta.CallbackId, callbackNotificationContent, callbackNotificationTrigger);
+
+            AddCallbackNotificationRequest(callbackNotificationRequest, meta.IsRepeating, true);
         }
 
         private void AddCallbackNotificationRequest(UNNotificationRequest request, bool repeating, bool addToCollectionIfSuccessful)
@@ -82,17 +85,17 @@ namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
             });
         }
 
-        public override void RaiseCallbackAsync(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, bool notifyUser, Action<DateTime> scheduleRepeatCallback, Action letDeviceSleepCallback, Action finishedCallback)
+        public override void RaiseCallbackAsync(INotifyMeta meta, bool notifyUser, Action<DateTime> scheduleRepeatCallback, Action letDeviceSleepCallback, Action finishedCallback)
         {
             // see corresponding comment in UILocalNotificationCallbackScheduler
             UNNotificationRequest request;
             lock (_callbackIdRequest)
             {
-                request = _callbackIdRequest[callbackId];
-                _callbackIdRequest.Remove(callbackId);
+                request = _callbackIdRequest[meta.CallbackId];
+                _callbackIdRequest.Remove(meta.CallbackId);
             }
 
-            base.RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, notifyUser,
+            base.RaiseCallbackAsync(meta, notifyUser,
 
             repeatCallbackTime =>
             {
@@ -100,9 +103,9 @@ namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
                 {
                     SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                     {
-                        UNTimeIntervalNotificationTrigger callbackNotificationTrigger = UNTimeIntervalNotificationTrigger.CreateTrigger((DateTime.Now - repeatCallbackTime).TotalDays, false);
-                        UNNotificationRequest callbackNotificationRequest = UNNotificationRequest.FromIdentifier(callbackId, request.Content, callbackNotificationTrigger);
-                        AddCallbackNotificationRequest(callbackNotificationRequest, repeating, true);
+                        var callbackNotificationTrigger = UNTimeIntervalNotificationTrigger.CreateTrigger((DateTime.Now - repeatCallbackTime).TotalDays, false);
+                        var callbackNotificationRequest = UNNotificationRequest.FromIdentifier(meta.CallbackId, request.Content, callbackNotificationTrigger);
+                        AddCallbackNotificationRequest(callbackNotificationRequest, meta.IsRepeating, true);
                     });
                 }
             },
@@ -123,24 +126,19 @@ namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
                 {
                     foreach (string callbackId in _callbackIdRequest.Keys)
                     {
-                        UNNotificationRequest request = _callbackIdRequest[callbackId];
+                        var request = _callbackIdRequest[callbackId];
 
                         if (request.Content.UserInfo != null)
                         {
-                            string activationId = (request.Content.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ACTIVATION_ID_KEY)) as NSString).ToString();
-                            if (activationId != newActivationId)
+                            var meta = new iOSNotifyMeta(request.Content.UserInfo);
+                            
+                            if (meta.ActivationId != newActivationId)
                             {
-                                // reset the UserInfo to include the current activation ID
-                                bool repeating = (request.Content.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber).BoolValue;
-                                int repeatDelayMS = (request.Content.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_DELAY_KEY)) as NSNumber).Int32Value;
-                                bool repeatLag = (request.Content.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_LAG_KEY)) as NSNumber).BoolValue;
-                                string notificationId = (request.Content.UserInfo.ValueForKey(new NSString(Notifier.NOTIFICATION_ID_KEY)) as NSString)?.ToString();
-                                (request.Content as UNMutableNotificationContent).UserInfo = GetCallbackInfo(callbackId, repeating, repeatDelayMS, repeatLag, notificationId, newActivationId);
+                                meta.ActivationId = newActivationId;
 
-                                // since we set the UILocalNotification's FireDate when it was constructed, if it's currently in the past it will fire immediately 
-                                // when scheduled again with the new activation ID.
-                                if (request.Content.UserInfo != null)
-                                    AddCallbackNotificationRequest(request, repeating, false);
+                                // since we set the UILocalNotification's FireDate when it was constructed
+                                // if it's currently in the past it will fire immediately when scheduled again with the new activation ID.
+                                if (request.Content.UserInfo != null) AddCallbackNotificationRequest(request, meta.IsRepeating, false);
                             }
                         }
                     }

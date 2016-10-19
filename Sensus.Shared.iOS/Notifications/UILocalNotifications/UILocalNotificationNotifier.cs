@@ -13,13 +13,16 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using Foundation;
-using Sensus.Shared.Callbacks;
+using System.Collections.Generic;
+
 using Sensus.Shared.Context;
+using Sensus.Shared.Callbacks;
 using Sensus.Shared.Exceptions;
+
 using UIKit;
+using Foundation;
+using Sensus.Shared.iOS.Notifications;
 using Xamarin.Forms.Platform.iOS;
 
 namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
@@ -45,7 +48,7 @@ namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
                         string notificationId = notification.UserInfo.ValueForKey(new NSString(NOTIFICATION_ID_KEY)).ToString();
                         if (notificationId == id)
                         {
-                            CancelNotification(notification, NOTIFICATION_ID_KEY);
+                            CancelNotification(notification);
 
                             // TODO:  How do we prevent this collection from growing without bound?
                             _notifications.Remove(notification);
@@ -92,27 +95,26 @@ namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
         /// </summary>
         /// <param name="notification">Notification to cancel.</param>
         /// <param name="notificationIdKey">Key for ID in UserInfo of the UILocalNotification.</param>
-        public void CancelNotification(UILocalNotification notification, string notificationIdKey)
+        public void CancelNotification(UILocalNotification notification)
         {
             // set up action to cancel notification
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
                 try
                 {
-                    string idToCancel = notification.UserInfo.ValueForKey(new NSString(notificationIdKey)).ToString();
+                    var notificationMeta = new iOSNotifyMeta(notification);                    
 
-                    SensusServiceHelper.Get().Logger.Log("Cancelling local notification \"" + idToCancel + "\".", LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Get().Logger.Log("Cancelling local notification \"" + notificationMeta.CallbackId + "\".", LoggingLevel.Normal, GetType());
 
                     // a local notification can be scheduled, in which case it hasn't yet been delivered and should reside within the shared 
                     // application's list of scheduled notifications. the tricky part here is that these notification objects aren't reference-equal, 
                     // so we can't just pass `notification` to CancelLocalNotification. instead, we must search for the notification by id and 
                     // cancel the appropriate scheduled notification object.
                     bool notificationCanceled = false;
-                    foreach (UILocalNotification scheduledNotification in UIApplication.SharedApplication.ScheduledLocalNotifications)
-                    {
-                        string scheduledId = scheduledNotification.UserInfo.ValueForKey(new NSString(notificationIdKey))?.ToString();
 
-                        if (scheduledId == idToCancel)
+                    foreach (var scheduledNotification in UIApplication.SharedApplication.ScheduledLocalNotifications)
+                    {
+                        if (notificationMeta.CallbackId == new iOSNotifyMeta(scheduledNotification).CallbackId)
                         {
                             UIApplication.SharedApplication.CancelLocalNotification(scheduledNotification);
                             notificationCanceled = true;
@@ -122,12 +124,11 @@ namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
                     // if we didn't cancel the notification above, then it isn't scheduled and should have already been delivered. if it has been 
                     // delivered, then our only option for cancelling it is to pass `notification` itself to CancelLocalNotification. this assumes
                     // that `notification` is the actual notification object and not, for example, the one originally passed to ScheduleLocalNotification.
-                    if (!notificationCanceled)
-                        UIApplication.SharedApplication.CancelLocalNotification(notification);
+                    if (!notificationCanceled) UIApplication.SharedApplication.CancelLocalNotification(notification);
                 }
                 catch (Exception ex)
                 {
-                    SensusException.Report("Failed to cancel notification.", ex, false);
+                    SensusException.Report("Failed to cancel notification.", ex);
                 }
             });
         }

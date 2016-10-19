@@ -17,6 +17,8 @@ using System.Collections.Generic;
 using Foundation;
 using Sensus.Shared.Callbacks;
 using Sensus.Shared.Context;
+using Sensus.Shared.iOS.Notifications;
+using Sensus.Shared.Notifications;
 using UIKit;
 using Xamarin.Forms.Platform.iOS;
 
@@ -31,44 +33,50 @@ namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
             _callbackIdNotification = new Dictionary<string, UILocalNotification>();
         }
 
-        protected override void ScheduleCallbackAsync(string callbackId, int delayMS, bool repeating, int repeatDelayMS, bool repeatLag)
+        protected override void ScheduleCallbackAsync(INotifyMeta meta)
         {
-            // the following lines need to precede the run on main thread to avoid deadlocks -- this is an old comment. not sure if it's still the case.
-            string userNotificationMessage = GetCallbackUserNotificationMessage(callbackId);
-            string notificationId = GetCallbackNotificationId(callbackId);
+            if (meta.CallbackId == null || SensusContext.Current.ActivationId == null) return;
 
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
-                NSDictionary callbackInfo = GetCallbackInfo(callbackId, repeating, repeatDelayMS, repeatLag, notificationId, SensusContext.Current.ActivationId);
-
-                // user info can be null (e.g., if we don't have an activation ID). don't schedule the notification if this happens.
-                if (callbackInfo == null)
-                    return;
-
                 // all properties below were introduced in iOS 8.0. we currently target 8.0 and above, so these should be safe to set.
-                UILocalNotification callbackNotification = new UILocalNotification
+                var callbackNotification = new UILocalNotification
                 {
-                    FireDate = DateTime.UtcNow.AddMilliseconds(delayMS).ToNSDate(),
-                    TimeZone = null,  // null for UTC interpretation of FireDate
-                    AlertBody = userNotificationMessage,
-                    UserInfo = callbackInfo
+                    FireDate  = DateTime.UtcNow.Add(meta.RepeatDelay).ToNSDate(),
+                    TimeZone  = null,  // null for UTC interpretation of FireDate
+                    AlertBody = GetCallbackUserNotificationMessage(meta.CallbackId)
+                };
+
+                new iOSNotifyMeta(callbackNotification)
+                {
+                    CallbackId   = meta.CallbackId,
+                    IsRepeating  = meta.IsRepeating,
+                    RepeatDelay  = meta.RepeatDelay,
+                    LagAllowed   = meta.LagAllowed,
+                    ActivationId = SensusContext.Current.ActivationId
                 };
 
                 // also in 8.0
-                if (userNotificationMessage != null)
+                if (callbackNotification.AlertBody != null)
+                {
                     callbackNotification.SoundName = UILocalNotification.DefaultSoundName;
+                }
 
                 // the following UILocalNotification property was introduced in iOS 8.2:  https://developer.apple.com/reference/uikit/uilocalnotification/1616647-alerttitle
                 if (UIDevice.CurrentDevice.CheckSystemVersion(8, 2))
+                {
                     callbackNotification.AlertTitle = "Sensus";
+                }
 
-                ScheduleCallbackNotification(callbackNotification, callbackId);
+                ScheduleCallbackNotification(callbackNotification, meta.CallbackId);
 
-                SensusServiceHelper.Get().Logger.Log("Callback " + callbackId + " scheduled for " + callbackNotification.FireDate + " (" + (repeating ? "repeating" : "one-time") + "). " + _callbackIdNotification.Count + " total callbacks in scheduler.", LoggingLevel.Normal, GetType());
+                var repeatingMessage = meta.IsRepeating ? "repeating" : "one-time";
+
+                SensusServiceHelper.Get().Logger.Log($"Callback {meta.CallbackId} scheduled for {callbackNotification.FireDate} ({repeatingMessage}). {_callbackIdNotification.Count} total callbacks in scheduler.", LoggingLevel.Normal, GetType());
             });
         }
-
-        public override void RaiseCallbackAsync(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, bool notifyUser, Action<DateTime> scheduleRepeatCallback, Action letDeviceSleepCallback, Action finishedCallback)
+       
+        public override void RaiseCallbackAsync(INotifyMeta meta, bool notifyUser, Action<DateTime> scheduleRepeatCallback, Action letDeviceSleepCallback, Action finishedCallback)
         {
             // remove from platform-specific notification collection before raising the callback. the purpose of the platform-specific notification collection 
             // is to hold the notifications between successive activations of the app. when the app is reactivated, notifications from this collection are 
@@ -77,13 +85,14 @@ namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
             // (which will occur, e.g., when the facebook login manager returns control to the app). this can lead to duplicate notifications for the same callback, 
             // or infinite cycles of app reactivation if the notification raises a callback that causes it to be reissued (e.g., in the case of facebook login).
             UILocalNotification callbackNotification;
+
             lock (_callbackIdNotification)
             {
-                callbackNotification = _callbackIdNotification[callbackId];
-                _callbackIdNotification.Remove(callbackId);
+                callbackNotification = _callbackIdNotification[meta.CallbackId];
+                _callbackIdNotification.Remove(meta.CallbackId);
             }
 
-            base.RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, notifyUser,
+            base.RaiseCallbackAsync(meta, notifyUser,
 
             repeatCallbackTime =>
             {
@@ -93,7 +102,7 @@ namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
                     {
                         callbackNotification.FireDate = repeatCallbackTime.ToUniversalTime().ToNSDate();
 
-                        ScheduleCallbackNotification(callbackNotification, callbackId);
+                        ScheduleCallbackNotification(callbackNotification, meta.CallbackId);
                     });
                 }
             },
@@ -131,25 +140,19 @@ namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
                 {
                     foreach (string callbackId in _callbackIdNotification.Keys)
                     {
-                        UILocalNotification notification = _callbackIdNotification[callbackId];
+                        var notification = _callbackIdNotification[callbackId];
 
                         if (notification.UserInfo != null)
                         {
-                            // get activation ID and check for condition (2) above
-                            string activationId = (notification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ACTIVATION_ID_KEY)) as NSString).ToString();
-                            if (activationId != newActivationId)
-                            {
-                                // reset the UserInfo to include the current activation ID
-                                bool repeating = (notification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber).BoolValue;
-                                int repeatDelayMS = (notification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_DELAY_KEY)) as NSNumber).Int32Value;
-                                bool repeatLag = (notification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_LAG_KEY)) as NSNumber).BoolValue;
-                                string notificationId = (notification.UserInfo.ValueForKey(new NSString(Notifier.NOTIFICATION_ID_KEY)) as NSString)?.ToString();
-                                notification.UserInfo = GetCallbackInfo(callbackId, repeating, repeatDelayMS, repeatLag, notificationId, newActivationId);
+                            var meta = new iOSNotifyMeta(notification.UserInfo);                            
 
-                                // since we set the UILocalNotification's FireDate when it was constructed, if it's currently in the past it will fire immediately 
-                                // when scheduled again with the new activation ID.
-                                if (notification.UserInfo != null)
-                                    UIApplication.SharedApplication.ScheduleLocalNotification(notification);
+                            if (meta.ActivationId != newActivationId)
+                            {
+                                meta.ActivationId = newActivationId;
+
+                                // since we set the UILocalNotification's FireDate when it was constructed, 
+                                // if it's currently in the past it will fire immediately when scheduled again with the new activation ID.
+                                if (notification.UserInfo != null) UIApplication.SharedApplication.ScheduleLocalNotification(notification);
                             }
                         }
                     }
@@ -158,14 +161,14 @@ namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
         }
 
         protected override void UnscheduleCallbackPlatformSpecific(string callbackId)
-        {
+        {            
             lock (_callbackIdNotification)
             {
                 // there are race conditions on this collection, and the key might be removed elsewhere
                 UILocalNotification notification;
                 if (_callbackIdNotification.TryGetValue(callbackId, out notification))
                 {
-                    (SensusContext.Current.Notifier as UILocalNotificationNotifier)?.CancelNotification(notification, SENSUS_CALLBACK_ID_KEY);
+                    (SensusContext.Current.Notifier as UILocalNotificationNotifier)?.CancelNotification(notification);
                     _callbackIdNotification.Remove(callbackId);
                 }
             }

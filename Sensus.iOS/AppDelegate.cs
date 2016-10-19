@@ -33,10 +33,6 @@ using Plugin.Toasts;
 using Facebook.CoreKit;
 using Sensus.Shared.iOS.Exceptions;
 using Syncfusion.SfChart.XForms.iOS.Renderers;
-using Sensus.Shared.iOS;
-using Sensus.Shared.iOS.Callbacks.UILocalNotifications;
-using Sensus.Shared.iOS.Callbacks;
-using Sensus.Shared.Callbacks;
 
 namespace Sensus.iOS
 {
@@ -131,9 +127,13 @@ namespace Sensus.iOS
 
         public override void OnActivated(UIApplication uiApplication)
         {
+            // since all notifications are about to be rescheduled/serviced, clear all current notifications.
+            UIApplication.SharedApplication.CancelAllLocalNotifications();
+            UIApplication.SharedApplication.ApplicationIconBadgeNumber = 0;
+
             iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
 
-            SensusContext.Current.ActivationId = Guid.NewGuid().ToString();
+            serviceHelper.ActivationId = Guid.NewGuid().ToString();
 
             try
             {
@@ -146,7 +146,7 @@ namespace Sensus.iOS
 
             serviceHelper.StartAsync(() =>
             {
-                (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler).UpdateCallbackActivationIdsAsync(SensusContext.Current.ActivationId);
+                serviceHelper.UpdateCallbackNotificationActivationIdsAsync();
 
 #if UNIT_TESTING
                     // load and run the unit testing protocol
@@ -171,19 +171,32 @@ namespace Sensus.iOS
 
         public override void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)
         {
-            // UILocalNotifications were obsoleted in iOS 10.0, and we should not be receiving them. furthermore, we won't have
-            // any idea how to service them on iOS 10.0 and above. so just report the problem to Insights and bail.
-            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
-                SensusException.Report("Received UILocalNotification in iOS 10 or later.");
-            else
+            if (notification.UserInfo != null)
             {
-                // we're in iOS < 10.0, which means we should have a notifier and scheduler to handle the notification.
+                iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
 
-                // cancel notification (removing it from the tray), since it has served its purpose
-                (SensusContext.Current.Notifier as IUILocalNotificationNotifier)?.CancelNotification(notification, CallbackScheduler.SENSUS_CALLBACK_ID_KEY);
+                // check whether this is a callback notification and service it if it is
+                NSNumber isCallbackValue = notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_KEY)) as NSNumber;
+                if (isCallbackValue?.BoolValue ?? false)
+                    serviceHelper.ServiceCallbackNotificationAsync(notification);
 
-                // service the callback
-                (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler)?.ServiceCallbackAsync(notification.UserInfo);
+                // check whether the user opened a pending-survey notification (indicated by an application state that is not active). we'll
+                // also get notifications when the app is active, due to how we manage pending-survey notifications.
+                if (application.ApplicationState != UIApplicationState.Active)
+                {
+                    NSString notificationId = notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.NOTIFICATION_ID_KEY)) as NSString;
+                    if (notificationId != null && notificationId.ToString() == SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID)
+                    {
+                        // display the pending scripts page if it is not already on the top of the navigation stack
+                        SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                        {
+                            IReadOnlyList<Page> navigationStack = Xamarin.Forms.Application.Current.MainPage.Navigation.NavigationStack;
+                            Page topPage = navigationStack.Count == 0 ? null : navigationStack.Last();
+                            if (!(topPage is PendingScriptsPage))
+                                await Xamarin.Forms.Application.Current.MainPage.Navigation.PushAsync(new PendingScriptsPage());
+                        });
+                    }
+                }
             }
         }
 
@@ -193,6 +206,9 @@ namespace Sensus.iOS
         public override void DidEnterBackground(UIApplication uiApplication)
         {
             iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
+
+            // app is no longer active, so reset the activation ID
+            serviceHelper.ActivationId = null;
 
             serviceHelper.IssuePendingSurveysNotificationAsync(true, true);
 
