@@ -27,9 +27,7 @@ using Xamarin.Forms;
 namespace Sensus.Shared.iOS.Callbacks
 {
     public abstract class iOSCallbackScheduler : CallbackScheduler, IiOSCallbackScheduler
-    {
-        public const string SENSUS_CALLBACK_ACTIVATION_ID_KEY = "SENSUS-CALLBACK-ACTIVATION-ID";
-
+    {        
         protected override void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag)
         {
             ScheduleCallbackAsync(new iOSNotifyMeta { CallbackId = callbackId, RepeatDelay = TimeSpan.FromMilliseconds(initialDelayMS), IsRepeating = true, LagAllowed = repeatLag });

@@ -75,7 +75,7 @@ namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
                 SensusServiceHelper.Get().Logger.Log($"Callback {meta.CallbackId} scheduled for {callbackNotification.FireDate} ({repeatingMessage}). {_callbackIdNotification.Count} total callbacks in scheduler.", LoggingLevel.Normal, GetType());
             });
         }
-
+       
         public override void RaiseCallbackAsync(INotifyMeta meta, bool notifyUser, Action<DateTime> scheduleRepeatCallback, Action letDeviceSleepCallback, Action finishedCallback)
         {
             // remove from platform-specific notification collection before raising the callback. the purpose of the platform-specific notification collection 
@@ -168,7 +168,7 @@ namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
                 UILocalNotification notification;
                 if (_callbackIdNotification.TryGetValue(callbackId, out notification))
                 {
-                    (SensusContext.Current.Notifier as UILocalNotificationNotifier)?.CancelNotification(notification, SENSUS_CALLBACK_ID_KEY);
+                    (SensusContext.Current.Notifier as UILocalNotificationNotifier)?.CancelNotification(notification);
                     _callbackIdNotification.Remove(callbackId);
                 }
             }
