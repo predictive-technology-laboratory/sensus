@@ -12,15 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Sensus.Shared.Callbacks;
-using Sensus.Shared.iOS.Notifications;
-
-namespace Sensus.Shared.iOS.Callbacks
+namespace Sensus.Shared.Callbacks
 {
-    public interface IiOSCallbackScheduler : ICallbackScheduler
+    public abstract class Notifier : INotifier
     {
-        void UpdateCallbackActivationIdsAsync(string newActivationId);
+        public const string NOTIFICATION_ID_KEY = "ID";
 
-        void ServiceCallbackAsync(iOSNotifyMeta meta);
+        public abstract void IssueNotificationAsync(string message, string id, bool playSound, bool vibrate);
     }
 }

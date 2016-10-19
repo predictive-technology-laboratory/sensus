@@ -13,13 +13,15 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using Foundation;
-using Sensus.Shared.Callbacks;
+using System.Collections.Generic;
+
 using Sensus.Shared.Context;
+using Sensus.Shared.Callbacks;
 using Sensus.Shared.Exceptions;
+
 using UIKit;
+using Foundation;
 using Xamarin.Forms.Platform.iOS;
 
 namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
@@ -127,7 +129,7 @@ namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
                 }
                 catch (Exception ex)
                 {
-                    SensusException.Report("Failed to cancel notification.", ex, false);
+                    SensusException.Report("Failed to cancel notification.", ex);
                 }
             });
         }

@@ -13,27 +13,21 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Concurrent;
+
 using Sensus.Shared.Context;
 using Sensus.Shared.Exceptions;
 using Sensus.Shared.Notifications;
-using Xamarin;
 
 namespace Sensus.Shared.Callbacks
 {
     public abstract class CallbackScheduler : ICallbackScheduler
-    {
-        public const string SENSUS_CALLBACK_KEY = "SENSUS-CALLBACK";
-        public const string SENSUS_CALLBACK_ID_KEY = "SENSUS-CALLBACK-ID";
-        public const string SENSUS_CALLBACK_REPEATING_KEY = "SENSUS-CALLBACK-REPEATING";
-        public const string SENSUS_CALLBACK_REPEAT_DELAY_KEY = "SENSUS-CALLBACK-REPEAT-DELAY";
-        public const string SENSUS_CALLBACK_REPEAT_LAG_KEY = "SENSUS-CALLBACK-REPEAT-LAG";
-
+    {        
         private ConcurrentDictionary<string, ScheduledCallback> _idCallback;
 
-        public CallbackScheduler()
+        protected CallbackScheduler()
         {
             _idCallback = new ConcurrentDictionary<string, ScheduledCallback>();
         }

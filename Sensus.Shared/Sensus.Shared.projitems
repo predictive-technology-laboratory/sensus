@@ -38,6 +38,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\INotify.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\INotifyMeta.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\NotificationType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\Notifier.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\ScheduledCallback.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\SmsDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\TelephonyDatum.cs" />
