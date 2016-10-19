@@ -80,80 +80,12 @@ namespace Sensus.Android
                 // sensus receives a signal on device boot and for any callback alarms that are 
                 // requested. furthermore, all calls here should be nonblocking / async so we don't 
                 // tie up the UI thread.
-                serviceHelper.StartAsync(() =>
-                {
-                    if (intent != null)
-                    {
-                        // is this a callback intent?
-                        if (intent.GetBooleanExtra(SensusServiceHelper.SENSUS_CALLBACK_KEY, false))
-                        {
-                            string callbackId = intent.GetStringExtra(SensusServiceHelper.SENSUS_CALLBACK_ID_KEY);
+                throw new NotImplementedException();
+                //serviceHelper.StartAsync(() =>
+                //{
 
-                            // if the user removes the main activity from the switcher, the service's process will be killed and restarted without notice, and 
-                            // we'll have no opportunity to unschedule repeating callbacks. when the service is restarted we'll reinitialize the service
-                            // helper, restart the repeating callbacks, and we'll then have duplicate repeating callbacks. handle the invalid callbacks below.
-                            // if the callback is scheduled, it's fine. if it's not, then unschedule it.
-                            if (serviceHelper.CallbackIsScheduled(callbackId))
-                            {
-                                bool repeating = intent.GetBooleanExtra(SensusServiceHelper.SENSUS_CALLBACK_REPEATING_KEY, false);
-                                int repeatDelayMS = intent.GetIntExtra(SensusServiceHelper.SENSUS_CALLBACK_REPEAT_DELAY_KEY, -1);
-                                bool repeatLag = intent.GetBooleanExtra(SensusServiceHelper.SENSUS_CALLBACK_REPEAT_LAG_KEY, false);
-                                bool wakeLockReleased = false;
+                //});
 
-                                // raise callback and notify the user if there is a message. we wouldn't have presented the user with the message yet.
-                                serviceHelper.RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, true,
-
-                                    // schedule a new callback at the given time.
-                                    repeatCallbackTime =>
-                                    {
-                                        serviceHelper.ScheduleCallbackAlarm(serviceHelper.CreateCallbackPendingIntent(intent), callbackId, repeatCallbackTime);
-                                    },
-
-                                    // if the callback indicates that it's okay for the device to sleep, release the wake lock now.
-                                    () =>
-                                    {
-                                        wakeLockReleased = true;
-                                        serviceHelper.LetDeviceSleep();
-                                        serviceHelper.Logger.Log("Wake lock released preemptively for scheduled callback action.", LoggingLevel.Normal, GetType());
-                                    },
-
-                                    // release wake lock now if we didn't while the callback action was executing.
-                                    () =>
-                                    {
-                                        if (!wakeLockReleased)
-                                        {
-                                            serviceHelper.LetDeviceSleep();
-                                            serviceHelper.Logger.Log("Wake lock released after scheduled callback action completed.", LoggingLevel.Normal, GetType());
-                                        }
-                                    });
-                            }
-                            else
-                            {
-                                serviceHelper.UnscheduleCallback(callbackId);
-                                serviceHelper.LetDeviceSleep();
-                            }
-                        }
-                        else if (intent.GetStringExtra(SensusServiceHelper.NOTIFICATION_ID_KEY) == SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID)
-                        {
-                            serviceHelper.BringToForeground();
-
-                            // display the pending scripts page if it is not already on the top of the navigation stack
-                            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
-                            {
-                                IReadOnlyList<Page> navigationStack = Xamarin.Forms.Application.Current.MainPage.Navigation.NavigationStack;
-                                Page topPage = navigationStack.Count == 0 ? null : navigationStack.Last();
-                                if (!(topPage is PendingScriptsPage))
-                                    await Xamarin.Forms.Application.Current.MainPage.Navigation.PushAsync(new PendingScriptsPage());
-
-                                serviceHelper.LetDeviceSleep();
-                            });
-                        }
-                        else
-                            serviceHelper.LetDeviceSleep();
-                    }
-                    else
-                        serviceHelper.LetDeviceSleep();
-                });
             }
 
             return StartCommandResult.Sticky;

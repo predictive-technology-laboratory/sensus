@@ -13,5 +13,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Context\AndroidSensusContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IAndroidSensusServiceHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\AndroidInsightsInitializer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\AndroidNotify.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\AndroidNotifyMeta.cs" />
   </ItemGroup>
 </Project>

@@ -23,6 +23,8 @@ using System.Collections.Generic;
 using Microsoft.Band.Portable.Sensors;
 using Syncfusion.SfChart.XForms;
 using Sensus.Shared.UI.UiProperties;
+using Sensus.Shared.Context;
+using Sensus.Shared.Callbacks;
 
 namespace Sensus.Shared.Probes.User.MicrosoftBand
 {
@@ -263,7 +265,7 @@ namespace Sensus.Shared.Probes.User.MicrosoftBand
                 if (HEALTH_TEST_CALLBACK_ID != null)
                 {
                     SensusServiceHelper.Get().Logger.Log("Canceling health test.", LoggingLevel.Verbose, typeof(MicrosoftBandProbeBase));
-                    SensusServiceHelper.Get().UnscheduleCallback(HEALTH_TEST_CALLBACK_ID);
+                    SensusContext.Current.CallbackScheduler.UnscheduleCallback(HEALTH_TEST_CALLBACK_ID);
                     HEALTH_TEST_CALLBACK_ID = null;
                 }
             }
@@ -331,7 +333,7 @@ namespace Sensus.Shared.Probes.User.MicrosoftBand
                 if (HEALTH_TEST_CALLBACK_ID == null)
                 {
                     ScheduledCallback callback = new ScheduledCallback("Microsoft Band Health Test", TestBandClientAsync, TimeSpan.FromMinutes(5));
-                    HEALTH_TEST_CALLBACK_ID = SensusServiceHelper.Get().ScheduleRepeatingCallback(callback, HEALTH_TEST_DELAY_MS, HEALTH_TEST_DELAY_MS, false);
+                    HEALTH_TEST_CALLBACK_ID = SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(callback, HEALTH_TEST_DELAY_MS, HEALTH_TEST_DELAY_MS, false);
                 }
             }
 

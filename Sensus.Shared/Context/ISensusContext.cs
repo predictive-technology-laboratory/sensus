@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Sensus.Shared.Callbacks;
 using Sensus.Shared.Concurrent;
 using Sensus.Shared.Encryption;
 
@@ -25,5 +26,13 @@ namespace Sensus.Shared.Context
         Platform Platform { get; }
         IConcurrent MainThreadSynchronizer { get; }
         IEncryption Encryption { get; }
+        INotifier Notifier { get; }
+        ICallbackScheduler CallbackScheduler { get; }
+
+        /// <summary>
+        /// Gets or sets the activation identifier, which changes every time the user-facing app is brought to the foreground.
+        /// </summary>
+        /// <value>The activation identifier.</value>
+        string ActivationId { get; set; }
     }
 }

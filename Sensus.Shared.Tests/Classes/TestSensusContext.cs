@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Sensus.Shared.Callbacks;
 using Sensus.Shared.Concurrent;
 using Sensus.Shared.Context;
 using Sensus.Shared.Encryption;
@@ -27,9 +28,12 @@ namespace Sensus.Shared.Test.Classes
             Encryption             = new SimpleEncryption("");
         }
 
-        public Platform Platform { get; }
+        public Platform Platform { get; set; }
         public IConcurrent MainThreadSynchronizer { get; set; }
         public IEncryption Encryption { get; set; }
+        public ICallbackScheduler CallbackScheduler { get; set; }
+        public INotifier Notifier { get; set; }
+        public string ActivationId { get; set; }
 
     }
 }
