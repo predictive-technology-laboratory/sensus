@@ -34,9 +34,9 @@ namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
             if (notificationInfo != null)
                 notificationContent.UserInfo = notificationInfo;
 
-            notificationContent.Title = title ?? "";
+            notificationContent.Title = title ?? "Empty";
 
-            notificationContent.Body = message ?? "";
+            notificationContent.Body = message ?? "Empty";
 
             if (!string.IsNullOrWhiteSpace(notificationContent.Body) && playSound)
                 notificationContent.Sound = UNNotificationSound.Default;
