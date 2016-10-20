@@ -17,7 +17,6 @@ using System.Collections.Generic;
 using Foundation;
 using Sensus.Shared.Callbacks;
 using Sensus.Shared.Context;
-using Sensus.Shared.Exceptions;
 using UserNotifications;
 
 namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
@@ -42,72 +41,16 @@ namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
             if (callbackInfo == null)
                 return;
 
-            UNMutableNotificationContent callbackNotificationContent = new UNMutableNotificationContent
-            {
-                Title = "Sensus",
-                UserInfo = callbackInfo
-            };
-
-            if (userNotificationMessage != null)
-            {
-                callbackNotificationContent.Body = userNotificationMessage;
-                callbackNotificationContent.Sound = UNNotificationSound.Default;
-            }
-
-            UNTimeIntervalNotificationTrigger callbackNotificationTrigger = UNTimeIntervalNotificationTrigger.CreateTrigger(delayMS / 1000d, false);
-            UNNotificationRequest callbackNotificationRequest = UNNotificationRequest.FromIdentifier(callbackId, callbackNotificationContent, callbackNotificationTrigger);
-            AddCallbackNotificationRequest(callbackNotificationRequest, repeating, true);
-        }
-
-        private void AddCallbackNotificationRequest(UNNotificationRequest request, bool repeating, bool addToCollectionIfSuccessful)
-        {
-            UNUserNotificationCenter.Current.AddNotificationRequest(request, error =>
+            (SensusContext.Current.Notifier as IUNUserNotificationNotifier).IssueNotificationAsync(userNotificationMessage, callbackId, true, null, delayMS, callbackInfo, (request, error) =>
             {
                 if (error == null)
                 {
-                    if (addToCollectionIfSuccessful)
+                    lock (_callbackIdRequest)
                     {
-                        lock (_callbackIdRequest)
-                        {
-                            _callbackIdRequest.Add(request.Identifier, request);
-                            SensusServiceHelper.Get().Logger.Log("Callback " + request.Identifier + " scheduled for " + (request.Trigger as UNTimeIntervalNotificationTrigger).NextTriggerDate + " (" + (repeating ? "repeating" : "one-time") + "). " + _callbackIdRequest.Count + " total callbacks in scheduler.", LoggingLevel.Normal, GetType());
-                        }
+                        _callbackIdRequest.Add(callbackId, request);
                     }
                 }
-                else
-                {
-                    SensusServiceHelper.Get().Logger.Log("Failed to add notification request:  " + error.Description, LoggingLevel.Normal, GetType());
-                    SensusException.Report("Failed to add notification request:  " + error.Description);
-                }
             });
-        }
-
-        public override void RaiseCallbackAsync(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, bool notifyUser, Action<DateTime> scheduleRepeatCallback, Action letDeviceSleepCallback, Action finishedCallback)
-        {
-            // see corresponding comment in UILocalNotificationCallbackScheduler
-            UNNotificationRequest request;
-            lock (_callbackIdRequest)
-            {
-                request = _callbackIdRequest[callbackId];
-                _callbackIdRequest.Remove(callbackId);
-            }
-
-            base.RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, notifyUser,
-
-            repeatCallbackTime =>
-            {
-                lock (_callbackIdRequest)
-                {
-                    SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
-                    {
-                        UNTimeIntervalNotificationTrigger callbackNotificationTrigger = UNTimeIntervalNotificationTrigger.CreateTrigger((DateTime.Now - repeatCallbackTime).TotalDays, false);
-                        UNNotificationRequest callbackNotificationRequest = UNNotificationRequest.FromIdentifier(callbackId, request.Content, callbackNotificationTrigger);
-                        AddCallbackNotificationRequest(callbackNotificationRequest, repeating, true);
-                    });
-                }
-            },
-
-            letDeviceSleepCallback, finishedCallback);
         }
 
         public override void UpdateCallbackActivationIdsAsync(string newActivationId)
@@ -118,7 +61,7 @@ namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
                 UNUserNotificationCenter.Current.RemoveAllDeliveredNotifications();
                 UNUserNotificationCenter.Current.RemoveAllPendingNotificationRequests();
 
-                // see corresponding comment in UILocalNotificationCallbackScheduler
+                // see corresponding comments in UILocalNotificationCallbackScheduler
                 lock (_callbackIdRequest)
                 {
                     foreach (string callbackId in _callbackIdRequest.Keys)
@@ -140,12 +83,51 @@ namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
                                 // since we set the UILocalNotification's FireDate when it was constructed, if it's currently in the past it will fire immediately 
                                 // when scheduled again with the new activation ID.
                                 if (request.Content.UserInfo != null)
-                                    AddCallbackNotificationRequest(request, repeating, false);
+                                    (SensusContext.Current.Notifier as IUNUserNotificationNotifier).IssueNotificationAsync(request);
                             }
                         }
                     }
                 }
             });
+        }
+
+        public override void RaiseCallbackAsync(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, bool notifyUser, Action<DateTime> scheduleRepeatCallback, Action letDeviceSleepCallback, Action finishedCallback)
+        {
+            // see corresponding comments in UILocalNotificationCallbackScheduler
+
+            UNNotificationRequest request;
+            lock (_callbackIdRequest)
+            {
+                request = _callbackIdRequest[callbackId];
+                _callbackIdRequest.Remove(callbackId);
+            }
+
+            base.RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, notifyUser,
+
+            repeatCallbackTime =>
+            {
+                lock (_callbackIdRequest)
+                {
+                    SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+                    {
+                        UNTimeIntervalNotificationTrigger callbackNotificationTrigger = UNTimeIntervalNotificationTrigger.CreateTrigger((DateTime.Now - repeatCallbackTime).TotalDays, false);
+                        UNNotificationRequest callbackNotificationRequest = UNNotificationRequest.FromIdentifier(request.Identifier, request.Content, callbackNotificationTrigger);
+
+                        (SensusContext.Current.Notifier as IUNUserNotificationNotifier).IssueNotificationAsync(callbackNotificationRequest, error =>
+                        {
+                            if (error == null)
+                            {
+                                lock (_callbackIdRequest)
+                                {
+                                    _callbackIdRequest.Add(callbackNotificationRequest.Identifier, callbackNotificationRequest);
+                                }
+                            }
+                        });
+                    });
+                }
+            },
+
+            letDeviceSleepCallback, finishedCallback);
         }
 
         protected override void UnscheduleCallbackPlatformSpecific(string callbackId)
@@ -156,7 +138,7 @@ namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
                 UNNotificationRequest request;
                 if (_callbackIdRequest.TryGetValue(callbackId, out request))
                 {
-                    (SensusContext.Current.Notifier as IUNUserNotificationNotifier)?.CancelNotification(callbackId);
+                    (SensusContext.Current.Notifier as IUNUserNotificationNotifier)?.CancelNotification(request);
                     _callbackIdRequest.Remove(callbackId);
                 }
             }

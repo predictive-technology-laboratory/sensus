@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
+using System.Threading.Tasks;
 using Sensus.Shared.Context;
 using Sensus.Shared.Exceptions;
 using Xamarin;
@@ -103,7 +104,7 @@ namespace Sensus.Shared.Callbacks
         {
             DateTime callbackStartTime = DateTime.Now;
 
-            new Thread(async () =>
+            Task.Run(async () =>
             {
                 try
                 {
@@ -232,7 +233,7 @@ namespace Sensus.Shared.Callbacks
                         finishedCallback();
                 }
 
-            }).Start();
+            });
         }
 
         /// <summary>

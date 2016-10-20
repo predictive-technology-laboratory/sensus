@@ -12,13 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using Foundation;
 using Sensus.Shared.Callbacks;
 using UserNotifications;
 
 namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
 {
+    /// <summary>
+    /// Adds methods specific to the UNNotificationCenter architecture.
+    /// </summary>
     public interface IUNUserNotificationNotifier : INotifier
     {
-        void CancelNotification(string notificationId);
+        void CancelNotification(string id);
+
+        void CancelNotification(UNNotificationRequest request);
+
+        void IssueNotificationAsync(string message, string id, bool playSound, string title, int delayMS, NSDictionary notificationInfo, Action<UNNotificationRequest, NSError> callback = null);
+
+        void IssueNotificationAsync(UNNotificationRequest request, Action<NSError> callback = null);
     }
 }

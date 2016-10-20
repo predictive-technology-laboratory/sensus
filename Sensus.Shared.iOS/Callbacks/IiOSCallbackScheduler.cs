@@ -14,10 +14,12 @@
 
 using Foundation;
 using Sensus.Shared.Callbacks;
-using UIKit;
 
 namespace Sensus.Shared.iOS.Callbacks
 {
+    /// <summary>
+    /// Adds iOS-specific methods to the callback scheduler.
+    /// </summary>
     public interface IiOSCallbackScheduler : ICallbackScheduler
     {
         void UpdateCallbackActivationIdsAsync(string newActivationId);

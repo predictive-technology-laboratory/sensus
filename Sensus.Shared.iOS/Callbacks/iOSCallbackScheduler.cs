@@ -26,7 +26,7 @@ namespace Sensus.Shared.iOS.Callbacks
 {
     public abstract class iOSCallbackScheduler : CallbackScheduler, IiOSCallbackScheduler
     {
-        public const string SENSUS_CALLBACK_ACTIVATION_ID_KEY = "SENSUS-CALLBACK-ACTIVATION-ID";
+        public const string SENSUS_CALLBACK_ACTIVATION_ID_KEY = "SENSUS-CALLBACK-ACTIVATION-ID";  // TODO:  Should we move this up to Shared?
 
         protected override void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag)
         {
@@ -121,10 +121,9 @@ namespace Sensus.Shared.iOS.Callbacks
                     // display the pending scripts page if it is not already on the top of the navigation stack
                     SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                     {
-                        IReadOnlyList<Page> navigationStack = Xamarin.Forms.Application.Current.MainPage.Navigation.NavigationStack;
-                        Page topPage = navigationStack.Count == 0 ? null : navigationStack.Last();
+                        Page topPage = Application.Current.MainPage.Navigation.NavigationStack.LastOrDefault();
                         if (!(topPage is PendingScriptsPage))
-                            await Xamarin.Forms.Application.Current.MainPage.Navigation.PushAsync(new PendingScriptsPage());
+                            await Application.Current.MainPage.Navigation.PushAsync(new PendingScriptsPage());
                     });
                 }
             }

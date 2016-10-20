@@ -21,6 +21,7 @@ using Sensus.Shared.iOS.Callbacks.UNUserNotifications;
 using Sensus.Shared.iOS.Callbacks.UILocalNotifications;
 using Sensus.Shared.Callbacks;
 using UserNotifications;
+using Foundation;
 
 namespace Sensus.Shared.iOS.Context
 {
@@ -43,6 +44,7 @@ namespace Sensus.Shared.iOS.Context
             // iOS introduced a new notification center in 10.0 based on UNUserNotifications
             if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
             {
+                UNUserNotificationCenter.Current.RequestAuthorizationAsync(UNAuthorizationOptions.Alert | UNAuthorizationOptions.Sound);
                 UNUserNotificationCenter.Current.Delegate = new UNUserNotificationDelegate();
                 CallbackScheduler = new UNUserNotificationCallbackScheduler();
                 Notifier = new UNUserNotificationNotifier();
