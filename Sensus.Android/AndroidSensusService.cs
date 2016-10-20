@@ -12,19 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Android.OS;
 using Android.App;
 using Android.Content;
-using Android.OS;
+using Android.Provider;
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using Android.Provider;
-using Xamarin.Forms;
 using Sensus.Shared;
 using Sensus.Shared.UI;
 using Sensus.Shared.Context;
+using Sensus.Shared.Callbacks;
 using Sensus.Shared.Exceptions;
 using Sensus.Shared.Android.Context;
+using Sensus.Shared.Android.Callbacks;
 using Sensus.Shared.Android.Exceptions;
 
 namespace Sensus.Android
@@ -46,7 +47,7 @@ namespace Sensus.Android
 
             InsightsInitialization.Initialize(new AndroidInsightsInitializer(Settings.Secure.GetString(ContentResolver, Settings.Secure.AndroidId)), SensusServiceHelper.XAMARIN_INSIGHTS_APP_KEY);
 
-            SensusContext.Current = new AndroidSensusContext(SensusServiceHelper.ENCRYPTION_KEY);
+            SensusContext.Current = new AndroidSensusContext(this, SensusServiceHelper.ENCRYPTION_KEY, Resource.Drawable.ic_launcher);
             SensusServiceHelper.Initialize(() => new AndroidSensusServiceHelper());
 
             AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
@@ -61,100 +62,71 @@ namespace Sensus.Android
 
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
-            AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
+            var serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
+            var scheduleHelper = (AndroidCallbackScheduler)SensusContext.Current.CallbackScheduler;
 
             // there might be a race condition between the calling of this method and the stopping/disposal of the service helper.
             // if the service helper is stopped/disposed before the service is stopped but after this method is called, the service
             // helper will be null.
-            if (serviceHelper != null)
-            {
-                serviceHelper.Logger.Log("Sensus service received start command (startId=" + startId + ", flags=" + flags + ").", LoggingLevel.Normal, GetType());
+            if (serviceHelper == null) return StartCommandResult.Sticky;
+            
+            serviceHelper.Logger.Log("Sensus service received start command (startId=" + startId + ", flags=" + flags + ").", LoggingLevel.Normal, GetType());
 
-                // acquire wake lock before this method returns to ensure that the device does not sleep prematurely, interrupting the execution of a callback.
-                serviceHelper.KeepDeviceAwake();
+            // acquire wake lock before this method returns to ensure that the device does not sleep prematurely, interrupting the execution of a callback.
+            serviceHelper.KeepDeviceAwake();
 
-                // the service can be stopped without destroying the service object. in such cases, 
-                // subsequent calls to start the service will not call OnCreate. therefore, it's 
-                // important that any code called here is okay to call multiple times, even if the 
-                // service is running. calling this when the service is running can happen because 
-                // sensus receives a signal on device boot and for any callback alarms that are 
-                // requested. furthermore, all calls here should be nonblocking / async so we don't 
-                // tie up the UI thread.
-                serviceHelper.StartAsync(() =>
+            // the service can be stopped without destroying the service object. in such cases, 
+            // subsequent calls to start the service will not call OnCreate. therefore, it's 
+            // important that any code called here is okay to call multiple times, even if the 
+            // service is running. calling this when the service is running can happen because 
+            // sensus receives a signal on device boot and for any callback alarms that are 
+            // requested. furthermore, all calls here should be nonblocking / async so we don't 
+            // tie up the UI thread.
+            serviceHelper.StartAsync(() =>
+            {                    
+                var meta = new AndroidCallbackData(intent);
+
+                if (meta == null)
                 {
-                    if (intent != null)
+                    serviceHelper.LetDeviceSleep();
+                    return;
+                }
+
+                if (meta.Type == NotificationType.Undefined)
+                {
+                    serviceHelper.LetDeviceSleep();
+                    return;
+                }
+
+                if (meta.Type == NotificationType.Callback && !scheduleHelper.CallbackIsScheduled(meta.CallbackId))
+                {
+                    scheduleHelper.UnscheduleCallback(meta.CallbackId);
+                    serviceHelper.LetDeviceSleep();
+                }
+
+                if (meta.Type == NotificationType.Callback && scheduleHelper.CallbackIsScheduled(meta.CallbackId))
+                {
+                }
+
+                if (meta.Type == NotificationType.Script)
+                {
+                    serviceHelper.BringToForeground();
+
+                    // display the pending scripts page if it is not already on the top of the navigation stack
+                    SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                     {
-                        // is this a callback intent?
-                        if (intent.GetBooleanExtra(SensusServiceHelper.SENSUS_CALLBACK_KEY, false))
+                        var topPage = Xamarin.Forms.Application.Current.MainPage.Navigation.NavigationStack.LastOrDefault();
+
+                        if (!(topPage is PendingScriptsPage))
                         {
-                            string callbackId = intent.GetStringExtra(SensusServiceHelper.SENSUS_CALLBACK_ID_KEY);
-
-                            // if the user removes the main activity from the switcher, the service's process will be killed and restarted without notice, and 
-                            // we'll have no opportunity to unschedule repeating callbacks. when the service is restarted we'll reinitialize the service
-                            // helper, restart the repeating callbacks, and we'll then have duplicate repeating callbacks. handle the invalid callbacks below.
-                            // if the callback is scheduled, it's fine. if it's not, then unschedule it.
-                            if (serviceHelper.CallbackIsScheduled(callbackId))
-                            {
-                                bool repeating = intent.GetBooleanExtra(SensusServiceHelper.SENSUS_CALLBACK_REPEATING_KEY, false);
-                                int repeatDelayMS = intent.GetIntExtra(SensusServiceHelper.SENSUS_CALLBACK_REPEAT_DELAY_KEY, -1);
-                                bool repeatLag = intent.GetBooleanExtra(SensusServiceHelper.SENSUS_CALLBACK_REPEAT_LAG_KEY, false);
-                                bool wakeLockReleased = false;
-
-                                // raise callback and notify the user if there is a message. we wouldn't have presented the user with the message yet.
-                                serviceHelper.RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, true,
-
-                                    // schedule a new callback at the given time.
-                                    repeatCallbackTime =>
-                                    {
-                                        serviceHelper.ScheduleCallbackAlarm(serviceHelper.CreateCallbackPendingIntent(intent), callbackId, repeatCallbackTime);
-                                    },
-
-                                    // if the callback indicates that it's okay for the device to sleep, release the wake lock now.
-                                    () =>
-                                    {
-                                        wakeLockReleased = true;
-                                        serviceHelper.LetDeviceSleep();
-                                        serviceHelper.Logger.Log("Wake lock released preemptively for scheduled callback action.", LoggingLevel.Normal, GetType());
-                                    },
-
-                                    // release wake lock now if we didn't while the callback action was executing.
-                                    () =>
-                                    {
-                                        if (!wakeLockReleased)
-                                        {
-                                            serviceHelper.LetDeviceSleep();
-                                            serviceHelper.Logger.Log("Wake lock released after scheduled callback action completed.", LoggingLevel.Normal, GetType());
-                                        }
-                                    });
-                            }
-                            else
-                            {
-                                serviceHelper.UnscheduleCallback(callbackId);
-                                serviceHelper.LetDeviceSleep();
-                            }
+                            await Xamarin.Forms.Application.Current.MainPage.Navigation.PushAsync(new PendingScriptsPage());
                         }
-                        else if (intent.GetStringExtra(SensusServiceHelper.NOTIFICATION_ID_KEY) == SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID)
-                        {
-                            serviceHelper.BringToForeground();
 
-                            // display the pending scripts page if it is not already on the top of the navigation stack
-                            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
-                            {
-                                IReadOnlyList<Page> navigationStack = Xamarin.Forms.Application.Current.MainPage.Navigation.NavigationStack;
-                                Page topPage = navigationStack.Count == 0 ? null : navigationStack.Last();
-                                if (!(topPage is PendingScriptsPage))
-                                    await Xamarin.Forms.Application.Current.MainPage.Navigation.PushAsync(new PendingScriptsPage());
-
-                                serviceHelper.LetDeviceSleep();
-                            });
-                        }
-                        else
-                            serviceHelper.LetDeviceSleep();
-                    }
-                    else
                         serviceHelper.LetDeviceSleep();
-                });
-            }
+                    });
+                }
+            });
+            
 
             return StartCommandResult.Sticky;
         }

@@ -13,12 +13,12 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using Foundation;
-using Sensus.Shared.Callbacks;
-using Sensus.Shared.Context;
+
 using Sensus.Shared.UI;
+using Sensus.Shared.Context;
+using Sensus.Shared.Callbacks;
+
 using UIKit;
 using Xamarin.Forms;
 
@@ -26,107 +26,63 @@ namespace Sensus.Shared.iOS.Callbacks
 {
     public abstract class iOSCallbackScheduler : CallbackScheduler, IiOSCallbackScheduler
     {
-        public const string SENSUS_CALLBACK_ACTIVATION_ID_KEY = "SENSUS-CALLBACK-ACTIVATION-ID";
-
         protected override void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag)
         {
-            ScheduleCallbackAsync(callbackId, initialDelayMS, true, repeatDelayMS, repeatLag);
+            ScheduleCallbackAsync(new iOSCallbackData { CallbackId = callbackId, RepeatDelay = TimeSpan.FromMilliseconds(initialDelayMS), IsRepeating = true, LagAllowed = repeatLag });
         }
 
         protected override void ScheduleOneTimeCallback(string callbackId, int delayMS)
         {
-            ScheduleCallbackAsync(callbackId, delayMS, false, -1, false);
+            ScheduleCallbackAsync(new iOSCallbackData { CallbackId = callbackId, RepeatDelay = TimeSpan.FromMilliseconds(delayMS), IsRepeating = false, LagAllowed = false });
         }
 
-        protected abstract void ScheduleCallbackAsync(string callbackId, int delayMS, bool repeating, int repeatDelayMS, bool repeatLag);
+        protected abstract void ScheduleCallbackAsync(ICallbackData meta);
 
         public abstract void UpdateCallbackActivationIdsAsync(string newActivationId);
 
-        public NSDictionary GetCallbackInfo(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, string notificationId, string activationId)
+        public void ServiceCallbackAsync(iOSCallbackData meta)
         {
-            // we've seen cases where the UserInfo dictionary cannot be serialized because one of its values is null. if this happens, the 
-            // callback won't be serviced, and things won't return to normal until Sensus is activated by the user and the callbacks are 
-            // refreshed. don't create the UserInfo dictionary if we've got null values.
-            //
-            // see:  https://insights.xamarin.com/app/Sensus-Production/issues/64
-            // 
-            if (callbackId == null || activationId == null)
-                return null;
-
-            List<object> keyValuePairs = new object[]
-            {
-                SENSUS_CALLBACK_ID_KEY, callbackId,
-                SENSUS_CALLBACK_REPEATING_KEY, repeating,
-                SENSUS_CALLBACK_REPEAT_DELAY_KEY, repeatDelayMS,
-                SENSUS_CALLBACK_REPEAT_LAG_KEY, repeatLag,
-                SENSUS_CALLBACK_ACTIVATION_ID_KEY, activationId
-
-            }.ToList();
-
-            // add the notification id if there is one (again, no null values allowed -- see above)
-            if (notificationId != null)
-                keyValuePairs.AddRange(new object[] { Notifier.NOTIFICATION_ID_KEY, notificationId });
-
-            return new NSDictionary(SENSUS_CALLBACK_KEY, true, keyValuePairs.ToArray());
-        }
-
-        public void ServiceCallbackAsync(NSDictionary callbackInfo)
-        {
-            // check whether the passed information describes a callback
-            NSNumber isCallbackValue = callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_KEY)) as NSNumber;
-            if (!(isCallbackValue?.BoolValue ?? false))
-                return;
-
-            string activationId = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ACTIVATION_ID_KEY)) as NSString).ToString();
-            string callbackId = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ID_KEY)) as NSString).ToString();
-            bool repeating = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber).BoolValue;
-            int repeatDelayMS = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_DELAY_KEY)) as NSNumber).Int32Value;
-            bool repeatLag = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_LAG_KEY)) as NSNumber).BoolValue;
-
             // only raise callback if it's from the current activation and if it is still scheduled
-            if (activationId != SensusContext.Current.ActivationId || !CallbackIsScheduled(callbackId))
-                return;
+            if (meta.ActivationId != SensusContext.Current.ActivationId || !CallbackIsScheduled(meta.CallbackId)) return;
 
-            nint callbackTaskId = UIApplication.SharedApplication.BeginBackgroundTask(() =>
+            if (meta.Type == NotificationType.Callback)
             {
-                // if we're out of time running in the background, cancel the callback.
-                CancelRaisedCallback(callbackId);
-            });
+                nint callbackTaskId = UIApplication.SharedApplication.BeginBackgroundTask(() => { CancelRaisedCallback(meta.CallbackId); /* if we're out of time running in the background, cancel the callback */ });
 
-            // raise callback but don't notify user since we would have already done so when the UILocalNotification was delivered to the notification tray.
-            RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, false, 
+                // raise callback but don't notify user since we would have already done so when the UILocalNotification was delivered to the notification tray.
+                RaiseCallbackAsync(meta, false,
 
-            // don't need to specify how repeats will be scheduled. the class that extends this one will take care of it.
-            null,
+                    // don't need to specify how repeats will be scheduled. the class that extends this one will take care of it.
+                    null,
 
-            // nothing to do if the callback thinks we can sleep. ios does not provide 
-            null,
+                    // nothing to do if the callback thinks we can sleep. ios does not provide 
+                    null,
 
-            // we've completed the raising process, so end background task
-            () =>
-            {
-                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
-                {
-                    UIApplication.SharedApplication.EndBackgroundTask(callbackTaskId);
-                });
-            });
+                    // we've completed the raising process, so end background task
+                    () =>
+                    {
+                        SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+                        {
+                            UIApplication.SharedApplication.EndBackgroundTask(callbackTaskId);
+                        });
+                    }
+                );
+            }
 
             // check whether the user opened a pending-survey notification (indicated by an application state that is not active). we'll
             // also get notifications when the app is active, due to how we manage pending-survey notifications.
-            if (UIApplication.SharedApplication.ApplicationState != UIApplicationState.Active)
+            if (meta.Type == NotificationType.Script && UIApplication.SharedApplication.ApplicationState != UIApplicationState.Active)
             {
-                NSString notificationId = callbackInfo.ValueForKey(new NSString(Notifier.NOTIFICATION_ID_KEY)) as NSString;
-                if (notificationId?.ToString() == SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID)
+                // display the pending scripts page if it is not already on the top of the navigation stack
+                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                 {
-                    // display the pending scripts page if it is not already on the top of the navigation stack
-                    SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                    var topPage = Application.Current.MainPage.Navigation.NavigationStack.LastOrDefault();
+
+                    if (!(topPage is PendingScriptsPage))
                     {
-                        IReadOnlyList<Page> navigationStack = Xamarin.Forms.Application.Current.MainPage.Navigation.NavigationStack;
-                        Page topPage = navigationStack.Count == 0 ? null : navigationStack.Last();
-                        if (!(topPage is PendingScriptsPage))
-                            await Xamarin.Forms.Application.Current.MainPage.Navigation.PushAsync(new PendingScriptsPage());
-                    });
-                }
+                        await Application.Current.MainPage.Navigation.PushAsync(new PendingScriptsPage());
+                    }
+                });
             }
         }
     }

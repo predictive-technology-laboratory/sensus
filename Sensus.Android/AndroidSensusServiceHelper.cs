@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -32,6 +33,7 @@ using Sensus.Shared.Probes.Location;
 using Sensus.Shared.Probes;
 using Sensus.Shared.Probes.Movement;
 using System.Linq;
+using System.Threading.Tasks;
 using ZXing.Mobile;
 using Android.Graphics;
 using Android.Media;
@@ -39,6 +41,9 @@ using Android.Bluetooth;
 using Android.Hardware;
 using Sensus.Android.Probes.Context;
 using Sensus.Shared.Android;
+using Sensus.Shared.Callbacks;
+using Sensus.Shared.Context;
+using Sensus.Shared.Exceptions;
 
 namespace Sensus.Android
 {
@@ -55,6 +60,7 @@ namespace Sensus.Android
         private int _wakeLockAcquisitionCount;
         private List<Action<AndroidMainActivity>> _actionsToRunUsingMainActivity;
         private Dictionary<string, PendingIntent> _callbackIdPendingIntent;
+        private ConcurrentDictionary<string, ScheduledCallback> _idCallback;
         private bool _userDeniedBluetoothEnable;
 
         public override string DeviceId
@@ -360,7 +366,7 @@ namespace Sensus.Android
             RunActionUsingMainActivityAsync(mainActivity =>
             {
                 Intent emailIntent = new Intent(Intent.ActionSend);
-                emailIntent.PutExtra(Intent.ExtraEmail, new string[] { toAddress });
+                emailIntent.PutExtra(Intent.ExtraEmail, new [] { toAddress });
                 emailIntent.PutExtra(Intent.ExtraSubject, subject);
                 emailIntent.PutExtra(Intent.ExtraText, message);
                 emailIntent.SetType("text/plain");
@@ -481,47 +487,6 @@ namespace Sensus.Android
         #endregion
 
         #region notifications
-
-        public override void IssueNotificationAsync(string message, string id, bool playSound, bool vibrate)
-        {
-            IssueNotificationAsync("Sensus", message, true, false, id, playSound, vibrate);
-        }
-
-        public void IssueNotificationAsync(string title, string message, bool autoCancel, bool ongoing, string id, bool playSound, bool vibrate)
-        {
-            if (_notificationManager != null)
-            {
-                new Thread(() =>
-                {
-                    if (message == null)
-                        _notificationManager.Cancel(id, 0);
-                    else
-                    {
-                        Intent serviceIntent = new Intent(_service, typeof(AndroidSensusService));
-                        serviceIntent.PutExtra(NOTIFICATION_ID_KEY, id);
-                        PendingIntent pendingIntent = PendingIntent.GetService(_service, 0, serviceIntent, PendingIntentFlags.UpdateCurrent);
-
-                        Notification.Builder builder = new Notification.Builder(_service)
-                            .SetContentTitle(title)
-                            .SetContentText(message)
-                            .SetSmallIcon(Resource.Drawable.ic_launcher)
-                            .SetContentIntent(pendingIntent)
-                            .SetAutoCancel(autoCancel)
-                            .SetOngoing(ongoing);
-
-                        if (playSound)
-                            builder.SetSound(RingtoneManager.GetDefaultUri(RingtoneType.Notification));
-
-                        if (vibrate)
-                            builder.SetVibrate(new long[] { 0, 250, 50, 250 });
-
-                        _notificationManager.Notify(id, 0, builder.Build());
-                    }
-
-                }).Start();
-            }
-        }
-
         protected override void ProtectedFlashNotificationAsync(string message, bool flashLaterIfNotVisible, TimeSpan duration, Action callback)
         {
             new Thread(() =>
@@ -701,88 +666,6 @@ namespace Sensus.Android
             else
                 return isEnabled;
         }
-        #endregion
-
-        #region callback scheduling
-
-        protected override void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag)
-        {
-            DateTime callbackTime = DateTime.Now.AddMilliseconds(initialDelayMS);
-            Logger.Log("Callback " + callbackId + " scheduled for " + callbackTime + " (repeating).", LoggingLevel.Normal, GetType());
-            ScheduleCallbackAlarm(CreateCallbackPendingIntent(callbackId, true, repeatDelayMS, repeatLag), callbackId, callbackTime);
-        }
-
-        protected override void ScheduleOneTimeCallback(string callbackId, int delayMS)
-        {
-            DateTime callbackTime = DateTime.Now.AddMilliseconds(delayMS);
-            Logger.Log("Callback " + callbackId + " scheduled for " + callbackTime + " (one-time).", LoggingLevel.Normal, GetType());
-            ScheduleCallbackAlarm(CreateCallbackPendingIntent(callbackId, false, 0, false), callbackId, callbackTime);
-        }
-
-        private PendingIntent CreateCallbackPendingIntent(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag)
-        {
-            Intent callbackIntent = new Intent(_service, typeof(AndroidSensusService));
-            callbackIntent.PutExtra(SENSUS_CALLBACK_KEY, true);
-            callbackIntent.PutExtra(SENSUS_CALLBACK_ID_KEY, callbackId);
-            callbackIntent.PutExtra(SENSUS_CALLBACK_REPEATING_KEY, repeating);
-            callbackIntent.PutExtra(SENSUS_CALLBACK_REPEAT_DELAY_KEY, repeatDelayMS);
-            callbackIntent.PutExtra(SENSUS_CALLBACK_REPEAT_LAG_KEY, repeatLag);
-
-            // add the notification id if there is one
-            string notificationId = GetCallbackNotificationId(callbackId);
-            if (notificationId != null)
-                callbackIntent.PutExtra(NOTIFICATION_ID_KEY, notificationId);
-
-            return CreateCallbackPendingIntent(callbackIntent);
-        }
-
-        public PendingIntent CreateCallbackPendingIntent(Intent callbackIntent)
-        {
-            // upon hash collisions for the request code, the previous intent will simply be canceled.
-            return PendingIntent.GetService(_service, callbackIntent.GetStringExtra(SENSUS_CALLBACK_ID_KEY).GetHashCode(), callbackIntent, PendingIntentFlags.CancelCurrent);
-        }
-
-        public void ScheduleCallbackAlarm(PendingIntent callbackPendingIntent, string callbackId, DateTime callbackTime)
-        {
-            lock (_callbackIdPendingIntent)
-            {
-                // update pending intent associated with the callback id. we'll need the updated pending intent if/when
-                // we which to unschedule the alarm.
-                _callbackIdPendingIntent[callbackId] = callbackPendingIntent;
-
-                AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
-
-                long delayMS = (long)(callbackTime - DateTime.Now).TotalMilliseconds;
-                long callbackTimeMS = Java.Lang.JavaSystem.CurrentTimeMillis() + delayMS;
-
-                // https://github.com/predictive-technology-laboratory/sensus/wiki/Backwards-Compatibility
-#if __ANDROID_23__
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
-                    alarmManager.SetExactAndAllowWhileIdle(AlarmType.RtcWakeup, callbackTimeMS, callbackPendingIntent);  // API level 23 added "while idle" option, making things even tighter.
-                else if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
-                    alarmManager.SetExact(AlarmType.RtcWakeup, callbackTimeMS, callbackPendingIntent);  // API level 19 differentiated Set (loose) from SetExact (tight)
-                else
-#endif
-                {
-                    alarmManager.Set(AlarmType.RtcWakeup, callbackTimeMS, callbackPendingIntent);  // API 1-18 treats Set as a tight alarm
-                }
-            }
-        }
-
-        protected override void UnscheduleCallbackPlatformSpecific(string callbackId)
-        {
-            lock (_callbackIdPendingIntent)
-            {
-                PendingIntent callbackPendingIntent;
-                if (_callbackIdPendingIntent.TryGetValue(callbackId, out callbackPendingIntent))
-                {
-                    AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
-                    alarmManager.Cancel(callbackPendingIntent);
-                    _callbackIdPendingIntent.Remove(callbackId);
-                }
-            }
-        }
-
         #endregion
 
         #region device awake / sleep

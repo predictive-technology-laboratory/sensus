@@ -9,6 +9,8 @@
     <Import_RootNamespace>Sensus.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\ICallbackData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\NotificationType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\ConcurrentObservableCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\IConcurrent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\LockConcurrent.cs" />
@@ -224,6 +226,5 @@
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\" />
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\" />
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ProbeTriggerProperties\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Callbacks\" />
   </ItemGroup>
 </Project>
