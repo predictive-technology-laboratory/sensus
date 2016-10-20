@@ -9,6 +9,9 @@
     <Import_RootNamespace>Sensus.Shared.Android</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\AndroidCallbackScheduler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\AndroidNotifier.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\AndroidCallbackData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\MainConcurrent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Context\AndroidSensusContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IAndroidSensusServiceHelper.cs" />

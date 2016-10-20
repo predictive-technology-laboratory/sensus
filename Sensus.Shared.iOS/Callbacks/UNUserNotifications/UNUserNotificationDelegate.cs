@@ -13,8 +13,8 @@
 // limitations under the License.
 
 using System;
-using Sensus.Shared.Context;
 using UserNotifications;
+using Sensus.Shared.Context;
 
 namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
 {
@@ -24,9 +24,9 @@ namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
         {
             base.DidReceiveNotificationResponse(center, response, completionHandler);
 
-            (SensusContext.Current.Notifier as IUNUserNotificationNotifier).CancelNotification(response?.Notification.Request.Identifier);
+            ((IUNUserNotificationNotifier)SensusContext.Current.Notifier).CancelNotification(response?.Notification.Request.Identifier);
 
-            (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler)?.ServiceCallbackAsync(response?.Notification?.Request?.Content?.UserInfo);
+            (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler)?.ServiceCallbackAsync(new iOSCallbackData(response));
         }
     }
 }

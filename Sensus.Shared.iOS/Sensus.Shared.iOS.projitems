@@ -9,6 +9,7 @@
     <Import_RootNamespace>Sensus.Shared.iOS</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\iOSCallbackData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\MainConcurrent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Context\iOSSensusContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\iOSInsightsInitializer.cs" />
@@ -36,7 +37,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Callbacks\" />
     <Folder Include="$(MSBuildThisFileDirectory)Callbacks\UILocalNotifications\" />
     <Folder Include="$(MSBuildThisFileDirectory)Callbacks\UNUserNotifications\" />
   </ItemGroup>

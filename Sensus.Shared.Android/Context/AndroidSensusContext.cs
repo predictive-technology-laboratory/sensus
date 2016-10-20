@@ -12,10 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Android.App;
+using Sensus.Shared.Context;
+using Sensus.Shared.Callbacks;
 using Sensus.Shared.Encryption;
 using Sensus.Shared.Concurrent;
+using Sensus.Shared.Android.Callbacks;
 using Sensus.Shared.Android.Concurrent;
-using Sensus.Shared.Context;
 
 namespace Sensus.Shared.Android.Context
 {
@@ -24,12 +27,17 @@ namespace Sensus.Shared.Android.Context
         public Platform Platform { get; }
         public IConcurrent MainThreadSynchronizer { get; }
         public IEncryption Encryption { get; }
+        public ICallbackScheduler CallbackScheduler { get; }
+        public INotifier Notifier { get; }
+        public string ActivationId { get; set; }
 
-        public AndroidSensusContext(string encryptionKey)
+        public AndroidSensusContext(Service androidService, string encryptionKey, int smallIcon)
         {
-            Platform = Platform.Android;
+            Platform               = Platform.Android;
             MainThreadSynchronizer = new MainConcurrent();
-            Encryption = new SimpleEncryption(encryptionKey);
+            Encryption             = new SimpleEncryption(encryptionKey);
+            Notifier               = new AndroidNotifier(androidService, smallIcon);
+            CallbackScheduler      = new AndroidCallbackScheduler(androidService);
         }
     }
 }

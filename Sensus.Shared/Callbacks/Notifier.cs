@@ -16,8 +16,6 @@ namespace Sensus.Shared.Callbacks
 {
     public abstract class Notifier : INotifier
     {
-        public const string NOTIFICATION_ID_KEY = "ID";
-
         public abstract void IssueNotificationAsync(string message, string id, bool playSound, bool vibrate);
     }
 }

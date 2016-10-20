@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Sensus.Shared.Callbacks;
-
-namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
+namespace Sensus.Shared.Callbacks
 {
-    public interface IUNUserNotificationNotifier : INotifier
+    public enum NotificationType
     {
-        void CancelNotification(string notificationId);
+        Undefined = 0,
+        Callback,
+        Script
     }
 }

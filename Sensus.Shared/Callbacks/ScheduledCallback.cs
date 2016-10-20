@@ -75,26 +75,19 @@ namespace Sensus.Shared.Callbacks
         public bool Running { get; set; }
 
         /// <summary>
-        /// ID to set on system-level notification bundle.
-        /// </summary>
-        public string NotificationId { get; set; }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="ScheduledCallback"/> class.
         /// </summary>
         /// <param name="name">Name</param>
         /// <param name="action">Action</param>
         /// <param name="callbackTimeout">Callback Timeout</param>
         /// <param name="userNotificationMessage">User notification message</param>
-        /// <param name="notificationId"></param>
-        public ScheduledCallback(string name, ActionDelegate action, TimeSpan? callbackTimeout = null, string userNotificationMessage = null, string notificationId = null)
+
+        public ScheduledCallback(string name, ActionDelegate action, TimeSpan? callbackTimeout = null, string userNotificationMessage = null)
         {
             Action                  = action;
             Name                    = name;
             CallbackTimeout         = callbackTimeout;
             UserNotificationMessage = userNotificationMessage;
-            NotificationId          = notificationId;
-            Running                 = false;
         }
     }
 }
