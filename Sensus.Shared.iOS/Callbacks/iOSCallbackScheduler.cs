@@ -42,7 +42,7 @@ namespace Sensus.Shared.iOS.Callbacks
 
         public abstract void UpdateCallbackActivationIdsAsync(string newActivationId);
 
-        public NSDictionary GetCallbackInfo(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, DisplayPage displayPage, string activationId)
+        public NSMutableDictionary GetCallbackInfo(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, DisplayPage displayPage, string activationId)
         {
             // we've seen cases where the UserInfo dictionary cannot be serialized because one of its values is null. if this happens, the 
             // callback won't be serviced, and things won't return to normal until Sensus is activated by the user and the callbacks are 
@@ -64,7 +64,7 @@ namespace Sensus.Shared.iOS.Callbacks
 
             }.ToList();
 
-            return new NSDictionary(SENSUS_CALLBACK_KEY, true, keyValuePairs.ToArray());
+            return new NSMutableDictionary(new NSDictionary(SENSUS_CALLBACK_KEY, true, keyValuePairs.ToArray()));
         }
 
         public void ServiceCallbackAsync(NSDictionary callbackInfo)
@@ -84,10 +84,15 @@ namespace Sensus.Shared.iOS.Callbacks
             if (activationId != SensusContext.Current.ActivationId || !CallbackIsScheduled(callbackId))
                 return;
 
-            nint callbackTaskId = UIApplication.SharedApplication.BeginBackgroundTask(() =>
+            // start background task
+            nint callbackTaskId = -1;
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
-                // if we're out of time running in the background, cancel the callback.
-                CancelRaisedCallback(callbackId);
+                callbackTaskId = UIApplication.SharedApplication.BeginBackgroundTask(() =>
+                {
+                    // if we're out of time running in the background, cancel the callback.
+                    CancelRaisedCallback(callbackId);
+                });
             });
 
             // raise callback but don't notify user since we would have already done so when the UILocalNotification was delivered to the notification tray.
@@ -110,20 +115,23 @@ namespace Sensus.Shared.iOS.Callbacks
 
             // check whether the user opened a pending-survey notification (indicated by an application state that is not active). we'll
             // also get notifications when the app is active, due to how we manage pending-survey notifications.
-            if (UIApplication.SharedApplication.ApplicationState != UIApplicationState.Active)
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
-                DisplayPage displayPage = (DisplayPage)Enum.Parse(typeof(DisplayPage), callbackInfo.ValueForKey(new NSString(Notifier.DISPLAY_PAGE_KEY)) as NSString);
-                if (displayPage == DisplayPage.PendingSurveys)
+                if (UIApplication.SharedApplication.ApplicationState != UIApplicationState.Active)
                 {
-                    // display the pending scripts page if it is not already on the top of the navigation stack
-                    SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                    DisplayPage displayPage = (DisplayPage)Enum.Parse(typeof(DisplayPage), callbackInfo.ValueForKey(new NSString(Notifier.DISPLAY_PAGE_KEY)) as NSString);
+                    if (displayPage == DisplayPage.PendingSurveys)
                     {
-                        Page topPage = Application.Current.MainPage.Navigation.NavigationStack.LastOrDefault();
-                        if (!(topPage is PendingScriptsPage))
-                            await Application.Current.MainPage.Navigation.PushAsync(new PendingScriptsPage());
-                    });
+                        // display the pending scripts page if it is not already on the top of the navigation stack
+                        SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                        {
+                            Page topPage = Application.Current.MainPage.Navigation.NavigationStack.LastOrDefault();
+                            if (!(topPage is PendingScriptsPage))
+                                await Application.Current.MainPage.Navigation.PushAsync(new PendingScriptsPage());
+                        });
+                    }
                 }
-            }
+            });
         }
     }
 }

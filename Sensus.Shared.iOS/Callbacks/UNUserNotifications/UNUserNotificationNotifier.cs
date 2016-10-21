@@ -15,6 +15,7 @@
 using System;
 using Foundation;
 using Sensus.Shared.Callbacks;
+using Sensus.Shared.Context;
 using Sensus.Shared.Exceptions;
 using UserNotifications;
 
@@ -27,21 +28,30 @@ namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
             IssueNotificationAsync(title, message, id, playSound, displayPage, 1, null, null); // delay must be > 0
         }
 
-        public void IssueSilentNotificationAsync(string id, int delayMS, Action<UNNotificationRequest, NSError> callback = null)
+        public void IssueSilentNotificationAsync(string id, int delayMS, NSMutableDictionary notificationInfo, Action<UNNotificationRequest> requestCallback = null)
         {
-            IssueNotificationAsync("silent", "silent", id, false, DisplayPage.None, delayMS, new NSDictionary(SILENT_NOTIFICATION_KEY, true), callback);
+            if (notificationInfo == null)
+                notificationInfo = new NSMutableDictionary();
+
+            notificationInfo.SetValueForKey(new NSNumber(true), new NSString(SILENT_NOTIFICATION_KEY));
+
+            IssueNotificationAsync("silent", "silent", id, false, DisplayPage.None, delayMS, notificationInfo, requestCallback);
         }
 
-        public void IssueNotificationAsync(string title, string message, string id, bool playSound, DisplayPage displayPage, int delayMS, NSDictionary notificationInfo, Action<UNNotificationRequest, NSError> callback = null)
+        public void IssueNotificationAsync(string title, string message, string id, bool playSound, DisplayPage displayPage, int delayMS, NSMutableDictionary notificationInfo, Action<UNNotificationRequest> requestCallback = null)
         {
-            UNMutableNotificationContent notificationContent = new UNMutableNotificationContent();
+            if (notificationInfo == null)
+                notificationInfo = new NSMutableDictionary();
+
+            notificationInfo.SetValueForKey(new NSString(id), new NSString(NOTIFICATION_ID_KEY));
+            notificationInfo.SetValueForKey(new NSString(displayPage.ToString()), new NSString(DISPLAY_PAGE_KEY));
+
+            UNMutableNotificationContent notificationContent = new UNMutableNotificationContent
+            {
+                UserInfo = notificationInfo
+            };
 
             // the following properties are allowed to be null, but they cannot be set to null.
-
-            if (notificationInfo == null)
-                notificationContent.UserInfo = new NSDictionary();
-            else
-                notificationContent.UserInfo = notificationInfo;
 
             if (!string.IsNullOrWhiteSpace(title))
                 notificationContent.Title = title;
@@ -52,39 +62,45 @@ namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
             if (playSound)
                 notificationContent.Sound = UNNotificationSound.Default;
 
-            notificationContent.UserInfo.SetValueForKey(new NSString(id), new NSString(NOTIFICATION_ID_KEY));
-            notificationContent.UserInfo.SetValueForKey(new NSString(displayPage.ToString()), new NSString(DISPLAY_PAGE_KEY));
+            // delay must be > 0 or exception will be thrown
+            if (delayMS <= 0)
+                delayMS = 1;
 
             UNTimeIntervalNotificationTrigger notificationTrigger = UNTimeIntervalNotificationTrigger.CreateTrigger(delayMS / 1000d, false);
             UNNotificationRequest notificationRequest = UNNotificationRequest.FromIdentifier(id, notificationContent, notificationTrigger);
-            IssueNotificationAsync(notificationRequest, error => callback?.Invoke(notificationRequest, error));
+            requestCallback?.Invoke(notificationRequest);
+            IssueNotificationAsync(notificationRequest);
         }
 
-        public void IssueNotificationAsync(UNNotificationRequest request, Action<NSError> callback = null)
+        public void IssueNotificationAsync(UNNotificationRequest request, Action<NSError> errorCallback = null)
         {
-            CancelNotification(request.Identifier);
-
-            UNUserNotificationCenter.Current.AddNotificationRequest(request, error =>
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
-                if (error == null)
+                UNUserNotificationCenter.Current.AddNotificationRequest(request, error =>
                 {
-                    SensusServiceHelper.Get().Logger.Log("Notification " + request.Identifier + " requested for " + (request.Trigger as UNTimeIntervalNotificationTrigger).NextTriggerDate + ". ", LoggingLevel.Normal, GetType());
-                }
-                else
-                {
-                    SensusServiceHelper.Get().Logger.Log("Failed to add notification request:  " + error.Description, LoggingLevel.Normal, GetType());
-                    SensusException.Report("Failed to add notification request:  " + error.Description);
-                }
+                    if (error == null)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Notification " + request.Identifier + " requested for " + (request.Trigger as UNTimeIntervalNotificationTrigger).NextTriggerDate + ". ", LoggingLevel.Normal, GetType());
+                    }
+                    else
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Failed to add notification request:  " + error.Description, LoggingLevel.Normal, GetType());
+                        SensusException.Report("Failed to add notification request:  " + error.Description);
+                    }
 
-                callback?.Invoke(error);
+                    errorCallback?.Invoke(error);
+                });
             });
         }
 
         public override void CancelNotification(string id)
         {
-            var ids = new[] { id };
-            UNUserNotificationCenter.Current.RemoveDeliveredNotifications(ids);
-            UNUserNotificationCenter.Current.RemovePendingNotificationRequests(ids);
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            {
+                var ids = new[] { id };
+                UNUserNotificationCenter.Current.RemoveDeliveredNotifications(ids);
+                UNUserNotificationCenter.Current.RemovePendingNotificationRequests(ids);
+            });
         }
 
         public void CancelNotification(UNNotificationRequest request)
@@ -94,15 +110,18 @@ namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
 
         public override void CancelSilentNotifications()
         {
-            UNUserNotificationCenter.Current.GetPendingNotificationRequests(requests =>
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
-                foreach (UNNotificationRequest request in requests)
+                UNUserNotificationCenter.Current.GetPendingNotificationRequests(requests =>
                 {
-                    if ((request.Content?.UserInfo?.ValueForKey(new NSString(SILENT_NOTIFICATION_KEY)) as NSNumber)?.BoolValue ?? false)
+                    foreach (UNNotificationRequest request in requests)
                     {
-                        CancelNotification(request);
+                        if ((request.Content?.UserInfo?.ValueForKey(new NSString(SILENT_NOTIFICATION_KEY)) as NSNumber)?.BoolValue ?? false)
+                        {
+                            CancelNotification(request);
+                        }
                     }
-                }
+                });
             });
         }
     }

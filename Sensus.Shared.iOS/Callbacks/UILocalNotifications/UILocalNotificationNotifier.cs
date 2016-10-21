@@ -28,38 +28,40 @@ namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
             IssueNotificationAsync(title, message, id, playSound, displayPage, 0, null);
         }
 
-        public void IssueSilentNotificationAsync(string id, int delayMS)
+        public void IssueSilentNotificationAsync(string id, int delayMS, NSMutableDictionary notificationInfo)
         {
-            IssueNotificationAsync("silent", "silent", id, false, DisplayPage.None, delayMS, new NSDictionary(SILENT_NOTIFICATION_KEY, true));
+            if (notificationInfo == null)
+                notificationInfo = new NSMutableDictionary();
+
+            notificationInfo.SetValueForKey(new NSNumber(true), new NSString(SILENT_NOTIFICATION_KEY));
+
+            IssueNotificationAsync("silent", "silent", id, false, DisplayPage.None, delayMS, notificationInfo);
         }
 
-        public void IssueNotificationAsync(string title, string message, string id, bool playSound, DisplayPage displayPage, int delayMS, NSDictionary notificationInfo)
+        public void IssueNotificationAsync(string title, string message, string id, bool playSound, DisplayPage displayPage, int delayMS, NSMutableDictionary notificationInfo)
         {
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
-                CancelNotification(id);
+                if (notificationInfo == null)
+                    notificationInfo = new NSMutableDictionary();
+
+                notificationInfo.SetValueForKey(new NSString(id), new NSString(NOTIFICATION_ID_KEY));
+                notificationInfo.SetValueForKey(new NSString(displayPage.ToString()), new NSString(DISPLAY_PAGE_KEY));
 
                 // all properties below were introduced in iOS 8.0. we currently target 8.0 and above, so these should be safe to set.
                 UILocalNotification notification = new UILocalNotification
                 {
                     AlertBody = message,
                     TimeZone = null,  // null for UTC interpretation of FireDate
-                    FireDate = DateTime.UtcNow.ToNSDate().AddSeconds(delayMS / 1000d)
+                    FireDate = DateTime.UtcNow.ToNSDate().AddSeconds(delayMS / 1000d),
+                    UserInfo = notificationInfo
                 };
-
-                if (notificationInfo == null)
-                    notification.UserInfo = new NSDictionary();
-                else
-                    notification.UserInfo = notificationInfo;
-
-                notification.UserInfo.SetValueForKey(new NSString(id), new NSString(NOTIFICATION_ID_KEY));
-                notification.UserInfo.SetValueForKey(new NSString(displayPage.ToString()), new NSString(DISPLAY_PAGE_KEY));
 
                 // also in 8.0
                 if (playSound)
                     notification.SoundName = UILocalNotification.DefaultSoundName;
 
-                // the following UILocalNotification property was introduced in iOS 8.2:  https://developer.apple.com/reference/uikit/uilocalnotification/1616647-alerttitle
+                // introduced in iOS 8.2:  https://developer.apple.com/reference/uikit/uilocalnotification/1616647-alerttitle
                 if (UIDevice.CurrentDevice.CheckSystemVersion(8, 2) && !string.IsNullOrWhiteSpace(title))
                     notification.AlertTitle = title;
 

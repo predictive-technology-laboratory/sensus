@@ -35,7 +35,7 @@ namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
         {
             // get the callback information. this can be null if we don't have all required information. don't schedule the notification if this happens.
             DisplayPage displayPage = GetCallbackDisplayPage(callbackId);
-            NSDictionary callbackInfo = GetCallbackInfo(callbackId, repeating, repeatDelayMS, repeatLag, displayPage, SensusContext.Current.ActivationId);
+            NSMutableDictionary callbackInfo = GetCallbackInfo(callbackId, repeating, repeatDelayMS, repeatLag, displayPage, SensusContext.Current.ActivationId);
             if (callbackInfo == null)
                 return;
 
@@ -43,7 +43,7 @@ namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
 
             string userNotificationMessage = GetCallbackUserNotificationMessage(callbackId);
             if (userNotificationMessage == null)
-                notifier.IssueSilentNotificationAsync(callbackId, delayMS);
+                notifier.IssueSilentNotificationAsync(callbackId, delayMS, callbackInfo);
             else
                 notifier.IssueNotificationAsync("Sensus", userNotificationMessage, callbackId, true, displayPage, delayMS, callbackInfo);
         }
@@ -74,7 +74,9 @@ namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
                             string activationId = (notification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ACTIVATION_ID_KEY)) as NSString).ToString();
                             if (activationId != newActivationId)
                             {
-                                notification.UserInfo.SetValueForKey(new NSString(newActivationId), new NSString(SENSUS_CALLBACK_ACTIVATION_ID_KEY));
+                                NSMutableDictionary userInfo = new NSMutableDictionary(notification.UserInfo);
+                                userInfo.SetValueForKey(new NSString(newActivationId), new NSString(SENSUS_CALLBACK_ACTIVATION_ID_KEY));
+                                notification.UserInfo = userInfo;
 
                                 // since we set the UILocalNotification's FireDate when it was constructed, if it's currently in the past it will fire immediately 
                                 // when scheduled again with the new activation ID.

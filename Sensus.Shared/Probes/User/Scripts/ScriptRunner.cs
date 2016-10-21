@@ -375,7 +375,7 @@ namespace Sensus.Shared.Probes.User.Scripts
             });
 
 #if __IOS__
-            // we won't have a way to update the "X Pending Surveys" notification on ios. the best we can do is display a new notification describing the survey and showing its expiration time (if there is one).                                                
+            // we don't have a way to update an "X Pending Surveys" notification on ios like we do on android. the best we can do is display a new notification describing the survey and showing its expiration time (if there is one).                                                
             if (script.ExpirationDate.HasValue)
             {
                 callback.UserNotificationMessage = "Please open to take survey. Expires on " + script.ExpirationDate.Value.ToShortDateString() + " at " + script.ExpirationDate.Value.ToShortTimeString() + ".";

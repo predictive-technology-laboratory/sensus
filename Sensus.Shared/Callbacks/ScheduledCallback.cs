@@ -78,7 +78,7 @@ namespace Sensus.Shared.Callbacks
         /// Page to display when callback is returned to app.
         /// </summary>
         /// <value>The display page.</value>
-        public DisplayPage DisplayPage { get; set; } = DisplayPage.None;
+        public DisplayPage DisplayPage { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ScheduledCallback"/> class.
@@ -93,6 +93,7 @@ namespace Sensus.Shared.Callbacks
             Name = name;
             CallbackTimeout = callbackTimeout;
             UserNotificationMessage = userNotificationMessage;
+            DisplayPage = DisplayPage.None;
             Running = false;
         }
     }

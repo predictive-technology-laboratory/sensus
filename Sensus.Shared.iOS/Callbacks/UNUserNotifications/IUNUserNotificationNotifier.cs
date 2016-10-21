@@ -24,11 +24,11 @@ namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
     /// </summary>
     public interface IUNUserNotificationNotifier : IiOSNotifier
     {
-        void IssueSilentNotificationAsync(string id, int delayMS, Action<UNNotificationRequest, NSError> callback = null);
+        void IssueSilentNotificationAsync(string id, int delayMS, NSMutableDictionary notificationInfo, Action<UNNotificationRequest> requestCallback = null);
 
-        void IssueNotificationAsync(string title, string message, string id, bool playSound, DisplayPage displayPage, int delayMS, NSDictionary notificationInfo, Action<UNNotificationRequest, NSError> callback = null);
+        void IssueNotificationAsync(string title, string message, string id, bool playSound, DisplayPage displayPage, int delayMS, NSMutableDictionary notificationInfo, Action<UNNotificationRequest> requestCallback = null);
 
-        void IssueNotificationAsync(UNNotificationRequest request, Action<NSError> callback = null);
+        void IssueNotificationAsync(UNNotificationRequest request, Action<NSError> errorCallback = null);
 
         void CancelNotification(UNNotificationRequest request);
     }

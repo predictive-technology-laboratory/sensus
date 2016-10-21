@@ -231,7 +231,6 @@ namespace Sensus.Shared.Callbacks
                     if (finishedCallback != null)
                         finishedCallback();
                 }
-
             });
         }
 
