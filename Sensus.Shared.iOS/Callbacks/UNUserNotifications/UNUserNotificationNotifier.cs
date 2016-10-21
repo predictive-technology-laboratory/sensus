@@ -94,7 +94,16 @@ namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
 
         public override void CancelSilentNotifications()
         {
-            throw new NotImplementedException();
+            UNUserNotificationCenter.Current.GetPendingNotificationRequests(requests =>
+            {
+                foreach (UNNotificationRequest request in requests)
+                {
+                    if ((request.Content?.UserInfo?.ValueForKey(new NSString(SILENT_NOTIFICATION_KEY)) as NSNumber)?.BoolValue ?? false)
+                    {
+                        CancelNotification(request);
+                    }
+                }
+            });
         }
     }
 }

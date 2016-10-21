@@ -101,13 +101,12 @@ namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
         {
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
-                // a local notification can be scheduled, in which case it hasn't yet been delivered and should reside within the shared 
-                // application's list of scheduled notifications. the tricky part here is that these notification objects aren't reference-equal, 
-                // so we can't just pass `notification` to CancelLocalNotification. instead, we must search for the notification by id and 
-                // cancel the appropriate scheduled notification object.
                 foreach (UILocalNotification scheduledNotification in UIApplication.SharedApplication.ScheduledLocalNotifications)
                 {
-                    throw new NotImplementedException();
+                    if ((scheduledNotification.UserInfo?.ValueForKey(new NSString(SILENT_NOTIFICATION_KEY)) as NSNumber)?.BoolValue ?? false)
+                    {
+                        CancelNotification(scheduledNotification);
+                    }
                 }
             });
         }
