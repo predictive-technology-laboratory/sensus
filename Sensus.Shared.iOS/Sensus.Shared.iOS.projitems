@@ -33,6 +33,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\UILocalNotifications\IUILocalNotificationNotifier.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\UNUserNotifications\UNUserNotificationDelegate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\UNUserNotifications\IUNUserNotificationNotifier.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\IiOSNotifier.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\iOSNotifier.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\" />

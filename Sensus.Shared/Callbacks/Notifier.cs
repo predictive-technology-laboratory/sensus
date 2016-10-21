@@ -16,9 +16,11 @@ namespace Sensus.Shared.Callbacks
 {
     public abstract class Notifier : INotifier
     {
-        // TODO:  This is used more like a notification type (Script, Probe, PendingSurvey, etc.). Changed to enumeration?
-        public const string NOTIFICATION_ID_KEY = "ID";
+        public const string NOTIFICATION_ID_KEY = "SENSUS-NOTIFICATION-ID";
+        public const string DISPLAY_PAGE_KEY = "SENSUS-DISPLAY-PAGE";
 
-        public abstract void IssueNotificationAsync(string message, string id, bool playSound, bool vibrate);
+        public abstract void IssueNotificationAsync(string title, string message, string id, bool playSound, DisplayPage displayPage);
+
+        public abstract void CancelNotification(string id);
     }
 }

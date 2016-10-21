@@ -26,7 +26,7 @@ namespace Sensus.Shared.iOS.Callbacks
 {
     public abstract class iOSCallbackScheduler : CallbackScheduler, IiOSCallbackScheduler
     {
-        public const string SENSUS_CALLBACK_ACTIVATION_ID_KEY = "SENSUS-CALLBACK-ACTIVATION-ID";  // TODO:  Should we move this up to Shared?
+        public const string SENSUS_CALLBACK_ACTIVATION_ID_KEY = "SENSUS-CALLBACK-ACTIVATION-ID";
 
         protected override void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag)
         {
@@ -42,7 +42,7 @@ namespace Sensus.Shared.iOS.Callbacks
 
         public abstract void UpdateCallbackActivationIdsAsync(string newActivationId);
 
-        public NSDictionary GetCallbackInfo(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, string notificationId, string activationId)
+        public NSDictionary GetCallbackInfo(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, DisplayPage displayPage, string activationId)
         {
             // we've seen cases where the UserInfo dictionary cannot be serialized because one of its values is null. if this happens, the 
             // callback won't be serviced, and things won't return to normal until Sensus is activated by the user and the callbacks are 
@@ -55,7 +55,8 @@ namespace Sensus.Shared.iOS.Callbacks
 
             List<object> keyValuePairs = new object[]
             {
-                SENSUS_CALLBACK_ID_KEY, callbackId,
+                Notifier.NOTIFICATION_ID_KEY, callbackId,
+                Notifier.DISPLAY_PAGE_KEY, displayPage.ToString(),
                 SENSUS_CALLBACK_REPEATING_KEY, repeating,
                 SENSUS_CALLBACK_REPEAT_DELAY_KEY, repeatDelayMS,
                 SENSUS_CALLBACK_REPEAT_LAG_KEY, repeatLag,
@@ -63,25 +64,21 @@ namespace Sensus.Shared.iOS.Callbacks
 
             }.ToList();
 
-            // add the notification id if there is one (again, no null values allowed -- see above)
-            if (notificationId != null)
-                keyValuePairs.AddRange(new object[] { Notifier.NOTIFICATION_ID_KEY, notificationId });
-
             return new NSDictionary(SENSUS_CALLBACK_KEY, true, keyValuePairs.ToArray());
         }
 
         public void ServiceCallbackAsync(NSDictionary callbackInfo)
         {
             // check whether the passed information describes a callback
-            NSNumber isCallbackValue = callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_KEY)) as NSNumber;
-            if (!(isCallbackValue?.BoolValue ?? false))
+            NSNumber isCallback = callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_KEY)) as NSNumber;
+            if (!(isCallback?.BoolValue ?? false))
                 return;
 
-            string activationId = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ACTIVATION_ID_KEY)) as NSString).ToString();
-            string callbackId = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ID_KEY)) as NSString).ToString();
+            string callbackId = (callbackInfo.ValueForKey(new NSString(Notifier.NOTIFICATION_ID_KEY)) as NSString).ToString();
             bool repeating = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber).BoolValue;
             int repeatDelayMS = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_DELAY_KEY)) as NSNumber).Int32Value;
             bool repeatLag = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_LAG_KEY)) as NSNumber).BoolValue;
+            string activationId = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ACTIVATION_ID_KEY)) as NSString).ToString();
 
             // only raise callback if it's from the current activation and if it is still scheduled
             if (activationId != SensusContext.Current.ActivationId || !CallbackIsScheduled(callbackId))
@@ -94,7 +91,7 @@ namespace Sensus.Shared.iOS.Callbacks
             });
 
             // raise callback but don't notify user since we would have already done so when the UILocalNotification was delivered to the notification tray.
-            RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, false, 
+            RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, false,
 
             // don't need to specify how repeats will be scheduled. the class that extends this one will take care of it.
             null,
@@ -115,8 +112,8 @@ namespace Sensus.Shared.iOS.Callbacks
             // also get notifications when the app is active, due to how we manage pending-survey notifications.
             if (UIApplication.SharedApplication.ApplicationState != UIApplicationState.Active)
             {
-                NSString notificationId = callbackInfo.ValueForKey(new NSString(Notifier.NOTIFICATION_ID_KEY)) as NSString;
-                if (notificationId?.ToString() == SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID)
+                DisplayPage displayPage = (DisplayPage)Enum.Parse(typeof(DisplayPage), callbackInfo.ValueForKey(new NSString(Notifier.DISPLAY_PAGE_KEY)) as NSString);
+                if (displayPage == DisplayPage.PendingSurveys)
                 {
                     // display the pending scripts page if it is not already on the top of the navigation stack
                     SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>

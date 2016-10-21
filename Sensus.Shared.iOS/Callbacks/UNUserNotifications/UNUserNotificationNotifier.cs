@@ -20,26 +20,40 @@ using UserNotifications;
 
 namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
 {
-    public class UNUserNotificationNotifier : Notifier, IUNUserNotificationNotifier
+    public class UNUserNotificationNotifier : iOSNotifier, IUNUserNotificationNotifier
     {
-        public override void IssueNotificationAsync(string message, string id, bool playSound, bool vibrate)
+        public override void IssueNotificationAsync(string title, string message, string id, bool playSound, DisplayPage displayPage)
         {
-            IssueNotificationAsync(message, id, playSound, "Sensus", 0, null, null);
+            IssueNotificationAsync(title, message, id, playSound, displayPage, 1, null, null); // delay must be > 0
         }
 
-        public void IssueNotificationAsync(string message, string id, bool playSound, string title, int delayMS, NSDictionary notificationInfo, Action<UNNotificationRequest, NSError> callback = null)
+        public void IssueSilentNotificationAsync(string id, int delayMS, Action<UNNotificationRequest, NSError> callback = null)
+        {
+            IssueNotificationAsync("silent", "silent", id, false, DisplayPage.None, delayMS, new NSDictionary(SILENT_NOTIFICATION_KEY, true), callback);
+        }
+
+        public void IssueNotificationAsync(string title, string message, string id, bool playSound, DisplayPage displayPage, int delayMS, NSDictionary notificationInfo, Action<UNNotificationRequest, NSError> callback = null)
         {
             UNMutableNotificationContent notificationContent = new UNMutableNotificationContent();
 
-            if (notificationInfo != null)
+            // the following properties are allowed to be null, but they cannot be set to null.
+
+            if (notificationInfo == null)
+                notificationContent.UserInfo = new NSDictionary();
+            else
                 notificationContent.UserInfo = notificationInfo;
 
-            notificationContent.Title = title ?? "Empty";
+            if (!string.IsNullOrWhiteSpace(title))
+                notificationContent.Title = title;
 
-            notificationContent.Body = message ?? "Empty";
+            if (!string.IsNullOrWhiteSpace(message))
+                notificationContent.Body = message;
 
-            if (!string.IsNullOrWhiteSpace(notificationContent.Body) && playSound)
+            if (playSound)
                 notificationContent.Sound = UNNotificationSound.Default;
+
+            notificationContent.UserInfo.SetValueForKey(new NSString(id), new NSString(NOTIFICATION_ID_KEY));
+            notificationContent.UserInfo.SetValueForKey(new NSString(displayPage.ToString()), new NSString(DISPLAY_PAGE_KEY));
 
             UNTimeIntervalNotificationTrigger notificationTrigger = UNTimeIntervalNotificationTrigger.CreateTrigger(delayMS / 1000d, false);
             UNNotificationRequest notificationRequest = UNNotificationRequest.FromIdentifier(id, notificationContent, notificationTrigger);
@@ -48,12 +62,8 @@ namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
 
         public void IssueNotificationAsync(UNNotificationRequest request, Action<NSError> callback = null)
         {
-            // remove previous notification with same ID
-            var id = new[] { request.Identifier };
-            UNUserNotificationCenter.Current.RemoveDeliveredNotifications(id);
-            UNUserNotificationCenter.Current.RemovePendingNotificationRequests(id);
+            CancelNotification(request.Identifier);
 
-            // issue new notification
             UNUserNotificationCenter.Current.AddNotificationRequest(request, error =>
             {
                 if (error == null)
@@ -70,7 +80,7 @@ namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
             });
         }
 
-        public void CancelNotification(string id)
+        public override void CancelNotification(string id)
         {
             var ids = new[] { id };
             UNUserNotificationCenter.Current.RemoveDeliveredNotifications(ids);
@@ -80,6 +90,11 @@ namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
         public void CancelNotification(UNNotificationRequest request)
         {
             CancelNotification(request.Identifier);
+        }
+
+        public override void CancelSilentNotifications()
+        {
+            throw new NotImplementedException();
         }
     }
 }

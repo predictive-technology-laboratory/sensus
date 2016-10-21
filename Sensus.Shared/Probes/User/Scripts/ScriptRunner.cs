@@ -384,9 +384,9 @@ namespace Sensus.Shared.Probes.User.Scripts
             {
                 callback.UserNotificationMessage = "Please open to take survey.";
             }
-            
+
             // on ios we need a separate indicator that the surveys page should be displayed when the user opens the notification. this is achieved by setting the notification ID to the pending survey notification ID.
-            callback.NotificationId = SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID;
+            callback.DisplayPage = DisplayPage.PendingSurveys;
 #endif
 
             return callback;

@@ -25,7 +25,6 @@ namespace Sensus.Shared.Callbacks
     public abstract class CallbackScheduler : ICallbackScheduler
     {
         public const string SENSUS_CALLBACK_KEY = "SENSUS-CALLBACK";
-        public const string SENSUS_CALLBACK_ID_KEY = "SENSUS-CALLBACK-ID";
         public const string SENSUS_CALLBACK_REPEATING_KEY = "SENSUS-CALLBACK-REPEATING";
         public const string SENSUS_CALLBACK_REPEAT_DELAY_KEY = "SENSUS-CALLBACK-REPEAT-DELAY";
         public const string SENSUS_CALLBACK_REPEAT_LAG_KEY = "SENSUS-CALLBACK-REPEAT-LAG";
@@ -92,12 +91,12 @@ namespace Sensus.Shared.Callbacks
                 return null;
         }
 
-        public string GetCallbackNotificationId(string callbackId)
+        public DisplayPage GetCallbackDisplayPage(string callbackId)
         {
             if (_idCallback.ContainsKey(callbackId))
-                return _idCallback[callbackId].NotificationId;
+                return _idCallback[callbackId].DisplayPage;
             else
-                return null;
+                return DisplayPage.None;
         }
 
         public virtual void RaiseCallbackAsync(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, bool notifyUser, Action<DateTime> scheduleRepeatCallback, Action letDeviceSleepCallback, Action finishedCallback)
@@ -144,7 +143,7 @@ namespace Sensus.Shared.Callbacks
                                     SensusServiceHelper.Get().Logger.Log("Raising callback \"" + scheduledCallback.Name + "\" (" + callbackId + ").", LoggingLevel.Normal, GetType());
 
                                     if (notifyUser)
-                                        SensusContext.Current.Notifier.IssueNotificationAsync(scheduledCallback.UserNotificationMessage, callbackId, true, true);
+                                        SensusContext.Current.Notifier.IssueNotificationAsync("Sensus", scheduledCallback.UserNotificationMessage, callbackId, true, scheduledCallback.DisplayPage);
 
                                     // if the callback specified a timeout, request cancellation at the specified time.
                                     if (scheduledCallback.CallbackTimeout.HasValue)

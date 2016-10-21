@@ -16,6 +16,8 @@ namespace Sensus.Shared.Callbacks
 {
     public interface INotifier
     {
-        void IssueNotificationAsync(string message, string id, bool playSound, bool vibrate);
+        void IssueNotificationAsync(string title, string message, string id, bool playSound, DisplayPage type);
+
+        void CancelNotification(string id);
     }
 }

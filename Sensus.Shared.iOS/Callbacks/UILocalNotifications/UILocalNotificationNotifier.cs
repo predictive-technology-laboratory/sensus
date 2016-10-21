@@ -13,121 +13,101 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Foundation;
 using Sensus.Shared.Callbacks;
 using Sensus.Shared.Context;
-using Sensus.Shared.Exceptions;
 using UIKit;
 using Xamarin.Forms.Platform.iOS;
 
 namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
 {
-    public class UILocalNotificationNotifier : Notifier, IUILocalNotificationNotifier
+    public class UILocalNotificationNotifier : iOSNotifier, IUILocalNotificationNotifier
     {
-        private List<UILocalNotification> _notifications;
-
-        public UILocalNotificationNotifier()
+        public override void IssueNotificationAsync(string title, string message, string id, bool playSound, DisplayPage displayPage)
         {
-            _notifications = new List<UILocalNotification>();
+            IssueNotificationAsync(title, message, id, playSound, displayPage, 0, null);
         }
 
-        public override void IssueNotificationAsync(string message, string id, bool playSound, bool vibrate)
+        public void IssueSilentNotificationAsync(string id, int delayMS)
+        {
+            IssueNotificationAsync("silent", "silent", id, false, DisplayPage.None, delayMS, new NSDictionary(SILENT_NOTIFICATION_KEY, true));
+        }
+
+        public void IssueNotificationAsync(string title, string message, string id, bool playSound, DisplayPage displayPage, int delayMS, NSDictionary notificationInfo)
         {
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
-                // cancel any existing notifications with the given id
-                lock (_notifications)
+                CancelNotification(id);
+
+                // all properties below were introduced in iOS 8.0. we currently target 8.0 and above, so these should be safe to set.
+                UILocalNotification notification = new UILocalNotification
                 {
-                    foreach (UILocalNotification notification in _notifications.ToList())
-                    {
-                        string notificationId = notification.UserInfo.ValueForKey(new NSString(NOTIFICATION_ID_KEY)).ToString();
-                        if (notificationId == id)
-                        {
-                            CancelNotification(notification, NOTIFICATION_ID_KEY);
+                    AlertBody = message,
+                    TimeZone = null,  // null for UTC interpretation of FireDate
+                    FireDate = DateTime.UtcNow.ToNSDate().AddSeconds(delayMS / 1000d)
+                };
 
-                            // TODO:  How do we prevent this collection from growing without bound?
-                            _notifications.Remove(notification);
-                        }
-                    }
-                }
+                if (notificationInfo == null)
+                    notification.UserInfo = new NSDictionary();
+                else
+                    notification.UserInfo = notificationInfo;
 
-                // if the message is not null, then schedule the notification.
-                if (message != null)
-                {
-                    // all properties below were introduced in iOS 8.0. we currently target 8.0 and above, so these should be safe to set.
-                    UILocalNotification notification = new UILocalNotification
-                    {
-                        AlertBody = message,
-                        TimeZone = null,  // null for UTC interpretation of FireDate
-                        FireDate = DateTime.UtcNow.ToNSDate(),
-                        UserInfo = new NSDictionary(NOTIFICATION_ID_KEY, id)
-                    };
+                notification.UserInfo.SetValueForKey(new NSString(id), new NSString(NOTIFICATION_ID_KEY));
+                notification.UserInfo.SetValueForKey(new NSString(displayPage.ToString()), new NSString(DISPLAY_PAGE_KEY));
 
-                    // also in 8.0
-                    if (playSound)
-                        notification.SoundName = UILocalNotification.DefaultSoundName;
+                // also in 8.0
+                if (playSound)
+                    notification.SoundName = UILocalNotification.DefaultSoundName;
 
-                    // the following UILocalNotification property was introduced in iOS 8.2:  https://developer.apple.com/reference/uikit/uilocalnotification/1616647-alerttitle
-                    if (UIDevice.CurrentDevice.CheckSystemVersion(8, 2))
-                        notification.AlertTitle = "Sensus";
+                // the following UILocalNotification property was introduced in iOS 8.2:  https://developer.apple.com/reference/uikit/uilocalnotification/1616647-alerttitle
+                if (UIDevice.CurrentDevice.CheckSystemVersion(8, 2) && !string.IsNullOrWhiteSpace(title))
+                    notification.AlertTitle = title;
 
-                    lock (_notifications)
-                    {
-                        _notifications.Add(notification);
-                    }
-
-                    UIApplication.SharedApplication.ScheduleLocalNotification(notification);
-                }
+                UIApplication.SharedApplication.ScheduleLocalNotification(notification);
             });
         }
 
-        /// <summary>
-        /// Cancels a UILocalNotification. This will succeed in one of two conditions:  (1) if the notification to be
-        /// cancelled is scheduled (i.e., not delivered); or (2) if the notification to be cancelled has been delivered
-        /// and if the object passed in is the delivered notification and not the one that was passed to
-        /// ScheduleLocalNotification -- once passed to ScheduleLocalNotification, a copy is made and the objects won't test equal
-        /// for cancellation.
-        /// </summary>
-        /// <param name="notification">Notification to cancel.</param>
-        /// <param name="notificationIdKey">Key for ID in UserInfo of the UILocalNotification.</param>
-        public void CancelNotification(UILocalNotification notification, string notificationIdKey)
+        public void CancelNotification(UILocalNotification notification)
         {
             // set up action to cancel notification
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
-                try
+                UIApplication.SharedApplication.CancelLocalNotification(notification);
+                CancelNotification(notification.UserInfo?.ValueForKey(new NSString(NOTIFICATION_ID_KEY))?.ToString());
+            });
+        }
+
+        public override void CancelNotification(string id)
+        {
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            {
+                // a local notification can be scheduled, in which case it hasn't yet been delivered and should reside within the shared 
+                // application's list of scheduled notifications. the tricky part here is that these notification objects aren't reference-equal, 
+                // so we can't just pass `notification` to CancelLocalNotification. instead, we must search for the notification by id and 
+                // cancel the appropriate scheduled notification object.
+                foreach (UILocalNotification scheduledNotification in UIApplication.SharedApplication.ScheduledLocalNotifications)
                 {
-                    string idToCancel = notification.UserInfo.ValueForKey(new NSString(notificationIdKey)).ToString();
+                    string scheduledId = scheduledNotification.UserInfo?.ValueForKey(new NSString(NOTIFICATION_ID_KEY))?.ToString();
 
-                    SensusServiceHelper.Get().Logger.Log("Cancelling local notification \"" + idToCancel + "\".", LoggingLevel.Normal, GetType());
-
-                    // a local notification can be scheduled, in which case it hasn't yet been delivered and should reside within the shared 
-                    // application's list of scheduled notifications. the tricky part here is that these notification objects aren't reference-equal, 
-                    // so we can't just pass `notification` to CancelLocalNotification. instead, we must search for the notification by id and 
-                    // cancel the appropriate scheduled notification object.
-                    bool notificationCanceled = false;
-                    foreach (UILocalNotification scheduledNotification in UIApplication.SharedApplication.ScheduledLocalNotifications)
+                    if (scheduledId == id)
                     {
-                        string scheduledId = scheduledNotification.UserInfo.ValueForKey(new NSString(notificationIdKey))?.ToString();
-
-                        if (scheduledId == idToCancel)
-                        {
-                            UIApplication.SharedApplication.CancelLocalNotification(scheduledNotification);
-                            notificationCanceled = true;
-                        }
+                        UIApplication.SharedApplication.CancelLocalNotification(scheduledNotification);
                     }
-
-                    // if we didn't cancel the notification above, then it isn't scheduled and should have already been delivered. if it has been 
-                    // delivered, then our only option for cancelling it is to pass `notification` itself to CancelLocalNotification. this assumes
-                    // that `notification` is the actual notification object and not, for example, the one originally passed to ScheduleLocalNotification.
-                    if (!notificationCanceled)
-                        UIApplication.SharedApplication.CancelLocalNotification(notification);
                 }
-                catch (Exception ex)
+            });
+        }
+
+        public override void CancelSilentNotifications()
+        {
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            {
+                // a local notification can be scheduled, in which case it hasn't yet been delivered and should reside within the shared 
+                // application's list of scheduled notifications. the tricky part here is that these notification objects aren't reference-equal, 
+                // so we can't just pass `notification` to CancelLocalNotification. instead, we must search for the notification by id and 
+                // cancel the appropriate scheduled notification object.
+                foreach (UILocalNotification scheduledNotification in UIApplication.SharedApplication.ScheduledLocalNotifications)
                 {
-                    SensusException.Report("Failed to cancel notification.", ex, false);
+                    throw new NotImplementedException();
                 }
             });
         }

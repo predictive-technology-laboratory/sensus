@@ -180,7 +180,7 @@ namespace Sensus.iOS
                 // we're in iOS < 10.0, which means we should have a notifier and scheduler to handle the notification.
 
                 // cancel notification (removing it from the tray), since it has served its purpose
-                (SensusContext.Current.Notifier as IUILocalNotificationNotifier)?.CancelNotification(notification, CallbackScheduler.SENSUS_CALLBACK_ID_KEY);
+                (SensusContext.Current.Notifier as IUILocalNotificationNotifier)?.CancelNotification(notification);
 
                 // service the callback
                 (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler)?.ServiceCallbackAsync(notification.UserInfo);
@@ -192,6 +192,8 @@ namespace Sensus.iOS
         // when the user quits.
         public override void DidEnterBackground(UIApplication uiApplication)
         {
+            (SensusContext.Current.Notifier as IiOSNotifier).CancelSilentNotifications();
+
             iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
 
             serviceHelper.IssuePendingSurveysNotificationAsync(true, true);

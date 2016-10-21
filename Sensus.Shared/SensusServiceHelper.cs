@@ -58,8 +58,8 @@ namespace Sensus.Shared
     {
         #region static members
         private static SensusServiceHelper SINGLETON;
-        public const string PENDING_SURVEY_NOTIFICATION_ID = "PENDING-SURVEY-NOTIFICATION";
         public const int PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS = 60;
+        private const string PENDING_SURVEY_NOTIFICATION_ID = "SENSUS-PENDING-SURVEY-NOTIFICATION";
         public const string XAMARIN_INSIGHTS_APP_KEY = "";
         public const string ENCRYPTION_KEY = "";
 
@@ -785,12 +785,16 @@ namespace Sensus.Shared
         {
             RemoveExpiredScripts(false);
 
-            SensusContext.Current.Notifier.IssueNotificationAsync(PendingSurveyMessage(_scriptsToRun.Count), PENDING_SURVEY_NOTIFICATION_ID, playSound, vibrate);
+            string pendingSurveyMessage = PendingSurveyMessage(_scriptsToRun.Count);
+            if (pendingSurveyMessage == null)
+                ClearPendingSurveysNotificationAsync();
+            else
+                SensusContext.Current.Notifier.IssueNotificationAsync("Sensus", pendingSurveyMessage, PENDING_SURVEY_NOTIFICATION_ID, playSound, DisplayPage.PendingSurveys);
         }
 
         public void ClearPendingSurveysNotificationAsync()
         {
-            SensusContext.Current.Notifier.IssueNotificationAsync(null, PENDING_SURVEY_NOTIFICATION_ID, false, false);
+            SensusContext.Current.Notifier.CancelNotification(PENDING_SURVEY_NOTIFICATION_ID);
         }
 
         public void TextToSpeechAsync(string text)

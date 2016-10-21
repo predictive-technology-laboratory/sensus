@@ -20,16 +20,16 @@ using UserNotifications;
 namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
 {
     /// <summary>
-    /// Adds methods specific to the UNNotificationCenter architecture.
+    /// Adds notifier methods specific to the UNNotificationCenter architecture.
     /// </summary>
-    public interface IUNUserNotificationNotifier : INotifier
+    public interface IUNUserNotificationNotifier : IiOSNotifier
     {
-        void CancelNotification(string id);
+        void IssueSilentNotificationAsync(string id, int delayMS, Action<UNNotificationRequest, NSError> callback = null);
 
-        void CancelNotification(UNNotificationRequest request);
-
-        void IssueNotificationAsync(string message, string id, bool playSound, string title, int delayMS, NSDictionary notificationInfo, Action<UNNotificationRequest, NSError> callback = null);
+        void IssueNotificationAsync(string title, string message, string id, bool playSound, DisplayPage displayPage, int delayMS, NSDictionary notificationInfo, Action<UNNotificationRequest, NSError> callback = null);
 
         void IssueNotificationAsync(UNNotificationRequest request, Action<NSError> callback = null);
+
+        void CancelNotification(UNNotificationRequest request);
     }
 }

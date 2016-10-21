@@ -133,7 +133,7 @@ namespace Sensus.Android
                                 serviceHelper.LetDeviceSleep();
                             }
                         }
-                        else if (intent.GetStringExtra(SensusServiceHelper.NOTIFICATION_ID_KEY) == SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID)
+                        else if (intent.GetStringExtra(Notifier.DISPLAY_PAGE) == DisplayPage.PendingSurveyPage)
                         {
                             serviceHelper.BringToForeground();
 
