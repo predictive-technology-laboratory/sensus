@@ -30,6 +30,7 @@ using Xamarin.Forms.Platform.Android;
 using Xam.Plugin.MapExtend.Droid;
 using Plugin.CurrentActivity;
 using ZXing.Mobile;
+using Sensus.Shared.Android;
 
 #if __ANDROID_23__
 using Plugin.Permissions;
@@ -46,7 +47,7 @@ namespace Sensus.Android
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault }, DataMimeType = "application/json")]  // protocols obtained from "file" and "content" schemes:  http://developer.android.com/guide/components/intents-filters.html#DataTest
     public class AndroidMainActivity : FormsApplicationActivity
     {
-        private AndroidSensusServiceConnection _serviceConnection;
+        private AndroidSensusServiceConnection<AndroidMainActivity> _serviceConnection;
         private ManualResetEvent _activityResultWait;
         private AndroidActivityResultRequestCode _activityResultRequestCode;
         private Tuple<Result, Intent> _activityResult;
@@ -93,7 +94,7 @@ namespace Sensus.Android
 
             MobileBarcodeScanner.Initialize(Application);
 
-            _serviceConnection = new AndroidSensusServiceConnection();
+            _serviceConnection = new AndroidSensusServiceConnection<AndroidMainActivity>();
 
             _serviceConnection.ServiceConnected += (o, e) =>
             {
@@ -161,8 +162,10 @@ namespace Sensus.Android
 
             CrossCurrentActivity.Current.Activity = this;
 
+            SensusContext.Current.ActivationId = Guid.NewGuid().ToString();
+
             // make sure that the service is running and bound any time the activity is resumed.
-            Intent serviceIntent = new Intent(this, typeof(AndroidSensusService));
+            Intent serviceIntent = new Intent(this, typeof(AndroidSensusService<AndroidMainActivity>));
             StartService(serviceIntent);
             BindService(serviceIntent, _serviceConnection, Bind.AutoCreate | Bind.AboveClient);
 
@@ -242,7 +245,7 @@ namespace Sensus.Android
             // focus changed event and let the service helper know when the activity is focused and when it is not. this
             // way, any actions that the service helper runs will certainly be run after the main activity is running
             // and focused.
-            AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
+            AndroidSensusServiceHelper<AndroidMainActivity> serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper<AndroidMainActivity>;
 
             if (serviceHelper != null)
             {

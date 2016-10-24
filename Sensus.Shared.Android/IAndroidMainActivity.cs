@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Sensus.Shared.Callbacks
+using System;
+using Android.App;
+using Android.Content;
+
+namespace Sensus.Shared.Android
 {
-    public interface INotifier
+    public interface IAndroidMainActivity
     {
-        void IssueNotificationAsync(string title, string message, string id, bool playSound, DisplayPage type);
-
-        void CancelNotification(string id);
-
-        void OpenDisplayPage(DisplayPage displayPage);
+        void GetActivityResultAsync(Intent intent, AndroidActivityResultRequestCode requestCode, Action<Tuple<Result, Intent>> callback);
     }
 }

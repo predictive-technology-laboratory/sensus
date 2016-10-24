@@ -16,20 +16,28 @@ using Sensus.Shared.Encryption;
 using Sensus.Shared.Concurrent;
 using Sensus.Shared.Android.Concurrent;
 using Sensus.Shared.Context;
+using Sensus.Shared.Callbacks;
+using Sensus.Shared.Android.Callbacks;
+using Xamarin.Forms.Platform.Android;
 
 namespace Sensus.Shared.Android.Context
 {
-    public class AndroidSensusContext : ISensusContext
+    public class AndroidSensusContext<MainActivityT> : ISensusContext where MainActivityT : FormsApplicationActivity
     {
-        public Platform Platform { get; }
+        public Sensus.Shared.Context.Platform Platform { get; }
         public IConcurrent MainThreadSynchronizer { get; }
         public IEncryption Encryption { get; }
+        public ICallbackScheduler CallbackScheduler { get; }
+        public INotifier Notifier { get; }
+        public string ActivationId { get; set; }
 
-        public AndroidSensusContext(string encryptionKey)
+        public AndroidSensusContext(string encryptionKey, AndroidSensusService<MainActivityT> service)
         {
-            Platform = Platform.Android;
+            Platform = Sensus.Shared.Context.Platform.Android;
             MainThreadSynchronizer = new MainConcurrent();
             Encryption = new SimpleEncryption(encryptionKey);
+            CallbackScheduler = new AndroidCallbackScheduler<MainActivityT>(service);
+            Notifier = new AndroidNotifier<MainActivityT>(service);
         }
     }
 }
