@@ -39,13 +39,21 @@ namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
             if (callbackInfo == null)
                 return;
 
+            Action<UILocalNotification> notificationCreated = notification =>
+            {
+                lock (_callbackIdNotification)
+                {
+                    _callbackIdNotification.Add(callbackId, notification);
+                }
+            };
+
             IUILocalNotificationNotifier notifier = SensusContext.Current.Notifier as IUILocalNotificationNotifier;
 
             string userNotificationMessage = GetCallbackUserNotificationMessage(callbackId);
             if (userNotificationMessage == null)
-                notifier.IssueSilentNotificationAsync(callbackId, delayMS, callbackInfo);
+                notifier.IssueSilentNotificationAsync(callbackId, delayMS, callbackInfo, notificationCreated);
             else
-                notifier.IssueNotificationAsync("Sensus", userNotificationMessage, callbackId, true, displayPage, delayMS, callbackInfo);
+                notifier.IssueNotificationAsync("Sensus", userNotificationMessage, callbackId, true, displayPage, delayMS, callbackInfo, notificationCreated);
         }
 
         public override void UpdateCallbackActivationIds(string newActivationId)
@@ -63,7 +71,6 @@ namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
                 {
                     foreach (string callbackId in _callbackIdNotification.Keys)
                     {
-                        // TODO:  Cancel notification if it's a callback.
                         UILocalNotification notification = _callbackIdNotification[callbackId];
 
                         if (notification.UserInfo != null)
@@ -71,15 +78,19 @@ namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
                             string activationId = (notification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ACTIVATION_ID_KEY)) as NSString).ToString();
                             if (activationId != newActivationId)
                             {
+                                IUILocalNotificationNotifier notifier = SensusContext.Current.Notifier as IUILocalNotificationNotifier;
+
+                                // we don't have a way to update a previous notification, so cancel the current one to avoid duplicate notifications.
+                                notifier.CancelNotification(notification);
+
+                                // update activation ID in user info
                                 NSMutableDictionary userInfo = new NSMutableDictionary(notification.UserInfo);
                                 userInfo.SetValueForKey(new NSString(newActivationId), new NSString(SENSUS_CALLBACK_ACTIVATION_ID_KEY));
                                 notification.UserInfo = userInfo;
 
-                                // TODO:  Does firing in the past really work?
-
                                 // since we set the UILocalNotification's FireDate when it was constructed, if it's currently in the past it will fire immediately 
                                 // when scheduled again with the new activation ID.
-                                UIApplication.SharedApplication.ScheduleLocalNotification(notification);
+                                notifier.IssueNotificationAsync(notification);
                             }
                         }
                     }
@@ -98,7 +109,7 @@ namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
             UILocalNotification callbackNotification;
             lock (_callbackIdNotification)
             {
-                callbackNotification = _callbackIdNotification[callbackId];
+                _callbackIdNotification.TryGetValue(callbackId, out callbackNotification);
                 _callbackIdNotification.Remove(callbackId);
             }
 
@@ -115,7 +126,7 @@ namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
                 SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                 {
                     callbackNotification.FireDate = repeatCallbackTime.ToUniversalTime().ToNSDate();
-                    UIApplication.SharedApplication.ScheduleLocalNotification(callbackNotification);
+                    (SensusContext.Current.Notifier as IUILocalNotificationNotifier).IssueNotificationAsync(callbackNotification);
                 });
             },
 

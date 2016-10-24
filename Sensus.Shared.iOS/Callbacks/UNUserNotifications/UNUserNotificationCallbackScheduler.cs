@@ -42,7 +42,7 @@ namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
 
             string userNotificationMessage = GetCallbackUserNotificationMessage(callbackId);
 
-            Action<UNNotificationRequest> requestCallback = request =>
+            Action<UNNotificationRequest> requestCreated = request =>
             {
                 lock (_callbackIdRequest)
                 {
@@ -53,9 +53,9 @@ namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
             IUNUserNotificationNotifier notifier = SensusContext.Current.Notifier as IUNUserNotificationNotifier;
 
             if (userNotificationMessage == null)
-                notifier.IssueSilentNotificationAsync(callbackId, delayMS, callbackInfo, requestCallback);
+                notifier.IssueSilentNotificationAsync(callbackId, delayMS, callbackInfo, requestCreated);
             else
-                notifier.IssueNotificationAsync("Sensus", userNotificationMessage, callbackId, true, displayPage, delayMS, callbackInfo, requestCallback);
+                notifier.IssueNotificationAsync("Sensus", userNotificationMessage, callbackId, true, displayPage, delayMS, callbackInfo, requestCreated);
         }
 
         public override void UpdateCallbackActivationIds(string newActivationId)
@@ -95,7 +95,7 @@ namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
             UNNotificationRequest request;
             lock (_callbackIdRequest)
             {
-                request = _callbackIdRequest[callbackId];
+                _callbackIdRequest.TryGetValue(callbackId, out request);
                 _callbackIdRequest.Remove(callbackId);
             }
 

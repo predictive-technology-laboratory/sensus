@@ -28,17 +28,17 @@ namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
             IssueNotificationAsync(title, message, id, playSound, displayPage, -1, null, null);
         }
 
-        public void IssueSilentNotificationAsync(string id, int delayMS, NSMutableDictionary info, Action<UNNotificationRequest> requestCallback = null)
+        public void IssueSilentNotificationAsync(string id, int delayMS, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
         {
             if (info == null)
                 info = new NSMutableDictionary();
 
             info.SetValueForKey(new NSNumber(true), new NSString(SILENT_NOTIFICATION_KEY));
 
-            IssueNotificationAsync("silent", "silent", id, false, DisplayPage.None, delayMS, info, requestCallback);
+            IssueNotificationAsync("silent", "silent", id, false, DisplayPage.None, delayMS, info, requestCreated);
         }
 
-        public void IssueNotificationAsync(string title, string message, string id, bool playSound, DisplayPage displayPage, int delayMS, NSMutableDictionary info, Action<UNNotificationRequest> requestCallback = null)
+        public void IssueNotificationAsync(string title, string message, string id, bool playSound, DisplayPage displayPage, int delayMS, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
         {
             if (info == null)
                 info = new NSMutableDictionary();
@@ -62,10 +62,10 @@ namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
             if (playSound)
                 content.Sound = UNNotificationSound.Default;
 
-            IssueNotificationAsync(id, content, delayMS, requestCallback);
+            IssueNotificationAsync(id, content, delayMS, requestCreated);
         }
 
-        public void IssueNotificationAsync(string id, UNNotificationContent content, double delayMS, Action<UNNotificationRequest> requestCallback = null)
+        public void IssueNotificationAsync(string id, UNNotificationContent content, double delayMS, Action<UNNotificationRequest> requestCreated = null)
         {
             UNCalendarNotificationTrigger trigger = null;
 
@@ -93,7 +93,7 @@ namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
             }
 
             UNNotificationRequest notificationRequest = UNNotificationRequest.FromIdentifier(id, content, trigger);
-            requestCallback?.Invoke(notificationRequest);
+            requestCreated?.Invoke(notificationRequest);
             IssueNotificationAsync(notificationRequest);
         }
 

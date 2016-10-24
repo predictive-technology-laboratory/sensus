@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using Foundation;
 using Sensus.Shared.Callbacks;
 using UIKit;
@@ -20,9 +21,11 @@ namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
 {
     public interface IUILocalNotificationNotifier : IiOSNotifier
     {
-        void IssueSilentNotificationAsync(string id, int delayMS, NSMutableDictionary notificationInfo);
+        void IssueSilentNotificationAsync(string id, int delayMS, NSMutableDictionary notificationInfo, Action<UILocalNotification> notificationCreated = null);
 
-        void IssueNotificationAsync(string title, string message, string id, bool playSound, DisplayPage displayPage, int delayMS, NSMutableDictionary notificationInfo);
+        void IssueNotificationAsync(string title, string message, string id, bool playSound, DisplayPage displayPage, int delayMS, NSMutableDictionary notificationInfo, Action<UILocalNotification> notificationCreated = null);
+
+        void IssueNotificationAsync(UILocalNotification notification);
 
         void CancelNotification(UILocalNotification notification);
     }

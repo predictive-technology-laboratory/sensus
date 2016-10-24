@@ -187,6 +187,7 @@ namespace Sensus.iOS
                 {
                     callbackScheduler.ServiceCallbackAsync(notification.UserInfo);
 
+                    // if the user opened the notification, display the page associated with the notification (if there is one).
                     if (application.ApplicationState == UIApplicationState.Inactive)
                         callbackScheduler.OpenDisplayPage(notification.UserInfo);
                 }                    

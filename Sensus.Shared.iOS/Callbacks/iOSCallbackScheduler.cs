@@ -96,7 +96,7 @@ namespace Sensus.Shared.iOS.Callbacks
                 });
             });
 
-            // raise callback but don't notify user since we would have already done so when the UILocalNotification was delivered to the notification tray.
+            // raise callback but don't notify user since we would have already done so when the notification was delivered to the notification tray.
             RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, false,
 
             // don't need to specify how repeats will be scheduled. the class that extends this one will take care of it.
