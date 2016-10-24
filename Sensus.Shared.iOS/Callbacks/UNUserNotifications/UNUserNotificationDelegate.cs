@@ -22,7 +22,14 @@ namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
     {
         public override void WillPresentNotification(UNUserNotificationCenter center, UNNotification notification, Action<UNNotificationPresentationOptions> completionHandler)
         {
+            SensusServiceHelper.Get().Logger.Log("Notification delivered:  " + (notification?.Request?.Identifier ?? "[null identifier]"), LoggingLevel.Normal, GetType());
             (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler)?.ServiceCallbackAsync(notification?.Request?.Content?.UserInfo);
+        }
+
+        public override void DidReceiveNotificationResponse(UNUserNotificationCenter center, UNNotificationResponse response, Action completionHandler)
+        {
+            SensusServiceHelper.Get().Logger.Log("Notification received user response:  " + (response?.Notification?.Request?.Identifier ?? "[null identifier]"), LoggingLevel.Normal, GetType());
+            (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler)?.OpenDisplayPage(response?.Notification?.Request?.Content?.UserInfo);
         }
     }
 }

@@ -85,18 +85,23 @@ namespace Sensus.Shared.Callbacks
 
         public string GetCallbackUserNotificationMessage(string callbackId)
         {
-            if (_idCallback.ContainsKey(callbackId))
-                return _idCallback[callbackId].UserNotificationMessage;
-            else
-                return null;
+            ScheduledCallback callback;
+            _idCallback.TryGetValue(callbackId, out callback);
+            return callback?.UserNotificationMessage;
         }
 
         public DisplayPage GetCallbackDisplayPage(string callbackId)
         {
-            if (_idCallback.ContainsKey(callbackId))
-                return _idCallback[callbackId].DisplayPage;
-            else
-                return DisplayPage.None;
+            ScheduledCallback callback;
+            _idCallback.TryGetValue(callbackId, out callback);
+            return callback?.DisplayPage ?? DisplayPage.None;
+        }
+
+        public string GetCallbackName(string callbackId)
+        {
+            ScheduledCallback callback;
+            _idCallback.TryGetValue(callbackId, out callback);
+            return callback?.Name;
         }
 
         public virtual void RaiseCallbackAsync(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, bool notifyUser, Action<DateTime> scheduleRepeatCallback, Action letDeviceSleepCallback, Action finishedCallback)
@@ -228,8 +233,7 @@ namespace Sensus.Shared.Callbacks
                 }
                 finally
                 {
-                    if (finishedCallback != null)
-                        finishedCallback();
+                    finishedCallback?.Invoke();
                 }
             });
         }

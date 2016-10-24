@@ -48,14 +48,10 @@ namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
                 notifier.IssueNotificationAsync("Sensus", userNotificationMessage, callbackId, true, displayPage, delayMS, callbackInfo);
         }
 
-        public override void UpdateCallbackActivationIdsAsync(string newActivationId)
+        public override void UpdateCallbackActivationIds(string newActivationId)
         {
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
-                // since all notifications are about to be rescheduled, clear all current notifications.
-                UIApplication.SharedApplication.CancelAllLocalNotifications();
-                UIApplication.SharedApplication.ApplicationIconBadgeNumber = 0;
-
                 // this method will be called in one of three conditions:  (1) after sensus has been started and is running, (2)
                 // after sensus has been reactivated and was already running, and (3) after a start attempt was made but failed.
                 // in all three situations, there will be zero or more notifications present in the _callbackIdNotification lookup.
@@ -67,6 +63,7 @@ namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
                 {
                     foreach (string callbackId in _callbackIdNotification.Keys)
                     {
+                        // TODO:  Cancel notification if it's a callback.
                         UILocalNotification notification = _callbackIdNotification[callbackId];
 
                         if (notification.UserInfo != null)
@@ -77,6 +74,8 @@ namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
                                 NSMutableDictionary userInfo = new NSMutableDictionary(notification.UserInfo);
                                 userInfo.SetValueForKey(new NSString(newActivationId), new NSString(SENSUS_CALLBACK_ACTIVATION_ID_KEY));
                                 notification.UserInfo = userInfo;
+
+                                // TODO:  Does firing in the past really work?
 
                                 // since we set the UILocalNotification's FireDate when it was constructed, if it's currently in the past it will fire immediately 
                                 // when scheduled again with the new activation ID.

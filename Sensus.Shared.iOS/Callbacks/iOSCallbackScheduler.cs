@@ -18,6 +18,7 @@ using System.Linq;
 using Foundation;
 using Sensus.Shared.Callbacks;
 using Sensus.Shared.Context;
+using Sensus.Shared.Exceptions;
 using Sensus.Shared.UI;
 using UIKit;
 using Xamarin.Forms;
@@ -40,7 +41,7 @@ namespace Sensus.Shared.iOS.Callbacks
 
         protected abstract void ScheduleCallbackAsync(string callbackId, int delayMS, bool repeating, int repeatDelayMS, bool repeatLag);
 
-        public abstract void UpdateCallbackActivationIdsAsync(string newActivationId);
+        public abstract void UpdateCallbackActivationIds(string newActivationId);
 
         public NSMutableDictionary GetCallbackInfo(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, DisplayPage displayPage, string activationId)
         {
@@ -112,26 +113,31 @@ namespace Sensus.Shared.iOS.Callbacks
                     UIApplication.SharedApplication.EndBackgroundTask(callbackTaskId);
                 });
             });
+        }
 
-            // check whether the user opened a pending-survey notification (indicated by an application state that is not active). we'll
-            // also get notifications when the app is active, due to how we manage pending-survey notifications.
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+        public void OpenDisplayPage(NSDictionary notificationInfo)
+        {
+            DisplayPage displayPage;
+            if (Enum.TryParse(notificationInfo.ValueForKey(new NSString(Notifier.DISPLAY_PAGE_KEY)) as NSString, out displayPage))
             {
-                if (UIApplication.SharedApplication.ApplicationState != UIApplicationState.Active)
+                if (displayPage == DisplayPage.None)
+                    return;
+
+                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                 {
-                    DisplayPage displayPage = (DisplayPage)Enum.Parse(typeof(DisplayPage), callbackInfo.ValueForKey(new NSString(Notifier.DISPLAY_PAGE_KEY)) as NSString);
+                    Page desiredTopPage = null;
+
                     if (displayPage == DisplayPage.PendingSurveys)
-                    {
-                        // display the pending scripts page if it is not already on the top of the navigation stack
-                        SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
-                        {
-                            Page topPage = Application.Current.MainPage.Navigation.NavigationStack.LastOrDefault();
-                            if (!(topPage is PendingScriptsPage))
-                                await Application.Current.MainPage.Navigation.PushAsync(new PendingScriptsPage());
-                        });
-                    }
-                }
-            });
+                        desiredTopPage = new PendingScriptsPage();
+                    else
+                        SensusException.Report("Unrecognized display page:  " + displayPage);
+
+                    Page currentTopPage = Application.Current.MainPage.Navigation.NavigationStack.LastOrDefault();
+
+                    if (currentTopPage != null && desiredTopPage != null && desiredTopPage.GetType() != currentTopPage.GetType())
+                        await Application.Current.MainPage.Navigation.PushAsync(desiredTopPage);
+                });
+            }
         }
     }
 }

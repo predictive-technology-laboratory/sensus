@@ -44,7 +44,7 @@ namespace Sensus.Shared.iOS.Context
             // iOS introduced a new notification center in 10.0 based on UNUserNotifications
             if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
             {
-                UNUserNotificationCenter.Current.RequestAuthorizationAsync(UNAuthorizationOptions.Alert | UNAuthorizationOptions.Sound);
+                UNUserNotificationCenter.Current.RequestAuthorizationAsync(UNAuthorizationOptions.Badge | UNAuthorizationOptions.Sound | UNAuthorizationOptions.Alert);
                 UNUserNotificationCenter.Current.Delegate = new UNUserNotificationDelegate();
                 CallbackScheduler = new UNUserNotificationCallbackScheduler();
                 Notifier = new UNUserNotificationNotifier();
@@ -52,6 +52,7 @@ namespace Sensus.Shared.iOS.Context
             // use the pre-10.0 approach based on UILocalNotifications
             else
             {
+                UIApplication.SharedApplication.RegisterUserNotificationSettings(UIUserNotificationSettings.GetSettingsForTypes(UIUserNotificationType.Badge | UIUserNotificationType.Sound | UIUserNotificationType.Alert, new NSSet()));
                 CallbackScheduler = new UILocalNotificationCallbackScheduler();
                 Notifier = new UILocalNotificationNotifier();
             }

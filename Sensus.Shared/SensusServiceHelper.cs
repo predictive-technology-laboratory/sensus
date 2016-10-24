@@ -714,13 +714,13 @@ namespace Sensus.Shared
         public void StartAsync(Action callback)
         {
             new Thread(() =>
-                {
-                    Start();
+            {
+                Start();
 
-                    if (callback != null)
-                        callback();
+                if (callback != null)
+                    callback();
 
-                }).Start();
+            }).Start();
         }
 
         /// <summary>

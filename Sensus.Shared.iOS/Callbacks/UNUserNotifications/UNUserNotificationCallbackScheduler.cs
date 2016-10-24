@@ -14,10 +14,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Foundation;
 using Sensus.Shared.Callbacks;
 using Sensus.Shared.Context;
 using UserNotifications;
+using Xamarin.Forms.Platform.iOS;
 
 namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
 {
@@ -56,39 +58,34 @@ namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
                 notifier.IssueNotificationAsync("Sensus", userNotificationMessage, callbackId, true, displayPage, delayMS, callbackInfo, requestCallback);
         }
 
-        public override void UpdateCallbackActivationIdsAsync(string newActivationId)
+        public override void UpdateCallbackActivationIds(string newActivationId)
         {
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            // see corresponding comments in UILocalNotificationCallbackScheduler
+            lock (_callbackIdRequest)
             {
-                // since all notifications are about to be rescheduled, clear all current notifications.
-                UNUserNotificationCenter.Current.RemoveAllDeliveredNotifications();
-                UNUserNotificationCenter.Current.RemoveAllPendingNotificationRequests();
-
-                // see corresponding comments in UILocalNotificationCallbackScheduler
-                lock (_callbackIdRequest)
+                foreach (string callbackId in _callbackIdRequest.Keys.ToList())
                 {
-                    foreach (string callbackId in _callbackIdRequest.Keys)
+                    UNNotificationRequest request = _callbackIdRequest[callbackId];
+                    string activationId = (request.Content.UserInfo?.ValueForKey(new NSString(SENSUS_CALLBACK_ACTIVATION_ID_KEY)) as NSString)?.ToString();
+                    if (activationId != newActivationId)
                     {
-                        UNNotificationRequest request = _callbackIdRequest[callbackId];
+                        double delayMS = 0;
+                        DateTime? triggerDateTime = (request.Trigger as UNCalendarNotificationTrigger)?.NextTriggerDate?.ToDateTime().ToLocalTime();
+                        if (triggerDateTime.HasValue)
+                            delayMS = (triggerDateTime.Value - DateTime.Now).TotalMilliseconds;
 
-                        if (request.Content.UserInfo != null)
+                        UNMutableNotificationContent newContent = request.Content.MutableCopy() as UNMutableNotificationContent;
+                        NSMutableDictionary newUserInfo = new NSMutableDictionary(request.Content.UserInfo);
+                        newUserInfo.SetValueForKey(new NSString(newActivationId), new NSString(SENSUS_CALLBACK_ACTIVATION_ID_KEY));
+                        newContent.UserInfo = newUserInfo;
+
+                        (SensusContext.Current.Notifier as IUNUserNotificationNotifier).IssueNotificationAsync(callbackId, newContent, delayMS, newRequest =>
                         {
-                            string activationId = (request.Content.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ACTIVATION_ID_KEY)) as NSString).ToString();
-                            if (activationId != newActivationId)
-                            {
-                                NSMutableDictionary userInfo = new NSMutableDictionary(request.Content.UserInfo);
-                                userInfo.SetValueForKey(new NSString(newActivationId), new NSString(SENSUS_CALLBACK_ACTIVATION_ID_KEY));
-                                (request.Content as UNMutableNotificationContent).UserInfo = userInfo;
-
-                                // TODO:  Does the delay work out properly for re-issued notifications?
-
-                                if (request.Content.UserInfo != null)
-                                    (SensusContext.Current.Notifier as IUNUserNotificationNotifier).IssueNotificationAsync(request);
-                            }
-                        }
+                            _callbackIdRequest[callbackId] = newRequest;
+                        });
                     }
                 }
-            });
+            }
         }
 
         public override void RaiseCallbackAsync(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, bool notifyUser, Action<DateTime> scheduleRepeatCallback, Action letDeviceSleepCallback, Action finishedCallback)
@@ -106,19 +103,13 @@ namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
 
             repeatCallbackTime =>
             {
-                double delaySeconds = (repeatCallbackTime - DateTime.Now).TotalSeconds;
-                if (delaySeconds <= 0)
-                    delaySeconds = 1;
-
-                UNTimeIntervalNotificationTrigger callbackNotificationTrigger = UNTimeIntervalNotificationTrigger.CreateTrigger(delaySeconds, false);
-                UNNotificationRequest callbackNotificationRequest = UNNotificationRequest.FromIdentifier(request.Identifier, request.Content, callbackNotificationTrigger);
-
-                lock (_callbackIdRequest)
+                (SensusContext.Current.Notifier as IUNUserNotificationNotifier).IssueNotificationAsync(request.Identifier, request.Content, (repeatCallbackTime - DateTime.Now).TotalMilliseconds, newRequest =>
                 {
-                    _callbackIdRequest.Add(callbackNotificationRequest.Identifier, callbackNotificationRequest);
-                }
-
-                (SensusContext.Current.Notifier as IUNUserNotificationNotifier).IssueNotificationAsync(callbackNotificationRequest);
+                    lock (_callbackIdRequest)
+                    {
+                        _callbackIdRequest.Add(newRequest.Identifier, newRequest);
+                    }
+                });
             },
 
             letDeviceSleepCallback, finishedCallback);

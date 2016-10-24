@@ -48,7 +48,7 @@
     </IpaPackageName>
     <MtouchUseRefCounting>true</MtouchUseRefCounting>
     <BuildIpa>false</BuildIpa>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <NoWarn>1701</NoWarn>
     <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
     <CodesignProvision>

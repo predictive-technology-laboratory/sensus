@@ -68,8 +68,6 @@ namespace Sensus.iOS
 
             LoadApplication(new App());
 
-            uiApplication.RegisterUserNotificationSettings(UIUserNotificationSettings.GetSettingsForTypes(UIUserNotificationType.Badge | UIUserNotificationType.Sound | UIUserNotificationType.Alert, new NSSet()));
-
 #if UNIT_TESTING
             Forms.ViewInitialized += (sender, e) =>
             {
@@ -131,9 +129,9 @@ namespace Sensus.iOS
 
         public override void OnActivated(UIApplication uiApplication)
         {
-            iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
-
             SensusContext.Current.ActivationId = Guid.NewGuid().ToString();
+
+            iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
 
             try
             {
@@ -146,7 +144,7 @@ namespace Sensus.iOS
 
             serviceHelper.StartAsync(() =>
             {
-                (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler).UpdateCallbackActivationIdsAsync(SensusContext.Current.ActivationId);
+                (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler).UpdateCallbackActivationIds(SensusContext.Current.ActivationId);
 
 #if UNIT_TESTING
                     // load and run the unit testing protocol
@@ -156,7 +154,6 @@ namespace Sensus.iOS
                         Protocol.RunUnitTestingProtocol(file);
                     }
 #endif
-
             });
 
             // background authorization will be done implicitly when the location manager is used in probes, but the authorization is
@@ -182,8 +179,17 @@ namespace Sensus.iOS
                 // cancel notification (removing it from the tray), since it has served its purpose
                 (SensusContext.Current.Notifier as IUILocalNotificationNotifier)?.CancelNotification(notification);
 
-                // service the callback
-                (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler)?.ServiceCallbackAsync(notification.UserInfo);
+                // service the callback. if the user opened the notification then the application state will be inactive
+                IiOSCallbackScheduler callbackScheduler = SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler;
+                if (callbackScheduler == null)
+                    SensusException.Report("Invalid callback scheduler.");
+                else
+                {
+                    callbackScheduler.ServiceCallbackAsync(notification.UserInfo);
+
+                    if (application.ApplicationState == UIApplicationState.Inactive)
+                        callbackScheduler.OpenDisplayPage(notification.UserInfo);
+                }                    
             }
         }
 

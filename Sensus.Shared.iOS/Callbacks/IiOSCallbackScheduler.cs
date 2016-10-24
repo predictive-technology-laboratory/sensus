@@ -22,8 +22,10 @@ namespace Sensus.Shared.iOS.Callbacks
     /// </summary>
     public interface IiOSCallbackScheduler : ICallbackScheduler
     {
-        void UpdateCallbackActivationIdsAsync(string newActivationId);
+        void UpdateCallbackActivationIds(string newActivationId);
 
         void ServiceCallbackAsync(NSDictionary callbackInfo);
+
+        void OpenDisplayPage(NSDictionary notificationInfo);
     }
 }

@@ -45,7 +45,7 @@ namespace Sensus.Shared.iOS.Concurrent
             {
                 var runWait = new ManualResetEvent(false);
 
-                Device.BeginInvokeOnMainThread(() =>
+                NSThread.MainThread.BeginInvokeOnMainThread(() =>
                 {
                     try
                     {
@@ -80,7 +80,7 @@ namespace Sensus.Shared.iOS.Concurrent
                 var result = default(T);
                 var runWait = new ManualResetEvent(false);
 
-                Device.BeginInvokeOnMainThread(() =>
+                NSThread.MainThread.BeginInvokeOnMainThread(() =>
                 {
                     try
                     {
