@@ -23,6 +23,14 @@ namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
         public override void WillPresentNotification(UNUserNotificationCenter center, UNNotification notification, Action<UNNotificationPresentationOptions> completionHandler)
         {
             SensusServiceHelper.Get().Logger.Log("Notification delivered:  " + (notification?.Request?.Identifier ?? "[null identifier]"), LoggingLevel.Normal, GetType());
+
+            // common scenario:  app is backgrounded, and multiple non-silent sensus notifications appear in the iOS tray. the user taps one of these, which
+            // dismisses the tapped notification and brings up sensus. upon activation sensus then updates and reissues all notifications. these reissued
+            // notifications will come directly to the app as long as it's in the foreground. the original notifications that were in the iOS notification
+            // tray will still be there, despite the fact that the notifications have been sent to the app via the current method. short story:  we need to 
+            // cancel each notification as it comes in to remove it from the notification center.
+            SensusContext.Current.Notifier.CancelNotification(notification?.Request?.Identifier);
+
             (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler)?.ServiceCallbackAsync(notification?.Request?.Content?.UserInfo);
         }
 

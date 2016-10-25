@@ -79,6 +79,7 @@ namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
                         newUserInfo.SetValueForKey(new NSString(newActivationId), new NSString(SENSUS_CALLBACK_ACTIVATION_ID_KEY));
                         newContent.UserInfo = newUserInfo;
 
+                        // we don't need to cancel the current notification. reissuing with the same id will update it.
                         (SensusContext.Current.Notifier as IUNUserNotificationNotifier).IssueNotificationAsync(callbackId, newContent, delayMS, newRequest =>
                         {
                             _callbackIdRequest[callbackId] = newRequest;

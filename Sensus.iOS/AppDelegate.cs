@@ -65,6 +65,8 @@ namespace Sensus.iOS
             if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
             {
                 UNUserNotificationCenter.Current.RequestAuthorizationAsync(UNAuthorizationOptions.Badge | UNAuthorizationOptions.Sound | UNAuthorizationOptions.Alert);
+                UNUserNotificationCenter.Current.RemoveAllDeliveredNotifications();
+                UNUserNotificationCenter.Current.RemoveAllPendingNotificationRequests();
                 UNUserNotificationCenter.Current.Delegate = new UNUserNotificationDelegate();
                 SensusContext.Current.CallbackScheduler = new UNUserNotificationCallbackScheduler();
                 SensusContext.Current.Notifier = new UNUserNotificationNotifier();
