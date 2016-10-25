@@ -22,6 +22,8 @@ using Sensus.Shared.Concurrent;
 using Sensus.Shared.Extensions;
 using Sensus.Shared.UI.UiProperties;
 using Sensus.Shared.Probes.Location;
+using Sensus.Shared.Context;
+using Sensus.Shared.Callbacks;
 
 namespace Sensus.Shared.Probes.User.Scripts
 {
@@ -336,7 +338,7 @@ namespace Sensus.Shared.Probes.User.Scripts
             {
                 var delayMS = (int)triggerTime.TimeTill.TotalMilliseconds;
                 var callback = CreateCallback(new Script(Script, Guid.NewGuid()) { ExpirationDate = triggerTime.Expiration, ScheduledRunTime = triggerTime.DateTime });
-                var callbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(callback, delayMS);
+                var callbackId = SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(callback, delayMS);
 
                 SensusServiceHelper.Get().Logger.Log($"Scheduled for {triggerTime.DateTime} ({callbackId})", LoggingLevel.Normal, GetType());
 
@@ -348,7 +350,7 @@ namespace Sensus.Shared.Probes.User.Scripts
 
         private void UnscheduleCallback(string scheduledCallbackId)
         {
-            SensusServiceHelper.Get().UnscheduleCallback(scheduledCallbackId);
+            SensusContext.Current.CallbackScheduler.UnscheduleCallback(scheduledCallbackId);
             SensusServiceHelper.Get().Logger.Log($"Unscheduled ({scheduledCallbackId})", LoggingLevel.Normal, GetType());
         }
 
@@ -373,7 +375,7 @@ namespace Sensus.Shared.Probes.User.Scripts
             });
 
 #if __IOS__
-            // we won't have a way to update the "X Pending Surveys" notification on ios. the best we can do is display a new notification describing the survey and showing its expiration time (if there is one).                                                
+            // we don't have a way to update an "X Pending Surveys" notification on ios like we do on android. the best we can do is display a new notification describing the survey and showing its expiration time (if there is one).                                                
             if (script.ExpirationDate.HasValue)
             {
                 callback.UserNotificationMessage = "Please open to take survey. Expires on " + script.ExpirationDate.Value.ToShortDateString() + " at " + script.ExpirationDate.Value.ToShortTimeString() + ".";
@@ -382,9 +384,9 @@ namespace Sensus.Shared.Probes.User.Scripts
             {
                 callback.UserNotificationMessage = "Please open to take survey.";
             }
-            
+
             // on ios we need a separate indicator that the surveys page should be displayed when the user opens the notification. this is achieved by setting the notification ID to the pending survey notification ID.
-            callback.NotificationId = SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID;
+            callback.DisplayPage = DisplayPage.PendingSurveys;
 #endif
 
             return callback;
@@ -469,7 +471,7 @@ namespace Sensus.Shared.Probes.User.Scripts
                     }
                 }
 
-                await Probe.StoreDatumAsync(new ScriptRunDatum(script.RunTime.Value, Script.Id, Name, script.Id, script.ScheduledRunTime.Value, script.CurrentDatum?.Id, latitude, longitude, locationTimestamp), default(CancellationToken));
+                await Probe.StoreDatumAsync(new ScriptRunDatum(script.RunTime.Value, Script.Id, Name, script.Id, script.ScheduledRunTime, script.CurrentDatum?.Id, latitude, longitude, locationTimestamp), default(CancellationToken));
             });
 
             // this method can be called with previous / current datum values (e.g., when the script is first triggered). it 

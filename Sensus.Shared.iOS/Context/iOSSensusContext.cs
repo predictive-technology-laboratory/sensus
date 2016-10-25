@@ -15,23 +15,17 @@
 using Sensus.Shared.Context;
 using Sensus.Shared.Concurrent;
 using Sensus.Shared.Encryption;
-using Sensus.Shared.iOS.Concurrent;
+using Sensus.Shared.Callbacks;
 
 namespace Sensus.Shared.iOS.Context
 {
-    public class iOSSensusContext: ISensusContext
+    public class iOSSensusContext : ISensusContext
     {
-        public Platform Platform { get; }
-        public IConcurrent MainThreadSynchronizer { get; }
-        public IEncryption Encryption { get; }
-
-        #region Constructor
-        public iOSSensusContext(string encryptionKey)
-        {
-            Platform               = Platform.iOS;
-            MainThreadSynchronizer = new MainConcurrent();
-            Encryption             = new SimpleEncryption(encryptionKey);
-        }
-        #endregion
+        public Platform Platform { get; set; }
+        public IConcurrent MainThreadSynchronizer { get; set; }
+        public IEncryption Encryption { get; set; }
+        public ICallbackScheduler CallbackScheduler { get; set; }
+        public INotifier Notifier { get; set; }
+        public string ActivationId { get; set; }
     }
 }

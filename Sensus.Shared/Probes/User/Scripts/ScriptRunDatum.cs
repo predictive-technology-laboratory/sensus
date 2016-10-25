@@ -21,7 +21,7 @@ namespace Sensus.Shared.Probes.User.Scripts
         private string _scriptId;
         private string _scriptName;
         private string _runId;
-        private DateTimeOffset _scheduledTimestamp;
+        private DateTimeOffset? _scheduledTimestamp;
         private string _triggerDatumId;
         private double? _latitude;
         private double? _longitude;
@@ -63,7 +63,7 @@ namespace Sensus.Shared.Probes.User.Scripts
             }
         }
 
-        public DateTimeOffset ScheduledTimestamp
+        public DateTimeOffset? ScheduledTimestamp
         {
             get
             {
@@ -113,7 +113,7 @@ namespace Sensus.Shared.Probes.User.Scripts
             }
         }
 
-        public ScriptRunDatum(DateTimeOffset timestamp, string scriptId, string scriptName, string runId, DateTimeOffset scheduledTimestamp, string triggerDatumId, double? latitude, double? longitude, DateTimeOffset? locationTimestamp)
+        public ScriptRunDatum(DateTimeOffset timestamp, string scriptId, string scriptName, string runId, DateTimeOffset? scheduledTimestamp, string triggerDatumId, double? latitude, double? longitude, DateTimeOffset? locationTimestamp)
             : base(timestamp)
         {
             _scriptId = scriptId;

@@ -30,6 +30,7 @@ using Xamarin.Forms.Platform.Android;
 using Xam.Plugin.MapExtend.Droid;
 using Plugin.CurrentActivity;
 using ZXing.Mobile;
+using System.Threading.Tasks;
 
 #if __ANDROID_23__
 using Plugin.Permissions;
@@ -172,16 +173,17 @@ namespace Sensus.Android
             ProgressDialog serviceBindWaitDialog = ProgressDialog.Show(this, "Please Wait", "Binding to Sensus", true, false);
 
             // start new thread to wait for connection, since we're currently on the UI thread, which the service connection needs in order to complete.
-            new Thread(() =>
+            Task.Run(() =>
             {
                 _serviceBindWait.WaitOne();
 
                 SensusServiceHelper.Get().ClearPendingSurveysNotificationAsync();
 
+                SensusContext.Current.ActivationId = Guid.NewGuid().ToString();
+
                 // now that the service connection has been established, dismiss the wait dialog and show protocols.
                 SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(serviceBindWaitDialog.Dismiss);
-
-            }).Start();
+            });
         }
 
         protected override void OnPause()

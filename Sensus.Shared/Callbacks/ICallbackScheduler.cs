@@ -12,20 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Sensus.Shared.Encryption;
-using Sensus.Shared.Concurrent;
-using Sensus.Shared.Context;
-using Sensus.Shared.Callbacks;
-
-namespace Sensus.Shared.Android.Context
+namespace Sensus.Shared.Callbacks
 {
-    public class AndroidSensusContext : ISensusContext
+    public interface ICallbackScheduler
     {
-        public Platform Platform { get; set; }
-        public IConcurrent MainThreadSynchronizer { get; set; }
-        public IEncryption Encryption { get; set; }
-        public ICallbackScheduler CallbackScheduler { get; set; }
-        public INotifier Notifier { get; set; }
-        public string ActivationId { get; set; }
+        string ScheduleRepeatingCallback(ScheduledCallback callback, int initialDelayMS, int repeatDelayMS, bool repeatLag);
+
+        string RescheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag);
+
+        string ScheduleOneTimeCallback(ScheduledCallback callback, int delayMS);
+
+        void UnscheduleCallback(string callbackId);
     }
 }

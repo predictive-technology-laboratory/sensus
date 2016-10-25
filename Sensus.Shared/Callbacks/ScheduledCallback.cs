@@ -16,7 +16,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sensus.Shared
+namespace Sensus.Shared.Callbacks
 {
     /// <summary>
     /// Encapsulates information needed to run a scheduled callback.
@@ -75,9 +75,10 @@ namespace Sensus.Shared
         public bool Running { get; set; }
 
         /// <summary>
-        /// ID to set on system-level notification bundle.
+        /// Page to display when callback is returned to app.
         /// </summary>
-        public string NotificationId { get; set; }
+        /// <value>The display page.</value>
+        public DisplayPage DisplayPage { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ScheduledCallback"/> class.
@@ -86,15 +87,14 @@ namespace Sensus.Shared
         /// <param name="action">Action</param>
         /// <param name="callbackTimeout">Callback Timeout</param>
         /// <param name="userNotificationMessage">User notification message</param>
-        /// <param name="notificationId"></param>
-        public ScheduledCallback(string name, ActionDelegate action, TimeSpan? callbackTimeout = null, string userNotificationMessage = null, string notificationId = null)
+        public ScheduledCallback(string name, ActionDelegate action, TimeSpan? callbackTimeout = null, string userNotificationMessage = null)
         {
-            Action                  = action;
-            Name                    = name;
-            CallbackTimeout         = callbackTimeout;
+            Action = action;
+            Name = name;
+            CallbackTimeout = callbackTimeout;
             UserNotificationMessage = userNotificationMessage;
-            NotificationId          = notificationId;
-            Running                 = false;
+            DisplayPage = DisplayPage.None;
+            Running = false;
         }
     }
 }

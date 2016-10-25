@@ -12,20 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Sensus.Shared.Encryption;
-using Sensus.Shared.Concurrent;
-using Sensus.Shared.Context;
+using Foundation;
 using Sensus.Shared.Callbacks;
 
-namespace Sensus.Shared.Android.Context
+namespace Sensus.Shared.iOS.Callbacks
 {
-    public class AndroidSensusContext : ISensusContext
+    /// <summary>
+    /// Adds iOS-specific methods to the callback scheduler.
+    /// </summary>
+    public interface IiOSCallbackScheduler : ICallbackScheduler
     {
-        public Platform Platform { get; set; }
-        public IConcurrent MainThreadSynchronizer { get; set; }
-        public IEncryption Encryption { get; set; }
-        public ICallbackScheduler CallbackScheduler { get; set; }
-        public INotifier Notifier { get; set; }
-        public string ActivationId { get; set; }
+        void UpdateCallbackActivationIds(string newActivationId);
+
+        void ServiceCallbackAsync(NSDictionary callbackInfo);
+
+        void OpenDisplayPage(NSDictionary notificationInfo);
     }
 }

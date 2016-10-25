@@ -33,6 +33,12 @@ using Plugin.Toasts;
 using Facebook.CoreKit;
 using Sensus.Shared.iOS.Exceptions;
 using Syncfusion.SfChart.XForms.iOS.Renderers;
+using Sensus.Shared.iOS.Callbacks.UILocalNotifications;
+using Sensus.Shared.iOS.Callbacks;
+using UserNotifications;
+using Sensus.Shared.iOS.Callbacks.UNUserNotifications;
+using Sensus.Shared.iOS.Concurrent;
+using Sensus.Shared.Encryption;
 
 namespace Sensus.iOS
 {
@@ -44,9 +50,34 @@ namespace Sensus.iOS
     {
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
+            // insights should be initialized first to maximize coverage of exception reporting
             InsightsInitialization.Initialize(new iOSInsightsInitializer(UIDevice.CurrentDevice.IdentifierForVendor.AsString()), SensusServiceHelper.XAMARIN_INSIGHTS_APP_KEY);
 
-            SensusContext.Current = new iOSSensusContext(SensusServiceHelper.ENCRYPTION_KEY);
+            #region configure context
+            SensusContext.Current = new iOSSensusContext
+            {
+                Platform = Shared.Context.Platform.iOS,
+                MainThreadSynchronizer = new MainConcurrent(),
+                Encryption = new SimpleEncryption(SensusServiceHelper.ENCRYPTION_KEY)
+            };
+
+            // iOS introduced a new notification center in 10.0 based on UNUserNotifications
+            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
+            {
+                UNUserNotificationCenter.Current.RequestAuthorizationAsync(UNAuthorizationOptions.Badge | UNAuthorizationOptions.Sound | UNAuthorizationOptions.Alert);
+                UNUserNotificationCenter.Current.Delegate = new UNUserNotificationDelegate();
+                SensusContext.Current.CallbackScheduler = new UNUserNotificationCallbackScheduler();
+                SensusContext.Current.Notifier = new UNUserNotificationNotifier();
+            }
+            // use the pre-10.0 approach based on UILocalNotifications
+            else
+            {
+                UIApplication.SharedApplication.RegisterUserNotificationSettings(UIUserNotificationSettings.GetSettingsForTypes(UIUserNotificationType.Badge | UIUserNotificationType.Sound | UIUserNotificationType.Alert, new NSSet()));
+                SensusContext.Current.CallbackScheduler = new UILocalNotificationCallbackScheduler();
+                SensusContext.Current.Notifier = new UILocalNotificationNotifier();
+            }
+            #endregion
+
             SensusServiceHelper.Initialize(() => new iOSSensusServiceHelper());
 
             // facebook settings
@@ -63,8 +94,6 @@ namespace Sensus.iOS
             ToastNotificatorImplementation.Init();
 
             LoadApplication(new App());
-
-            uiApplication.RegisterUserNotificationSettings(UIUserNotificationSettings.GetSettingsForTypes(UIUserNotificationType.Badge | UIUserNotificationType.Sound | UIUserNotificationType.Alert, new NSSet()));
 
 #if UNIT_TESTING
             Forms.ViewInitialized += (sender, e) =>
@@ -127,13 +156,9 @@ namespace Sensus.iOS
 
         public override void OnActivated(UIApplication uiApplication)
         {
-            // since all notifications are about to be rescheduled/serviced, clear all current notifications.
-            UIApplication.SharedApplication.CancelAllLocalNotifications();
-            UIApplication.SharedApplication.ApplicationIconBadgeNumber = 0;
+            SensusContext.Current.ActivationId = Guid.NewGuid().ToString();
 
             iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
-
-            serviceHelper.ActivationId = Guid.NewGuid().ToString();
 
             try
             {
@@ -146,7 +171,7 @@ namespace Sensus.iOS
 
             serviceHelper.StartAsync(() =>
             {
-                serviceHelper.UpdateCallbackNotificationActivationIdsAsync();
+                (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler).UpdateCallbackActivationIds(SensusContext.Current.ActivationId);
 
 #if UNIT_TESTING
                     // load and run the unit testing protocol
@@ -156,7 +181,6 @@ namespace Sensus.iOS
                         Protocol.RunUnitTestingProtocol(file);
                     }
 #endif
-
             });
 
             // background authorization will be done implicitly when the location manager is used in probes, but the authorization is
@@ -171,31 +195,28 @@ namespace Sensus.iOS
 
         public override void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)
         {
-            if (notification.UserInfo != null)
+            // UILocalNotifications were obsoleted in iOS 10.0, and we should not be receiving them. furthermore, we won't have
+            // any idea how to service them on iOS 10.0 and above. so just report the problem to Insights and bail.
+            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
+                SensusException.Report("Received UILocalNotification in iOS 10 or later.");
+            else
             {
-                iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
+                // we're in iOS < 10.0, which means we should have a notifier and scheduler to handle the notification.
 
-                // check whether this is a callback notification and service it if it is
-                NSNumber isCallbackValue = notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_KEY)) as NSNumber;
-                if (isCallbackValue?.BoolValue ?? false)
-                    serviceHelper.ServiceCallbackNotificationAsync(notification);
+                // cancel notification (removing it from the tray), since it has served its purpose
+                (SensusContext.Current.Notifier as IUILocalNotificationNotifier)?.CancelNotification(notification);
 
-                // check whether the user opened a pending-survey notification (indicated by an application state that is not active). we'll
-                // also get notifications when the app is active, due to how we manage pending-survey notifications.
-                if (application.ApplicationState != UIApplicationState.Active)
+                // service the callback. if the user opened the notification then the application state will be inactive
+                IiOSCallbackScheduler callbackScheduler = SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler;
+                if (callbackScheduler == null)
+                    SensusException.Report("Invalid callback scheduler.");
+                else
                 {
-                    NSString notificationId = notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.NOTIFICATION_ID_KEY)) as NSString;
-                    if (notificationId != null && notificationId.ToString() == SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID)
-                    {
-                        // display the pending scripts page if it is not already on the top of the navigation stack
-                        SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
-                        {
-                            IReadOnlyList<Page> navigationStack = Xamarin.Forms.Application.Current.MainPage.Navigation.NavigationStack;
-                            Page topPage = navigationStack.Count == 0 ? null : navigationStack.Last();
-                            if (!(topPage is PendingScriptsPage))
-                                await Xamarin.Forms.Application.Current.MainPage.Navigation.PushAsync(new PendingScriptsPage());
-                        });
-                    }
+                    callbackScheduler.ServiceCallbackAsync(notification.UserInfo);
+
+                    // if the user opened the notification, display the page associated with the notification (if there is one).
+                    if (application.ApplicationState == UIApplicationState.Inactive)
+                        callbackScheduler.OpenDisplayPage(notification.UserInfo);
                 }
             }
         }
@@ -205,10 +226,9 @@ namespace Sensus.iOS
         // when the user quits.
         public override void DidEnterBackground(UIApplication uiApplication)
         {
-            iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
+            (SensusContext.Current.Notifier as IiOSNotifier).CancelSilentNotifications();
 
-            // app is no longer active, so reset the activation ID
-            serviceHelper.ActivationId = null;
+            iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
 
             serviceHelper.IssuePendingSurveysNotificationAsync(true, true);
 

@@ -287,6 +287,8 @@
     <Compile Include="AndroidSensusServiceConnection.cs" />
     <Compile Include="AndroidServiceConnectedEventArgs.cs" />
     <Compile Include="TextCellDisposedFix.cs" />
+    <Compile Include="Callbacks\AndroidCallbackScheduler.cs" />
+    <Compile Include="Callbacks\AndroidNotifier.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -346,6 +348,9 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\README.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Callbacks\" />
   </ItemGroup>
   <Import Project="..\Sensus.Shared\Sensus.Shared.projitems" Label="Shared" />
   <Import Project="..\Sensus.Shared.Android\Sensus.Shared.Android.projitems" Label="Shared" />

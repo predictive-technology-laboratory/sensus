@@ -36,6 +36,7 @@ using System.Threading.Tasks;
 using Sensus.Shared.Context;
 using Sensus.Shared.Probes.User.MicrosoftBand;
 using Sensus.Shared.Probes.User.Scripts;
+using Sensus.Shared.Callbacks;
 
 #if __IOS__
 using HealthKit;
@@ -1147,12 +1148,12 @@ namespace Sensus.Shared
             }, null, $"Started study: {Name}.");
 #endif
 
-            _scheduledStartCallbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(startProtocolCallback, (int)timeUntilStart.TotalMilliseconds);
+            _scheduledStartCallbackId = SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(startProtocolCallback, (int)timeUntilStart.TotalMilliseconds);
         }
 
         public void CancelScheduledStart()
         {
-            SensusServiceHelper.Get().UnscheduleCallback(_scheduledStartCallbackId);
+            SensusContext.Current.CallbackScheduler.UnscheduleCallback(_scheduledStartCallbackId);
             _scheduledStartCallbackId = null;
 
             // we might have scheduled a stop when starting the protocol, so be sure to cancel it.
@@ -1178,12 +1179,12 @@ namespace Sensus.Shared
             }, null, $"Stopped study: {Name}.");
 #endif
 
-            _scheduledStopCallbackId = SensusServiceHelper.Get().ScheduleOneTimeCallback(stopProtocolCallback, (int)timeUntilStop.TotalMilliseconds);
+            _scheduledStopCallbackId = SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(stopProtocolCallback, (int)timeUntilStop.TotalMilliseconds);
         }
 
         public void CancelScheduledStop()
         {
-            SensusServiceHelper.Get().UnscheduleCallback(_scheduledStopCallbackId);
+            SensusContext.Current.CallbackScheduler.UnscheduleCallback(_scheduledStopCallbackId);
             _scheduledStopCallbackId = null;
         }
 

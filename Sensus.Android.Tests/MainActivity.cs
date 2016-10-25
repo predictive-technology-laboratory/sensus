@@ -34,7 +34,7 @@ namespace Sensus.Android.Tests
         {
             base.OnCreate(savedInstanceState);
 
-            global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
+            Xamarin.Forms.Forms.Init(this, savedInstanceState);
 
             SetUp.SetUpFixture.SetUp();
 
