@@ -50,6 +50,7 @@ namespace Sensus.Android.Callbacks
                     Notification.Builder notificationBuilder = new Notification.Builder(_service)
                         .SetContentTitle(title)
                         .SetContentText(message)
+                        .SetSmallIcon(Resource.Drawable.ic_launcher)
                         .SetContentIntent(notificationPendingIntent)
                         .SetAutoCancel(true)
                         .SetOngoing(false);
