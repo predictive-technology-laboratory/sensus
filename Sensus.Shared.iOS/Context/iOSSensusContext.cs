@@ -15,48 +15,17 @@
 using Sensus.Shared.Context;
 using Sensus.Shared.Concurrent;
 using Sensus.Shared.Encryption;
-using Sensus.Shared.iOS.Concurrent;
-using UIKit;
-using Sensus.Shared.iOS.Callbacks.UNUserNotifications;
-using Sensus.Shared.iOS.Callbacks.UILocalNotifications;
 using Sensus.Shared.Callbacks;
-using UserNotifications;
-using Foundation;
 
 namespace Sensus.Shared.iOS.Context
 {
     public class iOSSensusContext : ISensusContext
     {
-        public Platform Platform { get; }
-        public IConcurrent MainThreadSynchronizer { get; }
-        public IEncryption Encryption { get; }
-        public ICallbackScheduler CallbackScheduler { get; }
-        public INotifier Notifier { get; }
+        public Platform Platform { get; set; }
+        public IConcurrent MainThreadSynchronizer { get; set; }
+        public IEncryption Encryption { get; set; }
+        public ICallbackScheduler CallbackScheduler { get; set; }
+        public INotifier Notifier { get; set; }
         public string ActivationId { get; set; }
-
-        #region Constructor
-        public iOSSensusContext(string encryptionKey)
-        {
-            Platform = Platform.iOS;
-            MainThreadSynchronizer = new MainConcurrent();
-            Encryption = new SimpleEncryption(encryptionKey);
-
-            // iOS introduced a new notification center in 10.0 based on UNUserNotifications
-            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
-            {
-                UNUserNotificationCenter.Current.RequestAuthorizationAsync(UNAuthorizationOptions.Badge | UNAuthorizationOptions.Sound | UNAuthorizationOptions.Alert);
-                UNUserNotificationCenter.Current.Delegate = new UNUserNotificationDelegate();
-                CallbackScheduler = new UNUserNotificationCallbackScheduler();
-                Notifier = new UNUserNotificationNotifier();
-            }
-            // use the pre-10.0 approach based on UILocalNotifications
-            else
-            {
-                UIApplication.SharedApplication.RegisterUserNotificationSettings(UIUserNotificationSettings.GetSettingsForTypes(UIUserNotificationType.Badge | UIUserNotificationType.Sound | UIUserNotificationType.Alert, new NSSet()));
-                CallbackScheduler = new UILocalNotificationCallbackScheduler();
-                Notifier = new UILocalNotificationNotifier();
-            }
-        }
-        #endregion
     }
 }

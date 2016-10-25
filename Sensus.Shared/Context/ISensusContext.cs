@@ -23,11 +23,11 @@ namespace Sensus.Shared.Context
     /// </summary>
     public interface ISensusContext
     {
-        Platform Platform { get; }
-        IConcurrent MainThreadSynchronizer { get; }
-        IEncryption Encryption { get; }
-        INotifier Notifier { get; }
-        ICallbackScheduler CallbackScheduler { get; }
+        Platform Platform { get; set; }
+        IConcurrent MainThreadSynchronizer { get; set; }
+        IEncryption Encryption { get; set; }
+        INotifier Notifier { get; set; }
+        ICallbackScheduler CallbackScheduler { get; set; }
 
         /// <summary>
         /// Gets or sets the activation identifier, which changes every time the user-facing app is brought to the foreground.

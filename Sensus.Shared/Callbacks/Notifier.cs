@@ -12,6 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Linq;
+using Sensus.Shared.Context;
+using Sensus.Shared.Exceptions;
+using Sensus.Shared.UI;
+using Xamarin.Forms;
+
 namespace Sensus.Shared.Callbacks
 {
     public abstract class Notifier : INotifier
@@ -22,5 +28,26 @@ namespace Sensus.Shared.Callbacks
         public abstract void IssueNotificationAsync(string title, string message, string id, bool playSound, DisplayPage displayPage);
 
         public abstract void CancelNotification(string id);
+
+        public void OpenDisplayPage(DisplayPage displayPage)
+        {
+            if (displayPage == DisplayPage.None)
+                return;
+
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+            {
+                Page desiredTopPage = null;
+
+                if (displayPage == DisplayPage.PendingSurveys)
+                    desiredTopPage = new PendingScriptsPage();
+                else
+                    SensusException.Report("Unrecognized display page:  " + displayPage);
+
+                Page currentTopPage = Application.Current.MainPage.Navigation.NavigationStack.LastOrDefault();
+
+                if (currentTopPage != null && desiredTopPage != null && desiredTopPage.GetType() != currentTopPage.GetType())
+                    await Application.Current.MainPage.Navigation.PushAsync(desiredTopPage);
+            });
+        }
     }
 }

@@ -19,5 +19,7 @@ namespace Sensus.Shared.Callbacks
         void IssueNotificationAsync(string title, string message, string id, bool playSound, DisplayPage type);
 
         void CancelNotification(string id);
+
+        void OpenDisplayPage(DisplayPage displayPage);
     }
 }

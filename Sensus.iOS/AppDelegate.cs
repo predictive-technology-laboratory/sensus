@@ -33,10 +33,12 @@ using Plugin.Toasts;
 using Facebook.CoreKit;
 using Sensus.Shared.iOS.Exceptions;
 using Syncfusion.SfChart.XForms.iOS.Renderers;
-using Sensus.Shared.iOS;
 using Sensus.Shared.iOS.Callbacks.UILocalNotifications;
 using Sensus.Shared.iOS.Callbacks;
-using Sensus.Shared.Callbacks;
+using UserNotifications;
+using Sensus.Shared.iOS.Callbacks.UNUserNotifications;
+using Sensus.Shared.iOS.Concurrent;
+using Sensus.Shared.Encryption;
 
 namespace Sensus.iOS
 {
@@ -48,9 +50,34 @@ namespace Sensus.iOS
     {
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
+            // insights should be initialized first to maximize coverage of exception reporting
             InsightsInitialization.Initialize(new iOSInsightsInitializer(UIDevice.CurrentDevice.IdentifierForVendor.AsString()), SensusServiceHelper.XAMARIN_INSIGHTS_APP_KEY);
 
-            SensusContext.Current = new iOSSensusContext(SensusServiceHelper.ENCRYPTION_KEY);
+            #region configure context
+            SensusContext.Current = new iOSSensusContext
+            {
+                Platform = Shared.Context.Platform.iOS,
+                MainThreadSynchronizer = new MainConcurrent(),
+                Encryption = new SimpleEncryption(SensusServiceHelper.ENCRYPTION_KEY)
+            };
+
+            // iOS introduced a new notification center in 10.0 based on UNUserNotifications
+            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
+            {
+                UNUserNotificationCenter.Current.RequestAuthorizationAsync(UNAuthorizationOptions.Badge | UNAuthorizationOptions.Sound | UNAuthorizationOptions.Alert);
+                UNUserNotificationCenter.Current.Delegate = new UNUserNotificationDelegate();
+                SensusContext.Current.CallbackScheduler = new UNUserNotificationCallbackScheduler();
+                SensusContext.Current.Notifier = new UNUserNotificationNotifier();
+            }
+            // use the pre-10.0 approach based on UILocalNotifications
+            else
+            {
+                UIApplication.SharedApplication.RegisterUserNotificationSettings(UIUserNotificationSettings.GetSettingsForTypes(UIUserNotificationType.Badge | UIUserNotificationType.Sound | UIUserNotificationType.Alert, new NSSet()));
+                SensusContext.Current.CallbackScheduler = new UILocalNotificationCallbackScheduler();
+                SensusContext.Current.Notifier = new UILocalNotificationNotifier();
+            }
+            #endregion
+
             SensusServiceHelper.Initialize(() => new iOSSensusServiceHelper());
 
             // facebook settings
@@ -190,7 +217,7 @@ namespace Sensus.iOS
                     // if the user opened the notification, display the page associated with the notification (if there is one).
                     if (application.ApplicationState == UIApplicationState.Inactive)
                         callbackScheduler.OpenDisplayPage(notification.UserInfo);
-                }                    
+                }
             }
         }
 

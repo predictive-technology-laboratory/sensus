@@ -14,22 +14,18 @@
 
 using Sensus.Shared.Encryption;
 using Sensus.Shared.Concurrent;
-using Sensus.Shared.Android.Concurrent;
 using Sensus.Shared.Context;
+using Sensus.Shared.Callbacks;
 
 namespace Sensus.Shared.Android.Context
 {
     public class AndroidSensusContext : ISensusContext
     {
-        public Platform Platform { get; }
-        public IConcurrent MainThreadSynchronizer { get; }
-        public IEncryption Encryption { get; }
-
-        public AndroidSensusContext(string encryptionKey)
-        {
-            Platform = Platform.Android;
-            MainThreadSynchronizer = new MainConcurrent();
-            Encryption = new SimpleEncryption(encryptionKey);
-        }
+        public Platform Platform { get; set; }
+        public IConcurrent MainThreadSynchronizer { get; set; }
+        public IEncryption Encryption { get; set; }
+        public ICallbackScheduler CallbackScheduler { get; set; }
+        public INotifier Notifier { get; set; }
+        public string ActivationId { get; set; }
     }
 }

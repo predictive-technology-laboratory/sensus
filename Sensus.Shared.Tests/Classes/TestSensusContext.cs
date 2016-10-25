@@ -22,11 +22,11 @@ namespace Sensus.Shared.Test.Classes
 {
     public class TestSensusContext : ISensusContext
     {
-        public Platform Platform { get; }
+        public Platform Platform { get; set; }
         public IConcurrent MainThreadSynchronizer { get; set; }
         public IEncryption Encryption { get; set; }
-        public INotifier Notifier { get; }
-        public ICallbackScheduler CallbackScheduler { get; }
+        public INotifier Notifier { get; set; }
+        public ICallbackScheduler CallbackScheduler { get; set; }
         public string ActivationId { get; set; }
 
         public TestSensusContext()
