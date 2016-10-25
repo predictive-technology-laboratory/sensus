@@ -41,11 +41,14 @@ namespace Sensus.Shared.Callbacks
                 if (displayPage == DisplayPage.PendingSurveys)
                     desiredTopPage = new PendingScriptsPage();
                 else
+                {
                     SensusException.Report("Unrecognized display page:  " + displayPage);
+                    return;
+                }
 
                 Page currentTopPage = Application.Current.MainPage.Navigation.NavigationStack.LastOrDefault();
 
-                if (currentTopPage != null && desiredTopPage != null && desiredTopPage.GetType() != currentTopPage.GetType())
+                if (currentTopPage == null || desiredTopPage.GetType() != currentTopPage.GetType())
                     await Application.Current.MainPage.Navigation.PushAsync(desiredTopPage);
             });
         }

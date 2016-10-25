@@ -120,7 +120,7 @@ namespace Sensus.Android.Callbacks
                 PendingIntent callbackPendingIntent;
                 if (_callbackIdPendingIntent.TryGetValue(callbackId, out callbackPendingIntent))
                 {
-                    AlarmManager alarmManager = _service.GetSystemService(global::Android.Content.Context.AlarmService) as AlarmManager;
+                    AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
                     alarmManager.Cancel(callbackPendingIntent);
                     _callbackIdPendingIntent.Remove(callbackId);
                 }
@@ -141,7 +141,7 @@ namespace Sensus.Android.Callbacks
                 // we which to unschedule the alarm.
                 _callbackIdPendingIntent[callbackId] = callbackPendingIntent;
 
-                AlarmManager alarmManager = _service.GetSystemService(global::Android.Content.Context.AlarmService) as AlarmManager;
+                AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
 
                 long delayMS = (long)(callbackTime - DateTime.Now).TotalMilliseconds;
                 long callbackTimeMS = Java.Lang.JavaSystem.CurrentTimeMillis() + delayMS;

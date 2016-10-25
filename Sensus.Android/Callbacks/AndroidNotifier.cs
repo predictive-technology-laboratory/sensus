@@ -28,39 +28,41 @@ namespace Sensus.Android.Callbacks
         public AndroidNotifier(AndroidSensusService service)
         {
             _service = service;
-            _notificationManager = _service.GetSystemService(global::Android.Content.Context.NotificationService) as NotificationManager;
+            _notificationManager = _service.GetSystemService(Context.NotificationService) as NotificationManager;
         }
 
         public override void IssueNotificationAsync(string title, string message, string id, bool playSound, DisplayPage displayPage)
         {
-            if (_notificationManager != null)
+            if (_notificationManager == null)
+                return;
+
+            Task.Run(() =>
             {
-                Task.Run(() =>
+                if (message == null)
+                    CancelNotification(id);
+                else
                 {
-                    if (message == null)
-                        _notificationManager.Cancel(id, 0);
-                    else
+                    Intent notificationIntent = new Intent(_service, typeof(AndroidSensusService));
+                    notificationIntent.PutExtra(DISPLAY_PAGE_KEY, displayPage.ToString());
+
+                    PendingIntent notificationPendingIntent = PendingIntent.GetService(_service, 0, notificationIntent, PendingIntentFlags.UpdateCurrent);
+
+                    Notification.Builder notificationBuilder = new Notification.Builder(_service)
+                        .SetContentTitle(title)
+                        .SetContentText(message)
+                        .SetContentIntent(notificationPendingIntent)
+                        .SetAutoCancel(true)
+                        .SetOngoing(false);
+
+                    if (playSound)
                     {
-                        Intent serviceIntent = new Intent(_service, typeof(AndroidSensusService));
-                        PendingIntent pendingIntent = PendingIntent.GetService(_service, 0, serviceIntent, PendingIntentFlags.UpdateCurrent);
-
-                        Notification.Builder builder = new Notification.Builder(_service)
-                            .SetContentTitle(title)
-                            .SetContentText(message)
-                            .SetContentIntent(pendingIntent)
-                            .SetAutoCancel(true)
-                            .SetOngoing(false);
-
-                        if (playSound)
-                        {
-                            builder.SetSound(RingtoneManager.GetDefaultUri(RingtoneType.Notification));
-                            builder.SetVibrate(new long[] { 0, 250, 50, 250 });
-                        }
-
-                        _notificationManager.Notify(id, 0, builder.Build());
+                        notificationBuilder.SetSound(RingtoneManager.GetDefaultUri(RingtoneType.Notification));
+                        notificationBuilder.SetVibrate(new long[] { 0, 250, 50, 250 });
                     }
-                });
-            }
+
+                    _notificationManager.Notify(id, 0, notificationBuilder.Build());
+                }
+            });
         }
 
         public override void CancelNotification(string id)

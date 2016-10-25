@@ -161,6 +161,8 @@ namespace Sensus.Android
 
             CrossCurrentActivity.Current.Activity = this;
 
+            SensusContext.Current.ActivationId = Guid.NewGuid().ToString();
+
             // make sure that the service is running and bound any time the activity is resumed.
             Intent serviceIntent = new Intent(this, typeof(AndroidSensusService));
             StartService(serviceIntent);
