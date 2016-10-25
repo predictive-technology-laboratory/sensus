@@ -71,7 +71,7 @@ namespace Sensus.Shared.iOS.Callbacks
         public void ServiceCallbackAsync(NSDictionary callbackInfo)
         {
             // check whether the passed information describes a callback
-            NSNumber isCallback = callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_KEY)) as NSNumber;
+            NSNumber isCallback = callbackInfo?.ValueForKey(new NSString(SENSUS_CALLBACK_KEY)) as NSNumber;
             if (!(isCallback?.BoolValue ?? false))
                 return;
 
