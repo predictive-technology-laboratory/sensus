@@ -1379,10 +1379,6 @@ namespace Sensus.Shared
                             }
                     }
 
-#if __ANDROID__
-                    misc += "Wake lock count:  " + (SensusServiceHelper.Get() as Sensus.Shared.Android.IAndroidSensusServiceHelper)?.WakeLockAcquisitionCount + Environment.NewLine;
-#endif
-
                     report = new ProtocolReportDatum(DateTimeOffset.UtcNow, error, warning, misc, this);
                     SensusServiceHelper.Get().Logger.Log("Protocol report:" + Environment.NewLine + report, LoggingLevel.Normal, GetType());
                 }

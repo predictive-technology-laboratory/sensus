@@ -119,25 +119,7 @@ namespace Sensus.Shared.iOS.Callbacks
         {
             DisplayPage displayPage;
             if (Enum.TryParse(notificationInfo.ValueForKey(new NSString(Notifier.DISPLAY_PAGE_KEY)) as NSString, out displayPage))
-            {
-                if (displayPage == DisplayPage.None)
-                    return;
-
-                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
-                {
-                    Page desiredTopPage = null;
-
-                    if (displayPage == DisplayPage.PendingSurveys)
-                        desiredTopPage = new PendingScriptsPage();
-                    else
-                        SensusException.Report("Unrecognized display page:  " + displayPage);
-
-                    Page currentTopPage = Application.Current.MainPage.Navigation.NavigationStack.LastOrDefault();
-
-                    if (currentTopPage != null && desiredTopPage != null && desiredTopPage.GetType() != currentTopPage.GetType())
-                        await Application.Current.MainPage.Navigation.PushAsync(desiredTopPage);
-                });
-            }
+                SensusContext.Current.Notifier.OpenDisplayPage(displayPage);
         }
     }
 }

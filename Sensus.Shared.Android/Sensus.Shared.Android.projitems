@@ -11,7 +11,44 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\MainConcurrent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Context\AndroidSensusContext.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)IAndroidSensusServiceHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\AndroidInsightsInitializer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\AndroidCallbackScheduler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\AndroidNotifier.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AndroidSensusService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AndroidSensusServiceBinder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AndroidSensusServiceHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AndroidActivityResultRequestCode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AndroidSensusServiceBootStarter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AndroidSensusServiceConnection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AndroidServiceConnectedEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AndroidTextToSpeech.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TextCellDisposedFix.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\AndroidSensorListener.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\AndroidFacebookProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\AndroidSmsIncomingBroadcastReceiver.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\AndroidSmsOutgoingObserver.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\AndroidSmsProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\AndroidTelephonyIdleIncomingListener.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\AndroidTelephonyOutgoingBroadcastReceiver.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\AndroidTelephonyProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\AndroidAmbientTemperatureProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\AndroidBluetoothBroadcastReceiver.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\AndroidBluetoothDeviceProximityProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\AndroidLightProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\AndroidSoundProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Device\AndroidBatteryProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Device\AndroidScreenProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\AndroidAltitudeProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\AndroidCompassProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AndroidAccelerometerProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\AndroidCellTowerChangeListener.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\AndroidCellTowerProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\AndroidListeningWlanProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\AndroidWlanBroadcastReceiver.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IAndroidMainActivity.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Callbacks\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Probes\" />
   </ItemGroup>
 </Project>

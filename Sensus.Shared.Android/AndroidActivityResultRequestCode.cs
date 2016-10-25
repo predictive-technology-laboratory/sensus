@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,14 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Sensus.Shared.Callbacks
+namespace Sensus.Shared.Android
 {
-    public interface INotifier
+    public enum AndroidActivityResultRequestCode
     {
-        void IssueNotificationAsync(string title, string message, string id, bool playSound, DisplayPage type);
-
-        void CancelNotification(string id);
-
-        void OpenDisplayPage(DisplayPage displayPage);
+        PromptForFile,
+        RecognizeSpeech,
+        EnableBluetooth
     }
 }

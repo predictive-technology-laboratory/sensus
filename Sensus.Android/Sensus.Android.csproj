@@ -253,40 +253,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AndroidActivityResultRequestCode.cs" />
-    <Compile Include="AndroidSensusServiceBootStarter.cs" />
-    <Compile Include="AndroidSensusServiceHelper.cs" />
-    <Compile Include="AndroidTextToSpeech.cs" />
     <Compile Include="AndroidMainActivity.cs" />
-    <Compile Include="Probes\AndroidSensorListener.cs" />
-    <Compile Include="Probes\Apps\AndroidFacebookProbe.cs" />
-    <Compile Include="Probes\Communication\AndroidSmsIncomingBroadcastReceiver.cs" />
-    <Compile Include="Probes\Communication\AndroidSmsOutgoingObserver.cs" />
-    <Compile Include="Probes\Communication\AndroidSmsProbe.cs" />
-    <Compile Include="Probes\Communication\AndroidTelephonyIdleIncomingListener.cs" />
-    <Compile Include="Probes\Communication\AndroidTelephonyOutgoingBroadcastReceiver.cs" />
-    <Compile Include="Probes\Communication\AndroidTelephonyProbe.cs" />
-    <Compile Include="Probes\Context\AndroidAmbientTemperatureProbe.cs" />
-    <Compile Include="Probes\Context\AndroidBluetoothBroadcastReceiver.cs" />
-    <Compile Include="Probes\Context\AndroidBluetoothDeviceProximityProbe.cs" />
-    <Compile Include="Probes\Context\AndroidLightProbe.cs" />
-    <Compile Include="Probes\Context\AndroidSoundProbe.cs" />
-    <Compile Include="Probes\Device\AndroidBatteryProbe.cs" />
-    <Compile Include="Probes\Device\AndroidScreenProbe.cs" />
-    <Compile Include="Probes\Location\AndroidAltitudeProbe.cs" />
-    <Compile Include="Probes\Location\AndroidCompassProbe.cs" />
-    <Compile Include="Probes\Movement\AndroidAccelerometerProbe.cs" />
-    <Compile Include="Probes\Network\AndroidCellTowerChangeListener.cs" />
-    <Compile Include="Probes\Network\AndroidCellTowerProbe.cs" />
-    <Compile Include="Probes\Network\AndroidListeningWlanProbe.cs" />
-    <Compile Include="Probes\Network\AndroidWlanBroadcastReceiver.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="AndroidSensusService.cs" />
-    <Compile Include="AndroidSensusServiceBinder.cs" />
-    <Compile Include="AndroidSensusServiceConnection.cs" />
-    <Compile Include="AndroidServiceConnectedEventArgs.cs" />
-    <Compile Include="TextCellDisposedFix.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
