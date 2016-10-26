@@ -927,8 +927,13 @@ namespace Sensus
 
             ResetStorageDirectory();
 
-            // pick a random time anchor within the first 1000 years AD.
-            _randomTimeAnchor = new DateTimeOffset((long)(new Random().NextDouble() * new DateTimeOffset(1000, 1, 1, 0, 0, 0, new TimeSpan()).Ticks), new TimeSpan());
+            // pick a random time anchor within the first 1000 years AD. we got a strange exception in insights about the resulting datetime having a year
+            // outside of [0,10000]. no clue how this could happen, but we'll guard against it all the same.
+            try
+            {
+                _randomTimeAnchor = new DateTimeOffset((long)(new Random().NextDouble() * new DateTimeOffset(1000, 1, 1, 0, 0, 0, new TimeSpan()).Ticks), new TimeSpan());
+            }
+            catch (Exception) { }
 
             // reset probes
             foreach (Probe probe in _probes)
