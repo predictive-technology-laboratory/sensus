@@ -28,6 +28,7 @@ using AVFoundation;
 using Plugin.Toasts;
 using CoreBluetooth;
 using CoreFoundation;
+using System.Threading.Tasks;
 
 namespace Sensus.iOS
 {
@@ -122,9 +123,9 @@ namespace Sensus.iOS
             });
         }
 
-        public override void TextToSpeechAsync(string text, Action callback)
+        public override Task TextToSpeechAsync(string text)
         {
-            new Thread(() =>
+            return Task.Run(() =>
             {
                 try
                 {
@@ -134,22 +135,19 @@ namespace Sensus.iOS
                 {
                     SensusServiceHelper.Get().Logger.Log("Failed to speak utterance:  " + ex.Message, LoggingLevel.Normal, GetType());
                 }
-
-                if (callback != null)
-                    callback();
-
-            }).Start();
+            });
         }
 
-        public override void RunVoicePromptAsync(string prompt, Action postDisplayCallback, Action<string> callback)
+        public override Task<string> RunVoicePromptAsync(string prompt, Action postDisplayCallback)
         {
-            new Thread(() =>
+            return Task.Run(() =>
             {
                 string input = null;
                 ManualResetEvent dialogDismissWait = new ManualResetEvent(false);
 
                 SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                 {
+                    #region set up dialog
                     ManualResetEvent dialogShowWait = new ManualResetEvent(false);
 
                     UIAlertView dialog = new UIAlertView("Sensus is requesting input...", prompt, null, "Cancel", "OK");
@@ -172,10 +170,10 @@ namespace Sensus.iOS
                     };
 
                     dialog.Show();
+                    #endregion
 
                     #region voice recognizer
-
-                    new Thread(() =>
+                    Task.Run(() =>
                     {
                         // wait for the dialog to be shown so it doesn't hide our speech recognizer activity
                         dialogShowWait.WaitOne();
@@ -184,16 +182,14 @@ namespace Sensus.iOS
                         Thread.Sleep(1000);
 
                         // TODO:  Add speech recognition
-
-                    }).Start();
-
+                    });
                     #endregion
                 });
 
                 dialogDismissWait.WaitOne();
-                callback(input);
 
-            }).Start();
+                return input;
+            });
         }
 
         protected override void ProtectedFlashNotificationAsync(string message, bool flashLaterIfNotVisible, TimeSpan duration, Action callback)

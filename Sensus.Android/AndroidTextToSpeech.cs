@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Android.OS;
+using System.Threading.Tasks;
 
 namespace Sensus.Android
 {
@@ -31,7 +32,7 @@ namespace Sensus.Android
         private readonly object _locker = new object();
 
         public AndroidTextToSpeech(AndroidSensusService service)
-        {         
+        {
             // initialize wait handles before passing the current object as a listener
             // below. if the listener OnInit method is called before the wait handles are
             // initialized we could get an NRE:  https://insights.xamarin.com/app/Sensus-Production/issues/1099
@@ -50,9 +51,9 @@ namespace Sensus.Android
             _initWait.Set();
         }
 
-        public void SpeakAsync(string text, Action callback)
+        public Task SpeakAsync(string text)
         {
-            new Thread(() =>
+            return Task.Run(() =>
             {
                 lock (_locker)
                 {
@@ -79,12 +80,8 @@ namespace Sensus.Android
                     }
 
                     _utteranceWait.WaitOne();
-
-                    if (callback != null)
-                        callback();
                 }
-
-            }).Start();
+            });
         }
 
         public override void OnStart(string utteranceId)

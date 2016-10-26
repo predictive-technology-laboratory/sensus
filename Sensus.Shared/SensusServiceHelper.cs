@@ -561,9 +561,9 @@ namespace Sensus
 
         public abstract void SendEmailAsync(string toAddress, string subject, string message);
 
-        public abstract void TextToSpeechAsync(string text, Action callback);
+        public abstract Task TextToSpeechAsync(string text);
 
-        public abstract void RunVoicePromptAsync(string prompt, Action postDisplayCallback, Action<string> callback);
+        public abstract Task<string> RunVoicePromptAsync(string prompt, Action postDisplayCallback);
 
         public abstract void KeepDeviceAwake();
 
@@ -797,11 +797,6 @@ namespace Sensus
             SensusContext.Current.Notifier.CancelNotification(PENDING_SURVEY_NOTIFICATION_ID);
         }
 
-        public void TextToSpeechAsync(string text)
-        {
-            TextToSpeechAsync(text, () => { });
-        }
-
         /// <summary>
         /// Flashs the a notification.
         /// </summary>
@@ -850,7 +845,7 @@ namespace Sensus
 
         public void PromptForInputsAsync(DateTimeOffset? firstPromptTimestamp, IEnumerable<InputGroup> inputGroups, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action postDisplayCallback, Action<IEnumerable<InputGroup>> callback)
         {
-            new Thread(() =>
+            new Thread(async () =>
             {
                 if (inputGroups == null || inputGroups.Count() == 0 || inputGroups.All(inputGroup => inputGroup == null))
                 {
@@ -879,22 +874,30 @@ namespace Sensus
 
                             if (voiceInput.Enabled && voiceInput.Display)
                             {
-                                // only run the post-display callback the first time a page is displayed. the caller expects the callback
-                                // to fire only once upon first display.
-                                voiceInput.RunAsync(firstPromptTimestamp, firstPageDisplay ? postDisplayCallback : null, response =>
+                                try
                                 {
+                                    // only run the post-display callback the first time a page is displayed. the caller expects the callback
+                                    // to fire only once upon first display.
+                                    await voiceInput.RunAsync(firstPromptTimestamp, firstPageDisplay ? postDisplayCallback : null);
                                     firstPageDisplay = false;
-                                    responseWait.Set();
-                                });
+                                }
+                                catch (Exception ex)
+                                {
+                                    try
+                                    {
+                                        Insights.Report(ex, Insights.Severity.Critical);
+                                    }
+                                    catch { }
+                                }
                             }
-                            else
-                                responseWait.Set();
+
+                            responseWait.Set();
                         }
                         else
                         {
                             BringToForeground();
 
-                            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                            await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                             {
                                 // catch any exceptions from preparing and displaying the prompts page
                                 try
@@ -975,7 +978,7 @@ namespace Sensus
                                         responseWait.Set();
                                     else
                                     {
-                                        // display page. only animate the display for the first page.
+                                        // display page, which will handle setting the response wait. only animate the display for the first page.
                                         await Application.Current.MainPage.Navigation.PushModalAsync(promptForInputsPage, firstPageDisplay);
 
                                         // only run the post-display callback the first time a page is displayed. the caller expects the callback

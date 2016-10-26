@@ -39,17 +39,16 @@ using Android.Bluetooth;
 using Android.Hardware;
 using Sensus.Android.Probes.Context;
 using Sensus.Android;
+using System.Threading.Tasks;
 
 namespace Sensus.Android
 {
     public class AndroidSensusServiceHelper : SensusServiceHelper, IAndroidSensusServiceHelper
     {
         private AndroidSensusService _service;
-        private ConnectivityManager _connectivityManager;
         private string _deviceId;
         private AndroidMainActivity _focusedMainActivity;
         private readonly object _focusedMainActivityLocker = new object();
-        private AndroidTextToSpeech _textToSpeech;
         private PowerManager.WakeLock _wakeLock;
         private int _wakeLockAcquisitionCount;
         private List<Action<AndroidMainActivity>> _actionsToRunUsingMainActivity;
@@ -64,16 +63,25 @@ namespace Sensus.Android
         {
             get
             {
+                ConnectivityManager connectivityManager = _service.GetSystemService(global::Android.Content.Context.ConnectivityService) as ConnectivityManager;
+
+                if (connectivityManager == null)
+                {
+                    Logger.Log("No connectivity manager available for WiFi check.", LoggingLevel.Normal, GetType());
+                    return false;
+                }
+
+
                 // https://github.com/predictive-technology-laboratory/sensus/wiki/Backwards-Compatibility
 #if __ANDROID_21__
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
-                    return _connectivityManager.GetAllNetworks().Select(network => _connectivityManager.GetNetworkInfo(network)).Any(networkInfo => networkInfo != null && networkInfo.Type == ConnectivityType.Wifi && networkInfo.IsConnected);  // API level 21
+                    return connectivityManager.GetAllNetworks().Select(network => connectivityManager.GetNetworkInfo(network)).Any(networkInfo => networkInfo != null && networkInfo.Type == ConnectivityType.Wifi && networkInfo.IsConnected);  // API level 21
                 else
 #endif
                 {
                     // ignore deprecation warning
 #pragma warning disable 618
-                    return _connectivityManager.GetNetworkInfo(ConnectivityType.Wifi).IsConnected;
+                    return connectivityManager.GetNetworkInfo(ConnectivityType.Wifi).IsConnected;
 #pragma warning restore 618
                 }
             }
@@ -150,18 +158,6 @@ namespace Sensus.Android
 
             if (_service == null)
             {
-                if (_connectivityManager != null)
-                {
-                    _connectivityManager.Dispose();
-                    _connectivityManager = null;
-                }
-
-                if (_textToSpeech != null)
-                {
-                    _textToSpeech.Dispose();
-                    _textToSpeech = null;
-                }
-
                 if (_wakeLock != null)
                 {
                     _wakeLock.Dispose();
@@ -170,8 +166,6 @@ namespace Sensus.Android
             }
             else
             {
-                _connectivityManager = _service.GetSystemService(global::Android.Content.Context.ConnectivityService) as ConnectivityManager;
-                _textToSpeech = new AndroidTextToSpeech(_service);
                 _wakeLock = (_service.GetSystemService(global::Android.Content.Context.PowerService) as PowerManager).NewWakeLock(WakeLockFlags.Partial, "SENSUS");
                 _wakeLockAcquisitionCount = 0;
                 _deviceId = Settings.Secure.GetString(_service.ContentResolver, Settings.Secure.AndroidId);
@@ -360,112 +354,116 @@ namespace Sensus.Android
             }, true, false);
         }
 
-        public override void TextToSpeechAsync(string text, Action callback)
+        public override Task TextToSpeechAsync(string text)
         {
-            _textToSpeech.SpeakAsync(text, callback);
+            return Task.Run(async () =>
+            {
+                AndroidTextToSpeech textToSpeech = new AndroidTextToSpeech(_service);
+                await textToSpeech.SpeakAsync(text);
+                textToSpeech.Dispose();
+            });
         }
 
-        public override void RunVoicePromptAsync(string prompt, Action postDisplayCallback, Action<string> callback)
+        public override Task<string> RunVoicePromptAsync(string prompt, Action postDisplayCallback)
         {
-            new Thread(() =>
+            return Task.Run(() =>
+            {
+                string input = null;
+                ManualResetEvent dialogDismissWait = new ManualResetEvent(false);
+
+                RunActionUsingMainActivityAsync(mainActivity =>
                 {
-                    string input = null;
-                    ManualResetEvent dialogDismissWait = new ManualResetEvent(false);
+                    mainActivity.RunOnUiThread(() =>
+                    {
+                        #region set up dialog
+                        TextView promptView = new TextView(mainActivity) { Text = prompt, TextSize = 20 };
+                        EditText inputEdit = new EditText(mainActivity) { TextSize = 20 };
+                        LinearLayout scrollLayout = new LinearLayout(mainActivity) { Orientation = global::Android.Widget.Orientation.Vertical };
+                        scrollLayout.AddView(promptView);
+                        scrollLayout.AddView(inputEdit);
+                        ScrollView scrollView = new ScrollView(mainActivity);
+                        scrollView.AddView(scrollLayout);
 
-                    RunActionUsingMainActivityAsync(mainActivity =>
+                        AlertDialog dialog = new AlertDialog.Builder(mainActivity)
+                            .SetTitle("Sensus is requesting input...")
+                            .SetView(scrollView)
+                            .SetPositiveButton("OK", (o, e) =>
+                            {
+                                input = inputEdit.Text;
+                            })
+                            .SetNegativeButton("Cancel", (o, e) =>
+                            {
+                            })
+                            .Create();
+
+                        dialog.DismissEvent += (o, e) =>
                         {
-                            mainActivity.RunOnUiThread(() =>
+                            dialogDismissWait.Set();
+                        };
+
+                        ManualResetEvent dialogShowWait = new ManualResetEvent(false);
+
+                        dialog.ShowEvent += (o, e) =>
+                        {
+                            dialogShowWait.Set();
+
+                            if (postDisplayCallback != null)
+                                postDisplayCallback();
+                        };
+
+                        // dismiss the keyguard when dialog appears
+                        dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.DismissKeyguard);
+                        dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.ShowWhenLocked);
+                        dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.TurnScreenOn);
+                        dialog.Window.SetSoftInputMode(global::Android.Views.SoftInput.AdjustResize | global::Android.Views.SoftInput.StateAlwaysHidden);
+
+                        // dim whatever is behind the dialog
+                        dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.DimBehind);
+                        dialog.Window.Attributes.DimAmount = 0.75f;
+
+                        dialog.Show();
+                        #endregion
+
+                        #region voice recognizer
+                        Task.Run(() =>
+                        {
+                            // wait for the dialog to be shown so it doesn't hide our speech recognizer activity
+                            dialogShowWait.WaitOne();
+
+                            // there's a slight race condition between the dialog showing and speech recognition showing. pause here to prevent the dialog from hiding the speech recognizer.
+                            Thread.Sleep(1000);
+
+                            Intent intent = new Intent(RecognizerIntent.ActionRecognizeSpeech);
+                            intent.PutExtra(RecognizerIntent.ExtraLanguageModel, RecognizerIntent.LanguageModelFreeForm);
+                            intent.PutExtra(RecognizerIntent.ExtraSpeechInputCompleteSilenceLengthMillis, 1500);
+                            intent.PutExtra(RecognizerIntent.ExtraSpeechInputPossiblyCompleteSilenceLengthMillis, 1500);
+                            intent.PutExtra(RecognizerIntent.ExtraSpeechInputMinimumLengthMillis, 15000);
+                            intent.PutExtra(RecognizerIntent.ExtraMaxResults, 1);
+                            intent.PutExtra(RecognizerIntent.ExtraLanguage, Java.Util.Locale.Default);
+                            intent.PutExtra(RecognizerIntent.ExtraPrompt, prompt);
+
+                            mainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.RecognizeSpeech, result =>
+                            {
+                                if (result != null && result.Item1 == Result.Ok)
                                 {
-                                    #region set up dialog
-                                    TextView promptView = new TextView(mainActivity) { Text = prompt, TextSize = 20 };
-                                    EditText inputEdit = new EditText(mainActivity) { TextSize = 20 };
-                                    LinearLayout scrollLayout = new LinearLayout(mainActivity) { Orientation = global::Android.Widget.Orientation.Vertical };
-                                    scrollLayout.AddView(promptView);
-                                    scrollLayout.AddView(inputEdit);
-                                    ScrollView scrollView = new ScrollView(mainActivity);
-                                    scrollView.AddView(scrollLayout);
-
-                                    AlertDialog dialog = new AlertDialog.Builder(mainActivity)
-                                        .SetTitle("Sensus is requesting input...")
-                                        .SetView(scrollView)
-                                        .SetPositiveButton("OK", (o, e) =>
-                                        {
-                                            input = inputEdit.Text;
-                                        })
-                                        .SetNegativeButton("Cancel", (o, e) =>
-                                        {
-                                        })
-                                        .Create();
-
-                                    dialog.DismissEvent += (o, e) =>
+                                    IList<string> matches = result.Item2.GetStringArrayListExtra(RecognizerIntent.ExtraResults);
+                                    if (matches != null && matches.Count > 0)
+                                        mainActivity.RunOnUiThread(() =>
                                     {
-                                        dialogDismissWait.Set();
-                                    };
+                                        inputEdit.Text = matches[0];
+                                    });
+                                }
+                            });
+                        });
+                        #endregion
+                    });
 
-                                    ManualResetEvent dialogShowWait = new ManualResetEvent(false);
+                }, true, false);
 
-                                    dialog.ShowEvent += (o, e) =>
-                                    {
-                                        dialogShowWait.Set();
+                dialogDismissWait.WaitOne();
 
-                                        if (postDisplayCallback != null)
-                                            postDisplayCallback();
-                                    };
-
-                                    // dismiss the keyguard when dialog appears
-                                    dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.DismissKeyguard);
-                                    dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.ShowWhenLocked);
-                                    dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.TurnScreenOn);
-                                    dialog.Window.SetSoftInputMode(global::Android.Views.SoftInput.AdjustResize | global::Android.Views.SoftInput.StateAlwaysHidden);
-
-                                    // dim whatever is behind the dialog
-                                    dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.DimBehind);
-                                    dialog.Window.Attributes.DimAmount = 0.75f;
-
-                                    dialog.Show();
-                                    #endregion
-
-                                    #region voice recognizer
-                                    new Thread(() =>
-                                        {
-                                            // wait for the dialog to be shown so it doesn't hide our speech recognizer activity
-                                            dialogShowWait.WaitOne();
-
-                                            // there's a slight race condition between the dialog showing and speech recognition showing. pause here to prevent the dialog from hiding the speech recognizer.
-                                            Thread.Sleep(1000);
-
-                                            Intent intent = new Intent(RecognizerIntent.ActionRecognizeSpeech);
-                                            intent.PutExtra(RecognizerIntent.ExtraLanguageModel, RecognizerIntent.LanguageModelFreeForm);
-                                            intent.PutExtra(RecognizerIntent.ExtraSpeechInputCompleteSilenceLengthMillis, 1500);
-                                            intent.PutExtra(RecognizerIntent.ExtraSpeechInputPossiblyCompleteSilenceLengthMillis, 1500);
-                                            intent.PutExtra(RecognizerIntent.ExtraSpeechInputMinimumLengthMillis, 15000);
-                                            intent.PutExtra(RecognizerIntent.ExtraMaxResults, 1);
-                                            intent.PutExtra(RecognizerIntent.ExtraLanguage, Java.Util.Locale.Default);
-                                            intent.PutExtra(RecognizerIntent.ExtraPrompt, prompt);
-
-                                            mainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.RecognizeSpeech, result =>
-                                                {
-                                                    if (result != null && result.Item1 == Result.Ok)
-                                                    {
-                                                        IList<string> matches = result.Item2.GetStringArrayListExtra(RecognizerIntent.ExtraResults);
-                                                        if (matches != null && matches.Count > 0)
-                                                            mainActivity.RunOnUiThread(() =>
-                                                                {
-                                                                    inputEdit.Text = matches[0];
-                                                                });
-                                                    }
-                                                });
-
-                                        }).Start();
-                                    #endregion
-                                });
-
-                        }, true, false);
-
-                    dialogDismissWait.WaitOne();
-                    callback(input);
-
-                }).Start();
+                return input;
+            });
         }
 
         #endregion
@@ -654,19 +652,25 @@ namespace Sensus.Android
 
         public override void KeepDeviceAwake()
         {
-            lock (_wakeLock)
+            if (_wakeLock != null)
             {
-                _wakeLock.Acquire();
-                Logger.Log("Wake lock acquisition count:  " + ++_wakeLockAcquisitionCount, LoggingLevel.Verbose, GetType());
+                lock (_wakeLock)
+                {
+                    _wakeLock.Acquire();
+                    Logger.Log("Wake lock acquisition count:  " + ++_wakeLockAcquisitionCount, LoggingLevel.Verbose, GetType());
+                }
             }
         }
 
         public override void LetDeviceSleep()
         {
-            lock (_wakeLock)
+            if (_wakeLock != null)
             {
-                _wakeLock.Release();
-                Logger.Log("Wake lock acquisition count:  " + --_wakeLockAcquisitionCount, LoggingLevel.Verbose, GetType());
+                lock (_wakeLock)
+                {
+                    _wakeLock.Release();
+                    Logger.Log("Wake lock acquisition count:  " + --_wakeLockAcquisitionCount, LoggingLevel.Verbose, GetType());
+                }
             }
         }
 

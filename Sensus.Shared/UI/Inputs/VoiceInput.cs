@@ -18,6 +18,7 @@ using Xamarin.Forms;
 using Newtonsoft.Json;
 using Sensus.Exceptions;
 using Sensus.UI.UiProperties;
+using System.Threading.Tasks;
 
 namespace Sensus.UI.Inputs
 {
@@ -105,9 +106,9 @@ namespace Sensus.UI.Inputs
             SensusException.Report("Cannot set View on VoiceInput.");
         }
 
-        public void RunAsync(DateTimeOffset? firstRunTimestamp, Action postDisplayCallback, Action<string> callback)
+        public Task<string> RunAsync(DateTimeOffset? firstRunTimestamp, Action postDisplayCallback)
         {
-            new Thread(() =>
+            return Task.Run(async () =>
             {
                 string outputMessage = _outputMessage;
 
@@ -129,24 +130,19 @@ namespace Sensus.UI.Inputs
                 }
                 #endregion
 
-                SensusServiceHelper.Get().TextToSpeechAsync(outputMessage, () =>
-                {
-                    SensusServiceHelper.Get().RunVoicePromptAsync(outputMessage, postDisplayCallback, response =>
-                    {
-                        Viewed = true;
+                await SensusServiceHelper.Get().TextToSpeechAsync(outputMessage);
 
-                        if (string.IsNullOrWhiteSpace(response))
-                            response = null;
+                _response = await SensusServiceHelper.Get().RunVoicePromptAsync(outputMessage, postDisplayCallback);
 
-                        _response = response;
+                Viewed = true;
 
-                        Complete = _response != null;
+                if (string.IsNullOrWhiteSpace(_response))
+                    _response = null;
 
-                        callback(_response);
-                    });
-                });
+                Complete = _response != null;
 
-            }).Start();
+                return _response;
+            });
         }
     }
 }

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Threading.Tasks;
 using Sensus.Probes;
 using Xamarin.Forms;
 
@@ -98,7 +99,7 @@ namespace Sensus.Tests.Classes
             throw new NotImplementedException();
         }
 
-        public override void RunVoicePromptAsync(string prompt, Action postDisplayCallback, Action<string> callback)
+        public override Task<string> RunVoicePromptAsync(string prompt, Action postDisplayCallback)
         {
             throw new NotImplementedException();
         }
@@ -113,7 +114,7 @@ namespace Sensus.Tests.Classes
             throw new NotImplementedException();
         }
 
-        public override void TextToSpeechAsync(string text, Action callback)
+        public override Task TextToSpeechAsync(string text)
         {
             throw new NotImplementedException();
         }
