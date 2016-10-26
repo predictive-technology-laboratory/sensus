@@ -174,6 +174,7 @@ namespace Sensus.Android
                 serviceHelper.SetService(null);
             }
 
+            // do this last so that we don't dispose the service and its system services too early.
             base.OnDestroy();
         }
     }
