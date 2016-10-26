@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
 using System;
 using System.Reflection;
 using System.Collections.Generic;
-using Sensus.Shared.Anonymization;
-using Sensus.Shared.Anonymization.Anonymizers;
+using Sensus.Anonymization;
+using Sensus.Anonymization.Anonymizers;
 
-namespace Sensus.Shared.Probes.Apps
+namespace Sensus.Probes.Apps
 {
     public class FacebookDatum : Datum
     {

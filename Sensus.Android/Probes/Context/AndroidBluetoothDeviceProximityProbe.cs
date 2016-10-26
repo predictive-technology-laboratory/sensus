@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 using System;
-using Sensus.Shared;
-using Sensus.Shared.Probes.Context;
+using Sensus;
+using Sensus.Probes.Context;
 using Plugin.Permissions.Abstractions;
 
 namespace Sensus.Android.Probes.Context

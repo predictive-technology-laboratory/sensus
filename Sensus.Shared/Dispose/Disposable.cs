@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 using System;
 
-namespace Sensus.Shared.Dispose
+namespace Sensus.Dispose
 {
     /// <summary>
     /// This implements the Dispose pattern suggested by Microsoft at http://msdn.microsoft.com/en-us/library/fs2xkftw.aspx

@@ -16,7 +16,7 @@ using System;
 using Android.Database;
 using Android.OS;
 using Android.Provider;
-using Sensus.Shared.Probes.Communication;
+using Sensus.Probes.Communication;
 using Xamarin;
 
 namespace Sensus.Android.Probes.Communication

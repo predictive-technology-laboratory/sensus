@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,9 +18,9 @@ using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using Sensus.Shared.UI.Inputs;
+using Sensus.UI.Inputs;
 
-namespace Sensus.Shared.UI
+namespace Sensus.UI
 {
     public class ScriptInputsPage : ContentPage
     {

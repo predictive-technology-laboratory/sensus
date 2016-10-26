@@ -16,16 +16,16 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
-using Sensus.Shared.Probes;
-using Sensus.Shared.Anonymization;
-using Sensus.Shared.UI.UiProperties;
-using Sensus.Shared.Probes.Location;
-using Sensus.Shared.Probes.User.Scripts;
-using Sensus.Shared.Anonymization.Anonymizers;
+using Sensus.Probes;
+using Sensus.Anonymization;
+using Sensus.UI.UiProperties;
+using Sensus.Probes.Location;
+using Sensus.Probes.User.Scripts;
+using Sensus.Anonymization.Anonymizers;
 using Xamarin.Forms;
 using Newtonsoft.Json;
 
-namespace Sensus.Shared.UI
+namespace Sensus.UI
 {
     /// <summary>
     /// Displays a single probe.

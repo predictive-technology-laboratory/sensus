@@ -15,12 +15,12 @@
 using System;
 using System.Threading;
 using System.Collections.Generic;
-using Sensus.Shared.Probes.Location;
+using Sensus.Probes.Location;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions.Abstractions;
 using Syncfusion.SfChart.XForms;
 
-namespace Sensus.Shared.Probes.Movement
+namespace Sensus.Probes.Movement
 {
     public class PollingSpeedProbe : PollingProbe
     {

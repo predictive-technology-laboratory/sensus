@@ -15,12 +15,12 @@
 using System;
 using System.Linq;
 using System.Reflection;
-using Sensus.Shared.Probes;
-using Sensus.Shared.Probes.User.Scripts;
-using Sensus.Shared.Probes.User.Scripts.ProbeTriggerProperties;
+using Sensus.Probes;
+using Sensus.Probes.User.Scripts;
+using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 using Xamarin.Forms;
 
-namespace Sensus.Shared.UI
+namespace Sensus.UI
 {
     /// <summary>
     /// Allows the user to add a script trigger to a script runner.
@@ -360,7 +360,7 @@ namespace Sensus.Shared.UI
             {
                 try
                 {
-                    _scriptRunner.Triggers.Add(new Sensus.Shared.Probes.User.Scripts.Trigger(_selectedProbe, _selectedDatumProperty, _selectedCondition, _conditionValue, changeSwitch.IsToggled, fireRepeatedlySwitch.IsToggled, regexSwitch.IsToggled, startTimePicker.Time, endTimePicker.Time));
+                    _scriptRunner.Triggers.Add(new Sensus.Probes.User.Scripts.Trigger(_selectedProbe, _selectedDatumProperty, _selectedCondition, _conditionValue, changeSwitch.IsToggled, fireRepeatedlySwitch.IsToggled, regexSwitch.IsToggled, startTimePicker.Time, endTimePicker.Time));
                     await Navigation.PopAsync();
                 }
                 catch (Exception ex)

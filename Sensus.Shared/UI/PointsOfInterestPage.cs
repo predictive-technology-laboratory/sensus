@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,11 +17,11 @@ using Xamarin.Forms.Maps;
 using System;
 using System.Threading;
 using System.Collections.Generic;
-using Sensus.Shared.Context;
-using Sensus.Shared.UI.Inputs;
-using Sensus.Shared.Probes.Location;
+using Sensus.Context;
+using Sensus.UI.Inputs;
+using Sensus.Probes.Location;
 
-namespace Sensus.Shared.UI
+namespace Sensus.UI
 {
     /// <summary>
     /// Displays points of interest, allowing the user to add/delete them.

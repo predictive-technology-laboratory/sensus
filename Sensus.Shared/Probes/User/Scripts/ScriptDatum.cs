@@ -15,12 +15,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Sensus.Shared.Anonymization;
-using Sensus.Shared.Anonymization.Anonymizers;
-using Sensus.Shared.Probes.User.Scripts.ProbeTriggerProperties;
-using Sensus.Shared.UI.Inputs;
+using Sensus.Anonymization;
+using Sensus.Anonymization.Anonymizers;
+using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
+using Sensus.UI.Inputs;
 
-namespace Sensus.Shared.Probes.User.Scripts
+namespace Sensus.Probes.User.Scripts
 {
     public class ScriptDatum : Datum
     {

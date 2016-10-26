@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ using Microsoft.Band.Portable;
 using Microsoft.Band.Portable.Sensors;
 using Syncfusion.SfChart.XForms;
 
-namespace Sensus.Shared.Probes.User.MicrosoftBand
+namespace Sensus.Probes.User.MicrosoftBand
 {
     public class MicrosoftBandContactProbe : MicrosoftBandProbe<BandContactSensor, BandContactReading>
     {

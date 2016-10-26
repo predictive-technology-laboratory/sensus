@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,14 +14,14 @@
 
 using System;
 using System.Collections.Generic;
-using Sensus.Shared;
+using Sensus;
 using System.Threading;
 using HealthKit;
 using Foundation;
-using Sensus.Shared.Probes.User.Health;
+using Sensus.Probes.User.Health;
 using Syncfusion.SfChart.XForms;
 
-namespace Sensus.Shared.iOS.Probes.User.Health
+namespace Sensus.iOS.Probes.User.Health
 {
     public class iOSHealthKitBiologicalSexProbe : iOSHealthKitProbe
     {

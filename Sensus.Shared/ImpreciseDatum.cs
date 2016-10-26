@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Sensus.Shared.Probes;
+using Sensus.Probes;
 using System;
 
-namespace Sensus.Shared
+namespace Sensus
 {
     /// <summary>
     /// Represents a Datum that could be imprecisely measured.

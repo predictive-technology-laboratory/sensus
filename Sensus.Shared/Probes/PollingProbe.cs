@@ -17,15 +17,15 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using Sensus.Shared.UI.UiProperties;
+using Sensus.UI.UiProperties;
 using Newtonsoft.Json;
-using Sensus.Shared.Context;
-using Sensus.Shared.Callbacks;
+using Sensus.Context;
+using Sensus.Callbacks;
 #if __IOS__
 using CoreLocation;
 #endif
 
-namespace Sensus.Shared.Probes
+namespace Sensus.Probes
 {
     public abstract class PollingProbe : Probe
     {

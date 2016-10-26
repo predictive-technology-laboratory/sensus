@@ -17,7 +17,7 @@ using System;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
-namespace Sensus.Shared.Probes.User.Scripts
+namespace Sensus.Probes.User.Scripts
 {
     /// <summary>
     /// Represents a condition under which a scripted probe is run.

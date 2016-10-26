@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,15 +15,15 @@
 using System;
 using Newtonsoft.Json.Serialization;
 using System.Reflection;
-using Sensus.Shared.Anonymization;
+using Sensus.Anonymization;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Newtonsoft.Json;
 using System.Linq;
-using Sensus.Shared.Anonymization.Anonymizers;
-using Sensus.Shared.Exceptions;
+using Sensus.Anonymization.Anonymizers;
+using Sensus.Exceptions;
 
-namespace Sensus.Shared.Anonymization
+namespace Sensus.Anonymization
 {
     public class AnonymizedJsonContractResolver : DefaultContractResolver
     {

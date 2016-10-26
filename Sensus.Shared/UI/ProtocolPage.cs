@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Sensus.Shared.DataStores;
-using Sensus.Shared.DataStores.Local;
-using Sensus.Shared.DataStores.Remote;
-using Sensus.Shared.UI.UiProperties;
+using Sensus.DataStores;
+using Sensus.DataStores.Local;
+using Sensus.DataStores.Remote;
+using Sensus.UI.UiProperties;
 using System;
 using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
-using Sensus.Shared.Context;
-using Sensus.Shared.UI.Inputs;
+using Sensus.Context;
+using Sensus.UI.Inputs;
 using Xamarin.Forms;
 
-namespace Sensus.Shared.UI
+namespace Sensus.UI
 {
     /// <summary>
     /// Displays a single protocol.

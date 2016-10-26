@@ -14,11 +14,11 @@
 
 using System;
 using System.Text.RegularExpressions;
-using Sensus.Shared.Anonymization;
-using Sensus.Shared.Anonymization.Anonymizers;
-using Sensus.Shared.Probes.User.Scripts.ProbeTriggerProperties;
+using Sensus.Anonymization;
+using Sensus.Anonymization.Anonymizers;
+using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 
-namespace Sensus.Shared.Probes.Communication
+namespace Sensus.Probes.Communication
 {
     public class SmsDatum : Datum
     {

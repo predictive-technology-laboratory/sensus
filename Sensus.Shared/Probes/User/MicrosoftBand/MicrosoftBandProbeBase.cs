@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,11 +22,11 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.Band.Portable.Sensors;
 using Syncfusion.SfChart.XForms;
-using Sensus.Shared.UI.UiProperties;
-using Sensus.Shared.Context;
-using Sensus.Shared.Callbacks;
+using Sensus.UI.UiProperties;
+using Sensus.Context;
+using Sensus.Callbacks;
 
-namespace Sensus.Shared.Probes.User.MicrosoftBand
+namespace Sensus.Probes.User.MicrosoftBand
 {
     public abstract class MicrosoftBandProbeBase : ListeningProbe
     {

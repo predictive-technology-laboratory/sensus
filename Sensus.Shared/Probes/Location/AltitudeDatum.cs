@@ -13,12 +13,12 @@
 // limitations under the License.
 
 using Newtonsoft.Json;
-using Sensus.Shared.Probes.User.Scripts.ProbeTriggerProperties;
+using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 using System;
-using Sensus.Shared.Anonymization;
-using Sensus.Shared.Anonymization.Anonymizers;
+using Sensus.Anonymization;
+using Sensus.Anonymization.Anonymizers;
 
-namespace Sensus.Shared.Probes.Location
+namespace Sensus.Probes.Location
 {
     public class AltitudeDatum : ImpreciseDatum
     {

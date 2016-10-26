@@ -13,10 +13,10 @@
 // limitations under the License.
 
 using System;
-using Sensus.Shared.UI.UiProperties;
+using Sensus.UI.UiProperties;
 using Syncfusion.SfChart.XForms;
 
-namespace Sensus.Shared.Probes.Context
+namespace Sensus.Probes.Context
 {
     public abstract class SoundProbe : PollingProbe
     {

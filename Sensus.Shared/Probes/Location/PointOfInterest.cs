@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,10 +13,10 @@
 // limitations under the License.
 
 using System;
-using Sensus.Shared.Probes.Movement;
+using Sensus.Probes.Movement;
 using Plugin.Geolocator.Abstractions;
 
-namespace Sensus.Shared.Probes.Location
+namespace Sensus.Probes.Location
 {
     public class PointOfInterest
     {

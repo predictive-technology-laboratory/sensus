@@ -26,11 +26,11 @@ using Android.Speech;
 using Android.Support.V4.Content;
 using Android.Widget;
 using Newtonsoft.Json;
-using Sensus.Shared;
+using Sensus;
 using Xamarin;
-using Sensus.Shared.Probes.Location;
-using Sensus.Shared.Probes;
-using Sensus.Shared.Probes.Movement;
+using Sensus.Probes.Location;
+using Sensus.Probes;
+using Sensus.Probes.Movement;
 using System.Linq;
 using ZXing.Mobile;
 using Android.Graphics;
@@ -38,7 +38,7 @@ using Android.Media;
 using Android.Bluetooth;
 using Android.Hardware;
 using Sensus.Android.Probes.Context;
-using Sensus.Shared.Android;
+using Sensus.Android;
 
 namespace Sensus.Android
 {
@@ -46,7 +46,6 @@ namespace Sensus.Android
     {
         private AndroidSensusService _service;
         private ConnectivityManager _connectivityManager;
-        private NotificationManager _notificationManager;
         private string _deviceId;
         private AndroidMainActivity _focusedMainActivity;
         private readonly object _focusedMainActivityLocker = new object();
@@ -157,12 +156,6 @@ namespace Sensus.Android
                     _connectivityManager = null;
                 }
 
-                if (_notificationManager != null)
-                {
-                    _notificationManager.Dispose();
-                    _notificationManager = null;
-                }
-
                 if (_textToSpeech != null)
                 {
                     _textToSpeech.Dispose();
@@ -177,10 +170,9 @@ namespace Sensus.Android
             }
             else
             {
-                _connectivityManager = _service.GetSystemService(Context.ConnectivityService) as ConnectivityManager;
-                _notificationManager = _service.GetSystemService(Context.NotificationService) as NotificationManager;
+                _connectivityManager = _service.GetSystemService(global::Android.Content.Context.ConnectivityService) as ConnectivityManager;
                 _textToSpeech = new AndroidTextToSpeech(_service);
-                _wakeLock = (_service.GetSystemService(Context.PowerService) as PowerManager).NewWakeLock(WakeLockFlags.Partial, "SENSUS");
+                _wakeLock = (_service.GetSystemService(global::Android.Content.Context.PowerService) as PowerManager).NewWakeLock(WakeLockFlags.Partial, "SENSUS");
                 _wakeLockAcquisitionCount = 0;
                 _deviceId = Settings.Secure.GetString(_service.ContentResolver, Settings.Secure.AndroidId);
             }
@@ -542,7 +534,7 @@ namespace Sensus.Android
             ManualResetEvent enableWait = new ManualResetEvent(false);
 
             // check whether bluetooth is enabled
-            BluetoothManager bluetoothManager = _service.GetSystemService(Context.BluetoothService) as BluetoothManager;
+            BluetoothManager bluetoothManager = _service.GetSystemService(global::Android.Content.Context.BluetoothService) as BluetoothManager;
             BluetoothAdapter bluetoothAdapter = bluetoothManager.Adapter;
             if (bluetoothAdapter == null || !bluetoothAdapter.IsEnabled)
             {
@@ -602,7 +594,7 @@ namespace Sensus.Android
             base.DisableBluetooth(reenable, lowEnergy, rationale);
 
             // check whether bluetooth is enabled
-            BluetoothManager bluetoothManager = _service.GetSystemService(Context.BluetoothService) as BluetoothManager;
+            BluetoothManager bluetoothManager = _service.GetSystemService(global::Android.Content.Context.BluetoothService) as BluetoothManager;
             BluetoothAdapter bluetoothAdapter = bluetoothManager.Adapter;
             if (bluetoothAdapter != null && bluetoothAdapter.IsEnabled)
             {
@@ -700,7 +692,7 @@ namespace Sensus.Android
 
         public SensorManager GetSensorManager()
         {
-            return _service.GetSystemService(Context.SensorService) as SensorManager;
+            return _service.GetSystemService(global::Android.Content.Context.SensorService) as SensorManager;
         }
     }
 }

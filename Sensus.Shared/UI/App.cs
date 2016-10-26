@@ -14,7 +14,7 @@
 
 using Xamarin.Forms;
 
-namespace Sensus.Shared.UI
+namespace Sensus.UI
 {
     public class App : Application
     {

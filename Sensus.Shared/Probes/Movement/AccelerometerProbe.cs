@@ -17,7 +17,7 @@ using System.Threading;
 using Newtonsoft.Json;
 using Syncfusion.SfChart.XForms;
 
-namespace Sensus.Shared.Probes.Movement
+namespace Sensus.Probes.Movement
 {
     /// <summary>
     /// Probes information about physical acceleration in x, y, and z directions.

@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@ using System;
 using Xamarin.Forms;
 using System.Reflection;
 
-namespace Sensus.Shared.UI.UiProperties
+namespace Sensus.UI.UiProperties
 {
     /// <summary>
     /// Decorated members should be rendered as editable DateTimes.

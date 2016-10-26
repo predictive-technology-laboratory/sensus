@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,14 +18,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using Sensus.Shared.Concurrent;
-using Sensus.Shared.Extensions;
-using Sensus.Shared.UI.UiProperties;
-using Sensus.Shared.Probes.Location;
-using Sensus.Shared.Context;
-using Sensus.Shared.Callbacks;
+using Sensus.Concurrent;
+using Sensus.Extensions;
+using Sensus.UI.UiProperties;
+using Sensus.Probes.Location;
+using Sensus.Context;
+using Sensus.Callbacks;
 
-namespace Sensus.Shared.Probes.User.Scripts
+namespace Sensus.Probes.User.Scripts
 {
     public class ScriptRunner
     {

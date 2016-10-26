@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,11 +13,11 @@
 // limitations under the License.
 
 using Xamarin.Forms;
-using Sensus.Shared.UI.Inputs;
-using Sensus.Shared.UI.UiProperties;
+using Sensus.UI.Inputs;
+using Sensus.UI.UiProperties;
 using System.Collections.Generic;
 
-namespace Sensus.Shared.UI
+namespace Sensus.UI
 {
     public class ScriptInputGroupPage : ContentPage
     {

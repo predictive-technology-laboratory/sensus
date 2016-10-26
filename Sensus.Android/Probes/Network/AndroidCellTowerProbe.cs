@@ -14,9 +14,9 @@
 
 using Android.App;
 using Android.Telephony;
-using Sensus.Shared.Probes.Network;
+using Sensus.Probes.Network;
 using System;
-using Sensus.Shared;
+using Sensus;
 using Plugin.Permissions.Abstractions;
 
 namespace Sensus.Android.Probes.Network

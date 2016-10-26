@@ -18,8 +18,8 @@ using Android.Content;
 using System;
 using System.Threading;
 using System.Collections.Generic;
-using Sensus.Shared;
-using Sensus.Shared.Probes.Device;
+using Sensus;
+using Sensus.Probes.Device;
 
 
 namespace Sensus.Android.Probes.Device

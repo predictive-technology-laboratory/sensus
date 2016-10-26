@@ -13,7 +13,7 @@
 // limitations under the License.
 
 using Newtonsoft.Json;
-using Sensus.Shared.Exceptions;
+using Sensus.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,7 +21,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 
-namespace Sensus.Shared.DataStores.Local
+namespace Sensus.DataStores.Local
 {
     public class FileLocalDataStore : LocalDataStore
     {

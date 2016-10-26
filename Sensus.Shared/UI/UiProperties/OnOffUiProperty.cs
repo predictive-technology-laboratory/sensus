@@ -15,7 +15,7 @@
 using Xamarin.Forms;
 using System.Reflection;
 
-namespace Sensus.Shared.UI.UiProperties
+namespace Sensus.UI.UiProperties
 {
     /// <summary>
     /// Decorated members should be rendered as On/Off values.

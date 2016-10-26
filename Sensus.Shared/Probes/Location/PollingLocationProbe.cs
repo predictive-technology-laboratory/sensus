@@ -19,7 +19,7 @@ using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions.Abstractions;
 using Syncfusion.SfChart.XForms;
 
-namespace Sensus.Shared.Probes.Location
+namespace Sensus.Probes.Location
 {
     /// <summary>
     /// Probes location information.

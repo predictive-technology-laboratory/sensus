@@ -15,9 +15,9 @@
 using System;
 using Xamarin.Forms;
 using System.Reflection;
-using Sensus.Shared.Exceptions;
+using Sensus.Exceptions;
 
-namespace Sensus.Shared.UI.UiProperties
+namespace Sensus.UI.UiProperties
 {
     /// <summary>
     /// Decorated members should be rendered as display-only text.

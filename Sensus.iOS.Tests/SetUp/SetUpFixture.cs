@@ -1,6 +1,6 @@
-﻿using Sensus.Shared.Context;
-using Sensus.Shared.Test.Classes;
-using Sensus.Shared.iOS.Concurrent;
+using Sensus.Context;
+using Sensus.Test.Classes;
+using Sensus.iOS.Concurrent;
 
 namespace Sensus.iOS.Tests.SetUp
 {   

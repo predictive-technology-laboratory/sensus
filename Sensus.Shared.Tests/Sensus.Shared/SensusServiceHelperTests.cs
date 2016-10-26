@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,11 +15,11 @@
 using System.Linq;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using Sensus.Shared.Tests.Classes;
-using Sensus.Shared.Probes.Location;
-using Sensus.Shared.Probes.User.Scripts;
+using Sensus.Tests.Classes;
+using Sensus.Probes.Location;
+using Sensus.Probes.User.Scripts;
 
-namespace Sensus.Shared.Tests.Core
+namespace Sensus.Tests.Core
 {
     [TestFixture]
     public class SensusServiceHelperTests

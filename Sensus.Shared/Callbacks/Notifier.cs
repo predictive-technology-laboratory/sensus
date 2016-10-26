@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,12 +13,12 @@
 // limitations under the License.
 
 using System.Linq;
-using Sensus.Shared.Context;
-using Sensus.Shared.Exceptions;
-using Sensus.Shared.UI;
+using Sensus.Context;
+using Sensus.Exceptions;
+using Sensus.UI;
 using Xamarin.Forms;
 
-namespace Sensus.Shared.Callbacks
+namespace Sensus.Callbacks
 {
     public abstract class Notifier : INotifier
     {

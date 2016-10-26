@@ -13,13 +13,13 @@
 // limitations under the License.
 
 using System.Collections.Generic;
-using Sensus.Shared.DataStores;
-using Sensus.Shared.UI.UiProperties;
-using Sensus.Shared.DataStores.Local;
-using Sensus.Shared.DataStores.Remote;
+using Sensus.DataStores;
+using Sensus.UI.UiProperties;
+using Sensus.DataStores.Local;
+using Sensus.DataStores.Remote;
 using Xamarin.Forms;
 
-namespace Sensus.Shared.UI
+namespace Sensus.UI
 {
     /// <summary>
     /// Displays a data store.

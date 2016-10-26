@@ -14,16 +14,16 @@
 
 using System;
 using Xamarin.Forms;
-using Sensus.Shared.Exceptions;
-using Sensus.Shared.UI.UiProperties;
+using Sensus.Exceptions;
+using Sensus.UI.UiProperties;
 using Newtonsoft.Json;
 using System.Threading;
 using System.Collections.Generic;
 using System.Linq;
-using Sensus.Shared;
+using Sensus;
 using Xamarin;
 
-namespace Sensus.Shared.UI.Inputs
+namespace Sensus.UI.Inputs
 {
     public abstract class Input
     {

@@ -1,8 +1,8 @@
-﻿using NUnit.Framework;
-using Sensus.Shared.Context;
-using Sensus.Shared.Test.Classes;
+using NUnit.Framework;
+using Sensus.Context;
+using Sensus.Test.Classes;
 
-namespace Sensus.Shared.Tests //this namespace has to align with the tests we want this fixture for
+namespace Sensus.Tests //this namespace has to align with the tests we want this fixture for
 {
     [SetUpFixture]
     public class SetUpFixture

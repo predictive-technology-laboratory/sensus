@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,9 +14,9 @@
 
 using Android.App;
 using Xamarin;
-using Sensus.Shared.Exceptions;
+using Sensus.Exceptions;
 
-namespace Sensus.Shared.Android.Exceptions
+namespace Sensus.Android.Exceptions
 {
     public class AndroidInsightsInitializer : InsightsInitializer
     {

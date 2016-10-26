@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,16 +13,16 @@
 // limitations under the License.
 
 using System;
-using Sensus.Shared.Probes.Context;
+using Sensus.Probes.Context;
 using System.Collections.Generic;
 using AVFoundation;
 using Foundation;
 using System.IO;
-using Sensus.Shared;
+using Sensus;
 using System.Threading;
 using Plugin.Permissions.Abstractions;
 
-namespace Sensus.Shared.iOS.Probes.Context
+namespace Sensus.iOS.Probes.Context
 {
     /// <summary>
     /// Probes sound level (decibels) from microphone. http://developer.xamarin.com/recipes/ios/media/sound/record_sound

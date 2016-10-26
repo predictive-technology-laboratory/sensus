@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,10 +13,10 @@
 // limitations under the License.
 
 using Xamarin.Forms;
-using Sensus.Shared.UI.UiProperties;
-using Sensus.Shared.Probes.User.Scripts;
+using Sensus.UI.UiProperties;
+using Sensus.Probes.User.Scripts;
 
-namespace Sensus.Shared.UI
+namespace Sensus.UI
 {
     /// <summary>
     /// Displays a script runner, allowing the user to edit its prompts and triggers.

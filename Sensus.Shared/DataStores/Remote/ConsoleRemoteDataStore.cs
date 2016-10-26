@@ -15,11 +15,11 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Threading;
-using Sensus.Shared.UI.UiProperties;
+using Sensus.UI.UiProperties;
 using System;
 using System.Threading.Tasks;
 
-namespace Sensus.Shared.DataStores.Remote
+namespace Sensus.DataStores.Remote
 {
     public class ConsoleRemoteDataStore : RemoteDataStore
     {

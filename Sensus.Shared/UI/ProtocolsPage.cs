@@ -18,9 +18,9 @@ using System.Linq;
 using System.Threading;
 using System.Collections.Generic;
 using Xamarin.Forms;
-using Sensus.Shared.Context;
-using Sensus.Shared.UI.Inputs;
-using Sensus.Shared.Exceptions;
+using Sensus.Context;
+using Sensus.UI.Inputs;
+using Sensus.Exceptions;
 using ZXing;
 using Plugin.Permissions.Abstractions;
 
@@ -28,7 +28,7 @@ using Plugin.Permissions.Abstractions;
 using Sensus.Android;
 #endif
 
-namespace Sensus.Shared.UI
+namespace Sensus.UI
 {
     /// <summary>
     /// Displays all protocols.

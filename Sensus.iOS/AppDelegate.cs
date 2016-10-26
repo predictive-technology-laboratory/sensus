@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,25 +20,25 @@ using Xamarin;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.iOS;
 using Xam.Plugin.MapExtend.iOSUnified;
-using Sensus.Shared;
-using Sensus.Shared.UI;
-using Sensus.Shared.Probes;
-using Sensus.Shared.Context;
-using Sensus.Shared.Exceptions;
-using Sensus.Shared.iOS.Context;
+using Sensus;
+using Sensus.UI;
+using Sensus.Probes;
+using Sensus.Context;
+using Sensus.Exceptions;
+using Sensus.iOS.Context;
 using UIKit;
 using Foundation;
 using CoreLocation;
 using Plugin.Toasts;
 using Facebook.CoreKit;
-using Sensus.Shared.iOS.Exceptions;
+using Sensus.iOS.Exceptions;
 using Syncfusion.SfChart.XForms.iOS.Renderers;
-using Sensus.Shared.iOS.Callbacks.UILocalNotifications;
-using Sensus.Shared.iOS.Callbacks;
+using Sensus.iOS.Callbacks.UILocalNotifications;
+using Sensus.iOS.Callbacks;
 using UserNotifications;
-using Sensus.Shared.iOS.Callbacks.UNUserNotifications;
-using Sensus.Shared.iOS.Concurrent;
-using Sensus.Shared.Encryption;
+using Sensus.iOS.Callbacks.UNUserNotifications;
+using Sensus.iOS.Concurrent;
+using Sensus.Encryption;
 
 namespace Sensus.iOS
 {
@@ -56,7 +56,7 @@ namespace Sensus.iOS
             #region configure context
             SensusContext.Current = new iOSSensusContext
             {
-                Platform = Shared.Context.Platform.iOS,
+                Platform = Sensus.Context.Platform.iOS,
                 MainThreadSynchronizer = new MainConcurrent(),
                 Encryption = new SimpleEncryption(SensusServiceHelper.ENCRYPTION_KEY)
             };

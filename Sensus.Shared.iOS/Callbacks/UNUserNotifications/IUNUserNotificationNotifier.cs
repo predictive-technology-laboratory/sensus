@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
 
 using System;
 using Foundation;
-using Sensus.Shared.Callbacks;
+using Sensus.Callbacks;
 using UserNotifications;
 
-namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
+namespace Sensus.iOS.Callbacks.UNUserNotifications
 {
     /// <summary>
     /// Adds notifier methods specific to the UNNotificationCenter architecture.

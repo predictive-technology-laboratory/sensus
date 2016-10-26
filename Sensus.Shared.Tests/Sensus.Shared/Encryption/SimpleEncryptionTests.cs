@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,9 +13,9 @@
 // limitations under the License.
 
 using NUnit.Framework;
-using Sensus.Shared.Encryption;
+using Sensus.Encryption;
 
-namespace Sensus.Shared.Tests.Encryption
+namespace Sensus.Tests.Encryption
 {
     [TestFixture]
     public class SimpleEncryptionTests

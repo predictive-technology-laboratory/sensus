@@ -16,10 +16,10 @@ using System;
 using System.Linq;
 using System.Collections.ObjectModel;
 using Newtonsoft.Json;
-using Sensus.Shared.UI.Inputs;
-using Sensus.Shared.Extensions;
+using Sensus.UI.Inputs;
+using Sensus.Extensions;
 
-namespace Sensus.Shared.Probes.User.Scripts
+namespace Sensus.Probes.User.Scripts
 {
     public class Script
     {

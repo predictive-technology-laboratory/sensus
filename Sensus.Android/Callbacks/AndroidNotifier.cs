@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.Media;
-using Sensus.Shared.Callbacks;
+using Sensus.Callbacks;
 
 namespace Sensus.Android.Callbacks
 {
@@ -28,7 +28,7 @@ namespace Sensus.Android.Callbacks
         public AndroidNotifier(AndroidSensusService service)
         {
             _service = service;
-            _notificationManager = _service.GetSystemService(Context.NotificationService) as NotificationManager;
+            _notificationManager = _service.GetSystemService(global::Android.Content.Context.NotificationService) as NotificationManager;
         }
 
         public override void IssueNotificationAsync(string title, string message, string id, bool playSound, DisplayPage displayPage)

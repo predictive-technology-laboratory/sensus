@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,14 +13,14 @@
 // limitations under the License.
 
 using System;
-using Sensus.Shared.Probes.Network;
+using Sensus.Probes.Network;
 using Foundation;
 using SystemConfiguration;
 using System.Collections.Generic;
-using Sensus.Shared;
+using Sensus;
 using System.Threading;
 
-namespace Sensus.Shared.iOS.Network.Probes
+namespace Sensus.iOS.Network.Probes
 {
     public class iOSPollingWlanProbe : PollingWlanProbe
     {

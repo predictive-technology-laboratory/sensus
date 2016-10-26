@@ -15,7 +15,7 @@
 using Android.App;
 using Android.Bluetooth;
 using Android.Content;
-using Sensus.Shared.Probes.Context;
+using Sensus.Probes.Context;
 using System;
 
 namespace Sensus.Android.Probes.Context

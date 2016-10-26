@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Sensus.Shared;
+using Sensus;
 using System;
 using Android.Hardware;
 

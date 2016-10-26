@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,13 +13,13 @@
 // limitations under the License.
 
 using System;
-using Sensus.Shared;
-using Sensus.Shared.Probes.User.Health;
+using Sensus;
+using Sensus.Probes.User.Health;
 using HealthKit;
 using Xamarin.Forms.Platform.iOS;
 using Syncfusion.SfChart.XForms;
 
-namespace Sensus.Shared.iOS.Probes.User.Health
+namespace Sensus.iOS.Probes.User.Health
 {
     public class iOSHealthKitHeightProbe : iOSHealthKitSamplingProbe
     {

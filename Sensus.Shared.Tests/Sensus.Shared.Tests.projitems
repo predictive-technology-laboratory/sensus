@@ -6,7 +6,7 @@
     <SharedGUID>542cbe5f-b59a-422d-b0b9-6123121cb203</SharedGUID>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
-    <Import_RootNamespace>Sensus.Shared.Tests</Import_RootNamespace>
+    <Import_RootNamespace>Sensus.Tests</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Classes\TestSensusContext.cs" />

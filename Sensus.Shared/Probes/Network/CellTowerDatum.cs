@@ -14,11 +14,11 @@
 
 using Newtonsoft.Json;
 using System;
-using Sensus.Shared.Anonymization;
-using Sensus.Shared.Anonymization.Anonymizers;
-using Sensus.Shared.Probes.User.Scripts.ProbeTriggerProperties;
+using Sensus.Anonymization;
+using Sensus.Anonymization.Anonymizers;
+using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 
-namespace Sensus.Shared.Probes.Network
+namespace Sensus.Probes.Network
 {
     public class CellTowerDatum : Datum
     {

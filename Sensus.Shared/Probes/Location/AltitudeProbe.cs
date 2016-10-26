@@ -16,7 +16,7 @@ using System;
 using Newtonsoft.Json;
 using Syncfusion.SfChart.XForms;
 
-namespace Sensus.Shared.Probes.Location
+namespace Sensus.Probes.Location
 {
     public abstract class AltitudeProbe : ListeningProbe
     {

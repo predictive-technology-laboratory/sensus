@@ -13,39 +13,39 @@
 // limitations under the License.
 
 using Newtonsoft.Json;
-using Sensus.Shared.DataStores.Local;
-using Sensus.Shared.DataStores.Remote;
-using Sensus.Shared.Probes;
-using Sensus.Shared.UI.UiProperties;
+using Sensus.DataStores.Local;
+using Sensus.DataStores.Remote;
+using Sensus.Probes;
+using Sensus.UI.UiProperties;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Threading;
 using Xamarin.Forms;
-using Sensus.Shared.Anonymization;
+using Sensus.Anonymization;
 using System.Linq;
 using System.Reflection;
-using Sensus.Shared.UI;
-using Sensus.Shared.Probes.Location;
-using Sensus.Shared.UI.Inputs;
-using Sensus.Shared.Probes.Apps;
-using Sensus.Shared.Probes.Movement;
+using Sensus.UI;
+using Sensus.Probes.Location;
+using Sensus.UI.Inputs;
+using Sensus.Probes.Apps;
+using Sensus.Probes.Movement;
 using System.Text;
 using System.Threading.Tasks;
-using Sensus.Shared.Context;
-using Sensus.Shared.Probes.User.MicrosoftBand;
-using Sensus.Shared.Probes.User.Scripts;
-using Sensus.Shared.Callbacks;
+using Sensus.Context;
+using Sensus.Probes.User.MicrosoftBand;
+using Sensus.Probes.User.Scripts;
+using Sensus.Callbacks;
 
 #if __IOS__
 using HealthKit;
 using Foundation;
-using Sensus.Shared.iOS.Probes.User.Health;
+using Sensus.iOS.Probes.User.Health;
 using Plugin.Geolocator.Abstractions;
 #endif
 
-namespace Sensus.Shared
+namespace Sensus
 {
     /// <summary>
     /// Container for probes, data stores, and all other information needed to run a collection experiment.
@@ -1380,7 +1380,7 @@ namespace Sensus.Shared
                     }
 
 #if __ANDROID__
-                    misc += "Wake lock count:  " + (SensusServiceHelper.Get() as Sensus.Shared.Android.IAndroidSensusServiceHelper)?.WakeLockAcquisitionCount + Environment.NewLine;
+                    misc += "Wake lock count:  " + (SensusServiceHelper.Get() as Sensus.Android.IAndroidSensusServiceHelper)?.WakeLockAcquisitionCount + Environment.NewLine;
 #endif
 
                     report = new ProtocolReportDatum(DateTimeOffset.UtcNow, error, warning, misc, this);

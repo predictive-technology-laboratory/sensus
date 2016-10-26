@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,10 +13,10 @@
 // limitations under the License.
 
 using System;
-using Sensus.Shared.Probes;
+using Sensus.Probes;
 using Xamarin.Forms;
 
-namespace Sensus.Shared.Tests.Classes
+namespace Sensus.Tests.Classes
 {
     public class TestSensusServiceHelper : SensusServiceHelper
     {

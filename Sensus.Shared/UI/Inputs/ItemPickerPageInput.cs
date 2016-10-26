@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,19 +15,19 @@
 using System;
 using Xamarin.Forms;
 using System.Collections.Generic;
-using Sensus.Shared;
-using Sensus.Shared.Probes;
+using Sensus;
+using Sensus.Probes;
 using System.IO;
 using Newtonsoft.Json;
 using System.Threading;
-using Sensus.Shared.Exceptions;
-using Sensus.Shared.UI.Inputs;
+using Sensus.Exceptions;
+using Sensus.UI.Inputs;
 using System.Linq;
 using System.Globalization;
-using Sensus.Shared.UI.UiProperties;
+using Sensus.UI.UiProperties;
 using Xamarin;
 
-namespace Sensus.Shared.UI.Inputs
+namespace Sensus.UI.Inputs
 {
     public class ItemPickerPageInput : ItemPickerInput
     {

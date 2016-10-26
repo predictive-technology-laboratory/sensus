@@ -15,9 +15,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using Sensus.Shared.Concurrent;
+using Sensus.Concurrent;
 
-namespace Sensus.Shared.Tests.Concurrent
+namespace Sensus.Tests.Concurrent
 {    
     public abstract class IConcurrentTests
     {        

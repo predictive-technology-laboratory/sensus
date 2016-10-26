@@ -13,10 +13,10 @@
 // limitations under the License.
 
 using NUnit.Framework;
-using Sensus.Shared.Exceptions;
+using Sensus.Exceptions;
 using System;
 
-namespace Sensus.Shared.Tests.Exceptions
+namespace Sensus.Tests.Exceptions
 {
     [TestFixture]
     public class IInsightsInitializerTests

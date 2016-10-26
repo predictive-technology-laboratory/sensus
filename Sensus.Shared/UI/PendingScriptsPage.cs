@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,12 +15,12 @@
 using System;
 using System.Threading;
 using System.Globalization;
-using Sensus.Shared.Context;
-using Sensus.Shared.UI.Inputs;
-using Sensus.Shared.Probes.User.Scripts;
+using Sensus.Context;
+using Sensus.UI.Inputs;
+using Sensus.Probes.User.Scripts;
 using Xamarin.Forms;
 
-namespace Sensus.Shared.UI
+namespace Sensus.UI
 {
     public class PendingScriptsPage : ContentPage
     {

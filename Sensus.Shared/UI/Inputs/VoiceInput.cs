@@ -16,10 +16,10 @@ using System;
 using System.Threading;
 using Xamarin.Forms;
 using Newtonsoft.Json;
-using Sensus.Shared.Exceptions;
-using Sensus.Shared.UI.UiProperties;
+using Sensus.Exceptions;
+using Sensus.UI.UiProperties;
 
-namespace Sensus.Shared.UI.Inputs
+namespace Sensus.UI.Inputs
 {
     public class VoiceInput : Input
     {

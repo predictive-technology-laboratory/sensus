@@ -20,7 +20,7 @@ using Plugin.Geolocator;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions.Abstractions;
 
-namespace Sensus.Shared.Probes.Location
+namespace Sensus.Probes.Location
 {
     /// <summary>
     /// A GPS receiver. Implemented as a singleton.

@@ -13,11 +13,11 @@
 // limitations under the License.
 
 using System;
-using Sensus.Shared.Probes;
-using Sensus.Shared.Exceptions;
+using Sensus.Probes;
+using Sensus.Exceptions;
 using Xamarin.Forms;
 
-namespace Sensus.Shared.UI
+namespace Sensus.UI
 {
     public abstract class ProbesPage : ContentPage
     {

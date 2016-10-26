@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,11 +14,11 @@
 
 using System;
 using Microsoft.Band.Portable.Sensors;
-using Sensus.Shared.Anonymization;
-using Sensus.Shared.Anonymization.Anonymizers;
-using Sensus.Shared.Probes.User.Scripts.ProbeTriggerProperties;
+using Sensus.Anonymization;
+using Sensus.Anonymization.Anonymizers;
+using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 
-namespace Sensus.Shared.Probes.User.MicrosoftBand
+namespace Sensus.Probes.User.MicrosoftBand
 {
     public class MicrosoftBandUltravioletLightDatum : Datum
     {

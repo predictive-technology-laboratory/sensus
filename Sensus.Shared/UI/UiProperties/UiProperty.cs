@@ -18,7 +18,7 @@ using System.Reflection;
 using System.Collections.Generic;
 using Xamarin.Forms;
 
-namespace Sensus.Shared.UI.UiProperties
+namespace Sensus.UI.UiProperties
 {
     /// <summary>
     /// Attribute used to declare that a property should be rendered within the UI.

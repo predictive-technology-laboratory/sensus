@@ -15,7 +15,7 @@
 using System;
 using Newtonsoft.Json;
 
-namespace Sensus.Shared.Probes.Location
+namespace Sensus.Probes.Location
 {
     public abstract class CompassProbe : ListeningProbe
     {

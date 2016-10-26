@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,11 +15,11 @@
 using System;
 using System.IO;
 using System.Threading;
-using Sensus.Shared.Context;
-using Sensus.Shared.DataStores.Local;
+using Sensus.Context;
+using Sensus.DataStores.Local;
 using Xamarin.Forms;
 
-namespace Sensus.Shared.UI
+namespace Sensus.UI
 {
     /// <summary>
     /// Displays the progress of sharing a local data store. Data must be collected and written to a file

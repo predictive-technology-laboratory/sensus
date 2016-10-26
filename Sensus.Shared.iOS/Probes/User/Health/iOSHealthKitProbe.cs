@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@ using System.Threading;
 using HealthKit;
 using Foundation;
 using Newtonsoft.Json;
-using Sensus.Shared;
-using Sensus.Shared.Probes;
+using Sensus;
+using Sensus.Probes;
 
-namespace Sensus.Shared.iOS.Probes.User.Health
+namespace Sensus.iOS.Probes.User.Health
 {
     public abstract class iOSHealthKitProbe : PollingProbe
     {

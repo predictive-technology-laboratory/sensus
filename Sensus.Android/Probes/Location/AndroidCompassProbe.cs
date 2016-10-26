@@ -16,8 +16,8 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Android.Hardware;
-using Sensus.Shared;
-using Sensus.Shared.Probes.Location;
+using Sensus;
+using Sensus.Probes.Location;
 using Syncfusion.SfChart.XForms;
 
 namespace Sensus.Android.Probes.Location

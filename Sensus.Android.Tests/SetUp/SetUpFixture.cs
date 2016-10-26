@@ -1,6 +1,6 @@
-﻿using Sensus.Shared.Context;
-using Sensus.Shared.Test.Classes;
-using Sensus.Shared.Android.Concurrent;
+using Sensus.Context;
+using Sensus.Test.Classes;
+using Sensus.Android.Concurrent;
 
 namespace Sensus.Android.Tests.SetUp
 {  

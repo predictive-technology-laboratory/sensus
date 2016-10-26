@@ -18,15 +18,15 @@ using Android.OS;
 using System;
 using System.Collections.Generic;
 using Android.Provider;
-using Sensus.Shared;
-using Sensus.Shared.Context;
-using Sensus.Shared.Exceptions;
-using Sensus.Shared.Android.Context;
-using Sensus.Shared.Android.Exceptions;
-using Sensus.Shared.Callbacks;
+using Sensus;
+using Sensus.Context;
+using Sensus.Exceptions;
+using Sensus.Android.Context;
+using Sensus.Android.Exceptions;
+using Sensus.Callbacks;
 using Sensus.Android.Callbacks;
-using Sensus.Shared.Android.Concurrent;
-using Sensus.Shared.Encryption;
+using Sensus.Android.Concurrent;
+using Sensus.Encryption;
 
 namespace Sensus.Android
 {
@@ -158,8 +158,6 @@ namespace Sensus.Android
         {
             Console.Error.WriteLine("--------------------------- Destroying Service ---------------------------");
 
-            base.OnDestroy();
-
             AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
 
             // the service helper will be null if we failed to create it within OnCreate, so first check that. also, 
@@ -175,6 +173,8 @@ namespace Sensus.Android
                 serviceHelper.StopProtocols();
                 serviceHelper.SetService(null);
             }
+
+            base.OnDestroy();
         }
     }
 }

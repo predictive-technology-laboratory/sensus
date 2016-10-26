@@ -16,9 +16,9 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using Xamarin.Forms;
-using Sensus.Shared.Probes.Location;
+using Sensus.Probes.Location;
 
-namespace Sensus.Shared.UI
+namespace Sensus.UI
 {
     /// <summary>
     /// Allows the user to add a proximity trigger to a proximity probe.

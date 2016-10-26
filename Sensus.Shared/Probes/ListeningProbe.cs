@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Sensus.Shared.UI.UiProperties;
+using Sensus.UI.UiProperties;
 using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace Sensus.Shared.Probes
+namespace Sensus.Probes
 {
     public abstract class ListeningProbe : Probe
     {

@@ -16,8 +16,8 @@ using System;
 using System.Threading;
 using System.Collections.Generic;
 using Android.Media;
-using Sensus.Shared;
-using Sensus.Shared.Probes.Context;
+using Sensus;
+using Sensus.Probes.Context;
 using Plugin.Permissions.Abstractions;
 
 namespace Sensus.Android.Probes.Context

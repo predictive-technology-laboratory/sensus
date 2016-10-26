@@ -27,19 +27,19 @@ using Xamarin;
 using Xamarin.Forms;
 using Newtonsoft.Json;
 
-using Sensus.Shared.UI;
-using Sensus.Shared.Probes;
-using Sensus.Shared.Context;
-using Sensus.Shared.UI.Inputs;
-using Sensus.Shared.Concurrent;
-using Sensus.Shared.Exceptions;
-using Sensus.Shared.Probes.Location;
-using Sensus.Shared.Probes.User.Scripts;
+using Sensus.UI;
+using Sensus.Probes;
+using Sensus.Context;
+using Sensus.UI.Inputs;
+using Sensus.Concurrent;
+using Sensus.Exceptions;
+using Sensus.Probes.Location;
+using Sensus.Probes.User.Scripts;
 
 using Plugin.Permissions;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions.Abstractions;
-using Sensus.Shared.Callbacks;
+using Sensus.Callbacks;
 
 #if __ANDROID__ || __IOS__
 using ZXing.Mobile;
@@ -49,7 +49,7 @@ using ZXing;
 using XLabs.Platform.Device;
 #endif
 
-namespace Sensus.Shared
+namespace Sensus
 {
     /// <summary>
     /// Provides platform-independent service functionality.

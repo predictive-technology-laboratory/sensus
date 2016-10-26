@@ -13,10 +13,10 @@
 // limitations under the License.
 
 using System.Linq;
-using Sensus.Shared.Probes.User.Scripts;
+using Sensus.Probes.User.Scripts;
 using Xamarin.Forms;
 
-namespace Sensus.Shared.UI
+namespace Sensus.UI
 {
     /// <summary>
     /// Displays  triggers for a script runner.

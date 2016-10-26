@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,22 +20,18 @@ using System.Threading;
 using Facebook.CoreKit;
 using Facebook.LoginKit;
 using Foundation;
-using Sensus.Shared.Context;
-using Sensus.Shared.Exceptions;
-using Sensus.Shared.Probes.Apps;
+using Sensus.Context;
+using Sensus.Exceptions;
+using Sensus.Probes.Apps;
 using UIKit;
 
-namespace Sensus.Shared.iOS.Probes.Apps
+namespace Sensus.iOS.Probes.Apps
 {
     public class iOSFacebookProbe : FacebookProbe
     {
         private bool HasValidAccessToken
         {
             get { return AccessToken.CurrentAccessToken != null && AccessToken.CurrentAccessToken.ExpirationDate.SecondsSinceReferenceDate >= NSDate.Now.SecondsSinceReferenceDate; }
-        }
-
-        public iOSFacebookProbe()
-        {
         }
 
         private void ObtainAccessToken(string[] permissionNames)
@@ -60,19 +56,19 @@ namespace Sensus.Shared.iOS.Probes.Apps
                         {
                             if (error == null && loginResult.Token != null)
                             {
-                                SensusServiceHelper.Get().Logger.Log("Facebook login succeeded.", Shared.LoggingLevel.Normal, GetType());
+                                SensusServiceHelper.Get().Logger.Log("Facebook login succeeded.", LoggingLevel.Normal, GetType());
                                 AccessToken.CurrentAccessToken = loginResult.Token;
                                 loginWait.Set();
                             }
                             else if (loginResult != null && loginResult.IsCancelled)
                             {
-                                SensusServiceHelper.Get().Logger.Log("Facebook login cancelled.", Shared.LoggingLevel.Normal, GetType());
+                                SensusServiceHelper.Get().Logger.Log("Facebook login cancelled.", LoggingLevel.Normal, GetType());
                                 loginCancelled = true;
                                 loginWait.Set();
                             }
                             else
                             {
-                                SensusServiceHelper.Get().Logger.Log("Facebook login failed.", Shared.LoggingLevel.Normal, GetType());
+                                SensusServiceHelper.Get().Logger.Log("Facebook login failed.", LoggingLevel.Normal, GetType());
                                 loginWait.Set();
                             }
                         });

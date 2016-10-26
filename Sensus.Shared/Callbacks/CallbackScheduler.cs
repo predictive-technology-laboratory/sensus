@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,11 +16,11 @@ using System;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
-using Sensus.Shared.Context;
-using Sensus.Shared.Exceptions;
+using Sensus.Context;
+using Sensus.Exceptions;
 using Xamarin;
 
-namespace Sensus.Shared.Callbacks
+namespace Sensus.Callbacks
 {
     public abstract class CallbackScheduler : ICallbackScheduler
     {

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 using Android.Hardware;
-using Sensus.Shared.Probes.Location;
+using Sensus.Probes.Location;
 using System;
 
 namespace Sensus.Android.Probes.Location

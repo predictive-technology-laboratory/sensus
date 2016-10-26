@@ -17,7 +17,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace Sensus.Shared
+namespace Sensus
 {
     public class Logger
     {

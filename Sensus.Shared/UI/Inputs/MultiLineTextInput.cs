@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,9 +15,9 @@
 using System;
 using Xamarin.Forms;
 using Newtonsoft.Json;
-using Sensus.Shared.UI.UiProperties;
+using Sensus.UI.UiProperties;
 
-namespace Sensus.Shared.UI.Inputs
+namespace Sensus.UI.Inputs
 {
     public class MultiLineTextInput : Input
     {

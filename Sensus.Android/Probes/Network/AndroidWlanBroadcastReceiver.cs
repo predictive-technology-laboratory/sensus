@@ -16,9 +16,9 @@ using Android.App;
 using Android.Content;
 using Android.Net;
 using Android.Net.Wifi;
-using Sensus.Shared.Probes.Network;
+using Sensus.Probes.Network;
 using System;
-using Sensus.Shared;
+using Sensus;
 
 namespace Sensus.Android.Probes.Network
 {

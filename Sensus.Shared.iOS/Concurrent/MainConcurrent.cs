@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,11 +15,11 @@
 using Foundation;
 using System;
 using System.Threading;
-using Sensus.Shared.Dispose;
-using Sensus.Shared.Concurrent;
+using Sensus.Dispose;
+using Sensus.Concurrent;
 using Xamarin.Forms;
 
-namespace Sensus.Shared.iOS.Concurrent
+namespace Sensus.iOS.Concurrent
 {
     public class MainConcurrent : Disposable, IConcurrent
     {

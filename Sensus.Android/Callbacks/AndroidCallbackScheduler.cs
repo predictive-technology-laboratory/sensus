@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@ using System.Collections.Generic;
 using Android.App;
 using Android.Content;
 using Android.OS;
-using Sensus.Shared;
-using Sensus.Shared.Callbacks;
+using Sensus;
+using Sensus.Callbacks;
 
 namespace Sensus.Android.Callbacks
 {
@@ -120,7 +120,7 @@ namespace Sensus.Android.Callbacks
                 PendingIntent callbackPendingIntent;
                 if (_callbackIdPendingIntent.TryGetValue(callbackId, out callbackPendingIntent))
                 {
-                    AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
+                    AlarmManager alarmManager = _service.GetSystemService(global::Android.Content.Context.AlarmService) as AlarmManager;
                     alarmManager.Cancel(callbackPendingIntent);
                     _callbackIdPendingIntent.Remove(callbackId);
                 }
@@ -141,7 +141,7 @@ namespace Sensus.Android.Callbacks
                 // we which to unschedule the alarm.
                 _callbackIdPendingIntent[callbackId] = callbackPendingIntent;
 
-                AlarmManager alarmManager = _service.GetSystemService(Context.AlarmService) as AlarmManager;
+                AlarmManager alarmManager = _service.GetSystemService(global::Android.Content.Context.AlarmService) as AlarmManager;
 
                 long delayMS = (long)(callbackTime - DateTime.Now).TotalMilliseconds;
                 long callbackTimeMS = Java.Lang.JavaSystem.CurrentTimeMillis() + delayMS;

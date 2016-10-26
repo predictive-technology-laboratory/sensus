@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,12 +13,12 @@
 // limitations under the License.
 
 using System;
-using Sensus.Shared.Anonymization;
+using Sensus.Anonymization;
 using System.Collections.Generic;
-using Sensus.Shared.Anonymization.Anonymizers;
-using Sensus.Shared.Exceptions;
+using Sensus.Anonymization.Anonymizers;
+using Sensus.Exceptions;
 
-namespace Sensus.Shared.Anonymization
+namespace Sensus.Anonymization
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public class Anonymizable : Attribute

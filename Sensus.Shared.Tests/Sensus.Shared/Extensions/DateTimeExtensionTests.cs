@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,9 +14,9 @@
 
 using System;
 using NUnit.Framework;
-using Sensus.Shared.Extensions;
+using Sensus.Extensions;
 
-namespace Sensus.Shared.Tests.Extensions
+namespace Sensus.Tests.Extensions
 {
     [TestFixture]
     public class DateTimeExtensionTests

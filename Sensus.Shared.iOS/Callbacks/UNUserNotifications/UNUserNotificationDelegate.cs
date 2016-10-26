@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,10 +13,10 @@
 // limitations under the License.
 
 using System;
-using Sensus.Shared.Context;
+using Sensus.Context;
 using UserNotifications;
 
-namespace Sensus.Shared.iOS.Callbacks.UNUserNotifications
+namespace Sensus.iOS.Callbacks.UNUserNotifications
 {
     public class UNUserNotificationDelegate : UNUserNotificationCenterDelegate
     {

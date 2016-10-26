@@ -16,7 +16,7 @@ using System;
 using Newtonsoft.Json;
 using Syncfusion.SfChart.XForms;
 
-namespace Sensus.Shared.Probes.Network
+namespace Sensus.Probes.Network
 {
     /// <summary>
     /// Probes information about the cell tower to which the device is bound.

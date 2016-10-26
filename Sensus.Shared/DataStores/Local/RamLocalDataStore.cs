@@ -18,7 +18,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sensus.Shared.DataStores.Local
+namespace Sensus.DataStores.Local
 {
     public class RamLocalDataStore : LocalDataStore
     {

@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Sensus.Shared.Probes.User.Scripts.ProbeTriggerProperties;
+using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 using System;
 
-namespace Sensus.Shared.Probes.Device
+namespace Sensus.Probes.Device
 {
     public class ScreenDatum : Datum
     {

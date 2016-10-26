@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,12 +20,12 @@ using Android.App;
 using Android.OS;
 using Android.Runtime;
 using Org.Json;
-using Sensus.Shared;
-using Sensus.Shared.Probes.Apps;
+using Sensus;
+using Sensus.Probes.Apps;
 using Xamarin.Facebook;
 using Xamarin.Facebook.Login;
 using System.Reflection;
-using Sensus.Shared.Exceptions;
+using Sensus.Exceptions;
 
 namespace Sensus.Android.Probes.Apps
 {
@@ -68,10 +68,6 @@ namespace Sensus.Android.Probes.Apps
             get { return FacebookSdk.IsInitialized && AccessToken.CurrentAccessToken != null && !AccessToken.CurrentAccessToken.IsExpired; }
         }
 
-        public AndroidFacebookProbe()
-        {
-        }
-
         private void ObtainAccessToken(string[] permissionNames)
         {
             lock (LoginLocker)
@@ -108,14 +104,14 @@ namespace Sensus.Android.Probes.Apps
                                     {
                                         HandleSuccess = loginResult =>
                                         {
-                                            SensusServiceHelper.Get().Logger.Log("Facebook login succeeded.", Shared.LoggingLevel.Normal, GetType());
+                                            SensusServiceHelper.Get().Logger.Log("Facebook login succeeded.", LoggingLevel.Normal, GetType());
                                             AccessToken.CurrentAccessToken = loginResult.AccessToken;
                                             loginWait.Set();
                                         },
 
                                         HandleCancel = () =>
                                         {
-                                            SensusServiceHelper.Get().Logger.Log("Facebook login cancelled.", Shared.LoggingLevel.Normal, GetType());
+                                            SensusServiceHelper.Get().Logger.Log("Facebook login cancelled.", LoggingLevel.Normal, GetType());
                                             AccessToken.CurrentAccessToken = null;
                                             loginCancelled = true;
                                             loginWait.Set();
@@ -123,7 +119,7 @@ namespace Sensus.Android.Probes.Apps
 
                                         HandleError = loginResult =>
                                         {
-                                            SensusServiceHelper.Get().Logger.Log("Facebook login failed.", Shared.LoggingLevel.Normal, GetType());
+                                            SensusServiceHelper.Get().Logger.Log("Facebook login failed.", LoggingLevel.Normal, GetType());
                                             AccessToken.CurrentAccessToken = null;
                                             loginWait.Set();
                                         },

@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Sensus.Shared.Probes;
+using Sensus.Probes;
 using Syncfusion.SfChart.XForms;
 using Xamarin.Forms;
 using System;
 
-namespace Sensus.Shared.UI
+namespace Sensus.UI
 {
     public class ProbesViewPage : ProbesPage
     {

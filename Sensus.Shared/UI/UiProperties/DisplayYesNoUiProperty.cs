@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Sensus.Shared.Exceptions;
+using Sensus.Exceptions;
 using System;
 using Xamarin.Forms;
 using System.Reflection;
 
-namespace Sensus.Shared.UI.UiProperties
+namespace Sensus.UI.UiProperties
 {
     /// <summary>
     /// Decorated members should be rendered as display-only yes/no values.

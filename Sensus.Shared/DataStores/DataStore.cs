@@ -17,13 +17,13 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using Sensus.Shared.UI.UiProperties;
-using Sensus.Shared.Exceptions;
-using Sensus.Shared.DataStores.Remote;
-using Sensus.Shared.Context;
-using Sensus.Shared.Callbacks;
+using Sensus.UI.UiProperties;
+using Sensus.Exceptions;
+using Sensus.DataStores.Remote;
+using Sensus.Context;
+using Sensus.Callbacks;
 
-namespace Sensus.Shared.DataStores
+namespace Sensus.DataStores
 {
     /// <summary>
     /// An abstract repository for probed data.

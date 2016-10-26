@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,14 +13,14 @@
 // limitations under the License.
 
 using System;
-using Sensus.Shared.Probes.Movement;
+using Sensus.Probes.Movement;
 using CoreMotion;
 using Foundation;
-using Sensus.Shared;
+using Sensus;
 using Plugin.Permissions.Abstractions;
 using System.Threading;
 
-namespace Sensus.Shared.iOS.Probes.Movement
+namespace Sensus.iOS.Probes.Movement
 {
     public class iOSAccelerometerProbe : AccelerometerProbe
     {

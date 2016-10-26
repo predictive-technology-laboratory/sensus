@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 using System;
 using System.Collections.Generic;
-using Sensus.Shared.UI.UiProperties;
+using Sensus.UI.UiProperties;
 using Newtonsoft.Json.Serialization;
 using System.Linq;
 using System.Text;
@@ -30,7 +30,7 @@ using System.IO.Compression;
 using Newtonsoft.Json;
 using System.Net;
 
-namespace Sensus.Shared.DataStores.Remote
+namespace Sensus.DataStores.Remote
 {
     public class AmazonS3RemoteDataStore : RemoteDataStore
     {

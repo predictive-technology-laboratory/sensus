@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,12 +17,12 @@ using System.Linq;
 using System.Threading;
 using System.Reflection;
 using System.Collections.Generic;
-using Sensus.Shared.UI.UiProperties;
-using Sensus.Shared.Anonymization;
-using Sensus.Shared.Anonymization.Anonymizers;
+using Sensus.UI.UiProperties;
+using Sensus.Anonymization;
+using Sensus.Anonymization.Anonymizers;
 using Syncfusion.SfChart.XForms;
 
-namespace Sensus.Shared.Probes.Apps
+namespace Sensus.Probes.Apps
 {
     /// <summary>
     /// Use the following command to generate the debug keyhash:

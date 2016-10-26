@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Sensus.Shared.Probes;
-using Sensus.Shared.UI.UiProperties;
+using Sensus.Probes;
+using Sensus.UI.UiProperties;
 using System.Collections.Generic;
 using System;
 using Newtonsoft.Json;
@@ -31,7 +31,7 @@ using MiniZip.ZipArchive;
 #warning "Unrecognized platform"
 #endif
 
-namespace Sensus.Shared.DataStores.Local
+namespace Sensus.DataStores.Local
 {
     /// <summary>
     /// Responsible for transferring data from probes to local media.

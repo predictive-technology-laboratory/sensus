@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,12 +15,12 @@
 using System;
 using System.Collections.Generic;
 using Foundation;
-using Sensus.Shared.Callbacks;
-using Sensus.Shared.Context;
+using Sensus.Callbacks;
+using Sensus.Context;
 using UIKit;
 using Xamarin.Forms.Platform.iOS;
 
-namespace Sensus.Shared.iOS.Callbacks.UILocalNotifications
+namespace Sensus.iOS.Callbacks.UILocalNotifications
 {
     public class UILocalNotificationNotifier : iOSNotifier, IUILocalNotificationNotifier
     {

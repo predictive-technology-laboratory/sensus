@@ -15,7 +15,7 @@
 using System;
 using Syncfusion.SfChart.XForms;
 
-namespace Sensus.Shared.Probes.Network
+namespace Sensus.Probes.Network
 {
     /// <summary>
     /// Probes information about WLAN access points.

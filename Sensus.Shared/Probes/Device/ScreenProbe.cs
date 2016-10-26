@@ -15,7 +15,7 @@
 using System;
 using Syncfusion.SfChart.XForms;
 
-namespace Sensus.Shared.Probes.Device
+namespace Sensus.Probes.Device
 {
     /// <summary>
     /// Probes information about screen on/off status.

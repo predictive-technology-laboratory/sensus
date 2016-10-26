@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,9 +13,9 @@
 // limitations under the License.
 
 using Foundation;
-using Sensus.Shared.Callbacks;
+using Sensus.Callbacks;
 
-namespace Sensus.Shared.iOS.Callbacks
+namespace Sensus.iOS.Callbacks
 {
     /// <summary>
     /// Adds iOS-specific methods to the callback scheduler.
