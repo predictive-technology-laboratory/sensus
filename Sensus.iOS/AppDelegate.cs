@@ -14,13 +14,10 @@
 
 using System;
 using System.IO;
-using System.Linq;
-using System.Collections.Generic;
 using Xamarin;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.iOS;
 using Xam.Plugin.MapExtend.iOSUnified;
-using Sensus;
 using Sensus.UI;
 using Sensus.Probes;
 using Sensus.Context;

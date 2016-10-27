@@ -99,7 +99,7 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
 
         public void IssueNotificationAsync(UNNotificationRequest request, Action<NSError> errorCallback = null)
         {
-            UNUserNotificationCenter.Current.AddNotificationRequest(request, async error =>
+            UNUserNotificationCenter.Current.AddNotificationRequest(request, error =>
             {
                 if (error == null)
                 {
@@ -111,10 +111,10 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
                     SensusException.Report("Failed to add notification request:  " + error.Description);
                 }
 
-                UNNotificationRequest[] pendingRequests = await UNUserNotificationCenter.Current.GetPendingNotificationRequestsAsync();
-                SensusServiceHelper.Get().Logger.Log("Pending notification requests:  " + pendingRequests.Length, LoggingLevel.Normal, GetType());
-                foreach (UNNotificationRequest pendingRequest in pendingRequests)
-                    SensusServiceHelper.Get().Logger.Log($"{pendingRequest.Identifier}:  {(pendingRequest.Trigger as UNCalendarNotificationTrigger)?.NextTriggerDate}", LoggingLevel.Normal, GetType());
+                UNUserNotificationCenter.Current.GetPendingNotificationRequests(pendingRequests =>
+                {
+                    SensusServiceHelper.Get().Logger.Log("Pending notification requests:  " + pendingRequests.Length, LoggingLevel.Normal, GetType());
+                });
 
                 errorCallback?.Invoke(error);
             });
