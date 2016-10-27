@@ -304,7 +304,7 @@ namespace Sensus.Probes
 
                 string message = "Failed to start probe \"" + GetType().Name + "\":  " + startException.Message;
                 SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
-                SensusServiceHelper.Get().FlashNotificationAsync(message, duration: TimeSpan.FromSeconds(4));
+                SensusServiceHelper.Get().FlashNotificationAsync(message, false, TimeSpan.FromSeconds(4));  // don't save failure messages for later, since they might be confusing at that future time.
 
                 // disable probe if it is not supported on the device (or if the user has elected not to enable it -- e.g., by refusing to log into facebook)
                 if (startException is NotSupportedException)
