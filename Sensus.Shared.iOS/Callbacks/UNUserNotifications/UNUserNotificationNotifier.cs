@@ -17,6 +17,7 @@ using Foundation;
 using Sensus.Callbacks;
 using Sensus.Context;
 using Sensus.Exceptions;
+using UIKit;
 using UserNotifications;
 
 namespace Sensus.iOS.Callbacks.UNUserNotifications
@@ -99,6 +100,21 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
 
         public void IssueNotificationAsync(UNNotificationRequest request, Action<NSError> errorCallback = null)
         {
+            // don't issue silent notifications from the background, as they will be delivered and will confuse the user (they're 
+            // not designed to be seen).
+            bool abort = false;
+
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            {
+                abort = IsSilent(request?.Content?.UserInfo) && UIApplication.SharedApplication.ApplicationState != UIApplicationState.Active;
+            });
+
+            if (abort)
+            {
+                SensusServiceHelper.Get().Logger.Log("Aborting notification:  Will not issue silent notification from background.", LoggingLevel.Normal, GetType());
+                return;
+            }
+
             UNUserNotificationCenter.Current.AddNotificationRequest(request, error =>
             {
                 if (error == null)
@@ -111,17 +127,15 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
                     SensusException.Report("Failed to add notification request:  " + error.Description);
                 }
 
-                UNUserNotificationCenter.Current.GetPendingNotificationRequests(pendingRequests =>
-                {
-                    SensusServiceHelper.Get().Logger.Log("Pending notification requests:  " + pendingRequests.Length, LoggingLevel.Normal, GetType());
-                });
-
                 errorCallback?.Invoke(error);
             });
         }
 
         public override void CancelNotification(string id)
         {
+            if (id == null)
+                return;
+            
             var ids = new[] { id };
             UNUserNotificationCenter.Current.RemoveDeliveredNotifications(ids);
             UNUserNotificationCenter.Current.RemovePendingNotificationRequests(ids);
@@ -129,7 +143,7 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
 
         public void CancelNotification(UNNotificationRequest request)
         {
-            CancelNotification(request.Identifier);
+            CancelNotification(request?.Identifier);
         }
 
         public override void CancelSilentNotifications()
@@ -138,7 +152,7 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
             {
                 foreach (UNNotificationRequest request in requests)
                 {
-                    if ((request.Content?.UserInfo?.ValueForKey(new NSString(SILENT_NOTIFICATION_KEY)) as NSNumber)?.BoolValue ?? false)
+                    if (IsSilent(request.Content?.UserInfo))
                     {
                         CancelNotification(request);
                     }

@@ -143,7 +143,7 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
             {
                 foreach (UILocalNotification scheduledNotification in UIApplication.SharedApplication.ScheduledLocalNotifications)
                 {
-                    if ((scheduledNotification.UserInfo?.ValueForKey(new NSString(SILENT_NOTIFICATION_KEY)) as NSNumber)?.BoolValue ?? false)
+                    if (IsSilent(scheduledNotification.UserInfo))
                     {
                         CancelNotification(scheduledNotification);
                     }

@@ -155,8 +155,6 @@ namespace Sensus.iOS
 
         public override void OnActivated(UIApplication uiApplication)
         {
-            SensusContext.Current.ActivationId = Guid.NewGuid().ToString();
-
             iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
 
             try
@@ -170,7 +168,7 @@ namespace Sensus.iOS
 
             serviceHelper.StartAsync(() =>
             {
-                (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler).UpdateCallbackActivationIds(SensusContext.Current.ActivationId);
+                (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler).UpdateCallbackNotifications();
 
 #if UNIT_TESTING
                     // load and run the unit testing protocol

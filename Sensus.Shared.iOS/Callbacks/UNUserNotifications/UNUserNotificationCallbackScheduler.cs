@@ -36,7 +36,7 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
         {
             // get the callback information. this can be null if we don't have all required information. don't schedule the notification if this happens.
             DisplayPage displayPage = GetCallbackDisplayPage(callbackId);
-            NSMutableDictionary callbackInfo = GetCallbackInfo(callbackId, repeating, repeatDelayMS, repeatLag, displayPage, SensusContext.Current.ActivationId);
+            NSMutableDictionary callbackInfo = GetCallbackInfo(callbackId, repeating, repeatDelayMS, repeatLag, displayPage);
             if (callbackInfo == null)
                 return;
 
@@ -58,32 +58,37 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
                 notifier.IssueNotificationAsync("Sensus", userNotificationMessage, callbackId, true, displayPage, delayMS, callbackInfo, requestCreated);
         }
 
-        public override void UpdateCallbackActivationIds(string newActivationId)
+        public override void UpdateCallbackNotifications()
         {
-            // see corresponding comments in UILocalNotificationCallbackScheduler
             lock (_callbackIdRequest)
             {
+                IUNUserNotificationNotifier notifier = SensusContext.Current.Notifier as IUNUserNotificationNotifier;
+
                 foreach (string callbackId in _callbackIdRequest.Keys.ToList())
                 {
                     UNNotificationRequest request = _callbackIdRequest[callbackId];
-                    string activationId = (request.Content.UserInfo?.ValueForKey(new NSString(SENSUS_CALLBACK_ACTIVATION_ID_KEY)) as NSString)?.ToString();
-                    if (activationId != newActivationId)
+
+                    double msTillTrigger = 0;
+                    DateTime? triggerDateTime = (request.Trigger as UNCalendarNotificationTrigger)?.NextTriggerDate?.ToDateTime().ToLocalTime();
+                    if (triggerDateTime.HasValue)
+                        msTillTrigger = (triggerDateTime.Value - DateTime.Now).TotalMilliseconds;
+
+                    // service any callback that should have already been serviced or will soon be serviced
+                    if (msTillTrigger < 5000)
                     {
-                        double delayMS = 0;
-                        DateTime? triggerDateTime = (request.Trigger as UNCalendarNotificationTrigger)?.NextTriggerDate?.ToDateTime().ToLocalTime();
-                        if (triggerDateTime.HasValue)
-                            delayMS = (triggerDateTime.Value - DateTime.Now).TotalMilliseconds;
-
-                        UNMutableNotificationContent newContent = request.Content.MutableCopy() as UNMutableNotificationContent;
-                        NSMutableDictionary newUserInfo = new NSMutableDictionary(request.Content.UserInfo);
-                        newUserInfo.SetValueForKey(new NSString(newActivationId), new NSString(SENSUS_CALLBACK_ACTIVATION_ID_KEY));
-                        newContent.UserInfo = newUserInfo;
-
-                        // we don't need to cancel the current notification. reissuing with the same id will update it.
-                        (SensusContext.Current.Notifier as IUNUserNotificationNotifier).IssueNotificationAsync(callbackId, newContent, delayMS, newRequest =>
+                        notifier.CancelNotification(request);
+                        ServiceCallbackAsync(request.Content?.UserInfo);
+                    }
+                    // all other callbacks will have upcoming notification deliveries, except for silent notifications, which were canceled when the 
+                    // app was backgrounded. re-issue those silent notifications now.
+                    else if (iOSNotifier.IsSilent(request.Content?.UserInfo))
+                    {
                         {
-                            _callbackIdRequest[callbackId] = newRequest;
-                        });
+                            notifier.IssueNotificationAsync(callbackId, request.Content, msTillTrigger, newRequest =>
+                            {
+                                _callbackIdRequest[callbackId] = newRequest;
+                            });
+                        }
                     }
                 }
             }

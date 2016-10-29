@@ -28,11 +28,5 @@ namespace Sensus.Context
         IEncryption Encryption { get; set; }
         INotifier Notifier { get; set; }
         ICallbackScheduler CallbackScheduler { get; set; }
-
-        /// <summary>
-        /// Gets or sets the activation identifier, which changes every time the user-facing app is brought to the foreground.
-        /// </summary>
-        /// <value>The activation identifier.</value>
-        string ActivationId { get; set; }
     }
 }

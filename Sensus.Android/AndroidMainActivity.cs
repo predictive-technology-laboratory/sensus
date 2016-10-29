@@ -179,8 +179,6 @@ namespace Sensus.Android
 
                 SensusServiceHelper.Get().ClearPendingSurveysNotificationAsync();
 
-                SensusContext.Current.ActivationId = Guid.NewGuid().ToString();
-
                 // now that the service connection has been established, dismiss the wait dialog and show protocols.
                 SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(serviceBindWaitDialog.Dismiss);
             });

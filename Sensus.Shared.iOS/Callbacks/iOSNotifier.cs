@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Foundation;
 using Sensus.Callbacks;
 
 namespace Sensus.iOS.Callbacks
@@ -19,6 +20,11 @@ namespace Sensus.iOS.Callbacks
     public abstract class iOSNotifier : Notifier, IiOSNotifier
     {
         public const string SILENT_NOTIFICATION_KEY = "SENSUS-SILENT-NOTIFICATION";
+
+        public static bool IsSilent(NSDictionary notificationInfo)
+        {
+            return (notificationInfo?.ValueForKey(new NSString(SILENT_NOTIFICATION_KEY)) as NSNumber)?.BoolValue ?? false;
+        }
 
         public abstract void CancelSilentNotifications();
     }

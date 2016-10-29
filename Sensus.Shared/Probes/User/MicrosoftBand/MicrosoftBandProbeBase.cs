@@ -35,7 +35,7 @@ namespace Sensus.Probes.User.MicrosoftBand
         private static BandClient BAND_CLIENT;
         private static bool BAND_CLIENT_CONNECTING = false;
         private const int BAND_CLIENT_CONNECT_TIMEOUT_MS = 5000;
-        private const int BAND_CLIENT_CONNECT_ATTEMPTS = 5;
+        private const int BAND_CLIENT_CONNECT_ATTEMPTS = 2;
         private static ManualResetEvent BAND_CLIENT_CONNECT_WAIT = new ManualResetEvent(false);
         private static object BAND_CLIENT_LOCKER = new object();
         private static List<MicrosoftBandProbeBase> CONFIGURE_PROBES_IF_CONNECTED = new List<MicrosoftBandProbeBase>();
@@ -86,7 +86,7 @@ namespace Sensus.Probes.User.MicrosoftBand
             }
         }
 
-        protected static void ConnectClient(MicrosoftBandProbeBase configureProbeIfConnected = null)
+        protected static void ConnectClient(MicrosoftBandProbeBase configureProbeIfConnected = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (!SensusServiceHelper.Get().EnableBluetooth(true, "Sensus uses Bluetooth to collect data from your Microsoft Band, which is being used in one of your studies."))
                 return;
@@ -135,7 +135,7 @@ namespace Sensus.Probes.User.MicrosoftBand
                             {
                                 int connectAttempt = 0;
 
-                                while (++connectAttempt <= BAND_CLIENT_CONNECT_ATTEMPTS && (BandClient == null || !BandClient.IsConnected))
+                                while (++connectAttempt <= BAND_CLIENT_CONNECT_ATTEMPTS && (BandClient == null || !BandClient.IsConnected) && !cancellationToken.IsCancellationRequested)
                                 {
                                     SensusServiceHelper.Get().Logger.Log("Connect attempt " + connectAttempt + " of " + BAND_CLIENT_CONNECT_ATTEMPTS + ".", LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
 
@@ -212,7 +212,7 @@ namespace Sensus.Probes.User.MicrosoftBand
                 // ensure that client is connected
                 try
                 {
-                    ConnectClient();
+                    ConnectClient(cancellationToken: cancellationToken);
 
                     // we've successfully connected. if we fail at some point in the future, allow the system to reenable bluetooth.
                     REENABLE_BLUETOOTH_IF_NEEDED = true;
@@ -222,7 +222,7 @@ namespace Sensus.Probes.User.MicrosoftBand
                     SensusServiceHelper.Get().Logger.Log("Band client failed to connect:  " + ex.Message, LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
 
                     // we failed to connect. try reenabling bluetooth if we haven't already tried.
-                    if (REENABLE_BLUETOOTH_IF_NEEDED)
+                    if (!cancellationToken.IsCancellationRequested && REENABLE_BLUETOOTH_IF_NEEDED)
                     {
                         SensusServiceHelper.Get().Logger.Log("Reenabling Bluetooth...", LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
                         try
@@ -246,6 +246,9 @@ namespace Sensus.Probes.User.MicrosoftBand
                 // the readings will be restarted.
                 foreach (MicrosoftBandProbeBase probe in BandProbesThatShouldBeRunning)
                 {
+                    if (cancellationToken.IsCancellationRequested)
+                        break;
+                    
                     try
                     {
                         probe.StartReadings();

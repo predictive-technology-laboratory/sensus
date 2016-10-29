@@ -27,8 +27,6 @@ namespace Sensus.iOS.Callbacks
 {
     public abstract class iOSCallbackScheduler : CallbackScheduler, IiOSCallbackScheduler
     {
-        public const string SENSUS_CALLBACK_ACTIVATION_ID_KEY = "SENSUS-CALLBACK-ACTIVATION-ID";
-
         protected override void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag)
         {
             ScheduleCallbackAsync(callbackId, initialDelayMS, true, repeatDelayMS, repeatLag);
@@ -41,9 +39,9 @@ namespace Sensus.iOS.Callbacks
 
         protected abstract void ScheduleCallbackAsync(string callbackId, int delayMS, bool repeating, int repeatDelayMS, bool repeatLag);
 
-        public abstract void UpdateCallbackActivationIds(string newActivationId);
+        public abstract void UpdateCallbackNotifications();
 
-        public NSMutableDictionary GetCallbackInfo(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, DisplayPage displayPage, string activationId)
+        public NSMutableDictionary GetCallbackInfo(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, DisplayPage displayPage)
         {
             // we've seen cases where the UserInfo dictionary cannot be serialized because one of its values is null. if this happens, the 
             // callback won't be serviced, and things won't return to normal until Sensus is activated by the user and the callbacks are 
@@ -51,7 +49,7 @@ namespace Sensus.iOS.Callbacks
             //
             // see:  https://insights.xamarin.com/app/Sensus-Production/issues/64
             // 
-            if (callbackId == null || activationId == null)
+            if (callbackId == null)
                 return null;
 
             List<object> keyValuePairs = new object[]
@@ -60,8 +58,7 @@ namespace Sensus.iOS.Callbacks
                 Notifier.DISPLAY_PAGE_KEY, displayPage.ToString(),
                 SENSUS_CALLBACK_REPEATING_KEY, repeating,
                 SENSUS_CALLBACK_REPEAT_DELAY_KEY, repeatDelayMS,
-                SENSUS_CALLBACK_REPEAT_LAG_KEY, repeatLag,
-                SENSUS_CALLBACK_ACTIVATION_ID_KEY, activationId
+                SENSUS_CALLBACK_REPEAT_LAG_KEY, repeatLag
 
             }.ToList();
 
@@ -79,10 +76,9 @@ namespace Sensus.iOS.Callbacks
             bool repeating = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber).BoolValue;
             int repeatDelayMS = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_DELAY_KEY)) as NSNumber).Int32Value;
             bool repeatLag = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_LAG_KEY)) as NSNumber).BoolValue;
-            string activationId = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ACTIVATION_ID_KEY)) as NSString).ToString();
 
-            // only raise callback if it's from the current activation and if it is still scheduled
-            if (activationId != SensusContext.Current.ActivationId || !CallbackIsScheduled(callbackId))
+            // only raise callback if it is still scheduled
+            if (!CallbackIsScheduled(callbackId))
                 return;
 
             // start background task
@@ -102,7 +98,7 @@ namespace Sensus.iOS.Callbacks
             // don't need to specify how repeats will be scheduled. the class that extends this one will take care of it.
             null,
 
-            // nothing to do if the callback thinks we can sleep. ios does not provide 
+            // nothing to do if the callback thinks we can sleep. ios does not provide wake-locks like android.
             null,
 
             // we've completed the raising process, so end background task
@@ -118,7 +114,7 @@ namespace Sensus.iOS.Callbacks
         public void OpenDisplayPage(NSDictionary notificationInfo)
         {
             DisplayPage displayPage;
-            if (Enum.TryParse(notificationInfo.ValueForKey(new NSString(Notifier.DISPLAY_PAGE_KEY)) as NSString, out displayPage))
+            if (Enum.TryParse(notificationInfo?.ValueForKey(new NSString(Notifier.DISPLAY_PAGE_KEY)) as NSString, out displayPage))
                 SensusContext.Current.Notifier.OpenDisplayPage(displayPage);
         }
     }

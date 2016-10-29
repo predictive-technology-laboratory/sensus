@@ -35,7 +35,7 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
         {
             // get the callback information. this can be null if we don't have all required information. don't schedule the notification if this happens.
             DisplayPage displayPage = GetCallbackDisplayPage(callbackId);
-            NSMutableDictionary callbackInfo = GetCallbackInfo(callbackId, repeating, repeatDelayMS, repeatLag, displayPage, SensusContext.Current.ActivationId);
+            NSMutableDictionary callbackInfo = GetCallbackInfo(callbackId, repeating, repeatDelayMS, repeatLag, displayPage);
             if (callbackInfo == null)
                 return;
 
@@ -56,7 +56,7 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
                 notifier.IssueNotificationAsync("Sensus", userNotificationMessage, callbackId, true, displayPage, delayMS, callbackInfo, notificationCreated);
         }
 
-        public override void UpdateCallbackActivationIds(string newActivationId)
+        public override void UpdateCallbackNotifications()
         {
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
@@ -69,30 +69,27 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
                 // the activation ID of the current object. so...let's make that happen.
                 lock (_callbackIdNotification)
                 {
+                    IUILocalNotificationNotifier notifier = SensusContext.Current.Notifier as IUILocalNotificationNotifier;
+
                     foreach (string callbackId in _callbackIdNotification.Keys)
                     {
                         UILocalNotification notification = _callbackIdNotification[callbackId];
 
-                        if (notification.UserInfo != null)
+                        double msTillTrigger = 0;
+                        DateTime? triggerDateTime = notification.FireDate?.ToDateTime().ToLocalTime();
+                        if (triggerDateTime.HasValue)
+                            msTillTrigger = (triggerDateTime.Value - DateTime.Now).TotalMilliseconds;
+
+                        // service any callback that should have already been serviced or will soon be serviced
+                        if (msTillTrigger < 5000)
                         {
-                            string activationId = (notification.UserInfo.ValueForKey(new NSString(SENSUS_CALLBACK_ACTIVATION_ID_KEY)) as NSString).ToString();
-                            if (activationId != newActivationId)
-                            {
-                                IUILocalNotificationNotifier notifier = SensusContext.Current.Notifier as IUILocalNotificationNotifier;
-
-                                // we don't have a way to update a previous notification, so cancel the current one to avoid duplicate notifications.
-                                notifier.CancelNotification(notification);
-
-                                // update activation ID in user info
-                                NSMutableDictionary userInfo = new NSMutableDictionary(notification.UserInfo);
-                                userInfo.SetValueForKey(new NSString(newActivationId), new NSString(SENSUS_CALLBACK_ACTIVATION_ID_KEY));
-                                notification.UserInfo = userInfo;
-
-                                // since we set the UILocalNotification's FireDate when it was constructed, if it's currently in the past it will fire immediately 
-                                // when scheduled again with the new activation ID.
-                                notifier.IssueNotificationAsync(notification);
-                            }
+                            notifier.CancelNotification(notification);
+                            ServiceCallbackAsync(notification.UserInfo);
                         }
+                        // all other callbacks will have upcoming notification deliveries, except for silent notifications, which were canceled when the 
+                        // app was backgrounded. re-issue those silent notifications now.
+                        else if (iOSNotifier.IsSilent(notification.UserInfo))
+                            notifier.IssueNotificationAsync(notification);
                     }
                 }
             });
