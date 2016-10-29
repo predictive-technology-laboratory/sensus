@@ -322,10 +322,10 @@ namespace Sensus.Probes.User.MicrosoftBand
             _samplingRate = BandSensorSampleRate.Ms16;
         }
 
-        protected override void Initialize()
-        {
-            base.Initialize();
+        protected abstract void Configure(BandClient bandClient);
 
+        protected override void StartListening()
+        {
             // we expect this probe to start successfully, but an exception may occur if no bands are paired with the device of if the
             // connection with a paired band fails. so schedule a static repeating callback to check on all band probes and restart them 
             // if needed/possible. this is better than a non-static callback for each band probe because there are many band probes and 
@@ -341,12 +341,7 @@ namespace Sensus.Probes.User.MicrosoftBand
             }
 
             ConnectClient(this);
-        }
 
-        protected abstract void Configure(BandClient bandClient);
-
-        protected override void StartListening()
-        {
             StartReadings();
         }
 

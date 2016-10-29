@@ -22,6 +22,7 @@ using System.Threading;
 using Syncfusion.SfChart.XForms;
 using System.Threading.Tasks;
 using Sensus.Context;
+using Sensus.Probes.User.MicrosoftBand;
 
 namespace Sensus.Probes
 {
@@ -233,7 +234,8 @@ namespace Sensus.Probes
         }
 
         /// <summary>
-        /// Initializes this probe. Throws an exception if initialization fails.
+        /// Initializes this probe. Throws an exception if initialization fails. After successful completion the probe is considered to be
+        /// running and a candidate for stopping at some future point.
         /// </summary>
         protected virtual void Initialize()
         {
@@ -292,14 +294,19 @@ namespace Sensus.Probes
             }
             catch (Exception startException)
             {
-                // stop probe to clean up any inconsistent state information
-                try
+                // stop probe to clean up any inconsistent state information. the only time we don't want to do this is when
+                // starting a band probe and getting a client connect exception. in this case we want to leave the probe running
+                // so that we can attempt to reconnect to the band at a later time via the band's health test.
+                if (!(startException is MicrosoftBandClientConnectException))
                 {
-                    Stop();
-                }
-                catch (Exception stopException)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Failed to stop probe after failing to start it:  " + stopException.Message, LoggingLevel.Normal, GetType());
+                    try
+                    {
+                        Stop();
+                    }
+                    catch (Exception stopException)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Failed to stop probe after failing to start it:  " + stopException.Message, LoggingLevel.Normal, GetType());
+                    }
                 }
 
                 string message = "Failed to start probe \"" + GetType().Name + "\":  " + startException.Message;
@@ -330,6 +337,8 @@ namespace Sensus.Probes
                     SensusServiceHelper.Get().Logger.Log("Starting.", LoggingLevel.Normal, GetType());
 
                     Initialize();
+
+                    // the probe has successfully initialized and can now be considered started/running.
                     _running = true;
 
                     lock (_startStopTimes)
