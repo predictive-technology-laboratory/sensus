@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Foundation;
 using Sensus.Callbacks;
 using Sensus.Context;
@@ -71,7 +72,8 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
                 {
                     IUILocalNotificationNotifier notifier = SensusContext.Current.Notifier as IUILocalNotificationNotifier;
 
-                    foreach (string callbackId in _callbackIdNotification.Keys)
+                    // copy key list since servicing/raising the callback is going to modify the collection temporarily
+                    foreach (string callbackId in _callbackIdNotification.Keys.ToList())
                     {
                         UILocalNotification notification = _callbackIdNotification[callbackId];
 
@@ -89,7 +91,9 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
                         // all other callbacks will have upcoming notification deliveries, except for silent notifications, which were canceled when the 
                         // app was backgrounded. re-issue those silent notifications now.
                         else if (iOSNotifier.IsSilent(notification.UserInfo))
+                        {
                             notifier.IssueNotificationAsync(notification);
+                        }
                     }
                 }
             });

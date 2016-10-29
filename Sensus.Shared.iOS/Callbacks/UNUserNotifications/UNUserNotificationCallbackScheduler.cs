@@ -64,6 +64,7 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
             {
                 IUNUserNotificationNotifier notifier = SensusContext.Current.Notifier as IUNUserNotificationNotifier;
 
+                // copy key list since servicing/raising the callback is going to modify the collection temporarily
                 foreach (string callbackId in _callbackIdRequest.Keys.ToList())
                 {
                     UNNotificationRequest request = _callbackIdRequest[callbackId];
