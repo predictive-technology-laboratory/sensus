@@ -84,12 +84,10 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
                     // app was backgrounded. re-issue those silent notifications now.
                     else if (iOSNotifier.IsSilent(request.Content?.UserInfo))
                     {
+                        notifier.IssueNotificationAsync(callbackId, request.Content, msTillTrigger, newRequest =>
                         {
-                            notifier.IssueNotificationAsync(callbackId, request.Content, msTillTrigger, newRequest =>
-                            {
-                                _callbackIdRequest[callbackId] = newRequest;
-                            });
-                        }
+                            _callbackIdRequest[callbackId] = newRequest;
+                        });
                     }
                 }
             }
