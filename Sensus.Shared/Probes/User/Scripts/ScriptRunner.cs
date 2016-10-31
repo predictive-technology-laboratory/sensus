@@ -294,7 +294,7 @@ namespace Sensus.Probes.User.Scripts
 
             foreach (var triggerTime in _scheduleTrigger.GetTriggerTimes(DateTime.Now, _maxScheduledDate.Max(DateTime.Now), _maxAge))
             {
-                if (!Probe.Protocol.ContinueIndefinitely && triggerTime.DateTime > Probe.Protocol.EndDate)
+                if (!Probe.Protocol.ContinueIndefinitely && triggerTime.Trigger > Probe.Protocol.EndDate)
                 {
                     break;
                 }
@@ -329,23 +329,21 @@ namespace Sensus.Probes.User.Scripts
 
         private void ScheduleScriptRun(ScriptTriggerTime triggerTime)
         {
-            if (triggerTime.TimeTill <= TimeSpan.FromMinutes(1))
+            // don't bother with the script if it's coming too soon.
+            if (triggerTime.ReferenceTillTrigger <= TimeSpan.FromMinutes(1))
             {
                 return;
             }
 
             lock (_scheduledCallbackIds)
             {
-                var delayMS = (int)triggerTime.TimeTill.TotalMilliseconds;
-                var callback = CreateCallback(new Script(Script, Guid.NewGuid()) { ExpirationDate = triggerTime.Expiration, ScheduledRunTime = triggerTime.DateTime });
-                var callbackId = SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(callback, delayMS);
-
-                SensusServiceHelper.Get().Logger.Log($"Scheduled for {triggerTime.DateTime} ({callbackId})", LoggingLevel.Normal, GetType());
-
+                var callback = CreateCallback(new Script(Script, Guid.NewGuid()) { ExpirationDate = triggerTime.Expiration, ScheduledRunTime = triggerTime.Trigger });
+                var callbackId = SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(callback, (int)triggerTime.ReferenceTillTrigger.TotalMilliseconds);
                 _scheduledCallbackIds.Add(callbackId);
+                SensusServiceHelper.Get().Logger.Log($"Scheduled for {triggerTime.Trigger} ({callbackId})", LoggingLevel.Normal, GetType());
             }
 
-            _maxScheduledDate = _maxScheduledDate.Max(triggerTime.DateTime);
+            _maxScheduledDate = _maxScheduledDate.Max(triggerTime.Trigger);
         }
 
         private void UnscheduleCallback(string scheduledCallbackId)

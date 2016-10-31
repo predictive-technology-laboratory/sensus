@@ -88,9 +88,10 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
                 lock (_idNotification)
                 {
                     // notifications are not required to have an id. if the current one does, save the notification by id for easy lookup later.
+                    // use indexing to add/replace since we might be reissuing the notification with the same id.
                     string id = notification.UserInfo?.ValueForKey(new NSString(NOTIFICATION_ID_KEY))?.ToString();
                     if (id != null)
-                        _idNotification.Add(id, notification);
+                        _idNotification[id] = notification;
                 }
 
                 UIApplication.SharedApplication.ScheduleLocalNotification(notification);
@@ -119,8 +120,8 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
                 // cancel the appropriate scheduled notification object.
                 foreach (UILocalNotification scheduledNotification in UIApplication.SharedApplication.ScheduledLocalNotifications)
                 {
-                    string scheduledId = scheduledNotification.UserInfo?.ValueForKey(new NSString(NOTIFICATION_ID_KEY))?.ToString();
-                    if (scheduledId == id)
+                    string scheduledNotificationId = scheduledNotification.UserInfo?.ValueForKey(new NSString(NOTIFICATION_ID_KEY))?.ToString();
+                    if (scheduledNotificationId == id)
                         UIApplication.SharedApplication.CancelLocalNotification(scheduledNotification);
                 }
 

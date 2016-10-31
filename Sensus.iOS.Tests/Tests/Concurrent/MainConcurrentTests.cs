@@ -23,7 +23,6 @@ namespace Sensus.iOS.Tests.Concurrent
     {
         public MainConcurrentTests() : base(new MainConcurrent(5000))
         {
-            
         }
     }
 }

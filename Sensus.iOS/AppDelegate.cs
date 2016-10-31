@@ -192,8 +192,8 @@ namespace Sensus.iOS
 
         public override void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)
         {
-            // UILocalNotifications were obsoleted in iOS 10.0, and we should not be receiving them. furthermore, we won't have
-            // any idea how to service them on iOS 10.0 and above. so just report the problem to Insights and bail.
+            // UILocalNotifications were obsoleted in iOS 10.0, and we should not be receiving them via this app delegate
+            // method. we won't have any idea how to service them on iOS 10.0 and above. report the problem to Insights and bail.
             if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
                 SensusException.Report("Received UILocalNotification in iOS 10 or later.");
             else
@@ -203,16 +203,18 @@ namespace Sensus.iOS
                 // cancel notification (removing it from the tray), since it has served its purpose
                 (SensusContext.Current.Notifier as IUILocalNotificationNotifier)?.CancelNotification(notification);
 
-                // service the callback. if the user opened the notification then the application state will be inactive
                 IiOSCallbackScheduler callbackScheduler = SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler;
                 if (callbackScheduler == null)
                     SensusException.Report("Invalid callback scheduler.");
                 else
                 {
+                    // service the callback.
                     callbackScheduler.ServiceCallbackAsync(notification.UserInfo);
 
-                    // if the user opened the notification, display the page associated with the notification (if there is one).
-                    if (application.ApplicationState == UIApplicationState.Inactive)
+                    // check whether the user opened the notification to open sensus, indicated by an application state that is not active. we'll
+                    // also get notifications when the app is active, since we use them for timed callback events. if the user opened the notification, 
+                    // display the page associated with the notification (if there is one).
+                    if (application.ApplicationState != UIApplicationState.Active)
                         callbackScheduler.OpenDisplayPage(notification.UserInfo);
                 }
             }

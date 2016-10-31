@@ -62,22 +62,35 @@ namespace Sensus.Probes.User.Scripts
         #endregion
 
         #region Public Methods
-        /// <remarks>
-        /// If we are currently in the previous window we skip it. This may not be perfect but it makes everything else infinitely simpler to do.
-        /// </remarks>
-        public ScriptTriggerTime GetNextTriggerTime(DateTime from, DateTime after, bool windowExpiration, TimeSpan? maxAge)
+        /// <summary>
+        /// Gets the next trigger time.
+        /// </summary>
+        /// <returns>The next trigger time.</returns>
+        /// <param name="reference">The reference time, from which the next time should be computed.</param>
+        /// <param name="after">The time after which the trigger time should occur.</param>
+        /// <param name="windowExpiration">Whether or not to expire at the current window's end.</param>
+        /// <param name="maxAge">Maximum age of the triggered script.</param>
+        public ScriptTriggerTime GetNextTriggerTime(DateTime reference, DateTime after, bool windowExpiration, TimeSpan? maxAge)
         {
-            var timeTillTrigger = TimeBetween(from, after) + TimeTillFutureStart(after.TimeOfDay) + RandomWindowTime();
-            var timeTillTriggerWindowEnd = TimeBetween(from, after) + TimeTillFutureEnd(after.TimeOfDay);
-
-            var windowExpirationDateTime = Start == End ? DateTime.MaxValue : windowExpiration ? from.Add(timeTillTriggerWindowEnd) : DateTime.MaxValue;
-            var ageExpirationDateTime = maxAge != null ? from.Add(timeTillTrigger).Add(maxAge.Value) : DateTime.MaxValue;
-
-            return new ScriptTriggerTime
+            TimeSpan timeTillTrigger = TimeBetween(reference, after) + TimeTillFutureStart(after.TimeOfDay) + RandomWindowTime();
+            DateTime triggerDateTime = reference.Add(timeTillTrigger);
+            
+            // it only makes sense to do window expiration when the window timespan is not zero. if we did window expiration with
+            // a zero-length window the script would expire immediately.
+            DateTime? windowExpirationDateTime = default(DateTime?);
+            if (windowExpiration && Start != End)
             {
-                TimeTill = timeTillTrigger,
-                Expiration = windowExpirationDateTime.Min(ageExpirationDateTime)
-            };
+                TimeSpan timeTillTriggerWindowEnd = TimeBetween(reference, after) + TimeTillFutureEnd(after.TimeOfDay);
+                windowExpirationDateTime = reference.Add(timeTillTriggerWindowEnd);
+            }
+
+            DateTime? ageExpirationDateTime = default(DateTime?);
+            if (maxAge != null)
+            {
+                ageExpirationDateTime = triggerDateTime.Add(maxAge.Value);
+            }
+
+            return new ScriptTriggerTime(reference, triggerDateTime, windowExpirationDateTime.Min(ageExpirationDateTime));
         }
 
         public override string ToString()

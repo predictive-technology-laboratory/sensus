@@ -18,8 +18,16 @@ namespace Sensus.Probes.User.Scripts
 {
     public class ScriptTriggerTime
     {
-        public DateTime DateTime => DateTime.Now + TimeTill;
-        public TimeSpan TimeTill { get; set; }
-        public DateTime Expiration { get; set; }
+        public DateTime Reference { get; private set;}
+        public DateTime Trigger { get; private set; }
+        public DateTime? Expiration { get; private set; }
+        public TimeSpan ReferenceTillTrigger => Trigger - Reference;
+
+        public ScriptTriggerTime(DateTime reference, DateTime trigger, DateTime? expiration = default(DateTime?))
+        {
+            Reference = reference;
+            Trigger = trigger;
+            Expiration = expiration;
+        }
     }
 }

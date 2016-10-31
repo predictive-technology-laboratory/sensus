@@ -18,9 +18,9 @@ using NUnit.Framework;
 using Sensus.Concurrent;
 
 namespace Sensus.Tests.Concurrent
-{    
+{
     public abstract class IConcurrentTests
-    {        
+    {
         #region Fields
         private const int DelayTime = 100;
         private readonly IConcurrent _concurrent;
@@ -156,7 +156,6 @@ namespace Sensus.Tests.Concurrent
                 {
                     _concurrent.ExecuteThreadSafe(() =>
                     {
-
                         test.Add(4);
 
                         foreach (var i in test)
@@ -178,7 +177,6 @@ namespace Sensus.Tests.Concurrent
             }
 
             Assert.IsTrue(task.IsCompleted);
-
             Assert.Contains(4, test);
             Assert.Contains(5, test);
         }

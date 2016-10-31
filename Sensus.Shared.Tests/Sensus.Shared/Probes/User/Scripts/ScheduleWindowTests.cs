@@ -62,16 +62,16 @@ namespace Sensus.Tests.Scripts
         {
             var t = TriggerWindow.Parse("10:22-12:22");
 
-            var from  = new DateTime(1986,4,18, 10, 22, 0);
+            var reference  = new DateTime(1986,4,18, 10, 22, 0);
             var after = new DateTime(1986,4,25, 10, 22, 0);
 
             for (var i = 0; i < 100; i++)
             {
-                var nextTriggerTime = t.GetNextTriggerTime(from, after, false, null);
+                var nextTriggerTime = t.GetNextTriggerTime(reference, after, false, null);
 
-                Assert.GreaterOrEqual(nextTriggerTime.TimeTill, TimeSpan.FromDays(8));
-                Assert.LessOrEqual(nextTriggerTime.TimeTill, TimeSpan.FromDays(8).Add(TimeSpan.FromHours(2)));
-                Assert.AreEqual(DateTime.MaxValue, nextTriggerTime.Expiration);
+                Assert.GreaterOrEqual(nextTriggerTime.ReferenceTillTrigger, TimeSpan.FromDays(8));
+                Assert.LessOrEqual(nextTriggerTime.ReferenceTillTrigger, TimeSpan.FromDays(8).Add(TimeSpan.FromHours(2)));
+                Assert.AreEqual(null, nextTriggerTime.Expiration);
             }
         }
 
@@ -80,15 +80,15 @@ namespace Sensus.Tests.Scripts
         {
             var t = TriggerWindow.Parse("10:22");
 
-            var from = new DateTime(1986, 4, 18, 10, 22, 0);
+            var reference = new DateTime(1986, 4, 18, 10, 22, 0);
             var after = new DateTime(1986, 4, 25, 10, 22, 0);
 
             for (var i = 0; i < 100; i++)
             {
-                var nextTriggerTime = t.GetNextTriggerTime(from, after, false, null);
+                var nextTriggerTime = t.GetNextTriggerTime(reference, after, false, null);
 
-                Assert.AreEqual(TimeSpan.FromDays(8), nextTriggerTime.TimeTill);
-                Assert.AreEqual(DateTime.MaxValue, nextTriggerTime.Expiration);
+                Assert.AreEqual(TimeSpan.FromDays(8), nextTriggerTime.ReferenceTillTrigger);
+                Assert.AreEqual(null, nextTriggerTime.Expiration);
             }
         }
 
@@ -97,15 +97,15 @@ namespace Sensus.Tests.Scripts
         {
             var t = TriggerWindow.Parse("10:22");
 
-            var from = new DateTime(1986, 4, 18, 10, 22, 0);
-            var after = from.AddDays(30);
+            var reference = new DateTime(1986, 4, 18, 10, 22, 0);
+            var after = reference.AddDays(30);
 
             for (var i = 0; i < 100; i++)
             {
-                var nextTriggerTime = t.GetNextTriggerTime(from, after, false, null);
+                var nextTriggerTime = t.GetNextTriggerTime(reference, after, false, null);
 
-                Assert.AreEqual(TimeSpan.FromDays(31), nextTriggerTime.TimeTill);
-                Assert.AreEqual(DateTime.MaxValue, nextTriggerTime.Expiration);
+                Assert.AreEqual(TimeSpan.FromDays(31), nextTriggerTime.ReferenceTillTrigger);
+                Assert.AreEqual(null, nextTriggerTime.Expiration);
             }
         }
 
@@ -114,13 +114,13 @@ namespace Sensus.Tests.Scripts
         {
             var t = TriggerWindow.Parse("10:22");
 
-            var from = new DateTime(1986, 4, 18, 10, 22, 0);
-            var after = from.AddDays(30);
+            var reference = new DateTime(1986, 4, 18, 10, 22, 0);
+            var after = reference.AddDays(30);
 
-            var nextTriggerTime = t.GetNextTriggerTime(from, after, true, null);
+            var nextTriggerTime = t.GetNextTriggerTime(reference, after, true, null);
 
-            Assert.AreEqual(TimeSpan.FromDays(31), nextTriggerTime.TimeTill);
-            Assert.AreEqual(DateTime.MaxValue, nextTriggerTime.Expiration);
+            Assert.AreEqual(TimeSpan.FromDays(31), nextTriggerTime.ReferenceTillTrigger);
+            Assert.AreEqual(null, nextTriggerTime.Expiration);
         }
 
         [Test]
@@ -128,17 +128,17 @@ namespace Sensus.Tests.Scripts
         {
             var t = TriggerWindow.Parse("10:22-12:22");
 
-            var from  = new DateTime(1986, 4, 18, 10, 22, 0);
+            var reference  = new DateTime(1986, 4, 18, 10, 22, 0);
             var after = new DateTime(1986, 4, 25, 10, 22, 0);
             var expir = TimeSpan.FromMinutes(10);
 
             for (var i = 0; i < 100; i++)
             {
-                var nextTriggerTime = t.GetNextTriggerTime(from, after, false, expir);
+                var nextTriggerTime = t.GetNextTriggerTime(reference, after, false, expir);
                 
-                Assert.GreaterOrEqual(nextTriggerTime.TimeTill, TimeSpan.FromDays(8));
-                Assert.LessOrEqual(nextTriggerTime.TimeTill, TimeSpan.FromDays(8).Add(TimeSpan.FromHours(2)));
-                Assert.AreEqual(from + nextTriggerTime.TimeTill + expir, nextTriggerTime.Expiration);
+                Assert.GreaterOrEqual(nextTriggerTime.ReferenceTillTrigger, TimeSpan.FromDays(8));
+                Assert.LessOrEqual(nextTriggerTime.ReferenceTillTrigger, TimeSpan.FromDays(8).Add(TimeSpan.FromHours(2)));
+                Assert.AreEqual(reference + nextTriggerTime.ReferenceTillTrigger + expir, nextTriggerTime.Expiration);
             }
         }
 
@@ -147,16 +147,16 @@ namespace Sensus.Tests.Scripts
         {
             var t = TriggerWindow.Parse("10:22-12:22");
 
-            var from  = new DateTime(1986, 4, 18, 10, 22, 0);
+            var reference  = new DateTime(1986, 4, 18, 10, 22, 0);
             var after = new DateTime(1986, 4, 25, 10, 22, 0);
 
             for (var i = 0; i < 100; i++)
             {
-                var nextTriggerTime = t.GetNextTriggerTime(from, after, true, null);
+                var nextTriggerTime = t.GetNextTriggerTime(reference, after, true, null);
 
-                Assert.GreaterOrEqual(nextTriggerTime.TimeTill, TimeSpan.FromDays(8));
-                Assert.LessOrEqual(nextTriggerTime.TimeTill, TimeSpan.FromDays(8).Add(TimeSpan.FromHours(2)));
-                Assert.AreEqual(from.AddDays(8).AddHours(2), nextTriggerTime.Expiration);
+                Assert.GreaterOrEqual(nextTriggerTime.ReferenceTillTrigger, TimeSpan.FromDays(8));
+                Assert.LessOrEqual(nextTriggerTime.ReferenceTillTrigger, TimeSpan.FromDays(8).Add(TimeSpan.FromHours(2)));
+                Assert.AreEqual(reference.AddDays(8).AddHours(2), nextTriggerTime.Expiration);
             }
         }
 
@@ -165,17 +165,17 @@ namespace Sensus.Tests.Scripts
         {
             var t = TriggerWindow.Parse("10:22-12:22");
 
-            var from  = new DateTime(1986, 4, 18, 10, 22, 0);
+            var reference  = new DateTime(1986, 4, 18, 10, 22, 0);
             var after = new DateTime(1986, 4, 25, 10, 22, 0);
-            var expir = TimeSpan.FromMinutes(1);
+            var expire = TimeSpan.FromMinutes(1);
 
             for (var i = 0; i < 100; i++)
             { 
-                var nextTriggerTime = t.GetNextTriggerTime(from, after, false, expir);
+                var nextTriggerTime = t.GetNextTriggerTime(reference, after, false, expire);
 
-                Assert.GreaterOrEqual(nextTriggerTime.TimeTill, TimeSpan.FromDays(8));
-                Assert.LessOrEqual(nextTriggerTime.TimeTill, TimeSpan.FromDays(8).Add(TimeSpan.FromHours(2)));
-                Assert.That(nextTriggerTime.Expiration, Is.EqualTo(from + nextTriggerTime.TimeTill + expir).Within(TimeSpan.FromSeconds(1)));
+                Assert.GreaterOrEqual(nextTriggerTime.ReferenceTillTrigger, TimeSpan.FromDays(8));
+                Assert.LessOrEqual(nextTriggerTime.ReferenceTillTrigger, TimeSpan.FromDays(8).Add(TimeSpan.FromHours(2)));
+                Assert.That(nextTriggerTime.Expiration, Is.EqualTo(reference + nextTriggerTime.ReferenceTillTrigger + expire).Within(TimeSpan.FromSeconds(1)));
             }
         }
 

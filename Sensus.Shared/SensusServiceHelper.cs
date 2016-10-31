@@ -20,8 +20,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Security.Cryptography;
-using System.Collections.Concurrent;
-using System.Collections.ObjectModel;
 
 using Xamarin;
 using Xamarin.Forms;

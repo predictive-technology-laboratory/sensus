@@ -74,25 +74,30 @@ namespace Sensus.Probes.User.Scripts
         /// Gets trigger times relative to a given time after some other time.
         /// </summary>
         /// <returns>Trigger times.</returns>
-        /// <param name="from">Get trigger times relative to this time.</param>
-        /// <param name="after">Get trigger times after this time.</param>
+        /// <param name="reference">The reference time, from which the next time should be computed.</param>
+        /// <param name="after">The time after which the trigger time should occur.</param>
         /// <param name="maxAge">Maximum age of the trigger.</param>
-        public IEnumerable<ScriptTriggerTime> GetTriggerTimes(DateTime from, DateTime after, TimeSpan? maxAge = null)
+        public List<ScriptTriggerTime> GetTriggerTimes(DateTime reference, DateTime after, TimeSpan? maxAge = null)
         {
-            var eightDays = TimeSpan.FromDays(8);
-            var oneDay = TimeSpan.FromDays(1);
-
             lock (_windows)
             {
-                // return trigger times up to 8 days beyond the from time
-                for (; after - from < eightDays; after += oneDay)
+                // we used to use a yield-return approach for returning the trigger times; however, there's an issue:  the reference time does not 
+                // change, and if there are significant latencies involved in scheduling the retuned trigger time then the notification time will
+                // not accurately reflect the requested trigger reference. so, the better approach is to gather all triggers immediately to minimize
+                // the effect of such latencies.
+                List<ScriptTriggerTime> triggerTimes = new List<ScriptTriggerTime>();
+
+                // return trigger times up to 8 days beyond the reference
+                for (; (after - reference).TotalDays < 8; after = after.AddDays(1))
                 {
                     // It is important that these are ordered otherwise we might skip windows since we use the _maxScheduledDate to determine which schedule comes next.
-                    foreach (var triggerTime in _windows.Select(window => window.GetNextTriggerTime(from, after, WindowExpiration, maxAge)).OrderBy(window => window.TimeTill).ToArray())
+                    foreach (ScriptTriggerTime triggerTime in _windows.Select(window => window.GetNextTriggerTime(reference, after, WindowExpiration, maxAge)).OrderBy(tt => tt.Trigger))
                     {
-                        yield return triggerTime;
+                        triggerTimes.Add(triggerTime);
                     }
                 }
+
+                return triggerTimes;
             }
         }
         #endregion

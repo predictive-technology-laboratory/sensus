@@ -47,21 +47,21 @@ namespace Sensus.DataStores.Remote
         public override Task<List<Datum>> CommitAsync(IEnumerable<Datum> data, CancellationToken cancellationToken)
         {
             return Task.Run(() =>
+            {
+                List<Datum> committedData = new List<Datum>();
+
+                foreach (Datum datum in data)
                 {
-                    List<Datum> committedData = new List<Datum>();
+                    if (cancellationToken.IsCancellationRequested)
+                        break;
 
-                    foreach (Datum datum in data)
-                    {
-                        if (cancellationToken.IsCancellationRequested)
-                            break;
+                    SensusServiceHelper.Get().Logger.Log("Committed datum to remote console:  " + datum, LoggingLevel.Debug, GetType());
+                    MostRecentSuccessfulCommitTime = DateTime.Now;
+                    committedData.Add(datum);
+                }
 
-                        SensusServiceHelper.Get().Logger.Log("Committed datum to remote console:  " + datum, LoggingLevel.Debug, GetType());
-                        MostRecentSuccessfulCommitTime = DateTime.Now;
-                        committedData.Add(datum);
-                    }
-
-                    return committedData;
-                });
+                return committedData;
+            });
         }
 
         public override string GetDatumKey(Datum datum)

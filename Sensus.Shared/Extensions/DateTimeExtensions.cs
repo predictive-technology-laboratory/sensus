@@ -47,5 +47,15 @@ namespace Sensus.Extensions
         {
             return d2 < d1 ? d2.Value : d1;
         }
+
+        public static DateTime? Min(this DateTime? d1, DateTime? d2)
+        {
+            if (d1.HasValue)
+                return d1.Value.Min(d2);
+            else if (d2.HasValue)
+                return d2.Value.Min(d1);
+            else
+                return default(DateTime?);
+        }
     }
 }
