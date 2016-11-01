@@ -150,35 +150,27 @@ namespace Sensus.Tests.Concurrent
             var test = new List<int> { 1, 2, 3 };
             var cancel = new System.Threading.CancellationTokenSource();
 
-            var task = Task.Run(() =>
+            _concurrent.ExecuteThreadSafe(() =>
             {
                 _concurrent.ExecuteThreadSafe(() =>
                 {
-                    _concurrent.ExecuteThreadSafe(() =>
+                    for (var i = 4; i <= 6; i++)
                     {
-                        test.Add(4);
-
-                        foreach (var i in test)
-                        {
-                            Task.Delay(DelayTime).Wait();
-                        }
-
-                        test.Add(5);
-                    });
+                        test.Add(i);
+                        Task.Delay(DelayTime).Wait();
+                    }
                 });
-            }, cancel.Token);
+            });
 
-            task.Wait(1000);
-
-            if (!task.IsCompleted)
+            if (test.Count < 6)
             {
                 cancel.Cancel();
                 throw new System.Exception("It appears that we deadlocked");
             }
-
-            Assert.IsTrue(task.IsCompleted);
+            
             Assert.Contains(4, test);
             Assert.Contains(5, test);
+            Assert.Contains(6, test);
         }
 
         [Test]
@@ -188,29 +180,21 @@ namespace Sensus.Tests.Concurrent
             var output = default(List<int>);
             var cancel = new System.Threading.CancellationTokenSource();
 
-            var task = Task.Run(() =>
+            output = _concurrent.ExecuteThreadSafe(() =>
             {
-                output = _concurrent.ExecuteThreadSafe(() =>
+                return _concurrent.ExecuteThreadSafe(() =>
                 {
-                    return _concurrent.ExecuteThreadSafe(() =>
+                    for(var i = 4; i <= 6; i++)
                     {
-                        test.Add(4);
+                        test.Add(i);
+                        Task.Delay(DelayTime).Wait();
+                    }                        
 
-                        foreach (var i in test)
-                        {
-                            Task.Delay(DelayTime).Wait();
-                        }
-
-                        test.Add(5);
-
-                        return test;
-                    });
+                    return test;
                 });
-            }, cancel.Token);
+            });
 
-            task.Wait(1000);
-
-            if (!task.IsCompleted)
+            if (output.Count < 6)
             {
                 cancel.Cancel();
                 throw new System.Exception("It appears that we deadlocked");
@@ -218,6 +202,7 @@ namespace Sensus.Tests.Concurrent
 
             Assert.Contains(4, output);
             Assert.Contains(5, output);
+            Assert.Contains(6, output);
             Assert.AreSame(test, output);
         }
     }
