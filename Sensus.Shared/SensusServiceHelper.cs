@@ -1198,6 +1198,7 @@ namespace Sensus
                 {
                     return PermissionStatus.Granted;
                 }
+
                 // the Permissions plugin requires a main activity to be present on android. ensure this below.
                 BringToForeground();
 

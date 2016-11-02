@@ -164,5 +164,7 @@
 	<string>Certain Sensus studies integrate with HealthKit to gather data. You will be alerted when joining such studies.</string>
 	<key>NSHealthUpdateUsageDescription</key>
 	<string>Sensus does not share health information with other apps.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Certain Sensus studies use the microphone to gather sound data. You will be alerted when joining such studies.</string>
 </dict>
 </plist>
