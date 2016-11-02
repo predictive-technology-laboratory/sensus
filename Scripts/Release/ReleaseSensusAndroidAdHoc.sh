@@ -59,5 +59,6 @@ if [ $? -ne 0 ]; then
 fi
 
 # revert all changes
+echo
 echo "Reverting all local changes."
 git checkout ../..
