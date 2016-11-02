@@ -14,9 +14,6 @@
 
 using System;
 using Microsoft.Band.Portable.Sensors;
-using Sensus.Anonymization;
-using Sensus.Anonymization.Anonymizers;
-using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 
 namespace Sensus.Probes.User.MicrosoftBand
 {

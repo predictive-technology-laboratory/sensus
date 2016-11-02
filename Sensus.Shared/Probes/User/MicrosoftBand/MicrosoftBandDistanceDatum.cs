@@ -25,7 +25,7 @@ namespace Sensus.Probes.User.MicrosoftBand
         private double _totalDistance;
         private MotionType _motionType;
 
-        [Anonymizable(null, new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
+        [Anonymizable("Total Distance:", new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
         [DoubleProbeTriggerProperty]
         public double TotalDistance
         {

@@ -25,7 +25,7 @@ namespace Sensus.Probes.User.MicrosoftBand
         private double _angularY;
         private double _angularZ;
 
-        [Anonymizable(null, new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
+        [Anonymizable("X:", new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
         [DoubleProbeTriggerProperty]
         public double AngularX
         {
@@ -40,7 +40,7 @@ namespace Sensus.Probes.User.MicrosoftBand
             }
         }
 
-        [Anonymizable(null, new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
+        [Anonymizable("Y:", new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
         [DoubleProbeTriggerProperty]
         public double AngularY
         {
@@ -55,7 +55,7 @@ namespace Sensus.Probes.User.MicrosoftBand
             }
         }
 
-        [Anonymizable(null, new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
+        [Anonymizable("Z:", new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
         [DoubleProbeTriggerProperty]
         public double AngularZ
         {

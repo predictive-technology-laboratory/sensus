@@ -23,7 +23,7 @@ namespace Sensus.Probes.User.MicrosoftBand
     {
         private double _heartRate;
 
-        [Anonymizable(null, new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
+        [Anonymizable("Heart Rate (BPM):", new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
         [DoubleProbeTriggerProperty("Heart Rate")]
         public double HeartRate
         {

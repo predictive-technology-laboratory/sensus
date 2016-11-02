@@ -23,7 +23,7 @@ namespace Sensus.Probes.User.MicrosoftBand
     {
         private double _stepsAscended;
 
-        [Anonymizable(null, new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
+        [Anonymizable("Steps Ascended:", new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
         [DoubleProbeTriggerProperty]
         public double StepsAscended
         {

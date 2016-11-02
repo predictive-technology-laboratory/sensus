@@ -23,7 +23,7 @@ namespace Sensus.Probes.User.MicrosoftBand
     {
         private double _airPressure;
 
-        [Anonymizable(null, new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
+        [Anonymizable("Air Pressure:", new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
         [DoubleProbeTriggerProperty]
         public double AirPressure
         {
