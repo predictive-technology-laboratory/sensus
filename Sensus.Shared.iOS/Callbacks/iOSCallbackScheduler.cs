@@ -72,10 +72,11 @@ namespace Sensus.iOS.Callbacks
             if (!(isCallback?.BoolValue ?? false))
                 return;
 
-            string callbackId = (callbackInfo.ValueForKey(new NSString(Notifier.NOTIFICATION_ID_KEY)) as NSString).ToString();
-            bool repeating = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber).BoolValue;
-            int repeatDelayMS = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_DELAY_KEY)) as NSNumber).Int32Value;
-            bool repeatLag = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_LAG_KEY)) as NSNumber).BoolValue;
+            // not sure why the following would be null, but we've seen NRE in insights and these are the likely suspects.
+            string callbackId = (callbackInfo.ValueForKey(new NSString(Notifier.NOTIFICATION_ID_KEY)) as NSString)?.ToString();
+            bool repeating = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber)?.BoolValue ?? false;
+            int repeatDelayMS = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_DELAY_KEY)) as NSNumber)?.Int32Value ?? 100000; // not sure what the right value is here.
+            bool repeatLag = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_LAG_KEY)) as NSNumber)?.BoolValue ?? false;
 
             // only raise callback if it is still scheduled
             if (!CallbackIsScheduled(callbackId))
