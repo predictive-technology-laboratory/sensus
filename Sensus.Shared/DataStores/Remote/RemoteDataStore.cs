@@ -58,12 +58,12 @@ namespace Sensus.DataStores.Remote
 #endif
         }
 
-        protected sealed override Task CycleAsync(string callbackId, CancellationToken cancellationToken, Action letDeviceSleepCallback)
+        protected sealed override Task CommitAddedDataAndReleaseAsync(string callbackId, CancellationToken cancellationToken, Action letDeviceSleepCallback)
         {
             return Task.Run(async () =>
             {
                 if (cancellationToken.IsCancellationRequested)
-                    SensusServiceHelper.Get().Logger.Log("Cancelled retrieval of data from local data store.", LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Get().Logger.Log("Cancelled commit to remote data store.", LoggingLevel.Normal, GetType());
                 else if (!Protocol.LocalDataStore.UploadToRemoteDataStore)
                     SensusServiceHelper.Get().Logger.Log("Remote data store upload is disabled.", LoggingLevel.Normal, GetType());
                 else if (_requireWiFi && !SensusServiceHelper.Get().WiFiConnected)
@@ -81,10 +81,10 @@ namespace Sensus.DataStores.Remote
 
                     // first commmit any data that have accumulated in the internal memory of the remote data store, e.g., protocol report
                     // data when we are not committing local data to remote but we are also forcing report data.
-                    await base.CycleAsync(callbackId, cancellationToken, letDeviceSleepCallback);
+                    await base.CommitAddedDataAndReleaseAsync(callbackId, cancellationToken, letDeviceSleepCallback);
 
                     // instruct the local data store to commit its data to the remote data store.
-                    Protocol.LocalDataStore.CommitDataToRemoteDataStore(cancellationToken);
+                    Protocol.LocalDataStore.CommitToRemote(cancellationToken);
 
 #if __IOS__
                     // on ios the user must activate the app in order to save data. give the user some feedback to let them know that the data were stored remotely.

@@ -162,13 +162,13 @@ namespace Sensus.DataStores.Local
                         WriteToNewPath();
                 }
 
-                CheckSizeAndCommitToRemote(cancellationToken);
+                CommitToRemoteIfTooLarge(cancellationToken);
 
                 return committedData;
             });
         }
 
-        public override void CommitDataToRemoteDataStore(CancellationToken cancellationToken)
+        public override void CommitToRemote(CancellationToken cancellationToken)
         {
             lock (_storageDirectoryLocker)
             {
@@ -183,7 +183,7 @@ namespace Sensus.DataStores.Local
 
                 using (StreamWriter uncommittedDataFile = new StreamWriter(uncommittedDataPath))
                 {
-                    foreach (string path in pathsToCommit)
+                    foreach (string pathToCommit in pathsToCommit)
                     {
                         if (cancellationToken.IsCancellationRequested)
                             break;
@@ -191,13 +191,13 @@ namespace Sensus.DataStores.Local
                         // wrap in try-catch to ensure that we process all files
                         try
                         {
-                            using (StreamReader file = new StreamReader(path))
+                            using (StreamReader fileToCommit = new StreamReader(pathToCommit))
                             {
                                 // commit data in small batches. all data will end up in the uncommitted file, in the batch object, or
                                 // in the remote data store.
                                 HashSet<Datum> batch = new HashSet<Datum>();
                                 string datumJSON;
-                                while ((datumJSON = file.ReadLine()) != null)
+                                while ((datumJSON = fileToCommit.ReadLine()) != null)
                                 {
                                     // if we have been canceled, dump the rest of the file into the uncommitted data file.
                                     if (cancellationToken.IsCancellationRequested)
@@ -215,27 +215,20 @@ namespace Sensus.DataStores.Local
                                         }
 
                                         if (batch.Count >= 50000)
-                                            CommitBatchToRemote(batch, cancellationToken, uncommittedDataFile);
+                                            CommitBatchToRemoteAndRelease(batch, cancellationToken, uncommittedDataFile);
                                     }
                                 }
 
-                                // deal with any data that remain in an the batch object. they'll end up in the uncommitted file or
-                                // in the remote data store. if the former, they'll be picked up next commit.
+                                // commit partial batch
                                 if (batch.Count > 0)
                                 {
-                                    if (cancellationToken.IsCancellationRequested)
-                                    {
-                                        foreach (Datum datum in batch)
-                                            uncommittedDataFile.WriteLine(datum.GetJSON(Protocol.JsonAnonymizer, false));
-                                    }
-                                    else
-                                        CommitBatchToRemote(batch, cancellationToken, uncommittedDataFile);
+                                    CommitBatchToRemoteAndRelease(batch, cancellationToken, uncommittedDataFile);
                                 }
                             }
 
                             // we've read all lines in the file and either committed them to the remote data store or written them
-                            // to the uncommitted data file. 
-                            File.Delete(path);
+                            // to the uncommitted data file. we can delete the current path.
+                            File.Delete(pathToCommit);
                         }
                         catch (Exception ex)
                         {
@@ -246,9 +239,10 @@ namespace Sensus.DataStores.Local
             }
         }
 
-        private void CommitBatchToRemote(HashSet<Datum> batch, CancellationToken cancellationToken, StreamWriter uncommittedDataFile)
+        private void CommitBatchToRemoteAndRelease(HashSet<Datum> batch, CancellationToken cancellationToken, StreamWriter uncommittedDataFile)
         {
-            CommitChunksAsync(batch, Protocol.RemoteDataStore, cancellationToken).Wait();
+            if (!cancellationToken.IsCancellationRequested)
+                CommitAndReleaseAsync(batch, Protocol.RemoteDataStore, cancellationToken).Wait();
 
             // any leftover data should be dumped to the uncommitted file to maintain memory limits. the data will be committed next time.
             foreach (Datum datum in batch)
@@ -258,7 +252,7 @@ namespace Sensus.DataStores.Local
             batch.Clear();
         }
 
-        protected override bool TriggerRemoteCommit()
+        protected override bool TooLarge()
         {
             lock (_storageDirectoryLocker)
             {

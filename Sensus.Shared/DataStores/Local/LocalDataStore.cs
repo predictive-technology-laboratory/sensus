@@ -65,30 +65,33 @@ namespace Sensus.DataStores.Local
 #endif
         }
 
-        public abstract void CommitDataToRemoteDataStore(CancellationToken cancellationToken);
-
-        protected abstract bool TriggerRemoteCommit();
-
-        protected void CheckSizeAndCommitToRemote(CancellationToken cancellationToken)
+        /// <summary>
+        /// Checks whether the current local data store has grown too large, and (if it has) commits the data to the remote data store.
+        /// This relieves pressure on local storage resources (e.g., RAM or disk) in cases where the remote data store is not triggered
+        /// frequently enough by its own callback delays. It makes sense to call this method after committing data to the current local data
+        /// store.
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        protected void CommitToRemoteIfTooLarge(CancellationToken cancellationToken)
         {
-            bool runCommit = false;
+            bool commit = false;
 
             lock (_sizeTriggeredRemoteCommitLocker)
             {
-                if (TriggerRemoteCommit() && !_sizeTriggeredRemoteCommitRunning)
+                if (TooLarge() && !_sizeTriggeredRemoteCommitRunning)
                 {
                     _sizeTriggeredRemoteCommitRunning = true;
-                    runCommit = true;
+                    commit = true;
                 }
             }
 
-            if (runCommit)
+            if (commit)
             {
                 SensusServiceHelper.Get().Logger.Log("Running size-triggered commit to remote.", LoggingLevel.Normal, GetType());
 
                 try
                 {
-                    CommitDataToRemoteDataStore(cancellationToken);
+                    CommitToRemote(cancellationToken);
                 }
                 catch (Exception ex)
                 {
@@ -100,6 +103,10 @@ namespace Sensus.DataStores.Local
                 }
             }
         }
+
+        protected abstract bool TooLarge();
+
+        public abstract void CommitToRemote(CancellationToken cancellationToken);
 
         public int WriteDataToZipFile(string zipPath, CancellationToken cancellationToken, Action<string, double> progressCallback)
         {

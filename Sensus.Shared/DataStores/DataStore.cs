@@ -32,22 +32,28 @@ namespace Sensus.DataStores
     {
         private const int COMMIT_CHUNK_SIZE = 10000;
 
-        protected static Task CommitChunksAsync(HashSet<Datum> data, DataStore dataStore, CancellationToken cancellationToken)
+        /// <summary>
+        /// Commits data from a passed set to a data store, and then releases (removes) the committed data from the passed set.
+        /// </summary>
+        /// <returns>A task for the operation</returns>
+        /// <param name="data">Data to commit. Data will be removed from this collection when they are successfully committed.</param>
+        /// <param name="dataStore">Data store to commit to.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        protected static Task CommitAndReleaseAsync(HashSet<Datum> data, DataStore dataStore, CancellationToken cancellationToken)
         {
             return Task.Run(async () =>
             {
                 // the data set passed in is open to modification, and callers might continue adding data after this method returns.
-                // so, we can't simply run until data is empty since it may never be empty. instead, run a predetermined number of 
-                // chunks.
+                // so, we can't simply commit until data is empty since it may never be empty. instead, commit a predetermined number
+                // of chunks.
                 int maxNumChunks;
                 lock (data)
                 {
                     maxNumChunks = (int)Math.Ceiling(data.Count / (double)COMMIT_CHUNK_SIZE);
                 }
 
-                HashSet<Datum> chunk = new HashSet<Datum>();
-
                 // process all chunks, stopping for cancellation.
+                HashSet<Datum> chunk = new HashSet<Datum>();
                 int chunksCommitted = 0;
                 while (!cancellationToken.IsCancellationRequested && chunksCommitted < maxNumChunks)
                 {
@@ -85,7 +91,7 @@ namespace Sensus.DataStores
                         }
                     }
 
-                    // if we failed to commit anything, then we've been canceled, there's nothing to commit, or the commit failed.
+                    // if didn't commit anything, then we've been canceled, there's nothing to commit, or the commit failed.
                     // in any of these cases, we should not proceed with the next chunk. the caller will need to retry the commit.
                     if (dataCommitted == 0)
                         break;
@@ -96,7 +102,7 @@ namespace Sensus.DataStores
         }
 
         /// <summary>
-        /// We don't mind commit callbacks lag, since it don't affect any performance metrics and
+        /// We don't mind commit callback lags, since they don't affect any performance metrics and
         /// the latencies aren't inspected when testing data store health or participation. It also
         /// doesn't make sense to force rapid commits since data will not have accumulated.
         /// </summary>
@@ -249,11 +255,18 @@ namespace Sensus.DataStores
                     userNotificationMessage = "Sensus needs to submit your data for the \"" + _protocol.Name + "\" study. Please open this notification.";
 #endif
 
-                ScheduledCallback callback = new ScheduledCallback(GetType().FullName + " Commit", CycleAsync, TimeSpan.FromMinutes(_commitTimeoutMinutes), userNotificationMessage);
+                ScheduledCallback callback = new ScheduledCallback(GetType().FullName + " Commit", CommitAddedDataAndReleaseAsync, TimeSpan.FromMinutes(_commitTimeoutMinutes), userNotificationMessage);
                 _commitCallbackId = SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(callback, _commitDelayMS, _commitDelayMS, COMMIT_CALLBACK_LAG);
             }
         }
 
+        /// <summary>
+        /// Adds a datum to the in-memory storage of this data store.
+        /// </summary>
+        /// <returns>Task for the operation</returns>
+        /// <param name="datum">Datum to add.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <param name="forceCommit">If set to <c>true</c> force immediate commit of added data.</param>
         public Task AddAsync(Datum datum, CancellationToken cancellationToken, bool forceCommit)
         {
             lock (_data)
@@ -265,7 +278,7 @@ namespace Sensus.DataStores
 
                 if (!_sizeTriggeredCommitRunning && !_forcedCommitRunning)
                 {
-                    // if we've accumulated a chunk, commit it locally to reduce memory pressure
+                    // if we've accumulated a chunk in memory, commit the chunk to reduce memory pressure
                     if (_data.Count >= COMMIT_CHUNK_SIZE)
                     {
                         SensusServiceHelper.Get().Logger.Log("Running size-triggered commit.", LoggingLevel.Normal, GetType());
@@ -276,7 +289,7 @@ namespace Sensus.DataStores
                         {
                             try
                             {
-                                await CommitChunksAsync(_data, this, cancellationToken);
+                                await CommitAddedDataAndReleaseAsync(cancellationToken);
                             }
                             catch (Exception ex)
                             {
@@ -298,7 +311,7 @@ namespace Sensus.DataStores
                         {
                             try
                             {
-                                await CommitChunksAsync(_data, this, cancellationToken);
+                                await CommitAddedDataAndReleaseAsync(cancellationToken);
                             }
                             catch (Exception ex)
                             {
@@ -316,12 +329,17 @@ namespace Sensus.DataStores
             }
         }
 
-        protected virtual Task CycleAsync(string callbackId, CancellationToken cancellationToken, Action letDeviceSleepCallback)
+        protected Task CommitAddedDataAndReleaseAsync(CancellationToken cancellationToken)
+        {
+            return CommitAddedDataAndReleaseAsync(null, cancellationToken, null);
+        }
+
+        protected virtual Task CommitAddedDataAndReleaseAsync(string callbackId, CancellationToken cancellationToken, Action letDeviceSleepCallback)
         {
             return Task.Run(async () =>
             {
                 if (_running)
-                    await CommitChunksAsync(_data, this, cancellationToken);
+                    await CommitAndReleaseAsync(_data, this, cancellationToken);
             });
         }
 

@@ -85,13 +85,13 @@ namespace Sensus.DataStores.Local
                     }
                 }
 
-                CheckSizeAndCommitToRemote(cancellationToken);
+                CommitToRemoteIfTooLarge(cancellationToken);
 
                 return committedData;
             });
         }
 
-        protected override bool TriggerRemoteCommit()
+        protected override bool TooLarge()
         {
             lock (_data)
             {
@@ -99,9 +99,9 @@ namespace Sensus.DataStores.Local
             }
         }
 
-        public override void CommitDataToRemoteDataStore(CancellationToken cancellationToken)
+        public override void CommitToRemote(CancellationToken cancellationToken)
         {
-            CommitChunksAsync(_data, Protocol.RemoteDataStore, cancellationToken).Wait();
+            CommitAndReleaseAsync(_data, Protocol.RemoteDataStore, cancellationToken).Wait();
         }
 
         protected override IEnumerable<Tuple<string, string>> GetDataLinesToWrite(CancellationToken cancellationToken, Action<string, double> progressCallback)
