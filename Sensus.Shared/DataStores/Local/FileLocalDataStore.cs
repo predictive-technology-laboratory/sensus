@@ -85,7 +85,7 @@ namespace Sensus.DataStores.Local
             base.Start();
         }
 
-        public override Task<List<Datum>> CommitAsync(IEnumerable<Datum> data, CancellationToken cancellationToken)
+        protected override Task<List<Datum>> CommitAsync(IEnumerable<Datum> data, CancellationToken cancellationToken)
         {
             return Task.Run(() =>
             {
@@ -119,7 +119,6 @@ namespace Sensus.DataStores.Local
                                     try
                                     {
                                         file.WriteLine(datumJSON);
-                                        MostRecentSuccessfulCommitTime = DateTime.Now;
                                         committedData.Add(datum);
                                     }
                                     catch (Exception ex)

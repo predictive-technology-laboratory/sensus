@@ -470,7 +470,7 @@ namespace Sensus.Android
 
         protected override void ProtectedFlashNotificationAsync(string message, bool flashLaterIfNotVisible, TimeSpan duration, Action callback)
         {
-            new Thread(() =>
+            Task.Run(() =>
             {
                 RunActionUsingMainActivityAsync(mainActivity =>
                 {
@@ -481,13 +481,11 @@ namespace Sensus.Android
                         for (int i = 0; i < shortToasts; ++i)
                             Toast.MakeText(mainActivity, message, ToastLength.Short).Show();
 
-                        if (callback != null)
-                            callback();
+                        callback?.Invoke();
                     });
 
                 }, false, flashLaterIfNotVisible);
-
-            }).Start();
+            });
         }
 
         public override bool EnableProbeWhenEnablingAll(Probe probe)

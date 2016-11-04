@@ -43,60 +43,72 @@ namespace Sensus.DataStores
         {
             return Task.Run(async () =>
             {
-                // the data set passed in is open to modification, and callers might continue adding data after this method returns.
-                // so, we can't simply commit until data is empty since it may never be empty. instead, commit a predetermined number
-                // of chunks.
-                int maxNumChunks;
-                lock (data)
+                try
                 {
-                    maxNumChunks = (int)Math.Ceiling(data.Count / (double)COMMIT_CHUNK_SIZE);
-                }
+                    dataStore._committing = true;
 
-                // process all chunks, stopping for cancellation.
-                HashSet<Datum> chunk = new HashSet<Datum>();
-                int chunksCommitted = 0;
-                while (!cancellationToken.IsCancellationRequested && chunksCommitted < maxNumChunks)
-                {
-                    // build a new chunk, stopping for cancellation, exhaustion of data, or full chunk.
-                    chunk.Clear();
-
+                    // the data set passed in is open to modification, and callers might continue adding data after this method returns.
+                    // so, we can't simply commit until data is empty since it may never be empty. instead, commit a predetermined number
+                    // of chunks.
+                    int maxNumChunks;
                     lock (data)
                     {
-                        foreach (Datum datum in data)
-                        {
-                            chunk.Add(datum);
-
-                            if (cancellationToken.IsCancellationRequested || chunk.Count >= COMMIT_CHUNK_SIZE)
-                                break;
-                        }
+                        maxNumChunks = (int)Math.Ceiling(data.Count / (double)COMMIT_CHUNK_SIZE);
                     }
 
-                    // commit chunk as long as we're not canceled and the chunk has something in it
-                    int dataCommitted = 0;
-                    if (!cancellationToken.IsCancellationRequested && chunk.Count > 0)
+                    // process all chunks, stopping for cancellation.
+                    HashSet<Datum> chunk = new HashSet<Datum>();
+                    int chunksCommitted = 0;
+                    while (!cancellationToken.IsCancellationRequested && chunksCommitted < maxNumChunks)
                     {
-                        List<Datum> committedData = await dataStore.CommitAsync(chunk, cancellationToken);
+                        // build a new chunk, stopping for cancellation, exhaustion of data, or full chunk.
+                        chunk.Clear();
 
                         lock (data)
                         {
-                            foreach (Datum committedDatum in committedData)
+                            foreach (Datum datum in data)
                             {
-                                // remove committed data from the data that were passed in. if we check for and break
-                                // on cancellation here, the committed data will not be treated as such. we need to 
-                                // remove them from the data collection to indicate to the caller that they were committed.
-                                data.Remove(committedDatum);
-                                ++dataCommitted;
-                                ++dataStore.CommittedDataCount;
+                                chunk.Add(datum);
+
+                                if (cancellationToken.IsCancellationRequested || chunk.Count >= COMMIT_CHUNK_SIZE)
+                                    break;
                             }
                         }
+
+                        // commit chunk as long as we're not canceled and the chunk has something in it
+                        int dataCommitted = 0;
+                        if (!cancellationToken.IsCancellationRequested && chunk.Count > 0)
+                        {
+                            List<Datum> committedData = await dataStore.CommitAsync(chunk, cancellationToken);
+
+                            lock (data)
+                            {
+                                foreach (Datum committedDatum in committedData)
+                                {
+                                    // remove committed data from the data that were passed in. if we check for and break
+                                    // on cancellation here, the committed data will not be treated as such. we need to 
+                                    // remove them from the data collection to indicate to the caller that they were committed.
+                                    data.Remove(committedDatum);
+                                    ++dataCommitted;
+                                    ++dataStore.CommittedDataCount;
+                                }
+                            }
+                        }
+
+                        // if didn't commit anything, then we've been canceled, there's nothing to commit, or the commit failed.
+                        // in any of these cases, we should not proceed with the next chunk. the caller will need to retry the commit.
+                        if (dataCommitted == 0)
+                            break;
+
+                        ++chunksCommitted;
                     }
 
-                    // if didn't commit anything, then we've been canceled, there's nothing to commit, or the commit failed.
-                    // in any of these cases, we should not proceed with the next chunk. the caller will need to retry the commit.
-                    if (dataCommitted == 0)
-                        break;
-
-                    ++chunksCommitted;
+                    // no exceptions were thrown, so we consider this a successful commit.
+                    dataStore._mostRecentSuccessfulCommitTime = DateTime.Now;
+                }
+                finally
+                {
+                    dataStore._committing = false;
                 }
             });
         }
@@ -119,6 +131,7 @@ namespace Sensus.DataStores
         private long _committedDataCount;
         private bool _sizeTriggeredCommitRunning;
         private bool _forcedCommitRunning;
+        private bool _committing;
 
         [EntryIntegerUiProperty("Commit Delay (MS):", true, 2)]
         public int CommitDelayMS
@@ -159,19 +172,6 @@ namespace Sensus.DataStores
         {
             get { return _protocol; }
             set { _protocol = value; }
-        }
-
-        [JsonIgnore]
-        protected DateTime? MostRecentSuccessfulCommitTime
-        {
-            get
-            {
-                return _mostRecentSuccessfulCommitTime;
-            }
-            set
-            {
-                _mostRecentSuccessfulCommitTime = value;
-            }
         }
 
         [JsonIgnore]
@@ -344,10 +344,20 @@ namespace Sensus.DataStores
 
         public async Task<bool> CommitAsync(Datum datum, CancellationToken cancellationToken)
         {
-            return (await CommitAsync(new Datum[] { datum }, cancellationToken)).Contains(datum);
+            try
+            {
+                _committing = true;
+                bool committed = (await CommitAsync(new Datum[] { datum }, cancellationToken)).Contains(datum);
+                _mostRecentSuccessfulCommitTime = DateTime.Now;
+                return committed;
+            }
+            finally
+            {
+                _committing = false;
+            }
         }
 
-        public abstract Task<List<Datum>> CommitAsync(IEnumerable<Datum> data, CancellationToken cancellationToken);
+        protected abstract Task<List<Datum>> CommitAsync(IEnumerable<Datum> data, CancellationToken cancellationToken);
 
         public virtual void Clear()
         {
@@ -387,9 +397,12 @@ namespace Sensus.DataStores
                 restart = true;
             }
 
-            double msElapsedSinceLastCommit = (DateTime.Now - _mostRecentSuccessfulCommitTime.GetValueOrDefault()).TotalMilliseconds;
-            if (msElapsedSinceLastCommit > (_commitDelayMS + 5000))  // system timer callbacks aren't always fired exactly as scheduled, resulting in health tests that identify warning conditions for delayed data storage. allow a small fudge factor to ignore most of these warnings warnings.
-                warning += "Datastore \"" + GetType().FullName + "\" has not committed data in " + msElapsedSinceLastCommit + "ms (commit delay = " + _commitDelayMS + "ms)." + Environment.NewLine;
+            if (!_committing && _mostRecentSuccessfulCommitTime.HasValue)
+            {
+                TimeSpan timeElapsedSinceLastCommit = DateTime.Now - _mostRecentSuccessfulCommitTime.Value;
+                if (timeElapsedSinceLastCommit.TotalMilliseconds > (_commitDelayMS + 5000))  // system timer callbacks aren't always fired exactly as scheduled, resulting in health tests that identify warning conditions for delayed data storage. allow a small fudge factor to ignore most of these warnings.
+                    warning += "Datastore \"" + GetType().FullName + "\" has not committed data in " + timeElapsedSinceLastCommit + " (commit delay = " + _commitDelayMS + "ms)." + Environment.NewLine;
+            }
 
             lock (_data)
             {

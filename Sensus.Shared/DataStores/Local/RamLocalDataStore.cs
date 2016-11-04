@@ -55,7 +55,7 @@ namespace Sensus.DataStores.Local
             _data = new HashSet<Datum>();
         }
 
-        public override Task<List<Datum>> CommitAsync(IEnumerable<Datum> data, CancellationToken cancellationToken)
+        protected override Task<List<Datum>> CommitAsync(IEnumerable<Datum> data, CancellationToken cancellationToken)
         {
             return Task.Run(() =>
             {
@@ -75,7 +75,6 @@ namespace Sensus.DataStores.Local
                             string anonymizedDatumJSON = datum.GetJSON(Protocol.JsonAnonymizer, false);
                             Datum anonymizedDatum = Datum.FromJSON(anonymizedDatumJSON);
                             _data.Add(anonymizedDatum);
-                            MostRecentSuccessfulCommitTime = DateTime.Now;
                             committedData.Add(anonymizedDatum);
                         }
                         catch (Exception ex)

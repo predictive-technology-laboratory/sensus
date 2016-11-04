@@ -142,107 +142,107 @@ namespace Sensus.DataStores.Remote
             return new AmazonS3Client(credentials, amazonRegion);
         }
 
-        public override Task<List<Datum>> CommitAsync(IEnumerable<Datum> data, CancellationToken cancellationToken)
+        protected override Task<List<Datum>> CommitAsync(IEnumerable<Datum> data, CancellationToken cancellationToken)
         {
             return Task.Run(async () =>
+            {
+                AmazonS3Client s3 = null;
+
+                try
                 {
-                    AmazonS3Client s3 = null;
+                    s3 = InitializeS3();
 
-                    try
+                    DateTimeOffset commitStartTime = DateTimeOffset.UtcNow;
+
+                    List<Datum> committedData = new List<Datum>();
+
+                    #region group data by type and get JSON for each datum
+                    Dictionary<string, List<Datum>> datumTypeData = new Dictionary<string, List<Datum>>();
+                    Dictionary<string, StringBuilder> datumTypeJSON = new Dictionary<string, StringBuilder>();
+
+                    foreach (Datum datum in data)
                     {
-                        s3 = InitializeS3();
+                        if (cancellationToken.IsCancellationRequested)
+                            break;
 
-                        DateTimeOffset commitStartTime = DateTimeOffset.UtcNow;
+                        string datumType = datum.GetType().Name;
 
-                        List<Datum> committedData = new List<Datum>();
-
-                        #region group data by type and get JSON for each datum
-                        Dictionary<string, List<Datum>> datumTypeData = new Dictionary<string, List<Datum>>();
-                        Dictionary<string, StringBuilder> datumTypeJSON = new Dictionary<string, StringBuilder>();
-
-                        foreach (Datum datum in data)
+                        // upload all participation reward data as individual S3 objects so we can retrieve them individually at a later time for participation verification.
+                        if (datum is ParticipationRewardDatum)
                         {
-                            if (cancellationToken.IsCancellationRequested)
-                                break;
-
-                            string datumType = datum.GetType().Name;
-
-                            // upload all participation reward data as individual S3 objects so we can retrieve them individually at a later time for participation verification.
-                            if (datum is ParticipationRewardDatum)
-                            {
-                                // the JSON for each participation reward datum must be indented so that cross-platform type conversion will work if/when the datum is retrieved.
-                                string datumJSON = datum.GetJSON(Protocol.JsonAnonymizer, true);
-
-                                try
-                                {
-                                    // do not compress the json. it's too small to do much good.
-                                    if ((await PutJsonAsync(s3, GetDatumKey(datum), "[" + Environment.NewLine + datumJSON + Environment.NewLine + "]", false, cancellationToken)) == HttpStatusCode.OK)
-                                        committedData.Add(datum);
-                                }
-                                catch (Exception ex)
-                                {
-                                    SensusServiceHelper.Get().Logger.Log("Failed to insert datum into Amazon S3 bucket \"" + _bucket + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
-                                }
-                            }
-                            else
-                            {
-                                string datumJSON = datum.GetJSON(Protocol.JsonAnonymizer, false);
-
-                                // group all other data (i.e., other than participation reward data) by type for batch committal
-                                List<Datum> dataSubset;
-                                if (!datumTypeData.TryGetValue(datumType, out dataSubset))
-                                {
-                                    dataSubset = new List<Datum>();
-                                    datumTypeData.Add(datumType, dataSubset);
-                                }
-
-                                dataSubset.Add(datum);
-
-                                // add datum to its JSON array string
-                                StringBuilder json;
-                                if (!datumTypeJSON.TryGetValue(datumType, out json))
-                                {
-                                    json = new StringBuilder("[" + Environment.NewLine);
-                                    datumTypeJSON.Add(datumType, json);
-                                }
-
-                                json.Append((dataSubset.Count == 1 ? "" : "," + Environment.NewLine) + datumJSON);
-                            }
-                        }
-                        #endregion
-
-                        #region commit all data, batched by type
-                        foreach (string datumType in datumTypeJSON.Keys)
-                        {
-                            if (cancellationToken.IsCancellationRequested)
-                                break;
-
-                            string key = (_folder + "/" + datumType + "/" + Guid.NewGuid() + ".json").Trim('/');  // trim '/' in case folder is blank
-
-                            StringBuilder json = datumTypeJSON[datumType];
-                            json.Append(Environment.NewLine + "]");
+                            // the JSON for each participation reward datum must be indented so that cross-platform type conversion will work if/when the datum is retrieved.
+                            string datumJSON = datum.GetJSON(Protocol.JsonAnonymizer, true);
 
                             try
                             {
-                                if ((await PutJsonAsync(s3, key, json.ToString(), _compress, cancellationToken)) == HttpStatusCode.OK)
-                                    committedData.AddRange(datumTypeData[datumType]);
+                                // do not compress the json. it's too small to do much good.
+                                if ((await PutJsonAsync(s3, GetDatumKey(datum), "[" + Environment.NewLine + datumJSON + Environment.NewLine + "]", false, cancellationToken)) == HttpStatusCode.OK)
+                                    committedData.Add(datum);
                             }
                             catch (Exception ex)
                             {
                                 SensusServiceHelper.Get().Logger.Log("Failed to insert datum into Amazon S3 bucket \"" + _bucket + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
                             }
                         }
-                        #endregion
+                        else
+                        {
+                            string datumJSON = datum.GetJSON(Protocol.JsonAnonymizer, false);
 
-                        SensusServiceHelper.Get().Logger.Log("Committed " + committedData.Count + " data items to Amazon S3 bucket \"" + _bucket + "\" in " + (DateTimeOffset.UtcNow - commitStartTime).TotalSeconds + " seconds.", LoggingLevel.Normal, GetType());
+                            // group all other data (i.e., other than participation reward data) by type for batch committal
+                            List<Datum> dataSubset;
+                            if (!datumTypeData.TryGetValue(datumType, out dataSubset))
+                            {
+                                dataSubset = new List<Datum>();
+                                datumTypeData.Add(datumType, dataSubset);
+                            }
 
-                        return committedData;
+                            dataSubset.Add(datum);
+
+                            // add datum to its JSON array string
+                            StringBuilder json;
+                            if (!datumTypeJSON.TryGetValue(datumType, out json))
+                            {
+                                json = new StringBuilder("[" + Environment.NewLine);
+                                datumTypeJSON.Add(datumType, json);
+                            }
+
+                            json.Append((dataSubset.Count == 1 ? "" : "," + Environment.NewLine) + datumJSON);
+                        }
                     }
-                    finally
+                    #endregion
+
+                    #region commit all data, batched by type
+                    foreach (string datumType in datumTypeJSON.Keys)
                     {
-                        DisposeS3(s3);
+                        if (cancellationToken.IsCancellationRequested)
+                            break;
+
+                        string key = (_folder + "/" + datumType + "/" + Guid.NewGuid() + ".json").Trim('/');  // trim '/' in case folder is blank
+
+                        StringBuilder json = datumTypeJSON[datumType];
+                        json.Append(Environment.NewLine + "]");
+
+                        try
+                        {
+                            if ((await PutJsonAsync(s3, key, json.ToString(), _compress, cancellationToken)) == HttpStatusCode.OK)
+                                committedData.AddRange(datumTypeData[datumType]);
+                        }
+                        catch (Exception ex)
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Failed to insert datum into Amazon S3 bucket \"" + _bucket + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
+                        }
                     }
-                });
+                    #endregion
+
+                    SensusServiceHelper.Get().Logger.Log("Committed " + committedData.Count + " data items to Amazon S3 bucket \"" + _bucket + "\" in " + (DateTimeOffset.UtcNow - commitStartTime).TotalSeconds + " seconds.", LoggingLevel.Normal, GetType());
+
+                    return committedData;
+                }
+                finally
+                {
+                    DisposeS3(s3);
+                }
+            });
         }
 
         private Task<HttpStatusCode> PutJsonAsync(AmazonS3Client s3, string key, string json, bool compress, CancellationToken cancellationToken)
@@ -275,12 +275,7 @@ namespace Sensus.DataStores.Remote
                 else
                     putRequest.ContentBody = json;
 
-                HttpStatusCode responseCode = (await s3.PutObjectAsync(putRequest, cancellationToken)).HttpStatusCode;
-
-                if (responseCode == HttpStatusCode.OK)
-                    MostRecentSuccessfulCommitTime = DateTime.Now;
-
-                return responseCode;
+                return (await s3.PutObjectAsync(putRequest, cancellationToken)).HttpStatusCode;
             });
         }
 

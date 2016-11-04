@@ -194,11 +194,13 @@ namespace Sensus.iOS
 
         protected override void ProtectedFlashNotificationAsync(string message, bool flashLaterIfNotVisible, TimeSpan duration, Action callback)
         {
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            Task.Run(() =>
             {
-                DependencyService.Get<IToastNotificator>().Notify(ToastNotificationType.Info, "", message + Environment.NewLine, duration);
-
-                callback?.Invoke();
+                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+                {
+                    DependencyService.Get<IToastNotificator>().Notify(ToastNotificationType.Info, "", message + Environment.NewLine, duration);
+                    callback?.Invoke();
+                });
             });
         }
 

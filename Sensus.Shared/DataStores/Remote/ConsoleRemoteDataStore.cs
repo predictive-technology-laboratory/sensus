@@ -44,7 +44,7 @@ namespace Sensus.DataStores.Remote
             get { return false; }
         }
 
-        public override Task<List<Datum>> CommitAsync(IEnumerable<Datum> data, CancellationToken cancellationToken)
+        protected override Task<List<Datum>> CommitAsync(IEnumerable<Datum> data, CancellationToken cancellationToken)
         {
             return Task.Run(() =>
             {
@@ -56,7 +56,6 @@ namespace Sensus.DataStores.Remote
                         break;
 
                     SensusServiceHelper.Get().Logger.Log("Committed datum to remote console:  " + datum, LoggingLevel.Debug, GetType());
-                    MostRecentSuccessfulCommitTime = DateTime.Now;
                     committedData.Add(datum);
                 }
 
