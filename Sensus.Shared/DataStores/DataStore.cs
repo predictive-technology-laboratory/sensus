@@ -336,10 +336,10 @@ namespace Sensus.DataStores
 
         protected Task CommitAndReleaseAddedDataAsync(CancellationToken cancellationToken)
         {
-            if (!_running)
+            if (_running)
+                return CommitAndReleaseAsync(_data, this, cancellationToken);
+            else
                 return Task.FromResult(false);
-
-            return CommitAndReleaseAsync(_data, this, cancellationToken);
         }
 
         public async Task<bool> CommitAsync(Datum datum, CancellationToken cancellationToken)
