@@ -288,7 +288,13 @@ namespace Sensus
                 if (protocol == null)
                     SensusServiceHelper.Get().FlashNotificationAsync("Protocol is empty. Cannot display or start it.");
                 else if (protocol.Running)
-                    SensusServiceHelper.Get().FlashNotificationAsync("You are already participating in \"" + protocol.Name + "\".");
+                {
+                    // android occasionally kills/restarts the activity, and when it does this it redelivers the intent that originally started the ativity. this 
+                    // intent will contain a protocol in cases where the user originally launched the activity by opening the protocol from URL, attachment, etc. 
+                    // if we save the below flash for later, then when the user opens the activity at a later time they'll be confused by the message. so, don't store
+                    // the flash below.
+                    SensusServiceHelper.Get().FlashNotificationAsync("You are already participating in \"" + protocol.Name + "\".", false);
+                }
                 else
                 {
                     Device.BeginInvokeOnMainThread(() =>
