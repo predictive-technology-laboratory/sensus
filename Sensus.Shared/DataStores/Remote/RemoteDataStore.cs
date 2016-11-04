@@ -60,17 +60,22 @@ namespace Sensus.DataStores.Remote
 
         protected sealed override Task CommitAddedDataAndReleaseAsync(string callbackId, CancellationToken cancellationToken, Action letDeviceSleepCallback)
         {
-            return Task.Run(async () =>
+            bool commit = false;
+
+            if (cancellationToken.IsCancellationRequested)
+                SensusServiceHelper.Get().Logger.Log("Cancelled commit to remote data store.", LoggingLevel.Normal, GetType());
+            else if (!Protocol.LocalDataStore.UploadToRemoteDataStore)
+                SensusServiceHelper.Get().Logger.Log("Remote data store upload is disabled.", LoggingLevel.Normal, GetType());
+            else if (_requireWiFi && !SensusServiceHelper.Get().WiFiConnected)
+                SensusServiceHelper.Get().Logger.Log("Required WiFi but device WiFi is not connected.", LoggingLevel.Normal, GetType());
+            else if (_requireCharging && !SensusServiceHelper.Get().IsCharging)
+                SensusServiceHelper.Get().Logger.Log("Required charging but device is not charging.", LoggingLevel.Normal, GetType());
+            else
+                commit = true;
+
+            if (commit)
             {
-                if (cancellationToken.IsCancellationRequested)
-                    SensusServiceHelper.Get().Logger.Log("Cancelled commit to remote data store.", LoggingLevel.Normal, GetType());
-                else if (!Protocol.LocalDataStore.UploadToRemoteDataStore)
-                    SensusServiceHelper.Get().Logger.Log("Remote data store upload is disabled.", LoggingLevel.Normal, GetType());
-                else if (_requireWiFi && !SensusServiceHelper.Get().WiFiConnected)
-                    SensusServiceHelper.Get().Logger.Log("Required WiFi but device WiFi is not connected.", LoggingLevel.Normal, GetType());
-                else if (_requireCharging && !SensusServiceHelper.Get().IsCharging)
-                    SensusServiceHelper.Get().Logger.Log("Required charging but device is not charging.", LoggingLevel.Normal, GetType());
-                else
+                return Task.Run(async () =>
                 {
 #if __IOS__
                     // on ios the user must activate the app in order to save data. give the user some feedback to let them know that this is 
@@ -88,11 +93,12 @@ namespace Sensus.DataStores.Remote
 
 #if __IOS__
                     // on ios the user must activate the app in order to save data. give the user some feedback to let them know that the data were stored remotely.
-                    if (this is RemoteDataStore)
-                        SensusServiceHelper.Get().FlashNotificationAsync("Submitted data to the \"" + Protocol.Name + "\" study. Thank you!");
+                    SensusServiceHelper.Get().FlashNotificationAsync("Submitted data to the \"" + Protocol.Name + "\" study. Thank you!");
 #endif
-                }
-            });
+                });
+            }
+            else
+                return Task.FromResult(false);
         }
 
         public abstract string GetDatumKey(Datum datum);

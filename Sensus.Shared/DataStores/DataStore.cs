@@ -329,18 +329,17 @@ namespace Sensus.DataStores
             }
         }
 
-        protected Task CommitAddedDataAndReleaseAsync(CancellationToken cancellationToken)
-        {
-            return CommitAddedDataAndReleaseAsync(null, cancellationToken, null);
-        }
-
         protected virtual Task CommitAddedDataAndReleaseAsync(string callbackId, CancellationToken cancellationToken, Action letDeviceSleepCallback)
         {
-            return Task.Run(async () =>
-            {
-                if (_running)
-                    await CommitAndReleaseAsync(_data, this, cancellationToken);
-            });
+            return CommitAddedDataAndReleaseAsync(cancellationToken);
+        }
+
+        protected Task CommitAddedDataAndReleaseAsync(CancellationToken cancellationToken)
+        {
+            if (!_running)
+                return Task.FromResult(false);
+
+            return CommitAndReleaseAsync(_data, this, cancellationToken);
         }
 
         public async Task<bool> CommitAsync(Datum datum, CancellationToken cancellationToken)
