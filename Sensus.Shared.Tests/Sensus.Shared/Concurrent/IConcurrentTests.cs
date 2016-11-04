@@ -34,7 +34,50 @@ namespace Sensus.Tests.Concurrent
         #endregion
 
         [Test]
-        public void ActionIsThreadSafe()
+        public void ExecuteThreadSafeActionThrowsNoException()
+        {
+            var test = new List<int> { 1, 2, 3 };
+
+            Assert.DoesNotThrow(() =>
+            {
+                _concurrent.ExecuteThreadSafe(() =>
+                {
+                    test.Add(4);
+
+                    foreach (var i in test)
+                    {
+                        Task.Delay(DelayTime).Wait();
+                    }
+
+                    test.Add(5);
+                });
+            });
+        }
+
+        [Test]
+        public void ExecuteThreadSafeFuncThrowsNoException()
+        {
+            var test = new List<int> { 1, 2, 3 };
+
+            Assert.DoesNotThrow(() =>
+            {
+                _concurrent.ExecuteThreadSafe(() =>
+                {
+                    test.Add(4);
+
+                    foreach (var i in test)
+                    {
+                        Task.Delay(DelayTime).Wait();
+                    }
+                    test.Add(5);
+
+                    return test;
+                });
+            });
+        }
+
+        [Test]
+        public void ExecuteThreadSafeActionIsThreadSafe()
         {
             var test = new List<int> { 1, 2, 3 };
 
@@ -63,7 +106,7 @@ namespace Sensus.Tests.Concurrent
         }
 
         [Test]
-        public void FuncIsThreadSafe()
+        public void ExecuteThreadSafeFuncIsThreadSafe()
         {
             var test = new List<int> { 1, 2, 3 };
 
@@ -100,55 +143,71 @@ namespace Sensus.Tests.Concurrent
         }
 
         [Test]
-        public void BasicActionIsThreadSafe()
+        public void ExecuteThreadSafeActionIsSynchronous()
         {
-            var test = new List<int> { 1, 2, 3 };
+            var test = new List<int> { 1, 2, 3 };            
 
             _concurrent.ExecuteThreadSafe(() =>
             {
-                test.Add(4);
-
                 foreach (var i in test)
                 {
                     Task.Delay(DelayTime).Wait();
                 }
-
-                test.Add(5);
             });
+
+            test.Add(4);
+            Task.Delay(DelayTime).Wait();
+            test.Add(5);
 
             Assert.Contains(4, test);
             Assert.Contains(5, test);
         }
 
         [Test]
-        public void BasicFuncIsThreadSafe()
+        public void ExecuteThreadSafeFuncIsSynchronous()
         {
             var test = new List<int> { 1, 2, 3 };
 
-            var output = _concurrent.ExecuteThreadSafe(() =>
+            _concurrent.ExecuteThreadSafe(() =>
             {
-                test.Add(4);
-
                 foreach (var i in test)
                 {
                     Task.Delay(DelayTime).Wait();
                 }
 
-                test.Add(5);
+                return test;
+            });
+
+            test.Add(4);
+            Task.Delay(DelayTime).Wait();
+            test.Add(5);
+            
+            Assert.Contains(4, test);
+            Assert.Contains(5, test);
+        }
+
+        [Test]
+        public void ExecuteThreadSafeFuncReturnsCorrectly()
+        {
+            var test = new List<int> { 1, 2, 3 };
+
+            var output = _concurrent.ExecuteThreadSafe(() =>
+            {
+                foreach (var i in test)
+                {
+                    Task.Delay(DelayTime).Wait();
+                }
 
                 return test;
             });
 
-            Assert.Contains(4, output);
-            Assert.Contains(5, output);
-            Assert.AreSame(test, output);
+            Assert.AreSame(output, test);
         }
 
         [Test]
-        public void InnerActionIsThreadSafe()
+        public void InnerExecuteThreadSafeActionNoDeadlock()
         {
             var test = new List<int> { 1, 2, 3 };
-            var cancel = new System.Threading.CancellationTokenSource();
 
             _concurrent.ExecuteThreadSafe(() =>
             {
@@ -162,25 +221,15 @@ namespace Sensus.Tests.Concurrent
                 });
             });
 
-            if (test.Count < 6)
-            {
-                cancel.Cancel();
-                throw new System.Exception("It appears that we deadlocked");
-            }
-            
-            Assert.Contains(4, test);
-            Assert.Contains(5, test);
-            Assert.Contains(6, test);
+            Assert.AreEqual(6, test.Count, "It appears that we deadlocked because the action didn't finish adding items");
         }
 
         [Test]
-        public void InnerFuncIsThreadSafe()
+        public void InnerExecuteThreadSafeFuncNoDeadlock()
         {
             var test = new List<int> { 1, 2, 3 };
-            var output = default(List<int>);
-            var cancel = new System.Threading.CancellationTokenSource();
 
-            output = _concurrent.ExecuteThreadSafe(() =>
+            _concurrent.ExecuteThreadSafe(() =>
             {
                 return _concurrent.ExecuteThreadSafe(() =>
                 {
@@ -194,16 +243,8 @@ namespace Sensus.Tests.Concurrent
                 });
             });
 
-            if (output.Count < 6)
-            {
-                cancel.Cancel();
-                throw new System.Exception("It appears that we deadlocked");
-            }
-
-            Assert.Contains(4, output);
-            Assert.Contains(5, output);
-            Assert.Contains(6, output);
-            Assert.AreSame(test, output);
+            //we check test because in the case of a deadlock I'm not sure what output will be returned...
+            Assert.AreEqual(6, test.Count, "It appears that we deadlocked because the func didn't finish adding items");
         }
     }
 }
