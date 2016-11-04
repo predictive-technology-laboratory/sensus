@@ -215,14 +215,14 @@ namespace Sensus.DataStores.Local
                                         }
 
                                         if (batch.Count >= 50000)
-                                            CommitBatchToRemoteAndRelease(batch, cancellationToken, uncommittedDataFile);
+                                            CommitAndReleaseBatchToRemote(batch, cancellationToken, uncommittedDataFile);
                                     }
                                 }
 
                                 // commit partial batch
                                 if (batch.Count > 0)
                                 {
-                                    CommitBatchToRemoteAndRelease(batch, cancellationToken, uncommittedDataFile);
+                                    CommitAndReleaseBatchToRemote(batch, cancellationToken, uncommittedDataFile);
                                 }
                             }
 
@@ -239,7 +239,7 @@ namespace Sensus.DataStores.Local
             }
         }
 
-        private void CommitBatchToRemoteAndRelease(HashSet<Datum> batch, CancellationToken cancellationToken, StreamWriter uncommittedDataFile)
+        private void CommitAndReleaseBatchToRemote(HashSet<Datum> batch, CancellationToken cancellationToken, StreamWriter uncommittedDataFile)
         {
             if (!cancellationToken.IsCancellationRequested)
                 CommitAndReleaseAsync(batch, Protocol.RemoteDataStore, cancellationToken).Wait();

@@ -255,7 +255,7 @@ namespace Sensus.DataStores
                     userNotificationMessage = "Sensus needs to submit your data for the \"" + _protocol.Name + "\" study. Please open this notification.";
 #endif
 
-                ScheduledCallback callback = new ScheduledCallback(GetType().FullName + " Commit", CommitAddedDataAndReleaseAsync, TimeSpan.FromMinutes(_commitTimeoutMinutes), userNotificationMessage);
+                ScheduledCallback callback = new ScheduledCallback(GetType().FullName + " Commit", CommitAndReleaseAddedDataAsync, TimeSpan.FromMinutes(_commitTimeoutMinutes), userNotificationMessage);
                 _commitCallbackId = SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(callback, _commitDelayMS, _commitDelayMS, COMMIT_CALLBACK_LAG);
             }
         }
@@ -289,7 +289,7 @@ namespace Sensus.DataStores
                         {
                             try
                             {
-                                await CommitAddedDataAndReleaseAsync(cancellationToken);
+                                await CommitAndReleaseAddedDataAsync(cancellationToken);
                             }
                             catch (Exception ex)
                             {
@@ -311,7 +311,7 @@ namespace Sensus.DataStores
                         {
                             try
                             {
-                                await CommitAddedDataAndReleaseAsync(cancellationToken);
+                                await CommitAndReleaseAddedDataAsync(cancellationToken);
                             }
                             catch (Exception ex)
                             {
@@ -329,12 +329,12 @@ namespace Sensus.DataStores
             }
         }
 
-        protected virtual Task CommitAddedDataAndReleaseAsync(string callbackId, CancellationToken cancellationToken, Action letDeviceSleepCallback)
+        protected virtual Task CommitAndReleaseAddedDataAsync(string callbackId, CancellationToken cancellationToken, Action letDeviceSleepCallback)
         {
-            return CommitAddedDataAndReleaseAsync(cancellationToken);
+            return CommitAndReleaseAddedDataAsync(cancellationToken);
         }
 
-        protected Task CommitAddedDataAndReleaseAsync(CancellationToken cancellationToken)
+        protected Task CommitAndReleaseAddedDataAsync(CancellationToken cancellationToken)
         {
             if (!_running)
                 return Task.FromResult(false);

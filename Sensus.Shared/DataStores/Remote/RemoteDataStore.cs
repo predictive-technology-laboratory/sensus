@@ -58,7 +58,7 @@ namespace Sensus.DataStores.Remote
 #endif
         }
 
-        protected sealed override Task CommitAddedDataAndReleaseAsync(string callbackId, CancellationToken cancellationToken, Action letDeviceSleepCallback)
+        protected sealed override Task CommitAndReleaseAddedDataAsync(string callbackId, CancellationToken cancellationToken, Action letDeviceSleepCallback)
         {
             bool commit = false;
 
@@ -86,7 +86,7 @@ namespace Sensus.DataStores.Remote
 
                     // first commmit any data that have accumulated in the internal memory of the remote data store, e.g., protocol report
                     // data when we are not committing local data to remote but we are also forcing report data.
-                    await base.CommitAddedDataAndReleaseAsync(callbackId, cancellationToken, letDeviceSleepCallback);
+                    await base.CommitAndReleaseAddedDataAsync(callbackId, cancellationToken, letDeviceSleepCallback);
 
                     // instruct the local data store to commit its data to the remote data store.
                     Protocol.LocalDataStore.CommitToRemote(cancellationToken);
