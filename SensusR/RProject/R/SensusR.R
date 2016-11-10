@@ -38,17 +38,28 @@ sensus.sync.from.aws.s3 = function(s3.path, profile = "default", local.path = te
   
   if(decompress)
   {
-    print("Decompressing files...")
-    
-    gz.paths = list.files(local.path, recursive = TRUE, full.names = TRUE, include.dirs = FALSE, pattern = "*.gz")
-  
-    for(gz.path in gz.paths)
-    {
-      gunzip(gz.path)
-    }
+    sensus.decompress.json(local.path)
   }
   
   return(local.path)
+}
+
+#' Decompresses JSON files downloaded from AWS S3.
+#' 
+#' @param local.path Path to location on local machine.
+#' @return None
+#' @examples 
+#' # sensus.decompress("~/Desktop/data")
+sensus.decompress.json = function(local.path)
+{
+  gz.paths = list.files(local.path, recursive = TRUE, full.names = TRUE, include.dirs = FALSE, pattern = "*.gz")
+  
+  print(paste("Decompressing", length(gz.paths), "files..."))
+  
+  for(gz.path in gz.paths)
+  {
+    gunzip(gz.path)
+  }
 }
 
 #' Read JSON-formatted Sensus data.
