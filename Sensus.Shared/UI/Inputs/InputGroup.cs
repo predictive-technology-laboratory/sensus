@@ -46,7 +46,7 @@ namespace Sensus.UI.Inputs
         #region Constructors
         public InputGroup()
         {
-            Id     = Guid.NewGuid().ToString();
+            Id = Guid.NewGuid().ToString();
             Inputs = NewObservableCollection();
             Geotag = false;
         }
@@ -67,7 +67,7 @@ namespace Sensus.UI.Inputs
         [JsonConstructor]
         private InputGroup(string id, ObservableCollection<Input> inputs)
         {
-            Id     = id;
+            Id = id;
             Inputs = inputs;
         }
         #endregion
