@@ -14,6 +14,8 @@
 
 using Android.Telephony;
 using System;
+using Android.Telephony.Cdma;
+using Android.Telephony.Gsm;
 
 namespace Sensus.Android.Probes.Network
 {
@@ -24,7 +26,30 @@ namespace Sensus.Android.Probes.Network
         public override void OnCellLocationChanged(CellLocation location)
         {
             if (CellTowerChanged != null)
-                CellTowerChanged(this, location.ToString());
+            {
+                string cellTowerInformation = null;
+
+                if (location is CdmaCellLocation)
+                {
+                    CdmaCellLocation cdmaLocation = location as CdmaCellLocation;
+                    cellTowerInformation = "[base_station_id=" + cdmaLocation.BaseStationId + "," +
+                                            "base_station_lat=" + cdmaLocation.BaseStationLatitude + "," +
+                                            "base_station_lon=" + cdmaLocation.BaseStationLongitude + "," +
+                                            "network_id=" + cdmaLocation.NetworkId + "," +
+                                            "system_id=" + cdmaLocation.SystemId + "]";
+                }
+                else if (location is GsmCellLocation)
+                {
+                    GsmCellLocation gsmLocation = location as GsmCellLocation;
+                    cellTowerInformation = "[cid=" + gsmLocation.Cid + ",lac=" + gsmLocation.Lac + "]";
+                }
+                else
+                {
+                    cellTowerInformation = location?.ToString();
+                }
+
+                CellTowerChanged(this, cellTowerInformation);
+            }
         }
     }
 }

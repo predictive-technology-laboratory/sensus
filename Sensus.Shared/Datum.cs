@@ -124,7 +124,7 @@ namespace Sensus
         /// </summary>
         protected Datum()
         {
-        }
+        } 
 
         protected Datum(DateTimeOffset timestamp)
         {

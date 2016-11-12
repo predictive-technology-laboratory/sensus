@@ -219,6 +219,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\Notifier.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\ScheduledCallback.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\DisplayPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\DataRateCalculator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />

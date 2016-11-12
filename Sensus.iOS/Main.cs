@@ -26,4 +26,4 @@ namespace Sensus.iOS
             UIApplication.Main(args, null, "AppDelegate");
         }
     }
-} 
+}

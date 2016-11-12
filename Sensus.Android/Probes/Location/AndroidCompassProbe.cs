@@ -33,26 +33,26 @@ namespace Sensus.Android.Probes.Location
         public AndroidCompassProbe()
         {
             _magneticFieldValues = new float[3];
-            _magnetometerListener = new AndroidSensorListener(SensorType.MagneticField, SensorDelay.Normal, null, async e =>
-                {
-                    if (e.Values != null && e.Values.Count == 3)
-                        await StoreHeadingAsync(magneticFieldValues: e.Values.ToArray());
-                });
+            _magnetometerListener = new AndroidSensorListener(SensorType.MagneticField, null, async e =>
+            {
+                if (e.Values != null && e.Values.Count == 3)
+                    await StoreHeadingAsync(magneticFieldValues: e.Values.ToArray());
+            });
 
             _accelerometerValues = new float[3];
-            _accelerometerListener = new AndroidSensorListener(SensorType.Accelerometer, SensorDelay.Normal, null, async e =>
-                {
-                    if (e.Values != null && e.Values.Count == 3)
-                        await StoreHeadingAsync(accelerometerValues: e.Values.ToArray());
-                });
+            _accelerometerListener = new AndroidSensorListener(SensorType.Accelerometer, null, async e =>
+            {
+                if (e.Values != null && e.Values.Count == 3)
+                    await StoreHeadingAsync(accelerometerValues: e.Values.ToArray());
+            });
         }
 
         protected override void Initialize()
         {
             base.Initialize();
 
-            _magnetometerListener.Initialize();
-            _accelerometerListener.Initialize();
+            _magnetometerListener.Initialize(MinDataStoreDelay);
+            _accelerometerListener.Initialize(MinDataStoreDelay);
         }
 
         protected override void StartListening()

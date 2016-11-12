@@ -58,7 +58,7 @@ namespace Sensus.Probes
         private Datum _mostRecentDatum;
         private Protocol _protocol;
         private bool _storeData;
-        private DateTimeOffset _mostRecentStoreTimestamp;
+        private DateTimeOffset? _mostRecentStoreTimestamp;
         private bool _originallyEnabled;
         private List<Tuple<bool, DateTime>> _startStopTimes;
         private List<DateTime> _successfulHealthTestTimes;
@@ -145,7 +145,7 @@ namespace Sensus.Probes
         }
 
         [JsonIgnore]
-        public DateTimeOffset MostRecentStoreTimestamp
+        public DateTimeOffset? MostRecentStoreTimestamp
         {
             get { return _mostRecentStoreTimestamp; }
         }
@@ -466,7 +466,7 @@ namespace Sensus.Probes
             }
 
             _mostRecentDatum = null;
-            _mostRecentStoreTimestamp = DateTimeOffset.MinValue;
+            _mostRecentStoreTimestamp = null;
         }
 
         public SfChart GetChart()

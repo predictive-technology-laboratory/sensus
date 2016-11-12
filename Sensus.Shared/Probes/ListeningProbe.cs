@@ -18,6 +18,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace Sensus.Probes
 {
@@ -26,6 +27,8 @@ namespace Sensus.Probes
         private float _maxDataStoresPerSecond;
         private bool _keepDeviceAwake;
         private bool _deviceAwake;
+        private DataRateCalculator _incomingDataRate;
+        private Random _dropRandom;
 
         private readonly object _locker = new object();
 
@@ -34,6 +37,15 @@ namespace Sensus.Probes
         {
             get { return _maxDataStoresPerSecond; }
             set { _maxDataStoresPerSecond = value; }
+        }
+
+        [JsonIgnore]
+        public TimeSpan MinDataStoreDelay
+        {
+            get
+            {
+                return TimeSpan.FromSeconds(1 / _maxDataStoresPerSecond);
+            }
         }
 
         [OnOffUiProperty("Keep Device Awake:", true, int.MaxValue - 1)]
@@ -161,6 +173,8 @@ namespace Sensus.Probes
             _maxDataStoresPerSecond = 1;
             _keepDeviceAwake = DefaultKeepDeviceAwake;
             _deviceAwake = false;
+            _incomingDataRate = new DataRateCalculator(TimeSpan.FromSeconds(10));
+            _dropRandom = new Random();
         }
 
         protected sealed override void InternalStart()
@@ -202,8 +216,17 @@ namespace Sensus.Probes
 
         public sealed override Task StoreDatumAsync(Datum datum, CancellationToken cancellationToken = default(CancellationToken))
         {
-            float storesPerSecond = 1 / (float)(DateTimeOffset.UtcNow - MostRecentStoreTimestamp).TotalSeconds;
-            if (storesPerSecond <= _maxDataStoresPerSecond)
+            bool store = true;
+            double incomingDataPerSecond = _incomingDataRate.Add(datum);
+            double overagePerSecond = incomingDataPerSecond - MaxDataStoresPerSecond;
+            if (overagePerSecond > 0)
+            {
+                double dropRate = overagePerSecond / incomingDataPerSecond;
+                if (_dropRandom.NextDouble() < dropRate)
+                    store = false;
+            }
+
+            if (store)
                 return base.StoreDatumAsync(datum, cancellationToken);
             else
                 return Task.FromResult(false);
