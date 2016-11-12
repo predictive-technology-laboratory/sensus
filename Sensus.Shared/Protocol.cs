@@ -85,8 +85,7 @@ namespace Sensus
                         SensusServiceHelper.Get().Logger.Log(errorMessage, LoggingLevel.Normal, typeof(Protocol));
                         SensusServiceHelper.Get().FlashNotificationAsync(errorMessage);
 
-                        if (callback != null)
-                            callback(null);
+                        callback?.Invoke(null);
                     }
                 };
 #elif WINDOWS_PHONE
@@ -127,11 +126,13 @@ namespace Sensus
                         // a match from an randomized experimental design perspective.
                         Protocol registeredProtocol = null;
                         foreach (Protocol p in SensusServiceHelper.Get().RegisteredProtocols)
+                        {
                             if (p.Equals(protocol) || p.GroupedProtocols.Contains(protocol) || protocol.GroupedProtocols.Contains(p))
                             {
                                 registeredProtocol = p;
                                 break;
                             }
+                        }
 
                         // if we haven't yet registered the protocol, then set it up and register it
                         if (registeredProtocol == null)
@@ -191,7 +192,10 @@ namespace Sensus
                             SensusServiceHelper.Get().RegisterProtocol(protocol);
                         }
                         else
+                        {
+                            SensusServiceHelper.Get().FlashNotificationAsync("The study that you just opened has already been loaded into Sensus.");
                             protocol = registeredProtocol;
+                        }
 
                         // protocols deserialized upon receipt (i.e., those here) are never groupable for experimental integrity reasons. we
                         // do not want the user to be able to group the newly deserialized protocol with other protocols and then share the 
@@ -213,8 +217,7 @@ namespace Sensus
                     }
                     finally
                     {
-                        if (callback != null)
-                            callback(protocol);
+                        callback?.Invoke(protocol);
                     }
                 });
             }
@@ -222,9 +225,7 @@ namespace Sensus
             {
                 SensusServiceHelper.Get().Logger.Log("Failed to decrypt/convert/deserialize protocol from bytes:  " + ex.Message, LoggingLevel.Normal, typeof(Protocol));
                 SensusServiceHelper.Get().FlashNotificationAsync("Failed to unpack protocol.");
-
-                if (callback != null)
-                    callback(null);
+                callback?.Invoke(null);
             }
         }
 
@@ -283,7 +284,7 @@ namespace Sensus
 
         public static void DisplayAndStartAsync(Protocol protocol)
         {
-            new Thread(() =>
+            Task.Run(() =>
             {
                 if (protocol == null)
                     SensusServiceHelper.Get().FlashNotificationAsync("Protocol is empty. Cannot display or start it.");
@@ -293,7 +294,7 @@ namespace Sensus
                     // intent will contain a protocol in cases where the user originally launched the activity by opening the protocol from URL, attachment, etc. 
                     // if we save the below flash for later, then when the user opens the activity at a later time they'll be confused by the message. so, don't store
                     // the flash below.
-                    SensusServiceHelper.Get().FlashNotificationAsync("You are already participating in \"" + protocol.Name + "\".", false);
+                    SensusServiceHelper.Get().FlashNotificationAsync("The following study is currently running:  \"" + protocol.Name + "\".", false);
                 }
                 else
                 {
@@ -320,8 +321,7 @@ namespace Sensus
                         });
                     });
                 }
-
-            }).Start();
+            });
         }
 
         public static void RunUnitTestingProtocol(Stream unitTestingProtocolFile)
@@ -337,36 +337,36 @@ namespace Sensus
                     unitTestingProtocolFile.CopyTo(protocolStream);
                     string protocolJSON = SensusServiceHelper.Get().ConvertJsonForCrossPlatform(SensusContext.Current.Encryption.Decrypt(protocolStream.ToArray()));
                     DeserializeAsync(protocolJSON, protocol =>
+                    {
+                        if (protocol == null)
+                            throw new Exception("Failed to deserialize unit testing protocol.");
+
+                        foreach (Probe probe in protocol.Probes)
                         {
-                            if (protocol == null)
-                                throw new Exception("Failed to deserialize unit testing protocol.");
+                            // unit testing is problematic with probes that take us away from Sensus, since it's difficult to automate UI 
+                            // interaction outside of Sensus. disable any probes that might take us away from Sensus.
 
-                            foreach (Probe probe in protocol.Probes)
-                            {
-                                // unit testing is problematic with probes that take us away from Sensus, since it's difficult to automate UI 
-                                // interaction outside of Sensus. disable any probes that might take us away from Sensus.
-
-                                if (probe is FacebookProbe)
-                                    probe.Enabled = false;
+                            if (probe is FacebookProbe)
+                                probe.Enabled = false;
 
 #if __IOS__
                                 if (probe is iOSHealthKitProbe)
                                     probe.Enabled = false;
 #endif
 
-                                // clear the run-times collection from any script runners. need a clean start, just in case we have one-shot scripts
-                                // that need to run every unit testing execution.
-                                if (probe is ScriptProbe)
-                                    foreach (ScriptRunner scriptRunner in (probe as ScriptProbe).ScriptRunners)
-                                        scriptRunner.RunTimes.Clear();
+                            // clear the run-times collection from any script runners. need a clean start, just in case we have one-shot scripts
+                            // that need to run every unit testing execution.
+                            if (probe is ScriptProbe)
+                                foreach (ScriptRunner scriptRunner in (probe as ScriptProbe).ScriptRunners)
+                                    scriptRunner.RunTimes.Clear();
 
-                                // disable the accelerometer probe, since we use it to trigger a test script that can interrupt UI scripting.
-                                if (probe is AccelerometerProbe)
-                                    probe.Enabled = false;
-                            }
+                            // disable the accelerometer probe, since we use it to trigger a test script that can interrupt UI scripting.
+                            if (probe is AccelerometerProbe)
+                                probe.Enabled = false;
+                        }
 
-                            DisplayAndStartAsync(protocol);
-                        });
+                        DisplayAndStartAsync(protocol);
+                    });
                 }
             }
             catch (Exception ex)
@@ -976,27 +976,23 @@ namespace Sensus
         public void CopyAsync(bool resetId, bool register, Action<Protocol> callback = null)
         {
             DeserializeAsync(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), protocol =>
-                {
-                    protocol.Reset(resetId);
+            {
+                protocol.Reset(resetId);
 
-                    if (register)
-                        SensusServiceHelper.Get().RegisterProtocol(protocol);
+                if (register)
+                    SensusServiceHelper.Get().RegisterProtocol(protocol);
 
-                    if (callback != null)
-                        callback(protocol);
-                });
+                callback?.Invoke(protocol);
+            });
         }
 
         public void StartAsync(Action callback = null)
         {
-            new Thread(() =>
-                {
-                    Start();
-
-                    if (callback != null)
-                        callback();
-
-                }).Start();
+            Task.Run(() =>
+            {
+                Start();
+                callback?.Invoke();
+            });
         }
 
         private void StartInternal()
