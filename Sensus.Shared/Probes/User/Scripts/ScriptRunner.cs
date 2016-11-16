@@ -35,7 +35,7 @@ namespace Sensus.Probes.User.Scripts
         private readonly Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>> _triggerHandlers;
         private TimeSpan? _maxAge;
         private DateTime? _maxScheduledDate;
-        private readonly List<string> _scheduledCallbackIds;
+        private readonly List<string> _scriptRunCallbackIds;
         private readonly ScheduleTrigger _scheduleTrigger;
 
         private readonly object _locker = new object();
@@ -132,7 +132,7 @@ namespace Sensus.Probes.User.Scripts
             _enabled = false;
             _maxAge = null;
             _triggerHandlers = new Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>>();
-            _scheduledCallbackIds = new List<string>();
+            _scriptRunCallbackIds = new List<string>();
 
             Script = new Script(this);
             Triggers = new ConcurrentObservableCollection<Trigger>(new LockConcurrent());
@@ -246,7 +246,7 @@ namespace Sensus.Probes.User.Scripts
             Task.Run(() =>
             {
                 UnscheduleCallbacks();
-                ScheduleCallbacks();
+                ScheduleScriptRuns();
             });
 
             // use the async version below for a couple reasons. first, we're in a non-async method and we want to ensure
@@ -285,45 +285,36 @@ namespace Sensus.Probes.User.Scripts
         #endregion
 
         #region Private Methods
-        private void ScheduleCallbacks()
+        private void ScheduleScriptRuns()
         {
             if (_scheduleTrigger.WindowCount == 0 || SensusServiceHelper.Get() == null || Probe == null || !Probe.Protocol.Running || !_enabled)
             {
                 return;
             }
 
-            foreach (var triggerTime in _scheduleTrigger.GetTriggerTimes(DateTime.Now, _maxScheduledDate.Max(DateTime.Now), _maxAge))
+            // get trigger times with respect to the current time occurring after the maximum previously scheduled trigger time.
+            foreach (ScriptTriggerTime triggerTime in _scheduleTrigger.GetTriggerTimes(DateTime.Now, _maxScheduledDate.Max(DateTime.Now), _maxAge))
             {
+                // don't schedule scripts past the end of the protocol if there's a scheduled end date.
                 if (!Probe.Protocol.ContinueIndefinitely && triggerTime.Trigger > Probe.Protocol.EndDate)
                 {
                     break;
                 }
 
-                if (_scheduledCallbackIds.Count > 32 / Probe.ScriptRunners.Count)
+                // we should always allow at least one future script to be scheduled. this is why the _scheduledCallbackIds collection
+                // is a member of the current instances and not global within the script probe. beyond this single scheduled script,
+                // only allow a maximum of 32 script-run callbacks to be scheduled. android's limit is 500, and ios 9 has a limit of 64. 
+                // not sure about ios 10+. as long as we have just a few script runners, each one will be able to schedule a few future
+                // script runs. this will help mitigate the problem of users ignoring surveys and losing touch with the study.
+                lock (_scriptRunCallbackIds)
                 {
-                    break;
+                    if (_scriptRunCallbackIds.Count > 32 / Probe.ScriptRunners.Count)
+                    {
+                        break;
+                    }
                 }
 
                 ScheduleScriptRun(triggerTime);
-            }
-        }
-
-        private void UnscheduleCallbacks()
-        {
-            if (_scheduledCallbackIds.Count == 0 || SensusServiceHelper.Get() == null)
-            {
-                return;
-            }
-
-            lock (_scheduledCallbackIds)
-            {
-                foreach (var scheduledCallbackId in _scheduledCallbackIds)
-                {
-                    UnscheduleCallback(scheduledCallbackId);
-                }
-
-                _scheduledCallbackIds.Clear();
-                _maxScheduledDate = null;
             }
         }
 
@@ -335,24 +326,20 @@ namespace Sensus.Probes.User.Scripts
                 return;
             }
 
-            lock (_scheduledCallbackIds)
+            ScheduledCallback callback = CreateScriptRunCallback(new Script(Script, Guid.NewGuid()) { ExpirationDate = triggerTime.Expiration, ScheduledRunTime = triggerTime.Trigger });
+            string callbackId = SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(callback, (int)triggerTime.ReferenceTillTrigger.TotalMilliseconds);
+
+            lock (_scriptRunCallbackIds)
             {
-                var callback = CreateCallback(new Script(Script, Guid.NewGuid()) { ExpirationDate = triggerTime.Expiration, ScheduledRunTime = triggerTime.Trigger });
-                var callbackId = SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(callback, (int)triggerTime.ReferenceTillTrigger.TotalMilliseconds);
-                _scheduledCallbackIds.Add(callbackId);
-                SensusServiceHelper.Get().Logger.Log($"Scheduled for {triggerTime.Trigger} ({callbackId})", LoggingLevel.Normal, GetType());
+                _scriptRunCallbackIds.Add(callbackId);
             }
+
+            SensusServiceHelper.Get().Logger.Log($"Scheduled for {triggerTime.Trigger} ({callbackId})", LoggingLevel.Normal, GetType());
 
             _maxScheduledDate = _maxScheduledDate.Max(triggerTime.Trigger);
         }
 
-        private void UnscheduleCallback(string scheduledCallbackId)
-        {
-            SensusContext.Current.CallbackScheduler.UnscheduleCallback(scheduledCallbackId);
-            SensusServiceHelper.Get().Logger.Log($"Unscheduled ({scheduledCallbackId})", LoggingLevel.Normal, GetType());
-        }
-
-        private ScheduledCallback CreateCallback(Script script)
+        private ScheduledCallback CreateScriptRunCallback(Script script)
         {
             var callback = new ScheduledCallback("Window Trigger", (callbackId, cancellationToken, letDeviceSleepCallback) =>
             {
@@ -365,9 +352,16 @@ namespace Sensus.Probes.User.Scripts
 
                     Run(script);
 
-                    ScheduleCallbacks();
+                    lock (_scriptRunCallbackIds)
+                    {
+                        _scriptRunCallbackIds.Remove(callbackId);
+                    }
 
-                    _scheduledCallbackIds.Remove(callbackId);
+                    // on android, the callback alarm has fired and the script has been run. on ios, the notification has been
+                    // delivered (1) either to the app in the foreground or (2) to the notification tray where the user has opened
+                    // it -- either way on ios the app is in the foreground and the script has been run. now is a good time to update 
+                    // the scheduled callbacks to run this script.
+                    ScheduleScriptRuns();
 
                 }, cancellationToken);
             });
@@ -388,6 +382,31 @@ namespace Sensus.Probes.User.Scripts
 #endif
 
             return callback;
+        }
+
+        private void UnscheduleCallbacks()
+        {
+            lock (_scriptRunCallbackIds)
+            {
+                if (_scriptRunCallbackIds.Count == 0 || SensusServiceHelper.Get() == null)
+                {
+                    return;
+                }
+
+                foreach (var scheduledCallbackId in _scriptRunCallbackIds)
+                {
+                    UnscheduleCallback(scheduledCallbackId);
+                }
+
+                _scriptRunCallbackIds.Clear();
+                _maxScheduledDate = null;
+            }
+        }
+
+        private void UnscheduleCallback(string scheduledCallbackId)
+        {
+            SensusContext.Current.CallbackScheduler.UnscheduleCallback(scheduledCallbackId);
+            SensusServiceHelper.Get().Logger.Log($"Unscheduled ({scheduledCallbackId})", LoggingLevel.Normal, GetType());
         }
 
         private Task RunAsync(Script script, Datum previousDatum = null, Datum currentDatum = null)

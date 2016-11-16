@@ -82,7 +82,7 @@ namespace Sensus.Probes.User.Scripts
             lock (_windows)
             {
                 // we used to use a yield-return approach for returning the trigger times; however, there's an issue:  the reference time does not 
-                // change, and if there are significant latencies involved in scheduling the retuned trigger time then the notification time will
+                // change, and if there are significant latencies involved in scheduling the returned trigger time then the notification time will
                 // not accurately reflect the requested trigger reference. so, the better approach is to gather all triggers immediately to minimize
                 // the effect of such latencies.
                 List<ScriptTriggerTime> triggerTimes = new List<ScriptTriggerTime>();
@@ -91,7 +91,7 @@ namespace Sensus.Probes.User.Scripts
                 for (; (after - reference).TotalDays < 8; after = after.AddDays(1))
                 {
                     // It is important that these are ordered otherwise we might skip windows since we use the _maxScheduledDate to determine which schedule comes next.
-                    foreach (ScriptTriggerTime triggerTime in _windows.Select(window => window.GetNextTriggerTime(reference, after, WindowExpiration, maxAge)).OrderBy(tt => tt.Trigger))
+                    foreach (ScriptTriggerTime triggerTime in _windows.Select(window => window.GetNextTriggerTime(reference, after, WindowExpiration, maxAge)).OrderBy(t => t.Trigger))
                     {
                         triggerTimes.Add(triggerTime);
                     }

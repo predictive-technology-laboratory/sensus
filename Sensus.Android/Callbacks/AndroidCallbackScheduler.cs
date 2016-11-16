@@ -36,15 +36,15 @@ namespace Sensus.Android.Callbacks
         protected override void ScheduleOneTimeCallback(string callbackId, int delayMS)
         {
             DateTime callbackTime = DateTime.Now.AddMilliseconds(delayMS);
-            SensusServiceHelper.Get().Logger.Log("Callback " + callbackId + " scheduled for " + callbackTime + " (one-time).", LoggingLevel.Normal, GetType());
             ScheduleCallbackAlarm(CreateCallbackPendingIntent(callbackId, false, 0, false), callbackId, callbackTime);
+            SensusServiceHelper.Get().Logger.Log("Callback " + callbackId + " scheduled for " + callbackTime + " (one-time).", LoggingLevel.Normal, GetType());
         }
 
         protected override void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag)
         {
             DateTime callbackTime = DateTime.Now.AddMilliseconds(initialDelayMS);
-            SensusServiceHelper.Get().Logger.Log("Callback " + callbackId + " scheduled for " + callbackTime + " (repeating).", LoggingLevel.Normal, GetType());
             ScheduleCallbackAlarm(CreateCallbackPendingIntent(callbackId, true, repeatDelayMS, repeatLag), callbackId, callbackTime);
+            SensusServiceHelper.Get().Logger.Log("Callback " + callbackId + " scheduled for " + callbackTime + " (repeating).", LoggingLevel.Normal, GetType());
         }
 
         private PendingIntent CreateCallbackPendingIntent(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag)
@@ -60,6 +60,39 @@ namespace Sensus.Android.Callbacks
             callbackIntent.PutExtra(SENSUS_CALLBACK_REPEAT_LAG_KEY, repeatLag);
 
             return CreateCallbackPendingIntent(callbackIntent);
+        }
+
+        private PendingIntent CreateCallbackPendingIntent(Intent callbackIntent)
+        {
+            // hash the callback id (stored in the NOTIFICATION_ID field) as the request code. upon hash collisions the previous intent will simply be canceled.
+            return PendingIntent.GetService(_service, callbackIntent.GetStringExtra(Notifier.NOTIFICATION_ID_KEY).GetHashCode(), callbackIntent, PendingIntentFlags.CancelCurrent);
+        }
+
+        private void ScheduleCallbackAlarm(PendingIntent callbackPendingIntent, string callbackId, DateTime callbackTime)
+        {
+            lock (_callbackIdPendingIntent)
+            {
+                // update pending intent associated with the callback id. we'll need the updated pending intent if/when
+                // we wish to unschedule the alarm.
+                _callbackIdPendingIntent[callbackId] = callbackPendingIntent;
+
+                AlarmManager alarmManager = _service.GetSystemService(global::Android.Content.Context.AlarmService) as AlarmManager;
+
+                long delayMS = (long)(callbackTime - DateTime.Now).TotalMilliseconds;
+                long callbackTimeMS = Java.Lang.JavaSystem.CurrentTimeMillis() + delayMS;
+
+                // https://github.com/predictive-technology-laboratory/sensus/wiki/Backwards-Compatibility
+#if __ANDROID_23__
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
+                    alarmManager.SetExactAndAllowWhileIdle(AlarmType.RtcWakeup, callbackTimeMS, callbackPendingIntent);  // API level 23 added "while idle" option, making things even tighter.
+                else if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
+                    alarmManager.SetExact(AlarmType.RtcWakeup, callbackTimeMS, callbackPendingIntent);  // API level 19 differentiated Set (loose) from SetExact (tight)
+                else
+#endif
+                {
+                    alarmManager.Set(AlarmType.RtcWakeup, callbackTimeMS, callbackPendingIntent);  // API 1-18 treats Set as a tight alarm
+                }
+            }
         }
 
         public void ServiceCallback(Intent intent)
@@ -82,7 +115,7 @@ namespace Sensus.Android.Callbacks
                 // raise callback and notify the user if there is a message. we wouldn't have presented the user with the message yet.
                 RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, true,
 
-                    // schedule a new callback at the given time.
+                    // schedule a new alarm for the same callback at the desired time.
                     repeatCallbackTime =>
                     {
                         ScheduleCallbackAlarm(CreateCallbackPendingIntent(intent), callbackId, repeatCallbackTime);
@@ -123,39 +156,6 @@ namespace Sensus.Android.Callbacks
                     AlarmManager alarmManager = _service.GetSystemService(global::Android.Content.Context.AlarmService) as AlarmManager;
                     alarmManager.Cancel(callbackPendingIntent);
                     _callbackIdPendingIntent.Remove(callbackId);
-                }
-            }
-        }
-
-        public PendingIntent CreateCallbackPendingIntent(Intent callbackIntent)
-        {
-            // upon hash collisions for the request code, the previous intent will simply be canceled.
-            return PendingIntent.GetService(_service, callbackIntent.GetStringExtra(Notifier.NOTIFICATION_ID_KEY).GetHashCode(), callbackIntent, PendingIntentFlags.CancelCurrent);
-        }
-
-        public void ScheduleCallbackAlarm(PendingIntent callbackPendingIntent, string callbackId, DateTime callbackTime)
-        {
-            lock (_callbackIdPendingIntent)
-            {
-                // update pending intent associated with the callback id. we'll need the updated pending intent if/when
-                // we which to unschedule the alarm.
-                _callbackIdPendingIntent[callbackId] = callbackPendingIntent;
-
-                AlarmManager alarmManager = _service.GetSystemService(global::Android.Content.Context.AlarmService) as AlarmManager;
-
-                long delayMS = (long)(callbackTime - DateTime.Now).TotalMilliseconds;
-                long callbackTimeMS = Java.Lang.JavaSystem.CurrentTimeMillis() + delayMS;
-
-                // https://github.com/predictive-technology-laboratory/sensus/wiki/Backwards-Compatibility
-#if __ANDROID_23__
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
-                    alarmManager.SetExactAndAllowWhileIdle(AlarmType.RtcWakeup, callbackTimeMS, callbackPendingIntent);  // API level 23 added "while idle" option, making things even tighter.
-                else if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
-                    alarmManager.SetExact(AlarmType.RtcWakeup, callbackTimeMS, callbackPendingIntent);  // API level 19 differentiated Set (loose) from SetExact (tight)
-                else
-#endif
-                {
-                    alarmManager.Set(AlarmType.RtcWakeup, callbackTimeMS, callbackPendingIntent);  // API 1-18 treats Set as a tight alarm
                 }
             }
         }
