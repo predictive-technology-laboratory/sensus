@@ -28,7 +28,7 @@ namespace Sensus.Tests.Scripts
 
             Assert.AreEqual(new TimeSpan(0, 10, 22, 0), t.Start);
             Assert.AreEqual(new TimeSpan(0, 10, 22, 0), t.End);
-            Assert.AreEqual(TimeSpan.Zero, t.Window);
+            Assert.AreEqual(TimeSpan.Zero, t.Duration);
         }
 
         [Test]
@@ -38,7 +38,7 @@ namespace Sensus.Tests.Scripts
 
             Assert.AreEqual(new TimeSpan(0, 10, 22, 0), t.Start);
             Assert.AreEqual(new TimeSpan(0, 12, 22, 0), t.End);
-            Assert.AreEqual(TimeSpan.FromHours(2), t.Window);
+            Assert.AreEqual(TimeSpan.FromHours(2), t.Duration);
         }
 
         [Test]

@@ -22,7 +22,6 @@ namespace Sensus.Callbacks
 {
     public abstract class Notifier : INotifier
     {
-        public const string NOTIFICATION_ID_KEY = "SENSUS-NOTIFICATION-ID";
         public const string DISPLAY_PAGE_KEY = "SENSUS-DISPLAY-PAGE";
 
         public abstract void IssueNotificationAsync(string title, string message, string id, bool playSound, DisplayPage displayPage);

@@ -37,9 +37,8 @@ namespace Sensus.Probes
         private int _pollingSleepDurationMS;
         private int _pollingTimeoutMinutes;
         private bool _isPolling;
-        private string _pollCallbackId;
         private List<DateTime> _pollTimes;
-        private ScheduledCallback _callback;
+        private ScheduledCallback _pollCallback;
 #if __IOS__
         private bool _significantChangePoll;
         private bool _significantChangeOverrideScheduledPolls;
@@ -57,13 +56,7 @@ namespace Sensus.Probes
                 if (value <= 1000)
                     value = 1000;
 
-                if (value != _pollingSleepDurationMS)
-                {
-                    _pollingSleepDurationMS = value;
-
-                    if (_pollCallbackId != null)
-                        _pollCallbackId = SensusContext.Current.CallbackScheduler.RescheduleRepeatingCallback(_pollCallbackId, _pollingSleepDurationMS, _pollingSleepDurationMS, POLL_CALLBACK_LAG);
-                }
+                _pollingSleepDurationMS = value;
             }
         }
 
@@ -168,7 +161,6 @@ namespace Sensus.Probes
             _pollingSleepDurationMS = DefaultPollingSleepDurationMS;
             _pollingTimeoutMinutes = 5;
             _isPolling = false;
-            _pollCallbackId = null;
             _pollTimes = new List<DateTime>();
 #if __IOS__
             _significantChangePoll = false;
@@ -198,7 +190,7 @@ namespace Sensus.Probes
                 string userNotificationMessage = null;
 #endif
 
-                _callback = new ScheduledCallback(GetType().FullName + " Poll", (callbackId, cancellationToken, letDeviceSleepCallback) =>
+                _pollCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
                 {
                     return Task.Run(async () =>
                     {
@@ -243,7 +235,7 @@ namespace Sensus.Probes
                         }
                     });
 
-                }, TimeSpan.FromMinutes(_pollingTimeoutMinutes), userNotificationMessage);
+                }, GetType().FullName, Protocol.Id, TimeSpan.FromMinutes(_pollingTimeoutMinutes), userNotificationMessage);
 
 #if __IOS__
                 if (_significantChangePoll)
@@ -269,7 +261,7 @@ namespace Sensus.Probes
                     _pollCallbackId = SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_callback, 0, _pollingSleepDurationMS, POLL_CALLBACK_LAG);
                 }
 #elif __ANDROID__
-                _pollCallbackId = SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_callback, 0, _pollingSleepDurationMS, POLL_CALLBACK_LAG);
+                SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_pollCallback, 0, _pollingSleepDurationMS, POLL_CALLBACK_LAG);
 #endif
             }
         }
@@ -287,8 +279,8 @@ namespace Sensus.Probes
                     _locationManager.StopMonitoringSignificantLocationChanges();
 #endif
 
-                SensusContext.Current.CallbackScheduler.UnscheduleCallback(_pollCallbackId);
-                _pollCallbackId = null;
+                SensusContext.Current.CallbackScheduler.UnscheduleCallback(_pollCallback?.Id);
+                _pollCallback = null;
             }
         }
 
@@ -314,7 +306,7 @@ namespace Sensus.Probes
             base.Reset();
 
             _isPolling = false;
-            _pollCallbackId = null;
+            _pollCallback = null;
 
             lock (_pollTimes)
             {

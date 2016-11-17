@@ -42,40 +42,16 @@ namespace Sensus.Callbacks
         protected abstract void UnscheduleCallbackPlatformSpecific(string callbackId);
         #endregion
 
-        public string ScheduleRepeatingCallback(ScheduledCallback callback, int initialDelayMS, int repeatDelayMS, bool repeatLag)
+        public void ScheduleRepeatingCallback(ScheduledCallback callback, int initialDelayMS, int repeatDelayMS, bool repeatLag)
         {
-            string callbackId = AddCallback(callback);
-            ScheduleRepeatingCallback(callbackId, initialDelayMS, repeatDelayMS, repeatLag);
-            return callbackId;
+            _idCallback[callback.Id] = callback;
+            ScheduleRepeatingCallback(callback.Id, initialDelayMS, repeatDelayMS, repeatLag);
         }
 
-        public string RescheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag)
+        public void ScheduleOneTimeCallback(ScheduledCallback callback, int delayMS)
         {
-            ScheduledCallback scheduledCallback;
-            if (_idCallback.TryGetValue(callbackId, out scheduledCallback))
-            {
-                UnscheduleCallback(callbackId);
-                return ScheduleRepeatingCallback(scheduledCallback, initialDelayMS, repeatDelayMS, repeatLag);
-            }
-            else
-                return null;
-        }
-
-        public string ScheduleOneTimeCallback(ScheduledCallback callback, int delayMS)
-        {
-            string callbackId = AddCallback(callback);
-            ScheduleOneTimeCallback(callbackId, delayMS);
-            return callbackId;
-        }
-
-        private string AddCallback(ScheduledCallback callback)
-        {
-            // treat the callback as if it were brand new, even if it might have been previously used (e.g., if it's being reschedueld). set a
-            // new ID and cancellation token.
-            callback.Id = Guid.NewGuid().ToString();
-            callback.Canceller = new CancellationTokenSource();
-            _idCallback.TryAdd(callback.Id, callback);
-            return callback.Id;
+            _idCallback[callback.Id] = callback;
+            ScheduleOneTimeCallback(callback.Id, delayMS);
         }
 
         public bool CallbackIsScheduled(string callbackId)
@@ -95,13 +71,6 @@ namespace Sensus.Callbacks
             ScheduledCallback callback;
             _idCallback.TryGetValue(callbackId, out callback);
             return callback?.DisplayPage ?? DisplayPage.None;
-        }
-
-        public string GetCallbackName(string callbackId)
-        {
-            ScheduledCallback callback;
-            _idCallback.TryGetValue(callbackId, out callback);
-            return callback?.Name;
         }
 
         public virtual void RaiseCallbackAsync(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, bool notifyUser, Action<DateTime> scheduleRepeatCallback, Action letDeviceSleepCallback, Action finishedCallback)
@@ -136,16 +105,16 @@ namespace Sensus.Callbacks
                         }
 
                         if (actionAlreadyRunning)
-                            SensusServiceHelper.Get().Logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") is already running. Not running again.", LoggingLevel.Normal, GetType());
+                            SensusServiceHelper.Get().Logger.Log("Callback \"" + scheduledCallback.Id + "\" is already running. Not running again.", LoggingLevel.Normal, GetType());
                         else
                         {
                             try
                             {
                                 if (scheduledCallback.Canceller.IsCancellationRequested)
-                                    SensusServiceHelper.Get().Logger.Log("Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") was cancelled before it was raised.", LoggingLevel.Normal, GetType());
+                                    SensusServiceHelper.Get().Logger.Log("Callback \"" + scheduledCallback.Id + "\" was cancelled before it was raised.", LoggingLevel.Normal, GetType());
                                 else
                                 {
-                                    SensusServiceHelper.Get().Logger.Log("Raising callback \"" + scheduledCallback.Name + "\" (" + callbackId + ").", LoggingLevel.Normal, GetType());
+                                    SensusServiceHelper.Get().Logger.Log("Raising callback \"" + scheduledCallback.Id + "\".", LoggingLevel.Normal, GetType());
 
                                     if (notifyUser)
                                         SensusContext.Current.Notifier.IssueNotificationAsync("Sensus", scheduledCallback.UserNotificationMessage, callbackId, true, scheduledCallback.DisplayPage);
@@ -159,7 +128,7 @@ namespace Sensus.Callbacks
                             }
                             catch (Exception ex)
                             {
-                                string errorMessage = "Callback \"" + scheduledCallback.Name + "\" (" + callbackId + ") failed:  " + ex.Message;
+                                string errorMessage = "Callback \"" + scheduledCallback.Id + "\" failed:  " + ex.Message;
                                 SensusServiceHelper.Get().Logger.Log(errorMessage, LoggingLevel.Normal, GetType());
                                 SensusException.Report(errorMessage, ex);
                             }
@@ -248,7 +217,7 @@ namespace Sensus.Callbacks
             if (_idCallback.TryGetValue(callbackId, out scheduledCallback))
             {
                 scheduledCallback.Canceller.Cancel();
-                SensusServiceHelper.Get().Logger.Log("Cancelled callback \"" + scheduledCallback.Name + "\" (" + callbackId + ").", LoggingLevel.Normal, GetType());
+                SensusServiceHelper.Get().Logger.Log("Cancelled callback \"" + callbackId + "\".", LoggingLevel.Normal, GetType());
             }
             else
                 SensusServiceHelper.Get().Logger.Log("Callback \"" + callbackId + "\" not present. Cannot cancel.", LoggingLevel.Normal, GetType());

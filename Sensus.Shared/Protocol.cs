@@ -385,8 +385,8 @@ namespace Sensus
         private string _name;
         private List<Probe> _probes;
         private bool _running;
-        private string _scheduledStartCallbackId;
-        private string _scheduledStopCallbackId;
+        private ScheduledCallback _scheduledStartCallback;
+        private ScheduledCallback _scheduledStopCallback;
         private LocalDataStore _localDataStore;
         private RemoteDataStore _remoteDataStore;
         private string _storageDirectory;
@@ -439,15 +439,15 @@ namespace Sensus
         }
 
         [JsonIgnore]
-        public String ScheduledStartCallbackId
+        public ScheduledCallback ScheduledStartCallback
         {
-            get { return _scheduledStartCallbackId; }
+            get { return _scheduledStartCallback; }
         }
 
         [JsonIgnore]
-        public String ScheduledStopCallbackId
+        public ScheduledCallback ScheduledStopCallback
         {
-            get { return _scheduledStopCallbackId; }
+            get { return _scheduledStopCallback; }
         }
 
         public LocalDataStore LocalDataStore
@@ -878,8 +878,6 @@ namespace Sensus
         private Protocol()
         {
             _running = false;
-            _scheduledStartCallbackId = null;
-            _scheduledStopCallbackId = null;
             _forceProtocolReportsToRemoteDataStore = false;
             _lockPasswordHash = "";
             _jsonAnonymizer = new AnonymizedJsonContractResolver(this);
@@ -1004,7 +1002,7 @@ namespace Sensus
                 else
                     _running = true;
 
-                _scheduledStartCallbackId = null;
+                _scheduledStartCallback = null;
 
                 if (ProtocolRunningChanged != null)
                     ProtocolRunningChanged(this, _running);
@@ -1140,28 +1138,30 @@ namespace Sensus
         {
             TimeSpan timeUntilStart = _startTimestamp - DateTime.Now;
 
-            ScheduledCallback startProtocolCallback = new ScheduledCallback("Start protocol", (callbackId, cancellationToken, letDeviceSleepCallback) =>
+            _scheduledStartCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
             {
                 return Task.Run(() =>
                 {
                     StartInternal();
-                    _scheduledStartCallbackId = null;
+                    _scheduledStartCallback = null;
                 });
+
+            }, "START", _id, null,
 #if __ANDROID__
-            }, null, $"Started study: {Name}.");
+            $"Started study: {Name}.");
 #elif __IOS__
-            }, null, $"Please open to start study {Name}.");
+            $"Please open to start study {Name}.");
 #else
-            }, null, $"Started study: {Name}.");
+            $"Started study: {Name}.");
 #endif
 
-            _scheduledStartCallbackId = SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(startProtocolCallback, (int)timeUntilStart.TotalMilliseconds);
+            SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(_scheduledStartCallback, (int)timeUntilStart.TotalMilliseconds);
         }
 
         public void CancelScheduledStart()
         {
-            SensusContext.Current.CallbackScheduler.UnscheduleCallback(_scheduledStartCallbackId);
-            _scheduledStartCallbackId = null;
+            SensusContext.Current.CallbackScheduler.UnscheduleCallback(_scheduledStartCallback?.Id);
+            _scheduledStartCallback = null;
 
             // we might have scheduled a stop when starting the protocol, so be sure to cancel it.
             CancelScheduledStop();
@@ -1171,28 +1171,29 @@ namespace Sensus
         {
             TimeSpan timeUntilStop = _endTimestamp - DateTime.Now;
 
-            ScheduledCallback stopProtocolCallback = new ScheduledCallback("Stop protocol", (callbackId, cancellationToken, letDeviceSleepCallback) =>
+            _scheduledStopCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
             {
                 return Task.Run(() =>
                 {
                     Stop();
-                    _scheduledStopCallbackId = null;
+                    _scheduledStopCallback = null;
                 });
+            }, "STOP", _id, null,
 #if __ANDROID__
-            }, null, $"Stopped study: {Name}.");
+            $"Stopped study: {Name}.");
 #elif __IOS__
-            }, null, $"Please open to stop study: {Name}.");
+            $"Please open to stop study: {Name}.");
 #else
-            }, null, $"Stopped study: {Name}.");
+            $"Stopped study: {Name}.");
 #endif
 
-            _scheduledStopCallbackId = SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(stopProtocolCallback, (int)timeUntilStop.TotalMilliseconds);
+            SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(_scheduledStopCallback, (int)timeUntilStop.TotalMilliseconds);
         }
 
         public void CancelScheduledStop()
         {
-            SensusContext.Current.CallbackScheduler.UnscheduleCallback(_scheduledStopCallbackId);
-            _scheduledStopCallbackId = null;
+            SensusContext.Current.CallbackScheduler.UnscheduleCallback(_scheduledStopCallback?.Id);
+            _scheduledStopCallback = null;
         }
 
         public void StartWithUserAgreementAsync(string startupMessage, Action callback = null)
@@ -1433,6 +1434,8 @@ namespace Sensus
                 else
                     return;
 
+                SensusServiceHelper.Get().Logger.Log("Stopping protocol \"" + _name + "\".", LoggingLevel.Normal, GetType());
+
                 if (ProtocolRunningChanged != null)
                     ProtocolRunningChanged(this, _running);
 
@@ -1440,8 +1443,6 @@ namespace Sensus
                 CancelScheduledStop();
 
                 SensusServiceHelper.Get().RemoveRunningProtocolId(_id);
-
-                SensusServiceHelper.Get().Logger.Log("Stopping protocol \"" + _name + "\".", LoggingLevel.Normal, GetType());
 
                 foreach (Probe probe in _probes)
                     if (probe.Running)

@@ -13,11 +13,9 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using Android.App;
 using Android.Content;
 using Android.OS;
-using Sensus;
 using Sensus.Callbacks;
 
 namespace Sensus.Android.Callbacks
@@ -25,73 +23,74 @@ namespace Sensus.Android.Callbacks
     public class AndroidCallbackScheduler : CallbackScheduler
     {
         private AndroidSensusService _service;
-        private Dictionary<string, PendingIntent> _callbackIdPendingIntent;
 
         public AndroidCallbackScheduler(AndroidSensusService service)
         {
             _service = service;
-            _callbackIdPendingIntent = new Dictionary<string, PendingIntent>();
         }
 
         protected override void ScheduleOneTimeCallback(string callbackId, int delayMS)
         {
-            DateTime callbackTime = DateTime.Now.AddMilliseconds(delayMS);
-            ScheduleCallbackAlarm(CreateCallbackPendingIntent(callbackId, false, 0, false), callbackId, callbackTime);
-            SensusServiceHelper.Get().Logger.Log("Callback " + callbackId + " scheduled for " + callbackTime + " (one-time).", LoggingLevel.Normal, GetType());
+            Intent callbackIntent = CreateCallbackIntent(callbackId);
+            PendingIntent callbackPendingIntent = CreateCallbackPendingIntent(callbackIntent);
+            ScheduleCallbackAlarm(callbackPendingIntent, delayMS);
+            SensusServiceHelper.Get().Logger.Log("Callback " + callbackId + " scheduled for " + DateTime.Now.AddMilliseconds(delayMS) + " (one-time).", LoggingLevel.Normal, GetType());
         }
 
         protected override void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag)
         {
-            DateTime callbackTime = DateTime.Now.AddMilliseconds(initialDelayMS);
-            ScheduleCallbackAlarm(CreateCallbackPendingIntent(callbackId, true, repeatDelayMS, repeatLag), callbackId, callbackTime);
-            SensusServiceHelper.Get().Logger.Log("Callback " + callbackId + " scheduled for " + callbackTime + " (repeating).", LoggingLevel.Normal, GetType());
-        }
-
-        private PendingIntent CreateCallbackPendingIntent(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag)
-        {
-            DisplayPage displayPage = GetCallbackDisplayPage(callbackId);
-
-            Intent callbackIntent = new Intent(_service, typeof(AndroidSensusService));
-            callbackIntent.PutExtra(Notifier.NOTIFICATION_ID_KEY, callbackId);
-            callbackIntent.PutExtra(Notifier.DISPLAY_PAGE_KEY, displayPage.ToString());
-            callbackIntent.PutExtra(SENSUS_CALLBACK_KEY, true);
-            callbackIntent.PutExtra(SENSUS_CALLBACK_REPEATING_KEY, repeating);
+            Intent callbackIntent = CreateCallbackIntent(callbackId);
+            callbackIntent.PutExtra(SENSUS_CALLBACK_REPEATING_KEY, true);
             callbackIntent.PutExtra(SENSUS_CALLBACK_REPEAT_DELAY_KEY, repeatDelayMS);
             callbackIntent.PutExtra(SENSUS_CALLBACK_REPEAT_LAG_KEY, repeatLag);
+            PendingIntent callbackPendingIntent = CreateCallbackPendingIntent(callbackIntent);
+            ScheduleCallbackAlarm(callbackPendingIntent, initialDelayMS);
+            SensusServiceHelper.Get().Logger.Log("Callback " + callbackId + " scheduled for " + DateTime.Now.AddMilliseconds(initialDelayMS) + " (repeating).", LoggingLevel.Normal, GetType());
+        }
 
-            return CreateCallbackPendingIntent(callbackIntent);
+        private Intent CreateCallbackIntent(string callbackId)
+        {
+            Intent callbackIntent = new Intent(_service, typeof(AndroidSensusService));
+            callbackIntent.SetAction(callbackId);
+            callbackIntent.PutExtra(Notifier.DISPLAY_PAGE_KEY, GetCallbackDisplayPage(callbackId).ToString());
+            callbackIntent.PutExtra(SENSUS_CALLBACK_KEY, true);
+            return callbackIntent;
         }
 
         private PendingIntent CreateCallbackPendingIntent(Intent callbackIntent)
         {
-            // hash the callback id (stored in the NOTIFICATION_ID field) as the request code. upon hash collisions the previous intent will simply be canceled.
-            return PendingIntent.GetService(_service, callbackIntent.GetStringExtra(Notifier.NOTIFICATION_ID_KEY).GetHashCode(), callbackIntent, PendingIntentFlags.CancelCurrent);
+            // intent extras are not considered when checking equality. thus, the only way we'll get equal pending intents is
+            // if the intent action (i.e., callback id) is the same. this should not happen, but if it does we should probably
+            // cancel the previously issued (current) intent with the one we are here constructing and are about to pass to the
+            // alarm manager. see the following for more information:
+            //
+            // https://developer.android.com/reference/android/app/PendingIntent.html 
+            //
+            return PendingIntent.GetService(_service, 0, callbackIntent, PendingIntentFlags.CancelCurrent);
         }
 
-        private void ScheduleCallbackAlarm(PendingIntent callbackPendingIntent, string callbackId, DateTime callbackTime)
+        private void ScheduleCallbackAlarm(PendingIntent callbackPendingIntent, long delayMS)
         {
-            lock (_callbackIdPendingIntent)
-            {
-                // update pending intent associated with the callback id. we'll need the updated pending intent if/when
-                // we wish to unschedule the alarm.
-                _callbackIdPendingIntent[callbackId] = callbackPendingIntent;
+            AlarmManager alarmManager = _service.GetSystemService(global::Android.Content.Context.AlarmService) as AlarmManager;
 
-                AlarmManager alarmManager = _service.GetSystemService(global::Android.Content.Context.AlarmService) as AlarmManager;
+            // cancel the current alarm for this callback id. this deals with the situations where (1) sensus schedules callbacks
+            // and is subsequently restarted, or (2) a probe is restarted after scheduling callbacks (e.g., script runner). in 
+            // these situations, the originally scheduled callbacks will remain in the alarm manager, and we'll begin piling up
+            // additional, duplicate alarms. we need to be careful to avoid duplicate alarms, and this is how we manage it.
+            alarmManager.Cancel(callbackPendingIntent);
 
-                long delayMS = (long)(callbackTime - DateTime.Now).TotalMilliseconds;
-                long callbackTimeMS = Java.Lang.JavaSystem.CurrentTimeMillis() + delayMS;
+            long callbackTimeMS = Java.Lang.JavaSystem.CurrentTimeMillis() + delayMS;
 
-                // https://github.com/predictive-technology-laboratory/sensus/wiki/Backwards-Compatibility
+            // https://github.com/predictive-technology-laboratory/sensus/wiki/Backwards-Compatibility
 #if __ANDROID_23__
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
-                    alarmManager.SetExactAndAllowWhileIdle(AlarmType.RtcWakeup, callbackTimeMS, callbackPendingIntent);  // API level 23 added "while idle" option, making things even tighter.
-                else if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
-                    alarmManager.SetExact(AlarmType.RtcWakeup, callbackTimeMS, callbackPendingIntent);  // API level 19 differentiated Set (loose) from SetExact (tight)
-                else
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
+                alarmManager.SetExactAndAllowWhileIdle(AlarmType.RtcWakeup, callbackTimeMS, callbackPendingIntent);  // API level 23 added "while idle" option, making things even tighter.
+            else if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
+                alarmManager.SetExact(AlarmType.RtcWakeup, callbackTimeMS, callbackPendingIntent);  // API level 19 differentiated Set (loose) from SetExact (tight)
+            else
 #endif
-                {
-                    alarmManager.Set(AlarmType.RtcWakeup, callbackTimeMS, callbackPendingIntent);  // API 1-18 treats Set as a tight alarm
-                }
+            {
+                alarmManager.Set(AlarmType.RtcWakeup, callbackTimeMS, callbackPendingIntent);  // API 1-18 treats Set as a tight alarm
             }
         }
 
@@ -99,7 +98,7 @@ namespace Sensus.Android.Callbacks
         {
             SensusServiceHelper serviceHelper = SensusServiceHelper.Get();
 
-            string callbackId = intent.GetStringExtra(Notifier.NOTIFICATION_ID_KEY);
+            string callbackId = intent.Action;
 
             // if the user removes the main activity from the switcher, the service's process will be killed and restarted without notice, and 
             // we'll have no opportunity to unschedule repeating callbacks. when the service is restarted we'll reinitialize the service
@@ -118,7 +117,7 @@ namespace Sensus.Android.Callbacks
                     // schedule a new alarm for the same callback at the desired time.
                     repeatCallbackTime =>
                     {
-                        ScheduleCallbackAlarm(CreateCallbackPendingIntent(intent), callbackId, repeatCallbackTime);
+                        ScheduleCallbackAlarm(CreateCallbackPendingIntent(intent), (long)(repeatCallbackTime - DateTime.Now).TotalMilliseconds);
                     },
 
                     // if the callback indicates that it's okay for the device to sleep, release the wake lock now.
@@ -148,16 +147,17 @@ namespace Sensus.Android.Callbacks
 
         protected override void UnscheduleCallbackPlatformSpecific(string callbackId)
         {
-            lock (_callbackIdPendingIntent)
-            {
-                PendingIntent callbackPendingIntent;
-                if (_callbackIdPendingIntent.TryGetValue(callbackId, out callbackPendingIntent))
-                {
-                    AlarmManager alarmManager = _service.GetSystemService(global::Android.Content.Context.AlarmService) as AlarmManager;
-                    alarmManager.Cancel(callbackPendingIntent);
-                    _callbackIdPendingIntent.Remove(callbackId);
-                }
-            }
+            // we don't need a reference to the original pending intent in order to cancel the alarm. we just need a pending intent
+            // with the same request code and underlying intent with the same action. extras are not considered, and we don't use
+            // the other intent fields (data, categories, etc.). see the following for more information:
+            //
+            // https://developer.android.com/reference/android/app/PendingIntent.html 
+            //
+            Intent callbackIntent = CreateCallbackIntent(callbackId);
+            PendingIntent callbackPendingIntent = CreateCallbackPendingIntent(callbackIntent);
+            AlarmManager alarmManager = _service.GetSystemService(global::Android.Content.Context.AlarmService) as AlarmManager;
+            alarmManager.Cancel(callbackPendingIntent);
+            SensusServiceHelper.Get().Logger.Log("Unscheduled alarm for callback \"" + callbackId + "\".", LoggingLevel.Normal, GetType());
         }
     }
 }

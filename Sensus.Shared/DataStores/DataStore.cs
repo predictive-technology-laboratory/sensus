@@ -126,7 +126,7 @@ namespace Sensus.DataStores
         private Protocol _protocol;
         private DateTime? _mostRecentSuccessfulCommitTime;
         private HashSet<Datum> _data;
-        private string _commitCallbackId;
+        private ScheduledCallback _commitCallback;
         private long _addedDataCount;
         private long _committedDataCount;
         private bool _sizeTriggeredCommitRunning;
@@ -142,13 +142,7 @@ namespace Sensus.DataStores
                 if (value <= 1000)
                     value = 1000;
 
-                if (value != _commitDelayMS)
-                {
-                    _commitDelayMS = value;
-
-                    if (_commitCallbackId != null)
-                        _commitCallbackId = SensusContext.Current.CallbackScheduler.RescheduleRepeatingCallback(_commitCallbackId, _commitDelayMS, _commitDelayMS, COMMIT_CALLBACK_LAG);
-                }
+                _commitDelayMS = value;
             }
         }
 
@@ -227,7 +221,6 @@ namespace Sensus.DataStores
             _running = false;
             _mostRecentSuccessfulCommitTime = null;
             _data = new HashSet<Datum>();
-            _commitCallbackId = null;
             _committedDataCount = 0;
             _addedDataCount = 0;
             _sizeTriggeredCommitRunning = false;
@@ -255,8 +248,8 @@ namespace Sensus.DataStores
                     userNotificationMessage = "Sensus needs to submit your data for the \"" + _protocol.Name + "\" study. Please open this notification.";
 #endif
 
-                ScheduledCallback callback = new ScheduledCallback(GetType().FullName + " Commit", CommitAndReleaseAddedDataAsync, TimeSpan.FromMinutes(_commitTimeoutMinutes), userNotificationMessage);
-                _commitCallbackId = SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(callback, _commitDelayMS, _commitDelayMS, COMMIT_CALLBACK_LAG);
+                _commitCallback = new ScheduledCallback(CommitAndReleaseAddedDataAsync, GetType().FullName, Protocol.Id, TimeSpan.FromMinutes(_commitTimeoutMinutes), userNotificationMessage);
+                SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_commitCallback, _commitDelayMS, _commitDelayMS, COMMIT_CALLBACK_LAG);
             }
         }
 
@@ -376,8 +369,7 @@ namespace Sensus.DataStores
             {
                 _running = false;
                 SensusServiceHelper.Get().Logger.Log("Stopping.", LoggingLevel.Normal, GetType());
-                SensusContext.Current.CallbackScheduler.UnscheduleCallback(_commitCallbackId);
-                _commitCallbackId = null;
+                SensusContext.Current.CallbackScheduler.UnscheduleCallback(_commitCallback?.Id);
             }
         }
 
@@ -421,7 +413,7 @@ namespace Sensus.DataStores
                 throw new Exception("Cannot reset data store while it is running.");
 
             _mostRecentSuccessfulCommitTime = null;
-            _commitCallbackId = null;
+            _commitCallback = null;
             _addedDataCount = 0;
             _committedDataCount = 0;
 

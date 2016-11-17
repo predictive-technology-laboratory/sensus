@@ -19,6 +19,7 @@ namespace Sensus.iOS.Callbacks
 {
     public abstract class iOSNotifier : Notifier, IiOSNotifier
     {
+        public const string NOTIFICATION_ID_KEY = "SENSUS-NOTIFICATION-ID";
         public const string SILENT_NOTIFICATION_KEY = "SENSUS-SILENT-NOTIFICATION";
 
         public static bool IsSilent(NSDictionary notificationInfo)

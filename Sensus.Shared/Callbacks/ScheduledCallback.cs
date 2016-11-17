@@ -39,10 +39,10 @@ namespace Sensus.Callbacks
         public ActionDelegate Action { get; set; }
 
         /// <summary>
-        /// Name of callback.
+        /// Gets or sets the identifier.
         /// </summary>
-        /// <value>The name.</value>
-        public string Name { get; set; }
+        /// <value>The identifier.</value>
+        public string Id { get; set; }
 
         /// <summary>
         /// Gets or sets the callback timeout.
@@ -63,10 +63,10 @@ namespace Sensus.Callbacks
         public CancellationTokenSource Canceller { get; set; }
 
         /// <summary>
-        /// Gets or sets the identifier.
+        /// Page to display when callback is returned to app.
         /// </summary>
-        /// <value>The identifier.</value>
-        public string Id { get; set; }
+        /// <value>The display page.</value>
+        public DisplayPage DisplayPage { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether this <see cref="ScheduledCallback"/> is running.
@@ -75,24 +75,20 @@ namespace Sensus.Callbacks
         public bool Running { get; set; }
 
         /// <summary>
-        /// Page to display when callback is returned to app.
-        /// </summary>
-        /// <value>The display page.</value>
-        public DisplayPage DisplayPage { get; set; }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="ScheduledCallback"/> class.
         /// </summary>
-        /// <param name="name">Name</param>
         /// <param name="action">Action</param>
+        /// <param name="id">Identifier for callback</param>
+        /// <param name="domain">Domain of scheduled callback</param>
         /// <param name="callbackTimeout">Callback Timeout</param>
         /// <param name="userNotificationMessage">User notification message</param>
-        public ScheduledCallback(string name, ActionDelegate action, TimeSpan? callbackTimeout = null, string userNotificationMessage = null)
+        public ScheduledCallback(ActionDelegate action, string id, string domain, TimeSpan? callbackTimeout = null, string userNotificationMessage = null)
         {
             Action = action;
-            Name = name;
+            Id = (domain ?? "SENSUS") + "." + id;
             CallbackTimeout = callbackTimeout;
             UserNotificationMessage = userNotificationMessage;
+            Canceller = new CancellationTokenSource();
             DisplayPage = DisplayPage.None;
             Running = false;
         }

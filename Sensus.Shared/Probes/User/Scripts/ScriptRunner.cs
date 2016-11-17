@@ -326,26 +326,27 @@ namespace Sensus.Probes.User.Scripts
                 return;
             }
 
-            ScheduledCallback callback = CreateScriptRunCallback(new Script(Script, Guid.NewGuid()) { ExpirationDate = triggerTime.Expiration, ScheduledRunTime = triggerTime.Trigger });
-            string callbackId = SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(callback, (int)triggerTime.ReferenceTillTrigger.TotalMilliseconds);
+            Script scriptToRun = new Script(Script, Guid.NewGuid()) { ExpirationDate = triggerTime.Expiration, ScheduledRunTime = triggerTime.Trigger };
+            ScheduledCallback callback = CreateScriptRunCallback(scriptToRun, triggerTime);
+            SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(callback, (int)triggerTime.ReferenceTillTrigger.TotalMilliseconds);
 
             lock (_scriptRunCallbackIds)
             {
-                _scriptRunCallbackIds.Add(callbackId);
+                _scriptRunCallbackIds.Add(callback.Id);
             }
 
-            SensusServiceHelper.Get().Logger.Log($"Scheduled for {triggerTime.Trigger} ({callbackId})", LoggingLevel.Normal, GetType());
+            SensusServiceHelper.Get().Logger.Log($"Scheduled for {triggerTime.Trigger} ({callback.Id})", LoggingLevel.Normal, GetType());
 
             _maxScheduledDate = _maxScheduledDate.Max(triggerTime.Trigger);
         }
 
-        private ScheduledCallback CreateScriptRunCallback(Script script)
+        private ScheduledCallback CreateScriptRunCallback(Script script, ScriptTriggerTime triggerTime)
         {
-            var callback = new ScheduledCallback("Window Trigger", (callbackId, cancellationToken, letDeviceSleepCallback) =>
+            ScheduledCallback callback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
             {
                 return Task.Run(() =>
                 {
-                    SensusServiceHelper.Get().Logger.Log($"Executed ({callbackId})", LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Get().Logger.Log($"Running script on callback ({callbackId})", LoggingLevel.Normal, GetType());
 
                     if (!Probe.Running || !_enabled)
                         return;
@@ -364,7 +365,8 @@ namespace Sensus.Probes.User.Scripts
                     ScheduleScriptRuns();
 
                 }, cancellationToken);
-            });
+
+            }, GetType().FullName + "-" + ((long)(triggerTime.Trigger - DateTime.MinValue).TotalDays) + "-" + triggerTime.Window, Script.Id);
 
 #if __IOS__
             // we don't have a way to update an "X Pending Surveys" notification on ios like we do on android. the best we can do is display a new notification describing the survey and showing its expiration time (if there is one).                                                

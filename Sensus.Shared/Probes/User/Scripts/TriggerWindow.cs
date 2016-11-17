@@ -58,7 +58,7 @@ namespace Sensus.Probes.User.Scripts
         #region Properties
         public TimeSpan Start { get; private set; }
         public TimeSpan End { get; private set; }
-        public TimeSpan Window => End - Start;
+        public TimeSpan Duration => End - Start;
         #endregion
 
         #region Public Methods
@@ -90,7 +90,7 @@ namespace Sensus.Probes.User.Scripts
                 ageExpirationDateTime = triggerDateTime.Add(maxAge.Value);
             }
 
-            return new ScriptTriggerTime(reference, triggerDateTime, windowExpirationDateTime.Min(ageExpirationDateTime));
+            return new ScriptTriggerTime(reference, triggerDateTime, windowExpirationDateTime.Min(ageExpirationDateTime), ToString());
         }
 
         public override string ToString()
@@ -163,7 +163,7 @@ namespace Sensus.Probes.User.Scripts
         {
             var zeroToOne = new Random((int)DateTime.Now.Ticks).NextDouble();
 
-            return TimeSpan.FromTicks((long)(Window.Ticks * zeroToOne));
+            return TimeSpan.FromTicks((long)(Duration.Ticks * zeroToOne));
         }
         #endregion
     }

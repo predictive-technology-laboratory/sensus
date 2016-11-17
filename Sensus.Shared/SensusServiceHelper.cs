@@ -264,7 +264,7 @@ namespace Sensus
 
         private Logger _logger;
         private List<string> _runningProtocolIds;
-        private string _healthTestCallbackId;
+        private ScheduledCallback _healthTestCallback;
         private SHA256Managed _hasher;
         private List<PointOfInterest> _pointsOfInterest;
 
@@ -478,7 +478,6 @@ namespace Sensus
             _registeredProtocols = new ConcurrentObservableCollection<Protocol>();
             _scriptsToRun = new ConcurrentObservableCollection<Script>();
             _runningProtocolIds = new List<string>();
-            _healthTestCallbackId = null;
             _hasher = new SHA256Managed();
             _pointsOfInterest = new List<PointOfInterest>();
 
@@ -617,9 +616,9 @@ namespace Sensus
                 if (!_runningProtocolIds.Contains(id))
                     _runningProtocolIds.Add(id);
 
-                if (_healthTestCallbackId == null)
+                if (_healthTestCallback == null)
                 {
-                    ScheduledCallback healthTestCallback = new ScheduledCallback("Test Health", async (callbackId, cancellationToken, letDeviceSleepCallback) =>
+                    _healthTestCallback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
                     {
                         List<Protocol> protocolsToTest = new List<Protocol>();
 
@@ -643,9 +642,9 @@ namespace Sensus
                             await protocolToTest.TestHealthAsync(false, cancellationToken);
                         }
 
-                    }, TimeSpan.FromMinutes(1));
+                    }, "HEALTH-TEST", GetType().FullName, TimeSpan.FromMinutes(1));
 
-                    _healthTestCallbackId = SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(healthTestCallback, HEALTH_TEST_DELAY_MS, HEALTH_TEST_DELAY_MS, HEALTH_TEST_REPEAT_LAG);
+                    SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_healthTestCallback, HEALTH_TEST_DELAY_MS, HEALTH_TEST_DELAY_MS, HEALTH_TEST_REPEAT_LAG);
                 }
             }
         }
@@ -658,8 +657,8 @@ namespace Sensus
 
                 if (_runningProtocolIds.Count == 0)
                 {
-                    SensusContext.Current.CallbackScheduler.UnscheduleCallback(_healthTestCallbackId);
-                    _healthTestCallbackId = null;
+                    SensusContext.Current.CallbackScheduler.UnscheduleCallback(_healthTestCallback?.Id);
+                    _healthTestCallback = null;
                 }
             }
         }

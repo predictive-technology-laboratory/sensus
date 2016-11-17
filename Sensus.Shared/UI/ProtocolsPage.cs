@@ -43,7 +43,7 @@ namespace Sensus.UI
                 if (protocol == null)
                     return null;
                 else
-                    return protocol.Name + " (" + (protocol.Running ? "Running" : (protocol.ScheduledStartCallbackId != null ? "Scheduled: " + protocol.StartDate.ToShortDateString() + " " + (protocol.StartDate.Date + protocol.StartTime).ToShortTimeString() : "Stopped")) + ")";
+                    return protocol.Name + " (" + (protocol.Running ? "Running" : (protocol.ScheduledStartCallback != null ? "Scheduled: " + protocol.StartDate.ToShortDateString() + " " + (protocol.StartDate.Date + protocol.StartTime).ToShortTimeString() : "Stopped")) + ")";
             }
 
             public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -61,7 +61,7 @@ namespace Sensus.UI
                 if (protocol == null)
                     return Color.Default;
                 else
-                    return protocol.Running ? Color.Green : (protocol.ScheduledStartCallbackId != null ? Color.Olive : Color.Red);
+                    return protocol.Running ? Color.Green : (protocol.ScheduledStartCallback != null ? Color.Olive : Color.Red);
             }
 
             public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -162,7 +162,7 @@ namespace Sensus.UI
                 if (selectedProtocol.Running)
                     actions.Add("Status");
 
-                if (!selectedProtocol.Running && selectedProtocol.ScheduledStartCallbackId != null)
+                if (!selectedProtocol.Running && selectedProtocol.ScheduledStartCallback != null)
                 {
                     actions.Remove("Start");
                     actions.Insert(0, "Cancel Scheduled Start");
