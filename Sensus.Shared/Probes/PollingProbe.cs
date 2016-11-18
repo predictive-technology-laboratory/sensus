@@ -162,15 +162,17 @@ namespace Sensus.Probes
             _pollingTimeoutMinutes = 5;
             _isPolling = false;
             _pollTimes = new List<DateTime>();
+
 #if __IOS__
             _significantChangePoll = false;
             _significantChangeOverrideScheduledPolls = false;
             _locationManager = new CLLocationManager();
             _locationManager.LocationsUpdated += (sender, e) =>
             {
-                SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(_callback, 0);
+                SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(_pollCallback, 0);
             };
 #endif
+
         }
 
         protected override void InternalStart()
@@ -258,7 +260,7 @@ namespace Sensus.Probes
                 // schedule the callback if we're not doing significant-change polling, or if we are but the latter doesn't override the former.
                 if (!_significantChangePoll || !_significantChangeOverrideScheduledPolls)
                 {
-                    _pollCallbackId = SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_callback, 0, _pollingSleepDurationMS, POLL_CALLBACK_LAG);
+                    SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_pollCallback, 0, _pollingSleepDurationMS, POLL_CALLBACK_LAG);
                 }
 #elif __ANDROID__
                 SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_pollCallback, 0, _pollingSleepDurationMS, POLL_CALLBACK_LAG);

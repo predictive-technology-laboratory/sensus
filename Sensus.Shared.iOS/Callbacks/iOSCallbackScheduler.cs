@@ -54,7 +54,7 @@ namespace Sensus.iOS.Callbacks
 
             List<object> keyValuePairs = new object[]
             {
-                Notifier.NOTIFICATION_ID_KEY, callbackId,
+                iOSNotifier.NOTIFICATION_ID_KEY, callbackId,
                 Notifier.DISPLAY_PAGE_KEY, displayPage.ToString(),
                 SENSUS_CALLBACK_REPEATING_KEY, repeating,
                 SENSUS_CALLBACK_REPEAT_DELAY_KEY, repeatDelayMS,
@@ -73,7 +73,7 @@ namespace Sensus.iOS.Callbacks
                 return;
 
             // not sure why the following would be null, but we've seen NRE in insights and these are the likely suspects.
-            string callbackId = (callbackInfo.ValueForKey(new NSString(Notifier.NOTIFICATION_ID_KEY)) as NSString)?.ToString();
+            string callbackId = (callbackInfo.ValueForKey(new NSString(iOSNotifier.NOTIFICATION_ID_KEY)) as NSString)?.ToString();
             bool repeating = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber)?.BoolValue ?? false;
             int repeatDelayMS = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_DELAY_KEY)) as NSNumber)?.Int32Value ?? 100000; // not sure what the right value is here.
             bool repeatLag = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_LAG_KEY)) as NSNumber)?.BoolValue ?? false;
