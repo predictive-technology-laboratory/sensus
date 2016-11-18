@@ -46,16 +46,21 @@ namespace Sensus.Probes
 
         public double Add(Datum datum)
         {
-            // maintain a sample of the given duration
-            lock (_sample)
+            // probes are allowed to generate null data (e.g., the POI probe indicating that no POI are nearby). for the purposes of data rate 
+            // calculation, these should be ignored.
+            if (datum != null)
             {
-                // remove any data that are older than the sample duration
-                _sample.Add(datum);
-                while (_sample.Count > 0 && (DateTimeOffset.Now - _sample.First().Timestamp).TotalSeconds > _sampleDuration.TotalSeconds)
-                    _sample.RemoveAt(0);
-
-                return DataPerSecond;
+                // maintain a sample of the given duration
+                lock (_sample)
+                {
+                    // remove any data that are older than the sample duration
+                    _sample.Add(datum);
+                    while (_sample.Count > 0 && (DateTimeOffset.Now - _sample.First().Timestamp).TotalSeconds > _sampleDuration.TotalSeconds)
+                        _sample.RemoveAt(0);
+                }
             }
+
+            return DataPerSecond;
         }
     }
 }
