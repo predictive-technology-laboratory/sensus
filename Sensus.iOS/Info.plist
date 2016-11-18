@@ -166,5 +166,11 @@
 	<string>Sensus does not share health information with other apps.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Certain Sensus studies use the microphone to gather sound data. You will be alerted when joining such studies.</string>
+	<key>NSLocationUsageDescription</key>
+	<string>Location information will not be collected at this time. Sensus will ask for your permission again when it is ready to collect location information.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Sensus is collecting location information for one of the studies you are participating in.</string>
+	<key>NSMotionUsageDescription</key>
+	<string>Certain Sensus studies use the accelerometer to gather movement data. You will be alerted when joining such studies.</string>
 </dict>
 </plist>
