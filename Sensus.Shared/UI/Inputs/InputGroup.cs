@@ -18,6 +18,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using Sensus.UI.UiProperties;
 using Newtonsoft.Json;
+using Sensus.Extensions;
 
 namespace Sensus.UI.Inputs
 {
@@ -46,22 +47,17 @@ namespace Sensus.UI.Inputs
         #region Constructors
         public InputGroup()
         {
-            Id = Guid.NewGuid().ToString();
+            Id     = Guid.NewGuid().ToString();
             Inputs = NewObservableCollection();
             Geotag = false;
         }
 
-        public InputGroup(InputGroup inputGroup)
+        public InputGroup(InputGroup old)
         {
-            Id = inputGroup.Id;
-            Inputs = NewObservableCollection();
-            Name = inputGroup.Name;
-            Geotag = inputGroup.Geotag;
-
-            foreach (var input in inputGroup.Inputs)
-            {
-                Inputs.Add(input.Copy());
-            }
+            Id     = old.Id;
+            Name   = old.Name;
+            Geotag = old.Geotag;
+            Inputs = old.Inputs.Select(i => i.Copy()).ToObservableCollection(CollectionChanged);
         }
 
         [JsonConstructor]
