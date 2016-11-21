@@ -57,7 +57,9 @@ namespace Sensus.UI.Inputs
             Id     = old.Id;
             Name   = old.Name;
             Geotag = old.Geotag;
-            Inputs = old.Inputs.Select(i => i.Copy()).ToObservableCollection(CollectionChanged);
+
+            Inputs   = JsonConvert.DeserializeObject<ObservableCollection<Input>>(JsonConvert.SerializeObject(old.Inputs, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
+            //Inputs = old.Inputs.Select(i => i.Copy()).ToObservableCollection(CollectionChanged);
         }
 
         [JsonConstructor]
