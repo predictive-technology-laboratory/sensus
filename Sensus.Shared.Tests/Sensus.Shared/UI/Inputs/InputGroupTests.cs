@@ -8,7 +8,7 @@ namespace Sensus.Tests.UI.Inputs
     public class InputGroupTests
     {
         [Test]
-        public void EmptyConstructorDoesNotThrow()
+        public void EmptyConstructorDoesNotThrowTest()
         {
             Assert.DoesNotThrow(() => new InputGroup());
         }
@@ -77,6 +77,36 @@ namespace Sensus.Tests.UI.Inputs
             Assert.AreEqual(input.Id, copy.Inputs.Single().Id);
             Assert.AreNotSame(input, copy.Inputs.Single());
             Assert.AreEqual(copy.Id, copy.Inputs.Single().GroupId);
+        }
+
+        [Test]
+        public void DisplayConditionInputCopyTest1()
+        {
+            var input = new SliderInput();
+
+            input.DisplayConditions.Add(new InputDisplayCondition(input, InputValueCondition.Equals, "a", false));
+            
+            var group = new InputGroup { Inputs = { input } };
+            var copy = new InputGroup(group);
+
+            Assert.AreNotSame(group.Inputs.Single(), copy.Inputs.Single());
+            Assert.AreSame(copy.Inputs.Single(), copy.Inputs.Single().DisplayConditions.Single().Input);
+        }
+
+        [Test, Explicit("This is a known fail case. Currently we handle this by manually updating all input references when we copy.")]
+        public void DisplayConditionInputCopyTest2()
+        {
+            var input1 = new SliderInput();
+            var input2 = new SliderInput();
+
+            input1.DisplayConditions.Add(new InputDisplayCondition(input2, InputValueCondition.Equals, "a", false));
+
+            var group = new InputGroup { Inputs = { input1 } };
+            var copy = new InputGroup(group);
+
+            Assert.AreSame(input1, group.Inputs.Single());
+            Assert.AreNotSame(group.Inputs.Single(), copy.Inputs.Single());
+            Assert.AreSame(input2, copy.Inputs.Single().DisplayConditions.Single().Input);
         }
     }
 }
