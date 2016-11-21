@@ -18,6 +18,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using Sensus.UI.UiProperties;
 using Newtonsoft.Json;
+using Sensus.Extensions;
 
 namespace Sensus.UI.Inputs
 {
@@ -46,27 +47,24 @@ namespace Sensus.UI.Inputs
         #region Constructors
         public InputGroup()
         {
-            Id = Guid.NewGuid().ToString();
+            Id     = Guid.NewGuid().ToString();
             Inputs = NewObservableCollection();
             Geotag = false;
         }
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:Sensus.UI.Inputs.InputGroup"/> class as a copy of another. WARNING:  You must call
         /// UpdateDisplayConditionInputs on the resulting object to ensure that all display conditions are properly set up.
         /// </summary>
-        /// <param name="inputGroup">Input group.</param>
-        public InputGroup(InputGroup inputGroup)
+        public InputGroup(InputGroup old)
         {
-            Id = inputGroup.Id;
-            Inputs = NewObservableCollection();
-            Name = inputGroup.Name;
-            Geotag = inputGroup.Geotag;
+            Id     = old.Id;
+            Name   = old.Name;
+            Geotag = old.Geotag;
 
-            foreach (var input in inputGroup.Inputs)
-            {
-                Inputs.Add(input.Copy());
-            }
+            Inputs   = JsonConvert.DeserializeObject<ObservableCollection<Input>>(JsonConvert.SerializeObject(old.Inputs, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
+            //Inputs = old.Inputs.Select(i => i.Copy()).ToObservableCollection(CollectionChanged);
         }
 
         [JsonConstructor]
