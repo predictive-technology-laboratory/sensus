@@ -17,7 +17,6 @@ using Foundation;
 using System;
 using System.IO;
 using System.Threading;
-using Sensus;
 using Sensus.Probes;
 using Sensus.Context;
 using Sensus.Probes.Movement;
@@ -25,10 +24,10 @@ using Sensus.Probes.Location;
 using Xamarin.Forms;
 using MessageUI;
 using AVFoundation;
-using Plugin.Toasts;
 using CoreBluetooth;
 using CoreFoundation;
 using System.Threading.Tasks;
+using ToastIOS;
 
 namespace Sensus.iOS
 {
@@ -92,16 +91,25 @@ namespace Sensus.iOS
         {
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
-                if (MFMailComposeViewController.CanSendMail)
+                if (!MFMailComposeViewController.CanSendMail)
                 {
-                    MFMailComposeViewController mailer = new MFMailComposeViewController();
-                    mailer.SetSubject(subject);
-                    mailer.AddAttachmentData(NSData.FromUrl(NSUrl.FromFilename(path)), mimeType, Path.GetFileName(path));
-                    mailer.Finished += (sender, e) => mailer.DismissViewControllerAsync(true);
-                    UIApplication.SharedApplication.KeyWindow.RootViewController.PresentViewController(mailer, true, null);
-                }
-                else
                     FlashNotificationAsync("You do not have any mail accounts configured. Please configure one before attempting to send emails from Sensus.");
+                    return;
+                }
+
+                NSData data = NSData.FromUrl(NSUrl.FromFilename(path));
+
+                if (data == null)
+                {
+                    FlashNotificationAsync("No file to share.");
+                    return;
+                }
+
+                MFMailComposeViewController mailer = new MFMailComposeViewController();
+                mailer.SetSubject(subject);
+                mailer.AddAttachmentData(data, mimeType, Path.GetFileName(path));
+                mailer.Finished += (sender, e) => mailer.DismissViewControllerAsync(true);
+                UIApplication.SharedApplication.KeyWindow.RootViewController.PresentViewController(mailer, true, null);
             });
         }
 
@@ -198,7 +206,7 @@ namespace Sensus.iOS
             {
                 SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                 {
-                    DependencyService.Get<IToastNotificator>().Notify(ToastNotificationType.Info, "", message + Environment.NewLine, duration);
+                    Toast.MakeText(message, (nint)duration.TotalMilliseconds).Show(ToastType.Info);
                     callback?.Invoke();
                 });
             });

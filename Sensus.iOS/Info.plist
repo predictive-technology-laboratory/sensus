@@ -172,5 +172,7 @@
 	<string>Sensus is collecting location information for one of the studies you are participating in.</string>
 	<key>NSMotionUsageDescription</key>
 	<string>Certain Sensus studies use the accelerometer to gather movement data. You will be alerted when joining such studies.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Sensus uses the camera to scan QR codes. It will not record any images.</string>
 </dict>
 </plist>
