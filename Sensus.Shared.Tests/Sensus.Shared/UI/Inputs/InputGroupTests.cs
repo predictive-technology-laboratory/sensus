@@ -89,6 +89,8 @@ namespace Sensus.Tests.UI.Inputs
             var group = new InputGroup { Inputs = { input } };
             var copy = new InputGroup(group);
 
+            Assert.AreSame(input, input.DisplayConditions.Single().Input);
+            Assert.AreSame(input, group.Inputs.Single());
             Assert.AreNotSame(group.Inputs.Single(), copy.Inputs.Single());
             Assert.AreSame(copy.Inputs.Single(), copy.Inputs.Single().DisplayConditions.Single().Input);
         }
@@ -104,6 +106,7 @@ namespace Sensus.Tests.UI.Inputs
             var group = new InputGroup { Inputs = { input1 } };
             var copy = new InputGroup(group);
 
+            Assert.AreSame(input2, input1.DisplayConditions.Single().Input);
             Assert.AreSame(input1, group.Inputs.Single());
             Assert.AreNotSame(group.Inputs.Single(), copy.Inputs.Single());
             Assert.AreSame(input2, copy.Inputs.Single().DisplayConditions.Single().Input);
