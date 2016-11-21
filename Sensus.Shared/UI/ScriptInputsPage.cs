@@ -48,20 +48,20 @@ namespace Sensus.UI
 
                 if (selectedIndex > 0)
                     actions.Add("Move Up");
-                    
+
                 if (selectedIndex < inputGroup.Inputs.Count - 1)
                     actions.Add("Move Down");
 
                 actions.Add("Edit");
-                    
+
                 if (previousInputGroups != null && previousInputGroups.Select(previousInputGroup => previousInputGroup.Inputs.Count).Sum() > 0)
                     actions.Add("Add Display Condition");
 
                 if (selectedInput.DisplayConditions.Count > 0)
-                    actions.AddRange(new string[]{ "View Display Conditions" });
+                    actions.AddRange(new string[] { "View Display Conditions" });
 
                 actions.Add("Delete");
-                    
+
                 string selectedAction = await DisplayActionSheet(selectedInput.Name, "Cancel", null, actions.ToArray());
 
                 if (selectedAction == "Move Up")
@@ -75,7 +75,7 @@ namespace Sensus.UI
                     {
                         Bind();
                     };
-                        
+
                     await Navigation.PushAsync(inputPage);
                     _inputsList.SelectedItem = null;
                 }
@@ -102,7 +102,7 @@ namespace Sensus.UI
                                 return;
 
                             if (inputs.All(input => input.Valid))
-                            {                   
+                            {
                                 Input conditionInput = ((inputs[0] as ItemPickerPageInput).Value as IEnumerable<object>).First() as Input;
                                 InputValueCondition condition = (InputValueCondition)((inputs[1] as ItemPickerPageInput).Value as IEnumerable<object>).First();
                                 bool conjunctive = ((inputs[2] as ItemPickerPageInput).Value as IEnumerable<object>).First().Equals("Conjunctive");
@@ -133,15 +133,12 @@ namespace Sensus.UI
                                         false,
                                         input =>
                                         {
-                                            if (input == null)
-                                                return;
-
-                                            if (input.Valid)
+                                            if (input?.Valid ?? false)
                                                 selectedInput.DisplayConditions.Add(new InputDisplayCondition(conditionInput, condition, input.Value, conjunctive));
                                         });
                                 }
-                            }                            
-                        });                    
+                            }
+                        });
                 }
                 else if (selectedAction == "View Display Conditions")
                 {
@@ -187,7 +184,7 @@ namespace Sensus.UI
                                 {
                                     Bind();
                                 };
-                        
+
                                 await Navigation.PushAsync(inputPage);
                             }
                         }
