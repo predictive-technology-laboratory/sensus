@@ -13,7 +13,9 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace Sensus.UI.Inputs
 {
@@ -93,7 +95,21 @@ namespace Sensus.UI.Inputs
 
         public override string ToString()
         {
-            return _input.Name + " " + _condition + (_value == null ? "" : " " + _value) + " " + (_conjunctive ? "(Conjunctive)" : "(Disjunctive)");
+            string valueDescription = "";
+
+            if (_value != null)
+            {
+                if (_value is List<object>)
+                {
+                    valueDescription = string.Concat((_value as List<object>).Select(o => "," + o).ToArray()).Trim(',');
+                }
+                else
+                    valueDescription = _value.ToString();
+
+                valueDescription = " " + valueDescription;
+            }
+
+            return _input.Name + " " + _condition + valueDescription + " " + (_conjunctive ? "(Conjunctive)" : "(Disjunctive)");
         }
     }
 }

@@ -70,7 +70,11 @@ namespace Sensus.UI
                     _groupsList.SelectedItem = null;
                 }
                 else if (selectedAction == "Copy")
-                    script.InputGroups.Add(new InputGroup(selectedInputGroup));
+                {
+                    InputGroup copy = new InputGroup(selectedInputGroup);
+                    copy.UpdateDisplayConditionInputs(_script.InputGroups.SelectMany(inputGroup => inputGroup.Inputs).ToArray());
+                    script.InputGroups.Add(copy);
+                }
                 else if (selectedAction == "Delete")
                 {
                     if (await DisplayAlert("Delete " + selectedInputGroup.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
