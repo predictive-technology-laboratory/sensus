@@ -20,7 +20,6 @@ using Android.App;
 using Android.Widget;
 using Android.Content;
 using Android.Content.PM;
-using Sensus;
 using Sensus.UI;
 using Sensus.Context;
 using Xamarin;
@@ -29,7 +28,6 @@ using Xamarin.Facebook;
 using Xamarin.Forms.Platform.Android;
 using Xam.Plugin.MapExtend.Droid;
 using Plugin.CurrentActivity;
-using ZXing.Mobile;
 using System.Threading.Tasks;
 
 #if __ANDROID_23__
@@ -79,6 +77,7 @@ namespace Sensus.Android
             Forms.Init(this, savedInstanceState);
             FormsMaps.Init(this, savedInstanceState);
             MapExtendRenderer.Init(this, savedInstanceState);
+            ZXing.Net.Mobile.Forms.Android.Platform.Init();
             CrossCurrentActivity.Current.Activity = this;
 
 #if UNIT_TESTING
@@ -92,10 +91,7 @@ namespace Sensus.Android
             _app = new App();
             LoadApplication(_app);
 
-            MobileBarcodeScanner.Initialize(Application);
-
             _serviceConnection = new AndroidSensusServiceConnection();
-
             _serviceConnection.ServiceConnected += (o, e) =>
             {
                 // it's happened that the service is created / started after the service helper is disposed:  https://insights.xamarin.com/app/Sensus-Production/issues/46
@@ -105,18 +101,6 @@ namespace Sensus.Android
                 {
                     Finish();
                     return;
-                }
-
-                if (e.Binder.SensusServiceHelper.BarcodeScanner == null)
-                {
-                    try
-                    {
-                        e.Binder.SensusServiceHelper.BarcodeScanner = new MobileBarcodeScanner();
-                    }
-                    catch (Exception ex)
-                    {
-                        e.Binder.SensusServiceHelper.Logger.Log("Failed to create barcode scanner:  " + ex.Message, LoggingLevel.Normal, GetType());
-                    }
                 }
 
                 // tell the service to finish this activity when it is stopped
@@ -179,8 +163,16 @@ namespace Sensus.Android
 
                 SensusServiceHelper.Get().ClearPendingSurveysNotificationAsync();
 
-                // now that the service connection has been established, dismiss the wait dialog and show protocols.
-                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(serviceBindWaitDialog.Dismiss);
+                // now that the service connection has been established, dismiss the wait dialog. wrap this in a try-catch in 
+                // case the screen orientation changes before we get here, which will disconnect the dialog from the window manager 
+                // and will throw an exception.
+                try
+                {
+                    SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(serviceBindWaitDialog.Dismiss);
+                }
+                catch (Exception)
+                {
+                }
             });
         }
 
@@ -397,6 +389,7 @@ namespace Sensus.Android
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
         {
             PermissionsImplementation.Current.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+            ZXing.Net.Mobile.Forms.Android.PermissionsHandler.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
 #endif
 

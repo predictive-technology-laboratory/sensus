@@ -40,9 +40,9 @@ using Plugin.Permissions.Abstractions;
 using Sensus.Callbacks;
 
 #if __ANDROID__ || __IOS__
-using ZXing.Mobile;
 using ZXing;
 #endif
+
 #if __IOS__
 using XLabs.Platform.Device;
 #endif
@@ -269,7 +269,6 @@ namespace Sensus
         private List<PointOfInterest> _pointsOfInterest;
 
 #if __IOS__ || __ANDROID__
-        private MobileBarcodeScanner _barcodeScanner;
         private ZXing.Mobile.BarcodeWriter _barcodeWriter;
 #endif
 
@@ -303,19 +302,6 @@ namespace Sensus
         }
 
 #if __IOS__ || __ANDROID__
-        [JsonIgnore]
-        public MobileBarcodeScanner BarcodeScanner
-        {
-            get
-            {
-                return _barcodeScanner;
-            }
-            set
-            {
-                _barcodeScanner = value;
-            }
-        }
-
         [JsonIgnore]
         public ZXing.Mobile.BarcodeWriter BarcodeWriter
         {

@@ -44,8 +44,22 @@ namespace Sensus.Probes.User.Scripts
         {
             get
             {
-                int scriptsRun = _scriptRunners.Sum(scriptRunner => scriptRunner.RunTimes.Count(runTime => runTime >= Protocol.ParticipationHorizon));
-                int scriptsCompleted = _scriptRunners.Sum(scriptRunner => scriptRunner.CompletionTimes.Count(completionTime => completionTime >= Protocol.ParticipationHorizon));
+                int scriptsRun = _scriptRunners.Sum(scriptRunner =>
+                {
+                    lock (scriptRunner.RunTimes)
+                    {
+                        return scriptRunner.RunTimes.Count(runTime => runTime >= Protocol.ParticipationHorizon);
+                    }
+                });
+
+                int scriptsCompleted = _scriptRunners.Sum(scriptRunner =>
+                {
+                    lock (scriptRunner.CompletionTimes)
+                    {
+                        return scriptRunner.CompletionTimes.Count(completionTime => completionTime >= Protocol.ParticipationHorizon);
+                    }
+                });
+
                 return scriptsRun == 0 ? 1 : scriptsCompleted / (float)scriptsRun;
             }
         }
@@ -94,7 +108,7 @@ namespace Sensus.Probes.User.Scripts
         }
 
         public ScriptProbe()
-        {            
+        {
             _scriptRunners = new ObservableCollection<ScriptRunner>();
         }
 
@@ -113,7 +127,7 @@ namespace Sensus.Probes.User.Scripts
 
             foreach (ScriptRunner scriptRunner in _scriptRunners)
                 if (scriptRunner.Enabled)
-                    scriptRunner.Start();            
+                    scriptRunner.Start();
         }
 
         public override bool TestHealth(ref string error, ref string warning, ref string misc)

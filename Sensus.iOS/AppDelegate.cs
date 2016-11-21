@@ -26,7 +26,6 @@ using Sensus.iOS.Context;
 using UIKit;
 using Foundation;
 using CoreLocation;
-using Plugin.Toasts;
 using Facebook.CoreKit;
 using Sensus.iOS.Exceptions;
 using Syncfusion.SfChart.XForms.iOS.Renderers;
@@ -87,10 +86,7 @@ namespace Sensus.iOS
             FormsMaps.Init();
             MapExtendRenderer.Init();
             new SfChartRenderer();
-
-            // toasts for iOS
-            DependencyService.Register<ToastNotificatorImplementation>();
-            ToastNotificatorImplementation.Init();
+            ZXing.Net.Mobile.Forms.iOS.Platform.Init();
 
             LoadApplication(new App());
 
@@ -156,15 +152,6 @@ namespace Sensus.iOS
         public override void OnActivated(UIApplication uiApplication)
         {
             iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
-
-            try
-            {
-                serviceHelper.BarcodeScanner = new ZXing.Mobile.MobileBarcodeScanner(UIApplication.SharedApplication.KeyWindow.RootViewController);
-            }
-            catch (Exception ex)
-            {
-                serviceHelper.Logger.Log("Failed to create barcode scanner:  " + ex.Message, LoggingLevel.Normal, GetType());
-            }
 
             serviceHelper.StartAsync(() =>
             {
@@ -265,8 +252,11 @@ namespace Sensus.iOS
             // track running time for listening probes, we need to add a stop time manually since
             // we won't call stop until after the service helper has been saved.
             foreach (Protocol protocol in serviceHelper.RegisteredProtocols)
+            {
                 if (protocol.Running)
+                {
                     foreach (Probe probe in protocol.Probes)
+                    {
                         if (probe.Running)
                         {
                             lock (probe.StartStopTimes)
@@ -274,6 +264,9 @@ namespace Sensus.iOS
                                 probe.StartStopTimes.Add(new Tuple<bool, DateTime>(false, DateTime.Now));
                             }
                         }
+                    }
+                }
+            }
 
             serviceHelper.Save();
             serviceHelper.StopProtocols();

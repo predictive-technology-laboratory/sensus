@@ -269,17 +269,16 @@ namespace Sensus.Probes
 
         protected void StartAsync()
         {
-            new Thread(() =>
+            Task.Run(() =>
+            {
+                try
                 {
-                    try
-                    {
-                        Start();
-                    }
-                    catch (Exception)
-                    {
-                    }
-
-                }).Start();
+                    Start();
+                }
+                catch (Exception)
+                {
+                }
+            });
         }
 
         /// <summary>
@@ -385,18 +384,17 @@ namespace Sensus.Probes
 
         protected void StopAsync()
         {
-            new Thread(() =>
+            Task.Run(() =>
+            {
+                try
                 {
-                    try
-                    {
-                        Stop();
-                    }
-                    catch (Exception ex)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Failed to stop:  " + ex.Message, LoggingLevel.Normal, GetType());
-                    }
-
-                }).Start();
+                    Stop();
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Failed to stop:  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
+            });
         }
 
         /// <summary>
