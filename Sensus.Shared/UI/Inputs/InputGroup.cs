@@ -47,7 +47,7 @@ namespace Sensus.UI.Inputs
         #region Constructors
         public InputGroup()
         {
-            Id     = Guid.NewGuid().ToString();
+            Id = Guid.NewGuid().ToString();
             Inputs = NewObservableCollection();
             Geotag = false;
         }
@@ -57,14 +57,12 @@ namespace Sensus.UI.Inputs
         /// Initializes a new instance of the <see cref="T:Sensus.UI.Inputs.InputGroup"/> class as a copy of another. WARNING:  You must call
         /// UpdateDisplayConditionInputs on the resulting object to ensure that all display conditions are properly set up.
         /// </summary>
-        public InputGroup(InputGroup old)
+        public InputGroup(InputGroup inputGroup)
         {
-            Id     = old.Id;
-            Name   = old.Name;
-            Geotag = old.Geotag;
-
-            Inputs   = JsonConvert.DeserializeObject<ObservableCollection<Input>>(JsonConvert.SerializeObject(old.Inputs, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
-            //Inputs = old.Inputs.Select(i => i.Copy()).ToObservableCollection(CollectionChanged);
+            Id = inputGroup.Id;
+            Name = inputGroup.Name;
+            Geotag = inputGroup.Geotag;
+            Inputs = JsonConvert.DeserializeObject<ObservableCollection<Input>>(JsonConvert.SerializeObject(inputGroup.Inputs, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
         }
 
         [JsonConstructor]
@@ -86,7 +84,7 @@ namespace Sensus.UI.Inputs
         {
             foreach (Input input in Inputs)
                 foreach (InputDisplayCondition displayCondition in input.DisplayConditions)
-                    displayCondition.Input = inputs.First(i => i.Id == displayCondition.Input.Id);
+                    displayCondition.Input = inputs.Single(i => i.Id == displayCondition.Input.Id);
         }
 
         public override string ToString()
