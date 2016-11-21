@@ -51,6 +51,11 @@ namespace Sensus.UI.Inputs
             Geotag = false;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:Sensus.UI.Inputs.InputGroup"/> class as a copy of another. WARNING:  You must call
+        /// UpdateDisplayConditionInputs on the resulting object to ensure that all display conditions are properly set up.
+        /// </summary>
+        /// <param name="inputGroup">Input group.</param>
         public InputGroup(InputGroup inputGroup)
         {
             Id = inputGroup.Id;
@@ -73,6 +78,19 @@ namespace Sensus.UI.Inputs
         #endregion
 
         #region Public Methods
+        /// <summary>
+        /// Updates any display conditions contained on any input in this group to reference inputs contained in the passed array.
+        /// This is necessary after copying an input group, because we use serialization/deserialization to copy each individual
+        /// input, which then breaks the object reference from input display conditions to their target inputs.
+        /// </summary>
+        /// <param name="inputs">Inputs.</param>
+        public void UpdateDisplayConditionInputs(Input[] inputs)
+        {
+            foreach (Input input in Inputs)
+                foreach (InputDisplayCondition displayCondition in input.DisplayConditions)
+                    displayCondition.Input = inputs.First(i => i.Id == displayCondition.Input.Id);
+        }
+
         public override string ToString()
         {
             return Name;

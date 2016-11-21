@@ -66,6 +66,12 @@ namespace Sensus.Probes.User.Scripts
             Id = script.Id;
             Runner = script.Runner;
             InputGroups = script.InputGroups.Select(g => new InputGroup(g)).ToObservableCollection();
+
+            // update input object references within any display conditions
+            Input[] allInputs = InputGroups.SelectMany(group => group.Inputs).ToArray();
+            foreach (InputGroup inputGroup in InputGroups)
+                inputGroup.UpdateDisplayConditionInputs(allInputs);
+
             ScheduledRunTime = script.ScheduledRunTime;
             RunTime = script.RunTime;
             PreviousDatum = script.PreviousDatum;
