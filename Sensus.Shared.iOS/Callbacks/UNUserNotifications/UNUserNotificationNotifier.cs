@@ -36,7 +36,7 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
 
             info.SetValueForKey(new NSNumber(true), new NSString(SILENT_NOTIFICATION_KEY));
 
-            IssueNotificationAsync("silent", "silent", id, false, DisplayPage.None, delayMS, info, requestCreated);
+            IssueNotificationAsync("Your study needs to be updated.", "Please open this notification.", id, false, DisplayPage.None, delayMS, info, requestCreated);
         }
 
         public void IssueNotificationAsync(string title, string message, string id, bool playSound, DisplayPage displayPage, int delayMS, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using Foundation;
 using Sensus.Context;
 using UserNotifications;
 
@@ -36,8 +37,21 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
 
         public override void DidReceiveNotificationResponse(UNUserNotificationCenter center, UNNotificationResponse response, Action completionHandler)
         {
-            SensusServiceHelper.Get().Logger.Log("Notification received user response:  " + (response?.Notification?.Request?.Identifier ?? "[null identifier]"), LoggingLevel.Normal, GetType());
-            (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler)?.OpenDisplayPage(response?.Notification?.Request?.Content?.UserInfo);
+            UNNotificationRequest request = response?.Notification?.Request;
+            NSDictionary notificationInfo = request?.Content?.UserInfo;
+
+            if (notificationInfo == null)
+                return;
+
+            SensusServiceHelper.Get().Logger.Log("Notification received user response:  " + (request.Identifier ?? "[null identifier]"), LoggingLevel.Normal, GetType());
+
+            (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler)?.OpenDisplayPage(notificationInfo);
+
+            // provide some generic feedback if the user responded to a silent notification
+            if ((notificationInfo.ValueForKey(new NSString(iOSNotifier.SILENT_NOTIFICATION_KEY)) as NSNumber)?.BoolValue ?? false)
+            {
+                SensusServiceHelper.Get().FlashNotificationAsync("Study Updated.", false);
+            }
         }
     }
 }

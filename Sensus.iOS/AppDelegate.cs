@@ -201,8 +201,16 @@ namespace Sensus.iOS
                     // check whether the user opened the notification to open sensus, indicated by an application state that is not active. we'll
                     // also get notifications when the app is active, since we use them for timed callback events. if the user opened the notification, 
                     // display the page associated with the notification (if there is one).
-                    if (application.ApplicationState != UIApplicationState.Active)
+                    if (application.ApplicationState != UIApplicationState.Active && notification.UserInfo != null)
+                    {
                         callbackScheduler.OpenDisplayPage(notification.UserInfo);
+
+                        // provide some generic feedback if the user responded to a silent notification
+                        if ((notification.UserInfo.ValueForKey(new NSString(iOSNotifier.SILENT_NOTIFICATION_KEY)) as NSNumber)?.BoolValue ?? false)
+                        {
+                            SensusServiceHelper.Get().FlashNotificationAsync("Study Updated.", false);
+                        }
+                    }
                 }
             }
         }

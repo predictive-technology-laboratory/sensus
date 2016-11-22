@@ -245,7 +245,7 @@ namespace Sensus.DataStores
                 // so, do the best possible thing and bug the user with a notification indicating that data need to be stored.
                 // only do this for the remote data store to that we don't get duplicate notifications.
                 if (this is RemoteDataStore)
-                    userNotificationMessage = "Sensus needs to submit your data for the \"" + _protocol.Name + "\" study. Please open this notification.";
+                    userNotificationMessage = "Please open this notification to submit your data for the \"" + _protocol.Name + "\" study.";
 #endif
 
                 _commitCallback = new ScheduledCallback(CommitAndReleaseAddedDataAsync, GetType().FullName, Protocol.Id, TimeSpan.FromMinutes(_commitTimeoutMinutes), userNotificationMessage);
