@@ -101,7 +101,7 @@ namespace Sensus.Android
                         // is this a callback intent?
                         if (intent.GetBooleanExtra(CallbackScheduler.SENSUS_CALLBACK_KEY, false))
                             (SensusContext.Current.CallbackScheduler as AndroidCallbackScheduler).ServiceCallback(intent);
-                        // should we display a page
+                        // should we display a page?
                         else if (Enum.TryParse(intent.GetStringExtra(Notifier.DISPLAY_PAGE_KEY), out displayPage))
                         {
                             serviceHelper.BringToForeground();

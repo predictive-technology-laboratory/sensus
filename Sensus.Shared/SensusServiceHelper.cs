@@ -768,11 +768,18 @@ namespace Sensus
         {
             RemoveExpiredScripts(false);
 
-            string pendingSurveyMessage = PendingSurveyMessage(_scriptsToRun.Count);
-            if (pendingSurveyMessage == null)
+            int numScriptsToRun = _scriptsToRun.Count;
+
+            if (numScriptsToRun == 0)
                 ClearPendingSurveysNotificationAsync();
             else
-                SensusContext.Current.Notifier.IssueNotificationAsync("Sensus", pendingSurveyMessage, PENDING_SURVEY_NOTIFICATION_ID, playSound, DisplayPage.PendingSurveys);
+            {
+                string s = numScriptsToRun == 1 ? "" : "s";
+                string pendingSurveysTitle = numScriptsToRun == 0 ? null : $"You have {numScriptsToRun} pending survey{s}.";
+                DateTime? nextExpirationDate = _scriptsToRun.Select(script => script.ExpirationDate).Where(expirationDate => expirationDate.HasValue).OrderBy(expirationDate => expirationDate).FirstOrDefault();
+                string nextExpirationMessage = nextExpirationDate == null ? (numScriptsToRun == 1 ? "This survey does" : "These surveys do") + " not expire." : "Next expiration:  " + nextExpirationDate.Value.ToShortDateString() + " at " + nextExpirationDate.Value.ToShortTimeString();
+                SensusContext.Current.Notifier.IssueNotificationAsync(pendingSurveysTitle, nextExpirationMessage, PENDING_SURVEY_NOTIFICATION_ID, playSound, DisplayPage.PendingSurveys);
+            }
         }
 
         public void ClearPendingSurveysNotificationAsync()
@@ -1289,13 +1296,6 @@ namespace Sensus
             {
                 IssuePendingSurveysNotificationAsync(false, false);
             }
-        }
-
-        private string PendingSurveyMessage(int scriptsToRunCount)
-        {
-            var s = scriptsToRunCount == 1 ? "" : "s";
-
-            return scriptsToRunCount == 0 ? null : $"You have {scriptsToRunCount} pending survey{s}.";
         }
         #endregion
     }
