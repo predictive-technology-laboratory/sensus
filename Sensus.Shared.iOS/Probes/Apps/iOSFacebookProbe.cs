@@ -36,64 +36,70 @@ namespace Sensus.iOS.Probes.Apps
 
         private void ObtainAccessToken(string[] permissionNames)
         {
-            if (HasValidAccessToken)
+            if (!UIDevice.CurrentDevice.CheckSystemVersion(9, 0))
+                throw new NotSupportedException("The Facebook probe is only available on iOS 9 and higher.");
+            
+            lock (LoginLocker)
             {
-                SensusServiceHelper.Get().Logger.Log("Already have valid Facebook access token. No need to initialize.", LoggingLevel.Normal, GetType());
-                return;
-            }
-
-            ManualResetEvent loginWait = new ManualResetEvent(false);
-            string loginErrorMessage = null;
-            bool userCancelledLogin = false;
-
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
-            {
-                try
+                if (HasValidAccessToken)
                 {
-                    var loginResult = await new LoginManager().LogInWithReadPermissionsAsync(permissionNames, UIApplication.SharedApplication.KeyWindow.RootViewController);
-
-                    if (loginResult == null)
-                    {
-                        loginErrorMessage = "No login result returned by login manager.";
-                    }
-                    else if (loginResult.IsCancelled)
-                    {
-                        loginErrorMessage = "User cancelled login.";
-                        userCancelledLogin = true;
-                    }
-                    else
-                    {
-                        AccessToken.CurrentAccessToken = loginResult.Token;
-                    }
+                    SensusServiceHelper.Get().Logger.Log("Already have valid Facebook access token. No need to initialize.", LoggingLevel.Normal, GetType());
+                    return;
                 }
-                catch (Exception ex)
+
+                ManualResetEvent loginWait = new ManualResetEvent(false);
+                string loginErrorMessage = null;
+                bool userCancelledLogin = false;
+
+                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                 {
-                    loginErrorMessage = "Exception while logging in:  " + ex.Message;
-                }
-                finally
-                {
-                    loginWait.Set();
-                }
-            });
+                    try
+                    {
+                        LoginManagerLoginResult loginResult = await new LoginManager().LogInWithReadPermissionsAsync(permissionNames, UIApplication.SharedApplication.KeyWindow.RootViewController);
 
-            loginWait.WaitOne();
+                        if (loginResult == null)
+                        {
+                            loginErrorMessage = "No login result returned by login manager.";
+                        }
+                        else if (loginResult.IsCancelled)
+                        {
+                            loginErrorMessage = "User cancelled login.";
+                            userCancelledLogin = true;
+                        }
+                        else
+                        {
+                            AccessToken.CurrentAccessToken = loginResult.Token;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        loginErrorMessage = "Exception while logging in:  " + ex.Message;
+                    }
+                    finally
+                    {
+                        loginWait.Set();
+                    }
+                });
 
-            if (loginErrorMessage == null)
-                SensusServiceHelper.Get().Logger.Log("Facebook login succeeded.", LoggingLevel.Normal, GetType());
-            else
-                SensusServiceHelper.Get().Logger.Log("Error while initializing Facebook SDK and/or logging in:  " + loginErrorMessage, LoggingLevel.Normal, GetType());
+                loginWait.WaitOne();
 
-            if (!HasValidAccessToken)
-            {
-                string message = "Failed to obtain access token.";
-                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
-
-                // if the user cancelled the login, don't prompt them again
-                if (userCancelledLogin)
-                    throw new NotSupportedException(message + " User cancelled login.");
-                // if the user did not cancel the login, allow the login to be presented again when the health test is run
+                if (loginErrorMessage == null)
+                    SensusServiceHelper.Get().Logger.Log("Facebook login succeeded.", LoggingLevel.Normal, GetType());
                 else
-                    throw new Exception(message);
+                    SensusServiceHelper.Get().Logger.Log("Error while initializing Facebook SDK and/or logging in:  " + loginErrorMessage, LoggingLevel.Normal, GetType());
+
+                if (!HasValidAccessToken)
+                {
+                    string message = "Failed to obtain access token.";
+                    SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+
+                    // if the user cancelled the login, don't prompt them again
+                    if (userCancelledLogin)
+                        throw new NotSupportedException(message + " User cancelled login.");
+                    // if the user did not cancel the login, allow the login to be presented again when the health test is run
+                    else
+                        throw new Exception(message);
+                }
             }
         }
 
@@ -198,7 +204,8 @@ namespace Sensus.iOS.Probes.Apps
                                                         valuesSet = true;
                                                     }
                                                 }
-                                                else if (resultKey != "data" && resultKey != "paging")
+                                                // there are several result keys that we don't yet handle. ignore these.
+                                                else if (resultKey != "data" && resultKey != "paging" && resultKey != "summary")
                                                     SensusServiceHelper.Get().Logger.Log("Unrecognized key in Facebook result dictionary:  " + resultKey, LoggingLevel.Verbose, GetType());
                                             }
                                             #endregion

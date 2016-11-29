@@ -44,6 +44,8 @@ namespace Sensus.iOS
     [Register("AppDelegate")]
     public class AppDelegate : FormsApplicationDelegate
     {
+        private CLLocationManager _locationManager = new CLLocationManager();
+
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
             // insights should be initialized first to maximize coverage of exception reporting
@@ -99,6 +101,13 @@ namespace Sensus.iOS
 
             Calabash.Start();
 #endif
+
+            // background authorization will be done implicitly when the location manager is used in probes, but the authorization is
+            // done asynchronously so it's likely that the probes will believe that GPS is not enabled/authorized even though the user
+            // is about to grant access (if they choose). now, the health test should fix this up by checking for GPS and restarting
+            // the probes, but the whole thing will seem strange to the user. instead, prompt the user for background authorization
+            // immediately. this is only done one time after the app is installed and started.
+            _locationManager.RequestAlwaysAuthorization();
 
             return base.FinishedLaunching(uiApplication, launchOptions);
         }
@@ -167,13 +176,6 @@ namespace Sensus.iOS
 #endif
             });
 
-            // background authorization will be done implicitly when the location manager is used in probes, but the authorization is
-            // done asynchronously so it's likely that the probes will believe that GPS is not enabled/authorized even though the user
-            // is about to grant access (if they choose). now, the health test should fix this up by checking for GPS and restarting
-            // the probes, but the whole thing will seem strange to the user. instead, prompt the user for background authorization
-            // immediately. this is only done one time after the app is installed and started.
-            new CLLocationManager().RequestAlwaysAuthorization();
-
             base.OnActivated(uiApplication);
         }
 
@@ -195,23 +197,28 @@ namespace Sensus.iOS
                     SensusException.Report("Invalid callback scheduler.");
                 else
                 {
-                    System.Threading.Tasks.Task.Run(async () =>
+                    // run asynchronously to release the UI thread
+                    System.Threading.Tasks.Task.Run(() =>
                     {
-                        await callbackScheduler.ServiceCallbackAsync(notification.UserInfo);
-
-                        // check whether the user opened the notification to open sensus, indicated by an application state that is not active. we'll
-                        // also get notifications when the app is active, since we use them for timed callback events. if the user opened the notification, 
-                        // display the page associated with the notification (if there is one).
-                        if (application.ApplicationState != UIApplicationState.Active && notification.UserInfo != null)
+                        // the following must be done on the UI thread because we reference members of the UILocalNotification.
+                        SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                         {
-                            callbackScheduler.OpenDisplayPage(notification.UserInfo);
+                            await callbackScheduler.ServiceCallbackAsync(notification.UserInfo);
 
-                            // provide some generic feedback if the user responded to a silent notification
-                            if ((notification.UserInfo.ValueForKey(new NSString(iOSNotifier.SILENT_NOTIFICATION_KEY)) as NSNumber)?.BoolValue ?? false)
+                            // check whether the user opened the notification to open sensus, indicated by an application state that is not active. we'll
+                            // also get notifications when the app is active, since we use them for timed callback events. if the user opened the notification, 
+                            // display the page associated with the notification (if there is one). 
+                            if (application.ApplicationState != UIApplicationState.Active && notification.UserInfo != null)
                             {
-                                SensusServiceHelper.Get().FlashNotificationAsync("Study Updated.", false);
+                                callbackScheduler.OpenDisplayPage(notification.UserInfo);
+
+                                // provide some generic feedback if the user responded to a silent notification
+                                if ((notification.UserInfo.ValueForKey(new NSString(iOSNotifier.SILENT_NOTIFICATION_KEY)) as NSNumber)?.BoolValue ?? false)
+                                {
+                                    SensusServiceHelper.Get().FlashNotificationAsync("Study Updated.", false);
+                                }
                             }
-                        }
+                        });
                     });
                 }
             }

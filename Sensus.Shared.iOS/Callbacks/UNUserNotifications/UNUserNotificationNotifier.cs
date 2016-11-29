@@ -36,6 +36,9 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
 
             info.SetValueForKey(new NSNumber(true), new NSString(SILENT_NOTIFICATION_KEY));
 
+            // the user should never see a silent notification since we cancel them when the app is backgrounded. but there are race conditions that
+            // might result in a silent notifiation being scheduled just before the app is backgrounded. give a generic message so that the notification
+            // isn't totally confusing to the user.
             IssueNotificationAsync("Please open this notification.", "One of your studies needs to be updated.", id, false, DisplayPage.None, delayMS, info, requestCreated);
         }
 

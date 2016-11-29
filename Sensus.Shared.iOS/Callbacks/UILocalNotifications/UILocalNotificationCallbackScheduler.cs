@@ -58,9 +58,14 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
                 notifier.IssueNotificationAsync("Sensus", userNotificationMessage, callbackId, true, displayPage, delayMS, callbackInfo, notificationCreated);
         }
 
+        /// <summary>
+        /// Updates the callbacks by running any that should have already been serviced or will be serviced in the near future.
+        /// Also reissues all silent notifications, which would have been canceled when the app went into the background.
+        /// </summary>
+        /// <returns>The callbacks async.</returns>
         public override Task UpdateCallbacksAsync()
         {
-            return Task.Run(async () =>
+            return Task.Run(() =>
             {
                 IUILocalNotificationNotifier notifier = SensusContext.Current.Notifier as IUILocalNotificationNotifier;
 
@@ -74,23 +79,27 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
 
                 foreach (UILocalNotification notification in notifications)
                 {
-                    double msTillTrigger = 0;
-                    DateTime? triggerDateTime = notification.FireDate?.ToDateTime().ToLocalTime();
-                    if (triggerDateTime.HasValue)
-                        msTillTrigger = (triggerDateTime.Value - DateTime.Now).TotalMilliseconds;
+                    // the following needs to be done on the main thread since we're working with UILocalNotification objects.
+                    SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                    {
+                        double msTillTrigger = 0;
+                        DateTime? triggerDateTime = notification.FireDate?.ToDateTime().ToLocalTime();
+                        if (triggerDateTime.HasValue)
+                            msTillTrigger = (triggerDateTime.Value - DateTime.Now).TotalMilliseconds;
 
-                    // service any callback that should have already been serviced or will soon be serviced
-                    if (msTillTrigger < 5000)
-                    {
-                        notifier.CancelNotification(notification);
-                        await ServiceCallbackAsync(notification.UserInfo);
-                    }
-                    // all other callbacks will have upcoming notification deliveries, except for silent notifications, which were canceled when the 
-                    // app was backgrounded. re-issue those silent notifications now.
-                    else if (iOSNotifier.IsSilent(notification.UserInfo))
-                    {
-                        notifier.IssueNotificationAsync(notification);
-                    }
+                        // service any callback that should have already been serviced or will soon be serviced
+                        if (msTillTrigger < 5000)
+                        {
+                            notifier.CancelNotification(notification);
+                            await ServiceCallbackAsync(notification.UserInfo);
+                        }
+                        // all other callbacks will have upcoming notification deliveries, except for silent notifications, which were canceled when the 
+                        // app was backgrounded. re-issue those silent notifications now.
+                        else if (iOSNotifier.IsSilent(notification.UserInfo))
+                        {
+                            notifier.IssueNotificationAsync(notification);
+                        }
+                    });
                 }
             });
         }

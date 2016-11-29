@@ -37,6 +37,9 @@ namespace Sensus.iOS
         private const int BLUETOOTH_ENABLE_TIMEOUT_MS = 10000;
         #endregion
 
+        private DateTime _nextToastTime;
+        private readonly object _toastLocker = new object();
+
         public override bool IsCharging
         {
             get
@@ -84,6 +87,7 @@ namespace Sensus.iOS
 
         public iOSSensusServiceHelper()
         {
+            _nextToastTime = DateTime.Now;
             UIDevice.CurrentDevice.BatteryMonitoringEnabled = true;
         }
 
@@ -202,13 +206,33 @@ namespace Sensus.iOS
 
         protected override void ProtectedFlashNotificationAsync(string message, bool flashLaterIfNotVisible, TimeSpan duration, Action callback)
         {
-            Task.Run(() =>
+            Task.Run(async () =>
             {
+                TimeSpan delay = TimeSpan.FromSeconds(0);
+
+                lock (_toastLocker)
+                {
+                    DateTime now = DateTime.Now;
+
+                    double delaySeconds = (_nextToastTime - now).TotalSeconds;
+
+                    if (delaySeconds > 0)
+                        delay = TimeSpan.FromSeconds(delaySeconds);
+
+                    _nextToastTime = now + delay + duration;
+                }
+
+                if (delay.TotalSeconds > 0)
+                {
+                    await Task.Delay(delay);
+                }
+
                 SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                 {
-                    Toast.MakeText(message, (nint)duration.TotalMilliseconds).Show(ToastType.Info);
-                    callback?.Invoke();
+                    Toast.MakeText(message, (nint)duration.TotalMilliseconds).SetFontSize(13).Show(ToastType.Info);
                 });
+
+                callback?.Invoke();
             });
         }
 

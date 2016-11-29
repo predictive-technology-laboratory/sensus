@@ -314,7 +314,9 @@ namespace Sensus.Probes
 
                 // disable probe if it is not supported on the device (or if the user has elected not to enable it -- e.g., by refusing to log into facebook)
                 if (startException is NotSupportedException)
+                {
                     Enabled = false;
+                }
 
                 throw startException;
             }

@@ -83,7 +83,6 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
                     // service any callback that should have already been serviced or will soon be serviced
                     if (msTillTrigger < 5000)
                     {
-                        SensusServiceHelper.Get().Logger.Log("Servicing callback that is set to trigger in " + msTillTrigger + "ms:  " + request.Identifier, LoggingLevel.Normal, GetType());
                         notifier.CancelNotification(request);
                         await ServiceCallbackAsync(request.Content?.UserInfo);
                     }
@@ -91,7 +90,6 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
                     // app was backgrounded. re-issue those silent notifications now.
                     else if (iOSNotifier.IsSilent(request.Content?.UserInfo))
                     {
-                        SensusServiceHelper.Get().Logger.Log("Reissuing silent callback:  " + request.Identifier, LoggingLevel.Normal, GetType());
                         notifier.IssueNotificationAsync(request.Identifier, request.Content, msTillTrigger, newRequest =>
                         {
                             lock (_callbackIdRequest)

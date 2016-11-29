@@ -1061,10 +1061,9 @@ namespace Sensus
                             int probesEnabled = 0;
                             bool startMicrosoftBandProbes = true;
                             foreach (Probe probe in _probes)
+                            {
                                 if (probe.Enabled)
                                 {
-                                    ++probesEnabled;
-
                                     if (probe is MicrosoftBandProbeBase && !startMicrosoftBandProbes)
                                         continue;
 
@@ -1082,7 +1081,14 @@ namespace Sensus
                                     catch (Exception)
                                     {
                                     }
+
+                                    // probe might become disabled during Start due to a NotSupportedException
+                                    if (probe.Enabled)
+                                    {
+                                        ++probesEnabled;
+                                    }
                                 }
+                            }
 
                             if (probesEnabled == 0)
                                 throw new Exception("No probes were enabled.");
@@ -1119,7 +1125,9 @@ namespace Sensus
                 }
 
                 if (stopProtocol)
+                {
                     Stop();
+                }
             }
         }
 
