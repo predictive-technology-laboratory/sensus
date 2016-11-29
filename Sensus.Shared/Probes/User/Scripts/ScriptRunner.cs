@@ -436,7 +436,8 @@ namespace Sensus.Probes.User.Scripts
 
             // scheduled scripts have their expiration dates set when they're scheduled. scripts triggered by other probes
             // as well as on-start scripts will not yet have their expiration dates set. so check the script we've been 
-            // given and set the expiration date if needed.
+            // given and set the expiration date if needed. triggered scripts don't have windows, so the only expiration
+            // condition comes from the maximum age.
             if (script.ExpirationDate == null && _maxAge.HasValue)
             {
                 script.ExpirationDate = script.Birthdate + _maxAge.Value;

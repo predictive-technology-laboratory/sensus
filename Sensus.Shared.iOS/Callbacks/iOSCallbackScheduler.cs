@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Foundation;
 using Sensus.Callbacks;
 using Sensus.Context;
@@ -39,7 +40,7 @@ namespace Sensus.iOS.Callbacks
 
         protected abstract void ScheduleCallbackAsync(string callbackId, int delayMS, bool repeating, int repeatDelayMS, bool repeatLag);
 
-        public abstract void UpdateCallbackNotifications();
+        public abstract Task UpdateCallbacksAsync();
 
         public NSMutableDictionary GetCallbackInfo(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, DisplayPage displayPage)
         {
@@ -65,46 +66,43 @@ namespace Sensus.iOS.Callbacks
             return new NSMutableDictionary(new NSDictionary(SENSUS_CALLBACK_KEY, true, keyValuePairs.ToArray()));
         }
 
-        public void ServiceCallbackAsync(NSDictionary callbackInfo)
+        public Task ServiceCallbackAsync(NSDictionary callbackInfo)
         {
-            // check whether the passed information describes a callback
-            NSNumber isCallback = callbackInfo?.ValueForKey(new NSString(SENSUS_CALLBACK_KEY)) as NSNumber;
-            if (!(isCallback?.BoolValue ?? false))
-                return;
-
-            // not sure why the following would be null, but we've seen NRE in insights and these are the likely suspects.
-            string callbackId = (callbackInfo.ValueForKey(new NSString(iOSNotifier.NOTIFICATION_ID_KEY)) as NSString)?.ToString();
-            bool repeating = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber)?.BoolValue ?? false;
-            int repeatDelayMS = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_DELAY_KEY)) as NSNumber)?.Int32Value ?? 100000; // not sure what the right value is here.
-            bool repeatLag = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_LAG_KEY)) as NSNumber)?.BoolValue ?? false;
-
-            // only raise callback if it is still scheduled
-            if (!CallbackIsScheduled(callbackId))
-                return;
-
-            // start background task
-            nint callbackTaskId = -1;
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            return Task.Run(async () =>
             {
-                callbackTaskId = UIApplication.SharedApplication.BeginBackgroundTask(() =>
+                // check whether the passed information describes a callback
+                NSNumber isCallback = callbackInfo?.ValueForKey(new NSString(SENSUS_CALLBACK_KEY)) as NSNumber;
+                if (!(isCallback?.BoolValue ?? false))
+                    return;
+
+                // not sure why the following would be null, but we've seen NRE in insights and these are the likely suspects.
+                string callbackId = (callbackInfo.ValueForKey(new NSString(iOSNotifier.NOTIFICATION_ID_KEY)) as NSString)?.ToString();
+                bool repeating = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber)?.BoolValue ?? false;
+                int repeatDelayMS = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_DELAY_KEY)) as NSNumber)?.Int32Value ?? 100000; // not sure what the right value is here.
+                bool repeatLag = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_LAG_KEY)) as NSNumber)?.BoolValue ?? false;
+
+                // only raise callback if it is still scheduled
+                if (!CallbackIsScheduled(callbackId))
+                    return;
+
+                SensusServiceHelper.Get().Logger.Log("Servicing callback " + callbackId, LoggingLevel.Normal, GetType());
+
+                // start background task
+                nint callbackTaskId = -1;
+                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                 {
-                    // if we're out of time running in the background, cancel the callback.
-                    CancelRaisedCallback(callbackId);
+                    callbackTaskId = UIApplication.SharedApplication.BeginBackgroundTask(() =>
+                    {
+                        // if we're out of time running in the background, cancel the callback.
+                        CancelRaisedCallback(callbackId);
+                    });
                 });
-            });
 
-            // raise callback but don't notify user since we would have already done so when the notification was delivered to the notification tray.
-            RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, false,
+                // raise callback but don't notify user since we would have already done so when the notification was delivered to the notification tray.
+                // we don't need to specify how repeats will be scheduled, since the class that extends this one will take care of it. furthermore, there's 
+                // nothing to do if the callback thinks we can sleep, since ios does not provide wake-locks like android.
+                await RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, false, null, null);
 
-            // don't need to specify how repeats will be scheduled. the class that extends this one will take care of it.
-            null,
-
-            // nothing to do if the callback thinks we can sleep. ios does not provide wake-locks like android.
-            null,
-
-            // we've completed the raising process, so end background task
-            () =>
-            {
                 SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                 {
                     UIApplication.SharedApplication.EndBackgroundTask(callbackTaskId);

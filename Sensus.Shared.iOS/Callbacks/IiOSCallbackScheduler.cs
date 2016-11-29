@@ -14,6 +14,7 @@
 
 using Foundation;
 using Sensus.Callbacks;
+using System.Threading.Tasks;
 
 namespace Sensus.iOS.Callbacks
 {
@@ -22,9 +23,9 @@ namespace Sensus.iOS.Callbacks
     /// </summary>
     public interface IiOSCallbackScheduler : ICallbackScheduler
     {
-        void UpdateCallbackNotifications();
+        Task UpdateCallbacksAsync();
 
-        void ServiceCallbackAsync(NSDictionary callbackInfo);
+        Task ServiceCallbackAsync(NSDictionary callbackInfo);
 
         void OpenDisplayPage(NSDictionary notificationInfo);
     }

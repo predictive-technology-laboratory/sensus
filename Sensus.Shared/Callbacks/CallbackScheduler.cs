@@ -73,11 +73,11 @@ namespace Sensus.Callbacks
             return callback?.DisplayPage ?? DisplayPage.None;
         }
 
-        public virtual void RaiseCallbackAsync(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, bool notifyUser, Action<DateTime> scheduleRepeatCallback, Action letDeviceSleepCallback, Action finishedCallback)
+        public virtual Task RaiseCallbackAsync(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, bool notifyUser, Action<DateTime> scheduleRepeatCallback, Action letDeviceSleepCallback)
         {
             DateTime callbackStartTime = DateTime.Now;
 
-            Task.Run(async () =>
+            return Task.Run(async () =>
             {
                 try
                 {
@@ -199,10 +199,6 @@ namespace Sensus.Callbacks
                     catch (Exception)
                     {
                     }
-                }
-                finally
-                {
-                    finishedCallback?.Invoke();
                 }
             });
         }

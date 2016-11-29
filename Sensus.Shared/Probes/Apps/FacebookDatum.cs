@@ -95,9 +95,9 @@ namespace Sensus.Probes.Apps
         [FacebookPermission("email", null, "email")]
         public string Email { get; set; }
 
-        [Anonymizable("Biography:", typeof(StringHashAnonymizer), false)]
-        [FacebookPermission("user_about_me", null, "bio")]
-        public string Biography { get; set; }
+        [Anonymizable("About:", typeof(StringHashAnonymizer), false)]
+        [FacebookPermission("user_about_me", null, "about")]
+        public string About { get; set; }
 
         [Anonymizable(null, typeof(StringHashAnonymizer), false)]
         [FacebookPermission("user_education_history", null, "education")]
@@ -137,79 +137,75 @@ namespace Sensus.Probes.Apps
 
         // user edges
         [Anonymizable(null, typeof(StringHashAnonymizer), false)]
-        [FacebookPermission("user_friends", "friends", null)]
+        [FacebookPermission("user_friends", "friends", "summary=total_count")]
         public List<string> Friends { get; set; }
 
         [Anonymizable("Books Read:", typeof(StringHashAnonymizer), false)]
-        [FacebookPermission("user_actions.books", "book.reads", null)]
+        [FacebookPermission("user_actions.books", "book.reads", "book")]
         public List<string> Books { get; set; }
 
         [Anonymizable(null, typeof(StringHashAnonymizer), false)]
-        [FacebookPermission("user_actions.fitness", "fitness.runs", null)]
+        [FacebookPermission("user_actions.fitness", "fitness.runs", "course")]
         public List<string> Runs { get; set; }
 
         [Anonymizable(null, typeof(StringHashAnonymizer), false)]
-        [FacebookPermission("user_actions.fitness", "fitness.walks", null)]
+        [FacebookPermission("user_actions.fitness", "fitness.walks", "course")]
         public List<string> Walks { get; set; }
 
         [Anonymizable("Bike Rides:", typeof(StringHashAnonymizer), false)]
-        [FacebookPermission("user_actions.fitness", "fitness.bikes", null)]
+        [FacebookPermission("user_actions.fitness", "fitness.bikes", "course")]
         public List<string> Bikes { get; set; }
 
         [Anonymizable("Songs Listened To:", typeof(StringHashAnonymizer), false)]
-        [FacebookPermission("user_actions.music", "music.listens", null)]
+        [FacebookPermission("user_actions.music", "music.listens", "song")]
         public List<string> Songs { get; set; }
 
         [Anonymizable(null, typeof(StringHashAnonymizer), false)]
-        [FacebookPermission("user_actions.music", "music.playlists", null)]
+        [FacebookPermission("user_actions.music", "music.playlists", "playlist")]
         public List<string> Playlists { get; set; }
 
         [Anonymizable("News Read:", typeof(StringHashAnonymizer), false)]
-        [FacebookPermission("user_actions.news", "news.reads", null)]
+        [FacebookPermission("user_actions.news", "news.reads", "article")]
         public List<string> NewsReads { get; set; }
 
         [Anonymizable("News Published:", typeof(StringHashAnonymizer), false)]
-        [FacebookPermission("user_actions.news", "news.publishes", null)]
+        [FacebookPermission("user_actions.news", "news.publishes", "article")]
         public List<string> NewsPublishes { get; set; }
 
         [Anonymizable("Videos Watched:", typeof(StringHashAnonymizer), false)]
-        [FacebookPermission("user_actions.video", "video.watches", null)]
+        [FacebookPermission("user_actions.video", "video.watches", "video")]
         public List<string> VideosWatched { get; set; }
 
         [Anonymizable("Video Ratings:", typeof(StringHashAnonymizer), false)]
-        [FacebookPermission("user_actions.video", "video.rates", null)]
+        [FacebookPermission("user_actions.video", "video.rates", "movie")]
         public List<string> VideoRatings { get; set; }
 
         [Anonymizable("Video Wish List:", typeof(StringHashAnonymizer), false)]
-        [FacebookPermission("user_actions.video", "video.wants_to_watch", null)]
+        [FacebookPermission("user_actions.video", "video.wants_to_watch", "movie")]
         public List<string> VideoWishList { get; set; }
 
         [Anonymizable(null, typeof(StringHashAnonymizer), false)]
-        [FacebookPermission("user_events", "events", null)]
+        [FacebookPermission("user_events", "events", "id")]
         public List<string> Events { get; set; }
 
         [Anonymizable(null, typeof(StringHashAnonymizer), false)]
-        [FacebookPermission("user_games_activity", "games", null)]
-        public List<string> Games { get; set; }
-
-        [Anonymizable(null, typeof(StringHashAnonymizer), false)]
-        [FacebookPermission("user_likes", "likes", null)]
+        [FacebookPermission("user_likes", "likes", "created_time")]
         public List<string> Likes { get; set; }
 
         [Anonymizable("Captions of Posted Photos:", typeof(StringHashAnonymizer), false)]
-        [FacebookPermission("user_photos", "photos", null)]
+        [FacebookPermission("user_photos", "photos", "id")]
         public List<string> PhotoCaptions { get; set; }
 
         [Anonymizable(null, typeof(StringHashAnonymizer), false)]
-        [FacebookPermission("user_posts", "posts", null)]
+        [FacebookPermission("user_posts", "posts", "id")]
         public List<string> Posts { get; set; }
 
         [Anonymizable("Tagged Places:", typeof(StringHashAnonymizer), false)]
-        [FacebookPermission("user_tagged_places", "tagged_places", null)]
+        [FacebookPermission("user_tagged_places", "tagged_places", "id")]
         public List<string> TaggedPlaces { get; set; }
 
         [Anonymizable("Titles of Posted Videos:", typeof(StringHashAnonymizer), false)]
-        [FacebookPermission("user_videos", "videos", null)]
+        [FacebookPermission("user_videos", "videos", "id")]
         public List<string> VideoTitles { get; set; }
 
         public override string DisplayDetail

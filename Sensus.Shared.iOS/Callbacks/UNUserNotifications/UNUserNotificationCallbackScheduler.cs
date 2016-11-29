@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Foundation;
 using Sensus.Callbacks;
 using Sensus.Context;
@@ -58,17 +59,22 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
                 notifier.IssueNotificationAsync("Sensus", userNotificationMessage, callbackId, true, displayPage, delayMS, callbackInfo, requestCreated);
         }
 
-        public override void UpdateCallbackNotifications()
+        public override Task UpdateCallbacksAsync()
         {
-            lock (_callbackIdRequest)
+            return Task.Run(async () =>
             {
                 IUNUserNotificationNotifier notifier = SensusContext.Current.Notifier as IUNUserNotificationNotifier;
 
-                // copy key list since servicing/raising the callback is going to modify the collection temporarily
-                foreach (string callbackId in _callbackIdRequest.Keys.ToList())
+                // get a list of requests to update. cannot iterate over the requests directly because the raising
+                // process is going to temporarily modify the collection.
+                List<UNNotificationRequest> requests = null;
+                lock (_callbackIdRequest)
                 {
-                    UNNotificationRequest request = _callbackIdRequest[callbackId];
+                    requests = _callbackIdRequest.Values.ToList();
+                }
 
+                foreach (UNNotificationRequest request in requests)
+                {
                     double msTillTrigger = 0;
                     DateTime? triggerDateTime = (request.Trigger as UNCalendarNotificationTrigger)?.NextTriggerDate?.ToDateTime().ToLocalTime();
                     if (triggerDateTime.HasValue)
@@ -77,47 +83,55 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
                     // service any callback that should have already been serviced or will soon be serviced
                     if (msTillTrigger < 5000)
                     {
+                        SensusServiceHelper.Get().Logger.Log("Servicing callback that is set to trigger in " + msTillTrigger + "ms:  " + request.Identifier, LoggingLevel.Normal, GetType());
                         notifier.CancelNotification(request);
-                        ServiceCallbackAsync(request.Content?.UserInfo);
+                        await ServiceCallbackAsync(request.Content?.UserInfo);
                     }
                     // all other callbacks will have upcoming notification deliveries, except for silent notifications, which were canceled when the 
                     // app was backgrounded. re-issue those silent notifications now.
                     else if (iOSNotifier.IsSilent(request.Content?.UserInfo))
                     {
-                        notifier.IssueNotificationAsync(callbackId, request.Content, msTillTrigger, newRequest =>
+                        SensusServiceHelper.Get().Logger.Log("Reissuing silent callback:  " + request.Identifier, LoggingLevel.Normal, GetType());
+                        notifier.IssueNotificationAsync(request.Identifier, request.Content, msTillTrigger, newRequest =>
                         {
-                            _callbackIdRequest[callbackId] = newRequest;
+                            lock (_callbackIdRequest)
+                            {
+                                _callbackIdRequest[request.Identifier] = newRequest;
+                            }
                         });
                     }
                 }
-            }
+            });
         }
 
-        public override void RaiseCallbackAsync(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, bool notifyUser, Action<DateTime> scheduleRepeatCallback, Action letDeviceSleepCallback, Action finishedCallback)
+        public override Task RaiseCallbackAsync(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, bool notifyUser, Action<DateTime> scheduleRepeatCallback, Action letDeviceSleepCallback)
         {
-            // see corresponding comments in UILocalNotificationCallbackScheduler
-
-            UNNotificationRequest request;
-            lock (_callbackIdRequest)
+            return Task.Run(async () =>
             {
-                _callbackIdRequest.TryGetValue(callbackId, out request);
-                _callbackIdRequest.Remove(callbackId);
-            }
-
-            base.RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, notifyUser,
-
-            repeatCallbackTime =>
-            {
-                (SensusContext.Current.Notifier as IUNUserNotificationNotifier).IssueNotificationAsync(request.Identifier, request.Content, (repeatCallbackTime - DateTime.Now).TotalMilliseconds, newRequest =>
+                // see corresponding comments in UILocalNotificationCallbackScheduler
+                UNNotificationRequest request;
+                lock (_callbackIdRequest)
                 {
-                    lock (_callbackIdRequest)
-                    {
-                        _callbackIdRequest.Add(newRequest.Identifier, newRequest);
-                    }
-                });
-            },
+                    _callbackIdRequest.TryGetValue(callbackId, out request);
+                    _callbackIdRequest.Remove(callbackId);
+                }
 
-            letDeviceSleepCallback, finishedCallback);
+                await base.RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, notifyUser,
+
+                    repeatCallbackTime =>
+                    {
+                        (SensusContext.Current.Notifier as IUNUserNotificationNotifier).IssueNotificationAsync(request.Identifier, request.Content, (repeatCallbackTime - DateTime.Now).TotalMilliseconds, newRequest =>
+                        {
+                            lock (_callbackIdRequest)
+                            {
+                                _callbackIdRequest.Add(newRequest.Identifier, newRequest);
+                            }
+                        });
+                    },
+
+                    letDeviceSleepCallback
+                );
+            });
         }
 
         protected override void UnscheduleCallbackPlatformSpecific(string callbackId)

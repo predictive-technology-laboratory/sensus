@@ -17,6 +17,7 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using Sensus.Callbacks;
+using System.Threading.Tasks;
 
 namespace Sensus.Android.Callbacks
 {
@@ -94,55 +95,56 @@ namespace Sensus.Android.Callbacks
             }
         }
 
-        public void ServiceCallback(Intent intent)
+        public Task ServiceCallbackAsync(Intent intent)
         {
-            SensusServiceHelper serviceHelper = SensusServiceHelper.Get();
-
-            string callbackId = intent.Action;
-
-            // if the user removes the main activity from the switcher, the service's process will be killed and restarted without notice, and 
-            // we'll have no opportunity to unschedule repeating callbacks. when the service is restarted we'll reinitialize the service
-            // helper, restart the repeating callbacks, and we'll then have duplicate repeating callbacks. handle the invalid callbacks below.
-            // if the callback is scheduled, it's fine. if it's not, then unschedule it.
-            if (CallbackIsScheduled(callbackId))
+            return Task.Run(async () =>
             {
-                bool repeating = intent.GetBooleanExtra(SENSUS_CALLBACK_REPEATING_KEY, false);
-                int repeatDelayMS = intent.GetIntExtra(SENSUS_CALLBACK_REPEAT_DELAY_KEY, -1);
-                bool repeatLag = intent.GetBooleanExtra(SENSUS_CALLBACK_REPEAT_LAG_KEY, false);
-                bool wakeLockReleased = false;
+                SensusServiceHelper serviceHelper = SensusServiceHelper.Get();
 
-                // raise callback and notify the user if there is a message. we wouldn't have presented the user with the message yet.
-                RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, true,
+                string callbackId = intent.Action;
 
-                    // schedule a new alarm for the same callback at the desired time.
-                    repeatCallbackTime =>
-                    {
-                        ScheduleCallbackAlarm(CreateCallbackPendingIntent(intent), (long)(repeatCallbackTime - DateTime.Now).TotalMilliseconds);
-                    },
+                // if the user removes the main activity from the switcher, the service's process will be killed and restarted without notice, and 
+                // we'll have no opportunity to unschedule repeating callbacks. when the service is restarted we'll reinitialize the service
+                // helper, restart the repeating callbacks, and we'll then have duplicate repeating callbacks. handle the invalid callbacks below.
+                // if the callback is scheduled, it's fine. if it's not, then unschedule it.
+                if (CallbackIsScheduled(callbackId))
+                {
+                    bool repeating = intent.GetBooleanExtra(SENSUS_CALLBACK_REPEATING_KEY, false);
+                    int repeatDelayMS = intent.GetIntExtra(SENSUS_CALLBACK_REPEAT_DELAY_KEY, -1);
+                    bool repeatLag = intent.GetBooleanExtra(SENSUS_CALLBACK_REPEAT_LAG_KEY, false);
+                    bool wakeLockReleased = false;
 
-                    // if the callback indicates that it's okay for the device to sleep, release the wake lock now.
-                    () =>
-                    {
-                        wakeLockReleased = true;
-                        serviceHelper.LetDeviceSleep();
-                        serviceHelper.Logger.Log("Wake lock released preemptively for scheduled callback action.", LoggingLevel.Normal, GetType());
-                    },
+                    // raise callback and notify the user if there is a message. we wouldn't have presented the user with the message yet.
+                    await RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, true,
+
+                        // schedule a new alarm for the same callback at the desired time.
+                        repeatCallbackTime =>
+                        {
+                            ScheduleCallbackAlarm(CreateCallbackPendingIntent(intent), (long)(repeatCallbackTime - DateTime.Now).TotalMilliseconds);
+                        },
+
+                        // if the callback indicates that it's okay for the device to sleep, release the wake lock now.
+                        () =>
+                        {
+                            wakeLockReleased = true;
+                            serviceHelper.LetDeviceSleep();
+                            serviceHelper.Logger.Log("Wake lock released preemptively for scheduled callback action.", LoggingLevel.Normal, GetType());
+                        }
+                    );
 
                     // release wake lock now if we didn't while the callback action was executing.
-                    () =>
+                    if (!wakeLockReleased)
                     {
-                        if (!wakeLockReleased)
-                        {
-                            serviceHelper.LetDeviceSleep();
-                            serviceHelper.Logger.Log("Wake lock released after scheduled callback action completed.", LoggingLevel.Normal, GetType());
-                        }
-                    });
-            }
-            else
-            {
-                UnscheduleCallback(callbackId);
-                serviceHelper.LetDeviceSleep();
-            }
+                        serviceHelper.LetDeviceSleep();
+                        serviceHelper.Logger.Log("Wake lock released after scheduled callback action completed.", LoggingLevel.Normal, GetType());
+                    }
+                }
+                else
+                {
+                    UnscheduleCallback(callbackId);
+                    serviceHelper.LetDeviceSleep();
+                }
+            });
         }
 
         protected override void UnscheduleCallbackPlatformSpecific(string callbackId)

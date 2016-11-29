@@ -20,6 +20,7 @@ using Sensus.Callbacks;
 using Sensus.Context;
 using UIKit;
 using Xamarin.Forms.Platform.iOS;
+using System.Threading.Tasks;
 
 namespace Sensus.iOS.Callbacks.UILocalNotifications
 {
@@ -57,81 +58,80 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
                 notifier.IssueNotificationAsync("Sensus", userNotificationMessage, callbackId, true, displayPage, delayMS, callbackInfo, notificationCreated);
         }
 
-        public override void UpdateCallbackNotifications()
+        public override Task UpdateCallbacksAsync()
         {
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            return Task.Run(async () =>
             {
-                // this method will be called in one of three conditions:  (1) after sensus has been started and is running, (2)
-                // after sensus has been reactivated and was already running, and (3) after a start attempt was made but failed.
-                // in all three situations, there will be zero or more notifications present in the _callbackIdNotification lookup.
-                // in (1), the notifications will have just been created and will have activation IDs set to the activation ID of
-                // the current object. in (2), the notifications will have stale activation IDs. in (3), there will be no notifications.
-                // the required post-condition of this method is that any present notification objects have activation IDs set to
-                // the activation ID of the current object. so...let's make that happen.
+                IUILocalNotificationNotifier notifier = SensusContext.Current.Notifier as IUILocalNotificationNotifier;
+
+                // get a list of notifications to update. cannot iterate over the notifications directly because the raising
+                // process is going to temporarily modify the collection.
+                List<UILocalNotification> notifications = null;
                 lock (_callbackIdNotification)
                 {
-                    IUILocalNotificationNotifier notifier = SensusContext.Current.Notifier as IUILocalNotificationNotifier;
+                    notifications = _callbackIdNotification.Values.ToList();
+                }
 
-                    // copy key list since servicing/raising the callback is going to modify the collection temporarily
-                    foreach (string callbackId in _callbackIdNotification.Keys.ToList())
+                foreach (UILocalNotification notification in notifications)
+                {
+                    double msTillTrigger = 0;
+                    DateTime? triggerDateTime = notification.FireDate?.ToDateTime().ToLocalTime();
+                    if (triggerDateTime.HasValue)
+                        msTillTrigger = (triggerDateTime.Value - DateTime.Now).TotalMilliseconds;
+
+                    // service any callback that should have already been serviced or will soon be serviced
+                    if (msTillTrigger < 5000)
                     {
-                        UILocalNotification notification = _callbackIdNotification[callbackId];
-
-                        double msTillTrigger = 0;
-                        DateTime? triggerDateTime = notification.FireDate?.ToDateTime().ToLocalTime();
-                        if (triggerDateTime.HasValue)
-                            msTillTrigger = (triggerDateTime.Value - DateTime.Now).TotalMilliseconds;
-
-                        // service any callback that should have already been serviced or will soon be serviced
-                        if (msTillTrigger < 5000)
-                        {
-                            notifier.CancelNotification(notification);
-                            ServiceCallbackAsync(notification.UserInfo);
-                        }
-                        // all other callbacks will have upcoming notification deliveries, except for silent notifications, which were canceled when the 
-                        // app was backgrounded. re-issue those silent notifications now.
-                        else if (iOSNotifier.IsSilent(notification.UserInfo))
-                        {
-                            notifier.IssueNotificationAsync(notification);
-                        }
+                        notifier.CancelNotification(notification);
+                        await ServiceCallbackAsync(notification.UserInfo);
+                    }
+                    // all other callbacks will have upcoming notification deliveries, except for silent notifications, which were canceled when the 
+                    // app was backgrounded. re-issue those silent notifications now.
+                    else if (iOSNotifier.IsSilent(notification.UserInfo))
+                    {
+                        notifier.IssueNotificationAsync(notification);
                     }
                 }
             });
         }
 
-        public override void RaiseCallbackAsync(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, bool notifyUser, Action<DateTime> scheduleRepeatCallback, Action letDeviceSleepCallback, Action finishedCallback)
+        public override Task RaiseCallbackAsync(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, bool notifyUser, Action<DateTime> scheduleRepeatCallback, Action letDeviceSleepCallback)
         {
-            // remove from platform-specific notification collection before raising the callback. the purpose of the platform-specific notification collection 
-            // is to hold the notifications between successive activations of the app. when the app is reactivated, notifications from this collection are 
-            // updated with the new activation id and they are rescheduled. if, in raising the callback associated with the current notification, the app is 
-            // reactivated (e.g., by a call to the facebook probe login manager), then the current notification will be reissued when updated via app reactivation 
-            // (which will occur, e.g., when the facebook login manager returns control to the app). this can lead to duplicate notifications for the same callback, 
-            // or infinite cycles of app reactivation if the notification raises a callback that causes it to be reissued (e.g., in the case of facebook login).
-            UILocalNotification callbackNotification;
-            lock (_callbackIdNotification)
+            return Task.Run(async () =>
             {
-                _callbackIdNotification.TryGetValue(callbackId, out callbackNotification);
-                _callbackIdNotification.Remove(callbackId);
-            }
-
-            base.RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, notifyUser,
-
-            repeatCallbackTime =>
-            {
-                // add to the platform-specific notification collection, so that the notification is updated and reissued if/when the app is reactivated
+                // remove from platform-specific notification collection before raising the callback. the purpose of the platform-specific notification collection 
+                // is to hold the notifications between successive activations of the app. when the app is reactivated, notifications from this collection are 
+                // updated with the new activation id and they are rescheduled. if, in raising the callback associated with the current notification, the app is 
+                // reactivated (e.g., by a call to the facebook probe login manager), then the current notification will be reissued when updated via app reactivation 
+                // (which will occur, e.g., when the facebook login manager returns control to the app). this can lead to duplicate notifications for the same callback, 
+                // or infinite cycles of app reactivation if the notification raises a callback that causes it to be reissued (e.g., in the case of facebook login).
+                UILocalNotification callbackNotification;
                 lock (_callbackIdNotification)
                 {
-                    _callbackIdNotification.Add(callbackId, callbackNotification);
+                    _callbackIdNotification.TryGetValue(callbackId, out callbackNotification);
+                    _callbackIdNotification.Remove(callbackId);
                 }
 
-                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
-                {
-                    callbackNotification.FireDate = repeatCallbackTime.ToUniversalTime().ToNSDate();
-                    (SensusContext.Current.Notifier as IUILocalNotificationNotifier).IssueNotificationAsync(callbackNotification);
-                });
-            },
+                await base.RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, notifyUser,
 
-            letDeviceSleepCallback, finishedCallback);
+                    repeatCallbackTime =>
+                    {
+                        // add to the platform-specific notification collection, so that the notification is updated and reissued if/when the app is reactivated
+                        lock (_callbackIdNotification)
+                        {
+                            _callbackIdNotification.Add(callbackId, callbackNotification);
+                        }
+
+                        SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+                        {
+                            callbackNotification.FireDate = repeatCallbackTime.ToUniversalTime().ToNSDate();
+                            (SensusContext.Current.Notifier as IUILocalNotificationNotifier).IssueNotificationAsync(callbackNotification);
+                        });
+                    },
+
+                    letDeviceSleepCallback
+                );
+            });
         }
 
         protected override void UnscheduleCallbackPlatformSpecific(string callbackId)

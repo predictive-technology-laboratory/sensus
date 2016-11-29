@@ -209,9 +209,9 @@ namespace Sensus.Probes.User.MicrosoftBand
                     return;
                 }
 
-                // ensure that client is connected
                 try
                 {
+                    // ensure that client is connected
                     ConnectClient(cancellationToken: cancellationToken);
 
                     // we've successfully connected. if we fail at some point in the future, allow the system to reenable bluetooth.
@@ -251,7 +251,19 @@ namespace Sensus.Probes.User.MicrosoftBand
 
                     try
                     {
-                        probe.StartReadings();
+                        // if the probe is already running, start readings to ensure that we're using the potentially newly configured
+                        // sensor on the band client.
+                        if (probe.Running)
+                        {
+                            probe.StartReadings();
+                        }
+                        // if we attempted to start several band probes upon protocol start up and failed, we would have bailed out after
+                        // the first band probe failed to start. this would leave the other band probes enabled but not running at the time
+                        // of this health test. start such probes now.
+                        else
+                        {
+                            probe.Start();
+                        }
                     }
                     catch (Exception ex)
                     {

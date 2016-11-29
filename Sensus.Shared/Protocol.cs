@@ -1445,6 +1445,7 @@ namespace Sensus
                 SensusServiceHelper.Get().RemoveRunningProtocolId(_id);
 
                 foreach (Probe probe in _probes)
+                {
                     if (probe.Running)
                     {
                         try
@@ -1456,6 +1457,7 @@ namespace Sensus
                             SensusServiceHelper.Get().Logger.Log("Failed to stop " + probe.GetType().FullName + ":  " + ex.Message, LoggingLevel.Normal, GetType());
                         }
                     }
+                }
 
                 if (_localDataStore != null && _localDataStore.Running)
                 {
