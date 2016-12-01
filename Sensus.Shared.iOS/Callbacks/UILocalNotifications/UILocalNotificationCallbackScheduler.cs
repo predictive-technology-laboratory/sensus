@@ -80,7 +80,7 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
                 foreach (UILocalNotification notification in notifications)
                 {
                     // the following needs to be done on the main thread since we're working with UILocalNotification objects.
-                    SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                    SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                     {
                         double msTillTrigger = 0;
                         DateTime? triggerDateTime = notification.FireDate?.ToDateTime().ToLocalTime();
@@ -91,7 +91,7 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
                         if (msTillTrigger < 5000)
                         {
                             notifier.CancelNotification(notification);
-                            await ServiceCallbackAsync(notification.UserInfo);
+                            ServiceCallbackAsync(notification.UserInfo);
                         }
                         // all other callbacks will have upcoming notification deliveries, except for silent notifications, which were canceled when the 
                         // app was backgrounded. re-issue those silent notifications now.

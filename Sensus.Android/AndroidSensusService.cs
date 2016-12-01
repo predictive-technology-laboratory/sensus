@@ -90,7 +90,7 @@ namespace Sensus.Android
                 // sensus receives a signal on device boot and for any callback alarms that are 
                 // requested. furthermore, all calls here should be nonblocking / async so we don't 
                 // tie up the UI thread.
-                serviceHelper.StartAsync(async () =>
+                serviceHelper.StartAsync(() =>
                 {
                     if (intent == null)
                         serviceHelper.LetDeviceSleep();
@@ -100,7 +100,9 @@ namespace Sensus.Android
 
                         // is this a callback intent?
                         if (intent.GetBooleanExtra(CallbackScheduler.SENSUS_CALLBACK_KEY, false))
-                            await (SensusContext.Current.CallbackScheduler as AndroidCallbackScheduler).ServiceCallbackAsync(intent);
+                        {
+                            (SensusContext.Current.CallbackScheduler as AndroidCallbackScheduler).ServiceCallbackAsync(intent);
+                        }
                         // should we display a page?
                         else if (Enum.TryParse(intent.GetStringExtra(Notifier.DISPLAY_PAGE_KEY), out displayPage))
                         {
@@ -109,7 +111,9 @@ namespace Sensus.Android
                             serviceHelper.LetDeviceSleep();
                         }
                         else
+                        {
                             serviceHelper.LetDeviceSleep();
+                        }
                     }
                 });
             }

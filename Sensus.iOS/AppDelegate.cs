@@ -201,9 +201,9 @@ namespace Sensus.iOS
                     System.Threading.Tasks.Task.Run(() =>
                     {
                         // the following must be done on the UI thread because we reference members of the UILocalNotification.
-                        SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                        SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                         {
-                            await callbackScheduler.ServiceCallbackAsync(notification.UserInfo);
+                            callbackScheduler.ServiceCallbackAsync(notification.UserInfo);
 
                             // check whether the user opened the notification to open sensus, indicated by an application state that is not active. we'll
                             // also get notifications when the app is active, since we use them for timed callback events. if the user opened the notification, 
