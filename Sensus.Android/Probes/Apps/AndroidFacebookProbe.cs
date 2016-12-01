@@ -122,7 +122,7 @@ namespace Sensus.Android.Probes.Apps
                                             SensusServiceHelper.Get().Logger.Log("Facebook login failed.", LoggingLevel.Normal, GetType());
                                             AccessToken.CurrentAccessToken = null;
                                             loginWait.Set();
-                                        },
+                                        }
                                     };
 
                                     LoginManager.Instance.RegisterCallback(mainActivity.FacebookCallbackManager, loginCallback);
@@ -197,13 +197,17 @@ namespace Sensus.Android.Probes.Apps
                                                parameters,
                                                HttpMethod.Get);
 
+                    request.Version = "v2.8";
+
                     graphRequestBatch.Add(request);
                 }
 
                 if (graphRequestBatch.Size() == 0)
                     throw new Exception("User has not granted any Facebook permissions.");
                 else
+                {
                     foreach (GraphResponse response in graphRequestBatch.ExecuteAndWait())
+                    {
                         if (response.Error == null)
                         {
                             FacebookDatum datum = new FacebookDatum(DateTimeOffset.UtcNow);
@@ -244,7 +248,7 @@ namespace Sensus.Android.Probes.Apps
                                         valuesSet = true;
                                     }
                                 }
-                                else
+                                else if (jsonField != "data" && jsonField != "paging" && jsonField != "summary")
                                     SensusServiceHelper.Get().Logger.Log("Unrecognized JSON field in Facebook query response:  " + jsonField, LoggingLevel.Verbose, GetType());
                             }
 
@@ -253,6 +257,8 @@ namespace Sensus.Android.Probes.Apps
                         }
                         else
                             throw new Exception("Error received while querying Facebook graph API:  " + response.Error.ErrorMessage);
+                    }
+                }
             }
             else
                 throw new Exception("Attempted to poll Facebook probe without a valid access token.");
