@@ -54,7 +54,7 @@ namespace Sensus.UI
 
             var contentLayout = new StackLayout
             {
-                Orientation     = StackOrientation.Vertical,
+                Orientation = StackOrientation.Vertical,
                 VerticalOptions = LayoutOptions.FillAndExpand
             };
 
@@ -105,7 +105,7 @@ namespace Sensus.UI
 
                 if (datumProperties.Length == 0)
                     return;
-                    
+
                 #region datum property picker
                 Label datumPropertyLabel = new Label
                 {
@@ -149,11 +149,11 @@ namespace Sensus.UI
                 };
 
                 triggerDefinitionLayout.Children.Add(new StackLayout
-                    {
-                        Orientation = StackOrientation.Horizontal,
-                        HorizontalOptions = LayoutOptions.FillAndExpand,
-                        Children = { conditionLabel, conditionPicker }
-                    });
+                {
+                    Orientation = StackOrientation.Horizontal,
+                    HorizontalOptions = LayoutOptions.FillAndExpand,
+                    Children = { conditionLabel, conditionPicker }
+                });
                 #endregion
 
                 #region condition value for comparison, based on selected datum property -- includes change calculation (for double datum) and regex (for string datum)
@@ -247,11 +247,11 @@ namespace Sensus.UI
                     };
 
                     conditionValueStack.Children.Add(new StackLayout
-                        {
-                            Orientation = StackOrientation.Horizontal,
-                            HorizontalOptions = LayoutOptions.FillAndExpand,
-                            Children = { conditionValueStackLabel, conditionValueStackView }
-                        });
+                    {
+                        Orientation = StackOrientation.Horizontal,
+                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        Children = { conditionValueStackLabel, conditionValueStackView }
+                    });
 
                     #region change calculation
                     if (allowChangeCalculation)
@@ -265,11 +265,11 @@ namespace Sensus.UI
                         changeSwitch.IsToggled = false;
 
                         conditionValueStack.Children.Add(new StackLayout
-                            {
-                                Orientation = StackOrientation.Horizontal,
-                                HorizontalOptions = LayoutOptions.FillAndExpand,
-                                Children = { changeLabel, changeSwitch }
-                            });
+                        {
+                            Orientation = StackOrientation.Horizontal,
+                            HorizontalOptions = LayoutOptions.FillAndExpand,
+                            Children = { changeLabel, changeSwitch }
+                        });
                     }
                     #endregion
 
@@ -285,11 +285,11 @@ namespace Sensus.UI
                         regexSwitch.IsToggled = false;
 
                         conditionValueStack.Children.Add(new StackLayout
-                            {
-                                Orientation = StackOrientation.Horizontal,
-                                HorizontalOptions = LayoutOptions.FillAndExpand,
-                                Children = { regexLabel, regexSwitch }
-                            });
+                        {
+                            Orientation = StackOrientation.Horizontal,
+                            HorizontalOptions = LayoutOptions.FillAndExpand,
+                            Children = { regexLabel, regexSwitch }
+                        });
                     }
                     #endregion
                 };
@@ -307,11 +307,11 @@ namespace Sensus.UI
                 fireRepeatedlySwitch.IsToggled = false;
 
                 triggerDefinitionLayout.Children.Add(new StackLayout
-                    {
-                        Orientation = StackOrientation.Horizontal,
-                        HorizontalOptions = LayoutOptions.FillAndExpand,
-                        Children = { fireRepeatedlyLabel, fireRepeatedlySwitch }
-                    });
+                {
+                    Orientation = StackOrientation.Horizontal,
+                    HorizontalOptions = LayoutOptions.FillAndExpand,
+                    Children = { fireRepeatedlyLabel, fireRepeatedlySwitch }
+                });
                 #endregion
 
                 #region start/end times
@@ -324,11 +324,11 @@ namespace Sensus.UI
                 startTimePicker.Time = new TimeSpan(8, 0, 0);
 
                 triggerDefinitionLayout.Children.Add(new StackLayout
-                    {
-                        Orientation = StackOrientation.Horizontal,
-                        HorizontalOptions = LayoutOptions.FillAndExpand,
-                        Children = { startTimeLabel, startTimePicker }
-                    });
+                {
+                    Orientation = StackOrientation.Horizontal,
+                    HorizontalOptions = LayoutOptions.FillAndExpand,
+                    Children = { startTimeLabel, startTimePicker }
+                });
 
                 Label endTimeLabel = new Label
                 {
@@ -339,11 +339,11 @@ namespace Sensus.UI
                 endTimePicker.Time = new TimeSpan(21, 0, 0);
 
                 triggerDefinitionLayout.Children.Add(new StackLayout
-                    {
-                        Orientation = StackOrientation.Horizontal,
-                        HorizontalOptions = LayoutOptions.FillAndExpand,
-                        Children = { endTimeLabel, endTimePicker }
-                    });
+                {
+                    Orientation = StackOrientation.Horizontal,
+                    HorizontalOptions = LayoutOptions.FillAndExpand,
+                    Children = { endTimeLabel, endTimePicker }
+                });
                 #endregion
             };
 
@@ -360,7 +360,7 @@ namespace Sensus.UI
             {
                 try
                 {
-                    _scriptRunner.Triggers.Add(new Sensus.Probes.User.Scripts.Trigger(_selectedProbe, _selectedDatumProperty, _selectedCondition, _conditionValue, changeSwitch.IsToggled, fireRepeatedlySwitch.IsToggled, regexSwitch.IsToggled, startTimePicker.Time, endTimePicker.Time));
+                    _scriptRunner.Triggers.Add(new Probes.User.Scripts.Trigger(_selectedProbe, _selectedDatumProperty, _selectedCondition, _conditionValue, changeSwitch.IsToggled, fireRepeatedlySwitch.IsToggled, regexSwitch.IsToggled, startTimePicker.Time, endTimePicker.Time));
                     await Navigation.PopAsync();
                 }
                 catch (Exception ex)
