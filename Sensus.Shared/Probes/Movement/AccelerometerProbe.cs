@@ -14,6 +14,7 @@
 
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Syncfusion.SfChart.XForms;
 
@@ -78,16 +79,15 @@ namespace Sensus.Probes.Movement
         protected override void StartListening()
         {
             // allow the accelerometer to stabilize...the first few readings can be extremely erratic
-            new Thread(() =>
-                {
-                    Thread.Sleep(2000);
-                    _stabilizing = false;
+            Task.Run(() =>
+            {
+                Thread.Sleep(2000);
+                _stabilizing = false;
 
-                    // not sure if null is the problem:  https://insights.xamarin.com/app/Sensus-Production/issues/907
-                    if (SensusServiceHelper.Get() != null)
-                        SensusServiceHelper.Get().Logger.Log("Accelerometer has finished stabilization period.", LoggingLevel.Normal, GetType());
-
-                }).Start();
+                // not sure if null is the problem:  https://insights.xamarin.com/app/Sensus-Production/issues/907
+                if (SensusServiceHelper.Get() != null)
+                    SensusServiceHelper.Get().Logger.Log("Accelerometer has finished stabilization period.", LoggingLevel.Normal, GetType());
+            });
         }
 
         public override void Reset()

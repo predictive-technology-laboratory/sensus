@@ -36,7 +36,7 @@ namespace Sensus.iOS.Probes.Movement
             {
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable sensors in the future
                 // and we'd like the probe to be restarted at that time.
-                string error = "Motion sensors are not permitted on this device. Cannot start accelerometer probe.";
+                string error = "This device does not contain an accelerometer, or the user has denied access to it. Cannot start accelerometer probe.";
                 SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
@@ -46,16 +46,16 @@ namespace Sensus.iOS.Probes.Movement
         {
             base.StartListening();
 
-            _motionManager.StartAccelerometerUpdates(new NSOperationQueue(), async (data, error) =>
+            _motionManager?.StartAccelerometerUpdates(new NSOperationQueue(), async (data, error) =>
             {
-                if (!Stabilizing)
+                if (!Stabilizing && data != null && error == null)
                     await StoreDatumAsync(new AccelerometerDatum(DateTimeOffset.UtcNow, data.Acceleration.X, data.Acceleration.Y, data.Acceleration.Z));
             });
         }
 
         protected override void StopListening()
         {
-            _motionManager.StopAccelerometerUpdates();
+            _motionManager?.StopAccelerometerUpdates();
         }
     }
 }

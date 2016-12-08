@@ -108,47 +108,47 @@ namespace Sensus.Probes
                 {
                     if (StartStopTimes.Count == 0)
                         return 0;
-                    
+
                     runningSeconds = StartStopTimes.Select((startStopTime, index) =>
+                    {
+                        DateTime? startTime = null;
+                        DateTime? stopTime = null;
+
+                        // if this is the final element and it's a start time, then the probe is currently running and we should calculate 
+                        // how much time has elapsed since the probe was started.
+                        if (index == StartStopTimes.Count - 1 && startStopTime.Item1)
                         {
-                            DateTime? startTime = null;
-                            DateTime? stopTime = null;
-
-                            // if this is the final element and it's a start time, then the probe is currently running and we should calculate 
-                            // how much time has elapsed since the probe was started.
-                            if (index == StartStopTimes.Count - 1 && startStopTime.Item1)
-                            {
-                                // if the current start time came before the participation horizon, use the horizon as the start time.
-                                if (startStopTime.Item2 < Protocol.ParticipationHorizon)
-                                    startTime = Protocol.ParticipationHorizon;
-                                else
-                                    startTime = startStopTime.Item2;
-
-                                // the probe is currently running, so use the current time as the stop time.
-                                stopTime = DateTime.Now;
-                            }
-                            // otherwise, we only need to consider stop times after the participation horizon.
-                            else if (!startStopTime.Item1 && startStopTime.Item2 > Protocol.ParticipationHorizon)
-                            {
-                                stopTime = startStopTime.Item2;
-
-                                // if the previous element is a start time, use it.
-                                if (index > 0 && StartStopTimes[index - 1].Item1)
-                                    startTime = StartStopTimes[index - 1].Item2;
-
-                                // if we don't have a previous element that's a start time, or we do but the start time was before the participation horizon, then 
-                                // use the participation horizon as the start time.
-                                if (startTime == null || startTime.Value < Protocol.ParticipationHorizon)
-                                    startTime = Protocol.ParticipationHorizon;
-                            }
-
-                            // if we've got a start and stop time, return the total number of seconds covered.
-                            if (startTime != null && stopTime != null)
-                                return (stopTime.Value - startTime.Value).TotalSeconds;
+                            // if the current start time came before the participation horizon, use the horizon as the start time.
+                            if (startStopTime.Item2 < Protocol.ParticipationHorizon)
+                                startTime = Protocol.ParticipationHorizon;
                             else
-                                return 0;
-                        
-                        }).Sum();
+                                startTime = startStopTime.Item2;
+
+                            // the probe is currently running, so use the current time as the stop time.
+                            stopTime = DateTime.Now;
+                        }
+                        // otherwise, we only need to consider stop times after the participation horizon.
+                        else if (!startStopTime.Item1 && startStopTime.Item2 > Protocol.ParticipationHorizon)
+                        {
+                            stopTime = startStopTime.Item2;
+
+                            // if the previous element is a start time, use it.
+                            if (index > 0 && StartStopTimes[index - 1].Item1)
+                                startTime = StartStopTimes[index - 1].Item2;
+
+                            // if we don't have a previous element that's a start time, or we do but the start time was before the participation horizon, then 
+                            // use the participation horizon as the start time.
+                            if (startTime == null || startTime.Value < Protocol.ParticipationHorizon)
+                                startTime = Protocol.ParticipationHorizon;
+                        }
+
+                        // if we've got a start and stop time, return the total number of seconds covered.
+                        if (startTime != null && stopTime != null)
+                            return (stopTime.Value - startTime.Value).TotalSeconds;
+                        else
+                            return 0;
+
+                    }).Sum();
                 }
 
                 double participationHorizonSeconds = TimeSpan.FromDays(Protocol.ParticipationHorizonDays).TotalSeconds;
