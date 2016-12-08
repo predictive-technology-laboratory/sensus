@@ -103,6 +103,13 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
 
         public void IssueNotificationAsync(UNNotificationRequest request, Action<NSError> errorCallback = null)
         {
+            // although we should never, we might be getting in null requests from somewhere. bail if we do.
+            if (request == null)
+            {
+                SensusException.Report("Null notification request.");
+                return;
+            }
+
             // don't issue silent notifications from the background, as they will be delivered and will confuse the user (they're 
             // not designed to be seen).
             bool abort = false;
