@@ -56,7 +56,14 @@ namespace Sensus.Callbacks
 
         public bool CallbackIsScheduled(string callbackId)
         {
-            return _idCallback.ContainsKey(callbackId);
+            // we should never get a null callback id, but it seems that we are from android.
+            if (callbackId == null)
+            {
+                SensusException.Report("Received null callback id.");
+                return false;
+            }
+            else
+                return _idCallback.ContainsKey(callbackId);
         }
 
         public string GetCallbackUserNotificationMessage(string callbackId)
