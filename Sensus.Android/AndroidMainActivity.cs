@@ -220,7 +220,16 @@ namespace Sensus.Android
             _serviceBindWait.Reset();
 
             if (_serviceConnection.Binder != null)
-                UnbindService(_serviceConnection);
+            {
+                try
+                {
+                    UnbindService(_serviceConnection);
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Failed to disconnection from service:  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
+            }
         }
 
         public override void OnWindowFocusChanged(bool hasFocus)
