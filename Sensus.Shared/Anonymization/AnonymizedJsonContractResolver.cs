@@ -27,14 +27,14 @@ namespace Sensus.Anonymization
 {
     public class AnonymizedJsonContractResolver : DefaultContractResolver
     {
-        private class AnonymizedMemberValueProvider : IValueProvider
+        private class AnonymizedPropertyValueProvider : IValueProvider
         {
             private PropertyInfo _property;
             private IValueProvider _defaultMemberValueProvider;
             private AnonymizedJsonContractResolver _contractResolver;
 
-            public AnonymizedMemberValueProvider(PropertyInfo property, IValueProvider defaultMemberValueProvider, AnonymizedJsonContractResolver contractResolver)
-            {                
+            public AnonymizedPropertyValueProvider(PropertyInfo property, IValueProvider defaultMemberValueProvider, AnonymizedJsonContractResolver contractResolver)
+            {
                 _property = property;
                 _defaultMemberValueProvider = defaultMemberValueProvider;
                 _contractResolver = contractResolver;
@@ -110,12 +110,12 @@ namespace Sensus.Anonymization
                     // the case of deserialization, this will be empty and will be filled in.
                     ObservableCollection<string> propertyAnonymizerSpecs = new ObservableCollection<string>();
                     foreach (PropertyInfo property in _propertyAnonymizer.Keys)
-                    {                    
+                    {
                         string anonymizerTypeStr = "";
                         Anonymizer anonymizer = _propertyAnonymizer[property];
                         if (anonymizer != null)
                             anonymizerTypeStr = anonymizer.GetType().FullName;
-                    
+
                         propertyAnonymizerSpecs.Add(property.ReflectedType.FullName + "-" + property.Name + ":" + anonymizerTypeStr);  // use the reflected type and not the declaring type, because we want different anonymizers for the same base-class property (e.g., DeviceId) within child-class implementations.
                     }
 
@@ -125,7 +125,7 @@ namespace Sensus.Anonymization
                     {
                         foreach (string propertyAnonymizerSpec in a.NewItems)
                         {
-                            string[] propertyAnonymizerParts = propertyAnonymizerSpec.Split(new char[]{ ':' }, StringSplitOptions.RemoveEmptyEntries);
+                            string[] propertyAnonymizerParts = propertyAnonymizerSpec.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
 
                             string[] propertyParts = propertyAnonymizerParts[0].Split('-');
                             Type datumType = Type.GetType(propertyParts[0]);
@@ -144,7 +144,7 @@ namespace Sensus.Anonymization
 
                     return propertyAnonymizerSpecs;
                 }
-            }                
+            }
         }
 
         /// <summary>
@@ -207,10 +207,18 @@ namespace Sensus.Anonymization
         /// <param name="member">Member.</param>
         protected override IValueProvider CreateMemberValueProvider(MemberInfo member)
         {
-            if (!(member is PropertyInfo))
-                throw new SensusException("Attempted to serialize/anonymize non-property datum member.");
+            IValueProvider defaultValueProvider = base.CreateMemberValueProvider(member);
 
-            return new AnonymizedMemberValueProvider(member as PropertyInfo, base.CreateMemberValueProvider(member), this);
+            // only datum objects should be serialized, and these should only contain serialized properties.
+            PropertyInfo propertyInfo = member as PropertyInfo;
+            if (propertyInfo == null)
+            {
+                // this is unexpected. report the issue and return the default serializer.
+                SensusException.Report("Attempted to serialize/anonymize non-property datum member:  " + member);
+                return defaultValueProvider;
+            }
+            else
+                return new AnonymizedPropertyValueProvider(propertyInfo, defaultValueProvider, this);
         }
     }
 }
