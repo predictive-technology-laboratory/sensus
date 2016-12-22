@@ -25,36 +25,42 @@ using CoreGraphics;
 
 namespace Sensus.Shared.iOS.UI
 {
-    public class SliderInputEffect : PlatformEffect, IInputEffect<float>
+    public class SliderInputEffect : PlatformEffect, IInputEffect<Slider, double>
     {
-        public event Action<float> ValueChanged;
+        public event Action<double> ValueChanged;
+
+        public void SetFormsControl(Slider formsSlider)
+        {
+            // do nothing. we don't need to track a reference to the forms control.
+        }
 
         protected override void OnAttached()
         {
-            UISlider slider = Control as UISlider;
+            UISlider nativeSlider = Control as UISlider;
 
             // make the thumb image invisible
-            UIImage defaultThumbImage = slider.ThumbImage(UIControlState.Normal);
-            slider.SetThumbImage(new UIImage(), UIControlState.Normal);
+            UIImage defaultThumbImage = nativeSlider.ThumbImage(UIControlState.Normal);
+            nativeSlider.SetThumbImage(new UIImage(), UIControlState.Normal);
             bool resetThumbImage = true;
 
             // listen for the user pressing on the slider. this also reports slides.
-            slider.AddGestureRecognizer(new UILongPressGestureRecognizer(pressRecognizer =>
+            nativeSlider.AddGestureRecognizer(new UILongPressGestureRecognizer(pressRecognizer =>
             {
                 // make the thumb image visible
                 if (resetThumbImage)
                 {
-                    slider.SetThumbImage(defaultThumbImage, UIControlState.Normal);
+                    nativeSlider.SetThumbImage(defaultThumbImage, UIControlState.Normal);
                     resetThumbImage = false;
                 }
 
-                // update the slider value - we subtract 25 from the width of the frame to get the right offset
+                // update the slider value - we subtract 25 from the width of the frame to get the right offset (fudgey)
                 CGPoint pointTapped = pressRecognizer.LocationInView(pressRecognizer.View);
-                nfloat newValue = ((pointTapped.X - slider.Frame.Location.X) / (slider.Frame.Size.Width - 25)) * (slider.MaxValue - slider.MinValue);
-                slider.SetValue((float)newValue, false);
+                float percent = (float)((pointTapped.X - nativeSlider.Frame.Location.X) / (nativeSlider.Frame.Size.Width - 25));
+                float newValue = nativeSlider.MinValue + (percent * (nativeSlider.MaxValue - nativeSlider.MinValue));
+                nativeSlider.SetValue(newValue, false);
 
                 // let the observer know that the value has changed
-                ValueChanged?.Invoke(slider.Value);
+                ValueChanged?.Invoke(nativeSlider.Value);
             })
             { MinimumPressDuration = 0 });
         }

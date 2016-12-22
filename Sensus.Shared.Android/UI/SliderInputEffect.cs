@@ -29,30 +29,40 @@ namespace Sensus.Shared.Android.UI
     /// button immediately can bias the user to (1) move the button away from the initial value or (2) bias the user
     /// to select a value near the initial value (anchor-adjustment bias).
     /// </summary>
-    public class SliderInputEffect : PlatformEffect, IInputEffect<float>
+    public class SliderInputEffect : PlatformEffect, IInputEffect<Slider, double>
     {
-        public event Action<float> ValueChanged;
+        public event Action<double> ValueChanged;
+
+        private Slider _formsSlider;
+
+        public void SetFormsControl(Slider formsSlider)
+        {
+            _formsSlider = formsSlider;
+        }
 
         protected override void OnAttached()
         {
-            SeekBar seekBar = Control as SeekBar;
+            SeekBar nativeSeekBar = Control as SeekBar;
 
             // make the thumb image invisible
-            Drawable defaultThumb = seekBar.Thumb;
-            seekBar.SetThumb(new ColorDrawable(global::Android.Graphics.Color.Transparent));
+            Drawable defaultThumb = nativeSeekBar.Thumb;
+            nativeSeekBar.SetThumb(new ColorDrawable(global::Android.Graphics.Color.Transparent));
             bool resetThumbImage = true;
 
-            seekBar.ProgressChanged += (sender, e) =>
+            nativeSeekBar.ProgressChanged += (sender, e) =>
             {
                 // make the thumb image visible
                 if (resetThumbImage)
                 {
-                    seekBar.SetThumb(defaultThumb);
+                    nativeSeekBar.SetThumb(defaultThumb);
                     resetThumbImage = false;
                 }
 
-                // let the observer know that the value has changed
-                ValueChanged?.Invoke(seekBar.Progress);
+                // let the observer know that the value has changed. note that SeekBars have a fixed minimum (0) and
+                // a variable maximum. rescale the SeekBar's value to be in the range desired for the forms control.
+                double percent = nativeSeekBar.Progress / (double)nativeSeekBar.Max;
+                double formsValue = _formsSlider.Minimum + (percent * (_formsSlider.Maximum - _formsSlider.Minimum));
+                ValueChanged?.Invoke(formsValue);
             };
         }
 

@@ -13,11 +13,14 @@
 // limitations under the License.
 
 using System;
+using Xamarin.Forms;
 
 namespace Sensus
 {
-    public interface IInputEffect<ValueType>
+    public interface IInputEffect<FormsControlType, FormsValueType> where FormsControlType : View
     {
-        event Action<ValueType> ValueChanged;
+        void SetFormsControl(FormsControlType formsView);
+
+        event Action<FormsValueType> ValueChanged;
     }
 }

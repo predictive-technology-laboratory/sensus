@@ -192,7 +192,7 @@ namespace Sensus.UI.Inputs
 
         private void Construct(double minimum, double maximum)
         {
-            _tipText = "Please tap the range below to select a value.";
+            _tipText = "Please tap the range below to select a value";
             _minimum = minimum;
             _maximum = maximum;
             _increment = (_maximum - _minimum + 1) / 10;
@@ -224,15 +224,18 @@ namespace Sensus.UI.Inputs
                 _sliderLabel = CreateLabel(index);
                 if (!string.IsNullOrWhiteSpace(_tipText))
                 {
-                    _sliderLabel.Text += " " + _tipText;
+                    _sliderLabel.Text += " (" + _tipText + ")";
                 }
 
                 _slider.Minimum = _minimum;
                 _slider.Maximum = _maximum;
-                _slider.Value = _incrementalValue = GetIncrementalValue(0);  // value doesn't matter, since user must tap the slider to select the initial value
 
+                // we use the effects framework to hide the slider initial position from the user, in order to 
+                // avoid biasing the user toward the initial position.
                 Effect effect = Effect.Resolve(EFFECT_RESOLUTION_NAME);
-                (effect as IInputEffect<float>).ValueChanged += newValue =>
+                IInputEffect<Slider, double> effectInterface = effect as IInputEffect<Slider, double>;
+                effectInterface.SetFormsControl(_slider);
+                effectInterface.ValueChanged += newValue =>
                 {
                     double newIncrementalValue = GetIncrementalValue(newValue);
 
