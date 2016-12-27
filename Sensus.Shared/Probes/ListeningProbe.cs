@@ -24,27 +24,27 @@ namespace Sensus.Probes
 {
     public abstract class ListeningProbe : Probe
     {
-        private float _maxDataStoresPerSecond;
+        private float? _maxDataStoresPerSecond;
         private bool _keepDeviceAwake;
         private bool _deviceAwake;
-        private DataRateCalculator _incomingDataRate;
+        private DataRateCalculator _incomingDataRateCalculator;
         private Random _dropRandom;
 
         private readonly object _locker = new object();
 
         [EntryFloatUiProperty("Max Data / Second:", true, int.MaxValue)]
-        public float MaxDataStoresPerSecond
+        public float? MaxDataStoresPerSecond
         {
             get { return _maxDataStoresPerSecond; }
             set { _maxDataStoresPerSecond = value; }
         }
 
         [JsonIgnore]
-        public TimeSpan MinDataStoreDelay
+        public TimeSpan? MinDataStoreDelay
         {
             get
             {
-                return TimeSpan.FromSeconds(1 / _maxDataStoresPerSecond);
+                return _maxDataStoresPerSecond == null ? default(TimeSpan?) : TimeSpan.FromSeconds(1 / _maxDataStoresPerSecond.Value);
             }
         }
 
@@ -170,10 +170,10 @@ namespace Sensus.Probes
 
         protected ListeningProbe()
         {
-            _maxDataStoresPerSecond = 1;
+            _maxDataStoresPerSecond = null;  // no data rate limit by default
             _keepDeviceAwake = DefaultKeepDeviceAwake;
             _deviceAwake = false;
-            _incomingDataRate = new DataRateCalculator(TimeSpan.FromSeconds(10));
+            _incomingDataRateCalculator = new DataRateCalculator(TimeSpan.FromSeconds(10));
             _dropRandom = new Random();
         }
 
@@ -217,13 +217,20 @@ namespace Sensus.Probes
         public sealed override Task StoreDatumAsync(Datum datum, CancellationToken cancellationToken = default(CancellationToken))
         {
             bool store = true;
-            double incomingDataPerSecond = _incomingDataRate.Add(datum);
-            double overagePerSecond = incomingDataPerSecond - MaxDataStoresPerSecond;
-            if (overagePerSecond > 0)
+
+            if (_maxDataStoresPerSecond.HasValue)
             {
-                double dropRate = overagePerSecond / incomingDataPerSecond;
-                if (_dropRandom.NextDouble() < dropRate)
-                    store = false;
+                _incomingDataRateCalculator.Add(datum);
+                double incomingDataPerSecond = _incomingDataRateCalculator.DataPerSecond;
+                double overagePerSecond = incomingDataPerSecond - _maxDataStoresPerSecond.Value;
+                if (overagePerSecond > 0)
+                {
+                    double dropRate = overagePerSecond / incomingDataPerSecond;
+                    if (_dropRandom.NextDouble() < dropRate)
+                    {
+                        store = false;
+                    }
+                }
             }
 
             if (store)
