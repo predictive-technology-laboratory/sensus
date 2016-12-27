@@ -1224,12 +1224,14 @@ namespace Sensus
 
             StringBuilder collectionDescription = new StringBuilder();
             foreach (Probe probe in _probes.OrderBy(probe => probe.DisplayName))
+            {
                 if (probe.Enabled && probe.StoreData)
                 {
                     string probeCollectionDescription = probe.CollectionDescription;
                     if (!string.IsNullOrWhiteSpace(probeCollectionDescription))
                         collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + probeCollectionDescription);
                 }
+            }
 
             List<Input> consent = new List<Input>();
 

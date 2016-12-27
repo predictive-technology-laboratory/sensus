@@ -24,6 +24,8 @@ namespace Sensus.Probes
 {
     public abstract class ListeningProbe : Probe
     {
+        private const float DATA_RATE_EPSILON = 0.00000000001f;
+
         private float? _maxDataStoresPerSecond;
         private bool _keepDeviceAwake;
         private bool _deviceAwake;
@@ -36,7 +38,15 @@ namespace Sensus.Probes
         public float? MaxDataStoresPerSecond
         {
             get { return _maxDataStoresPerSecond; }
-            set { _maxDataStoresPerSecond = value; }
+            set
+            {
+                if (value < 0)
+                {
+                    value = 0;
+                }
+
+                _maxDataStoresPerSecond = value; 
+            }
         }
 
         [JsonIgnore]
@@ -44,7 +54,23 @@ namespace Sensus.Probes
         {
             get
             {
-                return _maxDataStoresPerSecond == null ? default(TimeSpan?) : TimeSpan.FromSeconds(1 / _maxDataStoresPerSecond.Value);
+                float maxDataStoresPerSecond = _maxDataStoresPerSecond.GetValueOrDefault(-1);
+
+                // 0 (or negligible) data per second:  maximum delay
+                if (Math.Abs(maxDataStoresPerSecond) < DATA_RATE_EPSILON)
+                {
+                    return TimeSpan.MaxValue;
+                }
+                // non-negligible data per second:  usual calculation
+                else if (maxDataStoresPerSecond > 0)
+                {
+                    return TimeSpan.FromSeconds(1 / maxDataStoresPerSecond);
+                }
+                // unrestricted data per second:  no delay specified
+                else
+                {
+                    return default(TimeSpan?);
+                }
             }
         }
 
@@ -173,7 +199,7 @@ namespace Sensus.Probes
             _maxDataStoresPerSecond = null;  // no data rate limit by default
             _keepDeviceAwake = DefaultKeepDeviceAwake;
             _deviceAwake = false;
-            _incomingDataRateCalculator = new DataRateCalculator(TimeSpan.FromSeconds(10));
+            _incomingDataRateCalculator = new DataRateCalculator(TimeSpan.FromSeconds(15));
             _dropRandom = new Random();
         }
 
@@ -218,11 +244,19 @@ namespace Sensus.Probes
         {
             bool store = true;
 
-            if (_maxDataStoresPerSecond.HasValue)
+            float maxDataStoresPerSecond = _maxDataStoresPerSecond.GetValueOrDefault(-1);
+
+            // 0 (or negligible) data per second:  don't store
+            if (Math.Abs(maxDataStoresPerSecond) < DATA_RATE_EPSILON)
+            {
+                store = false;
+            }
+            // non-negligible data per second:  check data rate
+            else if (maxDataStoresPerSecond > 0)
             {
                 _incomingDataRateCalculator.Add(datum);
                 double incomingDataPerSecond = _incomingDataRateCalculator.DataPerSecond;
-                double overagePerSecond = incomingDataPerSecond - _maxDataStoresPerSecond.Value;
+                double overagePerSecond = incomingDataPerSecond - maxDataStoresPerSecond;
                 if (overagePerSecond > 0)
                 {
                     double dropRate = overagePerSecond / incomingDataPerSecond;

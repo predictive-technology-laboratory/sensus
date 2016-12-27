@@ -29,13 +29,8 @@ namespace Sensus.Probes
             {
                 lock (_sample)
                 {
-                    // remove any data that are older than the sample duration
-                    while (_sample.Count > 0 && (DateTimeOffset.Now - _sample.First().Timestamp).TotalSeconds > _sampleDuration.TotalSeconds)
-                    {
-                        _sample.RemoveAt(0);
-                    }
+                    PurgeOldData();
 
-                    // return data rate
                     if (_sample.Count > 1)
                     {
                         return _sample.Count / (_sample.Last().Timestamp - _sample.First().Timestamp).TotalSeconds;
@@ -64,6 +59,19 @@ namespace Sensus.Probes
                 lock (_sample)
                 {
                     _sample.Add(datum);
+                    PurgeOldData();
+                }
+            }
+        }
+
+        private void PurgeOldData()
+        {
+            lock (_sample)
+            {
+                // remove any data that are older than the sample duration
+                while (_sample.Count > 0 && (DateTimeOffset.Now - _sample.First().Timestamp).TotalSeconds > _sampleDuration.TotalSeconds)
+                {
+                    _sample.RemoveAt(0);
                 }
             }
         }
