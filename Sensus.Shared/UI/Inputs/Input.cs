@@ -22,11 +22,17 @@ using System.Collections.Generic;
 using System.Linq;
 using Sensus;
 using Xamarin;
+using Sensus.UI.Inputs;
+
+// register the input effect group
+[assembly: ResolutionGroupName(Input.EFFECT_RESOLUTION_GROUP_NAME)]
 
 namespace Sensus.UI.Inputs
 {
     public abstract class Input
     {
+        public const string EFFECT_RESOLUTION_GROUP_NAME = "InputEffects";
+
         private string _name;
         private string _id;
         private string _groupId;

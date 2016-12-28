@@ -20,8 +20,8 @@ namespace Sensus.Probes
 {
     public class DataRateCalculator
     {
-        private List<Datum> _sample;
         private TimeSpan _sampleDuration;
+        private List<Datum> _sample;
 
         public double DataPerSecond
         {
@@ -29,11 +29,16 @@ namespace Sensus.Probes
             {
                 lock (_sample)
                 {
-                    double dataRate = 0;
-                    if (_sample.Count >= 2)
-                        dataRate = _sample.Count / (_sample.Last().Timestamp - _sample.First().Timestamp).TotalSeconds;
+                    PurgeOldData();
 
-                    return dataRate;
+                    if (_sample.Count > 1)
+                    {
+                        return _sample.Count / (_sample.Last().Timestamp - _sample.First().Timestamp).TotalSeconds;
+                    }
+                    else
+                    {
+                        return 0;
+                    }
                 }
             }
         }
@@ -44,7 +49,7 @@ namespace Sensus.Probes
             _sample = new List<Datum>();
         }
 
-        public double Add(Datum datum)
+        public void Add(Datum datum)
         {
             // probes are allowed to generate null data (e.g., the POI probe indicating that no POI are nearby). for the purposes of data rate 
             // calculation, these should be ignored.
@@ -53,14 +58,22 @@ namespace Sensus.Probes
                 // maintain a sample of the given duration
                 lock (_sample)
                 {
-                    // remove any data that are older than the sample duration
                     _sample.Add(datum);
-                    while (_sample.Count > 0 && (DateTimeOffset.Now - _sample.First().Timestamp).TotalSeconds > _sampleDuration.TotalSeconds)
-                        _sample.RemoveAt(0);
+                    PurgeOldData();
                 }
             }
+        }
 
-            return DataPerSecond;
+        private void PurgeOldData()
+        {
+            lock (_sample)
+            {
+                // remove any data that are older than the sample duration
+                while (_sample.Count > 0 && (DateTimeOffset.Now - _sample.First().Timestamp).TotalSeconds > _sampleDuration.TotalSeconds)
+                {
+                    _sample.RemoveAt(0);
+                }
+            }
         }
     }
 }

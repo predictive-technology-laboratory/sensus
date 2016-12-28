@@ -35,11 +35,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\UNUserNotifications\IUNUserNotificationNotifier.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\IiOSNotifier.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\iOSNotifier.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\SliderInputEffect.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\" />
     <Folder Include="$(MSBuildThisFileDirectory)Callbacks\" />
     <Folder Include="$(MSBuildThisFileDirectory)Callbacks\UILocalNotifications\" />
     <Folder Include="$(MSBuildThisFileDirectory)Callbacks\UNUserNotifications\" />
+    <Folder Include="$(MSBuildThisFileDirectory)UI\" />
   </ItemGroup>
 </Project>

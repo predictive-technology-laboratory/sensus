@@ -24,27 +24,53 @@ namespace Sensus.Probes
 {
     public abstract class ListeningProbe : Probe
     {
-        private float _maxDataStoresPerSecond;
+        private const float DATA_RATE_EPSILON = 0.00000000001f;
+
+        private float? _maxDataStoresPerSecond;
         private bool _keepDeviceAwake;
         private bool _deviceAwake;
-        private DataRateCalculator _incomingDataRate;
+        private DataRateCalculator _incomingDataRateCalculator;
         private Random _dropRandom;
 
         private readonly object _locker = new object();
 
         [EntryFloatUiProperty("Max Data / Second:", true, int.MaxValue)]
-        public float MaxDataStoresPerSecond
+        public float? MaxDataStoresPerSecond
         {
             get { return _maxDataStoresPerSecond; }
-            set { _maxDataStoresPerSecond = value; }
+            set
+            {
+                if (value < 0)
+                {
+                    value = 0;
+                }
+
+                _maxDataStoresPerSecond = value; 
+            }
         }
 
         [JsonIgnore]
-        public TimeSpan MinDataStoreDelay
+        public TimeSpan? MinDataStoreDelay
         {
             get
             {
-                return TimeSpan.FromSeconds(1 / _maxDataStoresPerSecond);
+                float maxDataStoresPerSecond = _maxDataStoresPerSecond.GetValueOrDefault(-1);
+
+                // 0 (or negligible) data per second:  maximum delay
+                if (Math.Abs(maxDataStoresPerSecond) < DATA_RATE_EPSILON)
+                {
+                    return TimeSpan.MaxValue;
+                }
+                // non-negligible data per second:  usual calculation
+                else if (maxDataStoresPerSecond > 0)
+                {
+                    return TimeSpan.FromSeconds(1 / maxDataStoresPerSecond);
+                }
+                // unrestricted data per second:  no delay specified
+                else
+                {
+                    return default(TimeSpan?);
+                }
             }
         }
 
@@ -170,10 +196,10 @@ namespace Sensus.Probes
 
         protected ListeningProbe()
         {
-            _maxDataStoresPerSecond = 1;
+            _maxDataStoresPerSecond = null;  // no data rate limit by default
             _keepDeviceAwake = DefaultKeepDeviceAwake;
             _deviceAwake = false;
-            _incomingDataRate = new DataRateCalculator(TimeSpan.FromSeconds(10));
+            _incomingDataRateCalculator = new DataRateCalculator(TimeSpan.FromSeconds(15));
             _dropRandom = new Random();
         }
 
@@ -217,13 +243,28 @@ namespace Sensus.Probes
         public sealed override Task StoreDatumAsync(Datum datum, CancellationToken cancellationToken = default(CancellationToken))
         {
             bool store = true;
-            double incomingDataPerSecond = _incomingDataRate.Add(datum);
-            double overagePerSecond = incomingDataPerSecond - MaxDataStoresPerSecond;
-            if (overagePerSecond > 0)
+
+            float maxDataStoresPerSecond = _maxDataStoresPerSecond.GetValueOrDefault(-1);
+
+            // 0 (or negligible) data per second:  don't store
+            if (Math.Abs(maxDataStoresPerSecond) < DATA_RATE_EPSILON)
             {
-                double dropRate = overagePerSecond / incomingDataPerSecond;
-                if (_dropRandom.NextDouble() < dropRate)
-                    store = false;
+                store = false;
+            }
+            // non-negligible data per second:  check data rate
+            else if (maxDataStoresPerSecond > 0)
+            {
+                _incomingDataRateCalculator.Add(datum);
+                double incomingDataPerSecond = _incomingDataRateCalculator.DataPerSecond;
+                double overagePerSecond = incomingDataPerSecond - maxDataStoresPerSecond;
+                if (overagePerSecond > 0)
+                {
+                    double dropRate = overagePerSecond / incomingDataPerSecond;
+                    if (_dropRandom.NextDouble() < dropRate)
+                    {
+                        store = false;
+                    }
+                }
             }
 
             if (store)

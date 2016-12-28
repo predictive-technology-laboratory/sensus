@@ -21,6 +21,9 @@ namespace Sensus.UI.Inputs
 {
     public class SliderInput : Input
     {
+        public const string EFFECT_RESOLUTION_EFFECT_NAME = "SliderInputEffect";
+        public const string EFFECT_RESOLUTION_NAME = EFFECT_RESOLUTION_GROUP_NAME + "." + EFFECT_RESOLUTION_EFFECT_NAME;
+
         private string _tipText;
         private double _minimum;
         private double _maximum;
@@ -43,7 +46,7 @@ namespace Sensus.UI.Inputs
             }
             set
             {
-                _tipText = value;
+                _tipText = value?.Trim();
             }
         }
 
@@ -56,12 +59,6 @@ namespace Sensus.UI.Inputs
             }
             set
             {
-                if (value >= _maximum)
-                {
-                    SensusServiceHelper.Get().FlashNotificationAsync("Slider input minimum must be less than maximum.");
-                    value = _maximum - 1;
-                }
-                
                 _minimum = value;
             }
         }
@@ -75,12 +72,6 @@ namespace Sensus.UI.Inputs
             }
             set
             {
-                if (value <= _minimum)
-                {
-                    SensusServiceHelper.Get().FlashNotificationAsync("Slider input maximum must be greater than minimum.");
-                    value = _minimum + 1;
-                }
-                
                 _maximum = value;
             }
         }
@@ -201,7 +192,7 @@ namespace Sensus.UI.Inputs
 
         private void Construct(double minimum, double maximum)
         {
-            _tipText = "  Please select a value below.";
+            _tipText = "Please tap the range below to select a value";
             _minimum = minimum;
             _maximum = maximum;
             _increment = (_maximum - _minimum + 1) / 10;
@@ -212,33 +203,41 @@ namespace Sensus.UI.Inputs
 
         public override View GetView(int index)
         {
-            if (base.GetView(index) == null && _maximum > _minimum)
+            if (base.GetView(index) == null)
             {
                 _slider = new Slider
                 {
                     HorizontalOptions = LayoutOptions.FillAndExpand,
+
+                    // need to set the min and max to extremes to allow them to be reset below to arbitrary values
                     Minimum = double.MinValue,
                     Maximum = double.MaxValue
 
                     // set the style ID on the view so that we can retrieve it when unit testing
-                    #if UNIT_TESTING
+#if UNIT_TESTING
                     , StyleId = Name
-                    #endif
+#endif
                 };
 
-                _slider.Minimum = _minimum;
-                _slider.Maximum = _maximum;
-                _slider.Value = _incrementalValue = GetIncrementalValue((_maximum - _minimum) / 2d);
                 _incrementalValueHasChanged = false;
 
                 _sliderLabel = CreateLabel(index);
-
                 if (!string.IsNullOrWhiteSpace(_tipText))
-                    _sliderLabel.Text += _tipText;
-
-                _slider.ValueChanged += (o, e) =>
                 {
-                    double newIncrementalValue = GetIncrementalValue(_slider.Value);
+                    _sliderLabel.Text += " (" + _tipText + ")";
+                }
+
+                _slider.Minimum = _minimum;
+                _slider.Maximum = _maximum;
+
+                // we use the effects framework to hide the slider initial position from the user, in order to 
+                // avoid biasing the user toward the initial position.
+                Effect effect = Effect.Resolve(EFFECT_RESOLUTION_NAME);
+                IInputEffect<Slider, double> effectInterface = effect as IInputEffect<Slider, double>;
+                effectInterface.SetFormsControl(_slider);
+                effectInterface.ValueChanged += newValue =>
+                {
+                    double newIncrementalValue = GetIncrementalValue(newValue);
 
                     if (newIncrementalValue != _incrementalValue)
                     {
@@ -249,67 +248,68 @@ namespace Sensus.UI.Inputs
                     }
                 };
 
+                _slider.Effects.Add(effect);
+
                 base.SetView(new StackLayout
+                {
+                    Orientation = StackOrientation.Vertical,
+                    VerticalOptions = LayoutOptions.Start,
+                    Children =
                     {
-                        Orientation = StackOrientation.Vertical,
-                        VerticalOptions = LayoutOptions.Start,
-                        Children =
+                        _sliderLabel,
+                        new StackLayout
                         {
-                            _sliderLabel,
-                            new StackLayout
+                            Orientation = StackOrientation.Horizontal,
+                            HorizontalOptions = LayoutOptions.FillAndExpand,
+                            Children =
                             {
-                                Orientation = StackOrientation.Horizontal,
-                                HorizontalOptions = LayoutOptions.FillAndExpand,
-                                Children =
+                                new Label
                                 {
-                                    new Label
-                                    {
-                                        Text = _minimum.ToString(),
-                                        FontSize = 20,
-                                        HorizontalOptions = LayoutOptions.Fill,
-                                        IsVisible = _displayMinMax
-                                    },
-                                    _slider,
-                                    new Label
-                                    {
-                                        Text = _maximum.ToString(),
-                                        FontSize = 20,
-                                        HorizontalOptions = LayoutOptions.Fill,
-                                        IsVisible = _displayMinMax
-                                    }
+                                    Text = _slider.Minimum.ToString(),
+                                    FontSize = 20,
+                                    HorizontalOptions = LayoutOptions.Fill,
+                                    IsVisible = _displayMinMax
                                 },
-                            },
-                            new StackLayout
-                            {
-                                Orientation = StackOrientation.Horizontal,
-                                HorizontalOptions = LayoutOptions.FillAndExpand,
-                                Children =
+                                _slider,
+                                new Label
                                 {
-                                    new Label
-                                    {
-                                        Text = _leftLabel,
-                                        FontSize = 15,
-                                        HorizontalOptions = LayoutOptions.FillAndExpand
-                                        
-                                    },
-                                    new Label
-                                    {
-                                        Text = _rightLabel,
-                                        FontSize = 15,
-                                        HorizontalOptions = LayoutOptions.End
-                                    }
-                                },
-                                IsVisible = (!string.IsNullOrWhiteSpace(_leftLabel) || !string.IsNullOrWhiteSpace(_rightLabel))
+                                    Text = _slider.Maximum.ToString(),
+                                    FontSize = 20,
+                                    HorizontalOptions = LayoutOptions.Fill,
+                                    IsVisible = _displayMinMax
+                                }
                             }
+                        },
+                        new StackLayout
+                        {
+                            Orientation = StackOrientation.Horizontal,
+                            HorizontalOptions = LayoutOptions.FillAndExpand,
+                            Children =
+                            {
+                                new Label
+                                {
+                                    Text = _leftLabel,
+                                    FontSize = 15,
+                                    HorizontalOptions = LayoutOptions.FillAndExpand
+                                },
+                                new Label
+                                {
+                                    Text = _rightLabel,
+                                    FontSize = 15,
+                                    HorizontalOptions = LayoutOptions.End
+                                }
+                            },
+                            IsVisible = (!string.IsNullOrWhiteSpace(_leftLabel) || !string.IsNullOrWhiteSpace(_rightLabel))
                         }
-                    });
+                    }
+                });
             }
             else
             {
                 if (Enabled)
                 {
                     // if the view was already initialized and is enabled, just update the label since the index might have changed.
-                    string tipText = _incrementalValueHasChanged ? "" : "  " + _tipText;
+                    string tipText = _incrementalValueHasChanged ? "" : " " + _tipText;
                     _sliderLabel.Text = GetLabelText(index) + (_displaySliderValue && _incrementalValueHasChanged ? "  " + _incrementalValue.ToString() : "") + tipText;
                 }
                 else
@@ -320,7 +320,7 @@ namespace Sensus.UI.Inputs
                         _slider.Value = _minimum;
                         _sliderLabel.Text = GetLabelText(index) + "  No value selected.";
                     }
-                }                
+                }
             }
 
             return base.GetView(index);

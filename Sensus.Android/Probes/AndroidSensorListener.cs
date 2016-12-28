@@ -21,7 +21,7 @@ namespace Sensus.Android.Probes
     public class AndroidSensorListener : Java.Lang.Object, ISensorEventListener
     {
         private SensorType _sensorType;
-        private TimeSpan _sensorDelay;
+        private TimeSpan? _sensorDelay;
         private Action<SensorStatus> _sensorAccuracyChangedCallback;
         private Action<SensorEvent> _sensorValueChangedCallback;
         private SensorManager _sensorManager;
@@ -38,7 +38,7 @@ namespace Sensus.Android.Probes
             _listening = false;
         }
 
-        public void Initialize(TimeSpan sensorDelay)
+        public void Initialize(TimeSpan? sensorDelay)
         {
             _sensorDelay = sensorDelay;
             _sensorManager = ((AndroidSensusServiceHelper)SensusServiceHelper.Get()).GetSensorManager();
@@ -65,15 +65,16 @@ namespace Sensus.Android.Probes
 
             // use the largest delay that will provide samples at the desired rate:  https://developer.android.com/guide/topics/sensors/sensors_overview.html#sensors-monitor
             SensorDelay sensorDelay = SensorDelay.Fastest;
-            long sensorDelayMicroseconds = _sensorDelay.Ticks / 10;
-            if (sensorDelayMicroseconds >= 200000)
-                sensorDelay = SensorDelay.Normal;
-            else if (sensorDelayMicroseconds >= 60000)
-                sensorDelay = SensorDelay.Ui;
-            else if (sensorDelayMicroseconds >= 20000)
-                sensorDelay = SensorDelay.Game;
-            else
-                sensorDelay = SensorDelay.Fastest;
+            if (_sensorDelay.HasValue)
+            {
+                long sensorDelayMicroseconds = _sensorDelay.Value.Ticks / 10;
+                if (sensorDelayMicroseconds >= 200000)
+                    sensorDelay = SensorDelay.Normal;
+                else if (sensorDelayMicroseconds >= 60000)
+                    sensorDelay = SensorDelay.Ui;
+                else if (sensorDelayMicroseconds >= 20000)
+                    sensorDelay = SensorDelay.Game;
+            }
             
             _sensorManager.RegisterListener(this, _sensor, sensorDelay);
         }
