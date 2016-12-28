@@ -78,6 +78,40 @@ namespace Sensus.UI
             }
         }
 
+        private class ScriptObjectConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                if (value == null)
+                    return "";
+
+                Script script = value as Script;
+
+                return script;
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        private class PendingScriptTextCell : TextCell
+        {
+            public PendingScriptTextCell()
+            {
+                var deleteAction = new MenuItem { Text = "Delete", IsDestructive = true };
+                deleteAction.SetBinding(MenuItem.CommandParameterProperty, new Binding(".", converter: new ScriptObjectConverter()));
+                deleteAction.Clicked += (sender, e) =>
+                {
+                    var script = ((MenuItem)sender).CommandParameter as Script;
+                    SensusServiceHelper.Get().RemoveScript((Script)((MenuItem)sender).CommandParameter);
+                    SensusServiceHelper.Get().Logger.Log("\"" + script.Runner.Name + "\" instance with birthdate \"" + script.Birthdate + "\" was deleted.", LoggingLevel.Normal, typeof(Script));
+                };
+                this.ContextActions.Add(deleteAction);
+            }
+        }
+
         public PendingScriptsPage()
         {
             Title = "Pending Surveys";
@@ -85,9 +119,10 @@ namespace Sensus.UI
             SensusServiceHelper.Get().RemoveExpiredScripts(true);
 
             ListView scriptList = new ListView();
-            scriptList.ItemTemplate = new DataTemplate(typeof(TextCell));
-            scriptList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", converter: new ScriptTextConverter()));
-            scriptList.ItemTemplate.SetBinding(TextCell.DetailProperty, new Binding(".", converter: new ScriptDetailConverter()));
+
+            scriptList.ItemTemplate = new DataTemplate(typeof(PendingScriptTextCell));
+            scriptList.ItemTemplate.SetBinding(PendingScriptTextCell.TextProperty, new Binding(".", converter: new ScriptTextConverter()));
+            scriptList.ItemTemplate.SetBinding(PendingScriptTextCell.DetailProperty, new Binding(".", converter: new ScriptDetailConverter()));
             scriptList.ItemsSource = SensusServiceHelper.Get().ScriptsToRun;
             scriptList.ItemTapped += (o, e) =>
             {
