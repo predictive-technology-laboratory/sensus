@@ -1289,7 +1289,9 @@ namespace Sensus
             foreach (var script in scripts)
             {
                 if (_scriptsToRun.Remove(script))
+                {
                     removed = true;
+                }
             }
 
             if (removed && issueNotification)
