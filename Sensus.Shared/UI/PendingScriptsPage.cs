@@ -100,7 +100,6 @@ namespace Sensus.UI
             SensusServiceHelper.Get().RemoveExpiredScripts(true);
 
             ListView scriptList = new ListView();
-
             scriptList.ItemTemplate = new DataTemplate(typeof(PendingScriptTextCell));
             scriptList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", converter: new ScriptTextConverter()));
             scriptList.ItemTemplate.SetBinding(TextCell.DetailProperty, new Binding(".", converter: new ScriptDetailConverter()));
