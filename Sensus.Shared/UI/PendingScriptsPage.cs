@@ -78,6 +78,21 @@ namespace Sensus.UI
             }
         }
 
+        private class PendingScriptTextCell : TextCell
+        {
+            public PendingScriptTextCell()
+            {
+                MenuItem deleteMenuItem = new MenuItem { Text = "Delete", IsDestructive = true };
+                deleteMenuItem.SetBinding(MenuItem.CommandParameterProperty, new Binding("."));
+                deleteMenuItem.Clicked += (sender, e) =>
+                {
+                    SensusServiceHelper.Get().RemoveScript((sender as MenuItem).CommandParameter as Script);
+                };
+
+                ContextActions.Add(deleteMenuItem);
+            }
+        }
+
         public PendingScriptsPage()
         {
             Title = "Pending Surveys";
@@ -85,7 +100,8 @@ namespace Sensus.UI
             SensusServiceHelper.Get().RemoveExpiredScripts(true);
 
             ListView scriptList = new ListView();
-            scriptList.ItemTemplate = new DataTemplate(typeof(TextCell));
+
+            scriptList.ItemTemplate = new DataTemplate(typeof(PendingScriptTextCell));
             scriptList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", converter: new ScriptTextConverter()));
             scriptList.ItemTemplate.SetBinding(TextCell.DetailProperty, new Binding(".", converter: new ScriptDetailConverter()));
             scriptList.ItemsSource = SensusServiceHelper.Get().ScriptsToRun;
