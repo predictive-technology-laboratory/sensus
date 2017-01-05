@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using NUnit.Framework;
 using Sensus.Concurrent;
 
@@ -22,7 +24,7 @@ namespace Sensus.Tests.Concurrent
     public class ConcurrentObservableCollectionTests
     {        
         #region Fields        
-        private const int DelayTime = 100;
+        private const int DelayTime = 2;
         private readonly IConcurrent Concurrent;
         #endregion
 
@@ -32,6 +34,29 @@ namespace Sensus.Tests.Concurrent
         public ConcurrentObservableCollectionTests(IConcurrent concurrent)
         {
             Concurrent = concurrent;
+        }
+
+        [Test(Description="If this fails the DelayTime likely isn't large enough to cause a failure if future tests break.")]
+        public void DelayIsLongEnough()
+        {
+            var test = new List<int> { 1, 2, 3 };
+
+            var task1 = Task.Run(() =>
+            {
+                foreach (var i in test)
+                {
+                    Task.Delay(DelayTime).Wait();
+                }
+            });
+
+            var task2 = Task.Run(() =>
+            {
+                test.Insert(0, 4);
+                Task.Delay(DelayTime).Wait();
+                test.Insert(0, 5);
+            });
+
+            Assert.Throws<AggregateException>(() => Task.WaitAll(task1, task2));
         }
 
         [Test]

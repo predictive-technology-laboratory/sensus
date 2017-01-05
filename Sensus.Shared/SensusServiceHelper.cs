@@ -108,7 +108,7 @@ namespace Sensus
         /// Initializes the sensus service helper. Must be called when app first starts, from the main / UI thread.
         /// </summary>
         /// <param name="createNew">Function for creating a new service helper, if one is needed.</param>
-        public static void Initialize(Func<SensusServiceHelper> createNew)
+        public static void Initialize(Func<SensusServiceHelper> createNew, bool delay = true)
         {
             if (SINGLETON != null)
             {
@@ -122,7 +122,7 @@ namespace Sensus
             {
                 // we failed to deserialize. wait a bit and try again. but don't wait too long since we're holding up the 
                 // app-load sequence, which is not allowed to take too much time.
-                Thread.Sleep(5000);
+                if(delay) Thread.Sleep(5000);
 
                 if (!TryDeserializeSingleton(out deserializeException))
                 {

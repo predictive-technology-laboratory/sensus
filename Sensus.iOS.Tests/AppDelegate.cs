@@ -41,17 +41,15 @@ namespace Sensus.iOS.Tests
         //
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
-            global::Xamarin.Forms.Forms.Init();
+            Xamarin.Calabash.Start();
+
+            Xamarin.Forms.Forms.Init();
 
             SetUp.SetUpFixture.SetUp();
 
             // This will load all tests within the current project
             var nunit = new NUnit.Runner.App { AutoRun = false };
 
-            // If you want to add tests in another assembly
-            //nunit.AddTestAssembly(typeof(MyTests).Assembly);
-
-            
             LoadApplication(nunit);
 
             return base.FinishedLaunching(app, options);
