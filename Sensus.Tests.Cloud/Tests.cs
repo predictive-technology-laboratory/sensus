@@ -14,12 +14,10 @@
 
 using System;
 using System.Linq;
-using System.Collections.Concurrent;
 using NUnit.Framework;
 using Xamarin.UITest;
-using Xamarin.UITest.iOS;
-using Xamarin.UITest.Android;
 using Xamarin.UITest.Queries;
+using System.Collections.Generic;
 
 namespace Sensus.Tests.Cloud
 {
@@ -27,77 +25,44 @@ namespace Sensus.Tests.Cloud
     public class Tests
     {
         #region Fields
-        ConcurrentBag<IApp> apps;
+        private IApp _app;
+        private string _labelClass;
         #endregion
 
         #region Setup
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
         {
-            apps = new ConcurrentBag<IApp>();
-
-            if (TestEnvironment.Platform == TestPlatform.Local)
-            {
 #if __ANDROID__
-                apps.Add(ConfigureApp.Android.StartApp());
+            _app = ConfigureApp.Android.StartApp();
+            _labelClass = "FormsTextView";
 #elif __IOS__
-                apps.Add(ConfigureApp.iOS.StartApp());
+            _app = ConfigureApp.iOS.StartApp();
+            _labelClass = "UILabel";
 #endif
-            }
-
-            if (TestEnvironment.Platform == TestPlatform.TestCloudAndroid)
-            {
-                apps.Add(ConfigureApp.Android.StartApp());
-            }
-
-            if (TestEnvironment.Platform == TestPlatform.TestCloudiOS)
-            {
-                apps.Add(ConfigureApp.iOS.StartApp());
-            }
         }
         #endregion
 
         [Test]
-        public void AndroidTest()
+        public void TestApp()
         {
-            Test(apps.OfType<AndroidApp>().SingleOrDefault());
-        }
+            // run tests and wait for results
+            _app.Tap(c => c.Text("Run Tests"));
+            _app.WaitForElement(c => c.Text("Overall result:"), timeout: TimeSpan.FromSeconds(90));
 
-        [Test]
-        public void iOSTest()
-        {
-            Test(apps.OfType<iOSApp>().SingleOrDefault());
-        }
+            // get and parse label content
+            List<AppResult> labels = _app.Query(q => q.Class(_labelClass)).ToList();
+            string overallResult = labels[labels.FindIndex(label => label.Text.Trim() == "Overall result:") + 1].Text;
+            int testsRun = int.Parse(labels[labels.FindIndex(label => label.Text.Trim() == "Tests run:") + 1].Text);
+            int testsPassed = int.Parse(labels[labels.FindIndex(label => label.Text.Trim() == "Passed:") + 1].Text);
 
-        #region Private Methods
-        private void Test(IApp app)
-        {
-            if (app == null)
-            {
-                throw new IgnoreException("No test app provided");
-            }
-
-            app.Tap(c => c.Text("Run Tests"));
-            app.WaitForElement(c => c.Text("Overall result:"), timeout: TimeSpan.FromSeconds(90));
-
-            AppResult[] textBoxes = app.Query(q => q.Class("FormsTextView")).ToArray();
-
-            Assert.AreEqual(textBoxes[0].Text.Trim(), "Overall result:");
-            string overallResult = textBoxes[1].Text;
-
-            Assert.AreEqual(textBoxes[2].Text.Trim(), "Tests run:");
-            int testsRun = int.Parse(textBoxes[3].Text);
-
-            Assert.AreEqual(textBoxes[4].Text.Trim(), "Passed:");
-            int testsPassed = int.Parse(textBoxes[5].Text);
-
+            // check results
             if (overallResult != "Passed" || testsPassed != testsRun)
             {
-                app.Tap(c => c.Text("Failed Results"));
-                app.Screenshot("Failures");
+                _app.Tap(c => c.Text("Failed Results"));
+                _app.Screenshot("Failures");
                 throw new Exception($"{testsPassed} of {testsRun} passed.");
             }
         }
-        #endregion
     }
 }
