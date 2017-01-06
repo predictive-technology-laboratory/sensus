@@ -90,7 +90,9 @@ namespace Sensus.Probes.User.MicrosoftBand
         protected override void StopReadings()
         {
             if (_sensor != null)
+            {
                 _sensor.StopReadingsAsync().Wait();
+            }
         }
     }
 }

@@ -120,6 +120,7 @@ namespace Sensus.UI
 
                     // process all inputs in the script
                     foreach (InputGroup inputGroup in script.InputGroups)
+                    {
                         foreach (Input input in inputGroup.Inputs)
                         {
                             // only consider inputs that still need to be stored. if an input has already been stored, it should be ignored.
@@ -146,6 +147,7 @@ namespace Sensus.UI
                                 }
                             }
                         }
+                    }
 
                     if (script.Valid)
                     {

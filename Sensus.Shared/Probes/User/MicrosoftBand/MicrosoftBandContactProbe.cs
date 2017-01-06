@@ -21,6 +21,10 @@ namespace Sensus.Probes.User.MicrosoftBand
 {
     public class MicrosoftBandContactProbe : MicrosoftBandProbe<BandContactSensor, BandContactReading>
     {
+        public event EventHandler<ContactState> ContactStateChanged;
+
+        private ContactState? _previousState;
+
         public override Type DatumType
         {
             get
@@ -44,6 +48,12 @@ namespace Sensus.Probes.User.MicrosoftBand
 
         protected override Datum GetDatumFromReading(BandContactReading reading)
         {
+            if (_previousState == null || reading.State != _previousState.Value)
+            {
+                ContactStateChanged?.Invoke(this, reading.State);
+                _previousState = reading.State;
+            }
+
             return new MicrosoftBandContactDatum(DateTimeOffset.UtcNow, reading.State);
         }
 

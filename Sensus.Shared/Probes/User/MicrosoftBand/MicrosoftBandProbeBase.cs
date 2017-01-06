@@ -195,7 +195,9 @@ namespace Sensus.Probes.User.MicrosoftBand
             BAND_CLIENT_CONNECT_WAIT.WaitOne();
 
             if (BandClient == null || !BandClient.IsConnected)
+            {
                 throw new MicrosoftBandClientConnectException("Failed to connect to Band.");
+            }
         }
 
         public static Task TestBandClientAsync(string callbackId, CancellationToken cancellationToken, Action letDeviceSleepCallback)
@@ -255,7 +257,15 @@ namespace Sensus.Probes.User.MicrosoftBand
                         // sensor on the band client.
                         if (probe.Running)
                         {
-                            probe.StartReadings();
+                            // only start readings if they haven't been stopped due to non-contact. acquire lock to prevent race
+                            // condition with contact changed event, which might attempt to stop readings on loss of contact.
+                            lock(HEALTH_TEST_LOCKER)
+                            {
+                                if (!probe._stoppedBecauseNotWorn)
+                                {
+                                    probe.StartReadings();
+                                }
+                            }
                         }
                         // if we attempted to start several band probes upon protocol start up and failed, we would have bailed out after
                         // the first band probe failed to start. this would leave the other band probes enabled but not running at the time
@@ -289,6 +299,8 @@ namespace Sensus.Probes.User.MicrosoftBand
         #endregion
 
         private BandSensorSampleRate _samplingRate;
+        private bool _stopWhenNotWorn;
+        private bool _stoppedBecauseNotWorn;
 
         [ListUiProperty("Sampling Rate:", true, 5, new object[] { BandSensorSampleRate.Ms16, BandSensorSampleRate.Ms32, BandSensorSampleRate.Ms128 })]
         public BandSensorSampleRate SamplingRate
@@ -300,6 +312,19 @@ namespace Sensus.Probes.User.MicrosoftBand
             set
             {
                 _samplingRate = value;
+            }
+        }
+
+        [OnOffUiProperty("Stop When Not Worn (Must Enable Contact Probe):", true, 6)]
+        public bool StopWhenNotWorn
+        {
+            get
+            {
+                return _stopWhenNotWorn;
+            }
+            set
+            {
+                _stopWhenNotWorn = value;
             }
         }
 
@@ -332,9 +357,23 @@ namespace Sensus.Probes.User.MicrosoftBand
         protected MicrosoftBandProbeBase()
         {
             _samplingRate = BandSensorSampleRate.Ms16;
+
+            // non-contact band probes should stop when the band is not being worn. if
+            // the user sets _stopWhenNotWorn to true on the contact probe, nothing will 
+            // happen (i.e., the contact probe will continue running) because we don't
+            // hook up the contact event below.
+            _stopWhenNotWorn = !(this is MicrosoftBandContactProbe);
+            _stoppedBecauseNotWorn = false;
         }
 
         protected abstract void Configure(BandClient bandClient);
+
+        protected override void Initialize()
+        {
+            base.Initialize();
+
+            _stoppedBecauseNotWorn = false;
+        }
 
         protected override void StartListening()
         {
@@ -356,17 +395,35 @@ namespace Sensus.Probes.User.MicrosoftBand
             ConnectClient(this);
 
             StartReadings();
+
+            // hook up the contact event for non-contact probes
+            if (!(this is MicrosoftBandContactProbe))
+            {
+                MicrosoftBandContactProbe contactProbe = Protocol.Probes.Single(probe => probe is MicrosoftBandContactProbe) as MicrosoftBandContactProbe;
+                contactProbe.ContactStateChanged += ContactStateChanged;
+            }
         }
 
         protected abstract void StartReadings();
 
         protected override void StopListening()
         {
+            // disconnect the contact event for non-contact probes. this probe has already been marked as non-running, so
+            // there's no risk of a race condition in which the contact state changes to worn and the change event attempts
+            // to restart this probe after it has been stopped (we check Running during the change event).
+            if (!(this is MicrosoftBandContactProbe))
+            {
+                MicrosoftBandContactProbe contactProbe = Protocol.Probes.Single(probe => probe is MicrosoftBandContactProbe) as MicrosoftBandContactProbe;
+                contactProbe.ContactStateChanged -= ContactStateChanged;
+            }
+
             StopReadings();
 
             // only cancel the static health test if none of the band probes should be running.
             if (BandProbesThatShouldBeRunning.Count == 0)
+            {
                 CancelHealthTest();
+            }
 
             // disconnect the client if no band probes are actually running.
             if (BandProbesThatAreRunning.Count == 0 && (BandClient?.IsConnected ?? false))
@@ -385,6 +442,30 @@ namespace Sensus.Probes.User.MicrosoftBand
         }
 
         protected abstract void StopReadings();
+
+        private void ContactStateChanged(object sender, ContactState contactState)
+        {
+            // contact probe might get a reading before this probe changes to the running state or after it changes
+            // to the stopped state.
+            if (Running)
+            {
+                // start readings if band is worn, regardless of whether we're stopping readings when it isn't worn.
+                if (contactState == ContactState.Worn)
+                {
+                    StartReadings();
+                    _stoppedBecauseNotWorn = false;
+                }
+                else if (contactState == ContactState.NotWorn && _stopWhenNotWorn)
+                {
+                    // prevent race condition with client health test, which will be trying to start readings on this probe.
+                    lock(HEALTH_TEST_LOCKER)
+                    {
+                        StopReadings();
+                        _stoppedBecauseNotWorn = true;
+                    }
+                }
+            }
+        }
 
         public override bool TestHealth(ref string error, ref string warning, ref string misc)
         {
