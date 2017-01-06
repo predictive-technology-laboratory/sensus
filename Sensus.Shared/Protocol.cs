@@ -90,6 +90,7 @@ namespace Sensus
                 };
 #elif WINDOWS_PHONE
                 // TODO:  Read bytes and display.
+#elif LOCAL_TESTS
 #else
 #warning "Unrecognized platform"
 #endif

@@ -45,7 +45,7 @@ namespace Sensus.Probes
                     value = 0;
                 }
 
-                _maxDataStoresPerSecond = value; 
+                _maxDataStoresPerSecond = value;
             }
         }
 
@@ -179,6 +179,8 @@ namespace Sensus.Probes
 
                 double participationHorizonSeconds = TimeSpan.FromDays(Protocol.ParticipationHorizonDays).TotalSeconds;
                 return (float)(runningSeconds / participationHorizonSeconds);
+#elif LOCAL_TESTS
+                return 0;
 #else
 #warning "Unrecognized platform"
                 return 0;

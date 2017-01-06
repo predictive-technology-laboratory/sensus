@@ -187,6 +187,8 @@ namespace Sensus.Probes
                 string userNotificationMessage = null;
 #elif WINDOWS_PHONE
                 string userNotificationMessage = null; // TODO:  Should we use a message?
+#elif LOCAL_TESTS
+                string userNotificationMessage = null;
 #else
 #warning "Unrecognized platform"
                 string userNotificationMessage = null;
