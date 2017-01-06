@@ -62,7 +62,7 @@ namespace Sensus.Tests.Core
         public void RegisteredOneProtocolTest()
         {
             TestSensusServiceHelper service1 = new TestSensusServiceHelper();
-            SensusServiceHelper.Initialize(() => service1);
+            SensusServiceHelper.Initialize(() => service1, false);
 
             service1.RegisteredProtocols.Clear();
 
@@ -82,7 +82,7 @@ namespace Sensus.Tests.Core
         public void RegisteredTwoProtocolsTest()
         {
             TestSensusServiceHelper service1 = new TestSensusServiceHelper();
-            SensusServiceHelper.Initialize(() => service1);
+            SensusServiceHelper.Initialize(() => service1, false);
 
             service1.RegisteredProtocols.Clear();
 
@@ -105,7 +105,7 @@ namespace Sensus.Tests.Core
         {
             var service1 = new TestSensusServiceHelper();
 
-            SensusServiceHelper.Initialize(() => service1);
+            SensusServiceHelper.Initialize(() => service1, false);
 
             Protocol.Create("Test");
 
@@ -127,7 +127,7 @@ namespace Sensus.Tests.Core
         {
             var service1 = new TestSensusServiceHelper();
 
-            SensusServiceHelper.Initialize(() => service1);
+            SensusServiceHelper.Initialize(() => service1, false);
 
             service1.PointsOfInterest.Clear();
             service1.PointsOfInterest.Add(new PointOfInterest("Test", "Test", null));
@@ -147,7 +147,7 @@ namespace Sensus.Tests.Core
         {
             var service1 = new TestSensusServiceHelper();
 
-            SensusServiceHelper.Initialize(() => service1);
+            SensusServiceHelper.Initialize(() => service1, false);
 
             service1.FlashNotificationsEnabled = true;
 
@@ -175,7 +175,7 @@ namespace Sensus.Tests.Core
         {
             var service1 = new TestSensusServiceHelper();
 
-            SensusServiceHelper.Initialize(() => service1);
+            SensusServiceHelper.Initialize(() => service1, false);
 
             service1.RunningProtocolIds.Clear();
 
