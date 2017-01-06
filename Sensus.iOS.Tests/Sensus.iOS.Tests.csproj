@@ -12,6 +12,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <ReleaseVersion>2.0.0</ReleaseVersion>
+    <Description>Endpoint that runs all iOS and platform-neutral (i.e., shared) unit tests. Runs on iOS simulators and devices.</Description>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
     <DebugSymbols>true</DebugSymbols>

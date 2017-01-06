@@ -26,6 +26,7 @@
     <ReleaseVersion>2.0.0</ReleaseVersion>
     <AndroidManifest>..\Sensus.Android\Properties\AndroidManifest.xml</AndroidManifest>
     <AndroidLinkMode>None</AndroidLinkMode>
+    <Description>Endpoint that runs all Android and platform-neutral (i.e., shared) unit tests. Runs on Android emulators and devices.</Description>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|Android' ">
     <DebugSymbols>True</DebugSymbols>
