@@ -19,6 +19,7 @@ using NUnit.Framework;
 using Xamarin.UITest;
 using Xamarin.UITest.iOS;
 using Xamarin.UITest.Android;
+using Xamarin.UITest.Queries;
 
 namespace Sensus.Tests.Cloud
 {
@@ -37,12 +38,11 @@ namespace Sensus.Tests.Cloud
 
             if (TestEnvironment.Platform == TestPlatform.Local)
             {
-                //StartApp() doesn't appear to be Thread Safe so we have to start them one at a time.
-                //var task1 = Task.Run(() => apps.Add(ConfigureApp.Android.StartApp()));
-                //var task2 = Task.Run(() => apps.Add(ConfigureApp.iOS.StartApp()));
-
+#if __ANDROID__
                 apps.Add(ConfigureApp.Android.StartApp());
+#elif __IOS__
                 apps.Add(ConfigureApp.iOS.StartApp());
+#endif
             }
 
             if (TestEnvironment.Platform == TestPlatform.TestCloudAndroid)
@@ -72,19 +72,30 @@ namespace Sensus.Tests.Cloud
         #region Private Methods
         private void Test(IApp app)
         {
-            if (app == null) throw new IgnoreException("No test app provided");
-            
-            app.Tap(c => c.Text("Run Tests"));
+            if (app == null)
+            {
+                throw new IgnoreException("No test app provided");
+            }
 
+            app.Tap(c => c.Text("Run Tests"));
             app.WaitForElement(c => c.Text("Overall result:"), timeout: TimeSpan.FromSeconds(90));
 
-            app.Tap(c => c.Text("Failed Results"));
+            AppResult[] textBoxes = app.Query(q => q.Class("FormsTextView")).ToArray();
 
-            if (app.Query(c => c.Class("Xamarin_Forms_Platform_iOS_BoxRenderer")).Any())
+            Assert.AreEqual(textBoxes[0].Text.Trim(), "Overall result:");
+            string overallResult = textBoxes[1].Text;
+
+            Assert.AreEqual(textBoxes[2].Text.Trim(), "Tests run:");
+            int testsRun = int.Parse(textBoxes[3].Text);
+
+            Assert.AreEqual(textBoxes[4].Text.Trim(), "Passed:");
+            int testsPassed = int.Parse(textBoxes[5].Text);
+
+            if (overallResult != "Passed" || testsPassed != testsRun)
             {
+                app.Tap(c => c.Text("Failed Results"));
                 app.Screenshot("Failures");
-
-                throw new Exception($"{app.Query(c => c.Class("Xamarin_Forms_Platform_iOS_BoxRenderer")).Count()} Tests Failed");
+                throw new Exception($"{testsPassed} of {testsRun} passed.");
             }
         }
         #endregion

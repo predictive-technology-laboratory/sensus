@@ -170,7 +170,7 @@ namespace Sensus.Tests.Concurrent
         [Test]
         public void ExecuteThreadSafeActionIsSynchronous()
         {
-            var test = new List<int> { 1, 2, 3 };            
+            var test = new List<int> { 1, 2, 3 };
 
             _concurrent.ExecuteThreadSafe(() =>
             {
@@ -206,7 +206,7 @@ namespace Sensus.Tests.Concurrent
             test.Add(4);
             Task.Delay(DelayTime).Wait();
             test.Add(5);
-            
+
             Assert.Contains(4, test);
             Assert.Contains(5, test);
         }
@@ -258,11 +258,11 @@ namespace Sensus.Tests.Concurrent
             {
                 return _concurrent.ExecuteThreadSafe(() =>
                 {
-                    for(var i = 4; i <= 6; i++)
+                    for (var i = 4; i <= 6; i++)
                     {
                         test.Add(i);
                         Task.Delay(DelayTime).Wait();
-                    }                        
+                    }
 
                     return test;
                 });
