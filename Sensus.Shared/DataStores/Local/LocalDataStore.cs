@@ -27,6 +27,7 @@ using System.Threading.Tasks;
 using Java.Util.Zip;
 #elif __IOS__
 using MiniZip.ZipArchive;
+#elif LOCAL_TESTS
 #else
 #warning "Unrecognized platform"
 #endif

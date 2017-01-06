@@ -108,7 +108,7 @@ namespace Sensus
         /// Initializes the sensus service helper. Must be called when app first starts, from the main / UI thread.
         /// </summary>
         /// <param name="createNew">Function for creating a new service helper, if one is needed.</param>
-        public static void Initialize(Func<SensusServiceHelper> createNew)
+        public static void Initialize(Func<SensusServiceHelper> createNew, bool delay = true)
         {
             if (SINGLETON != null)
             {
@@ -122,7 +122,7 @@ namespace Sensus
             {
                 // we failed to deserialize. wait a bit and try again. but don't wait too long since we're holding up the 
                 // app-load sequence, which is not allowed to take too much time.
-                Thread.Sleep(5000);
+                if (delay) Thread.Sleep(5000);
 
                 if (!TryDeserializeSingleton(out deserializeException))
                 {
@@ -473,9 +473,9 @@ namespace Sensus
 #elif __IOS__
             //In order for AppleDevice calls to work we need to be on the UI thread. We should always be on the made thread when creating new SensusServiceHelpers. Still, just to be safe, we're explicitly synchronizing 
             int qrCodeSize = SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() => (int)(0.9 * Math.Min(AppleDevice.CurrentDevice.Display.Height, AppleDevice.CurrentDevice.Display.Width)));
+#elif LOCAL_TESTS
 #else
 #warning "Unrecognized platform"
-            int qrCodeSize = 0;
 #endif
 
 #if __IOS__ || __ANDROID__

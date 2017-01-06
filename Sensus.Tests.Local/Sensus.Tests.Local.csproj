@@ -15,13 +15,14 @@
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
     <ReleaseVersion>2.0.0</ReleaseVersion>
+    <Description>Endpoint that runs all platform-neutral (i.e., shared) unit tests. Will run within Xamarin/Visual Studio directly.</Description>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;LOCAL_TESTS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
