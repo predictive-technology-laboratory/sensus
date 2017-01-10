@@ -22,6 +22,7 @@ namespace Sensus.Probes.User.Scripts
     {
         #region Fields
         private readonly List<TriggerWindow> _windows;
+        private int _intervalDays;
         #endregion
 
         #region Properties
@@ -59,6 +60,18 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
+        public int IntervalDays
+        {
+            get
+            {
+                return _intervalDays;
+            }
+            set
+            {
+                _intervalDays = value;
+            }
+        }
+
         public bool WindowExpiration { get; set; }
         #endregion
 
@@ -66,6 +79,7 @@ namespace Sensus.Probes.User.Scripts
         public ScheduleTrigger()
         {
             _windows = new List<TriggerWindow>();
+            _intervalDays = 1;
         }
         #endregion
 
@@ -87,8 +101,8 @@ namespace Sensus.Probes.User.Scripts
                 // the effect of such latencies.
                 List<ScriptTriggerTime> triggerTimes = new List<ScriptTriggerTime>();
 
-                // return trigger times up to 8 days beyond the reference
-                for (; (after - reference).TotalDays < 8; after = after.AddDays(1))
+                // return up to 8 trigger times beyond the reference
+                for (; (after - reference).TotalDays < (8 * _intervalDays); after = after.AddDays(_intervalDays))
                 {
                     // It is important that these are ordered otherwise we might skip windows since we use the _maxScheduledDate to determine which schedule comes next.
                     foreach (ScriptTriggerTime triggerTime in _windows.Select(window => window.GetNextTriggerTime(reference, after, WindowExpiration, maxAge)).OrderBy(t => t.Trigger))

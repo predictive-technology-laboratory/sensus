@@ -108,6 +108,24 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
+        [EntryIntegerUiProperty("Random Windows Interval (Days):", true, 9)]
+        public int TriggerIntervalDays
+        {
+            get
+            {
+                return _scheduleTrigger.IntervalDays;
+            }
+            set
+            {
+                if (value < 1)
+                {
+                    value = 1;
+                }
+
+                _scheduleTrigger.IntervalDays = value;
+            }
+        }
+
         public List<DateTime> RunTimes { get; set; }
 
         public List<DateTime> CompletionTimes { get; set; }
