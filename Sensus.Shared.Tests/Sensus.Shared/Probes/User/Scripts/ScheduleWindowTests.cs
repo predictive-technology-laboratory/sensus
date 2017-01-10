@@ -62,8 +62,8 @@ namespace Sensus.Tests.Scripts
         {
             var t = TriggerWindow.Parse("10:22-12:22");
 
-            var reference  = new DateTime(1986,4,18, 10, 22, 0);
-            var after = new DateTime(1986,4,25, 10, 22, 0);
+            var reference = new DateTime(1986, 4, 18, 10, 22, 0);
+            var after = new DateTime(1986, 4, 25, 10, 22, 0);
 
             for (var i = 0; i < 100; i++)
             {
@@ -128,17 +128,17 @@ namespace Sensus.Tests.Scripts
         {
             var t = TriggerWindow.Parse("10:22-12:22");
 
-            var reference  = new DateTime(1986, 4, 18, 10, 22, 0);
+            var reference = new DateTime(1986, 4, 18, 10, 22, 0);
             var after = new DateTime(1986, 4, 25, 10, 22, 0);
-            var expir = TimeSpan.FromMinutes(10);
+            var expire = TimeSpan.FromMinutes(10);
 
             for (var i = 0; i < 100; i++)
             {
-                var nextTriggerTime = t.GetNextTriggerTime(reference, after, false, expir);
-                
+                var nextTriggerTime = t.GetNextTriggerTime(reference, after, false, expire);
+
                 Assert.GreaterOrEqual(nextTriggerTime.ReferenceTillTrigger, TimeSpan.FromDays(8));
                 Assert.LessOrEqual(nextTriggerTime.ReferenceTillTrigger, TimeSpan.FromDays(8).Add(TimeSpan.FromHours(2)));
-                Assert.AreEqual(reference + nextTriggerTime.ReferenceTillTrigger + expir, nextTriggerTime.Expiration);
+                Assert.AreEqual(reference + nextTriggerTime.ReferenceTillTrigger + expire, nextTriggerTime.Expiration);
             }
         }
 
@@ -147,7 +147,7 @@ namespace Sensus.Tests.Scripts
         {
             var t = TriggerWindow.Parse("10:22-12:22");
 
-            var reference  = new DateTime(1986, 4, 18, 10, 22, 0);
+            var reference = new DateTime(1986, 4, 18, 10, 22, 0);
             var after = new DateTime(1986, 4, 25, 10, 22, 0);
 
             for (var i = 0; i < 100; i++)
@@ -165,12 +165,12 @@ namespace Sensus.Tests.Scripts
         {
             var t = TriggerWindow.Parse("10:22-12:22");
 
-            var reference  = new DateTime(1986, 4, 18, 10, 22, 0);
+            var reference = new DateTime(1986, 4, 18, 10, 22, 0);
             var after = new DateTime(1986, 4, 25, 10, 22, 0);
             var expire = TimeSpan.FromMinutes(1);
 
             for (var i = 0; i < 100; i++)
-            { 
+            {
                 var nextTriggerTime = t.GetNextTriggerTime(reference, after, false, expire);
 
                 Assert.GreaterOrEqual(nextTriggerTime.ReferenceTillTrigger, TimeSpan.FromDays(8));
