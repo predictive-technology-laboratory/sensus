@@ -103,8 +103,7 @@ namespace Sensus
                 SensusServiceHelper.Get().Logger.Log(errorMessage, LoggingLevel.Normal, typeof(Protocol));
                 SensusServiceHelper.Get().FlashNotificationAsync(errorMessage);
 
-                if (callback != null)
-                    callback(null);
+                callback?.Invoke(null);
             }
         }
 
@@ -277,9 +276,7 @@ namespace Sensus
                     SensusServiceHelper.Get().FlashNotificationsEnabled = true;
                 }
 
-                if (callback != null)
-                    callback(protocol);
-
+                callback?.Invoke(protocol);
             });
         }
 
