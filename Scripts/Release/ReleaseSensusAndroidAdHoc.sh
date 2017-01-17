@@ -2,9 +2,9 @@
 
 if [ $# -ne 7 ]; then
     echo
-    echo "Purpose:  Creates an iOS ad-hoc release using Diawi."
+    echo "Purpose:  Creates an Android ad-hoc release using Diawi."
     echo ""
-    echo "Usage:  ./ReleaseSensusiOSAdHoc.sh [version] [encryption key] [xamarin insights key] [diawi token] [email]"
+    echo "Usage:  ./ReleaseSensusAndroidAdHoc.sh [version] [android keystore path] [android keystore password] [encryption key] [xamarin insights key] [diawi token] [email]"
     echo "\t[version]:  Version name."
     echo "\t[android keystore path]:  Path to Android keystore file."
     echo "\t[android keystore password]:  Password used to open the Android keystore and signing key (assumed to be the same)."
@@ -13,7 +13,7 @@ if [ $# -ne 7 ]; then
     echo "\t[diawi token]:  Authorization token for Diawi uploads."
     echo "\t[email]:  Callback email for Diawi upload."
     echo ""
-    echo "For example:  ./ReleaseSensusiOSAdHoc.sh 0.8.0-prerelease asdf2349f809 09d8f09df8df 238f987 asdf@asdf.com"
+    echo "For example:  ./ReleaseSensusAndroidAdHoc.sh 0.8.0-prerelease /path/to/keystore keystorepassword asdf2349f809 09d8f09df8df 238f987 asdf@asdf.com"
     echo
     exit 1
 fi
@@ -49,12 +49,12 @@ if [ $? -ne 0 ]; then
     exit $?;
 fi
 
-# upload IPA
+# upload APK
 echo "Uploading to Diawi..."
 curl -v https://upload.diawi.com -F "file=@../../Sensus.Android/bin/Release/edu.virginia.sie.ptl.sensus-Signed.apk" -F token="$6" -F callback_email="$7"
 echo
 if [ $? -ne 0 ]; then
-    echo "Error uploading iOS ad-hoc release to Diawi."
+    echo "Error uploading Android ad-hoc release to Diawi."
     exit $?;
 fi
 
