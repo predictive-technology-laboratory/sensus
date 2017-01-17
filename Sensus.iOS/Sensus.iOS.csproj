@@ -31,7 +31,6 @@
     <NoWarn>1701</NoWarn>
     <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
-<AssemblyName>Sensus.iOS</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
     <DebugSymbols>true</DebugSymbols>
