@@ -58,12 +58,12 @@ namespace Sensus.DataStores.Remote
 #endif
         }
 
-        protected sealed override Task CommitAndReleaseAddedDataAsync(string callbackId, CancellationToken cancellationToken, Action letDeviceSleepCallback)
+        public sealed override Task CommitAndReleaseAddedDataAsync(CancellationToken cancellationToken)
         {
             bool commit = false;
 
             if (cancellationToken.IsCancellationRequested)
-                SensusServiceHelper.Get().Logger.Log("Cancelled commit to remote data store.", LoggingLevel.Normal, GetType());
+                SensusServiceHelper.Get().Logger.Log("Cancelled commit to remote data store via token.", LoggingLevel.Normal, GetType());
             else if (!Protocol.LocalDataStore.UploadToRemoteDataStore)
                 SensusServiceHelper.Get().Logger.Log("Remote data store upload is disabled.", LoggingLevel.Normal, GetType());
             else if (_requireWiFi && !SensusServiceHelper.Get().WiFiConnected)
@@ -86,7 +86,7 @@ namespace Sensus.DataStores.Remote
 
                     // first commmit any data that have accumulated in the internal memory of the remote data store, e.g., protocol report
                     // data when we are not committing local data to remote but we are also forcing report data.
-                    await base.CommitAndReleaseAddedDataAsync(callbackId, cancellationToken, letDeviceSleepCallback);
+                    await base.CommitAndReleaseAddedDataAsync(cancellationToken);
 
                     // instruct the local data store to commit its data to the remote data store.
                     Protocol.LocalDataStore.CommitToRemote(cancellationToken);
