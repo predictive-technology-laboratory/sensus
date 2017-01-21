@@ -70,29 +70,31 @@ namespace Sensus.DataStores.Local
         /// Checks whether the current local data store has grown too large, and (if it has) commits the data to the remote data store.
         /// This relieves pressure on local storage resources (e.g., RAM or disk) in cases where the remote data store is not triggered
         /// frequently enough by its own callback delays. It makes sense to call this method after committing data to the current local data
-        /// store.
+        /// store. This method will have no effect if the local data store is configured to not upload data to the remote data store.
         /// </summary>
         /// <param name="cancellationToken">Cancellation token.</param>
-        protected void CommitToRemoteIfTooLarge(CancellationToken cancellationToken)
+        protected Task CommitToRemoteIfTooLargeAsync(CancellationToken cancellationToken)
         {
-            bool commit = false;
-
-            lock (_sizeTriggeredRemoteCommitLocker)
+            return Task.Run(async () =>
             {
-                if (TooLarge() && !_sizeTriggeredRemoteCommitRunning)
+                bool commit = false;
+
+                lock (_sizeTriggeredRemoteCommitLocker)
                 {
-                    _sizeTriggeredRemoteCommitRunning = true;
-                    commit = true;
+                    if (TooLarge() && !_sizeTriggeredRemoteCommitRunning)
+                    {
+                        _sizeTriggeredRemoteCommitRunning = true;
+                        commit = true;
+                    }
                 }
-            }
-
-            if (commit)
-            {
-                SensusServiceHelper.Get().Logger.Log("Running size-triggered commit to remote.", LoggingLevel.Normal, GetType());
 
                 try
                 {
-                    CommitToRemote(cancellationToken);
+                    if (commit)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Running size-triggered commit to remote.", LoggingLevel.Normal, GetType());
+                        await Protocol.RemoteDataStore.CommitAndReleaseAddedDataAsync(cancellationToken);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -102,7 +104,7 @@ namespace Sensus.DataStores.Local
                 {
                     _sizeTriggeredRemoteCommitRunning = false;
                 }
-            }
+            });
         }
 
         protected abstract bool TooLarge();

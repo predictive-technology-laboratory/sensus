@@ -87,7 +87,7 @@ namespace Sensus.DataStores.Local
 
         protected override Task<List<Datum>> CommitAsync(IEnumerable<Datum> data, CancellationToken cancellationToken)
         {
-            return Task.Run(() =>
+            return Task.Run(async () =>
             {
                 List<Datum> committedData = new List<Datum>();
 
@@ -161,7 +161,7 @@ namespace Sensus.DataStores.Local
                         WriteToNewPath();
                 }
 
-                CommitToRemoteIfTooLarge(cancellationToken);
+                await CommitToRemoteIfTooLargeAsync(cancellationToken);
 
                 return committedData;
             });

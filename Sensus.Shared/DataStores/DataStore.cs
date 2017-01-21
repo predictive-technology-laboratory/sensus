@@ -246,9 +246,9 @@ namespace Sensus.DataStores
                 // only do this for the remote data store to that we don't get duplicate notifications.
                 if (this is RemoteDataStore)
                     userNotificationMessage = "Please open this notification to submit your data for the \"" + _protocol.Name + "\" study.";
-#endif
+#endif  
 
-                _commitCallback = new ScheduledCallback(CommitAndReleaseAddedDataAsync, GetType().FullName, Protocol.Id, Protocol.Id, TimeSpan.FromMinutes(_commitTimeoutMinutes), userNotificationMessage);
+                _commitCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) => CommitAndReleaseAddedDataAsync(cancellationToken), GetType().FullName, Protocol.Id, Protocol.Id, TimeSpan.FromMinutes(_commitTimeoutMinutes), userNotificationMessage);
                 SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_commitCallback, _commitDelayMS, _commitDelayMS, COMMIT_CALLBACK_LAG);
             }
         }
@@ -322,12 +322,7 @@ namespace Sensus.DataStores
             }
         }
 
-        protected virtual Task CommitAndReleaseAddedDataAsync(string callbackId, CancellationToken cancellationToken, Action letDeviceSleepCallback)
-        {
-            return CommitAndReleaseAddedDataAsync(cancellationToken);
-        }
-
-        protected Task CommitAndReleaseAddedDataAsync(CancellationToken cancellationToken)
+        public virtual Task CommitAndReleaseAddedDataAsync(CancellationToken cancellationToken)
         {
             if (_running)
                 return CommitAndReleaseAsync(_data, this, cancellationToken);
