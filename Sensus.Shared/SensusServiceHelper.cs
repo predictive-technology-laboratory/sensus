@@ -755,7 +755,10 @@ namespace Sensus
             }
 
             _scriptsToRun.Insert(0, script);
-            IssuePendingSurveysNotificationAsync(true, true);
+
+            var soundAndVibrate = ScriptIsWithinExclusionWindow(script);
+
+            IssuePendingSurveysNotificationAsync(soundAndVibrate, soundAndVibrate);
         }
 
         public void RemoveScript(Script script)
@@ -1307,6 +1310,22 @@ namespace Sensus
             {
                 IssuePendingSurveysNotificationAsync(false, false);
             }
+        }
+
+        private bool ScriptIsWithinExclusionWindow(Script script)
+        {
+            bool result = true;
+
+            var runningProtocol = GetRunningProtocolById(script.Runner.Probe.Protocol.Id);
+
+            // check whether the current time is within any of this script's protocol's notification sound exclusion windows.
+            // if we are within a window, don't play a sound.
+            if (runningProtocol != null)
+                foreach (Window window in runningProtocol.NotificationSoundExclusionWindowsList)
+                    if (window.EncompassesCurrentTime())
+                        result = false;
+
+            return result;
         }
         #endregion
     }
