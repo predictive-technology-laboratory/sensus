@@ -248,7 +248,7 @@ namespace Sensus.DataStores
                     userNotificationMessage = "Please open this notification to submit your data for the \"" + _protocol.Name + "\" study.";
 #endif
 
-                _commitCallback = new ScheduledCallback(CommitAndReleaseAddedDataAsync, GetType().FullName, Protocol.Id, TimeSpan.FromMinutes(_commitTimeoutMinutes), userNotificationMessage);
+                _commitCallback = new ScheduledCallback(CommitAndReleaseAddedDataAsync, GetType().FullName, Protocol.Id, Protocol.Id, TimeSpan.FromMinutes(_commitTimeoutMinutes), userNotificationMessage);
                 SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_commitCallback, _commitDelayMS, _commitDelayMS, COMMIT_CALLBACK_LAG);
             }
         }

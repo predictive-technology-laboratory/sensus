@@ -151,7 +151,6 @@ namespace Sensus.Probes.User.Scripts
             _maxAge = null;
             _triggerHandlers = new Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>>();
             _scriptRunCallbackIds = new List<string>();
-
             Script = new Script(this);
             Triggers = new ConcurrentObservableCollection<Trigger>(new LockConcurrent());
             RunTimes = new List<DateTime>();
@@ -384,7 +383,7 @@ namespace Sensus.Probes.User.Scripts
 
                 }, cancellationToken);
 
-            }, GetType().FullName + "-" + ((long)(triggerTime.Trigger - DateTime.MinValue).TotalDays) + "-" + triggerTime.Window, Script.Id);
+            }, GetType().FullName + "-" + ((long)(triggerTime.Trigger - DateTime.MinValue).TotalDays) + "-" + triggerTime.Window, Script.Id, Probe.Protocol.Id);
 
 #if __IOS__
             // all scheduled scripts with an expiration should show an expiration date to the user. on iOS this will be the only notification for 

@@ -400,6 +400,7 @@ namespace Sensus
         private bool _startImmediately;
         private DateTime _endTimestamp;
         private bool _continueIndefinitely;
+        private readonly List<Window> _notificationSoundExclusionWindows;
         private int _participationHorizonDays;
         private string _contactEmail;
         private bool _groupable;
@@ -692,7 +693,48 @@ namespace Sensus
             get { return DateTime.Now.AddDays(-_participationHorizonDays); }
         }
 
-        [EntryStringUiProperty("Contact Email:", true, 24)]
+        public List<Window> NotificationSoundExclusionWindowsList
+        {
+            get
+            {
+                return _notificationSoundExclusionWindows;
+            }
+        }
+
+        [EntryStringUiProperty("Notification Sound Exclusion Windows:", true, 24)]
+        public string NotificationSoundExclusionWindows
+        {
+            get
+            {
+                lock (_notificationSoundExclusionWindows)
+                {
+                    return string.Join(", ", _notificationSoundExclusionWindows);
+                }
+            }
+            set
+            {
+                if (value == NotificationSoundExclusionWindows)
+                    return;
+
+                lock (_notificationSoundExclusionWindows)
+                {
+                    _notificationSoundExclusionWindows.Clear();
+
+                    try
+                    {
+                        _notificationSoundExclusionWindows.AddRange(value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(TriggerWindow.Parse));
+                    }
+                    catch
+                    {
+                        // ignore improperly formatted trigger windows
+                    }
+
+                    _notificationSoundExclusionWindows.Sort();
+                }
+            }
+        }
+
+        [EntryStringUiProperty("Contact Email:", true, 25)]
         public string ContactEmail
         {
             get
@@ -705,7 +747,7 @@ namespace Sensus
             }
         }
 
-        [OnOffUiProperty(null, true, 25)]
+        [OnOffUiProperty(null, true, 26)]
         public bool Groupable
         {
             get
@@ -730,7 +772,7 @@ namespace Sensus
             }
         }
 
-        [EntryFloatUiProperty("Reward Threshold:", true, 26)]
+        [EntryFloatUiProperty("Reward Threshold:", true, 27)]
         public float? RewardThreshold
         {
             get
@@ -777,7 +819,7 @@ namespace Sensus
             }
         }
 
-        [EntryFloatUiProperty("GPS - Desired Accuracy (Meters):", true, 27)]
+        [EntryFloatUiProperty("GPS - Desired Accuracy (Meters):", true, 28)]
         public float GpsDesiredAccuracyMeters
         {
             get { return _gpsDesiredAccuracyMeters; }
@@ -790,7 +832,7 @@ namespace Sensus
             }
         }
 
-        [EntryIntegerUiProperty("GPS - Minimum Time Delay (MS):", true, 28)]
+        [EntryIntegerUiProperty("GPS - Minimum Time Delay (MS):", true, 29)]
         public int GpsMinTimeDelayMS
         {
             get { return _gpsMinTimeDelayMS; }
@@ -803,7 +845,7 @@ namespace Sensus
             }
         }
 
-        [EntryFloatUiProperty("GPS - Minimum Distance Delay (Meters):", true, 29)]
+        [EntryFloatUiProperty("GPS - Minimum Distance Delay (Meters):", true, 30)]
         public float GpsMinDistanceDelayMeters
         {
             get
@@ -822,21 +864,21 @@ namespace Sensus
         #region iOS-specific protocol properties
 
 #if __IOS__
-        [OnOffUiProperty("GPS - Pause Location Updates:", true, 30)]
+        [OnOffUiProperty("GPS - Pause Location Updates:", true, 31)]
         public bool GpsPauseLocationUpdatesAutomatically { get; set; } = false;
 
-        [ListUiProperty("GPS - Pause Activity Type:", true, 31, new object[] { ActivityType.Other, ActivityType.AutomotiveNavigation, ActivityType.Fitness, ActivityType.OtherNavigation })]
+        [ListUiProperty("GPS - Pause Activity Type:", true, 32, new object[] { ActivityType.Other, ActivityType.AutomotiveNavigation, ActivityType.Fitness, ActivityType.OtherNavigation })]
         public ActivityType GpsPauseActivityType { get; set; } = ActivityType.Other;
 
-        [OnOffUiProperty("GPS - Significant Changes:", true, 32)]
+        [OnOffUiProperty("GPS - Significant Changes:", true, 33)]
         public bool GpsListenForSignificantChanges { get; set; } = false;
 
-        [OnOffUiProperty("GPS - Defer Location Updates:", true, 33)]
+        [OnOffUiProperty("GPS - Defer Location Updates:", true, 34)]
         public bool GpsDeferLocationUpdates { get; set; } = false;
 
         private float _gpsDeferralDistanceMeters = 500;
 
-        [EntryFloatUiProperty("GPS - Deferral Distance (Meters):", true, 34)]
+        [EntryFloatUiProperty("GPS - Deferral Distance (Meters):", true, 35)]
         public float GpsDeferralDistanceMeters
         {
             get
@@ -854,7 +896,7 @@ namespace Sensus
 
         private float _gpsDeferralTimeMinutes = 5;
 
-        [EntryFloatUiProperty("GPS - Deferral Time (Mins.):", true, 35)]
+        [EntryFloatUiProperty("GPS - Deferral Time (Mins.):", true, 36)]
         public float GpsDeferralTimeMinutes
         {
             get { return _gpsDeferralTimeMinutes; }
@@ -882,6 +924,7 @@ namespace Sensus
             _shareable = false;
             _pointsOfInterest = new List<PointOfInterest>();
             _participationHorizonDays = 1;
+            _notificationSoundExclusionWindows = new List<Window>();
             _startTimestamp = DateTime.Now;
             _endTimestamp = DateTime.Now;
             _startImmediately = true;
@@ -1152,7 +1195,7 @@ namespace Sensus
                     _scheduledStartCallback = null;
                 });
 
-            }, "START", _id, null,
+            }, "START", _id, _id, null,
 #if __ANDROID__
             $"Started study: {Name}.");
 #elif __IOS__
@@ -1184,7 +1227,7 @@ namespace Sensus
                     Stop();
                     _scheduledStopCallback = null;
                 });
-            }, "STOP", _id, null,
+            }, "STOP", _id, _id, null,
 #if __ANDROID__
             $"Stopped study: {Name}.");
 #elif __IOS__
