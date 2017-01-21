@@ -662,10 +662,8 @@ namespace Sensus
         public Protocol GetRunningProtocolById(string id)
         {
             foreach (Protocol protocol in GetRunningProtocols())
-            {
                 if (protocol.Id.Equals(id))
                     return protocol;
-            }
 
             return null;
         }

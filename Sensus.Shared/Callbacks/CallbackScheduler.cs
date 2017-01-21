@@ -129,17 +129,13 @@ namespace Sensus.Callbacks
 
                                         var runningProtocol = SensusServiceHelper.Get().GetRunningProtocolById(scheduledCallback.ProtocolId);
 
-                                        // check whether the current time is within any of the callback's protocol's exclusion windows
+                                        // check whether the current time is within any of the callback's protocol's notification sound exclusion windows.
+                                        // if we are within a window, don't play a sound.
                                         if (runningProtocol != null)
-                                        {
                                             foreach (Window window in runningProtocol.NotificationSoundExclusionWindowsList)
-                                            {
                                                 if (window.EncompassesCurrentTime())
                                                     playSound = false;
-                                            }
-                                        }
 
-                                        // if we are within a notification sound exclusion window, playSound should be false.
                                         SensusContext.Current.Notifier.IssueNotificationAsync("Sensus", scheduledCallback.UserNotificationMessage, callbackId, playSound, scheduledCallback.DisplayPage);
                                             
                                     }
