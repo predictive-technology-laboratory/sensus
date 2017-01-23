@@ -73,14 +73,12 @@ namespace Sensus
             return Start.CompareTo(comparee.Start);
         }
 
-        public bool EncompassesCurrentTime()
+        public bool EncompassesTime(DateTime time)
         {
-            DateTime now = DateTime.Now;
-
             if (Start == End)
-                return now.Hour == Start.Hours && now.Minute == Start.Minutes;
+                return time.Hour == Start.Hours && time.Minute == Start.Minutes;
             else
-                return now.TimeOfDay >= Start && now.TimeOfDay <= End;
+                return time.TimeOfDay >= Start && time.TimeOfDay <= End;
         }
         #endregion
 

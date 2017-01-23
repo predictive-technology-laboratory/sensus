@@ -74,12 +74,7 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
                 // to determine whether to vibrate and play sound. if protocolId is null, just use the vibrateAndPlaySound parameter.
                 if (protocolId != null)
                 {
-                    var runningProtocol = SensusServiceHelper.Get().GetRunningProtocolById(protocolId);
-
-                    if (runningProtocol != null)
-                        foreach (Window window in runningProtocol.NotificationAlertExclusionWindowsList)
-                            if (window.EncompassesCurrentTime())
-                                vibrateAndPlaySound = false;
+                    vibrateAndPlaySound = !NotificationTimeIsWithinAlertExclusionWindow(protocolId, notification.FireDate.ToDateTime());
                 }
 
                 // also introduced in 8.0

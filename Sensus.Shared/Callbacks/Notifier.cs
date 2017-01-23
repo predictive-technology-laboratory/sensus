@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Linq;
 using Sensus.Context;
 using Sensus.Exceptions;
@@ -50,6 +51,18 @@ namespace Sensus.Callbacks
                 if (currentTopPage == null || desiredTopPage.GetType() != currentTopPage.GetType())
                     await Application.Current.MainPage.Navigation.PushAsync(desiredTopPage);
             });
+        }
+
+        protected bool NotificationTimeIsWithinAlertExclusionWindow(string protocolId, DateTime time)
+        {
+            var runningProtocol = SensusServiceHelper.Get().GetRunningProtocolById(protocolId);
+
+            if (runningProtocol != null)
+                foreach (Window window in runningProtocol.NotificationAlertExclusionWindowsList)
+                    if (window.EncompassesTime(time))
+                        return true;
+
+            return false;
         }
     }
 }
