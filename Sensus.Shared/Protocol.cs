@@ -400,7 +400,7 @@ namespace Sensus
         private bool _startImmediately;
         private DateTime _endTimestamp;
         private bool _continueIndefinitely;
-        private readonly List<Window> _notificationSoundExclusionWindows;
+        private readonly List<Window> _notificationAlertExclusionWindows;
         private int _participationHorizonDays;
         private string _contactEmail;
         private bool _groupable;
@@ -693,43 +693,43 @@ namespace Sensus
             get { return DateTime.Now.AddDays(-_participationHorizonDays); }
         }
 
-        public List<Window> NotificationSoundExclusionWindowsList
+        public List<Window> NotificationAlertExclusionWindowsList
         {
             get
             {
-                return _notificationSoundExclusionWindows;
+                return _notificationAlertExclusionWindows;
             }
         }
 
-        [EntryStringUiProperty("Notification Sound Exclusion Windows:", true, 24)]
-        public string NotificationSoundExclusionWindows
+        [EntryStringUiProperty("Notification Alert Exclusion Windows:", true, 24)]
+        public string NotificationAlertExclusionWindows
         {
             get
             {
-                lock (_notificationSoundExclusionWindows)
+                lock (_notificationAlertExclusionWindows)
                 {
-                    return string.Join(", ", _notificationSoundExclusionWindows);
+                    return string.Join(", ", _notificationAlertExclusionWindows);
                 }
             }
             set
             {
-                if (value == NotificationSoundExclusionWindows)
+                if (value == NotificationAlertExclusionWindows)
                     return;
 
-                lock (_notificationSoundExclusionWindows)
+                lock (_notificationAlertExclusionWindows)
                 {
-                    _notificationSoundExclusionWindows.Clear();
+                    _notificationAlertExclusionWindows.Clear();
 
                     try
                     {
-                        _notificationSoundExclusionWindows.AddRange(value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(TriggerWindow.Parse));
+                        _notificationAlertExclusionWindows.AddRange(value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(TriggerWindow.Parse));
                     }
                     catch
                     {
                         // ignore improperly formatted trigger windows
                     }
 
-                    _notificationSoundExclusionWindows.Sort();
+                    _notificationAlertExclusionWindows.Sort();
                 }
             }
         }
@@ -924,7 +924,7 @@ namespace Sensus
             _shareable = false;
             _pointsOfInterest = new List<PointOfInterest>();
             _participationHorizonDays = 1;
-            _notificationSoundExclusionWindows = new List<Window>();
+            _notificationAlertExclusionWindows = new List<Window>();
             _startTimestamp = DateTime.Now;
             _endTimestamp = DateTime.Now;
             _startImmediately = true;

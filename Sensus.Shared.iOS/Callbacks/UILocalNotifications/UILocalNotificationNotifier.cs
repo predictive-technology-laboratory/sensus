@@ -31,9 +31,9 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
             _idNotification = new Dictionary<string, UILocalNotification>();
         }
 
-        public override void IssueNotificationAsync(string title, string message, string id, bool playSound, DisplayPage displayPage)
+        public override void IssueNotificationAsync(string title, string message, string id, string protocolId, bool vibrateAndPlaySound, DisplayPage displayPage)
         {
-            IssueNotificationAsync(title, message, id, playSound, displayPage, 0, null);
+            IssueNotificationAsync(title, message, id, protocolId, vibrateAndPlaySound, displayPage, 0, null);
         }
 
         public void IssueSilentNotificationAsync(string id, int delayMS, NSMutableDictionary notificationInfo, Action<UILocalNotification> notificationCreated = null)
@@ -46,10 +46,10 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
             // the user should never see a silent notification since we cancel them when the app is backgrounded. but there are race conditions that
             // might result in a silent notifiation being scheduled just before the app is backgrounded. give a generic message so that the notification
             // isn't totally confusing to the user.
-            IssueNotificationAsync("Please open this notification.", "One of your studies needs to be updated.", id, false, DisplayPage.None, delayMS, notificationInfo, notificationCreated);
+            IssueNotificationAsync("Please open this notification.", "One of your studies needs to be updated.", id, null, false, DisplayPage.None, delayMS, notificationInfo, notificationCreated);
         }
 
-        public void IssueNotificationAsync(string title, string message, string id, bool playSound, DisplayPage displayPage, int delayMS, NSMutableDictionary notificationInfo, Action<UILocalNotification> notificationCreated = null)
+        public void IssueNotificationAsync(string title, string message, string id, string protocolId, bool vibrateAndPlaySound, DisplayPage displayPage, int delayMS, NSMutableDictionary notificationInfo, Action<UILocalNotification> notificationCreated = null)
         {
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
@@ -70,8 +70,20 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
                     UserInfo = notificationInfo
                 };
 
+                // if a protocol ID has been passed to the method, check the protocol's Notification Alert Exclusion Windows
+                // to determine whether to vibrate and play sound. if protocolId is null, just use the vibrateAndPlaySound parameter.
+                if (protocolId != null)
+                {
+                    var runningProtocol = SensusServiceHelper.Get().GetRunningProtocolById(protocolId);
+
+                    if (runningProtocol != null)
+                        foreach (Window window in runningProtocol.NotificationAlertExclusionWindowsList)
+                            if (window.EncompassesCurrentTime())
+                                vibrateAndPlaySound = false;
+                }
+
                 // also introduced in 8.0
-                if (playSound)
+                if (vibrateAndPlaySound)
                     notification.SoundName = UILocalNotification.DefaultSoundName;
 
                 // introduced in iOS 8.2:  https://developer.apple.com/reference/uikit/uilocalnotification/1616647-alerttitle

@@ -31,7 +31,7 @@ namespace Sensus.Android.Callbacks
             _notificationManager = _service.GetSystemService(global::Android.Content.Context.NotificationService) as NotificationManager;
         }
 
-        public override void IssueNotificationAsync(string title, string message, string id, bool playSound, DisplayPage displayPage)
+        public override void IssueNotificationAsync(string title, string message, string id, string protocolId, bool vibrateAndPlaySound, DisplayPage displayPage)
         {
             if (_notificationManager == null)
                 return;
@@ -55,7 +55,19 @@ namespace Sensus.Android.Callbacks
                         .SetAutoCancel(true)
                         .SetOngoing(false);
 
-                    if (playSound)
+                    // if a protocol ID has been passed to the method, check the protocol's Notification Alert Exclusion Windows
+                    // to determine whether to vibrate and play sound. if protocolId is null, just use the vibrateAndPlaySound parameter.
+                    if (protocolId != null)
+                    {
+                        var runningProtocol = SensusServiceHelper.Get().GetRunningProtocolById(protocolId);
+
+                        if (runningProtocol != null)
+                            foreach (Window window in runningProtocol.NotificationAlertExclusionWindowsList)
+                                if (window.EncompassesCurrentTime())
+                                    vibrateAndPlaySound = false;
+                    }
+
+                    if (vibrateAndPlaySound)
                     {
                         notificationBuilder.SetSound(RingtoneManager.GetDefaultUri(RingtoneType.Notification));
                         notificationBuilder.SetVibrate(new long[] { 0, 250, 50, 250 });

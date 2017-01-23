@@ -628,7 +628,7 @@ namespace Sensus
                             await protocolToTest.TestHealthAsync(false, cancellationToken);
                         }
 
-                    }, "HEALTH-TEST", GetType().FullName, "", TimeSpan.FromMinutes(1));
+                    }, "HEALTH-TEST", GetType().FullName, null, TimeSpan.FromMinutes(1));
 
                     SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_healthTestCallback, HEALTH_TEST_DELAY_MS, HEALTH_TEST_DELAY_MS, HEALTH_TEST_REPEAT_LAG);
                 }
@@ -661,11 +661,7 @@ namespace Sensus
 
         public Protocol GetRunningProtocolById(string id)
         {
-            foreach (Protocol protocol in GetRunningProtocols())
-                if (protocol.Id.Equals(id))
-                    return protocol;
-
-            return null;
+            return GetRunningProtocols().SingleOrDefault(protocol => protocol.Id == id);
         }
 
         #endregion
@@ -755,10 +751,7 @@ namespace Sensus
             }
 
             _scriptsToRun.Insert(0, script);
-
-            var soundAndVibrate = ScriptIsWithinExclusionWindow(script);
-
-            IssuePendingSurveysNotificationAsync(soundAndVibrate, soundAndVibrate);
+            IssuePendingSurveysNotificationAsync(script.Runner.Probe.Protocol.Id, true);
         }
 
         public void RemoveScript(Script script)
@@ -776,7 +769,7 @@ namespace Sensus
             RemoveScripts(issueNotification, _scriptsToRun.Where(s => s.Expired).ToArray());
         }
 
-        public void IssuePendingSurveysNotificationAsync(bool playSound, bool vibrate)
+        public void IssuePendingSurveysNotificationAsync(string protocolId, bool vibrateAndPlaySound)
         {
             RemoveExpiredScripts(false);
 
@@ -790,7 +783,7 @@ namespace Sensus
                 string pendingSurveysTitle = numScriptsToRun == 0 ? null : $"You have {numScriptsToRun} pending survey{s}.";
                 DateTime? nextExpirationDate = _scriptsToRun.Select(script => script.ExpirationDate).Where(expirationDate => expirationDate.HasValue).OrderBy(expirationDate => expirationDate).FirstOrDefault();
                 string nextExpirationMessage = nextExpirationDate == null ? (numScriptsToRun == 1 ? "This survey does" : "These surveys do") + " not expire." : "Next expiration:  " + nextExpirationDate.Value.ToShortDateString() + " at " + nextExpirationDate.Value.ToShortTimeString();
-                SensusContext.Current.Notifier.IssueNotificationAsync(pendingSurveysTitle, nextExpirationMessage, PENDING_SURVEY_NOTIFICATION_ID, playSound, DisplayPage.PendingSurveys);
+                SensusContext.Current.Notifier.IssueNotificationAsync(pendingSurveysTitle, nextExpirationMessage, PENDING_SURVEY_NOTIFICATION_ID, protocolId, vibrateAndPlaySound, DisplayPage.PendingSurveys);
             }
         }
 
@@ -800,7 +793,7 @@ namespace Sensus
         }
 
         /// <summary>
-        /// Flashs the a notification.
+        /// Flashes a notification.
         /// </summary>
         /// <returns>The notification async.</returns>
         /// <param name="message">Message.</param>
@@ -1308,24 +1301,8 @@ namespace Sensus
 
             if (removed && issueNotification)
             {
-                IssuePendingSurveysNotificationAsync(false, false);
+                IssuePendingSurveysNotificationAsync(null, false);
             }
-        }
-
-        private bool ScriptIsWithinExclusionWindow(Script script)
-        {
-            bool result = true;
-
-            var runningProtocol = GetRunningProtocolById(script.Runner.Probe.Protocol.Id);
-
-            // check whether the current time is within any of this script's protocol's notification sound exclusion windows.
-            // if we are within a window, don't play a sound.
-            if (runningProtocol != null)
-                foreach (Window window in runningProtocol.NotificationSoundExclusionWindowsList)
-                    if (window.EncompassesCurrentTime())
-                        result = false;
-
-            return result;
         }
         #endregion
     }
