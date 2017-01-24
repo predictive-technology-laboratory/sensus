@@ -28,21 +28,21 @@ namespace Sensus.iOS.Callbacks
 {
     public abstract class iOSCallbackScheduler : CallbackScheduler, IiOSCallbackScheduler
     {
-        protected override void ScheduleRepeatingCallback(string callbackId, long initialDelayMS, long repeatDelayMS, bool repeatLag)
+        protected override void ScheduleOneTimeCallback(OneTimeCallback callback)
         {
-            ScheduleCallbackAsync(callbackId, initialDelayMS, true, repeatDelayMS, repeatLag);
+            ScheduleCallbackAsync(callback.Id, callback.Delay);
         }
 
-        protected override void ScheduleOneTimeCallback(string callbackId, long delayMS)
+        protected override void ScheduleRepeatingCallback(RepeatingCallback callback)
         {
-            ScheduleCallbackAsync(callbackId, delayMS, false, -1, false);
+            ScheduleCallbackAsync(callback.Id, callback.InitialDelay);
         }
 
-        protected abstract void ScheduleCallbackAsync(string callbackId, long delayMS, bool repeating, long repeatDelayMS, bool repeatLag);
+        protected abstract void ScheduleCallbackAsync(string callbackId, TimeSpan delay);
 
         public abstract Task UpdateCallbacksAsync();
 
-        public NSMutableDictionary GetCallbackInfo(string callbackId, bool repeating, long repeatDelayMS, bool repeatLag, DisplayPage displayPage)
+        public NSMutableDictionary GetCallbackInfo(string callbackId, DisplayPage displayPage)
         {
             // we've seen cases where the UserInfo dictionary cannot be serialized because one of its values is null. if this happens, the 
             // callback won't be serviced, and things won't return to normal until Sensus is activated by the user and the callbacks are 
@@ -56,11 +56,7 @@ namespace Sensus.iOS.Callbacks
             List<object> keyValuePairs = new object[]
             {
                 iOSNotifier.NOTIFICATION_ID_KEY, callbackId,
-                Notifier.DISPLAY_PAGE_KEY, displayPage.ToString(),
-                SENSUS_CALLBACK_REPEATING_KEY, repeating,
-                SENSUS_CALLBACK_REPEAT_DELAY_KEY, repeatDelayMS,
-                SENSUS_CALLBACK_REPEAT_LAG_KEY, repeatLag
-
+                Notifier.DISPLAY_PAGE_KEY, displayPage.ToString()
             }.ToList();
 
             return new NSMutableDictionary(new NSDictionary(SENSUS_CALLBACK_KEY, true, keyValuePairs.ToArray()));
@@ -77,9 +73,6 @@ namespace Sensus.iOS.Callbacks
 
                 // not sure why the following would be null, but we've seen NRE in insights and these are the likely suspects.
                 string callbackId = (callbackInfo.ValueForKey(new NSString(iOSNotifier.NOTIFICATION_ID_KEY)) as NSString)?.ToString();
-                bool repeating = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber)?.BoolValue ?? false;
-                int repeatDelayMS = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_DELAY_KEY)) as NSNumber)?.Int32Value ?? 100000; // not sure what the right value is here.
-                bool repeatLag = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_LAG_KEY)) as NSNumber)?.BoolValue ?? false;
 
                 // only raise callback if it is still scheduled
                 if (!CallbackIsScheduled(callbackId))
@@ -101,7 +94,7 @@ namespace Sensus.iOS.Callbacks
                 // raise callback but don't notify user since we would have already done so when the notification was delivered to the notification tray.
                 // we don't need to specify how repeats will be scheduled, since the class that extends this one will take care of it. furthermore, there's 
                 // nothing to do if the callback thinks we can sleep, since ios does not provide wake-locks like android.
-                await RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, false, null, null);
+                await RaiseCallbackAsync(callbackId, false, null, null);
 
                 SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                 {

@@ -345,8 +345,8 @@ namespace Sensus.Probes.User.Scripts
             }
 
             Script scriptToRun = new Script(Script, Guid.NewGuid()) { ExpirationDate = triggerTime.Expiration, ScheduledRunTime = triggerTime.Trigger };
-            ScheduledCallback callback = CreateScriptRunCallback(scriptToRun, triggerTime);
-            SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(callback, (int)triggerTime.ReferenceTillTrigger.TotalMilliseconds);
+            OneTimeCallback callback = CreateScriptRunCallback(scriptToRun, triggerTime);
+            SensusContext.Current.CallbackScheduler.ScheduleCallback(callback);
 
             lock (_scriptRunCallbackIds)
             {
@@ -358,9 +358,9 @@ namespace Sensus.Probes.User.Scripts
             _maxScheduledDate = _maxScheduledDate.Max(triggerTime.Trigger);
         }
 
-        private ScheduledCallback CreateScriptRunCallback(Script script, ScriptTriggerTime triggerTime)
+        private OneTimeCallback CreateScriptRunCallback(Script script, ScriptTriggerTime triggerTime)
         {
-            ScheduledCallback callback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
+            OneTimeCallback callback = new OneTimeCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
             {
                 return Task.Run(() =>
                 {
@@ -384,7 +384,7 @@ namespace Sensus.Probes.User.Scripts
 
                 }, cancellationToken);
 
-            }, GetType().FullName + "-" + ((long)(triggerTime.Trigger - DateTime.MinValue).TotalDays) + "-" + triggerTime.Window, Script.Id);
+            }, GetType().FullName + "-" + ((long)(triggerTime.Trigger - DateTime.MinValue).TotalDays) + "-" + triggerTime.Window, script.Runner.Probe.Protocol.Id, Script.Id, triggerTime.ReferenceTillTrigger);
 
 #if __IOS__
             // all scheduled scripts with an expiration should show an expiration date to the user. on iOS this will be the only notification for 
