@@ -29,7 +29,7 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
             IssueNotificationAsync(title, message, id, playSound, displayPage, -1, null, null);
         }
 
-        public void IssueSilentNotificationAsync(string id, int delayMS, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
+        public void IssueSilentNotificationAsync(string id, long delayMS, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
         {
             if (info == null)
                 info = new NSMutableDictionary();
@@ -42,7 +42,7 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
             IssueNotificationAsync("Please open this notification.", "One of your studies needs to be updated.", id, false, DisplayPage.None, delayMS, info, requestCreated);
         }
 
-        public void IssueNotificationAsync(string title, string message, string id, bool playSound, DisplayPage displayPage, int delayMS, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
+        public void IssueNotificationAsync(string title, string message, string id, bool playSound, DisplayPage displayPage, long delayMS, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
         {
             if (info == null)
                 info = new NSMutableDictionary();

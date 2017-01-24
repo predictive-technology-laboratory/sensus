@@ -383,8 +383,8 @@ namespace Sensus
         private string _name;
         private List<Probe> _probes;
         private bool _running;
-        private ScheduledCallback _scheduledStartCallback;
-        private ScheduledCallback _scheduledStopCallback;
+        private OneTimeCallback _scheduledStartCallback;
+        private OneTimeCallback _scheduledStopCallback;
         private LocalDataStore _localDataStore;
         private RemoteDataStore _remoteDataStore;
         private string _storageDirectory;
@@ -437,13 +437,13 @@ namespace Sensus
         }
 
         [JsonIgnore]
-        public ScheduledCallback ScheduledStartCallback
+        public OneTimeCallback ScheduledStartCallback
         {
             get { return _scheduledStartCallback; }
         }
 
         [JsonIgnore]
-        public ScheduledCallback ScheduledStopCallback
+        public OneTimeCallback ScheduledStopCallback
         {
             get { return _scheduledStopCallback; }
         }
@@ -1144,7 +1144,7 @@ namespace Sensus
         {
             TimeSpan timeUntilStart = _startTimestamp - DateTime.Now;
 
-            _scheduledStartCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
+            _scheduledStartCallback = new OneTimeCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
             {
                 return Task.Run(() =>
                 {
@@ -1152,16 +1152,16 @@ namespace Sensus
                     _scheduledStartCallback = null;
                 });
 
-            }, "START", _id, null,
+                }, "START", _id, _id, timeUntilStart, null,
 #if __ANDROID__
-            $"Started study: {Name}.");
+                $"Started study: {Name}.");
 #elif __IOS__
             $"Please open to start study {Name}.");
 #else
             $"Started study: {Name}.");
 #endif
 
-            SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(_scheduledStartCallback, (int)timeUntilStart.TotalMilliseconds);
+            SensusContext.Current.CallbackScheduler.ScheduleCallback(_scheduledStartCallback);
         }
 
         public void CancelScheduledStart()
@@ -1177,14 +1177,14 @@ namespace Sensus
         {
             TimeSpan timeUntilStop = _endTimestamp - DateTime.Now;
 
-            _scheduledStopCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
+            _scheduledStopCallback = new OneTimeCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
             {
                 return Task.Run(() =>
                 {
                     Stop();
                     _scheduledStopCallback = null;
                 });
-            }, "STOP", _id, null,
+            }, "STOP", _id, _id, timeUntilStop, null,
 #if __ANDROID__
             $"Stopped study: {Name}.");
 #elif __IOS__
@@ -1193,7 +1193,7 @@ namespace Sensus
             $"Stopped study: {Name}.");
 #endif
 
-            SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(_scheduledStopCallback, (int)timeUntilStop.TotalMilliseconds);
+            SensusContext.Current.CallbackScheduler.ScheduleCallback(_scheduledStopCallback);
         }
 
         public void CancelScheduledStop()

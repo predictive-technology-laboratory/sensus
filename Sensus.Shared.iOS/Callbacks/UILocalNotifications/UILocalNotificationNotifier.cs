@@ -36,7 +36,7 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
             IssueNotificationAsync(title, message, id, playSound, displayPage, 0, null);
         }
 
-        public void IssueSilentNotificationAsync(string id, int delayMS, NSMutableDictionary notificationInfo, Action<UILocalNotification> notificationCreated = null)
+        public void IssueSilentNotificationAsync(string id, long delayMS, NSMutableDictionary notificationInfo, Action<UILocalNotification> notificationCreated = null)
         {
             if (notificationInfo == null)
                 notificationInfo = new NSMutableDictionary();

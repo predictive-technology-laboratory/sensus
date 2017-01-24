@@ -28,21 +28,21 @@ namespace Sensus.iOS.Callbacks
 {
     public abstract class iOSCallbackScheduler : CallbackScheduler, IiOSCallbackScheduler
     {
-        protected override void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag)
+        protected override void ScheduleRepeatingCallback(string callbackId, long initialDelayMS, long repeatDelayMS, bool repeatLag)
         {
             ScheduleCallbackAsync(callbackId, initialDelayMS, true, repeatDelayMS, repeatLag);
         }
 
-        protected override void ScheduleOneTimeCallback(string callbackId, int delayMS)
+        protected override void ScheduleOneTimeCallback(string callbackId, long delayMS)
         {
             ScheduleCallbackAsync(callbackId, delayMS, false, -1, false);
         }
 
-        protected abstract void ScheduleCallbackAsync(string callbackId, int delayMS, bool repeating, int repeatDelayMS, bool repeatLag);
+        protected abstract void ScheduleCallbackAsync(string callbackId, long delayMS, bool repeating, long repeatDelayMS, bool repeatLag);
 
         public abstract Task UpdateCallbacksAsync();
 
-        public NSMutableDictionary GetCallbackInfo(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, DisplayPage displayPage)
+        public NSMutableDictionary GetCallbackInfo(string callbackId, bool repeating, long repeatDelayMS, bool repeatLag, DisplayPage displayPage)
         {
             // we've seen cases where the UserInfo dictionary cannot be serialized because one of its values is null. if this happens, the 
             // callback won't be serviced, and things won't return to normal until Sensus is activated by the user and the callbacks are 

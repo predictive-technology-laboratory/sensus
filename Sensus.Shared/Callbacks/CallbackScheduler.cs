@@ -37,21 +37,25 @@ namespace Sensus.Callbacks
         }
 
         #region platform-specific methods
-        protected abstract void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag);
-        protected abstract void ScheduleOneTimeCallback(string callbackId, int delayMS);
+        protected abstract void ScheduleRepeatingCallback(string callbackId, long initialDelayMS, long repeatDelayMS, bool repeatLag);
+        protected abstract void ScheduleOneTimeCallback(string callbackId, long delayMS);
         protected abstract void UnscheduleCallbackPlatformSpecific(string callbackId);
         #endregion
 
-        public void ScheduleRepeatingCallback(ScheduledCallback callback, int initialDelayMS, int repeatDelayMS, bool repeatLag)
+        public void ScheduleCallback(ScheduledCallback callback)
         {
-            _idCallback[callback.Id] = callback;
-            ScheduleRepeatingCallback(callback.Id, initialDelayMS, repeatDelayMS, repeatLag);
-        }
-
-        public void ScheduleOneTimeCallback(ScheduledCallback callback, int delayMS)
-        {
-            _idCallback[callback.Id] = callback;
-            ScheduleOneTimeCallback(callback.Id, delayMS);
+            if (callback.GetType() == typeof(OneTimeCallback))
+            {
+                OneTimeCallback oneTimeCallback = callback as OneTimeCallback;
+                _idCallback[oneTimeCallback.Id] = oneTimeCallback;
+                ScheduleOneTimeCallback(oneTimeCallback.Id, (long) oneTimeCallback.Delay.TotalMilliseconds);
+            }
+            else if (callback.GetType() == typeof(RepeatingCallback))
+            {
+                RepeatingCallback repeatingCallback = callback as RepeatingCallback;
+                _idCallback[repeatingCallback.Id] = callback;
+                ScheduleRepeatingCallback(repeatingCallback.Id, (long) repeatingCallback.InitialDelay.TotalMilliseconds, (long) repeatingCallback.RepeatDelay.TotalMilliseconds, repeatingCallback.RepeatLag);
+            }
         }
 
         public bool CallbackIsScheduled(string callbackId)

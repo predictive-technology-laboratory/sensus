@@ -33,7 +33,7 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
             _callbackIdNotification = new Dictionary<string, UILocalNotification>();
         }
 
-        protected override void ScheduleCallbackAsync(string callbackId, int delayMS, bool repeating, int repeatDelayMS, bool repeatLag)
+        protected override void ScheduleCallbackAsync(string callbackId, long delayMS, bool repeating, long repeatDelayMS, bool repeatLag)
         {
             // get the callback information. this can be null if we don't have all required information. don't schedule the notification if this happens.
             DisplayPage displayPage = GetCallbackDisplayPage(callbackId);

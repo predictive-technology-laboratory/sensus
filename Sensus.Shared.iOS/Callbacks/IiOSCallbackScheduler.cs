@@ -21,7 +21,7 @@ namespace Sensus.iOS.Callbacks
     /// <summary>
     /// Adds iOS-specific methods to the callback scheduler.
     /// </summary>
-    public interface IiOSCallbackScheduler : ICallbackScheduler
+    public interface IiOSCallbackScheduler
     {
         Task UpdateCallbacksAsync();
 
