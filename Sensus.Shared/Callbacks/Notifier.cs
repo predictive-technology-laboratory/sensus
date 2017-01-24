@@ -53,7 +53,7 @@ namespace Sensus.Callbacks
             });
         }
 
-        protected bool NotificationTimeIsWithinAlertExclusionWindow(string protocolId, DateTime time)
+        public static bool NotificationTimeIsWithinAlertExclusionWindow(string protocolId, DateTime time)
         {
             var runningProtocol = SensusServiceHelper.Get().GetRunningProtocolById(protocolId);
 

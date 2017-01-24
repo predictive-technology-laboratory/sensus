@@ -63,9 +63,9 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
             if (!string.IsNullOrWhiteSpace(message))
                 content.Body = message;
 
-            // if a protocol ID has been passed to the method, check the protocol's Notification Alert Exclusion Windows
-            // to determine whether to vibrate and play sound. if protocolId is null, just use the vibrateAndPlaySound parameter.
-            if (protocolId != null)
+            // only check the protocol's Notification Alert Exclusion Windows to determine whether to cancel vibration and sound
+            // if the vibrateAndPlaySound parameter is true and a protocol ID has been passed to the method.
+            if (vibrateAndPlaySound && protocolId != null)
             {
                 vibrateAndPlaySound = !NotificationTimeIsWithinAlertExclusionWindow(protocolId, DateTime.UtcNow.AddSeconds(delayMS / 1000d));
             }
