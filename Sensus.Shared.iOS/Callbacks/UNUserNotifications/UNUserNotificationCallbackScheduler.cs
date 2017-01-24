@@ -75,13 +75,13 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
 
                 foreach (UNNotificationRequest request in requests)
                 {
-                    double msTillTrigger = 0;
+                    TimeSpan timeTillTrigger = TimeSpan.Zero;
                     DateTime? triggerDateTime = (request.Trigger as UNCalendarNotificationTrigger)?.NextTriggerDate?.ToDateTime().ToLocalTime();
                     if (triggerDateTime.HasValue)
-                        msTillTrigger = (triggerDateTime.Value - DateTime.Now).TotalMilliseconds;
+                        timeTillTrigger = triggerDateTime.Value - DateTime.Now;
 
                     // service any callback that should have already been serviced or will soon be serviced
-                    if (msTillTrigger < 5000)
+                    if (timeTillTrigger.TotalMilliseconds < 5000)
                     {
                         notifier.CancelNotification(request);
                         ServiceCallbackAsync(request.Content?.UserInfo);
@@ -90,7 +90,7 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
                     // app was backgrounded. re-issue those silent notifications now.
                     else if (iOSNotifier.IsSilent(request.Content?.UserInfo))
                     {
-                        notifier.IssueNotificationAsync(request.Identifier, request.Content, msTillTrigger, newRequest =>
+                        notifier.IssueNotificationAsync(request.Identifier, request.Content, timeTillTrigger, newRequest =>
                         {
                             lock (_callbackIdRequest)
                             {
@@ -118,7 +118,7 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
 
                     repeatCallbackTime =>
                     {
-                        (SensusContext.Current.Notifier as IUNUserNotificationNotifier).IssueNotificationAsync(request.Identifier, request.Content, (repeatCallbackTime - DateTime.Now).TotalMilliseconds, newRequest =>
+                        (SensusContext.Current.Notifier as IUNUserNotificationNotifier).IssueNotificationAsync(request.Identifier, request.Content, repeatCallbackTime - DateTime.Now, newRequest =>
                         {
                             lock (_callbackIdRequest)
                             {
