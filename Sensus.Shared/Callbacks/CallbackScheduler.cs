@@ -31,6 +31,14 @@ namespace Sensus.Callbacks
 
         private ConcurrentDictionary<string, ScheduledCallback> _idCallback;
 
+        protected ConcurrentDictionary<string, ScheduledCallback> IdCallback
+        {
+            get
+            {
+                return _idCallback;
+            }
+        }
+
         public CallbackScheduler()
         {
             _idCallback = new ConcurrentDictionary<string, ScheduledCallback>();

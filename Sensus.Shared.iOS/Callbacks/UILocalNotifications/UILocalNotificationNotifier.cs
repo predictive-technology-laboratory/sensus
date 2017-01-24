@@ -31,9 +31,9 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
             _idNotification = new Dictionary<string, UILocalNotification>();
         }
 
-        public override void IssueNotificationAsync(string title, string message, string id, string protocolId, bool vibrateAndPlaySound, DisplayPage displayPage)
+        public override void IssueNotificationAsync(string title, string message, string id, string protocolId, bool alertUser, DisplayPage displayPage)
         {
-            IssueNotificationAsync(title, message, id, protocolId, vibrateAndPlaySound, displayPage, 0, null);
+            IssueNotificationAsync(title, message, id, protocolId, alertUser, displayPage, 0, null);
         }
 
         public void IssueSilentNotificationAsync(string id, int delayMS, NSMutableDictionary notificationInfo, Action<UILocalNotification> notificationCreated = null)
@@ -49,7 +49,7 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
             IssueNotificationAsync("Please open this notification.", "One of your studies needs to be updated.", id, null, false, DisplayPage.None, delayMS, notificationInfo, notificationCreated);
         }
 
-        public void IssueNotificationAsync(string title, string message, string id, string protocolId, bool vibrateAndPlaySound, DisplayPage displayPage, int delayMS, NSMutableDictionary notificationInfo, Action<UILocalNotification> notificationCreated = null)
+        public void IssueNotificationAsync(string title, string message, string id, string protocolId, bool alertUser, DisplayPage displayPage, int delayMS, NSMutableDictionary notificationInfo, Action<UILocalNotification> notificationCreated = null)
         {
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
@@ -71,14 +71,14 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
                 };
 
                 // only check the protocol's Notification Alert Exclusion Windows to determine whether to cancel vibration and sound
-                // if the vibrateAndPlaySound parameter is true and a protocol ID has been passed to the method.
-                if (vibrateAndPlaySound && protocolId != null)
+                // if the alertUser parameter is true and a protocol ID has been passed to the method.
+                if (alertUser && protocolId != null)
                 {
-                    vibrateAndPlaySound = !NotificationTimeIsWithinAlertExclusionWindow(protocolId, notification.FireDate.ToDateTime());
+                    alertUser = !NotificationTimeIsWithinAlertExclusionWindow(protocolId, notification.FireDate.ToDateTime());
                 }
 
                 // also introduced in 8.0
-                if (vibrateAndPlaySound)
+                if (alertUser)
                     notification.SoundName = UILocalNotification.DefaultSoundName;
 
                 // introduced in iOS 8.2:  https://developer.apple.com/reference/uikit/uilocalnotification/1616647-alerttitle

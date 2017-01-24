@@ -24,9 +24,9 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
 {
     public class UNUserNotificationNotifier : iOSNotifier, IUNUserNotificationNotifier
     {
-        public override void IssueNotificationAsync(string title, string message, string id, string protocolId, bool vibrateAndPlaySound, DisplayPage displayPage)
+        public override void IssueNotificationAsync(string title, string message, string id, string protocolId, bool alertUser, DisplayPage displayPage)
         {
-            IssueNotificationAsync(title, message, id, protocolId, vibrateAndPlaySound, displayPage, -1, null, null);
+            IssueNotificationAsync(title, message, id, protocolId, alertUser, displayPage, -1, null, null);
         }
 
         public void IssueSilentNotificationAsync(string id, int delayMS, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
@@ -42,7 +42,7 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
             IssueNotificationAsync("Please open this notification.", "One of your studies needs to be updated.", id, null, false, DisplayPage.None, delayMS, info, requestCreated);
         }
 
-        public void IssueNotificationAsync(string title, string message, string id, string protocolId, bool vibrateAndPlaySound, DisplayPage displayPage, int delayMS, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
+        public void IssueNotificationAsync(string title, string message, string id, string protocolId, bool alertUser, DisplayPage displayPage, int delayMS, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
         {
             if (info == null)
                 info = new NSMutableDictionary();
@@ -64,13 +64,13 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
                 content.Body = message;
 
             // only check the protocol's Notification Alert Exclusion Windows to determine whether to cancel vibration and sound
-            // if the vibrateAndPlaySound parameter is true and a protocol ID has been passed to the method.
-            if (vibrateAndPlaySound && protocolId != null)
+            // if the alertUser parameter is true and a protocol ID has been passed to the method.
+            if (alertUser && protocolId != null)
             {
-                vibrateAndPlaySound = !NotificationTimeIsWithinAlertExclusionWindow(protocolId, DateTime.UtcNow.AddSeconds(delayMS / 1000d));
+                alertUser = !NotificationTimeIsWithinAlertExclusionWindow(protocolId, DateTime.UtcNow.AddSeconds(delayMS / 1000d));
             }
 
-            if (vibrateAndPlaySound)
+            if (alertUser)
                 content.Sound = UNNotificationSound.Default;
 
             IssueNotificationAsync(id, content, delayMS, requestCreated);
