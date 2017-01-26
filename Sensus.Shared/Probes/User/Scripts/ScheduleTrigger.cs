@@ -28,7 +28,7 @@ namespace Sensus.Probes.User.Scripts
         #region Properties
         public int WindowCount => _windows.Count;
 
-        public string Windows
+        public string WindowsString
         {
             get
             {
@@ -39,7 +39,7 @@ namespace Sensus.Probes.User.Scripts
             }
             set
             {
-                if (value == Windows)
+                if (value == WindowsString)
                     return;
 
                 lock (_windows)
@@ -48,7 +48,7 @@ namespace Sensus.Probes.User.Scripts
 
                     try
                     {
-                        _windows.AddRange(value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(TriggerWindow.Parse));
+                        _windows.AddRange(value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(windowString => new TriggerWindow(windowString)));
                     }
                     catch
                     {

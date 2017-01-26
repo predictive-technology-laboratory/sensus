@@ -19,18 +19,10 @@ namespace Sensus.Probes.User.Scripts
 {
     public class TriggerWindow : Window
     {
-        #region Static Methods
-        public new static TriggerWindow Parse(string window)
+        public TriggerWindow(string windowString)
+            : base(windowString)
         {
-            var newWindow = Window.Parse(window);
-
-            return new TriggerWindow
-            {
-                Start = newWindow.Start,
-                End = newWindow.End
-            };
         }
-        #endregion
 
         #region Public Methods
         /// <summary>

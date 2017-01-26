@@ -24,7 +24,7 @@ namespace Sensus.Tests.Scripts
         [Test]
         public void PointScheduleTriggerParse()
         {
-            var t = TriggerWindow.Parse("10:22");
+            var t = new TriggerWindow("10:22");
 
             Assert.AreEqual(new TimeSpan(0, 10, 22, 0), t.Start);
             Assert.AreEqual(new TimeSpan(0, 10, 22, 0), t.End);
@@ -34,7 +34,7 @@ namespace Sensus.Tests.Scripts
         [Test]
         public void WindowScheduleTriggerParse()
         {
-            var t = TriggerWindow.Parse("10:22-12:22");
+            var t = new TriggerWindow("10:22-12:22");
 
             Assert.AreEqual(new TimeSpan(0, 10, 22, 0), t.Start);
             Assert.AreEqual(new TimeSpan(0, 12, 22, 0), t.End);
@@ -44,7 +44,7 @@ namespace Sensus.Tests.Scripts
         [Test]
         public void PointScheduleToString()
         {
-            var t = TriggerWindow.Parse("10:22");
+            var t = new TriggerWindow("10:22");
 
             Assert.AreEqual("10:22", t.ToString());
         }
@@ -52,7 +52,7 @@ namespace Sensus.Tests.Scripts
         [Test]
         public void WindowScheduleToString()
         {
-            var t = TriggerWindow.Parse("10:22-12:22");
+            var t = new TriggerWindow("10:22-12:22");
 
             Assert.AreEqual("10:22-12:22", t.ToString());
         }
@@ -60,7 +60,7 @@ namespace Sensus.Tests.Scripts
         [Test]
         public void NextScheduleWindowNoExpiration()
         {
-            var t = TriggerWindow.Parse("10:22-12:22");
+            var t = new TriggerWindow("10:22-12:22");
 
             var reference = new DateTime(1986, 4, 18, 10, 22, 0);
             var after = new DateTime(1986, 4, 25, 10, 22, 0);
@@ -78,7 +78,7 @@ namespace Sensus.Tests.Scripts
         [Test]
         public void NextSchedulePointNoExpiration()
         {
-            var t = TriggerWindow.Parse("10:22");
+            var t = new TriggerWindow("10:22");
 
             var reference = new DateTime(1986, 4, 18, 10, 22, 0);
             var after = new DateTime(1986, 4, 25, 10, 22, 0);
@@ -95,7 +95,7 @@ namespace Sensus.Tests.Scripts
         [Test]
         public void NextSchedulePointExpirationNotTooBig()
         {
-            var t = TriggerWindow.Parse("10:22");
+            var t = new TriggerWindow("10:22");
 
             var reference = new DateTime(1986, 4, 18, 10, 22, 0);
             var after = reference.AddDays(30);
@@ -112,7 +112,7 @@ namespace Sensus.Tests.Scripts
         [Test]
         public void NextSchedulePointExpirationExpireWindow()
         {
-            var t = TriggerWindow.Parse("10:22");
+            var t = new TriggerWindow("10:22");
 
             var reference = new DateTime(1986, 4, 18, 10, 22, 0);
             var after = reference.AddDays(30);
@@ -126,7 +126,7 @@ namespace Sensus.Tests.Scripts
         [Test]
         public void NextScheduleWindowExpireAge()
         {
-            var t = TriggerWindow.Parse("10:22-12:22");
+            var t = new TriggerWindow("10:22-12:22");
 
             var reference = new DateTime(1986, 4, 18, 10, 22, 0);
             var after = new DateTime(1986, 4, 25, 10, 22, 0);
@@ -145,7 +145,7 @@ namespace Sensus.Tests.Scripts
         [Test]
         public void NextScheduleWindowWithExpireWindow()
         {
-            var t = TriggerWindow.Parse("10:22-12:22");
+            var t = new TriggerWindow("10:22-12:22");
 
             var reference = new DateTime(1986, 4, 18, 10, 22, 0);
             var after = new DateTime(1986, 4, 25, 10, 22, 0);
@@ -163,7 +163,7 @@ namespace Sensus.Tests.Scripts
         [Test]
         public void NextScheduleWindowWithExpirationTime()
         {
-            var t = TriggerWindow.Parse("10:22-12:22");
+            var t = new TriggerWindow("10:22-12:22");
 
             var reference = new DateTime(1986, 4, 18, 10, 22, 0);
             var after = new DateTime(1986, 4, 25, 10, 22, 0);
@@ -182,8 +182,8 @@ namespace Sensus.Tests.Scripts
         [Test]
         public void WindowScheduleCompareToDifferent()
         {
-            var t1 = TriggerWindow.Parse("10:22-12:22");
-            var t2 = TriggerWindow.Parse("10:23-12:23");
+            var t1 = new TriggerWindow("10:22-12:22");
+            var t2 = new TriggerWindow("10:23-12:23");
 
             Assert.LessOrEqual(t1.CompareTo(t2), 0);
             Assert.GreaterOrEqual(t2.CompareTo(t1), 0);
@@ -192,8 +192,8 @@ namespace Sensus.Tests.Scripts
         [Test]
         public void WindowScheduleCompareToEqual()
         {
-            var t1 = TriggerWindow.Parse("10:22-12:22");
-            var t2 = TriggerWindow.Parse("10:22-12:22");
+            var t1 = new TriggerWindow("10:22-12:22");
+            var t2 = new TriggerWindow("10:22-12:22");
 
             Assert.AreEqual(0, t1.CompareTo(t2));
         }

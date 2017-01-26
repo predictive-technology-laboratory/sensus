@@ -61,25 +61,22 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
                 notificationInfo.SetValueForKey(new NSString(id), new NSString(NOTIFICATION_ID_KEY));
                 notificationInfo.SetValueForKey(new NSString(displayPage.ToString()), new NSString(DISPLAY_PAGE_KEY));
 
+                DateTime fireDateTime = DateTime.Now.AddSeconds(delayMS / 1000d);
+
                 // all properties below were introduced in iOS 8.0. we currently target 8.0 and above, so these should be safe to set.
                 UILocalNotification notification = new UILocalNotification
                 {
                     AlertBody = message,
                     TimeZone = null,  // null for UTC interpretation of FireDate
-                    FireDate = DateTime.UtcNow.ToNSDate().AddSeconds(delayMS / 1000d),
+                    FireDate = fireDateTime.ToUniversalTime().ToNSDate(),
                     UserInfo = notificationInfo
                 };
 
-                // only check the protocol's Notification Alert Exclusion Windows to determine whether to cancel vibration and sound
-                // if the alertUser parameter is true and a protocol ID has been passed to the method.
-                if (alertUser && protocolId != null)
-                {
-                    alertUser = !NotificationTimeIsWithinAlertExclusionWindow(protocolId, notification.FireDate.ToDateTime());
-                }
-
                 // also introduced in 8.0
-                if (alertUser)
+                if (alertUser && !TimeIsWithinAlertExclusionWindow(protocolId, fireDateTime.TimeOfDay))
+                {
                     notification.SoundName = UILocalNotification.DefaultSoundName;
+                }
 
                 // introduced in iOS 8.2:  https://developer.apple.com/reference/uikit/uilocalnotification/1616647-alerttitle
                 if (UIDevice.CurrentDevice.CheckSystemVersion(8, 2) && !string.IsNullOrWhiteSpace(title))

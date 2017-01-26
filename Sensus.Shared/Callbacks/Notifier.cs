@@ -25,6 +25,11 @@ namespace Sensus.Callbacks
     {
         public const string DISPLAY_PAGE_KEY = "SENSUS-DISPLAY-PAGE";
 
+        public static bool TimeIsWithinAlertExclusionWindow(string protocolId, TimeSpan time)
+        {
+            return SensusServiceHelper.Get().GetRunningProtocols().SingleOrDefault(protocol => protocol.Id == protocolId)?.AlertExclusionWindows.Any(window => window.Encompasses(time)) ?? false;
+        }
+
         public abstract void IssueNotificationAsync(string title, string message, string id, string protocolId, bool alertUser, DisplayPage displayPage);
 
         public abstract void CancelNotification(string id);
@@ -51,18 +56,6 @@ namespace Sensus.Callbacks
                 if (currentTopPage == null || desiredTopPage.GetType() != currentTopPage.GetType())
                     await Application.Current.MainPage.Navigation.PushAsync(desiredTopPage);
             });
-        }
-
-        public static bool NotificationTimeIsWithinAlertExclusionWindow(string protocolId, DateTime time)
-        {
-            var runningProtocol = SensusServiceHelper.Get().GetRunningProtocolById(protocolId);
-
-            if (runningProtocol != null)
-                foreach (Window window in runningProtocol.NotificationAlertExclusionWindowsList)
-                    if (window.EncompassesTime(time))
-                        return true;
-
-            return false;
         }
     }
 }

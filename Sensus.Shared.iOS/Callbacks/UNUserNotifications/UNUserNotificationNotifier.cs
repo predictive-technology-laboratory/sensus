@@ -63,15 +63,13 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
             if (!string.IsNullOrWhiteSpace(message))
                 content.Body = message;
 
-            // only check the protocol's Notification Alert Exclusion Windows to determine whether to cancel vibration and sound
-            // if the alertUser parameter is true and a protocol ID has been passed to the method.
-            if (alertUser && protocolId != null)
+            // the following calculation isn't perfect because we use DateTime.Now and then use it again in the subsequent call to IssueNotificationAsync.
+            // these two values will be slightly different due to execution time, but the risk is small:  the user might hear or not hear the notification
+            // when it comes through, and it's very unlikely that the result will be incorrect.
+            if (alertUser && !TimeIsWithinAlertExclusionWindow(protocolId, DateTime.Now.AddSeconds(delayMS / 1000d).TimeOfDay))
             {
-                alertUser = !NotificationTimeIsWithinAlertExclusionWindow(protocolId, DateTime.UtcNow.AddSeconds(delayMS / 1000d));
-            }
-
-            if (alertUser)
                 content.Sound = UNNotificationSound.Default;
+            }
 
             IssueNotificationAsync(id, content, delayMS, requestCreated);
         }
@@ -152,7 +150,7 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
         {
             if (id == null)
                 return;
-            
+
             var ids = new[] { id };
             UNUserNotificationCenter.Current.RemoveDeliveredNotifications(ids);
             UNUserNotificationCenter.Current.RemovePendingNotificationRequests(ids);

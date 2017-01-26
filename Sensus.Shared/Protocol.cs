@@ -348,8 +348,8 @@ namespace Sensus
                                 probe.Enabled = false;
 
 #if __IOS__
-                                if (probe is iOSHealthKitProbe)
-                                    probe.Enabled = false;
+                            if (probe is iOSHealthKitProbe)
+                                probe.Enabled = false;
 #endif
 
                             // clear the run-times collection from any script runners. need a clean start, just in case we have one-shot scripts
@@ -400,7 +400,7 @@ namespace Sensus
         private bool _startImmediately;
         private DateTime _endTimestamp;
         private bool _continueIndefinitely;
-        private readonly List<Window> _notificationAlertExclusionWindows;
+        private readonly List<Window> _alertExclusionWindows;
         private int _participationHorizonDays;
         private string _contactEmail;
         private bool _groupable;
@@ -693,48 +693,7 @@ namespace Sensus
             get { return DateTime.Now.AddDays(-_participationHorizonDays); }
         }
 
-        public List<Window> NotificationAlertExclusionWindowsList
-        {
-            get
-            {
-                return _notificationAlertExclusionWindows;
-            }
-        }
-
-        [EntryStringUiProperty("Notification Alert Exclusion Windows:", true, 24)]
-        public string NotificationAlertExclusionWindows
-        {
-            get
-            {
-                lock (_notificationAlertExclusionWindows)
-                {
-                    return string.Join(", ", _notificationAlertExclusionWindows);
-                }
-            }
-            set
-            {
-                if (value == NotificationAlertExclusionWindows)
-                    return;
-
-                lock (_notificationAlertExclusionWindows)
-                {
-                    _notificationAlertExclusionWindows.Clear();
-
-                    try
-                    {
-                        _notificationAlertExclusionWindows.AddRange(value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(TriggerWindow.Parse));
-                    }
-                    catch
-                    {
-                        // ignore improperly formatted trigger windows
-                    }
-
-                    _notificationAlertExclusionWindows.Sort();
-                }
-            }
-        }
-
-        [EntryStringUiProperty("Contact Email:", true, 25)]
+        [EntryStringUiProperty("Contact Email:", true, 24)]
         public string ContactEmail
         {
             get
@@ -747,7 +706,7 @@ namespace Sensus
             }
         }
 
-        [OnOffUiProperty(null, true, 26)]
+        [OnOffUiProperty(null, true, 25)]
         public bool Groupable
         {
             get
@@ -772,7 +731,7 @@ namespace Sensus
             }
         }
 
-        [EntryFloatUiProperty("Reward Threshold:", true, 27)]
+        [EntryFloatUiProperty("Reward Threshold:", true, 26)]
         public float? RewardThreshold
         {
             get
@@ -819,7 +778,7 @@ namespace Sensus
             }
         }
 
-        [EntryFloatUiProperty("GPS - Desired Accuracy (Meters):", true, 28)]
+        [EntryFloatUiProperty("GPS - Desired Accuracy (Meters):", true, 27)]
         public float GpsDesiredAccuracyMeters
         {
             get { return _gpsDesiredAccuracyMeters; }
@@ -832,7 +791,7 @@ namespace Sensus
             }
         }
 
-        [EntryIntegerUiProperty("GPS - Minimum Time Delay (MS):", true, 29)]
+        [EntryIntegerUiProperty("GPS - Minimum Time Delay (MS):", true, 28)]
         public int GpsMinTimeDelayMS
         {
             get { return _gpsMinTimeDelayMS; }
@@ -845,7 +804,7 @@ namespace Sensus
             }
         }
 
-        [EntryFloatUiProperty("GPS - Minimum Distance Delay (Meters):", true, 30)]
+        [EntryFloatUiProperty("GPS - Minimum Distance Delay (Meters):", true, 29)]
         public float GpsMinDistanceDelayMeters
         {
             get
@@ -864,21 +823,21 @@ namespace Sensus
         #region iOS-specific protocol properties
 
 #if __IOS__
-        [OnOffUiProperty("GPS - Pause Location Updates:", true, 31)]
+        [OnOffUiProperty("GPS - Pause Location Updates:", true, 30)]
         public bool GpsPauseLocationUpdatesAutomatically { get; set; } = false;
 
-        [ListUiProperty("GPS - Pause Activity Type:", true, 32, new object[] { ActivityType.Other, ActivityType.AutomotiveNavigation, ActivityType.Fitness, ActivityType.OtherNavigation })]
+        [ListUiProperty("GPS - Pause Activity Type:", true, 31, new object[] { ActivityType.Other, ActivityType.AutomotiveNavigation, ActivityType.Fitness, ActivityType.OtherNavigation })]
         public ActivityType GpsPauseActivityType { get; set; } = ActivityType.Other;
 
-        [OnOffUiProperty("GPS - Significant Changes:", true, 33)]
+        [OnOffUiProperty("GPS - Significant Changes:", true, 32)]
         public bool GpsListenForSignificantChanges { get; set; } = false;
 
-        [OnOffUiProperty("GPS - Defer Location Updates:", true, 34)]
+        [OnOffUiProperty("GPS - Defer Location Updates:", true, 33)]
         public bool GpsDeferLocationUpdates { get; set; } = false;
 
         private float _gpsDeferralDistanceMeters = 500;
 
-        [EntryFloatUiProperty("GPS - Deferral Distance (Meters):", true, 35)]
+        [EntryFloatUiProperty("GPS - Deferral Distance (Meters):", true, 34)]
         public float GpsDeferralDistanceMeters
         {
             get
@@ -896,7 +855,7 @@ namespace Sensus
 
         private float _gpsDeferralTimeMinutes = 5;
 
-        [EntryFloatUiProperty("GPS - Deferral Time (Mins.):", true, 36)]
+        [EntryFloatUiProperty("GPS - Deferral Time (Mins.):", true, 35)]
         public float GpsDeferralTimeMinutes
         {
             get { return _gpsDeferralTimeMinutes; }
@@ -909,6 +868,48 @@ namespace Sensus
             }
         }
 #endif
+
+        [EntryStringUiProperty("Alert Exclusion Windows:", true, 36)]
+        public string AlertExclusionWindowString
+        {
+            get
+            {
+                lock (_alertExclusionWindows)
+                {
+                    return string.Join(", ", _alertExclusionWindows);
+                }
+            }
+            set
+            {
+                if (value == AlertExclusionWindowString)
+                    return;
+
+                lock (_alertExclusionWindows)
+                {
+                    _alertExclusionWindows.Clear();
+
+                    try
+                    {
+                        _alertExclusionWindows.AddRange(value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(windowString => new Window(windowString)));
+                    }
+                    catch
+                    {
+                        // ignore improperly formatted trigger windows
+                    }
+
+                    _alertExclusionWindows.Sort();
+                }
+            }
+        }
+
+        [JsonIgnore]
+        public List<Window> AlertExclusionWindows
+        {
+            get
+            {
+                return _alertExclusionWindows;
+            }
+        }
 
         #endregion
 
@@ -924,7 +925,7 @@ namespace Sensus
             _shareable = false;
             _pointsOfInterest = new List<PointOfInterest>();
             _participationHorizonDays = 1;
-            _notificationAlertExclusionWindows = new List<Window>();
+            _alertExclusionWindows = new List<Window>();
             _startTimestamp = DateTime.Now;
             _endTimestamp = DateTime.Now;
             _startImmediately = true;

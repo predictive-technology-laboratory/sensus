@@ -13,53 +13,42 @@
 // limitations under the License.
 
 using System;
-using Sensus.Extensions;
 
 namespace Sensus
 {
     public class Window : IComparable<Window>
     {
-        #region Static Methods
-        public static Window Parse(string window)
+        #region Properties
+        public TimeSpan Start { get; private set; }
+        public TimeSpan End { get; private set; }
+        public TimeSpan Duration => End - Start;
+        #endregion
+
+        public Window(string windowString)
         {
-            var startEnd = window.Trim().Split('-');
+            var startEnd = windowString.Trim().Split('-');
 
             if (startEnd.Length == 1)
             {
-                return new Window
-                {
-                    //for some reason DateTime.Parse seems to be more forgiving
-                    Start = DateTime.Parse(startEnd[0].Trim()).TimeOfDay,
-                    End = DateTime.Parse(startEnd[0].Trim()).TimeOfDay
-                };
+                //for some reason DateTime.Parse seems to be more forgiving
+                Start = DateTime.Parse(startEnd[0].Trim()).TimeOfDay;
+                End = DateTime.Parse(startEnd[0].Trim()).TimeOfDay;
             }
 
             if (startEnd.Length == 2)
             {
-                var result = new Window
-                {
-                    //for some reason DateTime.Parse seems to be more forgiving
-                    Start = DateTime.Parse(startEnd[0].Trim()).TimeOfDay,
-                    End = DateTime.Parse(startEnd[1].Trim()).TimeOfDay
-                };
+                //for some reason DateTime.Parse seems to be more forgiving
+                Start = DateTime.Parse(startEnd[0].Trim()).TimeOfDay;
+                End = DateTime.Parse(startEnd[1].Trim()).TimeOfDay;
 
-                if (result.Start > result.End)
+                if (Start > End)
                 {
-                    throw new Exception($"Improper trigger window ({window})");
+                    throw new Exception($"Improper trigger window ({windowString})");
                 }
-
-                return result;
             }
 
-            throw new Exception($"Improper trigger window ({window})");
+            throw new Exception($"Improper trigger window ({windowString})");
         }
-        #endregion
-
-        #region Properties
-        public TimeSpan Start { get; protected set; }
-        public TimeSpan End { get; protected set; }
-        public TimeSpan Duration => End - Start;
-        #endregion
 
         #region Public Methods
         public override string ToString()
@@ -73,12 +62,9 @@ namespace Sensus
             return Start.CompareTo(comparee.Start);
         }
 
-        public bool EncompassesTime(DateTime time)
+        public bool Encompasses(TimeSpan time)
         {
-            if (Start == End)
-                return time.Hour == Start.Hours && time.Minute == Start.Minutes;
-            else
-                return time.TimeOfDay >= Start && time.TimeOfDay <= End;
+            return time >= Start && time <= End;
         }
         #endregion
 
@@ -126,6 +112,8 @@ namespace Sensus
         {
             var ticksTillUpcomingTarget = (target - reference).Ticks;
 
+            // if target comes before the reference time (e.g., 10am target and 1pm reference), then skip ahead to the
+            // next day (e.g., producing 1pm today as reference and 10am tomorrow as target)
             if (ticksTillUpcomingTarget <= 0)
             {
                 ticksTillUpcomingTarget += TimeSpan.TicksPerDay;

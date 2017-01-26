@@ -32,6 +32,15 @@ namespace Sensus.Android.Callbacks
             _notificationManager = _service.GetSystemService(global::Android.Content.Context.NotificationService) as NotificationManager;
         }
 
+        /// <summary>
+        /// Issues the notification.
+        /// </summary>
+        /// <param name="title">Title.</param>
+        /// <param name="message">Message.</param>
+        /// <param name="id">Identifier of notification.</param>
+        /// <param name="protocolId">Protocol identifier to check for alert exclusion time windows.</param>
+        /// <param name="alertUser">If set to <c>true</c> alert user.</param>
+        /// <param name="displayPage">Display page.</param>
         public override void IssueNotificationAsync(string title, string message, string id, string protocolId, bool alertUser, DisplayPage displayPage)
         {
             if (_notificationManager == null)
@@ -56,14 +65,7 @@ namespace Sensus.Android.Callbacks
                         .SetAutoCancel(true)
                         .SetOngoing(false);
 
-                    // only check the protocol's Notification Alert Exclusion Windows to determine whether to cancel vibration and sound
-                    // if the alertUser parameter is true and a protocol ID has been passed to the method.
-                    if (alertUser && protocolId != null)
-                    {
-                        alertUser = !NotificationTimeIsWithinAlertExclusionWindow(protocolId, DateTime.Now);
-                    }
-
-                    if (alertUser)
+                    if (alertUser && !TimeIsWithinAlertExclusionWindow(protocolId, DateTime.Now.TimeOfDay))
                     {
                         notificationBuilder.SetSound(RingtoneManager.GetDefaultUri(RingtoneType.Notification));
                         notificationBuilder.SetVibrate(new long[] { 0, 250, 50, 250 });

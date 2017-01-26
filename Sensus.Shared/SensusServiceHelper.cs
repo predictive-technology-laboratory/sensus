@@ -659,11 +659,6 @@ namespace Sensus
             return _registeredProtocols.Where(p => p.Running).ToList();
         }
 
-        public Protocol GetRunningProtocolById(string id)
-        {
-            return GetRunningProtocols().SingleOrDefault(protocol => protocol.Id == id);
-        }
-
         #endregion
 
         public void SaveAsync(Action callback = null)
@@ -769,6 +764,11 @@ namespace Sensus
             RemoveScripts(issueNotification, _scriptsToRun.Where(s => s.Expired).ToArray());
         }
 
+        /// <summary>
+        /// Issues the pending surveys notification.
+        /// </summary>
+        /// <param name="protocolId">Protocol identifier used to check for alert exclusion time windows. </param>
+        /// <param name="alertUser">If set to <c>true</c> alert user using sound and/or vibration.</param>
         public void IssuePendingSurveysNotificationAsync(string protocolId, bool alertUser)
         {
             RemoveExpiredScripts(false);
@@ -776,7 +776,9 @@ namespace Sensus
             int numScriptsToRun = _scriptsToRun.Count;
 
             if (numScriptsToRun == 0)
+            {
                 ClearPendingSurveysNotificationAsync();
+            }
             else
             {
                 string s = numScriptsToRun == 1 ? "" : "s";

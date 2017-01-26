@@ -95,20 +95,20 @@ namespace Sensus.Probes.User.Scripts
             set { _scheduleTrigger.WindowExpiration = value; }
         }
 
-        [EntryStringUiProperty("Random Windows:", true, 8)]
+        [EntryStringUiProperty("Trigger Windows:", true, 8)]
         public string TriggerWindows
         {
             get
             {
-                return _scheduleTrigger.Windows;
+                return _scheduleTrigger.WindowsString;
             }
             set
             {
-                _scheduleTrigger.Windows = value;
+                _scheduleTrigger.WindowsString = value;
             }
         }
 
-        [EntryIntegerUiProperty("Random Windows Interval (Days):", true, 9)]
+        [EntryIntegerUiProperty("Trigger Windows Interval (Days):", true, 9)]
         public int TriggerIntervalDays
         {
             get

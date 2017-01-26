@@ -31,14 +31,6 @@ namespace Sensus.Callbacks
 
         private ConcurrentDictionary<string, ScheduledCallback> _idCallback;
 
-        protected ConcurrentDictionary<string, ScheduledCallback> IdCallback
-        {
-            get
-            {
-                return _idCallback;
-            }
-        }
-
         public CallbackScheduler()
         {
             _idCallback = new ConcurrentDictionary<string, ScheduledCallback>();
@@ -88,6 +80,13 @@ namespace Sensus.Callbacks
             return callback?.DisplayPage ?? DisplayPage.None;
         }
 
+        public string GetCallbackProtocolId(string callbackId)
+        {
+            ScheduledCallback callback;
+            _idCallback.TryGetValue(callbackId, out callback);
+            return callback?.ProtocolId;
+        }
+
         public virtual Task RaiseCallbackAsync(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, bool notifyUser, Action<DateTime> scheduleRepeatCallback, Action letDeviceSleepCallback)
         {
             DateTime callbackStartTime = DateTime.Now;
@@ -133,7 +132,7 @@ namespace Sensus.Callbacks
 
                                     if (notifyUser)
                                     {
-                                        SensusContext.Current.Notifier.IssueNotificationAsync("Sensus", scheduledCallback.UserNotificationMessage, callbackId, scheduledCallback.ProtocolId, !Notifier.NotificationTimeIsWithinAlertExclusionWindow(scheduledCallback.ProtocolId, DateTime.Now), scheduledCallback.DisplayPage);
+                                        SensusContext.Current.Notifier.IssueNotificationAsync("Sensus", scheduledCallback.UserNotificationMessage, callbackId, scheduledCallback.ProtocolId, true, scheduledCallback.DisplayPage);
                                     }
 
                                     // if the callback specified a timeout, request cancellation at the specified time.
