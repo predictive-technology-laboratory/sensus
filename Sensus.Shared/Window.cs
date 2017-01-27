@@ -26,28 +26,27 @@ namespace Sensus
 
         public Window(string windowString)
         {
-            var startEnd = windowString.Trim().Split('-');
+            string[] startEnd = windowString.Trim().Split('-');
+
+            Start = DateTime.Parse(startEnd[0].Trim()).TimeOfDay;  // for some reason DateTime.Parse seems to be more forgiving
 
             if (startEnd.Length == 1)
             {
-                //for some reason DateTime.Parse seems to be more forgiving
-                Start = DateTime.Parse(startEnd[0].Trim()).TimeOfDay;
-                End = DateTime.Parse(startEnd[0].Trim()).TimeOfDay;
+                End = Start;
             }
-
-            if (startEnd.Length == 2)
+            else if (startEnd.Length == 2)
             {
-                //for some reason DateTime.Parse seems to be more forgiving
-                Start = DateTime.Parse(startEnd[0].Trim()).TimeOfDay;
-                End = DateTime.Parse(startEnd[1].Trim()).TimeOfDay;
+                End = DateTime.Parse(startEnd[1].Trim()).TimeOfDay;  // for some reason DateTime.Parse seems to be more forgiving
 
                 if (Start > End)
                 {
                     throw new Exception($"Improper trigger window ({windowString})");
                 }
             }
-
-            throw new Exception($"Improper trigger window ({windowString})");
+            else
+            {
+                throw new Exception($"Improper trigger window ({windowString})");
+            }
         }
 
         #region Public Methods

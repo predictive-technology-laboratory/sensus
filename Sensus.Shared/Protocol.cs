@@ -322,6 +322,11 @@ namespace Sensus
             });
         }
 
+        public static bool TimeIsWithinAlertExclusionWindow(string protocolId, TimeSpan time)
+        {
+            return SensusServiceHelper.Get().GetRunningProtocols().SingleOrDefault(protocol => protocol.Id == protocolId)?.AlertExclusionWindows.Any(window => window.Encompasses(time)) ?? false;
+        }
+
         public static void RunUnitTestingProtocol(Stream unitTestingProtocolFile)
         {
             try

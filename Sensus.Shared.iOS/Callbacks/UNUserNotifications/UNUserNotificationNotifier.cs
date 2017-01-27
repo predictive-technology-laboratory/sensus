@@ -66,7 +66,7 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
             // the following calculation isn't perfect because we use DateTime.Now and then use it again in the subsequent call to IssueNotificationAsync.
             // these two values will be slightly different due to execution time, but the risk is small:  the user might hear or not hear the notification
             // when it comes through, and it's very unlikely that the result will be incorrect.
-            if (alertUser && !TimeIsWithinAlertExclusionWindow(protocolId, DateTime.Now.AddSeconds(delayMS / 1000d).TimeOfDay))
+            if (alertUser && !Protocol.TimeIsWithinAlertExclusionWindow(protocolId, DateTime.Now.AddSeconds(delayMS / 1000d).TimeOfDay))
             {
                 content.Sound = UNNotificationSound.Default;
             }

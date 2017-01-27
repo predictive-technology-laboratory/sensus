@@ -65,7 +65,7 @@ namespace Sensus.Android.Callbacks
                         .SetAutoCancel(true)
                         .SetOngoing(false);
 
-                    if (alertUser && !TimeIsWithinAlertExclusionWindow(protocolId, DateTime.Now.TimeOfDay))
+                    if (alertUser && !Protocol.TimeIsWithinAlertExclusionWindow(protocolId, DateTime.Now.TimeOfDay))
                     {
                         notificationBuilder.SetSound(RingtoneManager.GetDefaultUri(RingtoneType.Notification));
                         notificationBuilder.SetVibrate(new long[] { 0, 250, 50, 250 });
