@@ -321,7 +321,7 @@ namespace Sensus.UI
                     FontSize = 20
                 };
 
-                startTimePicker.Time = new TimeSpan(8, 0, 0);
+                startTimePicker.Time = new TimeSpan(0, 0, 0);
 
                 triggerDefinitionLayout.Children.Add(new StackLayout
                 {
@@ -336,7 +336,7 @@ namespace Sensus.UI
                     FontSize = 20
                 };
 
-                endTimePicker.Time = new TimeSpan(21, 0, 0);
+                endTimePicker.Time = new TimeSpan(23, 59, 59);
 
                 triggerDefinitionLayout.Children.Add(new StackLayout
                 {

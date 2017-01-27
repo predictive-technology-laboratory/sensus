@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Linq;
 using Sensus.Context;
 using Sensus.Exceptions;
@@ -24,7 +25,7 @@ namespace Sensus.Callbacks
     {
         public const string DISPLAY_PAGE_KEY = "SENSUS-DISPLAY-PAGE";
 
-        public abstract void IssueNotificationAsync(string title, string message, string id, bool playSound, DisplayPage displayPage);
+        public abstract void IssueNotificationAsync(string title, string message, string id, string protocolId, bool alertUser, DisplayPage displayPage);
 
         public abstract void CancelNotification(string id);
 

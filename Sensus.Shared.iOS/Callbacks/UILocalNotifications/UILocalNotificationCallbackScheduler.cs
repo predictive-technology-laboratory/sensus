@@ -55,7 +55,9 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
             if (userNotificationMessage == null)
                 notifier.IssueSilentNotificationAsync(callbackId, delayMS, callbackInfo, notificationCreated);
             else
-                notifier.IssueNotificationAsync("Sensus", userNotificationMessage, callbackId, true, displayPage, delayMS, callbackInfo, notificationCreated);
+            {
+                notifier.IssueNotificationAsync("Sensus", userNotificationMessage, callbackId, GetCallbackProtocolId(callbackId), true, displayPage, delayMS, callbackInfo, notificationCreated);
+            }
         }
 
         /// <summary>

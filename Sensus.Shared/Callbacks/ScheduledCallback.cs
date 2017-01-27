@@ -45,6 +45,12 @@ namespace Sensus.Callbacks
         public string Id { get; set; }
 
         /// <summary>
+        /// Gets or sets the callback's protocol's identifier.
+        /// </summary>
+        /// <value>The protocol identifier.</value>
+        public string ProtocolId { get; set; }
+
+        /// <summary>
         /// Gets or sets the callback timeout.
         /// </summary>
         /// <value>The callback timeout.</value>
@@ -82,10 +88,11 @@ namespace Sensus.Callbacks
         /// <param name="domain">Domain of scheduled callback</param>
         /// <param name="callbackTimeout">Callback Timeout</param>
         /// <param name="userNotificationMessage">User notification message</param>
-        public ScheduledCallback(ActionDelegate action, string id, string domain, TimeSpan? callbackTimeout = null, string userNotificationMessage = null)
+        public ScheduledCallback(ActionDelegate action, string id, string domain, string protocolId, TimeSpan? callbackTimeout = null, string userNotificationMessage = null)
         {
             Action = action;
             Id = (domain ?? "SENSUS") + "." + id;
+            ProtocolId = protocolId;
             CallbackTimeout = callbackTimeout;
             UserNotificationMessage = userNotificationMessage;
             Canceller = new CancellationTokenSource();

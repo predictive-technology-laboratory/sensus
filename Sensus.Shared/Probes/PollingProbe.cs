@@ -239,7 +239,7 @@ namespace Sensus.Probes
                         }
                     });
 
-                }, GetType().FullName, Protocol.Id, TimeSpan.FromMinutes(_pollingTimeoutMinutes), userNotificationMessage);
+                }, GetType().FullName, Protocol.Id, Protocol.Id, TimeSpan.FromMinutes(_pollingTimeoutMinutes), userNotificationMessage);
 
 #if __IOS__
                 if (_significantChangePoll)

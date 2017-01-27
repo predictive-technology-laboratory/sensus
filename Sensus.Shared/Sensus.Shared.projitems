@@ -221,6 +221,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\DisplayPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\DataRateCalculator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\IInputEffect.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Window.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />
