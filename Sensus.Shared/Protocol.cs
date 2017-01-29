@@ -322,6 +322,11 @@ namespace Sensus
             });
         }
 
+        public static bool TimeIsWithinAlertExclusionWindow(string protocolId, TimeSpan time)
+        {
+            return SensusServiceHelper.Get().GetRunningProtocols().SingleOrDefault(protocol => protocol.Id == protocolId)?.AlertExclusionWindows.Any(window => window.Encompasses(time)) ?? false;
+        }
+
         public static void RunUnitTestingProtocol(Stream unitTestingProtocolFile)
         {
             try
@@ -348,8 +353,8 @@ namespace Sensus
                                 probe.Enabled = false;
 
 #if __IOS__
-                                if (probe is iOSHealthKitProbe)
-                                    probe.Enabled = false;
+                            if (probe is iOSHealthKitProbe)
+                                probe.Enabled = false;
 #endif
 
                             // clear the run-times collection from any script runners. need a clean start, just in case we have one-shot scripts
@@ -400,6 +405,7 @@ namespace Sensus
         private bool _startImmediately;
         private DateTime _endTimestamp;
         private bool _continueIndefinitely;
+        private readonly List<Window> _alertExclusionWindows;
         private int _participationHorizonDays;
         private string _contactEmail;
         private bool _groupable;
@@ -868,6 +874,48 @@ namespace Sensus
         }
 #endif
 
+        [EntryStringUiProperty("Alert Exclusion Windows:", true, 36)]
+        public string AlertExclusionWindowString
+        {
+            get
+            {
+                lock (_alertExclusionWindows)
+                {
+                    return string.Join(", ", _alertExclusionWindows);
+                }
+            }
+            set
+            {
+                if (value == AlertExclusionWindowString)
+                    return;
+
+                lock (_alertExclusionWindows)
+                {
+                    _alertExclusionWindows.Clear();
+
+                    try
+                    {
+                        _alertExclusionWindows.AddRange(value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(windowString => new Window(windowString)));
+                    }
+                    catch
+                    {
+                        // ignore improperly formatted trigger windows
+                    }
+
+                    _alertExclusionWindows.Sort();
+                }
+            }
+        }
+
+        [JsonIgnore]
+        public List<Window> AlertExclusionWindows
+        {
+            get
+            {
+                return _alertExclusionWindows;
+            }
+        }
+
         #endregion
 
         /// <summary>
@@ -882,6 +930,7 @@ namespace Sensus
             _shareable = false;
             _pointsOfInterest = new List<PointOfInterest>();
             _participationHorizonDays = 1;
+            _alertExclusionWindows = new List<Window>();
             _startTimestamp = DateTime.Now;
             _endTimestamp = DateTime.Now;
             _startImmediately = true;
@@ -1151,7 +1200,6 @@ namespace Sensus
                     StartInternal();
                     _scheduledStartCallback = null;
                 });
-
                 }, "START", _id, _id, timeUntilStart, null,
 #if __ANDROID__
                 $"Started study: {Name}.");
@@ -1240,7 +1288,7 @@ namespace Sensus
                 consent.Add(new LabelOnlyInput(_description));
 
             consent.Add(new LabelOnlyInput("This study will start " + (_startImmediately || DateTime.Now >= _startTimestamp ? "immediately" : "on " + _startTimestamp.ToShortDateString() + " at " + _startTimestamp.ToShortTimeString()) +
-                                           " and " + (_continueIndefinitely ? "continue indefinitely." : "stop on " + _endTimestamp.ToShortDateString() + " at " + _endTimestamp.ToShortTimeString() + ".")));
+                                           " and " + (_continueIndefinitely ? "continue forever." : "stop on " + _endTimestamp.ToShortDateString() + " at " + _endTimestamp.ToShortTimeString() + ".")));
 
             consent.Add(new LabelOnlyInput("This study would like to collect the following data from your device:"));
 

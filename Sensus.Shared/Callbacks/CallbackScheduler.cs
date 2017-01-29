@@ -94,6 +94,13 @@ namespace Sensus.Callbacks
             return callback?.DisplayPage ?? DisplayPage.None;
         }
 
+        public string GetCallbackProtocolId(string callbackId)
+        {
+            ScheduledCallback callback;
+            _idCallback.TryGetValue(callbackId, out callback);
+            return callback?.ProtocolId;
+        }
+
         public virtual Task RaiseCallbackAsync(string callbackId, bool notifyUser, Action<DateTime> scheduleRepeatCallback, Action letDeviceSleepCallback)
         {
             DateTime callbackStartTime = DateTime.Now;
@@ -138,7 +145,9 @@ namespace Sensus.Callbacks
                                     SensusServiceHelper.Get().Logger.Log("Raising callback \"" + scheduledCallback.Id + "\".", LoggingLevel.Normal, GetType());
 
                                     if (notifyUser)
-                                        SensusContext.Current.Notifier.IssueNotificationAsync("Sensus", scheduledCallback.UserNotificationMessage, callbackId, true, scheduledCallback.DisplayPage);
+                                    {
+                                        SensusContext.Current.Notifier.IssueNotificationAsync("Sensus", scheduledCallback.UserNotificationMessage, callbackId, scheduledCallback.ProtocolId, true, scheduledCallback.DisplayPage);
+                                    }
 
                                     // if the callback specified a timeout, request cancellation at the specified time.
                                     if (scheduledCallback.CallbackTimeout.HasValue)

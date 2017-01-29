@@ -31,9 +31,9 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
             _idNotification = new Dictionary<string, UILocalNotification>();
         }
 
-        public override void IssueNotificationAsync(string title, string message, string id, bool playSound, DisplayPage displayPage)
+        public override void IssueNotificationAsync(string title, string message, string id, string protocolId, bool alertUser, DisplayPage displayPage)
         {
-            IssueNotificationAsync(title, message, id, playSound, displayPage, TimeSpan.Zero, null);
+            IssueNotificationAsync(title, message, id, protocolId, alertUser, displayPage, TimeSpan.Zero, null);
         }
 
         public void IssueSilentNotificationAsync(string id, TimeSpan delay, NSMutableDictionary notificationInfo, Action<UILocalNotification> notificationCreated = null)
@@ -46,10 +46,10 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
             // the user should never see a silent notification since we cancel them when the app is backgrounded. but there are race conditions that
             // might result in a silent notifiation being scheduled just before the app is backgrounded. give a generic message so that the notification
             // isn't totally confusing to the user.
-            IssueNotificationAsync("Please open this notification.", "One of your studies needs to be updated.", id, false, DisplayPage.None, delay, notificationInfo, notificationCreated);
+            IssueNotificationAsync("Please open this notification.", "One of your studies needs to be updated.", id, null, false, DisplayPage.None, delay, notificationInfo, notificationCreated);
         }
 
-        public void IssueNotificationAsync(string title, string message, string id, bool playSound, DisplayPage displayPage, TimeSpan delay, NSMutableDictionary notificationInfo, Action<UILocalNotification> notificationCreated = null)
+        public void IssueNotificationAsync(string title, string message, string id, string protocolId, bool alertUser, DisplayPage displayPage, TimeSpan delay, NSMutableDictionary notificationInfo, Action<UILocalNotification> notificationCreated = null)
         {
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
@@ -61,18 +61,22 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
                 notificationInfo.SetValueForKey(new NSString(id), new NSString(NOTIFICATION_ID_KEY));
                 notificationInfo.SetValueForKey(new NSString(displayPage.ToString()), new NSString(DISPLAY_PAGE_KEY));
 
+                DateTime fireDateTime = DateTime.Now.Add(delay);
+
                 // all properties below were introduced in iOS 8.0. we currently target 8.0 and above, so these should be safe to set.
                 UILocalNotification notification = new UILocalNotification
                 {
                     AlertBody = message,
                     TimeZone = null,  // null for UTC interpretation of FireDate
-                    FireDate = DateTime.UtcNow.ToNSDate().AddSeconds(delay.TotalMilliseconds / 1000d),
+                    FireDate = fireDateTime.ToUniversalTime().ToNSDate(),
                     UserInfo = notificationInfo
                 };
 
                 // also introduced in 8.0
-                if (playSound)
+                if (alertUser && !Protocol.TimeIsWithinAlertExclusionWindow(protocolId, fireDateTime.TimeOfDay))
+                {
                     notification.SoundName = UILocalNotification.DefaultSoundName;
+                }
 
                 // introduced in iOS 8.2:  https://developer.apple.com/reference/uikit/uilocalnotification/1616647-alerttitle
                 if (UIDevice.CurrentDevice.CheckSystemVersion(8, 2) && !string.IsNullOrWhiteSpace(title))

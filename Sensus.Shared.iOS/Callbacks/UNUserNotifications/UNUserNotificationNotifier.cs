@@ -24,9 +24,9 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
 {
     public class UNUserNotificationNotifier : iOSNotifier, IUNUserNotificationNotifier
     {
-        public override void IssueNotificationAsync(string title, string message, string id, bool playSound, DisplayPage displayPage)
+        public override void IssueNotificationAsync(string title, string message, string id, string protocolId, bool alertUser, DisplayPage displayPage)
         {
-            IssueNotificationAsync(title, message, id, playSound, displayPage, TimeSpan.Zero, null, null);
+            IssueNotificationAsync(title, message, id, protocolId, alertUser, displayPage, TimeSpan.Zero, null, null);
         }
 
         public void IssueSilentNotificationAsync(string id, TimeSpan delay, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
@@ -39,10 +39,10 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
             // the user should never see a silent notification since we cancel them when the app is backgrounded. but there are race conditions that
             // might result in a silent notifiation being scheduled just before the app is backgrounded. give a generic message so that the notification
             // isn't totally confusing to the user.
-            IssueNotificationAsync("Please open this notification.", "One of your studies needs to be updated.", id, false, DisplayPage.None, delay, info, requestCreated);
+            IssueNotificationAsync("Please open this notification.", "One of your studies needs to be updated.", id, null, false, DisplayPage.None, delay, info, requestCreated);
         }
 
-        public void IssueNotificationAsync(string title, string message, string id, bool playSound, DisplayPage displayPage, TimeSpan delay, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
+        public void IssueNotificationAsync(string title, string message, string id, string protocolId, bool alertUser, DisplayPage displayPage, TimeSpan delay, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
         {
             if (info == null)
                 info = new NSMutableDictionary();
@@ -63,8 +63,13 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
             if (!string.IsNullOrWhiteSpace(message))
                 content.Body = message;
 
-            if (playSound)
+            // the following calculation isn't perfect because we use DateTime.Now and then use it again in the subsequent call to IssueNotificationAsync.
+            // these two values will be slightly different due to execution time, but the risk is small:  the user might hear or not hear the notification
+            // when it comes through, and it's very unlikely that the result will be incorrect.
+            if (alertUser && !Protocol.TimeIsWithinAlertExclusionWindow(protocolId, DateTime.Now.Add(delay).TimeOfDay))
+            {
                 content.Sound = UNNotificationSound.Default;
+            }
 
             IssueNotificationAsync(id, content, delay, requestCreated);
         }
@@ -145,7 +150,7 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
         {
             if (id == null)
                 return;
-            
+
             var ids = new[] { id };
             UNUserNotificationCenter.Current.RemoveDeliveredNotifications(ids);
             UNUserNotificationCenter.Current.RemovePendingNotificationRequests(ids);

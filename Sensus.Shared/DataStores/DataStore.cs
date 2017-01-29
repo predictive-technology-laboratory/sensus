@@ -246,7 +246,7 @@ namespace Sensus.DataStores
                 // only do this for the remote data store to that we don't get duplicate notifications.
                 if (this is RemoteDataStore)
                     userNotificationMessage = "Please open this notification to submit your data for the \"" + _protocol.Name + "\" study.";
-#endif
+#endif  
 
                 _commitCallback = new RepeatingCallback((callbackId, cancellationToken, letDeviceSleepCallback) => CommitAndReleaseAddedDataAsync(cancellationToken), GetType().FullName, Protocol.Id, Protocol.Id, TimeSpan.FromMilliseconds(_commitDelayMS), TimeSpan.FromMilliseconds(_commitDelayMS), COMMIT_CALLBACK_LAG, TimeSpan.FromMinutes(_commitTimeoutMinutes), userNotificationMessage);
                 SensusContext.Current.CallbackScheduler.ScheduleCallback(_commitCallback);

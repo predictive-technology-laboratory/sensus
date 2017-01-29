@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
@@ -31,7 +32,16 @@ namespace Sensus.Android.Callbacks
             _notificationManager = _service.GetSystemService(global::Android.Content.Context.NotificationService) as NotificationManager;
         }
 
-        public override void IssueNotificationAsync(string title, string message, string id, bool playSound, DisplayPage displayPage)
+        /// <summary>
+        /// Issues the notification.
+        /// </summary>
+        /// <param name="title">Title.</param>
+        /// <param name="message">Message.</param>
+        /// <param name="id">Identifier of notification.</param>
+        /// <param name="protocolId">Protocol identifier to check for alert exclusion time windows.</param>
+        /// <param name="alertUser">If set to <c>true</c> alert user.</param>
+        /// <param name="displayPage">Display page.</param>
+        public override void IssueNotificationAsync(string title, string message, string id, string protocolId, bool alertUser, DisplayPage displayPage)
         {
             if (_notificationManager == null)
                 return;
@@ -55,7 +65,7 @@ namespace Sensus.Android.Callbacks
                         .SetAutoCancel(true)
                         .SetOngoing(false);
 
-                    if (playSound)
+                    if (alertUser && !Protocol.TimeIsWithinAlertExclusionWindow(protocolId, DateTime.Now.TimeOfDay))
                     {
                         notificationBuilder.SetSound(RingtoneManager.GetDefaultUri(RingtoneType.Notification));
                         notificationBuilder.SetVibrate(new long[] { 0, 250, 50, 250 });

@@ -26,52 +26,52 @@ namespace Sensus.Tests.Scripts
         [Test]
         public void Deserialize1PointTest()
         {
-            var schedule = new ScheduleTrigger { Windows = "10:00" };
+            var schedule = new ScheduleTrigger { WindowsString = "10:00" };
 
             Assert.AreEqual(1, schedule.WindowCount);
-            Assert.AreEqual("10:00", schedule.Windows);
+            Assert.AreEqual("10:00", schedule.WindowsString);
         }
 
         [Test]
         public void Deserialize1WindowTest()
         {
-            var schedule = new ScheduleTrigger { Windows = "10:00-10:30" };
+            var schedule = new ScheduleTrigger { WindowsString = "10:00-10:30" };
 
             Assert.AreEqual(1, schedule.WindowCount);
-            Assert.AreEqual("10:00-10:30", schedule.Windows);
+            Assert.AreEqual("10:00-10:30", schedule.WindowsString);
         }
 
         [Test]
         public void Deserialize1PointTrailingCommaTest()
         {
-            var schedule = new ScheduleTrigger { Windows = "10:00" };
+            var schedule = new ScheduleTrigger { WindowsString = "10:00" };
 
             Assert.AreEqual(1, schedule.WindowCount);
-            Assert.AreEqual("10:00", schedule.Windows);
+            Assert.AreEqual("10:00", schedule.WindowsString);
         }
 
         [Test]
         public void Deserialize1Point1WindowTest()
         {
-            var schedule = new ScheduleTrigger { Windows = "10:00,10:10-10:20" };
+            var schedule = new ScheduleTrigger { WindowsString = "10:00,10:10-10:20" };
 
             Assert.AreEqual(2, schedule.WindowCount);
-            Assert.AreEqual("10:00, 10:10-10:20", schedule.Windows);
+            Assert.AreEqual("10:00, 10:10-10:20", schedule.WindowsString);
         }
 
         [Test]
         public void Deserialize1Point1WindowSpacesTest()
         {
-            var schedule = new ScheduleTrigger { Windows = "10:00,                10:10-10:20" };
+            var schedule = new ScheduleTrigger { WindowsString = "10:00,                10:10-10:20" };
 
             Assert.AreEqual(2, schedule.WindowCount);
-            Assert.AreEqual("10:00, 10:10-10:20", schedule.Windows);
+            Assert.AreEqual("10:00, 10:10-10:20", schedule.WindowsString);
         }
 
         [Test]
         public void SchedulesAllFutureTest()
         {
-            var schedule = new ScheduleTrigger { Windows = "10:00, 10:10-10:20" };
+            var schedule = new ScheduleTrigger { WindowsString = "10:00, 10:10-10:20" };
 
             var referenceDate = new DateTime(1986, 4, 18, 0, 0, 0);
             var afterDate = new DateTime(1986, 4, 18, 0, 0, 0);
@@ -91,7 +91,7 @@ namespace Sensus.Tests.Scripts
         [Test]
         public void SchedulesOneFutureTest()
         {
-            var schedule = new ScheduleTrigger { Windows = "10:00, 10:20-10:30" };
+            var schedule = new ScheduleTrigger { WindowsString = "10:00, 10:20-10:30" };
 
             var referenceDate = new DateTime(1986, 4, 18, 10, 10, 0);
             var afterDate = new DateTime(1986, 4, 18, 10, 10, 0);
@@ -111,7 +111,7 @@ namespace Sensus.Tests.Scripts
         [Test]
         public void SchedulesAfterOneDayTest()
         {
-            var schedule = new ScheduleTrigger { Windows = "10:00, 10:20-10:30" };
+            var schedule = new ScheduleTrigger { WindowsString = "10:00, 10:20-10:30" };
 
             var referenceDate = new DateTime(1986, 4, 18, 10, 10, 0);
             var afterDate = new DateTime(1986, 4, 19, 10, 10, 0);
@@ -131,7 +131,7 @@ namespace Sensus.Tests.Scripts
         [Test]
         public void SchedulesPullsOnlySevenDays()
         {
-            var schedule = new ScheduleTrigger { Windows = "10:00" };
+            var schedule = new ScheduleTrigger { WindowsString = "10:00" };
 
             var referenceDate = new DateTime(1986, 4, 18, 0, 0, 0);
             var afterDate = new DateTime(1986, 4, 19, 0, 0, 0);
@@ -144,7 +144,7 @@ namespace Sensus.Tests.Scripts
         [Test]
         public void SchedulesAllFutureNoExpirationsTest()
         {
-            var schedule = new ScheduleTrigger { Windows = "10:00, 10:10-10:20" };
+            var schedule = new ScheduleTrigger { WindowsString = "10:00, 10:10-10:20" };
 
             var referenceDate = new DateTime(1986, 4, 18, 0, 0, 0);
             var afterDate = new DateTime(1986, 4, 18, 0, 0, 0);
@@ -173,7 +173,7 @@ namespace Sensus.Tests.Scripts
         {
             var schedule = new ScheduleTrigger
             {
-                Windows = "10:00, 10:10-10:20"
+                WindowsString = "10:00, 10:10-10:20"
             };
 
             var referenceDate = new DateTime(1986, 4, 18, 0, 0, 0);
@@ -204,7 +204,7 @@ namespace Sensus.Tests.Scripts
             var schedule = new ScheduleTrigger
             {
                 WindowExpiration = true,
-                Windows = "10:00, 10:10-10:20"
+                WindowsString = "10:00, 10:10-10:20"
             };
 
             var referenceDate = new DateTime(1986, 4, 18, 0, 0, 0);
@@ -235,7 +235,7 @@ namespace Sensus.Tests.Scripts
             var schedule = new ScheduleTrigger
             {
                 WindowExpiration = true,
-                Windows = "10:00, 10:10-10:20"
+                WindowsString = "10:00, 10:10-10:20"
             };
 
             var referenceDate = new DateTime(1986, 4, 18, 0, 0, 0);
