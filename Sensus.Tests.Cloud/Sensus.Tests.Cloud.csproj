@@ -70,5 +70,11 @@
       <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
       <Private>False</Private>
     </ProjectReference>
+    <ProjectReference Include="..\Sensus.Android\Sensus.Android.csproj"> 
+ 	  <Project>{D33B6CDB-795C-4826-B131-47C526ACE07F}</Project> 
+      <Name>Sensus.Android</Name> 
+      <ReferenceOutputAssembly>False</ReferenceOutputAssembly> 
+      <Private>False</Private> 
+    </ProjectReference>
   </ItemGroup>
 </Project>
