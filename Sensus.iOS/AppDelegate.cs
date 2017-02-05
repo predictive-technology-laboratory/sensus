@@ -200,7 +200,7 @@ namespace Sensus.iOS
                     // run asynchronously to release the UI thread
                     System.Threading.Tasks.Task.Run(() =>
                     {
-                        // the following must be done on the UI thread because we reference members of the UILocalNotification.
+                        // the following must be done on the UI thread because we reference UIApplicationState.Active.
                         SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                         {
                             callbackScheduler.ServiceCallbackAsync(notification.UserInfo);
