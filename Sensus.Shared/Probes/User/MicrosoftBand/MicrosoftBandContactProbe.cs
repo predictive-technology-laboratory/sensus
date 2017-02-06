@@ -16,6 +16,7 @@ using System;
 using Microsoft.Band.Portable;
 using Microsoft.Band.Portable.Sensors;
 using Syncfusion.SfChart.XForms;
+using System.Threading.Tasks;
 
 namespace Sensus.Probes.User.MicrosoftBand
 {
@@ -46,14 +47,31 @@ namespace Sensus.Probes.User.MicrosoftBand
             return bandClient.SensorManager.Contact;
         }
 
+        protected override void ReadingChangedAsync(object sender, BandSensorReadingEventArgs<BandContactReading> args)
+        {
+            Task.Run(() =>
+            {
+                try
+                {
+                    ContactState state = args.SensorReading.State;
+
+                    if (_previousState == null || state != _previousState.Value)
+                    {
+                        ContactStateChanged?.Invoke(this, state);
+                        _previousState = state;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Error processing Band contact change:  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
+
+                base.ReadingChangedAsync(sender, args);
+            });
+        }
+
         protected override Datum GetDatumFromReading(BandContactReading reading)
         {
-            if (_previousState == null || reading.State != _previousState.Value)
-            {
-                ContactStateChanged?.Invoke(this, reading.State);
-                _previousState = reading.State;
-            }
-
             return new MicrosoftBandContactDatum(DateTimeOffset.UtcNow, reading.State);
         }
 

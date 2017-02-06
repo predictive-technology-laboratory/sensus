@@ -15,7 +15,8 @@
 using System;
 using Microsoft.Band.Portable;
 using Microsoft.Band.Portable.Sensors;
-using Newtonsoft.Json;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Sensus.Probes.User.MicrosoftBand
 {
@@ -33,7 +34,7 @@ namespace Sensus.Probes.User.MicrosoftBand
             }
         }
 
-        protected override void Configure(BandClient bandClient)
+        protected override void Configure(BandClient bandClient, CancellationToken cancellationToken)
         {
             SensorType bandClientSensor = GetSensor(bandClient);
 
@@ -47,7 +48,7 @@ namespace Sensus.Probes.User.MicrosoftBand
                 // disconnect reading callback
                 try
                 {
-                    _sensor.ReadingChanged -= ReadingChanged;
+                    _sensor.ReadingChanged -= ReadingChangedAsync;
                 }
                 catch (Exception ex)
                 {
@@ -57,7 +58,7 @@ namespace Sensus.Probes.User.MicrosoftBand
                 // unregister listener
                 try
                 {
-                    _sensor.StopReadingsAsync().Wait();
+                    _sensor.StopReadingsAsync().Wait(cancellationToken);
                 }
                 catch (Exception ex)
                 {
@@ -67,31 +68,42 @@ namespace Sensus.Probes.User.MicrosoftBand
 
             // set up the new sensor
             _sensor = bandClientSensor;
-            _sensor.ReadingChanged += ReadingChanged;
+            _sensor.ReadingChanged += ReadingChangedAsync;
         }
 
         protected abstract SensorType GetSensor(BandClient bandClient);
 
-        private async void ReadingChanged(object sender, BandSensorReadingEventArgs<ReadingType> args)
+        protected virtual void ReadingChangedAsync(object sender, BandSensorReadingEventArgs<ReadingType> args)
         {
-            await StoreDatumAsync(GetDatumFromReading(args.SensorReading));
+            Task.Run(async () =>
+            {
+                try
+                {
+                    Datum datum = GetDatumFromReading(args.SensorReading);
+                    await StoreDatumAsync(datum);
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Error getting/storing Band datum:  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
+            });
         }
 
-        protected override void StartReadings()
+        protected override void StartReadings(CancellationToken cancellationToken)
         {
             if (_sensor == null)
                 throw new Exception("Sensor not configured.");
             else
-                _sensor.StartReadingsAsync(SamplingRate).Wait();
+                _sensor.StartReadingsAsync(SamplingRate).Wait(cancellationToken);
         }
 
         protected abstract Datum GetDatumFromReading(ReadingType reading);
 
-        protected override void StopReadings()
+        protected override void StopReadings(CancellationToken cancellationToken)
         {
             if (_sensor != null)
             {
-                _sensor.StopReadingsAsync().Wait();
+                _sensor.StopReadingsAsync().Wait(cancellationToken);
             }
         }
     }

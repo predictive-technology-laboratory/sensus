@@ -44,7 +44,7 @@ namespace Sensus.Probes.User.MicrosoftBand
             return bandClient.SensorManager.HeartRate;
         }
 
-        protected override void StartReadings()
+        protected override void StartReadings(CancellationToken cancellationToken)
         {
             if (Sensor.UserConsented == UserConsent.Unspecified)
             {
@@ -58,11 +58,15 @@ namespace Sensus.Probes.User.MicrosoftBand
                 consentWait.WaitOne();
 
                 if (Sensor.UserConsented != UserConsent.Granted)
+                {
                     throw new Exception("User did not consent.");
+                }
             }
 
             if (Sensor.UserConsented == UserConsent.Granted)
-                base.StartReadings();
+            {
+                base.StartReadings(cancellationToken);
+            }
         }
 
         protected override Datum GetDatumFromReading(BandHeartRateReading reading)
