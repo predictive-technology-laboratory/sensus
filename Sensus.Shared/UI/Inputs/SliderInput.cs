@@ -265,18 +265,16 @@ namespace Sensus.UI.Inputs
                             {
                                 new Label
                                 {
-                                    Text = _slider.Minimum.ToString(),
+                                    Text = _displayMinMax ? _slider.Minimum.ToString() : " ", // we used to set the label invisible, but this doesn't leave enough vertical space above/below the slider. adding a blank space does the trick.
                                     FontSize = 20,
-                                    HorizontalOptions = LayoutOptions.Fill,
-                                    IsVisible = _displayMinMax
+                                    HorizontalOptions = LayoutOptions.Fill
                                 },
                                 _slider,
                                 new Label
                                 {
-                                    Text = _slider.Maximum.ToString(),
+                                    Text = _displayMinMax ? _slider.Maximum.ToString() : " ",  // we used to set the label invisible, but this doesn't leave enough vertical space above/below the slider. adding a blank space does the trick.
                                     FontSize = 20,
-                                    HorizontalOptions = LayoutOptions.Fill,
-                                    IsVisible = _displayMinMax
+                                    HorizontalOptions = LayoutOptions.Fill
                                 }
                             }
                         },
