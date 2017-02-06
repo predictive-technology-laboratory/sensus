@@ -31,27 +31,41 @@ namespace Sensus.Callbacks
 
         private ConcurrentDictionary<string, ScheduledCallback> _idCallback;
 
+        protected ConcurrentDictionary<string, ScheduledCallback> IdCallback
+        {
+            get
+            {
+                return _idCallback;
+            }
+        }
+
         public CallbackScheduler()
         {
             _idCallback = new ConcurrentDictionary<string, ScheduledCallback>();
         }
 
         #region platform-specific methods
-        protected abstract void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag);
-        protected abstract void ScheduleOneTimeCallback(string callbackId, int delayMS);
+        protected abstract void ScheduleOneTimeCallback(OneTimeCallback callback);
+        protected abstract void ScheduleRepeatingCallback(RepeatingCallback callback);
         protected abstract void UnscheduleCallbackPlatformSpecific(string callbackId);
         #endregion
 
-        public void ScheduleRepeatingCallback(ScheduledCallback callback, int initialDelayMS, int repeatDelayMS, bool repeatLag)
+        public void ScheduleCallback(ScheduledCallback callback)
         {
-            _idCallback[callback.Id] = callback;
-            ScheduleRepeatingCallback(callback.Id, initialDelayMS, repeatDelayMS, repeatLag);
-        }
-
-        public void ScheduleOneTimeCallback(ScheduledCallback callback, int delayMS)
-        {
-            _idCallback[callback.Id] = callback;
-            ScheduleOneTimeCallback(callback.Id, delayMS);
+            if (callback.GetType() == typeof(OneTimeCallback))
+            {
+                OneTimeCallback oneTimeCallback = callback as OneTimeCallback;
+                _idCallback[oneTimeCallback.Id] = oneTimeCallback;
+                ScheduleOneTimeCallback(oneTimeCallback);
+                SensusServiceHelper.Get().Logger.Log("Callback " + oneTimeCallback.Id + " scheduled for " + DateTime.Now.Add(oneTimeCallback.Delay) + " (one-time).", LoggingLevel.Normal, GetType());
+            }
+            else if (callback.GetType() == typeof(RepeatingCallback))
+            {
+                RepeatingCallback repeatingCallback = callback as RepeatingCallback;
+                _idCallback[repeatingCallback.Id] = callback;
+                ScheduleRepeatingCallback(repeatingCallback);
+                SensusServiceHelper.Get().Logger.Log("Callback " + repeatingCallback.Id + " scheduled for " + DateTime.Now.Add(repeatingCallback.InitialDelay) + " (repeating).", LoggingLevel.Normal, GetType());
+            }
         }
 
         public bool CallbackIsScheduled(string callbackId)
@@ -87,7 +101,7 @@ namespace Sensus.Callbacks
             return callback?.ProtocolId;
         }
 
-        public virtual Task RaiseCallbackAsync(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, bool notifyUser, Action<DateTime> scheduleRepeatCallback, Action letDeviceSleepCallback)
+        public virtual Task RaiseCallbackAsync(string callbackId, bool alertUser, Action<DateTime> scheduleRepeatCallback, Action letDeviceSleepCallback)
         {
             DateTime callbackStartTime = DateTime.Now;
 
@@ -130,7 +144,7 @@ namespace Sensus.Callbacks
                                 {
                                     SensusServiceHelper.Get().Logger.Log("Raising callback \"" + scheduledCallback.Id + "\".", LoggingLevel.Normal, GetType());
 
-                                    if (notifyUser)
+                                    if (alertUser)
                                     {
                                         SensusContext.Current.Notifier.IssueNotificationAsync("Sensus", scheduledCallback.UserNotificationMessage, callbackId, scheduledCallback.ProtocolId, true, scheduledCallback.DisplayPage);
                                     }
@@ -159,7 +173,7 @@ namespace Sensus.Callbacks
                                 // then UnscheduleRepeatingCallback should be used -- this method first cancels any raised callbacks and then removes the callback entirely.
                                 try
                                 {
-                                    if (repeating)
+                                    if (scheduledCallback.GetType() == typeof(RepeatingCallback))
                                     {
                                         lock (_idCallback)
                                         {
@@ -180,17 +194,17 @@ namespace Sensus.Callbacks
                                     }
 
                                     // schedule callback again if it was a repeating callback and is still scheduled with a valid repeat delay
-                                    if (repeating && CallbackIsScheduled(callbackId) && repeatDelayMS >= 0 && scheduleRepeatCallback != null)
+                                    if (scheduledCallback.GetType() == typeof(RepeatingCallback) && CallbackIsScheduled(callbackId) && (scheduledCallback as RepeatingCallback).RepeatDelay >= TimeSpan.Zero && scheduleRepeatCallback != null)
                                     {
                                         DateTime nextCallbackTime;
 
                                         // if this repeating callback is allowed to lag, schedule the repeat from the current time.
-                                        if (repeatLag)
-                                            nextCallbackTime = DateTime.Now.AddMilliseconds(repeatDelayMS);
+                                        if ((scheduledCallback as RepeatingCallback).RepeatLag)
+                                            nextCallbackTime = DateTime.Now.Add((scheduledCallback as RepeatingCallback).RepeatDelay);
                                         else
                                         {
                                             // otherwise, schedule the repeat from the time at which the current callback was raised.
-                                            nextCallbackTime = callbackStartTime.AddMilliseconds(repeatDelayMS);
+                                            nextCallbackTime = callbackStartTime.Add((scheduledCallback as RepeatingCallback).RepeatDelay);
                                         }
 
                                         scheduleRepeatCallback(nextCallbackTime);

@@ -604,7 +604,7 @@ namespace Sensus
 
                 if (_healthTestCallback == null)
                 {
-                    _healthTestCallback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
+                    _healthTestCallback = new RepeatingCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
                     {
                         List<Protocol> protocolsToTest = new List<Protocol>();
 
@@ -628,9 +628,9 @@ namespace Sensus
                             await protocolToTest.TestHealthAsync(false, cancellationToken);
                         }
 
-                    }, "HEALTH-TEST", GetType().FullName, null, TimeSpan.FromMinutes(1));
+                    }, "HEALTH-TEST", null, GetType().FullName, TimeSpan.FromMilliseconds(HEALTH_TEST_DELAY_MS), TimeSpan.FromMilliseconds(HEALTH_TEST_DELAY_MS), HEALTH_TEST_REPEAT_LAG, TimeSpan.FromMinutes(1));
 
-                    SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_healthTestCallback, HEALTH_TEST_DELAY_MS, HEALTH_TEST_DELAY_MS, HEALTH_TEST_REPEAT_LAG);
+                    SensusContext.Current.CallbackScheduler.ScheduleCallback(_healthTestCallback);
                 }
             }
         }

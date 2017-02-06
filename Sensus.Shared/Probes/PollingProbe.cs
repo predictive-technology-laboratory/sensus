@@ -169,7 +169,7 @@ namespace Sensus.Probes
             _locationManager = new CLLocationManager();
             _locationManager.LocationsUpdated += (sender, e) =>
             {
-                SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(_pollCallback, 0);
+                SensusContext.Current.CallbackScheduler.ScheduleCallback(_pollCallback);
             };
 #endif
 
@@ -194,7 +194,7 @@ namespace Sensus.Probes
                 string userNotificationMessage = null;
 #endif
 
-                _pollCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
+                _pollCallback = new RepeatingCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
                 {
                     return Task.Run(async () =>
                     {
@@ -239,7 +239,7 @@ namespace Sensus.Probes
                         }
                     });
 
-                }, GetType().FullName, Protocol.Id, Protocol.Id, TimeSpan.FromMinutes(_pollingTimeoutMinutes), userNotificationMessage);
+                }, GetType().FullName, Protocol.Id, Protocol.Id, TimeSpan.Zero, TimeSpan.FromMilliseconds(_pollingSleepDurationMS), POLL_CALLBACK_LAG, TimeSpan.FromMinutes(_pollingTimeoutMinutes), userNotificationMessage);
 
 #if __IOS__
                 if (_significantChangePoll)
@@ -262,10 +262,10 @@ namespace Sensus.Probes
                 // schedule the callback if we're not doing significant-change polling, or if we are but the latter doesn't override the former.
                 if (!_significantChangePoll || !_significantChangeOverrideScheduledPolls)
                 {
-                    SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_pollCallback, 0, _pollingSleepDurationMS, POLL_CALLBACK_LAG);
+                    SensusContext.Current.CallbackScheduler.ScheduleCallback(_pollCallback);
                 }
 #elif __ANDROID__
-                SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_pollCallback, 0, _pollingSleepDurationMS, POLL_CALLBACK_LAG);
+                SensusContext.Current.CallbackScheduler.ScheduleCallback(_pollCallback);
 #endif
             }
         }

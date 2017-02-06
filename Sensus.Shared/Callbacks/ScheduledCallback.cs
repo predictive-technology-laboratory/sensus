@@ -21,7 +21,7 @@ namespace Sensus.Callbacks
     /// <summary>
     /// Encapsulates information needed to run a scheduled callback.
     /// </summary>
-    public class ScheduledCallback
+    public abstract class ScheduledCallback
     {
         /// <summary>
         /// Delegate for scheduled callback actions.
@@ -45,7 +45,7 @@ namespace Sensus.Callbacks
         public string Id { get; set; }
 
         /// <summary>
-        /// Gets or sets the callback's protocol's identifier.
+        /// Gets or sets the protocol identifier.
         /// </summary>
         /// <value>The protocol identifier.</value>
         public string ProtocolId { get; set; }
@@ -88,7 +88,7 @@ namespace Sensus.Callbacks
         /// <param name="domain">Domain of scheduled callback</param>
         /// <param name="callbackTimeout">Callback Timeout</param>
         /// <param name="userNotificationMessage">User notification message</param>
-        public ScheduledCallback(ActionDelegate action, string id, string domain, string protocolId, TimeSpan? callbackTimeout = null, string userNotificationMessage = null)
+        public ScheduledCallback(ActionDelegate action, string id, string protocolId, string domain, TimeSpan? callbackTimeout = null, string userNotificationMessage = null)
         {
             Action = action;
             Id = (domain ?? "SENSUS") + "." + id;

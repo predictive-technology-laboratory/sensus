@@ -16,9 +16,7 @@ namespace Sensus.Callbacks
 {
     public interface ICallbackScheduler
     {
-        void ScheduleRepeatingCallback(ScheduledCallback callback, int initialDelayMS, int repeatDelayMS, bool repeatLag);
-
-        void ScheduleOneTimeCallback(ScheduledCallback callback, int delayMS);
+        void ScheduleCallback(ScheduledCallback callback);
 
         void UnscheduleCallback(string callbackId);
     }

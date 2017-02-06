@@ -33,11 +33,11 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
             _callbackIdNotification = new Dictionary<string, UILocalNotification>();
         }
 
-        protected override void ScheduleCallbackAsync(string callbackId, int delayMS, bool repeating, int repeatDelayMS, bool repeatLag)
+        protected override void ScheduleCallbackAsync(string callbackId, TimeSpan delay)
         {
             // get the callback information. this can be null if we don't have all required information. don't schedule the notification if this happens.
             DisplayPage displayPage = GetCallbackDisplayPage(callbackId);
-            NSMutableDictionary callbackInfo = GetCallbackInfo(callbackId, repeating, repeatDelayMS, repeatLag, displayPage);
+            NSMutableDictionary callbackInfo = GetCallbackInfo(callbackId, displayPage);
             if (callbackInfo == null)
                 return;
 
@@ -53,11 +53,9 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
 
             string userNotificationMessage = GetCallbackUserNotificationMessage(callbackId);
             if (userNotificationMessage == null)
-                notifier.IssueSilentNotificationAsync(callbackId, delayMS, callbackInfo, notificationCreated);
+                notifier.IssueSilentNotificationAsync(callbackId, delay, callbackInfo, notificationCreated);
             else
-            {
-                notifier.IssueNotificationAsync("Sensus", userNotificationMessage, callbackId, GetCallbackProtocolId(callbackId), true, displayPage, delayMS, callbackInfo, notificationCreated);
-            }
+                notifier.IssueNotificationAsync("Sensus", userNotificationMessage, callbackId, GetCallbackProtocolId(callbackId), true, displayPage, delay, callbackInfo, notificationCreated);
         }
 
         /// <summary>
@@ -106,7 +104,7 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
             });
         }
 
-        public override Task RaiseCallbackAsync(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, bool notifyUser, Action<DateTime> scheduleRepeatCallback, Action letDeviceSleepCallback)
+        public override Task RaiseCallbackAsync(string callbackId, bool alertUser, Action<DateTime> scheduleRepeatCallback, Action letDeviceSleepCallback)
         {
             return Task.Run(async () =>
             {
@@ -123,7 +121,7 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
                     _callbackIdNotification.Remove(callbackId);
                 }
 
-                await base.RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, notifyUser,
+                await base.RaiseCallbackAsync(callbackId, alertUser,
 
                     repeatCallbackTime =>
                     {
