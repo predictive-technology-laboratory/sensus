@@ -101,7 +101,7 @@ namespace Sensus.Callbacks
             return callback?.ProtocolId;
         }
 
-        public virtual Task RaiseCallbackAsync(string callbackId, bool notifyUser, Action<DateTime> scheduleRepeatCallback, Action letDeviceSleepCallback)
+        public virtual Task RaiseCallbackAsync(string callbackId, bool alertUser, Action<DateTime> scheduleRepeatCallback, Action letDeviceSleepCallback)
         {
             DateTime callbackStartTime = DateTime.Now;
 
@@ -144,7 +144,7 @@ namespace Sensus.Callbacks
                                 {
                                     SensusServiceHelper.Get().Logger.Log("Raising callback \"" + scheduledCallback.Id + "\".", LoggingLevel.Normal, GetType());
 
-                                    if (notifyUser)
+                                    if (alertUser)
                                     {
                                         SensusContext.Current.Notifier.IssueNotificationAsync("Sensus", scheduledCallback.UserNotificationMessage, callbackId, scheduledCallback.ProtocolId, true, scheduledCallback.DisplayPage);
                                     }

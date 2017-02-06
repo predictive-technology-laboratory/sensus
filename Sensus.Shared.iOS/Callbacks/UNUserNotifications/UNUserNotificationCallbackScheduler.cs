@@ -102,7 +102,7 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
             });
         }
 
-        public override Task RaiseCallbackAsync(string callbackId, bool notifyUser, Action<DateTime> scheduleRepeatCallback, Action letDeviceSleepCallback)
+        public override Task RaiseCallbackAsync(string callbackId, bool alertUser, Action<DateTime> scheduleRepeatCallback, Action letDeviceSleepCallback)
         {
             return Task.Run(async () =>
             {
@@ -114,7 +114,7 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
                     _callbackIdRequest.Remove(callbackId);
                 }
 
-                await base.RaiseCallbackAsync(callbackId, notifyUser,
+                await base.RaiseCallbackAsync(callbackId, alertUser,
 
                     repeatCallbackTime =>
                     {
