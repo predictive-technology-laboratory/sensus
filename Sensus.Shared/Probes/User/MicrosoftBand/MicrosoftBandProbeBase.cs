@@ -90,7 +90,9 @@ namespace Sensus.Probes.User.MicrosoftBand
         protected static void ConnectClient(MicrosoftBandProbeBase configureProbeIfConnected = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (!SensusServiceHelper.Get().EnableBluetooth(true, "Sensus uses Bluetooth to collect data from your Microsoft Band, which is being used in one of your studies."))
-                return;
+            {
+                throw new MicrosoftBandClientConnectException("Bluetooth not enabled.");
+            }
 
             if (configureProbeIfConnected != null)
             {
@@ -111,7 +113,7 @@ namespace Sensus.Probes.User.MicrosoftBand
                     {
                         try
                         {
-                            // if we already have a connection, configure any waiting probes
+                            // if we already have a connected client, configure any waiting probes on the client.
                             if (BandClient?.IsConnected ?? false)
                             {
                                 lock (CONFIGURE_PROBES_IF_CONNECTED)
@@ -131,7 +133,7 @@ namespace Sensus.Probes.User.MicrosoftBand
                                     CONFIGURE_PROBES_IF_CONNECTED.Clear();
                                 }
                             }
-                            // otherwise, attempt to connect
+                            // otherwise, attempt to establish a connected client.
                             else
                             {
                                 int connectAttempt = 0;
@@ -140,7 +142,7 @@ namespace Sensus.Probes.User.MicrosoftBand
                                 {
                                     try
                                     {
-                                        // try to clean up any existing connection state
+                                        // clean up any existing connection state by calling disconnect
                                         await (BandClient?.DisconnectAsync() ?? Task.CompletedTask);
 
                                         SensusServiceHelper.Get().Logger.Log("Connect attempt " + connectAttempt + " of " + BAND_CLIENT_CONNECT_ATTEMPTS + ".", LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
@@ -157,14 +159,18 @@ namespace Sensus.Probes.User.MicrosoftBand
                                             Task<BandClient> connectTask = bandManager.ConnectAsync(band);
 
                                             if (await Task.WhenAny(connectTask, Task.Delay(BAND_CLIENT_CONNECT_TIMEOUT_MS)) == connectTask)
+                                            {
                                                 BandClient = await connectTask;
+                                            }
                                             else
+                                            {
                                                 SensusServiceHelper.Get().Logger.Log("Timed out.", LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
+                                            }
                                         }
                                     }
                                     catch (Exception ex)
                                     {
-                                        SensusServiceHelper.Get().Logger.Log("Exception while connecting:  " + ex.Message, LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
+                                        SensusServiceHelper.Get().Logger.Log("Exception while connecting to Band:  " + ex.Message, LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
                                     }
                                 }
 
@@ -192,7 +198,7 @@ namespace Sensus.Probes.User.MicrosoftBand
                         }
                         catch (Exception ex)
                         {
-                            SensusServiceHelper.Get().Logger.Log("Failed to connect to Band:  " + ex.Message, LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
+                            SensusServiceHelper.Get().Logger.Log("Failed to reuse/establish connected Band client:  " + ex.Message, LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
                         }
                         finally
                         {
@@ -266,7 +272,8 @@ namespace Sensus.Probes.User.MicrosoftBand
                     try
                     {
                         // if the probe is already running, start readings to ensure that we're using the potentially newly configured
-                        // sensor on the band client.
+                        // sensor on the band client. this could be a probe that was previous started successfully, or the first Band
+                        // probe that faulted when trying to start the protocol.
                         if (probe.Running)
                         {
                             // only start readings if they haven't been stopped due to non-contact. acquire lock to prevent race
