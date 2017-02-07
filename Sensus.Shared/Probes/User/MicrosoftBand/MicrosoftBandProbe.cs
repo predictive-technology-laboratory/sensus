@@ -40,7 +40,9 @@ namespace Sensus.Probes.User.MicrosoftBand
 
             // if we're currently configured with the sensor from the client, do nothing
             if (ReferenceEquals(_sensor, bandClientSensor))
+            {
                 return;
+            }
 
             // if we have a sensor that isn't from the client, tear it down so that we do not continue to receive readings from it.
             if (_sensor != null)
@@ -89,21 +91,21 @@ namespace Sensus.Probes.User.MicrosoftBand
             });
         }
 
-        protected override void StartReadings(CancellationToken cancellationToken)
+        protected override void StartReadings()
         {
             if (_sensor == null)
                 throw new Exception("Sensor not configured.");
             else
-                _sensor.StartReadingsAsync(SamplingRate).Wait(cancellationToken);
+                _sensor.StartReadingsAsync(SamplingRate).Wait();
         }
 
         protected abstract Datum GetDatumFromReading(ReadingType reading);
 
-        protected override void StopReadings(CancellationToken cancellationToken)
+        protected override void StopReadings()
         {
             if (_sensor != null)
             {
-                _sensor.StopReadingsAsync().Wait(cancellationToken);
+                _sensor.StopReadingsAsync().Wait();
             }
         }
     }

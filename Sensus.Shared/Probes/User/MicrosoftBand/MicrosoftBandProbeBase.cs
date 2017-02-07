@@ -71,7 +71,9 @@ namespace Sensus.Probes.User.MicrosoftBand
                 try
                 {
                     if (BAND_CLIENT?.IsConnected ?? false)
+                    {
                         SensusServiceHelper.Get().Logger.Log("Client is connected.", LoggingLevel.Debug, typeof(MicrosoftBandProbeBase));
+                    }
                 }
                 catch (ObjectDisposedException)
                 {
@@ -87,18 +89,18 @@ namespace Sensus.Probes.User.MicrosoftBand
             }
         }
 
-        protected static void ConnectClient(MicrosoftBandProbeBase configureProbeIfConnected = null, CancellationToken cancellationToken = default(CancellationToken))
+        protected static void ConnectClient(MicrosoftBandProbeBase probeToConfigureIfAlreadyConnected = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (!SensusServiceHelper.Get().EnableBluetooth(true, "Sensus uses Bluetooth to collect data from your Microsoft Band, which is being used in one of your studies."))
             {
                 throw new MicrosoftBandClientConnectException("Bluetooth not enabled.");
             }
 
-            if (configureProbeIfConnected != null)
+            if (probeToConfigureIfAlreadyConnected != null)
             {
                 lock (CONFIGURE_PROBES_IF_CONNECTED)
                 {
-                    CONFIGURE_PROBES_IF_CONNECTED.Add(configureProbeIfConnected);
+                    CONFIGURE_PROBES_IF_CONNECTED.Add(probeToConfigureIfAlreadyConnected);
                 }
             }
 
@@ -161,6 +163,7 @@ namespace Sensus.Probes.User.MicrosoftBand
                                             if (await Task.WhenAny(connectTask, Task.Delay(BAND_CLIENT_CONNECT_TIMEOUT_MS)) == connectTask)
                                             {
                                                 BandClient = await connectTask;
+                                                SensusServiceHelper.Get().Logger.Log("Connected.", LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
                                             }
                                             else
                                             {
@@ -183,11 +186,12 @@ namespace Sensus.Probes.User.MicrosoftBand
                                         {
                                             try
                                             {
+                                                SensusServiceHelper.Get().Logger.Log("Reconfiguring probe:  " + probe.DisplayName, LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
                                                 probe.Configure(BandClient, cancellationToken);
                                             }
                                             catch (Exception ex)
                                             {
-                                                SensusServiceHelper.Get().Logger.Log("Failed to start readings for Band probe:  " + ex.Message, LoggingLevel.Normal, probe.GetType());
+                                                SensusServiceHelper.Get().Logger.Log("Failed to reconfigure probe:  " + ex.Message, LoggingLevel.Normal, probe.GetType());
                                             }
                                         }
 
@@ -282,7 +286,7 @@ namespace Sensus.Probes.User.MicrosoftBand
                             {
                                 if (!probe._stoppedBecauseNotWorn)
                                 {
-                                    probe.StartReadings(cancellationToken);
+                                    probe.StartReadings();
                                 }
                             }
                         }
@@ -423,10 +427,10 @@ namespace Sensus.Probes.User.MicrosoftBand
 
             ConnectClient(this);
 
-            StartReadings(default(CancellationToken));
+            StartReadings();
         }
 
-        protected abstract void StartReadings(CancellationToken cancellationToken);
+        protected abstract void StartReadings();
 
         protected override void StopListening()
         {
@@ -439,7 +443,7 @@ namespace Sensus.Probes.User.MicrosoftBand
                 contactProbe.ContactStateChanged -= ContactStateChanged;
             }
 
-            StopReadings(default(CancellationToken));
+            StopReadings();
 
             // only cancel the static health test if none of the band probes should be running.
             if (BandProbesThatShouldBeRunning.Count == 0)
@@ -463,7 +467,7 @@ namespace Sensus.Probes.User.MicrosoftBand
             }
         }
 
-        protected abstract void StopReadings(CancellationToken cancellationToken);
+        protected abstract void StopReadings();
 
         private void ContactStateChanged(object sender, ContactState contactState)
         {
@@ -471,21 +475,18 @@ namespace Sensus.Probes.User.MicrosoftBand
             // to the stopped state.
             if (Running)
             {
-                // prevent race condition with client health test, which will be trying to start readings on this probe.
-                lock (HEALTH_TEST_LOCKER)
+                // start readings if band is worn, regardless of whether we're stopping readings when it isn't worn.
+                if (contactState == ContactState.Worn)
                 {
-                    // impose a timeout on starting/stopping readings to ensure that we always return.
-                    CancellationTokenSource cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(15));
-
-                    // start readings if band is worn, regardless of whether we're stopping readings when it isn't worn.
-                    if (contactState == ContactState.Worn)
+                    StartReadings();
+                    _stoppedBecauseNotWorn = false;
+                }
+                else if (contactState == ContactState.NotWorn && _stopWhenNotWorn && !_stoppedBecauseNotWorn)
+                {
+                    // prevent race condition with client health test, which will be trying to start readings on this probe.
+                    lock (HEALTH_TEST_LOCKER)
                     {
-                        StartReadings(cancellationTokenSource.Token);
-                        _stoppedBecauseNotWorn = false;
-                    }
-                    else if (contactState == ContactState.NotWorn && _stopWhenNotWorn && !_stoppedBecauseNotWorn)
-                    {
-                        StopReadings(cancellationTokenSource.Token);
+                        StopReadings();
                         _stoppedBecauseNotWorn = true;
                     }
                 }

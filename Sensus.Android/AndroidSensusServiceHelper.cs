@@ -523,7 +523,7 @@ namespace Sensus.Android
             // ensure that the device has the required feature
             if (!_service.PackageManager.HasSystemFeature(lowEnergy ? PackageManager.FeatureBluetoothLe : PackageManager.FeatureBluetooth))
             {
-                FlashNotificationAsync("This device does not have Bluetooth " + (lowEnergy ? "Low Energy" : "") + ".", true);
+                FlashNotificationAsync("This device does not have Bluetooth " + (lowEnergy ? "Low Energy" : "") + ".", false);
                 return enabled;
             }
 

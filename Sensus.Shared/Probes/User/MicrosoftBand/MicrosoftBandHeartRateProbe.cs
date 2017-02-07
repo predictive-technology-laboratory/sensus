@@ -44,7 +44,7 @@ namespace Sensus.Probes.User.MicrosoftBand
             return bandClient.SensorManager.HeartRate;
         }
 
-        protected override void StartReadings(CancellationToken cancellationToken)
+        protected override void StartReadings()
         {
             if (Sensor.UserConsented == UserConsent.Unspecified)
             {
@@ -65,7 +65,7 @@ namespace Sensus.Probes.User.MicrosoftBand
 
             if (Sensor.UserConsented == UserConsent.Granted)
             {
-                base.StartReadings(cancellationToken);
+                base.StartReadings();
             }
         }
 
