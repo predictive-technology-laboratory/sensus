@@ -124,7 +124,7 @@ namespace Sensus.Probes.User.MicrosoftBand
                                     {
                                         try
                                         {
-                                            probe.Configure(BandClient, cancellationToken);
+                                            probe.Configure(BandClient);
                                         }
                                         catch (Exception ex)
                                         {
@@ -187,7 +187,7 @@ namespace Sensus.Probes.User.MicrosoftBand
                                             try
                                             {
                                                 SensusServiceHelper.Get().Logger.Log("Reconfiguring probe:  " + probe.DisplayName, LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
-                                                probe.Configure(BandClient, cancellationToken);
+                                                probe.Configure(BandClient);
                                             }
                                             catch (Exception ex)
                                             {
@@ -389,7 +389,7 @@ namespace Sensus.Probes.User.MicrosoftBand
             _stoppedBecauseNotWorn = false;
         }
 
-        protected abstract void Configure(BandClient bandClient, CancellationToken cancellationToken);
+        protected abstract void Configure(BandClient bandClient);
 
         protected override void Initialize()
         {

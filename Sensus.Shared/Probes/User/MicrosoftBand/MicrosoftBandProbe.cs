@@ -34,7 +34,7 @@ namespace Sensus.Probes.User.MicrosoftBand
             }
         }
 
-        protected override void Configure(BandClient bandClient, CancellationToken cancellationToken)
+        protected override void Configure(BandClient bandClient)
         {
             SensorType bandClientSensor = GetSensor(bandClient);
 
@@ -60,7 +60,7 @@ namespace Sensus.Probes.User.MicrosoftBand
                 // unregister listener
                 try
                 {
-                    _sensor.StopReadingsAsync().Wait(cancellationToken);
+                    _sensor.StopReadingsAsync().Wait();
                 }
                 catch (Exception ex)
                 {
