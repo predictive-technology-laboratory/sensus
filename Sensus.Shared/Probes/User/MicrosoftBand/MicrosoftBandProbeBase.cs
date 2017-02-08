@@ -144,9 +144,6 @@ namespace Sensus.Probes.User.MicrosoftBand
                                 {
                                     try
                                     {
-                                        // clean up any existing connection state by calling disconnect
-                                        await (BandClient?.DisconnectAsync() ?? Task.CompletedTask);
-
                                         SensusServiceHelper.Get().Logger.Log("Connect attempt " + connectAttempt + " of " + BAND_CLIENT_CONNECT_ATTEMPTS + ".", LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
 
                                         BandClientManager bandManager = BandClientManager.Instance;
