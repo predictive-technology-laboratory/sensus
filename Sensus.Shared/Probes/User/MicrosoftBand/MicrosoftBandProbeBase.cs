@@ -35,7 +35,7 @@ namespace Sensus.Probes.User.MicrosoftBand
         private static BandClient BAND_CLIENT;
         private static bool BAND_CLIENT_CONNECTING = false;
         private const int BAND_CLIENT_CONNECT_TIMEOUT_MS = 10000;
-        private const int BAND_CLIENT_CONNECT_ATTEMPTS = 2;
+        private const int BAND_CLIENT_CONNECT_ATTEMPTS = 3;
         private static ManualResetEvent BAND_CLIENT_CONNECT_WAIT = new ManualResetEvent(false);
         private static object BAND_CLIENT_LOCKER = new object();
         private static List<MicrosoftBandProbeBase> CONFIGURE_PROBES_IF_CONNECTED = new List<MicrosoftBandProbeBase>();
@@ -138,6 +138,16 @@ namespace Sensus.Probes.User.MicrosoftBand
                             // otherwise, attempt to establish a connected client.
                             else
                             {
+                                // first clean up any existing connection state by calling disconnect 
+                                try
+                                {
+                                    await (BandClient?.DisconnectAsync() ?? Task.CompletedTask);
+                                }
+                                catch (Exception ex)
+                                {
+                                    SensusServiceHelper.Get().Logger.Log("Exception while disconnecting:  " + ex.Message, LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
+                                }
+
                                 int connectAttempt = 0;
 
                                 while (++connectAttempt <= BAND_CLIENT_CONNECT_ATTEMPTS && (BandClient == null || !BandClient.IsConnected) && !cancellationToken.IsCancellationRequested)
@@ -160,7 +170,15 @@ namespace Sensus.Probes.User.MicrosoftBand
                                             if (await Task.WhenAny(connectTask, Task.Delay(BAND_CLIENT_CONNECT_TIMEOUT_MS)) == connectTask)
                                             {
                                                 BandClient = await connectTask;
-                                                SensusServiceHelper.Get().Logger.Log("Connected.", LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
+
+                                                if (BandClient.IsConnected)
+                                                {
+                                                    SensusServiceHelper.Get().Logger.Log("Connected.", LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
+                                                }
+                                                else
+                                                {
+                                                    SensusServiceHelper.Get().Logger.Log("Could not connect.", LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
+                                                }
                                             }
                                             else
                                             {
