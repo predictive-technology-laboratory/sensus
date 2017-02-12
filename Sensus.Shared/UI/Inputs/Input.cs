@@ -461,11 +461,17 @@ namespace Sensus.UI.Inputs
             return _name + (_name == DefaultName ? "" : " -- " + DefaultName) + (_required ? "*" : "");
         }
 
-        public Input Copy()
+        public Input Copy(bool newId)
         {
             Input copy = JsonConvert.DeserializeObject<Input>(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
 
             copy.Reset();
+
+            // the reset on the previous line only resets the state of the input. it does not assign it a new/unique ID, which all inputs require.
+            if (newId)
+            {
+                copy.Id = Guid.NewGuid().ToString();
+            }
 
             return copy;
         }

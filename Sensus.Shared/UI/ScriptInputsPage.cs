@@ -117,7 +117,7 @@ namespace Sensus.UI
                                     (?<=[A-Za-z])(?=[^A-Za-z])", RegexOptions.IgnorePatternWhitespace);
 
                                     // show the user a required copy of the condition input and prompt for the condition value
-                                    Input conditionInputCopy = conditionInput.Copy();
+                                    Input conditionInputCopy = conditionInput.Copy(false);
                                     conditionInputCopy.DisplayConditions.Clear();
                                     conditionInputCopy.LabelText = "Value that " + conditionInputCopy.Name + " " + uppercaseSplitter.Replace(condition.ToString(), " ").ToLower() + ":";
                                     conditionInputCopy.Required = true;

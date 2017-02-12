@@ -57,12 +57,25 @@ namespace Sensus.UI.Inputs
         /// Initializes a new instance of the <see cref="T:Sensus.UI.Inputs.InputGroup"/> class as a copy of another. WARNING:  You must call
         /// UpdateDisplayConditionInputs on the resulting object to ensure that all display conditions are properly set up.
         /// </summary>
-        public InputGroup(InputGroup inputGroup)
+        public InputGroup(InputGroup inputGroup, bool newGroupId)
         {
             Id = inputGroup.Id;
             Name = inputGroup.Name;
             Geotag = inputGroup.Geotag;
             Inputs = JsonConvert.DeserializeObject<ObservableCollection<Input>>(JsonConvert.SerializeObject(inputGroup.Inputs, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
+
+            if (newGroupId)
+            {
+                Id = Guid.NewGuid().ToString();
+
+                // update all inputs to have the new group ID. because we are creating a new group, all inputs should get new IDs to break
+                // all connections with the passed-in group.
+                foreach (Input input in Inputs)
+                {
+                    input.GroupId = Id;
+                    input.Id = Guid.NewGuid().ToString();
+                }
+            }
         }
 
         [JsonConstructor]
@@ -83,8 +96,12 @@ namespace Sensus.UI.Inputs
         public void UpdateDisplayConditionInputs(Input[] inputs)
         {
             foreach (Input input in Inputs)
+            {
                 foreach (InputDisplayCondition displayCondition in input.DisplayConditions)
+                {
                     displayCondition.Input = inputs.Single(i => i.Id == displayCondition.Input.Id);
+                }
+            }
         }
 
         public override string ToString()

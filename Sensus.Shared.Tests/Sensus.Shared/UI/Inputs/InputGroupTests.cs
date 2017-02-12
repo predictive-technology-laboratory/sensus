@@ -55,7 +55,7 @@ namespace Sensus.Tests.UI.Inputs
                 Name = "Name"
             };
 
-            var copy = new InputGroup(group);
+            var copy = new InputGroup(group, false);
 
             Assert.AreEqual(group.Valid, copy.Valid);
             Assert.AreEqual(group.Geotag, copy.Geotag);
@@ -67,15 +67,13 @@ namespace Sensus.Tests.UI.Inputs
         public void BasicInputCopyTest()
         {
             var input = new SliderInput();
-
-            var inputId = input.Id;
-
             var group = new InputGroup { Inputs = { input } };
-            var copy  = new InputGroup(group);
+            var copy  = new InputGroup(group, true);  // assign new ID as done when user taps Copy on the InputGroup.
 
             Assert.AreEqual(1, copy.Inputs.Count());
-            Assert.AreEqual(input.Id, copy.Inputs.Single().Id);
+            Assert.AreNotEqual(input.Id, copy.Inputs.Single().Id);  // copied inputs should have different IDs
             Assert.AreNotSame(input, copy.Inputs.Single());
+            Assert.AreNotEqual(group.Id, copy.Id);
             Assert.AreEqual(copy.Id, copy.Inputs.Single().GroupId);
         }
 
@@ -87,13 +85,11 @@ namespace Sensus.Tests.UI.Inputs
             input.DisplayConditions.Add(new InputDisplayCondition(input, InputValueCondition.Equals, "a", false));
             
             var group = new InputGroup { Inputs = { input } };
-            var copy  = new InputGroup(group);
+            var copy  = new InputGroup(group, false);
 
             Assert.AreSame(input, input.DisplayConditions.Single().Input);
             Assert.AreSame(input, group.Inputs.Single());
-
             Assert.AreNotSame(group.Inputs.Single(), copy.Inputs.Single());
-
             Assert.AreSame(copy.Inputs.Single(), copy.Inputs.Single().DisplayConditions.Single().Input);
         }
 
@@ -106,7 +102,7 @@ namespace Sensus.Tests.UI.Inputs
             input2.DisplayConditions.Add(new InputDisplayCondition(input2, InputValueCondition.Equals, "a", false));
 
             var group = new InputGroup { Inputs = { input1, input2 } };
-            var copy = new InputGroup(group);
+            var copy = new InputGroup(group, false);
 
             Assert.AreSame(input2, input2.DisplayConditions.Single().Input);
             Assert.AreSame(input1, group.Inputs.Skip(0).Take(1).Single());
