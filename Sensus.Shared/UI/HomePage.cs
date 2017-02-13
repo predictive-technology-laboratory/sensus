@@ -55,7 +55,8 @@ namespace Sensus.UI
             Label privacyPolicyLabel = new Label
             {
                 Text = "Privacy Policy",
-                HorizontalOptions = LayoutOptions.Center
+                HorizontalOptions = LayoutOptions.Center,
+                VerticalOptions = LayoutOptions.Center
             };
 
             TapGestureRecognizer privacyPolicyTappedRecognizer = new TapGestureRecognizer();

@@ -111,16 +111,6 @@ namespace Sensus.Probes.User.MicrosoftBand
                                 return;
                             }
 
-                            /*// first clean up any existing connection state by calling disconnect -- looks like this is hanging and preventing the test from finishing!
-                            try
-                            {
-                                await (BandClient?.DisconnectAsync() ?? Task.CompletedTask);
-                            }
-                            catch (Exception ex)
-                            {
-                                SensusServiceHelper.Get().Logger.Log("Exception while disconnecting:  " + ex.Message, LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
-                            }*/
-
                             int connectAttempt = 0;
 
                             while (++connectAttempt <= BAND_CLIENT_CONNECT_ATTEMPTS && (BandClient == null || !BandClient.IsConnected) && !cancellationToken.IsCancellationRequested)

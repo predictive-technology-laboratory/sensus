@@ -34,6 +34,13 @@ namespace Sensus.Shared.Android.UI
         public event Action<double> ValueChanged;
 
         private Slider _formsSlider;
+        private bool _userHasChangedSliderValue;
+        private Drawable _visibleThumbDrawable;
+
+        public SliderInputEffect()
+        {
+            _userHasChangedSliderValue = false;
+        }
 
         public void SetFormsControl(Slider formsSlider)
         {
@@ -44,25 +51,27 @@ namespace Sensus.Shared.Android.UI
         {
             SeekBar nativeSeekBar = Control as SeekBar;
 
-            // make the thumb image invisible
-            Drawable defaultThumb = nativeSeekBar.Thumb;
-            nativeSeekBar.SetThumb(new ColorDrawable(global::Android.Graphics.Color.Transparent));
-            bool resetThumbImage = true;
+            // make the thumb image invisible if the user hasn't changed the slider's value
+            if (!_userHasChangedSliderValue)
+            {
+                _visibleThumbDrawable = nativeSeekBar.Thumb;
+                nativeSeekBar.SetThumb(new ColorDrawable(global::Android.Graphics.Color.Transparent));
+            }
 
             nativeSeekBar.ProgressChanged += (sender, e) =>
             {
-                // make the thumb image visible
-                if (resetThumbImage)
+                // make the thumb image visible if we haven't already
+                if (!_userHasChangedSliderValue)
                 {
-                    nativeSeekBar.SetThumb(defaultThumb);
-                    resetThumbImage = false;
+                    nativeSeekBar.SetThumb(_visibleThumbDrawable);
+                    _userHasChangedSliderValue = true;
                 }
 
                 // let the observer know that the value has changed. note that SeekBars have a fixed minimum (0) and
                 // a variable maximum. rescale the SeekBar's value to be in the range desired for the forms control.
                 double percent = nativeSeekBar.Progress / (double)nativeSeekBar.Max;
-                double formsValue = _formsSlider.Minimum + (percent * (_formsSlider.Maximum - _formsSlider.Minimum));
-                ValueChanged?.Invoke(formsValue);
+                _formsSlider.Value = _formsSlider.Minimum + (percent * (_formsSlider.Maximum - _formsSlider.Minimum));
+                ValueChanged?.Invoke(_formsSlider.Value);
             };
         }
 
