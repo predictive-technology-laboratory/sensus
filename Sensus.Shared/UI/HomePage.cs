@@ -84,7 +84,8 @@ namespace Sensus.UI
                 {
                     studiesButton,
                     surveysButton,
-                    privacyPolicyLabel
+                    privacyPolicyLabel,
+                    new Label()
                 }
             };
         }

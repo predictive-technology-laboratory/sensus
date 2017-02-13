@@ -229,15 +229,9 @@ namespace Sensus.UI.Inputs
 
                 _slider.Minimum = _minimum;
                 _slider.Maximum = _maximum;
-
-                // we use the effects framework to hide the slider initial position from the user, in order to 
-                // avoid biasing the user toward the initial position.
-                Effect effect = Effect.Resolve(EFFECT_RESOLUTION_NAME);
-                IInputEffect<Slider, double> effectInterface = effect as IInputEffect<Slider, double>;
-                effectInterface.SetFormsControl(_slider);
-                effectInterface.ValueChanged += newValue =>
+                _slider.ValueChanged += (sender, e) =>
                 {
-                    double newIncrementalValue = GetIncrementalValue(newValue);
+                    double newIncrementalValue = GetIncrementalValue(e.NewValue);
 
                     if (newIncrementalValue != _incrementalValue)
                     {
@@ -248,7 +242,8 @@ namespace Sensus.UI.Inputs
                     }
                 };
 
-                _slider.Effects.Add(effect);
+                // we use the effects framework to hide the slider's initial position from the user, in order to avoid biasing the user away from or toward the initial position.
+                _slider.Effects.Add(Effect.Resolve(EFFECT_RESOLUTION_NAME));
 
                 base.SetView(new StackLayout
                 {

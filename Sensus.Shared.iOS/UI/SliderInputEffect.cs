@@ -25,42 +25,44 @@ using CoreGraphics;
 
 namespace Sensus.Shared.iOS.UI
 {
-    public class SliderInputEffect : PlatformEffect, IInputEffect<Slider, double>
+    public class SliderInputEffect : PlatformEffect
     {
-        public event Action<double> ValueChanged;
+        private UIImage _visibleThumbImage;
+        private bool _userHasChangedSliderValue;
 
-        public void SetFormsControl(Slider formsSlider)
+        public SliderInputEffect()
         {
-            // do nothing. we don't need to track a reference to the forms control.
+            _userHasChangedSliderValue = false;
         }
 
         protected override void OnAttached()
         {
             UISlider nativeSlider = Control as UISlider;
+            Slider formsSlider = Element as Slider;
 
-            // make the thumb image invisible
-            UIImage defaultThumbImage = nativeSlider.ThumbImage(UIControlState.Normal);
-            nativeSlider.SetThumbImage(new UIImage(), UIControlState.Normal);
-            bool resetThumbImage = true;
+            // make the thumb image invisible if the user hasn't previously changed the slider's value
+            if (!_userHasChangedSliderValue)
+            {
+                _visibleThumbImage = nativeSlider.ThumbImage(UIControlState.Normal);
+                nativeSlider.SetThumbImage(new UIImage(), UIControlState.Normal);
+            }
 
             // listen for the user pressing on the slider. this also reports slides.
             nativeSlider.AddGestureRecognizer(new UILongPressGestureRecognizer(pressRecognizer =>
             {
                 // make the thumb image visible
-                if (resetThumbImage)
+                if (!_userHasChangedSliderValue)
                 {
-                    nativeSlider.SetThumbImage(defaultThumbImage, UIControlState.Normal);
-                    resetThumbImage = false;
+                    nativeSlider.SetThumbImage(_visibleThumbImage, UIControlState.Normal);
+                    _userHasChangedSliderValue = true;
                 }
 
                 // update the slider value - we subtract 25 from the width of the frame to get the right offset (fudgey)
                 CGPoint pointTapped = pressRecognizer.LocationInView(pressRecognizer.View);
                 float percent = (float)((pointTapped.X - nativeSlider.Frame.Location.X) / (nativeSlider.Frame.Size.Width - 25));
-                float newValue = nativeSlider.MinValue + (percent * (nativeSlider.MaxValue - nativeSlider.MinValue));
-                nativeSlider.SetValue(newValue, false);
-
-                // let the observer know that the value has changed
-                ValueChanged?.Invoke(nativeSlider.Value);
+                float newNativeValue = nativeSlider.MinValue + (percent * (nativeSlider.MaxValue - nativeSlider.MinValue));
+                nativeSlider.SetValue(newNativeValue, false);
+                formsSlider.Value = formsSlider.Minimum + (percent * (formsSlider.Maximum - formsSlider.Minimum));
             })
             { MinimumPressDuration = 0 });
         }
