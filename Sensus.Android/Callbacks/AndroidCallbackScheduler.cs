@@ -126,17 +126,17 @@ namespace Sensus.Android.Callbacks
                         // if the callback indicates that it's okay for the device to sleep, release the wake lock now.
                         () =>
                         {
+                            serviceHelper.Logger.Log("Releasing wake lock preemptively for scheduled callback action.", LoggingLevel.Normal, GetType());
                             wakeLockReleased = true;
                             serviceHelper.LetDeviceSleep();
-                            serviceHelper.Logger.Log("Wake lock released preemptively for scheduled callback action.", LoggingLevel.Normal, GetType());
                         }
                     );
 
                     // release wake lock now if we didn't while the callback action was executing.
                     if (!wakeLockReleased)
                     {
+                        serviceHelper.Logger.Log("Releasing wake lock after scheduled callback action completed.", LoggingLevel.Normal, GetType());
                         serviceHelper.LetDeviceSleep();
-                        serviceHelper.Logger.Log("Wake lock released after scheduled callback action completed.", LoggingLevel.Normal, GetType());
                     }
                 }
                 else

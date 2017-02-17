@@ -44,15 +44,26 @@ namespace Sensus.Probes.User.MicrosoftBand
             return bandClient.SensorManager.HeartRate;
         }
 
-        protected override void StartReadings()
+        protected override Task StartReadingsAsync()
         {
             if (Sensor.UserConsented == UserConsent.Unspecified)
             {
                 ManualResetEvent consentWait = new ManualResetEvent(false);
+
                 Task.Run(async () =>
                 {
-                    await Sensor.RequestUserConsent();
-                    consentWait.Set();
+                    try
+                    {
+                        await Sensor.RequestUserConsent();
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Failed to request user consent:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
+                    finally
+                    {
+                        consentWait.Set();
+                    }
                 });
 
                 consentWait.WaitOne();
@@ -65,7 +76,11 @@ namespace Sensus.Probes.User.MicrosoftBand
 
             if (Sensor.UserConsented == UserConsent.Granted)
             {
-                base.StartReadings();
+                return base.StartReadingsAsync();
+            }
+            else
+            {
+                return Task.FromResult(false);
             }
         }
 

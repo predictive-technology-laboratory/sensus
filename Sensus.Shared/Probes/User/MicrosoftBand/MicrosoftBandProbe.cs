@@ -44,28 +44,32 @@ namespace Sensus.Probes.User.MicrosoftBand
                 return;
             }
 
-            // if we have a sensor that isn't from the client, tear it down so that we do not continue to receive readings from it.
+            // if we have a sensor that isn't from the client that was passed in, tear it down so that we do not continue to receive readings from it.
             if (_sensor != null)
             {
-                // disconnect reading callback
-                try
+                // the tear-down seems to hang unpredictably. start a background task to prevent lock-ups.
+                Task.Run(async () =>
                 {
-                    _sensor.ReadingChanged -= ReadingChangedAsync;
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Failed to remove reading-changed handler when reconfiguring probe:  " + ex.Message, LoggingLevel.Normal, GetType());
-                }
+                    // disconnect reading callback so we no longer get readings if the sensor doesn't stop for some reason.
+                    try
+                    {
+                        _sensor.ReadingChanged -= ReadingChangedAsync;
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Failed to remove reading-changed handler when reconfiguring probe:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
 
-                // unregister listener
-                try
-                {
-                    _sensor.StopReadingsAsync().Wait();
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Failed to stop readings when reconfiguring probe:  " + ex.Message, LoggingLevel.Normal, GetType());
-                }
+                    // tell the sensor to stop reading. this unregisters a low-level handler under the hood.
+                    try
+                    {
+                        await _sensor.StopReadingsAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Failed to stop readings when tearing down sensor for probe reconfigure:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
+                });
             }
 
             // set up the new sensor
@@ -91,21 +95,29 @@ namespace Sensus.Probes.User.MicrosoftBand
             });
         }
 
-        protected override void StartReadings()
+        protected override Task StartReadingsAsync()
         {
             if (_sensor == null)
+            {
                 throw new Exception("Sensor not configured.");
+            }
             else
-                _sensor.StartReadingsAsync(SamplingRate).Wait();
+            {
+                return _sensor.StartReadingsAsync(SamplingRate);
+            }
         }
 
         protected abstract Datum GetDatumFromReading(ReadingType reading);
 
-        protected override void StopReadings()
+        protected override Task StopReadingsAsync()
         {
-            if (_sensor != null)
+            if (_sensor == null)
             {
-                _sensor.StopReadingsAsync().Wait();
+                throw new Exception("Sensor not configured.");
+            }
+            else
+            {
+                return _sensor.StopReadingsAsync();
             }
         }
     }

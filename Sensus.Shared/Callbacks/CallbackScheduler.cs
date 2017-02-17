@@ -137,7 +137,9 @@ namespace Sensus.Callbacks
 
                                     // if the callback specified a timeout, request cancellation at the specified time.
                                     if (scheduledCallback.CallbackTimeout.HasValue)
+                                    {
                                         scheduledCallback.Canceller.CancelAfter(scheduledCallback.CallbackTimeout.Value);
+                                    }
 
                                     await scheduledCallback.Action(callbackId, scheduledCallback.Canceller.Token, letDeviceSleepCallback);
                                 }

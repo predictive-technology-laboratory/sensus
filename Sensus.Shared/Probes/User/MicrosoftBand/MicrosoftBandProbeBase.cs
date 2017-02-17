@@ -41,7 +41,6 @@ namespace Sensus.Probes.User.MicrosoftBand
         private static ScheduledCallback HEALTH_TEST_CALLBACK;
         private const int HEALTH_TEST_DELAY_MS = 60000;
         private const int HEALTH_TEST_TIMEOUT_MS = 60000;
-        private static readonly object HEALTH_TEST_LOCKER = new object();
         private static bool REENABLE_BLUETOOTH_IF_NEEDED = true;
 
         private static List<MicrosoftBandProbeBase> BandProbesThatShouldBeRunning
@@ -120,7 +119,11 @@ namespace Sensus.Probes.User.MicrosoftBand
                                     SensusServiceHelper.Get().Logger.Log("Connect attempt " + connectAttempt + " of " + BAND_CLIENT_CONNECT_ATTEMPTS + ".", LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
 
                                     BandClientManager bandManager = BandClientManager.Instance;
-                                    BandDeviceInfo band = (await bandManager.GetPairedBandsAsync()).FirstOrDefault();
+
+                                    BandDeviceInfo[] bands = (await bandManager.GetPairedBandsAsync()).ToArray();
+                                    SensusServiceHelper.Get().Logger.Log("Found " + bands.Length + " paired band(s).", LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
+
+                                    BandDeviceInfo band = bands.FirstOrDefault();
                                     if (band == null)
                                     {
                                         SensusServiceHelper.Get().Logger.Log("No paired Bands.", LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
@@ -238,14 +241,10 @@ namespace Sensus.Probes.User.MicrosoftBand
                         // probe that faulted when trying to start the protocol.
                         if (probe.Running)
                         {
-                            // only start readings if they haven't been stopped due to non-contact. acquire lock to prevent race
-                            // condition with contact changed event, which might attempt to stop readings on loss of contact.
-                            lock (HEALTH_TEST_LOCKER)
+                            // only start readings if they haven't been stopped due to non-contact.
+                            if (!probe._stoppedBecauseNotWorn)
                             {
-                                if (!probe._stoppedBecauseNotWorn)
-                                {
-                                    probe.StartReadings();
-                                }
+                                probe.StartReadingsAsync().Wait(cancellationToken);
                             }
                         }
                         // if we attempted to start several band probes upon protocol start up and failed, we would have bailed out after
@@ -266,14 +265,11 @@ namespace Sensus.Probes.User.MicrosoftBand
 
         private static void CancelHealthTest()
         {
-            lock (HEALTH_TEST_LOCKER)
+            if (HEALTH_TEST_CALLBACK != null)
             {
-                if (HEALTH_TEST_CALLBACK != null)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Canceling health test.", LoggingLevel.Verbose, typeof(MicrosoftBandProbeBase));
-                    SensusContext.Current.CallbackScheduler.UnscheduleCallback(HEALTH_TEST_CALLBACK.Id);
-                    HEALTH_TEST_CALLBACK = null;
-                }
+                SensusServiceHelper.Get().Logger.Log("Canceling health test.", LoggingLevel.Verbose, typeof(MicrosoftBandProbeBase));
+                SensusContext.Current.CallbackScheduler.UnscheduleCallback(HEALTH_TEST_CALLBACK.Id);
+                HEALTH_TEST_CALLBACK = null;
             }
         }
 
@@ -361,16 +357,13 @@ namespace Sensus.Probes.User.MicrosoftBand
             // we expect this probe to start successfully, but an exception may occur if no bands are paired with the device of if the
             // connection with a paired band fails. so schedule a static repeating callback to check on all band probes and restart them 
             // if needed/possible. this is better than a non-static callback for each band probe because there are many band probes and 
-            // the callbacks would be redundant, frequent, and power-hungry.
-            lock (HEALTH_TEST_LOCKER)
+            // the callbacks would be redundant, frequent, and power-hungry. only schedule the callback if we haven't done so already. 
+            // the callback should be global across all band probes.
+            if (HEALTH_TEST_CALLBACK == null)
             {
-                // only schedule the callback if we haven't done so already. the callback should be global across all band probes.
-                if (HEALTH_TEST_CALLBACK == null)
-                {
-                    // the band health test is static, so it has no domain other than sensus.
-                    HEALTH_TEST_CALLBACK = new ScheduledCallback(TestBandClientAsync, "BAND-HEALTH-TEST", null, null, TimeSpan.FromMilliseconds(HEALTH_TEST_TIMEOUT_MS));
-                    SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(HEALTH_TEST_CALLBACK, HEALTH_TEST_DELAY_MS, HEALTH_TEST_DELAY_MS, false);
-                }
+                // the band health test is static, so it has no domain other than sensus.
+                HEALTH_TEST_CALLBACK = new ScheduledCallback(TestBandClientAsync, "BAND-HEALTH-TEST", null, null, TimeSpan.FromMilliseconds(HEALTH_TEST_TIMEOUT_MS));
+                SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(HEALTH_TEST_CALLBACK, HEALTH_TEST_DELAY_MS, HEALTH_TEST_DELAY_MS, false);
             }
 
             // hook up the contact event for non-contact probes. need to do this before the calls below because they might throw
@@ -385,10 +378,15 @@ namespace Sensus.Probes.User.MicrosoftBand
 
             ConnectClient();
             Configure(BandClient);
-            StartReadings();
+
+            // wait for readings to start...
+            if (!StartReadingsAsync().Wait(TimeSpan.FromSeconds(10)))
+            {
+                throw new MicrosoftBandClientConnectException("Failed to start readings.");
+            }
         }
 
-        protected abstract void StartReadings();
+        protected abstract Task StartReadingsAsync();
 
         protected override void StopListening()
         {
@@ -401,7 +399,10 @@ namespace Sensus.Probes.User.MicrosoftBand
                 contactProbe.ContactStateChanged -= ContactStateChanged;
             }
 
-            StopReadings();
+            if (!StopReadingsAsync().Wait(TimeSpan.FromSeconds(10)))
+            {
+                SensusServiceHelper.Get().Logger.Log("Failed to stop readings.", LoggingLevel.Normal, GetType());
+            }
 
             // only cancel the static health test if none of the band probes should be running.
             if (BandProbesThatShouldBeRunning.Count == 0)
@@ -425,7 +426,7 @@ namespace Sensus.Probes.User.MicrosoftBand
             }
         }
 
-        protected abstract void StopReadings();
+        protected abstract Task StopReadingsAsync();
 
         private void ContactStateChanged(object sender, ContactState contactState)
         {
@@ -436,17 +437,13 @@ namespace Sensus.Probes.User.MicrosoftBand
                 // start readings if band is worn, regardless of whether we're stopping readings when it isn't worn.
                 if (contactState == ContactState.Worn)
                 {
-                    StartReadings();
+                    StartReadingsAsync();
                     _stoppedBecauseNotWorn = false;
                 }
                 else if (contactState == ContactState.NotWorn && _stopWhenNotWorn && !_stoppedBecauseNotWorn)
                 {
-                    // prevent race condition with client health test, which will be trying to start readings on this probe.
-                    lock (HEALTH_TEST_LOCKER)
-                    {
-                        StopReadings();
-                        _stoppedBecauseNotWorn = true;
-                    }
+                    StopReadingsAsync();
+                    _stoppedBecauseNotWorn = true;
                 }
             }
         }
