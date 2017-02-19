@@ -141,6 +141,9 @@ namespace Sensus.Probes.User.Scripts
 
         [ListUiProperty("Run Mode:", true, 14, new object[] { RunMode.Multiple, RunMode.SingleUpdate, RunMode.SingleKeepOldest })]
         public RunMode RunMode { get; set; }
+
+        [EntryStringUiProperty("Incomplete Submission Confirmation:", true, 15)]
+        public string IncompleteSubmissionConfirmation { get; set; }
         #endregion
 
         #region Constructor
@@ -160,6 +163,7 @@ namespace Sensus.Probes.User.Scripts
             RunOnStart = false;
             DisplayProgress = true;
             RunMode = RunMode.SingleUpdate;
+            IncompleteSubmissionConfirmation = "You have not completed all required fields. Do you want to continue?";
 
             Triggers.CollectionChanged += (o, e) =>
             {
@@ -395,7 +399,7 @@ namespace Sensus.Probes.User.Scripts
 
                 }, cancellationToken);
 
-            // Be careful to use Script.Id rather than script.Id for the callback domain. Using the former means that callbacks are tied to the script runner and not the script copies (the latter) that we will be running. The latter would always be unique.
+                // Be careful to use Script.Id rather than script.Id for the callback domain. Using the former means that callbacks are tied to the script runner and not the script copies (the latter) that we will be running. The latter would always be unique.
             }, GetType().FullName + "-" + ((long)(triggerTime.Trigger - DateTime.MinValue).TotalDays) + "-" + triggerTime.Window, Script.Id, Probe.Protocol.Id);
 
 #if __IOS__
