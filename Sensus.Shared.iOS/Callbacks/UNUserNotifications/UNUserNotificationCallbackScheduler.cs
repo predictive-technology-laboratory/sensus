@@ -39,7 +39,9 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
             DisplayPage displayPage = GetCallbackDisplayPage(callbackId);
             NSMutableDictionary callbackInfo = GetCallbackInfo(callbackId, repeating, repeatDelayMS, repeatLag, displayPage);
             if (callbackInfo == null)
+            {
                 return;
+            }
 
             string userNotificationMessage = GetCallbackUserNotificationMessage(callbackId);
 

@@ -164,6 +164,19 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
+        public DateTimeOffset SubmissionTimestamp
+        {
+            get
+            {
+                return _submissionTimestamp;
+            }
+
+            set
+            {
+                _submissionTimestamp = value;
+            }
+        }
+
         public override string DisplayDetail
         {
             get
@@ -180,19 +193,6 @@ namespace Sensus.Probes.User.Scripts
                     else
                         return _response.ToString();
                 }
-            }
-        }
-
-        public DateTimeOffset SubmissionTimestamp
-        {
-            get
-            {
-                return _submissionTimestamp;
-            }
-
-            set
-            {
-                _submissionTimestamp = value;
             }
         }
 

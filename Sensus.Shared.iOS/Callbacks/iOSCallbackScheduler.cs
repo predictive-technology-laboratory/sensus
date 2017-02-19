@@ -28,12 +28,12 @@ namespace Sensus.iOS.Callbacks
 {
     public abstract class iOSCallbackScheduler : CallbackScheduler, IiOSCallbackScheduler
     {
-        protected override void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag)
+        protected override void ScheduleRepeatingCallbackPlatformSpecific(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag)
         {
             ScheduleCallbackAsync(callbackId, initialDelayMS, true, repeatDelayMS, repeatLag);
         }
 
-        protected override void ScheduleOneTimeCallback(string callbackId, int delayMS)
+        protected override void ScheduleOneTimeCallbackPlatformSpecific(string callbackId, int delayMS)
         {
             ScheduleCallbackAsync(callbackId, delayMS, false, -1, false);
         }

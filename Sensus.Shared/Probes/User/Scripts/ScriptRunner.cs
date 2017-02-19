@@ -319,7 +319,7 @@ namespace Sensus.Probes.User.Scripts
                 }
 
                 // we should always allow at least one future script to be scheduled. this is why the _scheduledCallbackIds collection
-                // is a member of the current instances and not global within the script probe. beyond this single scheduled script,
+                // is a member of the current instance and not global within the script probe. beyond this single scheduled script,
                 // only allow a maximum of 32 script-run callbacks to be scheduled. android's limit is 500, and ios 9 has a limit of 64. 
                 // not sure about ios 10+. as long as we have just a few script runners, each one will be able to schedule a few future
                 // script runs. this will help mitigate the problem of users ignoring surveys and losing touch with the study.
@@ -345,16 +345,28 @@ namespace Sensus.Probes.User.Scripts
 
             Script scriptToRun = new Script(Script, Guid.NewGuid()) { ExpirationDate = triggerTime.Expiration, ScheduledRunTime = triggerTime.Trigger };
             ScheduledCallback callback = CreateScriptRunCallback(scriptToRun, triggerTime);
-            SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(callback, (int)triggerTime.ReferenceTillTrigger.TotalMilliseconds);
 
-            lock (_scriptRunCallbackIds)
+            // there is a race condition, so far only seen in ios, in which multiple script runner notifications
+            // accumulate and are executed concurrently when the user opens the app. when these script runners
+            // execute they add their scripts to the pending scripts collection and concurrently attempt to 
+            // schedule all future scripts. because two such attempts are made concurrently, they may race to 
+            // schedule the same future script. each script callback id is functional in the sense that it is
+            // a string denoting the script to run and the time window to run within. thus, the callback ids can
+            // duplicate. the callback scheduler checks for such duplicate ids and will return false on the next
+            // line when a duplicate is detected. in the case of a duplicate we can simply abort scheduling the
+            // script run since it was already schedule. this issue is much less common in android because all 
+            // scripts are run immediately in the background, producing little opportunity for the race condition.
+            if (SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(callback, (int)triggerTime.ReferenceTillTrigger.TotalMilliseconds))
             {
-                _scriptRunCallbackIds.Add(callback.Id);
+                lock (_scriptRunCallbackIds)
+                {
+                    _scriptRunCallbackIds.Add(callback.Id);
+                }
+
+                SensusServiceHelper.Get().Logger.Log($"Scheduled for {triggerTime.Trigger} ({callback.Id})", LoggingLevel.Normal, GetType());
+
+                _maxScheduledDate = _maxScheduledDate.Max(triggerTime.Trigger);
             }
-
-            SensusServiceHelper.Get().Logger.Log($"Scheduled for {triggerTime.Trigger} ({callback.Id})", LoggingLevel.Normal, GetType());
-
-            _maxScheduledDate = _maxScheduledDate.Max(triggerTime.Trigger);
         }
 
         private ScheduledCallback CreateScriptRunCallback(Script script, ScriptTriggerTime triggerTime)
@@ -383,6 +395,7 @@ namespace Sensus.Probes.User.Scripts
 
                 }, cancellationToken);
 
+            // Be careful to use Script.Id rather than script.Id for the callback domain. Using the former means that callbacks are tied to the script runner and not the script copies (the latter) that we will be running. The latter would always be unique.
             }, GetType().FullName + "-" + ((long)(triggerTime.Trigger - DateTime.MinValue).TotalDays) + "-" + triggerTime.Window, Script.Id, Probe.Protocol.Id);
 
 #if __IOS__

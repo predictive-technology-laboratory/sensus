@@ -613,15 +613,21 @@ namespace Sensus
                             lock (_runningProtocolIds)
                             {
                                 foreach (Protocol protocol in _registeredProtocols)
+                                {
                                     if (_runningProtocolIds.Contains(protocol.Id))
+                                    {
                                         protocolsToTest.Add(protocol);
+                                    }
+                                }
                             }
                         }
 
                         foreach (Protocol protocolToTest in protocolsToTest)
                         {
                             if (cancellationToken.IsCancellationRequested)
+                            {
                                 break;
+                            }
 
                             _logger.Log("Sensus health test for protocol \"" + protocolToTest.Name + "\" is running on callback " + callbackId + ".", LoggingLevel.Normal, GetType());
 
@@ -730,23 +736,62 @@ namespace Sensus
 
         public void AddScriptToRun(Script script, RunMode runMode)
         {
-            var scriptsWithSameParent = _scriptsToRun.Where(s => s.SharesParentScriptWith(script)).ToArray();
-
-            if (scriptsWithSameParent.Any() && runMode == RunMode.SingleKeepOldest)
+            // scripts can be added from several threads, particularly on ios when several script runs can execute concurrently when
+            // the user opens the app. execute all additions to the _scriptsToRun collection on the main thread for safety.
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
-                return;
-            }
+                bool modifiedScriptsToRun = false;
 
-            if (scriptsWithSameParent.Any() && runMode == RunMode.SingleUpdate)
-            {
-                foreach (var scriptWithSameParent in scriptsWithSameParent)
+                if (runMode == RunMode.Multiple)
                 {
-                    _scriptsToRun.Remove(scriptWithSameParent);
+                    _scriptsToRun.Insert(0, script);
+                    modifiedScriptsToRun = true;
                 }
-            }
+                else
+                {
+                    List<Script> scriptsFromSameRunner = _scriptsToRun.Where(scriptToRun => scriptToRun.Runner.Script.Id == script.Runner.Script.Id).ToList();
+                    scriptsFromSameRunner.Add(script);
+                    scriptsFromSameRunner.Sort((script1, script2) => script1.Birthdate.CompareTo(script2.Birthdate));
 
-            _scriptsToRun.Insert(0, script);
-            IssuePendingSurveysNotificationAsync(script.Runner.Probe.Protocol.Id, true);
+                    Script scriptToKeep = null;
+                    List<Script> scriptsToRemove = null;
+
+                    if (runMode == RunMode.SingleKeepOldest)
+                    {
+                        scriptToKeep = scriptsFromSameRunner.First();
+                        scriptsToRemove = scriptsFromSameRunner.Skip(1).ToList();
+                    }
+                    else if (runMode == RunMode.SingleUpdate)
+                    {
+                        scriptToKeep = scriptsFromSameRunner.Last();
+                        scriptsToRemove = scriptsFromSameRunner.Take(scriptsFromSameRunner.Count - 1).ToList();
+                    }
+                    else
+                    {
+                        SensusException.Report("Unrecognized RunMode:  " + runMode);
+                        return;
+                    }
+
+                    foreach (Script scriptToRemove in scriptsToRemove)
+                    {
+                        if (_scriptsToRun.Remove(scriptToRemove))
+                        {
+                            modifiedScriptsToRun = true;
+                        }
+                    }
+
+                    if (!_scriptsToRun.Contains(scriptToKeep))
+                    {
+                        _scriptsToRun.Insert(0, scriptToKeep);
+                        modifiedScriptsToRun = true;
+                    }
+                }
+
+                if (modifiedScriptsToRun)
+                {
+                    IssuePendingSurveysNotificationAsync(script.Runner.Probe.Protocol.Id, true);
+                }
+            });
         }
 
         public void RemoveScript(Script script)

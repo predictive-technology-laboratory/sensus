@@ -37,21 +37,33 @@ namespace Sensus.Callbacks
         }
 
         #region platform-specific methods
-        protected abstract void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag);
-        protected abstract void ScheduleOneTimeCallback(string callbackId, int delayMS);
+        protected abstract void ScheduleRepeatingCallbackPlatformSpecific(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag);
+        protected abstract void ScheduleOneTimeCallbackPlatformSpecific(string callbackId, int delayMS);
         protected abstract void UnscheduleCallbackPlatformSpecific(string callbackId);
         #endregion
 
-        public void ScheduleRepeatingCallback(ScheduledCallback callback, int initialDelayMS, int repeatDelayMS, bool repeatLag)
+        public bool ScheduleRepeatingCallback(ScheduledCallback callback, int initialDelayMS, int repeatDelayMS, bool repeatLag)
         {
-            _idCallback[callback.Id] = callback;
-            ScheduleRepeatingCallback(callback.Id, initialDelayMS, repeatDelayMS, repeatLag);
+            if (!_idCallback.TryAdd(callback.Id, callback))
+            {
+                return false;
+            }
+
+            ScheduleRepeatingCallbackPlatformSpecific(callback.Id, initialDelayMS, repeatDelayMS, repeatLag);
+
+            return true;
         }
 
-        public void ScheduleOneTimeCallback(ScheduledCallback callback, int delayMS)
+        public bool ScheduleOneTimeCallback(ScheduledCallback callback, int delayMS)
         {
-            _idCallback[callback.Id] = callback;
-            ScheduleOneTimeCallback(callback.Id, delayMS);
+            if (!_idCallback.TryAdd(callback.Id, callback))
+            {
+                return false;
+            }
+            
+            ScheduleOneTimeCallbackPlatformSpecific(callback.Id, delayMS);
+
+            return true;
         }
 
         public bool CallbackIsScheduled(string callbackId)
@@ -196,7 +208,9 @@ namespace Sensus.Callbacks
                                         scheduleRepeatCallback(nextCallbackTime);
                                     }
                                     else
+                                    {
                                         UnscheduleCallback(callbackId);
+                                    }
                                 }
                             }
                         }

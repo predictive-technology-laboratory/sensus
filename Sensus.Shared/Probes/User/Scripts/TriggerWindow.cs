@@ -35,7 +35,9 @@ namespace Sensus.Probes.User.Scripts
         /// <param name="maxAge">Maximum age of the triggered script.</param>
         public ScriptTriggerTime GetNextTriggerTime(DateTime reference, DateTime after, bool windowExpiration, TimeSpan? maxAge)
         {
-            TimeSpan timeTillTrigger = TimeBetween(reference, after) + TimeTillFutureStart(after.TimeOfDay) + RandomWindowTime();
+            double zeroToOne = new Random((int)DateTime.Now.Ticks).NextDouble();
+            TimeSpan randomIntervalIntoWindow = TimeSpan.FromTicks((long)(Duration.Ticks * zeroToOne));
+            TimeSpan timeTillTrigger = TimeBetween(reference, after) + TimeTillFutureStart(after.TimeOfDay) + randomIntervalIntoWindow;
             DateTime triggerDateTime = reference.Add(timeTillTrigger);
             
             // it only makes sense to do window expiration when the window timespan is not zero. if we did window expiration with
@@ -54,19 +56,6 @@ namespace Sensus.Probes.User.Scripts
             }
 
             return new ScriptTriggerTime(reference, triggerDateTime, windowExpirationDateTime.Min(ageExpirationDateTime), ToString());
-        }
-        #endregion
-
-        #region Private Methods
-        /// <summary>
-        /// Calculates a random time into this window.
-        /// </summary>
-        /// <returns>The random time.</returns>
-        private TimeSpan RandomWindowTime()
-        {
-            var zeroToOne = new Random((int)DateTime.Now.Ticks).NextDouble();
-
-            return TimeSpan.FromTicks((long)(Duration.Ticks * zeroToOne));
         }
         #endregion
     }

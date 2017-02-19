@@ -30,7 +30,7 @@ namespace Sensus.Android.Callbacks
             _service = service;
         }
 
-        protected override void ScheduleOneTimeCallback(string callbackId, int delayMS)
+        protected override void ScheduleOneTimeCallbackPlatformSpecific(string callbackId, int delayMS)
         {
             Intent callbackIntent = CreateCallbackIntent(callbackId);
             PendingIntent callbackPendingIntent = CreateCallbackPendingIntent(callbackIntent);
@@ -38,7 +38,7 @@ namespace Sensus.Android.Callbacks
             SensusServiceHelper.Get().Logger.Log("Callback " + callbackId + " scheduled for " + DateTime.Now.AddMilliseconds(delayMS) + " (one-time).", LoggingLevel.Normal, GetType());
         }
 
-        protected override void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag)
+        protected override void ScheduleRepeatingCallbackPlatformSpecific(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag)
         {
             Intent callbackIntent = CreateCallbackIntent(callbackId);
             callbackIntent.PutExtra(SENSUS_CALLBACK_REPEATING_KEY, true);

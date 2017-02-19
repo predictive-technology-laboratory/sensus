@@ -220,6 +220,7 @@ namespace Sensus.Probes
                             }
 
                             if (data != null)
+                            {
                                 foreach (Datum datum in data)
                                 {
                                     if (cancellationToken.IsCancellationRequested)
@@ -234,6 +235,7 @@ namespace Sensus.Probes
                                         SensusServiceHelper.Get().Logger.Log("Failed to store datum:  " + ex.Message, LoggingLevel.Normal, GetType());
                                     }
                                 }
+                            }
 
                             _isPolling = false;
                         }

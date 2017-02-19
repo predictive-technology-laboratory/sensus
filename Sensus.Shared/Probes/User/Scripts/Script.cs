@@ -47,14 +47,15 @@ namespace Sensus.Probes.User.Scripts
         public bool Expired => ExpirationDate < DateTime.Now;
 
         /// <summary>
-        /// Gets the birthdate of the script.
+        /// Gets the birthdate of the script, which is when it was first made available to the user for completion.
         /// </summary>
         /// <value>The birthdate.</value>
         /// <remarks>
         /// The scheduled time will always be slightly before the run time, depending on latencies in the android/ios alarm/notification systems.
         /// Furthermore, on ios notifications are delivered to the tray and not to the app when the app is backgrounded. The user must open the 
         /// notification in order for the script to run. In this case the scheduled time could significantly precede the run time. In any case, 
-        /// the scheduled time is the right thing to use as the script's birthdate.
+        /// the scheduled time is the right thing to use as the script's birthdate. On the other hand, not all scripts are scheduled (e.g., those
+        /// that are triggered by other probes). For such scripts the only thing we'll have is the run time.
         /// </remarks>
         [JsonIgnore]
         public DateTime Birthdate => (ScheduledRunTime ?? RunTime).Value.LocalDateTime;
@@ -99,17 +100,6 @@ namespace Sensus.Probes.User.Scripts
             Id = id;
             Runner = runner;
             InputGroups = inputGroups;
-        }
-        #endregion
-
-        #region Public Methods
-        /// <summary>
-        /// Checks whether the current and another script share a parent script.
-        /// </summary>
-        /// <returns><c>true</c>, if parent script is shared, <c>false</c> otherwise.</returns>
-        public bool SharesParentScriptWith(Script script)
-        {
-            return Runner.Script.Id == script.Runner.Script.Id;
         }
         #endregion
     }
