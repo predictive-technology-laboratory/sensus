@@ -12,26 +12,40 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Android.App;
-using EstimoteSdk;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Sensus.Context;
+using System.Linq;
+
+#if __ANDROID__
+using Android.App;
+using EstimoteSdk;
+#elif __IOS__
+using Estimote;
+using Region = CoreLocation.CLBeaconRegion;
+#endif
 
 namespace Sensus.Probes.Location
 {
-    public class EstimoteBeaconManager :  Java.Lang.Object, BeaconManager.IServiceReadyCallback, BeaconManager.IMonitoringListener
+#if __ANDROID__
+    public class EstimoteBeaconManager : Java.Lang.Object, BeaconManager.IServiceReadyCallback, BeaconManager.IMonitoringListener
+#elif __IOS__
+    public class EstimoteBeaconManager
+#endif
     {
         public static bool RegionsAreEqual(Region region1, Region region2)
         {
-            return region1.Identifier == region2.Identifier && 
-                   region1.ProximityUUID.ToString() == region2.ProximityUUID.ToString() && 
-                   region1.Major == region2.Major && 
+            return region1.Identifier == region2.Identifier &&
+#if __ANDROID__
+                   region1.ProximityUUID.ToString() == region2.ProximityUUID.ToString() &&
+#elif __IOS__
+                   region1.ProximityUuid.ToString() == region2.ProximityUuid.ToString() &&
+#endif
+                   region1.Major == region2.Major &&
                    region1.Minor == region2.Minor;
         }
 
-        public event EventHandler<Tuple<Region, IList<Beacon>>> EnteredRegion;
+        public event EventHandler<Region> EnteredRegion;
         public event EventHandler<Region> ExitedRegion;
 
         private BeaconManager _beaconManager;
@@ -43,14 +57,40 @@ namespace Sensus.Probes.Location
 
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
+#if __ANDROID__
                 _beaconManager = new BeaconManager(Application.Context);
                 _beaconManager.SetMonitoringListener(this);
                 _beaconManager.SetForegroundScanPeriod((long)foregroundScanPeriod.TotalMilliseconds, (long)foregroundWaitTime.TotalMilliseconds);
                 _beaconManager.SetBackgroundScanPeriod((long)backgroundScanPeriod.TotalMilliseconds, (long)backgroundWaitTime.TotalMilliseconds);
                 _beaconManager.Connect(this);
+#elif __IOS__
+                _beaconManager = new BeaconManager();
+
+                _beaconManager.EnteredRegion += (sender, e) =>
+                {
+                    if (_beacons.Any(beacon => RegionsAreEqual(beacon.Region, e.Region)))
+                    {
+                        EnteredRegion?.Invoke(this, e.Region);
+                    }
+                };
+
+                _beaconManager.ExitedRegion += (sender, e) =>
+                {
+                    if (_beacons.Any(beacon => RegionsAreEqual(beacon.Region, e.Region)))
+                    {
+                        ExitedRegion?.Invoke(this, e.Region);
+                    }
+                };
+
+                foreach (EstimoteBeacon beacon in _beacons)
+                {
+                    _beaconManager.StartMonitoringForRegion(beacon.Region);
+                }
+#endif
             });
         }
 
+#if __ANDROID__
         public void OnServiceReady()
         {
             foreach (EstimoteBeacon beacon in _beacons)
@@ -63,7 +103,7 @@ namespace Sensus.Probes.Location
         {
             if (_beacons.Any(beacon => RegionsAreEqual(beacon.Region, region)))
             {
-                EnteredRegion?.Invoke(this, new Tuple<Region, IList<Beacon>>(region, beacons));
+                EnteredRegion?.Invoke(this, region);
             }
         }
 
@@ -74,6 +114,7 @@ namespace Sensus.Probes.Location
                 ExitedRegion?.Invoke(this, region);
             }
         }
+#endif
 
         public void Disconnect()
         {
@@ -81,7 +122,11 @@ namespace Sensus.Probes.Location
             {
                 try
                 {
+#if __ANDROID__
                     _beaconManager.StopMonitoring(beacon.Region);
+#elif __IOS__
+                    _beaconManager.StopMonitoringForRegion(beacon.Region);
+#endif
                 }
                 catch (Exception ex)
                 {
@@ -89,14 +134,16 @@ namespace Sensus.Probes.Location
                 }
             }
 
+#if __ANDROID__
             try
             {
                 _beaconManager.Disconnect();
             }
             catch (Exception)
             {
-                
+
             }
+#endif
 
             try
             {

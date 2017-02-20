@@ -14,8 +14,16 @@
 
 using System;
 using System.Linq;
-using EstimoteSdk;
 using Newtonsoft.Json;
+
+#if __ANDROID__
+using Java.Lang;
+using Java.Util;
+using EstimoteSdk;
+#elif __IOS__
+using Foundation;
+using Region = CoreLocation.CLBeaconRegion;
+#endif
 
 namespace Sensus.Probes.Location
 {
@@ -29,7 +37,7 @@ namespace Sensus.Probes.Location
 
                 if (parts.Length != 4)
                 {
-                    throw new Exception("Invalid beacon:  " + value);
+                    throw new System.Exception("Invalid beacon:  " + value);
                 }
 
                 string identifier = string.IsNullOrWhiteSpace(parts[0]) ? Guid.NewGuid().ToString() : parts[0];  // identifier cannot be null
@@ -52,7 +60,7 @@ namespace Sensus.Probes.Location
 
                 return new EstimoteBeacon(identifier, proximityUUID, major, minor);
             }
-            catch (Exception)
+            catch (System.Exception)
             {
                 return null;
             }
@@ -68,14 +76,28 @@ namespace Sensus.Probes.Location
         {
             get
             {
-                
-#if __ANDROID__
-                Java.Util.UUID proximityUUID = ProximityUUID == null ? null : Java.Util.UUID.FromString(ProximityUUID);
-                Java.Lang.Integer major = Major == null ? null : Java.Lang.Integer.ValueOf(Major.Value);
-                Java.Lang.Integer minor = Minor == null ? null : Java.Lang.Integer.ValueOf(Minor.Value);
-#endif
 
+#if __ANDROID__
+                UUID proximityUUID = ProximityUUID == null ? null : UUID.FromString(ProximityUUID);
+                Integer major = Major == null ? null : Integer.ValueOf(Major.Value);
+                Integer minor = Minor == null ? null : Integer.ValueOf(Minor.Value);
                 return new Region(Identifier, proximityUUID, major, minor);
+#elif __IOS__
+                NSUuid proximityUUID = ProximityUUID == null ? null : new NSUuid(ProximityUUID);
+
+                if (Major != null && Minor == null)
+                {
+                    return new Region(proximityUUID, (ushort)Major.Value, Identifier);
+                }
+                else if (Major != null && Minor != null)
+                {
+                    return new Region(proximityUUID, (ushort)Major.Value, (ushort)Minor.Value, Identifier);
+                }
+                else
+                {
+                    return new Region(proximityUUID, Identifier);
+                }
+#endif
             }
         }
 

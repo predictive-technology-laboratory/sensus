@@ -107,9 +107,9 @@ namespace Sensus.Probes.Location
             BackgroundScanPeriodSeconds = 10;
             BackgroundWaitPeriodSeconds = 30;
 
-            _beaconManager.EnteredRegion += async (sender, regionBeacons) =>
+            _beaconManager.EnteredRegion += async (sender, region) =>
             {
-                await StoreDatumAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, regionBeacons.Item1, true));
+                await StoreDatumAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, region, true));
             };
 
             _beaconManager.ExitedRegion += async (sender, region) =>

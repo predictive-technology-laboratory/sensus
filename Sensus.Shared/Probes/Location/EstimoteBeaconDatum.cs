@@ -13,16 +13,21 @@
 // limitations under the License.
 
 using System;
-using EstimoteSdk;
 using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 using Newtonsoft.Json;
+
+#if __ANDROID__
+using EstimoteSdk;
+#elif __IOS__
+using Region = CoreLocation.CLBeaconRegion;
+#endif
 
 namespace Sensus.Probes.Location
 {
     public class EstimoteBeaconDatum : Datum
     {
         [StringProbeTriggerProperty]
-        public string Name { get; set; }
+        public string Identifier { get; set; }
 
         [StringProbeTriggerProperty]
         public string UUID { get; set; }
@@ -41,7 +46,7 @@ namespace Sensus.Probes.Location
         {
             get
             {
-                return Name + ":" + UUID + ":" + Major + ":" + Minor;
+                return Identifier + ":" + UUID + ":" + Major + ":" + Minor;
             }
         }
 
@@ -55,17 +60,24 @@ namespace Sensus.Probes.Location
         public EstimoteBeaconDatum(DateTimeOffset timestamp, Region region, bool entering)
             : base(timestamp)
         {
-            Name = region.Identifier;
+            Identifier = region.Identifier;
+            Entering = entering;
+
+#if __ANDROID__
             UUID = region.ProximityUUID.ToString();
             Major = region.Major;
             Minor = region.Minor;
-            Entering = entering;
+#elif __IOS__
+            UUID = region.ProximityUuid.ToString();
+            Major = region.Major.Int32Value;
+            Minor = region.Minor.Int32Value;
+#endif
         }
 
         public override string ToString()
         {
             return base.ToString() + Environment.NewLine +
-                   "Name:  " + Name + Environment.NewLine +
+                   "Identifier:  " + Identifier + Environment.NewLine +
                    "UUID:  " + UUID + Environment.NewLine +
                    "Major:  " + Major + Environment.NewLine +
                    "Minor:  " + Minor + Environment.NewLine +
