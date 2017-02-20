@@ -90,7 +90,7 @@ sensus.read.json = function(data.path, is.directory = TRUE, recursive = TRUE, co
     file.num = file.num + 1
     
     print(paste("Parsing JSON file ", file.num, " of ", num.files, ":  ", path, sep = ""))
-
+    
     # read and parse JSON
     file.size = file.info(path)$size
     if(file.size == 0)
@@ -100,7 +100,7 @@ sensus.read.json = function(data.path, is.directory = TRUE, recursive = TRUE, co
     
     file.text = readChar(path, file.size)
     file.json = jsonlite::fromJSON(file.text)
-
+    
     # skip empty JSON
     if(is.null(file.json) || is.na(file.json) || nrow(file.json) == 0)
     {
@@ -128,9 +128,9 @@ sensus.read.json = function(data.path, is.directory = TRUE, recursive = TRUE, co
     
     # parse timestamps
     file.json$Timestamp = strptime(file.json$Timestamp, format = "%Y-%m-%dT%H:%M:%OS", tz="UTC")    
-    if(convert.to.local.timezone)
+    if(TRUE)
     {
-      file.json$Timestamp = lubridate::with_tz(file.json$Timestamp, local.timezone)
+      file.json$Timestamp = lubridate::with_tz(file.json$Timestamp, Sys.timezone())
     }
     
     # add to data by type, putting each file in its own list entry (we'll merge files later)
@@ -143,7 +143,7 @@ sensus.read.json = function(data.path, is.directory = TRUE, recursive = TRUE, co
     data.type.file.num = length(data[[type]]) + 1
     data[[type]][[data.type.file.num]] = file.json
   }
- 
+  
   # merge files for each data type
   for(datum.type in names(data))
   { 
@@ -151,14 +151,23 @@ sensus.read.json = function(data.path, is.directory = TRUE, recursive = TRUE, co
     
     # pre-allocate vectors for each column in data frame
     datum.type.num.rows = sum(sapply(datum.type.data, nrow))
-    datum.type.col.classes = sapply(datum.type.data[[1]], class)
+    datum.type.col.classes = list()
+    num.files = length(datum.type.data)
+    for(file.num in 1:num.files)
+    {
+      file.col.classes = sapply(datum.type.data[[file.num]], class)
+      for (col.class in names(file.col.classes))
+      {
+        if (!is.element(col.class, names(datum.type.col.classes)))
+          datum.type.col.classes[[col.class]] = file.col.classes[[col.class]]
+      }
+    }
     datum.type.col.classes[["Timestamp"]] = NULL  # cannot directly create vector with mode POSIXlt
     datum.type.col.vectors = lapply(datum.type.col.classes, vector, length = datum.type.num.rows)
     datum.type.col.vectors[["Timestamp"]] = as.POSIXlt(rep(NA, datum.type.num.rows))
     
     # merge files for current datum.type
     insert.start.row = 1
-    num.files = length(datum.type.data)
     datum.type.col.vectors.names = names(datum.type.col.vectors)
     percent.done = 0
     for(file.num in 1:num.files)
@@ -169,7 +178,8 @@ sensus.read.json = function(data.path, is.directory = TRUE, recursive = TRUE, co
       insert.end.row = insert.start.row + file.data.rows - 1
       for(col.name in datum.type.col.vectors.names)
       {
-        datum.type.col.vectors[[col.name]][insert.start.row:insert.end.row] = file.data[ , col.name]
+        if (is.element(col.name, names(file.data)))
+          datum.type.col.vectors[[col.name]][insert.start.row:insert.end.row] = file.data[, col.name]
       }
       
       insert.start.row = insert.start.row + file.data.rows
