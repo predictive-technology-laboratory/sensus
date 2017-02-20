@@ -27,7 +27,7 @@ namespace Sensus.Probes.Location
         private EstimoteBeaconManager _beaconManager;
         private List<EstimoteBeacon> _beacons;
 
-        [EditorUiProperty("Beacons (One Per Line):", true, 1)]
+        [EditorUiProperty("Beacons (One Per Line):", true, 30)]
         public string Beacons
         {
             get
@@ -40,17 +40,17 @@ namespace Sensus.Probes.Location
             }
         }
 
-        [TimeUiProperty("Foreground Scan Period:", true, 2)]
-        public TimeSpan ForegroundScanPeriod { get; set; }
+        [EntryIntegerUiProperty("Foreground Scan Period (Seconds):", true, 31)]
+        public int ForegroundScanPeriodSeconds { get; set; }
 
-        [TimeUiProperty("Foreground Wait Period:", true, 3)]
-        public TimeSpan ForegroundWaitPeriod { get; set; }
+        [EntryIntegerUiProperty("Foreground Wait Period (Seconds):", true, 32)]
+        public int ForegroundWaitPeriodSeconds { get; set; }
 
-        [TimeUiProperty("Background Scan Period:", true, 4)]
-        public TimeSpan BackgroundScanPeriod { get; set; }
+        [EntryIntegerUiProperty("Background Scan Period (Seconds):", true, 33)]
+        public int BackgroundScanPeriodSeconds { get; set; }
 
-        [TimeUiProperty("Background Wait Period:", true, 5)]
-        public TimeSpan BackgroundWaitPeriod { get; set; }
+        [EntryIntegerUiProperty("Background Wait Period (Seconds):", true, 34)]
+        public int BackgroundWaitPeriodSeconds { get; set; }
 
         [JsonIgnore]
         protected override bool DefaultKeepDeviceAwake
@@ -102,10 +102,20 @@ namespace Sensus.Probes.Location
             _beaconManager = new EstimoteBeaconManager();
             _beacons = new List<EstimoteBeacon>();
 
-            ForegroundScanPeriod = TimeSpan.FromSeconds(10);
-            ForegroundWaitPeriod = TimeSpan.FromSeconds(30);
-            BackgroundScanPeriod = TimeSpan.FromSeconds(10);
-            BackgroundWaitPeriod = TimeSpan.FromSeconds(30);
+            ForegroundScanPeriodSeconds = 10;
+            ForegroundWaitPeriodSeconds = 30;
+            BackgroundScanPeriodSeconds = 10;
+            BackgroundWaitPeriodSeconds = 30;
+
+            _beaconManager.EnteredRegion += async (sender, regionBeacons) =>
+            {
+                await StoreDatumAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, regionBeacons.Item1, true));
+            };
+
+            _beaconManager.ExitedRegion += async (sender, region) =>
+            {
+                await StoreDatumAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, region, false));
+            };
         }
 
         protected override void Initialize()
@@ -129,9 +139,7 @@ namespace Sensus.Probes.Location
                 throw new Exception("Bluetooth not enabled.");
             }
 
-            _beaconManager.SetForegroundScanPeriod(ForegroundScanPeriod, ForegroundWaitPeriod);
-            _beaconManager.SetBackgroundScanPeriod(BackgroundScanPeriod, BackgroundWaitPeriod);
-            _beaconManager.Connect(_beacons);
+            _beaconManager.Connect(_beacons, TimeSpan.FromSeconds(ForegroundScanPeriodSeconds), TimeSpan.FromSeconds(ForegroundWaitPeriodSeconds), TimeSpan.FromSeconds(BackgroundScanPeriodSeconds), TimeSpan.FromSeconds(BackgroundWaitPeriodSeconds));
         }
 
         protected override void StopListening()

@@ -32,9 +32,9 @@ namespace Sensus.Probes.Location
                     throw new Exception("Invalid beacon:  " + value);
                 }
 
-                string name = string.IsNullOrWhiteSpace(parts[0]) ? null : parts[0];
+                string identifier = string.IsNullOrWhiteSpace(parts[0]) ? Guid.NewGuid().ToString() : parts[0];  // identifier cannot be null
 
-                string uuid = parts[1];
+                string proximityUUID = string.IsNullOrWhiteSpace(parts[1]) ? null : parts[1];
 
                 int? major = null;
                 int majorInt;
@@ -50,17 +50,16 @@ namespace Sensus.Probes.Location
                     minor = minorInt;
                 }
 
-                return new EstimoteBeacon(name, uuid, major, minor);
+                return new EstimoteBeacon(identifier, proximityUUID, major, minor);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                SensusServiceHelper.Get().Logger.Log("Exception while parsing beacon:  " + ex, LoggingLevel.Normal, typeof(EstimoteBeacon));
                 return null;
             }
         }
 
-        public string Name { get; set; }
-        public string UUID { get; set; }
+        public string Identifier { get; set; }
+        public string ProximityUUID { get; set; }
         public int? Major { get; set; }
         public int? Minor { get; set; }
 
@@ -69,55 +68,43 @@ namespace Sensus.Probes.Location
         {
             get
             {
-                if (UUID == null && Major == null && Minor == null)
-                {
-                    return new Region(Name, UUID);
-                }
-                else if (UUID != null && Major == null && Minor == null)
-                {
-                    return new Region(Name, UUID);
-                }
-                else if (UUID != null && Major != null && Minor == null)
-                {
-                    return new Region(Name, UUID, Major.Value);
-                }
-                else if (UUID != null && Major != null && Minor != null)
-                {
-                    return new Region(Name, UUID, Major.Value, Minor.Value);
-                }
-                else
-                {
-                    return null;
-                }
+                
+#if __ANDROID__
+                Java.Util.UUID proximityUUID = ProximityUUID == null ? null : Java.Util.UUID.FromString(ProximityUUID);
+                Java.Lang.Integer major = Major == null ? null : Java.Lang.Integer.ValueOf(Major.Value);
+                Java.Lang.Integer minor = Minor == null ? null : Java.Lang.Integer.ValueOf(Minor.Value);
+#endif
+
+                return new Region(Identifier, proximityUUID, major, minor);
             }
         }
 
-        public EstimoteBeacon(string name, string uuid, int? major, int? minor)
+        public EstimoteBeacon(string identifier, string proximityUUID, int? major, int? minor)
         {
-            if (name == null)
+            if (string.IsNullOrWhiteSpace(identifier))
             {
-                throw new ArgumentNullException(nameof(name));
+                throw new ArgumentException("Cannot be null or white space.", nameof(identifier));
             }
 
-            bool valid = uuid == null && major == null && minor == null ||
-                         uuid != null && major == null && minor == null ||
-                         uuid != null && major != null && minor == null ||
-                         uuid != null && major != null && minor != null;
+            bool valid = proximityUUID == null && major == null && minor == null ||
+                         proximityUUID != null && major == null && minor == null ||
+                         proximityUUID != null && major != null && minor == null ||
+                         proximityUUID != null && major != null && minor != null;
 
             if (!valid)
             {
                 throw new ArgumentException("Invalid beacon specification");
             }
 
-            Name = name;
-            UUID = uuid;
+            Identifier = identifier;
+            ProximityUUID = proximityUUID;
             Major = major;
             Minor = minor;
         }
 
         public override string ToString()
         {
-            return Name + ":" + UUID + ":" + Major + ":" + Minor;
+            return Identifier + ":" + ProximityUUID + ":" + Major + ":" + Minor;
         }
     }
 }

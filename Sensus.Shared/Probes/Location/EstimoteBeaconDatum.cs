@@ -15,6 +15,7 @@
 using System;
 using EstimoteSdk;
 using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
+using Newtonsoft.Json;
 
 namespace Sensus.Probes.Location
 {
@@ -26,15 +27,21 @@ namespace Sensus.Probes.Location
         [StringProbeTriggerProperty]
         public string UUID { get; set; }
 
+        [DoubleProbeTriggerProperty]
         public int? Major { get; set; }
 
+        [DoubleProbeTriggerProperty]
         public int? Minor { get; set; }
 
+        [BooleanProbeTriggerProperty]
+        public bool Entering { get; set; }
+
+        [JsonIgnore]
         public override string DisplayDetail
         {
             get
             {
-                return UUID + ":" + Major + ":" + Minor;
+                return Name + ":" + UUID + ":" + Major + ":" + Minor;
             }
         }
 
@@ -45,13 +52,14 @@ namespace Sensus.Probes.Location
         {
         }
 
-        public EstimoteBeaconDatum(DateTimeOffset timestamp, Region region)
+        public EstimoteBeaconDatum(DateTimeOffset timestamp, Region region, bool entering)
             : base(timestamp)
         {
             Name = region.Identifier;
             UUID = region.ProximityUUID.ToString();
             Major = region.Major;
             Minor = region.Minor;
+            Entering = entering;
         }
 
         public override string ToString()
@@ -60,7 +68,8 @@ namespace Sensus.Probes.Location
                    "Name:  " + Name + Environment.NewLine +
                    "UUID:  " + UUID + Environment.NewLine +
                    "Major:  " + Major + Environment.NewLine +
-                   "Minor:  " + Minor;
+                   "Minor:  " + Minor + Environment.NewLine +
+                   "Entering:  " + Entering;
         }
     }
 }

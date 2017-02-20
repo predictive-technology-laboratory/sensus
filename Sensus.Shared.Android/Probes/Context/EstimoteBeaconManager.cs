@@ -17,12 +17,13 @@ using EstimoteSdk;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Sensus.Context;
 
 namespace Sensus.Probes.Location
 {
     public class EstimoteBeaconManager :  Java.Lang.Object, BeaconManager.IServiceReadyCallback, BeaconManager.IMonitoringListener
     {
-        public static bool SameRegion(Region region1, Region region2)
+        public static bool RegionsAreEqual(Region region1, Region region2)
         {
             return region1.Identifier == region2.Identifier && 
                    region1.ProximityUUID.ToString() == region2.ProximityUUID.ToString() && 
@@ -36,26 +37,18 @@ namespace Sensus.Probes.Location
         private BeaconManager _beaconManager;
         private List<EstimoteBeacon> _beacons;
 
-        public EstimoteBeaconManager()
-        {
-            _beaconManager = new BeaconManager(Application.Context);
-            _beaconManager.SetMonitoringListener(this);
-        }
-
-        public void SetForegroundScanPeriod(TimeSpan foregroundScanPeriod, TimeSpan foregroundWaitTime)
-        {
-            _beaconManager.SetForegroundScanPeriod((long)foregroundScanPeriod.TotalMilliseconds, (long)foregroundWaitTime.TotalMilliseconds);
-        }
-
-        public void SetBackgroundScanPeriod(TimeSpan backgroundScanPeriod, TimeSpan backgroundWaitTime)
-        {
-            _beaconManager.SetBackgroundScanPeriod((long)backgroundScanPeriod.TotalMilliseconds, (long)backgroundWaitTime.TotalMilliseconds);
-        }
-
-        public void Connect(List<EstimoteBeacon> beacons)
+        public void Connect(List<EstimoteBeacon> beacons, TimeSpan foregroundScanPeriod, TimeSpan foregroundWaitTime, TimeSpan backgroundScanPeriod, TimeSpan backgroundWaitTime)
         {
             _beacons = beacons;
-            _beaconManager.Connect(this);
+
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            {
+                _beaconManager = new BeaconManager(Application.Context);
+                _beaconManager.SetMonitoringListener(this);
+                _beaconManager.SetForegroundScanPeriod((long)foregroundScanPeriod.TotalMilliseconds, (long)foregroundWaitTime.TotalMilliseconds);
+                _beaconManager.SetBackgroundScanPeriod((long)backgroundScanPeriod.TotalMilliseconds, (long)backgroundWaitTime.TotalMilliseconds);
+                _beaconManager.Connect(this);
+            });
         }
 
         public void OnServiceReady()
@@ -68,7 +61,7 @@ namespace Sensus.Probes.Location
 
         public void OnEnteredRegion(Region region, IList<Beacon> beacons)
         {
-            if (_beacons.Any(beacon => SameRegion(beacon.Region, region)))
+            if (_beacons.Any(beacon => RegionsAreEqual(beacon.Region, region)))
             {
                 EnteredRegion?.Invoke(this, new Tuple<Region, IList<Beacon>>(region, beacons));
             }
@@ -76,7 +69,7 @@ namespace Sensus.Probes.Location
 
         public void OnExitedRegion(Region region)
         {
-            if (_beacons.Any(beacon => SameRegion(beacon.Region, region)))
+            if (_beacons.Any(beacon => RegionsAreEqual(beacon.Region, region)))
             {
                 ExitedRegion?.Invoke(this, region);
             }
@@ -94,9 +87,26 @@ namespace Sensus.Probes.Location
                 {
                     SensusServiceHelper.Get().Logger.Log("Error stopping Estimote monitoring:  " + ex.Message, LoggingLevel.Normal, GetType());
                 }
-            }            
+            }
 
-            _beaconManager.Disconnect();
+            try
+            {
+                _beaconManager.Disconnect();
+            }
+            catch (Exception)
+            {
+                
+            }
+
+            try
+            {
+                _beaconManager.Dispose();
+            }
+            catch (Exception)
+            {
+            }
+
+            _beaconManager = null;
         }
     }
 }
