@@ -102,9 +102,9 @@ namespace Sensus.Probes.Location
             _beaconManager = new EstimoteBeaconManager();
             _beacons = new List<EstimoteBeacon>();
 
-            ForegroundScanPeriodSeconds = 10;
+            ForegroundScanPeriodSeconds = 20;
             ForegroundWaitPeriodSeconds = 30;
-            BackgroundScanPeriodSeconds = 10;
+            BackgroundScanPeriodSeconds = 20;
             BackgroundWaitPeriodSeconds = 30;
 
             _beaconManager.EnteredRegion += async (sender, region) =>
