@@ -196,7 +196,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\ScriptRunnersPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ScriptTriggersPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ShareLocalDataStorePage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\DateUIProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\DateUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\DisplayStringUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\DisplayYesNoUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\EditableListUiProperty.cs" />
@@ -207,7 +207,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\EntryStringUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\ListUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\OnOffUiProperty.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\TimeUIProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\TimeUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\UiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\VerifiedParticipationPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ViewTextLinesPage.cs" />
@@ -221,6 +221,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\DisplayPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\DataRateCalculator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Window.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteBeacon.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteBeaconDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteBeaconProbe.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />

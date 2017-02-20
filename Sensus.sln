@@ -26,8 +26,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.iOS.Tests", "Sensus.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.Tests.Cloud", "Sensus.Tests.Cloud\Sensus.Tests.Cloud.csproj", "{306FDC42-BB95-4DFD-B867-654EA3F941E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.Tests.Local", "Sensus.Tests.Local\Sensus.Tests.Local.csproj", "{B11B3650-C440-40F2-834D-339D5FF8CD96}"
-EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Sensus.Shared", "Sensus.Shared\Sensus.Shared.shproj", "{B2F65FE8-F266-4C0C-B4A8-D326002B9180}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Sensus.Shared.Android", "Sensus.Shared.Android\Sensus.Shared.Android.shproj", "{B6E23DA5-2716-426B-9F8F-9C47BD6B68D3}"
@@ -152,22 +150,6 @@ Global
 		{306FDC42-BB95-4DFD-B867-654EA3F941E9}.Release|iPhone.ActiveCfg = Debug|iPhone
 		{306FDC42-BB95-4DFD-B867-654EA3F941E9}.Release|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
 		{306FDC42-BB95-4DFD-B867-654EA3F941E9}.Release|Android.Build.0 = Release|Android
-		{B11B3650-C440-40F2-834D-339D5FF8CD96}.Ad-Hoc|Android.ActiveCfg = Debug|Any CPU
-		{B11B3650-C440-40F2-834D-339D5FF8CD96}.Ad-Hoc|Any CPU.ActiveCfg = Debug|Any CPU
-		{B11B3650-C440-40F2-834D-339D5FF8CD96}.Ad-Hoc|iPhone.ActiveCfg = Debug|Any CPU
-		{B11B3650-C440-40F2-834D-339D5FF8CD96}.Ad-Hoc|iPhoneSimulator.ActiveCfg = Debug|Any CPU
-		{B11B3650-C440-40F2-834D-339D5FF8CD96}.Debug|Android.ActiveCfg = Debug|Any CPU
-		{B11B3650-C440-40F2-834D-339D5FF8CD96}.Debug|Android.Build.0 = Debug|Any CPU
-		{B11B3650-C440-40F2-834D-339D5FF8CD96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B11B3650-C440-40F2-834D-339D5FF8CD96}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B11B3650-C440-40F2-834D-339D5FF8CD96}.Debug|iPhone.ActiveCfg = Debug|Any CPU
-		{B11B3650-C440-40F2-834D-339D5FF8CD96}.Debug|iPhone.Build.0 = Debug|Any CPU
-		{B11B3650-C440-40F2-834D-339D5FF8CD96}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
-		{B11B3650-C440-40F2-834D-339D5FF8CD96}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
-		{B11B3650-C440-40F2-834D-339D5FF8CD96}.Release|Android.ActiveCfg = Debug|Any CPU
-		{B11B3650-C440-40F2-834D-339D5FF8CD96}.Release|Any CPU.ActiveCfg = Debug|Any CPU
-		{B11B3650-C440-40F2-834D-339D5FF8CD96}.Release|iPhone.ActiveCfg = Debug|Any CPU
-		{B11B3650-C440-40F2-834D-339D5FF8CD96}.Release|iPhoneSimulator.ActiveCfg = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
