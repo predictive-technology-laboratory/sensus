@@ -128,9 +128,9 @@ sensus.read.json = function(data.path, is.directory = TRUE, recursive = TRUE, co
     
     # parse timestamps
     file.json$Timestamp = strptime(file.json$Timestamp, format = "%Y-%m-%dT%H:%M:%OS", tz="UTC")    
-    if(TRUE)
+    if(convert.to.local.timezone)
     {
-      file.json$Timestamp = lubridate::with_tz(file.json$Timestamp, Sys.timezone())
+      file.json$Timestamp = lubridate::with_tz(file.json$Timestamp, local.timezone)
     }
     
     # add to data by type, putting each file in its own list entry (we'll merge files later)
