@@ -14,11 +14,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)IAndroidSensusServiceHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\AndroidInsightsInitializer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\SliderInputEffect.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\EstimoteBeaconManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)UI\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Probes\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Probes\Context\" />
   </ItemGroup>
 </Project>
