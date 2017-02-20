@@ -55,7 +55,5 @@ namespace Sensus.Probes.Location
         {
             get { return typeof(CompassDatum); }
         }
-
-
     }
 }

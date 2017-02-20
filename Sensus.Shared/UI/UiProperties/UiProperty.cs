@@ -36,7 +36,7 @@ namespace Sensus.UI.UiProperties
         {
             if (property == null)
                 return null;
-            
+
             UiProperty attribute = property.GetCustomAttribute<UiProperty>();
 
             if (attribute == null)
@@ -60,7 +60,7 @@ namespace Sensus.UI.UiProperties
         /// <param name="o">Object to get StackLayouts for.</param>
         public static List<StackLayout> GetPropertyStacks(object o)
         {
-            List<Tuple<PropertyInfo, UiProperty>> propertyUiElements = 
+            List<Tuple<PropertyInfo, UiProperty>> propertyUiElements =
                 o.GetType()
                  .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
                  .Select(p => new Tuple<PropertyInfo, UiProperty>(p, GetUiPropertyAttribute(p)))
@@ -79,16 +79,16 @@ namespace Sensus.UI.UiProperties
                     Text = uiElement.LabelText ?? property.Name + ":",
                     FontSize = 20
                 };
-                
+
                 BindableProperty targetProperty = null;
                 IValueConverter converter = null;
                 View propertyView = uiElement.GetView(property, o, out targetProperty, out converter);
                 propertyView.IsEnabled = uiElement.Editable;
 
-                #if UNIT_TESTING
+#if UNIT_TESTING
                 // set style id so we can get the property value when unit testing
                 propertyView.StyleId = propertyLabel.Text + " View";
-                #endif
+#endif
 
                 if (targetProperty != null)
                 {
@@ -97,11 +97,11 @@ namespace Sensus.UI.UiProperties
                 }
 
                 propertyStacks.Add(new StackLayout
-                    {
-                        Orientation = StackOrientation.Vertical,
-                        VerticalOptions = LayoutOptions.Start,
-                        Children = { propertyLabel, propertyView }
-                    });
+                {
+                    Orientation = StackOrientation.Vertical,
+                    VerticalOptions = LayoutOptions.Start,
+                    Children = { propertyLabel, propertyView }
+                });
             }
 
             return propertyStacks;
