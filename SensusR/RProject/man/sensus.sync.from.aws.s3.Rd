@@ -5,7 +5,8 @@
 \title{Synchronizes data from Amazon S3 to a local path.}
 \usage{
 sensus.sync.from.aws.s3(s3.path, profile = "default",
-  local.path = tempfile(), aws.path = "/usr/local/bin/aws", delete = TRUE)
+  local.path = tempfile(), aws.path = "/usr/local/bin/aws", delete = TRUE,
+  decompress = TRUE)
 }
 \arguments{
 \item{s3.path}{Path within S3. This can be a prefix (partial path).}
@@ -17,6 +18,8 @@ sensus.sync.from.aws.s3(s3.path, profile = "default",
 \item{aws.path}{Path to AWS client.}
 
 \item{delete}{Whether or not to delete local files that are not present in the S3 path.}
+
+\item{decompress}{Whether or not to decompress any gzip files after downloading them.}
 }
 \value{
 Local path to location of downloaded data.
@@ -25,6 +28,6 @@ Local path to location of downloaded data.
 Synchronizes data from Amazon S3 to a local path.
 }
 \examples{
-# data.path = sensus.sync.from.aws.s3("s3://bucket/path/to/data", "~/Desktop/data")
+# data.path = sensus.sync.from.aws.s3("s3://bucket/path/to/data", local.path = "~/Desktop/data")
 }
 

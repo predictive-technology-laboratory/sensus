@@ -551,6 +551,25 @@ sensus.plot.data.frequency.by.day = function(datum, xlab = "Study Day", ylab = "
   plot(sapply(datum.split.by.day, nrow), xlab = xlab, ylab = ylab, main = main, type = "l", cex.lab = 1.5, cex.axis = 1.5, cex.main = 2)
 }
 
+#' Plot the CDF of inter-reading time lags.
+#' 
+#' @param datum Data frame for a single datum.
+#' @param xlim Limits for the x-axis.
+#' @param xlab Label for x-axis.
+#' @param ylab Label for y-axis.
+#' @param main Label for plot.
+#' @examples 
+#' data.path = system.file("extdata", "example_data", package="SensusR")
+#' data = sensus.read.json(data.path)
+#' sensus.plot.lag.cdf(data$AccelerometerDatum)
+sensus.plot.lag.cdf = function(datum, xlim = c(0,1), xlab = "Inter-reading time (seconds)", ylab = "Percentile", main = paste("Inter-reading times (n=", nrow(datum), ")", sep=""))
+{
+  lags = diff(datum$Timestamp)
+  lag.ecdf = ecdf(as.numeric(lags))
+  num.rows = nrow(datum)
+  plot(lag.ecdf, xlim = xlim, xlab = xlab, ylab = ylab, main = main)
+}
+
 #' Removes all data associated with a device ID from a data collection.
 #' 
 #' @param datum Data collection to process.
