@@ -31,6 +31,7 @@ namespace Sensus.Probes
         private bool _deviceAwake;
         private DataRateCalculator _incomingDataRateCalculator;
         private Random _dropRandom;
+        private DataRateCalculator _storageDataRateCalculator;
 
         private readonly object _locker = new object();
 
@@ -201,7 +202,7 @@ namespace Sensus.Probes
             _maxDataStoresPerSecond = null;  // no data rate limit by default
             _keepDeviceAwake = DefaultKeepDeviceAwake;
             _deviceAwake = false;
-            _incomingDataRateCalculator = new DataRateCalculator(TimeSpan.FromSeconds(15));
+            _incomingDataRateCalculator = new DataRateCalculator(100);
             _dropRandom = new Random();
         }
 

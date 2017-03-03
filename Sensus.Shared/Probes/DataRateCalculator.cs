@@ -20,7 +20,7 @@ namespace Sensus.Probes
 {
     public class DataRateCalculator
     {
-        private TimeSpan _sampleDuration;
+        private int _sampleSize;
         private List<Datum> _sample;
 
         public double DataPerSecond
@@ -29,7 +29,7 @@ namespace Sensus.Probes
             {
                 lock (_sample)
                 {
-                    PurgeOldData();
+                    Purge();
 
                     if (_sample.Count > 1)
                     {
@@ -43,10 +43,10 @@ namespace Sensus.Probes
             }
         }
 
-        public DataRateCalculator(TimeSpan sampleDuration)
+        public DataRateCalculator(int sampleSize)
         {
-            _sampleDuration = sampleDuration;
-            _sample = new List<Datum>();
+            _sampleSize = sampleSize;
+            _sample = new List<Datum>(_sampleSize);
         }
 
         public void Add(Datum datum)
@@ -59,19 +59,20 @@ namespace Sensus.Probes
                 lock (_sample)
                 {
                     _sample.Add(datum);
-                    PurgeOldData();
+                    Purge();
                 }
             }
         }
 
-        private void PurgeOldData()
+        private void Purge()
         {
             lock (_sample)
             {
-                // remove any data that are older than the sample duration
-                while (_sample.Count > 0 && (DateTimeOffset.Now - _sample.First().Timestamp).TotalSeconds > _sampleDuration.TotalSeconds)
+                int numToRemove = _sample.Count - _sampleSize;
+
+                if (numToRemove > 0)
                 {
-                    _sample.RemoveAt(0);
+                    _sample.RemoveRange(0, numToRemove);
                 }
             }
         }
