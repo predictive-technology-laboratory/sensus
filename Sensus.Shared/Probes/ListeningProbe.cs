@@ -24,14 +24,20 @@ namespace Sensus.Probes
 {
     public abstract class ListeningProbe : Probe
     {
+        private enum SamplingModulusMatchAction
+        {
+            Store,
+            Drop
+        }
+
         private const float DATA_RATE_EPSILON = 0.00000000001f;
 
         private float? _maxDataStoresPerSecond;
         private bool _keepDeviceAwake;
         private bool _deviceAwake;
         private DataRateCalculator _incomingDataRateCalculator;
-        private Random _dropRandom;
-        private DataRateCalculator _storageDataRateCalculator;
+        private int _samplingModulus;
+        private SamplingModulusMatchAction _samplingModulusMatchAction;
 
         private readonly object _locker = new object();
 
@@ -203,13 +209,16 @@ namespace Sensus.Probes
             _keepDeviceAwake = DefaultKeepDeviceAwake;
             _deviceAwake = false;
             _incomingDataRateCalculator = new DataRateCalculator(100);
-            _dropRandom = new Random();
+            _samplingModulus = 1;
+            _samplingModulusMatchAction = SamplingModulusMatchAction.Store;
         }
 
         protected sealed override void InternalStart()
         {
             lock (_locker)
             {
+                _incomingDataRateCalculator.Clear();
+
                 // only keep device awake if we're not already running. calls to LetDeviceSleep must match these exactly.
                 if (!Running && _keepDeviceAwake)
                 {
@@ -238,6 +247,8 @@ namespace Sensus.Probes
                     SensusServiceHelper.Get().LetDeviceSleep();
                     _deviceAwake = false;
                 }
+
+                _incomingDataRateCalculator.Clear();
             }
         }
 
@@ -258,22 +269,60 @@ namespace Sensus.Probes
             else if (maxDataStoresPerSecond > 0)
             {
                 _incomingDataRateCalculator.Add(datum);
-                double incomingDataPerSecond = _incomingDataRateCalculator.DataPerSecond;
-                double overagePerSecond = incomingDataPerSecond - maxDataStoresPerSecond;
-                if (overagePerSecond > 0)
+
+                // recalculate the sampling modulus after accumulating a full sample size in the data rate calculator
+                if ((_incomingDataRateCalculator.TotalAdded % _incomingDataRateCalculator.SampleSize) == 0)
                 {
-                    double dropRate = overagePerSecond / incomingDataPerSecond;
-                    if (_dropRandom.NextDouble() < dropRate)
+                    double incomingDataPerSecond = _incomingDataRateCalculator.DataPerSecond;
+                    double extraDataPerSecond = incomingDataPerSecond - maxDataStoresPerSecond;
+
+                    // if we're not over the limit then store all samples
+                    if (extraDataPerSecond <= 0)
                     {
-                        store = false;
+                        _samplingModulus = 1;
+                        _samplingModulusMatchAction = SamplingModulusMatchAction.Store;
                     }
+                    // otherwise calculate a modulus that will get as close as possible to the desired rate given the empirical rate
+                    else
+                    {
+                        double samplingModulusMatchRate = extraDataPerSecond / incomingDataPerSecond;
+                        _samplingModulusMatchAction = SamplingModulusMatchAction.Drop;
+
+                        if (samplingModulusMatchRate > 0.5)
+                        {
+                            samplingModulusMatchRate = 1 - samplingModulusMatchRate;
+                            _samplingModulusMatchAction = SamplingModulusMatchAction.Store;
+                        }
+
+                        if (_samplingModulusMatchAction == SamplingModulusMatchAction.Store)
+                        {
+                            // round the (store) modulus down to oversample -- more is better, right?
+                            _samplingModulus = (int)Math.Floor(1 / samplingModulusMatchRate);
+                        }
+                        else
+                        {
+                            // round the (drop) modulus up to oversample -- more is better, right?
+                            _samplingModulus = (int)Math.Ceiling(1 / samplingModulusMatchRate);
+                        }
+                    }
+                }
+
+                bool isModulusMatch = (_incomingDataRateCalculator.TotalAdded % _samplingModulus) == 0;
+
+                if ((_samplingModulusMatchAction == SamplingModulusMatchAction.Store && !isModulusMatch) || (_samplingModulusMatchAction == SamplingModulusMatchAction.Drop && isModulusMatch))
+                {
+                    store = false;
                 }
             }
 
             if (store)
+            {
                 return base.StoreDatumAsync(datum, cancellationToken);
+            }
             else
+            {
                 return Task.FromResult(false);
+            }
         }
 
         public override void Reset()

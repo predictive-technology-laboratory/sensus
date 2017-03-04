@@ -22,6 +22,23 @@ namespace Sensus.Probes
     {
         private int _sampleSize;
         private List<Datum> _sample;
+        private long _totalAdded;
+
+        public int SampleSize
+        {
+            get
+            {
+                return _sampleSize;
+            }
+        }
+
+        public long TotalAdded
+        {
+            get
+            {
+                return _totalAdded;
+            }
+        }
 
         public double DataPerSecond
         {
@@ -29,11 +46,11 @@ namespace Sensus.Probes
             {
                 lock (_sample)
                 {
-                    Purge();
+                    TrimToSampleSize();
 
                     if (_sample.Count > 1)
                     {
-                        return _sample.Count / (_sample.Last().Timestamp - _sample.First().Timestamp).TotalSeconds;
+                        return _sample.Count / (DateTimeOffset.UtcNow - _sample.First().Timestamp).TotalSeconds;
                     }
                     else
                     {
@@ -47,6 +64,7 @@ namespace Sensus.Probes
         {
             _sampleSize = sampleSize;
             _sample = new List<Datum>(_sampleSize);
+            _totalAdded = 0;
         }
 
         public void Add(Datum datum)
@@ -59,21 +77,30 @@ namespace Sensus.Probes
                 lock (_sample)
                 {
                     _sample.Add(datum);
-                    Purge();
+                    _totalAdded++;
+                    TrimToSampleSize();
                 }
             }
         }
 
-        private void Purge()
+        private void TrimToSampleSize()
         {
             lock (_sample)
             {
                 int numToRemove = _sample.Count - _sampleSize;
-
                 if (numToRemove > 0)
                 {
                     _sample.RemoveRange(0, numToRemove);
                 }
+            }
+        }
+
+        public void Clear()
+        {
+            lock (_sample)
+            {
+                _sample.Clear();
+                _totalAdded = 0;
             }
         }
     }
