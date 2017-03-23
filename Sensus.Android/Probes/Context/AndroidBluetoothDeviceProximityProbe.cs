@@ -11,9 +11,10 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-using SensusService.Probes.Context;
 using System;
+using Sensus;
+using Sensus.Probes.Context;
+using Plugin.Permissions.Abstractions;
 
 namespace Sensus.Android.Probes.Context
 {
@@ -23,10 +24,24 @@ namespace Sensus.Android.Probes.Context
 
         public AndroidBluetoothDeviceProximityProbe()
         {
-            _deviceFoundCallback = (sender, bluetoothDeviceProximityDatum) =>
-                {
-                    StoreDatum(bluetoothDeviceProximityDatum);
-                };
+            _deviceFoundCallback = async (sender, bluetoothDeviceProximityDatum) =>
+            {
+                await StoreDatumAsync(bluetoothDeviceProximityDatum);
+            };
+        }
+
+        protected override void Initialize()
+        {
+            base.Initialize();
+
+            if (SensusServiceHelper.Get().ObtainPermission(Permission.Location) != PermissionStatus.Granted)
+            {
+                // throw standard exception instead of NotSupportedException, since the user might decide to enable location in the future
+                // and we'd like the probe to be restarted at that time.
+                string error = "Geolocation is not permitted on this device. Cannot start Bluetooth probe.";
+                SensusServiceHelper.Get().FlashNotificationAsync(error);
+                throw new Exception(error);
+            }
         }
 
         protected override void StartListening()

@@ -12,9 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Android.Hardware;
-using SensusService.Probes.Location;
 using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Android.Hardware;
+using Sensus;
+using Sensus.Probes.Location;
+using Syncfusion.SfChart.XForms;
 
 namespace Sensus.Android.Probes.Location
 {
@@ -26,51 +30,29 @@ namespace Sensus.Android.Probes.Location
         private AndroidSensorListener _accelerometerListener;
         private float[] _accelerometerValues;
 
-        private float[] _rMatrix;
-        private float[] _iMatrix;
-        private float[] _azimuthPitchRoll;
-
-        private readonly object _locker = new object();
-
         public AndroidCompassProbe()
         {
-            _rMatrix = new float[9];
-            _iMatrix = new float[9];
-            _azimuthPitchRoll = new float[3];
-
             _magneticFieldValues = new float[3];
-            _magnetometerListener = new AndroidSensorListener(SensorType.MagneticField, SensorDelay.Normal, null, e =>
-                {
-                    if (e.Values != null && e.Values.Count == 3)
-                        lock (_locker)
-                        {
-                            for (int i = 0; i < 3; i++)
-                                _magneticFieldValues[i] = e.Values[i];
-
-                            StoreHeading();
-                        }
-                });
+            _magnetometerListener = new AndroidSensorListener(SensorType.MagneticField, null, async e =>
+            {
+                if (e.Values != null && e.Values.Count == 3)
+                    await StoreHeadingAsync(magneticFieldValues: e.Values.ToArray());
+            });
 
             _accelerometerValues = new float[3];
-            _accelerometerListener = new AndroidSensorListener(SensorType.Accelerometer, SensorDelay.Normal, null, e =>
-                {
-                    if (e.Values != null && e.Values.Count == 3)
-                        lock (_locker)
-                        {
-                            for (int i = 0; i < 3; i++)
-                                _accelerometerValues[i] = e.Values[i];
-
-                            StoreHeading();
-                        }
-                });
+            _accelerometerListener = new AndroidSensorListener(SensorType.Accelerometer, null, async e =>
+            {
+                if (e.Values != null && e.Values.Count == 3)
+                    await StoreHeadingAsync(accelerometerValues: e.Values.ToArray());
+            });
         }
 
         protected override void Initialize()
         {
             base.Initialize();
 
-            _magnetometerListener.Initialize();
-            _accelerometerListener.Initialize();
+            _magnetometerListener.Initialize(MinDataStoreDelay);
+            _accelerometerListener.Initialize(MinDataStoreDelay);
         }
 
         protected override void StartListening()
@@ -79,24 +61,62 @@ namespace Sensus.Android.Probes.Location
             _accelerometerListener.Start();
         }
 
-        private void StoreHeading()
+        private Task StoreHeadingAsync(float[] magneticFieldValues = null, float[] accelerometerValues = null)
         {
-            if (SensorManager.GetRotationMatrix(_rMatrix, _iMatrix, _accelerometerValues, _magneticFieldValues))
+            lock (this)
             {
-                SensorManager.GetOrientation(_rMatrix, _azimuthPitchRoll);
+                float[] rotationMatrix = new float[9];
 
-                double heading = _azimuthPitchRoll[0] * (180 / Math.PI);  // convert heading radians to heading degrees
-                if (heading < 0)
-                    heading = 180 + (180 - Math.Abs(heading));  // convert to [0, 360] degrees from north
+                // if either the accelerometer or magnetic field values are missing, use the old ones
+                if (SensorManager.GetRotationMatrix(rotationMatrix, null, accelerometerValues ?? _accelerometerValues, magneticFieldValues ?? _magneticFieldValues))
+                {
+                    float[] azimuthPitchRoll = new float[3];
 
-                StoreDatum(new CompassDatum(DateTimeOffset.UtcNow, heading));
+                    SensorManager.GetOrientation(rotationMatrix, azimuthPitchRoll);
+
+                    double heading = azimuthPitchRoll[0] * (180 / Math.PI);  // convert heading radians to heading degrees
+
+                    if (heading < 0)
+                        heading = 180 + (180 - Math.Abs(heading));  // convert to [0, 360] degrees from north
+
+                    return StoreDatumAsync(new CompassDatum(DateTimeOffset.UtcNow, heading));
+                }
+
+                // update values for next call
+                if (magneticFieldValues != null)
+                    _magneticFieldValues = magneticFieldValues;
+
+                if (accelerometerValues != null)
+                    _accelerometerValues = accelerometerValues;
             }
+
+            return Task.FromResult(false);
         }
 
         protected override void StopListening()
         {
             _magnetometerListener.Stop();
             _accelerometerListener.Stop();
+        }
+
+        protected override ChartSeries GetChartSeries()
+        {
+            return null;
+        }
+
+        protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
+        {
+            return null;
+        }
+
+        protected override ChartAxis GetChartPrimaryAxis()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override RangeAxisBase GetChartSecondaryAxis()
+        {
+            throw new NotImplementedException();
         }
     }
 }

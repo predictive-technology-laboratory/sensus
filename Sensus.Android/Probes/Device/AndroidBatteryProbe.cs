@@ -12,23 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Android.OS;
 using Android.App;
 using Android.Content;
-using Android.OS;
-using SensusService.Probes.Device;
 using System;
-using System.Collections.Generic;
 using System.Threading;
+using System.Collections.Generic;
+using Sensus;
+using Sensus.Probes.Device;
+
 
 namespace Sensus.Android.Probes.Device
 {
     public class AndroidBatteryProbe : BatteryProbe
     {
-        protected override IEnumerable<SensusService.Datum> Poll(CancellationToken cancellationToken)
+        protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
         {
             Intent lastIntent = Application.Context.RegisterReceiver(null, new IntentFilter(Intent.ActionBatteryChanged));
             if (lastIntent == null)
-                return new BatteryDatum[] { };
+                throw new Exception("Failed to poll battery status.");
             else
                 return new BatteryDatum[] { new BatteryDatum(DateTimeOffset.UtcNow, lastIntent.GetIntExtra(BatteryManager.ExtraLevel, -1)) };
         }

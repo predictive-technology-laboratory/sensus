@@ -15,23 +15,33 @@
 using Android.App;
 using Android.Bluetooth;
 using Android.Content;
-using SensusService.Probes.Context;
+using Sensus.Probes.Context;
 using System;
 
 namespace Sensus.Android.Probes.Context
 {
     [BroadcastReceiver]
-    [IntentFilter(new string[] { BluetoothDevice.ActionFound }, Categories = new string[] { Intent.CategoryDefault })]
+    [IntentFilter(new string[] { BluetoothDevice.ActionFound, BluetoothAdapter.ActionStateChanged }, Categories = new string[] { Intent.CategoryDefault })]
     public class AndroidBluetoothBroadcastReceiver : BroadcastReceiver
     {
         public static event EventHandler<BluetoothDeviceProximityDatum> DEVICE_FOUND;
+        public static event EventHandler<State> STATE_CHANGED;
 
         public override void OnReceive(global::Android.Content.Context context, Intent intent)
         {
-            if (DEVICE_FOUND != null && intent != null && intent.Action == BluetoothDevice.ActionFound)
+            if (intent != null)
             {
-                BluetoothDevice device = intent.GetParcelableExtra(BluetoothDevice.ExtraDevice) as BluetoothDevice;
-                DEVICE_FOUND(this, new BluetoothDeviceProximityDatum(DateTimeOffset.UtcNow, device.Name, device.Address));
+                if (intent.Action == BluetoothDevice.ActionFound && DEVICE_FOUND != null)
+                {
+                    BluetoothDevice device = intent.GetParcelableExtra(BluetoothDevice.ExtraDevice) as BluetoothDevice;
+                    DEVICE_FOUND(this, new BluetoothDeviceProximityDatum(DateTimeOffset.UtcNow, device.Name, device.Address));
+                }
+                else if (intent.Action == BluetoothAdapter.ActionStateChanged && STATE_CHANGED != null)
+                {
+                    int stateInt = intent.GetIntExtra(BluetoothAdapter.ExtraState, -1);
+                    if (stateInt != -1)
+                        STATE_CHANGED(this, (State)stateInt);
+                }
             }
         }
     }

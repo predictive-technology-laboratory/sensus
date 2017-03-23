@@ -16,8 +16,9 @@ using Android.App;
 using Android.Content;
 using Android.Net;
 using Android.Net.Wifi;
-using SensusService.Probes.Network;
+using Sensus.Probes.Network;
 using System;
+using Sensus;
 
 namespace Sensus.Android.Probes.Network
 {
@@ -26,15 +27,9 @@ namespace Sensus.Android.Probes.Network
     public class AndroidWlanBroadcastReceiver : BroadcastReceiver
     {
         public static event EventHandler<WlanDatum> WIFI_CONNECTION_CHANGED;
+
         private static string PREVIOUS_ACCESS_POINT_BSSID = null;
         private static bool FIRST_RECEIVE = true;
-
-        private ConnectivityManager _connectivityManager;
-
-        public AndroidWlanBroadcastReceiver()
-        {
-            _connectivityManager = Application.Context.GetSystemService(global::Android.Content.Context.ConnectivityService) as ConnectivityManager;
-        }
 
         public override void OnReceive(global::Android.Content.Context context, Intent intent)
         {
@@ -54,7 +49,7 @@ namespace Sensus.Android.Probes.Network
         {
             string accessPointBSSID = null;
 
-            if (_connectivityManager.GetNetworkInfo(ConnectivityType.Wifi).IsConnected)
+            if (SensusServiceHelper.Get().WiFiConnected)
             {
                 WifiManager wifiManager = Application.Context.GetSystemService(global::Android.Content.Context.WifiService) as WifiManager;
                 accessPointBSSID = wifiManager.ConnectionInfo.BSSID;

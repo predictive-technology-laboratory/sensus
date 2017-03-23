@@ -12,12 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Android.Media;
-using SensusService;
-using SensusService.Probes.Context;
 using System;
-using System.Collections.Generic;
 using System.Threading;
+using System.Collections.Generic;
+using Android.Media;
+using Sensus;
+using Sensus.Probes.Context;
+using Plugin.Permissions.Abstractions;
 
 namespace Sensus.Android.Probes.Context
 {
@@ -28,6 +29,9 @@ namespace Sensus.Android.Probes.Context
             MediaRecorder recorder = null;
             try
             {
+                if (SensusServiceHelper.Get().ObtainPermission(Permission.Microphone) != PermissionStatus.Granted)
+                    throw new Exception("Cannot access microphone.");
+
                 recorder = new MediaRecorder();
                 recorder.SetAudioSource(AudioSource.Mic);
                 recorder.SetOutputFormat(OutputFormat.ThreeGpp);
@@ -42,11 +46,6 @@ namespace Sensus.Android.Probes.Context
                 Thread.Sleep(SampleLengthMS);
 
                 return new Datum[] { new SoundDatum(DateTimeOffset.UtcNow, 20 * Math.Log10(recorder.MaxAmplitude)) };  // http://www.mathworks.com/help/signal/ref/mag2db.html
-            }
-            catch (Exception)
-            {
-                // exception might be thrown if we're doing voice recognition concurrently
-                return new Datum[] { };
             }
             finally
             {

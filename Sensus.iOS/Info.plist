@@ -29,11 +29,7 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Sensus would like to use your location information, even when the device is asleep.</string>
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>location</string>
-	</array>
+	<string>Location information will not be collected at this time. Sensus will ask for your permission again when it is ready to collect location information.</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -41,7 +37,78 @@
 			<array>
 				<string>fb873948892650954</string>
 			</array>
+			<key>CFBundleURLTypes</key>
+			<string>Viewer</string>
 		</dict>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>edu.virginia.sie.ptl.sensus</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>sensus</string>
+			</array>
+			<key>CFBundleURLTypes</key>
+			<string>Viewer</string>
+		</dict>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>edu.virginia.sie.ptl.sensuss</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>sensuss</string>
+			</array>
+			<key>CFBundleURLTypes</key>
+			<string>Viewer</string>
+		</dict>
+	</array>
+	<key>FacebookAppID</key>
+	<string>873948892650954</string>
+	<key>FacebookDisplayName</key>
+	<string>Sensus</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>facebook.com</key>
+			<dict>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+				<key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
+				<false/>
+			</dict>
+			<key>fbcdn.net</key>
+			<dict>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+				<key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
+				<false/>
+			</dict>
+			<key>akamaihd.net</key>
+			<dict>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+				<key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
+				<false/>
+			</dict>
+		</dict>
+	</dict>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>fbapi</string>
+		<string>fb-messenger-api</string>
+		<string>fbauth2</string>
+		<string>fbshareextension</string>
+		<string>fbapi20130214</string>
+		<string>fbapi20130410</string>
+		<string>fbapi20130702</string>
+		<string>fbapi20131010</string>
+		<string>fbapi20131219</string>
+		<string>fbapi20140410</string>
+		<string>fbapi20140116</string>
+		<string>fbapi20150313</string>
+		<string>fbapi20150629</string>
+		<string>fbauth</string>
+		<string>fb-messenger-api20140430</string>
 	</array>
 	<key>CFBundleDocumentTypes</key>
 	<array>
@@ -64,9 +131,9 @@
 			<key>UTTypeTagSpecification</key>
 			<dict>
 				<key>public.filename-extension</key>
-				<string>sensus</string>
+				<string>json</string>
 				<key>public.mime-type</key>
-				<string>application/octet-stream</string>
+				<string>application/json</string>
 			</dict>
 			<key>UTTypeConformsTo</key>
 			<array>
@@ -74,15 +141,38 @@
 			</array>
 		</dict>
 	</array>
-	<key>CFBundleShortVersionString</key>
-	<string>0.9.0</string>
-	<key>CFBundleVersion</key>
-	<string>1</string>
 	<key>XSAppIconAssets</key>
 	<string>Resources/Images.xcassets/AppIcons.appiconset</string>
-	<key>FacebookAppID</key>
-	<string>873948892650954</string>
-	<key>FacebookDisplayName</key>
+	<key>CFBundleShortVersionString</key>
+	<string>13.3.0</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+		<string>bluetooth-central</string>
+	</array>
+	<key>CFBundleName</key>
 	<string>Sensus</string>
+	<key>CFBundleVersion</key>
+	<string>13.3.0</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Sensus does not use or transmit you calendar information in any way.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Sensus does not use or transmit photos in any way.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Certain Sensus studies use wearable sensors to gather data. You will be alerted when joining such studies.</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>Certain Sensus studies integrate with HealthKit to gather data. You will be alerted when joining such studies.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>Sensus does not share health information with other apps.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Certain Sensus studies use the microphone to gather sound data. You will be alerted when joining such studies.</string>
+	<key>NSLocationUsageDescription</key>
+	<string>Location information will not be collected at this time. Sensus will ask for your permission again when it is ready to collect location information.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Sensus is collecting location information for one of the studies you are participating in.</string>
+	<key>NSMotionUsageDescription</key>
+	<string>Certain Sensus studies use the accelerometer to gather movement data. You will be alerted when joining such studies.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Sensus uses the camera to scan QR codes. It will not record any images.</string>
 </dict>
 </plist>

@@ -14,44 +14,67 @@
 
 using Android.App;
 using Android.Telephony;
-using SensusService.Probes.Communication;
+using Sensus.Probes.Communication;
 using System;
+using Sensus;
+using Plugin.Permissions.Abstractions;
 
 namespace Sensus.Android.Probes.Communication
 {
-    public class AndroidTelephonyProbe : TelephonyProbe
+    public class AndroidTelephonyProbe : ListeningTelephonyProbe
     {
         private TelephonyManager _telephonyManager;
         private EventHandler<string> _outgoingCallCallback;
         private AndroidTelephonyIdleIncomingListener _idleIncomingCallListener;
+        private DateTime? _outgoingIncomingTime;
 
         public AndroidTelephonyProbe()
         {
-            _outgoingCallCallback = (sender, outgoingNumber) =>
-                {
-                    StoreDatum(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.OutgoingCall, outgoingNumber));
-                };
+            _outgoingCallCallback = async (sender, outgoingNumber) =>
+            {
+                _outgoingIncomingTime = DateTime.Now;
+
+                await StoreDatumAsync(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.OutgoingCall, outgoingNumber, null));
+            };
 
             _idleIncomingCallListener = new AndroidTelephonyIdleIncomingListener();
 
-            _idleIncomingCallListener.IncomingCall += (o, incomingNumber) =>
-                {
-                    StoreDatum(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.IncomingCall, incomingNumber));
-                };
+            _idleIncomingCallListener.IncomingCall += async (o, incomingNumber) =>
+            {
+                _outgoingIncomingTime = DateTime.Now;
 
-            _idleIncomingCallListener.Idle += (o, e) =>
-                {
-                    StoreDatum(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.Idle, null));
-                };
+                await StoreDatumAsync(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.IncomingCall, incomingNumber, null));
+            };
+
+            _idleIncomingCallListener.Idle += async (o, e) =>
+            {
+                // only calculate call duration if we have previously received an incoming or outgoing call event (android might report idle upon startup)
+                double? callDurationSeconds = null;
+                if (_outgoingIncomingTime != null)
+                    callDurationSeconds = (DateTime.Now - _outgoingIncomingTime.GetValueOrDefault()).TotalSeconds;
+
+                await StoreDatumAsync(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.Idle, null, callDurationSeconds));
+            };
         }
 
         protected override void Initialize()
         {
             base.Initialize();
 
-            _telephonyManager = Application.Context.GetSystemService(global::Android.Content.Context.TelephonyService) as TelephonyManager;
-            if (_telephonyManager == null)
-                throw new Exception("No telephony present.");
+            if (SensusServiceHelper.Get().ObtainPermission(Permission.Phone) == PermissionStatus.Granted)
+            {
+                _telephonyManager = Application.Context.GetSystemService(global::Android.Content.Context.TelephonyService) as TelephonyManager;
+                if (_telephonyManager == null)
+                    throw new NotSupportedException("No telephony present.");
+            }
+            else
+            {
+                // throw standard exception instead of NotSupportedException, since the user might decide to enable phone in the future
+                // and we'd like the probe to be restarted at that time.
+                string error = "Telephony not permitted on this device. Cannot start telephony probe.";
+                SensusServiceHelper.Get().FlashNotificationAsync(error);
+                throw new Exception(error);
+            }
         }
 
         protected override void StartListening()

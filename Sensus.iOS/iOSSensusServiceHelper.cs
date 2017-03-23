@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,43 +12,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using SensusService;
-using Xamarin.Geolocation;
-using Xamarin;
-using SensusService.Probes.Location;
-using SensusService.Probes;
-using Xamarin.Forms.Platform.iOS;
 using UIKit;
 using Foundation;
-using Xamarin.Forms;
-using System.Collections.Generic;
-using AVFoundation;
+using System;
+using System.IO;
 using System.Threading;
-using Toasts.Forms.Plugin.Abstractions;
-using SensusService.Probes.Movement;
+using Sensus.Probes;
+using Sensus.Context;
+using Sensus.Probes.Movement;
+using Sensus.Probes.Location;
+using Xamarin.Forms;
+using MessageUI;
+using AVFoundation;
+using CoreBluetooth;
+using CoreFoundation;
+using System.Threading.Tasks;
+using ToastIOS;
 
 namespace Sensus.iOS
 {
     public class iOSSensusServiceHelper : SensusServiceHelper
     {
-        public const string SENSUS_CALLBACK_REPEAT_DELAY = "SENSUS-CALLBACK-REPEAT-DELAY";
-        public const string SENSUS_CALLBACK_ACTIVATION_ID = "SENSUS-CALLBACK-ACTIVATION-ID";
+        #region static members
+        private const int BLUETOOTH_ENABLE_TIMEOUT_MS = 10000;
+        #endregion
 
-        private Dictionary<string, UILocalNotification> _callbackIdNotification;
-        private string _activationId;
-
-        public string ActivationId
-        {
-            get
-            {
-                return _activationId;
-            }
-            set
-            {
-                _activationId = value;
-            }
-        }
+        private DateTime _nextToastTime;
+        private readonly object _toastLocker = new object();
 
         public override bool IsCharging
         {
@@ -82,228 +72,245 @@ namespace Sensus.iOS
             }
         }
 
-        protected override Geolocator Geolocator
+        protected override bool IsOnMainThread
+        {
+            get { return NSThread.IsMain; }
+        }
+
+        public override string Version
         {
             get
             {
-                return new Geolocator();
+                return NSBundle.MainBundle.InfoDictionary["CFBundleShortVersionString"].ToString();
             }
         }
 
         public iOSSensusServiceHelper()
         {
-            _callbackIdNotification = new Dictionary<string, UILocalNotification>();
-
+            _nextToastTime = DateTime.Now;
             UIDevice.CurrentDevice.BatteryMonitoringEnabled = true;
         }
 
-        protected override void InitializeXamarinInsights()
+        public override void ShareFileAsync(string path, string subject, string mimeType)
         {
-            Insights.Initialize(XAMARIN_INSIGHTS_APP_KEY);
-        }
-
-        #region callback scheduling
-        protected override void ScheduleRepeatingCallback(string callbackId, int initialDelayMS, int repeatDelayMS, string userNotificationMessage)
-        {
-            ScheduleCallbackAsync(callbackId, initialDelayMS, true, repeatDelayMS, userNotificationMessage);
-        }
-
-        protected override void ScheduleOneTimeCallback(string callbackId, int delayMS, string userNotificationMessage)
-        {
-            ScheduleCallbackAsync(callbackId, delayMS, false, -1, userNotificationMessage);
-        }
-                   
-        private void ScheduleCallbackAsync(string callbackId, int delayMS, bool repeating, int repeatDelayMS, string userNotificationMessage)
-        {
-            Device.BeginInvokeOnMainThread(() =>
-                {
-                    UILocalNotification notification = new UILocalNotification
-                    {
-                        FireDate = DateTime.UtcNow.AddMilliseconds((double)delayMS).ToNSDate(),                        
-                        AlertBody = userNotificationMessage,
-                        UserInfo = GetNotificationUserInfoDictionary(callbackId, repeating, repeatDelayMS)
-                    };
-
-                    if(userNotificationMessage != null)
-                        notification.SoundName = UILocalNotification.DefaultSoundName;
-
-                    lock (_callbackIdNotification)
-                        _callbackIdNotification.Add(callbackId, notification);
-
-                    UIApplication.SharedApplication.ScheduleLocalNotification(notification);
-
-                    Logger.Log("Callback " + callbackId + " scheduled for " + notification.FireDate + " (" + (repeating ? "repeating" : "one-time") + "). " + _callbackIdNotification.Count + " total callbacks in iOS service helper.", LoggingLevel.Debug, GetType());
-                });
-        }
-
-        protected override void UnscheduleCallback(string callbackId, bool repeating)
-        {            
-            lock (_callbackIdNotification)
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
-                // there are race conditions on this collection, and the key might be removed elsewhere
-                UILocalNotification notification;
-                if (_callbackIdNotification.TryGetValue(callbackId, out notification))
+                if (!MFMailComposeViewController.CanSendMail)
                 {
-                    Device.BeginInvokeOnMainThread(() =>
-                        {
-                            UIApplication.SharedApplication.CancelLocalNotification(notification);
-                        });
-                    
-                    _callbackIdNotification.Remove(callbackId);
+                    FlashNotificationAsync("You do not have any mail accounts configured. Please configure one before attempting to send emails from Sensus.");
+                    return;
                 }
-            }
-        }
 
-        public void RefreshCallbackNotificationsAsync()
-        {
-            Device.BeginInvokeOnMainThread(() =>
+                NSData data = NSData.FromUrl(NSUrl.FromFilename(path));
+
+                if (data == null)
                 {
-                    // since all notifications are about to be rescheduled, clear any pending notifications from the notification center
-                    UIApplication.SharedApplication.ApplicationIconBadgeNumber = 0;
+                    FlashNotificationAsync("No file to share.");
+                    return;
+                }
 
-                    // this method will be called in one of three conditions:  (1) after sensus has been started and is running, (2)
-                    // after sensus has been reactivated and was already running, and (3) after a start attempt was made but failed.
-                    // in all three situations, there will be zero or more notifications present in the _callbackIdNotification lookup.
-                    // in (1), the notifications will have just been created and will have activation IDs set to the activation ID of
-                    // the current object. in (2), the notifications will have stale activation IDs. in (3), there will be no notifications.
-                    // the required post-condition of this method is that any present notification objects have activation IDs set to
-                    // the activation ID of the current object. so...let's make that happen.
-                    lock (_callbackIdNotification)
-                        foreach (string callbackId in _callbackIdNotification.Keys)
-                        {
-                            UILocalNotification notification = _callbackIdNotification[callbackId];
-
-                            // get activation ID and check for condition (2) above
-                            string activationId = (notification.UserInfo.ValueForKey(new NSString(iOSSensusServiceHelper.SENSUS_CALLBACK_ACTIVATION_ID)) as NSString).ToString();
-                            if (activationId != _activationId)
-                            {
-                                // cancel stale notification and issue new notification using current activation ID
-                                UIApplication.SharedApplication.CancelLocalNotification(notification);
-
-                                bool repeating = (notification.UserInfo.ValueForKey(new NSString(SensusServiceHelper.SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber).BoolValue;
-                                int repeatDelayMS = (notification.UserInfo.ValueForKey(new NSString(iOSSensusServiceHelper.SENSUS_CALLBACK_REPEAT_DELAY)) as NSNumber).Int32Value;
-                                notification.UserInfo = GetNotificationUserInfoDictionary(callbackId, repeating, repeatDelayMS);
-
-                                UIApplication.SharedApplication.ScheduleLocalNotification(notification);
-                            }
-                        }
-                });
+                MFMailComposeViewController mailer = new MFMailComposeViewController();
+                mailer.SetSubject(subject);
+                mailer.AddAttachmentData(data, mimeType, Path.GetFileName(path));
+                mailer.Finished += (sender, e) => mailer.DismissViewControllerAsync(true);
+                UIApplication.SharedApplication.KeyWindow.RootViewController.PresentViewController(mailer, true, null);
+            });
         }
 
-        public NSDictionary GetNotificationUserInfoDictionary(string callbackId, bool repeating, int repeatDelayMS)
+        public override void SendEmailAsync(string toAddress, string subject, string message)
         {
-            return new NSDictionary(
-                SENSUS_CALLBACK_KEY, true, 
-                SENSUS_CALLBACK_ID_KEY, callbackId,
-                SENSUS_CALLBACK_REPEATING_KEY, repeating,
-                SENSUS_CALLBACK_REPEAT_DELAY, repeatDelayMS,
-                SENSUS_CALLBACK_ACTIVATION_ID, _activationId);
-        }
-        #endregion
-
-        public override void ShareFileAsync(string path, string subject)
-        {
-            Device.BeginInvokeOnMainThread(() =>
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            {
+                if (MFMailComposeViewController.CanSendMail)
                 {
-                    ShareFileActivityItemSource activityItemSource = new ShareFileActivityItemSource(path, subject);
-                    UIActivityViewController shareActivity = new UIActivityViewController(new NSObject[] { activityItemSource }, null);
-                    UIApplication.SharedApplication.KeyWindow.RootViewController.PresentViewController(shareActivity, true, null);
-                });
+                    MFMailComposeViewController mailer = new MFMailComposeViewController();
+                    mailer.SetToRecipients(new string[] { toAddress });
+                    mailer.SetSubject(subject);
+                    mailer.SetMessageBody(message, false);
+                    mailer.Finished += (sender, e) => mailer.DismissViewControllerAsync(true);
+                    UIApplication.SharedApplication.KeyWindow.RootViewController.PresentViewController(mailer, true, null);
+                }
+                else
+                    FlashNotificationAsync("You do not have any mail accounts configured. Please configure one before attempting to send emails from Sensus.");
+            });
         }
 
-        public override void TextToSpeechAsync(string text, Action callback)
+        public override Task TextToSpeechAsync(string text)
         {
-            new Thread(() =>
+            return Task.Run(() =>
+            {
+                try
                 {
                     new AVSpeechSynthesizer().SpeakUtterance(new AVSpeechUtterance(text));
-
-                    if(callback != null)
-                        callback();
-
-                }).Start();
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Failed to speak utterance:  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
+            });
         }
 
-        public override void PromptForInputAsync(string prompt, bool startVoiceRecognizer, Action<string> callback)
+        public override Task<string> RunVoicePromptAsync(string prompt, Action postDisplayCallback)
         {
-            new Thread(() =>
+            return Task.Run(() =>
+            {
+                string input = null;
+                ManualResetEvent dialogDismissWait = new ManualResetEvent(false);
+
+                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                 {
-                    string input = null;
-                    ManualResetEvent dialogDismissWait = new ManualResetEvent(false);
+                    #region set up dialog
+                    ManualResetEvent dialogShowWait = new ManualResetEvent(false);
 
-                    Device.BeginInvokeOnMainThread(() =>
-                        {
-                            ManualResetEvent dialogShowWait = new ManualResetEvent(false);
-
-                            UIAlertView dialog = new UIAlertView("Sensus is requesting input...", prompt, null, "Cancel", "OK");
-                            dialog.AlertViewStyle = UIAlertViewStyle.PlainTextInput;
-                            dialog.Dismissed += (o,e) => { dialogDismissWait.Set(); };
-                            dialog.Presented += (o,e) => { dialogShowWait.Set(); };
-                            dialog.Clicked += (o,e) => 
-                                { 
-                                    if(e.ButtonIndex == 1)
-                                        input = dialog.GetTextField(0).Text;
-                                };
-                            
-                            dialog.Show();
-
-                            #region voice recognizer
-                            if (startVoiceRecognizer)
-                            {
-                                new Thread(() =>
-                                    {
-                                        // wait for the dialog to be shown so it doesn't hide our speech recognizer activity
-                                        dialogShowWait.WaitOne();
-
-                                        // there's a slight race condition between the dialog showing and speech recognition showing. pause here to prevent the dialog from hiding the speech recognizer.
-                                        Thread.Sleep(1000);
-
-                                        // TODO:  Add speech recognition
-
-                                    }).Start();
-                            }
-                            #endregion
-                        });
-
-                    dialogDismissWait.WaitOne();
-                    callback(input);
-
-                }).Start();
-        }
-
-        public override void IssueNotificationAsync(string message, string id)
-        {
-            Device.BeginInvokeOnMainThread(() =>
-                {
-                    if (message != null)
+                    UIAlertView dialog = new UIAlertView("Sensus is requesting input...", prompt, null, "Cancel", "OK");
+                    dialog.AlertViewStyle = UIAlertViewStyle.PlainTextInput;
+                    dialog.Dismissed += (o, e) =>
                     {
-                        UILocalNotification notification = new UILocalNotification
-                        {
-                            AlertTitle = "Sensus",
-                            AlertBody = message,
-                            FireDate = DateTime.UtcNow.ToNSDate()
-                        };
-                        
-                        UIApplication.SharedApplication.ScheduleLocalNotification(notification);
-                    }
+                        dialogDismissWait.Set();
+                    };
+                    dialog.Presented += (o, e) =>
+                    {
+                        dialogShowWait.Set();
+
+                        if (postDisplayCallback != null)
+                            postDisplayCallback();
+                    };
+                    dialog.Clicked += (o, e) =>
+                    {
+                        if (e.ButtonIndex == 1)
+                            input = dialog.GetTextField(0).Text;
+                    };
+
+                    dialog.Show();
+                    #endregion
+
+                    #region voice recognizer
+                    Task.Run(() =>
+                    {
+                        // wait for the dialog to be shown so it doesn't hide our speech recognizer activity
+                        dialogShowWait.WaitOne();
+
+                        // there's a slight race condition between the dialog showing and speech recognition showing. pause here to prevent the dialog from hiding the speech recognizer.
+                        Thread.Sleep(1000);
+
+                        // TODO:  Add speech recognition
+                    });
+                    #endregion
                 });
+
+                dialogDismissWait.WaitOne();
+
+                return input;
+            });
         }
 
-        public override void FlashNotificationAsync(string message, Action callback)
+        protected override void ProtectedFlashNotificationAsync(string message, bool flashLaterIfNotVisible, TimeSpan duration, Action callback)
         {
-            Device.BeginInvokeOnMainThread(() =>
+            Task.Run(async () =>
+            {
+                TimeSpan delay = TimeSpan.FromSeconds(0);
+
+                lock (_toastLocker)
                 {
-                    DependencyService.Get<IToastNotificator>().Notify(ToastNotificationType.Info, "", message + Environment.NewLine, TimeSpan.FromSeconds(2));
+                    DateTime now = DateTime.Now;
+
+                    double delaySeconds = (_nextToastTime - now).TotalSeconds;
+
+                    if (delaySeconds > 0)
+                        delay = TimeSpan.FromSeconds(delaySeconds);
+
+                    _nextToastTime = now + delay + duration;
+                }
+
+                if (delay.TotalSeconds > 0)
+                {
+                    await Task.Delay(delay);
+                }
+
+                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+                {
+                    Toast.MakeText(message, (nint)duration.TotalMilliseconds).SetFontSize(13).Show(ToastType.Info);
                 });
-        }            
+
+                callback?.Invoke();
+            });
+        }
+
+        public override bool EnableProbeWhenEnablingAll(Probe probe)
+        {
+            // polling for locations doesn't work very well in iOS, since it depends on the user. don't enable probes that need location polling by default.
+            return !(probe is PollingLocationProbe) &&
+            !(probe is PollingSpeedProbe) &&
+            !(probe is PollingPointsOfInterestProximityProbe);
+        }
+
+        public override ImageSource GetQrCodeImageSource(string contents)
+        {
+            return ImageSource.FromStream(() =>
+            {
+                UIImage bitmap = BarcodeWriter.Write(contents);
+                MemoryStream ms = new MemoryStream();
+                bitmap.AsPNG().AsStream().CopyTo(ms);
+                ms.Seek(0, SeekOrigin.Begin);
+                return ms;
+            });
+        }
+
+        /// <summary>
+        /// Enables the Bluetooth adapter, or prompts the user to do so if we cannot do this programmatically. Must not be called from the UI thread.
+        /// </summary>
+        /// <returns><c>true</c>, if Bluetooth was enabled, <c>false</c> otherwise.</returns>
+        /// <param name="lowEnergy">If set to <c>true</c> low energy.</param>
+        /// <param name="rationale">Rationale.</param>
+        public override bool EnableBluetooth(bool lowEnergy, string rationale)
+        {
+            base.EnableBluetooth(lowEnergy, rationale);
+
+            bool enabled = false;
+            ManualResetEvent enableWait = new ManualResetEvent(false);
+
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            {
+                try
+                {
+                    CBCentralManager manager = new CBCentralManager(DispatchQueue.CurrentQueue);
+                    manager.UpdatedState += (sender, e) =>
+                    {
+                        if (manager.State == CBCentralManagerState.PoweredOn)
+                        {
+                            enabled = true;
+                            enableWait.Set();
+                        }
+                    };
+
+                    if (manager.State == CBCentralManagerState.PoweredOn)
+                    {
+                        enabled = true;
+                        enableWait.Set();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log("Failed while requesting Bluetooth enable:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    enableWait.Set();
+                }
+            });
+
+            // the base class will ensure that we're not on the main thread, making the following wait okay.
+            if (!enableWait.WaitOne(BLUETOOTH_ENABLE_TIMEOUT_MS))
+                Logger.Log("Timed out while waiting for user to enable Bluetooth.", LoggingLevel.Normal, GetType());
+
+            return enabled;
+        }
 
         #region methods not implemented in ios
+
         public override void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
         {
-        }
+            FlashNotificationAsync("This is not supported on iOS.");
 
-        public override void UpdateApplicationStatus(string status)
-        {
-        }   
+            new Thread(() => callback(null)).Start();
+        }
 
         public override void KeepDeviceAwake()
         {
@@ -311,8 +318,12 @@ namespace Sensus.iOS
 
         public override void LetDeviceSleep()
         {
-        }                        
+        }
+
+        public override void BringToForeground()
+        {
+        }
+
         #endregion
     }
 }
-

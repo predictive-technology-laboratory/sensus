@@ -13,7 +13,7 @@
 // limitations under the License.
 
 using Android.Hardware;
-using SensusService.Probes.Context;
+using Sensus.Probes.Context;
 using System;
 
 namespace Sensus.Android.Probes.Context
@@ -24,17 +24,17 @@ namespace Sensus.Android.Probes.Context
 
         public AndroidLightProbe()
         {
-            _lightListener = new AndroidSensorListener(SensorType.Light, SensorDelay.Normal, null, e =>
-                {
-                    StoreDatum(new LightDatum(DateTimeOffset.UtcNow, e.Values[0]));
-                });
+            _lightListener = new AndroidSensorListener(SensorType.Light, null, async e =>
+            {
+                await StoreDatumAsync(new LightDatum(DateTimeOffset.UtcNow, e.Values[0]));
+            });
         }
 
         protected override void Initialize()
         {
             base.Initialize();
 
-            _lightListener.Initialize();
+            _lightListener.Initialize(MinDataStoreDelay);
         }
 
         protected override void StartListening()

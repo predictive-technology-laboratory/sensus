@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Android.OS;
+using System.Threading.Tasks;
 
 namespace Sensus.Android
 {
@@ -32,51 +33,55 @@ namespace Sensus.Android
 
         public AndroidTextToSpeech(AndroidSensusService service)
         {
-            _textToSpeech = new TextToSpeech(service, this);
+            // initialize wait handles before passing the current object as a listener
+            // below. if the listener OnInit method is called before the wait handles are
+            // initialized we could get an NRE:  https://insights.xamarin.com/app/Sensus-Production/issues/1099
             _initWait = new ManualResetEvent(false);
             _utteranceWait = new ManualResetEvent(false);
             _disposed = false;
 
+            // initialize speech module
+            _textToSpeech = new TextToSpeech(service, this);
+            _textToSpeech.SetLanguage(Java.Util.Locale.Default);
             _textToSpeech.SetOnUtteranceProgressListener(this);
         }
 
         public void OnInit(OperationResult status)
         {
-            _textToSpeech.SetLanguage(Java.Util.Locale.Default);
             _initWait.Set();
         }
 
-        public void SpeakAsync(string text, Action callback)
+        public Task SpeakAsync(string text)
         {
-            new Thread(() =>
+            return Task.Run(() =>
+            {
+                lock (_locker)
                 {
-                    lock (_locker)
+                    if (_disposed)
+                        return;
+
+                    _initWait.WaitOne();
+                    _utteranceWait.Reset();
+                    _utteranceIdToWaitFor = Guid.NewGuid().ToString();
+
+                    // https://github.com/predictive-technology-laboratory/sensus/wiki/Backwards-Compatibility
+#if __ANDROID_21__
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+                        _textToSpeech.Speak(text, QueueMode.Add, null, _utteranceIdToWaitFor);
+                    else
+#endif
                     {
-                        if (_disposed)
-                            return;
-
-                        _initWait.WaitOne();
-                        _utteranceWait.Reset();
-                        _utteranceIdToWaitFor = Guid.NewGuid().ToString();
-
-                        // TODO:  Test on Android 21 (or greater) device to make sure the following works
-                        #if __ANDROID_21__
-                        if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
-                            _textToSpeech.Speak(text, QueueMode.Add, null, _utteranceIdToWaitFor);
-                        else
-                        #endif
-                        {
-                            Dictionary<string, string> speakParams = new Dictionary<string, string>();
-                            speakParams.Add(TextToSpeech.Engine.KeyParamUtteranceId, _utteranceIdToWaitFor);
-                            _textToSpeech.Speak(text, QueueMode.Add, speakParams);
-                        }
-
-                        _utteranceWait.WaitOne();
-
-                        if (callback != null)
-                            callback();
+                        // ignore deprecation warning
+#pragma warning disable 618
+                        Dictionary<string, string> speakParams = new Dictionary<string, string>();
+                        speakParams.Add(TextToSpeech.Engine.KeyParamUtteranceId, _utteranceIdToWaitFor);
+                        _textToSpeech.Speak(text, QueueMode.Add, speakParams);
+#pragma warning restore 618
                     }
-                }).Start();
+
+                    _utteranceWait.WaitOne();
+                }
+            });
         }
 
         public override void OnStart(string utteranceId)

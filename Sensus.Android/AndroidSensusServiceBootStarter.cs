@@ -24,14 +24,10 @@ namespace Sensus.Android
     [IntentFilter(new string[] { Intent.ActionBootCompleted }, Categories = new string[] { Intent.CategoryDefault })]
     public class AndroidSensusServiceBootStarter : BroadcastReceiver
     {
-        public override void OnReceive(Context context, Intent intent)
+        public override void OnReceive(global::Android.Content.Context context, Intent intent)
         {
             if (intent.Action == Intent.ActionBootCompleted)
-            {
-                Intent serviceIntent = new Intent(context, typeof(AndroidSensusService));
-                serviceIntent.PutExtra(AndroidSensusServiceHelper.MAIN_ACTIVITY_WILL_BE_SET, false);
-                context.StartService(serviceIntent);
-            }
+                context.StartService(new Intent(context, typeof(AndroidSensusService)));
         }
     }
 }

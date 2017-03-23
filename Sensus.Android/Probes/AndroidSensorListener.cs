@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using SensusService;
+using Sensus;
 using System;
 using Android.Hardware;
 
@@ -21,7 +21,7 @@ namespace Sensus.Android.Probes
     public class AndroidSensorListener : Java.Lang.Object, ISensorEventListener
     {
         private SensorType _sensorType;
-        private SensorDelay _sensorDelay;
+        private TimeSpan? _sensorDelay;
         private Action<SensorStatus> _sensorAccuracyChangedCallback;
         private Action<SensorEvent> _sensorValueChangedCallback;
         private SensorManager _sensorManager;
@@ -30,28 +30,30 @@ namespace Sensus.Android.Probes
 
         private readonly object _locker = new object();
 
-        public AndroidSensorListener(SensorType sensorType, SensorDelay sensorDelay, Action<SensorStatus> sensorAccuracyChangedCallback, Action<SensorEvent> sensorValueChangedCallback)
+        public AndroidSensorListener(SensorType sensorType, Action<SensorStatus> sensorAccuracyChangedCallback, Action<SensorEvent> sensorValueChangedCallback)
         {
             _sensorType = sensorType;
-            _sensorDelay = sensorDelay;
             _sensorAccuracyChangedCallback = sensorAccuracyChangedCallback;
             _sensorValueChangedCallback = sensorValueChangedCallback;
             _listening = false;
         }
 
-        public void Initialize()
+        public void Initialize(TimeSpan? sensorDelay)
         {
-            _sensorManager = (SensusServiceHelper.Get() as AndroidSensusServiceHelper).Service.GetSystemService(global::Android.Content.Context.SensorService) as SensorManager;
-
+            _sensorDelay = sensorDelay;
+            _sensorManager = ((AndroidSensusServiceHelper)SensusServiceHelper.Get()).GetSensorManager();
             _sensor = _sensorManager.GetDefaultSensor(_sensorType);
+
             if (_sensor == null)
-                throw new Exception("No sensors present for sensor type " + _sensorType);
+            {
+                throw new NotSupportedException("No sensors present for sensor type " + _sensorType);
+            }
         }
 
         public void Start()
         {
             if (_sensor == null)
-                throw new Exception("Android sensor " + _sensorType + " is unsupported on this device.");
+                return;
 
             lock (_locker)
             {
@@ -61,13 +63,26 @@ namespace Sensus.Android.Probes
                     _listening = true;
             }
 
-            _sensorManager.RegisterListener(this, _sensor, _sensorDelay);
+            // use the largest delay that will provide samples at the desired rate:  https://developer.android.com/guide/topics/sensors/sensors_overview.html#sensors-monitor
+            SensorDelay sensorDelay = SensorDelay.Fastest;
+            if (_sensorDelay.HasValue)
+            {
+                long sensorDelayMicroseconds = _sensorDelay.Value.Ticks / 10;
+                if (sensorDelayMicroseconds >= 200000)
+                    sensorDelay = SensorDelay.Normal;
+                else if (sensorDelayMicroseconds >= 60000)
+                    sensorDelay = SensorDelay.Ui;
+                else if (sensorDelayMicroseconds >= 20000)
+                    sensorDelay = SensorDelay.Game;
+            }
+            
+            _sensorManager.RegisterListener(this, _sensor, sensorDelay);
         }
 
         public void Stop()
         {
             if (_sensor == null)
-                throw new Exception("Android sensor " + _sensorType + " is unsupported on this device.");
+                return;
 
             lock (_locker)
             {
