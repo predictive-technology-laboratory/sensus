@@ -225,6 +225,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteBeaconDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteBeaconProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteBeaconManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteTelemetryMotion.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />

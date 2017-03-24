@@ -46,7 +46,7 @@ namespace Sensus.Probes.Location
         {
             get
             {
-                return Identifier + ":" + UUID + ":" + Major + ":" + Minor;
+                return Identifier + ":" + UUID + ":" + Major + ":" + Minor + ":" + (Entering ? "In Range" : "Out of Range");
             }
         }
 

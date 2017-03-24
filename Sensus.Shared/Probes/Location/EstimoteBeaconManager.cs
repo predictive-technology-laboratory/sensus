@@ -50,6 +50,7 @@ namespace Sensus.Probes.Location
 
         private BeaconManager _beaconManager;
         private List<EstimoteBeacon> _beacons;
+        private DeviceManager _deviceManager;
 
         public void Connect(List<EstimoteBeacon> beacons, TimeSpan foregroundScanPeriod, TimeSpan foregroundWaitTime, TimeSpan backgroundScanPeriod, TimeSpan backgroundWaitTime)
         {
@@ -86,6 +87,10 @@ namespace Sensus.Probes.Location
                 {
                     _beaconManager.StartMonitoringForRegion(beacon.Region);
                 }
+
+                _deviceManager = new DeviceManager();
+                _deviceManager.
+                _deviceManager.RegisterForTelemetryNotification(new EstimoteTelemetryMotion());
 #endif
             });
         }

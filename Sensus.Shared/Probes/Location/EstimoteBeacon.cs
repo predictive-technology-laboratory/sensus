@@ -40,8 +40,7 @@ namespace Sensus.Probes.Location
                     throw new System.Exception("Invalid beacon:  " + value);
                 }
 
-                string identifier = string.IsNullOrWhiteSpace(parts[0]) ? Guid.NewGuid().ToString() : parts[0];  // identifier cannot be null
-
+                string identifier = parts[0];
                 string proximityUUID = string.IsNullOrWhiteSpace(parts[1]) ? null : parts[1];
 
                 int? major = null;
