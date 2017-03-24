@@ -267,7 +267,7 @@ namespace Sensus.DataStores
                 _data.Add(datum);
                 ++_addedDataCount;
 
-                SensusServiceHelper.Get().Logger.Log("Stored datum:  " + datum.GetType().Name, LoggingLevel.Debug, GetType());
+                SensusServiceHelper.Get().Logger.Log("Stored datum:  " + datum.GetType().Name + " " + datum.Timestamp, LoggingLevel.Debug, GetType());
 
                 if (!_sizeTriggeredCommitRunning && !_forcedCommitRunning)
                 {
