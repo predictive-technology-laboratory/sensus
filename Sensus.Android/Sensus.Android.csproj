@@ -22,7 +22,8 @@
     <TargetFrameworkVersion>v6.0</TargetFrameworkVersion>
     <AssemblyName>SensusAndroid</AssemblyName>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
-    <Description>Endpoint for the Sensus Android application.</Description>
+    <Description>Endpoint for the Sensus Android application. This is what gets built and distributed to the Android Play
+Store. It is possible to run and debug this project on physical and virtual Android devices.</Description>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|Android' ">
     <DebugSymbols>True</DebugSymbols>

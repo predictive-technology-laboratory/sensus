@@ -3,7 +3,8 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>b2f65fe8-f266-4c0c-b4a8-d326002b9180</ProjectGuid>
     <ReleaseVersion>2.0.0</ReleaseVersion>
-    <Description>Shared project containing platform-neutral code. When possible, code should be placed in this project.</Description>
+    <Description>Shared project containing platform-neutral code. When possible, code should be placed in this project 
+because it will be consumed by all other projects in this solution.</Description>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CodeSharing\Microsoft.CodeSharing.Common.Default.props" />
