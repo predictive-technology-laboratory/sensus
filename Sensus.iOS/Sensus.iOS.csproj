@@ -28,7 +28,7 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <CodesignKey>iPhone Developer</CodesignKey>
     <MtouchUseRefCounting>true</MtouchUseRefCounting>
     <MtouchLink>SdkOnly</MtouchLink>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <NoWarn>1701</NoWarn>
     <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
@@ -72,7 +72,7 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <MtouchUseRefCounting>true</MtouchUseRefCounting>
     <CodesignProvision>
     </CodesignProvision>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <NoWarn>1701</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
