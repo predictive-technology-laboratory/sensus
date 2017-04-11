@@ -284,6 +284,9 @@ project endpoint that is intended for the Xamarin Test Cloud.</Description>
     <Reference Include="Xamarin.Estimote.Android">
       <HintPath>..\packages\Xamarin.Estimote.Android.0.11.0.1\lib\MonoAndroid43\Xamarin.Estimote.Android.dll</HintPath>
     </Reference>
+    <Reference Include="BouncyCastle.Crypto">
+      <HintPath>..\packages\BouncyCastle.1.8.1\lib\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />

@@ -25,7 +25,7 @@ namespace Sensus.Context
     {
         Platform Platform { get; set; }
         IConcurrent MainThreadSynchronizer { get; set; }
-        IEncryption Encryption { get; set; }
+        IEncryption SymmetricEncryption { get; set; }
         INotifier Notifier { get; set; }
         ICallbackScheduler CallbackScheduler { get; set; }
     }

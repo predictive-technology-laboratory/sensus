@@ -271,6 +271,9 @@ project endpoint that is intended for the Xamarin Test Cloud.</Description>
     <Reference Include="Xamarin.Estimote.iOS">
       <HintPath>..\packages\Xamarin.Estimote.iOS.4.7.3.2\lib\Xamarin.iOS10\Xamarin.Estimote.iOS.dll</HintPath>
     </Reference>
+    <Reference Include="BouncyCastle.Crypto">
+      <HintPath>..\packages\BouncyCastle.1.8.1\lib\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <XamarinComponentReference Include="ZipArchive">

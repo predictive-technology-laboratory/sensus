@@ -48,7 +48,9 @@ namespace Sensus.Anonymization
             public object GetValue(object target)
             {
                 if (target == null)
+                {
                     throw new SensusException("Attempted to process a null object.");
+                }
                 // if the target object is a Datum, consider anonymizing the property value
                 else if (target is Datum)
                 {
@@ -70,12 +72,16 @@ namespace Sensus.Anonymization
                             return propertyValue;
                         }
                         else
+                        {
                             return anonymizer.Apply(propertyValue, _contractResolver.Protocol);
+                        }
                     }
                 }
                 // if the target is not a datum object (e.g., for InputCompletionRecords stored in ScriptDatum objects), simply return the member value in the default way.
                 else
+                {
                     return _defaultMemberValueProvider.GetValue(target);
+                }
             }
         }
 

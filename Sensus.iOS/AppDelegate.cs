@@ -56,7 +56,7 @@ namespace Sensus.iOS
             {
                 Platform = Sensus.Context.Platform.iOS,
                 MainThreadSynchronizer = new MainConcurrent(),
-                Encryption = new SimpleEncryption(SensusServiceHelper.ENCRYPTION_KEY)
+                SymmetricEncryption = new SymmetricEncryption(SensusServiceHelper.ENCRYPTION_KEY)
             };
 
             // iOS introduced a new notification center in 10.0 based on UNUserNotifications

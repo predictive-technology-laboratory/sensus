@@ -23,7 +23,7 @@ namespace Sensus.iOS.Context
     {
         public Platform Platform { get; set; }
         public IConcurrent MainThreadSynchronizer { get; set; }
-        public IEncryption Encryption { get; set; }
+        public IEncryption SymmetricEncryption { get; set; }
         public ICallbackScheduler CallbackScheduler { get; set; }
         public INotifier Notifier { get; set; }
         public string ActivationId { get; set; }

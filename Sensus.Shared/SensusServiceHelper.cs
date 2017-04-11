@@ -58,7 +58,19 @@ namespace Sensus
         private static SensusServiceHelper SINGLETON;
         public const int PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS = 60;
         private const string PENDING_SURVEY_NOTIFICATION_ID = "SENSUS-PENDING-SURVEY-NOTIFICATION";
+
+        /// <summary>
+        /// The Xamarin Insights app key. Generated via Xamarin Insights dashboard.
+        /// </summary>
         public const string XAMARIN_INSIGHTS_APP_KEY = "";
+
+        /// <summary>
+        /// The 64-character hex-encoded string for a 256-bit symmetric AES encryption key. Used to secure protocols for distribution. Can be generated with the following command:
+        /// 
+        ///     openssl enc -aes-256-cbc -k secret -P -md sha1
+        /// 
+        /// The above was adapted from:  https://www.ibm.com/support/knowledgecenter/SSLVY3_9.7.0/com.ibm.einstall.doc/topics/t_einstall_GenerateAESkey.html
+        /// </summary>
         public const string ENCRYPTION_KEY = "";
 
         public static readonly string SHARE_DIRECTORY = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "share");
@@ -177,7 +189,7 @@ namespace Sensus
                 string decryptedJSON;
                 try
                 {
-                    decryptedJSON = SensusContext.Current.Encryption.Decrypt(encryptedJsonBytes);
+                    decryptedJSON = SensusContext.Current.SymmetricEncryption.Decrypt(encryptedJsonBytes);
                 }
                 catch (Exception exception)
                 {
@@ -685,7 +697,7 @@ namespace Sensus
                 try
                 {
                     string serviceHelperJSON = JsonConvert.SerializeObject(this, JSON_SERIALIZER_SETTINGS);
-                    byte[] encryptedBytes = SensusContext.Current.Encryption.Encrypt(serviceHelperJSON);
+                    byte[] encryptedBytes = SensusContext.Current.SymmetricEncryption.Encrypt(serviceHelperJSON);
                     File.WriteAllBytes(SERIALIZATION_PATH, encryptedBytes);
 
                     _logger.Log("Serialized service helper with " + _registeredProtocols.Count + " protocols.", LoggingLevel.Normal, GetType());

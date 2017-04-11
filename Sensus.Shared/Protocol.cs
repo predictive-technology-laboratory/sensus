@@ -37,6 +37,7 @@ using Sensus.Context;
 using Sensus.Probes.User.MicrosoftBand;
 using Sensus.Probes.User.Scripts;
 using Sensus.Callbacks;
+using Sensus.Encryption;
 
 #if __IOS__
 using HealthKit;
@@ -111,7 +112,7 @@ namespace Sensus
         {
             try
             {
-                string json = SensusServiceHelper.Get().ConvertJsonForCrossPlatform(SensusContext.Current.Encryption.Decrypt(bytes));
+                string json = SensusServiceHelper.Get().ConvertJsonForCrossPlatform(SensusContext.Current.SymmetricEncryption.Decrypt(bytes));
 
                 DeserializeAsync(json, protocol =>
                 {
@@ -338,7 +339,7 @@ namespace Sensus
                 using (MemoryStream protocolStream = new MemoryStream())
                 {
                     unitTestingProtocolFile.CopyTo(protocolStream);
-                    string protocolJSON = SensusServiceHelper.Get().ConvertJsonForCrossPlatform(SensusContext.Current.Encryption.Decrypt(protocolStream.ToArray()));
+                    string protocolJSON = SensusServiceHelper.Get().ConvertJsonForCrossPlatform(SensusContext.Current.SymmetricEncryption.Decrypt(protocolStream.ToArray()));
                     DeserializeAsync(protocolJSON, protocol =>
                     {
                         if (protocol == null)
@@ -406,6 +407,7 @@ namespace Sensus
         private DateTime _endTimestamp;
         private bool _continueIndefinitely;
         private readonly List<Window> _alertExclusionWindows;
+        private string _asymmetricEncryptionPublicKey;
         private int _participationHorizonDays;
         private string _contactEmail;
         private bool _groupable;
@@ -916,6 +918,28 @@ namespace Sensus
             }
         }
 
+        [EntryStringUiProperty("Asymmetric Encryption Public Key:", true, 37)]
+        public string AsymmetricEncryptionPublicKey
+        {
+            get
+            {
+                return _asymmetricEncryptionPublicKey;
+            }
+            set
+            {
+                _asymmetricEncryptionPublicKey = value?.Trim().Replace("\n", "").Replace(" ", "");
+            }
+        }
+
+        [JsonIgnore]
+        public AsymmetricEncryption AsymmetricEncryption
+        {
+            get
+            {
+                return new AsymmetricEncryption(_asymmetricEncryptionPublicKey);
+            }
+        }
+
         #endregion
 
         /// <summary>
@@ -931,6 +955,7 @@ namespace Sensus
             _pointsOfInterest = new List<PointOfInterest>();
             _participationHorizonDays = 1;
             _alertExclusionWindows = new List<Window>();
+            _asymmetricEncryptionPublicKey = null;
             _startTimestamp = DateTime.Now;
             _endTimestamp = DateTime.Now;
             _startImmediately = true;
@@ -1013,7 +1038,7 @@ namespace Sensus
         {
             using (FileStream file = new FileStream(path, FileMode.Create, FileAccess.Write))
             {
-                byte[] encryptedBytes = SensusContext.Current.Encryption.Encrypt(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS));
+                byte[] encryptedBytes = SensusContext.Current.SymmetricEncryption.Encrypt(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS));
                 file.Write(encryptedBytes, 0, encryptedBytes.Length);
             }
         }

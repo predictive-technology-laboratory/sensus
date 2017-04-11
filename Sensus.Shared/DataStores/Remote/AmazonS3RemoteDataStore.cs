@@ -15,20 +15,19 @@
 using System;
 using System.Collections.Generic;
 using Sensus.UI.UiProperties;
-using Newtonsoft.Json.Serialization;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using Amazon.S3;
 using Amazon.CognitoIdentity;
 using Amazon;
 using Amazon.S3.Model;
-using Xamarin;
 using System.Threading.Tasks;
 using System.IO;
 using System.IO.Compression;
 using Newtonsoft.Json;
 using System.Net;
+using System.Security.Cryptography;
+using Sensus.Encryption;
 
 namespace Sensus.DataStores.Remote
 {
@@ -38,6 +37,8 @@ namespace Sensus.DataStores.Remote
         private string _folder;
         private string _cognitoIdentityPoolId;
         private bool _compress;
+        private bool _encrypt;
+        private string _serviceURL;
 
         [EntryStringUiProperty("Bucket:", true, 2)]
         public string Bucket
@@ -88,7 +89,7 @@ namespace Sensus.DataStores.Remote
             }
         }
 
-        [OnOffUiProperty("Compress:", true, 5)]
+        [OnOffUiProperty(null, true, 5)]
         public bool Compress
         {
             get
@@ -98,6 +99,42 @@ namespace Sensus.DataStores.Remote
             set
             {
                 _compress = value;
+            }
+        }
+
+        [OnOffUiProperty("Encrypt (must set public encryption key on protocol in order to use):", true, 6)]
+        public bool Encrypt
+        {
+            get
+            {
+                return _encrypt;
+            }
+            set
+            {
+                _encrypt = value;
+            }
+        }
+
+        [EntryStringUiProperty("Service URL:", true, 7)]
+        public string ServiceURL
+        {
+            get
+            {
+                return _serviceURL;
+            }
+            set
+            {
+                if (value != null)
+                {
+                    value = value.Trim();
+
+                    if (value == "")
+                    {
+                        value = null;
+                    }
+                }
+
+                _serviceURL = value;
             }
         }
 
@@ -132,14 +169,51 @@ namespace Sensus.DataStores.Remote
         {
             _bucket = _folder = "";
             _compress = false;
+            _encrypt = false;
+            _serviceURL = null;
+        }
+
+        public override void Start()
+        {
+            // ensure that we have a valid encryption setup if one is requested
+            if (_encrypt)
+            {
+                try
+                {
+                    AsymmetricEncryption testEncryption = Protocol.AsymmetricEncryption;
+                    string testValue = "testing";
+                    if (testEncryption.Decrypt(testEncryption.Encrypt(testValue)) != testValue)
+                    {
+                        throw new Exception();
+                    }
+                }
+                catch (Exception)
+                {
+                    throw new Exception("Ensure that a valid public key is set on the Protocol.");
+                }
+            }
+
+            base.Start();
         }
 
         private AmazonS3Client InitializeS3()
         {
             AWSConfigs.LoggingConfig.LogMetrics = false;  // getting many uncaught exceptions from AWS S3:  https://insights.xamarin.com/app/Sensus-Production/issues/351
+
             RegionEndpoint amazonRegion = RegionEndpoint.GetBySystemName(_cognitoIdentityPoolId.Substring(0, _cognitoIdentityPoolId.IndexOf(":")));
             CognitoAWSCredentials credentials = new CognitoAWSCredentials(_cognitoIdentityPoolId, amazonRegion);
-            return new AmazonS3Client(credentials, amazonRegion);
+
+            AmazonS3Config clientConfig = new AmazonS3Config();
+            if (_serviceURL == null)
+            {
+                clientConfig.RegionEndpoint = amazonRegion;
+            }
+            else
+            {
+                clientConfig.ServiceURL = _serviceURL;
+            }
+
+            return new AmazonS3Client(credentials, clientConfig);
         }
 
         protected override Task<List<Datum>> CommitAsync(IEnumerable<Datum> data, CancellationToken cancellationToken)
@@ -163,7 +237,9 @@ namespace Sensus.DataStores.Remote
                     foreach (Datum datum in data)
                     {
                         if (cancellationToken.IsCancellationRequested)
+                        {
                             break;
+                        }
 
                         string datumType = datum.GetType().Name;
 
@@ -176,8 +252,10 @@ namespace Sensus.DataStores.Remote
                             try
                             {
                                 // do not compress the json. it's too small to do much good.
-                                if ((await PutJsonAsync(s3, GetDatumKey(datum), "[" + Environment.NewLine + datumJSON + Environment.NewLine + "]", false, cancellationToken)) == HttpStatusCode.OK)
+                                if ((await PutJsonAsync(s3, GetDatumKey(datum), "[" + Environment.NewLine + datumJSON + Environment.NewLine + "]", false, false, cancellationToken)) == HttpStatusCode.OK)
+                                {
                                     committedData.Add(datum);
+                                }
                             }
                             catch (Exception ex)
                             {
@@ -224,7 +302,7 @@ namespace Sensus.DataStores.Remote
 
                         try
                         {
-                            if ((await PutJsonAsync(s3, key, json.ToString(), _compress, cancellationToken)) == HttpStatusCode.OK)
+                            if ((await PutJsonAsync(s3, key, json.ToString(), _compress, _encrypt, cancellationToken)) == HttpStatusCode.OK)
                                 committedData.AddRange(datumTypeData[datumType]);
                         }
                         catch (Exception ex)
@@ -245,35 +323,91 @@ namespace Sensus.DataStores.Remote
             });
         }
 
-        private Task<HttpStatusCode> PutJsonAsync(AmazonS3Client s3, string key, string json, bool compress, CancellationToken cancellationToken)
+        private Task<HttpStatusCode> PutJsonAsync(AmazonS3Client s3, string key, string json, bool compress, bool encrypt, CancellationToken cancellationToken)
         {
             return Task.Run(async () =>
             {
                 PutObjectRequest putRequest = new PutObjectRequest
                 {
                     BucketName = _bucket,
-                    Key = key + (compress ? ".gz" : ""),
-                    ContentType = compress ? "application/gzip" : "application/json"
+                    Key = key
                 };
 
-                if (compress)
+                if (!compress && !encrypt)
                 {
-                    // zip json string if option is selected -- from https://stackoverflow.com/questions/2798467/c-sharp-code-to-gzip-and-upload-a-string-to-amazon-s3
-                    MemoryStream compressed = new MemoryStream();
-
-                    using (GZipStream zip = new GZipStream(compressed, CompressionMode.Compress, true))
-                    {
-                        byte[] buffer = Encoding.UTF8.GetBytes(json);
-                        zip.Write(buffer, 0, buffer.Length);
-                        zip.Flush();
-                    }
-
-                    compressed.Position = 0;
-
-                    putRequest.InputStream = compressed;
+                    putRequest.ContentBody = json;
+                    putRequest.ContentType = "application/json";
                 }
                 else
-                    putRequest.ContentBody = json;
+                {
+                    byte[] inputStreamBytes = Encoding.UTF8.GetBytes(json);
+
+                    if (encrypt)
+                    {
+                        // apply symmetric-key encryption to the JSON, and send the symmetric key to S3 encrypted using the public key we have
+                        using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
+                        {
+                            // ensure that we generate a 32-byte symmetric key and 16-byte IV (IV length is block size / 8)
+                            aes.KeySize = 256;
+                            aes.BlockSize = 128;
+                            aes.GenerateKey();
+                            aes.GenerateIV();
+
+                            // apply symmetric-key encryption to our JSON
+                            SymmetricEncryption symmetricEncryption = new SymmetricEncryption(aes.Key, aes.IV);
+                            byte[] encryptedInputStreamBytes = symmetricEncryption.Encrypt(inputStreamBytes);
+
+                            // encrypt the symmetric key and initialization vector using our asymmetric public key
+                            byte[] encryptedKeyBytes = Protocol.AsymmetricEncryption.Encrypt(aes.Key);
+                            byte[] encryptedIVBytes = Protocol.AsymmetricEncryption.Encrypt(aes.IV);
+
+                            // write the new input stream...
+                            using (MemoryStream newInputStream = new MemoryStream())
+                            {
+                                // ...encrypted symmetric key
+                                byte[] encryptedKeyBytesLength = BitConverter.GetBytes(encryptedKeyBytes.Length);
+                                newInputStream.Write(encryptedKeyBytesLength, 0, encryptedKeyBytesLength.Length);
+                                newInputStream.Write(encryptedKeyBytes, 0, encryptedKeyBytes.Length);
+
+                                // ...encrypted initialization vector
+                                byte[] encryptedIVBytesLength = BitConverter.GetBytes(encryptedIVBytes.Length);
+                                newInputStream.Write(encryptedIVBytesLength, 0, encryptedIVBytesLength.Length);
+                                newInputStream.Write(encryptedIVBytes, 0, encryptedIVBytes.Length);
+
+                                // ...encrypted JSON
+                                newInputStream.Write(encryptedInputStreamBytes, 0, encryptedInputStreamBytes.Length);
+
+                                // change the input stream bytes to those we just generated
+                                inputStreamBytes = newInputStream.ToArray();
+                                putRequest.Key += ".bin";
+                            }
+                        }
+                    }
+
+                    MemoryStream putRequestInputStream = new MemoryStream();
+
+                    if (compress)
+                    {
+                        // zip json string if option is selected -- from https://stackoverflow.com/questions/2798467/c-sharp-code-to-gzip-and-upload-a-string-to-amazon-s3
+                        using (GZipStream zip = new GZipStream(putRequestInputStream, CompressionMode.Compress, true))
+                        {
+                            zip.Write(inputStreamBytes, 0, inputStreamBytes.Length);
+                            zip.Flush();
+                        }
+
+                        putRequest.ContentType = "application/gzip";
+                        putRequest.Key += ".gz";
+                    }
+                    else
+                    {
+                        putRequestInputStream.Write(inputStreamBytes, 0, inputStreamBytes.Length);
+                        putRequest.ContentType = "application/octet-stream";
+                    }
+
+                    // reset the stream and use it for the put request input
+                    putRequestInputStream.Position = 0;
+                    putRequest.InputStream = putRequestInputStream;
+                }
 
                 return (await s3.PutObjectAsync(putRequest, cancellationToken)).HttpStatusCode;
             });
