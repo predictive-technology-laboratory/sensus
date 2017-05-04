@@ -26,7 +26,12 @@
     <ReleaseVersion>2.0.0</ReleaseVersion>
     <AndroidManifest>..\Sensus.Android\Properties\AndroidManifest.xml</AndroidManifest>
     <AndroidLinkMode>None</AndroidLinkMode>
-    <Description>Endpoint that runs all Android and platform-neutral (i.e., shared) unit tests. Runs on Android emulators and devices.</Description>
+    <Description>Endpoint that runs all Android and platform-neutral (i.e., shared) unit tests in an NUnit app. It is 
+possible to run and debug this project on physical and virtual Android devices. To do this, simply
+"Run" (or hit the debugger play icon) within Xamarin/Visual studio while targeting such a device.
+
+This project is not intended to run in the Xamarin Test Cloud. See Sensus.Tests.Cloud for the 
+project endpoint that is intended for the Xamarin Test Cloud.</Description>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|Android' ">
     <DebugSymbols>True</DebugSymbols>

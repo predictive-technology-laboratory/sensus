@@ -4,7 +4,9 @@
     <ProjectGuid>ca15dd76-c484-4a56-a03f-9ef242294d55</ProjectGuid>
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
     <ReleaseVersion>2.0.0</ReleaseVersion>
-    <Description>Shared project containing iOS code.</Description>
+    <Description>Shared project containing iOS-specific code. Any code that is not compatible with Android should be 
+placed in this project because it will be consumed by all Sensus iOS endpoints (the actual iOS app as 
+well as the iOS unit testing app).</Description>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CodeSharing\Microsoft.CodeSharing.Common.Default.props" />

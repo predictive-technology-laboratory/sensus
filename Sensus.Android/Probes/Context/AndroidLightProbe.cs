@@ -26,6 +26,15 @@ namespace Sensus.Android.Probes.Context
         {
             _lightListener = new AndroidSensorListener(SensorType.Light, null, async e =>
             {
+                // looks like it's very risky to use e.Timestamp as the basis for timestamping our Datum objects. depending on the phone
+                // manufacturer and android version, e.Timestamp will be set relative to different anchors. this makes it impossible to
+                // compare data across sensors, phones, and android versions. using DateTimeOffset.UtcNow will cause imprecision due to
+                // latencies between reading time and execution time of the following line of code; however, these will be small under
+                // most conditions. one exception is when the listening probe lets the device sleep. in this case readings will be paused
+                // until the cpu wakes up, at which time any cached readings will be delivered in bulk to sensus. each of these readings
+                // will be timestamped with similar times by the following line of code, when in reality they originated much earlier. this
+                // will only happen when all listening probes are configured to allow the device to sleep.
+                // more detail here:  https://github.com/predictive-technology-laboratory/sensus/wiki/Listening-Probe#configuration
                 await StoreDatumAsync(new LightDatum(DateTimeOffset.UtcNow, e.Values[0]));
             });
         }
