@@ -3,7 +3,7 @@
 #' Provides access and analytic functions for Sensus data. More information can be found at the
 #' following URL:
 #' 
-#'     https://github.com/MatthewGerber/sensus/wiki
+#'     https://github.com/predictive-technology-laboratory/sensus/wiki
 #' 
 #' @section SensusR functions:
 #' The SensusR functions handle reading, cleaning, plotting, and otherwise analyzing data collected
