@@ -16,9 +16,7 @@ using System;
 using Sensus.Probes.Movement;
 using CoreMotion;
 using Foundation;
-using Sensus;
 using Plugin.Permissions.Abstractions;
-using System.Threading;
 
 namespace Sensus.iOS.Probes.Movement
 {
@@ -31,7 +29,9 @@ namespace Sensus.iOS.Probes.Movement
             base.Initialize();
 
             if (SensusServiceHelper.Get().ObtainPermission(Permission.Sensors) == PermissionStatus.Granted)
+            {
                 _motionManager = new CMMotionManager();
+            }
             else
             {
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable sensors in the future
@@ -49,7 +49,9 @@ namespace Sensus.iOS.Probes.Movement
             _motionManager?.StartAccelerometerUpdates(new NSOperationQueue(), async (data, error) =>
             {
                 if (!Stabilizing && data != null && error == null)
+                {
                     await StoreDatumAsync(new AccelerometerDatum(DateTimeOffset.UtcNow, data.Acceleration.X, data.Acceleration.Y, data.Acceleration.Z));
+                }
             });
         }
 

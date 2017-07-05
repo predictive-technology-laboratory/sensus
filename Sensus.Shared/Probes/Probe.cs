@@ -373,7 +373,9 @@ namespace Sensus.Probes
                             _chartData.Add(chartDataPoint);
 
                             while (_chartData.Count > 0 && _chartData.Count > _maxChartDataCount)
+                            {
                                 _chartData.RemoveAt(0);
+                            }
                         }
                     }
 
