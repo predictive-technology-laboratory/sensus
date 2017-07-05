@@ -26,26 +26,30 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
     {
         public override void IssueNotificationAsync(string title, string message, string id, string protocolId, bool alertUser, DisplayPage displayPage)
         {
-            IssueNotificationAsync(title, message, id, protocolId, alertUser, displayPage, -1, null, null);
+            IssueNotificationAsync(title, message, id, protocolId, alertUser, displayPage, TimeSpan.Zero, null, null);
         }
 
-        public void IssueSilentNotificationAsync(string id, int delayMS, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
+        public void IssueSilentNotificationAsync(string id, TimeSpan delay, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
         {
             if (info == null)
+            {
                 info = new NSMutableDictionary();
+            }
 
             info.SetValueForKey(new NSNumber(true), new NSString(SILENT_NOTIFICATION_KEY));
 
             // the user should never see a silent notification since we cancel them when the app is backgrounded. but there are race conditions that
             // might result in a silent notifiation being scheduled just before the app is backgrounded. give a generic message so that the notification
             // isn't totally confusing to the user.
-            IssueNotificationAsync("Please open this notification.", "One of your studies needs to be updated.", id, null, false, DisplayPage.None, delayMS, info, requestCreated);
+            IssueNotificationAsync("Please open this notification.", "One of your studies needs to be updated.", id, null, false, DisplayPage.None, delay, info, requestCreated);
         }
 
-        public void IssueNotificationAsync(string title, string message, string id, string protocolId, bool alertUser, DisplayPage displayPage, int delayMS, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
+        public void IssueNotificationAsync(string title, string message, string id, string protocolId, bool alertUser, DisplayPage displayPage, TimeSpan delay, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
         {
             if (info == null)
+            {
                 info = new NSMutableDictionary();
+            }
 
             info.SetValueForKey(new NSString(id), new NSString(NOTIFICATION_ID_KEY));
             info.SetValueForKey(new NSString(displayPage.ToString()), new NSString(DISPLAY_PAGE_KEY));
@@ -58,36 +62,42 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
             // the following properties are allowed to be null, but they cannot be set to null.
 
             if (!string.IsNullOrWhiteSpace(title))
+            {
                 content.Title = title;
+            }
 
             if (!string.IsNullOrWhiteSpace(message))
+            {
                 content.Body = message;
+            }
 
             // the following calculation isn't perfect because we use DateTime.Now and then use it again in the subsequent call to IssueNotificationAsync.
             // these two values will be slightly different due to execution time, but the risk is small:  the user might hear or not hear the notification
             // when it comes through, and it's very unlikely that the result will be incorrect.
-            if (alertUser && !Protocol.TimeIsWithinAlertExclusionWindow(protocolId, DateTime.Now.AddSeconds(delayMS / 1000d).TimeOfDay))
+            if (alertUser && !Protocol.TimeIsWithinAlertExclusionWindow(protocolId, (DateTime.Now + delay).TimeOfDay))
             {
                 content.Sound = UNNotificationSound.Default;
             }
 
-            IssueNotificationAsync(id, content, delayMS, requestCreated);
+            IssueNotificationAsync(id, content, delay, requestCreated);
         }
 
-        public void IssueNotificationAsync(string id, UNNotificationContent content, double delayMS, Action<UNNotificationRequest> requestCreated = null)
+        public void IssueNotificationAsync(string id, UNNotificationContent content, TimeSpan delay, Action<UNNotificationRequest> requestCreated = null)
         {
             UNCalendarNotificationTrigger trigger = null;
 
-            // a negative delay indicates an immediate notification, which is achieved with a null trigger.
-            if (delayMS > 0)
+            // a non-positive delay indicates an immediate notification, which is achieved with a null trigger.
+            if (delay.Ticks > 0)
             {
                 // we're going to specify an absolute date below based on the current time and the given delay. if this time is in the past by the time
                 // the notification center processes it (race condition), then the notification will not be scheduled. so ensure that we leave some time
                 // and avoid the race condition.
-                if (delayMS < 5000)
-                    delayMS = 5000;
+                if (delay.TotalSeconds < 5)
+                {
+                    delay = TimeSpan.FromSeconds(5);
+                }
 
-                DateTime triggerDateTime = DateTime.Now.AddMilliseconds(delayMS);
+                DateTime triggerDateTime = DateTime.Now + delay;
                 NSDateComponents triggerDateComponents = new NSDateComponents
                 {
                     Year = triggerDateTime.Year,

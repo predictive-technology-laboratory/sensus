@@ -114,19 +114,21 @@ namespace Sensus.Probes
         [JsonIgnore]
         protected abstract string DeviceAsleepWarning { get; }
 
-        protected override float RawParticipation
+        protected override double RawParticipation
         {
             get
             {
 #if __ANDROID__
                 // compute participation using successful health test times of the probe
-                long dayMS = 60000 * 60 * 24;
-                long participationHorizonMS = Protocol.ParticipationHorizonDays * dayMS;
-                float fullParticipationHealthTests = participationHorizonMS / (float)SensusServiceHelper.HEALTH_TEST_DELAY_MS;
+                long daySeconds = 60 * 60 * 24;
+                long participationHorizonSeconds = Protocol.ParticipationHorizonDays * daySeconds;
+                double fullParticipationHealthTests = participationHorizonSeconds / SensusServiceHelper.HEALTH_TEST_DELAY.TotalSeconds;
 
                 // lock collection because it might be concurrently modified by the test health method running in another thread.
                 lock (SuccessfulHealthTestTimes)
+                {
                     return SuccessfulHealthTestTimes.Count(healthTestTime => healthTestTime >= Protocol.ParticipationHorizon) / fullParticipationHealthTests;
+                }
 #elif __IOS__
                 // on ios, we cannot rely on the health test times to tell us how long the probe has been running. this is
                 // because, unlike in android, ios does not let local notifications return to the app when the app is in the 

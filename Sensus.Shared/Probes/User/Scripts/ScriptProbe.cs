@@ -40,7 +40,7 @@ namespace Sensus.Probes.User.Scripts
             get { return typeof(ScriptDatum); }
         }
 
-        protected override float RawParticipation
+        protected override double RawParticipation
         {
             get
             {

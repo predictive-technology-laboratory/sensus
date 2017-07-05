@@ -342,7 +342,7 @@ namespace Sensus.Probes.User.Scripts
         private void ScheduleScriptRun(ScriptTriggerTime triggerTime)
         {
             // don't bother with the script if it's coming too soon.
-            if (triggerTime.ReferenceTillTrigger <= TimeSpan.FromMinutes(1))
+            if (triggerTime.ReferenceTillTrigger.TotalMinutes <= 1)
             {
                 return;
             }
@@ -360,7 +360,7 @@ namespace Sensus.Probes.User.Scripts
             // line when a duplicate is detected. in the case of a duplicate we can simply abort scheduling the
             // script run since it was already schedule. this issue is much less common in android because all 
             // scripts are run immediately in the background, producing little opportunity for the race condition.
-            if (SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(callback, (int)triggerTime.ReferenceTillTrigger.TotalMilliseconds))
+            if (SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(callback, triggerTime.ReferenceTillTrigger))
             {
                 lock (_scriptRunCallbackIds)
                 {

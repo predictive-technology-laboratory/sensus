@@ -33,13 +33,15 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
             _callbackIdNotification = new Dictionary<string, UILocalNotification>();
         }
 
-        protected override void ScheduleCallbackAsync(string callbackId, int delayMS, bool repeating, int repeatDelayMS, bool repeatLag)
+        protected override void ScheduleCallbackAsync(string callbackId, TimeSpan delay, bool repeating, TimeSpan repeatDelay, bool repeatLag)
         {
             // get the callback information. this can be null if we don't have all required information. don't schedule the notification if this happens.
             DisplayPage displayPage = GetCallbackDisplayPage(callbackId);
-            NSMutableDictionary callbackInfo = GetCallbackInfo(callbackId, repeating, repeatDelayMS, repeatLag, displayPage);
+            NSMutableDictionary callbackInfo = GetCallbackInfo(callbackId, repeating, repeatDelay, repeatLag, displayPage);
             if (callbackInfo == null)
+            {
                 return;
+            }
 
             Action<UILocalNotification> notificationCreated = notification =>
             {
@@ -53,10 +55,12 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
 
             string userNotificationMessage = GetCallbackUserNotificationMessage(callbackId);
             if (userNotificationMessage == null)
-                notifier.IssueSilentNotificationAsync(callbackId, delayMS, callbackInfo, notificationCreated);
+            {
+                notifier.IssueSilentNotificationAsync(callbackId, delay, callbackInfo, notificationCreated);
+            }
             else
             {
-                notifier.IssueNotificationAsync("Sensus", userNotificationMessage, callbackId, GetCallbackProtocolId(callbackId), true, displayPage, delayMS, callbackInfo, notificationCreated);
+                notifier.IssueNotificationAsync("Sensus", userNotificationMessage, callbackId, GetCallbackProtocolId(callbackId), true, displayPage, delay, callbackInfo, notificationCreated);
             }
         }
 
@@ -84,13 +88,15 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
                     // the following needs to be done on the main thread since we're working with UILocalNotification objects.
                     SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                     {
-                        double msTillTrigger = 0;
+                        TimeSpan timeTillTrigger = TimeSpan.Zero;
                         DateTime? triggerDateTime = notification.FireDate?.ToDateTime().ToLocalTime();
                         if (triggerDateTime.HasValue)
-                            msTillTrigger = (triggerDateTime.Value - DateTime.Now).TotalMilliseconds;
+                        {
+                            timeTillTrigger = triggerDateTime.Value - DateTime.Now;
+                        }
 
                         // service any callback that should have already been serviced or will soon be serviced
-                        if (msTillTrigger < 5000)
+                        if (timeTillTrigger.TotalSeconds < 5)
                         {
                             notifier.CancelNotification(notification);
                             ServiceCallbackAsync(notification.UserInfo);
@@ -106,7 +112,7 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
             });
         }
 
-        public override Task RaiseCallbackAsync(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, bool notifyUser, Action<DateTime> scheduleRepeatCallback, Action letDeviceSleepCallback)
+        public override Task RaiseCallbackAsync(string callbackId, bool repeating, TimeSpan repeatDelay, bool repeatLag, bool notifyUser, Action<DateTime> scheduleRepeatCallback, Action letDeviceSleepCallback)
         {
             return Task.Run(async () =>
             {
@@ -123,7 +129,7 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
                     _callbackIdNotification.Remove(callbackId);
                 }
 
-                await base.RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, notifyUser,
+                await base.RaiseCallbackAsync(callbackId, repeating, repeatDelay, repeatLag, notifyUser,
 
                     repeatCallbackTime =>
                     {

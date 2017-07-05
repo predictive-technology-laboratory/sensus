@@ -33,35 +33,39 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
 
         public override void IssueNotificationAsync(string title, string message, string id, string protocolId, bool alertUser, DisplayPage displayPage)
         {
-            IssueNotificationAsync(title, message, id, protocolId, alertUser, displayPage, 0, null);
+            IssueNotificationAsync(title, message, id, protocolId, alertUser, displayPage, TimeSpan.Zero, null);
         }
 
-        public void IssueSilentNotificationAsync(string id, int delayMS, NSMutableDictionary notificationInfo, Action<UILocalNotification> notificationCreated = null)
+        public void IssueSilentNotificationAsync(string id, TimeSpan delay, NSMutableDictionary notificationInfo, Action<UILocalNotification> notificationCreated = null)
         {
             if (notificationInfo == null)
+            {
                 notificationInfo = new NSMutableDictionary();
+            }
 
             notificationInfo.SetValueForKey(new NSNumber(true), new NSString(SILENT_NOTIFICATION_KEY));
 
             // the user should never see a silent notification since we cancel them when the app is backgrounded. but there are race conditions that
             // might result in a silent notifiation being scheduled just before the app is backgrounded. give a generic message so that the notification
             // isn't totally confusing to the user.
-            IssueNotificationAsync("Please open this notification.", "One of your studies needs to be updated.", id, null, false, DisplayPage.None, delayMS, notificationInfo, notificationCreated);
+            IssueNotificationAsync("Please open this notification.", "One of your studies needs to be updated.", id, null, false, DisplayPage.None, delay, notificationInfo, notificationCreated);
         }
 
-        public void IssueNotificationAsync(string title, string message, string id, string protocolId, bool alertUser, DisplayPage displayPage, int delayMS, NSMutableDictionary notificationInfo, Action<UILocalNotification> notificationCreated = null)
+        public void IssueNotificationAsync(string title, string message, string id, string protocolId, bool alertUser, DisplayPage displayPage, TimeSpan delay, NSMutableDictionary notificationInfo, Action<UILocalNotification> notificationCreated = null)
         {
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
                 CancelNotification(id);
 
                 if (notificationInfo == null)
+                {
                     notificationInfo = new NSMutableDictionary();
+                }
 
                 notificationInfo.SetValueForKey(new NSString(id), new NSString(NOTIFICATION_ID_KEY));
                 notificationInfo.SetValueForKey(new NSString(displayPage.ToString()), new NSString(DISPLAY_PAGE_KEY));
 
-                DateTime fireDateTime = DateTime.Now.AddSeconds(delayMS / 1000d);
+                DateTime fireDateTime = DateTime.Now + delay;
 
                 // all properties below were introduced in iOS 8.0. we currently target 8.0 and above, so these should be safe to set.
                 UILocalNotification notification = new UILocalNotification
@@ -80,7 +84,9 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
 
                 // introduced in iOS 8.2:  https://developer.apple.com/reference/uikit/uilocalnotification/1616647-alerttitle
                 if (UIDevice.CurrentDevice.CheckSystemVersion(8, 2) && !string.IsNullOrWhiteSpace(title))
+                {
                     notification.AlertTitle = title;
+                }
 
                 notificationCreated?.Invoke(notification);
 
@@ -98,7 +104,9 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
                     // use indexing to add/replace since we might be reissuing the notification with the same id.
                     string id = notification.UserInfo?.ValueForKey(new NSString(NOTIFICATION_ID_KEY))?.ToString();
                     if (id != null)
+                    {
                         _idNotification[id] = notification;
+                    }
                 }
 
                 UIApplication.SharedApplication.ScheduleLocalNotification(notification);
@@ -129,7 +137,9 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
                 {
                     string scheduledNotificationId = scheduledNotification.UserInfo?.ValueForKey(new NSString(NOTIFICATION_ID_KEY))?.ToString();
                     if (scheduledNotificationId == id)
+                    {
                         UIApplication.SharedApplication.CancelLocalNotification(scheduledNotification);
+                    }
                 }
 
                 // cancel by object, too, in case the notification has been delivered and is no longer scheduled.

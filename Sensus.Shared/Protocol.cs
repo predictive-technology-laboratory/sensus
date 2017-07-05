@@ -766,20 +766,24 @@ namespace Sensus
         }
 
         [JsonIgnore]
-        public float Participation
+        public double Participation
         {
             get
             {
-                float[] participations = _probes.Select(probe => probe.GetParticipation())
+                double[] participations = _probes.Select(probe => probe.GetParticipation())
                                                 .Where(participation => participation != null)
                                                 .Select(participation => participation.GetValueOrDefault())
                                                 .ToArray();
 
                 // there will not be any participations if all probes are disabled -- perfect participation by definition
                 if (participations.Length == 0)
+                {
                     return 1;
+                }
                 else
+                {
                     return participations.Average();
+                }
             }
         }
 
@@ -1210,7 +1214,7 @@ namespace Sensus
             $"Started study: {Name}.");
 #endif
 
-            SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(_scheduledStartCallback, (int)timeUntilStart.TotalMilliseconds);
+            SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(_scheduledStartCallback, timeUntilStart);
         }
 
         public void CancelScheduledStart()
@@ -1242,7 +1246,7 @@ namespace Sensus
             $"Stopped study: {Name}.");
 #endif
 
-            SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(_scheduledStopCallback, (int)timeUntilStop.TotalMilliseconds);
+            SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(_scheduledStopCallback, timeUntilStop);
         }
 
         public void CancelScheduledStop()

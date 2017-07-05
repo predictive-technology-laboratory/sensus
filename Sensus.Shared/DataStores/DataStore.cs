@@ -249,7 +249,7 @@ namespace Sensus.DataStores
 #endif  
 
                 _commitCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) => CommitAndReleaseAddedDataAsync(cancellationToken), GetType().FullName, Protocol.Id, Protocol.Id, TimeSpan.FromMinutes(_commitTimeoutMinutes), userNotificationMessage);
-                SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_commitCallback, _commitDelayMS, _commitDelayMS, COMMIT_CALLBACK_LAG);
+                SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_commitCallback, TimeSpan.FromMilliseconds(_commitDelayMS), TimeSpan.FromMilliseconds(_commitDelayMS), COMMIT_CALLBACK_LAG);
             }
         }
 

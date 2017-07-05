@@ -79,7 +79,7 @@ namespace Sensus.Probes
         [JsonIgnore]
         public abstract int DefaultPollingSleepDurationMS { get; }
 
-        protected override float RawParticipation
+        protected override double RawParticipation
         {
             get
             {
@@ -169,7 +169,7 @@ namespace Sensus.Probes
             _locationManager = new CLLocationManager();
             _locationManager.LocationsUpdated += (sender, e) =>
             {
-                SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(_pollCallback, 0);
+                SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(_pollCallback, TimeSpan.Zero);
             };
 #endif
 
@@ -264,10 +264,10 @@ namespace Sensus.Probes
                 // schedule the callback if we're not doing significant-change polling, or if we are but the latter doesn't override the former.
                 if (!_significantChangePoll || !_significantChangeOverrideScheduledPolls)
                 {
-                    SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_pollCallback, 0, _pollingSleepDurationMS, POLL_CALLBACK_LAG);
+                    SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_pollCallback, TimeSpan.Zero, TimeSpan.FromMilliseconds(_pollingSleepDurationMS), POLL_CALLBACK_LAG);
                 }
 #elif __ANDROID__
-                SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_pollCallback, 0, _pollingSleepDurationMS, POLL_CALLBACK_LAG);
+                SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_pollCallback, TimeSpan.Zero, TimeSpan.FromMilliseconds(_pollingSleepDurationMS), POLL_CALLBACK_LAG);
 #endif
             }
         }

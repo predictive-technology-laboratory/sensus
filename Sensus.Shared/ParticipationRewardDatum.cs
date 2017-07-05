@@ -18,9 +18,9 @@ namespace Sensus
 {
     public class ParticipationRewardDatum : Datum
     {
-        private float _participation;
+        private double _participation;
 
-        public float Participation
+        public double Participation
         {
             get
             {
@@ -40,7 +40,7 @@ namespace Sensus
             }
         }
 
-        public ParticipationRewardDatum(DateTimeOffset timestamp, float participation)
+        public ParticipationRewardDatum(DateTimeOffset timestamp, double participation)
             : base(timestamp)
         {
             _participation = participation;
