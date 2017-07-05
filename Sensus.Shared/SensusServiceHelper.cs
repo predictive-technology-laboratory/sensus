@@ -761,7 +761,7 @@ namespace Sensus
                         scriptToKeep = scriptsFromSameRunner.First();
                         scriptsToRemove = scriptsFromSameRunner.Skip(1).ToList();
                     }
-                    else if (runMode == RunMode.SingleUpdate)
+                    else if (runMode == RunMode.SingleKeepNewest)
                     {
                         scriptToKeep = scriptsFromSameRunner.Last();
                         scriptsToRemove = scriptsFromSameRunner.Take(scriptsFromSameRunner.Count - 1).ToList();

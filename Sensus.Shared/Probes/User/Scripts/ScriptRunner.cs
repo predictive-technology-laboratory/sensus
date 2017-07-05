@@ -139,7 +139,7 @@ namespace Sensus.Probes.User.Scripts
         [OnOffUiProperty("Display Progress:", true, 13)]
         public bool DisplayProgress { get; set; }
 
-        [ListUiProperty("Run Mode:", true, 14, new object[] { RunMode.Multiple, RunMode.SingleUpdate, RunMode.SingleKeepOldest })]
+        [ListUiProperty("Run Mode:", true, 14, new object[] { RunMode.Multiple, RunMode.SingleKeepNewest, RunMode.SingleKeepOldest })]
         public RunMode RunMode { get; set; }
 
         [EntryStringUiProperty("Incomplete Submission Confirmation:", true, 15)]
@@ -162,7 +162,7 @@ namespace Sensus.Probes.User.Scripts
             OneShot = false;
             RunOnStart = false;
             DisplayProgress = true;
-            RunMode = RunMode.SingleUpdate;
+            RunMode = RunMode.SingleKeepNewest;
             IncompleteSubmissionConfirmation = "You have not completed all required fields. Do you want to continue?";
 
             Triggers.CollectionChanged += (o, e) =>
