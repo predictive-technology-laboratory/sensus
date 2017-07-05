@@ -38,7 +38,8 @@ namespace Sensus.DataStores.Remote
         private string _cognitoIdentityPoolId;
         private bool _compress;
         private bool _encrypt;
-        private string _serviceURL;
+        private string _pinnedServiceURL;
+        private string _pinnedPublicKey;
 
         [EntryStringUiProperty("Bucket:", true, 2)]
         public string Bucket
@@ -115,12 +116,12 @@ namespace Sensus.DataStores.Remote
             }
         }
 
-        [EntryStringUiProperty("Service URL:", true, 7)]
-        public string ServiceURL
+        [EntryStringUiProperty("Pinned Service URL:", true, 7)]
+        public string PinnedServiceURL
         {
             get
             {
-                return _serviceURL;
+                return _pinnedServiceURL;
             }
             set
             {
@@ -134,7 +135,20 @@ namespace Sensus.DataStores.Remote
                     }
                 }
 
-                _serviceURL = value;
+                _pinnedServiceURL = value;
+            }
+        }
+
+        [EntryStringUiProperty("Pinned Public Key:", true, 8)]
+        public string PinnedPublicKey
+        {
+            get
+            {
+                return _pinnedPublicKey;
+            }
+            set
+            {
+                _pinnedPublicKey = value?.Trim().Replace("\n", "").Replace(" ", "");
             }
         }
 
@@ -170,7 +184,8 @@ namespace Sensus.DataStores.Remote
             _bucket = _folder = "";
             _compress = false;
             _encrypt = false;
-            _serviceURL = null;
+            _pinnedServiceURL = null;
+            _pinnedPublicKey = null;
         }
 
         public override void Start()
@@ -188,6 +203,12 @@ namespace Sensus.DataStores.Remote
                 }
             }
 
+            // ensure that we have a pinned public key if we're pinning the service
+            if (_pinnedServiceURL != null && string.IsNullOrWhiteSpace(_pinnedPublicKey))
+            {
+                throw new Exception("Ensure that a pinned public key is provided to the AWS S3 remote data store.");
+            }
+
             base.Start();
         }
 
@@ -199,13 +220,25 @@ namespace Sensus.DataStores.Remote
             CognitoAWSCredentials credentials = new CognitoAWSCredentials(_cognitoIdentityPoolId, amazonRegion);
 
             AmazonS3Config clientConfig = new AmazonS3Config();
-            if (_serviceURL == null)
-            {
+            if (_pinnedServiceURL == null)
+            {                
                 clientConfig.RegionEndpoint = amazonRegion;
             }
             else
             {
-                clientConfig.ServiceURL = _serviceURL;
+                clientConfig.ServiceURL = _pinnedServiceURL;
+
+                ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) =>
+                {
+                    if (certificate == null)
+                    {
+                        return false;
+                    }
+
+                    return true;
+
+                    return certificate.GetPublicKeyString() == _pinnedPublicKey;
+                };
             }
 
             return new AmazonS3Client(credentials, clientConfig);
@@ -298,7 +331,9 @@ namespace Sensus.DataStores.Remote
                         try
                         {
                             if ((await PutJsonAsync(s3, key, json.ToString(), _compress, _encrypt, cancellationToken)) == HttpStatusCode.OK)
+                            {
                                 committedData.AddRange(datumTypeData[datumType]);
+                            }
                         }
                         catch (Exception ex)
                         {
