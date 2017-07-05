@@ -28,10 +28,14 @@ namespace Sensus.Encryption
 
         #region Constructor
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:Sensus.Encryption.SymmetricEncryption"/> class. Uses zero-valued initialization vector. If empty,
-        /// a zero-valued key will be used.
+        /// Initializes a new instance of the <see cref="T:Sensus.Encryption.SymmetricEncryption"/> class. Uses zero-valued initialization vector.
+        /// 
         /// </summary>
-        /// <param name="encryptionKeyHexString">A 64-character hex-encoded string for a 256-bit symmetric AES encryption key.</param>
+        /// <param name="encryptionKeyHexString">A 64-character hex-encoded string for a 256-bit symmetric AES encryption key. Can be generated with the following:
+        /// 
+        ///     openssl enc -aes-256-cbc -k secret -P -md sha1
+        /// 
+        /// </param>
         public SymmetricEncryption(string encryptionKeyHexString)
         {
             if (string.IsNullOrWhiteSpace(encryptionKeyHexString))

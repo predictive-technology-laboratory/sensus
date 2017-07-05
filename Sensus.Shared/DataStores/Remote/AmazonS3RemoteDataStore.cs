@@ -180,12 +180,7 @@ namespace Sensus.DataStores.Remote
             {
                 try
                 {
-                    AsymmetricEncryption testEncryption = Protocol.AsymmetricEncryption;
-                    string testValue = "testing";
-                    if (testEncryption.Decrypt(testEncryption.Encrypt(testValue)) != testValue)
-                    {
-                        throw new Exception();
-                    }
+                    Protocol.AsymmetricEncryption.Encrypt("testing");
                 }
                 catch (Exception)
                 {

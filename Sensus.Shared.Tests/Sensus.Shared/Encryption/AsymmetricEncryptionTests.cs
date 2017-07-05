@@ -71,15 +71,6 @@ namespace Sensus.Tests.Encryption
         }
 
         [Test]
-        public void EncryptionStringWrongPrivateKeyTest()
-        {
-            string wrongPrivateKey = "MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQChqtxjiFxPRUnBiYqX7J4ClINJBouHcs5DHhtc9KjbfQtKRlk5n0qElDSyJNo4wHbrG0vHKQjo0LysybFrRsPSU8SzXiyrpX+BBRtTpJGz4s+8OeRvXcBj69ff6xRKYREIzakr328uDm+9oJyHsZhJrl43pT8FGG6N8EmMx6q58FxWWtEcSYhrqiMaj09kZUkRc38HsGHhoApQU2n04dCw12wnL8JAy7OliuJ+E3941It/P231fegoilSF20D6vNhr7uhYxxmIwo3sb6v7biYKy1z8uZQwtoRHCRFO3iDR6DWHJxZXeCVwNiXcJyYlnp82vSeFKesfM+Wi5HNlGek1AgMBAAECggEAB0yenMPYXx/iv6FFJ6zgSX+JGe/4tsnhNDiUxbKqORbBPr5EYwylIa1LX8u4Kp3OALl/x2M76r8Z9bc5kn1kdAeiNvMGk01qn1mqrTEd/wA7nuUCQmD6QcixO4Pyq5UMXthiTf/NlkfClc49owbKuHDuAhcs7D75JuF1gKy3MaPtOHM7bUnuPpWBvZccOyvNnU8PvK9Ax4K6sxeszkH6az8+NceakNvCrKhyp7MM9QnAhJ4rx8tTwmT+C5WbmXqSQ5hgERs1LmYWsDiwDhKz010TCECbF4hLvS4I6qrw0kogpiKmCItb23TkUHymdQnmRFK5zwS11u+UTgYU5GnTIQKBgQDLzP7fUkM6Mgo+iednoRxAF5gq3itQMhDbait/k+NJrA1Phe3xxwL7Lirxj+cM4dDOs6WwTvjG3Ob7lv4Q8Kg3rt9fWa4fm6sDOYxOZwkHT23RiYSCJS//PwYDTTWZ/P+3xxB3n6YG865xKgTDgaWc6ZDAAJoWeUy/EQHiAG3xLQKBgQDLEzneMQiujx+mAXw693OIZ2nnFny5M12BRwVnkqxHaQECgA0YrSVrWDfxnBh+AJbEHf2Lpbtp/iQ3v2WbZdvlVMECE6of8Mnt/fOFI1cG2QyIIlivZ7e5PuHpLTAkGOn3oNSYCiZZxAOHlqAY9L9c817rCzjO4dJz3NxYmJsNKQKBgQCIwjU+Euu9/5pUQSIhrkFQ2QRpr9CM7ivVsTcjU1AwPd5owMzdc9iSSXbTxucbA+Wk73R+DWBvwgjWR4qSP4wCYbzPNVTdLQ7jCRkX+5hZaXmeJJPg6ad9twMH8CXKAbZv0otAWseE3rzuf23W7AcAdtOFpGHCNv/DL1x+Fh+wuQKBgATtRHwliGZjxorKgm8TzdPDXohivUfo/R3D0Ve/8ToSTBn5bVfp63x9OW49MULtVLsRVzNqI+/gYJSRqi9o+zrHIZ+hRoFb4CpL/Pp/7v6ViX5MBwbKZ2SxJ932YLKfgB2n40CFDoUjAkrp1pyEY5gnt2fQb+JlDCwPcbEckrZxAoGBAIIkQIv5Ik7ScCvpDR/Yt1Q264qttVUtIp+5rZbiZSFXSMBHDXGJTdVCYFKUOnA/FxBGbh0K0v+PBC2WJ3S9VgBcpTtCHJLgavHOfgPp3cavgDVLflaMvlMQCxbIPB5docsUVr/DdPMEz2IHborvB2PVDJHIzFKmJxV0/RGuuoRS";
-            var encryption = new AsymmetricEncryption(_publicKey, wrongPrivateKey);
-
-            Assert.Throws(typeof(CryptographicUnexpectedOperationException), () => { encryption.Decrypt(encryption.Encrypt("aw3lrifo2938473987s83fusoi3fjsofisjfo")); });
-        }
-
-        [Test]
         public void EncryptWithoutPublicKeyTest()
         {
             var encryption = new AsymmetricEncryption(null, _privateKey);

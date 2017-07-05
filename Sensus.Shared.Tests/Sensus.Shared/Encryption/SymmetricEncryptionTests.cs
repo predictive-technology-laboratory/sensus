@@ -23,14 +23,6 @@ namespace Sensus.Tests.Encryption
     public class SymmetricEncryptionTests
     {
         [Test]
-        public void BlankEncryptionKeyTest()
-        {
-            var encryption = new SymmetricEncryption("");
-
-            Assert.Throws(typeof(CryptographicException), () => { encryption.Encrypt("A"); });
-        }
-
-        [Test]
         public void ShortEncryptionKeyTest()
         {
             var encryption = new SymmetricEncryption("123123");
