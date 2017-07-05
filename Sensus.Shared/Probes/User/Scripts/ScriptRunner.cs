@@ -96,7 +96,7 @@ namespace Sensus.Probes.User.Scripts
         }
 
         [EntryStringUiProperty("Trigger Windows:", true, 8)]
-        public string TriggerWindows
+        public string TriggerWindowsString
         {
             get
             {
