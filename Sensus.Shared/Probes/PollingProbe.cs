@@ -282,7 +282,9 @@ namespace Sensus.Probes
 
 #if __IOS__
                 if (_significantChangePoll)
+                {
                     _locationManager.StopMonitoringSignificantLocationChanges();
+                }
 #endif
 
                 SensusContext.Current.CallbackScheduler.UnscheduleCallback(_pollCallback?.Id);
