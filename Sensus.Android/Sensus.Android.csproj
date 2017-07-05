@@ -275,7 +275,6 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <Compile Include="Probes\Communication\AndroidTelephonyOutgoingBroadcastReceiver.cs" />
     <Compile Include="Probes\Communication\AndroidTelephonyProbe.cs" />
     <Compile Include="Probes\Context\AndroidAmbientTemperatureProbe.cs" />
-    <Compile Include="Probes\Context\AndroidBluetoothBroadcastReceiver.cs" />
     <Compile Include="Probes\Context\AndroidBluetoothDeviceProximityProbe.cs" />
     <Compile Include="Probes\Context\AndroidLightProbe.cs" />
     <Compile Include="Probes\Context\AndroidSoundProbe.cs" />
@@ -297,6 +296,10 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <Compile Include="TextCellDisposedFix.cs" />
     <Compile Include="Callbacks\AndroidCallbackScheduler.cs" />
     <Compile Include="Callbacks\AndroidNotifier.cs" />
+    <Compile Include="Probes\Context\AndroidBluetoothAdvertisingCallback.cs" />
+    <Compile Include="Probes\Context\AndroidBluetoothScanCallback.cs" />
+    <Compile Include="Probes\Context\AndroidBluetoothBroadcastReceiver.cs" />
+    <Compile Include="Probes\Context\AndroidBluetoothGattCallback.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="AndroidClassDiagram.cd" />

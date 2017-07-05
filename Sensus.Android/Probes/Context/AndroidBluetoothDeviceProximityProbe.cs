@@ -11,24 +11,26 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 using System;
-using Sensus;
 using Sensus.Probes.Context;
 using Plugin.Permissions.Abstractions;
+using Android.Bluetooth.LE;
+using Android.Bluetooth;
+using Sensus.Context;
+using Android.OS;
+using Java.Util;
+using System.Text;
+using System.Collections.Generic;
 
 namespace Sensus.Android.Probes.Context
 {
     public class AndroidBluetoothDeviceProximityProbe : BluetoothDeviceProximityProbe
     {
-        private EventHandler<BluetoothDeviceProximityDatum> _deviceFoundCallback;
-
-        public AndroidBluetoothDeviceProximityProbe()
-        {
-            _deviceFoundCallback = async (sender, bluetoothDeviceProximityDatum) =>
-            {
-                await StoreDatumAsync(bluetoothDeviceProximityDatum);
-            };
-        }
+        private BluetoothLeScanner _bluetoothScanner;
+        private AndroidBluetoothScanCallback _bluetoothScannerCallback;
+        private BluetoothLeAdvertiser _bluetoothAdvertiser;
+        private AndroidBluetoothAdvertisingCallback _bluetoothAdvertiserCallback;
 
         protected override void Initialize()
         {
@@ -46,12 +48,64 @@ namespace Sensus.Android.Probes.Context
 
         protected override void StartListening()
         {
-            AndroidBluetoothBroadcastReceiver.DEVICE_FOUND += _deviceFoundCallback;
+            // adapted primarily from:  https://code.tutsplus.com/tutorials/how-to-advertise-android-as-a-bluetooth-le-peripheral--cms-25426
+
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            {
+                ParcelUuid serviceUUID = new ParcelUuid(UUID.FromString(SERVICE_UUID));
+
+                #region central -- scan for the sensus BLE probe peripheral
+                ScanFilter scanFilter = new ScanFilter.Builder()
+                                                      .SetServiceUuid(serviceUUID)
+                                                      .Build();
+
+                List<ScanFilter> scanFilters = new List<ScanFilter>();
+                scanFilters.Add(scanFilter);
+
+                ScanSettings scanSettings = new ScanSettings.Builder()
+                                                            .SetScanMode(global::Android.Bluetooth.LE.ScanMode.Balanced)
+                                                            .Build();
+
+                _bluetoothScannerCallback = new AndroidBluetoothScanCallback();
+
+                _bluetoothScannerCallback.DeviceIdEncountered += async (sender, deviceIdEncountered) =>
+                {
+                    await StoreDatumAsync(new BluetoothDeviceProximityDatum(DateTimeOffset.UtcNow, deviceIdEncountered));
+                };
+
+                _bluetoothScanner = BluetoothAdapter.DefaultAdapter.BluetoothLeScanner;
+                _bluetoothScanner.StartScan(scanFilters, scanSettings, _bluetoothScannerCallback);
+                #endregion
+
+                #region peripheral -- advertise the sensus BLE probe peripheral. not supported by all hardware models.
+                if (BluetoothAdapter.DefaultAdapter.IsMultipleAdvertisementSupported)
+                {
+                    AdvertiseSettings advertiseSettings = new AdvertiseSettings.Builder()
+                                                                               .SetAdvertiseMode(AdvertiseMode.Balanced)
+                                                                               .SetTxPowerLevel(AdvertiseTx.PowerMedium)
+                                                                               .SetConnectable(true)
+                                                                               .Build();
+
+                    AdvertiseData advertiseData = new AdvertiseData.Builder()
+                                                                   .SetIncludeDeviceName(false)
+                                                                   .AddServiceUuid(serviceUUID)
+                                                                   .Build();
+
+                    _bluetoothAdvertiserCallback = new AndroidBluetoothAdvertisingCallback();
+
+                    _bluetoothAdvertiser = BluetoothAdapter.DefaultAdapter.BluetoothLeAdvertiser;
+                    _bluetoothAdvertiser.StartAdvertising(advertiseSettings, advertiseData, _bluetoothAdvertiserCallback);
+
+                    // how do we handle read requests from the client?
+                }
+                #endregion
+            });
         }
 
         protected override void StopListening()
         {
-            AndroidBluetoothBroadcastReceiver.DEVICE_FOUND -= _deviceFoundCallback;
+            _bluetoothScanner.StopScan(_bluetoothScannerCallback);
+            _bluetoothAdvertiser.StopAdvertising(_bluetoothAdvertiserCallback);
         }
     }
 }

@@ -149,6 +149,7 @@
 	<array>
 		<string>location</string>
 		<string>bluetooth-central</string>
+		<string>bluetooth-peripheral</string>
 	</array>
 	<key>CFBundleName</key>
 	<string>Sensus</string>
@@ -159,7 +160,7 @@
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Sensus does not use or transmit photos in any way.</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>Certain Sensus studies use wearable sensors to gather data. You will be alerted when joining such studies.</string>
+	<string>Certain Sensus studies use Bluetooth sensors to gather data. You will be alerted when joining such studies.</string>
 	<key>NSHealthShareUsageDescription</key>
 	<string>Certain Sensus studies integrate with HealthKit to gather data. You will be alerted when joining such studies.</string>
 	<key>NSHealthUpdateUsageDescription</key>

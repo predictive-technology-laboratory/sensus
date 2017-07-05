@@ -20,6 +20,9 @@ namespace Sensus.Probes.Context
 {
     public abstract class BluetoothDeviceProximityProbe : ListeningProbe
     {
+        public const string SERVICE_UUID = "AF2FB88A-9A79-4748-8DB6-9AC1F8F41B2B";
+        public const string DEVICE_ID_CHARACTERISTIC_UUID = "2647AAAE-B7AC-4331-A3FF-0DF73288D3F7";
+
         [JsonIgnore]
         protected override bool DefaultKeepDeviceAwake
         {
