@@ -41,7 +41,7 @@ namespace Sensus.Probes
         private ScheduledCallback _pollCallback;
 #if __IOS__
         private bool _significantChangePoll;
-        private bool _significantChangeOverrideScheduledPolls;
+        private bool _significantChangePollOverridesScheduledPolls;
         private CLLocationManager _locationManager;
 #endif
 
@@ -107,11 +107,11 @@ namespace Sensus.Probes
             set { _significantChangePoll = value; }
         }
 
-        [OnOffUiProperty("Significant Change Override Scheduled Polls:", true, 8)]
-        public bool SignificantChangeOverrideScheduledPolls
+        [OnOffUiProperty("Significant Change Poll Overrides Scheduled Polls:", true, 8)]
+        public bool SignificantChangePollOverridesScheduledPolls
         {
-            get { return _significantChangeOverrideScheduledPolls; }
-            set { _significantChangeOverrideScheduledPolls = value; }
+            get { return _significantChangePollOverridesScheduledPolls; }
+            set { _significantChangePollOverridesScheduledPolls = value; }
         }
 #endif
 
@@ -165,11 +165,29 @@ namespace Sensus.Probes
 
 #if __IOS__
             _significantChangePoll = false;
-            _significantChangeOverrideScheduledPolls = false;
+            _significantChangePollOverridesScheduledPolls = false;
             _locationManager = new CLLocationManager();
             _locationManager.LocationsUpdated += (sender, e) =>
             {
-                SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(_pollCallback, TimeSpan.Zero);
+                Task.Run(() =>
+                {
+                    try
+                    {
+                        CancellationTokenSource canceller = new CancellationTokenSource();
+
+                        // if the callback specified a timeout, request cancellation at the specified time.
+                        if (_pollCallback.CallbackTimeout.HasValue)
+                        {
+                            canceller.CancelAfter(_pollCallback.CallbackTimeout.Value);
+                        }
+
+                        _pollCallback.Action(_pollCallback.Id, canceller.Token, () => { });
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Failed significant change poll:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
+                });
             };
 #endif
 
@@ -224,7 +242,9 @@ namespace Sensus.Probes
                                 foreach (Datum datum in data)
                                 {
                                     if (cancellationToken.IsCancellationRequested)
+                                    {
                                         break;
+                                    }
 
                                     try
                                     {
@@ -262,7 +282,7 @@ namespace Sensus.Probes
                 }
 
                 // schedule the callback if we're not doing significant-change polling, or if we are but the latter doesn't override the former.
-                if (!_significantChangePoll || !_significantChangeOverrideScheduledPolls)
+                if (!_significantChangePoll || !_significantChangePollOverridesScheduledPolls)
                 {
                     SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_pollCallback, TimeSpan.Zero, TimeSpan.FromMilliseconds(_pollingSleepDurationMS), POLL_CALLBACK_LAG);
                 }

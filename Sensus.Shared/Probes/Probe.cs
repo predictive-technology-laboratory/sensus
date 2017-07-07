@@ -139,7 +139,9 @@ namespace Sensus.Probes
                     _mostRecentDatum = value;
 
                     if (MostRecentDatumChanged != null)
+                    {
                         MostRecentDatumChanged(this, new Tuple<Datum, Datum>(previousDatum, _mostRecentDatum));
+                    }
                 }
             }
         }

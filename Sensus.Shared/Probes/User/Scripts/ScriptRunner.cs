@@ -196,7 +196,9 @@ namespace Sensus.Probes.User.Scripts
                             // get the value that might trigger the script -- it might be null in the case where the property is nullable and is not set (e.g., facebook fields, input locations, etc.)
                             object currentDatumValue = trigger.DatumProperty.GetValue(currentDatum);
                             if (currentDatumValue == null)
+                            {
                                 return;
+                            }
 
                             // if we're triggering based on datum value changes/differences instead of absolute values, calculate the change now.
                             if (trigger.Change)
