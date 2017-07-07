@@ -319,11 +319,15 @@ namespace Sensus.Probes
             if (Running)
             {
                 double msElapsedSincePreviousStore = (DateTimeOffset.UtcNow - MostRecentStoreTimestamp.GetValueOrDefault(DateTimeOffset.MinValue)).TotalMilliseconds;
+                bool significantChangePollsOverrideScheduledPolls = _significantChangePoll && _significantChangePollOverridesScheduledPolls;
                 int allowedLagMS = 5000;
                 if (!_isPolling &&
+                    !significantChangePollsOverrideScheduledPolls && 
                     _pollingSleepDurationMS <= int.MaxValue - allowedLagMS && // some probes (iOS HealthKit) have polling delays set to int.MaxValue. if we add to this (as we're about to do in the next check), we'll wrap around to 0 resulting in incorrect statuses. only do the check if we won't wrap around.
                     msElapsedSincePreviousStore > (_pollingSleepDurationMS + allowedLagMS))  // system timer callbacks aren't always fired exactly as scheduled, resulting in health tests that identify warning conditions for delayed polling. allow a small fudge factor to ignore these warnings.
+                {
                     warning += "Probe \"" + GetType().FullName + "\" has not stored data in " + msElapsedSincePreviousStore + "ms (polling delay = " + _pollingSleepDurationMS + "ms)." + Environment.NewLine;
+                }
             }
 
             return restart;
