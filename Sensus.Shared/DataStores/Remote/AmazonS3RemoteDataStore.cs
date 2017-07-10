@@ -28,20 +28,34 @@ using Newtonsoft.Json;
 using System.Net;
 using System.Security.Cryptography;
 using Sensus.Encryption;
+using Org.BouncyCastle.Asn1.X509;
 
 namespace Sensus.DataStores.Remote
 {
     public class AmazonS3RemoteDataStore : RemoteDataStore
     {
+        private string _region;
         private string _bucket;
         private string _folder;
-        private string _cognitoIdentityPoolId;
         private bool _compress;
         private bool _encrypt;
         private string _pinnedServiceURL;
         private string _pinnedPublicKey;
 
-        [EntryStringUiProperty("Bucket:", true, 2)]
+        [ListUiProperty(null, true, 1, new object[] { "us-east-2", "us-east-1", "us-west-1", "us-west-2", "ca-central-1", "ap-south-1", "ap-northeast-2", "ap-southeast-1", "ap-southeast-2", "ap-northeast-1", "eu-central-1", "eu-west-1", "eu-west-2", "sa-east-1" })]
+        public string Region
+        {
+            get
+            {
+                return _region;
+            }
+            set
+            {
+                _region = value;
+            }
+        }
+
+        [EntryStringUiProperty(null, true, 2)]
         public string Bucket
         {
             get
@@ -51,13 +65,15 @@ namespace Sensus.DataStores.Remote
             set
             {
                 if (value != null)
-                    value = value.Trim();
+                {
+                    value = value.Trim().ToLower();  // bucket names must be lowercase.
+                }
 
                 _bucket = value;
             }
         }
 
-        [EntryStringUiProperty("Folder:", true, 3)]
+        [EntryStringUiProperty(null, true, 3)]
         public string Folder
         {
             get
@@ -67,26 +83,11 @@ namespace Sensus.DataStores.Remote
             set
             {
                 if (value != null)
+                {
                     value = value.Trim().Trim('/');
+                }
 
                 _folder = value;
-            }
-        }
-
-        [EntryStringUiProperty("Cognito Pool Id:", true, 4)]
-        public string CognitoIdentityPoolId
-        {
-            get
-            {
-                return _cognitoIdentityPoolId;
-            }
-            set
-            {
-                // newlines and spaces will cause problems when extracting the region and using it in the URL
-                if (value != null)
-                    value = value.Trim();
-
-                _cognitoIdentityPoolId = value;
             }
         }
 
@@ -132,6 +133,13 @@ namespace Sensus.DataStores.Remote
                     if (value == "")
                     {
                         value = null;
+                    }
+                    else
+                    {
+                        if (!value.ToLower().StartsWith("https://"))
+                        {
+                            value = "https://" + value;
+                        }
                     }
                 }
 
@@ -181,7 +189,7 @@ namespace Sensus.DataStores.Remote
 
         public AmazonS3RemoteDataStore()
         {
-            _bucket = _folder = "";
+            _region = _bucket = _folder = null;
             _compress = false;
             _encrypt = false;
             _pinnedServiceURL = null;
@@ -214,15 +222,13 @@ namespace Sensus.DataStores.Remote
 
         private AmazonS3Client InitializeS3()
         {
-            AWSConfigs.LoggingConfig.LogMetrics = false;  // getting many uncaught exceptions from AWS S3:  https://insights.xamarin.com/app/Sensus-Production/issues/351
-
-            RegionEndpoint amazonRegion = RegionEndpoint.GetBySystemName(_cognitoIdentityPoolId.Substring(0, _cognitoIdentityPoolId.IndexOf(":")));
-            CognitoAWSCredentials credentials = new CognitoAWSCredentials(_cognitoIdentityPoolId, amazonRegion);
-
+            AWSConfigs.LoggingConfig.LogMetrics = false;  // getting many uncaught exceptions from AWS S3 related to logging metrics
             AmazonS3Config clientConfig = new AmazonS3Config();
+            clientConfig.ForcePathStyle = true;  // when using pinning via CloudFront reverse proxy, the bucket name is prepended to the host if the path style is not used. the resulting host does not exist for our reverse proxy, causing DNS name resolution errors. by using the path style, the bucket is appended to the reverse-proxy host and everything goes through fine.
+
             if (_pinnedServiceURL == null)
-            {                
-                clientConfig.RegionEndpoint = amazonRegion;
+            {
+                clientConfig.RegionEndpoint = RegionEndpoint.GetBySystemName(_region);
             }
             else
             {
@@ -241,7 +247,7 @@ namespace Sensus.DataStores.Remote
                 };
             }
 
-            return new AmazonS3Client(credentials, clientConfig);
+            return new AmazonS3Client(null, clientConfig);
         }
 
         protected override Task<List<Datum>> CommitAsync(IEnumerable<Datum> data, CancellationToken cancellationToken)
